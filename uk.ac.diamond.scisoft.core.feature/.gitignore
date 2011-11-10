@@ -1,0 +1,5 @@
+# Ignores that are common to all Eclipse feature projects
+/build.xml
+/feature.temp.folder
+
+# Ignores that are specific to this Eclipse project

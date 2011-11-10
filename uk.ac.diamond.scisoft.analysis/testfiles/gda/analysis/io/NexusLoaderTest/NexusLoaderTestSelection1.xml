@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nexusTreeNodeSelection>
+	<nexusTreeNodeSelection>
+		<nxClass>NXentry</nxClass>
+		<nexusTreeNodeSelection>
+			<nxClass>NXinstrument</nxClass>
+			<wanted>2</wanted>
+			<dataType>2</dataType>
+			<nexusTreeNodeSelection>
+				<nxClass>NXsource1</nxClass>
+				<wanted>2</wanted>
+				<dataType>2</dataType>
+			</nexusTreeNodeSelection>
+				<nexusTreeNodeSelection>
+					<nxClass>NXaperture</nxClass>
+					<wanted>2</wanted>
+					<dataType>2</dataType>
+					<nexusTreeNodeSelection>
+						<nxClass>NXgeometry</nxClass>
+						<wanted>2</wanted>
+						<dataType>2</dataType>
+						<nexusTreeNodeSelection>
+							<nxClass>NXshape</nxClass>
+							<wanted>2</wanted>
+							<dataType>1</dataType>
+						</nexusTreeNodeSelection>
+						<nexusTreeNodeSelection>
+							<nxClass>NXorientation</nxClass>
+							<wanted>2</wanted>
+							<dataType>2</dataType>
+						</nexusTreeNodeSelection>
+					</nexusTreeNodeSelection>
+				</nexusTreeNodeSelection>
+		</nexusTreeNodeSelection>
+		<nexusTreeNodeSelection>
+			<nxClass>NXdata</nxClass>
+			<wanted>2</wanted>
+			<dataType>2</dataType>
+		</nexusTreeNodeSelection>
+	</nexusTreeNodeSelection>
+</nexusTreeNodeSelection>

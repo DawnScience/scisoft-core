@@ -1,0 +1,19 @@
+ &SRS
+ SRSRUN=34146,SRSDAT=2011513,SRSTIM=95827,
+ SRSSTN='BASE',SRSPRJ='GDA_BASE',SRSEXP='Emulator',
+ SRSTLE='                                                            ',
+ SRSCN1='        ',SRSCN2='        ',SRSCN3='        ',
+<MetaDataAtStart>
+cmd='scan x 1 10 1 ai5 1'</MetaDataAtStart>
+ &END
+x	ai5
+1.0000	0.21393
+2.0000	0.21355
+3.0000	0.21301
+4.0000	0.21279
+5.0000	0.21173
+6.0000	0.21294
+7.0000	0.21244
+8.0000	0.21499
+9.0000	0.21382
+10.0000	0.21437

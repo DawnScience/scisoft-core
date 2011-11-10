@@ -1,0 +1,558 @@
+/*-
+ * Copyright © 2009 Diamond Light Source Ltd.
+ *
+ * This file is part of GDA.
+ *
+ * GDA is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 as published by the Free
+ * Software Foundation.
+ *
+ * GDA is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with GDA. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package uk.ac.diamond.scisoft.analysis.roi;
+
+import java.io.Serializable;
+import java.util.HashMap;
+
+
+/**
+ * Class for sector region of interest
+ */
+public class SectorROI extends ROIBase implements Serializable {
+	private double rad[]; // radii
+	private double ang[]; // angles in radians
+	private boolean clippingCompensation; // compensate for clipping
+	private boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
+	private boolean averageArea = true;
+	private double dpp; // Sampling rate used for profile calculations in dots per pixel
+
+	private int symmetry; // symmetry
+
+	/**
+	 * No operation
+	 */
+	public static final int NONE = 0;
+	/**
+	 * Full circular sector
+	 */
+	public static final int FULL = 1;
+	/**
+	 * Reflect sector in y-axis (left/right)
+	 */
+	public static final int XREFLECT = 2;
+	/**
+	 * Reflect sector in x-axis (up/down)
+	 */
+	public static final int YREFLECT = 3;
+	/**
+	 * Rotate sector by +90 degrees
+	 */
+	public static final int CNINETY = 4;
+	/**
+	 * Rotate sector by -90 degrees
+	 */
+	public static final int ACNINETY = 5;
+	/**
+	 * Invert sector through centre
+	 */
+	public static final int INVERT = 6;
+
+	private static HashMap<Integer, String> symmetryText = new HashMap<Integer, String>();
+	static {
+		symmetryText.put(SectorROI.NONE,     "N");
+		symmetryText.put(SectorROI.FULL,     "Full");
+		symmetryText.put(SectorROI.XREFLECT, "L/R");
+		symmetryText.put(SectorROI.YREFLECT, "U/D");
+		symmetryText.put(SectorROI.CNINETY,  "+90");
+		symmetryText.put(SectorROI.ACNINETY, "-90");
+		symmetryText.put(SectorROI.INVERT,   "I");
+	}
+
+	/**
+	 * @param clippingCompensation The clippingCompensation to set.
+	 */
+	public void setClippingCompensation(boolean clippingCompensation) {
+		this.clippingCompensation = clippingCompensation;
+	}
+
+	/**
+	 * @return Returns the clippingCompensation.
+	 */
+	public boolean isClippingCompensation() {
+		return clippingCompensation;
+	}
+
+	/**
+	 * @param symmetry The symmetry to set.
+	 */
+	public void setSymmetry(int symmetry) {
+		this.symmetry = symmetry;
+	}
+
+	/**
+	 * @param symmetry The symmetry to set.
+	 */
+	public static int getSymmetry(String symmetry) {
+		if (symmetryText.containsValue(symmetry))
+			for (int key : symmetryText.keySet())
+				if (symmetry.equals(symmetryText.get(key))) {
+					return key;
+				}
+		
+		return SectorROI.NONE;
+	}
+	
+	/**
+	 * @return Returns the symmetry.
+	 */
+	public int getSymmetry() {
+		return symmetry;
+	}
+
+	/**
+	 * 
+	 */
+	public SectorROI() {
+		this(30., 120., Math.PI*0.25, Math.PI*2./3.);
+	}
+
+	/**
+	 * @param sr 
+	 * @param er
+	 * @param sp
+	 * @param ep
+	 */
+	public SectorROI(double sr, double er, double sp, double ep) {
+		this(0., 0., sr, er, sp, ep);
+	}
+
+	/**
+	 * @param ptx
+	 * @param pty
+	 * @param sr
+	 * @param er
+	 * @param sp
+	 * @param ep
+	 */
+	public SectorROI(double ptx, double pty, double sr, double er, double sp, double ep) {
+		this(ptx, pty, sr, er, sp, ep, 1.0, false);
+	}
+
+	/**
+	 * @param ptx
+	 * @param pty
+	 * @param sr
+	 * @param er
+	 * @param sp
+	 * @param ep
+	 * @param clip 
+	 */
+	public SectorROI(double ptx, double pty, double sr, double er, double sp, double ep, double dpp, boolean clip) {
+		this(ptx, pty, sr, er, sp, ep, dpp, clip, SectorROI.NONE);
+	}
+
+	/**
+	 * @param ptx
+	 * @param pty
+	 * @param sr
+	 * @param er
+	 * @param sp
+	 * @param ep
+	 * @param clip 
+	 * @param sym 
+	 */
+	public SectorROI(double ptx, double pty, double sr, double er, double sp, double ep, double dpp, boolean clip, int sym) {
+		spt = new double[] {ptx, pty};
+		rad = new double[] {sr, er};
+		ang = new double[] {sp, ep};
+		this.dpp = dpp;
+		clippingCompensation = clip;
+		symmetry = sym;
+		combineSymmetry = false;
+		checkAngles();
+	}
+
+	/**
+	 * @param radius The radii to set
+	 */
+	public void setRadii(double radius[]) {
+		setRadii(radius[0], radius[1]);
+	}
+
+	/**
+	 * @param startRadius 
+	 * @param endRadius 
+	 */
+	public void setRadii(double startRadius, double endRadius) {
+		rad[0] = startRadius;
+		rad[1] = endRadius;
+		checkRadii();
+	}
+
+	/**
+	 * @return Returns the radii.
+	 */
+	public double[] getRadii() {
+		return rad;
+	}
+
+	/**
+	 * @param index 
+	 * @return Returns the radii.
+	 */
+	public double getRadius(int index) {
+		return rad[index];
+	}
+
+	/**
+	 * @return Returns the radii.
+	 */
+	public int[] getIntRadii() {
+		return new int[] { (int) rad[0], (int) rad[1] };
+	}
+
+	/**
+	 * @param index 
+	 * @return Returns the radius
+	 */
+	public int getIntRadius(int index) {
+		return (int) rad[index];
+	}
+
+	/**
+	 * Set angles
+	 * @param startAngle
+	 * @param endAngle
+	 */
+	public void setAngles(double startAngle, double endAngle) {
+		ang[0] = startAngle;
+		ang[1] = endAngle;
+		checkAngles();		
+	}
+
+	/**
+	 * @param angles The angles to set
+	 */
+	public void setAngles(double angles[]) {
+		setAngles(angles[0], angles[1]);
+	}
+
+	/**
+	 * @return Returns the angles
+	 */
+	public double[] getAnglesDegrees() {
+		double[] angles = new double[] { Math.toDegrees(ang[0]), Math.toDegrees(ang[1]) };
+		return angles;
+	}
+
+	/**
+	 * @param index 
+	 * @return Returns the angles
+	 */
+	public double getAngleDegrees(int index) {
+		return Math.toDegrees(ang[index]);
+	}
+
+	/**
+	 * @param angles The angles to set
+	 */
+	public void setAnglesDegrees(double angles[]) {
+		setAnglesDegrees(angles[0], angles[1]);
+	}
+
+	/**
+	 * @param startAngle 
+	 * @param endAngle 
+	 */
+	public void setAnglesDegrees(double startAngle, double endAngle) {
+		ang[0] = Math.toRadians(startAngle);
+		ang[1] = Math.toRadians(endAngle);
+		checkAngles();
+	}
+
+	/**
+	 * @return Returns the angles
+	 */
+	public double[] getAngles() {
+		return ang;
+	}
+
+	/**
+	 * @param index 
+	 * @return Returns the angles
+	 */
+	public double getAngle(int index) {
+		return ang[index];
+	}
+
+	/**
+	 * Add an offset to both angle
+	 * 
+	 * @param angle
+	 */
+	public void addAngles(double angle) {
+		for (int i = 0; i < 2; i++) {
+			ang[i] += angle;
+		}
+		if (ang[0] > 2.0 * Math.PI) {
+			ang[0] -= 2.0 * Math.PI;
+			ang[1] -= 2.0 * Math.PI;
+		}
+		if (ang[0] < 0) {
+			ang[0] += 2.0 * Math.PI;
+			ang[1] += 2.0 * Math.PI;
+		}
+	}
+
+	/**
+	 * Add an offset to an angle
+	 * @param index 
+	 * @param angle
+	 */
+	public void addAngle(int index, double angle) {
+		ang[index] += angle;
+		checkAngles();
+	}
+
+	/**
+	 * Make sure angles lie in permitted ranges:
+	 *  0 <= ang0 <= 2*pi, 0 <= ang1 <= 4*pi
+	 *  0 <= ang1 - ang0 <= 2*pi
+	 */
+	private void checkAngles() {
+
+		// sort out relative values
+		while (ang[0] >= ang[1]) {
+			ang[1] += 2.0 * Math.PI;
+		}
+
+		while ( (ang[0] + 2.0 * Math.PI) < ang[1]) {
+			ang[1] -= 2.0 * Math.PI;
+		}
+		
+		// place correctly in absolute terms
+		while (ang[0] < 0) {
+			ang[0] += 2.0 * Math.PI;
+			ang[1] += 2.0 * Math.PI;
+		}
+		
+		while (ang[0] > 2.0 * Math.PI) {
+			ang[0] -= 2.0 * Math.PI;
+			ang[1] -= 2.0 * Math.PI;
+		}
+	}
+
+	/**
+	 * Add an offset to radii
+	 * @param radius 
+	 */
+	public void addRadii(double radius) {
+		if (rad[0] + radius < 0)
+			radius = -rad[0];
+		if (rad[1] + radius < 0)
+			radius = -rad[1];
+		rad[0] += radius;
+		rad[1] += radius;
+	}
+
+	/**
+	 * Add an offset to a radius
+	 * @param index 
+	 * @param radius 
+	 */
+	public void addRadius(int index, double radius) {
+		rad[index] += radius;
+		checkRadii();
+	}
+
+	/**
+	 * Make sure radii lie in permitted range:
+	 *  0 <= rad0, rad1
+	 *  rad0 <= rad1
+	 */
+	private void checkRadii() {
+		if (rad[0] < 0)
+			rad[0] = 0;
+		if (rad[1] < 0)
+			rad[1] = 0;
+		if (rad[0] > rad[1]) {
+			rad[0] = rad[1];
+		}
+	}
+
+	/**
+	 * @return a copy
+	 */
+	@Override
+	public SectorROI copy() {
+		SectorROI lroi = new SectorROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);
+		lroi.setCombineSymmetry(combineSymmetry);
+		lroi.setPlot(plot);
+		return lroi;
+	}
+	
+	/**
+	 * @param sym 
+	 * @return true if given symmetry is okay with angles
+	 */
+	public boolean checkSymmetry(int sym) {
+		boolean isOK = false;
+
+		switch(sym) {
+		case NONE: case FULL:
+			isOK = true;
+			break;
+		case XREFLECT:
+			if (0 <= ang[0] && ang[0] < Math.PI/2 && ang[0] <= ang[1] && ang[1] <= Math.PI/2)
+				isOK = true;
+			else if (Math.PI/2 <= ang[0] && ang[0] <= 3*Math.PI/2 && ang[0] <= ang[1] && ang[1] <= 3*Math.PI/2)
+				isOK = true;
+			else if (3*Math.PI/2 <= ang[0] && ang[0] <= 2*Math.PI && ang[0] <= ang[1] && ang[1] <= 5*Math.PI/2)
+				isOK = true;
+			break;
+		case YREFLECT:
+			if (0 <= ang[0] && ang[0] < Math.PI && ang[0] <= ang[1] && ang[1] <= Math.PI)
+				isOK = true;
+			else if (Math.PI <= ang[0] && ang[0] <= 2*Math.PI && ang[0] <= ang[1] && ang[1] <= 2*Math.PI)
+				isOK = true;
+			break;
+		case CNINETY:
+			if (ang[1] <= ang[0] + Math.PI/2)
+				isOK = true;
+			break;
+		case ACNINETY:
+			if (ang[0] >= ang[1] - Math.PI/2)
+				isOK = true;
+			break;
+		case INVERT:
+			if (ang[1] <= ang[0] + Math.PI)
+				isOK = true;
+			break;
+		}
+		return isOK;
+	}
+
+	/**
+	 * @return angles from symmetry operations
+	 */
+	public double[] getSymmetryAngles() {
+		double[] nang = new double[] {0, 2*Math.PI};
+
+		switch (symmetry) {
+		case SectorROI.XREFLECT:
+			// add in x reflected integral
+			nang[0] = Math.PI - ang[1];
+			nang[1] = Math.PI - ang[0];
+			break;
+		case SectorROI.YREFLECT:
+			// add in y reflected integral
+			nang[0] = 2*Math.PI - ang[1];
+			nang[1] = 2*Math.PI - ang[0];
+			break;
+		case SectorROI.CNINETY:
+			// add in +90 rotated integral
+			nang[0] = ang[0] + Math.PI/2;
+			nang[1] = ang[1] + Math.PI/2;
+			break;
+		case SectorROI.ACNINETY:
+			// add in -90 rotated integral
+			nang[0] = ang[0] - Math.PI/2;
+			nang[1] = ang[1] - Math.PI/2;
+			break;
+		case SectorROI.INVERT:
+			// add in inverted integral
+			nang[0] = ang[0] + Math.PI;
+			nang[1] = ang[1] + Math.PI;
+			break;
+		}
+
+		return nang;
+	}
+
+	/**
+	 * @return text for symmetry setting
+	 */
+	public String getSymmetryText() {
+		if (symmetryText.containsKey(symmetry))
+			return symmetryText.get(symmetry);
+
+		return "N";
+	}
+
+	/**
+	 * @param combineSymmetry The combineSymmetry to set.
+	 */
+	public void setCombineSymmetry(boolean combineSymmetry) {
+		this.combineSymmetry = combineSymmetry;
+	}
+
+	/**
+	 * @return Returns the combineSymmetry.
+	 */
+	public boolean isCombineSymmetry() {
+		return combineSymmetry;
+	}
+
+	/**
+	 * Return sampling rate used in profile calculations
+	 * 
+	 * @return
+	 * 			sampling rate in dots per pixel
+	 */
+	public double getDpp() {
+		return dpp;
+	}
+
+	/**
+	 * Set sampling rate used in profile calculations  
+	 * 
+	 * @param dpp
+	 *			sampling rate in dots per pixel; 
+	 */
+	public void setDpp(double dpp) {
+		this.dpp = dpp;
+	}
+
+	/**
+	 * Whether the pixel average value shall be calculated instead of integrating
+	 * @return averageArea
+	 */
+	public boolean isAverageArea() {
+		return averageArea;
+	}
+
+	/**
+	 * Set true to not strictly integrate but average over the pixels
+	 * @param averageArea
+	 */
+	public void setAverageArea(boolean averageArea) {
+		this.averageArea = averageArea;
+	}
+
+	/**
+	 * @return Returns true if ROI has separate regions (determined by symmetry and combine flag)
+	 */
+	public boolean hasSeparateRegions() {
+		return !(symmetry == NONE || symmetry == FULL || combineSymmetry); 
+	}
+
+	@Override
+	public void downsample(double subFactor) {
+		spt[0] /= subFactor;
+		spt[1] /= subFactor;
+		rad[0] /= subFactor;
+		rad[1] /= subFactor;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Centre (%g, %g) Radii (%g,%g) Angles (%g, %g)", spt[0], spt[1], rad[0], rad[1], getAngleDegrees(0), getAngleDegrees(1));
+	}
+}

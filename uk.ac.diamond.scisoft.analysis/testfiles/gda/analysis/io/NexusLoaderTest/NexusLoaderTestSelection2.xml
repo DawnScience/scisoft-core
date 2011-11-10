@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nexusTreeNodeSelection>
+	<nexusTreeNodeSelection>
+		<nxClass>NXentry</nxClass>
+		<nexusTreeNodeSelection>
+			<nxClass>NXinstrumen.*</nxClass>
+			<wanted>2</wanted>
+			<dataType>2</dataType>
+		</nexusTreeNodeSelection>
+		<nexusTreeNodeSelection>
+			<nxClass>NXdata</nxClass>
+			<nexusTreeNodeSelection>
+				<nxClass>SDS</nxClass>
+				<name>heading.</name>
+				<wanted>2</wanted>
+				<dataType>2</dataType>
+			</nexusTreeNodeSelection>
+		</nexusTreeNodeSelection>
+	</nexusTreeNodeSelection>
+</nexusTreeNodeSelection>

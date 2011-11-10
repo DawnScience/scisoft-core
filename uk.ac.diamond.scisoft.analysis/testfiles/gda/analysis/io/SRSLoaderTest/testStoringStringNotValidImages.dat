@@ -1,0 +1,6 @@
+&START
+&END
+pos filename
+1   testfiles/gda/analysis/io/SRSLoaderTest/NotValidImage1.tif
+2	testfiles/gda/analysis/io/SRSLoaderTest/NotValidImage2.tif
+3   testfiles/gda/analysis/io/SRSLoaderTest/NotValidImage3.tif

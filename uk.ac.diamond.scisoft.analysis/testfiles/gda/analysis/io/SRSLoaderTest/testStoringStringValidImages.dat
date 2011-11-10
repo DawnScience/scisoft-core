@@ -1,0 +1,6 @@
+&START
+&END
+pos filename
+1   testfiles/gda/analysis/io/EdfLoaderTest/pilatus300k.edf
+2   testfiles/gda/analysis/io/PGMLoaderTest/image0001.pgm
+3	testfiles/gda/analysis/io/SRSLoaderTest/simple_data.dat

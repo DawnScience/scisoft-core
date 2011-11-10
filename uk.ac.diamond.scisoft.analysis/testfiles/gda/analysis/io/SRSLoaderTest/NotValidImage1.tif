@@ -1,0 +1,6 @@
+&START
+&END
+pos filename
+1   testfiles/gda/analysis/io/SRSLoaderTest/testStoringStrings1.dat
+2	testfiles/gda/analysis/io/SRSLoaderTest/testStoringStrings2.dat
+3   testfiles/gda/analysis/io/SRSLoaderTest/testStoringStrings3.dat

@@ -1,0 +1,53 @@
+<project name="plugin-uk.ac.diamond.scisoft.analysis" basedir=".">
+
+	<dirname property="GDA-plugin.basedir" file="${ant.file.${ant.project.name}}" />
+	<import file="../../builder/build-common.xml" />
+
+	<!-- ====================================================================
+	       Build
+	     ==================================================================== -->	
+
+	<!-- the jython scripting view should auto-complete class and method names in this plugin -->
+	<property name="plugin.enable.jython_autocomplete" value="true" />
+
+	<!-- ====================================================================
+	       Invoke the tests
+	     ==================================================================== -->
+
+	<target name="junit-tests" depends="toolCheck, set-test-base">
+		<condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
+			<os family="windows" />
+		</condition>
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1536m" />
+		<junit-call description="${ant.project.name} Java JUnit tests" forkmode="perTest" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory}">
+			<!-- forkmode=perTest, since some tests can trigger a JVM out-of-memory crash, whence following tests will erroneously report failure unless in a new JVM -->
+			<formatter type="xml" />
+			<classpath>
+				<pathelement location="${junitjar.loc}" />
+				<pathelement location="${jythonjar.loc}"/>
+				<path refid="libs.jars.path" />
+				<pathelement location="${plugins.dir}/uk.ac.diamond.scisoft.analysis/bin" />
+				<pathelement location="${plugins.dir}/uk.ac.gda.nexus/bin" />
+				<pathelement location="${plugins.dir}/uk.ac.gda.common/bin" />
+				<pathelement location="${plugins.dir}/uk.ac.diamond.CBFlib/bin" />
+				<path refid="plugins.jars.path" />
+				<path refid="thirdparty.bundles.path" />
+				<path>
+					<fileset dir="${target_eclipse.dir}">
+						<include name="**/javax.servlet_*.jar" />
+						<include name="**/org.apache.xmlrpc_*.jar" />
+						<include name="**/org.apache.ws.commons.util_*.jar" />
+						<include name="**/org.hamcrest.core_*.jar" />
+						<exclude name="**/*.source_*.jar" />
+					</fileset>
+				</path>
+			</classpath>
+			<batchtest todir="@{report.dir}">
+				<fileset dir="${GDA-plugin.basedir}/test">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit-call>
+	</target>
+
+</project>

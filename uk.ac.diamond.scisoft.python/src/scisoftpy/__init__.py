@@ -101,7 +101,7 @@ else:
 from maths import *
 
 '''
-Imports should work with python+numpy agreed with MB 11 Nov 2011
+Imports should work with python+numpy only agreed with MB 11 Nov 2011
 '''
 try:
     import nexus

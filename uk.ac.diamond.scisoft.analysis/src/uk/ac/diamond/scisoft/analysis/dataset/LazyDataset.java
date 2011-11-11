@@ -239,17 +239,17 @@ public class LazyDataset implements ILazyDataset {
 		}
 		return dataSlice;
 	}
-
+	
+	private IMetaData metadata = null;
+	
 	@Override
-	public void setMetadata(IMetaData metdada) {
-		// TODO Auto-generated method stub
-		
+	public void setMetadata(IMetaData metadata) {
+		this.metadata = metadata;
 	}
 
 	@Override
 	public IMetaData getMetaData() {
-		// TODO Auto-generated method stub
-		return null;
+		return metadata;
 	}
 
 }

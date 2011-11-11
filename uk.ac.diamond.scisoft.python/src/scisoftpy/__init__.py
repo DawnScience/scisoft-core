@@ -100,7 +100,13 @@ else:
 
 from maths import *
 
-import nexus
+'''
+Imports should work with python+numpy agreed with MB 11 Nov 2011
+'''
+try:
+    import nexus
+except Exception, e:
+    print >> sys.stderr, "Could not import nexus"
 
 try:
     import io

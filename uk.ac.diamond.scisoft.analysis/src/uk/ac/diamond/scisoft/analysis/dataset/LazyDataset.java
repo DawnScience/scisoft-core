@@ -248,7 +248,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetaData getMetadata() {
 		return metadata;
 	}
 

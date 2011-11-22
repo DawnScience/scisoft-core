@@ -30,7 +30,7 @@ import uk.ac.gda.monitor.IMonitor;
  * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero rank
  * and an empty array for shape.
  */
-public interface ILazyDataset extends Serializable {
+public interface ILazyDataset extends Serializable, IMetadataProvider{
 	/**
 	 * @return Class of element
 	 */
@@ -129,11 +129,5 @@ public interface ILazyDataset extends Serializable {
 	 */
 	public void setMetadata(IMetaData metadata);
 	
-	/**
-	 * Get the metadata out of the dataset
-	 * 
-	 * @return metadata
-	 */
-	public IMetaData getMetaData();
 	
 }

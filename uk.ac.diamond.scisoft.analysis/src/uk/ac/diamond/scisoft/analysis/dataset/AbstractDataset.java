@@ -3460,7 +3460,7 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetaData getMetadata() {
 		return metadataStructure;
 	}
 }

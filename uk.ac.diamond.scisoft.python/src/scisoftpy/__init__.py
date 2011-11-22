@@ -120,9 +120,30 @@ except Exception, e:
     print >> sys.stderr, "Could not import plotting routines"
     print >> sys.stderr, e
 
-import random
-import flatten
-import rpc
+try:
+    import random
+except Exception, e:
+    print >> sys.stderr, "Could not import random routines"
+    print >> sys.stderr, e
 
-import fft
+try:
+    import flatten
+
+except Exception, e:
+    print >> sys.stderr, "Could not import flatten API"
+    print >> sys.stderr, e
+
+try:
+    import rpc
+except Exception, e:
+    print >> sys.stderr, "Could not import rpc API"
+    print >> sys.stderr, e
+
+try:
+    import fft
+except Exception, e:
+    print >> sys.stderr, "Could not import plotting routines"
+    print >> sys.stderr, e
+
+
 

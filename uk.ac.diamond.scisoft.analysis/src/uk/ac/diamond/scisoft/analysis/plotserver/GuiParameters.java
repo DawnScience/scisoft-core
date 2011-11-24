@@ -147,12 +147,12 @@ public final class GuiParameters implements Serializable {
 	/**
 	 * Specified the file operation and should hold a FileOperationsBean for further detail
 	 */
-	public static final GuiParameters FILEOPERATION = new GuiParameters("FileOp", String.class);
+	public static final GuiParameters FILEOPERATION = new GuiParameters("FileOp", FileOperationBean.class);
 
 	/**
 	 * Specifies the filename
 	 */
-	public static final GuiParameters FILENAME = new GuiParameters("Filename", OneDDataFilePlotDefinition.class);
+	public static final GuiParameters FILENAME = new GuiParameters("Filename", String.class);
 
 	/**
 	 * Specifies a list of selected filenames (as a list of strings)

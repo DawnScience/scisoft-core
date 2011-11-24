@@ -147,7 +147,7 @@ public final class GuiParameters implements Serializable {
 	/**
 	 * Specified the file operation and should hold a FileOperationsBean for further detail
 	 */
-	public static final GuiParameters FILEOPERATION = new GuiParameters("FileOp", FileOperationBean.class);
+	public static final GuiParameters FILEOPERATION = new GuiParameters("FileOp", String.class);
 
 	/**
 	 * Specifies the filename

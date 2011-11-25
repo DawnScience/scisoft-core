@@ -73,7 +73,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testMetadata() throws Exception {
 		DataHolder dh = new ADSCImageLoader(testfile1).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetaData();
+		IMetaData metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -94,7 +94,7 @@ public class DiffractionImageTest {
 	@Ignore("This is being ignored intil the MAR loader has been refactored to use the new metadata, 10 Nov 11")
 	public void testMAR() throws Exception {
 		DataHolder dh = new MARLoader(testfile2).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetaData();
+		IMetaData metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -113,7 +113,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testminiCBF() throws Exception {
 		DataHolder dh = new CBFLoader(testfile3).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetaData();
+		IMetaData metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();

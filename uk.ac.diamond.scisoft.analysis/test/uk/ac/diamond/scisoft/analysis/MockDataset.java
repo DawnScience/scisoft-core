@@ -178,7 +178,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetaData getMetadata() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 }

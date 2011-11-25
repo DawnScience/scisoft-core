@@ -152,7 +152,7 @@ public final class GuiParameters implements Serializable {
 	/**
 	 * Specifies the filename
 	 */
-	public static final GuiParameters FILENAME = new GuiParameters("Filename", OneDDataFilePlotDefinition.class);
+	public static final GuiParameters FILENAME = new GuiParameters("Filename", String.class);
 
 	/**
 	 * Specifies a list of selected filenames (as a list of strings)

@@ -700,6 +700,8 @@ public class HDF5Loader extends AbstractFileLoader {
 			for (int i = 0; i < shape.length; i++) {
 				dstart[i] = pos[i];
 			}
+			//DO NOT CHANGE THE FOLLOWING UNLESS YOU HAVE A TEST TO PROVE IT IS NOT WORKING. 
+			sds.clear();
 			files[index++] = ((String[]) sds.getData())[0];
 		}
 		ExternalFiles ef= new ExternalFiles();

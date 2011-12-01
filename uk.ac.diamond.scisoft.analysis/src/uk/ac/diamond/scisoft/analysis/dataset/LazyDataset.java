@@ -22,7 +22,6 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.util.Arrays;
 
-import org.python.core.PyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,40 +205,6 @@ public class LazyDataset implements ILazyDataset {
 		return null; // TODO add interaction to use plot server to load dataset
 	}
 
-	/**
-	 * Jython method
-	 * 
-	 * @param indexes
-	 *            can be a mixed array of integers or slices
-	 * @return Dataset of specified sub-dataset
-	 */
-	public AbstractDataset getSlice(final PyObject indexes) {
-		int orank = shape.length;
-		boolean[] sdim = new boolean[orank]; // flag which dimensions are sliced
-
-		AbstractDataset dataSlice = getSlice(Slice.convertPySlicesToSlice(indexes, shape, sdim));
-
-		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
-		int rank = 0;
-		for (int i = 0; i < orank; i++) {
-			if (sdim[i])
-				rank++;
-		}
-
-		if (rank < orank) {
-			int[] oldShape = dataSlice.shape;
-			int[] newShape = new int[rank];
-			int j = 0;
-			for (int i = 0; i < orank; i++) {
-				if (sdim[i]) {
-					newShape[j++] = oldShape[i];
-				}
-			}
-			dataSlice.setShape(newShape);
-		}
-		return dataSlice;
-	}
-	
 	private IMetaData metadata = null;
 	
 	@Override

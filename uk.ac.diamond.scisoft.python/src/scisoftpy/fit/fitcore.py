@@ -412,13 +412,13 @@ class poly1d(object):
             else:
                 continue
 
-            pow = self.order - i
-            spow = str(pow)
-            if pow > 1:
+            lpow = self.order - i
+            if lpow > 1:
                 term += ' ' + self.variable
+                spow = str(lpow)
                 sup  += ' '*len(term) + spow
                 base += term + ' '*len(spow)
-            elif pow == 1:
+            elif lpow == 1:
                 term += ' ' + self.variable
                 sup  += ' '*len(term)
                 base += term
@@ -468,7 +468,8 @@ def polyval(p, x):
     p[0]*(x**N-1) + p[1]*(x**N-2) + ... + p[N-2]*x + p[N-1]
     '''
     poly = _poly(_asDS(p, _dnp.float64).data)
-    return poly.makeDataset([_asDS(x)])
+    d = _asDS(x, _dnp.float, force=True)
+    return poly.makeDataset([d])
 
 # need a cspline fit function
 

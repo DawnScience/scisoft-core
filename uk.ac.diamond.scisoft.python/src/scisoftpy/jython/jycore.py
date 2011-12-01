@@ -23,6 +23,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.ComplexFloatDataset as _complexflo
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset as _complexdoubleds
 
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
+from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
+from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
+from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 
 import org.apache.commons.math.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -56,7 +59,7 @@ class _dtype(object):
             s += "(%d)" % self.elements
         return s
 
-bool = _dtype(_abstractds.BOOL, name='bool')
+bool = _dtype(_abstractds.BOOL, name='bool') #@ReservedAssignment
 int8 = _dtype(_abstractds.INT8, name='int8')
 int16 = _dtype(_abstractds.INT16, name='int16')
 int32 = _dtype(_abstractds.INT32, name='int32')
@@ -119,9 +122,9 @@ float_ = float64
 complex_ = complex128
 
 # native types
-int = int
-float = float
-complex = complex
+int = int #@ReservedAssignment
+float = float #@ReservedAssignment
+complex = complex #@ReservedAssignment
 
 from jarray import array as _array
 _arraytype = type(_array([0], 'f')) # this is used for testing if returned object is a Java array
@@ -182,7 +185,7 @@ def fromDS(data):
         return Sciwrap(data)
     return data
 
-def asDataset(data, dtype=None):
+def asDataset(data, dtype=None, force=False):
     """
     Used for arithmetic ops to coerce a sequence to a dataset otherwise leave as single item
     """
@@ -194,7 +197,10 @@ def asDataset(data, dtype=None):
     try:
         iter(data)
     except:
-        return data
+        if not force:
+            if isinstance(data, complex):
+                return _jcomplex(data.real, data.imag)
+            return data
 
     return array(data, dtype)
 
@@ -291,7 +297,7 @@ class ndarray:
         return self.ipower(asDataset(o, self.dtype))
 
     def __eq__(self, o):
-        e = _cmps.equal(self, o)
+        e = _cmps.equal(self, asDataset(o))
         if self.size == 1:
             return e.getBoolean([])
         return e
@@ -349,7 +355,7 @@ class ndarray:
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                return self.getSlice(key)
+                return _getslice(self, key)
             return self.getObject(key)
         except _jarrayindex_exception:
             raise IndexError
@@ -364,7 +370,9 @@ class ndarray:
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                return self.setSlice(value, key)
+                _setslice(self, value, key)
+                return self
+            value = _cvt2j(value)
             return self.set(value, key)
         except _jarrayindex_exception:
             raise IndexError
@@ -1972,6 +1980,7 @@ def array(obj, dtype=None, copy=True):
                 dtype = float64
             obj = obj.getArray()
 
+    obj = _cvt2j(obj)
     if dtype == None:
         dtype = _getdtypefromobj(obj)
     else:

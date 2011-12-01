@@ -25,7 +25,6 @@ import javax.vecmath.Vector3d;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.python.modules.math;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
@@ -107,7 +106,7 @@ public class ResolutionTest {
 		// detector size for assert
 		double detSizeX = detector.getDetectorSizeH();
 		double detSizeY = detector.getDetectorSizeV();
-		double diagDetSize = math.sqrt((detSizeX * detSizeX) + (detSizeY * detSizeY));
+		double diagDetSize = Math.sqrt((detSizeX * detSizeX) + (detSizeY * detSizeY));
 		int[] detectorCorners = { 0, 0, 0, 3072, 3072, 0, 3072, 3072 };
 		Vector3d px1topx4;
 

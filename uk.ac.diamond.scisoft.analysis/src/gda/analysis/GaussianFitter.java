@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.python.modules.math;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +107,7 @@ public class GaussianFitter implements Serializable {
 			try {
 				double [] dataArray = data.doubleArray();
 				Arrays.sort(dataArray);
-				double median = dataArray[(int)math.floor(dataArray.length/2)];
+				double median = dataArray[(int)Math.floor(dataArray.length/2)];
 				funcOut = nelderMeadFit(new DataSet[] {xAxis}, sliceData, 0.0001,
 						new Gaussian(pos, FWHM, area), new Offset(median*0.95,median));
 
@@ -285,7 +284,7 @@ public class GaussianFitter implements Serializable {
 		try {
 			double [] dataArray = data.doubleArray();
 			Arrays.sort(dataArray);
-			double median = dataArray[(int)math.floor(dataArray.length/2)];
+			double median = dataArray[(int)Math.floor(dataArray.length/2)];
 			double maxvol = 2.*max*25.*width*width;
 			GaussianND g = new GaussianND(maxvol, new double[] {0, 0}, new double[] {shape[0], shape[1]}, 5*width);
 			logger.info("Starting peak value {}", g.getPeakValue());

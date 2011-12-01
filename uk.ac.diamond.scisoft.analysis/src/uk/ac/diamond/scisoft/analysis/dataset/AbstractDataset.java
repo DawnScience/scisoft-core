@@ -32,13 +32,6 @@ import org.apache.commons.math.complex.Complex;
 import org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math.stat.descriptive.moment.Variance;
-import org.python.core.PyArray;
-import org.python.core.PyBoolean;
-import org.python.core.PyComplex;
-import org.python.core.PyFloat;
-import org.python.core.PyObject;
-import org.python.core.PySequence;
-import org.python.core.PySequenceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -545,23 +538,6 @@ public abstract class AbstractDataset implements IDataset {
 		return size;
 	}
 
-	// get shape from object (array, list, PyArray, PyList, PyTuple supported)
-	protected static int[] getShapeFromObject(final Object obj) {
-		ArrayList<Integer> lshape = new ArrayList<Integer>();
-
-		getShapeFromObj(lshape, obj, 0);
-		if (obj != null && lshape.size() == 0) {
-			return new int[0]; // cope with a single item
-		}
-		final int rank = lshape.size();
-		final int[] shape = new int[rank];
-		for (int i = 0; i < rank; i++) {
-			shape[i] = lshape.get(i);
-		}
-
-		return shape;
-	}
-
 	/**
 	 * Find dataset type that best fits given types The best type takes into account complex and array datasets
 	 * 
@@ -686,7 +662,6 @@ public abstract class AbstractDataset implements IDataset {
 		result.put(Float.class, FLOAT32);
 		result.put(Double.class, FLOAT64);
 		result.put(Complex.class, COMPLEX128);
-		result.put(PyComplex.class, COMPLEX128);
 		result.put(String.class, STRING);
 		result.put(Object.class, OBJECT);
 		return result;
@@ -708,94 +683,84 @@ public abstract class AbstractDataset implements IDataset {
 
 	/**
 	 * Get dataset type from an object. The following are supported: Java Number objects, Apache common math Complex
-	 * objects, Python numeric objects, Java arrays and Python sequences, tuples and lists
+	 * objects, Java arrays and lists
 	 * 
 	 * @param obj
 	 * @return dataset type
 	 */
 	public static int getDTypeFromObject(Object obj) {
 		int dtype = BOOL;
-
+	
 		if (obj == null) {
 			return dtype;
 		}
 
-		if (obj instanceof PySequenceList) {
-			PySequenceList pl = (PySequenceList) obj;
-			int l = pl.size();
+		if (obj instanceof List<?>) {
+			List<?> jl = (List<?>) obj;
+			int l = jl.size();
 			for (int i = 0; i < l; i++) {
-				Object lo = pl.get(i);
-				int ldtype;
-				ldtype = getDTypeFromObject(lo);
+				int ldtype = getDTypeFromObject(jl.get(i));
+				if (ldtype > dtype) {
+					dtype = ldtype;
+				}
+			}
+		} else if (obj.getClass().isArray()) {
+			int l = Array.getLength(obj);
+			for (int i = 0; i < l; i++) {
+				Object lo = Array.get(obj, i);
+				int ldtype = getDTypeFromObject(lo);
 				if (ldtype > dtype) {
 					dtype = ldtype;
 				}
 			}
 		} else {
-			if (obj instanceof PyArray) {
-				obj = ((PyArray) obj).getArray();
-			}
-
-			if (obj instanceof List<?>) {
-				List<?> jl = (List<?>) obj;
-				int l = jl.size();
-				for (int i = 0; i < l; i++) {
-					int ldtype = getDTypeFromObject(jl.get(i));
-					if (ldtype > dtype) {
-						dtype = ldtype;
-					}
-				}
-			} else if (obj.getClass().isArray()) {
-				int l = Array.getLength(obj);
-				for (int i = 0; i < l; i++) {
-					Object lo = Array.get(obj, i);
-					int ldtype = getDTypeFromObject(lo);
-					if (ldtype > dtype) {
-						dtype = ldtype;
-					}
-				}
-			} else {
-				dtype = getDTypeFromClass(obj.getClass());
-			}
+			dtype = getDTypeFromClass(obj.getClass());
 		}
 		return dtype;
+	}
+
+	/**
+	 * get shape from object (array or list supported)
+	 * @param obj
+	 * @return shape
+	 */
+	protected static int[] getShapeFromObject(final Object obj) {
+		ArrayList<Integer> lshape = new ArrayList<Integer>();
+
+		getShapeFromObj(lshape, obj, 0);
+		if (obj != null && lshape.size() == 0) {
+			return new int[0]; // cope with a single item
+		}
+		final int rank = lshape.size();
+		final int[] shape = new int[rank];
+		for (int i = 0; i < rank; i++) {
+			shape[i] = lshape.get(i);
+		}
+
+		return shape;
 	}
 
 	private static void getShapeFromObj(final ArrayList<Integer> ldims, Object obj, int depth) {
 		if (obj == null)
 			return;
 
-		if (obj instanceof PySequenceList) {
-			PySequenceList pl = (PySequenceList) obj;
-			final int l = pl.size();
+		if (obj instanceof List<?>) {
+			List<?> jl = (List<?>) obj;
+			int l = jl.size();
 			updateShape(ldims, depth, l);
 			for (int i = 0; i < l; i++) {
-				Object lo = pl.get(i);
+				Object lo = jl.get(i);
+				getShapeFromObj(ldims, lo, depth + 1);
+			}
+		} else if (obj.getClass().isArray()) {
+			final int l = Array.getLength(obj);
+			updateShape(ldims, depth, l);
+			for (int i = 0; i < l; i++) {
+				Object lo = Array.get(obj, i);
 				getShapeFromObj(ldims, lo, depth + 1);
 			}
 		} else {
-			if (obj instanceof PyArray) {
-				obj = ((PyArray) obj).getArray();
-			}
-
-			if (obj instanceof List<?>) {
-				List<?> jl = (List<?>) obj;
-				int l = jl.size();
-				updateShape(ldims, depth, l);
-				for (int i = 0; i < l; i++) {
-					Object lo = jl.get(i);
-					getShapeFromObj(ldims, lo, depth + 1);
-				}
-			} else if (obj.getClass().isArray()) {
-				final int l = Array.getLength(obj);
-				updateShape(ldims, depth, l);
-				for (int i = 0; i < l; i++) {
-					Object lo = Array.get(obj, i);
-					getShapeFromObj(ldims, lo, depth + 1);
-				}
-			} else {
-				return; // not an array of any type
-			}
+			return; // not an array of any type
 		}
 	}
 
@@ -807,6 +772,44 @@ public abstract class AbstractDataset implements IDataset {
 		}
 	}
 
+	/**
+	 * Fill dataset from object at depth dimension
+	 * @param obj
+	 * @param depth
+	 * @param pos position
+	 */
+	public void fillData(Object obj, final int depth, final int[] pos) {
+		if (obj == null) {
+			int dtype = getDtype();
+			if (dtype == FLOAT32)
+				set(Float.NaN, pos);
+			else if (dtype == FLOAT64)
+				set(Double.NaN, pos);
+			return;
+		}
+
+		if (obj instanceof List<?>) {
+			List<?> jl = (List<?>) obj;
+			int l = jl.size();
+			for (int i = 0; i < l; i++) {
+				Object lo = jl.get(i);
+				fillData(lo, depth + 1, pos);
+				pos[depth]++;
+			}
+			pos[depth] = 0;
+		} else if (obj.getClass().isArray()) {
+			int l = Array.getLength(obj);
+			for (int i = 0; i < l; i++) {
+				Object lo = Array.get(obj, i);
+				fillData(lo, depth + 1, pos);
+				pos[depth]++;
+			}
+			pos[depth] = 0;
+		} else {
+			set(obj, pos);
+		}
+	}
+
 	protected static boolean toBoolean(final Object b) {
 		if (b instanceof Number) {
 			return ((Number) b).longValue() != 0;
@@ -814,12 +817,6 @@ public abstract class AbstractDataset implements IDataset {
 			return ((Boolean) b).booleanValue();
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getReal() != 0;
-		} else if (b instanceof PyBoolean) {
-			return ((PyBoolean) b).getValue() != 0;
-		} else if (b instanceof PyFloat) {
-			return ((PyFloat) b).asDouble() != 0;
-		} else if (b instanceof PyComplex) {
-			return (long) ((PyComplex) b).real != 0;
 		} else {
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
@@ -836,12 +833,6 @@ public abstract class AbstractDataset implements IDataset {
 			return ((Boolean) b).booleanValue() ? 1 : 0;
 		} else if (b instanceof Complex) {
 			return (long) ((Complex) b).getReal();
-		} else if (b instanceof PyBoolean) {
-			return ((PyBoolean) b).getValue();
-		} else if (b instanceof PyFloat) {
-			return (long) ((PyFloat) b).asDouble();
-		} else if (b instanceof PyComplex) {
-			return (long) ((PyComplex) b).real;
 		} else {
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
@@ -854,12 +845,6 @@ public abstract class AbstractDataset implements IDataset {
 			return ((Boolean) b).booleanValue() ? 1 : 0;
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getReal();
-		} else if (b instanceof PyBoolean) {
-			return ((PyBoolean) b).getValue() != 0 ? 1. : 0.;
-		} else if (b instanceof PyFloat) {
-			return ((PyFloat) b).asDouble();
-		} else if (b instanceof PyComplex) {
-			return ((PyComplex) b).real;
 		} else {
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
@@ -872,60 +857,8 @@ public abstract class AbstractDataset implements IDataset {
 			return 0;
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getImaginary();
-		} else if (b instanceof PyBoolean) {
-			return 0;
-		} else if (b instanceof PyFloat) {
-			return 0;
-		} else if (b instanceof PyComplex) {
-			return ((PyComplex) b).imag;
 		} else {
 			throw new IllegalArgumentException("Argument is not a number");
-		}
-	}
-
-	protected void fillData(Object obj, final int depth, final int[] pos) {
-		if (obj == null) {
-			int dtype = getDtype();
-			if (dtype == FLOAT32)
-				set(Float.NaN, pos);
-			else if (dtype == FLOAT64)
-				set(Double.NaN, pos);
-			return;
-		}
-		if (obj instanceof PySequenceList) {
-			PySequenceList pl = (PySequenceList) obj;
-			int l = pl.size();
-			for (int i = 0; i < l; i++) {
-				Object lo = pl.get(i);
-				fillData(lo, depth + 1, pos);
-				pos[depth]++;
-			}
-			pos[depth] = 0;
-		} else {
-			if (obj instanceof PyArray) {
-				obj = ((PyArray) obj).getArray();
-			}
-
-			if (obj instanceof List<?>) {
-				List<?> jl = (List<?>) obj;
-				int l = jl.size();
-				for (int i = 0; i < l; i++) {
-					Object lo = jl.get(i);
-					fillData(lo, depth + 1, pos);
-					pos[depth]++;
-				}
-				pos[depth] = 0;
-			} else if (obj.getClass().isArray()) {
-				int l = Array.getLength(obj);
-				for (int i = 0; i < l; i++) {
-					Object lo = Array.get(obj, i);
-					fillData(lo, depth + 1, pos);
-					pos[depth]++;
-				}
-				pos[depth] = 0;
-			} else {
-				set(obj, pos);
-			}
 		}
 	}
 
@@ -2589,58 +2522,6 @@ public abstract class AbstractDataset implements IDataset {
 	@Override
 	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 		return getSlice(start, stop, step);
-	}
-
-	/**
-	 * Jython method
-	 * 
-	 * @param indexes
-	 *            can be a mixed array of integers or slices
-	 * @return Dataset of specified sub-dataset
-	 */
-	public AbstractDataset getSlice(final PyObject indexes) {
-		int orank = shape.length;
-		boolean[] sdim = new boolean[orank]; // flag which dimensions are sliced
-
-		AbstractDataset dataSlice = getSlice(Slice.convertPySlicesToSlice(indexes, shape, sdim));
-
-		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
-		int rank = 0;
-		for (int i = 0; i < orank; i++) {
-			if (sdim[i])
-				rank++;
-		}
-
-		if (rank < orank) {
-			int[] oldShape = dataSlice.shape;
-			int[] newShape = new int[rank];
-			int j = 0;
-			for (int i = 0; i < orank; i++) {
-				if (sdim[i]) {
-					newShape[j++] = oldShape[i];
-				}
-			}
-			dataSlice.setShape(newShape);
-		}
-		return dataSlice;
-	}
-
-	/**
-	 * Jython method Set slice within dataset
-	 * @param object
-	 *            can an item or a dataset
-	 * @param indexes
-	 *            can be a mixed array of integers or slices
-	 */
-	public void setSlice(Object object, final PyObject indexes) {
-		if (isComplex() || getElementsPerItem() == 1) {
-			if (object instanceof PySequence) {
-				object = array(object, getDtype());
-			}
-		}
-
-		boolean[] sdim = new boolean[shape.length];
-		setSlice(object, Slice.convertPySlicesToSlice(indexes, shape, sdim));
 	}
 
 	/**

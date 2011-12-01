@@ -18,14 +18,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import org.python.core.Py;
-import org.python.core.PyEllipsis;
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyNone;
-import org.python.core.PyObject;
-import org.python.core.PySlice;
-import org.python.core.PyTuple;
 
 /**
  * Class to represent a slice through a single dimension of a multi-dimensional dataset. A slice
@@ -355,72 +347,6 @@ public class Slice {
 			step[i] = 1;
 		}
 	}
-
-	/**
-	 * Convert an array of python slice objects to a slice array
-	 * @param indexes
-	 * @param shape
-	 * @param isDimSliced
-	 * @return slice array
-	 */
-	public static Slice[] convertPySlicesToSlice(final PyObject indexes, final int[] shape, final boolean[] isDimSliced) {
-		PyObject indices[] = (indexes instanceof PyTuple) ? ((PyTuple) indexes).getArray() : new PyObject[] { indexes };
-
-		int slen;
-		int orank = shape.length;
-
-		// first check the dimensionality
-		if (indices.length > orank) {
-			slen = orank;
-		} else {
-			slen = indices.length;
-		}
-
-		boolean hasEllipse = false;
-		int i = 0;
-
-		Slice[] slice = new Slice[orank];
-
-		for (int j = 0; j < slen; j++) {
-			PyObject index = indices[j];
-			if (index instanceof PyEllipsis) {
-				isDimSliced[i] = true;
-				slice[i++] = null;
-				if (!hasEllipse) { // pad out with full slices on first ellipse
-					hasEllipse = true;
-					for (int k = slen; k < orank; k++) { 
-						isDimSliced[i] = true;
-						slice[i++] = null;
-					}
-				}
-			} else if (index instanceof PyInteger) {
-				int n = ((PyInteger) index).getValue();
-				if (n < -shape[i] || n >= shape[i]) {
-					throw new PyException(Py.IndexError);
-				}
-				if (n < 0) {
-					n += shape[i];
-				}
-				isDimSliced[i] = false; // nb specifying indexes whilst using slices will reduce rank
-				slice[i++] = new Slice(n, n+1);
-			} else if (index instanceof PySlice) {
-				PySlice pyslice = (PySlice) index;
-				isDimSliced[i] = true;
-				slice[i++] = new Slice(pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
-						pyslice.stop instanceof PyNone ? null : ((PyInteger) pyslice.stop).getValue(),
-						pyslice.step instanceof PyNone ? null : ((PyInteger) pyslice.step).getValue());
-			} else {
-				throw new IllegalArgumentException("Unexpected item in indexing");
-			}
-		}
-
-		while (i < orank) {
-			isDimSliced[i++] = true;
-		}
-
-		return slice;
-	}
-
 
 	/**
 	 * Convert from a set of integer arrays to a slice array

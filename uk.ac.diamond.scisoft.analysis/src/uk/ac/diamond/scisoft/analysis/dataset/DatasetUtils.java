@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.python.core.PyProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1111,15 +1110,12 @@ public class DatasetUtils {
 	public static AbstractDataset convertToAbstractDataset(ILazyDataset lazydata) {
 		if (lazydata == null) 
 			return null;
-			
+
 		if (lazydata instanceof AbstractDataset) {
 			AbstractDataset adata = (AbstractDataset) lazydata;
-			if (lazydata instanceof PyProxy) {
-				return adata.getView();
-			}
-			return adata;
+			return adata.getView();
 		}
-		
+
 		IDataset data;
 		if (lazydata instanceof IDataset) {
 			data = (IDataset)lazydata;
@@ -1131,9 +1127,9 @@ public class DatasetUtils {
 		if (isize <= 0) {
 			throw new IllegalArgumentException("Datasets with " + isize + " elements per item not supported");
 		}
+
 		final Class<?> cls = data.elementClass();
 		int dtype = AbstractDataset.getDTypeFromClass(cls);
-	
 		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), dtype);
 		dtype = result.getDtype();
 		result.setName(data.getName());

@@ -19,7 +19,6 @@
 package gda.analysis.functions;
 
 import org.apache.commons.math.special.Gamma;
-import org.python.modules.math;
 
 import gda.analysis.TerminalPrinter;
 
@@ -159,14 +158,14 @@ public class PearsonVII extends APeak implements IPeak {
 		area = getParameterValue(3);
 		
 		
-		double c2top = 2.0* Math.pow(Math.E, Gamma.logGamma(mixing)) * Math.sqrt(math.pow(2.0, 1.0/mixing)-1);
+		double c2top = 2.0* Math.pow(Math.E, Gamma.logGamma(mixing)) * Math.sqrt(Math.pow(2.0, 1.0/mixing)-1);
 		double c2bottom =  Math.pow(Math.E, Gamma.logGamma(mixing-0.5))* Math.sqrt(Math.PI);
 		
 		double c2 = c2top/c2bottom;
 		
 		c2_fwhm = c2/FWHM;		
 		
-		c3 = 4.0* Math.sqrt(math.pow(2.0, 1.0/mixing)-1.0);
+		c3 = 4.0* Math.sqrt(Math.pow(2.0, 1.0/mixing)-1.0);
 		
 //		
 		

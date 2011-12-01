@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 import org.apache.commons.math.complex.Complex;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
-import org.python.core.PyComplex;
 
 
 /**
@@ -244,19 +243,6 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		double di = data[index+1]; // PRIM_TYPE
 		return di >= 0 ? String.format("%.8g + %.8gj", data[index], di) :  // FORMAT_STRING
 			String.format("%.8g - %.8gj", data[index], -di);  // FORMAT_STRING
-	}
-
-	/**
-	 * Set values at absolute index in the internal array.
-	 * 
-	 * This is an internal method with no checks so can be dangerous. Use with care or ideally with an iterator.
-	 * @param index absolute index
-	 * @param val new values
-	 */
-	@SuppressWarnings("cast")
-	public void setAbs(final int index, final PyComplex val) {
-		setAbs(index, (double) val.real, (double) val.imag); // PRIM_TYPE
-		setDirty();
 	}
 
 	/**

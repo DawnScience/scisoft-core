@@ -7,7 +7,10 @@ Bundle-Activator: uk.ac.diamond.scisoft.python.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  uk.ac.gda.common;bundle-version="1.0.0",
- uk.ac.diamond.scisoft.analysis;bundle-version="1.0.0"
+ org.apache.commons.math;bundle-version="2.2.0",
+ uk.ac.gda.libs;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis.rcp;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: uk.ac.diamond.scisoft.python

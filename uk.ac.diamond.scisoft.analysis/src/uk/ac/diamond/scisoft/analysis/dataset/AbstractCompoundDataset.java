@@ -20,11 +20,10 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.math.complex.Complex;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
-import org.python.core.PyComplex;
-import org.python.core.PySequenceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,17 +157,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((double[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new double[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).doubleValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = toReal(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new double[itemSize];
 			int ilen = Array.getLength(b);
@@ -195,22 +195,6 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				result = new double[] {((Complex) b).getReal(), ((Complex) b).getImaginary()};
 				break;
 			}
-		} else if (b instanceof PyComplex) {
-			if (itemSize > 2) {
-				abstractCompoundLogger.error("Complex number will not fit in compound dataset");
-				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
-			}
-			switch (itemSize) {
-			default:
-			case 0:
-				break;
-			case 1:
-				result = new double[] {((PyComplex) b).real};
-				break;
-			case 2:
-				result = new double[] {((PyComplex) b).real, ((PyComplex) b).imag};
-				break;
-			}
 		} else if (b instanceof Number) {
 			result = new double[itemSize];
 			double val = ((Number) b).doubleValue();
@@ -232,17 +216,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((float[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new float[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).floatValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = (float) toReal(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new float[itemSize];
 			int ilen = Array.getLength(b);
@@ -274,17 +259,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((long[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new long[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).longValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = toLong(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new long[itemSize];
 			int ilen = Array.getLength(b);
@@ -316,17 +302,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((int[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new int[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).intValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = (int) toLong(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new int[itemSize];
 			int ilen = Array.getLength(b);
@@ -358,17 +345,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((short[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new short[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).shortValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = (short) toLong(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new short[itemSize];
 			int ilen = Array.getLength(b);
@@ -400,17 +388,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				for (int i = 0; i < ilen; i++)
 					result[i] = ((byte[]) b)[i];
 			}
-		} else if (b instanceof PySequenceList) {
+		} else if (b instanceof List<?>) {
 			result = new byte[itemSize];
-			PySequenceList pyobj = (PySequenceList) b;
-			int ilen = pyobj.size();
-			if (ilen > 0 && !(pyobj.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array is too short");
-				throw new IllegalArgumentException("Given array is too short");
+			List<?> jl = (List<?>) b;
+			int ilen = jl.size();
+			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
+				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
-			for (int i = 0; i < ilen; i++)
-				result[i] = ((Number) pyobj.get(i)).byteValue();
+			for (int i = 0; i < ilen; i++) {
+				result[i] = (byte) toLong(jl.get(i));
+			}
 		} else if (b.getClass().isArray()) {
 			result = new byte[itemSize];
 			int ilen = Array.getLength(b);
@@ -423,7 +412,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				result[i] = (byte) ((Number) Array.get(b, i)).longValue();
 		} else if (b instanceof Number) {
 			result = new byte[itemSize];
-			byte val = ((Number) b).byteValue();
+			final byte val = ((Number) b).byteValue();
 			for (int i = 0; i < itemSize; i++)
 				result[i] = val;
 		}

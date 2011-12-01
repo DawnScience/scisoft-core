@@ -24,6 +24,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset as _complexdo
 
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
+from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
+from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 
 import org.apache.commons.math.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -194,9 +196,10 @@ def asDataset(data, dtype=None, force=False):
 
     try:
         iter(data)
-        data = _cvt2j(data)
     except:
         if not force:
+            if isinstance(data, complex):
+                return _jcomplex(data.real, data.imag)
             return data
 
     return array(data, dtype)
@@ -294,7 +297,7 @@ class ndarray:
         return self.ipower(asDataset(o, self.dtype))
 
     def __eq__(self, o):
-        e = _cmps.equal(self, o)
+        e = _cmps.equal(self, asDataset(o))
         if self.size == 1:
             return e.getBoolean([])
         return e
@@ -352,7 +355,7 @@ class ndarray:
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                return self.getSlice(key)
+                return _getslice(self, key)
             return self.getObject(key)
         except _jarrayindex_exception:
             raise IndexError
@@ -367,7 +370,9 @@ class ndarray:
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                return self.setSlice(value, key)
+                _setslice(self, value, key)
+                return self
+            value = _cvt2j(value)
             return self.set(value, key)
         except _jarrayindex_exception:
             raise IndexError
@@ -1975,6 +1980,7 @@ def array(obj, dtype=None, copy=True):
                 dtype = float64
             obj = obj.getArray()
 
+    obj = _cvt2j(obj)
     if dtype == None:
         dtype = _getdtypefromobj(obj)
     else:

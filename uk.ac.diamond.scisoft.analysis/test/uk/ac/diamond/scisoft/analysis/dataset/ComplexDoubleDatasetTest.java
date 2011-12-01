@@ -20,10 +20,11 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math.complex.Complex;
 import org.junit.Test;
-import org.python.core.PyComplex;
-import org.python.core.PyTuple;
 
 public class ComplexDoubleDatasetTest {
 	@Test
@@ -47,8 +48,9 @@ public class ComplexDoubleDatasetTest {
 			assertEquals(i*2, b.getElementDoubleAbs(it.index), 1e-5*i);
 		}
 
-		PyComplex pz = new PyComplex(0.5, 1.0);
-		ComplexDoubleDataset z = ComplexDoubleDataset.createFromObject(new PyTuple(pz));
+		List<Complex> list = new ArrayList<Complex>();
+		list.add(new Complex(0.5, 1.0));
+		ComplexDoubleDataset z = ComplexDoubleDataset.createFromObject(list);
 		assertEquals(0.5, z.getComplex(0).getReal(), 1e-6);
 		assertEquals(1.0, z.getComplex(0).getImaginary(), 1e-6);
 

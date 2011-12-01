@@ -18,7 +18,6 @@
 
 package gda.analysis.functions;
 
-import org.python.core.PyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,13 +123,14 @@ public class FunctionOutput {
 	 * @param value
 	 *            The number of the point to be interrogated
 	 * @return the object which is the result
+	 * @throws Exception 
 	 */
-	public Object __getitem__(Integer value) {
+	public Object __getitem__(Integer value) throws Exception {
 		if ((value < 0) || (value >= params.length)) {
 			logger.error(
 					"The value {} is not within the Result objects bounds",
 					value);
-			throw new PyException();
+			throw new IllegalArgumentException("The key is not within the result objects bounds");
 		}
 		return params[value];
 	}

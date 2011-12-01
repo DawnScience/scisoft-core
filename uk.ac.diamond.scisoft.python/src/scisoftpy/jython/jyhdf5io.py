@@ -6,6 +6,8 @@ from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdataset
 from uk.ac.diamond.scisoft.analysis.dataset import AbstractDataset as _adataset
 from uk.ac.diamond.scisoft.analysis.dataset import LazyDataset as _ldataset
 
+from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
+
 from gda.analysis.io import ScanFileHolderException as io_exception
 
 from java.io import OutputStream as _ostream #@UnresolvedImport
@@ -72,10 +74,10 @@ class SDS(_dataset):
             isslice,key = self._toslice(key)
             if not isslice: # single item
                 key = tuple([ slice(k,k+1) for k in key ])
-                v = data.getSlice(key)
+                v = _getslice(data, key)
                 v = v.getAbs(0)
             else:
-                v = data.getSlice(key)
+                v = _getslice(data, key)
             return v
 
         return data[key]

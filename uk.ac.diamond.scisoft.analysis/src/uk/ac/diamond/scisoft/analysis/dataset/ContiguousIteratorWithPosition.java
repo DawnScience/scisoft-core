@@ -49,15 +49,15 @@ public class ContiguousIteratorWithPosition extends IndexIterator {
 	 * @param isize number of elements in an item
 	 */
 	public ContiguousIteratorWithPosition(final int[] shape, final int length, final int isize) {
-		if (shape.length == 0) {
-			this.shape = new int[] {1};
-		} else {
-			this.shape = shape;
-		}
+		this.shape = shape;
 		endrank = this.shape.length - 1;
 		istep = isize;
-		pos = new int[endrank + 1];
-		pos[endrank] = -1;
+		if (shape.length == 0) {
+			pos = new int[0];
+		} else {
+			pos = new int[endrank + 1];
+			pos[endrank] = -1;
+		}
 		index = -isize;
 		imax = length;
 	}
@@ -74,7 +74,7 @@ public class ContiguousIteratorWithPosition extends IndexIterator {
 				break;
 			}
 		}
-		if (j == -1) {
+		if (j == -1 && endrank >= 0) {
 			index = imax;
 			return false;
 		}

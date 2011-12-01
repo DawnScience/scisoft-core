@@ -90,11 +90,11 @@ public class IndexIteratorTest {
 		}
 
 		iter = ta.getIterator(true);
-
+		int[] pos = iter.getPos();
 		for (int i = 0; iter.hasNext(); i++) {
-			assertEquals(i, data[iter.index], 1e-5*i);
+			assertEquals(i, ta.getDouble(pos), 1e-5*i);
 		}
-}
+	}
 
 	private void testExpandedDataset(AbstractDataset ta, int ipos, int index) {
 		IndexIterator iter = ta.getIterator(true);

@@ -48,13 +48,17 @@ class Test(unittest.TestCase):
     def testPoly(self):
         fr = fit.polyfit(self.x, self.y, 1)
     
-        print 'Poly: ', fr[0]  # print fit result
-        self.checkitems([3.2, 0.35], fr[0], 1)
+        print 'Poly: ', fr  # print polynomial coeffs
+        self.checkitems([3.2, 0.35], fr, 1)
 
         fr = fit.polyfit(self.x, self.z, 2)
     
-        print 'Poly: ', fr[0]  # print fit result
-        self.checkitems([3.2, -12.2, 0.35], fr[0], 1)
+        print 'Poly: ', fr  # print polynomial coeffs
+        self.checkitems([3.2, -12.2, 0.35], fr, 1)
+
+        v = fit.polyval(fr, [0,1])
+        print 'value is', dnp.abs(v-0.3)
+        self.checkitems([0.1, -9], v, 1)
 
     def testPolyG(self):
         fr = fit.fit([fit.function.linear], self.x, self.y, [2.5, 0.8], [(0.1,4), (0.,1.7)], seed=123)
@@ -65,7 +69,7 @@ class Test(unittest.TestCase):
         fr = fit.fit([fit.function.quadratic], self.x, self.z, [2.5, -20., 0.8], [(0.1,4), (-40, 10), (0.,1.7)], seed=123)
     
         print 'PolyG: ', fr  # print fit result
-        self.checkitems([4.0, -12.2, 1.5], fr.parameters, 1)
+        self.checkitems([4.0, -12.2, 0.35], fr.parameters, 1)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

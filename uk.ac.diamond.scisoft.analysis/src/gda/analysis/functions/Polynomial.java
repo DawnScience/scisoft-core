@@ -57,6 +57,17 @@ public class Polynomial extends AFunction {
 	 * Make a polynomial with given parameters
 	 * @param params
 	 */
+	public Polynomial(double[] params) {
+		super(params);
+		a = new double[params.length];
+		nparams = params.length;
+		name = cname;
+	}
+
+	/**
+	 * Make a polynomial with given parameters
+	 * @param params
+	 */
 	public Polynomial(Parameter[] params) {
 		super(params);
 		a = new double[params.length];

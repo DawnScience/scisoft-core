@@ -79,6 +79,11 @@ public class ObjectDataset extends ObjectDatasetBase {
 		super(dataset);
 	}
 
+	@Override
+	public ObjectDatasetBase getView() {
+		return new ObjectDataset(this, true);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a PySequence, a Java array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.

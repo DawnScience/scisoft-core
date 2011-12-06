@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 /**
  * Basically an implementation of a simple cubic spline calculator
@@ -37,7 +37,7 @@ public class CubicSpline extends AFunction {
 		name = cname;
 	}
 	
-	public CubicSpline(Parameter[] params) {
+	public CubicSpline(IParameter[] params) {
 		super(params);
 		name = cname;
 	}

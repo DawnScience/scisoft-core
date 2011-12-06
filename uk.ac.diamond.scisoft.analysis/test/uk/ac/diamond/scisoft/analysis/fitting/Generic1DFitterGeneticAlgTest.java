@@ -17,24 +17,24 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting;
-import org.junit.Ignore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import gda.analysis.functions.APeak;
-import gda.analysis.functions.CompositeFunction;
-import gda.analysis.functions.Gaussian;
-import gda.analysis.functions.Lorentzian;
-import gda.analysis.functions.PearsonVII;
-import gda.analysis.functions.PseudoVoigt;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 @Ignore("Test not finished and is failing. 9 Nov 11")
 public class Generic1DFitterGeneticAlgTest {

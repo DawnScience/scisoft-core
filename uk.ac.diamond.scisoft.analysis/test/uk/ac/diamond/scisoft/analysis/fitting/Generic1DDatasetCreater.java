@@ -18,13 +18,13 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import gda.analysis.functions.CompositeFunction;
-import gda.analysis.functions.Gaussian;
-import gda.analysis.functions.Lorentzian;
-import gda.analysis.functions.PearsonVII;
-import gda.analysis.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 
 public class Generic1DDatasetCreater {
 	

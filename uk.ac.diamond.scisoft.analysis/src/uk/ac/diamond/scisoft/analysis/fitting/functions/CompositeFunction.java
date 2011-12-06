@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  */
 public class CompositeFunction extends AFunction {
 
-	private List<Parameter> parameterList; // holds a list of all parameters
+	private List<IParameter> parameterList; // holds a list of all parameters
 	private List<AFunction> functionList; // holds a list of all functions
 	private NavigableMap<Integer, AFunction> functionMap; // holds a mapping from offsets from parameters to functions
 
@@ -45,7 +45,7 @@ public class CompositeFunction extends AFunction {
 	 */
 	public CompositeFunction() {
 		super(0);
-		parameterList = new ArrayList<Parameter>();
+		parameterList = new ArrayList<IParameter>();
 		functionList = new ArrayList<AFunction>();
 		functionMap = new TreeMap<Integer, AFunction>();
 	}
@@ -64,11 +64,11 @@ public class CompositeFunction extends AFunction {
 		addFunction(parameterList, functionList, functionMap, function);
 	}
 
-	private void addFunction(List<Parameter> plist, List<AFunction> flist, NavigableMap<Integer, AFunction> fmap, AFunction function) {
+	private void addFunction(List<IParameter> plist, List<AFunction> flist, NavigableMap<Integer, AFunction> fmap, AFunction function) {
 		int psize = plist.size();
 		flist.add(function);
 		fmap.put(psize, function);			
-		for (Parameter p : function.parameters) {
+		for (IParameter p : function.parameters) {
 			plist.add(p);
 		}		
 	}
@@ -80,7 +80,7 @@ public class CompositeFunction extends AFunction {
 	 *            The position in the vector to be removed
 	 */
 	public void removeFunction(int index) {
-		List<Parameter> plist = new ArrayList<Parameter>();
+		List<IParameter> plist = new ArrayList<IParameter>();
 		List<AFunction> flist = new ArrayList<AFunction>();
 		NavigableMap<Integer, AFunction> fmap = new TreeMap<Integer, AFunction>();
 
@@ -144,13 +144,13 @@ public class CompositeFunction extends AFunction {
 		
 		DoubleDataset[] outputs = new DoubleDataset[noOfFunctions + 1];
 
-		outputs[0] = makeDataSet(values);
+		outputs[0] = makeDataset(values);
 		outputs[0].setName("Composite function");
 
 		// now add the data for each bit in turn
 		int j = 1;
 		for (AFunction f : functionList) {
-			outputs[j] = f.makeDataSet(values);
+			outputs[j] = f.makeDataset(values);
 			outputs[j++].setName(f.getName());
 		}
 
@@ -174,7 +174,7 @@ public class CompositeFunction extends AFunction {
 
 		outputs[0] = new DoubleDataset(DataValues);
 
-		outputs[1] = makeDataSet(XValues);
+		outputs[1] = makeDataset(XValues);
 		outputs[1].setName("Composite function");
 		// now add the data
 		for (int i = 0; i < XValues.getSize(); i++) {
@@ -203,7 +203,7 @@ public class CompositeFunction extends AFunction {
 		// now add the data for each bit in turn
 		int j = 4;
 		for (AFunction f : functionList) {
-			outputs[j] = f.makeDataSet(XValues);
+			outputs[j] = f.makeDataset(XValues);
 			outputs[j++].setName(f.getName());
 		}
 
@@ -221,7 +221,7 @@ public class CompositeFunction extends AFunction {
 	 *             Error raised if the index is too large
 	 */
 	@Override
-	public Parameter getParameter(int index) throws IndexOutOfBoundsException {
+	public IParameter getParameter(int index) throws IndexOutOfBoundsException {
 		try {
 			return parameterList.get(index);
 		} catch (IndexOutOfBoundsException e) {
@@ -236,10 +236,10 @@ public class CompositeFunction extends AFunction {
 	 * @return The double array of all the parameter values
 	 */
 	@Override
-	public Parameter[] getParameters() {
-		Parameter[] result = new Parameter[getNoOfParameters()];
+	public IParameter[] getParameters() {
+		IParameter[] result = new IParameter[getNoOfParameters()];
 		int n = 0;
-		for (Parameter p : parameterList) {
+		for (IParameter p : parameterList) {
 			result[n++] = p;
 		}
 
@@ -260,7 +260,7 @@ public class CompositeFunction extends AFunction {
 	public double[] getParameterValues() {
 		double[] result = new double[getNoOfParameters()];
 		int n = 0;
-		for (Parameter p : parameterList) {
+		for (IParameter p : parameterList) {
 			result[n++] = p.getValue();
 		}
 
@@ -294,12 +294,12 @@ public class CompositeFunction extends AFunction {
 	}
 
 	@Override
-	public double partialDeriv(int Parameter, double... position) throws IndexOutOfBoundsException {
-		Integer count = functionMap.floorKey(Parameter);
+	public double partialDeriv(int parameter, double... position) throws IndexOutOfBoundsException {
+		Integer count = functionMap.floorKey(parameter);
 		if (count == null) {
 			throw new IndexOutOfBoundsException("There are not enough parameters in the composite function");
 		}
-		return functionMap.get(count).partialDeriv(Parameter - count, position);
+		return functionMap.get(count).partialDeriv(parameter - count, position);
 	}
 
 }

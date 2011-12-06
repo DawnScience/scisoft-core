@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Class which wraps a single parameter for a function and allows for its change
  */
-public class Parameter implements Serializable {
+public class Parameter implements Serializable, IParameter {
 
 	/**
 	 * Setup the logging facilities
@@ -53,7 +53,7 @@ public class Parameter implements Serializable {
 	 * @param p
 	 *            The parameter to be cloned
 	 */
-	public Parameter(Parameter p) {
+	public Parameter(IParameter p) {
 		this.value = p.getValue();
 		this.upperLimit = p.getUpperLimit();
 		this.lowerLimit = p.getLowerLimit();
@@ -93,6 +93,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @return The Value of the parameter
 	 */
+	@Override
 	public double getValue() {
 		return value;
 	}
@@ -102,6 +103,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @return The upper limit
 	 */
+	@Override
 	public double getUpperLimit() {
 		return this.upperLimit;
 	}
@@ -111,6 +113,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @return The lower limit
 	 */
+	@Override
 	public double getLowerLimit() {
 		return this.lowerLimit;
 	}
@@ -120,6 +123,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @return Boolean for use in logical statements
 	 */
+	@Override
 	public boolean isFixed() {
 		return fixed;
 	}
@@ -130,6 +134,7 @@ public class Parameter implements Serializable {
 	 * @param b
 	 *            The new boolean value for the fixed variable
 	 */
+	@Override
 	public void setFixed(boolean b) {
 		this.fixed = b;
 	}
@@ -141,6 +146,7 @@ public class Parameter implements Serializable {
 	 * @param newLowerLimit
 	 * @param newUpperLimit
 	 */
+	@Override
 	public void setLimits(double newLowerLimit, double newUpperLimit) {
 		
 		if (newLowerLimit > newUpperLimit) {
@@ -168,6 +174,7 @@ public class Parameter implements Serializable {
 	 * @param lowerLimit
 	 *            The new double value which is the lower limit
 	 */
+	@Override
 	public void setLowerLimit(double lowerLimit) {
 		if (lowerLimit > upperLimit) {
 			logger.warn("Cannot set lower limit: You are trying to set the lower bound to greater than the upper limit");
@@ -187,6 +194,7 @@ public class Parameter implements Serializable {
 	 * @param upperLimit
 	 *            The new double value which is the upper limit
 	 */
+	@Override
 	public void setUpperLimit(double upperLimit) {
 		if (upperLimit < lowerLimit) {
 			logger.warn("Cannot set upper limit: You are trying to set the upper bound to lower than the lower limit");
@@ -207,6 +215,7 @@ public class Parameter implements Serializable {
 	 * @param value
 	 *            The new double Value of the parameter
 	 */
+	@Override
 	public void setValue(double value) {
 		if (value > upperLimit || value < lowerLimit) {
 			return;

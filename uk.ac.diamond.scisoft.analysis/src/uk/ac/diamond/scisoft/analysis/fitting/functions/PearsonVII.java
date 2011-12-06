@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.apache.commons.math.special.Gamma;
 
@@ -47,7 +47,7 @@ public class PearsonVII extends APeak implements IPeak {
 		name = cname;
 	}
 
-	public PearsonVII(Parameter[] params) {
+	public PearsonVII(IParameter[] params) {
 		super(params);
 		name = cname;
 	}
@@ -195,19 +195,15 @@ public class PearsonVII extends APeak implements IPeak {
 	}
 
 	@Override
-	public void disp() {
-// FIXME
-//		String out = String.format("Pearson VII position has value %f within the bounds [%f,%f]", getParameterValue(0),
-//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-//		TerminalPrinter.print(out);
-//
-//		out = String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]",
-//				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
-//		TerminalPrinter.print(out);
-//
-//		out = String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
-//				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit());
-//		TerminalPrinter.print(out);
+	public String toString() {
+		final StringBuilder out = new StringBuilder();
+		out.append(String.format("Pearson VII position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
+				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
+		out.append(String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]\n",
+				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
+		out.append(String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
+				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
+		return out.toString();
 	}
 
 	@Override

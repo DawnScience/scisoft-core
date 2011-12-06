@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 /**
@@ -45,7 +45,7 @@ package gda.analysis.functions;
 public class Step extends AFunction {
 	private static String cname = "Step";
 
-	public Step(Parameter[] params) {
+	public Step(IParameter[] params) {
 		super(params);
 		name = cname;
 	}

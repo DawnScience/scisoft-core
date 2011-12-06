@@ -18,9 +18,6 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import gda.analysis.functions.IFunction;
-import gda.analysis.functions.Parameter;
-
 import org.apache.commons.math.random.JDKRandomGenerator;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.random.RandomGenerator;
@@ -28,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Parameter;
 
 /**
  * This class uses the Differential evolution genetic algorithm as an optimizer.
@@ -102,13 +102,13 @@ public class GeneticAlg implements IOptimizer {
 
 		// first one should be the original, just in case its a good solution
 		for (int j = 0; j < nparams; j++) {
-			epoch[0][j] = function.getParameter(j).getValue();
+			epoch[0][j] = function.getParameterValue(j);
 		}
 
 		// the others explore space in the bounded regions
 		for (int i = 1; i < epochSize; i++) {
 			for (int j = 0; j < nparams; j++) {
-				final Parameter p = function.getParameter(j);
+				final IParameter p = function.getParameter(j);
 				epoch[i][j] = prng.nextUniform(p.getLowerLimit(), p.getUpperLimit());
 			}
 		}
@@ -224,7 +224,7 @@ public class GeneticAlg implements IOptimizer {
 					epoch[i][j] = nextepoch[i][j];
 
 					// then clip it
-					final Parameter p = function.getParameter(j);
+					final IParameter p = function.getParameter(j);
 
 					if (epoch[i][j] > p.getUpperLimit()) {
 						epoch[i][j] = 2. * p.getUpperLimit() - epoch[i][j];

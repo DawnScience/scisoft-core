@@ -18,10 +18,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import gda.analysis.functions.AFunction;
-import gda.analysis.functions.CompositeFunction;
-import gda.analysis.functions.IFunction;
-import gda.analysis.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
@@ -33,6 +29,10 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.LeastSquares;
 import uk.ac.diamond.scisoft.analysis.optimize.LinearLeastSquares;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
 public class Fitter {
 	

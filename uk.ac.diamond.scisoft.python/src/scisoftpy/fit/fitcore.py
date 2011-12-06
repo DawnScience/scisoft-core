@@ -10,7 +10,6 @@ from uk.ac.diamond.scisoft.analysis.fitting import Fitter as _fitter
 import scisoftpy as _dnp
 _asIterable = _dnp.asIterable
 _toList = _dnp.toList
-_toDS = _dnp.toDS
 _asDS = _dnp.asDataset
 
 from scisoftpy.maths import ndarraywrapped as _npwrapped

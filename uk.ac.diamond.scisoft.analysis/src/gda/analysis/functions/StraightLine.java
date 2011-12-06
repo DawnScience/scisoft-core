@@ -18,7 +18,6 @@
 
 package gda.analysis.functions;
 
-import gda.analysis.TerminalPrinter;
 
 /**
  * This class implements the function y(x) = m*x + c
@@ -84,14 +83,14 @@ public class StraightLine extends AFunction {
 
 	@Override
 	public void disp() {
-
-		String out = String.format("M Has Value %f within the bounds [%f,%f]", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-		TerminalPrinter.print(out);
-
-		out = String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(1),
-				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
-		TerminalPrinter.print(out);
+//		FIXME
+//		String out = String.format("M Has Value %f within the bounds [%f,%f]", getParameterValue(0),
+//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
+//		TerminalPrinter.print(out);
+//
+//		out = String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(1),
+//				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
+//		TerminalPrinter.print(out);
 	}
 
 	@Override

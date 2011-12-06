@@ -18,7 +18,6 @@
 
 package gda.analysis.functions;
 
-import gda.analysis.TerminalPrinter;
 
 /**
  * This class basically wraps the function y(x) = c
@@ -73,10 +72,11 @@ public class Offset extends AFunction {
 
 	@Override
 	public void disp() {
-
-		String out = String.format("Offset Position Has Value %f within the bounds [%f,%f]", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-		TerminalPrinter.print(out);
+		// FIXME
+//
+//		String out = String.format("Offset Position Has Value %f within the bounds [%f,%f]", getParameterValue(0),
+//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
+//		TerminalPrinter.print(out);
 	}
 
 	@Override

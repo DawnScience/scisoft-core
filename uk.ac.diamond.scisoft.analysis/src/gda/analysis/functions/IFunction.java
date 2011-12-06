@@ -20,7 +20,6 @@ package gda.analysis.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import gda.analysis.DataSet;
 
 
 /**
@@ -143,7 +142,7 @@ public interface IFunction {
 	 *            The values at which to evaluate the function
 	 * @return The dataset of the whole function
 	 */
-	public DataSet makeDataSet(DataSet... values);
+	public DoubleDataset makeDataSet(DoubleDataset... values);
 
 	/**
 	 * Function that makes a dataset from the Function

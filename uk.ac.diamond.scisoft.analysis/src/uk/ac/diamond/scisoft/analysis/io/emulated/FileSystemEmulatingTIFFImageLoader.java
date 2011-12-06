@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.io.emulated;
+package uk.ac.diamond.scisoft.analysis.io.emulated;
 
 import gda.analysis.io.IFileLoader;
 import gda.analysis.io.ScanFileHolderException;

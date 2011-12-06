@@ -20,7 +20,6 @@ package gda.analysis.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import gda.analysis.TerminalPrinter;
 
 /**
  * Class that wrappers the equation <br>
@@ -122,14 +121,15 @@ public class Polynomial extends AFunction {
 
 	@Override
 	public void disp() {
-		StringBuilder out = new StringBuilder();
-
-		for (int i = 0; i < nparams; i++) {
-			out.append(String.format("Parameter %d has value %f within the bounds [%f,%f]\n", i, getParameterValue(i), 
-					getParameter(i).getLowerLimit(), getParameter(i).getUpperLimit()));
-		}
-
-		TerminalPrinter.print(out.toString());
+		// FIXME
+//		StringBuilder out = new StringBuilder();
+//
+//		for (int i = 0; i < nparams; i++) {
+//			out.append(String.format("Parameter %d has value %f within the bounds [%f,%f]\n", i, getParameterValue(i), 
+//					getParameter(i).getLowerLimit(), getParameter(i).getUpperLimit()));
+//		}
+//
+//		TerminalPrinter.print(out.toString());
 	}
 
 	@Override

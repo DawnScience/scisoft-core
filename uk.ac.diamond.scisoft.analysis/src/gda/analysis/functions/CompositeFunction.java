@@ -18,8 +18,6 @@
 
 package gda.analysis.functions;
 
-import gda.analysis.DataSet;
-import gda.analysis.TerminalPrinter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +26,8 @@ import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -136,13 +136,13 @@ public class CompositeFunction extends AFunction {
 	 *            datasets containing all the values to evaluate the function at
 	 * @return an array of datasets
 	 */
-	public DataSet[] display(DataSet... values) {
+	public DoubleDataset[] display(DoubleDataset... values) {
 		if (values == null || values.length == 0) {
 			
 		}
 		int noOfFunctions = getNoOfFunctions();
 		
-		DataSet[] outputs = new DataSet[noOfFunctions + 1];
+		DoubleDataset[] outputs = new DoubleDataset[noOfFunctions + 1];
 
 		outputs[0] = makeDataSet(values);
 		outputs[0].setName("Composite function");
@@ -167,12 +167,12 @@ public class CompositeFunction extends AFunction {
 	 *            The data that is being fitted too, for visual help.
 	 * @return an array of datasets 
 	 */
-	public DataSet[] display(DataSet XValues, DataSet DataValues) {
+	public DoubleDataset[] display(DoubleDataset XValues, DoubleDataset DataValues) {
 		int noOfFunctions = getNoOfFunctions();
 
-		DataSet[] outputs = new DataSet[noOfFunctions + 4];
+		DoubleDataset[] outputs = new DoubleDataset[noOfFunctions + 4];
 
-		outputs[0] = new DataSet(DataValues);
+		outputs[0] = new DoubleDataset(DataValues);
 
 		outputs[1] = makeDataSet(XValues);
 		outputs[1].setName("Composite function");
@@ -184,15 +184,15 @@ public class CompositeFunction extends AFunction {
 
 		// now add the errors to the graph, this should provide a good view to
 		// how good the fit is quite nicely.
-		outputs[2] = new DataSet(XValues);
+		outputs[2] = new DoubleDataset(XValues);
 		outputs[2].setName("Error Value");
-		double offset = DataValues.min() - ((DataValues.max() - DataValues.min()) / 5.0);
+		double offset = DataValues.min().doubleValue() - ((DataValues.max().doubleValue() - DataValues.min().doubleValue()) / 5.0);
 		for (int i = 0; i < XValues.getSize(); i++) {
 			double value = (val(XValues.get(i)) - DataValues.get(i)) + offset;
 			outputs[2].set(value, i);
 		}
 
-		outputs[3] = new DataSet(XValues);
+		outputs[3] = new DoubleDataset(XValues);
 		outputs[3].setName("Error Offset");
 		// centre for the error
 		for (int i = 0; i < XValues.getSize(); i++) {
@@ -276,11 +276,6 @@ public class CompositeFunction extends AFunction {
 		for (AFunction f : functionList)
 			f.dirty = true;
 		dirty = true;
-	}
-
-	@Override
-	public void disp() {
-		TerminalPrinter.print(toString());
 	}
 
 	@Override

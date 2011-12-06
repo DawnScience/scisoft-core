@@ -20,7 +20,6 @@ package gda.analysis.functions;
 
 import org.apache.commons.math.special.Gamma;
 
-import gda.analysis.TerminalPrinter;
 
 /**
  * Class which expands on the AFunction class to give the properties of a pearsonVII. A 1D implementation
@@ -197,18 +196,18 @@ public class PearsonVII extends APeak implements IPeak {
 
 	@Override
 	public void disp() {
-
-		String out = String.format("Pearson VII position has value %f within the bounds [%f,%f]", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-		TerminalPrinter.print(out);
-
-		out = String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]",
-				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
-		TerminalPrinter.print(out);
-
-		out = String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit());
-		TerminalPrinter.print(out);
+// FIXME
+//		String out = String.format("Pearson VII position has value %f within the bounds [%f,%f]", getParameterValue(0),
+//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
+//		TerminalPrinter.print(out);
+//
+//		out = String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]",
+//				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
+//		TerminalPrinter.print(out);
+//
+//		out = String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
+//				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit());
+//		TerminalPrinter.print(out);
 	}
 
 	@Override

@@ -18,9 +18,6 @@
 
 package gda.analysis.functions;
 
-import gda.analysis.DataSet;
-import gda.analysis.TerminalPrinter;
-
 import java.io.Serializable;
 
 import org.slf4j.Logger;
@@ -36,8 +33,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
  * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
  * specified as true, then the first parameter must be that peak's position
  */
-// this is to allow for transition and is important.
-@SuppressWarnings("deprecation")
 public abstract class AFunction implements IFunction, Serializable {
 
 	/**
@@ -170,7 +165,8 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public void disp() {
-		TerminalPrinter.print(toString());
+// FIXME
+//		TerminalPrinter.print(toString());
 	}
 
 	@Override
@@ -218,11 +214,8 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param value
 	 * @return A Dataset!
 	 */
-	public DataSet makeDataSet(DataSet value) {
-
-		DataSet[] data = {value};	
-		
-		return makeDataSet(data);
+	public DoubleDataset makeDataSet(DoubleDataset value) {
+		return makeDataSet(value);
 	}
 
 	@Override
@@ -233,13 +226,13 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public DataSet makeDataSet(DataSet... values) {
+	public DoubleDataset makeDataSet(DoubleDataset... values) {
 
 		// the parallel functionality will stay in here, but is not being used
 		// as the threading overheads in java slow the performance
 		// significantly.
 		// return makeParallelDataSet(XValues);
-		return DataSet.convertToDataSet(makeSerialDataset(values));
+		return makeSerialDataset(values);
 	}
 
 

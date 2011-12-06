@@ -29,8 +29,6 @@ from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 
 import org.apache.commons.math.complex.Complex as _jcomplex #@UnresolvedImport
 
-from gda.analysis import DataSet as _dataset
-
 import Jama.Matrix as _matrix #@UnresolvedImport
 
 import jymaths as _maths
@@ -167,21 +165,11 @@ def toList(listdata):
     '''Convert a list or tuple to list of datasets'''
     return [ d for d in asIterable(listdata) ]
 
-def toDS(data):
-    '''Convert to DataSet, if necessary'''
-    if isinstance(data, _dataset):
-        return data
-    else:
-        if isinstance(data, _abstractds):
-            return _dataset.convertToDataSet(data)
-        else:
-            raise ValueError, "Not a dataset"
-
 def fromDS(data):
     '''Convert from a DataSet'''
-    if isinstance(data, _dataset):
-        return Sciwrap(_dataset.convertToDoubleDataset())
-    elif isinstance(data, _abstractds):
+#    if isinstance(data, _dataset):
+#        return Sciwrap(_dataset.convertToDoubleDataset())
+    if isinstance(data, _abstractds):
         return Sciwrap(data)
     return data
 
@@ -189,8 +177,8 @@ def asDataset(data, dtype=None, force=False):
     """
     Used for arithmetic ops to coerce a sequence to a dataset otherwise leave as single item
     """
-    if isinstance(data, _dataset):
-        return Sciwrap(_dataset.convertToDoubleDataset())
+#    if isinstance(data, _dataset):
+#        return Sciwrap(_dataset.convertToDoubleDataset())
     if isinstance(data, _abstractds):
         return data
 

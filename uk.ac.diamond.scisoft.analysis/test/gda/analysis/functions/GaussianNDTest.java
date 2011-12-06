@@ -19,10 +19,10 @@
 package gda.analysis.functions;
 
 import static org.junit.Assert.assertEquals;
-import gda.analysis.DataSet;
 
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 
 public class GaussianNDTest {
@@ -36,10 +36,10 @@ public class GaussianNDTest {
 		GaussianND g2 = new GaussianND(2., min, max, 20.);
 
 		g2.setParameterValues(new double[] {4, 6, 1, 4, 4, 0});
-		DataSet axis0 = DataSet.arange(8);
-		DataSet axis1 = DataSet.arange(12);
-		DataSet d2 = g2.makeDataSet(axis0, axis1);
-		d2.disp();
+		DoubleDataset axis0 = DoubleDataset.arange(8);
+		DoubleDataset axis1 = DoubleDataset.arange(12);
+		DoubleDataset d2 = g2.makeDataSet(axis0, axis1);
+		System.out.println(d2);
 
 		double[] gx = { 5.98199448e-05,   2.36592471e-04,   7.28756116e-04,
 		         1.74819504e-03,   3.26605832e-03,   4.75208682e-03,

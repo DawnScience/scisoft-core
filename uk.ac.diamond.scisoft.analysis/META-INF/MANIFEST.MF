@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: diamond.ac.uk
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4;bundle-version="4.5.0",
- uk.ac.diamond.CBFlib;resolution:=optional,
+ uk.ac.diamond.CBFlib;bundle-version="1.0.0",
  uk.ac.gda.libs;bundle-version="1.0.0",
  org.apache.commons.math;bundle-version="2.2.0",
  uk.ac.gda.common;bundle-version="1.0.0",

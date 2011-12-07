@@ -51,7 +51,35 @@ _plot_setdatabean = _plot.plot_setdatabean
 getguinames = _plot.plot_getguinames
 window_manager = _plot.plot_window_manager
 
-import io as _io
+import sys
+try:
+    import io as _io
+    
+    _REMOTEVOLNAME = "Remote Volume Viewer"
+
+    def volume(v, name=_REMOTEVOLNAME):
+        '''Plot a volume dataset in remote volume view
+        '''
+        import tempfile
+        import os #@Reimport
+        tmp = tempfile.mkstemp('.dsr') # '/tmp/blah.dsr'
+        os.close(tmp[0])
+        vdatafile = tmp[1]
+        # convert to byte, int or float as volume viewer cannot cope with boolean, long or double datasets
+        if v.dtype == _core.bool:
+            v = _core.cast(v, _core.int8)
+        elif v.dtype == _core.int64:
+            v = _core.cast(v, _core.int32)
+        elif v.dtype == _core.float64 or v.dtype == _core.complex64 or v.dtype == _core.complex128:
+            v = _core.cast(v, _core.float32)
+        _io.save(vdatafile, v, format='binary')
+        _plot_volume(name, vdatafile)
+        os.remove(vdatafile)
+
+except Exception, e:
+    print >> sys.stderr, "Could not io for volumne renderer, this part of plotting will not work"
+    print >> sys.stderr, e
+
 import roi
 
 
@@ -297,26 +325,6 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     '''
     return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor)
 
-_REMOTEVOLNAME = "Remote Volume Viewer"
-
-def volume(v, name=_REMOTEVOLNAME):
-    '''Plot a volume dataset in remote volume view
-    '''
-    import tempfile
-    import os #@Reimport
-    tmp = tempfile.mkstemp('.dsr') # '/tmp/blah.dsr'
-    os.close(tmp[0])
-    vdatafile = tmp[1]
-    # convert to byte, int or float as volume viewer cannot cope with boolean, long or double datasets
-    if v.dtype == _core.bool:
-        v = _core.cast(v, _core.int8)
-    elif v.dtype == _core.int64:
-        v = _core.cast(v, _core.int32)
-    elif v.dtype == _core.float64 or v.dtype == _core.complex64 or v.dtype == _core.complex128:
-        v = _core.cast(v, _core.float32)
-    _io.save(vdatafile, v, format='binary')
-    _plot_volume(name, vdatafile)
-    os.remove(vdatafile)
 
 
 def getbean(name=None):

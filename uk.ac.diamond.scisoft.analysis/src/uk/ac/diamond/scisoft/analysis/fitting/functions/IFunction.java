@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -58,14 +58,14 @@ public interface IFunction {
 	 *            The position in the array to be obtained
 	 * @return A link to the parameter
 	 */
-	public Parameter getParameter(int index);
+	public IParameter getParameter(int index);
 
 	/**
 	 * Gets all the parameters in the list
 	 * 
 	 * @return A copy of all the parameters
 	 */
-	public Parameter[] getParameters();
+	public IParameter[] getParameters();
 
 	/**
 	 * Function that gets the length of the parameter array
@@ -115,11 +115,6 @@ public interface IFunction {
 	public void setParameterValues(double... params);
 
 	/**
-	 * Displays the content of the Function
-	 */
-	public void disp();
-
-	/**
 	 * Function which calculates the partial derivative
 	 * 
 	 * @param Parameter
@@ -127,22 +122,6 @@ public interface IFunction {
 	 * @return the derivative at the point specified with respect to the parameter specified.
 	 */
 	public double partialDeriv(int Parameter, double... position);
-
-	/**
-	 * Function that makes a dataset from the Function
-	 * 
-	 * The function can be evaluated in one of two possible modes. In general, the function has
-	 * <tt>m</tt> independent variables and the output dataset has <tt>n</tt> dimensions.
-	 * The simplest mode has the restriction <tt>m = n</tt> and all <tt>n</tt> input datasets must
-	 * be 1D and the function is evaluated on a nD hypergrid.
-	 * 
-	 * The general mode requires <tt>m</tt> nD datasets.
-	 * 
-	 * @param values
-	 *            The values at which to evaluate the function
-	 * @return The dataset of the whole function
-	 */
-	public DoubleDataset makeDataSet(DoubleDataset... values);
 
 	/**
 	 * Function that makes a dataset from the Function

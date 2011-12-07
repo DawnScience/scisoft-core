@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 
@@ -47,7 +47,7 @@ public class Gaussian extends APeak implements IPeak {
 		name = cname;
 	}
 
-	public Gaussian(Parameter[] params) {
+	public Gaussian(IParameter[] params) {
 		if(params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
@@ -133,21 +133,17 @@ public class Gaussian extends APeak implements IPeak {
 	}
 
 	@Override
-	public void disp() {
-// FIXME
-//		String out = String.format("Gaussian position has value %f within the bounds [%f,%f]", getParameterValue(0),
-//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-//		TerminalPrinter.print(out);
-//
-//		out = String.format("Gaussian FWHM     has value %f within the bounds [%f,%f]", getParameterValue(1),
-//				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
-//		TerminalPrinter.print(out);
-//
-//		out = String.format("Gaussian area    has value %f within the bounds [%f,%f]", getParameterValue(2),
-//				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit());
-//		TerminalPrinter.print(out);
-	}
+	public String toString() {
+		final StringBuilder out = new StringBuilder();
 
+		out.append(String.format("Gaussian position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
+				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
+		out.append(String.format("Gaussian FWHM     has value %f within the bounds [%f,%f]\n", getParameterValue(1),
+				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
+		out.append(String.format("Gaussian area    has value %f within the bounds [%f,%f]", getParameterValue(2),
+				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
+		return out.toString();
+	}
 
 	@Override
 	public double getArea() {

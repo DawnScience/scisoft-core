@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 /**
@@ -33,7 +33,7 @@ public class StraightLine extends AFunction {
 		name = cname;
 	}
 
-	public StraightLine(Parameter[] params) {
+	public StraightLine(IParameter[] params) {
 		super(params);
 		name = cname;
 	}
@@ -82,15 +82,13 @@ public class StraightLine extends AFunction {
 	}
 
 	@Override
-	public void disp() {
-//		FIXME
-//		String out = String.format("M Has Value %f within the bounds [%f,%f]", getParameterValue(0),
-//				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit());
-//		TerminalPrinter.print(out);
-//
-//		out = String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(1),
-//				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit());
-//		TerminalPrinter.print(out);
+	public String toString() {
+		final StringBuilder out = new StringBuilder();
+		out.append(String.format("M Has Value %f within the bounds [%f,%f]\n", getParameterValue(0),
+				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
+		out.append(String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(1),
+				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
+		return out.toString();
 	}
 
 	@Override

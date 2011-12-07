@@ -16,29 +16,36 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+/**
+ * A unimodal function (i.e. has one peak)
+ */
 public interface IPeak extends IFunction {
+
 	/**
 	 * Returns the peak position for that peak
+	 * 
 	 * @return peak position
 	 */
 	public double getPosition();
-		
+
 	/**
 	 * Returns the full width half maximum of a peak
+	 * 
 	 * @return FWHM
 	 */
 	public double getFWHM();
-	
+
 	/**
 	 * Returns the area under the peak
+	 * 
 	 * @return area under peak
 	 */
 	public double getArea();
-	
+
 	/**
-	 * @return the height of the peak ( y at getPosition() )  
+	 * @return the height of the peak ( y at getPosition() )
 	 */
 	public double getHeight();
 

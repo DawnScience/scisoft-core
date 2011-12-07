@@ -2,9 +2,9 @@
 
 '''
 
-from gda.analysis.functions import Parameter as _param
-from gda.analysis.functions import AFunction as _absfn
-from gda.analysis.functions import CompositeFunction as _compfn
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Parameter as _param
+from uk.ac.diamond.scisoft.analysis.fitting.functions import AFunction as _absfn
+from uk.ac.diamond.scisoft.analysis.fitting.functions import CompositeFunction as _compfn
 from uk.ac.diamond.scisoft.analysis.fitting import Fitter as _fitter
 
 import scisoftpy as _dnp
@@ -369,7 +369,7 @@ def _polycoeff(roots):
         oc.append(nc[n])
     return oc
 
-from gda.analysis.functions import Polynomial as _poly
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Polynomial as _poly
 
 class poly1d(object):
     '''1D polynomial class'''

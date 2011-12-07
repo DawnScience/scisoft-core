@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 public abstract class APeak extends AFunction implements IPeak {
@@ -29,14 +29,12 @@ public abstract class APeak extends AFunction implements IPeak {
 		super(params);
 	}
 
-	public APeak(Parameter[] params) {
+	public APeak(IParameter[] params) {
 		super(params);
 	}
 
 	@Override
 	public double getHeight() {
-		return this.val(this.getPosition());
+		return val(getPosition());
 	}
-	
-	
 }

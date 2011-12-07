@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class PseudoVoigt extends APeak implements IPeak{
 	 * Initialise with set parameters
 	 * @param params Position, GaussianFWHM, LorentzianFWHM, Area, Mix(0-1)
 	 */
-	public PseudoVoigt(Parameter[] params) {
+	public PseudoVoigt(IParameter[] params) {
 		super(params);
 		name = cname;
 	}

@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -67,7 +67,7 @@ public class Polynomial extends AFunction {
 	 * Make a polynomial with given parameters
 	 * @param params
 	 */
-	public Polynomial(Parameter[] params) {
+	public Polynomial(IParameter[] params) {
 		super(params);
 		a = new double[params.length];
 		nparams = params.length;
@@ -120,16 +120,14 @@ public class Polynomial extends AFunction {
 	}
 
 	@Override
-	public void disp() {
-		// FIXME
-//		StringBuilder out = new StringBuilder();
-//
-//		for (int i = 0; i < nparams; i++) {
-//			out.append(String.format("Parameter %d has value %f within the bounds [%f,%f]\n", i, getParameterValue(i), 
-//					getParameter(i).getLowerLimit(), getParameter(i).getUpperLimit()));
-//		}
-//
-//		TerminalPrinter.print(out.toString());
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+
+		for (int i = 0; i < nparams; i++) {
+			out.append(String.format("Parameter %d has value %f within the bounds [%f,%f]\n", i, getParameterValue(i), 
+					getParameter(i).getLowerLimit(), getParameter(i).getUpperLimit()));
+		}
+		return out.substring(0, out.length() - 1);
 	}
 
 	@Override

@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
 /**
@@ -42,11 +42,11 @@ public class Box extends AFunction {
 		name = cname;
 	}
 
-	public Box(Parameter[] params) {
+	public Box(IParameter[] params) {
 		super(params);
 		
-		Parameter[] fermi1Params = {getParameter(0), getParameter(1), getParameter(4), new Parameter(0.0)};
-		Parameter[] fermi2Params = {getParameter(2), getParameter(3), getParameter(4), new Parameter(0.0)};
+		IParameter[] fermi1Params = {getParameter(0), getParameter(1), getParameter(4), new Parameter(0.0)};
+		IParameter[] fermi2Params = {getParameter(2), getParameter(3), getParameter(4), new Parameter(0.0)};
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);

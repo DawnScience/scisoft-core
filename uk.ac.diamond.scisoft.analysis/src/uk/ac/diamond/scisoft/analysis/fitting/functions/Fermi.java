@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 /**
  * Class that wrappers the Fermi function from Fermi-Dirac distribution
@@ -33,7 +33,7 @@ public class Fermi extends AFunction {
 		name = cname;
 	}
 
-	public Fermi(Parameter[] params) {
+	public Fermi(IParameter[] params) {
 		super(params);
 		name = cname;
 	}

@@ -18,13 +18,13 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
-import gda.analysis.functions.AFunction;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 
 class CalibrationResultsData implements Serializable {
 	private AFunction fuction;

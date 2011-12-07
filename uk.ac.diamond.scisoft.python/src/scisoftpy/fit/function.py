@@ -16,15 +16,15 @@ pearson7   -- Pearson VII profile: [position, FWHM, mixing, area]
 
 '''
 
-from gda.analysis.functions import Cubic as _cubic
-from gda.analysis.functions import Gaussian as _gaussian
-from gda.analysis.functions import Lorentzian as _lorentzian
-from gda.analysis.functions import Offset as _offset
-from gda.analysis.functions import PearsonVII as _pearsonvii
-from gda.analysis.functions import PseudoVoigt as _pseudovoigt
-from gda.analysis.functions import Quadratic as _quadratic
-from gda.analysis.functions import Step as _step
-from gda.analysis.functions import StraightLine as _straightline
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Cubic as _cubic
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Gaussian as _gaussian
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Lorentzian as _lorentzian
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Offset as _offset
+from uk.ac.diamond.scisoft.analysis.fitting.functions import PearsonVII as _pearsonvii
+from uk.ac.diamond.scisoft.analysis.fitting.functions import PseudoVoigt as _pseudovoigt
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Quadratic as _quadratic
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Step as _step
+from uk.ac.diamond.scisoft.analysis.fitting.functions import StraightLine as _straightline
 
 
 cubic = _cubic

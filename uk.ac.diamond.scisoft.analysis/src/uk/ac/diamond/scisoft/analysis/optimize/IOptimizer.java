@@ -18,7 +18,7 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import gda.analysis.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**

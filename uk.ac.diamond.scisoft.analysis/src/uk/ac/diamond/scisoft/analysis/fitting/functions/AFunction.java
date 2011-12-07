@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
@@ -43,7 +43,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	/**
 	 * The array of parameters which specify all the variables in the minimisation problem
 	 */
-	protected Parameter[] parameters;
+	protected IParameter[] parameters;
 
 	/**
 	 * The name of the function, a description more than anything else.
@@ -58,17 +58,19 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param params
 	 *            An array of parameters
 	 */
-	public AFunction(Parameter[] params) {
+	public AFunction(IParameter[] params) {
 		fillParameters(params);
 	}
 
-	protected void fillParameters(Parameter[] params) {
-		parameters = new Parameter[params.length];
+	protected void fillParameters(IParameter[] params) {
+		parameters = new IParameter[params.length];
 		for (int i = 0; i < params.length; i++) {
-			parameters[i] = new Parameter(params[i]);
+			IParameter p = params[i];
+			parameters[i] = new Parameter(p.getValue(), p.getLowerLimit(), p.getUpperLimit());
+			parameters[i].setFixed(p.isFixed());
 		}
 	}
-	
+
 	/**
 	 * Constructor which takes a list of parameter values as its starting configuration
 	 * 
@@ -111,13 +113,13 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public Parameter getParameter(int index) {
+	public IParameter getParameter(int index) {
 		return parameters[index];
 	}
 
 	@Override
-	public Parameter[] getParameters() {
-		Parameter[] params = new Parameter[parameters.length];
+	public IParameter[] getParameters() {
+		IParameter[] params = new IParameter[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
 			params[i] = new Parameter(parameters[i]);
 		}
@@ -148,7 +150,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public double[] getParameterValues() {
 		double[] result = new double[parameters.length];
 		for (int j = 0; j < parameters.length; j++) {
-			result[j] = getParameter(j).getValue();
+			result[j] = getParameterValue(j);
 		}
 		return result;
 	}
@@ -161,12 +163,6 @@ public abstract class AFunction implements IFunction, Serializable {
 			parameters[j].setValue(params[j]);
 		}
 		dirty = true;
-	}
-
-	@Override
-	public void disp() {
-// FIXME
-//		TerminalPrinter.print(toString());
 	}
 
 	@Override
@@ -209,32 +205,12 @@ public abstract class AFunction implements IFunction, Serializable {
 		return (maxval - minval) / (2. * PERT);
 	}
 
-	/**
-	 * Added by mark to get round problems in Jython
-	 * @param value
-	 * @return A Dataset!
-	 */
-	public DoubleDataset makeDataSet(DoubleDataset value) {
-		return makeDataSet(value);
-	}
-
 	@Override
 	public DoubleDataset makeDataset(IDataset... values) {
 		DoubleDataset result = makeSerialDataset(values);
 		result.setName(name);
 		return result;
 	}
-
-	@Override
-	public DoubleDataset makeDataSet(DoubleDataset... values) {
-
-		// the parallel functionality will stay in here, but is not being used
-		// as the threading overheads in java slow the performance
-		// significantly.
-		// return makeParallelDataSet(XValues);
-		return makeSerialDataset(values);
-	}
-
 
 	protected DoubleDataset makeSerialDataset(IDataset... values) {
 		// make the dataset

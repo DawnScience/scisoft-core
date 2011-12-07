@@ -18,11 +18,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import gda.analysis.functions.APeak;
-import gda.analysis.functions.CompositeFunction;
-import gda.analysis.functions.IdentifiedPeak;
-import gda.analysis.functions.Offset;
-
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +34,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 

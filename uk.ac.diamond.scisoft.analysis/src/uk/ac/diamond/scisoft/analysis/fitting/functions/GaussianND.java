@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gda.analysis.functions;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.LUDecomposition;
@@ -43,7 +43,7 @@ public class GaussianND extends AFunction {
 	 */
 	private static transient final Logger logger = LoggerFactory.getLogger(GaussianND.class);
 
-	public GaussianND(Parameter[] params) {
+	public GaussianND(IParameter[] params) {
 		super(params);
 		name = cname;
 	}

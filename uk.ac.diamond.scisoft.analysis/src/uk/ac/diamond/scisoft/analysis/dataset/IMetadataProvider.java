@@ -27,6 +27,7 @@ public interface IMetadataProvider {
 
 	/**
 	 * @return an instance of IMetaData
+	 * @throws Exception 
 	 */
-	public IMetaData getMetadata();
+	public IMetaData getMetadata() throws Exception;
 }

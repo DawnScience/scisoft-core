@@ -80,7 +80,7 @@ class h5manager(object):
             t = _hdf5file(-1, "FakePlasticTree.h5")
             t.setGroup(self.grp)
             return t
-        return self.tree
+        return self.file
 
     def __getitem__(self, key):
         '''Return a list of datasets in tree whose names match given key'''
@@ -99,7 +99,7 @@ from jynxio import NXLoader
 
 from java.io import OutputStream as _ostream #@UnresolvedImport
 class _NoOutputStream(_ostream):
-    def write(self, b, off, len): pass
+    def write(self, b, off, length): pass
 
 class JavaLoader(object):
     def load(self):

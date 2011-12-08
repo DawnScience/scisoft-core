@@ -18,10 +18,12 @@
 
 package uk.ac.diamond.scisoft.analysis.hdf5;
 
+import java.io.Serializable;
+
 /**
  * Link two HDF5 nodes together. The name of the link provides a reference for users to the destination node
  */
-public class HDF5NodeLink {
+public class HDF5NodeLink implements Serializable {
 	private HDF5Node from;
 	private HDF5Node to;
 	private String name;

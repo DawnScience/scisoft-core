@@ -512,7 +512,7 @@ def getfiles(bean):
     fl.sort()
     return fl
 
-_NTVNAME="nexusTreeViewer"
-def viewnexus(tree, name=_NTVNAME):
-    '''View a NeXus tree in the named view'''
+_H5TVNAME="hdf5TreeViewer"
+def viewnexus(tree, name=_H5TVNAME):
+    '''View a NeXus/HDF5 tree in the named view'''
     _plot_viewnexustree(name, tree)

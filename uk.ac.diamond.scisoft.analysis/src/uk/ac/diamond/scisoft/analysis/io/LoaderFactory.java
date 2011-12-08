@@ -449,6 +449,10 @@ public class LoaderFactory {
 
 			final Method setFile = loader.getClass().getMethod("setFile", String.class);
 			setFile.invoke(loader, path);
+		} catch (java.lang.NoClassDefFoundError ne) { // CBF Loader does this on win64
+			loader = null;
+		} catch (java.lang.UnsatisfiedLinkError ule) {// CBF Loader does this on win64, the first time
+			loader = null;
 		}
 
 		return loader;

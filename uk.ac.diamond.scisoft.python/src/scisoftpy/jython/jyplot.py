@@ -25,8 +25,9 @@ plot_updatepoints3d = _plotter.scatter3DPlotOver
 
 plot_scanforimages = _plotter.scanForImages
 
+from jyio import h5manager as _h5mgr
+
 def plot_viewnexustree(name, tree):
-    import jyio.h5manager as _h5mgr
     if not isinstance(tree, _h5mgr):
         import sys #@Reimport
         print >> sys.stderr, "Only tree from loadnexus works for now"

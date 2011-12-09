@@ -156,7 +156,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 			data.setStoredValue("hash", hash);
 
 			data.setMetadataMap(GDAMetadata);
-			output.addDataset("RAxis Image", data, GDAMetadata);
+			output.addDataset("RAxis Image", data, getMetaData());
 
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem reading the RAxis image", e);

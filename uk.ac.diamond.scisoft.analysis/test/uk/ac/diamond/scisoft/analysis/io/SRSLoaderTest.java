@@ -25,8 +25,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gda.analysis.io.ScanFileHolderException;
 
+import it.tidalwave.imageio.nef.NDFRasterReader;
+
+import java.util.Collection;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -178,11 +182,18 @@ public class SRSLoaderTest {
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 2, dh.size());
 			assertEquals("The file does not contain correct data", 2.0, dh.getDataset(0).getDouble(1), 1e-5);
-			Map<String, ? extends Object> md = dh.getMetadata().get(0);
-			assertEquals("Loaded incorrect number of metadata items", 11, md.size());
-			assertTrue("Metadata item missing", md.containsKey("cmd"));
-			assertTrue("Metadata item missing", md.containsKey("SRSTIM"));
-			assertEquals("SRS metadata item wrong", "95827", md.get("SRSTIM"));
+			IMetaData mdo = dh.getMetadata();
+			try {
+			Collection<String> mdNames = mdo.getMetaNames();
+			assertEquals("Loaded incorrect number of metadata items", 11, mdNames.size());
+			assertTrue("Metadata item missing", mdo.getMetaValue("cmd")!=null);
+			assertTrue("Metadata item missing", mdo.getMetaValue("SRSTIM")!=null);
+			assertEquals("SRS metadata item wrong", "95827", mdo.getMetaValue("SRSTIM"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Assert.fail("Could not find metadata");
+				
+			}
 		} catch (ScanFileHolderException e) {
 			fail("Couldn't load the file");
 		}

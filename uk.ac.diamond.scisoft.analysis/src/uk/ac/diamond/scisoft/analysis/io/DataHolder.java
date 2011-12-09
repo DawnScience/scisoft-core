@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
 
 /**
  * This class is to marshal all the data for the purpose of loading from or saving to a file directly or via a ScanFileHolder.
@@ -39,7 +40,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
  * <p>
  * The plan is to remove the *DataSet methods and move to generic datasets only
  */
-public class DataHolder {
+public class DataHolder implements IMetadataProvider{
 	protected static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**
@@ -55,7 +56,7 @@ public class DataHolder {
 	/**
 	 * List containing metadata
 	 */
-	private List<Map<String, ? extends Object>> metadata;
+	private IMetaData metadata;
 
 	/**
 	 * This must create the three objects which will be put into the ScanFileHolder
@@ -63,7 +64,7 @@ public class DataHolder {
 	public DataHolder() {
 		data = new Vector<ILazyDataset>();
 		names = new Vector<String>();
-		metadata = new Vector<Map<String, ? extends Object>>();
+		metadata = new MetaDataAdapter();
 	}
 
 	/**
@@ -89,24 +90,26 @@ public class DataHolder {
 	 * @param metadata
 	 *            the metadata that is associated with the dataset
 	 */
-	public void addDataset(String name, ILazyDataset dataset, Map<String, ? extends Object>metadata) {
+	public void addDataset(String name, ILazyDataset dataset, IMetaData metadata) {
 		names.add(name);
 		data.add(dataset);
-		this.metadata.add(metadata);
+		this.metadata = metadata;
 	}
 
 	/**
-	 * Add a map of metadata
-	 * @param metadata
+	 * Add a ImetaData object
+	 * @param metadata which is an object implementing IMetaData
 	 */
-	public void addMetadata(Map<String, ? extends Object> metadata) {
-		this.metadata.add(metadata);
+
+	public void setMetadata(IMetaData metadata) {
+		this.metadata = metadata;
 	}
 
 	/**
-	 * @return List of metadata maps
+	 * @return an object implementing IMetaData
 	 */
-	public List<Map<String, ? extends Object>> getMetadata() {
+	@Override
+	public IMetaData getMetadata() {
 		return metadata;
 	}
 
@@ -255,7 +258,7 @@ public class DataHolder {
 	public void clear() {
 		data.clear();
 		names.clear();
-		metadata.clear();
+		metadata = null;
 	}
 
 	/**

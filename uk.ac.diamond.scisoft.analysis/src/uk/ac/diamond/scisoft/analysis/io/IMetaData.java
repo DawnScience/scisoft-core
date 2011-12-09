@@ -73,49 +73,6 @@ public interface IMetaData extends Cloneable{
 	 */
 	public IMetaData clone();
 
-	/**
-	 * This returns the creation time of the file or dataset and is designed 
-	 * to work in the same manner is File.lastModified()
-	 * 
-	 * @return A long value representing the time the file was last modified
-	 * , measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970)
-	 */
-	public long getCreationTimestamp();
 
-	/**
-	 * @return String representing the user who created the file
-	 */
-	public String getCreator();
-
-	/**
-	 * 
-	 * @return a String containing the filename
-	 */
-	public String getFileName();
-	
-	/**
-	 * 
-	 * @return the owner of the file
-	 */
-	public String getFileOwner();
-
-	/**
-	 * 
-	 * @return a long representing the size of the file in bytes
-	 */
-	public long getFileSize();
-
-	/**
-	 * 
-	 * @return the full path of the file
-	 */
-	public String getFullPath();
-
-	/**
-	 * 
-	 * @return The scan command as a String that was used to generate the data. 
-	 * This can be null as not always applicable. 
-	 */
-	public String getScanCommand();
 
 }

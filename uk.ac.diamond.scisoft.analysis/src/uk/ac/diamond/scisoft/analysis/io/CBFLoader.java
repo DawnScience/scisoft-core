@@ -123,7 +123,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		if (loadMetadata) {
 			//data.setMetadataMap(GDAMetadata);
 			data.setMetadata(getMetaData());
-			output.addDataset(fileName, data, GDAMetadata);
+			output.addDataset(fileName, data, getMetaData());
 		} else {
 			output.addDataset(fileName, data);
 		}

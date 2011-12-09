@@ -157,7 +157,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
 			if (textMetadata.size() > 0)
-				result.addMetadata(textMetadata);
+				result.setMetadata(getMetaData());
 
 			// read in the names of the different datasets which will be needed
 			headStr = in.readLine();
@@ -499,6 +499,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			public Collection<String> getMetaNames() throws Exception{
 				return textMetadata.keySet();
 			}
+			
 		};
 	}
 	

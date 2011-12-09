@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class MetaDataAdapter implements IMetaData {
+public class MetaDataAdapter implements  IExtendedMetadata {
 
 	private Collection<String> dataNames;
 	private Collection<Object> userObjects;

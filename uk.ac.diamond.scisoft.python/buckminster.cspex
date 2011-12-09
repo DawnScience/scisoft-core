@@ -10,7 +10,7 @@
 		<!-- Place your Generators here -->
 	</generators>
 	<artifacts>
-		<!-- Place your Artifacts here -->
+		<public name="containsDocumentationSource"/>
 	</artifacts>
 	<actions>
 		<!-- Place your Actions here -->

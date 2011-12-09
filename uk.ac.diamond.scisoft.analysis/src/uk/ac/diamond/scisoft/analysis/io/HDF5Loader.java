@@ -705,7 +705,9 @@ public class HDF5Loader extends AbstractFileLoader {
 			files[index++] = ((String[]) sds.getData())[0];
 		}
 		ExternalFiles ef= new ExternalFiles();
-		ef.shape = AbstractDataset.squeezeShape(shape, true);
+		//reduce shape as we have removed the filenames
+		int[] squeezeShape = java.util.Arrays.copyOf(shape, shape.length-1);
+		ef.shape = squeezeShape;
 		ef.files = files;
 		return ef;
 	}

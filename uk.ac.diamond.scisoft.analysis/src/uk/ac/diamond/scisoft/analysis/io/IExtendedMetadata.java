@@ -35,6 +35,13 @@ public interface IExtendedMetadata extends IMetaData {
 	public long getCreationTimestamp();
 
 	/**
+	 * 
+	 * @return the timestamp when the file was last modified, 
+	 * measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970)
+	 */
+	public long getLastModified();
+	
+	/**
 	 * @return String representing the user who created the file
 	 */
 	public String getCreator();

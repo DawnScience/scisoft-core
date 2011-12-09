@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class MetaDataAdapter implements  IExtendedMetadata {
+public class MetaDataAdapter implements IExtendedMetadata {
 
 	private Collection<String> dataNames;
 	private Collection<Object> userObjects;
@@ -34,6 +34,7 @@ public class MetaDataAdapter implements  IExtendedMetadata {
 	private String owner = null;
 	private long filesize = 0;
 	private String path;
+	private long lastModified;
 
 	public MetaDataAdapter() {
 
@@ -42,7 +43,10 @@ public class MetaDataAdapter implements  IExtendedMetadata {
 	public MetaDataAdapter(File f){
 		filesize = f.length();
 		filename = f.getName();
+		lastModified = f.lastModified();
+		path = f.getAbsolutePath();
 	}
+	
 	public MetaDataAdapter(Collection<String> names) {
 		this.dataNames = names;
 	}
@@ -101,7 +105,6 @@ public class MetaDataAdapter implements  IExtendedMetadata {
 
 	@Override
 	public String getFileName() {
-		// TODO Auto-generated method stub
 		return filename;
 	}
 
@@ -127,5 +130,11 @@ public class MetaDataAdapter implements  IExtendedMetadata {
 	public String getScanCommand() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public long getLastModified() {
+		// TODO Auto-generated method stub
+		return lastModified;
 	}
 }

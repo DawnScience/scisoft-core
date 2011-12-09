@@ -344,6 +344,30 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 					}
 				}
 			}
+			if( nodes.isEmpty()){
+				//look in detector section - data from areaDetector 
+				for (int i = 0; i < tree.getNumberOfChildNodes(); i++) {
+					INexusTree node = tree.getChildNode(i);
+					if (node.getNxClass().equals(NexusExtractor.NXEntryClassName)) {
+						for (int j = 0; j < node.getNumberOfChildNodes(); j++) {
+							INexusTree entryNode = node.getChildNode(j);
+							if (entryNode.getNxClass().equals(NexusExtractor.NXInstrumentClassName)) {
+								for (int k = 0; k < entryNode.getNumberOfChildNodes(); k++) {
+									INexusTree instrumentEntryNode = entryNode.getChildNode(k);
+									if (instrumentEntryNode.getNxClass().equals(NexusExtractor.NXDetectorClassName)) {
+										String detname = instrumentEntryNode.getName();
+										for (int l = 0; l < instrumentEntryNode.getNumberOfChildNodes(); l++) {
+											INexusTree detEntryNode = instrumentEntryNode.getChildNode(l);
+											if ( detEntryNode.getNxClass().equals(NexusExtractor.SDSClassName))
+												nodes.put(detname, detEntryNode);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return nodes;
 	}

@@ -18,6 +18,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -27,11 +28,21 @@ public class MetaDataAdapter implements IMetaData {
 	private Collection<String> dataNames;
 	private Collection<Object> userObjects;
 	private Collection<IMetaData> metaData = new ArrayList<IMetaData>();
+	
+	private String creator = null;
+	private String filename  = null;
+	private String owner = null;
+	private long filesize = 0;
+	private String path;
 
 	public MetaDataAdapter() {
 
 	}
 
+	public MetaDataAdapter(File f){
+		filesize = f.length();
+		filename = f.getName();
+	}
 	public MetaDataAdapter(Collection<String> names) {
 		this.dataNames = names;
 	}
@@ -73,6 +84,48 @@ public class MetaDataAdapter implements IMetaData {
 
 	@Override
 	public MetaDataAdapter clone(){
+		return null;
+	}
+
+	@Override
+	public long getCreationTimestamp() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getCreator() {
+		// TODO Auto-generated method stub
+		return creator;
+	}
+
+	@Override
+	public String getFileName() {
+		// TODO Auto-generated method stub
+		return filename;
+	}
+
+	@Override
+	public String getFileOwner() {
+		// TODO Auto-generated method stub
+		return owner;
+	}
+
+	@Override
+	public long getFileSize() {
+		// TODO Auto-generated method stub
+		return filesize;
+	}
+
+	@Override
+	public String getFullPath() {
+		// TODO Auto-generated method stub
+		return path;
+	}
+
+	@Override
+	public String getScanCommand() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

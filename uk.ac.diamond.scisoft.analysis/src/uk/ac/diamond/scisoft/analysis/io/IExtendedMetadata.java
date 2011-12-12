@@ -22,6 +22,11 @@ package uk.ac.diamond.scisoft.analysis.io;
  * This is an interface that has been designed to add information about 
  * the file in addition to information which has been implemented 
  * in IMetaData
+ * 
+ * It is intended that the implementation of this class will be through an adaptor
+ * and the getters specified here should return a value held in a map that is specified in
+ * the interface IMetaData. This means that this class serves to decorate the IMetaData
+ * interface by specifying some of the key value pairs within the metadata.
  */
 public interface IExtendedMetadata extends IMetaData {
 

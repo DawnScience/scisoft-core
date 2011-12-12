@@ -20,6 +20,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 
@@ -28,25 +29,29 @@ public class MetaDataAdapter implements IExtendedMetadata {
 	private Collection<String> dataNames;
 	private Collection<Object> userObjects;
 	private Collection<IMetaData> metaData = new ArrayList<IMetaData>();
-	
+
 	private String creator = null;
-	private String filename  = null;
+	private String filename = null;
 	private String owner = null;
-	private long filesize = 0;
+	private long filesize = -1;
 	private String path;
-	private long lastModified;
+	private long lastModified = -1;
 
 	public MetaDataAdapter() {
 
 	}
 
-	public MetaDataAdapter(File f){
+	/**
+	 * This constructor will take a reference to a file and populate some of the metadata. 
+	 * This should be used in conjunction with populating the rest of the metadata.
+	 */
+	public MetaDataAdapter(File f) {
 		filesize = f.length();
 		filename = f.getName();
 		lastModified = f.lastModified();
 		path = f.getAbsolutePath();
 	}
-	
+
 	public MetaDataAdapter(Collection<String> names) {
 		this.dataNames = names;
 	}
@@ -87,19 +92,27 @@ public class MetaDataAdapter implements IExtendedMetadata {
 	}
 
 	@Override
-	public MetaDataAdapter clone(){
+	public MetaDataAdapter clone() {
 		return null;
 	}
 
 	@Override
-	public long getCreationTimestamp() {
-		// TODO Auto-generated method stub
-		return 0;
+	public Calendar getCreation() {
+		return null;
+	}
+
+	@Override
+	public Calendar getLastModified() {
+		Calendar c = null;
+		if (lastModified < 0) {
+			c = Calendar.getInstance();
+			c.setTimeInMillis(lastModified);
+		}
+		return c;
 	}
 
 	@Override
 	public String getCreator() {
-		// TODO Auto-generated method stub
 		return creator;
 	}
 
@@ -110,31 +123,21 @@ public class MetaDataAdapter implements IExtendedMetadata {
 
 	@Override
 	public String getFileOwner() {
-		// TODO Auto-generated method stub
 		return owner;
 	}
 
 	@Override
 	public long getFileSize() {
-		// TODO Auto-generated method stub
 		return filesize;
 	}
 
 	@Override
 	public String getFullPath() {
-		// TODO Auto-generated method stub
 		return path;
 	}
 
 	@Override
 	public String getScanCommand() {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public long getLastModified() {
-		// TODO Auto-generated method stub
-		return lastModified;
 	}
 }

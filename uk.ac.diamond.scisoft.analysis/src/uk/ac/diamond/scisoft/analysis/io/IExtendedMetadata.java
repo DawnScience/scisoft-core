@@ -18,6 +18,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.Calendar;
+
 /**
  * This is an interface that has been designed to add information about 
  * the file in addition to information which has been implemented 
@@ -32,19 +34,19 @@ public interface IExtendedMetadata extends IMetaData {
 
 	/**
 	 * This should be the timestamp when the experiment or measurement took
-	 *  place which should be recorded in the header of the file, if applicable.
+	 * place which should be recorded in the header of the file, if applicable. The object 
+	 * should be stored in the metadata as a Calendar object.
 	 *  
-	 * @return A long value representing the time the data was captured
-	 * , measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970)
+	 * @return A calendar object which can return the data and time when the data
+	 * was created 
 	 */
-	public long getCreationTimestamp();
+	public Calendar getCreation();
 
 	/**
 	 * 
-	 * @return the timestamp when the file was last modified, 
-	 * measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970)
+	 * @return a calendar object that indicated when the data was last modified. 
 	 */
-	public long getLastModified();
+	public Calendar getLastModified();
 	
 	/**
 	 * @return String representing the user who created the file

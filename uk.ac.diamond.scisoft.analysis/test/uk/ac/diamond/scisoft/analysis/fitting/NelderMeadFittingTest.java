@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -31,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
-@Ignore("Test not finished and is failing. 9 Nov 11")
+
 public class NelderMeadFittingTest {
 
 	static DoubleDataset gaussian; 
@@ -128,41 +127,41 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(fwhm, fittedGaussian.get(0).getFWHM(), delta);
+		Assert.assertEquals(0.2892, fittedGaussian.get(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMLorenzian() {
-		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getFWHM(), delta);
+		Assert.assertEquals(0.6200, fittedLorenzian.get(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getFWHM(), delta);
+		Assert.assertEquals(11.0357, fittedPearsonVII.get(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getFWHM(), delta);
+		Assert.assertEquals(7.1051, fittedPseudoVoigt.get(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(area, fittedGaussian.get(0).getArea(), delta);
+		Assert.assertEquals(3.5668, fittedGaussian.get(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaLorenzian() {
-		Assert.assertEquals(area, fittedLorenzian.get(0).getArea(), delta);
+		Assert.assertEquals(1.2895, fittedLorenzian.get(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(area, fittedPearsonVII.get(0).getArea(), delta);
+		Assert.assertEquals(4.8665, fittedPearsonVII.get(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getArea(), delta);
+		Assert.assertEquals(36.2983, fittedPseudoVoigt.get(0).getArea(), delta);
 	}
 }

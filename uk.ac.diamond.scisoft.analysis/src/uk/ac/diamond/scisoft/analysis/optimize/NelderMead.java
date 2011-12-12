@@ -180,7 +180,9 @@ public class NelderMead implements IOptimizer {
 		for (int p = 0; p < 5; p++) {
 			boolean ok = true;
 			
-			while (ok) {
+			int collapseCount = 0;
+			
+			while (ok && collapseCount < 5) {
 				// this outer loop handles collapsing simplexes
 				Simplex simplex = new Simplex(solution, startingSpread);
 	
@@ -199,18 +201,15 @@ public class NelderMead implements IOptimizer {
 				solution = simplex.getBestSolution();
 	
 				ok = simplex.hasCollapsed();
-				
-				//System.out.println("Extend count "+simplex.getExtendedCount());
-				//System.out.println("Contract count "+simplex.getContractCount());
-				//System.out.println("Reduce count "+simplex.getReduceCount());
-				//System.out.println("Reflect count "+simplex.getReflectedCount());
-				
-				
+				collapseCount += 1;
 			}
-			//System.out.println("Pass "+p+" solution is "+ problemDefinition.eval(solution));
+			
+			if (collapseCount > 0) {
+				logger.info("Error, the NelderMead simplex has collapsed, this minimisation may be flawed");
+			}
+			
 		}
 
-		//System.out.println(problemDefinition.eval(solution));
 		return solution;
 	}
 
@@ -275,7 +274,6 @@ public class NelderMead implements IOptimizer {
 			}
 
 			if ((best == oldBest) && (spread == oldSpread)) {
-				logger.info("Error, the NelderMead simplex has collapsed, this minimisation may be flawed");
 				collapsed = true; // this collapse is fixed by externally restarting search with bigger spread
 				return false;
 			}

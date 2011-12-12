@@ -20,8 +20,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 public class MetaDataAdapter implements IExtendedMetadata {
@@ -35,7 +35,7 @@ public class MetaDataAdapter implements IExtendedMetadata {
 	private String owner = null;
 	private long filesize = -1;
 	private String path;
-	private long lastModified = -1;
+	private Date lastModified = null;
 
 	public MetaDataAdapter() {
 
@@ -48,7 +48,7 @@ public class MetaDataAdapter implements IExtendedMetadata {
 	public MetaDataAdapter(File f) {
 		filesize = f.length();
 		filename = f.getName();
-		lastModified = f.lastModified();
+		lastModified = new Date(f.lastModified());
 		path = f.getAbsolutePath();
 	}
 
@@ -97,18 +97,13 @@ public class MetaDataAdapter implements IExtendedMetadata {
 	}
 
 	@Override
-	public Calendar getCreation() {
+	public Date getCreation() {
 		return null;
 	}
 
 	@Override
-	public Calendar getLastModified() {
-		Calendar c = null;
-		if (lastModified < 0) {
-			c = Calendar.getInstance();
-			c.setTimeInMillis(lastModified);
-		}
-		return c;
+	public Date getLastModified() {
+		return lastModified;
 	}
 
 	@Override

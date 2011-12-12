@@ -18,7 +18,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.util.Calendar;
+
+import java.util.Date;
 
 /**
  * This is an interface that has been designed to add information about 
@@ -40,13 +41,13 @@ public interface IExtendedMetadata extends IMetaData {
 	 * @return A calendar object which can return the data and time when the data
 	 * was created 
 	 */
-	public Calendar getCreation();
+	public Date getCreation();
 
 	/**
 	 * 
 	 * @return a calendar object that indicated when the data was last modified. 
 	 */
-	public Calendar getLastModified();
+	public Date getLastModified();
 	
 	/**
 	 * @return String representing the user who created the file

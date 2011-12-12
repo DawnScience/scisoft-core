@@ -11,8 +11,8 @@ How to do stuff with uk.ac.diamond.scisoft.analysis
 Introduction
 ============
 Diamond Light Source Ltd (DLS) [#DLS]_ is a not-for-profit company jointly
-owned by the UK government's STFC and Wellcome Trust. Its purpose is to handle all
-aspects of planning, building and running of a major scientific research
+owned by the UK government's STFC and Wellcome Trust. Its purpose is to handle
+all aspects of planning, building and running of a major scientific research
 facility: a synchrotron light source.
 
 The u.a.d.s.a plugin holds the DLS Scientific Software team's data
@@ -35,14 +35,20 @@ Jython
 The Jython aspect of the plugin comprises a Jython console and a command
 line with an editor (taken from PyDev).
 
-Everything from Jython is available on the console. In addition, there
-are a number of Java classes available to aid data analysis. The
-following sections details those Java classes as wrapped for Jython.
+Everything from Jython is available on the console.  In addition, there is a
+Python/Jython package called ScisoftPy that allows some functions to be
+scripted. This package is described in the Python plugin documentation. See the
+Jython documentation at its website [#Jython]_.
 
-See the Jython documentation at its website [#Jython]_.
+Graphical User Interface
+========================
+This user guide primarily documents some aspects of the graphical interface.
+The Eclipse framework provides an overall workbench comprising editors and
+views set out in a number of perspectives. These perspectives are either
+pre-configured or user customized arrangements of the editor and view panes.
 
-
-
+Following sections of this user guide explain the use and capability of the
+perspectives, editors and views developed by the Scientific Software team.
 
 
 References

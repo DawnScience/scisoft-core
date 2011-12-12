@@ -60,8 +60,8 @@ References
 ==========
 .. [#DLS] DLS: http://www.diamond.ac.uk
 .. [#GDA] GDA: http://www.gda.ac.uk
-.. [#Python] Jython: http://www.python.org
+.. [#Python] Python: http://www.python.org
 .. [#Jython] Jython: http://www.jython.org
-.. [#Scipy] NumPy: http://www.scipy.org
+.. [#Scipy] SciPy: http://www.scipy.org
 .. [#Numpy] NumPy: http://www.numpy.org
 

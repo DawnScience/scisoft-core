@@ -43,7 +43,7 @@ standard argument signature::
 
     def myfunc(p1, p2, x, *arg):
         '''p1 -- first parameter
-		p2 -- second parameter
+        p2 -- second parameter
         x -- list of coordinate datasets
         arg -- tuple of additional arguments
         '''

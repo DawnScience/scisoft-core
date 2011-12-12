@@ -10,13 +10,14 @@ This section lists people who have contributed in some way (code, design, docume
       * Mark Basham
       * Peter Chang
       * Joachim Diepstraten
+      * Baha El Kassaby
+      * Matt Gerring
       * Paul Gibbons
       * Jonah Graham
+      * Ghita Kouadri Mostefaoui
       * Karl Levik
       * Tracy Miranda
       * Irakli Sikharulidze
       * Duncan Sneddon
       * Matthew Webber
 
-   * Past contributors
-      * Richard Tyler

@@ -1,3 +1,108 @@
+Data Exploration Perspective
+============================
+This perspective provides the primary way to explore data held in a set of
+files. The default layout is divided horizontally into four parts: a project
+explorer pane on the left; a central section split vertically into a
+editor-holding area where opened files are displayed at the top and a dataset
+inspector view below; a plot view; and its accompanying side plot view.
+
+Files can be opened using the File > Open File... menu item. The following file
+formats are supported:
+
+   * ``png``, ``gif``, ``jpeg``, ``tiff`` - standard image formats
+
+   * ``adsc`` - ADSC Quantum area series detector format
+
+   * ``crysalis`` - Oxford Diffraction CrysAlis processing software format
+
+   * ``mar`` - Rayonix's MarCCD detector
+
+   * ``pilatus`` - Dectris Pilatus detector version of TIFF 
+
+   * ``cbf`` - Crystallographic Binary Format (IUCR)
+
+   * ``xmap`` - XIA's DXP-xMAP format for x-ray spectra
+
+   * ``srs`` - Daresbury Laboratory's Synchrotron Radiation Source format
+
+   * ``edf`` - European Synchrotron Radiation Source data format for Pilatus images
+
+   * ``binary`` - raw single dataset format
+
+   * ``npy`` - NumPy binary format
+
+   * ``hdf5`` - HDF5 [#HDF5]_ tree format
+
+   * ``nx`` - NeXus [#Nexus]_ tree format
+
+Project Explorer
+================
+This GUI element provides a way to organise and access sets of data files. A
+set of files can be imported to the explorer in a project. To create such a
+project, select from the File menu "New > Project... > Data > Data Project"
+(or bring up the context menu with a third mouse button click in the Project
+Explorer area). Specify a project name, folder and the directory containing
+the files. A project will be created with all the files linked in (not copied).
+
+A file listed in the project can be opened in an editor by double clicking on
+its row. When many files are opened, the tabs at the top of the editor area can
+be used to switch between files - single clicks in the project explorer will
+also do the same.
+
+Once a file has been opened, its content can be explored with the dataset
+inspector view.
+
+NeXus/HDF5 Editor/View
+----------------------
+The NeXus [#Nexus]_ file format is a common data storage format for neutron,
+x-ray and muon science. HDF5 [#HDF5]_ is one of the underlying file formats
+supported and used by the NeXus format as well as being a format in its own
+right.
+
+This editor or view allows the data held in a Nexus file to be explored with a
+graphical user interface. NeXus files can be loaded into the viewer by clicking
+on the toolbar button at the top right of the viewer.
+
+The table-tree representing the Nexus structure can be expanded node by
+node using a left mouse click on the node. The columns of the table-tree
+display the node name, class, value type, dimensions, value. Right clicking
+on the table header will bring up a context menu that allows columns to be
+hidden or made visible.
+
+To select an item to plot, double click on a node that belongs to the NXdata.
+This will send the data item to the dataset inspector view if it has a signal
+attribute. Otherwise, double click on any item of class SDS (scientific data
+set) to send that item alone.
+
+.. figure:: images/ntvstack01.png
+
+   NeXus tree viewer
+
+Dataset Inspector
+=================
+The dataset inspector provides a means to examine a dataset selected in the
+current editor. This view contains an axes selection table, a multi-dimensional
+slicer and an inspection type selector. A dataset is considered to be an
+N-dimensional array of items where each item is an element or a compound of
+elements. The axes selection table allows a choice of datasets to be associated
+with dimensions of the dataset and are used as abscissa values for plotting and
+displaying values against. By default, at least one integer dataset called
+"dim:n" is included per dimension that ranges from 0 to L-1 inclusive where L 
+is the length of the dimension.
+
+The slicer allows (hyper-)rectangular subset (or slice) of the dataset to use
+selected. Each dimension has an axis name, a slider, a start value display, a
+slice length adjuster, a slice step adjuster, and a reset button. The start
+position is chosen by moving the slider left or right. The number of items
+used and the step between items is adjusted by clicking the arrow buttons or by
+entering the desired values.
+
+The final element is the inspection type selector. This allows various
+visualisations and examinations to be performed on the sliced dataset. These
+are displayed in the plot view, dataset table view or image explorer view.
+These displays can be configured to show dimensions by selecting their
+corresponding axis from the drop-down combination boxes.
+
 Plot view
 =========
 The plot view is the main window where all graphical plotting is displayed.
@@ -33,64 +138,6 @@ It is possible to have more than one plot view open and plot to them
 simultaneously and usually they are named Plot 1, Plot 2, ..., Plot n. The name
 is important since it is used to send data to via the Jython terminal.
 
-Plotting any data in any form to one of the plot views can be done using the
-plotting package:
-
- * 1D scalar line plots::
-
-    import scisoftpy as dnp
-    
-    dnp.plot.line([x,] y)
-
-   plots the given ``y`` axis dataset (or list of datasets) against a ``x`` dataset (if given)
- 
- * multiple 1D scalar line plots as 3D series::
-
-    dnp.plot.stack([x,] y, z=None)
-
-   plots all of the given 1D ``y`` datasets against corresponding ``x`` (if given) as a
-   3D stack with specified ``z`` coordinates
- 
- * 2D scalar image plots (also 2D compound datasets such as RGB datasets are supported and shown in colour)::
-
-    dnp.plot.image(image, x=None, y=None)
-
-   plots the 2D dataset as an image
-
- * 2D scalar points plots::
-
-    dnp.plot.points(x, y, size=0)
-
-   plots the points defined by ``x`` and ``y`` datasets. ``size`` can be a number or a dataset
-   and defines the size of each point plotted
-
- * 2D scalar 3D surface plots::
-
-    dnp.plot.surface(data, x=None, y=None)
-
-   plots the 2D dataset as a surface
-
- * 3D scalar points plots::
-
-    dnp.plot.points(x, y, z, size=0)
-
-   plots the points defined by ``x``, ``y`` and ``z`` datasets. ``size`` can be a number or a dataset
-   and defines the size of each point plotted. The colours of each point depends on its size and the
-   colour mapping used
-
-By default, these functions send data to Plot 1. This default can be changed using::
-
-    dnp.plot.setdefname('Plot 2')
-
-Otherwise, data can be sent to other plot views on a plot-by-plot basis using
-the optional keyword argument, ``name``. For example::
-
-    dnp.plot.plot(y, name="Plot 2")
-
-
-In points plots, more points can be added with::
-
-    dnp.plot.addpoints(x, y, z=None, size=0)
 
 Both 2D image plots, 2D surface plots and 3D points plots will open
 automatically a histogram view panel that is associated to the plot view.
@@ -213,118 +260,9 @@ plot. The initial choice of y axis scale used in all the profile plots is
 controlled by the setting found within Windows > Preferences > Scisoft Settings
 > Side Plotter.
 
-Plot GUI information
---------------------
-GUI information from interactions with the plot view and side panels can be
-passed back and forth from the view to the Jython console.
-
-The plot client regularly updates the console with GUI information. This
-can be obtained using the plotting package::
-
-    import scisoftpy.plot as dpl
-    
-    # grab a GUI bean
-    gb = dpl.getbean()
-
-By default, this function returns information from Plot 1 - use the keyword
-argument ``name`` to obtain information from other named plot views. Again,
-the default view name can be changed with ``dpl.setdefname``. The GUI
-bean is a dictionary object with a set of possible keys listed in the
-GUI parameters class. :obj:`None` is returned if there is no dictionary
-present. You can add in new entries or overwrite existing ones. Modified GUI
-beans can be pushed back to a plot view::
-
-    dpl.setbean(gb)
-
-and the view will respond appropriately to the updated GUI information. The
-keys for the dictionary are listed as strings in the GUI parameters class::
-
-    dir(dpl.parameters)
 
 
-ROI objects
------------
-The regions of interest defined are in the ROI package::
-
-  import scisoftpy.roi as droi
-
-These are
-
- *line*
-   A line segment defined by its starting point, length and angle
- *rect*
-   A rectangle defined by its starting point, width, height and 
-   angle
- *sect*
-   A sector defined by its centre point, bounds on radius and azimuthal angle
-
-As mentioned in the previous section, the current ROI and any ROIs stored in
-the table are sent via a GUI bean back to the plot view.
-
-The current ROI is held in the GUI bean under the key ``parameters.roi``
-and the table of ROIs under the key ``parameters.roilist``. The values
-held under those keys depend on which side panel is active.
-
-When the line profile tool is being used, the ``parameters.roi`` item is a
-linear ROI object and any stored ROIs are held in a Jython list of linear ROIs::
-
-    cr = gb[dpl.parameters.roi]
-
-    # or use convenience function
-    cr = dpl.getroi(gb)
-
-    # print current ROI's starting point, length and angle (in radians)
-    print cr.point, cr.length, cr.angle
-
-    lr = gb[dpl.parameters.roilist]
-
-    # or use convenience function
-    lr = dpl.getrois(gb)
-
-    # get first item
-    ra = lr[0]
-
-    print ra.length, ra.angleDegrees
-
-    # copy ROI from list
-    roi = gb[dpl.parameters.roilist][0].copy()
-
-    # or use convenience function
-    roi = dpl.getrois(gb)[0].copy()
-
-    # modify ROI
-    roi.setPoint(100,50)
-
-    # delete ROI from bean
-    dpl.delroi(gb)
-
-    # delete rectangular ROI (if exists) from bean
-    dpl.delroi(gb, dpl.roi.rect)
-
-    # delete list of ROIs from bean
-    dpl.delrois(gb)
-
-    # delete list of sector ROIs (if exists) from bean
-    dpl.delrois(gb, dpl.roi.sect)
-
-    # import region of interest package
-    import scisoftpy.roi as droi
-    list = droi.linelist()
-    list.add(roi)
-    gb[dpl.parameters.roilist] = list
-
-    # or use convenience function
-    dpl.setrois(gb, list)
-
-    # push bean back
-    dpl.setbean(gb)
-
-The ROIs obtained from the client can be used with image datasets to calculate
-profile datasets in the console::
-
-    # for a linear ROI lroi, image dataset and a step size of 0.5 pixels,
-    # lprof is a list of datasets. The first element is the profile along the
-    # line and the second element is along the perpendicular bisector (if the
-    # crosshair option is set)
-    lprof = droi.profile(image, lroi, step=0.5) 
-
+References
+----------
+.. [#HDF5] HDF5: http://www.hdfgroup.org/HDF5
+.. [#Nexus] NeXus: http://www.nexusformat.org

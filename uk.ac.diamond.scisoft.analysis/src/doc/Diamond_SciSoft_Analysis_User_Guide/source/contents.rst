@@ -9,13 +9,8 @@ Contents:
    :numbered:
 
    scisoftug
-   scisoftpy
-   dataset
-   fileio
-   plotting
-   fitting
+   exploration
    generic1dFitterUI
-   nexusviewer
    pollingview
    ACKS
 

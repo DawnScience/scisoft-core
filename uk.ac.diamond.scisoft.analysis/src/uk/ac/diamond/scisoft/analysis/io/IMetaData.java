@@ -28,24 +28,24 @@ import java.util.Map;
  * this interface will be implemented  in an object that will then be 
  * associated with the DataHolder or Dataset using setMetaData(IMetaData)
  */
-public interface IMetaData extends Cloneable{
+public interface IMetaData extends Cloneable {
 
 	/**
-	 * Returns a collection of the data set names or null if not implemented.
+	 * Returns a collection of dataset names or null if not implemented.
 	 * 
 	 * @return collection
 	 */
 	public Collection<String> getDataNames();
 
 	/**
-	 * Can be implemented to return information about the sizes of the data.
+	 * Can be implemented to return sizes of datasets
 	 * 
 	 * @return map of sizes
 	 */
 	public Map<String, Integer> getDataSizes();
 
 	/**
-	 * Can be implemented to return information about the sizes of the data.
+	 * Can be implemented to return shapes of dataset
 	 * 
 	 * @return map of sizes
 	 */
@@ -59,21 +59,24 @@ public interface IMetaData extends Cloneable{
 	 */
 	public Serializable getMetaValue(String key) throws Exception;
 
+	/**
+	 * Returns a collection of metadata names
+	 * @return collection
+	 * @throws Exception
+	 */
 	public Collection<String> getMetaNames() throws Exception;
 
 	/**
-	 * May be implemented to provide custom meta data in the form of a list of objects
+	 * May be implemented to provide custom metadata in the form of a collection of objects
 	 * 
-	 * @return objects
+	 * @return collection
 	 */
 	public Collection<Object> getUserObjects();
 
 	/**
-	 * Copy of object
+	 * Copy of metadata
 	 * @return copy
 	 */
 	public IMetaData clone();
-
-
 
 }

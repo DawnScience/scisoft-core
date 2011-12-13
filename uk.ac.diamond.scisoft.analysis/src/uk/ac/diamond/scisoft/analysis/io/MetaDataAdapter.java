@@ -1,5 +1,5 @@
 /*-
- * Copyright © 2010 Diamond Light Source Ltd.
+ * Copyright © 2011 Diamond Light Source Ltd.
  *
  * This file is part of GDA.
  *
@@ -24,8 +24,8 @@ import java.util.Map;
 
 public class MetaDataAdapter implements IMetaData {
 
-	private Collection<String> dataNames;
-	private Collection<Object> userObjects;
+	protected Collection<String> dataNames;
+	protected Collection<Object> userObjects;
 
 	
 	public MetaDataAdapter() {

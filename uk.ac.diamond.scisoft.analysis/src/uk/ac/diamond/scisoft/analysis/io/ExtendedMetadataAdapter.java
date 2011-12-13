@@ -19,15 +19,9 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
-public class ExtendedMetadataAdapter implements IExtendedMetadata {
-	private Collection<String> dataNames;
-	private Collection<Object> userObjects;
-
+public class ExtendedMetadataAdapter extends MetaDataAdapter implements IExtendedMetadata {
 	private String creator = null;
 	private String filename = null;
 	private String owner = null;
@@ -40,49 +34,14 @@ public class ExtendedMetadataAdapter implements IExtendedMetadata {
 	}
 
 	/**
-	 * This constructor will take a reference to a file and populate some of the metadata. This should be used in
-	 * conjunction with populating the rest of the metadata.
+	 * This constructor will take a reference to a file and populate some of the metadata. This
+	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadataAdapter(File f) {
 		filesize = f.length();
 		filename = f.getName();
 		lastModified = new Date(f.lastModified());
 		path = f.getAbsolutePath();
-	}
-
-	@Override
-	public Collection<String> getDataNames() {
-		return dataNames;
-	}
-
-	@Override
-	public Collection<Object> getUserObjects() {
-		return userObjects;
-	}
-
-	@Override
-	public Map<String, Integer> getDataSizes() {
-		return null;
-	}
-
-	@Override
-	public Map<String, int[]> getDataShapes() {
-		return null;
-	}
-
-	@Override
-	public Serializable getMetaValue(String key) throws Exception {
-		return null;
-	}
-
-	@Override
-	public Collection<String> getMetaNames() throws Exception {
-		return null;
-	}
-
-	@Override
-	public IMetaData clone() {
-		return null;
 	}
 
 	@Override

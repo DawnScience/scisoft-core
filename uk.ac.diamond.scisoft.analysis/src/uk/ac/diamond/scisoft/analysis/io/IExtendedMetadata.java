@@ -34,54 +34,46 @@ import java.util.Date;
 public interface IExtendedMetadata extends IMetaData {
 
 	/**
-	 * This should be the timestamp when the experiment or measurement took
-	 * place which should be recorded in the header of the file, if applicable. The object 
-	 * should be stored in the metadata as a Calendar object.
-	 *  
-	 * @return A calendar object which can return the data and time when the data
-	 * was created 
+	 * This should be the timestamp when the experiment or measurement took place which should
+	 * be recorded in the header of the file, if applicable
+	 * 
+	 * @return a object to represent when the data was created
 	 */
 	public Date getCreation();
 
 	/**
-	 * 
-	 * @return a calendar object that indicated when the data was last modified. 
+	 * @return a date object that indicated when the data was last modified
 	 */
 	public Date getLastModified();
-	
+
 	/**
 	 * @return String representing the user who created the file
 	 */
 	public String getCreator();
 
 	/**
-	 * 
 	 * @return a String containing the filename
 	 */
 	public String getFileName();
-	
+
 	/**
-	 * 
 	 * @return the owner of the file
 	 */
 	public String getFileOwner();
 
 	/**
-	 * 
 	 * @return a long representing the size of the file in bytes
 	 */
 	public long getFileSize();
 
 	/**
-	 * 
 	 * @return the full path of the file
 	 */
 	public String getFullPath();
 
 	/**
-	 * 
-	 * @return The scan command as a String that was used to generate the data. 
-	 * This can be null as not always applicable. 
+	 * @return The scan command as a String that was used to generate the data. This can be null as not always
+	 *         applicable.
 	 */
 	public String getScanCommand();
 

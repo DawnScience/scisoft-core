@@ -53,7 +53,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	transient protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
 	protected String fileName;
-	protected List<String> dataNames = new ArrayList<String>();
+	protected List<String> datasetNames = new ArrayList<String>();
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
 	protected List<String> extraHeaders = new ArrayList<String>();
 	
@@ -163,8 +163,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			headStr = in.readLine();
 			headStr = headStr.trim();//remove whitespace to prevent the following split on white
 			String[] vals = splitRegex.split(headStr);
-			dataNames.clear();
-			dataNames.addAll(Arrays.asList(vals));
+			datasetNames.clear();
+			datasetNames.addAll(Arrays.asList(vals));
 			
 			List<?> [] columns = new List<?>[vals.length];
 
@@ -486,10 +486,10 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
+		return new ExtendedMetadataAdapter() {
 			@Override
 			public Collection<String> getDataNames() {
-				return dataNames;
+				return datasetNames;
 			}
 			@Override
 			public String getMetaValue(String key) {
@@ -500,6 +500,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				return textMetadata.keySet();
 			}
 			
+			@Override
+			public String getScanCommand() {
+				return textMetadata.get("cmd");
+			}
+
 		};
 	}
 	
@@ -515,8 +520,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			final String headStr = in.readLine();
 			//String[] vals = headStr.split("\t");
 			String[] vals = headStr.split("\\s{2,}|\\,\\s+|\\t");
-			dataNames.clear();
-			dataNames.addAll(Arrays.asList(vals));
+			datasetNames.clear();
+			datasetNames.addAll(Arrays.asList(vals));
 
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);

@@ -80,14 +80,14 @@ public class XasAsciiLoader extends SRSLoader {
 				}
 
 				// the first time we get here, the previous line should have been the header
-				if (columnData == null && dataNames.size() == 0) {
+				if (columnData == null && datasetNames.size() == 0) {
 					columnData = parseHeaderString(previousHeaderLine);
 				}
 
 				parseColumns(splitLine(dataStr.trim()), columnData);
 			}
 
-			String[] names = dataNames.toArray(new String[]{});
+			String[] names = datasetNames.toArray(new String[]{});
 			DataHolder result = new DataHolder();
 			try {
 				convertToDatasets(result, names, columnData, isStoreStringValues(), isUseImageLoaderForStrings());
@@ -112,8 +112,8 @@ public class XasAsciiLoader extends SRSLoader {
 		// remove leading hash
 		previousHeaderLine = previousHeaderLine.substring(1).trim();
 		String parts[] = splitLine(previousHeaderLine);
-		dataNames.clear();
-		dataNames.addAll(Arrays.asList(parts));
+		datasetNames.clear();
+		datasetNames.addAll(Arrays.asList(parts));
 		return new List<?>[parts.length];
 	}
 

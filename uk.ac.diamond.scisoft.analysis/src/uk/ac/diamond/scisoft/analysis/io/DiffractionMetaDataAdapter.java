@@ -19,14 +19,20 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
+import java.io.File;
+
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
-public class DiffractionMetaDataAdapter extends MetaDataAdapter implements IDiffractionMetadata {
+public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implements IDiffractionMetadata {
 
 	
 	public DiffractionMetaDataAdapter() {
 		
+	}
+
+	public DiffractionMetaDataAdapter(File f) {
+		super(f);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*-
- * Copyright © 2010 Diamond Light Source Ltd.
+ * Copyright © 2011 Diamond Light Source Ltd.
  *
  * This file is part of GDA.
  *
@@ -18,27 +18,36 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
-public class MetaDataAdapter implements IMetaData {
-
+public class ExtendedMetadataAdapter implements IExtendedMetadata {
 	private Collection<String> dataNames;
 	private Collection<Object> userObjects;
 
-	
-	public MetaDataAdapter() {
+	private String creator = null;
+	private String filename = null;
+	private String owner = null;
+	private long filesize = -1;
+	private String path;
+	private Date lastModified = null;
+
+	public ExtendedMetadataAdapter() {
 
 	}
 
-	public MetaDataAdapter(Collection<String> names) {
-		this.dataNames = names;
-	}
-
-	public MetaDataAdapter(Collection<String> names, final Collection<Object> userObjects) {
-		this.dataNames = names;
-		this.userObjects = userObjects;
+	/**
+	 * This constructor will take a reference to a file and populate some of the metadata. This should be used in
+	 * conjunction with populating the rest of the metadata.
+	 */
+	public ExtendedMetadataAdapter(File f) {
+		filesize = f.length();
+		filename = f.getName();
+		lastModified = new Date(f.lastModified());
+		path = f.getAbsolutePath();
 	}
 
 	@Override
@@ -72,8 +81,47 @@ public class MetaDataAdapter implements IMetaData {
 	}
 
 	@Override
-	public MetaDataAdapter clone() {
+	public IMetaData clone() {
 		return null;
 	}
 
+	@Override
+	public Date getCreation() {
+		return null;
+	}
+
+	@Override
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	@Override
+	public String getCreator() {
+		return creator;
+	}
+
+	@Override
+	public String getFileName() {
+		return filename;
+	}
+
+	@Override
+	public String getFileOwner() {
+		return owner;
+	}
+
+	@Override
+	public long getFileSize() {
+		return filesize;
+	}
+
+	@Override
+	public String getFullPath() {
+		return path;
+	}
+
+	@Override
+	public String getScanCommand() {
+		return null;
+	}
 }

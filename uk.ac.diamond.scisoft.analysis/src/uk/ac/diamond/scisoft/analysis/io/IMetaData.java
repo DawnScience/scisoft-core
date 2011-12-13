@@ -18,6 +18,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public interface IMetaData extends Cloneable{
 	 * @param key
 	 * @return value
 	 */
-	public String getMetaValue(String key) throws Exception;
+	public Serializable getMetaValue(String key) throws Exception;
 
 	public Collection<String> getMetaNames() throws Exception;
 

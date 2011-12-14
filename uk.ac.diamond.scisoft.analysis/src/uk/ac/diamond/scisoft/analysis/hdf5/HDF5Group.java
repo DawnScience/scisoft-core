@@ -306,11 +306,11 @@ public class HDF5Group extends HDF5Node {
 	 * @return node or null if not found
 	 */
 	public HDF5NodeLink findNodeLink(String pathname) {
-		int i = pathname.indexOf(HDF5Node.SEPARATOR);
+		int i = pathname.indexOf(SEPARATOR);
 
 		if (i == 0) {
 			pathname = pathname.substring(1);
-			i = pathname.indexOf(HDF5Node.SEPARATOR);
+			i = pathname.indexOf(SEPARATOR);
 		}
 
 		String link = i < 0 ? pathname: pathname.substring(0, i);
@@ -323,6 +323,18 @@ public class HDF5Group extends HDF5Node {
 			String path = pathname.substring(i+1);
 			if (node.isDestinationAGroup()) {
 				return ((HDF5Group) node.getDestination()).findNodeLink(path);
+			}
+		} else { // is attribute?
+			i = link.indexOf(ATTRIBUTE);
+			if (i > 0) {
+				link = pathname.substring(0, i);
+				String attr = pathname.substring(i+1);
+				if (nodes.containsKey(link)) {
+					HDF5NodeLink node = nodes.get(link);
+					if (node.getDestination().containsAttribute(attr)) {
+						return node;
+					}
+				}
 			}
 		}
 		return null;

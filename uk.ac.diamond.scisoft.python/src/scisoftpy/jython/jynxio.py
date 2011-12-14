@@ -9,7 +9,7 @@ class NXLoader(_h5loader):
     def _mkgroup(self, name, link, attrs, parent):
         cls = link.getDestination().getAttribute('NX_class')
         if cls is not None:
-            cls = cls.toString()
+            cls = cls.getFirstElement()
             if cls in _nx.NX_CLASSES:
                 g = _nx.NX_CLASSES[cls](attrs, parent)
         elif name == '/' or parent is None:

@@ -160,10 +160,26 @@ public class HDF5LoaderTest {
 		assertTrue("Dataset node", nd instanceof HDF5Dataset);
 		HDF5Dataset dn = (HDF5Dataset) nd;
 		assertTrue("String dataset", dn.isString());
-		assertEquals("Username", "rjw82", dn.getString());
-
+		AbstractDataset a = (AbstractDataset) dn.getDataset();
+		assertEquals("Username", "rjw82", a.getString(0));
 	}
 
+	@Test
+	public void testLoadingMetadata() throws Exception {
+		String n = TestFileFolder + "FeKedge_1_15.nxs";
+		HDF5Loader l = new HDF5Loader(n);
+
+		IMetaData md = l.loadFile().getMetadata();
+
+		System.out.println(md.getMetaNames());
+		assertTrue("Wrong version", md.getMetaValue("/@NeXus_version").equals("4.2.0"));
+
+		assertTrue("Wrong axis value", md.getMetaValue("/entry1/FFI0/Energy@axis").equals("1"));
+
+		assertTrue("Wrong name", md.getMetaValue("/entry1/instrument/source/name").equals("DLS"));
+		assertTrue("Wrong voltage", md.getMetaValue("/entry1/instrument/source/voltage").equals("-1000.0000"));
+
+	}
 
 	@Test
 	public void testLoadingChunked() throws ScanFileHolderException {

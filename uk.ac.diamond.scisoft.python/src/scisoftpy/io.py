@@ -104,7 +104,7 @@ def load(name, formats=None, withmetadata=True, ascolour=False, **kwarg):
 
     return lfh
 
-def save(name, data, format=None, range=(), autoscale=False):
+def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignment
     '''Save a (list of) datasets with optional scaling range
 
     Supported output formats:

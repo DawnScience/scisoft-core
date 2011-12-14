@@ -22,22 +22,19 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.Date;
 
 /**
- * This is an interface that has been designed to add information about 
- * the file in addition to information which has been implemented 
- * in IMetaData
- * 
- * It is intended that the implementation of this class will be through an adaptor
- * and the getters specified here should return a value held in a map that is specified in
- * the interface IMetaData. This means that this class serves to decorate the IMetaData
- * interface by specifying some of the key value pairs within the metadata.
+ * This is an interface that has been designed to add information about a file in addition to
+ * information which has been implemented in IMetaData.
+ * <p>
+ * It is intended that implementations of this interface will be through an adapter
+ * (see {@link ExtendedMetadataAdapter})
  */
 public interface IExtendedMetadata extends IMetaData {
 
 	/**
-	 * This should be the timestamp when the experiment or measurement took place which should
+	 * This should be the timestamp of when the experiment or measurement took place which should
 	 * be recorded in the header of the file, if applicable
 	 * 
-	 * @return a object to represent when the data was created
+	 * @return a date object to represent when the data was created
 	 */
 	public Date getCreation();
 
@@ -47,12 +44,12 @@ public interface IExtendedMetadata extends IMetaData {
 	public Date getLastModified();
 
 	/**
-	 * @return String representing the user who created the file
+	 * @return a string representing the user who created the file
 	 */
 	public String getCreator();
 
 	/**
-	 * @return a String containing the filename
+	 * @return a string containing the filename
 	 */
 	public String getFileName();
 
@@ -67,13 +64,13 @@ public interface IExtendedMetadata extends IMetaData {
 	public long getFileSize();
 
 	/**
-	 * @return the full path of the file
+	 * @return the full path string of the file
 	 */
 	public String getFullPath();
 
 	/**
-	 * @return The scan command as a String that was used to generate the data. This can be null as not always
-	 *         applicable.
+	 * @return The scan command as a string that was used to generate the data. This can be null as not always
+	 *         applicable
 	 */
 	public String getScanCommand();
 

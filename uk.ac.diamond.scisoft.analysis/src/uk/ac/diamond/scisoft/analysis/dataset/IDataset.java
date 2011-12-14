@@ -49,7 +49,7 @@ public interface IDataset extends ILazyDataset {
 	 * @return Item in given position as an object
 	 */
 	public Object getObject(final int... pos);
-	
+
 	/**
 	 * @param pos
 	 * @return Item in given position as a double

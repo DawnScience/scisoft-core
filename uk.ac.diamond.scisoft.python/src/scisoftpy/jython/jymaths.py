@@ -16,9 +16,9 @@ from decorator import decorator as _decorator
 
 from math import pi as _ppi
 from math import e as _e
-from java.lang.Double import POSITIVE_INFINITY as _jinf
-from java.lang.Double import MAX_VALUE as _jmax
-from java.lang.Double import NaN as _jnan
+from java.lang.Double import POSITIVE_INFINITY as _jinf #@UnresolvedImport
+from java.lang.Double import MAX_VALUE as _jmax #@UnresolvedImport
+from java.lang.Double import NaN as _jnan #@UnresolvedImport
 
 pi = _ppi
 e = _e
@@ -29,7 +29,7 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
 def _wrap(func, *arg, **kwargs):
     from jycore import Sciwrap as _sciwrap
-    import java.util.List as List
+    import java.util.List as List #@UnresolvedImport
     result = func(*arg, **kwargs)
     if type(result) is _types.ListType:
         return [ _sciwrap(r) for r in result ]
@@ -112,7 +112,7 @@ def reciprocal(a):
     return _maths.reciprocal(a)
 
 @ndarraywrapped
-def abs(a):
+def abs(a): #@ReservedAssignment
     '''Absolute value of input'''
     return _maths.abs(a)
 
@@ -348,7 +348,7 @@ def prod(a, axis=None):
         return _stats.product(a, axis)
 
 # these functions call (wrapped) instance methods
-def sum(a, axis=None):
+def sum(a, axis=None): #@ReservedAssignment
     '''Sum of input'''
     return a.sum(axis)
 
@@ -404,7 +404,7 @@ def diff(a, order=1, axis=-1):
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 
 @ndarraywrapped
-def histogram(a, bins=10, range=None, normed=False, weights=None, new=None):
+def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@ReservedAssignment
     '''Histogram of input'''
     if normed or weights or new:
         raise ValueError, 'Option not supported yet'

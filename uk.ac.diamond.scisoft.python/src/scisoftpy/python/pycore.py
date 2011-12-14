@@ -5,7 +5,7 @@ import numpy as _np #@UnresolvedImport
 
 ndarray = _np.ndarray
 ndgeneric = _np.generic
-bool = _np.bool
+bool = _np.bool #@ReservedAssignment
 int8 = _np.int8
 int16 = _np.int16
 int32 = _np.int32
@@ -25,11 +25,11 @@ _pyint = int
 _pyfloat = float
 _pycomplex = complex
 int_ = int64
-int = int_
+int = int_ #@ReservedAssignment
 float_ = float64
-float = float_
+float = float_ #@ReservedAssignment
 complex_ = complex128
-complex = complex_
+complex = complex_ #@ReservedAssignment
 
 import types as _types
 
@@ -139,10 +139,10 @@ def normalise(a, allelements=True):
     Keyword argument:
     allelements -- if True, then normalise for all elements rather than per-element
     '''
-    range = _np.ptp(a)
+    range_ = _np.ptp(a)
     bottom = a.min()
     n = a - bottom
-    n /= range
+    n /= range_
     return n
 
 #compoundarray(a, view=True):

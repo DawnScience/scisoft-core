@@ -129,7 +129,7 @@ def quantile(a, q):
     pass
 
 prod = _np.prod
-sum = _np.sum
+sum = _np.sum #@ReservedAssignment
 
 mean = _np.mean
 std = _np.std

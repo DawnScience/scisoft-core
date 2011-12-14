@@ -18,41 +18,51 @@
 
 package uk.ac.diamond.scisoft.analysis.hdf5;
 
-import java.lang.reflect.Array;
-
-import ncsa.hdf.object.Attribute;
-import ncsa.hdf.object.Datatype;
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 /**
- * Extends the attribute class to keep namespace uniform
+ * Represent an attribute using a dataset
  */
-public class HDF5Attribute extends Attribute {
+public class HDF5Attribute {
 
+	private String name;
 	private String type;
+	private AbstractDataset value;
 
-	public HDF5Attribute(final String attrName, final Datatype attrType, final long[] attrDims) {
-		super(attrName, attrType, attrDims);
+	/**
+	 * Create an attribute with name and value
+	 * @param attrName
+	 * @param attrValue (usually, this is a Java array)
+	 */
+	public HDF5Attribute(final String attrName, final Object attrValue) {
+		this(attrName, attrValue, false);
 	}
 
-	public HDF5Attribute(final Attribute a) {
-		super(a.getName(), a.getType(), a.getDataDims(), a.getValue());
+	/**
+	 * Create an attribute with name, value and sign
+	 * @param attrName
+	 * @param attrValue (usually, this is a Java array)
+	 * @param isUnsigned true if items are unsigned but held in signed primitives
+	 */
+	public HDF5Attribute(final String attrName, final Object attrValue, boolean isUnsigned) {
+		name = attrName;
+		value = AbstractDataset.array(attrValue, isUnsigned);
 	}
 
-	@Override
 	public String getName() {
-		return super.getName();
+		return name;
 	}
 
 	@Override
 	public String toString() {
-		return toString(",");
+		return value.toString();
 	}
 
 	/**
 	 * @return first element as string
 	 */
 	public String getFirstElement() {
-		return Array.get(getValue(), 0).toString();
+		return value.getString(0);
 	}
 
 	public void setTypeName(String name) {
@@ -61,5 +71,29 @@ public class HDF5Attribute extends Attribute {
 
 	public String getTypeName() {
 		return type;
+	}
+
+	public AbstractDataset getValue() {
+		return value;
+	}
+
+	public void setValue(Object obj) {
+		setValue(obj, false);
+	}
+
+	public void setValue(Object obj, boolean isUnsigned) {
+		value = AbstractDataset.array(obj, isUnsigned);
+	}
+
+	public int[] getShape() {
+		return value.getShape();
+	}
+
+	public int getRank() {
+		return value.getRank();
+	}
+
+	public int getSize() {
+		return value.getSize();
 	}
 }

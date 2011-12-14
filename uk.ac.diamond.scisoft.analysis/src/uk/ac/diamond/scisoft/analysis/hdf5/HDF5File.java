@@ -106,7 +106,7 @@ public class HDF5File extends HDF5Node {
 	 */
 	public HDF5NodeLink findNodeLink(final String pathname) {
 		final String path = canonicalizePath(pathname);
-		if (path.indexOf(HDF5Node.SEPARATOR) != 0)
+		if (path.indexOf(SEPARATOR) != 0)
 			return null;
 
 		if (path.length() == 1) {
@@ -114,11 +114,20 @@ public class HDF5File extends HDF5Node {
 		}
 
 		// check if group is empty - this indicates an external link created this
-		HDF5Group g = (HDF5Group) link.getDestination();
+		final HDF5Group g = (HDF5Group) link.getDestination();
 //		if ((g.getNumberOfGroups() + g.getNumberOfDatasets() + g.getNumberOfAttributes()) == 0) {
 //			
 //		}
-		return g.findNodeLink(path.substring(1));
+		// check if root attribute is needed
+		final String spath = path.substring(1);
+		if (!spath.startsWith(ATTRIBUTE)) {
+			return g.findNodeLink(spath);
+		}
+
+		if (g.containsAttribute(spath.substring(1)))
+			return link;
+
+		return null;
 	}
 
 	private static final String UPDIR = "/..";

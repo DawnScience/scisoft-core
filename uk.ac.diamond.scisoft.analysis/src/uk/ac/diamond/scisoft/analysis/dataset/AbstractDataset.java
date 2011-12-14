@@ -1572,26 +1572,29 @@ public abstract class AbstractDataset implements IDataset {
 
 	@Override
 	public String toString() {
-		StringBuilder out = new StringBuilder();
+		final int rank = shape == null ? 0 : shape.length;
+		final StringBuilder out = new StringBuilder();
 
-		if (name != null && name.length() > 0) {
-			out.append("Dataset '");
-			out.append(name);
-			out.append("' has shape [");
-		} else {
-			out.append("Dataset shape is [");
-		}
-		int rank = shape == null ? 0 : shape.length;
+		if (stringPolicy == STRING_SHAPE) {
+			if (name != null && name.length() > 0) {
+				out.append("Dataset '");
+				out.append(name);
+				out.append("' has shape [");
+			} else {
+				out.append("Dataset shape is [");
+			}
 
-		if (rank > 0 && shape[0] > 0) {
-			out.append(shape[0]);
+			if (rank > 0 && shape[0] > 0) {
+				out.append(shape[0]);
+			}
+			for (int i = 1; i < rank; i++) {
+				out.append(", " + shape[i]);
+			}
+			out.append("]");
+			return out.toString();
 		}
-		for (int i = 1; i < rank; i++) {
-			out.append(", " + shape[i]);
-		}
-		out.append("]\n");
 
-		if (size == 0 || stringPolicy == STRING_SHAPE) {
+		if (size == 0) {
 			return out.toString();
 		}
 
@@ -2000,6 +2003,38 @@ public abstract class AbstractDataset implements IDataset {
 	public static AbstractDataset array(final Object obj) {
 		final int dtype = getDTypeFromObject(obj);
 		return array(obj, dtype);
+	}
+
+	/**
+	 * Create a dataset from object (automatically detect dataset type)
+	 * 
+	 * @param obj
+	 *            can be a PySequence, Java array or Number
+	 * @param isUnsigned
+	 *            if true, interpret integer values as unsigned by increasing element bit width
+	 * @return dataset
+	 */
+	public static AbstractDataset array(final Object obj, boolean isUnsigned) {
+		AbstractDataset a = array(obj);
+		if (isUnsigned) {
+			switch (a.getDtype()) {
+			case AbstractDataset.INT32:
+				a = new LongDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 32);
+				break;
+			case AbstractDataset.INT16:
+				a = new IntegerDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 16);
+				break;
+			case AbstractDataset.INT8:
+				a = new ShortDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 8);
+				break;
+				// TODO array datasets
+			}
+
+		}
+		return a;
 	}
 
 	/**

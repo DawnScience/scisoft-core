@@ -25,13 +25,13 @@ import java.util.Map;
 /**
  * This interface describes the minimal metadata information that should be 
  * associated with an AbstractDataset or DataHolder. It is intended that
- * this interface will be implemented  in an object that will then be 
- * associated with the DataHolder or Dataset using setMetaData(IMetaData)
+ * this interface will be implemented in an object that will then be 
+ * associated with a DataHolder or dataset using setMetaData(IMetaData)
  */
 public interface IMetaData extends Cloneable {
 
 	/**
-	 * Returns a collection of dataset names or null if not implemented.
+	 * Returns a collection of dataset names or null if not implemented
 	 * 
 	 * @return collection
 	 */

@@ -8,7 +8,7 @@ from jycore import asDatasetList as _asDList
 from jymaths import ndarraywrapped as _npwrapped
 
 @_npwrapped
-def all(a, axis=None):
+def all(a, axis=None): #@ReservedAssignment
     '''Return true if all items are true'''
     if axis:
         return _cmps.allTrue(a, axis)
@@ -16,7 +16,7 @@ def all(a, axis=None):
         return _cmps.allTrue(a)
 
 @_npwrapped
-def any(a, axis=None):
+def any(a, axis=None): #@ReservedAssignment
     '''Return true if any items are true'''
     if axis:
         return _cmps.anyTrue(a, axis)

@@ -27,7 +27,6 @@ public class MetaDataAdapter implements IMetaData {
 	protected Collection<String> adapterDataNames;
 	protected Collection<Object> adapterUserObjects;
 
-	
 	public MetaDataAdapter() {
 
 	}

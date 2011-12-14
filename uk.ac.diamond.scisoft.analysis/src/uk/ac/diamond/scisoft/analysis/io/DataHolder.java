@@ -33,7 +33,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
 
 /**
- * This class is to marshal all the data for the purpose of loading from or saving to a file directly or via a ScanFileHolder.
+ * This class is to marshal all the data for the purpose of loading from or saving to a file
+ * directly or via a ScanFileHolder.
  * <p>
  * This is designed to take in any dataset obeying the IDataset interface but output an
  * object that is a subclass of AbstractDataset - the dataset will be converted if necessary.
@@ -145,7 +146,7 @@ public class DataHolder implements IMetadataProvider {
 	public void setDataset(int index, ILazyDataset dataset) {
 		data.set(index, dataset);
 	}
-	
+
 	/**
 	 * Set a generic dataset with given name
 	 * @param name
@@ -178,8 +179,7 @@ public class DataHolder implements IMetadataProvider {
 			return DatasetUtils.convertToAbstractDataset(data.get(names.indexOf(name)));
 		return null;
 	}
-	
-	
+
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param index

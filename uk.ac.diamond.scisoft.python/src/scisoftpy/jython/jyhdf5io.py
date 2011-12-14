@@ -155,12 +155,12 @@ class HDF5Loader(object):
         pass
 
 from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Attribute as _jattr
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Node as _jnode
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdata
+#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Node as _jnode
+#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdata
 from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Group as _jgroup
 from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5File as _jfile
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5NodeLink as _jlink
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5SymLink as _jslink
+#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5NodeLink as _jlink
+#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5SymLink as _jslink
 
 def _tojavatree(tree):
     f = _jfile(-1, tree._filename)

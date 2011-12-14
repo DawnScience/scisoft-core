@@ -211,7 +211,7 @@ public class MillerSpace {
 	 * @return Miller indices
 	 */
 	public double[] h(final Vector3d q, final Matrix3d rotation) {
-		double[]h = new double[3];
+		double[] h = new double[3];
 		h(q, rotation, h);
 		return h;
 	}

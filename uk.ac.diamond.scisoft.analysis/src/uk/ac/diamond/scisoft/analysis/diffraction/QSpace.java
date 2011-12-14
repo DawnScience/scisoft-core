@@ -22,6 +22,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 
 
 /**
@@ -35,9 +37,6 @@ public class QSpace {
 	private double kmod; // wave number
 	private Vector3d ki; // initial wave vector
 
-	public QSpace(AbstractDataset image) throws IllegalArgumentException {
-		this(DiffractionImage.createDetectorProperties(image), DiffractionImage.createDiffractionCrystalEnvironment(image));
-	}
 
 	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp) {
 		detProps = detprops;

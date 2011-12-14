@@ -274,7 +274,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
+		return new ExtendedMetadataAdapter() {
 			
 			@Override
 			public Collection<String> getMetaNames() {
@@ -289,6 +289,14 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 			@Override
 			public Collection<String> getDataNames() {
 				return Collections.unmodifiableCollection(vals.keySet());
+			}
+			
+			@Override
+			public String getScanCommand() {
+				if(metaData.containsKey("command")) {
+					return metaData.get("command");
+				} 
+				return null;
 			}
 		};
 	}
@@ -314,11 +322,24 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 				}
 				header.add(line);
 				
-				if (line.indexOf("=")>-1) {
-					metaData.put(line.substring(0,line.indexOf("=")-1), line.substring(line.indexOf("=")+1));
-				} else if (line.indexOf(":")>-1) {
-					metaData.put(line.substring(0,line.indexOf(":")-1), line.substring(line.indexOf(":")+1));
+				// This caused problems with some of B18's files, so changing the methodology a little
+//				if (line.indexOf("=")>-1) {
+//					metaData.put(line.substring(0,line.indexOf("=")-1), line.substring(line.indexOf("=")+1));
+//				} else if (line.indexOf(":")>-1) {
+//					metaData.put(line.substring(0,line.indexOf(":")-1), line.substring(line.indexOf(":")+1));
+//				}
+		
+				if (line.contains(":")) {
+					String[] parts = line.split(":");
+					String key = parts[0].replace("#", "");
+					String value = parts[1];
+					for (int p = 2; p < parts.length; p++) {
+						value = value+":"+parts[p];
+					}
+					metaData.put(key.trim(),value.trim());
 				}
+				
+				
 			} finally {
 			    line = in.readLine();
 			}

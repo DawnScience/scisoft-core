@@ -19,7 +19,7 @@ from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
 from ..nexus.hdf5 import HDF5dataset as _dataset
 
-from jycore import asarray, _isslice, _getdtypefromjdataset
+from jycore import asarray, _isslice, _getdtypefromjdataset, Sciwrap
 from jymaths import ndarraywrapped as _npwrapped
 
 class SDS(_dataset):
@@ -126,8 +126,10 @@ class HDF5Loader(object):
         while it.hasNext():
             n = it.next()
             v = node.getAttribute(n).getValue()
-            if len(v) == 1:
-                v = v[0]
+            if v.size == 1:
+                v = v.getObject([0])
+            else:
+                v = Sciwrap(v)
             attrs.append((n, v))
 
         if link.isDestinationAGroup():

@@ -31,9 +31,14 @@ public class HDF5Node implements Serializable {
 	private final long id;
 
 	/**
-	 * String used a separator between a group and its children
+	 * String used as separator between a group and its children
 	 */
 	public static final String SEPARATOR = "/";
+
+	/**
+	 * String used as separator between a node and its attributes
+	 */
+	public static final String ATTRIBUTE = "@";
 
 	public HDF5Node(final long oid) {
 		attributes = new LinkedHashMap<String, HDF5Attribute>();
@@ -70,7 +75,7 @@ public class HDF5Node implements Serializable {
 
 		for (String a : attributes.keySet()) {
 			out.append(INDENT);
-			out.append('@');
+			out.append(ATTRIBUTE);
 			out.append(a);
 			out.append(" = ");
 			out.append(attributes.get(a));

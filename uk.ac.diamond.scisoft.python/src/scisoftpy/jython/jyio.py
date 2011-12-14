@@ -49,6 +49,7 @@ from uk.ac.diamond.scisoft.analysis.io import RAxisImageLoader as _raxisload
 from gda.analysis.io import ScanFileHolderException as io_exception
 
 from uk.ac.diamond.scisoft.analysis.io import DataHolder as _jdataholder
+from uk.ac.diamond.scisoft.analysis.io import MetaDataAdapter as _jmetadata
 
 from jycore import asDatasetList#, asDatasetDict, toList
 
@@ -125,17 +126,15 @@ class JavaLoader(object):
 
         if len(data) != len(basenames):
             raise io_exception, "Number of names does not match number of datasets"
+
+        metadata = None
         if self.load_metadata:
             meta = jdh.getMetadata()
-            
-            if len(meta) > 1:
-                print 'File contains more than one metadata maps - using first one'
-            if len(meta) == 0:
-                metadata = None
-            else:
-                metadata = [ (k, meta[0][k]) for k in meta[0] ]
-        else:
-            metadata = None
+            if meta:
+                mnames = meta.metaNames
+                if mnames:
+                    metadata = [ (k, meta.getMetaValue(k)) for k in mnames ]
+
         return DataHolder(zip(basenames, data), metadata)
 
     def setloadmetadata(self, load_metadata):
@@ -255,6 +254,16 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
 loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, RawLoader, SRSLoader, PilatusEdfLoader, HDF5Loader ]
 
+class _Metadata(_jmetadata):
+    def __init__(self, metadata):
+        self.mdata = metadata
+
+    def getMetaNames(self):
+        return self.mdata.keys()
+
+    def getMetaValue(self, key):
+        return self.mdata.get(key)
+
 class JavaSaver(object):
     @classmethod
     def tojava(cls, dataholder):
@@ -268,7 +277,7 @@ class JavaSaver(object):
         md = dict()
         for k, v in dataholder.metadata.items():
             md[k] = v
-        jdh.addMetadata(md)
+        jdh.setMetadata(_Metadata(md))
         return jdh
 
     def save(self, dataholder):

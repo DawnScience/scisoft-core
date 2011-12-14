@@ -19,6 +19,8 @@
 package uk.ac.diamond.scisoft.analysis.hdf5;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 
 /**
  * Leaf node to hold a (lazy) dataset or string
@@ -43,6 +45,7 @@ public class HDF5Dataset extends HDF5Node {
 	public void setDataset(final ILazyDataset lazyDataset) {
 		dataset = lazyDataset;
 		supported = true;
+		string = (lazyDataset instanceof StringDataset);
 	}
 
 	public void setString(final String text) {
@@ -60,7 +63,20 @@ public class HDF5Dataset extends HDF5Node {
 	}
 
 	public String getString() {
-		return text;
+		if (!string)
+			return null;
+		if (text != null)
+			return text;
+		StringDataset a = (StringDataset) dataset;
+		StringBuilder out = new StringBuilder();
+		IndexIterator it = a.getIterator();
+		while (it.hasNext()) {
+			out.append(a.getAbs(it.index));
+			out.append('\n');
+		}
+		int end = out.length();
+		out.delete(end-1, end);
+		return out.toString();
 	}
 
 	@Override

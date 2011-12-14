@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
@@ -68,7 +70,7 @@ import uk.ac.gda.monitor.IMonitor;
 /**
  * Load HDF5 files using NCSA's Java library
  */
-public class HDF5Loader extends AbstractFileLoader {
+public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	transient protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
 	private String fileName;
@@ -103,6 +105,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile(null);
 	}
+
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 
@@ -115,11 +118,11 @@ public class HDF5Loader extends AbstractFileLoader {
 		for (String key : map.keySet()) {
 			dh.addDataset(key, map.get(key));
 		}
-				
-		return dh;
+		dh.setMetadata(getMetaData());
 
+		return dh;
 	}
-	
+
 	/**
 	 * @param group - group to investigate
 	 * @return a Map of all the data in the group collected recursively
@@ -129,8 +132,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		addAllDatasetsToMap(group, map);
 		return map;
 	}
-	
-	
+
 	/**
 	 * Adds the data items in a group to the given map recursively
 	 * @param group - group to investigate
@@ -156,7 +158,9 @@ public class HDF5Loader extends AbstractFileLoader {
 	public HDF5File loadTree() throws ScanFileHolderException {
 		return loadTree(null);
 	}
-		
+
+	HDF5File tFile = null;
+
 	public HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
 		
 		if (!monitorIncrement(mon)) {
@@ -168,7 +172,6 @@ public class HDF5Loader extends AbstractFileLoader {
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
 		}
 
-		HDF5File hf = null;
 		HObject root = null;
 		try {
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
@@ -190,14 +193,14 @@ public class HDF5Loader extends AbstractFileLoader {
 				return null;
 			}
 
-			hf = copyTree((H5Group) root, keepBitWidth);
+			tFile = copyTree((H5Group) root, keepBitWidth);
 
 			hdf.close();
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file", le);
 		}
 
-		return hf;
+		return tFile;
 	}
 
 	
@@ -227,7 +230,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			@SuppressWarnings("unchecked")
 			List<Attribute> attributes = oo.getMetadata();
 			for (Attribute a : attributes) {
-				HDF5Attribute h = new HDF5Attribute(a);
+				HDF5Attribute h = new HDF5Attribute(a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
@@ -353,7 +356,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			HDF5Dataset nd = new HDF5Dataset(oid);
 			if (copyAttributes(nd, oo)) {
-				final String link = nd.getAttribute(NAPIMOUNT).toString();
+				final String link = nd.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
 			}
 
@@ -387,8 +390,8 @@ public class HDF5Loader extends AbstractFileLoader {
 						nd.setString(ef.getAsText());
 					}
 				} else {
-					String s = ((String[]) osd.read())[0];
-					nd.setString(s);
+					nd.setDataset(createLazyDataset(file.getHostname(), osd, keepBitWidth));
+					nd.setMaxShape(osd.getMaxDims());
 				}
 			} else {
 				nd.setDataset(createLazyDataset(file.getHostname(), osd, keepBitWidth));
@@ -407,7 +410,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			H5Group og = (H5Group) oo;
 			HDF5Group ng = new HDF5Group(oid);
 			if (copyAttributes(ng, og)) {
-				final String link = ng.getAttribute(NAPIMOUNT).toString();
+				final String link = ng.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
 			}
 
@@ -433,6 +436,8 @@ public class HDF5Loader extends AbstractFileLoader {
 	 */
 	private static int getDtype(final int dclass, final int dsize) {
 		switch (dclass) {
+		case Datatype.CLASS_STRING:
+			break;
 		case Datatype.CLASS_CHAR:
 		case Datatype.CLASS_INTEGER:
 			switch (dsize) {
@@ -787,7 +792,11 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 
 				if (all) {
-					data = createDataset(dobj.read(), count, dtype, extend);
+					try {
+						data = createDataset(dobj.read(), count, dtype, extend);
+					} catch (HDF5Exception e) {
+						throw new ScanFileHolderException("Problem reading dataset from HDF5 file", e);
+					}
 				} else {
 					// read in many split chunks
 					final boolean[] isSplit = new boolean[rank];
@@ -869,6 +878,80 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		return data;
+	}
+
+	@Override
+	public void loadMetaData(IMonitor mon) throws Exception {
+		loadTree(mon);
+	}
+
+	@Override
+	public IMetaData getMetaData() {
+		if (tFile == null)
+			return null;
+
+		final List<String> metanames = createMetaNames(tFile.getNodeLink());
+
+		return new MetaDataAdapter() {
+			
+			@Override
+			public Collection<String> getMetaNames() throws Exception {
+				return metanames;
+			}
+
+			@Override
+			public String getMetaValue(String key) throws Exception {
+				if (!metanames.contains(key))
+					return null;
+				
+				HDF5Node node = tFile.findNodeLink(key).getDestination();
+				if (key.contains(HDF5Node.ATTRIBUTE)) {
+					return node.getAttribute(key.substring(key.indexOf(HDF5Node.ATTRIBUTE) + 1)).getFirstElement();
+				}
+
+				AbstractDataset a = (AbstractDataset) ((HDF5Dataset) node).getDataset();
+				return a.getRank() == 0 ? a.getString() : a.getString(0);
+			}
+		};
+	}
+
+
+	private List<String> createMetaNames(HDF5NodeLink link) {
+		List<String> list = new ArrayList<String>();
+		addMetadataToList(link, list);
+		return list;
+	}
+
+	/**
+	 * Adds the attributes and scalar dataset items in a node to the given list recursively
+	 * @param link - link to node to investigate
+	 * @param list - the list to add items to, to aid the recursive method
+	 */
+	private void addMetadataToList(HDF5NodeLink link, List<String> list) {
+		HDF5Node node = link.getDestination();
+		Iterator<String> iter = node.attributeNameIterator();
+		String name = link.getFullName() + HDF5Node.ATTRIBUTE;
+		while (iter.hasNext()) {
+			list.add(name + iter.next());
+		}
+
+		if (node instanceof HDF5Group) {
+			HDF5Group group = (HDF5Group) node;
+			Iterator<HDF5NodeLink> itt = group.getNodeLinkIterator();
+			while (itt.hasNext()) {
+				HDF5NodeLink l = itt.next();
+
+				addMetadataToList(l, list);
+
+				if (l.isDestinationADataset()) {
+					HDF5Node n = l.getDestination();
+					ILazyDataset dataset = ((HDF5Dataset) n).getDataset();
+					if (dataset instanceof AbstractDataset) { // scalar dataset
+						list.add(l.getFullName());
+					}
+				}
+			}
+		}
 	}
 }
 

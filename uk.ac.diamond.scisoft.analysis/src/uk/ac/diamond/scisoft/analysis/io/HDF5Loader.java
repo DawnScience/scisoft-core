@@ -27,6 +27,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -113,12 +114,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		dh = new DataHolder();
 
 		HDF5File tree = loadTree(mon);
-		Map<String, ILazyDataset> map = getAllDatasetsMap(tree.getGroup());
+		Map<String, ILazyDataset> map = createDatasetsMap(tree.getGroup());
 		
 		for (String key : map.keySet()) {
 			dh.addDataset(key, map.get(key));
 		}
-		dh.setMetadata(getMetaData());
+
+		if (loadMetadata)
+			dh.setMetadata(getMetaData());
 
 		return dh;
 	}
@@ -127,7 +130,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param group - group to investigate
 	 * @return a Map of all the data in the group collected recursively
 	 */
-	private Map<String, ILazyDataset> getAllDatasetsMap(HDF5Group group) {
+	public static Map<String, ILazyDataset> createDatasetsMap(HDF5Group group) {
 		HashMap<String, ILazyDataset> map = new HashMap<String, ILazyDataset>();
 		addAllDatasetsToMap(group, map);
 		return map;
@@ -138,7 +141,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param group - group to investigate
 	 * @param map - the map to add items to, to aid the recursive method
 	 */
-	private void addAllDatasetsToMap(HDF5Group group, Map<String, ILazyDataset> map) {
+	private static void addAllDatasetsToMap(HDF5Group group, Map<String, ILazyDataset> map) {
 		
 		Iterator<HDF5NodeLink> itt = group.getNodeLinkIterator();
 		while (itt.hasNext()) {
@@ -228,9 +231,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private static boolean copyAttributes(final HDF5Node nn, final HObject oo) throws Exception {
 		if (oo.hasAttribute()) {
 			@SuppressWarnings("unchecked")
-			List<Attribute> attributes = oo.getMetadata();
+			final List<Attribute> attributes = oo.getMetadata();
+			final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? HDF5File.ROOT : oo.getFullName();
 			for (Attribute a : attributes) {
-				HDF5Attribute h = new HDF5Attribute(a.getName(), a.getValue(), a.isUnsigned());
+				HDF5Attribute h = new HDF5Attribute(fname, a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
@@ -887,16 +891,20 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	@Override
 	public IMetaData getMetaData() {
-		if (tFile == null)
+		return createMetaData(tFile);
+	}
+
+	public static IMetaData createMetaData(final HDF5File tree) {
+		if (tree == null)
 			return null;
 
-		final List<String> metanames = createMetaNames(tFile.getNodeLink());
+		final List<String> metanames = createMetaNames(tree.getNodeLink());
 
 		return new MetaDataAdapter() {
 			
 			@Override
 			public Collection<String> getMetaNames() throws Exception {
-				return metanames;
+				return Collections.unmodifiableCollection(metanames);
 			}
 
 			@Override
@@ -904,7 +912,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (!metanames.contains(key))
 					return null;
 				
-				HDF5Node node = tFile.findNodeLink(key).getDestination();
+				HDF5Node node = tree.findNodeLink(key).getDestination();
 				if (key.contains(HDF5Node.ATTRIBUTE)) {
 					return node.getAttribute(key.substring(key.indexOf(HDF5Node.ATTRIBUTE) + 1)).getFirstElement();
 				}
@@ -915,8 +923,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		};
 	}
 
-
-	private List<String> createMetaNames(HDF5NodeLink link) {
+	private static List<String> createMetaNames(HDF5NodeLink link) {
 		List<String> list = new ArrayList<String>();
 		addMetadataToList(link, list);
 		return list;
@@ -927,7 +934,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param link - link to node to investigate
 	 * @param list - the list to add items to, to aid the recursive method
 	 */
-	private void addMetadataToList(HDF5NodeLink link, List<String> list) {
+	private static void addMetadataToList(HDF5NodeLink link, List<String> list) {
 		HDF5Node node = link.getDestination();
 		Iterator<String> iter = node.attributeNameIterator();
 		String name = link.getFullName() + HDF5Node.ATTRIBUTE;

@@ -27,8 +27,8 @@ import uk.ac.gda.monitor.IMonitor;
 
 /**
  * This interface defines the lazy parts of a dataset. A dataset is a N-dimensional array of items
- * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero rank
- * and an empty array for shape.
+ * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero
+ * rank and an empty array for shape.
  */
 public interface ILazyDataset extends Serializable, IMetadataProvider{
 	/**
@@ -52,14 +52,24 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	public int getSize();
 
 	/**
-	 * The shape (or array of lengths for each dimension) of the dataset can be empty for "scalar" datasets
+	 * The shape (or array of lengths for each dimension) of the dataset can be empty for "scalar"
+	 * datasets
 	 * 
 	 * @return Shape of dataset
 	 */
 	public int[] getShape();
 
 	/**
-	 * The rank (or number of dimensions/indices) of the dataset can be zero for a "scalar" (single-valued) dataset 
+	 * Set a compatible shape for dataset. A shape is compatible if it has the capacity to contain
+	 * the same number of items
+	 * 
+	 * @param shape
+	 */
+	public void setShape(final int... shape);
+
+	/**
+	 * The rank (or number of dimensions/indices) of the dataset can be zero for a "scalar"
+	 * (single-valued) dataset 
 	 * @return rank
 	 */
 	public int getRank();
@@ -102,7 +112,8 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @return The dataset of the sliced data
 	 * @throws ScanFileHolderException 
 	 */
-	public IDataset getSlice(IMonitor monitor, final int[] start, final int[] stop, final int[] step) throws ScanFileHolderException;
+	public IDataset getSlice(IMonitor monitor, final int[] start, final int[] stop,
+			final int[] step) throws ScanFileHolderException;
 
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items

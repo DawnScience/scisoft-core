@@ -40,11 +40,6 @@ public interface IDataset extends ILazyDataset {
 	public void setName(String name);
 
 	/**
-	 * @param shape
-	 */
-	public void setShape(final int... shape);
-
-	/**
 	 * @param pos
 	 * @return Item in given position as an object
 	 */

@@ -1400,19 +1400,11 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	@Override
 	public void setShape(final int... shape) {
-		int size = 1;
 		if (dataShape != null) {
 			throw new UnsupportedOperationException("Cannot set a new shape to discontiguous dataset");
 		}
-		for (int i = 0; i < shape.length; i++) {
-			// make sure the indexes isn't zero or negative
-			if (shape[i] <= 0) {
-				throw new IllegalArgumentException("Argument " + i + " is " + shape[i]
-						+ " which is an illegal argument as it is zero or negative");
-			}
 
-			size *= shape[i];
-		}
+		int size = calcSize(shape);
 		if (size != this.size) {
 			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
 					+ ") is not compatible with old shape (" + Arrays.toString(this.shape) + ")");

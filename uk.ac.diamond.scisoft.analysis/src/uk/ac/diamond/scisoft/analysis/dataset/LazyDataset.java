@@ -126,6 +126,16 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
+	public void setShape(int... shape) {
+		int nsize = AbstractDataset.calcSize(shape);
+		if (nsize != size) {
+			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
+					+ ") is not compatible with old shape (" + Arrays.toString(this.shape) + ")");
+		}
+		this.shape = shape.clone();
+	}
+
+	@Override
 	public ILazyDataset squeeze() {
 		return squeeze(false);
 	}

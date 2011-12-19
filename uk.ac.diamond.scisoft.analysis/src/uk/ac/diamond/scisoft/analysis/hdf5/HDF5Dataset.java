@@ -85,8 +85,8 @@ public class HDF5Dataset extends HDF5Node {
 
 		out.append(INDENT);
 		if (string) {
-			out.append(text);
-		} else if (supported){
+			out.append(getString());
+		} else if (supported) {
 			out.append(dataset.toString());
 		} else {
 			out.append("unsupported");

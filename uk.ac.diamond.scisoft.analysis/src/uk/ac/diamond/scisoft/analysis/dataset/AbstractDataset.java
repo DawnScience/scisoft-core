@@ -1944,7 +1944,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @throws IllegalArgumentException
 	 *             This will be thrown if there is a problem with the compatibility
 	 */
-	public void checkCompatibility(final AbstractDataset g) throws IllegalArgumentException {
+	public void checkCompatibility(final ILazyDataset g) throws IllegalArgumentException {
 		checkCompatibility(this, g);
 	}
 
@@ -1959,7 +1959,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @throws IllegalArgumentException
 	 *             This will be thrown if there is a problem with the compatibility
 	 */
-	public static void checkCompatibility(final AbstractDataset g, final AbstractDataset h) throws IllegalArgumentException {
+	public static void checkCompatibility(final ILazyDataset g, final ILazyDataset h) throws IllegalArgumentException {
 		if (!areShapesCompatible(g.getShape(), h.getShape())) {
 			throw new IllegalArgumentException("Shapes do not match");
 		}

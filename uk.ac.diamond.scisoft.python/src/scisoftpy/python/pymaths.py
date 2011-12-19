@@ -160,3 +160,9 @@ def equaldataset(lhs, rhs):
     # TODO add check for dataset descriptors
     return False
 
+dot = _np.dot
+vdot = _np.vdot
+inner = _np.inner
+#outer = _np.outer
+tensordot = _np.tensordot
+

@@ -20,13 +20,17 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -55,6 +59,9 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 	DetectorProperties detectorProperties;
 	DiffractionCrystalEnvironment diffractionCrystalEnvironment;
 	private boolean keepBitWidth = false;
+
+	private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
+	private Date date;
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -109,7 +116,6 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		try {
 
 			raf = new RandomAccessFile(fileName, "r");
-
 			processingMetadata(raf);
 
 		} catch (FileNotFoundException fnf) {
@@ -289,6 +295,13 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 					Double.parseDouble(getMetadataValue("OSC_START")), 
 					Double.parseDouble(getMetadataValue("OSC_RANGE")),
 					Double.parseDouble(getMetadataValue("TIME")));
+			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+			try {
+				date = sdf.parse(metadata.get("DATE"));
+			} catch (ParseException e) {
+			
+				throw new ScanFileHolderException("Could not parse the date from the header", e);
+			}
 			
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing numerical value from string",e);
@@ -312,24 +325,19 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 
 			raf = new RandomAccessFile(fileName, "r");
 			processingMetadata(raf);
-
+			
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("File not found", fnf);
-		} catch (Exception e) {
-			try {
-				if (raf != null)
-					raf.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			throw new ScanFileHolderException("There was a problem loading or reading metadata", e);
+		} finally{
+			if (raf != null)
+			raf.close();
 		}
 	}
 
 	@Override
 	public IDiffractionMetadata getMetaData() {
 		
-		return new DiffractionMetaDataAdapter(){
+		return new DiffractionMetaDataAdapter(new File(fileName)){
 
 			@Override
 			public DetectorProperties getDetector2DProperties() {
@@ -342,7 +350,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 			
 			@Override
-			public String getMetaValue(String key) {
+			public Serializable getMetaValue(String key) {
 				return metadata.get(key);
 			}
 			@Override
@@ -360,16 +368,21 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 			
 			@Override
+			public Date getCreation() {
+				return date;
+			}
+			@Override
 			public Collection<String> getDataNames() {
 				return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
 			}
 			
+
 			@Override
 			public DiffractionMetaDataAdapter clone(){
 				final HashMap<String, String> newMetadataMap = new HashMap<String,String>(metadata);
 				final DetectorProperties localDetProps = detectorProperties.clone();
 				final DiffractionCrystalEnvironment localDiffCrystEnv = diffractionCrystalEnvironment.clone();
-				return new DiffractionMetaDataAdapter(){
+				return new DiffractionMetaDataAdapter(new File(fileName)){
 					@Override
 					public DetectorProperties getDetector2DProperties() {
 						return localDetProps;
@@ -399,6 +412,11 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 					}
 					
 					@Override
+					public Date getCreation() {
+						return new Date(date.getTime());
+					}
+					
+					@Override
 					public Collection<String> getDataNames() {
 						return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
 					}
@@ -406,5 +424,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 		};
 	}
+
+	
 
 }

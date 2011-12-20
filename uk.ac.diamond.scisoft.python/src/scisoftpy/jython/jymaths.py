@@ -1,3 +1,20 @@
+###
+# Copyright © 2011 Diamond Light Source Ltd.
+# Contact :  ScientificSoftware@diamond.ac.uk
+# 
+# This is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License version 3 as published by the Free
+# Software Foundation.
+# 
+# This software is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this software. If not, see <http://www.gnu.org/licenses/>.
+###
+
 '''
 Maths package
 '''
@@ -419,3 +436,56 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@R
 
     from jycore import asDatasetList as _asList
     return h.value(_asList(a))
+
+import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
+
+@ndarraywrapped
+def dot(a, b):
+    '''Dot product of two arrays'''
+    return _linalg.dotProduct(a, b)
+
+@ndarraywrapped
+def vdot(a, b):
+    '''Dot product of two vectors with first vector conjugated if complex'''
+    return _linalg.dotProduct(conjugate(a.flatten()), b.flatten())
+
+@ndarraywrapped
+def inner(a, b):
+    '''Inner product of two arrays (sum product over last dimensions)'''
+    return _linalg.tensorDotProduct(a, b, -1, -1)
+
+
+@ndarraywrapped
+def tensordot(a, b, axes=2):
+    '''Tensor dot product of two arrays
+    '''
+    if isinstance(axes, int):
+        bx = range(axes)
+        ao = a.rank - axes - 1
+        ax = [ ao + i for i in bx ]
+    else:
+        t = type(axes)
+        if t is _types.ListType or t is _types.TupleType:
+            if len(t) == 0:
+                raise ValueError, 'Given axes sequence should be non-empty'
+
+            if len(t) == 1:
+                ax = axes[0]
+                bx = axes[0]
+            else:
+                ax = axes[0]
+                bx = axes[1]
+
+            ta = type(ax)
+            tal = ta is _types.ListType or ta is _types.TupleType
+            tb = type(bx)
+            tbl = tb is _types.ListType or tb is _types.TupleType
+            if tal != tbl:
+                if tal:
+                    bx = list(bx)
+                else:
+                    ax = list(ax)
+        else:
+            raise ValueError, 'Given axes has wrong type'
+
+    return _linalg.tensorDotProduct(a, b, ax, bx)

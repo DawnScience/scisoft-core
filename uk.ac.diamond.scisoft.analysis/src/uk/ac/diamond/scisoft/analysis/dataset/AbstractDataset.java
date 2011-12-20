@@ -1,19 +1,18 @@
-/*-
- * Copyright © 2010 Diamond Light Source Ltd.
- *
- * This file is part of GDA.
- *
- * GDA is free software: you can redistribute it and/or modify it under the
+/*
+ * Copyright © 2011 Diamond Light Source Ltd.
+ * Contact :  ScientificSoftware@diamond.ac.uk
+ * 
+ * This is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License version 3 as published by the Free
  * Software Foundation.
- *
- * GDA is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
+ * 
+ * This software is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
  * You should have received a copy of the GNU General Public License along
- * with GDA. If not, see <http://www.gnu.org/licenses/>.
+ * with this software. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package uk.ac.diamond.scisoft.analysis.dataset;
@@ -1400,19 +1399,11 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	@Override
 	public void setShape(final int... shape) {
-		int size = 1;
 		if (dataShape != null) {
 			throw new UnsupportedOperationException("Cannot set a new shape to discontiguous dataset");
 		}
-		for (int i = 0; i < shape.length; i++) {
-			// make sure the indexes isn't zero or negative
-			if (shape[i] <= 0) {
-				throw new IllegalArgumentException("Argument " + i + " is " + shape[i]
-						+ " which is an illegal argument as it is zero or negative");
-			}
 
-			size *= shape[i];
-		}
+		int size = calcSize(shape);
 		if (size != this.size) {
 			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
 					+ ") is not compatible with old shape (" + Arrays.toString(this.shape) + ")");
@@ -1952,7 +1943,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @throws IllegalArgumentException
 	 *             This will be thrown if there is a problem with the compatibility
 	 */
-	public void checkCompatibility(final AbstractDataset g) throws IllegalArgumentException {
+	public void checkCompatibility(final ILazyDataset g) throws IllegalArgumentException {
 		checkCompatibility(this, g);
 	}
 
@@ -1967,7 +1958,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @throws IllegalArgumentException
 	 *             This will be thrown if there is a problem with the compatibility
 	 */
-	public static void checkCompatibility(final AbstractDataset g, final AbstractDataset h) throws IllegalArgumentException {
+	public static void checkCompatibility(final ILazyDataset g, final ILazyDataset h) throws IllegalArgumentException {
 		if (!areShapesCompatible(g.getShape(), h.getShape())) {
 			throw new IllegalArgumentException("Shapes do not match");
 		}

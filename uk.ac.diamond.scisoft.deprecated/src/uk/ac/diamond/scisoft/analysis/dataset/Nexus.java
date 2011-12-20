@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Diamond Light Source Ltd.
+ * Copyright © 2010 Diamond Light Source Ltd.
  * Contact :  ScientificSoftware@diamond.ac.uk
  * 
  * This is free software: you can redistribute it and/or modify it under the

@@ -17,8 +17,6 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
-import gda.data.nexus.tree.INexusTree;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,17 +36,15 @@ public class DataBean implements Serializable {
 
 	private static final long serialVersionUID = -2033109932408452451L;
 
-	private List<DataSetWithAxisInformation> data;
+	protected List<DataSetWithAxisInformation> data;
 
-	private Map<String, AbstractDataset> axisData;
+	protected Map<String, AbstractDataset> axisData;
 
-	private List<INexusTree> nexusTrees;
+	protected List<HDF5File> hdf5Trees;
 	
-	private List<HDF5File> hdf5Trees;
+	protected GuiPlotMode guiPlotMode;
 	
-	private GuiPlotMode guiPlotMode;
-	
-	private GuiBean plotParameters;
+	protected GuiBean plotParameters;
 
 	/**
 	 * Constructor to initialise all the collection objects
@@ -57,7 +53,6 @@ public class DataBean implements Serializable {
 		guiPlotMode = plotMode;
 		data = new ArrayList<DataSetWithAxisInformation>();
 		axisData = new HashMap<String, AbstractDataset>();
-		nexusTrees = new ArrayList<INexusTree>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
 	
@@ -65,7 +60,6 @@ public class DataBean implements Serializable {
 		guiPlotMode = null;
 		data = new ArrayList<DataSetWithAxisInformation>();
 		axisData = new HashMap<String, AbstractDataset>();
-		nexusTrees = new ArrayList<INexusTree>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
 	
@@ -77,7 +71,6 @@ public class DataBean implements Serializable {
 		DataBean bean = new DataBean();
 		bean.data.addAll(data);
 		bean.axisData.putAll(axisData);
-		bean.nexusTrees.addAll(nexusTrees);
 		bean.hdf5Trees.addAll(hdf5Trees);
 		bean.guiPlotMode = guiPlotMode;
 		return bean;
@@ -112,15 +105,6 @@ public class DataBean implements Serializable {
 	 */
 	public void addAxis(String axisName, IDataset axisDataset) {
 		axisData.put(axisName, DatasetUtils.convertToAbstractDataset(axisDataset));
-	}
-
-	/**
-	 * Adds the provided NeXus tree to the bean, one element at a time
-	 * 
-	 * @param nexusTreeToAdd
-	 */
-	public void addNexusTree(INexusTree nexusTreeToAdd) {
-		nexusTrees.add(nexusTreeToAdd);
 	}
 
 	/**
@@ -160,23 +144,6 @@ public class DataBean implements Serializable {
 	 */
 	public void setData(List<DataSetWithAxisInformation> data) {
 		this.data = data;
-	}
-
-	/**
-	 * 
-	 * @param nexusTrees
-	 */
-	public void setNexusTrees(List<INexusTree> nexusTrees) {
-		this.nexusTrees = nexusTrees;
-	}
-
-	/**
-	 * gets all the nexusTrees as a collection
-	 * 
-	 * @return nexusTrees
-	 */
-	public List<INexusTree> getNexusTrees() {
-		return nexusTrees;
 	}
 
 	/**

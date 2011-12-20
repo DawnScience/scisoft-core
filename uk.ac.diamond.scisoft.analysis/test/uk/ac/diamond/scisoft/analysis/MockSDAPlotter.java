@@ -17,10 +17,10 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.data.nexus.tree.INexusTree;
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -361,12 +361,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void viewNexusTree(String viewer, INexusTree tree) throws Exception {
-		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
-
-	}
-
-	@Override
 	public void setGuiBean(String plotName, GuiBean bean) throws Exception {
 		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
 
@@ -395,6 +389,16 @@ public class MockSDAPlotter implements ISDAPlotter {
 
 	@Override
 	public String[] getGuiNames() throws Exception {
+		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
+	}
+
+	@Override
+	public void viewNexusTree(String viewer, HDF5File tree) throws Exception {
+		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
+	}
+
+	@Override
+	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
 		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
 	}
 

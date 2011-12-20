@@ -18,9 +18,6 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
-import gda.data.nexus.extractor.NexusGroupData;
-import gda.data.nexus.tree.INexusTree;
-import gda.data.nexus.tree.NexusTreeNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +33,6 @@ import java.util.HashMap;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import org.iucr.cbflib.CBF_NODETYPE;
 import org.iucr.cbflib.SWIGTYPE_p_p_char;
 import org.iucr.cbflib.cbf;
 import org.iucr.cbflib.cbfConstants;
@@ -44,7 +40,6 @@ import org.iucr.cbflib.cbf_handle_struct;
 import org.iucr.cbflib.intP;
 import org.iucr.cbflib.sizetP;
 import org.iucr.cbflib.uintP;
-import org.nexusformat.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -622,281 +617,280 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	 * @return Completed NexusTree
 	 * @throws ScanFileHolderException
 	 */
-	@SuppressWarnings("unused")
-	private INexusTree CBFMetaDataLoader(cbf_handle_struct chs, String fileName) throws ScanFileHolderException {
-		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
-
-		INexusTree root = new NexusTreeNode(fileName, "NXroot", null);
-
-		uintP blocks = new uintP();
-		CBFError.errorChecker(cbf.cbf_count_datablocks(chs, blocks.cast()));
-		int bmax = (int) blocks.value();
-		blocks.delete();
-
-		for (int blockn = 0; blockn < bmax; blockn++) {
-			SWIGTYPE_p_p_char name = cbf.new_charPP();
-			CBFError.errorChecker(cbf.cbf_select_datablock(chs, blockn));
-			CBFError.errorChecker(cbf.cbf_datablock_name(chs, name));
-
-			INexusTree child = new NexusTreeNode("NXcif_" + cbf.charPP_value(name), "NXentry", null);
-			root.addChildNode(child);  // can't do in child's constructor as it doesn't update parent
-
-			int[] itemtype = { 0 };
-			if (CBFError.errorChecker(cbf.cbf_rewind_blockitem(chs, itemtype))) {
-				uintP items = new uintP();
-				CBFError.errorChecker(cbf.cbf_count_blockitems(chs, items.cast()));
-				int imax = (int) items.value();
-				items.delete();
-
-				for (int itemn = 0; itemn < imax; itemn++) {
-					CBFError.errorChecker(cbf.cbf_select_blockitem(chs, itemn, itemtype));
-					if (itemtype[0] == CBF_NODETYPE.CBF_CATEGORY.swigValue()) {
-						process_category(chs, child);
-					} else {
-						SWIGTYPE_p_p_char frameName = cbf.new_charPP();
-
-						CBFError.errorChecker(cbf.cbf_saveframe_name(chs, frameName));
-						// make new save frame group
-						INexusTree sfNode = new NexusTreeNode(new String(cbf.charPP_value(frameName)), "saveframe", null);
-						if (CBFError.errorChecker(cbf.cbf_rewind_category(chs))) {
-							uintP cats = new uintP();
-							CBFError.errorChecker(cbf.cbf_count_categories(chs, cats.cast()));
-							int cmax = (int) cats.value();
-							cats.delete();
-
-							for (int catn = 0; catn < cmax; catn++) {
-								CBFError.errorChecker(cbf.cbf_select_category(chs, catn));
-								process_category(chs, sfNode);
-							}
-						}
-						child.addChildNode(sfNode);
-					}
-				}
-			}
-		}
-		return root;
-	}
+//	private INexusTree CBFMetaDataLoader(cbf_handle_struct chs, String fileName) throws ScanFileHolderException {
+//		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
+//
+//		INexusTree root = new NexusTreeNode(fileName, "NXroot", null);
+//
+//		uintP blocks = new uintP();
+//		CBFError.errorChecker(cbf.cbf_count_datablocks(chs, blocks.cast()));
+//		int bmax = (int) blocks.value();
+//		blocks.delete();
+//
+//		for (int blockn = 0; blockn < bmax; blockn++) {
+//			SWIGTYPE_p_p_char name = cbf.new_charPP();
+//			CBFError.errorChecker(cbf.cbf_select_datablock(chs, blockn));
+//			CBFError.errorChecker(cbf.cbf_datablock_name(chs, name));
+//
+//			INexusTree child = new NexusTreeNode("NXcif_" + cbf.charPP_value(name), "NXentry", null);
+//			root.addChildNode(child);  // can't do in child's constructor as it doesn't update parent
+//
+//			int[] itemtype = { 0 };
+//			if (CBFError.errorChecker(cbf.cbf_rewind_blockitem(chs, itemtype))) {
+//				uintP items = new uintP();
+//				CBFError.errorChecker(cbf.cbf_count_blockitems(chs, items.cast()));
+//				int imax = (int) items.value();
+//				items.delete();
+//
+//				for (int itemn = 0; itemn < imax; itemn++) {
+//					CBFError.errorChecker(cbf.cbf_select_blockitem(chs, itemn, itemtype));
+//					if (itemtype[0] == CBF_NODETYPE.CBF_CATEGORY.swigValue()) {
+//						process_category(chs, child);
+//					} else {
+//						SWIGTYPE_p_p_char frameName = cbf.new_charPP();
+//
+//						CBFError.errorChecker(cbf.cbf_saveframe_name(chs, frameName));
+//						// make new save frame group
+//						INexusTree sfNode = new NexusTreeNode(new String(cbf.charPP_value(frameName)), "saveframe", null);
+//						if (CBFError.errorChecker(cbf.cbf_rewind_category(chs))) {
+//							uintP cats = new uintP();
+//							CBFError.errorChecker(cbf.cbf_count_categories(chs, cats.cast()));
+//							int cmax = (int) cats.value();
+//							cats.delete();
+//
+//							for (int catn = 0; catn < cmax; catn++) {
+//								CBFError.errorChecker(cbf.cbf_select_category(chs, catn));
+//								process_category(chs, sfNode);
+//							}
+//						}
+//						child.addChildNode(sfNode);
+//					}
+//				}
+//			}
+//		}
+//		return root;
+//	}
 
 	/**
 	 * make NXgroup by processing columns of category
 	 * 
 	 * @throws ScanFileHolderException
 	 */
-	private void process_category(cbf_handle_struct chs, INexusTree parent) throws ScanFileHolderException {
-		SWIGTYPE_p_p_char catName = cbf.new_charPP();
-
-		CBFError.errorChecker(cbf.cbf_category_name(chs, catName));
-		// make new category group
-		INexusTree catNode = new NexusTreeNode(new String(cbf.charPP_value(catName)), "category", null);
-
-		uintP rows = new uintP();
-		CBFError.errorChecker(cbf.cbf_count_rows(chs, rows.cast()));
-		int rmax = (int) rows.value();
-		rows.delete();
-
-		if (rmax != 0) {
-			boolean somebinary;
-
-			uintP cols = new uintP();
-			CBFError.errorChecker(cbf.cbf_count_columns(chs, cols.cast()));
-			int cmax = (int) cols.value();
-			cols.delete();
-
-			if (cmax != 0 && CBFError.errorChecker(cbf.cbf_rewind_column(chs))) {
-				SWIGTYPE_p_p_char colName = cbf.new_charPP();
-				do {
-					CBFError.errorChecker(cbf.cbf_column_name(chs, colName));
-					somebinary = false;
-					CBFError.errorChecker(cbf.cbf_rewind_row(chs));
-					String[] vtype = new String[rmax];
-					String[] value = new String[rmax];
-					SWIGTYPE_p_p_char vtemp = cbf.new_charPP();
-
-					// transfer column from cif to Nexus
-					for (int rown = 0; rown < rmax; rown++) {
-						CBFError.errorChecker(cbf.cbf_select_row(chs, rown));
-						int status;
-						if ((status = cbf.cbf_get_value(chs, vtemp)) == 0) {
-							value[rown] = new String(cbf.charPP_value(vtemp));
-							CBFError.errorChecker(cbf.cbf_get_typeofvalue(chs, vtemp));
-							vtype[rown] = new String(cbf.charPP_value(vtemp));
-							if (value[rown] == null) {
-								value[rown] = ".";
-								vtype[rown] = "null";
-							}
-							if (vtype[rown] == null) {
-								vtype[rown] = "undefined";
-							}
-							if (somebinary) {
-								String data = formatdata(value[rown], vtype[rown]);
-								int[] dims = { data.length() };
-								NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, data);
-								catNode.addChildNode(new NexusTreeNode("row", "data", catNode, gdata));
-							}
-						} else if (status == cbfConstants.CBF_BINARY) {
-							if (!somebinary) {
-								INexusTree colNode = new NexusTreeNode(new String(cbf.charPP_value(colName)), "column", catNode);
-
-								for (int irow = 0; irow < rown; irow++) {
-									String data = formatdata(value[irow], vtype[irow]);
-									int[] dims = { data.length() };
-									NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, data);
-									colNode.addChildNode(new NexusTreeNode("row" + irow, "data", catNode, gdata));
-								}
-								somebinary = true;
-								catNode.addChildNode(colNode);
-							}
-
-							uintP cifcomp = new uintP();
-							intP bid = new intP(), els = new intP(), elu = new intP();
-							intP minel = new intP(), maxel = new intP(), isre = new intP();
-							sizetP elsize = new sizetP(), elnum = new sizetP();
-							sizetP dim1 = new sizetP(), dim2 = new sizetP(), dim3 = new sizetP(), pad = new sizetP();
-							SWIGTYPE_p_p_char byteorder = cbf.new_charPP();
-
-							CBFError.errorChecker(cbf.cbf_get_arrayparameters_wdims(chs, cifcomp.cast(), bid.cast(),
-									elsize.cast(), els.cast(), elu.cast(), elnum.cast(), minel.cast(), maxel.cast(),
-									isre.cast(), byteorder, dim1.cast(), dim2.cast(), dim3.cast(), pad.cast()));
-
-							// load and place in data array (perhaps do this in other part of Loader)
-							boolean isreal = (isre.value() == 1);
-							sizetP rsize = new sizetP();
-							Serializable odata = null;
-							int elmax = (int) elnum.value();
-							int elbytes = (int) elsize.value();
-							int nxtype = NexusFile.NX_UINT8;
-							ByteBuffer bdata = ByteBuffer.allocateDirect(elmax*elbytes).order(ByteOrder.nativeOrder());
-							if (isreal) {
-
-								CBFError.errorChecker(cbf.cbf_get_realarray(chs, bid.cast(), bdata,
-										elbytes, elmax, rsize.cast()));
-
-								switch ((int) elsize.value()) {
-								case 4:
-									nxtype = NexusFile.NX_FLOAT32;
-									odata = bdata.asFloatBuffer().array();
-									break;
-								case 8:
-									nxtype = NexusFile.NX_FLOAT64;
-									odata = bdata.asDoubleBuffer().array();
-									break;
-								}
-							} else {
-								CBFError.errorChecker(cbf.cbf_get_integerarray(chs, bid.cast(), bdata,
-										elbytes, els.value(), elmax, rsize.cast()));
-
-								if (elu.value() != 0) {
-									switch ((int) elsize.value()) {
-									case 1:
-										nxtype = NexusFile.NX_UINT8;
-										odata = bdata.array();
-										break;
-									case 2:
-										nxtype = NexusFile.NX_UINT16;
-										odata = bdata.asShortBuffer().array();
-										break;
-									case 4:
-										nxtype = NexusFile.NX_UINT32;
-										odata = bdata.asIntBuffer().array();
-										break;
-									case 8:
-										nxtype = NexusFile.NX_UINT64;
-										odata = bdata.asLongBuffer().array();
-										break;
-									}
-								} else {
-									switch ((int) elsize.value()) {
-									case 1:
-										nxtype = NexusFile.NX_INT8;
-										odata = bdata.array();
-										break;
-									case 2:
-										nxtype = NexusFile.NX_INT16;
-										odata = bdata.asShortBuffer().array();
-										break;
-									case 4:
-										nxtype = NexusFile.NX_INT32;
-										odata = bdata.asIntBuffer().array();
-										break;
-									case 8:
-										nxtype = NexusFile.NX_INT64;
-										odata = bdata.asLongBuffer().array();
-										break;
-									}
-								}
-							}
-
-							// sanity check dimension values as they could be zero
-							int[] tdims = { (int) dim1.value(), (int) dim2.value(), (int) dim3.value() };
-							int rank = 1;
-							for (int d = 0; d < tdims.length; d++) {
-								if (tdims[d] == 0)
-									tdims[d] = 1;
-								else if (tdims[d] > 1)
-									rank = d + 1;
-							}
-							if (rank == 1 && tdims[0] != elmax)
-								tdims[0] = elmax;
-
-							int[] dims = new int[rank];
-							for (int d = 0; d < rank; d++) {
-								dims[d] = tdims[d];
-							}
-
-							rsize.delete();
-							cifcomp.delete();
-							bid.delete(); els.delete(); elu.delete();
-							minel.delete(); maxel.delete(); isre.delete();
-							elsize.delete(); elnum.delete();
-							dim1.delete(); dim2.delete(); dim3.delete(); pad.delete();
-
-							catNode.addChildNode(new NexusTreeNode("row", "data", catNode, new NexusGroupData(dims,
-									nxtype, odata)));
-						}
-					}
-
-					if (!somebinary) {
-						int ctotal = 0;
-						String tdata = "";
-						if (rmax >= 1) {
-							tdata += formatdata(value[0], vtype[0]);
-							ctotal = tdata.length();
-							for (int rown = 1; rown < rmax; rown++) {
-								String data = "\n" + formatdata(value[rown], vtype[rown]);
-								tdata += data;
-								ctotal += data.length();
-							}
-						}
-						if (ctotal != tdata.length()) {
-							throw new ScanFileHolderException("Mismatch of CBF character data size");
-						}
-
-						int[] dims = { tdata.length() };
-						NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, tdata);
-						catNode.addChildNode(new NexusTreeNode(new String(cbf.charPP_value(colName)), "column", catNode, gdata));
-					}
-				} while (CBFError.errorChecker(cbf.cbf_next_column(chs)));
-			}
-		}
-		parent.addChildNode(catNode);
-	}
+//	private void process_category(cbf_handle_struct chs, INexusTree parent) throws ScanFileHolderException {
+//		SWIGTYPE_p_p_char catName = cbf.new_charPP();
+//
+//		CBFError.errorChecker(cbf.cbf_category_name(chs, catName));
+//		// make new category group
+//		INexusTree catNode = new NexusTreeNode(new String(cbf.charPP_value(catName)), "category", null);
+//
+//		uintP rows = new uintP();
+//		CBFError.errorChecker(cbf.cbf_count_rows(chs, rows.cast()));
+//		int rmax = (int) rows.value();
+//		rows.delete();
+//
+//		if (rmax != 0) {
+//			boolean somebinary;
+//
+//			uintP cols = new uintP();
+//			CBFError.errorChecker(cbf.cbf_count_columns(chs, cols.cast()));
+//			int cmax = (int) cols.value();
+//			cols.delete();
+//
+//			if (cmax != 0 && CBFError.errorChecker(cbf.cbf_rewind_column(chs))) {
+//				SWIGTYPE_p_p_char colName = cbf.new_charPP();
+//				do {
+//					CBFError.errorChecker(cbf.cbf_column_name(chs, colName));
+//					somebinary = false;
+//					CBFError.errorChecker(cbf.cbf_rewind_row(chs));
+//					String[] vtype = new String[rmax];
+//					String[] value = new String[rmax];
+//					SWIGTYPE_p_p_char vtemp = cbf.new_charPP();
+//
+//					// transfer column from cif to Nexus
+//					for (int rown = 0; rown < rmax; rown++) {
+//						CBFError.errorChecker(cbf.cbf_select_row(chs, rown));
+//						int status;
+//						if ((status = cbf.cbf_get_value(chs, vtemp)) == 0) {
+//							value[rown] = new String(cbf.charPP_value(vtemp));
+//							CBFError.errorChecker(cbf.cbf_get_typeofvalue(chs, vtemp));
+//							vtype[rown] = new String(cbf.charPP_value(vtemp));
+//							if (value[rown] == null) {
+//								value[rown] = ".";
+//								vtype[rown] = "null";
+//							}
+//							if (vtype[rown] == null) {
+//								vtype[rown] = "undefined";
+//							}
+//							if (somebinary) {
+//								String data = formatdata(value[rown], vtype[rown]);
+//								int[] dims = { data.length() };
+//								NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, data);
+//								catNode.addChildNode(new NexusTreeNode("row", "data", catNode, gdata));
+//							}
+//						} else if (status == cbfConstants.CBF_BINARY) {
+//							if (!somebinary) {
+//								INexusTree colNode = new NexusTreeNode(new String(cbf.charPP_value(colName)), "column", catNode);
+//
+//								for (int irow = 0; irow < rown; irow++) {
+//									String data = formatdata(value[irow], vtype[irow]);
+//									int[] dims = { data.length() };
+//									NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, data);
+//									colNode.addChildNode(new NexusTreeNode("row" + irow, "data", catNode, gdata));
+//								}
+//								somebinary = true;
+//								catNode.addChildNode(colNode);
+//							}
+//
+//							uintP cifcomp = new uintP();
+//							intP bid = new intP(), els = new intP(), elu = new intP();
+//							intP minel = new intP(), maxel = new intP(), isre = new intP();
+//							sizetP elsize = new sizetP(), elnum = new sizetP();
+//							sizetP dim1 = new sizetP(), dim2 = new sizetP(), dim3 = new sizetP(), pad = new sizetP();
+//							SWIGTYPE_p_p_char byteorder = cbf.new_charPP();
+//
+//							CBFError.errorChecker(cbf.cbf_get_arrayparameters_wdims(chs, cifcomp.cast(), bid.cast(),
+//									elsize.cast(), els.cast(), elu.cast(), elnum.cast(), minel.cast(), maxel.cast(),
+//									isre.cast(), byteorder, dim1.cast(), dim2.cast(), dim3.cast(), pad.cast()));
+//
+//							// load and place in data array (perhaps do this in other part of Loader)
+//							boolean isreal = (isre.value() == 1);
+//							sizetP rsize = new sizetP();
+//							Serializable odata = null;
+//							int elmax = (int) elnum.value();
+//							int elbytes = (int) elsize.value();
+//							int nxtype = NexusFile.NX_UINT8;
+//							ByteBuffer bdata = ByteBuffer.allocateDirect(elmax*elbytes).order(ByteOrder.nativeOrder());
+//							if (isreal) {
+//
+//								CBFError.errorChecker(cbf.cbf_get_realarray(chs, bid.cast(), bdata,
+//										elbytes, elmax, rsize.cast()));
+//
+//								switch ((int) elsize.value()) {
+//								case 4:
+//									nxtype = NexusFile.NX_FLOAT32;
+//									odata = bdata.asFloatBuffer().array();
+//									break;
+//								case 8:
+//									nxtype = NexusFile.NX_FLOAT64;
+//									odata = bdata.asDoubleBuffer().array();
+//									break;
+//								}
+//							} else {
+//								CBFError.errorChecker(cbf.cbf_get_integerarray(chs, bid.cast(), bdata,
+//										elbytes, els.value(), elmax, rsize.cast()));
+//
+//								if (elu.value() != 0) {
+//									switch ((int) elsize.value()) {
+//									case 1:
+//										nxtype = NexusFile.NX_UINT8;
+//										odata = bdata.array();
+//										break;
+//									case 2:
+//										nxtype = NexusFile.NX_UINT16;
+//										odata = bdata.asShortBuffer().array();
+//										break;
+//									case 4:
+//										nxtype = NexusFile.NX_UINT32;
+//										odata = bdata.asIntBuffer().array();
+//										break;
+//									case 8:
+//										nxtype = NexusFile.NX_UINT64;
+//										odata = bdata.asLongBuffer().array();
+//										break;
+//									}
+//								} else {
+//									switch ((int) elsize.value()) {
+//									case 1:
+//										nxtype = NexusFile.NX_INT8;
+//										odata = bdata.array();
+//										break;
+//									case 2:
+//										nxtype = NexusFile.NX_INT16;
+//										odata = bdata.asShortBuffer().array();
+//										break;
+//									case 4:
+//										nxtype = NexusFile.NX_INT32;
+//										odata = bdata.asIntBuffer().array();
+//										break;
+//									case 8:
+//										nxtype = NexusFile.NX_INT64;
+//										odata = bdata.asLongBuffer().array();
+//										break;
+//									}
+//								}
+//							}
+//
+//							// sanity check dimension values as they could be zero
+//							int[] tdims = { (int) dim1.value(), (int) dim2.value(), (int) dim3.value() };
+//							int rank = 1;
+//							for (int d = 0; d < tdims.length; d++) {
+//								if (tdims[d] == 0)
+//									tdims[d] = 1;
+//								else if (tdims[d] > 1)
+//									rank = d + 1;
+//							}
+//							if (rank == 1 && tdims[0] != elmax)
+//								tdims[0] = elmax;
+//
+//							int[] dims = new int[rank];
+//							for (int d = 0; d < rank; d++) {
+//								dims[d] = tdims[d];
+//							}
+//
+//							rsize.delete();
+//							cifcomp.delete();
+//							bid.delete(); els.delete(); elu.delete();
+//							minel.delete(); maxel.delete(); isre.delete();
+//							elsize.delete(); elnum.delete();
+//							dim1.delete(); dim2.delete(); dim3.delete(); pad.delete();
+//
+//							catNode.addChildNode(new NexusTreeNode("row", "data", catNode, new NexusGroupData(dims,
+//									nxtype, odata)));
+//						}
+//					}
+//
+//					if (!somebinary) {
+//						int ctotal = 0;
+//						String tdata = "";
+//						if (rmax >= 1) {
+//							tdata += formatdata(value[0], vtype[0]);
+//							ctotal = tdata.length();
+//							for (int rown = 1; rown < rmax; rown++) {
+//								String data = "\n" + formatdata(value[rown], vtype[rown]);
+//								tdata += data;
+//								ctotal += data.length();
+//							}
+//						}
+//						if (ctotal != tdata.length()) {
+//							throw new ScanFileHolderException("Mismatch of CBF character data size");
+//						}
+//
+//						int[] dims = { tdata.length() };
+//						NexusGroupData gdata = new NexusGroupData(dims, NexusFile.NX_CHAR, tdata);
+//						catNode.addChildNode(new NexusTreeNode(new String(cbf.charPP_value(colName)), "column", catNode, gdata));
+//					}
+//				} while (CBFError.errorChecker(cbf.cbf_next_column(chs)));
+//			}
+//		}
+//		parent.addChildNode(catNode);
+//	}
 
 	/**
 	 * 
 	 */
-	private String formatdata(String value, String type) {
-		if (type.compareToIgnoreCase("sqlq") == 0) {
-			return "\'" + value + "\'";
-		} else if (type.compareToIgnoreCase("dblq") == 0) {
-			return "\"" + value + "\"";
-		} else if (type.compareToIgnoreCase("text") == 0) {
-			return ";" + value + "\n;";
-		} else if (type.length() == 0) {
-			return ".";
-		} else {
-			return value;
-		}
-	}
+//	private String formatdata(String value, String type) {
+//		if (type.compareToIgnoreCase("sqlq") == 0) {
+//			return "\'" + value + "\'";
+//		} else if (type.compareToIgnoreCase("dblq") == 0) {
+//			return "\"" + value + "\"";
+//		} else if (type.compareToIgnoreCase("text") == 0) {
+//			return ";" + value + "\n;";
+//		} else if (type.length() == 0) {
+//			return ".";
+//		} else {
+//			return value;
+//		}
+//	}
 	
 
 	private String getMetadataValue(String key) throws ScanFileHolderException {
@@ -962,17 +956,17 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	public void loadMetaData(IMonitor mon) throws Exception {
 		cbf_handle_struct chs = new cbf_handle_struct(fileName);
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
-		try{
-		ImageOrientation imageOrien = readMiniCBFHeader(chs);
-		}catch (Exception e){
-			throw new ScanFileHolderException("Could not create metadata form CBF",e);
+		try {
+			readMiniCBFHeader(chs);
+		} catch (Exception e) {
+			throw new ScanFileHolderException("Could not create metadata form CBF", e);
 		}
 	}
 
 	@Override
 	public IMetaData getMetaData() {
-		return new DiffractionMetaDataAdapter(){
-			
+		return new DiffractionMetaDataAdapter() {
+
 			@Override
 			public DetectorProperties getDetector2DProperties() {
 				return detectorProperties;
@@ -982,21 +976,23 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
 				return diffractionCrystalEnvironment;
 			}
-			
+
 			@Override
 			public String getMetaValue(String key) throws Exception {
 				return metadata.get(key);
 			}
+
 			@Override
 			public Collection<String> getMetaNames() throws Exception {
 				// TODO Auto-generated method stub
 				return metadata.keySet();
 			}
+
 			@Override
 			public DiffractionMetaDataAdapter clone() {
 				final HashMap<String, String> internalMetadata = new HashMap<String, String>();
 				internalMetadata.putAll(metadata);
-				return new DiffractionMetaDataAdapter(){
+				return new DiffractionMetaDataAdapter() {
 					@Override
 					public DetectorProperties getDetector2DProperties() {
 						return detectorProperties.clone();
@@ -1006,11 +1002,12 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 					public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
 						return diffractionCrystalEnvironment.clone();
 					}
-					
+
 					@Override
 					public String getMetaValue(String key) throws Exception {
 						return internalMetadata.get(key);
 					}
+
 					@Override
 					public Collection<String> getMetaNames() throws Exception {
 						return internalMetadata.keySet();

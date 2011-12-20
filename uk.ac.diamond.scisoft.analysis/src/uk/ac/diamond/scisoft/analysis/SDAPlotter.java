@@ -17,9 +17,9 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.data.nexus.tree.INexusTree;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -764,8 +764,17 @@ public class SDAPlotter {
 	 * @param tree
 	 * @throws Exception
 	 */
-	public static void viewNexusTree(String viewer, INexusTree tree) throws Exception {
-		getPlotterImpl().viewNexusTree(viewer, tree);
+	public static void viewNexusTree(String viewer, HDF5File tree) throws Exception {
+		getPlotterImpl().viewHDF5Tree(viewer, tree);
+	}
+
+	/**
+	 * @param viewer
+	 * @param tree
+	 * @throws Exception
+	 */
+	public static void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
+		getPlotterImpl().viewHDF5Tree(viewer, tree);
 	}
 
 	/**

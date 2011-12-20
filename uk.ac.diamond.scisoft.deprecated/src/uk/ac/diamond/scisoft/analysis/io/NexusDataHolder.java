@@ -21,7 +21,7 @@ import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeProvider;
 
 public class NexusDataHolder extends DataHolder implements NexusTreeProvider {
-
+	private static final long serialVersionUID = -4311579344327127280L;
 	INexusTree tree;
 	
 	public void setNexusTree(INexusTree tree) {

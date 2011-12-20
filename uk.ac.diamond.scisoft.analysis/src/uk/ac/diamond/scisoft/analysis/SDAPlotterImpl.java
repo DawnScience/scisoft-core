@@ -18,7 +18,6 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import gda.analysis.io.ScanFileHolderException;
-import gda.data.nexus.tree.INexusTree;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +37,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
+import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinarySaver;
@@ -1663,11 +1663,25 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @throws Exception
 	 */
 	@Override
-	public void viewNexusTree(String viewer, INexusTree tree) throws Exception {
+	public void viewNexusTree(String viewer, HDF5File tree) throws Exception {
 		logger.info("Tree sent to {}", viewer);
 
 		DataBean db = new DataBean(null);
-		db.addNexusTree(tree);
+		db.addHDF5Tree(tree);
+		sendBeansToServer(viewer, db, null);
+	}
+
+	/**
+	 * @param viewer
+	 * @param tree
+	 * @throws Exception
+	 */
+	@Override
+	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
+		logger.info("Tree sent to {}", viewer);
+
+		DataBean db = new DataBean(null);
+		db.addHDF5Tree(tree);
 		sendBeansToServer(viewer, db, null);
 	}
 

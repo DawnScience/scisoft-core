@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.IFileSaver;
 import gda.analysis.io.ScanFileHolderException;
-import gda.data.nexus.tree.NexusTreeProvider;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -98,15 +97,15 @@ public class ASCIIDataHolderSaver implements IFileSaver {
 		try {
 			out = new BufferedWriter(new FileWriter(fileName));
 			
-			if (dh instanceof NexusTreeProvider) {
-				NexusTreeProvider ndh = (NexusTreeProvider) dh;
-				if(ndh.getNexusTree() != null) {
-					wl(ndh.getNexusTree().toXML(true, false));
-					wl(ndh.getNexusTree().toXML(true, true));
-					wl(ndh.getNexusTree().toXML(false, false));
-					wl(ndh.getNexusTree().toXML(false, true));
-				}
-			}
+//			if (dh instanceof NexusTreeProvider) {
+//				NexusTreeProvider ndh = (NexusTreeProvider) dh;
+//				if(ndh.getNexusTree() != null) {
+//					wl(ndh.getNexusTree().toXML(true, false));
+//					wl(ndh.getNexusTree().toXML(true, true));
+//					wl(ndh.getNexusTree().toXML(false, false));
+//					wl(ndh.getNexusTree().toXML(false, true));
+//				}
+//			}
 
 			String[] headings = dh.getNames();
 			wl("NumberOfDatasets," + headings.length);

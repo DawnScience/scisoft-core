@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.IFileSaver;
 import gda.analysis.io.ScanFileHolderException;
-import gda.data.nexus.tree.NexusTreeProvider;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -406,13 +405,13 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 			// first write the header
 			out.write("&SRS\n");
-			if (dh instanceof NexusTreeProvider) {
-				NexusTreeProvider ndh = (NexusTreeProvider) dh;
-				if (ndh.getNexusTree() != null) {
-					out.write(ndh.getNexusTree().toXML(true, true));
-					out.write(ndh.getNexusTree().toText("", ":", "/", "|"));
-				}
-			}
+//			if (dh instanceof NexusTreeProvider) {
+//				NexusTreeProvider ndh = (NexusTreeProvider) dh;
+//				if (ndh.getNexusTree() != null) {
+//					out.write(ndh.getNexusTree().toXML(true, true));
+//					out.write(ndh.getNexusTree().toText("", ":", "/", "|"));
+//				}
+//			}
 			writeMetadata(out);
 			out.write("&END\n");
 

@@ -17,12 +17,12 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
-import gda.data.nexus.tree.INexusTree;
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -359,8 +359,13 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void viewNexusTree(String viewer, INexusTree tree) throws Exception {
-		throw new AssertionFailedError("Method unsupported due to INexusTree argument");
+	public void viewNexusTree(String viewer, HDF5File tree) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+	}
+
+	@Override
+	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
@@ -392,5 +397,4 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	public String[] getGuiNames() throws Exception {
 		return (String[]) request("getguinames");
 	}
-
 }

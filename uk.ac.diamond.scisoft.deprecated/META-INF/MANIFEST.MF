@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Deprecated
+Bundle-SymbolicName: uk.ac.diamond.scisoft.deprecated
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.junit4;bundle-version="4.8.1",
+ uk.ac.gda.libs;bundle-version="1.0.0",
+ uk.ac.gda.common;bundle-version="1.0.0",
+ uk.ac.gda.nexus;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: uk.ac.diamond.scisoft.analysis.dataset,
+ uk.ac.diamond.scisoft.analysis.io,
+ uk.ac.diamond.scisoft.analysis.plotserver

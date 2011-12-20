@@ -17,9 +17,9 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.data.nexus.tree.INexusTree;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -651,7 +651,14 @@ public interface ISDAPlotter {
 	 * @param tree
 	 * @throws Exception
 	 */
-	public void viewNexusTree(String viewer, INexusTree tree) throws Exception;
+	public void viewNexusTree(String viewer, HDF5File tree) throws Exception;
+
+	/**
+	 * @param viewer
+	 * @param tree
+	 * @throws Exception
+	 */
+	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception;
 
 	/**
 	 * General way to send a gui bean to plot server

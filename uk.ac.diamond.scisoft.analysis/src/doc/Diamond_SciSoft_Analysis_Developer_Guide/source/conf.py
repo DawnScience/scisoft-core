@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ###
 # Copyright 2011 Diamond Light Source Ltd.
 # 
@@ -13,8 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
-# -*- coding: utf-8 -*-
 
 # get standard configurations settings
 import os

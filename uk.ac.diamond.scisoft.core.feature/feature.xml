@@ -2,8 +2,8 @@
 <feature
       id="uk.ac.diamond.scisoft.core.feature"
       label="scisoft core"
-      version="8.18.0"
-      provider-name="Diamond Light Source">
+      version="1.0.0.qualifier"
+      provider-name="Diamond Light Source Ltd.">
 
    <description url="http://www.opengda.org/">
       The core scisoft analysis functionality is avalable through this
@@ -12,26 +12,33 @@ anlaysis codes.
    </description>
 
    <copyright url="www.opengda.org">
-      Copyright © 2011 Diamond Light Source Ltd.
-Contact :  ScientificSoftware@diamond.ac.uk
-This is free software: you can redistribute it and/or modify
-it under the
-terms of the GNU General Public License version 3 as published
-by the Free
-Software Foundation.
-This software is distributed in the hope that it will be useful,
-but  
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General 
-Public License for more details.
-You should have received a copy of the GNU General Public License
-along
-with this software. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+      Copyright 2012 Diamond Light Source Ltd.
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+ 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
    </copyright>
 
-   <license url="http://www.gnu.org/licenses/gpl.txt">
-      GPLv3
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+ 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
    </license>
 
    <plugin

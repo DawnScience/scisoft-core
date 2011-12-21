@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Deprecated
 Bundle-SymbolicName: uk.ac.diamond.scisoft.deprecated
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Require-Bundle: org.junit4;bundle-version="4.8.1",
  uk.ac.gda.libs;bundle-version="1.0.0",
  uk.ac.gda.common;bundle-version="1.0.0",

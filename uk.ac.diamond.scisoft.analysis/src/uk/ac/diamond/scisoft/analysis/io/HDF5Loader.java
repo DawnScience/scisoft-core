@@ -204,9 +204,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return tFile;
 	}
 
-	
-	
-
 	/**
 	 * @param root
 	 * @param keepBitWidth
@@ -227,6 +224,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
 	private static boolean copyAttributes(final HDF5Node nn, final HObject oo) throws Exception {
+		boolean hasNAPIMount = false;
+
 		if (oo.hasAttribute()) {
 			@SuppressWarnings("unchecked")
 			final List<Attribute> attributes = oo.getMetadata();
@@ -236,11 +235,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
-					return true;
+					hasNAPIMount = true;
 				}
 			}
 		}
-		return false;
+		return hasNAPIMount;
 	}
 
 	// get external node

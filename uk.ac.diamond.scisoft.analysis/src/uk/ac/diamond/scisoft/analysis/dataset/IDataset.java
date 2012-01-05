@@ -31,13 +31,6 @@ public interface IDataset extends ILazyDataset {
 	public int getItemsize();
 
 	/**
-	 * Set the name of the dataset
-	 * 
-	 * @param name
-	 */
-	public void setName(String name);
-
-	/**
 	 * @param pos
 	 * @return Item in given position as an object
 	 */

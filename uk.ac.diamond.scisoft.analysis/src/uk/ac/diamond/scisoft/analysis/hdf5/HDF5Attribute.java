@@ -52,6 +52,9 @@ public class HDF5Attribute {
 		value = AbstractDataset.array(attrValue, isUnsigned);
 	}
 
+	/**
+	 * @return name of attribute
+	 */
 	public String getName() {
 		return name;
 	}
@@ -68,46 +71,88 @@ public class HDF5Attribute {
 		return value.getString(0);
 	}
 
+	/**
+	 * Set name of attribute type
+	 * @param name
+	 */
 	public void setTypeName(String name) {
 		type = name;
 	}
 
+	/**
+	 * @return name of attribute type
+	 */
 	public String getTypeName() {
 		return type;
 	}
 
+	/**
+	 * Get dataset holding value(s) of attribute
+	 * @return dataset
+	 */
 	public AbstractDataset getValue() {
 		return value;
 	}
 
+	/**
+	 * Set value of attribute from given object
+	 * @param obj
+	 */
 	public void setValue(Object obj) {
 		setValue(obj, false);
 	}
 
+	/**
+	 * Set value of attribute from given object
+	 * @param obj
+	 * @param isUnsigned
+	 *            if true, interpret integer values as unsigned by increasing element bit width
+	 */
 	public void setValue(Object obj, boolean isUnsigned) {
 		value = AbstractDataset.array(obj, isUnsigned);
 	}
 
+	/**
+	 * @return shape of attribute dataset
+	 */
 	public int[] getShape() {
 		return value.getShape();
 	}
 
+	/**
+	 * @return rank of attribute dataset
+	 */
 	public int getRank() {
 		return value.getRank();
 	}
 
+	/**
+	 * Get number of items in attribute dataset
+	 * @return size
+	 */
 	public int getSize() {
 		return value.getSize();
 	}
 
+	/**
+	 * Get node name
+	 * @return name
+	 */
 	public String getNode() {
 		return node;
 	}
 
+	/**
+	 * Get full name of attribute including node and attribute name
+	 * @return name
+	 */
 	public String getFullName() {
 		return node + HDF5Node.ATTRIBUTE + name;
 	}
 
+	/**
+	 * @return true if attribute contains strings
+	 */
 	public boolean isString() {
 		return value != null && (value instanceof StringDataset);
 	}

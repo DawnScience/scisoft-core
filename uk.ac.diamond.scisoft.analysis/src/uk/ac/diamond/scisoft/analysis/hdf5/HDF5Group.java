@@ -25,16 +25,23 @@ import java.util.Map;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
- * A group acts like a file system directory. It can contain a reference to a global pool of nodes which is used for
- * checking linked nodes
+ * A group acts like a file system directory. It can contain a reference to a global pool of nodes
+ * which is used for checking linked nodes
  */
 public class HDF5Group extends HDF5Node {
 	protected Map<Long, HDF5Node> pool; // global pool of nodes
 
+	/**
+	 * Set a reference to the global pool of nodes
+	 * @param globalPool
+	 */
 	public void setGlobalPool(Map<Long, HDF5Node> globalPool) {
 		pool = globalPool;
 	}
 
+	/**
+	 * @return global pool of cached nodes
+	 */
 	public Map<Long, HDF5Node> getGlobalPool() {
 		return pool;
 	}
@@ -43,6 +50,10 @@ public class HDF5Group extends HDF5Node {
 	private int groups;
 	private final Map<String, HDF5NodeLink> nodes;
 
+	/**
+	 * Construct a HDF5 group with given object ID
+	 * @param oid object ID
+	 */
 	public HDF5Group(final long oid) {
 		super(oid);
 		datasets = 0;
@@ -50,18 +61,35 @@ public class HDF5Group extends HDF5Node {
 		nodes = new LinkedHashMap<String, HDF5NodeLink>();
 	}
 
+	/**
+	 * @param name
+	 * @return node link to child node of given name
+	 */
 	public HDF5NodeLink getNodeLink(String name) {
 		return nodes.get(name);
 	}
 
+	/**
+	 * @return number of child groups in group
+	 */
 	public int getNumberOfGroups() {
 		return groups;
 	}
 
+	/**
+	 * @param name
+	 * @return true if group contains child group of given name
+	 */
 	public boolean containsGroup(final String name) {
 		return nodes.containsKey(name) && nodes.get(name).getDestination() instanceof HDF5Group;
 	}
 
+	/**
+	 * Add (child) group with given path and name 
+	 * @param path
+	 * @param name
+	 * @param g group
+	 */
 	public void addGroup(final String path, final String name, final HDF5Group g) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -76,6 +104,12 @@ public class HDF5Group extends HDF5Node {
 		nodes.put(name, new HDF5NodeLink(path, name, this, g));
 	}
 
+	/**
+	 * Add linked group with given path and name
+	 * @param path
+	 * @param name
+	 * @param g linked group
+	 */
 	public void addGroup(final String path, final String name, final HDF5SymLink g) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -90,6 +124,11 @@ public class HDF5Group extends HDF5Node {
 		nodes.put(name, new HDF5NodeLink(path, name, this, g));
 	}
 
+	/**
+	 * Get (child) group of given name 
+	 * @param name
+	 * @return group
+	 */
 	public HDF5Group getGroup(final String name) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -102,6 +141,10 @@ public class HDF5Group extends HDF5Node {
 		throw new IllegalArgumentException("No such group of given name");
 	}
 
+	/**
+	 * Remove group of given name
+	 * @param name
+	 */
 	public void removeGroup(final String name) {
 		if (!nodes.containsKey(name))
 			throw new IllegalArgumentException("No name exists in this group");
@@ -116,6 +159,10 @@ public class HDF5Group extends HDF5Node {
 		groups--;
 	}
 
+	/**
+	 * Remove given group
+	 * @param g group
+	 */
 	public void removeGroup(final HDF5Group g) {
 		for (String n : nodes.keySet()) {
 			HDF5NodeLink l = nodes.get(n);
@@ -128,14 +175,27 @@ public class HDF5Group extends HDF5Node {
 		throw new IllegalArgumentException("Given group does not exist in this group");
 	}
 
+	/**
+	 * @return number of datasets held in group
+	 */
 	public int getNumberOfDatasets() {
 		return datasets;
 	}
 
+	/**
+	 * @param name
+	 * @return true if group contains dataset of given name
+	 */
 	public boolean containsDataset(final String name) {
 		return nodes.containsKey(name) && nodes.get(name).getDestination() instanceof HDF5Dataset;
 	}
 
+	/**
+	 * Add given dataset with given path and name 
+	 * @param path
+	 * @param name
+	 * @param d dataset
+	 */
 	public void addDataset(final String path, final String name, final HDF5Dataset d) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -150,6 +210,12 @@ public class HDF5Group extends HDF5Node {
 		nodes.put(name, new HDF5NodeLink(path, name, this, d));
 	}
 
+	/**
+	 * Add linked dataset with given path and name 
+	 * @param path
+	 * @param name
+	 * @param d linked dataset
+	 */
 	public void addDataset(final String path, final String name, final HDF5SymLink d) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -164,6 +230,11 @@ public class HDF5Group extends HDF5Node {
 		nodes.put(name, new HDF5NodeLink(path, name, this, d));
 	}
 
+	/**
+	 * Get dataset of given name
+	 * @param name
+	 * @return dataset
+	 */
 	public HDF5Dataset getDataset(final String name) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
@@ -176,6 +247,10 @@ public class HDF5Group extends HDF5Node {
 		throw new IllegalArgumentException("No such dataset of given name");
 	}
 
+	/**
+	 * Remove dataset of given name
+	 * @param name
+	 */
 	public void removeDataset(final String name) {
 		if (!nodes.containsKey(name))
 			throw new IllegalArgumentException("No name exists in this group");
@@ -190,6 +265,10 @@ public class HDF5Group extends HDF5Node {
 		datasets--;
 	}
 
+	/**
+	 * Remove given dataset
+	 * @param d dataset
+	 */
 	public void removeDataset(final HDF5Dataset d) {
 		for (String n : nodes.keySet()) {
 			HDF5NodeLink l = nodes.get(n);
@@ -202,6 +281,12 @@ public class HDF5Group extends HDF5Node {
 		throw new IllegalArgumentException("Given dataset does not exist in this group");
 	}
 
+	/**
+	 * Add given node with given path and name
+	 * @param path
+	 * @param name
+	 * @param node
+	 */
 	public void addNode(String path, String name, HDF5Node node) {
 		if (node == null)
 			return;
@@ -238,10 +323,16 @@ public class HDF5Group extends HDF5Node {
 		return s.toString();
 	}
 
+	/**
+	 * @return iterator over links to children in group
+	 */
 	public Iterator<HDF5NodeLink> getNodeLinkIterator() {
 		return nodes.values().iterator();
 	}
 
+	/**
+	 * @return iterator over child names in group
+	 */
 	public Iterator<String> getNodeNameIterator() {
 		return nodes.keySet().iterator();
 	}

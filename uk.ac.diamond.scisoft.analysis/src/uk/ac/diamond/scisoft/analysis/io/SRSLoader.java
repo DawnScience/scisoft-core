@@ -67,7 +67,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	public SRSLoader(String FileName) {
 		fileName = FileName;
 	}
-	
+
 	public void setFile(final String fileName) {
 		this.fileName = fileName;
 	}
@@ -504,7 +504,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 		};
 	}
-	
+
 	@Override
 	public void loadMetaData(IMonitor mon) throws Exception {
 		BufferedReader in = null;

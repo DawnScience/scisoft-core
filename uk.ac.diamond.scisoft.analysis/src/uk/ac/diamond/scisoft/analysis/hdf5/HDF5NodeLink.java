@@ -28,7 +28,7 @@ public class HDF5NodeLink implements Serializable {
 	private String path;
 
 	/**
-	 * A node link
+	 * Construct a HDF5 node link
 	 * @param path to source
 	 * @param link name (ends in '/' for groups)
 	 * @param source node which link starts from (can be null)
@@ -47,30 +47,51 @@ public class HDF5NodeLink implements Serializable {
 //		}
 	}
 
+	/**
+	 * @return source node
+	 */
 	public HDF5Node getSource() {
 		return from;
 	}
 
+	/**
+	 * @return destination node
+	 */
 	public HDF5Node getDestination() {
 		return to;
 	}
 
+	/**
+	 * @return true if destination node is a dataset
+	 */
 	public boolean isDestinationADataset() {
 		return to instanceof HDF5Dataset;
 	}
 
+	/**
+	 * @return true if destination node is a group
+	 */
 	public boolean isDestinationAGroup() {
 		return to instanceof HDF5Group;
 	}
 
+	/**
+	 * @return true if destination node is a symbolic link
+	 */
 	public boolean isDestinationASymLink() {
 		return to instanceof HDF5SymLink;
 	}
 
+	/**
+	 * @return name of node link
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return path of node link
+	 */
 	public String getPath() {
 		return path;
 	}
@@ -80,6 +101,9 @@ public class HDF5NodeLink implements Serializable {
 		return path + name + '\n' + to.toString();
 	}
 
+	/**
+	 * @return full name of node link
+	 */
 	public String getFullName() {
 		return path + name;
 	}

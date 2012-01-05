@@ -1244,8 +1244,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 					while (iter.hasNext() && numFiles < maxFiles) {
 						String filename = iter.next();
 						if (numFiles % jumpBetween == 0) {
-							guiBean.put(GuiParameters.IMAGEGRIDXPOS, new Integer(x));
-							guiBean.put(GuiParameters.IMAGEGRIDYPOS, new Integer(y));
+							guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(x));
+							guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(y));
 							guiBean.put(GuiParameters.FILENAME, filename);
 							plotServer.updateGui(viewName, guiBean);
 							filesPushed++;
@@ -1337,11 +1337,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			GuiBean guiBean = new GuiBean();
 			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
 			guiBean.put(GuiParameters.FILENAME, rawvolume);
-			guiBean.put(GuiParameters.VOLUMEHEADERSIZE, new Integer(headerSize));
-			guiBean.put(GuiParameters.VOLUMEVOXELTYPE, new Integer(voxelType));
-			guiBean.put(GuiParameters.VOLUMEXDIM, new Integer(xdim));
-			guiBean.put(GuiParameters.VOLUMEYDIM, new Integer(ydim));
-			guiBean.put(GuiParameters.VOLUMEZDIM, new Integer(zdim));
+			guiBean.put(GuiParameters.VOLUMEHEADERSIZE, Integer.valueOf(headerSize));
+			guiBean.put(GuiParameters.VOLUMEVOXELTYPE, Integer.valueOf(voxelType));
+			guiBean.put(GuiParameters.VOLUMEXDIM, Integer.valueOf(xdim));
+			guiBean.put(GuiParameters.VOLUMEYDIM, Integer.valueOf(ydim));
+			guiBean.put(GuiParameters.VOLUMEZDIM, Integer.valueOf(zdim));
 			plotServer.updateGui(viewName, guiBean);
 		}
 	}
@@ -1523,8 +1523,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
 
 		guiBean.put(GuiParameters.FILENAME, filename);
-		guiBean.put(GuiParameters.IMAGEGRIDXPOS, new Integer(gridX));
-		guiBean.put(GuiParameters.IMAGEGRIDYPOS, new Integer(gridY));
+		guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
+		guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
 		setGuiBean(viewName, guiBean);
 	}
 
@@ -1622,8 +1622,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
 
-		guiBean.put(GuiParameters.IMAGEGRIDXPOS, new Integer(gridX));
-		guiBean.put(GuiParameters.IMAGEGRIDYPOS, new Integer(gridY));
+		guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
+		guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
 		if (store) {
 			DataHolder tHolder = new DataHolder();
 

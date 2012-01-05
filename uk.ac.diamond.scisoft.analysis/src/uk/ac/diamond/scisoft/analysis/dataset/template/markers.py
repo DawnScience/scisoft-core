@@ -68,7 +68,7 @@ class transmutate(object):
         '''
         self.sdsclass = srcclass
         self.ddsclass = dstclass
-        self.commentline = "// Produced from %s.java by %s" % (srcclass, scriptfile)
+        self.commentline = "// This is generated from %s.java by %s" % (srcclass, scriptfile)
 
         if len(source) != len(destination):
             raise ValueError, "length of lists should be the same"
@@ -145,7 +145,8 @@ class transmutate(object):
         '''
         if self.isobj:
             l = line.replace(self.spclass, '')
-            l = l.replace('new ', '')
+            l = l.replace('.valueOf(', '')
+            l = l.replace(');', ';')
             return l
         return line.replace(self.spclass, self.dpclass)
 

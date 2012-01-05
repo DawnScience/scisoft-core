@@ -109,6 +109,11 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
 	public int getSize() {
 		return size;
 	}

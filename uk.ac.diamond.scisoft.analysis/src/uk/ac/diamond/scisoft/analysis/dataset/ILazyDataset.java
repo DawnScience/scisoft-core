@@ -28,7 +28,7 @@ import uk.ac.gda.monitor.IMonitor;
  * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero
  * rank and an empty array for shape.
  */
-public interface ILazyDataset extends Serializable, IMetadataProvider{
+public interface ILazyDataset extends Serializable, IMetadataProvider {
 	/**
 	 * @return Class of element
 	 */
@@ -40,6 +40,13 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @return name
 	 */
 	public String getName();
+
+	/**
+	 * Set the name of the dataset
+	 * 
+	 * @param name
+	 */
+	public void setName(String name);
 
 	/**
 	 * The size of the dataset is the number of items in the array
@@ -120,7 +127,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @return The dataset of the sliced data
 	 */
 	public IDataset getSlice(final Slice... slice);
-	
+
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
 	 * 
@@ -130,13 +137,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @throws ScanFileHolderException 
 	 */
 	public IDataset getSlice(IMonitor monitor, final Slice... slice) throws ScanFileHolderException;
-	
+
 	/**
 	 * Set metadata on the dataset
 	 * 
 	 * @param metadata
 	 */
 	public void setMetadata(IMetaData metadata);
-	
-	
 }

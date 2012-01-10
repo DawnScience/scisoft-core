@@ -47,7 +47,7 @@ public interface ISDAPlotter {
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param yAxis
-	 *            The dataset to use as the Y axis
+	 *            The dataset to use as the Y values
 	 * @throws Exception
 	 */
 	public void plot(String plotName, final IDataset yAxis) throws Exception;
@@ -58,73 +58,95 @@ public interface ISDAPlotter {
 	 * @param title
 	 *            The title of the plot
 	 * @param yAxis
-	 *            The dataset to use as the Y axis
+	 *            The dataset to use as the Y values
 	 * @throws Exception
 	 */
-	public void plot(String plotName, final String title, IDataset yAxis) throws Exception;
+	public void plot(String plotName, final String title, final IDataset yAxis) throws Exception;
 
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param xAxis
-	 *            The dataset to use as the X axis
+	 *            The dataset to use as the X values
 	 * @param yAxis
-	 *            The dataset to use as the Y axis
+	 *            The dataset to use as the Y values
 	 * @throws Exception
 	 */
 	public void plot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception;
 
-	public void plot(String plotName, IDataset[] xAxes, final IDataset yAxis) throws Exception;
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param xAxis2
+	 *            The dataset to use as the X values on the second X axis
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception;
 
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
+	 *            The dataset to use as the X values (can be null)
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @throws Exception
+	 */
 	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X axis
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, IDataset xAxis, IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X axis (can be null)
-	 * @param yAxes
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
-	public void plot(String plotName, IDataset xAxis, final IDataset[] yAxes) throws Exception;
-	
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
 	 * @param xAxes
-	 *            The dataset to use as the X axis
+	 *            The dataset to use as the X values
 	 * @param yAxes
-	 *            The dataset to use as the Y axis
+	 *            The datasets to use as the Y values
 	 * @throws Exception
 	 */
-	public void plot(String plotName, IDataset[] xAxes, final IDataset[] yAxes) throws Exception;
+	public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X axis
+	 * @param xAxes
+	 *            The dataset to use as the X values
 	 * @param yAxes
-	 *            The dataset to use as the Y axis
+	 *            The datasets to use as the Y values
 	 * @throws Exception
 	 */
-	public void plot(String plotName, final String title, IDataset[] xAxis, IDataset[] yAxes) throws Exception;
+	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
@@ -132,10 +154,10 @@ public interface ISDAPlotter {
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param yAxis
-	 *            The dataset to use as the Y axis
+	 *            The dataset to use as the Y values
 	 * @throws Exception
 	 */
-	public void updatePlot(String plotName, IDataset yAxis) throws Exception;
+	public void updatePlot(String plotName, final IDataset yAxis) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
@@ -145,7 +167,18 @@ public interface ISDAPlotter {
 	 * @param yAxis
 	 * @throws Exception
 	 */
-	public void updatePlot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception;
+	public void updatePlot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception;
+
+	/**
+	 * Update existing plot with new data, keeping zoom level
+	 * 
+	 * @param plotName
+	 * @param xAxis
+	 * @param xAxis2
+	 * @param yAxis
+	 * @throws Exception
+	 */
+	public void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
@@ -155,7 +188,17 @@ public interface ISDAPlotter {
 	 * @param yAxes
 	 * @throws Exception
 	 */
-	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception;
+	public void updatePlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception;
+
+	/**
+	 * Update existing plot with new data, keeping zoom level
+	 * 
+	 * @param plotName
+	 * @param xAxes
+	 * @param yAxes
+	 * @throws Exception
+	 */
+	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view

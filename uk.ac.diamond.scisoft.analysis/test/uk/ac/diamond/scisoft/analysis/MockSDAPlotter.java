@@ -42,7 +42,7 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, IDataset[] xAxis, IDataset yAxis) throws Exception {
+	public void plot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
 		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
 	}
 
@@ -87,7 +87,19 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
+	public void updatePlot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
+		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
+
+	}
+
+	@Override
 	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
+		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
+
+	}
+
+	@Override
+	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
 		throw new AssertionFailedError("Methods in MockSDAPlotter should not be called");
 
 	}

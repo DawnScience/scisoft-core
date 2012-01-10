@@ -42,8 +42,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	private Object request(String dest, Object... args) throws AnalysisRpcException {
 		return rpcClient.request(dest, args);
 	}
-	
-	
+
 	/**
 	 * Not part of ISDAPlotter, but rather a test method available in loopback.py to change
 	 * the port.
@@ -70,8 +69,8 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, IDataset[] xAxes, IDataset yAxis) throws Exception {
-		request("line", xAxes, yAxis, plotName);
+	public void plot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
+		request("line", xAxis, xAxis2, yAxis, plotName);
 	}
 
 	@Override
@@ -110,8 +109,18 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
+	public void updatePlot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
+		request("updateline", xAxis, xAxis2, yAxis, plotName);
+	}
+
+	@Override
 	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
 		request("updateline", xAxis, yAxes, plotName);
+	}
+
+	@Override
+	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+		request("updateline", xAxes, yAxes, plotName);
 	}
 
 	@Override

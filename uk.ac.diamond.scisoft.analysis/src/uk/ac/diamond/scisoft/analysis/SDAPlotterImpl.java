@@ -78,207 +78,106 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	protected PlotService getPlotService() {
 		return PlotServiceProvider.getPlotService();
 	}
-	
+
 	/** 
 	 * Not strictly private to enable other implementation of ISDAPlotter to
 	 * extend this one, such as versions used in test.
 	 */
 	protected SDAPlotterImpl() {
 	}
-	
-	
+
 	private boolean isDataND(IDataset data, int dim) {
 		return data.getRank() == dim;
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
+	private IDataset[] validateXAxis(final IDataset xAxis, final IDataset... yAxes) {
+		if (xAxis == null) {
+			if (yAxes == null || yAxes.length == 0) {
+				logger.error("No datasets specified");
+				throw new IllegalArgumentException("No datasets specified");
+			}
+			return new IDataset[] { AbstractDataset.arange(yAxes[0].getSize(), AbstractDataset.INT32) };
+		}
+
+		return new IDataset[] { xAxis };
+	}
+
+	private IDataset[] validateXAxes(final IDataset[] xAxes, final IDataset... yAxes) {
+		if (xAxes == null) {
+			return validateXAxis(null, yAxes);
+		}
+
+		return xAxes;
+	}
+
 	@Override
 	public void plot(String plotName, final IDataset yAxis) throws Exception {
 		plot(plotName, (String) null, yAxis);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot (can be null)
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
 	@Override
-	public void plot(String plotName, final String title, IDataset yAxis) throws Exception {
-		AbstractDataset xAxis = AbstractDataset.arange(yAxis.getSize(), AbstractDataset.INT32);
-		plot(plotName, title, new IDataset[] { xAxis }, new IDataset[] { yAxis }, false);
+	public void plot(String plotName, final String title, final IDataset yAxis) throws Exception {
+		plot(plotName, title, null, yAxis);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X axis
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
 	@Override
 	public void plot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		plot(plotName, null, new IDataset[] { xAxis }, new IDataset[] { yAxis }, false);
+		plot(plotName, (String) null, xAxis, yAxis);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxes
-	 *            The datasets to use as the X axes
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
 	@Override
-	public void plot(String plotName, IDataset[] xAxes, final IDataset yAxis) throws Exception {
-		plot(plotName, null, xAxes, new IDataset[] { yAxis }, false);
+	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis) throws Exception {
+		lplot(plotName, title, validateXAxis(xAxis, yAxis), null, new IDataset[] { yAxis }, false);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot (can be null)
-	 * @param xAxis
-	 *            The dataset to use as the X axis
-	 * @param yAxes
-	 *            The datasets to use as the Y axes
-	 * @throws Exception
-	 */
+	@Override
+	public void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
+		lplot(plotName, null, validateXAxis(xAxis, yAxis), xAxis2, new IDataset[] { yAxis }, false);
+	}
+
+	@Override
+	public void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes) throws Exception {
+		plot(plotName, (String) null, xAxis, yAxes);
+	}
+
 	@Override
 	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception {
-		plot(plotName, title, new IDataset[] { xAxis }, yAxes);
+		plot(plotName, title, validateXAxis(xAxis, yAxes), yAxes);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot (can be null)
-	 * @param xAxis
-	 *            The dataset to use as the X axis
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
-	@Override
-	public void plot(String plotName, final String title, IDataset xAxis, IDataset yAxis) throws Exception {
-		if (!isDataND(xAxis, 1)) {
-			logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
-					xAxis.getRank());
-			throw new Exception("Input x dataset has incorrect rank: it should be 1");
-		}
-		if (!isDataND(yAxis, 1)) {
-			logger.error("Input y dataset has incorrect rank: it has {} dimensions when it should be 1",
-					yAxis.getRank());
-			throw new Exception("Input y dataset has incorrect rank: it should be 1");
-		}
-
-		plot(plotName, title, new IDataset[] { xAxis }, new IDataset[] { yAxis }, false);
-	}
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X axis (can be null)
-	 * @param yAxes
-	 *            The datasets to use as the Y axes
-	 * @throws Exception
-	 */
-	@Override
-	public void plot(String plotName, IDataset xAxis, final IDataset[] yAxes) throws Exception {
-		if (xAxis == null) {
-			if (yAxes == null || yAxes.length == 0) {
-				logger.error("No datasets specified");
-				throw new Exception("No datasets specified");
-			}
-			xAxis = AbstractDataset.arange(yAxes[0].getSize(), AbstractDataset.INT32);
-		}
-		plot(plotName, null, new IDataset[] { xAxis }, yAxes, false);
-	}
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxes
-	 *            The datasets to use as the X axes (limit of two)
-	 * @param yAxes
-	 *            The datasets to use as the Y axes
-	 * @throws Exception
-	 */
 	@Override
 	public void plot(String plotName, IDataset[] xAxes, final IDataset[] yAxes) throws Exception {
-		plot(plotName, null, xAxes, yAxes, false);
+		plot(plotName, null, xAxes, yAxes);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxes
-	 *            The datasets to use as the X axes (limit of two)
-	 * @param yAxes
-	 *            The datasets to use as the Y axes
-	 * @throws Exception
-	 */
 	@Override
 	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		plot(plotName, title, xAxes, yAxes, false);
+		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, false);
 	}
 
-	/**
-	 * Update existing plot with new data
-	 * 
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param yAxis
-	 *            The dataset to use as the Y axis
-	 * @throws Exception
-	 */
 	@Override
-	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
-		AbstractDataset xAxis = AbstractDataset.arange(yAxis.getSize(), AbstractDataset.INT32);
-		plot(plotName, null, new IDataset[] { xAxis }, new IDataset[] { yAxis }, true);
+	public void updatePlot(String plotName, final IDataset yAxis) throws Exception {
+		updatePlot(plotName, null, yAxis);
 	}
 
-	/**
-	 * Update existing plot with new data
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxis
-	 * @throws Exception
-	 */
 	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception {
-		plot(plotName, null, new IDataset[] { xAxis }, new IDataset[] { yAxis }, true);
+	public void updatePlot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
+		updatePlot(plotName, xAxis, null, yAxis);
 	}
 
-	/**
-	 * Update existing plot with new data
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @throws Exception
-	 */
 	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		plot(plotName, null, new IDataset[] { xAxis }, yAxes, true);
+	public void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
+		lplot(plotName, null, validateXAxis(xAxis, yAxis), xAxis2, new IDataset[] { yAxis }, true);
+	}
+
+	@Override
+	public void updatePlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception {
+		updatePlot(plotName, validateXAxis(xAxis, yAxes), yAxes);
+	}
+
+	@Override
+	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+		lplot(plotName, null, validateXAxes(xAxes, yAxes), null, yAxes, true);
 	}
 
 	/**
@@ -286,15 +185,12 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param plotName
 	 * @param title (can be null)
 	 * @param xAxes
+	 * @param xAxis2
 	 * @param yAxes
 	 * @param updateMode if true, keep zoom settings
 	 * @throws Exception
 	 */
-	private void plot(final String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final boolean updateMode) throws Exception {
-		if (xAxes.length > 2) {
-			logger.error("More than two x datasets are not supported");
-			throw new Exception("More than two x datasets are not supported");
-		}
+	private void lplot(final String plotName, final String title, IDataset[] xAxes, final IDataset xAxis2, IDataset[] yAxes, final boolean updateMode) throws Exception {
 		for (IDataset x : xAxes) {
 			if (!isDataND(x, 1)) {
 				logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
@@ -314,25 +210,40 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		// Create the beans to transfer the data
 		DataBean dataBean = new DataBean(GuiPlotMode.ONED);
-		dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
-		if (xAxes.length > 1)
-			dataBean.addAxis(AxisMapBean.XAXIS2, xAxes[1]);
+		if (xAxes.length == 1) {
+			dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
+			for (int i = 0; i < yAxes.length; i++) {
+				try {
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i]));
+				} catch (DataBeanException e) {
+					logger.error("Problem adding data to bean as axis key does not exist");
+					e.printStackTrace();
+				}
+			}
+		} else {
+			if (xAxes.length != yAxes.length)
+				throw new IllegalArgumentException("# xAxis does not match # yAxis");
+			for (int i = 0; i < xAxes.length; i++) {
+				String axisStr = AxisMapBean.XAXIS + i;
+				dataBean.addAxis(axisStr, xAxes[i]);
+				// now add it to the plot data
+				try {
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i], axisStr));
+				} catch (DataBeanException e) {
+					logger.error("Problem adding data to bean as axis key does not exist");
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (xAxis2 != null)
+			dataBean.addAxis(AxisMapBean.XAXIS2, xAxis2);
 
 		if (updateMode)
 			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, "UPDATE");
 
 		if (title != null)
 			dataBean.putGuiParameter(GuiParameters.TITLE, title);
-
-		for (int i = 0; i < yAxes.length; i++) {
-			// now add it to the plot data
-			try {
-				dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i]));
-			} catch (DataBeanException e) {
-				logger.error("Problem adding data to bean as axis key does not exist");
-				e.printStackTrace();
-			}
-		}
 
 		sendBeansToServer(plotName, dataBean, null);
 	}
@@ -922,72 +833,29 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @throws Exception
-	 */
 	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		stackPlot(plotName, new IDataset[] { xAxis }, yAxes, null);
+	public void stackPlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception {
+		stackPlot(plotName, xAxis, yAxes, null);
 	}
 
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @param zAxis
-	 * @throws Exception
-	 */
 	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		stackPlot(plotName, new IDataset[] { xAxis }, yAxes, zAxis);
+	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, final IDataset zAxis) throws Exception {
+		stackPlot(plotName, validateXAxis(xAxis, yAxes), yAxes, zAxis);
 	}
 
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @throws Exception
-	 */
 	@Override
 	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
 		stackPlot(plotName, xAxes, yAxes, null);
 	}
 
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @param zAxis
-	 * @throws Exception
-	 */
 	@Override
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		stackPlot(plotName, xAxes, yAxes, zAxis, false);
+	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, final IDataset zAxis) throws Exception {
+		lstackPlot(plotName, validateXAxes(xAxes, yAxes), yAxes, zAxis, false);
 	}
 
-	/**
-	 * Update stack with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @param zAxis
-	 * @throws Exception
-	 */
 	@Override
-	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		stackPlot(plotName, xAxes, yAxes, zAxis, true);
+	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, final IDataset zAxis) throws Exception {
+		lstackPlot(plotName, validateXAxes(xAxes, yAxes), yAxes, zAxis, true);
 	}
 
 	/**
@@ -999,12 +867,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param updateMode if true, keep zoom settings
 	 * @throws Exception
 	 */
-	private void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis, boolean updateMode) throws Exception {
-		if (xAxes == null) {
-			logger.error("No x axes defined");
-			throw new Exception("No x axes defined");
-		}
-
+	private void lstackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis, boolean updateMode) throws Exception {
 		for (IDataset x : xAxes) {
 			if (!isDataND(x, 1)) {
 				logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
@@ -1013,21 +876,38 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			}
 		}
 
-		DataBean dataBean = new DataBean(GuiPlotMode.ONED_THREED);
-		if (xAxes.length == 1) {
-			dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
-		} else {
-			if (xAxes.length != yAxes.length)
-				throw new Exception("# xAxis does not match # yAxis");
-			for (int i = 0; i < xAxes.length; i++) {
-				dataBean.addAxis(AxisMapBean.XAXIS + i, xAxes[i]);
-			}
-		}
 		for (IDataset y : yAxes) {
 			if (!isDataND(y, 1)) {
 				logger.error("Input y dataset has incorrect rank: it has {} dimensions when it should be 1",
 						y.getRank());
 				throw new Exception("Input y dataset has incorrect rank: it should be 1");
+			}
+		}
+
+		DataBean dataBean = new DataBean(GuiPlotMode.ONED_THREED);
+		if (xAxes.length == 1) {
+			dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
+			for (int i = 0; i < yAxes.length; i++) {
+				// now add it to the plot data
+				try {
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i]));
+				} catch (DataBeanException e) {
+					e.printStackTrace();
+				}
+			}
+
+		} else {
+			if (xAxes.length != yAxes.length)
+				throw new Exception("# xAxis does not match # yAxis");
+			for (int i = 0; i < xAxes.length; i++) {
+				String axisStr = AxisMapBean.XAXIS + i;
+				dataBean.addAxis(axisStr, xAxes[i]);
+				// now add it to the plot data
+				try {
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i], axisStr));
+				} catch (DataBeanException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -1042,18 +922,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		if (updateMode)
 			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, "UPDATE");
-
-		for (int i = 0; i < yAxes.length; i++) {
-			// now add it to the plot data
-			try {
-				if (xAxes.length == 1)
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i], AxisMapBean.XAXIS));
-				else
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i], AxisMapBean.XAXIS + i));
-			} catch (DataBeanException e) {
-				e.printStackTrace();
-			}
-		}
 
 		GuiBean guibean = new GuiBean();
 		guibean.put(GuiParameters.PLOTMODE, GuiPlotMode.ONED_THREED);
@@ -1769,5 +1637,4 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	public String[] getGuiNames() throws Exception {
 		return getPlotService().getGuiNames();
 	}
-
 }

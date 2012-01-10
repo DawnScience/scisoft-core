@@ -37,20 +37,20 @@ public class GridImageEntry implements Serializable {
 	 */
 	public GridImageEntry(String filename,int gridRow, int gridColumn) {
 		this.filename = filename;
-		gridRowPos = new Integer(gridRow);
-		gridColumnPos = new Integer(gridColumn);
+		gridRowPos = Integer.valueOf(gridRow);
+		gridColumnPos = Integer.valueOf(gridColumn);
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public Integer getGridRowPos() {
 		return gridRowPos;
 	}
-	
+
 	public Integer getGridColumnPos() {
 		return gridColumnPos;
 	}
-	
+
 }

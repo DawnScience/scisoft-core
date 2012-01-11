@@ -89,8 +89,15 @@ public class HDF5Node implements Serializable {
 	/**
 	 * @return iterator over attribute names in node
 	 */
-	public Iterator<String> attributeNameIterator() {
+	public Iterator<String> getAttributeNameIterator() {
 		return attributes.keySet().iterator();
+	}
+
+	/**
+	 * @return iterator over attribute names in node
+	 */
+	public Iterator<HDF5Attribute> getAttributeIterator() {
+		return attributes.values().iterator();
 	}
 
 	@Override

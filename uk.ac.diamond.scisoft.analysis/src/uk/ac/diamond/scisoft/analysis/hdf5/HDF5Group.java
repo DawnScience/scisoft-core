@@ -25,10 +25,10 @@ import java.util.Map;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
- * A group acts like a file system directory. It can contain a reference to a global pool of nodes
- * which is used for checking linked nodes
+ * A group acts like a file system directory. It holds a map of node links and can contain a
+ * reference to a global pool of nodes which is used for checking linked nodes
  */
-public class HDF5Group extends HDF5Node {
+public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	protected Map<Long, HDF5Node> pool; // global pool of nodes
 
 	/**
@@ -81,7 +81,7 @@ public class HDF5Group extends HDF5Node {
 	 * @return true if group contains child group of given name
 	 */
 	public boolean containsGroup(final String name) {
-		return nodes.containsKey(name) && nodes.get(name).getDestination() instanceof HDF5Group;
+		return nodes.containsKey(name) && nodes.get(name).isDestinationAGroup();
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class HDF5Group extends HDF5Node {
 	 * @return true if group contains dataset of given name
 	 */
 	public boolean containsDataset(final String name) {
-		return nodes.containsKey(name) && nodes.get(name).getDestination() instanceof HDF5Dataset;
+		return nodes.containsKey(name) && nodes.get(name).isDestinationADataset();
 	}
 
 	/**
@@ -324,13 +324,6 @@ public class HDF5Group extends HDF5Node {
 	}
 
 	/**
-	 * @return iterator over links to children in group
-	 */
-	public Iterator<HDF5NodeLink> getNodeLinkIterator() {
-		return nodes.values().iterator();
-	}
-
-	/**
 	 * @return iterator over child names in group
 	 */
 	public Iterator<String> getNodeNameIterator() {
@@ -351,11 +344,9 @@ public class HDF5Group extends HDF5Node {
 	public List<ILazyDataset> getDatasets(final String name) {
 		final ArrayList<ILazyDataset> list = new ArrayList<ILazyDataset>();
 
-		final Iterator<HDF5NodeLink> iter = getNodeLinkIterator();
+		for (HDF5NodeLink l : this)
+			findDatasets(name, list, l);
 
-		while (iter.hasNext()) {
-			findDatasets(name, list, iter.next());
-		}
 		return list;
 	}
 
@@ -375,11 +366,8 @@ public class HDF5Group extends HDF5Node {
 			return;
 
 		if (n instanceof HDF5Group) {
-			final Iterator<HDF5NodeLink> iter = ((HDF5Group) n).getNodeLinkIterator();
-
-			while (iter.hasNext()) {
-				findDatasets(name, list, iter.next());
-			}
+			for (HDF5NodeLink l : (HDF5Group) n)
+				findDatasets(name, list, l);
 		} else if (n instanceof HDF5Dataset) {
 			if (link.getName().equals(name)) {
 				ILazyDataset dataset = ((HDF5Dataset) n).getDataset();
@@ -427,5 +415,13 @@ public class HDF5Group extends HDF5Node {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @return iterator over links to children in group
+	 */
+	@Override
+	public Iterator<HDF5NodeLink> iterator() {
+		return nodes.values().iterator();
 	}
 }

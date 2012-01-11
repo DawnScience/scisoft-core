@@ -178,14 +178,21 @@ class SRSLoader(PythonLoader):
         Convert to all data to dictionary. Keys are column headers and values are
         1D NumPy arrays 
         '''
-        cols = cols.split('\t')
+        import re
+        cs_regex = re.compile('\s+')
+
+        cols = cs_regex.split(cols)
         lc = len(cols)
         data = [[] for dummy in cols]
         for t in text:
-            r = t.split('\t')
-            for i,v in enumerate(r):
-                data[i].append(SRSLoader._parse_value(v))
+            r = cs_regex.split(t.strip())
             lr = len(r)
+            if lr > lc:
+                print 'Long row!'
+                lr = lc
+            for i in range(lr):
+                data[i].append(SRSLoader._parse_value(r[i]))
+
             if lr < lc:
                 print 'Short row!'
                 for i in range(lr, lc):
@@ -338,8 +345,12 @@ _jpegscaledsave = None
 
 #from pycore import asDatasetDict, asDatasetList, toList
 
-from pynxio import NXLoader
-from pyhdf5io import HDF5Loader
+try:
+    from pynxio import NXLoader
+    from pyhdf5io import HDF5Loader
+except:
+    NXLoader = None
+    HDF5Loader = None
 
 input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "jpeg": JPEGLoader,

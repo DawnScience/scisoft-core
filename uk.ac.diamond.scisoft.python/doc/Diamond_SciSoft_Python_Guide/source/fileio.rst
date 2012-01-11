@@ -15,7 +15,7 @@ analysis plugin. This is done using the following method::
 This loads up the file as a list/ordered dictionary of datasets. Optionally
 arguments can be specified::
 
-    dh = dnp.io.load(name, formats=None, withmetadata=True, ascolour=False)
+    dh = dnp.io.load(name, format=None, withmetadata=True, ascolour=False)
 
 where:
 

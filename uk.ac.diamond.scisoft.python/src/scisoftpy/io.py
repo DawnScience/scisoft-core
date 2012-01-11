@@ -54,11 +54,11 @@ def _findsuffix(name, formats):
             return _extra_suffices[suffix]
     return None
 
-def load(name, formats=None, withmetadata=True, ascolour=False, **kwarg):
+def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **kwarg):
     '''Load a file and return a list of datasets (or a dictionary of datasets) and
     optionally a dictionary of metadata items
 
-    formats -- list of formats to try. Supported input formats:
+    format (or formats) -- list of formats to try. Supported input formats:
         png, gif, jpeg, tiff
         adsc, crysalis, mar, pilatus, ocs -> image detectors
         cbf
@@ -76,25 +76,35 @@ def load(name, formats=None, withmetadata=True, ascolour=False, **kwarg):
         f.close()
     except:
         raise ValueError, 'File %s does not exist' % name
-        
+
+    lformats = None
     if formats is None:
+        lformats = formats
+    if lformats is None:
+        if format is not None:
+            lformats = format
+    else:
+        if format is not None:
+            lformats.extend(format)
+        
+    if lformats is None:
         # parse name to find extension and match with loader
         suf = _findsuffix(name, _iformats)
         if suf:
-            formats = [suf]
+            lformats = [suf]
 
-    if formats: # remove unsupported
-        for f in formats:
+    if lformats: # remove unsupported
+        for f in lformats:
             if f not in _iformats:
-                formats.remove(f)
+                lformats.remove(f)
 
     lfh = None
     loaders = None
 
-    if not formats:
+    if not lformats:
         loaders = _loaders
     else:
-        loaders = [ _iformats[f] for f in formats ]
+        loaders = [ _iformats[f] for f in lformats ]
 
     if loaders:
         for l in loaders:

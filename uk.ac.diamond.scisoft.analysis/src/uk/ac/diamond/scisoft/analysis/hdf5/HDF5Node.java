@@ -93,6 +93,13 @@ public class HDF5Node implements Serializable {
 		return attributes.keySet().iterator();
 	}
 
+	/**
+	 * @return iterator over attribute names in node
+	 */
+	public Iterator<HDF5Attribute> getAttributeIterator() {
+		return attributes.values().iterator();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder();

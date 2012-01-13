@@ -149,7 +149,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.updatePlot(plotName, xAxis);
+		redirectPlotter.updatePlot(plotName, yAxis);
 		Assert.assertTrue(passed[0]);
 	}
 

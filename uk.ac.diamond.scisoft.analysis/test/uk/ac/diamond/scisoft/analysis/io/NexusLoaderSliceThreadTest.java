@@ -21,7 +21,6 @@ import java.io.File;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -54,7 +53,6 @@ public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 	}
 
 	@Test
-//	@Ignore("2010/11/05 Test ignored since not consistently passing in Hudson")
 	public void testWithNThreads() throws Exception {
 		super.testWithNThreads(100);
 	}

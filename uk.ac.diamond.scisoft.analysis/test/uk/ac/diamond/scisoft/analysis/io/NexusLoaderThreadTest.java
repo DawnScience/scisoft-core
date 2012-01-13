@@ -40,7 +40,7 @@ public class NexusLoaderThreadTest extends LoaderThreadTestBase {
 
 	@Override
 	@Test
-	@Ignore("2012/01/10 Test ignored since not consistently passing in Hudson")
+	@Ignore("2012/01/10 Test ignored since not consistently passing in Jenkins")
 	public void testWithTenThreads() throws Exception {
 		super.testWithTenThreads();
 	}

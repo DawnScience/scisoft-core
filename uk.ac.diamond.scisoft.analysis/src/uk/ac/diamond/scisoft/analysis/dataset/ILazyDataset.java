@@ -95,11 +95,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
 	 * 
 	 * @param start
-	 *            specifies the starting indexes
+	 *            specifies the starting indexes (can be null for origin)
 	 * @param stop
-	 *            specifies the stopping indexes
+	 *            specifies the stopping indexes (can be null for end)
 	 * @param step
-	 *            specifies the steps in the slice
+	 *            specifies the steps in the slice (can be null for unit steps)
 	 * @return The dataset of the sliced data
 	 */
 	public IDataset getSlice(final int[] start, final int[] stop, final int[] step);
@@ -109,11 +109,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * 
 	 * @param monitor
 	 * @param start
-	 *            specifies the starting indexes
+	 *            specifies the starting indexes (can be null for origin)
 	 * @param stop
-	 *            specifies the stopping indexes
+	 *            specifies the stopping indexes (can be null for end)
 	 * @param step
-	 *            specifies the steps in the slice
+	 *            specifies the steps in the slice (can be null for unit steps)
 	 * @return The dataset of the sliced data
 	 * @throws ScanFileHolderException 
 	 */
@@ -144,4 +144,10 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @param metadata
 	 */
 	public void setMetadata(IMetaData metadata);
+
+	/**
+	 * Clone dataset without copying data array
+	 * @return a (shallow) copy of dataset
+	 */
+	public ILazyDataset clone();
 }

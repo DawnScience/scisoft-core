@@ -291,6 +291,9 @@ public class Slice {
 	
 		int i = 0;
 		for (; i < length; i++) {
+			if (length > rank)
+				break;
+
 			@SuppressWarnings("null")
 			Slice s = slice[i];
 			if (s == null) {

@@ -933,9 +933,7 @@ public abstract class AbstractDataset implements IDataset {
 
 		if (step == null) {
 			lstep = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				lstep[i] = 1;
-			}
+			Arrays.fill(lstep, 1);
 		} else {
 			lstep = step;
 		}

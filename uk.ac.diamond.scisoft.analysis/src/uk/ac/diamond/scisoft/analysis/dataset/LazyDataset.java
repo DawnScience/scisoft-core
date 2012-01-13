@@ -60,6 +60,11 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
+	public LazyDataset clone() {
+		return new LazyDataset(new String(name), dtype, shape.clone(), loader);
+	}
+
+	@Override
 	public Class<?> elementClass() {
 		return AbstractDataset.elementClass(dtype);
 	}

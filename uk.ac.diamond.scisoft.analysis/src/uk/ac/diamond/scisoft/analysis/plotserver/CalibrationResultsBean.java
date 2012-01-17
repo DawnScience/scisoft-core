@@ -28,14 +28,16 @@ class CalibrationResultsData implements Serializable {
 	private AFunction fuction;
 	private ArrayList<CalibrationPeak> peakList;
 	private double meanCameraLength;
+	private String unit;
 	
-	CalibrationResultsData(AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength) {
+	CalibrationResultsData(AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength, String unit) {
 		super();
 		this.fuction= calibrationFunction;
 		this.peakList = new ArrayList<CalibrationPeak>();
 		for(CalibrationPeak p : peaks)
 			peakList.add(p);
 		this.meanCameraLength = meanCameraLength;
+		this.unit = unit;
 	}
 	
 	public AFunction getFuction() {
@@ -49,6 +51,10 @@ class CalibrationResultsData implements Serializable {
 	public double getMeanCameraLength() {
 		return meanCameraLength;
 	}
+	
+	public String getUnit() {
+		return unit;
+	}
 }
 
 public class CalibrationResultsBean implements Serializable {
@@ -59,15 +65,15 @@ public class CalibrationResultsBean implements Serializable {
 		results = new HashMap<String, CalibrationResultsData>();
 	}
 	
-	public CalibrationResultsBean(String experiment, AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength) {
+	public CalibrationResultsBean(String experiment, AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength, String unit) {
 		
 		results = new HashMap<String, CalibrationResultsData>();
-		CalibrationResultsData newData = new CalibrationResultsData(calibrationFunction, peaks, meanCameraLength); 
+		CalibrationResultsData newData = new CalibrationResultsData(calibrationFunction, peaks, meanCameraLength, unit); 
 		results.put(experiment, newData);
 	}
 	
-	public void putCalibrationResult(String experiment, AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength) {
-		CalibrationResultsData newData = new CalibrationResultsData(calibrationFunction, peaks, meanCameraLength); 
+	public void putCalibrationResult(String experiment, AFunction calibrationFunction, List<CalibrationPeak> peaks, double meanCameraLength, String unit) {
+		CalibrationResultsData newData = new CalibrationResultsData(calibrationFunction, peaks, meanCameraLength, unit); 
 		results.put(experiment, newData);
 	}
 	
@@ -81,6 +87,10 @@ public class CalibrationResultsBean implements Serializable {
 
 	public double getMeanCameraLength(String experiment) {
 		return results.get(experiment).getMeanCameraLength();
+	}
+	
+	public String getUnit(String experiment) {
+		return results.get(experiment).getUnit();
 	}
 	
 	public boolean containsKey(String experiment) {

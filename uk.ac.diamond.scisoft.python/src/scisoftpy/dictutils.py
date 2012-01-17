@@ -46,11 +46,11 @@ def sanitise_name(text):
     from string import digits
     sane = text.translate(_translator)
     if sane[0] in digits:
-        print "First character of '%s' is a digit so prepending an underscore" % sane
         sane = '_' + sane
+        print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane
     if sane in _method_names:
         sane = '_' + sane
-        print "'%s' is a reserved method name so prepending an underscore" % sane
+        print "Warning in sanitising dict keys: '%s' is a reserved method name so prepending an underscore" % sane
     if sane.startswith('__'):
         raise ValueError, "Cannot use a name that starts with double underscores: %s" % sane
 

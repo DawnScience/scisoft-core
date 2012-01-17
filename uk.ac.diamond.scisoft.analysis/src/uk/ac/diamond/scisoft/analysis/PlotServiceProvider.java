@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import java.lang.reflect.Method;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,6 @@ import uk.ac.diamond.scisoft.analysis.plotserver.RMIPlotServer;
 public class PlotServiceProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(PlotServiceProvider.class);
-	private static final String CORBAPLOTSERVER = "uk.ac.diamond.scisoft.analysis.plotserver.PlotServerBase";
 	private static PlotService plotService = null;
 
 	public static PlotService getPlotService() {
@@ -51,12 +48,10 @@ public class PlotServiceProvider {
 	public static PlotService getPlotService(String hostname) {
 		if (plotService == null) {
 			try {
-				Class<?> returnClass = Class.forName(CORBAPLOTSERVER);
-				Method member = returnClass.getMethod("getPlotServer", new Class<?>[] {});
-				plotService = (PlotServer) member.invoke(null, new Object[] {});
+				plotService=PlotServerProvider.getPlotServer();
 				if (plotService == null)
-					throw new NullPointerException("Did not really work did it?");
-				logger.info("Using PlotServerBase CORBA");
+					throw new NullPointerException("No registered plotserver");
+				logger.info("Using registered plotserver");
 			} catch (Exception e) {
 				try {
 					plotService = (PlotService) RMIServerProvider.getInstance().lookup(hostname,

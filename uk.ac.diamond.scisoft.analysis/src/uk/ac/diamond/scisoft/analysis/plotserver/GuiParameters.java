@@ -231,5 +231,10 @@ public final class GuiParameters implements Serializable {
 	 * Calibration function for NCD
 	 */
 	public static final GuiParameters CALIBRATIONFUNCTIONNCD = new GuiParameters("CalibrationFunction"); // Unknown/unused?
+	
+	/** 
+ 	 * Specifies the OneDFile 
+ 	 */ 
+ 	public static final GuiParameters ONEDFILE = new GuiParameters("OneDFile", OneDDataFilePlotDefinition.class); 
 
 }

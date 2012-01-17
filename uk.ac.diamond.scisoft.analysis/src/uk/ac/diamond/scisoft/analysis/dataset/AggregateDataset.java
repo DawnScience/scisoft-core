@@ -124,6 +124,14 @@ public class AggregateDataset implements ILazyDataset {
 				dtype = AbstractDataset.getBestDType(dtype, AbstractDataset.getDTypeFromClass(d.elementClass()));
 			}
 		}
+
+		for (ILazyDataset d : data) {
+			String n = d.getName();
+			if (n != null) {
+				name = n;
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -264,5 +272,29 @@ public class AggregateDataset implements ILazyDataset {
 	@Override
 	public AggregateDataset clone() {
 		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+
+		if (name != null && name.length() > 0) {
+			out.append("Aggregate dataset '");
+			out.append(name);
+			out.append("' has shape [");
+		} else {
+			out.append("Aggregate dataset shape is [");
+		}
+		int rank = shape == null ? 0 : shape.length;
+
+		if (rank > 0 && shape[0] > 0) {
+			out.append(shape[0]);
+		}
+		for (int i = 1; i < rank; i++) {
+			out.append(", " + shape[i]);
+		}
+		out.append(']');
+
+		return out.toString();
 	}
 }

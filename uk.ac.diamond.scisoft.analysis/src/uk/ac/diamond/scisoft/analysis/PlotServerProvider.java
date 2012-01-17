@@ -45,7 +45,7 @@ public class PlotServerProvider {
 			try {
 				plotServer = new RMIPlotServer();
 			} catch (Exception e) {
-				logger.info("RMIPlotserver can't be created using SimplePlotServer instead", e);
+				logger.info("RMIPlotserver can't be created, using SimplePlotServer instead", e);
 				plotServer = new SimplePlotServer();
 			}
 

@@ -69,7 +69,7 @@ import uk.ac.gda.monitor.IMonitor;
 /**
  * Load HDF5 files using NCSA's Java library
  */
-public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
+public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISliceLoader {
 	transient protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
 	private String fileName;
@@ -101,12 +101,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public DataHolder loadFile() throws ScanFileHolderException {
+	public synchronized DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile(null);
 	}
 
 	@Override
-	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public synchronized DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 
 		DataHolder dh = null;
 		dh = new DataHolder();
@@ -126,7 +126,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	/**
 	 * @param group - group to investigate
-	 * @return a Map of all the data in the group collected recursively
+	 * @return a map of all the data in the group collected recursively
 	 */
 	public static Map<String, ILazyDataset> createDatasetsMap(HDF5Group group) {
 		HashMap<String, ILazyDataset> map = new HashMap<String, ILazyDataset>();
@@ -140,18 +140,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param map - the map to add items to, to aid the recursive method
 	 */
 	private static void addAllDatasetsToMap(HDF5Group group, Map<String, ILazyDataset> map) {
-		
-		Iterator<HDF5NodeLink> itt = group.getNodeLinkIterator();
-		while (itt.hasNext()) {
-			HDF5NodeLink node = itt.next();
-			
-			if(node.isDestinationAGroup()) {
-				addAllDatasetsToMap((HDF5Group) node.getDestination(), map);
+
+		for (HDF5NodeLink l : group) {
+			if (l.isDestinationAGroup()) {
+				addAllDatasetsToMap((HDF5Group) l.getDestination(), map);
 			}
 			
-			if(node.isDestinationADataset()) {
-				ILazyDataset dataset = ((HDF5Dataset)node.getDestination()).getDataset();
-				map.put(node.getFullName(), dataset);
+			if (l.isDestinationADataset()) {
+				ILazyDataset dataset = ((HDF5Dataset) l.getDestination()).getDataset();
+				map.put(l.getFullName(), dataset);
 			}
 		}
 	}
@@ -162,7 +159,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	HDF5File tFile = null;
 
-	public HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
+	public synchronized HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
 		
 		if (!monitorIncrement(mon)) {
 			return null;
@@ -204,9 +201,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return tFile;
 	}
 
-	
-	
-
 	/**
 	 * @param root
 	 * @param keepBitWidth
@@ -226,21 +220,28 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private static final String NAPISCHEME = "nxfile";
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final HDF5Node nn, final HObject oo) throws Exception {
-		if (oo.hasAttribute()) {
-			@SuppressWarnings("unchecked")
-			final List<Attribute> attributes = oo.getMetadata();
-			final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? HDF5File.ROOT : oo.getFullName();
-			for (Attribute a : attributes) {
-				HDF5Attribute h = new HDF5Attribute(fname, a.getName(), a.getValue(), a.isUnsigned());
-				h.setTypeName(getTypeName(a.getType()));
-				nn.addAttribute(h);
-				if (a.getName().equals(NAPIMOUNT)) {
-					return true;
+	private static boolean copyAttributes(final HDF5Node nn, final HObject oo) {
+		boolean hasNAPIMount = false;
+
+		try {
+			if (oo.hasAttribute()) {
+				@SuppressWarnings("unchecked")
+				final List<Attribute> attributes = oo.getMetadata();
+				final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? HDF5File.ROOT : oo
+						.getFullName();
+				for (Attribute a : attributes) {
+					HDF5Attribute h = new HDF5Attribute(fname, a.getName(), a.getValue(), a.isUnsigned());
+					h.setTypeName(getTypeName(a.getType()));
+					nn.addAttribute(h);
+					if (a.getName().equals(NAPIMOUNT)) {
+						hasNAPIMount = true;
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.warn("Problem with attributes on {}: {}", oo.getFullName(), e.getMessage());
 		}
-		return false;
+		return hasNAPIMount;
 	}
 
 	// get external node
@@ -316,33 +317,33 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			throw new IllegalArgumentException("Link target cannot be resolved: " + target);
-			//			String lfile = null;
-			//			String link = null;
-			//			if (target.contains(LINKSEPARATOR)) { // external link?
-			//				int i = target.indexOf(LINKSEPARATOR);
-			//				lfile = target.substring(0, i);
-			//				link = target.substring(i+LINKSEPARATOR.length(), target.length());
-			//			} else {
-			//				if (target.startsWith(HDF5File.FILE_STARTER))
-			//					link = target.substring(HDF5File.FILE_STARTER.length());
-			//				else
-			//					link = target;
-			//			}
-			//
-			//			if (lfile == null || file.getFilename().equals(lfile)) {
-			//				// link is internal, i.e. soft
-			//				return new HDF5SymLink(file, link);
-			//			}
-			//
-			//			if (!lfile.startsWith(HDF5File.ROOT)) { // linked file path is relative so make full path
-			//				String dir = file.getFilename();
-			//				lfile = dir.substring(0, dir.lastIndexOf(HDF5Node.SEPARATOR)+1) + lfile;
-			//			}
-			//			HDF5File linkedFile = new HDF5File(lfile);
-			//			linkedFile.setHostname(file.getHostname());
-			//			return new HDF5SymLink(linkedFile, link);
-
-			//			return getExternalNode(pool, lfile, link, keepBitWidth);
+//			String lfile = null;
+//			String link = null;
+//			if (target.contains(LINKSEPARATOR)) { // external link?
+//				int i = target.indexOf(LINKSEPARATOR);
+//				lfile = target.substring(0, i);
+//				link = target.substring(i + LINKSEPARATOR.length(), target.length());
+//			} else {
+//				if (target.startsWith(HDF5File.FILE_STARTER))
+//					link = target.substring(HDF5File.FILE_STARTER.length());
+//				else
+//					link = target;
+//			}
+//
+//			if (lfile == null || file.getFilename().equals(lfile)) {
+//				// link is internal, i.e. soft
+//				return new HDF5SymLink(file, link);
+//			}
+//
+//			if (!lfile.startsWith(HDF5File.ROOT)) { // linked file path is relative so make full path
+//				String dir = file.getFilename();
+//				lfile = dir.substring(0, dir.lastIndexOf(HDF5Node.SEPARATOR) + 1) + lfile;
+//			}
+//			HDF5File linkedFile = new HDF5File(lfile);
+//			linkedFile.setHostname(file.getHostname());
+//			return new HDF5SymLink(linkedFile, link);
+//
+//			return getExternalNode(pool, lfile, link, keepBitWidth);
 		}
 
 		final Long oid = oo.getOID()[0] + file.getFilename().hashCode()*17; // include file name in ID
@@ -566,6 +567,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			osd.init();
 			dims = osd.getDims();
 		}
+		if (dims == null) {
+			System.err.println("Problem getting dimensions!");
+			osd.init();
+			dims = osd.getDims();
+		}
 		final int[] trueShape = new int[dims.length];
 		for (int i = 0; i < dims.length; i++) {
 			long d = dims[i];
@@ -771,6 +777,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				final long[] sstride = dobj.getStride();     // source steps
 				final long[] dsize = dobj.getSelectedDims(); // destination size
 				final int rank = sstart.length;
+				final int type;
+				if (dtype < 0) {
+					final Datatype datatype = dobj.getDatatype();
+					type = getDtype(datatype.getDatatypeClass(), datatype.getDatatypeSize());
+				} else {
+					type = dtype;
+				}
 
 				for (int i = 0; i < rank; i++) {
 					sstart[i] = start[i];
@@ -795,7 +808,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 				if (all) {
 					try {
-						data = createDataset(dobj.read(), count, dtype, extend);
+						data = createDataset(dobj.read(), count, type, extend);
 					} catch (HDF5Exception e) {
 						throw new ScanFileHolderException("Problem reading dataset from HDF5 file", e);
 					}
@@ -832,7 +845,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					for (int i = 0; i < axes.length; i++) {
 						axes[i] = notSplit.get(i);
 					}
-					data = AbstractDataset.zeros(count, dtype);
+					data = AbstractDataset.zeros(count, type);
 
 					PositionIterator it = data.getPositionIterator(axes);
 					final int[] pos = it.getPos();
@@ -855,7 +868,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					}
 
 					if (extend) {
-						switch (dtype) {
+						switch (type) {
 						case AbstractDataset.INT32:
 							data = new LongDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 32);
@@ -934,18 +947,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 */
 	private static void addMetadataToList(HDF5NodeLink link, List<String> list) {
 		HDF5Node node = link.getDestination();
-		Iterator<String> iter = node.attributeNameIterator();
+		Iterator<String> iter = node.getAttributeNameIterator();
 		String name = link.getFullName() + HDF5Node.ATTRIBUTE;
 		while (iter.hasNext()) {
 			list.add(name + iter.next());
 		}
 
 		if (node instanceof HDF5Group) {
-			HDF5Group group = (HDF5Group) node;
-			Iterator<HDF5NodeLink> itt = group.getNodeLinkIterator();
-			while (itt.hasNext()) {
-				HDF5NodeLink l = itt.next();
-
+			for (HDF5NodeLink l : (HDF5Group) node) {
 				addMetadataToList(l, list);
 
 				if (l.isDestinationADataset()) {
@@ -957,6 +966,60 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 		}
+	}
+
+	@Override
+	public AbstractDataset slice(SliceObject object, IMonitor mon) throws Exception {
+		final int[] start = object.getSliceStart();
+		final int[] stop = object.getSliceStop();
+		final int[] step = object.getSliceStep();
+		int[] lstart, lstop, lstep;
+		int rank;
+		if (start != null)
+			rank = start.length;
+		else if (stop != null)
+			rank = stop.length;
+		else if (step != null)
+			rank = step.length;
+		else
+			throw new IllegalArgumentException("Slice object does not have any info about rank");
+
+		if (step == null) {
+			lstep = new int[rank];
+			for (int i = 0; i < rank; i++) {
+				lstep[i] = 1;
+			}
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = object.getSlicedShape();
+			if (lstop == null)
+				lstop = object.getFullShape();
+		} else {
+			lstop = stop;
+		}
+
+		if (lstop == null)
+			throw new IllegalArgumentException("Slice object does not have any info about stop or shape");
+
+		int[] newShape = new int[rank];
+
+		for (int i = 0; i < rank; i++) {
+			if (lstep[i] > 0) {
+				newShape[i] = (lstop[i] - lstart[i] - 1) / lstep[i] + 1;
+			} else {
+				newShape[i] = (lstop[i] - lstart[i] + 1) / lstep[i] + 1;
+			}
+		}
+		return loadData(object.getPath(), object.getName(), lstart, newShape, lstep, -1, true);
 	}
 }
 

@@ -32,34 +32,59 @@ public class HDF5Dataset extends HDF5Node {
 	private String text;
 	private String type;
 
+	/**
+	 * Construct a HDF5 dataset with given object ID
+	 * @param oid object ID
+	 */
 	public HDF5Dataset(final long oid) {
 		super(oid);
 	}
 
+	/**
+	 * @return lazy dataset
+	 */
 	public ILazyDataset getDataset() {
 		return dataset;
 	}
 
+	/**
+	 * Set given (lazy) dataset
+	 * @param lazyDataset
+	 */
 	public void setDataset(final ILazyDataset lazyDataset) {
 		dataset = lazyDataset;
 		supported = true;
 		string = (lazyDataset instanceof StringDataset);
 	}
 
+	/**
+	 * Set string
+	 * @param text
+	 */
 	public void setString(final String text) {
 		this.text = text;
 		string = true;
 		supported = true;
 	}
 
+	/**
+	 * @return true if dataset is a string or string dataset
+	 */
 	public boolean isString() {
 		return string;
 	}
 
+	/**
+	 * @return true if this dataset is supported
+	 */
 	public boolean isSupported() {
 		return supported;
 	}
 
+	/**
+	 * Get a string if this dataset is a string or dataset
+	 * @return string or null
+	 */
 	public String getString() {
 		if (!string)
 			return null;
@@ -92,18 +117,32 @@ public class HDF5Dataset extends HDF5Node {
 		return out.toString();
 	}
 
+	/**
+	 * Set HDF5 type name
+	 * @param name
+	 */
 	public void setTypeName(String name) {
 		type = name;
 	}
 
+	/**
+	 * @return HDF5 type name
+	 */
 	public String getTypeName() {
 		return type;
 	}
 
+	/**
+	 * Set maximum shape of dataset
+	 * @param maxShape
+	 */
 	public void setMaxShape(long[] maxShape) {
 		this.maxShape = maxShape;
 	}
 
+	/**
+	 * @return maximum shape
+	 */
 	public long[] getMaxShape() {
 		return maxShape;
 	}

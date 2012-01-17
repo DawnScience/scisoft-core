@@ -38,33 +38,66 @@ public class HDF5Node implements Serializable {
 	 */
 	public static final String ATTRIBUTE = "@";
 
+	/**
+	 * Construct a HDF5 node with given object ID
+	 * @param oid object ID
+	 */
 	public HDF5Node(final long oid) {
 		attributes = new LinkedHashMap<String, HDF5Attribute>();
 		id = oid;
 	}
 
+	/**
+	 * @return ID
+	 */
 	public long getID() {
 		return id;
 	}
 
+	/**
+	 * @return number of attributes on node
+	 */
 	public int getNumberOfAttributes() {
 		return attributes.size();
 	}
 
+	/**
+	 * Get attribute of given name from node
+	 * @param name
+	 * @return attribute (can be null if there is no attribute of given name)
+	 */
 	public HDF5Attribute getAttribute(final String name) {
 		return attributes.get(name);
 	}
 
+	/**
+	 * Add given attribute to node
+	 * @param a
+	 */
 	public void addAttribute(final HDF5Attribute a) {
 		attributes.put(a.getName(), a);
 	}
 
+	/**
+	 * @param name
+	 * @return true if node contains attribute of given name
+	 */
 	public boolean containsAttribute(final String name) {
 		return attributes.containsKey(name);
 	}
 
-	public Iterator<String> attributeNameIterator() {
+	/**
+	 * @return iterator over attribute names in node
+	 */
+	public Iterator<String> getAttributeNameIterator() {
 		return attributes.keySet().iterator();
+	}
+
+	/**
+	 * @return iterator over attribute names in node
+	 */
+	public Iterator<HDF5Attribute> getAttributeIterator() {
+		return attributes.values().iterator();
 	}
 
 	@Override

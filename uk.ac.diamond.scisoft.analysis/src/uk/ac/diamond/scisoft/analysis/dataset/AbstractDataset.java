@@ -933,9 +933,7 @@ public abstract class AbstractDataset implements IDataset {
 
 		if (step == null) {
 			lstep = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				lstep[i] = 1;
-			}
+			Arrays.fill(lstep, 1);
 		} else {
 			lstep = step;
 		}
@@ -2942,17 +2940,17 @@ public abstract class AbstractDataset implements IDataset {
 		switch (getDtype()) {
 		case BOOL:
 		case INT32:
-			return new Integer((int) x);
+			return Integer.valueOf((int) x);
 		case INT8:
-			return new Byte((byte) x);
+			return Byte.valueOf((byte) x);
 		case INT16:
-			return new Short((short) x);
+			return Short.valueOf((short) x);
 		case INT64:
-			return new Long((long) x);
+			return Long.valueOf((long) x);
 		case FLOAT32:
-			return new Float((float) x);
+			return Float.valueOf((float) x);
 		case FLOAT64:
-			return new Double(x);
+			return Double.valueOf(x);
 		}
 		return null;
 	}
@@ -2964,13 +2962,13 @@ public abstract class AbstractDataset implements IDataset {
 		case INT8:
 		case INT16:
 		case INT32:
-			return new Integer((int) x);
+			return Integer.valueOf((int) x);
 		case INT64:
-			return new Long((long) x);
+			return Long.valueOf((long) x);
 		case FLOAT32:
-			return new Float(x);
+			return Float.valueOf((float) x);
 		case FLOAT64:
-			return new Double(x);
+			return Double.valueOf(x);
 		}
 		return null;
 	}

@@ -34,9 +34,9 @@ public class Stats {
 		if (is == 1) {
 			s = DatasetUtils.sort(a, null);
 		
-			a.setStoredValue("median", new Double(pQuantile(s, 0.5)));
-			a.setStoredValue("quartile1", new Double(pQuantile(s, 0.25)));
-			a.setStoredValue("quartile3", new Double(pQuantile(s, 0.75)));
+			a.setStoredValue("median", Double.valueOf(pQuantile(s, 0.5)));
+			a.setStoredValue("quartile1", Double.valueOf(pQuantile(s, 0.25)));
+			a.setStoredValue("quartile3", Double.valueOf(pQuantile(s, 0.75)));
 		} else {
 			AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
 			a.setStoredValue("median", new double[is]);
@@ -249,7 +249,7 @@ public class Stats {
 		final int is = a.getElementsPerItem();
 		if (is == 1) {
 			double q3 = ((Double) getQStatistics(a, "quartile3"));
-			return new Double(q3 - ((Double) a.getStoredValue("quartile1")).doubleValue());
+			return Double.valueOf(q3 - ((Double) a.getStoredValue("quartile1")).doubleValue());
 		}
 
 		double[] q1 = (double[]) getQStatistics(a, "quartile1");
@@ -310,7 +310,7 @@ public class Stats {
 	public static Object skewness(final AbstractDataset a) {
 		Object m = getFourthMoment(a);
 		if (m instanceof FourthMoment) {
-			return new Double((new Skewness((FourthMoment) m)).getResult());
+			return Double.valueOf((new Skewness((FourthMoment) m)).getResult());
 		}
 
 		FourthMoment[] mos = (FourthMoment[]) m;
@@ -329,7 +329,7 @@ public class Stats {
 	public static Object kurtosis(final AbstractDataset a) {
 		Object m = getFourthMoment(a);
 		if (m instanceof FourthMoment) {
-			return new Double((new Kurtosis((FourthMoment) m)).getResult());
+			return Double.valueOf((new Kurtosis((FourthMoment) m)).getResult());
 		}
 
 		FourthMoment[] mos = (FourthMoment[]) m;
@@ -466,7 +466,7 @@ public class Stats {
 			while (it.hasNext()) {
 				dresult *= a.getElementDoubleAbs(it.index);
 			}
-			return new Double(dresult);
+			return Double.valueOf(dresult);
 		case AbstractDataset.ARRAYFLOAT32:
 		case AbstractDataset.ARRAYFLOAT64:
 			is = a.getElementsPerItem();

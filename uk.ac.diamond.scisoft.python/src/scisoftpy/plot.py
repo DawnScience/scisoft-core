@@ -139,7 +139,7 @@ def line(x, y=None, name=None):
     any given x dataset in the named view
 
     Arguments:
-    x -- optional dataset for x-axis
+    x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
     name -- name of plot view to use (if None, use default name)
     '''
@@ -158,29 +158,45 @@ def line(x, y=None, name=None):
         else:
             _plot_line(name, None, yl)
     else:
-        xLength = x.shape[0]
+        xl = _toList(x)
+        xLength = xl[0].shape[0]
         yl = _toList(y)
         for i in yl:
             if xLength != i.shape[0]:
                 raise AttributeError("length of y does not match the length of x" ) 
-        _plot_line(name, x, _toList(y))
+        _plot_line(name, xl, yl)
 
 def updateline(x, y=None, name=None):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against
     any given x dataset in the named view
 
     Arguments:
-    x -- optional dataset for x-axis
+    x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
     name -- name of plot view to use (if None, use default name)
     '''
     if not name:
         name = _PVNAME
 
-    if y == None:
-        _plot_updateline(name, x)
+    if y is None:
+        yl = _toList(x)
+        if len(yl) == 1:
+            try:
+                _plot_updateline(name, yl[0])
+            except _exception, e:
+                print 'Got an exception', e
+            except:
+                pass
+        else:
+            _plot_updateline(name, None, yl)
     else:
-        _plot_updateline(name, x, _toList(y))
+        xl = _toList(x)
+        xLength = xl[0].shape[0]
+        yl = _toList(y)
+        for i in yl:
+            if xLength != i.shape[0]:
+                raise AttributeError("length of y does not match the length of x" ) 
+        _plot_updateline(name, xl, yl)
 
 plot = line
 updateplot = updateline

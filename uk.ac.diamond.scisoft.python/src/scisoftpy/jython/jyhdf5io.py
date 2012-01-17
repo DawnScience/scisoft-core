@@ -137,7 +137,7 @@ class HDF5Loader(object):
         if nid in pool:
             return pool[nid]
 
-        it = node.attributeNameIterator()
+        it = node.getAttributeNameIterator()
         attrs = []
         while it.hasNext():
             n = it.next()
@@ -152,12 +152,7 @@ class HDF5Loader(object):
             name = link.getName()
             g = self._mkgroup(name, link, attrs, parent)
             pool[nid] = g
-            it = node.getNodeLinkIterator()
-            nodes = []
-            while it.hasNext():
-                l = it.next()
-                nodes.append((l.getName(), self._copynode(pool, l, g)))
-
+            nodes = [(l.getName(), self._copynode(pool, l, g)) for l in node]
             g.init_group(nodes)
             return g
         elif link.isDestinationADataset():

@@ -28,7 +28,7 @@ import uk.ac.gda.monitor.IMonitor;
  * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero
  * rank and an empty array for shape.
  */
-public interface ILazyDataset extends Serializable, IMetadataProvider{
+public interface ILazyDataset extends Serializable, IMetadataProvider {
 	/**
 	 * @return Class of element
 	 */
@@ -40,6 +40,13 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @return name
 	 */
 	public String getName();
+
+	/**
+	 * Set the name of the dataset
+	 * 
+	 * @param name
+	 */
+	public void setName(String name);
 
 	/**
 	 * The size of the dataset is the number of items in the array
@@ -88,11 +95,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
 	 * 
 	 * @param start
-	 *            specifies the starting indexes
+	 *            specifies the starting indexes (can be null for origin)
 	 * @param stop
-	 *            specifies the stopping indexes
+	 *            specifies the stopping indexes (can be null for end)
 	 * @param step
-	 *            specifies the steps in the slice
+	 *            specifies the steps in the slice (can be null for unit steps)
 	 * @return The dataset of the sliced data
 	 */
 	public IDataset getSlice(final int[] start, final int[] stop, final int[] step);
@@ -102,11 +109,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * 
 	 * @param monitor
 	 * @param start
-	 *            specifies the starting indexes
+	 *            specifies the starting indexes (can be null for origin)
 	 * @param stop
-	 *            specifies the stopping indexes
+	 *            specifies the stopping indexes (can be null for end)
 	 * @param step
-	 *            specifies the steps in the slice
+	 *            specifies the steps in the slice (can be null for unit steps)
 	 * @return The dataset of the sliced data
 	 * @throws ScanFileHolderException 
 	 */
@@ -120,7 +127,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @return The dataset of the sliced data
 	 */
 	public IDataset getSlice(final Slice... slice);
-	
+
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
 	 * 
@@ -130,13 +137,17 @@ public interface ILazyDataset extends Serializable, IMetadataProvider{
 	 * @throws ScanFileHolderException 
 	 */
 	public IDataset getSlice(IMonitor monitor, final Slice... slice) throws ScanFileHolderException;
-	
+
 	/**
 	 * Set metadata on the dataset
 	 * 
 	 * @param metadata
 	 */
 	public void setMetadata(IMetaData metadata);
-	
-	
+
+	/**
+	 * Clone dataset without copying data array
+	 * @return a (shallow) copy of dataset
+	 */
+	public ILazyDataset clone();
 }

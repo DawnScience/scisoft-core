@@ -37,6 +37,11 @@ public class HDF5File extends HDF5Node {
 	final private String path; // full path to file (including filename)
 	private HDF5NodeLink link; // this is a link to the root group
 
+	/**
+	 * Construct a HDF5 file with given object ID and URI 
+	 * @param oid object ID
+	 * @param uri
+	 */
 	public HDF5File(final long oid, URI uri) {
 		super(oid);
 
@@ -46,14 +51,26 @@ public class HDF5File extends HDF5Node {
 		link = new HDF5NodeLink(null, ROOT, null, new HDF5Group(oid));
 	}
 
+	/**
+	 * Construct a HDF5 file with given object ID and file name 
+	 * @param oid object ID
+	 * @param fileName
+	 */
 	public HDF5File(final long oid, final String fileName) {
 		this(oid, new File(fileName).toURI());
 	}
 
+	/**
+	 * @return source URI
+	 */
 	public URI getSourceURI() {
 		return source;
 	}
 
+	/**
+	 * Set name of host that holds file 
+	 * @param hostname
+	 */
 	public void setHostname(String hostname) {
 		host = hostname;
 	}

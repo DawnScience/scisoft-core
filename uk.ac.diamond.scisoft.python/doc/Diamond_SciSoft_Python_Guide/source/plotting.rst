@@ -42,8 +42,11 @@ plotting package:
     
     dnp.plot.line([x,] y)
 
-   plots the given ``y`` axis dataset (or list of datasets) against a ``x`` dataset (if given)
- 
+   plots the given ``y`` value dataset or list of datasets against a ``x`` dataset or list of
+   datasets (if given). If a single ``x`` dataset is given, then it used for all ``y`` datasets and
+   if a list of ``x`` datasets is given then it used in a pairwise fashion with the corresponding
+   ``y`` datasets
+
  * multiple 1D scalar line plots as 3D series::
 
     dnp.plot.stack([x,] y, z=None)
@@ -85,7 +88,7 @@ By default, these functions send data to Plot 1. This default can be changed usi
 Otherwise, data can be sent to other plot views on a plot-by-plot basis using
 the optional keyword argument, ``name``. For example::
 
-    dnp.plot.plot(y, name="Plot 2")
+    dnp.plot.line(y, name="Plot 2")
 
 
 In points plots, more points can be added with::

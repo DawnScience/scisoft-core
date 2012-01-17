@@ -24,6 +24,7 @@ public class HDF5SymLink extends HDF5Node {
 	private String path;
 
 	/**
+	 * Construct a HDF5 symbolic link with given object ID, file name and node path
 	 * @param oid object ID
 	 * @param fileWithNode
 	 * @param pathToNode (ends in separator if group, otherwise a dataset)
@@ -34,11 +35,18 @@ public class HDF5SymLink extends HDF5Node {
 		path = pathToNode;
 	}
 
+	/**
+	 * Get node referenced by symbolic link
+	 * @return node
+	 */
 	public HDF5Node getNode() {
 		HDF5NodeLink l = file.findNodeLink(path);
 		return l != null ? l.getDestination() : null;
 	}
 
+	/**
+	 * @return true if linked node is a dataset
+	 */
 	public boolean isDataset() {
 		return !path.endsWith(SEPARATOR);
 	}

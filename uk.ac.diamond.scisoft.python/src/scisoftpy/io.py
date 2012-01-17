@@ -79,13 +79,13 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
 
     lformats = None
     if formats is None:
-        lformats = formats
+        lformats = _toList(formats)
     if lformats is None:
         if format is not None:
-            lformats = format
+            lformats = _toList(format)
     else:
         if format is not None:
-            lformats.extend(format)
+            lformats.extend(_toList(format))
         
     if lformats is None:
         # parse name to find extension and match with loader

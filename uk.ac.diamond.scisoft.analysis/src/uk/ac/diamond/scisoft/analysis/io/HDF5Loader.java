@@ -195,7 +195,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 			hdf.close();
 		} catch (Exception le) {
-			throw new ScanFileHolderException("Problem loading file", le);
+			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		}
 
 		return tFile;

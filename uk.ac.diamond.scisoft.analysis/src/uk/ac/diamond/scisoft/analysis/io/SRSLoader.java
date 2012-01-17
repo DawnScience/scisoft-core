@@ -105,31 +105,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return loadFile(null);
 	}
 
-	protected static Number parseValue(String text) {
-		try {
-			return Byte.parseByte(text);
-		} catch (NumberFormatException be) {
-			try {
-				return Short.parseShort(text);
-			} catch (NumberFormatException se) {
-				try {
-					return Integer.parseInt(text);
-				} catch (NumberFormatException ie) {
-					try {
-						return Long.parseLong(text);
-					} catch (NumberFormatException le) {
-						try { // nb no float as precision
-							return Double.parseDouble(text);
-						} catch (NumberFormatException de) {
-							logger.info("Value {} is not a number", text);
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 	private final Pattern splitRegex = Pattern.compile("\\s+");
 
 	/**
@@ -214,7 +189,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				Object first = list.get(0);
 				if (first instanceof Number) {
 					List<Number> listN = (List<Number>) list;
-					listN.add(parseValue(text));
+					listN.add(Utils.parseValue(text));
 				} else if (first instanceof String) {
 					List<String> listN = (List<String>) list;
 					listN.add(text);
@@ -222,7 +197,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					throw new ScanFileHolderException("Type unknown");
 				}
 			} else {
-				Number parseValue = parseValue(text);
+				Number parseValue = Utils.parseValue(text);
 				if (parseValue != null) {
 					columns[i] = new ArrayList<Number>();
 					((List<Number>) columns[i]).add(parseValue);

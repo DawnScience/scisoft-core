@@ -371,4 +371,34 @@ public class Utils {
 		data.setStoredValue("min", amin);
 		data.setStoredValue("hash", hash);
 	}
+
+	/**
+	 * Parse a string and try to convert it to the lowest precision Number object
+	 * @param text
+	 * @return a Number or null
+	 */
+	public static Number parseValue(String text) {
+		try {
+			return Byte.parseByte(text);
+		} catch (NumberFormatException be) {
+			try {
+				return Short.parseShort(text);
+			} catch (NumberFormatException se) {
+				try {
+					return Integer.parseInt(text);
+				} catch (NumberFormatException ie) {
+					try {
+						return Long.parseLong(text);
+					} catch (NumberFormatException le) {
+						try { // nb no float as precision
+							return Double.parseDouble(text);
+						} catch (NumberFormatException de) {
+							SRSLoader.logger.info("Value {} is not a number", text);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

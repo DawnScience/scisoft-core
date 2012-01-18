@@ -23,10 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gda.analysis.io.ScanFileHolderException;
 
-import it.tidalwave.imageio.nef.NDFRasterReader;
-
 import java.util.Collection;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;

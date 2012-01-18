@@ -109,9 +109,9 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("png",  PNGLoader.class);
 		    LoaderFactory.registerLoader("raw",  RawBinaryLoader.class);
 		    LoaderFactory.registerLoader("srs",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("srs",  SRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  DatLoader.class);
+		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
 		    LoaderFactory.registerLoader("txt",  DatLoader.class);
 		    LoaderFactory.registerLoader("txt",  SRSLoader.class);

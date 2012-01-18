@@ -1554,14 +1554,6 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Get text representation of an item at given position
-	 * 
-	 * @param pos
-	 * @return string of item
-	 */
-	abstract public String getString(final int... pos);
-
-	/**
 	 * types for to string method
 	 */
 	public static final int STRING_NORMAL = 0;

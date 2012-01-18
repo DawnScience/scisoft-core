@@ -104,6 +104,11 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
+	public String getString(int... pos) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
 	public Object getObject(int... pos) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}

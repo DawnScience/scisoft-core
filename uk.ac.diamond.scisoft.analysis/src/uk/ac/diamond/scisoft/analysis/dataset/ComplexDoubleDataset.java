@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Diamond Light Source Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -447,22 +447,8 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 				data[siter.index] = odata[oiter.index]; // PRIM_TYPE // ADD_CAST
 				data[siter.index+1] = odata[oiter.index+1]; // PRIM_TYPE // ADD_CAST
 			}
-		} else if (o instanceof AbstractDataset) {
-			AbstractDataset ds = (AbstractDataset) o;
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
-
-			if (!AbstractDataset.areShapesCompatible(siter.getSliceShape(), ds.shape)) {
-				throw new IllegalArgumentException(String.format(
-						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(ds.shape),
-						Arrays.toString(siter.getSliceShape())));
-			}
-
-			IndexIterator oiter = ds.getIterator();
-
-			while (siter.hasNext() && oiter.hasNext()) {
-				data[siter.index] = ds.getElementDoubleAbs(oiter.index);  // ADD_CAST
-				data[siter.index + 1] = 0;
-			}
+		} else if (o instanceof IDataset) {
+			super.setSlice(o, start, stop, step);
 		} else {
 			try {
 				double vr = toReal(o); // PRIM_TYPE // ADD_CAST

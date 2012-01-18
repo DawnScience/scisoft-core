@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Diamond Light Source Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -807,33 +807,53 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	@Override
 	public CompoundDoubleDataset setSlice(final Object o, final int[] start, final int[] stop, final int[] step) {
 		SliceIterator siter;
-		if (o instanceof AbstractDataset) {
+		if (o instanceof IDataset) {
+			final IDataset ds = (IDataset) o;
+			final int[] oshape = ds.getShape();
 			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
-			AbstractDataset ds = (AbstractDataset) o;
-
-			if (!areShapesCompatible(siter.getSliceShape(), ds.shape)) {
+			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
-						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(ds.shape),
+						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(oshape),
 						Arrays.toString(siter.getSliceShape())));
 			}
 
-			IndexIterator oiter = ds.getIterator();
+			if (ds instanceof AbstractDataset) {
+				final AbstractDataset ads = (AbstractDataset) ds;
+				IndexIterator oiter = ads.getIterator();
 
-			if (ds instanceof AbstractCompoundDataset) {
-				if (isize != ds.getElementsPerItem()) {
-					throw new IllegalArgumentException("Input dataset is not compatible with slice");
-				}
+				if (ds instanceof AbstractCompoundDataset) {
+					if (isize != ads.getElementsPerItem()) {
+						throw new IllegalArgumentException("Input dataset is not compatible with slice");
+					}
 
-				while (siter.hasNext() && oiter.hasNext()) {
-					for (int i = 0; i < isize; i++)
-						data[siter.index + i] = ds.getElementDoubleAbs(oiter.index + i); // GET_ELEMENT_WITH_CAST
+					while (siter.hasNext() && oiter.hasNext()) {
+						for (int i = 0; i < isize; i++)
+							data[siter.index + i] = ads.getElementDoubleAbs(oiter.index + i); // GET_ELEMENT_WITH_CAST
+					}
+				} else {
+					while (siter.hasNext() && oiter.hasNext()) {
+						data[siter.index] = ads.getElementDoubleAbs(oiter.index); // GET_ELEMENT_WITH_CAST
+						for (int i = 1; i < isize; i++)
+							data[siter.index + i] = 0;
+					}
 				}
 			} else {
-				while (siter.hasNext() && oiter.hasNext()) {
-					data[siter.index] = ds.getElementDoubleAbs(oiter.index); // GET_ELEMENT_WITH_CAST
-					for (int i = 1; i < isize; i++)
-						data[siter.index + i] = 0;
+				final IndexIterator oiter = new PositionIterator(oshape);
+				final int[] pos = oiter.getPos();
+
+				if (ds.getElementsPerItem() == 1) {
+					while (siter.hasNext() && oiter.hasNext()) {
+						data[siter.index] = ds.getDouble(pos); // PRIM_TYPE
+						for (int i = 1; i < isize; i++)
+							data[siter.index + i] = 0;
+					}
+				} else {
+					while (siter.hasNext() && oiter.hasNext()) {
+						final double[] val = toDoubleArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
+						for (int i = 0; i < isize; i++)
+							data[siter.index + i] = val[i];
+					}
 				}
 			}
 		} else {

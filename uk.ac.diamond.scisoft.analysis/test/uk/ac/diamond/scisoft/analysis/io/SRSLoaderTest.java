@@ -76,10 +76,12 @@ public class SRSLoaderTest {
 		
 		DataHolder dh;
 		String testfile1 = "testfiles/gda/analysis/io/SRSLoaderTest/optics_april20110402.dat";
+		// Dodgy old spec file, SRSLoader should reject it!
+		
 		dh = new SRSLoader(testfile1).loadFile();
 		
 		final int size = dh.getList().size();
-		if (size==0) fail("Test file optics_april20110402.dat cannot be parsed!");
+		if (size!=0) fail("Test file optics_april20110402.dat cannot be parsed!");
 	}
 
 	@Test

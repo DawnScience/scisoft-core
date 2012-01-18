@@ -46,7 +46,7 @@ public class DatasetUtils {
 	 *            number of axis (negative number counts from last)
 	 * @return appended dataset
 	 */
-	public static AbstractDataset append(AbstractDataset a, AbstractDataset b, int axis) {
+	public static AbstractDataset append(IDataset a, IDataset b, int axis) {
 		final int[] shape = a.getShape();
 		final int rank = shape.length;
 		final int[] othdims = b.getShape();
@@ -73,8 +73,8 @@ public class DatasetUtils {
 			newdims[i] = shape[i];
 		}
 		newdims[axis] += othdims[axis];
-		final int ot = b.getDtype();
-		final int dt = a.getDtype();
+		final int ot = AbstractDataset.getDType(b);
+		final int dt = AbstractDataset.getDType(a);
 		AbstractDataset ds = AbstractDataset.zeros(a.getElementsPerItem(), newdims, dt > ot ? dt : ot);
 		for (int l = 0, lmax = ds.getSize(); l < lmax; l++) {
 			int[] n = ds.getNDPosition(l);
@@ -172,7 +172,7 @@ public class DatasetUtils {
 	 * @param reps 
 	 * @return tiled dataset
 	 */
-	public static AbstractDataset tile(final AbstractDataset a, int... reps) {
+	public static AbstractDataset tile(final IDataset a, int... reps) {
 		int[] shape = a.getShape();
 		int[] oshape = null;
 		int rank = shape.length;
@@ -211,7 +211,7 @@ public class DatasetUtils {
 			newShape[i] = shape[i]*reps[i];
 		}
 
-		AbstractDataset tdata = AbstractDataset.zeros(a.getElementsPerItem(), newShape, a.getDtype());
+		AbstractDataset tdata = AbstractDataset.zeros(a.getElementsPerItem(), newShape, AbstractDataset.getDType(a));
 
 		// generate each start point and put a slice in
 		int[] start = new int[rank];
@@ -261,11 +261,11 @@ public class DatasetUtils {
 	 * @param axes if zero length then axes order reversed
 	 * @return remapped copy of data
 	 */
-	public static AbstractDataset transpose(final AbstractDataset a, int... axes) {
+	public static AbstractDataset transpose(final IDataset a, int... axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		if (rank == 1) {
-			return a;
+			return convertToAbstractDataset(a);
 		}
 
 		if (axes.length == 0) {
@@ -306,7 +306,7 @@ public class DatasetUtils {
 				break;
 		}
 		if (i == rank) {
-			return a.clone();
+			return convertToAbstractDataset(a.clone());
 		}
 
 		int[] nshape = new int[rank];
@@ -314,7 +314,7 @@ public class DatasetUtils {
 			nshape[i] = shape[axes[i]];
 		}
 
-		final AbstractDataset ta = AbstractDataset.zeros(a.getElementsPerItem(), nshape, a.getDtype());
+		final AbstractDataset ta = AbstractDataset.zeros(a.getElementsPerItem(), nshape, AbstractDataset.getDType(a));
 
 		// generate each start point and put a slice in
 		int[] npos = new int[rank];
@@ -353,7 +353,7 @@ public class DatasetUtils {
 	 * @param axis2
 	 * @return swapped dataset
 	 */
-	public static AbstractDataset swapAxes(final AbstractDataset a, int axis1, int axis2) {
+	public static AbstractDataset swapAxes(final IDataset a, int axis1, int axis2) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		if (axis1 < 0)
@@ -367,7 +367,7 @@ public class DatasetUtils {
 		}
 
 		if (rank == 1 || axis1 == axis2) {
-			return a;
+			return convertToAbstractDataset(a);
 		}
 
 		int[] axes = new int[rank];
@@ -396,27 +396,27 @@ public class DatasetUtils {
 	 * @param axis
 	 * @return concatenated dataset
 	 */
-	public static AbstractDataset concatenate(final AbstractDataset[] as, final int axis) {
+	public static AbstractDataset concatenate(final IDataset[] as, final int axis) {
 		if (as == null || as.length == 0) {
 			utilsLogger.error("No datasets given");
 			throw new IllegalArgumentException("No datasets given");
 		}
-		AbstractDataset a = as[0];
+		IDataset a = as[0];
 		if (as.length == 1) {
-			return a.clone();
+			return convertToAbstractDataset(a.clone());
 		}
 		int[] ashape = a.getShape();
-		int at = a.getDtype();
+		int at = AbstractDataset.getDType(a);
 		int anum = as.length;
 		int isize = a.getElementsPerItem();
 
 		int i = 1;
 		for (; i < anum; i++) {
-			if (at != as[i].getDtype()) {
+			if (at != AbstractDataset.getDType(as[i])) {
 				utilsLogger.error("Datasets are not of same type");
 				break;				
 			}
-			if (!AbstractDataset.areShapesCompatible(ashape, as[i].shape, axis)) {
+			if (!AbstractDataset.areShapesCompatible(ashape, as[i].getShape(), axis)) {
 				utilsLogger.error("Datasets' shapes are not equal");
 				break;
 			}
@@ -430,7 +430,7 @@ public class DatasetUtils {
 		}
 
 		for (i = 1; i < anum; i++) {
-			ashape[axis] += as[i].shape[axis];
+			ashape[axis] += as[i].getShape()[axis];
 		}
 
 		AbstractDataset result = AbstractDataset.zeros(isize, ashape, at);
@@ -439,10 +439,11 @@ public class DatasetUtils {
 		int[] stop = ashape;
 		stop[axis] = 0;
 		for (i = 0; i < anum; i++) {
-			AbstractDataset b = as[i];
-			stop[axis] += b.shape[axis];
+			IDataset b = as[i];
+			int[] bshape = b.getShape();
+			stop[axis] += bshape[axis];
 			result.setSlice(b, start, stop, null);
-			start[axis] += b.shape[axis];
+			start[axis] += bshape[axis];
 		}
 
 		return result;
@@ -1126,10 +1127,8 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Datasets with " + isize + " elements per item not supported");
 		}
 
-		final Class<?> cls = data.elementClass();
-		int dtype = AbstractDataset.getDTypeFromClass(cls);
-		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), dtype);
-		dtype = result.getDtype();
+		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), AbstractDataset.getDType(data));
+		int dtype = result.getDtype();
 		result.setName(data.getName());
 
 		final IndexIterator it = result.getIterator(true);
@@ -1763,7 +1762,7 @@ public class DatasetUtils {
 				utilsLogger.error("Given axis is not 1D");
 				throw new IllegalArgumentException("Given axis is not 1D");
 			}
-			nshape[i] = axes[i].size;
+			nshape[i] = axis.size;
 		}
 
 		for (int i = 0; i < rank; i++) {

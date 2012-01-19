@@ -46,7 +46,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * 
 	 * @param name
 	 */
-	public void setName(String name);
+	public void setName(final String name);
 
 	/**
 	 * The size of the dataset is the number of items in the array
@@ -117,7 +117,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @return The dataset of the sliced data
 	 * @throws ScanFileHolderException 
 	 */
-	public IDataset getSlice(IMonitor monitor, final int[] start, final int[] stop,
+	public IDataset getSlice(final IMonitor monitor, final int[] start, final int[] stop,
 			final int[] step) throws ScanFileHolderException;
 
 	/**
@@ -136,17 +136,17 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @return The dataset of the sliced data
 	 * @throws ScanFileHolderException 
 	 */
-	public IDataset getSlice(IMonitor monitor, final Slice... slice) throws ScanFileHolderException;
+	public IDataset getSlice(final IMonitor monitor, final Slice... slice) throws ScanFileHolderException;
 
 	/**
 	 * Set metadata on the dataset
 	 * 
 	 * @param metadata
 	 */
-	public void setMetadata(IMetaData metadata);
+	public void setMetadata(final IMetaData metadata);
 
 	/**
-	 * Clone dataset without copying data array
+	 * Clone dataset
 	 * @return a (shallow) copy of dataset
 	 */
 	public ILazyDataset clone();

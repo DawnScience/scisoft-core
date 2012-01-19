@@ -475,7 +475,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @param axis
 	 *            number of axis (negative number counts from last)
 	 * @return appended dataset
-	 * @deprecated Use {@link DatasetUtils#append(AbstractDataset, AbstractDataset, int)}
+	 * @deprecated Use {@link DatasetUtils#append(IDataset, IDataset, int)}
 	 */
 	@Deprecated
 	public AbstractDataset append(AbstractDataset other, int axis) {
@@ -715,6 +715,17 @@ public abstract class AbstractDataset implements IDataset {
 			dtype = getDTypeFromClass(obj.getClass());
 		}
 		return dtype;
+	}
+
+	/**
+	 * Get dataset type from given dataset
+	 * @param d
+	 * @return dataset type
+	 */
+	public static int getDType(ILazyDataset d) {
+		if (d instanceof AbstractDataset)
+			return ((AbstractDataset) d).getDtype();
+		return getDTypeFromClass(d.elementClass());
 	}
 
 	/**
@@ -1543,14 +1554,6 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Get text representation of an item at given position
-	 * 
-	 * @param pos
-	 * @return string of item
-	 */
-	abstract public String getString(final int... pos);
-
-	/**
 	 * types for to string method
 	 */
 	public static final int STRING_NORMAL = 0;
@@ -1927,8 +1930,8 @@ public abstract class AbstractDataset implements IDataset {
 	 *            The dataset to be compared
 	 * @return true if shapes are compatible
 	 */
-	public boolean isCompatibleWith(final AbstractDataset g) {
-		return areShapesCompatible(this.getShape(), g.getShape());
+	public boolean isCompatibleWith(final ILazyDataset g) {
+		return areShapesCompatible(shape, g.getShape());
 	}
 
 	/**

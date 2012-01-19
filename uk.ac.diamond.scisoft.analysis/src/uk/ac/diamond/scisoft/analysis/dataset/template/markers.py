@@ -79,6 +79,8 @@ class transmutate(object):
         self.dconv, self.dform, self.ddef) = destination
 
         self.dcast = "(" + self.dprim + ") "
+        self.Sprim = self.sprim.capitalize()
+        self.Dprim = self.dprim.capitalize()
 
         if (self.ddtype.startswith("INT") or self.ddtype.startswith("ARRAYINT")) and self.dprim is not "long":
             self.dprimlong = self.dprim + ") (long"
@@ -154,7 +156,11 @@ class transmutate(object):
         '''
         java primitive type is an element type
         '''
-        return line.replace(self.sprim, self.dprim)
+        if line.find(self.sprim) >= 0:
+            return line.replace(self.sprim, self.dprim)
+        if line.find(self.Sprim) >= 0:
+            return line.replace(self.Sprim, self.Dprim)
+        return line
 
     def primitivelong(self, line):
         return line.replace(self.dprim, self.dprimlong)

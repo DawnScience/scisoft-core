@@ -78,7 +78,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
         raise ValueError, 'File %s does not exist' % name
 
     lformats = None
-    if formats is None:
+    if formats is not None:
         lformats = _toList(formats)
     if lformats is None:
         if format is not None:

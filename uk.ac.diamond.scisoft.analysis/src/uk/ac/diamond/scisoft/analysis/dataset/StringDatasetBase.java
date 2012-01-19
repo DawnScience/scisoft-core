@@ -571,20 +571,30 @@ public class StringDatasetBase extends AbstractDataset {
 	@Override
 	public StringDatasetBase setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
 		SliceIterator siter;
-		if (obj instanceof AbstractDataset) {
-			AbstractDataset ds = (AbstractDataset) obj;
+		if (obj instanceof IDataset) {
+			final IDataset ds = (IDataset) obj;
+			final int[] oshape = ds.getShape();
 			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
-			if (!areShapesCompatible(siter.getSliceShape(), ds.shape)) {
+			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
-						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(ds.shape),
+						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(oshape),
 						Arrays.toString(siter.getSliceShape())));
 			}
 
-			IndexIterator oiter = ds.getIterator();
+			if (ds instanceof AbstractDataset) {
+				final AbstractDataset ads = (AbstractDataset) ds;
+				final IndexIterator oiter = ads.getIterator();
 
-			while (siter.hasNext() && oiter.hasNext())
-				data[siter.index] = ds.getStringAbs(oiter.index); // GET_ELEMENT_WITH_CAST
+				while (siter.hasNext() && oiter.hasNext())
+					data[siter.index] = ads.getStringAbs(oiter.index); // GET_ELEMENT_WITH_CAST
+			} else {
+				final IndexIterator oiter = new PositionIterator(oshape);
+				final int[] pos = oiter.getPos();
+
+				while (siter.hasNext() && oiter.hasNext())
+					data[siter.index] = ds.getString(pos); // PRIM_TYPE
+			}
 		} else {
 			try {
 				String v = obj.toString(); // PRIM_TYPE // FROM_OBJECT

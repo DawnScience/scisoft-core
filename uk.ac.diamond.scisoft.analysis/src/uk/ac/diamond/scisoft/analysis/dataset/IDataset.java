@@ -38,6 +38,12 @@ public interface IDataset extends ILazyDataset {
 
 	/**
 	 * @param pos
+	 * @return Item in given position as a string
+	 */
+	public String getString(final int... pos);
+
+	/**
+	 * @param pos
 	 * @return Item in given position as a double
 	 */
 	public double getDouble(final int... pos);
@@ -83,7 +89,7 @@ public interface IDataset extends ILazyDataset {
 	 * @param obj
 	 * @param pos
 	 */
-	public void set(Object obj, final int... pos);
+	public void set(final Object obj, final int... pos);
 
 	/**
 	 * @return Minimum value
@@ -107,4 +113,10 @@ public interface IDataset extends ILazyDataset {
 	 */
 	public int[] maxPos();
 
+	/**
+	 * Clone dataset without making new copy of data
+	 * @return a (shallow) copy of dataset
+	 */
+	@Override
+	public IDataset clone();
 }

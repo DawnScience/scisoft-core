@@ -160,7 +160,7 @@ public class AWTImageUtils {
 			if (maxv < 256) { // 888
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = ((rgbdata[n] & 0xff) << 16) & ((rgbdata[n + 1] & 0xff) << 8) & (rgbdata[n + 2] & 0xff);
+					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
 				}			
 			} else {
@@ -172,7 +172,7 @@ public class AWTImageUtils {
 
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) & (((rgbdata[n + 1] >> shift) & 0xff) << 8) & ((rgbdata[n + 2] >> shift) & 0xff);
+					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
 				}			
 			}
@@ -235,7 +235,7 @@ public class AWTImageUtils {
 			if (maxv < 256) { // 888
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = ((rgbdata[n] & 0xff) << 16) & ((rgbdata[n + 1] & 0xff) << 8) & (rgbdata[n + 2] & 0xff);
+					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
 				}			
 			} else {
@@ -247,7 +247,7 @@ public class AWTImageUtils {
 
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) & (((rgbdata[n + 1] >> shift) & 0xff) << 8) & ((rgbdata[n + 2] >> shift) & 0xff);
+					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
 				}			
 			}

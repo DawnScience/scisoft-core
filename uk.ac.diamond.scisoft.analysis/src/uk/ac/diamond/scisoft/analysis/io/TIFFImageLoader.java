@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.imageio.ImageReader;
@@ -32,6 +33,7 @@ import javax.imageio.stream.ImageInputStream;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
+import uk.ac.gda.monitor.IMonitor;
 
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
@@ -39,8 +41,10 @@ import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 /**
  * This class loads a TIFF image file
  */
-public class TIFFImageLoader extends JavaImageLoader {
+public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 
+	protected Map<String, Serializable> metadata = null;
+	private boolean loadData = true;
 	
 	public TIFFImageLoader() {
 		this(null, false);
@@ -83,8 +87,6 @@ public class TIFFImageLoader extends JavaImageLoader {
 			f = findCorrectSuffix();
 		}
 
-		Map<String, Serializable> metadata = null;
-
 		// TODO cope with multiple images (tiff)
 		try {
 			// test to see if the filename passed will load
@@ -95,32 +97,40 @@ public class TIFFImageLoader extends JavaImageLoader {
 			try {
 				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 				reader.setInput(iis);
-				input = reader.read(0);
+				if (loadData)
+					input = reader.read(0);
 			} catch (IllegalArgumentException e) { // catch bad number of bits
 //			} catch (Exception e) {
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
-				input = reader.read(0);
+				if (loadData)
+					input = reader.read(0);
 			}
 
-			if (input == null) {
+			if (loadData && input == null) {
 				throw new ScanFileHolderException("File format in '" + fileName + "' cannot be read");
 			}
 
 			if (loadMetadata)
 				metadata = createMetadata(reader.getImageMetadata(0));
+
+			if (loadData) {
+				data = createDataset(input);
+				data.setMetadata(getMetaData());
+			}
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);
 		} catch (IllegalArgumentException e) {
 			throw new ScanFileHolderException("IllegalArgumentException interpreting file '" + fileName + "'", e);
 		}
 
-		data = createDataset(input);
+
+		if (!loadData || data == null) {
+			return null;
+		}
 
 		DataHolder output = new DataHolder();
-		output.addDataset(fileName, data);
-		if (metadata != null)
-			data.setMetadataMap(metadata);
+		output.addDataset(fileName, data, data.getMetadata());
 		return output;
 	}
 
@@ -133,5 +143,31 @@ public class TIFFImageLoader extends JavaImageLoader {
 	@SuppressWarnings("unused")
 	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
 		return null;
+	}
+
+	@Override
+	public void loadMetaData(IMonitor mon) throws Exception {
+		loadData = false;
+		loadFile();
+		loadData = true;
+
+	}
+
+	@Override
+	public IMetaData getMetaData() {
+		if (metadata == null)
+			return null;
+
+		return new MetaDataAdapter() {
+			@Override
+			public Collection<String> getMetaNames() throws Exception {
+				return metadata.keySet();
+			}
+
+			@Override
+			public Serializable getMetaValue(String key) throws Exception {
+				return metadata.get(key);
+			}
+		};
 	}
 }

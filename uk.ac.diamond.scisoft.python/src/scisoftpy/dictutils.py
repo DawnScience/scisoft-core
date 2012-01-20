@@ -45,6 +45,9 @@ def sanitise_name(text):
     '''
     from string import digits
     sane = text.translate(_translator)
+    if not sane:
+        return sane
+
     if sane[0] in digits:
         sane = '_' + sane
         print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane
@@ -122,13 +125,13 @@ class ListDict(_odict):
         '''
         Key can be a number (integer) in which case return value at index of key list
         '''
-        from types import StringType, IntType
+        from types import StringType, IntType, UnicodeType
         if type(key) is IntType:
             if key > len(self):
                 raise IndexError, 'Key was too large'
             key = self.keys()[key]
 
-        if type(key) is StringType:
+        if type(key) is StringType or type(key) is UnicodeType:
             return super(_odict, self).__getitem__(key)
         else:
             raise KeyError, 'Key was not a string or integer'

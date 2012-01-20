@@ -142,14 +142,9 @@ public class AWTImageUtils {
 
 		final int size = data.getSize();
 		BufferedImage image = null;
-		DataBuffer buffer = null;
-		SampleModel sampleModel = null;
 
 		if (data instanceof RGBDataset) {
 			RGBDataset rgbds = (RGBDataset) data;
-
-			buffer = new DataBufferInt(size);
-			sampleModel = new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, width, height, new int[] { 0xff0000, 0x00ff00, 0x0000ff} );
 
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -161,7 +156,7 @@ public class AWTImageUtils {
 				while (iter.hasNext()) {
 					final int n = iter.index;
 					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
-					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
+					image.setRGB(pos[1], pos[0], rgb);
 				}			
 			} else {
 				int shift = 0;
@@ -173,24 +168,26 @@ public class AWTImageUtils {
 				while (iter.hasNext()) {
 					final int n = iter.index;
 					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
-					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
+					image.setRGB(pos[1], pos[0], rgb);
 				}			
 			}
 		} else {
+			DataBuffer buffer = null;
+			SampleModel sampleModel = null;
 			// reconcile data with output format
 
 			// populate data buffer using sample model
 			IntegerDataset tmp = (IntegerDataset) DatasetUtils.cast(data, AbstractDataset.INT32);
 
 			if (bits <= 8) {
-				buffer = new DataBufferByte(height * width);
+				buffer = new DataBufferByte(size);
 				sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, width, height, 1, width,
 						new int[] { 0 });
 				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 
 				sampleModel.setPixels(0, 0, width, height, tmp.getData(), buffer);
 			} else if (bits <= 16) {
-				buffer = new DataBufferUShort(height * width);
+				buffer = new DataBufferUShort(size);
 				sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_USHORT, width, height, 1,
 						width, new int[] { 0 });
 				image = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
@@ -199,10 +196,11 @@ public class AWTImageUtils {
 			} else {
 				throw new IllegalArgumentException("Number of bits must be less than or equal to 16");
 			}
+
+			WritableRaster wRas = Raster.createWritableRaster(sampleModel, buffer, null);
+			image.setData(wRas);
 		}
 
-		WritableRaster wRas = Raster.createWritableRaster(sampleModel, buffer, null);
-		image.setData(wRas);
 		return image;
 	}
 

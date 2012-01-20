@@ -128,6 +128,14 @@ class Test(unittest.TestCase):
         d = dnp.arange(100).reshape(10,10) % 3
         self.save("chequered.png", d)
         im = self.load("chequered.png", testfolder=OutTestFolder)
+        im = self.load("test.png")
+        self.save("grey.png", im)
+        im2 = self.load("grey.png", testfolder=OutTestFolder)
+
+    def testSavingOthers(self):
+        im = self.colourload("testrgb.png")
+        self.save("colour.png", im)
+        im2 = self.colourload("colour.png", testfolder=OutTestFolder)
 
     def testB16data(self):
         d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', formats=['srs'])

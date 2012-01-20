@@ -20,7 +20,6 @@ import java.io.File;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NexusLoaderThreadTest extends LoaderThreadTestBase {
@@ -40,7 +39,6 @@ public class NexusLoaderThreadTest extends LoaderThreadTestBase {
 
 	@Override
 	@Test
-	@Ignore("2012/01/10 Test ignored since not consistently passing in Hudson")
 	public void testWithTenThreads() throws Exception {
 		super.testWithTenThreads();
 	}

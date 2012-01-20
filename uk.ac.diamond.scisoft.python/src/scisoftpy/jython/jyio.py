@@ -290,10 +290,12 @@ class JavaSaver(object):
         for k,v in dataholder.items():
             if k != 'metadata':
                 jdh.addDataset(k, v)
-        md = dict()
-        for k, v in dataholder.metadata.items():
-            md[k] = v
-        jdh.setMetadata(_Metadata(md))
+
+        if 'metadata' in dataholder:
+            md = dict()
+            for k, v in dataholder.metadata.items():
+                md[k] = v
+            jdh.setMetadata(_Metadata(md))
         return jdh
 
     def save(self, dataholder):

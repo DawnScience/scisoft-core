@@ -76,7 +76,7 @@ public class ImageThumbnailLoader {
 	private static final int DOWNSAMPLE_SIZE_IN_PIXELS = 96;
 	/**
 	 * Utility method for extracting the image Dataset from a
-	 * DataHolder, optionally scaling the data to a thumnail
+	 * DataHolder, optionally scaling the data to a thumbnail
 	 * 
 	 * @param path
 	 * @param createThumbnail

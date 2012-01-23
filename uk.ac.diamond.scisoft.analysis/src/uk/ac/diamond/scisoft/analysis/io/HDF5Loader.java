@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -88,11 +89,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return lock;
 	}
 
-	private static void removeLock(String file) {
-		synchronized (openFiles) {
-			ReentrantLock lock = openFiles.get(file);
-			if (lock != null && lock.getHoldCount() == 0) {
-				openFiles.remove(file);
+	private static void releaseLock(ReentrantLock lock) {
+		lock.unlock();
+		if (lock.getHoldCount() == 0) {
+			synchronized (openFiles) {
+				if (openFiles.containsValue(lock)) {
+					for (Entry<String, ReentrantLock> e : openFiles.entrySet()) {
+						if (e.getValue().equals(lock)) {
+							openFiles.remove(e.getKey());
+						}
+					}
+				}
 			}
 		}
 	}
@@ -223,8 +230,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
-			lock.unlock();
-			removeLock(fileName);
+			releaseLock(lock);
 		}
 
 		return tFile;
@@ -305,8 +311,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				hdf.close();
 			}
 		} finally {
-			lock.unlock();
-			removeLock(lpath);
+			releaseLock(lock);
 		}
 		
 		return nn;
@@ -620,11 +625,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			osd.init();
 			dims = osd.getDims();
 		}
-		if (dims == null) {
-			System.err.println("Problem getting dimensions!");
-			osd.init();
-			dims = osd.getDims();
-		}
+
 		final int[] trueShape = new int[dims.length];
 		for (int i = 0; i < dims.length; i++) {
 			long d = dims[i];
@@ -696,23 +697,41 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				AbstractDataset d = null;
 				try {
 					if (!Arrays.equals(trueShape, shape)) {
-						// if shape was squeezed then need to translate to true slice
 						final int trank = trueShape.length;
 						int[] tstart = new int[trank];
 						int[] tsize = new int[trank];
 						int[] tstep = new int[trank];
 
-						int j = 0;
-						for (int i = 0; i < trank; i++) {
-							if (trueShape[i] == 1) {
-								tstart[i] = 0;
-								tsize[i] = 1;
-								tstep[i] = 1;
-							} else {
-								tstart[i] = lstart[j];
-								tsize[i] = newShape[j];
-								tstep[i] = lstep[j];
-								j++;
+						if (rank > trank) { // shape was extended (from left) then need to translate to true slice
+							int j = 0;
+							for (int i = 0; i < trank; i++) {
+								if (trueShape[i] == 1) {
+									tstart[i] = 0;
+									tsize[i] = 1;
+									tstep[i] = 1;
+								} else {
+									while (shape[j] == 1 && (rank - j) > (trank - i))
+										j++;
+
+									tstart[i] = lstart[j];
+									tsize[i] = newShape[j];
+									tstep[i] = lstep[j];
+									j++;
+								}
+							}
+						} else { // shape was squeezed then need to translate to true slice
+							int j = 0;
+							for (int i = 0; i < trank; i++) {
+								if (trueShape[i] == 1) {
+									tstart[i] = 0;
+									tsize[i] = 1;
+									tstep[i] = 1;
+								} else {
+									tstart[i] = lstart[j];
+									tsize[i] = newShape[j];
+									tstep[i] = lstep[j];
+									j++;
+								}
 							}
 						}
 
@@ -959,8 +978,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file", le);
 		} finally {
-			lock.unlock();
-			removeLock(fileName);
+			releaseLock(lock);
 		}
 
 		return data;

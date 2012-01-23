@@ -236,7 +236,9 @@ public class AggregateDataset implements ILazyDataset {
 		stop[0] = p - offset[map[op]];
 		sliced.add(DatasetUtils.convertToAbstractDataset(od.getSlice(monitor, start, stop, step)));
 
-		return DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
+		IDataset d = DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
+		d.setName(name);
+		return d;
 	}
 
 	@Override

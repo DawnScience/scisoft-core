@@ -100,10 +100,7 @@ The following methods are declared::
 
 	public int[] maxPos();             // position of first maxima
 
-	public IDataset getSlice(final int[] start, final int[] stop, final int[] step);
-	                                   // slice of dataset
-
-	public ILazyDataset clone();       // copy structure without making new copy of data
+	public IDataset clone();           // copy structure without making new copy of data
 
 Implementation
 --------------
@@ -120,8 +117,4 @@ Once expanded, the dataset can become discontiguous as extra space is reserved
 to allow for faster future expansion. A dataset can become contiguous again
 once it has expanded to fill its reserved space. Note that elements within the
 new shape but outside the old shape are set to minimum values or not-a-numbers. 
-
-
-
-
 

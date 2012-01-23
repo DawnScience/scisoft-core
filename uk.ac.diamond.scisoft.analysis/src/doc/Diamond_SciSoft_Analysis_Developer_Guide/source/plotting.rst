@@ -173,18 +173,18 @@ The !GuiParameter class holds:
 Data Bean
 ---------
 A !DataBean holds (bulk) data to be passed from server to client. It holds a
-HashMap of axes defined by names and datasets, a collection of
-!DataSetWithAxisInformation and a collection of !NexusTree. It has the
+HashMap of axes defined by names and datasets, a list of
+!DataSetWithAxisInformation and a list of HDF5File. It has the
 following methods:
 
  * addAxis(String, !DataSet)
  * addData(!DataSetWithAxisInformation)
- * addNexusTree(INexusTree)
+ * addHDF5Tree(HDF5File)
  * getAxis(String) returns a !DataSet
  * getData() returns a collection of !DataSetWithAxisInformation
- * getNexusTrees() returns a collection of !INexusTree
- * setData(Collection<!DataSetWithAxisInformation>)
- * setNexusTrees(Collection<INexusTree>)
+ * HDF5Trees() returns a list of HDF5File
+ * setData(List<!DataSetWithAxisInformation>)
+ * setHDF5Trees(List<HDF5File>)
 
 
 Jython

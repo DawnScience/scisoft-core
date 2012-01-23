@@ -39,7 +39,7 @@ _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
 _srsload = _io.SRSLoader
 
-from dictutils import DataHolder
+from dictutils import DataHolder, ListDict
 
 _extra_suffices = { "jpg" : "jpeg", "tif" : "tiff", "dat" : "srs", "h5" : "hdf5", "nxs" : "nx" }
 
@@ -166,7 +166,7 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
     except KeyError:
         raise ValueError, "Format not supported"
 
-    if isinstance(data, DataHolder):
+    if isinstance(data, ListDict):
         dh = data
     else:
         dl = []
@@ -178,7 +178,7 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
             for d in _toList(data):
                 n = getattr(d, 'name', 'data')
                 dl.append((n, d))
-        dh = DataHolder(dl)
+        dh = ListDict(dl)
 
     saver.save(dh)
 

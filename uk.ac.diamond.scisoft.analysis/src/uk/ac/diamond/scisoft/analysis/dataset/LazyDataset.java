@@ -37,7 +37,7 @@ public class LazyDataset implements ILazyDataset {
 	protected String name;
 	protected int[] shape;
 	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
-	private ILazyLoader loader;
+	protected ILazyLoader loader;
 	private int dtype;
 
 	/**

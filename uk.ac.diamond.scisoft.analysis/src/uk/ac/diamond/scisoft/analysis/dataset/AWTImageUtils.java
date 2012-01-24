@@ -146,7 +146,7 @@ public class AWTImageUtils {
 		if (data instanceof RGBDataset) {
 			RGBDataset rgbds = (RGBDataset) data;
 
-			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 			short maxv = rgbds.max().shortValue();
 			final IndexIterator iter = rgbds.getIterator(true);
@@ -155,7 +155,7 @@ public class AWTImageUtils {
 			if (maxv < 256) { // 888
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
+					final int rgb = 0xff000000 | ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
 					image.setRGB(pos[1], pos[0], rgb);
 				}			
 			} else {
@@ -167,7 +167,7 @@ public class AWTImageUtils {
 
 				while (iter.hasNext()) {
 					final int n = iter.index;
-					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
+					final int rgb = 0xff000000 | (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
 					image.setRGB(pos[1], pos[0], rgb);
 				}			
 			}

@@ -29,6 +29,7 @@ import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterImpl;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterTestAbstract;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
@@ -94,7 +95,11 @@ public class SDAPlotterViaRpcTest extends SDAPlotterTestAbstract {
 		pythonRunInfo = null;
 		
 		// Restore normal handler
-		AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), savedHandler);
+		try {
+			AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), savedHandler);
+		} catch (AnalysisRpcException e) {
+			throw new RuntimeException("Failed to restore handler", e);
+		}
 	}
 
 }

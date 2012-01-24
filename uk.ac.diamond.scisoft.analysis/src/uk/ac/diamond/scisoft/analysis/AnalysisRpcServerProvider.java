@@ -57,8 +57,9 @@ public class AnalysisRpcServerProvider {
 	 *            name of the service
 	 * @param handler
 	 *            handler to export
+	 * @throws AnalysisRpcException 
 	 */
-	public synchronized void addHandler(String serviceName, IAnalysisRpcHandler handler) {
+	public synchronized void addHandler(String serviceName, IAnalysisRpcHandler handler) throws AnalysisRpcException {
 		if (server == null) {
 			server = new AnalysisRpcServer(port);
 			try {
@@ -66,6 +67,7 @@ public class AnalysisRpcServerProvider {
 				logger.info("Starting Analysis RPC Server on port " + port);
 			} catch (AnalysisRpcException e) {
 				logger.error("Failed to start AnalysisRpcServer", e);
+				throw new AnalysisRpcException(e);
 			}
 		}
 		if (handler == null) {

@@ -1448,7 +1448,7 @@ public abstract class AbstractDataset implements IDataset {
 			throw new IllegalArgumentException("One or more index parameters must be supplied");
 		} else if (imax > rank) {
 			throw new IllegalArgumentException("No of index parameters is different to the shape of data: " + imax
-					+ " given " + rank + "required");
+					+ " given " + rank + " required");
 		}
 
 		// once checked return the appropriate value.

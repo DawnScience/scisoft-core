@@ -49,6 +49,9 @@ public class AggregateDataset implements ILazyDataset {
 		// make datasets have same rank
 		int maxRank = -1;
 		for (ILazyDataset d : datasets) {
+			if (d == null)
+				throw new IllegalArgumentException("Null dataset given");
+
 			int r = d.getRank();
 			if (r > maxRank)
 				maxRank = r;

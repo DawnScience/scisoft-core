@@ -37,7 +37,7 @@ public class PlotServiceProvider {
 	}
 
 	/**
-	 * Get a PlotService that can be used to do Plotting. It first tries to get the CORBArized PlotService if it fails
+	 * Get a PlotService that can be used to do Plotting. It first tries to get the existing PlotServer. If it fails
 	 * it will try to get the Java RMI plotService
 	 * <p>
 	 * The returned PlotService should not be held, but refetched each time it is used to allow the port to be changed.
@@ -48,7 +48,7 @@ public class PlotServiceProvider {
 	public static PlotService getPlotService(String hostname) {
 		if (plotService == null) {
 			try {
-				plotService=PlotServerProvider.getPlotServer();
+				plotService=PlotServerProvider.getExistingPlotServer();
 				if (plotService == null)
 					throw new NullPointerException("No registered plotserver");
 				logger.info("Using registered plotserver");

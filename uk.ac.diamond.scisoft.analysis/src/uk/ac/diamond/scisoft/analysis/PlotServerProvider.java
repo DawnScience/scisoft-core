@@ -41,6 +41,10 @@ public class PlotServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(PlotServerProvider.class);
 	static PlotServer plotServer;
 
+	public synchronized static PlotServer getExistingPlotServer() {	
+		return plotServer;
+	}
+	
 	public synchronized static PlotServer getPlotServer() {
 		if (plotServer == null) {
 			logger.info("PlotServer instance not set - using local created PlotServer instead");

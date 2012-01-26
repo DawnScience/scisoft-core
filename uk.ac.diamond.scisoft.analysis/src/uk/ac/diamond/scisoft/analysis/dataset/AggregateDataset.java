@@ -40,13 +40,15 @@ public class AggregateDataset implements ILazyDataset {
 	private int dtype = -1;
 
 	/**
-	 * Create an aggregate dataset
+	 * Calculate (possibly extended) shapes from given datasets
 	 * @param extend if true, extend rank by one
 	 * @param datasets
+	 * @return array of shapes
 	 */
-	public AggregateDataset(boolean extend, ILazyDataset... datasets) {
+	public static int[][] calcShapes(boolean extend, ILazyDataset... datasets) {
+		if (datasets.length == 0)
+			throw new IllegalArgumentException("No datasets given");
 
-		// make datasets have same rank
 		int maxRank = -1;
 		for (ILazyDataset d : datasets) {
 			if (d == null)
@@ -60,33 +62,56 @@ public class AggregateDataset implements ILazyDataset {
 		if (extend)
 			maxRank++;
 
-		data = new ILazyDataset[datasets.length];
+		int[][] shapes = new int[datasets.length][];
 		for (int j = 0; j < datasets.length; j++) {
 			ILazyDataset d = datasets[j];
 			int[] s = d.getShape();
 			if (s.length < maxRank) {
-				d = d.clone();
 				int[] ns = new int[maxRank];
 				int start = maxRank - s.length;
 
-				for (int i = 0; i < start; i++) {
+				for (int i = 0; i < start; i++) { // prepend ones as necessary
 					ns[i] = 1;
 				}
 				for (int i = 0; i < s.length; i++) {
 					ns[i+start] = s[i];
 				}
-
-				d.setShape(ns);
+				s = ns;
 			}
-			data[j] = d;
+			shapes[j] = s;
 		}
 
+		return shapes;
+	}
+
+	/**
+	 * Create an aggregate dataset
+	 * @param extend if true, extend rank by one
+	 * @param datasets
+	 */
+	public AggregateDataset(boolean extend, ILazyDataset... datasets) {
+
+		final int[][] shapes = calcShapes(extend, datasets);
+
 		// check for same (sub-)shape
-		int[] s = data[0].getShape();
-		int axis = extend ? -1 : 0;
-		for (ILazyDataset d : data) {
-			if (!AbstractDataset.areShapesCompatible(s, d.getShape(), axis))
-				throw new IllegalArgumentException("Dataset '" + d.getName() + "' has wrong shape");
+		final int[] s = shapes[0];
+		final int axis = extend ? -1 : 0;
+		for (int j = 1; j < shapes.length; j++) {
+			if (!AbstractDataset.areShapesCompatible(s, shapes[j], axis))
+				throw new IllegalArgumentException("Dataset '" + datasets[j].getName() + "' has wrong shape");
+		}
+
+		// set shapes of datasets
+		final int maxRank = s.length;
+		data = new ILazyDataset[datasets.length];
+		for (int j = 0; j < datasets.length; j++) {
+			ILazyDataset d = datasets[j];
+			int[] ds = d.getShape();
+			if (ds.length < maxRank) {
+				d = d.clone();
+				d.setShape(shapes[j]);
+			}
+			data[j] = d;
 		}
 
 		// calculate new shape
@@ -97,8 +122,8 @@ public class AggregateDataset implements ILazyDataset {
 		if (extend) {
 			shape[0] = data.length;
 		} else {
-			for (ILazyDataset d : data) {
-				shape[0] += d.getShape()[0];
+			for (int j = 0; j < datasets.length; j++) {
+				shape[0] += shapes[j][0];
 			}
 		}
 		size = AbstractDataset.calcSize(shape);

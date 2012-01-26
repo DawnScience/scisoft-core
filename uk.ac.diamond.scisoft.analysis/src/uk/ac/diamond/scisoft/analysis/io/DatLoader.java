@@ -299,6 +299,24 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 		};
 	}
 
+	private static Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
+	private static Pattern DATE_LINE = Pattern.compile("#D (Sun|Mon|Tue|Wed|Thu|Fri|Sat) [a-zA-Z]+ \\d+ .*");
+	/**
+	 * This method parses the headers. It tries to throw an exception
+	 * if it is sure an SRS file is found. Also it looks in the headers
+	 * and if it finds "#S" and "#D" it thinks that the file is a multi-scan
+	 * spec file and throws an exception.
+	 * 
+	 * Example of multi-scan spec file characteritic lines:
+	   #S 1  ascan  pvo -0.662 1.338  20 0.1
+       #D Sat Apr 02 10:19:13 2011
+	 * 
+	 * @param in
+	 * @param name
+	 * @param mon
+	 * @return last line
+	 * @throws Exception
+	 */
 	private String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
 		
 		String line = in.readLine();
@@ -308,6 +326,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 		vals.clear();
 		
 		boolean foundHeaderLine = false;
+		boolean wasScanLine     = false;
 		while (line.startsWith("#") || "".equals(line.trim())) {
 			
 			try {
@@ -318,6 +337,12 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 				if (mon!=null && mon.isCancelled()) {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
+				
+				if (wasScanLine && DATE_LINE.matcher(line.trim()).matches()) {
+					throw new ScanFileHolderException("This file is a multi-scan spec file - use SpecLoader instead!");
+				}
+				wasScanLine = SCAN_LINE.matcher(line.trim()).matches();
+				
 				header.add(line);
 				
 				// This caused problems with some of B18's files, so changing the methodology a little

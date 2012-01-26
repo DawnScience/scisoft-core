@@ -200,12 +200,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="ncsa.hdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="javax.xml"
          download-size="0"
          install-size="0"
@@ -228,6 +222,13 @@ limitations under the License.
 
    <plugin
          id="javax.xml.stream"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.aopalliance"
          download-size="0"
          install-size="0"
          version="0.0.0"

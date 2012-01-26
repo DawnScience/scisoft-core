@@ -114,9 +114,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		chs.delete(); // this also closes the file
 
 		if (loadMetadata) {
-			//data.setMetadataMap(GDAMetadata);
 			data.setMetadata(getMetaData());
-			output.addDataset(fileName, data, getMetaData());
+			output.addDataset(fileName, data, data.getMetadata());
 		} else {
 			output.addDataset(fileName, data);
 		}
@@ -964,6 +963,20 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	@Override
 	public IMetaData getMetaData() {
+		if (detectorProperties == null || diffractionCrystalEnvironment == null) {
+			return new MetaDataAdapter() {
+				@Override
+				public String getMetaValue(String key) throws Exception {
+					return metadata.get(key);
+				}
+
+				@Override
+				public Collection<String> getMetaNames() throws Exception {
+					return metadata.keySet();
+				}
+			};
+		}
+
 		return new DiffractionMetaDataAdapter() {
 
 			@Override

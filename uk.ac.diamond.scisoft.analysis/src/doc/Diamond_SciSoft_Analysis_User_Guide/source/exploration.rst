@@ -87,7 +87,7 @@ N-dimensional array of items where each item is an element or a compound of
 elements. The axes selection table allows a choice of datasets to be associated
 with dimensions of the dataset and are used as abscissa values for plotting and
 displaying values against. By default, at least one integer dataset called
-"dim:n" is included per dimension that ranges from 0 to L-1 inclusive where L 
+"dim:n" is included per dimension that ranges from 1 to L inclusive where L 
 is the length of the dimension.
 
 The slicer allows (hyper-)rectangular subset (or slice) of the dataset to use

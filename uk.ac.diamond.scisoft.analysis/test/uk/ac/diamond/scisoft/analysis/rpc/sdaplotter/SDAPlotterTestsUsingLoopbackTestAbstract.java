@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
+import javax.management.RuntimeErrorException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
@@ -76,12 +79,20 @@ public class SDAPlotterTestsUsingLoopbackTestAbstract {
 		pythonRunInfo = null;
 
 		// Restore normal handler
-		AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), savedHandler);
+		try {
+			AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), savedHandler);
+		} catch (AnalysisRpcException e) {
+			throw new RuntimeException("Failed to restore handler", e);
+		}
 	}
 
 	protected void registerHandler(ISDAPlotter handler) {
 		IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class, handler);
-		AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
+		try {
+			AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
+		} catch (AnalysisRpcException e) {
+			throw new RuntimeException("Failed to register handler", e);
+		}
 	}
 
 

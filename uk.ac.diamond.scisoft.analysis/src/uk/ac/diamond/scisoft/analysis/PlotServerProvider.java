@@ -18,11 +18,13 @@ package uk.ac.diamond.scisoft.analysis;
 
 import gda.observable.IObservable;
 
+import org.python.modules.thread.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.RMIPlotServer;
 import uk.ac.diamond.scisoft.analysis.plotserver.SimplePlotServer;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
@@ -39,26 +41,35 @@ public class PlotServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(PlotServerProvider.class);
 	static PlotServer plotServer;
 
+	public synchronized static PlotServer getExistingPlotServer() {	
+		return plotServer;
+	}
+	
 	public synchronized static PlotServer getPlotServer() {
 		if (plotServer == null) {
 			logger.info("PlotServer instance not set - using local created PlotServer instead");
 			try {
 				plotServer = new RMIPlotServer();
 			} catch (Exception e) {
-				logger.info("RMIPlotserver can't be created using SimplePlotServer instead", e);
+				logger.info("RMIPlotserver can't be created, using SimplePlotServer instead", e);
 				plotServer = new SimplePlotServer();
 			}
 
-			// Start the Analysis RPC wrapper around the SDAPlotter
-			// This only happens on SDA
-			IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class,
-					SDAPlotterImpl.getDefaultInstance());
-			AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
+			try {
+				// Start the Analysis RPC wrapper around the SDAPlotter
+				// This only happens on SDA
+				IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class,
+						SDAPlotterImpl.getDefaultInstance());
+				AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
 
-			// Because we are making a "real" PlotServer (as opposed to a proxy to one, such as over Corba)
-			// set the PlotService to be the same server, otherwise the PlotService will attempt connection
-			// via RMI
-			PlotServiceProvider.setPlotService(plotServer);
+				// Because we are making a "real" PlotServer (as opposed to a proxy to one, such as over Corba)
+				// set the PlotService to be the same server, otherwise the PlotService will attempt connection
+				// via RMI
+				PlotServiceProvider.setPlotService(plotServer);
+			} catch (Exception e) {
+				logger.error("Error starting Analysis RCP wrapper", e);
+				plotServer = null;
+			}
 		}
 		return plotServer;
 	}

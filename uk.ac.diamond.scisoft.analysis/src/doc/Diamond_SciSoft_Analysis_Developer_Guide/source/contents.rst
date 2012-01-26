@@ -12,7 +12,6 @@ Contents:
    genericdataset
    fileio
    plotting
-   nexusviewer
    ACKS
 
 Indices and tables

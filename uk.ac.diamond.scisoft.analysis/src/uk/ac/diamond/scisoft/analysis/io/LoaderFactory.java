@@ -109,9 +109,9 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("png",  PNGLoader.class);
 		    LoaderFactory.registerLoader("raw",  RawBinaryLoader.class);
 		    LoaderFactory.registerLoader("srs",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("srs",  SRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  DatLoader.class);
+		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
 		    LoaderFactory.registerLoader("txt",  DatLoader.class);
 		    LoaderFactory.registerLoader("txt",  SRSLoader.class);
@@ -270,8 +270,7 @@ public class LoaderFactory {
 		while (it.hasNext()) {
 			final Class<? extends AbstractFileLoader> clazz = it.next();
 			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
-			if (!IMetaLoader.class.isInstance(loader))
-				continue;
+			if (!IMetaLoader.class.isInstance(loader)) continue;
 
 			try {
 				// NOTE Assumes loader fails quickly and nicely
@@ -558,9 +557,41 @@ public class LoaderFactory {
 	 * @param loader
 	 * @throws Exception
 	 */
-	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader)
-			throws Exception {
+	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader) throws Exception {
 
+		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
+
+		// Since not using set of loaders anymore must use contains to ensure
+		// that a memory leak does not occur.
+		if (!list.contains(loader)) list.add(loader);
+	}
+
+	/**
+	 * Throws an exception if the loader is not ready to be used with LoaderFactory.
+	 * Otherwise adds the class to the list of loaders at the position specified.
+	 * 
+	 * NOTE that duplicates are allowed and the LoaderFactory simply tries loaders until
+	 * one works. If loaders do not fail fast on invalid files then this approach does not work.
+	 * 
+	 * This has been tested by adding a test for each file type using the loader factory. This
+	 * coverage could be extended by adding more example files and attempting to load them
+	 * with the factory. However as long as each file type is passed through LoaderFactory and
+	 * checks are made in the test to ensure that the loader is working, there is a good chance
+	 * that it will find the right loader.
+	 * 
+	 * @param extension - lower case string
+	 * @param loader
+	 * @throws Exception
+	 */
+	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader, final int position) throws Exception {
+
+		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
+		// Since not using set of loaders anymore must use contains to ensure
+		// that a memory leak does not occur.
+		if (!list.contains(loader)) list.add(position, loader);
+	}
+
+	private static List<Class<? extends AbstractFileLoader>> prepareRegistration(String extension, Class<? extends AbstractFileLoader> loader) throws Exception {
 		try {
 			loader.getConstructor(String.class);
 		} catch (NoSuchMethodException e) {
@@ -576,11 +607,7 @@ public class LoaderFactory {
 			list = new ArrayList<Class<? extends AbstractFileLoader>>();
 			LOADERS.put(extension, list);
 		}
-
-		// Since not using set of loaders anymore must use contains to ensure
-		// that a memory leak does not occur.
-		if (!list.contains(loader))
-			list.add(loader);
+		return list;
 	}
 
 	/**

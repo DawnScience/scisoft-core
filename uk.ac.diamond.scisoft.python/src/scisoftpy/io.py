@@ -39,7 +39,7 @@ _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
 _srsload = _io.SRSLoader
 
-from dictutils import DataHolder
+from dictutils import DataHolder, ListDict
 
 _extra_suffices = { "jpg" : "jpeg", "tif" : "tiff", "dat" : "srs", "h5" : "hdf5", "nxs" : "nx" }
 
@@ -78,14 +78,14 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
         raise ValueError, 'File %s does not exist' % name
 
     lformats = None
-    if formats is None:
-        lformats = formats
+    if formats is not None:
+        lformats = _toList(formats)
     if lformats is None:
         if format is not None:
-            lformats = format
+            lformats = _toList(format)
     else:
         if format is not None:
-            lformats.extend(format)
+            lformats.extend(_toList(format))
         
     if lformats is None:
         # parse name to find extension and match with loader
@@ -166,7 +166,7 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
     except KeyError:
         raise ValueError, "Format not supported"
 
-    if isinstance(data, DataHolder):
+    if isinstance(data, ListDict):
         dh = data
     else:
         dl = []
@@ -178,7 +178,7 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
             for d in _toList(data):
                 n = getattr(d, 'name', 'data')
                 dl.append((n, d))
-        dh = DataHolder(dl)
+        dh = ListDict(dl)
 
     saver.save(dh)
 

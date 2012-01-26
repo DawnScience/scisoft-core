@@ -49,6 +49,9 @@ public class AggregateDataset implements ILazyDataset {
 		// make datasets have same rank
 		int maxRank = -1;
 		for (ILazyDataset d : datasets) {
+			if (d == null)
+				throw new IllegalArgumentException("Null dataset given");
+
 			int r = d.getRank();
 			if (r > maxRank)
 				maxRank = r;
@@ -122,6 +125,14 @@ public class AggregateDataset implements ILazyDataset {
 				dtype = AbstractDataset.getBestDType(dtype, ((LazyDataset) d).getDtype());
 			} else {
 				dtype = AbstractDataset.getBestDType(dtype, AbstractDataset.getDTypeFromClass(d.elementClass()));
+			}
+		}
+
+		for (ILazyDataset d : data) {
+			String n = d.getName();
+			if (n != null) {
+				name = n;
+				break;
 			}
 		}
 	}
@@ -228,7 +239,9 @@ public class AggregateDataset implements ILazyDataset {
 		stop[0] = p - offset[map[op]];
 		sliced.add(DatasetUtils.convertToAbstractDataset(od.getSlice(monitor, start, stop, step)));
 
-		return DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
+		IDataset d = DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
+		d.setName(name);
+		return d;
 	}
 
 	@Override
@@ -264,5 +277,29 @@ public class AggregateDataset implements ILazyDataset {
 	@Override
 	public AggregateDataset clone() {
 		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+
+		if (name != null && name.length() > 0) {
+			out.append("Aggregate dataset '");
+			out.append(name);
+			out.append("' has shape [");
+		} else {
+			out.append("Aggregate dataset shape is [");
+		}
+		int rank = shape == null ? 0 : shape.length;
+
+		if (rank > 0 && shape[0] > 0) {
+			out.append(shape[0]);
+		}
+		for (int i = 1; i < rank; i++) {
+			out.append(", " + shape[i]);
+		}
+		out.append(']');
+
+		return out.toString();
 	}
 }

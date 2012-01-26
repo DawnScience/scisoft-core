@@ -1,7 +1,7 @@
 Input/Output
 ============
-The primary class is ScanFileHolder. This class is used to hold data from a GDA
-scan. It has been extend to allow other external files to be loaded and saved.
+The primary class is DataHolder. This class is used to hold data from any file.
+It has been extend to allow other external files to be loaded and saved.
 
 Images from various detectors can be read into the data analysis plugin. This is
 done using the following method::

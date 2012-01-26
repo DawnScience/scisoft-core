@@ -37,7 +37,7 @@
                 <path refid="libs.jars.path" />
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
                 <pathelement location="${workspace.loc}/plugins/uk.ac.gda.nexus/bin" />
-                <pathelement location="${workspace.loc}/plugins/uk.ac.gda.common/bin" />
+                <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
                 <path refid="plugins.jars.path" />
                 <path refid="thirdparty.bundles.path" />

@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -70,14 +72,44 @@ import uk.ac.gda.monitor.IMonitor;
  * Load HDF5 files using NCSA's Java library
  */
 public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISliceLoader {
-	transient protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
+
+	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
+
+	private static ReentrantLock acquireLock(String file) {
+		ReentrantLock lock;
+		synchronized (openFiles) {
+			lock = openFiles.get(file);
+			if (lock == null) {
+				lock = new ReentrantLock();
+				openFiles.put(file, lock);
+			}
+		}
+		lock.lock();
+		return lock;
+	}
+
+	private static void releaseLock(ReentrantLock lock) {
+		lock.unlock();
+		if (lock.getHoldCount() == 0) {
+			synchronized (openFiles) {
+				if (openFiles.containsValue(lock)) {
+					for (Entry<String, ReentrantLock> e : openFiles.entrySet()) {
+						if (e.getValue().equals(lock)) {
+							openFiles.remove(e.getKey());
+						}
+					}
+				}
+			}
+		}
+	}
 
 	private String fileName;
 	private boolean keepBitWidth = false;
 
 	private String host = null;
 
-	private static final String DATA_FILENAME_ATTR_NAME = "data_filename";
+	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
 
 	public HDF5Loader() {
 		setHost();
@@ -101,12 +133,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	@Override
-	public synchronized DataHolder loadFile() throws ScanFileHolderException {
+	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile(null);
 	}
 
 	@Override
-	public synchronized DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 
 		DataHolder dh = null;
 		dh = new DataHolder();
@@ -159,7 +191,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	HDF5File tFile = null;
 
-	public synchronized HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
+	public HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
 		
 		if (!monitorIncrement(mon)) {
 			return null;
@@ -170,8 +202,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
 		}
 
-		HObject root = null;
+		ReentrantLock lock = acquireLock(fileName);
 		try {
+			HObject root = null;
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 			if (hdf5 == null) {
 				throw new ScanFileHolderException("HDF5 support not found: configure the library path to include hdf shared libraries");
@@ -195,7 +228,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 			hdf.close();
 		} catch (Exception le) {
-			throw new ScanFileHolderException("Problem loading file", le);
+			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
+		} finally {
+			releaseLock(lock);
 		}
 
 		return tFile;
@@ -247,29 +282,38 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	// get external node
 	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String lpath, String node, final boolean keepBitWidth) throws Exception {
 		HDF5Node nn = null;
-		final H5File hdf = (H5File) FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5).createInstance(lpath, FileFormat.READ);
-		if (!hdf.canRead())
-			throw new IllegalArgumentException("Cannot read file");
 
-		final int lid = hdf.open();
-		if (lid < 0)
-			throw new IllegalArgumentException("Opening file was unsuccessful");
-
-		if (!node.startsWith(HDF5File.ROOT)) {
-			node = HDF5File.ROOT + node;
-		}
-
+		ReentrantLock lock = acquireLock(lpath);
 		try {
-			HObject lobj = findObject(hdf, node);
-			if (lobj != null) {
-				final long oid = lobj.getOID()[0] + hdf.getAbsolutePath().hashCode()*17; // include file name in ID
-				nn = copyNode(new HDF5File(oid, lpath), pool, lobj, keepBitWidth);
+			final H5File hdf = (H5File) FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5).createInstance(lpath,
+					FileFormat.READ);
+			if (!hdf.canRead())
+				throw new IllegalArgumentException("Cannot read file");
+
+			final int lid = hdf.open();
+			if (lid < 0)
+				throw new IllegalArgumentException("Opening file was unsuccessful");
+
+			if (!node.startsWith(HDF5File.ROOT)) {
+				node = HDF5File.ROOT + node;
 			}
-		} catch (Exception e) {
-			throw new ScanFileHolderException("Problem loading file", e);
+
+			try {
+				HObject lobj = findObject(hdf, node);
+				if (lobj != null) {
+					final long oid = lobj.getOID()[0] + hdf.getAbsolutePath().hashCode() * 17; // include file name in
+																								// ID
+					nn = copyNode(new HDF5File(oid, lpath), pool, lobj, keepBitWidth);
+				}
+			} catch (Exception e) {
+				throw new ScanFileHolderException("Problem loading file", e);
+			} finally {
+				hdf.close();
+			}
 		} finally {
-			hdf.close();
+			releaseLock(lock);
 		}
+		
 		return nn;
 	}
 
@@ -303,10 +347,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return nn;
 	}
 
-	//	private static final String LINKSEPARATOR = HDF5File.HOST_SEPARATOR + HDF5File.FILE_STARTER;
-
-	// depth-first recursion that copies object and return node
-	private static HDF5Node copyNode(final HDF5File file, final HashMap<Long, HDF5Node> pool, final HObject oo, final boolean keepBitWidth) throws Exception {
+	/**
+	 * Method can be used to set up a HObject which is a group.
+	 * @param file
+	 * @param pool - may be null
+	 * @param oo
+	 * @param keepBitWidth
+	 * @return HDF5Node, child to be added.
+	 * @throws Exception
+	 */
+	public static HDF5Node copyNode(final HDF5File file, final HashMap<Long, HDF5Node> pool, final HObject oo, final boolean keepBitWidth) throws Exception {
 		if (oo instanceof H5Link) {
 			// a link which cannot be resolved remains a link
 			H5Link ol = (H5Link) oo;
@@ -349,7 +399,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		final Long oid = oo.getOID()[0] + file.getFilename().hashCode()*17; // include file name in ID
 
 		if (oo instanceof Dataset) {
-			if (pool.containsKey(oid)) {
+			if (pool!=null && pool.containsKey(oid)) {
 				HDF5Node p = pool.get(oid);
 				if (!(p instanceof HDF5Dataset)) {
 					throw new IllegalStateException("Matching pooled node is not a dataset");
@@ -400,7 +450,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				nd.setDataset(createLazyDataset(file.getHostname(), osd, keepBitWidth));
 				nd.setMaxShape(osd.getMaxDims());
 			}
-			pool.put(oid, nd);
+			if (pool!=null) pool.put(oid, nd);
 			return nd;
 		} else if (oo instanceof H5Group) {
 			if (pool.containsKey(oid)) {
@@ -561,17 +611,21 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return ds;
 	}
 
-	private static ILazyDataset createLazyDataset(final String host, final H5ScalarDS osd, final boolean keepBitWidth) throws Exception {
+	/**
+	 * Method used to create an ILazyDataset from a H5ScalarDS.
+	 * @param host
+	 * @param osd
+	 * @param keepBitWidth
+	 * @return the dataset
+	 * @throws Exception
+	 */
+	public static ILazyDataset createLazyDataset(final String host, final H5ScalarDS osd, final boolean keepBitWidth) throws Exception {
 		long[] dims = osd.getDims();
 		if (dims == null) {
 			osd.init();
 			dims = osd.getDims();
 		}
-		if (dims == null) {
-			System.err.println("Problem getting dimensions!");
-			osd.init();
-			dims = osd.getDims();
-		}
+
 		final int[] trueShape = new int[dims.length];
 		for (int i = 0; i < dims.length; i++) {
 			long d = dims[i];
@@ -643,23 +697,41 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				AbstractDataset d = null;
 				try {
 					if (!Arrays.equals(trueShape, shape)) {
-						// if shape was squeezed then need to translate to true slice
 						final int trank = trueShape.length;
 						int[] tstart = new int[trank];
 						int[] tsize = new int[trank];
 						int[] tstep = new int[trank];
 
-						int j = 0;
-						for (int i = 0; i < trank; i++) {
-							if (trueShape[i] == 1) {
-								tstart[i] = 0;
-								tsize[i] = 1;
-								tstep[i] = 1;
-							} else {
-								tstart[i] = lstart[j];
-								tsize[i] = newShape[j];
-								tstep[i] = lstep[j];
-								j++;
+						if (rank > trank) { // shape was extended (from left) then need to translate to true slice
+							int j = 0;
+							for (int i = 0; i < trank; i++) {
+								if (trueShape[i] == 1) {
+									tstart[i] = 0;
+									tsize[i] = 1;
+									tstep[i] = 1;
+								} else {
+									while (shape[j] == 1 && (rank - j) > (trank - i))
+										j++;
+
+									tstart[i] = lstart[j];
+									tsize[i] = newShape[j];
+									tstep[i] = lstep[j];
+									j++;
+								}
+							}
+						} else { // shape was squeezed then need to translate to true slice
+							int j = 0;
+							for (int i = 0; i < trank; i++) {
+								if (trueShape[i] == 1) {
+									tstart[i] = 0;
+									tsize[i] = 1;
+									tstep[i] = 1;
+								} else {
+									tstart[i] = lstart[j];
+									tsize[i] = newShape[j];
+									tstep[i] = lstep[j];
+									j++;
+								}
 							}
 						}
 
@@ -681,7 +753,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return new LazyDataset(name, dtype, trueShape.clone(), l);
 	}
 
-	private static ILazyDataset createStackedDatasetFromStrings(ExternalFiles ef) throws OutOfMemoryError, Exception {
+	/**
+	 * Method used to create a StackedDataset from an ExternalFile object.
+	 * @param ef
+	 * @return lazy data set from external file.
+	 * @throws OutOfMemoryError
+	 * @throws Exception
+	 */
+	public static ILazyDataset createStackedDatasetFromStrings(ExternalFiles ef) throws OutOfMemoryError, Exception {
 		//remove final dimension as that is for the characters of the strings
 		//shape here is for the actual filenames
 		
@@ -689,7 +768,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return new LazyDataset("file_name", loader.getDtype(), loader.getShape(), loader);
 	}
 
-	private static ExternalFiles extractExternalFileNames(H5ScalarDS sds) throws Exception {
+	/**
+	 * Return any External File references to be followed.
+	 * @param sds
+	 * @return ExternalFiles object
+	 * @throws Exception
+	 */
+	public static ExternalFiles extractExternalFileNames(H5ScalarDS sds) throws Exception {
 		sds.init();
 		final long[] dshape = sds.getDims();
 		final long[] dstart = sds.getStartDims();
@@ -751,9 +836,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	@SuppressWarnings("null")
-	private static synchronized AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
+	private static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
 			final int[] step, final int dtype, final boolean extend) throws ScanFileHolderException {
 		AbstractDataset data = null;
+
+		ReentrantLock lock = acquireLock(fileName);
 		try {
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 			final H5File hdf = (H5File) hdf5.createInstance(fileName, FileFormat.READ);
@@ -890,6 +977,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			hdf.close();
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file", le);
+		} finally {
+			releaseLock(lock);
 		}
 
 		return data;
@@ -1020,25 +1109,5 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 		}
 		return loadData(object.getPath(), object.getName(), lstart, newShape, lstep, -1, true);
-	}
-}
-
-class ExternalFiles {
-	int[] shape;
-	String[] files;
-
-	String getAsText() {
-		if (files == null)
-			return "";
-		StringBuilder sBuilder = new StringBuilder();
-		boolean addCR = false;
-		for (String filename : files) {
-			if (addCR) {
-				sBuilder.append("\n");
-			}
-			sBuilder.append(filename);
-			addCR = true;
-		}
-		return sBuilder.toString();
 	}
 }

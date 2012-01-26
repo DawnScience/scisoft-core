@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.gda.monitor.IMonitor;
 
@@ -58,7 +59,8 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		
-		IntegerDataset data = null;
+		IntegerDataset integerData = null;
+		FloatDataset floatData = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
@@ -81,17 +83,24 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				// Now read the data
 				int height = Integer.parseInt(textMetadata.get("Dim_1"));
 				int width = Integer.parseInt(textMetadata.get("Dim_2"));
-				data = new IntegerDataset(width, height);
-				if ("UnsignedShort".equals(textMetadata.get("DataType"))) {
-					if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
-						Utils.readLeShort(fi, data, index);
-					else
-						Utils.readBeShort(fi, data, index);
+				String dataType = textMetadata.get("DataType");
+				if (dataType.equals("Float")) {
+					floatData = new FloatDataset(width, height);
+					Utils.readFloat(fi, floatData, index);
+					
 				} else {
-					if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
-						Utils.readLeInt(fi, data, index);
-					else
-						Utils.readBeInt(fi, data, index);
+					integerData = new IntegerDataset(width, height);
+					if ("UnsignedShort".equals(textMetadata.get("DataType"))) {
+						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
+							Utils.readLeShort(fi, integerData, index);
+						else
+							Utils.readBeShort(fi, integerData, index);
+					} else {
+						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
+							Utils.readLeInt(fi, integerData, index);
+						else
+							Utils.readBeInt(fi, integerData, index);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -106,8 +115,11 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				fi = null;
 			}
 		}
-		
-		output.addDataset("ESRF Pilatus Data", data);
+		if (integerData != null) {
+			output.addDataset("ESRF Data Format", integerData);
+		} else if (floatData != null) {
+			output.addDataset("ESRF Data Format", floatData);			
+		}
 		return output;
 	}
 

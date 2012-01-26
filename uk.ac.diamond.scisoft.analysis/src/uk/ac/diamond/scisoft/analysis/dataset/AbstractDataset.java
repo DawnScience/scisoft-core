@@ -1908,7 +1908,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @param axis
 	 * @return true if they are compatible
 	 */
-	protected static boolean areShapesCompatible(final int[] ashape, final int[] bshape, final int axis) {
+	public static boolean areShapesCompatible(final int[] ashape, final int[] bshape, final int axis) {
 		if (ashape.length != bshape.length) {
 			return false;
 		}

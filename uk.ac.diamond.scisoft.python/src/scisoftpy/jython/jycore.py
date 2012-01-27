@@ -1974,9 +1974,14 @@ def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
     if isinstance(obj, _abstractds):
         if copy:
-            return obj.clone()
+            if dtype == None or dtype == obj.dtype:
+                return obj.clone()
+            else:
+                return obj.cast(_translatenativetype(dtype).value)
         else:
-            return obj
+            if dtype == None:
+                dtype = obj.dtype
+            return obj.cast(_translatenativetype(dtype).value)
 
     if not isinstance(obj, list):
         if isinstance(obj, _matrix): # cope with JAMA matrices

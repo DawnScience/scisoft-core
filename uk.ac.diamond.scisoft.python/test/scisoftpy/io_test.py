@@ -137,6 +137,22 @@ class Test(unittest.TestCase):
         self.save("colour.png", im)
         im2 = self.colourload("colour.png", testfolder=OutTestFolder)
 
+    def testSavingBits(self):
+        d = dnp.arange(12*32).reshape((12,32))
+        b = dnp.abs(dnp.array(d, dnp.int8))
+        b[b < 0] = 0
+        print b.min(), b.max()
+        dnp.io.save(OutTestFolder+'uint.tiff', d, bits=32, signed=False)
+        dnp.io.save(OutTestFolder+'ushort.tiff', d, bits=16, signed=False)
+        dnp.io.save(OutTestFolder+'ubyte.tiff', b, bits=8, signed=False)
+        dnp.io.save(OutTestFolder+'int.tiff', d, bits=32)
+        dnp.io.save(OutTestFolder+'short.tiff', d, bits=16)
+        dnp.io.save(OutTestFolder+'byte.tiff', dnp.array(d, dnp.int8), bits=8)
+        dnp.io.save(OutTestFolder+'double.tiff', d, bits=33)
+        dnp.io.save(OutTestFolder+'float.tiff', d, bits=33)
+        dnp.io.save(OutTestFolder+'short.png', d, bits=16)
+        dnp.io.save(OutTestFolder+'byte.png', b, bits=8)
+
     def testB16data(self):
         d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', formats=['srs'])
         print d.keys()

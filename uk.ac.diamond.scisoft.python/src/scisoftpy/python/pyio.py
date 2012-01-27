@@ -238,6 +238,8 @@ try:
 except:
     print >> sys.stderr, "Could not import python image library"
 
+from pycore import ndarrayRGB as _RGB
+
 class ImageLoader(PythonLoader):
     def load(self):
         if _im is None:
@@ -246,8 +248,7 @@ class ImageLoader(PythonLoader):
         if im.mode == 'RGB':
             if self.ascolour:
                 # convert to an rgb dataset
-                from pycore import ndarrayRGB
-                d = _core.asarray(im, dtype=_core.int16).view(ndarrayRGB)
+                d = _core.asarray(im, dtype=_core.int16).view(_RGB)
             else:
                 im = im.convert('L')
                 d = _core.asarray(im)
@@ -266,7 +267,16 @@ class ImageSaver(PythonSaver):
         if _im is None:
             raise NotImplementedError
 
-        im = _im.fromarray(data[0])
+        d = data[0]
+        if isinstance(d, _RGB):
+            s = list(d.shape)
+            s.append(3)
+            c = _core.zeros(s, dtype=_core._uint8)
+            c[...,0] = d['r']
+            c[...,1] = d['g']
+            c[...,2] = d['b']
+            d = c
+        im = _im.fromarray(d)
         im.save(self.name)
 
 

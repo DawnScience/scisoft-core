@@ -89,6 +89,16 @@ NeXus [#Nexus]_ naming convention.
 The four standard image loaders will load and convert RGB images to grey-scale
 (luma).
 
+In some of the formats supported (CBF, MarCCD, ADSC), information is supplied
+on the position and orientation of the detector that took the image, the size
+of pixels, the position and wavelength of an illuminating beam in a diffraction
+experiment. This diffraction data can be loaded in exactly the same way::
+
+    di = dnp.io.load(name)
+
+which returns a list (or dictionary) of diffraction images. These images can
+be plotted using the plot package.
+
 Loaders for the two tree formats (``hdf5`` and ``nx``) return data structures
 that look like trees with a root node, branches to other nodes. Nodes can have
 branches, i.e. it is a group, and also contain node attributes and
@@ -132,7 +142,7 @@ Saving
 
 Datasets can be saved::
 
-    dnp.io.save(name, data, format=None, range=(), autoscale=False)
+    dnp.io.save(name, data, format=None, range=(), autoscale=False, signed=True, bits=None)
 
 where:
 
@@ -157,18 +167,15 @@ where:
   dataset values to fit the chosen format (only ``png`` and ``jpeg`` are
   supported for auto-scaling).
 
+ *signed* is a boolean value to dictate whether to save as signed numbers
+
+ *bits* is an integer value to dictate the number of bits to use when saving
+
 If there are multiple datasets specified then multiple images will be saved,
 suffixed with a number representing the number of the dataset in the sequence.
-
-In some of the formats supported (CBF, MarCCD, ADSC), information is supplied
-on the position and orientation of the detector that took the image, the size
-of pixels, the position and wavelength of an illuminating beam in a diffraction
-experiment. This diffraction data can be loaded in exactly the same way::
-
-    di = dnp.io.load(name)
-
-which returns a list (or dictionary) of diffraction images. These images can
-be plotted using the plot package.
+The ``bits`` keyword is supported by ``png`` and ``tiff`` savers. The latter
+saver supports the ``unsigned`` keyword too. If the number of bits used is
+greater than 32, the saver attempts to use 32-bit floats.
 
 References
 ----------

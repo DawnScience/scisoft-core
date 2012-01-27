@@ -222,7 +222,35 @@ public class AbstractDatasetTest {
 			assertEquals(xf[i], ((DoubleDataset) tf).getData()[i], 1e-6);
 		}
 	}
+	
+	@Test
+	public void testTileSpeed() throws Exception {
 
+		final AbstractDataset a = new DoubleDataset(new double[]{1.0}, 1);
+		
+		long start, end;
+		
+		start = System.currentTimeMillis();
+		final double[] da = new double[2048*2048];
+		for (int i = 0; i < da.length; i++) {
+			da[i] = 1.0d;
+		}
+		end = System.currentTimeMillis();
+		long diff1 = end-start;
+		System.out.println("Array 2028x2048 completed in "+diff1+"ms");
+		
+
+		start = System.currentTimeMillis();
+		final AbstractDataset tiled = DatasetUtils.tile(a, 2048, 2048);
+		end = System.currentTimeMillis();
+		assertEquals(2048, tiled.getShape()[1]);
+		long diff2 = end-start;
+		
+		if (diff2>(diff1*20)) throw new Exception("Creation of tile took more than 20x as long as array creation of same size!");
+		
+		System.out.println("Tile 2028x2048 completed in "+diff2+"ms");
+		
+	}
 	/**
 	 * Tests for transpose method
 	 */

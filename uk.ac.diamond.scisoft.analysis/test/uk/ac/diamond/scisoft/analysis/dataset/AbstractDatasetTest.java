@@ -226,7 +226,7 @@ public class AbstractDatasetTest {
 	@Test
 	public void testTileSpeed() throws Exception {
 
-		final AbstractDataset a = new DoubleDataset(new double[]{1.0}, 1);
+		AbstractDataset a = new DoubleDataset(new double[]{1.0}, 1);
 		
 		long start, end;
 		
@@ -241,12 +241,13 @@ public class AbstractDatasetTest {
 		
 
 		start = System.currentTimeMillis();
-		final AbstractDataset tiled = DatasetUtils.tile(a, 2048, 2048);
+		a = AbstractDataset.arange(2048, AbstractDataset.FLOAT64);
+		final AbstractDataset tiled = DatasetUtils.tile(a, 2048, 1);
 		end = System.currentTimeMillis();
 		assertEquals(2048, tiled.getShape()[1]);
 		long diff2 = end-start;
 		
-		if (diff2>(diff1*20)) throw new Exception("Creation of tile took more than 20x as long as array creation of same size!");
+		if (diff2>(diff1*20)) throw new Exception("Creation of tile took more than 20x as long as array creation of same size! (It took "+diff2+")");
 		
 		System.out.println("Tile 2028x2048 completed in "+diff2+"ms");
 		

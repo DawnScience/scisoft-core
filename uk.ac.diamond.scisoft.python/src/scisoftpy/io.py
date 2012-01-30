@@ -130,7 +130,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
 
     return lfh
 
-def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignment
+def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=None): #@ReservedAssignment
     '''Save a (list of) datasets with optional scaling range
 
     Supported output formats:
@@ -138,6 +138,9 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
         binary -> raw
         text -> raw
         npy
+
+    signed -- save as signed numbers if true
+    bits   -- save with number of bits
     '''
     saver = None
     try:
@@ -162,7 +165,7 @@ def save(name, data, format=None, range=(), autoscale=False): #@ReservedAssignme
             sclass = _oformats[format]
             if sclass is None:
                 raise ValueError, "Format not supported"
-            saver = sclass(name)
+            saver = sclass(name, signed, bits)
     except KeyError:
         raise ValueError, "Format not supported"
 

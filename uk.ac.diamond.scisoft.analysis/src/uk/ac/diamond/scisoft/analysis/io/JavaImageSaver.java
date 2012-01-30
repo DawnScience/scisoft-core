@@ -112,9 +112,9 @@ public class JavaImageSaver implements IFileSaver {
 					// test to see if the values of the data are within the
 					// capabilities of format
 					if (maxVal > 0 && data.max().doubleValue() > maxVal) {
-						throw new ScanFileHolderException("The value of a pixel exceeds the maximum value that  "
-										+ fileType + "  is capable of handling. To save a  "
-										+ fileType + "  it is recommended to use a ScaledSaver class. File "
+						throw new ScanFileHolderException("The value of a pixel exceeds the maximum value that "
+										+ fileType + " is capable of handling. To save a "
+										+ fileType + " it is recommended to use a ScaledSaver class. File "
 										+ fileName + " not written");
 					}
 					if (unsigned && data.min().doubleValue() < 0) {

@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.Arrays;
+
 
 /**
  * Class to run over contiguous datasets and keep track of position. Note this is slower than ContiguousIterator
@@ -87,5 +89,14 @@ public class ContiguousIteratorWithPosition extends IndexIterator {
 	@Override
 	public int[] getPos() {
 		return pos;
+	}
+
+	@Override
+	public void reset() {
+		if (shape.length > 0) {
+			Arrays.fill(pos, 0);
+			pos[endrank] = -1;
+		}
+		index = -istep;
 	}
 }

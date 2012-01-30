@@ -64,4 +64,9 @@ public class IntegerIterator extends IndexIterator {
 	public int[] getPos() {
 		return null;
 	}
+
+	@Override
+	public void reset() {
+		iter.reset();
+	}
 }

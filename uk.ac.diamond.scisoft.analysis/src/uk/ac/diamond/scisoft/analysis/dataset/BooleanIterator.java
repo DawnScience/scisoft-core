@@ -29,7 +29,7 @@ public class BooleanIterator extends IndexIterator {
 	 * Constructor for an iterator over the items of a boolean dataset that are
 	 * true
 	 *
-	 * @param iter dataset
+	 * @param iter dataset iterator
 	 * @param selection boolean dataset
 	 */
 	public BooleanIterator(final IndexIterator iter, final BooleanDataset selection) {
@@ -54,5 +54,11 @@ public class BooleanIterator extends IndexIterator {
 	@Override
 	public int[] getPos() {
 		return pos;
+	}
+
+	@Override
+	public void reset() {
+		iterb.reset();
+		iterd.reset();
 	}
 }

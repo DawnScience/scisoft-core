@@ -493,8 +493,11 @@ public class ObjectDatasetBase extends AbstractDataset {
 
 	@Override
 	public ObjectDatasetBase getSlice(final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter = (SliceIterator) getSliceIterator(start, stop, step);
+		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+	}
 
+	@Override
+	public ObjectDatasetBase getSlice(final SliceIterator siter) {
 		ObjectDatasetBase result = new ObjectDatasetBase(siter.getSliceShape());
 		Object[] rdata = result.data; // PRIM_TYPE
 
@@ -569,12 +572,11 @@ public class ObjectDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public ObjectDatasetBase setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter;
+	public ObjectDatasetBase setSlice(final Object obj, final SliceIterator siter) {
+
 		if (obj instanceof IDataset) {
 			final IDataset ds = (IDataset) obj;
 			final int[] oshape = ds.getShape();
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
 			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
@@ -599,7 +601,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 			try {
 				Object v = obj; // PRIM_TYPE // FROM_OBJECT
 
-				siter = (SliceIterator) getSliceIterator(start, stop, step);
 				while (siter.hasNext())
 					data[siter.index] = v;
 			} catch (IllegalArgumentException e) {

@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.Arrays;
+
 
 /**
  * Class to run over non-contiguous or fragmented datasets
@@ -91,5 +93,12 @@ public class DiscontiguousIterator extends IndexIterator {
 	@Override
 	public int[] getPos() {
 		return pos;
+	}
+
+	@Override
+	public void reset() {
+		Arrays.fill(pos, 0);
+		pos[endrank] = -1;
+		index = -istep;
 	}
 }

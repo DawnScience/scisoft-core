@@ -629,8 +629,11 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundLongDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter = (SliceIterator) getSliceIterator(start, stop, step);
+		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+	}
 
+	@Override
+	public CompoundLongDataset getSlice(final SliceIterator siter) {
 		CompoundLongDataset result = new CompoundLongDataset(isize, siter.getSliceShape());
 		long[] rdata = result.data; // PRIM_TYPE
 		IndexIterator riter = result.getIterator();
@@ -805,12 +808,10 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundLongDataset setSlice(final Object o, final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter;
+	public CompoundLongDataset setSlice(final Object o, final SliceIterator siter) {
 		if (o instanceof IDataset) {
 			final IDataset ds = (IDataset) o;
 			final int[] oshape = ds.getShape();
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
 			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
@@ -860,7 +861,6 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 			try {
 				final long[] vr = toLongArray(o, isize); // PRIM_TYPE // CLASS_TYPE
 
-				siter = (SliceIterator) getSliceIterator(start, stop, step);
 				while (siter.hasNext()) {
 					for (int i = 0; i < isize; i++)
 						data[siter.index + i] = vr[i];

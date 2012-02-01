@@ -87,8 +87,18 @@ public class IndexIteratorTest {
 			assertEquals(i, data[iter.index], 1e-5*i);
 		}
 
+		iter.reset();
+		for (int i = 0; iter.hasNext(); i++) {
+			assertEquals(i, data[iter.index], 1e-5*i);
+		}
+
 		iter = ta.getIterator(true);
 		int[] pos = iter.getPos();
+		for (int i = 0; iter.hasNext(); i++) {
+			assertEquals(i, ta.getDouble(pos), 1e-5*i);
+		}
+
+		iter.reset();
 		for (int i = 0; iter.hasNext(); i++) {
 			assertEquals(i, ta.getDouble(pos), 1e-5*i);
 		}
@@ -99,6 +109,16 @@ public class IndexIteratorTest {
 		double[] data = (double[]) ta.getBuffer();
 		int[] pos = iter.getPos();
 
+		for (int i = 0; iter.hasNext(); i++) {
+			if (pos[ipos] == index) {
+				assertEquals("Position " + Arrays.toString(pos), 0, data[iter.index], 0);
+				i--;
+			} else {
+				assertEquals("Position " + Arrays.toString(pos), i, data[iter.index], 1e-5*i);
+			}
+		}
+
+		iter.reset();
 		for (int i = 0; iter.hasNext(); i++) {
 			if (pos[ipos] == index) {
 				assertEquals("Position " + Arrays.toString(pos), 0, data[iter.index], 0);

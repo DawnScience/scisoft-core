@@ -23,6 +23,7 @@ ndarray = _np.ndarray
 ndgeneric = _np.generic
 bool = _np.bool #@ReservedAssignment
 int8 = _np.int8
+_uint8 = _np.uint8 # used for PIL saving
 int16 = _np.int16
 int32 = _np.int32
 int64 = _np.int64

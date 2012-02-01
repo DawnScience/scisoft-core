@@ -45,4 +45,9 @@ public abstract class IndexIterator {
 	 * @return position indices (nb this is reference not a copy so avoid changing)
 	 */
 	abstract public int[] getPos();
+
+	/**
+	 * Reset iterator
+	 */
+	abstract public void reset();
 }

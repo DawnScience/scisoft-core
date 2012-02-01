@@ -1137,7 +1137,19 @@ public abstract class AbstractDataset implements IDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
-	abstract public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step);
+	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
+		return setSlice(obj, (SliceIterator) getSliceIterator(start, stop, step));
+	}
+
+	/**
+	 * @param obj
+	 *            specifies the object used to set the specified slice
+	 * @param iterator
+	 *            specifies the slice iterator
+	 * 
+	 * @return The dataset with the sliced set to object
+	 */
+	abstract public AbstractDataset setSlice(final Object obj, final SliceIterator iterator);
 
 	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset is true
@@ -1384,7 +1396,7 @@ public abstract class AbstractDataset implements IDataset {
 	public int[] getShape() {
 		// make a copy of the dimensions data, and put that out
 		if (shape == null) {
-			System.err.println("Shape is null!!!");
+			abstractLogger.warn("Shape is null!!!");
 			return new int[] {};
 		}
 		return shape.clone();
@@ -1908,7 +1920,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @param axis
 	 * @return true if they are compatible
 	 */
-	protected static boolean areShapesCompatible(final int[] ashape, final int[] bshape, final int axis) {
+	public static boolean areShapesCompatible(final int[] ashape, final int[] bshape, final int axis) {
 		if (ashape.length != bshape.length) {
 			return false;
 		}
@@ -2521,6 +2533,14 @@ public abstract class AbstractDataset implements IDataset {
 
 	@Override
 	abstract public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step);
+
+	/**
+	 * Get a slice of the dataset. The returned dataset is a copied selection of items
+	 * 
+	 * @param iterator Slice iterator
+	 * @return The dataset of the sliced data
+	 */
+	abstract public AbstractDataset getSlice(final SliceIterator iterator);
 
 	@Override
 	public AbstractDataset getSlice(Slice... slice) {

@@ -81,28 +81,7 @@ public class PositionIterator extends IndexIterator {
 			}
 		}
 
-		int j = 0;
-		for (; j <= endrank; j++) {
-			if (!omit[j])
-				break;
-		}
-		if (j > endrank) {
-			once = true;
-			return;
-		}
-
-		if (omit[endrank]) {
-			pos[endrank] = 0;
-			
-			for (int i = endrank - 1; i >= 0; i--) {
-				if (!omit[i]) {
-					pos[i]--;
-					break;
-				}
-			}
-		} else {
-			pos[endrank] = -1;
-		}
+		reset();
 	}
 
 	@Override
@@ -137,5 +116,31 @@ public class PositionIterator extends IndexIterator {
 	 */
 	public boolean[] getOmit() {
 		return omit;
+	}
+
+	@Override
+	public void reset() {
+		int j = 0;
+		for (; j <= endrank; j++) {
+			if (!omit[j])
+				break;
+		}
+		if (j > endrank) {
+			once = true;
+			return;
+		}
+
+		if (omit[endrank]) {
+			pos[endrank] = 0;
+			
+			for (int i = endrank - 1; i >= 0; i--) {
+				if (!omit[i]) {
+					pos[i]--;
+					break;
+				}
+			}
+		} else {
+			pos[endrank] = -1;
+		}
 	}
 }

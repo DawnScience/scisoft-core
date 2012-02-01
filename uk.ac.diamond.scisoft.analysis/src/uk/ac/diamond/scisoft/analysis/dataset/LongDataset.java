@@ -520,8 +520,11 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter = (SliceIterator) getSliceIterator(start, stop, step);
+		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+	}
 
+	@Override
+	public LongDataset getSlice(final SliceIterator siter) {
 		LongDataset result = new LongDataset(siter.getSliceShape());
 		long[] rdata = result.data; // PRIM_TYPE
 
@@ -596,12 +599,11 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public LongDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter;
+	public LongDataset setSlice(final Object obj, final SliceIterator siter) {
+
 		if (obj instanceof IDataset) {
 			final IDataset ds = (IDataset) obj;
 			final int[] oshape = ds.getShape();
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
 			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
@@ -626,7 +628,6 @@ public class LongDataset extends AbstractDataset {
 			try {
 				long v = toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
-				siter = (SliceIterator) getSliceIterator(start, stop, step);
 				while (siter.hasNext())
 					data[siter.index] = v;
 			} catch (IllegalArgumentException e) {

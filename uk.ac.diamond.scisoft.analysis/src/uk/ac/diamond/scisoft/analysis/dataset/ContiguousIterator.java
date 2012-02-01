@@ -56,4 +56,9 @@ public class ContiguousIterator extends IndexIterator {
 	public int[] getPos() {
 		return null;
 	}
+
+	@Override
+	public void reset() {
+		index = -istep;
+	}
 }

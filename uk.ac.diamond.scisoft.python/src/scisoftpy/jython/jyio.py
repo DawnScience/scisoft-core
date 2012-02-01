@@ -16,11 +16,17 @@
 
 
 from uk.ac.diamond.scisoft.analysis.io import PNGLoader as _pngload
-from uk.ac.diamond.scisoft.analysis.io import PNGSaver as _pngsave
 from uk.ac.diamond.scisoft.analysis.io import PNGScaledSaver as _pngscaledsave
 from uk.ac.diamond.scisoft.analysis.io import JPEGLoader as _jpegload
 from uk.ac.diamond.scisoft.analysis.io import JPEGSaver as _jpegsave
 from uk.ac.diamond.scisoft.analysis.io import JPEGScaledSaver as _jpegscaledsave
+
+from java.lang import System as _system #@UnresolvedImport
+from java.io import PrintStream as _pstream #@UnresolvedImport
+from java.io import OutputStream as _ostream #@UnresolvedImport
+class _NoOutputStream(_ostream):
+    def write(self, b, off, length): pass
+
 try:
     from uk.ac.diamond.scisoft.analysis.io import TIFFImageLoader as _tiffload
 except:
@@ -114,21 +120,15 @@ def loadnexus(name):
 from jyhdf5io import HDF5Loader
 from jynxio import NXLoader
 
-from java.io import OutputStream as _ostream #@UnresolvedImport
-class _NoOutputStream(_ostream):
-    def write(self, b, off, length): pass
-
 class JavaLoader(object):
     def load(self):
         # capture all error messages
-        from java.lang import System #@UnresolvedImport
-        from java.io import PrintStream #@UnresolvedImport
-        oldErr = System.err
-        System.setErr(PrintStream(_NoOutputStream())) #@UndefinedVariable
+        oldErr = _system.err
+        _system.setErr(_pstream(_NoOutputStream()))
         try:
             jdh = self.loadFile()
         finally:
-            System.setErr(oldErr) #@UndefinedVariable
+            _system.setErr(oldErr)
 
         data = asDatasetList(jdh.getList())
         names = jdh.getNames()
@@ -302,33 +302,37 @@ class JavaSaver(object):
         jdh = JavaSaver.tojava(dataholder)
         self.saveFile(jdh)
 
-class PNGSaver(JavaSaver, _pngsave):
-    def __init__(self, *arg):
-        _pngsave.__init__(self, *arg) #@UndefinedVariable
+class PNGSaver(JavaSaver, _imgsave):
+    def __init__(self, name, signed, bits):
+        if bits is None:
+            bits = 16
+        _imgsave.__init__(self, name, "png", bits, True) #@UndefinedVariable
 
 class ImageSaver(JavaSaver, _imgsave):
-    def __init__(self, *arg):
-        _imgsave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        _imgsave.__init__(self, name, "gif", 8, True) #@UndefinedVariable
 
 class JPEGSaver(JavaSaver, _jpegsave):
-    def __init__(self, *arg):
-        _jpegsave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        _jpegsave.__init__(self, name) #@UndefinedVariable
 
 class TIFFSaver(JavaSaver, _tiffsave):
-    def __init__(self, *arg):
-        _tiffsave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        if bits is None:
+            bits = 16
+        _tiffsave.__init__(self, name, bits, not signed) #@UndefinedVariable
 
 class TextSaver(JavaSaver, _rawtextsave):
-    def __init__(self, *arg):
-        _rawtextsave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        _rawtextsave.__init__(self, name) #@UndefinedVariable
 
 class BinarySaver(JavaSaver, _rawbinsave):
-    def __init__(self, *arg):
-        _rawbinsave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        _rawbinsave.__init__(self, name) #@UndefinedVariable
 
 class NumPySaver(JavaSaver, _numpysave):
-    def __init__(self, *arg):
-        _numpysave.__init__(self, *arg) #@UndefinedVariable
+    def __init__(self, name, signed, bits):
+        _numpysave.__init__(self, name) #@UndefinedVariable
 
 output_formats = { "png": PNGSaver, "gif": ImageSaver, "jpeg": JPEGSaver, "tiff": TIFFSaver, "text": TextSaver,
               "binary": BinarySaver, "npy": NumPySaver }

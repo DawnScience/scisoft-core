@@ -223,6 +223,68 @@ public class AbstractDatasetTest {
 		}
 	}
 
+	@Test
+	public void testTileSpeed() throws Exception {
+		int[][] blocks = {{1024,1}, {256,4}, {64,16}, {32,32}, {16,64}, {4, 256}, {1,1024}};
+//		int[][] blocks = {{1024,64}, {256,64}, {64,64}, {32,64}, {16,64}, {4, 64}, {1,64}};
+
+		int[][] shapes = { {1024, 2048}, {2048, 2048}, {2048, 1024} };
+
+		for (int b = 0; b < blocks.length; b++) {
+			for (int s = 0; s < shapes.length; s++) {
+				for (int n = 0; n < 3; n++)
+					runTile(blocks[b][0], blocks[b][1], shapes[s][0], shapes[s][1]);
+			}
+		}
+	}
+
+	private void runTile(final int srows, final int scols, final int rows, final int cols) throws Exception {
+		AbstractDataset a = AbstractDataset.arange(srows*scols, AbstractDataset.FLOAT64).reshape(srows, scols);
+
+		long start, end;
+
+		System.out.printf("Tile %sx%d Block %dx%d: ", rows, cols, srows, scols);
+
+		final int nrows = rows/srows;
+		final int ncols = cols/scols;
+
+		start = System.currentTimeMillis();
+		DoubleDataset b = new DoubleDataset(rows, cols);
+		final double[] da = (double[]) a.getBuffer();
+		final double[] db = b.getData();
+		if (scols == 1) {
+			for (int i = 0; i < db.length; i++) {
+				db[i] = da[(i / cols) % srows];
+			}
+		} else if (srows == 1) {
+			for (int i = 0; i < db.length; i++) {
+				db[i] = da[i % scols];
+			}
+		} else {
+			for (int i = 0; i < db.length; i++) {
+				db[i] = da[((i / cols) % srows) * scols + i % scols];
+			}
+		}
+		end = System.currentTimeMillis();
+		long diff1 = end - start;
+		System.out.printf("array = %d ms, ", diff1);
+
+		start = System.currentTimeMillis();
+		final AbstractDataset tiled = DatasetUtils.tile(a, nrows, ncols);
+		end = System.currentTimeMillis();
+		long diff2 = end - start;
+		System.out.printf("tile = %d ms\n", diff2);
+
+		assertEquals(rows, tiled.getShape()[0]);
+		assertEquals(cols, tiled.getShape()[1]);
+		if (!tiled.equals(b))
+			throw new Exception("Datasets not equal!");
+
+		if (diff2 > (diff1 * 20))
+			throw new Exception("Creation of tile took more than 20x as long as array creation of same size! (It took "
+					+ diff2 + ")");
+	}
+
 	/**
 	 * Tests for transpose method
 	 */

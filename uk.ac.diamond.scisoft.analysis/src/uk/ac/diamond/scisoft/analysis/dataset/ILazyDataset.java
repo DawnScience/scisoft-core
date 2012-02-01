@@ -60,7 +60,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * The shape (or array of lengths for each dimension) of the dataset can be empty for "scalar"
 	 * datasets
 	 * 
-	 * @return Shape of dataset
+	 * @return Copy of shape of dataset
 	 */
 	public int[] getShape();
 

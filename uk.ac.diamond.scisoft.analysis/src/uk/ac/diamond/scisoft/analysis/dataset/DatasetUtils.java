@@ -174,21 +174,18 @@ public class DatasetUtils {
 	 */
 	public static AbstractDataset tile(final IDataset a, int... reps) {
 		int[] shape = a.getShape();
-		int[] oshape = null;
 		int rank = shape.length;
 		final int rlen = reps.length;
 
 		// expand shape
 		if (rank < rlen) {
 			int[] newShape = new int[rlen];
-			oshape = new int[rank];
 			int extraRank = rlen - rank;
 			for (int i = 0; i < extraRank; i++) {
 				newShape[i] = 1;
 			}
 			for (int i = 0; i < rank; i++) {
 				newShape[i+extraRank] = shape[i];
-				oshape[i] = shape[i];
 			}
 
 			shape = newShape;
@@ -213,36 +210,52 @@ public class DatasetUtils {
 
 		AbstractDataset tdata = AbstractDataset.zeros(a.getElementsPerItem(), newShape, AbstractDataset.getDType(a));
 
-		// generate each start point and put a slice in
-		int[] start = new int[rank];
-		int[] stop = new int[rank];
-		int[] step = new int[rank];
-		for (int i = 0; i < rank; i++) {
-			start[i] = 0;
-			stop[i] = shape[i];
-			step[i] = 1;
-		}
-		while (true) {
-			tdata.setSlice(a, start, stop, step);
+		// decide which way to put slices
+		boolean manyColumns;
+		if (rank == 1)
+			manyColumns = true;
+		else
+			manyColumns = shape[rank-1] > 64;
 
-			// now move the count on one position
-			int j = 0;
-			for (; j < rank; j++) {
-				start[j] += shape[j];
-				stop[j] += shape[j];
-				if (start[j] >= newShape[j]) {
-					start[j] = 0;
-					stop[j] = shape[j];
+		if (manyColumns) {
+			// generate each start point and put a slice in
+			IndexIterator iter = tdata.getSliceIterator(null, null, shape);
+			SliceIterator siter = (SliceIterator) tdata.getSliceIterator(null, shape, null); 
+			final int[] pos = iter.getPos();
+			while (iter.hasNext()) {
+				siter.setStart(pos);
+				tdata.setSlice(a, siter);
+			}
+
+		} else {
+			// for each value, set slice given by repeats
+			final int[] skip = new int[rank];
+			for (int i = 0; i < rank; i++) {
+				if (reps[i] == 1) {
+					skip[i] = newShape[i];
 				} else {
-					break;
+					skip[i] = shape[i];
 				}
 			}
-			if (j == rank)
-				break;
-		}
+			
+			AbstractDataset aa = convertToAbstractDataset(a);
+			IndexIterator ita = aa.getIterator(true);
+			final int[] pos = ita.getPos();
 
-		if (oshape != null)
-			a.setShape(oshape); // restore shape
+			final int[] sstart = new int[rank];
+			final int extra = rank - pos.length;
+			for (int i = 0; i < extra; i++) {
+				sstart[i] = 0;
+			}
+			SliceIterator siter = (SliceIterator) tdata.getSliceIterator(sstart, null, skip);
+			while (ita.hasNext()) {
+				for (int i = 0; i < pos.length; i++) {
+					sstart[i + extra] = pos[i];
+				}
+				siter.setStart(sstart);
+				tdata.setSlice(aa.getObjectAbs(ita.index), siter);
+			}
+		}
 
 		return tdata;
 	}

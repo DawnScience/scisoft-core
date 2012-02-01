@@ -396,8 +396,11 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter = (SliceIterator) getSliceIterator(start, stop, step);
+		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+	}
 
+	@Override
+	public ComplexDoubleDataset getSlice(final SliceIterator siter) {
 		ComplexDoubleDataset result = new ComplexDoubleDataset(siter.getSliceShape());
 		double[] rdata = result.data; // PRIM_TYPE
 		IndexIterator riter = result.getIterator();
@@ -411,11 +414,9 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public ComplexDoubleDataset setSlice(final Object o, final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter;
+	public ComplexDoubleDataset setSlice(final Object o, final SliceIterator siter) {
 		if (o instanceof ComplexFloatDataset) {
 			ComplexFloatDataset zds = (ComplexFloatDataset) o;
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
 			if (!AbstractDataset.areShapesCompatible(siter.getSliceShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
@@ -432,7 +433,6 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 			}
 		} else if (o instanceof ComplexDoubleDataset) { // IGNORE_CLASS
 			ComplexDoubleDataset zds = (ComplexDoubleDataset) o; // IGNORE_CLASS
-			siter = (SliceIterator) getSliceIterator(start, stop, step);
 
 			if (!AbstractDataset.areShapesCompatible(siter.getSliceShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
@@ -448,13 +448,12 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 				data[siter.index+1] = odata[oiter.index+1]; // PRIM_TYPE // ADD_CAST
 			}
 		} else if (o instanceof IDataset) {
-			super.setSlice(o, start, stop, step);
+			super.setSlice(o, siter);
 		} else {
 			try {
 				double vr = toReal(o); // PRIM_TYPE // ADD_CAST
 				double vi = toImag(o); // PRIM_TYPE // ADD_CAST
 
-				siter = (SliceIterator) getSliceIterator(start, stop, step);
 				while (siter.hasNext()) {
 					data[siter.index] = vr;
 					data[siter.index+1] = vi;

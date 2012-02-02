@@ -387,19 +387,19 @@ public class Utils {
 		final float[] fdata = data.getData();
 		byte[] buf = new byte[4*(size)+start];
 		is.read(buf);
+		byte [] bdata = new byte[4];
 		float fmax = Float.MIN_VALUE;
 		float fmin = Float.MAX_VALUE;
-		int hash = 0;
+		double hash = 0.0;
 		int pos = start; // Byte offset to start of data
+		float value;
 		for (int i = 0; i < size; i++) {
-			byte b0 = buf[pos];
-			byte b1 = buf[pos+1];
-			byte b2 = buf[pos+2];
-			byte b3 = buf[pos+3];
-			byte [] bdata = new byte[] {b3,b2,b1,b0};
-			ByteBuffer b = ByteBuffer.wrap(bdata);
-			float value = b.getFloat();
-			hash = (hash * 19 + (int)value);
+			bdata[0] = buf[pos+3];
+			bdata[1] = buf[pos+2];
+			bdata[2] = buf[pos+1];
+			bdata[3] = buf[pos];
+			value = ByteBuffer.wrap(bdata).getFloat();
+			hash = (hash * 19 + value);
 			fdata[i] = value;
 			if (value > fmax) {
 				fmax = value;
@@ -418,7 +418,7 @@ public class Utils {
 		}
 		data.setStoredValue("max", fmax);
 		data.setStoredValue("min", fmin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue("hash", (int)hash);
 	}
 
 	/**

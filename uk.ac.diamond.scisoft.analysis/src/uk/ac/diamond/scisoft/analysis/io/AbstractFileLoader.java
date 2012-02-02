@@ -24,6 +24,16 @@ import uk.ac.gda.monitor.IMonitor;
  * A class which can be extended when implementing IFileLoader
  */
 public abstract class AbstractFileLoader implements IFileLoader {
+	/** 
+	 * Name prefix for an image dataset
+	 */
+	public static final String IMAGE_NAME_PREFIX = "image-";
+
+	/**
+	 * Default name for first image dataset
+	 */
+	public static final String DEF_IMAGE_NAME = "image-00";
+
 	protected boolean loadMetadata = true;
 
 	@Override

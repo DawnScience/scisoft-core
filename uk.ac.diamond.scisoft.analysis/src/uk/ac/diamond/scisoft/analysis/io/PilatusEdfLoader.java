@@ -93,6 +93,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 					else
 						Utils.readBeInt(fi, data, index);
 				}
+				data.setName(DEF_IMAGE_NAME);
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);

@@ -225,8 +225,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 
 			tFile = copyTree((H5Group) root, keepBitWidth);
-
-			hdf.close();
+//			hdf.close();
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
@@ -290,16 +289,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (!hdf.canRead())
 				throw new IllegalArgumentException("Cannot read file");
 
-			final int lid = hdf.open();
-			if (lid < 0)
-				throw new IllegalArgumentException("Opening file was unsuccessful");
+//			final int lid = hdf.open();
+//			if (lid < 0)
+//				throw new IllegalArgumentException("Opening file was unsuccessful");
 
 			if (!node.startsWith(HDF5File.ROOT)) {
 				node = HDF5File.ROOT + node;
 			}
 
 			try {
-				HObject lobj = findObject(hdf, node);
+				HObject lobj = hdf.get(node);
 				if (lobj != null) {
 					final long oid = lobj.getOID()[0] + hdf.getAbsolutePath().hashCode() * 17; // include file name in
 																								// ID
@@ -810,31 +809,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return ef;
 	}
 
-	private static HObject findObject(FileFormat file, String path) throws Exception {
-		if (file == null || path == null)
-			return null;
-		if (!path.endsWith(HDF5Node.SEPARATOR))
-			path = path + HDF5Node.SEPARATOR;
-		return file.get(path);
-		//		DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) file.getRootNode();
-		//		if (theRoot == null)
-		//			return null;
-		//		else if (path.equals(HDF5File.ROOT))
-		//			return (HObject) theRoot.getUserObject();
-		//		@SuppressWarnings("unchecked")
-		//		Enumeration<DefaultMutableTreeNode> local_enum = theRoot.breadthFirstEnumeration();
-		//		DefaultMutableTreeNode theNode = null;
-		//		HObject theObj = null;
-		//		while (local_enum.hasMoreElements()) {
-		//			theNode = local_enum.nextElement();
-		//			theObj = (HObject) theNode.getUserObject();
-		//			String fullPath = theObj.getFullName() + HDF5Node.SEPARATOR;
-		//			if (path.equals(fullPath))
-		//				return theObj;
-		//		}
-		//		return null;
-	}
-
 	@SuppressWarnings("null")
 	private static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
 			final int[] step, final int dtype, final boolean extend) throws ScanFileHolderException {
@@ -847,11 +821,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (!hdf.canRead())
 				throw new IllegalArgumentException("Cannot read file");
 
-			final int h = hdf.open();
-			if (h < 0)
-				throw new IllegalArgumentException("Opening file was unsuccessful");
-
-			HObject obj = findObject(hdf, node);
+			HObject obj = hdf.get(node);
 
 			if (obj == null)
 				throw new IllegalArgumentException("Node not found: " + node);
@@ -974,7 +944,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			} else {
 				throw new ScanFileHolderException("Cannot handle (non-scalar) dataset type");
 			}
-			hdf.close();
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file", le);
 		} finally {

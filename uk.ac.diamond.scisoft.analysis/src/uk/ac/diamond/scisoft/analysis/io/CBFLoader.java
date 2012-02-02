@@ -111,6 +111,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		data = readCBFBinaryData(chs, imageOrien);
+		data.setName(DEF_IMAGE_NAME);
+
 		chs.delete(); // this also closes the file
 
 		if (loadMetadata) {

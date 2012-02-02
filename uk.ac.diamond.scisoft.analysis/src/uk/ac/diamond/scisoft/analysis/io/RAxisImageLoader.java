@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
@@ -153,6 +154,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 			data.setStoredValue("min", amin);
 			data.setStoredValue("hash", hash);
 
+			data.setName(DEF_IMAGE_NAME);
 			data.setMetadataMap(GDAMetadata);
 			output.addDataset("RAxis Image", data, getMetaData());
 

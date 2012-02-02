@@ -88,6 +88,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 				data = new IntegerDataset(height, width);
 				Utils.readBeShort(fi, (IntegerDataset) data, index);
 			}
+			data.setName(DEF_IMAGE_NAME);
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
@@ -118,14 +119,17 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		String line = br.readLine();
 		int index   = line.length()+1;
 		String token;
-		StringTokenizer s1 = new StringTokenizer(line);			
+		StringTokenizer s1 = new StringTokenizer(line);
 		token = s1.nextToken();
 		textMetadata.put("MagicNumber", token);
 		if (token.startsWith("P5")) {
 			if (!s1.hasMoreTokens()) {
 				line = br.readLine();
+				while (line.startsWith("#")) {  // ignore comment lines
 				index += line.length()+1;
-				s1 = new StringTokenizer(line);	
+				line = br.readLine();
+				}
+				s1 = new StringTokenizer(line);
 			}
 			token = s1.nextToken();
 			textMetadata.put("Width", token);

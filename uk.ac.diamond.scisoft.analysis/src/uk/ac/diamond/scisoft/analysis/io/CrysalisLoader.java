@@ -138,6 +138,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 
 				data = new IntegerDataset(height, width);
 				Utils.readLeInt(fi, data, 0);
+				data.setName(DEF_IMAGE_NAME);
 			} else {
 				throw new ScanFileHolderException("Not a valid Crysalis file");
 			}

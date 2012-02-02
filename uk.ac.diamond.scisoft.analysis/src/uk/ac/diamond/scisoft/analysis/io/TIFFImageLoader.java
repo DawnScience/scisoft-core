@@ -117,6 +117,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 			if (loadData) {
 				data = createDataset(input);
 				data.setMetadata(getMetaData());
+				data.setName(DEF_IMAGE_NAME);
 			}
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);

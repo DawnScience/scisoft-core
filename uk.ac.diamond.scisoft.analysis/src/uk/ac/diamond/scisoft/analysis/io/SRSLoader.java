@@ -350,7 +350,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 		int end = findQuoteChar(line, quote, start+1);
 		if (end < 0) { 
-			logger.warn("String was not quoted correctly: {}", line.substring(start));
+			logger.warn("String was not quoted correctly: {} from {}", line.substring(start), line);
 			return line.substring(start+1);
 		}
 

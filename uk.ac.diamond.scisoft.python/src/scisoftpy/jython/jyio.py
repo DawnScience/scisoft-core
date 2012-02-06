@@ -121,7 +121,7 @@ from jyhdf5io import HDF5Loader
 from jynxio import NXLoader
 
 class JavaLoader(object):
-    def load(self):
+    def load(self, warn=True):
         # capture all error messages
         oldErr = _system.err
         _system.setErr(_pstream(_NoOutputStream()))
@@ -151,7 +151,7 @@ class JavaLoader(object):
                 if mnames:
                     metadata = [ (k, meta.getMetaValue(k)) for k in mnames ]
 
-        return DataHolder(zip(basenames, data), metadata)
+        return DataHolder(zip(basenames, data), metadata, warn)
 
     def setloadmetadata(self, load_metadata):
         self.load_metadata = load_metadata

@@ -34,7 +34,7 @@ _translator = _maketranslator()
 _method_names = ['metadata', 'clear', 'popitem', 'has_key', 'keys', 'fromkeys', 'get', 'copy', 'setdefault', 'update', 'pop',
                  'values', 'items', 'iterkeys', 'itervalues', 'iteritems', 'append', 'extend', 'index', 'remove']
 
-def sanitise_name(text):
+def sanitise_name(text, warn=True):
     '''
     Sanitise name:
         if text is metadata then prepend with an underscore
@@ -50,16 +50,18 @@ def sanitise_name(text):
 
     if sane[0] in digits:
         sane = '_' + sane
-        print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane
+        if warn:
+            print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane
     if sane in _method_names:
         sane = '_' + sane
-        print "Warning in sanitising dict keys: '%s' is a reserved method name so prepending an underscore" % sane
+        if warn:
+            print "Warning in sanitising dict keys: '%s' is a reserved method name so prepending an underscore" % sane
     if sane.startswith('__'):
         raise ValueError, "Cannot use a name that starts with double underscores: %s" % sane
 
     return sane
 
-def make_safe(items):
+def make_safe(items, warn=True):
     '''
     Make a list of key/value tuples safe by sanitising keys
     and make them unique
@@ -68,7 +70,7 @@ def make_safe(items):
         return []
 
     items = zip(*items) # transform to two lists
-    keys = [sanitise_name(str(k)) for k in items[0]]
+    keys = [sanitise_name(str(k), warn) for k in items[0]]
     vals = items[1]
 
     lk = len(keys)
@@ -84,7 +86,8 @@ def make_safe(items):
                 while newkey in uk:
                     n += 1
                     newkey = keys[i] + str(n)
-                print "Replacing duplicate key '%s' with '%s'" % (k, newkey)
+                if warn:
+                    print "Replacing duplicate key '%s' with '%s'" % (k, newkey)
                 keys[i] = newkey
             uk[k] = n+1
     
@@ -97,17 +100,18 @@ class ListDict(_odict):
     Combined list/ordered dictionary class. Keys to the dictionary are exposed as attributes.
     This supports all dictionary methods, pop, append, extend, index, remove and del
     '''
-    def __init__(self, data=None, lock=False):
+    def __init__(self, data=None, lock=False, warn=True):
         '''
         A dictionary or list of tuples of key/value pairs. If lock=True,
         keys cannot be reassigned without first deleting the item
         '''
 #        super(ListDict, self).__setattr__('__lock', lock)
         _odict.__setattr__(self, '__lock', lock)
+        _odict.__setattr__(self, '__warn', warn)
         #self.__lock = lock #setattr__(self, '__lock', lock)
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
-        data = make_safe(data)
+        data = make_safe(data, warn)
         _odict.__init__(self, data)
         if data:
             self.__dict__.update(data)
@@ -116,7 +120,7 @@ class ListDict(_odict):
         _odict.clear(self)
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
-        data = make_safe(data)
+        data = make_safe(data, _odict.__getattribute__(self, '__warn'))
         _odict.update(self, data)
         if data:
             self.__dict__.update(data)
@@ -147,7 +151,7 @@ class ListDict(_odict):
             key = _odict.keys(self)[key]
 
         if type(key) is StringType:
-            key = sanitise_name(key)
+            key = sanitise_name(key, _odict.__getattribute__(self, '__warn'))
             if key in self and _odict.__getattribute__(self, '__lock'):
                 raise KeyError, 'Dictionary is locked, delete item to reassign to key'
             _odict.__setitem__(self, key, value)
@@ -269,6 +273,7 @@ class DataHolder(ListDict):
     Arguments:
     data        -- a list of tuples where each tuple is a string, NumPy array pair
     metadata    -- a list of tuples where each tuple is a string, object pair
+    warn        -- if True (default), print warnings about key names
 
     Data can be accessed in three ways:
         1. as an attribute
@@ -276,9 +281,9 @@ class DataHolder(ListDict):
         3. as a list item
     Metadata can be accessed in a similar manner though from an attribute called metadata
     '''
-    def __init__(self, data=None, metadata=None):
-        ListDict.__init__(self, data)
-        self.metadata = ListDict(metadata)
+    def __init__(self, data=None, metadata=None, warn=True):
+        ListDict.__init__(self, data, warn)
+        self.metadata = ListDict(metadata, warn)
 
 def _test_make_safe():
     # test make_safe

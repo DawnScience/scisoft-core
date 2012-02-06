@@ -15,7 +15,7 @@ analysis plugin. This is done using the following method::
 This loads up the file as a list/ordered dictionary of datasets. Optionally
 arguments can be specified::
 
-    dh = dnp.io.load(name, format=None, withmetadata=True, ascolour=False)
+    dh = dnp.io.load(name, format=None, withmetadata=True, ascolour=False, warn=True)
 
 where:
 
@@ -56,6 +56,8 @@ where:
 
  *ascolour* is a boolean value to dictate whether to return any coloured image
  data as an RGB dataset or convert it to greyscale
+
+ *warn* is a boolean value to dictate whether to print some warnings
 
 The object returned by load is usually a data holder and acts like a list and
 ordered dictionary. It has at least one attribute ``metadata`` which is

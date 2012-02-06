@@ -41,8 +41,10 @@ class SRSLoader(PythonLoader):
     '''
     Loads an SRS dat file and returns a dataholder object
     '''
-    def load(self):
+    def load(self, warn=True):
         '''
+        warn        -- if True (default), print warnings about key names
+
         Returns a DataHolder object
         '''
 
@@ -88,7 +90,7 @@ class SRSLoader(PythonLoader):
             data = self._parse_data(colstext, datatext)
             metadata = self._parse_head(srstext)
     
-            return DataHolder(data, metadata)
+            return DataHolder(data, metadata, warn)
 
         finally:
             f.close()
@@ -241,7 +243,7 @@ except:
 from pycore import ndarrayRGB as _RGB
 
 class ImageLoader(PythonLoader):
-    def load(self):
+    def load(self, warn=True):
         if _im is None:
             raise NotImplementedError
         im = _im.open(self.name)
@@ -260,7 +262,7 @@ class ImageLoader(PythonLoader):
         if _path.exists(n):
             n = _path.basename(n)
 
-        return DataHolder([(n, d)])
+        return DataHolder([(n, d)], warn=warn)
 
 class ImageSaver(PythonSaver):
     def save(self, data):
@@ -297,7 +299,7 @@ finally:
     os.close(fd)
 
 class TIFFfileLoader(PythonLoader):
-    def load(self):
+    def load(self, warn=True):
         if _tf is None:
             raise NotImplementedError
 
@@ -325,7 +327,7 @@ class TIFFfileLoader(PythonLoader):
 
         if len(data) < 1:
             pass
-        return DataHolder(data, metadata)
+        return DataHolder(data, metadata, warn)
 
 if _tf is None:
     LibTIFFLoader = ImageLoader

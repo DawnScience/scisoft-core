@@ -914,4 +914,30 @@ public class AbstractDatasetTest {
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", new Complex(1.0, -0.5), a.getObject());
 	}
+
+	@Test
+	public void testConcatenate() {
+		AbstractDataset a = AbstractDataset.arange(6, AbstractDataset.FLOAT64).reshape(3,2);
+		AbstractDataset b = AbstractDataset.arange(6, 8, 1, AbstractDataset.FLOAT64).reshape(1,2);
+		AbstractDataset c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
+		AbstractDataset d = AbstractDataset.arange(8, AbstractDataset.FLOAT64).reshape(4,2);
+		assertEquals("Rank", 2, c.getRank());
+		assertTrue("Dataset", c.equals(d));
+
+		a.setShape(2,3);
+		b = AbstractDataset.arange(6, 9, 1, AbstractDataset.FLOAT64).reshape(1,3);
+		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
+		d = AbstractDataset.arange(9, AbstractDataset.FLOAT64).reshape(3,3);
+		assertEquals("Rank", 2, c.getRank());
+		assertTrue("Dataset", c.equals(d));
+
+		a = AbstractDataset.arange(2, AbstractDataset.FLOAT64).reshape(1,2);
+		b = AbstractDataset.arange(3, 5, 1, AbstractDataset.FLOAT64).reshape(1,2);
+		a = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
+		b = AbstractDataset.arange(2, 6, 3, AbstractDataset.FLOAT64).reshape(2,1);
+		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 1);
+		d = AbstractDataset.arange(6, AbstractDataset.FLOAT64).reshape(2,3);
+		assertEquals("Rank", 2, c.getRank());
+		assertTrue("Dataset", c.equals(d));
+	}
 }

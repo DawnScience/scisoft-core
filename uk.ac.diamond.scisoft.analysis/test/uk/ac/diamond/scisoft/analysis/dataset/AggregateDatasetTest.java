@@ -20,6 +20,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +41,7 @@ public class AggregateDatasetTest {
 
 	@Test
 	public void testConstructorFailures() {
+		@SuppressWarnings("unused")
 		AggregateDataset a;
 		try {
 			a = new AggregateDataset(true, new ILazyDataset[] {});
@@ -98,4 +101,22 @@ public class AggregateDatasetTest {
 		assertArrayEquals("Incorrect shape", new int[] {1, 2, 2}, s.getShape());
 	}
 
+	@Test
+	public void testRepeatedDataset() {
+		AbstractDataset a = AbstractDataset.arange(3, AbstractDataset.FLOAT64);
+		AbstractDataset[] as = new AbstractDataset[5];
+		Arrays.fill(as, a);
+		AggregateDataset b = new AggregateDataset(true, as);
+		assertEquals("Incorrect rank", a.getRank() + 1, b.getRank());
+		assertArrayEquals("Incorrect shape", new int[] {as.length, 3}, b.getShape());
+
+		AbstractDataset s;
+		s = DatasetUtils.convertToAbstractDataset(b.getSlice(new int[] {1,0}, new int[] {2,2}, null));
+		assertArrayEquals("Incorrect shape", new int[] {1, 2}, s.getShape());
+		assertArrayEquals("Incorrect values", new double[] {0, 1}, (double[])s.getBuffer(), 1e-5);
+
+		s = DatasetUtils.convertToAbstractDataset(b.getSlice(new int[] {0,1}, new int[] {2,2}, null));
+		assertArrayEquals("Incorrect shape", new int[] {2, 1}, s.getShape());
+		assertArrayEquals("Incorrect values", new double[] {1, 1}, (double[])s.getBuffer(), 1e-5);
+	}
 }

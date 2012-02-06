@@ -427,7 +427,7 @@ public class DatasetUtils {
 		for (; i < anum; i++) {
 			if (at != AbstractDataset.getDType(as[i])) {
 				utilsLogger.error("Datasets are not of same type");
-				break;				
+				break;
 			}
 			if (!AbstractDataset.areShapesCompatible(ashape, as[i].getShape(), axis)) {
 				utilsLogger.error("Datasets' shapes are not equal");

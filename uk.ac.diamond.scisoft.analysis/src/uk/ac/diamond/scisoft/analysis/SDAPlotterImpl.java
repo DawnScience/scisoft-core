@@ -295,18 +295,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName
-	 * @param images
-	 * @throws Exception
-	 */
-	@Override
-	public void imagesPlot(String plotName, IDataset[] images) throws Exception {
-		imagesPlot(plotName, null, null, images);
-	}
-
-	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
 	 * @param xAxis
 	 *            can be null
 	 * @param yAxis
@@ -357,7 +345,19 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Allows the plotting of an image to the defined view
+	 * Allows the plotting of images to the defined view
+	 * 
+	 * @param plotName
+	 * @param images
+	 * @throws Exception
+	 */
+	@Override
+	public void imagesPlot(String plotName, IDataset[] images) throws Exception {
+		imagesPlot(plotName, null, null, images);
+	}
+
+	/**
+	 * Allows the plotting of images to the defined view
 	 * 
 	 * @param plotName
 	 * @param xAxis
@@ -367,7 +367,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param images
 	 * @throws Exception
 	 */
-
 	@Override
 	public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception {
 		if (!isDataND(images[0], 2)) {

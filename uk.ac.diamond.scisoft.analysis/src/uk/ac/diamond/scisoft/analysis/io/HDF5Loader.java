@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -74,16 +75,13 @@ import uk.ac.gda.monitor.IMonitor;
 public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISliceLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
-	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
+	private static Map<String, ReentrantLock> openFiles = new ConcurrentHashMap<String, ReentrantLock>();
 
 	private static ReentrantLock acquireLock(String file) {
-		ReentrantLock lock;
-		synchronized (openFiles) {
-			lock = openFiles.get(file);
-			if (lock == null) {
-				lock = new ReentrantLock();
-				openFiles.put(file, lock);
-			}
+		ReentrantLock lock = openFiles.get(file);
+		if (lock == null) {
+			lock = new ReentrantLock();
+			openFiles.put(file, lock);
 		}
 		lock.lock();
 		return lock;
@@ -92,12 +90,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	private static void releaseLock(ReentrantLock lock) {
 		lock.unlock();
 		if (lock.getHoldCount() == 0) {
-			synchronized (openFiles) {
-				if (openFiles.containsValue(lock)) {
-					for (Entry<String, ReentrantLock> e : openFiles.entrySet()) {
-						if (e.getValue().equals(lock)) {
-							openFiles.remove(e.getKey());
-						}
+			if (openFiles.containsValue(lock)) {
+				for (Entry<String, ReentrantLock> e : openFiles.entrySet()) {
+					if (e.getValue().equals(lock)) {
+						openFiles.remove(e.getKey());
 					}
 				}
 			}

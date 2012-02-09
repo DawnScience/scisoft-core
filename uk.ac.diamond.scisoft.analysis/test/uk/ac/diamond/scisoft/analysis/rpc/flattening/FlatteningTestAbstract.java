@@ -526,6 +526,8 @@ abstract public class FlatteningTestAbstract {
 		// test one explicitly
 		flattenAndUnflatten(GuiParameters.PLOTMODE);
 		// test all the parameters
+		// NOTE If the test fails here it is probably because of a mismatch between the Java and Python GuiParameters.
+		// see GuiParameters.java and pybeans.py 
 		for (GuiParameters param : GuiParameters.values()) {
 			flattenAndUnflatten(param);
 		}

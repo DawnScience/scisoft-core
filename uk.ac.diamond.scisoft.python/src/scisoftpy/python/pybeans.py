@@ -58,6 +58,7 @@ class _parameters(object):
         self.imagegridypos = self._parametershelper (self, "imagegridypos", "IGridY")
         self.imagegridsize = self._parametershelper (self, "imagegridsize", "IGridSize")
         self.metadatanodepath = self._parametershelper (self, "metadatanodepath", "NodePath")
+        self.treenodepath = self._parametershelper(self, "treenodepath", "TreeNodePath")
         self.gridpreferences = self._parametershelper(self, "GRIDPREFERENCES", "GridPrefs")
         self.imagegridstore = self._parametershelper (self, "imagegridstore", "ImageGridStore")
         self.volumeheadersize = self._parametershelper (self, "volumeheadersize", "RawVolumeHeaderSize")
@@ -70,6 +71,7 @@ class _parameters(object):
         self.masking = self._parametershelper(self, "masking", "Masking")
         self.calibrationpeaks = self._parametershelper(self, "calibrationpeaks", "CalibrationPeaks")
         self.calibrationfunctionncd = self._parametershelper(self, "calibrationfunctionncd", "CalibrationFunction")
+        self.onedfile = self._parametershelper(self, "onedfile", "OneDFile")
         
     def get(self, str):
         '''Return the GUIParemeter with the given name, or return None for no matching'''

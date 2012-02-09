@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public class XasAsciiLoader extends SRSLoader {
 			String[] names = datasetNames.toArray(new String[]{});
 			DataHolder result = new DataHolder();
 			try {
-				convertToDatasets(result, names, columnData, isStoreStringValues(), isUseImageLoaderForStrings());
+				convertToDatasets(result, names, columnData, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			} catch (Exception e) {
 				logger.warn(e.getMessage());
 			}

@@ -54,7 +54,7 @@ public class PlotServiceProvider {
 				logger.info("Using registered plotserver");
 			} catch (Exception e) {
 				try {
-					plotService = (PlotService) RMIServerProvider.getInstance().lookup(hostname,
+					plotService = (PlotService) RMIClientProvider.getInstance().lookup(hostname,
 							RMIPlotServer.RMI_SERVICE_NAME);
 					logger.info("Using RMIPlotService");
 				} catch (Exception e1) {

@@ -29,10 +29,9 @@ import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
  */
 public class AnalysisRpcServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcServerProvider.class);
-	public final static int DEFAULT_RPCPORT = 8610;
-
+	
 	private static AnalysisRpcServerProvider instance = new AnalysisRpcServerProvider();
-	private int port = DEFAULT_RPCPORT;
+	private int port = 0;
 	private AnalysisRpcServer server = null;
 	private AnalysisRpcClient analysisRpcClient;
 
@@ -64,6 +63,7 @@ public class AnalysisRpcServerProvider {
 			server = new AnalysisRpcServer(port);
 			try {
 				server.start();
+				port = server.getPort();
 				logger.info("Starting Analysis RPC Server on port " + port);
 			} catch (AnalysisRpcException e) {
 				logger.error("Failed to start AnalysisRpcServer", e);
@@ -113,7 +113,7 @@ public class AnalysisRpcServerProvider {
 	 * run on the same machine.
 	 * 
 	 * @param analysisRpcPort
-	 *            new port number, or 0 to use default port
+	 *            new port number, or 0 to auto select a free port
 	 * @throws IllegalStateException
 	 *             if the class has already been initialised
 	 * @throws IllegalArgumentException
@@ -126,11 +126,7 @@ public class AnalysisRpcServerProvider {
 			throw new IllegalStateException("Analysis Rpc Server Provider has already used the existing port, "
 					+ "setPort must be called before any handlers are added or requests are made");
 
-		if (analysisRpcPort == 0) {
-			port = DEFAULT_RPCPORT;
-		} else {
-			port = analysisRpcPort;
-		}
+		port = analysisRpcPort;
 	}
 
 	/**

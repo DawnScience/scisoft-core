@@ -23,17 +23,15 @@ via a temporary file written in NumPy file format.
 '''
 
 import scisoftpy.python.pyrpc as _rpc
+import os
 
-_RPC_CONNECTION_PORT = 8610
+_RPC_CONNECTION_PORT = 0
 _RPC_CLIENT = None
 
 def setremoteport(rpcport=0, **kwargs):
     '''Sets the Analysis RPC Connection Port to the rpcport arg'''
     global _RPC_CONNECTION_PORT
-    if rpcport == 0:
-        _RPC_CONNECTION_PORT = 8610;
-    else:
-        _RPC_CONNECTION_PORT = rpcport
+    _RPC_CONNECTION_PORT = rpcport
     global _RPC_CLIENT
     _RPC_CLIENT = None # ditch cached client
         
@@ -42,7 +40,13 @@ def _get_rpcclient():
     number to be changed at runtime'''
     global _RPC_CLIENT
     if _RPC_CLIENT is None:
-        _RPC_CLIENT = _rpc.rpcclient(_RPC_CONNECTION_PORT)
+        if _RPC_CONNECTION_PORT == 0:
+            try:
+                port = int(os.getenv('SCISOFT_RPC_PORT'))
+            except:
+                raise Exception("Failed to determine correct port, either ensure SCISOFT_RPC_PORT or call scisoftpy.plot.setremoteport(...)")
+            
+        _RPC_CLIENT = _rpc.rpcclient(port)
     return _RPC_CLIENT
 
         

@@ -16,9 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import java.rmi.AccessException;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -35,10 +35,9 @@ import org.slf4j.LoggerFactory;
  */
 public class RMIServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(RMIServerProvider.class);
-	public final static int DEFAULT_REGISTRYSERVERPORT = 8405;
 
 	private static RMIServerProvider instance = new RMIServerProvider();
-	private int port = DEFAULT_REGISTRYSERVERPORT;
+	private int port = 0;
 	private Registry serverRegistry = null;
 
 	/**
@@ -70,11 +69,29 @@ public class RMIServerProvider {
 	 *            name of the service
 	 * @param object
 	 *            remote to export
-	 * @throws RemoteException
 	 * @throws AlreadyBoundException
+	 * @throws IOException if automatic port selection fails
 	 */
-	public synchronized void exportAndRegisterObject(String serviceName, Remote object) throws RemoteException,
-			AlreadyBoundException {
+	public synchronized void exportAndRegisterObject(String serviceName, Remote object) throws AlreadyBoundException, IOException {
+		if (port == 0) {
+			// Use ServerSocket method for obtaining random(ish) free port
+			ServerSocket s = null;
+			try {
+				s = new ServerSocket(0);
+				port = s.getLocalPort();
+
+			} finally {
+				if (s != null) {
+					s.close();
+				}
+			}
+			if (port < 0) {
+				// The idea of this check is based on some code in PyDev which implies that ServerSocket
+				// can return -1 when a firewall configuration is causing a problem
+				throw new IOException("Unable to obtain free port, is a firewall running?");
+			}
+		}
+
 		Remote stub = UnicastRemoteObject.exportObject(object, port);
 
 		if (serverRegistry == null) {
@@ -84,25 +101,6 @@ public class RMIServerProvider {
 		logger.info("Adding " + serviceName);
 		serverRegistry.bind(serviceName, stub);
 		remotes.add(object);
-	}
-
-	/**
-	 * Return a proxy to the object on the server.
-	 * <p>
-	 * This is the method you call from the "client" code (e.g. the code run from Jython) to access the server.
-	 * 
-	 * @param host
-	 *            host name to connect to, or <code>null</code> for localhost
-	 * @param serviceName
-	 *            name of a registered service
-	 * @return remote proxy remote object
-	 * @throws RemoteException
-	 * @throws NotBoundException
-	 * @throws AccessException
-	 */
-	public Remote lookup(String host, String serviceName) throws RemoteException, NotBoundException, AccessException {
-		Registry registry = LocateRegistry.getRegistry(host, port);
-		return registry.lookup(serviceName);
 	}
 
 	/**
@@ -123,11 +121,7 @@ public class RMIServerProvider {
 			throw new IllegalStateException("RMI Server Provider has already used the existing port, "
 					+ "setPort must be called before any handlers are added.");
 
-		if (rmiPortNumber == 0) {
-			rmiPortNumber = DEFAULT_REGISTRYSERVERPORT;
-		} else {
-			port = rmiPortNumber;
-		}
+		port = rmiPortNumber;
 	}
 
 	/**

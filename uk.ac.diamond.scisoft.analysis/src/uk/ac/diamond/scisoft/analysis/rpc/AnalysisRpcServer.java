@@ -59,7 +59,7 @@ public class AnalysisRpcServer {
 	 * Create a new AnalysisRpc server that listens on the given port
 	 * 
 	 * @param port
-	 *            to listen on
+	 *            to listen on, or 0 to allocate port automatically
 	 */
 	public AnalysisRpcServer(int port) {
 		try {
@@ -153,5 +153,16 @@ public class AnalysisRpcServer {
 		return flattener;
 	}
 
+	/**
+	 * Returns the port, on which the AnalysisRpcServer is running. This method may be invoked after {@link #start()}
+	 * only.
+	 * <p>
+	 * For example, it may be useful to call {@link #getPort()} if the server is created on port 0 (auto assign a port)
+	 * 
+	 * @return Port number
+	 */
+	public int getPort() {
+		return webServer.getPort();
+	}
 
 }

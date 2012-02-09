@@ -32,6 +32,7 @@ import uuid
 TYPE = "__type__"
 CONTENT = "content"
 
+_TEMP_LOCATION_SET = False
 _TEMP_LOCATION = None
 
 def settemplocation(loc=None):
@@ -44,8 +45,9 @@ def settemplocation(loc=None):
      
      loc new temp file location to use, or None to use default of system temp
     '''
-    global _TEMP_LOCATION
+    global _TEMP_LOCATION, _TEMP_LOCATION_SET
     _TEMP_LOCATION = loc
+    _TEMP_LOCATION_SET = True
 
 class flatteningHelper(object):
     def __init__(self, typeObj, typeName):
@@ -186,7 +188,13 @@ class ndArrayHelper(flatteningHelper):
     def flatten(self, obj):
         rval = dict()
         if isinstance(obj, _np.ndarray):
-            global _TEMP_LOCATION
+            global _TEMP_LOCATION, _TEMP_LOCATION_SET
+            if not _TEMP_LOCATION_SET:
+                _TEMP_LOCATION = os.getenv('SCISOFT_RPC_TEMP')
+                _TEMP_LOCATION_SET = True
+            if _TEMP_LOCATION == "":
+                _TEMP_LOCATION = None
+                 
             (osfd, filename) = mkstemp(suffix='.npy', prefix='scisofttmp-', dir=_TEMP_LOCATION)
             os.close(osfd)
             try:

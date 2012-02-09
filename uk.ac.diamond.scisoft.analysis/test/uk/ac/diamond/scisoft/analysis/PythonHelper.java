@@ -104,6 +104,12 @@ public class PythonHelper {
 
 		pythonRunInfo.std.start();
 		pythonRunInfo.err.start();
+		try {
+			// Allow the python process to start before continuing, this is required
+			// when starting a server in the Python side.
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
 		return pythonRunInfo;
 	}
 

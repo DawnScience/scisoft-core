@@ -21,6 +21,7 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -151,7 +152,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				parseColumns(splitRegex.split(dataStr.trim()), columns);
 			}
 
-			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings());
+			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
@@ -219,7 +220,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @param storeStrings
 	 * @param useImageLoader
 	 */
-	protected static void convertToDatasets(DataHolder holder, String[] names, List<?>[] columns, boolean storeStrings, boolean useImageLoader) {
+	protected static void convertToDatasets(DataHolder holder, String[] names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
 		for (int i = 0; i < names.length; i++) {
 			if (columns[i] != null) {
 				final AbstractDataset ds = AbstractDataset.array(columns[i]);
@@ -232,7 +233,12 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					if (useImageLoader) {
 						ImageStackLoaderEx loader;
 						try {
-							loader = new ImageStackLoaderEx(sds.getShape(), sds.getData());
+							String[] paths = sds.getData();
+							for (int j = 0; j < paths.length ; j++) {
+								if(!(new File(paths[j])).exists())
+									paths[j] = (new File(file_directory,paths[j])).getAbsolutePath();
+							}
+							loader = new ImageStackLoaderEx(sds.getShape(), paths);
 							String name = names[i] + "_image";
 							LazyDataset lazyDataset = new LazyDataset(name, loader.dtype, loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);

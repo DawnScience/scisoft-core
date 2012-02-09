@@ -46,5 +46,6 @@ Bundle-ClassPath: .,
 Import-Package: Jama,
  ncsa.hdf.hdf5lib.exceptions,
  ncsa.hdf.object,
- ncsa.hdf.object.h5
+ ncsa.hdf.object.h5,
+ org.slf4j;version="[1.5.0,2.0.0)"
 Eclipse-BuddyPolicy: registered

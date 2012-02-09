@@ -103,7 +103,7 @@ public final class GuiParameters implements Serializable {
 
 	@Override
 	public final boolean equals(Object that) {
-		return ordinal == ((GuiParameters) that).ordinal;
+		return that != null && ordinal == ((GuiParameters) that).ordinal;
 	}
 
 	@Override

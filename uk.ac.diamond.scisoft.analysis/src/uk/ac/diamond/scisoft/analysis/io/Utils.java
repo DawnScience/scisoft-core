@@ -19,7 +19,9 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
+import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 
@@ -370,6 +372,53 @@ public class Utils {
 		data.setStoredValue("max", amax);
 		data.setStoredValue("min", amin);
 		data.setStoredValue("hash", hash);
+	}
+
+
+	/**
+	 * Read an image of float
+	 * @param is
+	 * @param data
+	 * @param start number of bytes from start of input stream
+	 * @throws IOException
+	 */
+	public static void readFloat(InputStream is, FloatDataset data, int start) throws IOException {
+		final int size = data.getSize();
+		final float[] fdata = data.getData();
+		byte[] buf = new byte[4*(size)+start];
+		is.read(buf);
+		byte [] bdata = new byte[4];
+		float fmax = Float.MIN_VALUE;
+		float fmin = Float.MAX_VALUE;
+		double hash = 0.0;
+		int pos = start; // Byte offset to start of data
+		float value;
+		for (int i = 0; i < size; i++) {
+			bdata[0] = buf[pos+3];
+			bdata[1] = buf[pos+2];
+			bdata[2] = buf[pos+1];
+			bdata[3] = buf[pos];
+			value = ByteBuffer.wrap(bdata).getFloat();
+			hash = (hash * 19 + value);
+			fdata[i] = value;
+			if (value > fmax) {
+				fmax = value;
+			}
+			if (value < fmin) {
+				fmin = value;
+			}
+			pos += 4;
+		}
+
+		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		int[] shape = data.getShape();
+		int rank = shape.length;
+		for (int i = 0; i < rank; i++) {
+			hash = hash*17 + shape[i];
+		}
+		data.setStoredValue("max", fmax);
+		data.setStoredValue("min", fmin);
+		data.setStoredValue("hash", (int)hash);
 	}
 
 	/**

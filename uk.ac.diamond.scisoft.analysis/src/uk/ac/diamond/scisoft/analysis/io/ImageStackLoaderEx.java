@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
+import java.io.File;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -45,18 +46,30 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	int [] dimensions;
 	private int[] data_shapes;
 	AbstractDatasetRecord cache;
-	
+	String parent;
 	
 	public int getDtype() {
 		return dtype;
 	}
 
 	public ImageStackLoaderEx(int [] dimensions, String[] imageFilenames) throws Exception {
+		this(dimensions, imageFilenames, null);
+	}
+
+	public ImageStackLoaderEx(int [] dimensions, String[] imageFilenames, String directory) throws Exception {
 		if( dimensions == null || dimensions.length<1 || dimensions.length>2)
 			throw new IllegalArgumentException("dimensions invalid");
 		int totalLength = AbstractDataset.calcSize(dimensions);
 		if( imageFilenames == null || imageFilenames.length != totalLength)
 			throw new IllegalArgumentException("imageFilenames.length != "+ totalLength);
+
+		if (directory != null) {
+			File file = new File(directory); 
+			if (!file.isDirectory()) {
+				throw new IllegalArgumentException("Given directory is not a directory");
+			}
+		}
+		parent = directory;
 
 		this.imageFilenames = imageFilenames;
 		this.dimensions = dimensions;
@@ -72,7 +85,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 			shape[i+offset]=data_shapes[i];
 		}
 	}
-	
+
 	String getFilename(int [] pos){
 		if (dimensions.length==1)
 			return imageFilenames[pos[0]];
@@ -86,6 +99,13 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		if (cache == null || !java.util.Arrays.equals(location, cache.location)) {
 			// load the file
 			String filename = getFilename(location);
+			if (parent != null) {
+				File f = new File(filename);
+				if (f.isAbsolute()) {
+					filename = f.getName();
+				}
+				filename = new File(parent, filename).getAbsolutePath();
+			}
 			DataHolder data = null;
 			try {
 				data = LoaderFactory.getData(filename, mon);

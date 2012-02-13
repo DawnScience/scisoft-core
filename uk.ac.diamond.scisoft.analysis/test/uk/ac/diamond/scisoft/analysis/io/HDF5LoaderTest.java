@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 import gda.analysis.io.ScanFileHolderException;
 import gda.util.TestUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -46,6 +48,37 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
+	public void testLoadingSpeed() {
+
+		List<Long> times = new ArrayList<Long>();
+
+		for (int i = 0; i < 4; i++) {
+			long start = -System.currentTimeMillis();
+			try {
+				HDF5Loader l = new HDF5Loader(TestFileFolder + "manygroups.h5");
+				@SuppressWarnings("unused")
+				HDF5File tree = l.loadTree(null);
+			} catch (ScanFileHolderException e) {
+			}
+			start += System.currentTimeMillis();
+			times.add(start);
+		}
+
+		Collections.sort(times);
+		System.out.printf("Load took %d ms", times.get(0));
+	}
+
+	// crashes JVM at the mo!!
+//	@Test
+//	public void testLoadingStrings() throws ScanFileHolderException {
+//		String n = TestFileFolder + "strings.h5";
+//		HDF5Loader l = new HDF5Loader(n);
+//
+//		@SuppressWarnings("unused")
+//		HDF5File tree = l.loadTree(null);
+//	}
+
+	@Test
 	public void testLoadingTest() throws ScanFileHolderException {
 		String n = TestFileFolder + "testlinks.nxs";
 		HDF5Loader l = new HDF5Loader(n);
@@ -62,52 +95,50 @@ public class HDF5LoaderTest {
 		list = tree.getGroup().getDatasets("d1");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {25, 3});
-		assertEquals("Value in " + name, 1, dataset.getInt(0,1));
-		assertEquals("Value in " + name, 5, dataset.getInt(1,2));
-		assertEquals("Value in " + name, 37, dataset.getInt(12,1));
+		checkDataset(name, dataset, new int[] { 25, 3 });
+		assertEquals("Value in " + name, 1, dataset.getInt(0, 1));
+		assertEquals("Value in " + name, 5, dataset.getInt(1, 2));
+		assertEquals("Value in " + name, 37, dataset.getInt(12, 1));
 
 		// hard link
 		name = "hard link";
 		list = tree.getGroup().getDatasets("d_hl");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {25, 3});
-		assertEquals("Value in " + name, 1, dataset.getInt(0,1));
-		assertEquals("Value in " + name, 5, dataset.getInt(1,2));
-		assertEquals("Value in " + name, 37, dataset.getInt(12,1));
+		checkDataset(name, dataset, new int[] { 25, 3 });
+		assertEquals("Value in " + name, 1, dataset.getInt(0, 1));
+		assertEquals("Value in " + name, 5, dataset.getInt(1, 2));
+		assertEquals("Value in " + name, 37, dataset.getInt(12, 1));
 
 		// soft link
 		name = "soft link";
 		list = tree.getGroup().getDatasets("d_sl");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {25, 3});
-		assertEquals("Value in " + name, 1, dataset.getInt(0,1));
-		assertEquals("Value in " + name, 5, dataset.getInt(1,2));
-		assertEquals("Value in " + name, 37, dataset.getInt(12,1));
+		checkDataset(name, dataset, new int[] { 25, 3 });
+		assertEquals("Value in " + name, 1, dataset.getInt(0, 1));
+		assertEquals("Value in " + name, 5, dataset.getInt(1, 2));
+		assertEquals("Value in " + name, 37, dataset.getInt(12, 1));
 
 		// external link
 		name = "external link";
 		list = tree.getGroup().getDatasets("d_el");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {2, 5});
-		assertEquals("Value of " + name, 1., dataset.getDouble(0,1), 1e-8);
-		assertEquals("Value of " + name, 9., dataset.getDouble(1,4), 1e-8);
+		checkDataset(name, dataset, new int[] { 2, 5 });
+		assertEquals("Value of " + name, 1., dataset.getDouble(0, 1), 1e-8);
+		assertEquals("Value of " + name, 9., dataset.getDouble(1, 4), 1e-8);
 
 		// NAPI mount
 		name = "NAPI";
 		list = tree.getGroup().getDatasets("extdst");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {2, 5});
-		assertEquals("Value of " + name, 1., dataset.getDouble(0,1), 1e-8);
-		assertEquals("Value of " + name, 9., dataset.getDouble(1,4), 1e-8);
+		checkDataset(name, dataset, new int[] { 2, 5 });
+		assertEquals("Value of " + name, 1., dataset.getDouble(0, 1), 1e-8);
+		assertEquals("Value of " + name, 9., dataset.getDouble(1, 4), 1e-8);
 
 		System.out.println(tree.findNodeLink("/entry1/to/this/level"));
-
-
 	}
 
 	@Test
@@ -149,9 +180,9 @@ public class HDF5LoaderTest {
 		List<ILazyDataset> list = tree.getGroup().getDatasets(name);
 		assertEquals("Number of " + name, 1, list.size());
 		IDataset dataset = list.get(0).getSlice();
-		checkDataset(name, dataset, new int[] {489});
-		assertEquals("Value of " + name, 6922, dataset.getDouble(2), 6922*1e-8);
-		assertEquals("Value of " + name, 7944.5, dataset.getDouble(479), 7944.5*1e-8);
+		checkDataset(name, dataset, new int[] { 489 });
+		assertEquals("Value of " + name, 6922, dataset.getDouble(2), 6922 * 1e-8);
+		assertEquals("Value of " + name, 7944.5, dataset.getDouble(479), 7944.5 * 1e-8);
 		nl = tree.findNodeLink("/entry1/user01/username");
 		System.out.println(nl);
 		HDF5Node nd = nl.getDestination();
@@ -181,7 +212,7 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingChunked() throws ScanFileHolderException {
-		final String n = TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/sino.h5";
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/sino.h5";
 
 		HDF5Loader l = new HDF5Loader(n);
 
@@ -197,47 +228,47 @@ public class HDF5LoaderTest {
 
 		// slice with chunks
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(1), null);
-		checkDataset("data", ad, new int[] {1, 1, 1481});
+		checkDataset("data", ad, new int[] { 1, 1, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 164.12514, x, x*1e-5);
+		assertEquals("Value of sum", 164.12514, x, x * 1e-5);
 
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), null);
-		checkDataset("data", ad, new int[] {1, 75, 1481});
+		checkDataset("data", ad, new int[] { 1, 75, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 40271.562, x, x*1e-5);
+		assertEquals("Value of sum", 40271.562, x, x * 1e-5);
 
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), new Slice(2));
-		checkDataset("data", ad, new int[] {1, 75, 2});
+		checkDataset("data", ad, new int[] { 1, 75, 2 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 3.7149904, x, x*1e-5);
+		assertEquals("Value of sum", 3.7149904, x, x * 1e-5);
 
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(1), null);
-		checkDataset("data", ad, new int[] {31, 1, 1481});
+		checkDataset("data", ad, new int[] { 31, 1, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 10522.864, x, x*1e-5);
+		assertEquals("Value of sum", 10522.864, x, x * 1e-5);
 
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), null);
-		checkDataset("data", ad, new int[] {31, 75, 1481});
+		checkDataset("data", ad, new int[] { 31, 75, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 1640010.1, x, x*1e-3);
+		assertEquals("Value of sum", 1640010.1, x, x * 1e-3);
 
 		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(2));
-		checkDataset("data", ad, new int[] {31, 75, 2});
+		checkDataset("data", ad, new int[] { 31, 75, 2 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 137.25012, x, x*1e-5);
+		assertEquals("Value of sum", 137.25012, x, x * 1e-5);
 
 		// slice across chunks
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(1,2));
-		checkDataset("data", ad, new int[] {31, 75, 1});
+		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(1, 2));
+		checkDataset("data", ad, new int[] { 31, 75, 1 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
-		assertEquals("Value of sum", 64.191261, x, x*1e-5);
+		assertEquals("Value of sum", 64.191261, x, x * 1e-5);
 
 	}
 
@@ -249,14 +280,14 @@ public class HDF5LoaderTest {
 		for (int i = 0; i < before.length; i++)
 			assertEquals("Path", after[i], HDF5File.canonicalizePath(before[i]));
 	}
-	
+
 	@Test
 	public void testScanFileHolderLoading() throws ScanFileHolderException {
 		String n = TestFileFolder + "FeKedge_1_15.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 		DataHolder dh = l.loadFile();
 		assertEquals("File does not have the correct number of datasets", 51, dh.getNames().length);
-		if(dh.contains("/entry1/xspress2system/data")) {
+		if (dh.contains("/entry1/xspress2system/data")) {
 			ILazyDataset data = dh.getLazyDataset("/entry1/xspress2system/data");
 			assertEquals("Dataset is not the right shape", 3, data.getShape().length);
 			assertEquals("Dataset dimention 0 is not of the correct shape", 489, data.getShape()[0]);

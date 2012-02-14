@@ -52,7 +52,7 @@ public class HDF5LoaderTest {
 
 		List<Long> times = new ArrayList<Long>();
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			long start = -System.currentTimeMillis();
 			try {
 				HDF5Loader l = new HDF5Loader(TestFileFolder + "manygroups.h5");
@@ -68,15 +68,19 @@ public class HDF5LoaderTest {
 		System.out.printf("Load took %d ms", times.get(0));
 	}
 
-	// crashes JVM at the mo!!
-//	@Test
-//	public void testLoadingStrings() throws ScanFileHolderException {
-//		String n = TestFileFolder + "strings.h5";
-//		HDF5Loader l = new HDF5Loader(n);
-//
-//		@SuppressWarnings("unused")
-//		HDF5File tree = l.loadTree(null);
-//	}
+	@Test
+	public void testLoadingStrings() throws ScanFileHolderException {
+		String n = TestFileFolder + "strings1d.h5";
+		HDF5Loader l = new HDF5Loader(n);
+
+		@SuppressWarnings("unused")
+		HDF5File tree = l.loadTree(null);
+
+		n = TestFileFolder + "strings2d.h5";
+		l = new HDF5Loader(n);
+
+		tree = l.loadTree(null);
+	}
 
 	@Test
 	public void testLoadingTest() throws ScanFileHolderException {

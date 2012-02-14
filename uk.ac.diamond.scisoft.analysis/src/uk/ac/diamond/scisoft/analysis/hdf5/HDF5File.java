@@ -31,11 +31,12 @@ public class HDF5File extends HDF5Node {
 	public static final String HOST_SEPARATOR = ":";
 	public static final String FILE_STARTER = "//";
 
-	public final static String ROOT = "/";
+	public final static String ROOT = SEPARATOR;
 	final private URI source;
 	private String host;
 	final private String path; // full path to file (including filename)
 	private HDF5NodeLink link; // this is a link to the root group
+	private String prefix; // full path prefix
 
 	/**
 	 * Construct a HDF5 file with given object ID and URI 
@@ -47,7 +48,11 @@ public class HDF5File extends HDF5Node {
 
 		source = uri;
 		host = uri.getHost(); // this can return null for "file:/blah"
-		path = new File(source).getAbsolutePath();
+		File f = new File(source);
+		
+		path = f.getAbsolutePath();
+		prefix = f.getParentFile().getAbsolutePath();
+
 		link = new HDF5NodeLink(null, ROOT, null, new HDF5Group(oid));
 	}
 
@@ -113,6 +118,13 @@ public class HDF5File extends HDF5Node {
 	@Override
 	public String toString() {
 		return (host != null ? (host + HOST_SEPARATOR + FILE_STARTER) : "") + path;
+	}
+
+	/**
+	 * @return full path of parent directory
+	 */
+	public String getParentDirectory() {
+		return prefix;
 	}
 
 	/**

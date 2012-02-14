@@ -18,13 +18,11 @@ package uk.ac.diamond.scisoft.analysis;
 
 import gda.observable.IObservable;
 
-import org.python.modules.thread.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.RMIPlotServer;
 import uk.ac.diamond.scisoft.analysis.plotserver.SimplePlotServer;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 

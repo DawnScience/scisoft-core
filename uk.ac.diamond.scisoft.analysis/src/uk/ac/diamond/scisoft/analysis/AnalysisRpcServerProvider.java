@@ -59,6 +59,10 @@ public class AnalysisRpcServerProvider {
 	 * @throws AnalysisRpcException 
 	 */
 	public synchronized void addHandler(String serviceName, IAnalysisRpcHandler handler) throws AnalysisRpcException {
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable")) {
+			throw new AnalysisRpcException("Analysis RPC Server disabled with property uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable");
+		}
+			
 		if (server == null) {
 			server = new AnalysisRpcServer(port);
 			try {

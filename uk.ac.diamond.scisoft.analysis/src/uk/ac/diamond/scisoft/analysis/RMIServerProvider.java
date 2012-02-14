@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -72,6 +73,10 @@ public class RMIServerProvider {
 	 * @throws IOException if automatic port selection fails
 	 */
 	public synchronized void exportAndRegisterObject(String serviceName, Remote object) throws AlreadyBoundException, IOException {
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.rmiserverprovider.disable")) {
+			throw new RemoteException("Analysis RPC Server disabled with property uk.ac.diamond.scisoft.analysis.rmiserverprovider.disable");
+		}
+			
 		if (port == 0) {
 			// Use ServerSocket method for obtaining random(ish) free port
 			ServerSocket s = null;

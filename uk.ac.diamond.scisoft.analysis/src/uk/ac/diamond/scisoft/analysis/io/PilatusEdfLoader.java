@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.gda.monitor.IMonitor;
@@ -58,9 +59,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		
-		IntegerDataset integerData = null;
-		FloatDataset floatData = null;
+		AbstractDataset data = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
@@ -85,21 +84,21 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				int width = Integer.parseInt(textMetadata.get("Dim_2"));
 				String dataType = textMetadata.get("DataType");
 				if (dataType.equals("Float")) {
-					floatData = new FloatDataset(width, height);
-					Utils.readFloat(fi, floatData, index);
+					data = new FloatDataset(width, height);
+					Utils.readFloat(fi, (FloatDataset) data, index);
 					
 				} else {
-					integerData = new IntegerDataset(width, height);
+					data = new IntegerDataset(width, height);
 					if ("UnsignedShort".equals(textMetadata.get("DataType"))) {
 						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
-							Utils.readLeShort(fi, integerData, index);
+							Utils.readLeShort(fi, (IntegerDataset) data, index);
 						else
-							Utils.readBeShort(fi, integerData, index);
+							Utils.readBeShort(fi, (IntegerDataset) data, index);
 					} else {
 						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
-							Utils.readLeInt(fi, integerData, index);
+							Utils.readLeInt(fi, (IntegerDataset) data, index);
 						else
-							Utils.readBeInt(fi, integerData, index);
+							Utils.readBeInt(fi, (IntegerDataset) data, index);
 					}
 				}
 				data.setName(DEF_IMAGE_NAME);
@@ -116,10 +115,8 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				fi = null;
 			}
 		}
-		if (integerData != null) {
-			output.addDataset("ESRF Data Format", integerData);
-		} else if (floatData != null) {
-			output.addDataset("ESRF Data Format", floatData);			
+		if (data != null) {
+			output.addDataset("ESRF Data Format", data);
 		}
 		return output;
 	}

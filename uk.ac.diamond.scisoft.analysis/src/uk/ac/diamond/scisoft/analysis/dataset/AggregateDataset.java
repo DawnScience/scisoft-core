@@ -184,7 +184,7 @@ public class AggregateDataset implements ILazyDataset {
 
 	@Override
 	public int[] getShape() {
-		return shape;
+		return shape.clone();
 	}
 
 	@Override

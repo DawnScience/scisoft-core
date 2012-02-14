@@ -66,7 +66,6 @@ public class PlotServerProvider {
 				PlotServiceProvider.setPlotService(plotServer);
 			} catch (Exception e) {
 				logger.error("Error starting Analysis RPC wrapper", e);
-				plotServer = null;
 			}
 		}
 		return plotServer;

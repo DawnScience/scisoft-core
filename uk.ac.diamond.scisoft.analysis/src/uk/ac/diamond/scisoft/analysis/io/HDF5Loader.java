@@ -369,7 +369,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							// create a new scalar dataset
 							HDF5Dataset d = new HDF5Dataset(oid);
 							if (copyAttributes(name, d, did)) {
-								final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
+								final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
 								group.addDataset(name, oname,
 										(HDF5Dataset) copyNAPIMountNode(f, pool, link, keepBitWidth));
 							} else {

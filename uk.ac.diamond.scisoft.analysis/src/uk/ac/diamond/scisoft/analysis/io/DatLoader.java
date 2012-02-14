@@ -267,7 +267,11 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	public void loadMetaData(final IMonitor mon) throws Exception {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-		parseHeaders(br, null, mon);
+		try {
+			parseHeaders(br, null, mon);
+		} finally {
+			br.close();
+		}
 	}
 	
 	@Override

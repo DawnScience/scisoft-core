@@ -25,14 +25,14 @@ import uk.ac.gda.monitor.IMonitor;
  */
 public abstract class AbstractFileLoader implements IFileLoader {
 	/** 
-	 * Name prefix for an image dataset
+	 * Name prefix for an image dataset (should be followed by two digits, starting with 01)
 	 */
 	public static final String IMAGE_NAME_PREFIX = "image-";
 
 	/**
 	 * Default name for first image dataset
 	 */
-	public static final String DEF_IMAGE_NAME = "image-00";
+	public static final String DEF_IMAGE_NAME = IMAGE_NAME_PREFIX + "01";
 
 	protected boolean loadMetadata = true;
 

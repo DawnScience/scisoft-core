@@ -487,7 +487,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				if(scanCmd == null)
 					scanCmd = textMetadata.get("command");
 				if(scanCmd == null)
-					scanCmd = textMetadata.get("anothercommand");
+					scanCmd = textMetadata.get("scancommand");
 				return scanCmd;
 			}
 

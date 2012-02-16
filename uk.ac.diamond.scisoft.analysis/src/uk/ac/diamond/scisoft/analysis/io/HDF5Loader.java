@@ -249,10 +249,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	private static int LIMIT = 10240;
 
 	/**
-	 * Create a group from given location ID
+	 * Create a group (and all its children, recursively) from given location ID
 	 * @param lid location ID
 	 * @param pool
-	 * @param name of group (full path)
+	 * @param name of group (full path and ends in '/')
 	 * @param keepBitWidth
 	 * @return node
 	 * @throws Exception
@@ -505,16 +505,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (!hdf.canRead())
 				throw new IllegalArgumentException("Cannot read file");
 
-//			final int lid = hdf.open();
-//			if (lid < 0)
-//				throw new IllegalArgumentException("Opening file was unsuccessful");
-
 			if (!node.startsWith(HDF5File.ROOT)) {
 				node = HDF5File.ROOT + node;
 			}
 
 			try {
 				HObject lobj = hdf.get(node);
+				if (lobj == null) {
+					logger.warn("Could not get external node {} in {}, retrying...", node, lpath);
+					lobj = hdf.get(node.substring(0, node.length()-1)); // cope with bug in API
+				}
 				if (lobj != null) {
 					final long oid = lobj.getOID()[0] + hdf.getAbsolutePath().hashCode() * 17; // include file name in
 																								// ID

@@ -409,7 +409,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				String[] linkName = new String[1];
 				int t = H5.H5Lget_val(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 				if (t < 0) {
-					logger.warn("Could not get value of link");
+					logger.error("Could not get value of link");
 					continue;
 				}
 //				System.err.println("  -> " + linkName[0]);
@@ -421,18 +421,20 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				int t = H5.H5Lget_val(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 //				System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 				if (t < 0) {
-					logger.warn("Could not get value of link");
+					logger.error("Could not get value of link");
 					continue;
 				}
-				String[] prefix = new String[1];
-				t = (int) H5.H5Pget_elink_prefix(H5.H5Pcreate(HDF5Constants.H5P_LINK_ACCESS), prefix);
-				if (t <= 0) {
-					logger.warn("Could not get prefix");
-					if (!(new File(linkName[1]).exists())) {
-						prefix[0] = f.getParentDirectory(); // use directory of linking file
-					}
+
+				String eName = linkName[1];
+				if (!(new File(eName).exists())) {
+					logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
+					eName = new File(f.getParentDirectory(), new File(eName).getName()).getAbsolutePath(); // use directory of linking file
 				}
-				group.addNode(name, oname, getExternalNode(pool, (new File(prefix[0], linkName[1])).getAbsolutePath(), linkName[0], keepBitWidth));
+				if (new File(eName).exists()) {
+					group.addNode(name, oname, getExternalNode(pool, eName, linkName[0], keepBitWidth));
+				} else {
+					logger.error("Could not find external file {}", eName);
+				}
 			} else {
 //				System.err.println("U: " + oname);
 			}

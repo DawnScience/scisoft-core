@@ -376,14 +376,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 									group.addDataset(name, oname,
 											(HDF5Dataset) copyNAPIMountNode(f, pool, link, keepBitWidth));
 								} else {
-									ILazyDataset ld = createLazyDataset(f, name + oname, oname, did, tid, keepBitWidth,
-											d.containsAttribute(DATA_FILENAME_ATTR_NAME));
-
-									if (ld == null) {
+									if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
+											d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
 										logger.error("Could not create a lazy dataset {} from {}", oname, name);
 										continue;
 									}
-									d.setDataset(ld);
 									group.addDataset(name, oname, d);
 								}
 								if (pool != null)
@@ -969,10 +966,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	 * @param tid
 	 * @param keepBitWidth
 	 * @param useExternalFiles
-	 * @return the dataset
+	 * @return true if created
 	 * @throws Exception
 	 */
-	private static ILazyDataset createLazyDataset(final HDF5File file, final String nodePath, final String name, final int did, final int tid, final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
+	private static boolean createLazyDataset(final HDF5File file, final HDF5Dataset dataset, final String nodePath, final String name, final int did, final int tid, final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
 		int sid = -1, pid = -1;
 		int rank;
 		boolean isText, isVLEN, isUnsigned = false;
@@ -1000,7 +997,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				pid = H5.H5Dget_create_plist(did);
 				int nfiles = H5.H5Pget_external_count(pid);
 				if (nfiles > 0)
-					return null;
+					return false;
 			} catch (Exception ex) {
 			}
 
@@ -1023,9 +1020,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					}
 				}
 				type = new H5Datatype(tid);
+				dataset.setTypeName(getTypeName(type));
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get dataset type");
-				return null;
+				return false;
 			} finally {
 				try {
 					H5.H5Tclose(tmptid);
@@ -1049,7 +1047,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 		} catch (HDF5Exception ex) {
 			logger.error("Could not get data space information", ex);
-			return null;
+			return false;
 		} finally {
 			try {
 				H5.H5Sclose(sid);
@@ -1092,10 +1090,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				}
 				final AbstractDataset d = AbstractDataset.array(data);
 				d.setName(name);
-				return d;
+				dataset.setDataset(d);
+				return true;
 			} catch (HDF5Exception ex) {
 				logger.error("Could not read single value dataset", ex);
-				return null;
+				return false;
 			}
 		}
 
@@ -1107,18 +1106,20 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 			if (!isVLEN && !isText) {
 				logger.error("String dataset not variable length or text!");
-				return null;
+				return false;
 			}
 				
 			ExternalFiles ef = extractExternalFileNames(did, tid, isVLEN, trueShape);
 			try {
-				return createStackedDatasetFromStrings(ef);
+				dataset.setDataset(createStackedDatasetFromStrings(ef));
+				return true;
 			} catch (Throwable th) {
 				try { // try again with known-to-be-good directory
-					return createStackedDatasetFromStrings(ef, file.getParentDirectory());
+					dataset.setDataset(createStackedDatasetFromStrings(ef, file.getParentDirectory()));
+					return true;
 				} catch (Throwable th2) {
 					logger.error("Unable to create lazy dataset", th2);
-					return null;
+					return false;
 				}
 			}
 		}
@@ -1228,7 +1229,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 		};
 
-		return new LazyDataset(name, dtype, trueShape.clone(), l);
+		dataset.setDataset(new LazyDataset(name, dtype, trueShape.clone(), l));
+		return true;
 	}
 
 	/**

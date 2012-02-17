@@ -557,9 +557,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				logger.debug("File, {}, does not exist!", lpath);
 
 				// see if linked file in same directory
-				String dpath = file.getFilename();
-				dpath = dpath.substring(0, dpath.lastIndexOf(HDF5Node.SEPARATOR)+1) + f.getName();
-				f = new File(dpath);
+				f = new File(file.getParentDirectory(), f.getName());
 				if (!f.exists()) {
 					throw new ScanFileHolderException("File, " + lpath + ", does not exist");
 				}

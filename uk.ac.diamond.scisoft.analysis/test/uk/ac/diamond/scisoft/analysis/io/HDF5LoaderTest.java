@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ncsa.hdf.object.FileFormat;
+import ncsa.hdf.object.h5.H5File;
+
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -49,23 +52,35 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingSpeed() {
-
-		List<Long> times = new ArrayList<Long>();
+		List<Long> ourTimes = new ArrayList<Long>();
+		List<Long> theirTimes = new ArrayList<Long>();
+		String name = TestFileFolder + "manygroups.h5";
+//		String name = "/dls/sci-scratch/ExampleData/NeXus/XPDSi7x7_2010-07-08_23-00-50.nxs";
 
 		for (int i = 0; i < 3; i++) {
-			long start = -System.currentTimeMillis();
+			long start;
+
+			start = -System.currentTimeMillis();
 			try {
-				HDF5Loader l = new HDF5Loader(TestFileFolder + "manygroups.h5");
-				@SuppressWarnings("unused")
-				HDF5File tree = l.loadTree(null);
+				HDF5Loader l = new HDF5Loader(name);
+				l.loadTree(null);
 			} catch (ScanFileHolderException e) {
 			}
 			start += System.currentTimeMillis();
-			times.add(start);
+			ourTimes.add(start);
+
+			start = -System.currentTimeMillis();
+			try {
+				new H5File(name, FileFormat.READ).open();
+			} catch (Exception e) {
+			}
+			start += System.currentTimeMillis();
+			theirTimes.add(start);
 		}
 
-		Collections.sort(times);
-		System.out.printf("Load took %d ms", times.get(0));
+		Collections.sort(ourTimes);
+		Collections.sort(theirTimes);
+		System.out.printf("Load took %d ms cf %d ms", ourTimes.get(0), theirTimes.get(0));
 	}
 
 	@Test

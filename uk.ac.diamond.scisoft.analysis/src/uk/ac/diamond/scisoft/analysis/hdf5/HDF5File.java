@@ -36,13 +36,18 @@ public class HDF5File extends HDF5Node {
 	private String host;
 	final private String path; // full path to file (including filename)
 	private HDF5NodeLink link; // this is a link to the root group
+	private String prefix; // full path prefix
 
 	public HDF5File(final long oid, URI uri) {
 		super(oid);
 
 		source = uri;
 		host = uri.getHost(); // this can return null for "file:/blah"
-		path = new File(source).getAbsolutePath();
+		File f = new File(source);
+
+		path = f.getAbsolutePath();
+		prefix = f.getParentFile().getAbsolutePath();
+
 		link = new HDF5NodeLink(null, ROOT, null, new HDF5Group(oid));
 	}
 
@@ -96,6 +101,13 @@ public class HDF5File extends HDF5Node {
 	@Override
 	public String toString() {
 		return (host != null ? (host + HOST_SEPARATOR + FILE_STARTER) : "") + path;
+	}
+
+	/**
+	 * @return full path of parent directory
+	 */
+	public String getParentDirectory() {
+		return prefix;
 	}
 
 	/**

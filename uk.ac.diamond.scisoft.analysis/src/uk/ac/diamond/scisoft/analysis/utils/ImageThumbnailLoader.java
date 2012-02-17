@@ -25,16 +25,17 @@ import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
+import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinaryLoader;
+import uk.ac.gda.monitor.IMonitor;
 
 /**
  *
  */
 public class ImageThumbnailLoader {
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageThumbnailLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(ImageThumbnailLoader.class);
 	
 	
 	/**
@@ -49,12 +50,27 @@ public class ImageThumbnailLoader {
 	 * @return AbstractDataset
 	 */
 	public static AbstractDataset loadImage(String filename, boolean createThumbnail) {
+		return loadImage(filename, createThumbnail, null);
+	}
+
+	/**
+	 * see {@link LoaderFactory} getData(...) method
+	 * 
+	 * This implementation which does not loop over
+	 * loaders and cause out of memory error depending on how badly the loader is 
+	 * coded.
+	 * 
+	 * @param filename
+	 * @param createThumbnail
+	 * @return AbstractDataset
+	 */
+	public static AbstractDataset loadImage(String filename, boolean createThumbnail, IMonitor monitor) {
 		
 		DataHolder scan = null;
 		if (!filename.toLowerCase().endsWith(".raw")) {
 //			long start = -System.nanoTime();
 			try {
-				scan = LoaderFactory.getData(filename, !createThumbnail, null);
+				scan = LoaderFactory.getData(filename, !createThumbnail, monitor);
 			} catch (Exception e) {
 				logger.error("Cannot load "+filename, e);
 			}
@@ -68,11 +84,10 @@ public class ImageThumbnailLoader {
 				logger.error("Cannot load "+filename, e);
 			}
 		}
-		
+
 		return getSingle(filename, createThumbnail, scan);
 	}
-	
-	
+
 	private static final int DOWNSAMPLE_SIZE_IN_PIXELS = 96;
 	/**
 	 * Utility method for extracting the image Dataset from a
@@ -86,15 +101,17 @@ public class ImageThumbnailLoader {
 	public static AbstractDataset getSingle(final String     path,
 			                                final boolean    createThumbnail,
 			                                final DataHolder scan) {
-		
-		if (scan!=null && scan.size() > 0) {
+		if (scan != null && scan.size() > 0) {
 			AbstractDataset ds = scan.getDataset(0);
 			if (ds.getRank() == 2) { // 2D datasets only!!!
 				int width = ds.getShape()[1];
 				int height = ds.getShape()[0];
-				if (ds.getName() == null || ds.getName().length() == 0) {
-					File f = new File(path);
-					ds.setName(f.getName());
+				String name = new File(path).getName();
+				String dname = ds.getName();
+				if (dname == null || dname.length() == 0 || dname.contains(AbstractFileLoader.IMAGE_NAME_PREFIX)) {
+					ds.setName(name);
+				} else {
+					ds.setName(name + AbstractFileLoader.FILEPATH_DATASET_SEPARATOR + ds.getName());
 				}
 				if (createThumbnail) {
 					int step;
@@ -112,5 +129,4 @@ public class ImageThumbnailLoader {
 		ds_null.setName("Invalid Image");
 		return ds_null;
 	}
-
 }

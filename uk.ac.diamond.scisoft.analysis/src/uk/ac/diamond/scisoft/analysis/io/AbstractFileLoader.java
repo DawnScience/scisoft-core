@@ -34,6 +34,11 @@ public abstract class AbstractFileLoader implements IFileLoader {
 	 */
 	public static final String DEF_IMAGE_NAME = IMAGE_NAME_PREFIX + "01";
 
+	/**
+	 * String to separate full file path or file name from dataset name
+	 */
+	public static final String FILEPATH_DATASET_SEPARATOR = ":";
+
 	protected boolean loadMetadata = true;
 
 	@Override

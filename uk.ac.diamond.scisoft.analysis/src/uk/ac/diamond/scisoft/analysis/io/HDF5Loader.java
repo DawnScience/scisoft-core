@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -238,7 +239,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		HDF5File f = new HDF5File(oid, fileName);
 		f.setHostname(host);
 
-		HDF5Group g = (HDF5Group) createGroup(fid, f, new HashMap<Long, HDF5Node>(), HDF5File.ROOT, keepBitWidth);
+		HDF5Group g = (HDF5Group) createGroup(fid, f, new HashMap<Long, HDF5Node>(), null, HDF5File.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
@@ -250,21 +251,22 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	/**
 	 * Create a group (and all its children, recursively) from given location ID
-	 * @param lid location ID
+	 * @param fid location ID
 	 * @param pool
+	 * @param queue
 	 * @param name of group (full path and ends in '/')
 	 * @param keepBitWidth
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createGroup(final int lid, final HDF5File f, final HashMap<Long, HDF5Node> pool, final String name, final boolean keepBitWidth) throws Exception {
+	private static HDF5Node createGroup(final int fid, final HDF5File f, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		int gid = -1;
 		HDF5Group group = null;
 
 		try {
 			int nelems = 0;
 			try {
-				gid = H5.H5Gopen(lid, name, HDF5Constants.H5P_DEFAULT);
+				gid = H5.H5Gopen(fid, name, HDF5Constants.H5P_DEFAULT);
 				H5G_info_t info = H5.H5Gget_info(gid);
 				nelems = (int) info.nlinks;
 			} catch (HDF5Exception ex) {
@@ -274,7 +276,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			byte[] idbuf = null;
 			long oid = -1;
 			try {
-				idbuf = H5.H5Rcreate(lid, name, HDF5Constants.H5R_OBJECT, -1);
+				idbuf = H5.H5Rcreate(fid, name, HDF5Constants.H5R_OBJECT, -1);
 				oid = HDFNativeData.byteToLong(idbuf, 0);
 			} catch (HDF5Exception ex) {
 				throw new ScanFileHolderException("Could not find group reference", ex);
@@ -301,7 +303,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			long[] oids = new long[nelems];
 			String[] oNames = new String[nelems];
 			try {
-				H5.H5Gget_obj_info_all(lid, name, oNames, oTypes, lTypes, oids, HDF5Constants.H5_INDEX_NAME);
+				H5.H5Gget_obj_info_all(fid, name, oNames, oTypes, lTypes, oids, HDF5Constants.H5_INDEX_NAME);
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get objects info in group", ex);
 				return null;
@@ -339,7 +341,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							continue;
 						}
 
-						group.addNode(name, oname, createGroup(gid, f, pool, name + oname + HDF5Node.SEPARATOR, keepBitWidth));
+						if (queue != null) {
+							queue.add(name + oname + HDF5Node.SEPARATOR);
+						} else {
+							HDF5Node g = createGroup(fid, f, pool, queue, name + oname + HDF5Node.SEPARATOR,
+									keepBitWidth);
+							if (g == null) {
+								logger.error("Could not load group {} in {}", oname, name);
+							} else {
+								group.addNode(name, oname, g);
+							}
+						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
 						// System.err.println("D: " + oname);
 						if (oid >= 0 && pool != null && pool.containsKey(oid)) {

@@ -3,7 +3,7 @@
       id="uk.ac.diamond.scisoft.core.feature"
       label="scisoft core"
       version="1.1.0.qualifier"
-      provider-name="Diamond Light Source Ltd.">
+      provider-name="Diamond Light Source">
 
    <description url="http://www.opengda.org/">
       The core scisoft analysis functionality is avalable through this

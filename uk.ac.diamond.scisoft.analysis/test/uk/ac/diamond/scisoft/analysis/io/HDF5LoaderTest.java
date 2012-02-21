@@ -34,6 +34,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Dataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Group;
@@ -314,4 +315,15 @@ public class HDF5LoaderTest {
 			assertEquals("Dataset dimention 2 is not of the correct shape", 64, data.getShape()[2]);
 		}
 	}
+
+	@Test
+	public void testLoadingDatasets() throws ScanFileHolderException {
+		String n = TestFileFolder + "FeKedge_1_15.nxs";
+		HDF5Loader l = new HDF5Loader(n);
+		List<ILazyDataset> ds = l.findDatasets(new String[] {"scan_command", "title"}, 1, null);
+		assertEquals("File does not have the correct number of datasets", 1, ds.size());
+		ILazyDataset d = ds.get(0);
+		assertTrue(d instanceof StringDataset);
+	}
+	
 }

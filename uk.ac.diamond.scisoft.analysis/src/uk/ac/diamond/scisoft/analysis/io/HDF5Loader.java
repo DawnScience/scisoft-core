@@ -286,6 +286,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw syncException;
 	}
 
+	/**
+	 * Load tree
+	 * @param mon
+	 * @return a HDF5File tree
+	 * @throws ScanFileHolderException
+	 */
 	public HDF5File loadTree(final IMonitor mon) throws ScanFileHolderException {
 		if (!monitorIncrement(mon)) {
 			return null;
@@ -1736,6 +1742,178 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 	}
 
+	/**
+	 * Find all datasets of given names at given depth
+	 * @param names
+	 * @param depth
+	 * @param mon
+	 * @return list of datasets
+	 * @throws ScanFileHolderException 
+	 */
+	public List<ILazyDataset> findDatasets(final String[] names, final int depth, IMonitor mon) throws ScanFileHolderException {
+		ArrayList<ILazyDataset> list = new ArrayList<ILazyDataset>();
+		ReentrantLock lock = acquireLock(fileName);
+		int fid = -1;
+		try {
+			fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+
+			if (!monitorIncrement(mon)) {
+				try {
+					H5.H5Fclose(fid);
+				} catch (Exception ex) {
+				}
+				return null;
+			}
+
+			final long oid = fileName.hashCode(); // include file name in ID
+			HDF5File f = new HDF5File(oid, fileName);
+			f.setHostname(host);
+
+			visitGroup(fid, f, HDF5File.ROOT, Arrays.asList(names), 0, depth, list);
+
+		} catch (Exception le) {
+			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
+		} finally {
+			try {
+				H5.H5Fclose(fid);
+			} catch (Exception e) {
+			}
+			releaseLock(lock);
+		}
+		return list;
+	}
+
+	private void visitGroup(final int fid, final HDF5File f, final String name, final List<String> names, int cDepth, int rDepth, ArrayList<ILazyDataset> list) throws Exception {
+		int gid = -1;
+
+		try {
+			int nelems = 0;
+			try {
+				gid = H5.H5Gopen(fid, name, HDF5Constants.H5P_DEFAULT);
+				H5G_info_t info = H5.H5Gget_info(gid);
+				nelems = (int) info.nlinks;
+			} catch (HDF5Exception ex) {
+				throw new ScanFileHolderException("Could not open group", ex);
+			}
+
+			byte[] idbuf = null;
+			long oid = -1;
+			try {
+				idbuf = H5.H5Rcreate(fid, name, HDF5Constants.H5R_OBJECT, -1);
+				oid = HDFNativeData.byteToLong(idbuf, 0);
+			} catch (HDF5Exception ex) {
+				throw new ScanFileHolderException("Could not find group reference", ex);
+			}
+
+			if (nelems <= 0) {
+				return;
+			}
+
+			int[] oTypes = new int[nelems];
+			int[] lTypes = new int[nelems];
+			long[] oids = new long[nelems];
+			String[] oNames = new String[nelems];
+			try {
+				H5.H5Gget_obj_info_all(fid, name, oNames, oTypes, lTypes, oids, HDF5Constants.H5_INDEX_NAME);
+			} catch (HDF5Exception ex) {
+				logger.error("Could not get objects info in group", ex);
+				return;
+			}
+
+			if (nelems > LIMIT) {
+				logger.warn("Number of members in group {} exceed limit ({} > {}). Only reading up to limit",
+						new Object[] { name, nelems, LIMIT });
+				nelems = LIMIT;
+			}
+
+			String oname;
+			int otype;
+			int ltype;
+
+			// Iterate through the file to see members of the group
+			for (int i = 0; i < nelems; i++) {
+				oname = oNames[i];
+				if (oname == null) {
+					continue;
+				}
+				otype = oTypes[i];
+				ltype = lTypes[i];
+				oid = oids[i];
+
+				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
+					if (otype == HDF5Constants.H5O_TYPE_GROUP && cDepth < rDepth) {
+						// System.err.println("G: " + oname);
+						visitGroup(fid, f, name + oname + HDF5Node.SEPARATOR, names,
+								cDepth + 1, rDepth, list);
+					} else if (otype == HDF5Constants.H5O_TYPE_DATASET && cDepth == rDepth) {
+						// System.err.println("D: " + oname);
+						if (names.contains(oname)) {
+							
+						int did = -1, tid = -1, tclass = -1;
+						try {
+							did = H5.H5Dopen(gid, oname, HDF5Constants.H5P_DEFAULT);
+							tid = H5.H5Dget_type(did);
+
+							tclass = H5.H5Tget_class(tid);
+							if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_VLEN) {
+								// for ARRAY, the type is determined by the base type
+								int btid = H5.H5Tget_super(tid);
+								tclass = H5.H5Tget_class(btid);
+								try {
+									H5.H5Tclose(btid);
+								} catch (HDF5Exception ex) {
+								}
+							}
+							if (tclass == HDF5Constants.H5T_COMPOUND) {
+								logger.error("Compound dataset not supported"); // TODO
+							} else {
+								// create a new scalar dataset
+								HDF5Dataset d = new HDF5Dataset(oid);
+								if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
+										d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+									logger.error("Could not create a lazy dataset {} from {}", oname, name);
+									continue;
+								}
+								list.add(d.getDataset());
+							}
+						} catch (HDF5Exception ex) {
+							logger.error("Could not open dataset", ex);
+						} finally {
+							if (tid >= 0) {
+								try {
+									H5.H5Tclose(tid);
+								} catch (HDF5Exception ex) {
+								}
+							}
+							if (did >= 0) {
+								try {
+									H5.H5Dclose(did);
+								} catch (HDF5Exception ex) {
+								}
+							}
+						}
+						}
+					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
+						logger.error("Named datatype not supported"); // TODO
+					}
+				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
+					// System.err.println("S: " + oname);
+				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
+					// System.err.println("E: " + oname);
+				} else {
+					// System.err.println("U: " + oname);
+				}
+			}
+		} finally {
+			if (gid >= 0) {
+				try {
+					H5.H5Gclose(gid);
+				} catch (HDF5Exception ex) {
+				}
+			}
+		}
+	}
+	
 	@Override
 	public AbstractDataset slice(SliceObject object, IMonitor mon) throws Exception {
 		final int[] start = object.getSliceStart();

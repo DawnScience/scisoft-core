@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,6 +108,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	private String fileName;
 	private boolean keepBitWidth = false;
+	private boolean async = false;
+	private int syncLimit;
+	private int syncNodes;
+	private ScanFileHolderException syncException = null;
 
 	private String host = null;
 
@@ -119,6 +124,26 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	public HDF5Loader(final String name) {
 		setHost();
 		setFile(name);
+	}
+
+	/**
+	 * Set whether loading is done asynchronously so that program flow is returned after first
+	 * level of a tree is read in and at least 200 nodes are read 
+	 * @param loadAsynchronously
+	 */
+	public void setAsyncLoad(boolean loadAsynchronously) {
+		setAsyncLoad(loadAsynchronously, 200);
+	}
+
+	/**
+	 * Set whether loading is done asynchronously so that program flow is returned after first
+	 * level of a tree is read in and at least the given number of nodes are read 
+	 * @param loadAsynchronously
+	 * @param nodes
+	 */
+	public void setAsyncLoad(boolean loadAsynchronously, int nodes) {
+		async = loadAsynchronously;
+		syncLimit = nodes;
 	}
 
 	private void setHost() {
@@ -190,8 +215,63 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	HDF5File tFile = null;
 
-	public HDF5File loadTree(IMonitor mon) throws ScanFileHolderException {
+	class LoadFileThread extends Thread {
+		private IMonitor mon;
+
+		public LoadFileThread(final IMonitor monitor) {
+			mon = monitor;
+			setName("Load HDF5 file: " + fileName);
+		}
 		
+		@Override
+		public void run() {
+			ReentrantLock lock = acquireLock(fileName);
+			int fid = -1;
+			try {
+				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+
+				if (!monitorIncrement(mon)) {
+					try {
+						H5.H5Fclose(fid);
+					} catch (Exception ex) {
+					}
+					return;
+				}
+
+				tFile = createTreeBF(fid, keepBitWidth);
+			} catch (Exception le) {
+				syncException = new ScanFileHolderException("Problem loading file: " + fileName, le);
+			} finally {
+				try {
+					H5.H5Fclose(fid);
+				} catch (Exception e) {
+				}
+				releaseLock(lock);
+			}
+		}
+	}
+
+	private synchronized void waitForSyncLimit() throws ScanFileHolderException {
+		while (syncNodes < syncLimit) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+			}
+		}
+		if (syncException != null)
+			throw syncException;
+	}
+
+	private synchronized void updateSyncNodes(int nodes) throws ScanFileHolderException {
+		syncNodes = nodes;
+		if (syncNodes >= syncLimit) {
+			notifyAll();
+		}
+		if (syncException != null)
+			throw syncException;
+	}
+
+	public HDF5File loadTree(final IMonitor mon) throws ScanFileHolderException {
 		if (!monitorIncrement(mon)) {
 			return null;
 		}
@@ -201,30 +281,41 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
 		}
 
-		ReentrantLock lock = acquireLock(fileName);
-		int fid = -1;
-		try {
-			fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+//		long start = -System.currentTimeMillis();
+		if (async) {
+			new LoadFileThread(mon).start();
+			try {
+				Thread.sleep(100l);
+			} catch (InterruptedException e) {
+			}
+			waitForSyncLimit();
+		} else {
+			ReentrantLock lock = acquireLock(fileName);
+			int fid = -1;
+			try {
+				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
-			if (!monitorIncrement(mon)) {
+				if (!monitorIncrement(mon)) {
+					try {
+						H5.H5Fclose(fid);
+					} catch (Exception ex) {
+					}
+					return null;
+				}
+
+				tFile = createTree(fid, keepBitWidth);
+			} catch (Exception le) {
+				throw new ScanFileHolderException("Problem loading file: " + fileName, le);
+			} finally {
 				try {
 					H5.H5Fclose(fid);
-				} catch (Exception ex) {
+				} catch (Exception e) {
 				}
-				return null;
+				releaseLock(lock);
 			}
-
-			tFile = createTree(fid, keepBitWidth);
-		} catch (Exception le) {
-			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
-		} finally {
-			try {
-				H5.H5Fclose(fid);
-			} catch (Exception e) {
-			}
-			releaseLock(lock);
 		}
-
+//		start += System.currentTimeMillis();
+//		System.err.printf("Loading %s took %.3fs\n", fileName, start*1e-3);
 		return tFile;
 	}
 
@@ -244,6 +335,55 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw new ScanFileHolderException("Could not copy root group");
 		}
 		f.setGroup(g);
+		return f;
+	}
+
+	/**
+	 * Breadth-first tree walk
+	 * @param fid file ID
+	 * @param keepBitWidth
+	 * @return a HDF5 tree
+	 * @throws Exception
+	 */
+	private HDF5File createTreeBF(final int fid, final boolean keepBitWidth) throws Exception {
+		final long oid = fileName.hashCode(); // include file name in ID
+		HDF5File f = new HDF5File(oid, fileName);
+		f.setHostname(host);
+
+		HashMap<Long, HDF5Node> pool = new HashMap<Long, HDF5Node>();
+		Queue<String> oqueue = new LinkedList<String>();
+		Queue<String> iqueue = new LinkedList<String>();
+		HDF5Group g = (HDF5Group) createGroup(fid, f, pool, oqueue, HDF5File.ROOT, keepBitWidth);
+		if (g == null) {
+			throw new ScanFileHolderException("Could not copy root group");
+		}
+		f.setGroup(g);
+
+		tFile = f;
+
+		do {
+			Queue<String> q = iqueue;
+			iqueue = oqueue;
+			oqueue = q;
+			while (iqueue.size() > 0) {
+				updateSyncNodes(pool.size());
+				String nn = iqueue.remove();
+				HDF5Node n = createGroup(fid, f, pool, oqueue, nn, keepBitWidth);
+				if (n == null) {
+					logger.error("Could not find group {}", nn);
+					continue;
+				}
+				nn = nn.substring(0, nn.length() - 1);
+				int i = nn.lastIndexOf(HDF5Node.SEPARATOR);
+				String pn = i == 0 ? HDF5File.ROOT : nn.substring(0, i);
+				HDF5NodeLink ol = f.findNodeLink(pn);
+				HDF5Group og = (HDF5Group) ol.getDestination();
+				og.addNode(pn, nn.substring(i + 1), n);
+			}
+		} while (oqueue.size() > 0);
+
+		updateSyncNodes(syncLimit); // notify if finished
+
 		return f;
 	}
 

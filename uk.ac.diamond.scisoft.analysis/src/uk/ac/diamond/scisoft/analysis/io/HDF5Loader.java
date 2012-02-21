@@ -862,7 +862,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	 * @param dsize data type item size in bytes
 	 * @return dataset type
 	 */
-	private static int getDtype(final int dclass, final int dsize) {
+	public static int getDtype(final int dclass, final int dsize) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
 			return AbstractDataset.STRING;

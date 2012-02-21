@@ -146,6 +146,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		syncLimit = nodes;
 	}
 
+	/**
+	 * Stop asynchronous loading
+	 */
+	public synchronized void stopAsyncLoading() {
+		syncNodes = syncLimit;
+	}
+
 	private void setHost() {
 		try {
 			host = InetAddress.getLocalHost().getHostName();
@@ -260,6 +267,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 		if (syncException != null)
 			throw syncException;
+	}
+
+	/**
+	 * Check number and return true once that number reaches the limit 
+	 * @return true once done
+	 */
+	private synchronized boolean checkSyncNodes() {
+		return syncNodes >= syncLimit;
 	}
 
 	private synchronized void updateSyncNodes(int nodes) throws ScanFileHolderException {
@@ -379,7 +394,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				HDF5NodeLink ol = f.findNodeLink(pn);
 				HDF5Group og = (HDF5Group) ol.getDestination();
 				og.addNode(pn, nn.substring(i + 1), n);
+				if (checkSyncNodes())
+					break;
 			}
+			if (checkSyncNodes())
+				break;
 		} while (oqueue.size() > 0);
 
 		updateSyncNodes(syncLimit); // notify if finished

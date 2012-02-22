@@ -49,8 +49,7 @@ public class NexusLoaderTest {
 	public void setUp(String name) throws Exception {
 		testScratchDirectoryName = TestUtils.setUpTest(NexusLoaderTest.class, name, true);
 	}
-	
-	
+
 	@Test
 	public void testLoadDifficultHdf5File() throws Exception {
 		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
@@ -62,8 +61,7 @@ public class NexusLoaderTest {
 		final AbstractDataset set = dh.getDataset("NXdata.data");
 		assert set.getSize()==61*171*1699;
 	}
-	
-	
+
 	@Test
 	public void testLoadAnotherDifficultHdf5File() throws Exception {
 		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
@@ -242,8 +240,8 @@ public class NexusLoaderTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		DataHolder dh = LoaderFactory.getData(TestFileFolder + "NexusLoaderTest.nxs", null);
-        if (dh==null || dh.getNames().length<1) throw new Exception();
- 	}
+		if (dh==null || dh.getNames().length<1) throw new Exception();
+	}
 
 	/*
 	 * Jira ticket GDA-3118
@@ -301,50 +299,31 @@ public class NexusLoaderTest {
 	@Test
 	public void testMultipleDetectorGetDataSetNames() throws Exception {
 		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder != null){
+		if (TestFileFolder != null) {
 			List<String> dataSetNames = NexusLoader.getDatasetNames(TestFileFolder + "/multiDetector.nxs", null);
-			String [] headings = dataSetNames.toArray(new String []{});
-			Assert.assertEquals("Number of headings is incorrect", 120, headings.length); 
+			String[] headings = dataSetNames.toArray(new String[] {});
+			Assert.assertEquals("Number of headings is incorrect", 120, headings.length);
 			Assert.assertEquals("EDXD_Element_23.edxd_q", headings[71]);
 			Assert.assertEquals("EDXD_Element_23.data", headings[69]);
 			Assert.assertEquals("bottom", headings[72]);
 			Assert.assertEquals("scaler1.scaler1-9", headings[113]);
 			Assert.assertEquals("scaler1.I0 EH1", headings[82]);
 
-			
 		}
 	}
-	
-	@Test
-	public void testLoaderFactory2() throws Exception {
-		
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		
-		DataHolder shf = LoaderFactory.getData(TestFileFolder + "/multiDetector.nxs", null);
-		String [] headings = shf.getNames();
-		Assert.assertEquals("Number of headings is incorrect", 120, headings.length); 
-		Assert.assertEquals("EDXD_Element_23.edxd_q", headings[71]);
-		Assert.assertEquals("EDXD_Element_23.data", headings[69]);
-		Assert.assertEquals("bottom", headings[72]);
-		Assert.assertEquals("scaler1.scaler1-9", headings[113]);
-		Assert.assertEquals("scaler1.I0 EH1", headings[82]);
-			
-	}
-	
-	@Test
-	public void testLoaderFactoryMeta() throws Exception {
-		
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		
-		IMetaData meta = LoaderFactory.getMetaData(TestFileFolder + "/multiDetector.nxs", null);
-		String [] headings = meta.getDataNames().toArray(new String[meta.getDataNames().size()]);
-		Assert.assertEquals("Number of headings is incorrect", 120, headings.length); 
-		Assert.assertEquals("EDXD_Element_23.edxd_q", headings[71]);
-		Assert.assertEquals("EDXD_Element_23.data", headings[69]);
-		Assert.assertEquals("bottom", headings[72]);
-		Assert.assertEquals("scaler1.scaler1-9", headings[113]);
-		Assert.assertEquals("scaler1.I0 EH1", headings[82]);
-			
-	}
 
+	@Test
+	public void testMeta() throws Exception {
+		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		IMetaLoader l = new NexusLoader(TestFileFolder + "/multiDetector.nxs");
+		l.loadMetaData(null);
+		IMetaData meta = l.getMetaData();
+		String[] headings = meta.getDataNames().toArray(new String[meta.getDataNames().size()]);
+		Assert.assertEquals("Number of headings is incorrect", 120, headings.length);
+		Assert.assertEquals("EDXD_Element_23.edxd_q", headings[71]);
+		Assert.assertEquals("EDXD_Element_23.data", headings[69]);
+		Assert.assertEquals("bottom", headings[72]);
+		Assert.assertEquals("scaler1.scaler1-9", headings[113]);
+		Assert.assertEquals("scaler1.I0 EH1", headings[82]);
+	}
 }

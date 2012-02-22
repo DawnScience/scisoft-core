@@ -59,7 +59,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	private boolean useImageLoaderForStrings = true;
 
 	public SRSLoader() {
-	
 	}
 	
 	/**
@@ -385,16 +384,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 
-			// first write the header
 			out.write("&SRS\n");
-//			if (dh instanceof NexusTreeProvider) {
-//				NexusTreeProvider ndh = (NexusTreeProvider) dh;
-//				if (ndh.getNexusTree() != null) {
-//					out.write(ndh.getNexusTree().toXML(true, true));
-//					out.write(ndh.getNexusTree().toText("", ":", "/", "|"));
-//				}
-//			}
-			writeMetadata(out);
+			writeMetadata(out, dh);
 			out.write("&END\n");
 
 			// now write out the data names
@@ -434,7 +425,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @param out
 	 * @throws IOException
 	 */
-	protected void writeMetadata(BufferedWriter out) throws IOException {
+	protected void writeMetadata(BufferedWriter out, @SuppressWarnings("unused") DataHolder holder) throws IOException {
 		String[] metadataKeys = getKeysToSave();
 		if (!textMetadata.isEmpty() && metadataKeys != null) {
 			for (String k : metadataKeys) {

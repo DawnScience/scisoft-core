@@ -29,7 +29,7 @@ public class PythonHelper {
 	 * Change this to return false to skip (aka {@link Assume} failure) all tests that require launching python
 	 */
 	public static boolean enablePythonTests() {
-		return false;
+		return true;
 	}
 
 
@@ -38,19 +38,55 @@ public class PythonHelper {
 	 * SimplePythonRunner#runAndGetOutput from PyDev. Any output on stderr means an error has occurred.
 	 */
 	public static String runPythonScript(String scriptContents, boolean failOnAnyOutput) throws Exception {
-		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON, "-c", scriptContents });
+		return runPythonScript(scriptContents, null, failOnAnyOutput);
+	}
+	
+	public static String runPythonScript(String scriptContents, String[] envp, boolean failOnAnyOutput) throws Exception {
+		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON, "-c", scriptContents }, envp);
 	}
 
 	public static String runPythonFile(String file, boolean failOnAnyOutput) throws Exception {
-		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON, file });
+		return runPythonFile(file, null, failOnAnyOutput);
+	}
+	
+	public static String runPythonFile(String file, String[] args, boolean failOnAnyOutput) throws Exception {
+		return runPythonFile(file, args, null, failOnAnyOutput);
+	}
+	
+	public static String runPythonFile(String file, String[] args, String[] envp, boolean failOnAnyOutput) throws Exception {
+		if (args == null)
+			args = new String[0];
+		String[] allArgs = new String[2 + args.length];
+		allArgs[0] = PYTHON;
+		allArgs[1] = file;
+		for (int i = 0; i < args.length; i++) {
+			allArgs[i + 2] = args[i];
+		}
+		return readAndProcessOutput(failOnAnyOutput, allArgs, envp);
 	}
 	
 	public static PythonRunInfo runPythonScriptBackground(String scriptContents) throws Exception {
-		return launch(new String[] { PYTHON, "-c", scriptContents });
+		return launch(new String[] { PYTHON, "-c", scriptContents }, null);
 	}
 
 	public static PythonRunInfo runPythonFileBackground(String file) throws Exception {
-		return launch(new String[] { PYTHON, file });
+		return runPythonFileBackground(file, null);
+	}
+	
+	public static PythonRunInfo runPythonFileBackground(String file, String[] args) throws Exception {
+		return runPythonFileBackground(file, args, null);
+	}
+	
+	public static PythonRunInfo runPythonFileBackground(String file, String[] args, String[] envp) throws Exception {
+		if (args == null)
+			args = new String[0];
+		String[] allArgs = new String[2 + args.length];
+		allArgs[0] = PYTHON;
+		allArgs[1] = file;
+		for (int i = 0; i < args.length; i++) {
+			allArgs[i + 2] = args[i];
+		}
+		return launch(allArgs, envp);
 	}
 
 	public static class PythonRunInfo {
@@ -86,17 +122,17 @@ public class PythonHelper {
 		}
 	}
 
-	private static String readAndProcessOutput(boolean failOnAnyOutput, String[] args) throws Exception {
-		PythonRunInfo pythonRunInfo = launch(args);
+	private static String readAndProcessOutput(boolean failOnAnyOutput, String[] args, String[] envp) throws Exception {
+		PythonRunInfo pythonRunInfo = launch(args, envp);
 		return pythonRunInfo.getStdout(failOnAnyOutput);
 	}
 
-	private static PythonRunInfo launch(String[] args) throws IOException {
+	private static PythonRunInfo launch(String[] args, String[] envp) throws IOException {
 		// Short circuit tests when python isn't available
 		Assume.assumeTrue(enablePythonTests());
 
 		PythonRunInfo pythonRunInfo = new PythonRunInfo();
-		pythonRunInfo.process = Runtime.getRuntime().exec(args);
+		pythonRunInfo.process = Runtime.getRuntime().exec(args, envp);
 
 		// No need to synchronize as we'll waitFor() the process before getting the contents.
 		pythonRunInfo.std = new ThreadStreamReader(pythonRunInfo.process.getInputStream(), false);

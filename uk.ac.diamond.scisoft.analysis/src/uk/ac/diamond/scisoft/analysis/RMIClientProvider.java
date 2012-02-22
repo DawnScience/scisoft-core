@@ -23,17 +23,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A simple interface to Java RMI so that objects can be exported using the defaults encoded in this class.
  */
-public class RMIClientProvider {
-	private static final Logger logger = LoggerFactory.getLogger(RMIClientProvider.class);
-
+public class RMIClientProvider extends AbstractClientProvider {
 	private static RMIClientProvider instance = new RMIClientProvider();
-	private int port = 0;
 
 	/**
 	 * Get Instance of provider
@@ -89,49 +83,10 @@ public class RMIClientProvider {
 		return lookup(host, serviceName, 0);
 	}
 
-	/**
-	 * Provide a port number to use. Allows overriding the default, particularly useful if multiple instances of SDA are
-	 * controlled from the same Jython/Java JVM.
-	 * 
-	 * @param rmiPortNumber
-	 *            new port number, or 0 to use default port resolution mechanism
-	 * @throws IllegalArgumentException
-	 *             if the port number is < 0
-	 */
-	public void setPort(int rmiPortNumber) throws IllegalStateException, IllegalArgumentException {
-		if (rmiPortNumber < 0)
-			throw new IllegalArgumentException("Port number must be >= 0");
-
-		port = rmiPortNumber;
+	@Override
+	protected String getEnvName() {
+		return "SCISOFT_RMI_PORT";
 	}
 
-	/**
-	 * Return Port number in use
-	 * 
-	 * @return port number
-	 * @throws RemoteException
-	 *             if the remote port cannot be determined
-	 */
-	public int getPort() throws RemoteException {
-		if (port == 0) {
-			String rmiPortString = System.getenv("SCISOFT_RMI_PORT");
-			if (rmiPortString != null) {
-				try {
-					port = Integer.parseInt(rmiPortString);
-				} catch (NumberFormatException e) {
-					port = 0;
-				}
-			}
-			// It isn't going to work with a port of 0, so throw the error now
-			if (port == 0) {
-				String msg = "Failed to determine suitable port from SCISOFT_RMI_PORT, value was '"
-						+ rmiPortString + "'";
-				logger.error(msg);
-				throw new RemoteException(msg);
-			}
-		}
-
-		return port;
-	}
 
 }

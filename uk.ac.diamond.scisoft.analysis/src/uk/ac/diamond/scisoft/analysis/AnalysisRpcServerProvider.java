@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
@@ -33,7 +32,6 @@ public class AnalysisRpcServerProvider {
 	private static AnalysisRpcServerProvider instance = new AnalysisRpcServerProvider();
 	private int port = 0;
 	private AnalysisRpcServer server = null;
-	private AnalysisRpcClient analysisRpcClient;
 
 	/**
 	 * Get Instance of provider
@@ -63,6 +61,24 @@ public class AnalysisRpcServerProvider {
 			throw new AnalysisRpcException("Analysis RPC Server disabled with property uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable");
 		}
 			
+		startServer();
+		if (handler == null) {
+			logger.info("Removing " + serviceName);
+			server.removeHandler(serviceName);
+		} else {
+			logger.info("Adding " + serviceName);
+			server.addHandler(serviceName, handler);
+		}
+	}
+
+	/**
+	 * Public for TESTING ONLY: Start the server
+	 * 
+	 * Forces the server to start even if no handlers have yet been added
+	 * 
+	 * @throws AnalysisRpcException
+	 */
+	public synchronized void startServer() throws AnalysisRpcException {
 		if (server == null) {
 			server = new AnalysisRpcServer(port);
 			try {
@@ -73,13 +89,6 @@ public class AnalysisRpcServerProvider {
 				logger.error("Failed to start AnalysisRpcServer", e);
 				throw new AnalysisRpcException(e);
 			}
-		}
-		if (handler == null) {
-			logger.info("Removing " + serviceName);
-			server.removeHandler(serviceName);
-		} else {
-			logger.info("Adding " + serviceName);
-			server.addHandler(serviceName, handler);
 		}
 	}
 
@@ -93,23 +102,6 @@ public class AnalysisRpcServerProvider {
 		if (server == null)
 			return null;
 		return server.getHandler(serviceName);
-	}
-
-	/**
-	 * Make a call to an RPC Service registered with addHandler.
-	 * 
-	 * @param serviceName
-	 *            name of the service to call
-	 * @param args
-	 *            arguments to the target method
-	 * @return what the delegated method call returned
-	 * @throws AnalysisRpcException
-	 */
-	public Object request(String serviceName, Object... args) throws AnalysisRpcException {
-		if (analysisRpcClient == null || analysisRpcClient.getPort() != port) {
-			analysisRpcClient = new AnalysisRpcClient(port);
-		}
-		return analysisRpcClient.request(serviceName, args);
 	}
 
 	/**
@@ -134,7 +126,9 @@ public class AnalysisRpcServerProvider {
 	}
 
 	/**
-	 * Return Port number in use
+	 * Return Port number in use.
+	 * 
+	 * The port number will not be valid before handlers are added. 
 	 * 
 	 * @return port number
 	 */

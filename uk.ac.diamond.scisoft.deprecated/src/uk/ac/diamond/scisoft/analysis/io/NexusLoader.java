@@ -51,7 +51,6 @@ import uk.ac.gda.monitor.IMonitor;
  *
  */
 public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDataSetLoader, ISliceLoader {
-	
 	private static final Logger logger = LoggerFactory.getLogger(NexusLoader.class);
 
 	private String filename;
@@ -184,7 +183,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 			String outputFilename, List<String> dataSetNames)
 			throws ScanFileHolderException {
 		DataHolder nxsh = new NexusLoader(filename, nexusDataSelectionFilename, nexusMetaDataSelectionFilename, dataSetNames).loadFile();
-		new ASCIIDataHolderSaver(outputFilename).saveFile(nxsh);
+		new ASCIIDataHolderNexusSaver(outputFilename).saveFile(nxsh);
 	}
 
 	/**
@@ -204,7 +203,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 			String outputFilename, List<String> dataSetNames)
 			throws ScanFileHolderException {
 		DataHolder nxsh = new NexusLoader(filename, nexusDataSelectionFilename, nexusMetaDataSelectionFilename, dataSetNames).loadFile();
-		new SRSLoader(outputFilename).saveFile(nxsh);
+		new SRSNexusLoader(outputFilename).saveFile(nxsh);
 	}
 
 	
@@ -294,7 +293,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 			
 		} catch (Exception e) {
 			throw new ScanFileHolderException("NexusReader exception loading " + filename
-					+ (nexusDataSelectionFilename == null ? "" : (" using selection file" + nexusDataSelectionFilename)), e);
+					+ (nexusDataSelectionFilename == null ? "" : (" using selection file " + nexusDataSelectionFilename)), e);
 		}
 	}
 
@@ -400,7 +399,6 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 	
 	@Override
 	public void loadMetaData(final IMonitor mon) throws Exception {
-		
 		allDataSetNames = getDatasetNames(this.filename, mon);
 		allDataSetSizes = getDataSizes(filename, allDataSetNames, mon);
 		allDataSetRanks = getDataShapes(filename, allDataSetNames, mon);

@@ -45,7 +45,7 @@ public class ASCIIDataHolderSaver implements IFileSaver {
 		this.fileName = fileName;
 	}
 
-	private void wl(String msg) throws IOException {
+	protected void wl(String msg) throws IOException {
 		w(msg + "\n");
 	}
 
@@ -91,21 +91,17 @@ public class ASCIIDataHolderSaver implements IFileSaver {
 		writeData(inner_shape, db);
 	}
 
+	@SuppressWarnings("unused")
+	protected void writeMetadata(DataHolder dh) throws IOException {
+		// do nothing but can be overridden
+	}
+
 	@Override
 	public void saveFile(DataHolder dh) throws ScanFileHolderException {
 		try {
 			out = new BufferedWriter(new FileWriter(fileName));
-			
-//			if (dh instanceof NexusTreeProvider) {
-//				NexusTreeProvider ndh = (NexusTreeProvider) dh;
-//				if(ndh.getNexusTree() != null) {
-//					wl(ndh.getNexusTree().toXML(true, false));
-//					wl(ndh.getNexusTree().toXML(true, true));
-//					wl(ndh.getNexusTree().toXML(false, false));
-//					wl(ndh.getNexusTree().toXML(false, true));
-//				}
-//			}
 
+			writeMetadata(dh);
 			String[] headings = dh.getNames();
 			wl("NumberOfDatasets," + headings.length);
 			for (String h : headings) {

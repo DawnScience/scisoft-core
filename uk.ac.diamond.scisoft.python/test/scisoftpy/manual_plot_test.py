@@ -24,11 +24,11 @@ If launched as python, will use AnalysisRpc to access plotserver, via SDAPlotter
 # Note: manual add of path is needed when this is run as an automated test by:
 # AutomatedManualPlottingPluginTest.java
 import os, sys
-scisoftpath = os.getcwd() + '/../uk.ac.diamond.scisoft.python/src'
-sys.path.append(scisoftpath)
+sys.path.append(sys.argv[1])
 import scisoftpy as dnp
 
-dnp.rpc.settemplocation('d:/temp/bug')
+# When manually testing you may want to check alternate temp locations
+# dnp.rpc.settemplocation('d:/temp/bug')
 
 a = dnp.arange(100)
 a.shape = (10,10)

@@ -26,14 +26,13 @@ Launch this file twice, once for python, once for jython
 # Note: manual add of path is needed when this is run as an automated test by:
 # AutomatedManualPlottingPluginTest.java
 import os, sys
-scisoftpath = os.getcwd() + '/../uk.ac.diamond.scisoft.python/src'
-sys.path.append(scisoftpath)
+sys.path.append(sys.argv[1])
 import scisoftpy as dnp
 
 a = dnp.arange(100)
 a.shape = (10,10)
 
-client = dnp.rpc.rpcclient(8610)
+client = dnp.rpc.rpcclient(int(os.getenv("SCISOFT_RPC_PORT")))
 # This is only an example of how to use RPCClient, do not use it to call 
 # plotting functions, use scisoftpy.plot for that!
 if os.name == "java":

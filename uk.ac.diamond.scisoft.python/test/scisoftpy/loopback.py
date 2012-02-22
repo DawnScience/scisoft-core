@@ -21,8 +21,7 @@ Provide a loop back mechanism that allows Java to call into this script and have
 # AllPyPlotMethodsPluginTest.java
 # AllPyPlotMethodsTest.java
 import os, sys
-scisoftpath = os.getcwd() + '/../uk.ac.diamond.scisoft.python/src'
-sys.path.append(scisoftpath)
+sys.path.append(sys.argv[1])
 import scisoftpy as dnp #@UnresolvedImport
 import thread
 

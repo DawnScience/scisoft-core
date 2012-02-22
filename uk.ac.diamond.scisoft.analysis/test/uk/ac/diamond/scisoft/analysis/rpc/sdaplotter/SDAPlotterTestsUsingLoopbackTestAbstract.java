@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
-import javax.management.RuntimeErrorException;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,8 +41,10 @@ public class SDAPlotterTestsUsingLoopbackTestAbstract {
 		redirectPlotter = new ReDirectOverRpcPlotterImpl();
 
 		// Launch the AnalysisRpc server that receives our requests and sends them back to us
+		AnalysisRpcServerProvider.getInstance().startServer();
+		String[] envp = new String[] {"SCISOFT_RPC_PORT=" + AnalysisRpcServerProvider.getInstance().getPort()};
 		pythonRunInfo = PythonHelper
-				.runPythonFileBackground("../uk.ac.diamond.scisoft.python/test/scisoftpy/loopback.py");
+				.runPythonFileBackground("../uk.ac.diamond.scisoft.python/test/scisoftpy/loopback.py", new String[] {"../uk.ac.diamond.scisoft.python/src/"}, envp);
 
 		savedHandler = AnalysisRpcServerProvider.getInstance().getHandler(SDAPlotter.class.getSimpleName());
 	}

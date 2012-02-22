@@ -45,6 +45,8 @@ def _get_rpcclient():
                 port = int(os.getenv('SCISOFT_RPC_PORT'))
             except:
                 raise Exception("Failed to determine correct port, either ensure SCISOFT_RPC_PORT or call scisoftpy.plot.setremoteport(...)")
+        else:
+            port = _RPC_CONNECTION_PORT
             
         _RPC_CLIENT = _rpc.rpcclient(port)
     return _RPC_CLIENT

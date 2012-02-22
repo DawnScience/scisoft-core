@@ -44,8 +44,11 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar,
  jars/it.tidalwave.imageio.raw-1.6.1.jar
 Import-Package: Jama,
+ ncsa.hdf.hdf5lib,
  ncsa.hdf.hdf5lib.exceptions,
+ ncsa.hdf.hdf5lib.structs,
  ncsa.hdf.object,
  ncsa.hdf.object.h5,
+ org.eclipse.core.resources,
  org.slf4j;version="[1.5.0,2.0.0)"
 Eclipse-BuddyPolicy: registered

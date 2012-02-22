@@ -116,7 +116,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 			}
 		}
 		if (data != null) {
-			output.addDataset("ESRF Data Format", data);
+			output.addDataset("ESRF Pilatus Data", data);
 		}
 		return output;
 	}

@@ -106,8 +106,6 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private int[] readMetaData(BufferedReader br, IMonitor mon) throws Exception {
-		
-		
 		int width  = 0;
 		int height = 0;
 		int maxval = 0;
@@ -124,11 +122,10 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		textMetadata.put("MagicNumber", token);
 		if (token.startsWith("P5")) {
 			if (!s1.hasMoreTokens()) {
-				line = br.readLine();
-				while (line.startsWith("#")) {  // ignore comment lines
-				index += line.length()+1;
-				line = br.readLine();
-				}
+				do {
+					line = br.readLine();
+					index += line.length() + 1;
+				} while (line.startsWith("#")); // ignore comment lines
 				s1 = new StringTokenizer(line);
 			}
 			token = s1.nextToken();

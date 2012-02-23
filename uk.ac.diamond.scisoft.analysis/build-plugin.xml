@@ -40,7 +40,7 @@
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
                 <pathelement location="${workspace.loc}/tp/plugins/*" />
-                ${ncsa.hdf.classpath}
+                <path refid="ncsa.hdf.classpath" />
                 <path refid="libs.jars.path" />
             </classpath>
             <batchtest todir="@{report.dir}">

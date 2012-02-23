@@ -232,10 +232,13 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					if (useImageLoader) {
 						ImageStackLoaderEx loader;
 						try {
-							String[] paths = sds.getData();
+							String[] oldpaths = sds.getData();
+							String[] paths = new String[oldpaths.length];
 							for (int j = 0; j < paths.length ; j++) {
-								if(!(new File(paths[j])).exists())
-									paths[j] = (new File(file_directory,paths[j])).getAbsolutePath();
+								if(!(new File(oldpaths[j])).exists())
+									paths[j] = (new File(file_directory, oldpaths[j])).getAbsolutePath();
+								else
+									paths[j] = oldpaths[j];
 							}
 							loader = new ImageStackLoaderEx(sds.getShape(), paths);
 							String name = names[i] + "_image";

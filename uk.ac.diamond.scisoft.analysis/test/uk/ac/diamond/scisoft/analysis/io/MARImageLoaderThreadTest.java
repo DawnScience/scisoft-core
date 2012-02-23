@@ -68,7 +68,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 			super.testWithNThreads(20);
 		} catch (ScanFileHolderException sfhe) {
 			if (!(sfhe.getCause() instanceof OutOfMemoryError))
-				Assert.fail("Something other than an out of memeory exception was thrown.");
+				Assert.fail("Something other than an out of memory exception was thrown.");
 			System.out.println("This test is expected to throw an exception as the loaders run out of memory");
 		} catch (Exception e) {
 			Assert.fail("Loading failed for reasons other than out of memory");

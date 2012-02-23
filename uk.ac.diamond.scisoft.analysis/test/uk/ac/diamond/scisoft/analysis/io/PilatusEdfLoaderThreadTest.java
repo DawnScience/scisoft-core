@@ -52,11 +52,11 @@ public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
 
 	@Override
 	public void doTestOfDataSet(int threadIndex) throws Exception {
-		
-		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
-     		
+
+		DataHolder dataHolder = LoaderFactory.getData(testFileFolder + "diff6105.edf", null);
+
 		AbstractDataset data = dataHolder.getDataset("ESRF Pilatus Data");
-		assertEquals(data.getDouble(0, 0),      98.0, 0.0);
-		assertEquals(data.getDouble(2047, 2047),199.0, 0.0);
+		assertEquals(data.getDouble(0, 0), 98.0, 0.0);
+		assertEquals(data.getDouble(2047, 2047), 199.0, 0.0);
 	}
 }

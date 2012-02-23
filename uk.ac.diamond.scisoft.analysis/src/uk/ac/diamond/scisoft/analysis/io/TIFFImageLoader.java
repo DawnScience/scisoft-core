@@ -88,12 +88,12 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		}
 
 		// TODO cope with multiple images (tiff)
+		ImageReader reader = null;
 		try {
 			// test to see if the filename passed will load
 			f = new File(fileName);
 			ImageInputStream iis = new FileImageInputStream(f);
 
-			ImageReader reader;
 			try {
 				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 				reader.setInput(iis);
@@ -123,6 +123,9 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);
 		} catch (IllegalArgumentException e) {
 			throw new ScanFileHolderException("IllegalArgumentException interpreting file '" + fileName + "'", e);
+		} finally {
+			if (reader != null)
+				reader.dispose();
 		}
 
 

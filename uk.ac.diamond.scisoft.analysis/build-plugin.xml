@@ -23,7 +23,7 @@
            Invoke the tests
          ==================================================================== -->
 
-    <target name="junit-tests" depends="toolCheck, guess-and-set-ncsa-hdf-context, set-test-base">
+    <target name="junit-tests" depends="toolCheck, set-ncsa-hdf-context-SDA-else-GDA, set-test-base">
         <condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
             <os family="windows" />
         </condition>

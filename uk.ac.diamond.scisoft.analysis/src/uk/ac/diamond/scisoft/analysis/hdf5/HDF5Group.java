@@ -70,13 +70,6 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	}
 
 	/**
-	 * @return number of nodelinks held in group
-	 */
-	public int getNumberOfNodelinks() {
-		return nodes.size();
-	}
-
-	/**
 	 * @return number of child groups in group
 	 */
 	public int getNumberOfGroups() {

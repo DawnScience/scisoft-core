@@ -18,8 +18,6 @@ package uk.ac.diamond.scisoft.analysis.hdf5;
 
 import java.io.Serializable;
 
-import org.eclipse.core.resources.IFile;
-
 /**
  * Link two HDF5 nodes together. The name of the link provides a reference for users to the destination node
  */
@@ -28,7 +26,7 @@ public class HDF5NodeLink implements Serializable {
 	private HDF5Node to;
 	private String name;
 	private String path;
-	private IFile container;
+	private String resourcepath = "";
 
 	/**
 	 * A node link
@@ -87,11 +85,11 @@ public class HDF5NodeLink implements Serializable {
 		return path + name;
 	}
 
-	public IFile getFile() {
-		return container;
+	public String getResourceFilename() {
+		return resourcepath;
 	}
 
-	public void setFile(IFile container) {
-		this.container = container;
+	public void setResourceFilename(String resourcepath) {
+		this.resourcepath = resourcepath;
 	}
 }

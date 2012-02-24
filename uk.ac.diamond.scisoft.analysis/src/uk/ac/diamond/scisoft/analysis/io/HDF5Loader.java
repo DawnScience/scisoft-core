@@ -382,8 +382,26 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 		tFile = f;
 
+		Queue<String> q = iqueue;
+		iqueue = oqueue;
+		oqueue = q;
+		while (iqueue.size() > 0) { // read in first level
+			String nn = iqueue.remove();
+			HDF5Node n = createGroup(fid, f, pool, oqueue, nn, keepBitWidth);
+			if (n == null) {
+				logger.error("Could not find group {}", nn);
+				continue;
+			}
+			nn = nn.substring(0, nn.length() - 1);
+			int i = nn.lastIndexOf(HDF5Node.SEPARATOR);
+			String pn = i == 0 ? HDF5File.ROOT : nn.substring(0, i);
+			HDF5NodeLink ol = f.findNodeLink(pn);
+			HDF5Group og = (HDF5Group) ol.getDestination();
+			og.addNode(f, pn, nn.substring(i + 1), n);
+		}
+
 		do {
-			Queue<String> q = iqueue;
+			q = iqueue;
 			iqueue = oqueue;
 			oqueue = q;
 			while (iqueue.size() > 0) {

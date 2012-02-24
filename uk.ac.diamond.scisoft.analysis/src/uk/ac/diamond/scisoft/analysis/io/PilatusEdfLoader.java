@@ -86,16 +86,17 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				if (dataType.equals("Float")) {
 					data = new FloatDataset(width, height);
 					Utils.readFloat(fi, (FloatDataset) data, index);
-					
 				} else {
 					data = new IntegerDataset(width, height);
-					if ("UnsignedShort".equals(textMetadata.get("DataType"))) {
-						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
-							Utils.readLeShort(fi, (IntegerDataset) data, index);
+					boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder")); 
+					if (dataType.contains("Short")) {
+						boolean signed = dataType.startsWith("Signed");
+						if (le)
+							Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
 						else
-							Utils.readBeShort(fi, (IntegerDataset) data, index);
+							Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
 					} else {
-						if ("LowByteFirst".equals(textMetadata.get("ByteOrder")))
+						if (le)
 							Utils.readLeInt(fi, (IntegerDataset) data, index);
 						else
 							Utils.readBeInt(fi, (IntegerDataset) data, index);

@@ -57,6 +57,17 @@ public class UtilsTest {
 	 * 
 	 */
 	@Test
+	public void testLeIntSigns() {
+		int attempt = Utils.leIntSE(255, -1);
+		assertEquals(-1, attempt, 1e-8);
+		attempt = Utils.leInt(255, -1);
+		assertEquals(256*255+255, attempt, 1e-8);
+	}
+
+	/**
+	 * 
+	 */
+	@Test
 	public void testReadLeInt() throws Exception {
 		ByteArrayInputStream is = new ByteArrayInputStream(leAnswer);
 

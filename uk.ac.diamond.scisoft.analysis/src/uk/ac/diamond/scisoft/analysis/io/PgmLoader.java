@@ -86,7 +86,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 				Utils.readByte(fi, (ShortDataset) data, index);
 			} else {
 				data = new IntegerDataset(height, width);
-				Utils.readBeShort(fi, (IntegerDataset) data, index);
+				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 			}
 			data.setName(DEF_IMAGE_NAME);
 		} catch (Exception e) {

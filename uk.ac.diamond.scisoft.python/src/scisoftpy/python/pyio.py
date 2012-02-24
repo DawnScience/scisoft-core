@@ -343,14 +343,15 @@ CBFLoader = None
 CrysLoader = None
 MARLoader = LibTIFFLoader
 PilLoader = LibTIFFLoader
-RawLoader = None
+BinaryLoader = None
+TextLoader = None
 XMapLoader  = None
 
 _pngsave = ImageSaver
 _jpegsave = ImageSaver
 _tiffsave = ImageSaver
 _imgsave = None
-_rawtextsave = None
+_rawtxtsave = None
 _rawbinsave = None
 _pngscaledsave = None
 _jpegscaledsave = None
@@ -372,13 +373,14 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "mar": MARLoader, "mccd": MARLoader,
                "pil": PilLoader,
                "srs": SRSLoader,
-               "binary": RawLoader, "xmap": XMapLoader,
-               "nx": NXLoader, "hdf5": HDF5Loader
+               "binary": BinaryLoader, "xmap": XMapLoader,
+               "nx": NXLoader, "hdf5": HDF5Loader,
+               "text": TextLoader
                }
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, RawLoader, SRSLoader ]
+loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, TextLoader ]
 
-output_formats = { "png": _pngsave, "gif": _imgsave, "jpeg": _jpegsave, "tiff": _tiffsave, "text": _rawtextsave,
+output_formats = { "png": _pngsave, "gif": _imgsave, "jpeg": _jpegsave, "tiff": _tiffsave, "text": _rawtxtsave,
               "binary": _rawbinsave }
 
 scaled_output_formats = { "png": _pngscaledsave, "jpeg": _jpegscaledsave }

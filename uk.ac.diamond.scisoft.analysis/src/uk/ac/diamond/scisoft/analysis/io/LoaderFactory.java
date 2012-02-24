@@ -115,6 +115,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
 		    LoaderFactory.registerLoader("txt",  DatLoader.class);
 		    LoaderFactory.registerLoader("txt",  SRSLoader.class);
+		    LoaderFactory.registerLoader("txt",  RawTextLoader.class);
 		    LoaderFactory.registerLoader("tif",  TIFFImageLoader.class);		    
 		    LoaderFactory.registerLoader("tiff", TIFFImageLoader.class);		    
 		    LoaderFactory.registerLoader("zip",  XMapLoader.class);

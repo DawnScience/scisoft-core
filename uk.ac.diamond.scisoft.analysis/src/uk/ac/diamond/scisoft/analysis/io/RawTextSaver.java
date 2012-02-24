@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Diamond Light Source Ltd.
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package gda.analysis.io;
+package uk.ac.diamond.scisoft.analysis.io;
+
+import gda.analysis.io.IFileSaver;
+import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -26,35 +30,38 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 /**
- * Class that saves data from DataHolder and writes the output as delimited
- * ACSII output
- * 
+ * Class that saves 1D or 2D data from DataHolder by writing the output as tab-delimited ACSII output
  */
-public class RawOutput implements IFileSaver {
+public class RawTextSaver implements IFileSaver {
 
 	private String fileName = "";
 
 	/**
-	 * Takes the dataset from a data holder which is an array of doubles
-	 * and output them as a width X height array called 'filename'.dat. The
-	 * double is written to 12 dp. If there are multiple datasets in a
-	 * ScanFileHolder then the class will save each in a separate file.
+	 * Takes the dataset from a data holder and output them as a height x width array called 'filename'.txt.
+	 * If there are multiple datasets in a ScanFileHolder then the class will save each in a separate file.
 	 * 
 	 * @param filename
 	 */
-	public RawOutput(String filename) {
+	public RawTextSaver(String filename) {
 		fileName = filename;
 	}
-
-	/**
-	 * 
-	 * @see gda.analysis.io.IFileSaver#saveFile(DataHolder)
-	 */
 
 	@Override
 	public void saveFile(DataHolder dh) throws ScanFileHolderException {
 		File f = null;
 		for (int i = 0, imax = dh.size(); i < imax; i++) {
+			AbstractDataset data = dh.getDataset(i);
+			int[] shape = data.getShape();
+			int rank = shape.length;
+			if (rank == 1) {
+				data = data.reshape(shape[0], 1);
+				shape = data.getShape();
+			} else if (rank > 2) {
+				throw new ScanFileHolderException("Cannot saved dataset: this loader only supports 1D or 2D datasets");
+			}
+
+			FileWriter fw = null;
+			BufferedWriter bw = null;
 			try {
 				String name = null;
 				String end = null;
@@ -62,8 +69,7 @@ public class RawOutput implements IFileSaver {
 					name = fileName;
 				} else {
 					try {
-						name = fileName.substring(0,
-								(fileName.lastIndexOf(".")));
+						name = fileName.substring(0, (fileName.lastIndexOf(".")));
 						end = fileName.substring(fileName.lastIndexOf("."));
 					} catch (Exception e) {
 						name = fileName;
@@ -75,27 +81,34 @@ public class RawOutput implements IFileSaver {
 
 				f = new File(name);
 
-				AbstractDataset data = dh.getDataset(i);
-				int[] dims = data.getShape();
-				int height = dims[0];
-				int width = dims[1];
+				int height = shape[0];
+				int width = shape[1];
 
-				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+				fw = new FileWriter(f);
+				bw = new BufferedWriter(fw);
 
 				for (int rows = 0; rows < height; rows++) {
-					for (int columns = 0; columns < width; columns++) {
-						bw.write(String.valueOf(data.getDouble(rows, columns)));
+					for (int columns = 0; columns < width - 1; columns++) {
+						bw.write(data.getString(rows, columns));
 						bw.write('\t');
 					}
+					bw.write(data.getString(rows, width - 1));
 					bw.newLine();
 				}
-				bw.close();
-
 			} catch (Exception e) {
-				throw new ScanFileHolderException("Error saving file '"
-						+ fileName + "'", e);
+				throw new ScanFileHolderException("Error saving file '" + fileName + "'", e);
+			} finally {
+				if (bw != null)
+					try {
+						bw.close();
+					} catch (IOException e) {
+					}
+				if (fw != null)
+					try {
+						fw.close();
+					} catch (IOException e) {
+					}
 			}
 		}
 	}
-
 }

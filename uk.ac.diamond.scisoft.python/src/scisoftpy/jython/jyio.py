@@ -54,13 +54,8 @@ from uk.ac.diamond.scisoft.analysis.io import SRSLoader as _srsload
 from uk.ac.diamond.scisoft.analysis.io import PilatusEdfLoader as _pilatusEdfLoader
 from uk.ac.diamond.scisoft.analysis.io import RawBinarySaver as _rawbinsave
 from uk.ac.diamond.scisoft.analysis.io import RawBinaryLoader as _rawbinload
-try:
-    from gda.analysis.io import RawOutput as _rawtextsave
-except:
-    import sys #@Reimport
-    print >> sys.stderr, "Could not import raw text loader"
-    print >> sys.stderr, "Problem with product bundling"
-    _rawtextsave = None
+from uk.ac.diamond.scisoft.analysis.io import RawTextSaver as _rawtxtsave
+from uk.ac.diamond.scisoft.analysis.io import RawTextLoader as _rawtxtload
 
 from uk.ac.diamond.scisoft.analysis.io import XMapLoader as _xmapload
 from uk.ac.diamond.scisoft.analysis.io import DatLoader as _dlsdatload
@@ -226,9 +221,14 @@ class PilLoader(JavaLoader, _ptiffload):
         _ptiffload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
-class RawLoader(JavaLoader, _rawbinload):
+class BinaryLoader(JavaLoader, _rawbinload):
     def __init__(self, *arg):
         _rawbinload.__init__(self, *arg) #@UndefinedVariable
+        self.load_metadata = True
+
+class TextLoader(JavaLoader, _rawtxtload):
+    def __init__(self, *arg):
+        _rawtxtload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
 class XMapLoader(JavaLoader, _xmapload):
@@ -259,16 +259,17 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "mar": MARLoader, "mccd": MARLoader,
                "pil": PilLoader,
                "srs": SRSLoader,
-               "binary": RawLoader, "xmap": XMapLoader,
+               "binary": BinaryLoader, "xmap": XMapLoader,
                "npy": NumPyLoader,
                "dls": DLSLoader,
                "osc": RAxisLoader,
                "nx": NXLoader,
                "hdf5": HDF5Loader,
-               "edf": PilatusEdfLoader
+               "edf": PilatusEdfLoader,
+               "text": TextLoader
                }
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, RawLoader, SRSLoader, PilatusEdfLoader, HDF5Loader ]
+loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, HDF5Loader ]
 
 class _Metadata(_jmetadata):
     def __init__(self, metadata):
@@ -322,7 +323,7 @@ class TIFFSaver(JavaSaver, _tiffsave):
             bits = 16
         _tiffsave.__init__(self, name, bits, not signed) #@UndefinedVariable
 
-class TextSaver(JavaSaver, _rawtextsave):
+class TextSaver(JavaSaver, _rawtxtsave):
     def __init__(self, name, signed, bits):
         _rawtextsave.__init__(self, name) #@UndefinedVariable
 

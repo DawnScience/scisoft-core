@@ -41,7 +41,9 @@ where:
 
    * ``edf`` - European Synchrotron Radiation Source data format for Pilatus images
 
-   * ``binary`` - raw single dataset format
+   * ``binary`` - raw single dataset binary format
+
+   * ``text`` - raw single dataset ASCII format
 
    * ``npy`` - NumPy binary format
 
@@ -156,7 +158,7 @@ where:
 
    * ``png``, ``gif``, ``jpeg``, ``tiff`` - standard image formats
 
-   * ``text`` - raw ASCII output
+   * ``text`` - raw ASCII dump
 
    * ``binary``  - raw binary dump
 

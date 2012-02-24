@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.hdf5;
 
 import java.io.Serializable;
 
+import org.eclipse.core.resources.IFile;
+
 /**
  * Link two HDF5 nodes together. The name of the link provides a reference for users to the destination node
  */
@@ -26,9 +28,10 @@ public class HDF5NodeLink implements Serializable {
 	private HDF5Node to;
 	private String name;
 	private String path;
+	private IFile container;
 
 	/**
-	 * Construct a HDF5 node link
+	 * A node link
 	 * @param path to source
 	 * @param link name (ends in '/' for groups)
 	 * @param source node which link starts from (can be null)
@@ -47,51 +50,30 @@ public class HDF5NodeLink implements Serializable {
 //		}
 	}
 
-	/**
-	 * @return source node
-	 */
 	public HDF5Node getSource() {
 		return from;
 	}
 
-	/**
-	 * @return destination node
-	 */
 	public HDF5Node getDestination() {
 		return to;
 	}
 
-	/**
-	 * @return true if destination node is a dataset
-	 */
 	public boolean isDestinationADataset() {
 		return to instanceof HDF5Dataset;
 	}
 
-	/**
-	 * @return true if destination node is a group
-	 */
 	public boolean isDestinationAGroup() {
 		return to instanceof HDF5Group;
 	}
 
-	/**
-	 * @return true if destination node is a symbolic link
-	 */
 	public boolean isDestinationASymLink() {
 		return to instanceof HDF5SymLink;
 	}
 
-	/**
-	 * @return name of node link
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @return path of node link
-	 */
 	public String getPath() {
 		return path;
 	}
@@ -101,10 +83,15 @@ public class HDF5NodeLink implements Serializable {
 		return path + name + '\n' + to.toString();
 	}
 
-	/**
-	 * @return full name of node link
-	 */
 	public String getFullName() {
 		return path + name;
+	}
+
+	public IFile getFile() {
+		return container;
+	}
+
+	public void setFile(IFile container) {
+		this.container = container;
 	}
 }

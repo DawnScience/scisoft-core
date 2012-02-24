@@ -92,12 +92,41 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	}
 
 	/**
+	 * Add node link
+	 * @param link
+	 */
+	public void addNodeLink(final HDF5NodeLink link) {
+		final String name = link.getName();
+		if (nodes.containsKey(name)) {
+			HDF5Node n = nodes.get(name).getDestination();
+			if (n instanceof HDF5SymLink)
+				n = ((HDF5SymLink) n).getNode();
+			if (link.isDestinationADataset() && !(n instanceof HDF5Dataset)) {
+				throw new IllegalArgumentException("Cannot add a group as there is a non-group of same name");
+			}
+			if (link.isDestinationAGroup() && !(n instanceof HDF5Group)) {
+				throw new IllegalArgumentException("Cannot add a group as there is a non-dataset of same name");
+			}
+		}
+		HDF5Node n = link.getDestination();
+		if (n instanceof HDF5SymLink)
+			n = ((HDF5SymLink) n).getNode();
+		if (n instanceof HDF5Group) {
+			groups++;
+		} else {
+			datasets++;
+		}
+		nodes.put(name, link);
+	}
+
+	/**
 	 * Add (child) group with given path and name 
+	 * @param file
 	 * @param path
 	 * @param name
 	 * @param g group
 	 */
-	public void addGroup(final String path, final String name, final HDF5Group g) {
+	public void addGroup(final HDF5File file, final String path, final String name, final HDF5Group g) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
 			if (n instanceof HDF5SymLink)
@@ -108,16 +137,17 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 		} else {
 			groups++;
 		}
-		nodes.put(name, new HDF5NodeLink(path, name, this, g));
+		nodes.put(name, new HDF5NodeLink(file, path, name, this, g));
 	}
 
 	/**
 	 * Add linked group with given path and name
+	 * @param file
 	 * @param path
 	 * @param name
 	 * @param g linked group
 	 */
-	public void addGroup(final String path, final String name, final HDF5SymLink g) {
+	public void addGroup(final HDF5File file, final String path, final String name, final HDF5SymLink g) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
 			if (n instanceof HDF5SymLink)
@@ -128,7 +158,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 		} else {
 			groups++;
 		}
-		nodes.put(name, new HDF5NodeLink(path, name, this, g));
+		nodes.put(name, new HDF5NodeLink(file, path, name, this, g));
 	}
 
 	/**
@@ -199,11 +229,12 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 
 	/**
 	 * Add given dataset with given path and name 
+	 * @param file
 	 * @param path
 	 * @param name
 	 * @param d dataset
 	 */
-	public void addDataset(final String path, final String name, final HDF5Dataset d) {
+	public void addDataset(final HDF5File file, final String path, final String name, final HDF5Dataset d) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
 			if (n instanceof HDF5SymLink)
@@ -214,16 +245,17 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 		} else {
 			datasets++;
 		}
-		nodes.put(name, new HDF5NodeLink(path, name, this, d));
+		nodes.put(name, new HDF5NodeLink(file, path, name, this, d));
 	}
 
 	/**
-	 * Add linked dataset with given path and name 
+	 * Add linked dataset with given path and name
+	 * @param file
 	 * @param path
 	 * @param name
 	 * @param d linked dataset
 	 */
-	public void addDataset(final String path, final String name, final HDF5SymLink d) {
+	public void addDataset(final HDF5File file, final String path, final String name, final HDF5SymLink d) {
 		if (nodes.containsKey(name)) {
 			HDF5Node n = nodes.get(name).getDestination();
 			if (n instanceof HDF5SymLink)
@@ -234,7 +266,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 		} else {
 			datasets++;
 		}
-		nodes.put(name, new HDF5NodeLink(path, name, this, d));
+		nodes.put(name, new HDF5NodeLink(file, path, name, this, d));
 	}
 
 	/**
@@ -290,24 +322,25 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 
 	/**
 	 * Add given node with given path and name
+	 * @param file
 	 * @param path
 	 * @param name
 	 * @param node
 	 */
-	public void addNode(String path, String name, HDF5Node node) {
+	public void addNode(final HDF5File file, final String path, final String name, final HDF5Node node) {
 		if (node == null)
 			return;
 
 		if (node instanceof HDF5SymLink) {
 			if (name.endsWith(SEPARATOR)) {
-				addGroup(path, name, (HDF5SymLink) node);
+				addGroup(file, path, name, (HDF5SymLink) node);
 			} else {
-				addDataset(path, name, (HDF5SymLink) node);
+				addDataset(file, path, name, (HDF5SymLink) node);
 			}
 		} else if (node instanceof HDF5Dataset) {
-			addDataset(path, name, (HDF5Dataset) node);
+			addDataset(file, path, name, (HDF5Dataset) node);
 		} else if (node instanceof HDF5Group) {
-			addGroup(path, name, (HDF5Group) node);
+			addGroup(file, path, name, (HDF5Group) node);
 		}
 	}
 

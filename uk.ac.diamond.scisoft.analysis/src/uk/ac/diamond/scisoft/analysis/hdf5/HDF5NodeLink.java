@@ -26,7 +26,7 @@ public class HDF5NodeLink implements Serializable {
 	private HDF5Node to;
 	private String name;
 	private String path;
-	private String fullfilename = "";
+	private HDF5File file;
 
 	/**
 	 * A node link
@@ -35,10 +35,11 @@ public class HDF5NodeLink implements Serializable {
 	 * @param source node which link starts from (can be null)
 	 * @param destination node which link points to
 	 */
-	public HDF5NodeLink(final String path, final String link, final HDF5Node source, final HDF5Node destination) {
+	public HDF5NodeLink(final HDF5File file, final String path, final String link, final HDF5Node source, final HDF5Node destination) {
 		if (link == null || destination == null) {
 			throw new IllegalArgumentException("Path name, link name and destination must be defined");
 		}
+		this.file = file;
 		this.path = path == null ? "" : path;
 		name = link;
 		from = source;
@@ -85,11 +86,7 @@ public class HDF5NodeLink implements Serializable {
 		return path + name;
 	}
 
-	public String getFullFilename() {
-		return fullfilename;
-	}
-
-	public void setFullFilename(String fullfilename) {
-		this.fullfilename = fullfilename;
+	public HDF5File getFile() {
+		return file;
 	}
 }

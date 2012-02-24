@@ -399,7 +399,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				String pn = i == 0 ? HDF5File.ROOT : nn.substring(0, i);
 				HDF5NodeLink ol = f.findNodeLink(pn);
 				HDF5Group og = (HDF5Group) ol.getDestination();
-				og.addNode(pn, nn.substring(i + 1), n);
+				og.addNode(f, pn, nn.substring(i + 1), n);
 				if (checkSyncNodes())
 					break;
 			}
@@ -453,7 +453,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (copyAttributes(name, group, gid)) {
 				final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
 				try {
-					return copyNAPIMountNode(f, pool, link, keepBitWidth);
+					return copyNAPIMountNode(f, pool, link, keepBitWidth); // TODO get correct file for node
 				} catch (Exception e) {
 					logger.error("Could not copy NAPI mount", e);
 				}
@@ -502,7 +502,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							if (!(p instanceof HDF5Group)) {
 								throw new IllegalStateException("Matching pooled node is not a group");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(f, name, oname, p);
 							continue;
 						}
 
@@ -514,7 +514,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
-								group.addNode(name, oname, g);
+								group.addNode(f, name, oname, g);
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
@@ -524,7 +524,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							if (!(p instanceof HDF5Dataset)) {
 								throw new IllegalStateException("Matching pooled node is not a dataset");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(f, name, oname, p);
 							continue;
 						}
 
@@ -548,9 +548,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							} else {
 								// create a new scalar dataset
 								HDF5Dataset d = new HDF5Dataset(oid);
-								if (copyAttributes(name, d, did)) {
+								if (copyAttributes(name, d, did)) { // TODO get correct file for node
 									final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
-									group.addDataset(name, oname,
+									group.addDataset(f, name, oname,
 											(HDF5Dataset) copyNAPIMountNode(f, pool, link, keepBitWidth));
 								} else {
 									if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
@@ -558,7 +558,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 										logger.error("Could not create a lazy dataset {} from {}", oname, name);
 										continue;
 									}
-									group.addDataset(name, oname, d);
+									group.addDataset(f, name, oname, d);
 								}
 								if (pool != null)
 									pool.put(oid, d);
@@ -594,7 +594,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					}
 					// System.err.println("  -> " + linkName[0]);
 					HDF5SymLink slink = new HDF5SymLink(oid, f, linkName[0]);
-					group.addNode(name, oname, slink);
+					group.addNode(f, name, oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
 					String[] linkName = new String[2]; // file name and file path
@@ -610,8 +610,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 						logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
 						eName = new File(f.getParentDirectory(), new File(eName).getName()).getAbsolutePath();
 					}
-					if (new File(eName).exists()) {
-						group.addNode(name, oname, getExternalNode(pool, eName, linkName[0], keepBitWidth));
+					if (new File(eName).exists()) { // TODO get correct file for node
+						group.addNode(f, name, oname, getExternalNode(pool, eName, linkName[0], keepBitWidth));
 					} else {
 						logger.error("Could not find external file {}", eName);
 					}
@@ -851,7 +851,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			for (HObject h : members) {
 				final String path = h.getPath();
 				final String name = h.getName();
-				ng.addNode(path, name, copyNode(file, pool, h, keepBitWidth));
+				ng.addNode(file, path, name, copyNode(file, pool, h, keepBitWidth));
 			}
 
 			if (pool != null)

@@ -26,7 +26,7 @@ public class HDF5NodeLink implements Serializable {
 	private HDF5Node to;
 	private String name;
 	private String path;
-	private String resourcepath = "";
+	private String fullfilename = "";
 
 	/**
 	 * A node link
@@ -85,11 +85,11 @@ public class HDF5NodeLink implements Serializable {
 		return path + name;
 	}
 
-	public String getResourceFilename() {
-		return resourcepath;
+	public String getFullFilename() {
+		return fullfilename;
 	}
 
-	public void setResourceFilename(String resourcepath) {
-		this.resourcepath = resourcepath;
+	public void setFullFilename(String fullfilename) {
+		this.fullfilename = fullfilename;
 	}
 }

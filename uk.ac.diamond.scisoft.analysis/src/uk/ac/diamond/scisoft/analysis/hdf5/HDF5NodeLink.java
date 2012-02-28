@@ -44,9 +44,6 @@ public class HDF5NodeLink implements Serializable {
 		name = link;
 		from = source;
 		to = destination;
-//		if ((to instanceof HDF5Group) && !name.endsWith(HDF5Node.SEPARATOR)) {
-//			throw new IllegalArgumentException("If destination is a group then name must end with a separator character");
-//		}
 	}
 
 	public HDF5Node getSource() {

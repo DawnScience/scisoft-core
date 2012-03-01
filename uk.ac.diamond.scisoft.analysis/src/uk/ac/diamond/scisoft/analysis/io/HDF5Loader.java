@@ -302,7 +302,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
 		}
 
-//		long start = -System.currentTimeMillis();
 		if (async) {
 			new LoadFileThread(mon).start();
 			try {
@@ -335,8 +334,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				releaseLock(lock);
 			}
 		}
-//		start += System.currentTimeMillis();
-//		System.err.printf("Loading %s took %.3fs\n", fileName, start*1e-3);
 		return tFile;
 	}
 
@@ -1171,7 +1168,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 //		boolean isEnum, isRegRef, isNativeDatatype;
 		Object fillValue;
 		long[] dims;
-		long[] maxDims;
 		Datatype type;
 		final int[] trueShape;
 
@@ -1235,10 +1231,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				rank = 1;
 				dims = new long[1];
 				dims[0] = 1;
+				dataset.setMaxShape(dims);
 			} else {
 				dims = new long[rank];
-				maxDims = new long[rank];
+				long[] maxDims = new long[rank];
 				H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
+				dataset.setMaxShape(maxDims);
 			}
 		} catch (HDF5Exception ex) {
 			logger.error("Could not get data space information", ex);

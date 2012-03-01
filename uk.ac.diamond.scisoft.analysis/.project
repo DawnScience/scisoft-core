@@ -4,7 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>ncsa.hdf</project>
-		<project>thirdparty</project>
+		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.gda.common</project>
 		<project>uk.ac.gda.libs</project>

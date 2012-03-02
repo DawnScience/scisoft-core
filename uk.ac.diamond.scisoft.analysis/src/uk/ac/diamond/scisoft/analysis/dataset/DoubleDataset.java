@@ -751,7 +751,7 @@ public class DoubleDataset extends AbstractDataset {
 	public boolean containsInvalidNumbers() {
 		IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
-			double x = data[iter.index]; // REAL_ONLY
+			double x = data[iter.index]; // PRIM_TYPE // REAL_ONLY
 			if (Double.isNaN(x) || Double.isInfinite(x)) // CLASS_TYPE // REAL_ONLY
 				return true; // REAL_ONLY
 		} // REAL_ONLY

@@ -951,7 +951,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
 			for (int i = 0; i < isize; i++) { // REAL_ONLY
-				double x = data[iter.index + i]; // REAL_ONLY
+				double x = data[iter.index + i]; // PRIM_TYPE // REAL_ONLY
 				if (Double.isNaN(x) || Double.isInfinite(x)) // CLASS_TYPE // REAL_ONLY
 					return true; // REAL_ONLY
 			} // REAL_ONLY

@@ -107,7 +107,7 @@ public class DetectorProperties {
 		this.origin = origin;
 		this.beamVector = beamVector;
 		beamVector.normalize();
-		px = heightInPixels;
+		px = widthInPixels;
 		py = heightInPixels;
 		vPxSize = pixelHeightInmm;
 		hPxSize = pixelWidthInmm;

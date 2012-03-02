@@ -130,8 +130,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		for (int i = 0; iter.hasNext(); i+=isize) {
 			data[i] = dataset.getElementDoubleAbs(iter.index); // ADD_CAST
 		}
-		if (dataset.metadataStructure != null)
-			metadataStructure = dataset.metadataStructure;
+		metadataStructure = dataset.metadataStructure;
 	}
 
 	/**
@@ -213,9 +212,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
-		if (metadataStructure != null)
-			view.metadataStructure = metadataStructure;
+		view.metadataStructure = metadataStructure;
 		return view;
 	}
 

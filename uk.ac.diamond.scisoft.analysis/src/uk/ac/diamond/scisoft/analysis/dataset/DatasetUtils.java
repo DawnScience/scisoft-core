@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -2014,6 +2015,60 @@ public class DatasetUtils {
 		// populate matrix
 		setRow(matrix, a);
 		return matrix;
+	}
+	
+	/**
+	 * Removes Nans and infinites from Double and Float datasets.
+	 * All other dataset types are ignored.
+	 * 
+	 * Do not protect this method with containsNans and containsInfinites because this will result
+	 * in more iterations over the data than necessary.
+	 * 
+	 * @param norm
+	 */
+	public static void removeNansInfinites(Collection<AbstractDataset> norm, final Number value) {
+		
+		for (AbstractDataset a : norm) {
+			
+			if (a instanceof DoubleDataset) {
+				final DoubleDataset set = (DoubleDataset)a;
+				final double[]      da  = set.getData();
+				for (int i = 0; i < da.length; i++) {
+					if (Double.isNaN(da[i])||Double.isInfinite(da[i])) da[i]=value.doubleValue();
+				}
+			} else if (a instanceof FloatDataset) {
+				final FloatDataset set = (FloatDataset)a;
+				final float[]      fa  = set.getData();
+				for (int i = 0; i < fa.length; i++) {
+					if (Float.isNaN(fa[i])||Float.isInfinite(fa[i])) fa[i]=value.floatValue();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method exists to reduce loop over data when searching for Nans and
+	 * Infinites in data. TODO remove when DoubleDataset and FloatDataset
+	 * do not require two loops to test for Nans and Infinites together.
+	 * 
+	 * @param a
+	 */
+	public static boolean containsInvalidNumbers(AbstractDataset a) {
+		
+		if (a instanceof DoubleDataset) {
+			final DoubleDataset set = (DoubleDataset)a;
+			final double[]      da  = set.getData();
+			for (int i = 0; i < da.length; i++) {
+				if (Double.isNaN(da[i])||Double.isInfinite(da[i])) return true;
+			}
+		} else if (a instanceof FloatDataset) {
+			final FloatDataset set = (FloatDataset)a;
+			final float[]      fa  = set.getData();
+			for (int i = 0; i < fa.length; i++) {
+				if (Float.isNaN(fa[i])||Float.isInfinite(fa[i])) return true;
+			}
+		}
+		return false;
 	}
 
 	/**

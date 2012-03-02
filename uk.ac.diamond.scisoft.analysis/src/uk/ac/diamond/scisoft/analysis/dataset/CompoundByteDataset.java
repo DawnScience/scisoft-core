@@ -933,6 +933,11 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public boolean containsInvalidNumbers() {
+		return false;
+	}
+
+	@Override
 	public CompoundByteDataset iadd(final Object b) {
 		if (b instanceof AbstractDataset) {
 			final AbstractDataset bds = (AbstractDataset) b;

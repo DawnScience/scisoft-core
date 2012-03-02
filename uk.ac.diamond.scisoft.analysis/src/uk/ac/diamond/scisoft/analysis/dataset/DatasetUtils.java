@@ -2018,57 +2018,60 @@ public class DatasetUtils {
 	}
 	
 	/**
-	 * Removes Nans and infinites from Double and Float datasets.
+	 * Removes NaNs and infinities from floating point datasets.
 	 * All other dataset types are ignored.
 	 * 
-	 * Do not protect this method with containsNans and containsInfinites because this will result
-	 * in more iterations over the data than necessary.
-	 * 
-	 * @param norm
+	 * @param a dataset
+	 * @param value replacement value
 	 */
-	public static void removeNansInfinites(Collection<AbstractDataset> norm, final Number value) {
-		
-		for (AbstractDataset a : norm) {
-			
-			if (a instanceof DoubleDataset) {
-				final DoubleDataset set = (DoubleDataset)a;
-				final double[]      da  = set.getData();
-				for (int i = 0; i < da.length; i++) {
-					if (Double.isNaN(da[i])||Double.isInfinite(da[i])) da[i]=value.doubleValue();
-				}
-			} else if (a instanceof FloatDataset) {
-				final FloatDataset set = (FloatDataset)a;
-				final float[]      fa  = set.getData();
-				for (int i = 0; i < fa.length; i++) {
-					if (Float.isNaN(fa[i])||Float.isInfinite(fa[i])) fa[i]=value.floatValue();
-				}
-			}
-		}
-	}
-
-	/**
-	 * Method exists to reduce loop over data when searching for Nans and
-	 * Infinites in data. TODO remove when DoubleDataset and FloatDataset
-	 * do not require two loops to test for Nans and Infinites together.
-	 * 
-	 * @param a
-	 */
-	public static boolean containsInvalidNumbers(AbstractDataset a) {
-		
+	public static void removeNansAndInfinities(AbstractDataset a, final Number value) {
 		if (a instanceof DoubleDataset) {
-			final DoubleDataset set = (DoubleDataset)a;
-			final double[]      da  = set.getData();
-			for (int i = 0; i < da.length; i++) {
-				if (Double.isNaN(da[i])||Double.isInfinite(da[i])) return true;
+			final double dvalue = AbstractDataset.toReal(value);
+			final DoubleDataset set = (DoubleDataset) a;
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				double x = data[it.index];
+				if (Double.isNaN(x) || Double.isInfinite(x))
+					data[it.index] = dvalue;
 			}
 		} else if (a instanceof FloatDataset) {
-			final FloatDataset set = (FloatDataset)a;
-			final float[]      fa  = set.getData();
-			for (int i = 0; i < fa.length; i++) {
-				if (Float.isNaN(fa[i])||Float.isInfinite(fa[i])) return true;
+			final float fvalue = (float) AbstractDataset.toReal(value);
+			final FloatDataset set = (FloatDataset) a;
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				float x = data[it.index];
+				if (Float.isNaN(x) || Float.isInfinite(x))
+					data[it.index] = fvalue;
+			}
+		} else if (a instanceof CompoundDoubleDataset) {
+			final double dvalue = AbstractDataset.toReal(value);
+			final CompoundDoubleDataset set = (CompoundDoubleDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					double x = data[it.index + j];
+					if (Double.isNaN(x) || Double.isInfinite(x))
+						data[it.index + j] = dvalue;
+				}
+			}
+		} else if (a instanceof CompoundFloatDataset) {
+			final float fvalue = (float) AbstractDataset.toReal(value);
+			final CompoundFloatDataset set = (CompoundFloatDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					float x = data[it.index + j];
+					if (Float.isNaN(x) || Float.isInfinite(x))
+						data[it.index + j] = fvalue;
+				}
 			}
 		}
-		return false;
 	}
 
 	/**

@@ -727,9 +727,6 @@ public class DoubleDataset extends AbstractDataset {
 		return getNDPosition(min.get(0)); // first minimum
 	}
 
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
 	@Override
 	public boolean containsNans() {
 		IndexIterator iter = getIterator(); // REAL_ONLY
@@ -740,14 +737,22 @@ public class DoubleDataset extends AbstractDataset {
 		return false;
 	}
 
-	/**
-	 * @return true if dataset contains any Infs
-	 */
 	@Override
 	public boolean containsInfs() {
 		IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
 			if (Double.isInfinite(data[iter.index])) // CLASS_TYPE // REAL_ONLY
+				return true; // REAL_ONLY
+		} // REAL_ONLY
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
+		IndexIterator iter = getIterator(); // REAL_ONLY
+		while (iter.hasNext()) { // REAL_ONLY
+			double x = data[iter.index]; // REAL_ONLY
+			if (Double.isNaN(x) || Double.isInfinite(x)) // CLASS_TYPE // REAL_ONLY
 				return true; // REAL_ONLY
 		} // REAL_ONLY
 		return false;

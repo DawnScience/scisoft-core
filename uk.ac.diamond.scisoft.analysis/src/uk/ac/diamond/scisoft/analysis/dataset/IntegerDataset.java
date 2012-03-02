@@ -727,19 +727,18 @@ public class IntegerDataset extends AbstractDataset {
 		return getNDPosition(min.get(0)); // first minimum
 	}
 
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
 	@Override
 	public boolean containsNans() {
 		return false;
 	}
 
-	/**
-	 * @return true if dataset contains any Infs
-	 */
 	@Override
 	public boolean containsInfs() {
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
 		return false;
 	}
 

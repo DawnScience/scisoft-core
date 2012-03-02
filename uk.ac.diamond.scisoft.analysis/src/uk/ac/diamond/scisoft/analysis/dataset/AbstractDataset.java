@@ -3091,9 +3091,20 @@ public abstract class AbstractDataset implements IDataset {
 		return (IntegerDataset) getStatistics(axis, "minIndex-" + axis);
 	}
 
+	/**
+	 * @return true if dataset contains any infinities
+	 */
 	abstract public boolean containsInfs();
 
+	/**
+	 * @return true if dataset contains any NaNs
+	 */
 	abstract public boolean containsNans();
+
+	/**
+	 * @return true if dataset contains any NaNs or infinities
+	 */
+	abstract public boolean containsInvalidNumbers();
 
 	/**
 	 * @return peak-to-peak value, the difference of maximum and minimum of dataset

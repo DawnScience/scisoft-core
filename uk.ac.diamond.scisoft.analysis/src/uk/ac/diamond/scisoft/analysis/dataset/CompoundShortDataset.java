@@ -933,6 +933,11 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public boolean containsInvalidNumbers() {
+		return false;
+	}
+
+	@Override
 	public CompoundShortDataset iadd(final Object b) {
 		if (b instanceof AbstractDataset) {
 			final AbstractDataset bds = (AbstractDataset) b;

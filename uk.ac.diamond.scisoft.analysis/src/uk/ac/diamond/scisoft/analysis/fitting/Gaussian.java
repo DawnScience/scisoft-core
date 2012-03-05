@@ -25,7 +25,6 @@ import org.apache.commons.math.linear.LUDecomposition;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.NonSquareMatrixException;
-import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -65,11 +64,7 @@ public class Gaussian {
 
 		try {
 			lmopt.optimize(f, dataset.getData(), weights, startPoint);
-		} catch (OptimizationException e) {
-			e.printStackTrace();
-		} catch (FunctionEvaluationException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

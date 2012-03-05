@@ -16,11 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import java.rmi.RemoteException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 
@@ -42,7 +37,6 @@ public class AnalysisRpcClientProvider extends AbstractClientProvider {
 
 	private AnalysisRpcClientProvider() {
 	}
-
 
 	/**
 	 * Make a call to an RPC Service registered with addHandler.

@@ -24,6 +24,7 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -155,7 +156,6 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 			data.setStoredValue("hash", hash);
 
 			data.setName(DEF_IMAGE_NAME);
-			data.setMetadataMap(GDAMetadata);
 			output.addDataset("RAxis Image", data, getMetaData());
 
 		} catch (Exception e) {
@@ -496,15 +496,22 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 	@Override
 	public IMetaData getMetaData() {
 		return new MetaDataAdapter() {
-
 			@Override
 			public String getMetaValue(String key) {
-				return metadata.get(key).toString();
+				if (metadata.containsKey(key))
+					return metadata.get(key).toString();
+				else if (GDAMetadata.containsKey(key))
+					return GDAMetadata.get(key).toString();
+				return null;
 			}
+
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
-				return metadata.keySet();
+				HashSet<String> set = new HashSet<String>(metadata.keySet());
+				set.addAll(GDAMetadata.keySet());
+				return set;
 			}
+
 			@Override
 			public Map<String, int[]> getDataShapes() {
 				int height = (Integer) metadata.get("nFast");
@@ -513,8 +520,6 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 				ret.put("RAXIS osc", new int[] { width, height });
 				return ret;
 			}
-
 		};
 	}
-
 }

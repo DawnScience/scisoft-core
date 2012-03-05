@@ -362,7 +362,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 				int height = Integer.parseInt(metadata.get("SIZE1"));
 				int width = Integer.parseInt(metadata.get("SIZE2"));
                 final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-                ret.put("ADSC Img", new int[]{width,height});
+                ret.put("ADSC Image", new int[]{width,height});
                 return ret;
 			}
 			
@@ -406,7 +406,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 						int height = Integer.parseInt(newMetadataMap.get("SIZE1"));
 						int width = Integer.parseInt(newMetadataMap.get("SIZE2"));
 		                final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-		                ret.put("ADSC Img", new int[]{width,height});
+		                ret.put("ADSC Image", new int[]{width,height});
 		                return ret;
 					}
 					

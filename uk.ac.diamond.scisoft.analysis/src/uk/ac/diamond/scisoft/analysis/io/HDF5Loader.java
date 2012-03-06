@@ -41,6 +41,7 @@ import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.HDFNativeData;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
+import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
@@ -114,6 +115,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	private ScanFileHolderException syncException = null;
 
 	private String host = null;
+
+	private static final int HASH_MULTIPLIER = 139;
 
 	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
 
@@ -348,7 +351,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		HDF5File f = new HDF5File(oid, fileName);
 		f.setHostname(host);
 
-		HDF5Group g = (HDF5Group) createGroup(fid, f, new HashMap<Long, HDF5Node>(), null, HDF5File.ROOT, keepBitWidth);
+		HDF5Group g = (HDF5Group) createGroup(fid, f, -1, new HashMap<Long, HDF5Node>(), null, HDF5File.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
@@ -369,22 +372,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		f.setHostname(host);
 
 		HashMap<Long, HDF5Node> pool = new HashMap<Long, HDF5Node>();
-		Queue<String> oqueue = new LinkedList<String>();
 		Queue<String> iqueue = new LinkedList<String>();
-		HDF5Group g = (HDF5Group) createGroup(fid, f, pool, oqueue, HDF5File.ROOT, keepBitWidth);
+		HDF5Group g = (HDF5Group) createGroup(fid, f, -1, pool, iqueue, HDF5File.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
 		f.setGroup(g);
 
-		tFile = f;
-
-		Queue<String> q = iqueue;
-		iqueue = oqueue;
-		oqueue = q;
+		Queue<String> oqueue = new LinkedList<String>();
 		while (iqueue.size() > 0) { // read in first level
 			String nn = iqueue.remove();
-			HDF5Node n = createGroup(fid, f, pool, oqueue, nn, keepBitWidth);
+			HDF5Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
 			if (n == null) {
 				logger.error("Could not find group {}", nn);
 				continue;
@@ -397,14 +395,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			og.addNode(f, pn, nn.substring(i + 1), n);
 		}
 
+		tFile = f;
+
 		do {
-			q = iqueue;
+			Queue<String> q = iqueue;
 			iqueue = oqueue;
 			oqueue = q;
 			while (iqueue.size() > 0) {
 				updateSyncNodes(pool.size());
 				String nn = iqueue.remove();
-				HDF5Node n = createGroup(fid, f, pool, oqueue, nn, keepBitWidth);
+				HDF5Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
 				if (n == null) {
 					logger.error("Could not find group {}", nn);
 					continue;
@@ -430,8 +430,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	private static int LIMIT = 10240;
 
 	/**
-	 * Create a group (and all its children, recursively) from given location ID
+	 * Create a node (and all its children, recursively) from given location ID
 	 * @param fid location ID
+	 * @param f HDF5 file
 	 * @param pool
 	 * @param queue
 	 * @param name of group (full path and ends in '/')
@@ -439,7 +440,38 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createGroup(final int fid, final HDF5File f, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private static HDF5Node createNode(final int fid, final HDF5File f, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+		try {
+			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
+			int t = info.type;
+			if (t == HDF5Constants.H5O_TYPE_GROUP) {
+				return createGroup(fid, f, -1, pool, queue, name, keepBitWidth);
+			} else if (t == HDF5Constants.H5O_TYPE_DATASET) {
+				return createDataset(fid, f, -1, pool, name, null, keepBitWidth);
+			} else if (t == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
+				logger.error("Named datatype not supported"); // TODO
+			} else {
+				logger.error("Unknown object type");
+			}
+		} catch (HDF5Exception ex) {
+			logger.error("Could not find info about object {}" + name);
+		}
+		return null;
+	}
+
+	/**
+	 * Create a group (and all its children, recursively) from given location ID
+	 * @param fid location ID
+	 * @param f HDF5 file
+	 * @param oid object ID
+	 * @param pool
+	 * @param queue
+	 * @param name of group (full path and ends in '/')
+	 * @param keepBitWidth
+	 * @return node
+	 * @throws Exception
+	 */
+	private static HDF5Node createGroup(final int fid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		int gid = -1;
 		HDF5Group group = null;
 
@@ -453,13 +485,21 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				throw new ScanFileHolderException("Could not open group", ex);
 			}
 
-			byte[] idbuf = null;
-			long oid = -1;
-			try {
-				idbuf = H5.H5Rcreate(fid, name, HDF5Constants.H5R_OBJECT, -1);
-				oid = HDFNativeData.byteToLong(idbuf, 0);
-			} catch (HDF5Exception ex) {
-				throw new ScanFileHolderException("Could not find group reference", ex);
+			if (oid == -1) {
+				byte[] idbuf = null;
+				try {
+					idbuf = H5.H5Rcreate(fid, name, HDF5Constants.H5R_OBJECT, -1);
+					oid = f.getID() * HASH_MULTIPLIER + HDFNativeData.byteToLong(idbuf, 0);
+				} catch (HDF5Exception ex) {
+					throw new ScanFileHolderException("Could not find group reference", ex);
+				}
+				if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+					HDF5Node p = pool.get(oid);
+					if (!(p instanceof HDF5Group)) {
+						throw new IllegalStateException("Matching pooled node is not a group");
+					}
+					return p;
+				}
 			}
 
 			group = new HDF5Group(oid);
@@ -468,7 +508,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (copyAttributes(name, group, gid)) {
 				final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
 				try {
-					return copyNAPIMountNode(f, pool, link, keepBitWidth); // TODO get correct file for node
+					return copyNAPIMountNode(f, pool, link, keepBitWidth);
 				} catch (Exception e) {
 					logger.error("Could not copy NAPI mount", e);
 				}
@@ -507,11 +547,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				}
 				otype = oTypes[i];
 				ltype = lTypes[i];
-				oid = oids[i];
+				oid = f.getID() * HASH_MULTIPLIER + oids[i];
 
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
-						// System.err.println("G: " + oname);
 						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
 							HDF5Node p = pool.get(oid);
 							if (!(p instanceof HDF5Group)) {
@@ -521,11 +560,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							continue;
 						}
 
+						// System.err.println("G: " + oname);
 						if (queue != null) {
 							queue.add(name + oname + HDF5Node.SEPARATOR);
 						} else {
-							HDF5Node g = createGroup(fid, f, pool, queue, name + oname + HDF5Node.SEPARATOR,
-									keepBitWidth);
+							HDF5Node g = createGroup(fid, f, oid, pool, queue, name + oname + HDF5Node.SEPARATOR, keepBitWidth);
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
@@ -533,7 +572,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
-						// System.err.println("D: " + oname);
 						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
 							HDF5Node p = pool.get(oid);
 							if (!(p instanceof HDF5Dataset)) {
@@ -543,62 +581,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							continue;
 						}
 
-						int did = -1, tid = -1, tclass = -1;
-						try {
-							did = H5.H5Dopen(gid, oname, HDF5Constants.H5P_DEFAULT);
-							tid = H5.H5Dget_type(did);
+						// System.err.println("D: " + oname);
+						HDF5Node n = createDataset(gid, f, oid, pool, name + oname, oname, keepBitWidth);
 
-							tclass = H5.H5Tget_class(tid);
-							if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_VLEN) {
-								// for ARRAY, the type is determined by the base type
-								int btid = H5.H5Tget_super(tid);
-								tclass = H5.H5Tget_class(btid);
-								try {
-									H5.H5Tclose(btid);
-								} catch (HDF5Exception ex) {
-								}
-							}
-							if (tclass == HDF5Constants.H5T_COMPOUND) {
-								logger.error("Compound dataset not supported"); // TODO
-							} else {
-								// create a new scalar dataset
-								HDF5Dataset d = new HDF5Dataset(oid);
-								if (copyAttributes(name, d, did)) { // TODO get correct file for node
-									final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
-									group.addDataset(f, name, oname,
-											(HDF5Dataset) copyNAPIMountNode(f, pool, link, keepBitWidth));
-								} else {
-									if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
-											d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
-										logger.error("Could not create a lazy dataset {} from {}", oname, name);
-										continue;
-									}
-									group.addDataset(f, name, oname, d);
-								}
-								if (pool != null)
-									pool.put(oid, d);
-							}
-						} catch (HDF5Exception ex) {
-							logger.error("Could not open dataset", ex);
-						} finally {
-							if (tid >= 0) {
-								try {
-									H5.H5Tclose(tid);
-								} catch (HDF5Exception ex) {
-								}
-							}
-							if (did >= 0) {
-								try {
-									H5.H5Dclose(did);
-								} catch (HDF5Exception ex) {
-								}
-							}
-						}
-
+						if (n != null)
+							group.addNode(f, name, oname, n);
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 						logger.error("Named datatype not supported"); // TODO
 					}
-
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
 					// System.err.println("S: " + oname);
 					String[] linkName = new String[1];
@@ -625,8 +615,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 						logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
 						eName = new File(f.getParentDirectory(), new File(eName).getName()).getAbsolutePath();
 					}
-					if (new File(eName).exists()) { // TODO get correct file for node
-						group.addNode(f, name, oname, getExternalNode(pool, eName, linkName[0], keepBitWidth));
+					if (new File(eName).exists()) {
+						group.addNode(f, name, oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
 						logger.error("Could not find external file {}", eName);
 					}
@@ -644,6 +634,95 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 
 		return group;
+	}
+
+	/**
+	 * Create a dataset (and all its children, recursively) from given location ID
+	 * @param lid location ID
+	 * @param f HDF5 file
+	 * @param oid object ID
+	 * @param pool
+	 * @param path of dataset (can full path or relative)
+	 * @param name dataset (can be null)
+	 * @param keepBitWidth
+	 * @return node
+	 * @throws Exception
+	 */
+	private static HDF5Node createDataset(final int lid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final String path, final String name, final boolean keepBitWidth) throws Exception {
+		byte[] idbuf = null;
+		if (oid == -1) {
+			try {
+				idbuf = H5.H5Rcreate(lid, path, HDF5Constants.H5R_OBJECT, -1);
+				oid = f.getID() * HASH_MULTIPLIER + HDFNativeData.byteToLong(idbuf, 0);
+			} catch (HDF5Exception ex) {
+				throw new ScanFileHolderException("Could not find object reference", ex);
+			}
+			if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+				HDF5Node p = pool.get(oid);
+				if (!(p instanceof HDF5Dataset)) {
+					throw new IllegalStateException("Matching pooled node is not a dataset");
+				}
+				return p;
+			}
+		}
+
+		int did = -1, tid = -1, tclass = -1;
+		try {
+			did = H5.H5Dopen(lid, name == null ? path : name, HDF5Constants.H5P_DEFAULT);
+			tid = H5.H5Dget_type(did);
+
+			tclass = H5.H5Tget_class(tid);
+			if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_VLEN) {
+				// for ARRAY, the type is determined by the base type
+				int btid = H5.H5Tget_super(tid);
+				tclass = H5.H5Tget_class(btid);
+				try {
+					H5.H5Tclose(btid);
+				} catch (HDF5Exception ex) {
+				}
+			}
+			if (tclass == HDF5Constants.H5T_COMPOUND) {
+				logger.error("Compound dataset not supported"); // TODO
+			} else {
+				// create a new scalar dataset
+				HDF5Dataset d = new HDF5Dataset(oid);
+				if (copyAttributes(path, d, did)) {
+					final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
+					return copyNAPIMountNode(f, pool, link, keepBitWidth);
+				}
+				String sname;
+				if (name == null) {
+					int i = path.lastIndexOf(HDF5Node.SEPARATOR);
+					sname = i >= 0 ? path.substring(i + 1) : path;
+				} else {
+					sname = name;
+				}
+				if (createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
+						d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+					if (pool != null)
+						pool.put(oid, d);
+					return d;
+				}
+				logger.error("Could not create a lazy dataset from {}", path);
+			}
+		} catch (HDF5Exception ex) {
+			logger.error("Could not open dataset", ex);
+		} finally {
+			if (tid >= 0) {
+				try {
+					H5.H5Tclose(tid);
+				} catch (HDF5Exception ex) {
+				}
+			}
+			if (did >= 0) {
+				try {
+					H5.H5Dclose(did);
+				} catch (HDF5Exception ex) {
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private static final String NAPIMOUNT = "napimount";
@@ -695,39 +774,30 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	// get external node
-	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String lpath, String node, final boolean keepBitWidth) throws Exception {
+	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
 		HDF5Node nn = null;
 
-		ReentrantLock lock = acquireLock(lpath);
+		if (!node.startsWith(HDF5File.ROOT)) {
+			node = HDF5File.ROOT + node;
+		}
+
+		ReentrantLock lock = acquireLock(path);
+		int fid = -1;
 		try {
-			final H5File hdf = (H5File) FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5).createInstance(lpath,
-					FileFormat.READ);
-			if (!hdf.canRead())
-				throw new IllegalArgumentException("Cannot read file");
+			fid = H5.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
-			if (!node.startsWith(HDF5File.ROOT)) {
-				node = HDF5File.ROOT + node;
-			}
+			final long oid = path.hashCode(); // include file name in ID
+			HDF5File f = new HDF5File(oid, path);
+			f.setHostname(host);
 
-			try {
-				HObject lobj = hdf.get(node);
-				if (lobj == null) {
-					logger.warn("Could not get external node {} in {}, retrying...", node, lpath);
-					lobj = hdf.get(node.substring(0, node.length()-1)); // cope with bug in API (as it does not handle a slash ending correctly)
-				}
-				if (lobj != null) {
-					 // include file name in ID
-					final long oid = lobj.getOID()[0] + hdf.getAbsolutePath().hashCode() * 17;
-					nn = copyNode(new HDF5File(oid, lpath), pool, lobj, keepBitWidth);
-				} else {
-					logger.warn("Could not get external node {} in {}", node, lpath);
-				}
-			} catch (Exception e) {
-				throw new ScanFileHolderException("Problem loading file", e);
-			} finally {
-				hdf.close();
-			}
+			nn = createNode(fid, f, pool, null, node, keepBitWidth);
+		} catch (Exception le) {
+			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {
+			try {
+				H5.H5Fclose(fid);
+			} catch (Exception e) {
+			}
 			releaseLock(lock);
 		}
 		
@@ -752,7 +822,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				}
 				lpath = f.getAbsolutePath();
 			}
-			nn = getExternalNode(pool, lpath, ltarget, keepBitWidth);
+			nn = getExternalNode(pool, file.getHostname(), lpath, ltarget, keepBitWidth);
 			if (nn == null)
 				logger.warn("Could not find external node: {}", ltarget);
 		} else {

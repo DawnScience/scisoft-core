@@ -393,8 +393,6 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	private void findDatasets(final String name, final List<ILazyDataset> list, final HDF5NodeLink link) {
 		HDF5Node n = null;
 		if (link.isDestinationASymLink()) {
-			if (link.getName().equals(name)) {
-			}
 			HDF5SymLink slink = (HDF5SymLink) link.getDestination();
 			if (slink.isDataset())
 				n = slink.getNode();

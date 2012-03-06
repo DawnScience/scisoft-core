@@ -773,8 +773,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		final long[] dstart = sds.getStartDims();
 		final long[] dstride = sds.getStride();
 		final long[] dsize = sds.getSelectedDims();
-		dstride[0] = 1;
-		dsize[0] = 1;
 
 		int length = 1;
 		final int[] shape = new int[dshape.length];
@@ -782,6 +780,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			int s = (int) dshape[i];
 			shape[i] = s;
 			length *= s;
+			// ensure we step through each dimension one point at a time
+			dstride[i] = 1;
+			dsize[i] = 1;
 		}
 		final String[] files = new String[length];
 		PositionIterator iter = new PositionIterator(shape);

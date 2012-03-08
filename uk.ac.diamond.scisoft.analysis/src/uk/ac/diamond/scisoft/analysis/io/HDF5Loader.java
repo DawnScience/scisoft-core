@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -30,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -77,26 +77,22 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	private static Map<String, ReentrantLock> openFiles = new ConcurrentHashMap<String, ReentrantLock>();
 
-	private static ReentrantLock acquireLock(String file) {
+	private static void acquireAccess(final String file) {
 		ReentrantLock lock = openFiles.get(file);
 		if (lock == null) {
 			lock = new ReentrantLock();
 			openFiles.put(file, lock);
 		}
 		lock.lock();
-		return lock;
 	}
 
-	private static void releaseLock(ReentrantLock lock) {
-		lock.unlock();
-		if (lock.getHoldCount() == 0) {
-			if (openFiles.containsValue(lock)) {
-				for (Entry<String, ReentrantLock> e : openFiles.entrySet()) {
-					if (e.getValue().equals(lock)) {
-						openFiles.remove(e.getKey());
-					}
-				}
-			}
+	private static void releaseLock(final String file) {
+		if (openFiles.containsKey(file)) {
+			ReentrantLock l = openFiles.get(file);
+			l.unlock();
+			if (!l.hasQueuedThreads())
+				openFiles.remove(file);
+			l = null;
 		}
 	}
 
@@ -197,8 +193,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		if (!f.exists()) {
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
 		}
+		try {
+			fileName = f.getCanonicalPath();
+		} catch (IOException e) {
+			logger.error("Could not get canonical path", e);
+			throw new ScanFileHolderException("Could not get canonical path", e);
+		}
 
-		ReentrantLock lock = acquireLock(fileName);
+		acquireAccess(fileName);
 		try {
 			HObject root = null;
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
@@ -225,7 +227,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
-			releaseLock(lock);
+			releaseLock(fileName);
 		}
 
 		return tFile;
@@ -277,8 +279,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	// get external node
 	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String lpath, String node, final boolean keepBitWidth) throws Exception {
 		HDF5Node nn = null;
+		final String cPath;
+		try {
+			cPath = new File(lpath).getCanonicalPath();
+		} catch (IOException e) {
+			logger.error("Could not get canonical path", e);
+			throw new ScanFileHolderException("Could not get canonical path", e);
+		}
 
-		ReentrantLock lock = acquireLock(lpath);
+		acquireAccess(cPath);
 		try {
 			final H5File hdf = (H5File) FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5).createInstance(lpath,
 					FileFormat.READ);
@@ -306,7 +315,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				hdf.close();
 			}
 		} finally {
-			releaseLock(lock);
+			releaseLock(cPath);
 		}
 		
 		return nn;
@@ -809,7 +818,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			final int[] step, final int dtype, final boolean extend) throws ScanFileHolderException {
 		AbstractDataset data = null;
 
-		ReentrantLock lock = acquireLock(fileName);
+		final String cPath;
+		try {
+			cPath = new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			logger.error("Could not get canonical path", e);
+			throw new ScanFileHolderException("Could not get canonical path", e);
+		}
+
+		acquireAccess(cPath);
 		try {
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 			final H5File hdf = (H5File) hdf5.createInstance(fileName, FileFormat.READ);
@@ -942,7 +959,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file", le);
 		} finally {
-			releaseLock(lock);
+			releaseLock(cPath);
 		}
 
 		return data;

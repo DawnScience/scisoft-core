@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -75,24 +74,39 @@ import uk.ac.gda.monitor.IMonitor;
 public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISliceLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
-	private static Map<String, ReentrantLock> openFiles = new ConcurrentHashMap<String, ReentrantLock>();
+	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
+
+	private static ReentrantLock globalLock = new ReentrantLock();
 
 	private static void acquireAccess(final String file) {
-		ReentrantLock lock = openFiles.get(file);
-		if (lock == null) {
-			lock = new ReentrantLock();
-			openFiles.put(file, lock);
+		globalLock.lock();
+
+		ReentrantLock l;
+		try {
+			l = openFiles.get(file);
+			if (l == null) {
+				l = new ReentrantLock();
+				openFiles.put(file, l);
+			}
+		} finally {
+			globalLock.unlock();
 		}
-		lock.lock();
+		l.lock();
 	}
 
 	private static void releaseLock(final String file) {
-		if (openFiles.containsKey(file)) {
+		globalLock.lock();
+
+		try {
 			ReentrantLock l = openFiles.get(file);
-			l.unlock();
-			if (!l.hasQueuedThreads())
-				openFiles.remove(file);
-			l = null;
+			if (l != null) {
+				l.unlock();
+				if (!l.hasQueuedThreads())
+					openFiles.remove(file);
+				l = null;
+			}
+		} finally {
+			globalLock.unlock();
 		}
 	}
 

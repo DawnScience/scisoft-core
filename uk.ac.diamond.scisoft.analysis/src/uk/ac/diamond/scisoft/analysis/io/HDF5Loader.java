@@ -87,11 +87,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	private static void acquireAccess(final String file) {
 		globalLock.lock();
-		ReentrantLock l = null;
+		ReentrantLock l;
 		try {
-			if (openFiles.containsKey(file)) {
-				l = openFiles.get(file);
-			} else {
+			l = openFiles.get(file);
+			if (l == null) {
 				l = new ReentrantLock();
 				openFiles.put(file, l);
 			}
@@ -790,20 +789,22 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	// get external node
-	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String host, String path, String node, final boolean keepBitWidth) throws Exception {
+	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
 		HDF5Node nn = null;
 
 		if (!node.startsWith(HDF5File.ROOT)) {
 			node = HDF5File.ROOT + node;
 		}
+
+		final String cPath;
 		try {
-			path = new File(path).getCanonicalPath();
+			cPath = new File(path).getCanonicalPath();
 		} catch (IOException e) {
 			logger.error("Could not get canonical path", e);
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
 
-		acquireAccess(path);
+		acquireAccess(cPath);
 		int fid = -1;
 		try {
 			fid = H5.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
@@ -820,7 +821,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				H5.H5Fclose(fid);
 			} catch (Exception e) {
 			}
-			releaseAccess(path);
+			releaseAccess(cPath);
 		}
 		
 		return nn;
@@ -1626,17 +1627,18 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	@SuppressWarnings("null")
-	private static AbstractDataset loadData(String fileName, final String node, final int[] start, final int[] count,
+	private static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
 			final int[] step, final int dtype, final boolean extend) throws Exception {
 		AbstractDataset data = null;
 
+		final String cPath;
 		try {
-			fileName = new File(fileName).getCanonicalPath();
+			cPath = new File(fileName).getCanonicalPath();
 		} catch (IOException e) {
 			logger.error("Could not get canonical path", e);
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
-		acquireAccess(fileName);
+		acquireAccess(cPath);
 		try {
 			final H5File hdf = (H5File) FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5).createInstance(fileName, FileFormat.READ);
 
@@ -1772,7 +1774,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				hdf.close();
 			}
 		} finally {
-			releaseAccess(fileName);
+			releaseAccess(cPath);
 		}
 
 		return data;

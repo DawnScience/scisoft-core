@@ -32,7 +32,7 @@ class PythonLoader(object):
         self.load_metadata = load_metadata
 
 class PythonSaver(object):
-    def __init__(self, name, lower=None, upper=None):
+    def __init__(self, name, lower=None, upper=None, **argv):
         self.name = name
         self.lower = lower
         self.upper = upper

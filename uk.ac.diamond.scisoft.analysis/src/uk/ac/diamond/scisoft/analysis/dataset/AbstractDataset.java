@@ -192,75 +192,6 @@ public abstract class AbstractDataset implements IDataset {
 	transient protected HashMap<String, Object> storedValues = null;
 
 	/**
-	 * Holds metadata as map from strings
-	 */
-	@Deprecated
-	protected Map<String, ? extends Serializable> metadata;
-
-	/**
-	 * @return metadata map
-	 * @deprecated Use setMetadata(IMetaData metadata) and create an object that extends IMetadata as the argument
-	 */
-	@Deprecated
-	public Map<String, ? extends Serializable> getMetadataMap() {
-		return metadata;
-	}
-
-	/**
-	 * @param key
-	 * @return an object
-	 * @deprecated Use getMetaData() which returns a IMetaData object
-	 */
-	@Deprecated
-	public Object getMetadata(String key) {
-		if (metadata == null) {
-			return null;
-		}
-		return metadata.get(key);
-	}
-
-	/**
-	 * @param metadata
-	 *            map
-	 * @deprecated Use setMetadata(IMetaData metadata) and create an object 
-	 * that extends IMetadata as the argument
-	 */
-	@Deprecated
-	public void setMetadataMap(Map<String, ? extends Serializable> metadata) {
-		this.metadata = metadata;
-	}
-
-	/**
-	 * Make a (shallow) copy of metadata map
-	 * 
-	 * @param metadata
-	 *            map
-	 * @return copied map
-	 */
-	@Deprecated
-	public static Map<String, ? extends Serializable> copyMetadataMap(Map<String, ? extends Serializable> metadata) {
-		Map<String, Serializable> copy = null;
-		if (metadata != null) {
-			copy = new HashMap<String, Serializable>();
-			copy.putAll(metadata);
-		}
-		return copy;
-	}
-
-	/**
-	 * @param key
-	 * @param value
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public void setMetadata(String key, Serializable value) {
-		if (metadata == null) {
-			metadata = new HashMap<String, Serializable>();
-		}
-		((Map<String, Serializable>) metadata).put(key, value);
-	}
-
-	/**
 	 * This dictates whether a dataset is allowed to be extended with a setting at a position outside of dataset's shape
 	 */
 	protected boolean extendible = true;
@@ -3091,9 +3022,20 @@ public abstract class AbstractDataset implements IDataset {
 		return (IntegerDataset) getStatistics(axis, "minIndex-" + axis);
 	}
 
+	/**
+	 * @return true if dataset contains any infinities
+	 */
 	abstract public boolean containsInfs();
 
+	/**
+	 * @return true if dataset contains any NaNs
+	 */
 	abstract public boolean containsNans();
+
+	/**
+	 * @return true if dataset contains any NaNs or infinities
+	 */
+	abstract public boolean containsInvalidNumbers();
 
 	/**
 	 * @return peak-to-peak value, the difference of maximum and minimum of dataset

@@ -53,7 +53,7 @@ public class HDF5File extends HDF5Node {
 		path = f.getAbsolutePath();
 		prefix = f.getParentFile().getAbsolutePath();
 
-		link = new HDF5NodeLink(null, ROOT, null, new HDF5Group(oid));
+		link = new HDF5NodeLink(this, null, ROOT, null, new HDF5Group(oid));
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class HDF5File extends HDF5Node {
 	 * Set root group
 	 */
 	public void setGroup(HDF5Group g) {
-		link = new HDF5NodeLink(null, ROOT, this, g);
+		link = new HDF5NodeLink(this, null, ROOT, this, g);
 	}
 
 	/**

@@ -110,9 +110,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			dataSize = dataset.dataSize;
 			dataShape = dataset.dataShape;
 			name = dataset.name;
-			metadata = dataset.metadata;
-			if(dataset.metadataStructure != null)
-				metadataStructure = dataset.metadataStructure;
+			metadataStructure = dataset.metadataStructure;
 			odata = data = dataset.data;
 
 			return;
@@ -120,8 +118,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = copyMetadataMap(dataset.metadata);
-		if(dataset.metadataStructure != null)
+		if (dataset.metadataStructure != null)
 			metadataStructure = dataset.metadataStructure.clone();
 		
 		double[] gdata = dataset.data; // PRIM_TYPE
@@ -365,7 +362,6 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
 		view.metadataStructure = metadataStructure;
 		return view;
 	}
@@ -924,9 +920,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		final IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
 			for (int i = 0; i < isize; i++) { // REAL_ONLY
-				if (Double.isNaN(data[iter.index + i])) { // CLASS_TYPE // REAL_ONLY
+				if (Double.isNaN(data[iter.index + i])) // CLASS_TYPE // REAL_ONLY
 					return true; // REAL_ONLY
-				} // REAL_ONLY
 			} // REAL_ONLY
 		} // REAL_ONLY
 		return false;
@@ -940,9 +935,21 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		final IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
 			for (int i = 0; i < isize; i++) { // REAL_ONLY
-				if (Double.isInfinite(data[iter.index + i])) { // CLASS_TYPE // REAL_ONLY
+				if (Double.isInfinite(data[iter.index + i])) // CLASS_TYPE // REAL_ONLY
 					return true; // REAL_ONLY
-				} // REAL_ONLY
+			} // REAL_ONLY
+		} // REAL_ONLY
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
+		IndexIterator iter = getIterator(); // REAL_ONLY
+		while (iter.hasNext()) { // REAL_ONLY
+			for (int i = 0; i < isize; i++) { // REAL_ONLY
+				double x = data[iter.index + i]; // PRIM_TYPE // REAL_ONLY
+				if (Double.isNaN(x) || Double.isInfinite(x)) // CLASS_TYPE // REAL_ONLY
+					return true; // REAL_ONLY
 			} // REAL_ONLY
 		} // REAL_ONLY
 		return false;

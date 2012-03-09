@@ -132,9 +132,7 @@ public class DoubleDataset extends AbstractDataset {
 			dataSize = dataset.dataSize;
 			dataShape = dataset.dataShape;
 			name = dataset.name;
-			metadata = dataset.metadata;
-			if (dataset.metadataStructure != null)
-				metadataStructure = dataset.metadataStructure;
+			metadataStructure = dataset.metadataStructure;
 			odata = data = dataset.data;
 
 			return;
@@ -142,7 +140,6 @@ public class DoubleDataset extends AbstractDataset {
 
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = copyMetadataMap(dataset.metadata);
 		if (dataset.metadataStructure != null)
 			metadataStructure = dataset.metadataStructure.clone();
 
@@ -173,7 +170,6 @@ public class DoubleDataset extends AbstractDataset {
 		size = dataset.size;
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = dataset.metadata;
 		odata = data = createArray(size);
 		metadataStructure = dataset.metadataStructure;
 		
@@ -292,7 +288,6 @@ public class DoubleDataset extends AbstractDataset {
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
 		view.metadataStructure = metadataStructure;
 		return view;
 	}
@@ -727,9 +722,6 @@ public class DoubleDataset extends AbstractDataset {
 		return getNDPosition(min.get(0)); // first minimum
 	}
 
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
 	@Override
 	public boolean containsNans() {
 		IndexIterator iter = getIterator(); // REAL_ONLY
@@ -740,14 +732,22 @@ public class DoubleDataset extends AbstractDataset {
 		return false;
 	}
 
-	/**
-	 * @return true if dataset contains any Infs
-	 */
 	@Override
 	public boolean containsInfs() {
 		IndexIterator iter = getIterator(); // REAL_ONLY
 		while (iter.hasNext()) { // REAL_ONLY
 			if (Double.isInfinite(data[iter.index])) // CLASS_TYPE // REAL_ONLY
+				return true; // REAL_ONLY
+		} // REAL_ONLY
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
+		IndexIterator iter = getIterator(); // REAL_ONLY
+		while (iter.hasNext()) { // REAL_ONLY
+			double x = data[iter.index]; // PRIM_TYPE // REAL_ONLY
+			if (Double.isNaN(x) || Double.isInfinite(x)) // CLASS_TYPE // REAL_ONLY
 				return true; // REAL_ONLY
 		} // REAL_ONLY
 		return false;

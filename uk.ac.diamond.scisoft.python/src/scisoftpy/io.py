@@ -65,6 +65,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
         xmap
         srs
         binary -> raw
+        text -> raw
         dls (DLS dat format, not SRS - more like gnuplot)
         edf
         npy (NumPy)

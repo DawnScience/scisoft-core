@@ -110,9 +110,7 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 			dataSize = dataset.dataSize;
 			dataShape = dataset.dataShape;
 			name = dataset.name;
-			metadata = dataset.metadata;
-			if(dataset.metadataStructure != null)
-				metadataStructure = dataset.metadataStructure;
+			metadataStructure = dataset.metadataStructure;
 			odata = data = dataset.data;
 
 			return;
@@ -120,8 +118,7 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = copyMetadataMap(dataset.metadata);
-		if(dataset.metadataStructure != null)
+		if (dataset.metadataStructure != null)
 			metadataStructure = dataset.metadataStructure.clone();
 
 		int[] gdata = dataset.data; // PRIM_TYPE
@@ -365,7 +362,6 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
 		view.metadataStructure = metadataStructure;
 		return view;
 	}
@@ -929,6 +925,11 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 	 */
 	@Override
 	public boolean containsInfs() {
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
 		return false;
 	}
 

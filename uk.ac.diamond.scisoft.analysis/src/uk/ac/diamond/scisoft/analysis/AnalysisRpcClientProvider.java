@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Diamond Light Source Ltd.
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
  */
 
 package uk.ac.diamond.scisoft.analysis;
-
-import java.rmi.RemoteException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
@@ -42,7 +37,6 @@ public class AnalysisRpcClientProvider extends AbstractClientProvider {
 
 	private AnalysisRpcClientProvider() {
 	}
-
 
 	/**
 	 * Make a call to an RPC Service registered with addHandler.

@@ -53,6 +53,16 @@ public class Utils {
 	}
 
 	/**
+	 * Sign extended conversion
+	 * @param b1
+	 * @param b2
+	 * @return an integer from bytes specified in little endian order
+	 */
+	public static int leIntSE(int b1, int b2) {
+		return (b2 << 8) | (b1 & 0xff);
+	}
+
+	/**
 	 * @param b1
 	 * @param b2
 	 * @param b3
@@ -83,6 +93,16 @@ public class Utils {
 	 */
 	public static int beInt(int b1, int b2) {
 		return ((b1 & 0xff) << 8) | (b2 & 0xff);
+	}
+
+	/**
+	 * Sign extended conversion
+	 * @param b1
+	 * @param b2
+	 * @return an integer from bytes specified in big endian order
+	 */
+	public static int beIntSE(int b1, int b2) {
+		return (b1 << 8) | (b2 & 0xff);
 	}
 
 	/**
@@ -259,9 +279,10 @@ public class Utils {
 	 * @param is
 	 * @param data
 	 * @param start number of bytes from start of input stream
+	 * @param signed if true, shorts are sign-extended into integers
 	 * @throws IOException
 	 */
-	public static void readBeShort(InputStream is, IntegerDataset data, int start) throws IOException {
+	public static void readBeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		byte[] buf = new byte[(2 * size)+start];
@@ -270,17 +291,32 @@ public class Utils {
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
 		int pos = start; // Byte offset to start of data
-		for (int i = 0; i < size; i++) {
-			int value = beInt(buf[pos], buf[pos+1]);
-			hash = (hash * 19 + value);
-			idata[i] = value;
-			if (value > amax) {
-				amax = value;
+		if (signed) {
+			for (int i = 0; i < size; i++) {
+				int value = beIntSE(buf[pos], buf[pos+1]);
+				hash = (hash * 19 + value);
+				idata[i] = value;
+				if (value > amax) {
+					amax = value;
+				}
+				if (value < amin) {
+					amin = value;
+				}
+				pos += 2;
 			}
-			if (value < amin) {
-				amin = value;
+		} else {
+			for (int i = 0; i < size; i++) {
+				int value = beInt(buf[pos], buf[pos+1]);
+				hash = (hash * 19 + value);
+				idata[i] = value;
+				if (value > amax) {
+					amax = value;
+				}
+				if (value < amin) {
+					amin = value;
+				}
+				pos += 2;
 			}
-			pos += 2;
 		}
 
 		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
@@ -299,9 +335,10 @@ public class Utils {
 	 * @param is
 	 * @param data
 	 * @param start number of bytes from start of input stream
+	 * @param signed if true, shorts are sign-extended into integers
 	 * @throws IOException
 	 */
-	public static void readLeShort(InputStream is, IntegerDataset data, int start) throws IOException {
+	public static void readLeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		byte[] buf = new byte[(2 * size)+start];
@@ -310,19 +347,33 @@ public class Utils {
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
 		int pos = start; // Byte offset to start of data
-		for (int i = 0; i < size; i++) {
-			int value = leInt(buf[pos], buf[pos+1]);
-			hash = (hash * 19 + value);
-			idata[i] = value;
-			if (value > amax) {
-				amax = value;
+		if (signed) {
+			for (int i = 0; i < size; i++) {
+				int value = leIntSE(buf[pos], buf[pos + 1]);
+				hash = (hash * 19 + value);
+				idata[i] = value;
+				if (value > amax) {
+					amax = value;
+				}
+				if (value < amin) {
+					amin = value;
+				}
+				pos += 2;
 			}
-			if (value < amin) {
-				amin = value;
+		} else {
+			for (int i = 0; i < size; i++) {
+				int value = leInt(buf[pos], buf[pos + 1]);
+				hash = (hash * 19 + value);
+				idata[i] = value;
+				if (value > amax) {
+					amax = value;
+				}
+				if (value < amin) {
+					amin = value;
+				}
+				pos += 2;
 			}
-			pos += 2;
 		}
-
 		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;

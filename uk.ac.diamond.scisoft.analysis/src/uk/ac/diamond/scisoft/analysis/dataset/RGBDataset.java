@@ -254,7 +254,7 @@ public class RGBDataset extends CompoundShortDataset {
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
+		view.metadataStructure = metadataStructure;
 
 		return view;
 	}

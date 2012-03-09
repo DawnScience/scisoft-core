@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.gda.monitor.IMonitor;
 
 /**
@@ -50,6 +51,10 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	
 	public int getDtype() {
 		return dtype;
+	}
+
+	public ImageStackLoaderEx(StringDataset imageFilenames, String directory) throws Exception {
+		this(imageFilenames.getShape(), imageFilenames.getData(), directory);
 	}
 
 	public ImageStackLoaderEx(int [] dimensions, String[] imageFilenames) throws Exception {

@@ -131,9 +131,7 @@ public class ObjectDatasetBase extends AbstractDataset {
 			dataSize = dataset.dataSize;
 			dataShape = dataset.dataShape;
 			name = dataset.name;
-			metadata = dataset.metadata;
-			if (dataset.metadataStructure != null)
-				metadataStructure = dataset.metadataStructure;
+			metadataStructure = dataset.metadataStructure;
 			odata = data = dataset.data;
 
 			return;
@@ -141,7 +139,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = copyMetadataMap(dataset.metadata);
 		if (dataset.metadataStructure != null)
 			metadataStructure = dataset.metadataStructure.clone();
 
@@ -172,7 +169,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 		size = dataset.size;
 		shape = dataset.shape.clone();
 		name = new String(dataset.name);
-		metadata = dataset.metadata;
 		odata = data = createArray(size);
 		metadataStructure = dataset.metadataStructure;
 
@@ -266,7 +262,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 		if (dataShape != null)
 			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
-		view.metadata = metadata;
 		view.metadataStructure = metadataStructure;
 		return view;
 	}
@@ -698,19 +693,18 @@ public class ObjectDatasetBase extends AbstractDataset {
 		return getNDPosition(min.get(0)); // first minimum
 	}
 
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
 	@Override
 	public boolean containsNans() {
 		return false;
 	}
 
-	/**
-	 * @return true if dataset contains any Infs
-	 */
 	@Override
 	public boolean containsInfs() {
+		return false;
+	}
+
+	@Override
+	public boolean containsInvalidNumbers() {
 		return false;
 	}
 

@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Parameter;
 
 /**
  * This class uses the Differential evolution genetic algorithm as an optimizer.

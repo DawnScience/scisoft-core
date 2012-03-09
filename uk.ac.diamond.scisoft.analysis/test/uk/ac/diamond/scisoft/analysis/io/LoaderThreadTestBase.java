@@ -23,9 +23,7 @@ public abstract class LoaderThreadTestBase {
 	
 
 	public void testInTestThread() throws Exception{
-		doTestOfDataSet(0);
-		
-		System.out.println("One thread passed.");
+		testWithNThreads(1);
 	}
 	
 	protected abstract void doTestOfDataSet(int index) throws Exception;
@@ -42,20 +40,23 @@ public abstract class LoaderThreadTestBase {
 		testWithNThreads(10);
 	}
 
-	protected void testWithNThreads(int threadNumber) throws Exception {
+	protected void testWithNThreads(final int threadNumber) throws Exception {
 		
         exception = null;
 		
         final boolean[] done    = new boolean[threadNumber];
+        final boolean[] ok      = new boolean[threadNumber];
         final Thread[]  threads = new Thread[threadNumber];
-        for (int i = 0; i < threads.length; i++) {
+        for (int i = 0; i < threadNumber; i++) {
         	final int index = i;
         	threads[i] =  new Thread(new Runnable() {
         		@Override
         		public void run() {
         			done[index] = false;
+        			ok[index]   = false;
         			try {
         				doTestOfDataSet(index);
+            			ok[index]   = true;
 					} catch (Exception e) {
 						exception = e;
 					} finally {
@@ -64,8 +65,8 @@ public abstract class LoaderThreadTestBase {
         		}
         	});
 		}
-        
-        for (int i = 0; i < threads.length; i++) {
+
+        for (int i = 0; i < threadNumber; i++) {
         	threads[i].start();
         }
         
@@ -79,12 +80,17 @@ public abstract class LoaderThreadTestBase {
         	}
         	break;
         }
-        
+
+        boolean allok = true;
+        for (int i = 0; i < threadNumber; i++) {
+        	if (!ok[i]) {
+                System.out.println("Thread #" + i + "/" + threadNumber + " failed!");
+                allok = false;
+        	}
+        }
         if (exception!=null) throw exception;
 
-        
-		System.out.println(threadNumber+" threads passed."); 	
+        if (allok)
+        	System.out.println("All (" + threadNumber + ") threads passed!");
 	}
-
-
 }

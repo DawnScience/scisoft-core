@@ -78,7 +78,7 @@ public class ObjectDataset extends ObjectDatasetBase {
 	}
 
 	@Override
-	public ObjectDatasetBase getView() {
+	public ObjectDataset getView() {
 		return new ObjectDataset(this, true);
 	}
 

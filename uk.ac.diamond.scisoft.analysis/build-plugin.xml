@@ -23,7 +23,7 @@
            Invoke the tests
          ==================================================================== -->
 
-    <target name="junit-tests" depends="toolCheck, set-test-base">
+    <target name="junit-tests" depends="toolCheck, set-ncsa-hdf-context-SDA-else-GDA, set-test-base">
         <condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
             <os family="windows" />
         </condition>
@@ -40,7 +40,7 @@
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
                 <pathelement location="${workspace.loc}/tp/plugins/*" />
-                <pathelement location="${workspace.git.loc}/scisoft/scisoft-hdf.git/ncsa.hdf/jars/*" />
+                <path refid="ncsa.hdf.classpath" />
                 <path refid="libs.jars.path" />
             </classpath>
             <batchtest todir="@{report.dir}">

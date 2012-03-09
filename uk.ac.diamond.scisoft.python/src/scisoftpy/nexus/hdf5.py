@@ -32,6 +32,10 @@ class HDF5node(object):
     def _setparent(self, parent):
         self.__parent = parent
 
+    def __repr__(self):
+        # override as the superclass (in orderdict) method as problems in the jython console(!)
+        return self.__str__()
+
 class HDF5dataset(HDF5node):
     def __init__(self, dataset, shape=None, dtype=None, maxshape=None, attrs={}, parent=None):
         '''

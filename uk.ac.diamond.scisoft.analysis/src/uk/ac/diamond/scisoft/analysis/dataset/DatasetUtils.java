@@ -2015,6 +2015,63 @@ public class DatasetUtils {
 		setRow(matrix, a);
 		return matrix;
 	}
+	
+	/**
+	 * Removes NaNs and infinities from floating point datasets.
+	 * All other dataset types are ignored.
+	 * 
+	 * @param a dataset
+	 * @param value replacement value
+	 */
+	public static void removeNansAndInfinities(AbstractDataset a, final Number value) {
+		if (a instanceof DoubleDataset) {
+			final double dvalue = AbstractDataset.toReal(value);
+			final DoubleDataset set = (DoubleDataset) a;
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				double x = data[it.index];
+				if (Double.isNaN(x) || Double.isInfinite(x))
+					data[it.index] = dvalue;
+			}
+		} else if (a instanceof FloatDataset) {
+			final float fvalue = (float) AbstractDataset.toReal(value);
+			final FloatDataset set = (FloatDataset) a;
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				float x = data[it.index];
+				if (Float.isNaN(x) || Float.isInfinite(x))
+					data[it.index] = fvalue;
+			}
+		} else if (a instanceof CompoundDoubleDataset) {
+			final double dvalue = AbstractDataset.toReal(value);
+			final CompoundDoubleDataset set = (CompoundDoubleDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					double x = data[it.index + j];
+					if (Double.isNaN(x) || Double.isInfinite(x))
+						data[it.index + j] = dvalue;
+				}
+			}
+		} else if (a instanceof CompoundFloatDataset) {
+			final float fvalue = (float) AbstractDataset.toReal(value);
+			final CompoundFloatDataset set = (CompoundFloatDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					float x = data[it.index + j];
+					if (Float.isNaN(x) || Float.isInfinite(x))
+						data[it.index + j] = fvalue;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Find absolute index of first value in dataset that is greater than given number

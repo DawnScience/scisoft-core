@@ -54,7 +54,7 @@ public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
 	@Test
 	public void testWithNThreads() throws Exception {
-		super.testWithNThreads(100);
+		super.testWithNThreads(60);
 	}
 
 	@Override

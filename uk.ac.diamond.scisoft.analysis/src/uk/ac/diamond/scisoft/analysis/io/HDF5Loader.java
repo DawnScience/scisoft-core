@@ -215,13 +215,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 
 		acquireAccess(fileName);
+		H5File hdf = null;
 		try {
 			HObject root = null;
 			final FileFormat hdf5 = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 			if (hdf5 == null) {
 				throw new ScanFileHolderException("HDF5 support not found: configure the library path to include hdf shared libraries");
 			}
-			final H5File hdf = (H5File) hdf5.createInstance(fileName, FileFormat.READ);
+			hdf = (H5File) hdf5.createInstance(fileName, FileFormat.READ);
 			if (!hdf.canRead())
 				throw new IllegalArgumentException("Cannot read file");
 
@@ -237,10 +238,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 
 			tFile = copyTree((H5Group) root, keepBitWidth);
-//			hdf.close();
 		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
+			try {
+				if (hdf != null)
+					hdf.close();
+			} catch (HDF5Exception e) {
+				logger.error("Problem closing HDF file", e);
+			}
 			releaseLock(fileName);
 		}
 

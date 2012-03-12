@@ -53,6 +53,11 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingSpeed() {
+		testLoadingSpeed(false);
+		testLoadingSpeed(true);
+	}
+
+	private void testLoadingSpeed(boolean async) {
 		List<Long> ourTimes = new ArrayList<Long>();
 		List<Long> theirTimes = new ArrayList<Long>();
 		String name = TestFileFolder + "manygroups.h5";
@@ -64,6 +69,7 @@ public class HDF5LoaderTest {
 			start = -System.currentTimeMillis();
 			try {
 				HDF5Loader l = new HDF5Loader(name);
+				l.setAsyncLoad(async);
 				l.loadTree(null);
 			} catch (ScanFileHolderException e) {
 			}
@@ -81,7 +87,7 @@ public class HDF5LoaderTest {
 
 		Collections.sort(ourTimes);
 		Collections.sort(theirTimes);
-		System.out.printf("Load took %d ms cf %d ms", ourTimes.get(0), theirTimes.get(0));
+		System.out.printf("Load took %d ms cf %d ms\n", ourTimes.get(0), theirTimes.get(0));
 	}
 
 	@Test
@@ -100,8 +106,14 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingTest() throws ScanFileHolderException {
+		testLoadingTest(false);
+		testLoadingTest(true);
+	}
+
+	private void testLoadingTest(boolean async) throws ScanFileHolderException {
 		String n = TestFileFolder + "testlinks.nxs";
 		HDF5Loader l = new HDF5Loader(n);
+		l.setAsyncLoad(async);
 
 		HDF5File tree = l.loadTree(null);
 		System.out.println(tree.getNodeLink());
@@ -159,6 +171,29 @@ public class HDF5LoaderTest {
 		assertEquals("Value of " + name, 9., dataset.getDouble(1, 4), 1e-8);
 
 		System.out.println(tree.findNodeLink("/entry1/to/this/level"));
+	}
+
+	@Test
+	public void testLoadingNames() throws ScanFileHolderException {
+		testLoadingNames(false);
+		testLoadingNames(true);
+	}
+	
+
+	private void testLoadingNames(boolean async) throws ScanFileHolderException {
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "327.nxs";
+		HDF5Loader l = new HDF5Loader(n);
+		l.setAsyncLoad(async);
+
+		HDF5File tree = l.loadTree(null);
+		System.out.println(tree.getNodeLink());
+		for (HDF5NodeLink nl : tree.getGroup())
+			System.out.println(nl);
+
+		HDF5Group g = tree.getGroup().getGroup("entry1");
+		assertEquals("Group is wrongly named" , "/entry1/EDXD_Element_00", g.getNodeLink("EDXD_Element_00").getFullName());
+		g = g.getGroup("EDXD_Element_00");
+		assertEquals("Attribute is wrongly named" , "/entry1/EDXD_Element_00/a@axis", g.getDataset("a").getAttribute("axis").getFullName());
 	}
 
 	@Test

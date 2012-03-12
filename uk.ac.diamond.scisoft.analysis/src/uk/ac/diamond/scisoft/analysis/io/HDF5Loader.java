@@ -402,12 +402,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				logger.error("Could not find group {}", nn);
 				continue;
 			}
-			nn = nn.substring(0, nn.length() - 1);
-			int i = nn.lastIndexOf(HDF5Node.SEPARATOR);
-			String pn = i == 0 ? HDF5File.ROOT : nn.substring(0, i);
-			HDF5NodeLink ol = f.findNodeLink(pn);
+			HDF5NodeLink ol = f.findNodeLink(HDF5File.ROOT);
 			HDF5Group og = (HDF5Group) ol.getDestination();
-			og.addNode(f, pn, nn.substring(i + 1), n);
+			og.addNode(f, HDF5File.ROOT, nn.substring(1, nn.length() - 1), n);
 		}
 
 		tFile = f;
@@ -424,12 +421,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					logger.error("Could not find group {}", nn);
 					continue;
 				}
-				nn = nn.substring(0, nn.length() - 1);
-				int i = nn.lastIndexOf(HDF5Node.SEPARATOR);
-				String pn = i == 0 ? HDF5File.ROOT : nn.substring(0, i);
-				HDF5NodeLink ol = f.findNodeLink(pn);
+				int i = nn.lastIndexOf(HDF5Node.SEPARATOR, nn.length() - 2);
+				HDF5NodeLink ol = f.findNodeLink(nn.substring(0, i));
 				HDF5Group og = (HDF5Group) ol.getDestination();
-				og.addNode(f, pn, nn.substring(i + 1), n);
+				og.addNode(f, nn.substring(0, i+1), nn.substring(i + 1, nn.length() - 1), n);
 				if (checkSyncNodes())
 					break;
 			}

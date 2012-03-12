@@ -31,7 +31,7 @@ public class HDF5NodeLink implements Serializable {
 	/**
 	 * A node link
 	 * @param path to source
-	 * @param link name (ends in '/' for groups)
+	 * @param link name
 	 * @param source node which link starts from (can be null)
 	 * @param destination node which link points to
 	 */
@@ -39,6 +39,7 @@ public class HDF5NodeLink implements Serializable {
 		if (link == null || destination == null) {
 			throw new IllegalArgumentException("Path name, link name and destination must be defined");
 		}
+
 		this.file = file;
 		this.path = path == null ? "" : path;
 		name = link;

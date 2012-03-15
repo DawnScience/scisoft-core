@@ -75,13 +75,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.springframework.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.springsource.slf4j.api"
          download-size="0"
          install-size="0"
@@ -229,6 +222,13 @@ limitations under the License.
 
    <plugin
          id="com.springsource.org.aopalliance"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="uk.ac.diamond.org.springframework"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -23,18 +23,14 @@ class HDF5node(object):
     def __init__(self, attrs={}, parent=None):
         '''
         '''
-        self.attrs = _ldict(attrs, lock=True)
-        self.__parent = parent
+        super(HDF5node, self).__setattr__('attrs', _ldict(attrs, lock=True))
+        super(HDF5node, self).__setattr__('__parent', parent)
 
     def _getparent(self):
-        return self.__parent
+        return super(HDF5node, self).__getattribute__('__parent')
 
     def _setparent(self, parent):
-        self.__parent = parent
-
-    def __repr__(self):
-        # override as the superclass (in orderdict) method as problems in the jython console(!)
-        return self.__str__()
+        super(HDF5node, self).__setattr__('__parent', parent)
 
 class HDF5dataset(HDF5node):
     def __init__(self, dataset, shape=None, dtype=None, maxshape=None, attrs={}, parent=None):
@@ -73,8 +69,8 @@ class HDF5dataset(HDF5node):
         return self.__data[key]
 
     def __str__(self):
-        s = "   @shape = ", self.__shape, "\n"
-        s += "   @maxshape = ", self.__maxshape, "\n"
+        s = "   @shape = %s\n" % (self.__shape,)
+        s += "   @maxshape = %s\n" % (self.__maxshape,)
         for a in self.attrs:
             s += "   @%s = %s\n" % (a, self.attrs[a]) 
         return s
@@ -120,8 +116,7 @@ class HDF5group(_ldict, HDF5node):
 #                    print(dir(g))
                     g = _ldict.__getitem__(g, n)
             return g
-
-        if key == '..':
+        elif key == '..':
             p = self._getparent()
             if p is not None:
                 return p
@@ -165,7 +160,7 @@ class HDF5group(_ldict, HDF5node):
 class HDF5tree(HDF5group):
     def __init__(self, filename, attrs={}):
         HDF5group.__init__(self, attrs)
-        self._filename = filename
+        super(HDF5tree, self).__setattr__('__filename', filename)
 
     def getnodes(self, name, group=True, data=True):
         '''Get all nodes with given name

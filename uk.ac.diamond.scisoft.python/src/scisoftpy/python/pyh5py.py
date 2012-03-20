@@ -222,7 +222,7 @@ class NXLoader(HDF5Loader):
                 print 'Unknown Nexus class: %s' % cls
                 g = super(NXLoader, self)._mkgroup(link, attrs, parent)
         elif link.name == '/':
-            g = _nx.NXroot(attrs)
+            g = _nx.NXroot(link.filename, attrs)
         else:
             g = _nx.NXgroup(attrs, parent)
 

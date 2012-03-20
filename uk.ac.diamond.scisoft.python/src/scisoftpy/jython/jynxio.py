@@ -27,6 +27,9 @@ class NXLoader(_h5loader):
             cls = cls.getFirstElement()
             if cls in _nx.NX_CLASSES:
                 g = _nx.NX_CLASSES[cls](attrs, parent)
+            else:
+                print 'Unknown Nexus class: %s' % cls
+                g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
         elif name == '/' or parent is None:
             g = _nx.NXroot(link.getSource().getFilename(), attrs)
         else:

@@ -95,7 +95,7 @@ def make_safe(items, warn=True):
 
 from _external.ordereddict import OrderedDict as _odict
 
-class ListDict(_odict):
+class ListDict(object):
     '''
     Combined list/ordered dictionary class. Keys to the dictionary are exposed as attributes.
     This supports all dictionary methods, pop, append, extend, index, remove and del
@@ -105,23 +105,21 @@ class ListDict(_odict):
         A dictionary or list of tuples of key/value pairs. If lock=True,
         keys cannot be reassigned without first deleting the item
         '''
-#        super(ListDict, self).__setattr__('__lock', lock)
-        _odict.__setattr__(self, '__lock', lock)
-        _odict.__setattr__(self, '__warn', warn)
-        #self.__lock = lock #setattr__(self, '__lock', lock)
+        super(ListDict, self).__setattr__('__lock__', lock)
+        super(ListDict, self).__setattr__('__warn__', warn)
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
         data = make_safe(data, warn)
-        _odict.__init__(self, data)
+        super(ListDict, self).__setattr__('__odict__', _odict(data))
         if data:
             self.__dict__.update(data)
 
     def _replacedata(self, data):
-        _odict.clear(self)
+        self.__odict__.clear()
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
-        data = make_safe(data, _odict.__getattribute__(self, '__warn'))
-        _odict.update(self, data)
+        data = make_safe(data, self.__warn__)
+        self.__odict__.update(data)
         if data:
             self.__dict__.update(data)
 
@@ -131,12 +129,12 @@ class ListDict(_odict):
         '''
         from types import StringType, IntType, UnicodeType
         if type(key) is IntType:
-            if key > len(self):
+            if key > self.__odict__.__len__():
                 raise IndexError, 'Key was too large'
-            key = self.keys()[key]
+            key = self.__odict__.keys()[key]
 
         if type(key) is StringType or type(key) is UnicodeType:
-            return super(_odict, self).__getitem__(key)
+            return self.__odict__.__getitem__(key)
         else:
             raise KeyError, 'Key was not a string or integer'
 
@@ -146,16 +144,16 @@ class ListDict(_odict):
         '''
         from types import StringType, IntType
         if type(key) is IntType:
-            if key > len(self):
+            if key > len(self.__odict__):
                 raise IndexError, 'Key was too large'
-            key = _odict.keys(self)[key]
+            key = self.__odict__.keys()[key]
 
         if type(key) is StringType:
-            key = sanitise_name(key, _odict.__getattribute__(self, '__warn'))
-            if key in self and _odict.__getattribute__(self, '__lock'):
+            key = sanitise_name(key, self.__warn__)
+            if self.__lock__ and key in self.__odict__:
                 raise KeyError, 'Dictionary is locked, delete item to reassign to key'
-            _odict.__setitem__(self, key, value)
-            _odict.__setattr__(self, key, value)
+            self.__odict__.__setitem__(key, value)
+            self.__setattr__(key, value)
         else:
             raise KeyError, 'Key was not a string or integer'
 
@@ -167,11 +165,11 @@ class ListDict(_odict):
         if type(key) is IntType:
             if key > len(self):
                 raise IndexError, 'Key was too large'
-            key = _odict.keys(self)[key]
+            key = self.__odict__.keys()[key]
 
         if type(key) is StringType:
-            _odict.__delitem__(self, key)
-            _odict.__delattr__(self, key)
+            self.__odict__.__delitem__(key)
+            self.__dict__.__delitem__(key)
         else:
             raise KeyError, 'Key was not a string or integer'
 
@@ -180,25 +178,58 @@ class ListDict(_odict):
         if type(key) is not StringType:
             raise KeyError, 'Key was not a string or integer'
 
-        if key in self and _odict.__getattribute__(self, '__lock'):
+        if self.__lock__ and key in self.__odict__:
             raise KeyError, 'Dictionary is locked, delete item to reassign to key'
 
-        _odict.__setattr__(self, key, value)
+        self.__dict__[key] = value
         if key in ['_OrderedDict__end', '_OrderedDict__map'] or key.startswith('__'):
             return # ignore internal attributes used by ordereddict implementation
 
-        _odict.__setitem__(self, key, value)
+        self.__odict__.__setitem__(key, value)
 
     def __delattr__(self, key):
         self.__delitem__(key)
 
     def __str__(self):
         s = ""
-        for k in self: #_odict.__iter__(self):
+        for k in self.__odict__: #_odict.__iter__(self):
             s += "('" + k + "', " + str(self[k]) + "), "
         if len(s) > 0:
             s = s[:-2]
         return _odict.__class__(_odict(self)).__name__ + "([" + s + "])"
+
+    def __len__(self):
+        return self.__odict__.__len__()
+
+    def __iter__(self):
+        return self.__odict__.iterkeys()
+
+    def keys(self):
+        return self.__odict__.keys()
+
+    def clear(self):
+        self.__odict__.clear()
+
+    def update(self, other, **kwargs):
+        self.__odict__.update(other, kwargs)
+
+    def setdefault(self, key, default=None):
+        self.__odict__.setdefault(key, default)
+
+    def values(self):
+        return self.__odict__.values()
+
+    def items(self):
+        return self.__odict__.items()
+
+    def iterkeys(self):
+        return self.__odict__.iterkeys()
+
+    def itervalues(self):
+        return self.__odict__.itervalues()
+
+    def iteritems(self):
+        return self.__odict__.iteritems()
 
     def pop(self, i=-1):
         '''
@@ -226,7 +257,11 @@ class ListDict(_odict):
                 item = item.popitem() # fall through with key/value pair
         if type(item) is TupleType or type(item) is ListType:
             if len(item) > 1:
-                self[item[0]] = item[1:]
+                k = item[0]
+                v = item[1:]
+                if len(v) == 1:
+                    v = v[0]
+                self[k] = v
                 return
             else:
                 item = item[0]
@@ -320,6 +355,7 @@ def _test_setting_listdict():
     d.append({'e': 2.3})
     d.append(['f', 2.3])
     d.append(['g', 1])
+    print d
     print d.index(1)
     d.remove(1)
     class testObj():

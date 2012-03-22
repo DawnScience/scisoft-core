@@ -227,6 +227,8 @@ public class LoaderFactory {
 			throw new FileNotFoundException(path);
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -267,6 +269,8 @@ public class LoaderFactory {
 	public static IMetaData getMetaData(final String path, final IMonitor mon) throws Exception {
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
@@ -304,6 +308,8 @@ public class LoaderFactory {
 	public static AbstractDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -338,6 +344,8 @@ public class LoaderFactory {
 	public static Map<String,ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon) throws Exception {
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -372,6 +380,8 @@ public class LoaderFactory {
 	public static AbstractDataset getSlice(final SliceObject object, final IMonitor mon) throws Exception {
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(object.getPath());
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it

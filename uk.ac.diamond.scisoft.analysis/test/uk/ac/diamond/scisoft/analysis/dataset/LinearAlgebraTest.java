@@ -73,7 +73,7 @@ public class LinearAlgebraTest {
 		
 		long nstart = -System.nanoTime();
 		AbstractDataset d = Maths.multiply(a, b);
-		Number n = (Number) d.sum();
+		Number n = (Number) d.typedSum();
 		nstart += System.nanoTime();
 		System.out.printf("Time taken %dus %dus\n", start/1000, nstart/1000);
 		Assert.assertTrue("Data does not match", n.equals(c.getObjectAbs(0)));

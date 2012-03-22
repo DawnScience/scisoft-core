@@ -38,16 +38,16 @@ def profile(data, roi, step=None, mask=None):
     '''
     data = _asDs(data)
     if isinstance(roi, line):
-        if step == None:
+        if step is None:
             raise ValueError, "step value required"
         return _roi.ROIProfile.line(data, roi, step)
     if isinstance(roi, rect):
-        if mask == None:
+        if mask is None:
             return _roi.ROIProfile.box(data, roi)
         else:
             return _roi.ROIProfile.box(data, mask, roi)
     if isinstance(roi, sect):
-        if mask == None:
+        if mask is None:
             return _roi.ROIProfile.sector(data, roi)
         else:
             return _roi.ROIProfile.sector(data, mask, roi)

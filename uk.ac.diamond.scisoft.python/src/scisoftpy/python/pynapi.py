@@ -572,7 +572,7 @@ def getAxes(axes):
     return filter(lambda x: len(x)>0, sep.split(axes.nxdata))
 
 def getRoot(node):
-    if node.nxgroup == None:
+    if node.nxgroup is None:
         return None
     elif node.nxgroup.nxclass == "NXroot":
         return node.nxgroup

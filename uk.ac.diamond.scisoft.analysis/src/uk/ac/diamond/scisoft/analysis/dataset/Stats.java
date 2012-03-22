@@ -417,7 +417,15 @@ public class Stats {
 	 * @return product of all items in dataset
 	 */
 	public static Object product(final AbstractDataset a) {
-		int dtype = a.getDtype();
+		return typedProduct(a, a.getDtype());
+	}
+
+	/**
+	 * @param a
+	 * @param dtype
+	 * @return product of all items in dataset
+	 */
+	public static Object typedProduct(final AbstractDataset a, int dtype) {
 
 		if (a.isComplex()) {
 			IndexIterator it = a.getIterator();
@@ -490,8 +498,17 @@ public class Stats {
 	 * @return product of items along axis in dataset
 	 */
 	public static AbstractDataset product(final AbstractDataset a, int axis) {
+		return typedProduct(a, a.getDtype(), axis);
+	}
+
+	/**
+	 * @param a
+	 * @param dtype
+	 * @param axis
+	 * @return product of items along axis in dataset
+	 */
+	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, int axis) {
 		axis = a.checkAxis(axis);
-		final int dtype = a.getDtype();
 		final int rank = a.getRank();
 		final int[] oshape = a.getShape();
 		final int is = a.getElementsPerItem();

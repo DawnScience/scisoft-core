@@ -681,6 +681,41 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		return results;
 	}
 
+	private static Object fromDoublesToBiggestPrimitives(double[] x, int dtype) {
+		switch (dtype) {
+		case BOOL:
+		case INT8:
+		case INT16:
+		case INT32:
+			int[] i32 = new int[x.length];
+			for (int i = 0; i < x.length; i++)
+				i32[i] = (int) (long) x[i];
+			return i32;
+		case INT64:
+			long[] i64 = new long[x.length];
+			for (int i = 0; i < x.length; i++)
+				i64[i] = (long) x[i];
+			return i64;
+		case FLOAT32:
+			float[] f32 = new float[x.length];
+			for (int i = 0; i < x.length; i++)
+				f32[i] = (float) x[i];
+			return f32;
+		case FLOAT64:
+			return x;
+		}
+		return null;
+	}
+
+	/**
+	 * @param dtype
+	 * @return sum over all items in dataset as array of primitives or a complex number
+	 */
+	@Override
+	public Object typedSum(int dtype) {
+		return fromDoublesToBiggestPrimitives((double[]) sum(), dtype);
+	}
+
 	@Override
 	public Object mean() {
 		if (storedValues == null) {

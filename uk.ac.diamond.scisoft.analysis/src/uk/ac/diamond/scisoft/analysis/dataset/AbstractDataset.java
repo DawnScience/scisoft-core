@@ -821,7 +821,7 @@ public abstract class AbstractDataset implements IDataset {
 		}
 	}
 
-	private boolean isAllZeros(final int[] a) {
+	private static boolean isAllZeros(final int[] a) {
 		int amax = a.length;
 		for (int i = 0; i < amax; i++) {
 			if (a[i] != 0) {
@@ -2894,11 +2894,11 @@ public abstract class AbstractDataset implements IDataset {
 		switch (getDtype()) {
 		case BOOL:
 		case INT32:
-			return Integer.valueOf((int) x);
+			return Integer.valueOf((int) (long) x);
 		case INT8:
-			return Byte.valueOf((byte) x);
+			return Byte.valueOf((byte) (long) x);
 		case INT16:
-			return Short.valueOf((short) x);
+			return Short.valueOf((short) (long) x);
 		case INT64:
 			return Long.valueOf((long) x);
 		case FLOAT32:
@@ -2910,13 +2910,13 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	// return biggest native primitive if integer (should test for 64bit?)
-	private Number fromDoubleToBiggestNumber(double x) {
-		switch (getDtype()) {
+	private static Number fromDoubleToBiggestNumber(double x, int dtype) {
+		switch (dtype) {
 		case BOOL:
 		case INT8:
 		case INT16:
 		case INT32:
-			return Integer.valueOf((int) x);
+			return Integer.valueOf((int) (long) x);
 		case INT64:
 			return Long.valueOf((long) x);
 		case FLOAT32:
@@ -3053,10 +3053,10 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * @return sum over all items in dataset as a Number, array of doubles or a complex number
+	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
 	 */
 	public Object sum() {
-		return fromDoubleToBiggestNumber(getStatistics().getSum());
+		return getStatistics().getSum();
 	}
 
 	/**
@@ -3065,6 +3065,31 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	public AbstractDataset sum(int axis) {
 		return (AbstractDataset) getStatistics(axis, "sum-" + axis);
+	}
+
+	/**
+	 * @return sum over all items in dataset as appropriate to dataset type
+	 * (integers for boolean, byte, short and integer; longs for long; floats for float; doubles for double)
+	 */
+	public Object typedSum() {
+		return typedSum(getDtype());
+	}
+
+	/**
+	 * @param dtype
+	 * @return sum over all items in dataset as appropriate to given dataset type
+	 */
+	public Object typedSum(int dtype) {
+		return fromDoubleToBiggestNumber(getStatistics().getSum(), dtype);
+	}
+
+	/**
+	 * @param dtype
+	 * @param axis
+	 * @return sum along axis in dataset
+	 */
+	public AbstractDataset typedSum(int dtype, int axis) {
+		return DatasetUtils.cast(sum(axis), dtype);
 	}
 
 	/**
@@ -3080,6 +3105,23 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	public AbstractDataset product(int axis) {
 		return Stats.product(this, axis);
+	}
+
+	/**
+	 * @param dtype
+	 * @return product over all items in dataset
+	 */
+	public Object typedProduct(int dtype) {
+		return Stats.typedProduct(this, dtype);
+	}
+
+	/**
+	 * @param dtype
+	 * @param axis
+	 * @return product along axis in dataset
+	 */
+	public AbstractDataset typedProduct(int dtype, int axis) {
+		return Stats.typedProduct(this, dtype, axis);
 	}
 
 	/**

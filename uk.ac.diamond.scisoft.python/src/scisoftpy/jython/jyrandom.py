@@ -45,7 +45,7 @@ def randint(low, high=None, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from a discrete distribution of integers in the range [low, high)
     '''
-    if high == None:
+    if high is None:
         high = low
         low = 0
     return random_integers(low, high-1, size)
@@ -55,10 +55,10 @@ def random_integers(low, high=None, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from a discrete distribution of integers in the range [low, high]
     '''
-    if high == None:
+    if high is None:
         high = low
         low = 0
-    if size == None:
+    if size is None:
         return _random.random_integers(low, high, [1]).getObject([0])
     return _random.random_integers(low, high, _asiter(size))
 
@@ -67,7 +67,7 @@ def exponential(scale=1.0, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from an exponential distribution of parameter scale
     '''
-    if size == None:
+    if size is None:
         return _random.exponential(scale, [1]).getObject([0])
     return _random.exponential(scale, _asiter(size))
 
@@ -76,7 +76,7 @@ def poisson(lam=1.0, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from a Poisson distribution of parameter lam
     '''
-    if size == None:
+    if size is None:
         return _random.poisson(lam, [1]).getObject([0])
     return _random.poisson(lam, _asiter(size))
 
@@ -84,7 +84,7 @@ def seed(seed=None):
     '''Set seed to given value (or a value based on the current time in
     milliseconds since the Epoch)
     '''
-    if seed == None:
+    if seed is None:
         import time
         seed = int(time.time()*1000)
     _random.seed(seed)

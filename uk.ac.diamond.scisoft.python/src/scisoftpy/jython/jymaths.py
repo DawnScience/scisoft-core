@@ -322,7 +322,7 @@ def clip(a, a_min, a_max):
 @ndarraywrapped
 def skewness(a, axis=None):
     '''Skewness of input'''
-    if axis == None:
+    if axis is None:
         return _stats.skewness(a)
     else:
         return _stats.skewness(a, axis)
@@ -330,7 +330,7 @@ def skewness(a, axis=None):
 @ndarraywrapped
 def kurtosis(a, axis=None):
     '''Kurtosis of input'''
-    if axis == None:
+    if axis is None:
         return _stats.kurtosis(a)
     else:
         return _stats.kurtosis(a, axis)
@@ -338,7 +338,7 @@ def kurtosis(a, axis=None):
 @ndarraywrapped
 def median(a, axis=None):
     '''Median of input'''
-    if axis == None:
+    if axis is None:
         return _stats.median(a)
     else:
         return _stats.median(a, axis)
@@ -346,7 +346,7 @@ def median(a, axis=None):
 @ndarraywrapped
 def iqr(a, axis=None):
     '''Interquartile range of input'''
-    if axis == None:
+    if axis is None:
         return _stats.iqr(a)
     else:
         return _stats.iqr(a, axis)
@@ -355,18 +355,14 @@ def quantile(a, q):
     '''Quantile of input'''
     return _stats.quantile(a, q)
 
-@ndarraywrapped
-def prod(a, axis=None):
-    '''Product of input'''
-    if axis == None:
-        return _stats.product(a)
-    else:
-        return _stats.product(a, axis)
-
 # these functions call (wrapped) instance methods
-def sum(a, axis=None): #@ReservedAssignment
+def prod(a, axis=None, dtype=None):
+    '''Product of input'''
+    return a.prod(axis, dtype)
+
+def sum(a, axis=None, dtype=None): #@ReservedAssignment
     '''Sum of input'''
-    return a.sum(axis)
+    return a.sum(axis, dtype)
 
 def mean(a, axis=None):
     '''Arithmetic mean of input'''
@@ -395,7 +391,7 @@ def amin(a, axis=None):
 @ndarraywrapped
 def cumprod(a, axis=None):
     '''Cumulative product of input'''
-    if axis == None:
+    if axis is None:
         return _stats.cumulativeProduct(a)
     else:
         return _stats.cumulativeProduct(a, axis)
@@ -403,7 +399,7 @@ def cumprod(a, axis=None):
 @ndarraywrapped
 def cumsum(a, axis=None):
     '''Cumulative sum of input'''
-    if axis == None:
+    if axis is None:
         return _stats.cumulativeSum(a)
     else:
         return _stats.cumulativeSum(a, axis)

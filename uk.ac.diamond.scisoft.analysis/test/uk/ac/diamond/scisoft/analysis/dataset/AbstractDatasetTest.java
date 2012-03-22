@@ -940,4 +940,11 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 2, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 	}
+
+	@Test
+	public void testSum() {
+		AbstractDataset a = AbstractDataset.arange(1024*1024, AbstractDataset.INT32);
+
+		assertEquals("Typed sum", -524288, a.typedSum(AbstractDataset.INT32));
+	}
 }

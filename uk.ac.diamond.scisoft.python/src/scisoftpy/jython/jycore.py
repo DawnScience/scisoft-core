@@ -407,18 +407,37 @@ class ndarray:
     def amin(self, axis=None):
         return self.min(axis)
 
-    def prod(self, axis=None):
-        return _maths.prod(self, axis)
+    @_ndwrapped
+    def sum(self, axis=None, dtype=None): #@ReservedAssignment
+        if dtype is None:
+            dtval = self.getDtype()
+        else:
+            dtval = _translatenativetype(dtype).value
+        if axis is None:
+            return self.typedSum(dtval)
+        else:
+            return self.typedSum(dtval, axis)
+
+    @_ndwrapped
+    def prod(self, axis=None, dtype=None):
+        if dtype is None:
+            dtval = self.getDtype()
+        else:
+            dtval = _translatenativetype(dtype).value
+        if axis is None:
+            return self.typedProduct(dtval)
+        else:
+            return self.typedProduct(dtval, axis)
 
     @_ndwrapped
     def var(self, axis=None, ddof=0):
         if ddof == 1:
-            if axis == None:
+            if axis is None:
                 return self.variance()
             else:
                 return self.variance(axis)
         else:
-            if axis == None:
+            if axis is None:
                 v = self.variance()
                 n = self.getStoredValue("stats").getN()
             else:
@@ -430,12 +449,12 @@ class ndarray:
     @_ndwrapped
     def std(self, axis=None, ddof=0):
         if ddof == 1:
-            if axis == None:
+            if axis is None:
                 return self.stdDeviation()
             else:
                 return self.stdDeviation(axis)
         else:
-            if axis == None:
+            if axis is None:
                 s = self.stdDeviation()
                 n = self.getStoredValue("stats").getN()
             else:
@@ -447,14 +466,14 @@ class ndarray:
 
     @_ndwrapped
     def rms(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.rootMeanSquare()
         else:
             return self.rootMeanSquare(axis)
 
     @_ndwrapped
     def ptp(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.peakToPeak()
         else:
             return self.peakToPeak(axis)
@@ -464,14 +483,14 @@ class ndarray:
 
     @_ndwrapped
     def argmax(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.argMax()
         else:
             return self.argMax(axis)
 
     @_ndwrapped
     def argmin(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.argMin()
         else:
             return self.argMin(axis)
@@ -545,28 +564,21 @@ class ndarrayA(ndarray, _booleands):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -576,7 +588,7 @@ class ndarrayA(ndarray, _booleands):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -589,14 +601,14 @@ class ndarrayA(ndarray, _booleands):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -625,28 +637,21 @@ class ndarrayB(ndarray, _byteds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -656,7 +661,7 @@ class ndarrayB(ndarray, _byteds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -669,14 +674,14 @@ class ndarrayB(ndarray, _byteds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -705,28 +710,21 @@ class ndarrayS(ndarray, _shortds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -736,7 +734,7 @@ class ndarrayS(ndarray, _shortds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -749,14 +747,14 @@ class ndarrayS(ndarray, _shortds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -785,28 +783,21 @@ class ndarrayI(ndarray, _integerds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -816,7 +807,7 @@ class ndarrayI(ndarray, _integerds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -829,14 +820,14 @@ class ndarrayI(ndarray, _integerds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -865,28 +856,21 @@ class ndarrayL(ndarray, _longds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -896,7 +880,7 @@ class ndarrayL(ndarray, _longds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -909,14 +893,14 @@ class ndarrayL(ndarray, _longds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -945,28 +929,21 @@ class ndarrayF(ndarray, _floatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -976,7 +953,7 @@ class ndarrayF(ndarray, _floatds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -989,14 +966,14 @@ class ndarrayF(ndarray, _floatds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1025,28 +1002,21 @@ class ndarrayD(ndarray, _doubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1056,7 +1026,7 @@ class ndarrayD(ndarray, _doubleds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1069,14 +1039,14 @@ class ndarrayD(ndarray, _doubleds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1105,28 +1075,21 @@ class ndarrayC(ndarray, _complexfloatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1136,7 +1099,7 @@ class ndarrayC(ndarray, _complexfloatds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1149,14 +1112,14 @@ class ndarrayC(ndarray, _complexfloatds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1204,28 +1167,21 @@ class ndarrayZ(ndarray, _complexdoubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1235,7 +1191,7 @@ class ndarrayZ(ndarray, _complexdoubleds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1248,14 +1204,14 @@ class ndarrayZ(ndarray, _complexdoubleds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1309,28 +1265,21 @@ class ndarrayCB(ndarray, _compoundbyteds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1340,7 +1289,7 @@ class ndarrayCB(ndarray, _compoundbyteds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1353,14 +1302,14 @@ class ndarrayCB(ndarray, _compoundbyteds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1394,28 +1343,21 @@ class ndarrayCS(ndarray, _compoundshortds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1425,7 +1367,7 @@ class ndarrayCS(ndarray, _compoundshortds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1438,14 +1380,14 @@ class ndarrayCS(ndarray, _compoundshortds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1479,28 +1421,21 @@ class ndarrayCI(ndarray, _compoundintegerds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1510,7 +1445,7 @@ class ndarrayCI(ndarray, _compoundintegerds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1523,14 +1458,14 @@ class ndarrayCI(ndarray, _compoundintegerds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1564,28 +1499,21 @@ class ndarrayCL(ndarray, _compoundlongds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1595,7 +1523,7 @@ class ndarrayCL(ndarray, _compoundlongds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1608,14 +1536,14 @@ class ndarrayCL(ndarray, _compoundlongds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1649,28 +1577,21 @@ class ndarrayCF(ndarray, _compoundfloatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1680,7 +1601,7 @@ class ndarrayCF(ndarray, _compoundfloatds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1693,14 +1614,14 @@ class ndarrayCF(ndarray, _compoundfloatds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1734,28 +1655,21 @@ class ndarrayCD(ndarray, _compounddoubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1765,7 +1679,7 @@ class ndarrayCD(ndarray, _compounddoubleds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1778,14 +1692,14 @@ class ndarrayCD(ndarray, _compounddoubleds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1861,28 +1775,21 @@ class ndarrayRGB(ndarray, _rgbds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.max(self)
         else:
             return self.ndcls.max(self, axis)
 
     @_ndwrapped
     def min(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.min(self)
         else:
             return self.ndcls.min(self, axis)
 
     @_ndwrapped
-    def sum(self, axis=None):
-        if axis == None:
-            return self.ndcls.sum(self)
-        else:
-            return self.ndcls.sum(self, axis)
-
-    @_ndwrapped
     def mean(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.mean(self)
         else:
             return self.ndcls.mean(self, axis)
@@ -1892,7 +1799,7 @@ class ndarrayRGB(ndarray, _rgbds):
 
     @_ndwrapped
     def transpose(self, axes=None):
-        if axes == None:
+        if axes is None:
             axes = ()
         return self.ndcls.transpose(self, asIterable(axes))
 
@@ -1905,14 +1812,14 @@ class ndarrayRGB(ndarray, _rgbds):
 
     @_ndwrapped
     def all(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.all(self)
         else:
             return self.ndcls.all(self, axis)
 
     @_ndwrapped
     def any(self, axis=None):
-        if axis == None:
+        if axis is None:
             return self.ndcls.any(self)
         else:
             return self.ndcls.any(self, axis)
@@ -1950,10 +1857,10 @@ def arange(start, stop=None, step=1, dtype=None):
     step  -- difference between neighbouring values, defaults to 1
     dtype -- defaults to None which means the type is inferred from given start, stop, step values
     '''
-    if stop == None:
+    if stop is None:
         stop = start
         start = 0
-    if dtype == None:
+    if dtype is None:
         if type(start) is _types.ComplexType or type(stop) is _types.ComplexType or type(step) is _types.ComplexType: 
             dtype = complex128
         elif type(start) is _types.FloatType or type(stop) is _types.FloatType or type(step) is _types.FloatType: 
@@ -1974,23 +1881,23 @@ def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
     if isinstance(obj, _abstractds):
         if copy:
-            if dtype == None or dtype == obj.dtype:
+            if dtype is None or dtype == obj.dtype:
                 return obj.clone()
             else:
                 return obj.cast(_translatenativetype(dtype).value)
         else:
-            if dtype == None:
+            if dtype is None:
                 dtype = obj.dtype
             return obj.cast(_translatenativetype(dtype).value)
 
     if not isinstance(obj, list):
         if isinstance(obj, _matrix): # cope with JAMA matrices
-            if dtype == None:
+            if dtype is None:
                 dtype = float64
             obj = obj.getArray()
 
     obj = _cvt2j(obj)
-    if dtype == None:
+    if dtype is None:
         dtype = _getdtypefromobj(obj)
     else:
         dtype = _translatenativetype(dtype)
@@ -2081,7 +1988,7 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0):
 
 @_ndwrapped
 def eye(N, M=None, k=0, dtype=float64):
-    if M == None:
+    if M is None:
         M = N
 
     dtype = _translatenativetype(dtype)
@@ -2162,7 +2069,7 @@ def squeeze(a):
 
 @_ndwrapped
 def transpose(a, axes=None):
-    if axes == None:
+    if axes is None:
         axes = ()
     return _dsutils.transpose(a, asIterable(axes))
 

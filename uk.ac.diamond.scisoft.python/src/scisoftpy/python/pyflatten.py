@@ -211,9 +211,9 @@ class ndArrayHelper(flatteningHelper):
             rval[self.FILENAME] = obj.filename
             if obj.deleteAfterLoad:
                 rval[self.DELETEFILEAFTERLOAD] = True
-            if obj.index != None:
+            if obj.index is not None:
                 rval[self.INDEX] = obj.index
-            if obj.name != None:
+            if obj.name is not None:
                 rval[self.NAME] = obj.name
 
         rval[TYPE] = self.TYPE_NAME

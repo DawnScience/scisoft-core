@@ -25,7 +25,7 @@ from jymaths import ndarraywrapped as _npwrapped
 def fft(a, n=None, axis=-1):
     '''Perform 1D FFT along given axis'''
     axis = a.checkAxis(axis)
-    if n == None:
+    if n is None:
         n = a.shape[axis]
     return _fft.fft(a, n, axis)
 
@@ -33,7 +33,7 @@ def fft(a, n=None, axis=-1):
 def ifft(a, n=None, axis=-1):
     '''Perform inverse 1D FFT along given axis'''
     axis = a.checkAxis(axis)
-    if n == None:
+    if n is None:
         n = a.shape[axis]
     return _fft.ifft(a, n, axis)
 

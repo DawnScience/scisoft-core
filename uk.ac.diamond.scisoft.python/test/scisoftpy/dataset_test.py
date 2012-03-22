@@ -629,7 +629,10 @@ class Test(unittest.TestCase):
         self.assertEquals(np.sum(ds), 66)
         self.checkitems([12, 15, 18, 21], np.sum(ds, 0))
         self.checkitems([ 6, 22, 38], np.sum(ds, 1))
-        
+        lds = np.arange(1024*1024, dtype=np.int32)
+        self.assertEquals(np.sum(lds), -524288)
+        self.assertEquals(np.sum(lds, dtype=np.int64), 549755289600)
+
         print 'test cumsum'
         self.checkitems([0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66], np.cumsum(ds))
         self.checkitems([[0, 1, 2, 3], [4, 6, 8, 10], [12, 15, 18, 21]], np.cumsum(ds, 0))

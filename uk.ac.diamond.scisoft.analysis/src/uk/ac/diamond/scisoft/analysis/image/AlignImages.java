@@ -33,34 +33,44 @@ public class AlignImages {
 	transient private static final Logger logger = LoggerFactory.getLogger(AlignImages.class);
 
 	/**
-	 * Align images 
+	 * Align images
 	 * @param images datasets
 	 * @param shifted images
 	 * @param roi
-	 * @param fromStart
+	 * @param fromStart direction of image alignment: should currently be set to true 
+	 * (the method needs to be re-modified to take into account the flip mode)
+	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final AbstractDataset[] images, final List<AbstractDataset> shifted, final RectangularROI roi, final boolean fromStart) {
+	public static List<double[]> align(final AbstractDataset[] images, final List<AbstractDataset> shifted, 
+			final RectangularROI roi, final boolean fromStart, double[] preShift) {
 		List<AbstractDataset> list = new ArrayList<AbstractDataset>();
 		Collections.addAll(list, images);
 		if (!fromStart) {
 			Collections.reverse(list);
 		}
-
 		final AbstractDataset anchor = list.get(0);
 		final int length = list.size();
 		final List<double[]> shift = new ArrayList<double[]>();
-
-		shift.add(new double[] {0., 0.});
+		if(preShift!=null){
+			shift.add(preShift);
+		}else{
+			shift.add(new double[] {0., 0.});
+		}
 		shifted.add(anchor);
 		for (int i = 1; i < length; i++) {
 			AbstractDataset image = list.get(i);
+			
 			double[] s = Image.findTranslation2D(anchor, image, roi);
+			// We add the preShift to the shift data
+			if(preShift!=null){
+				s[0]+=preShift[0];
+				s[1]+=preShift[1];
+			}
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
 			shifted.add(map.value(image).get(0));
 		}
-
 		return shift;
 	}
 
@@ -70,9 +80,10 @@ public class AlignImages {
 	 * @param shifted images
 	 * @param roi
 	 * @param fromStart
+	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final String[] files, final List<AbstractDataset> shifted, final RectangularROI roi, final boolean fromStart) {
+	public static List<double[]> align(final String[] files, final List<AbstractDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift) {
 		AbstractDataset[] images = new AbstractDataset[files.length];
 
 		for (int i = 0; i < files.length; i++) {
@@ -84,7 +95,7 @@ public class AlignImages {
 			}
 		}
 
-		return align(images, shifted, roi, fromStart);
+		return align(images, shifted, roi, fromStart, preShift);
 	}
 
 }

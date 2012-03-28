@@ -2,11 +2,11 @@
 
     <dirname property="GDA-plugin.basedir" file="${ant.file.${ant.project.name}}" />
     <pathconvert property="workspace.loc" setonempty="false">
-        <regexpmapper from="(.*)/plugins/.+" to="\1"/>
+        <regexpmapper from="(.*)_git/.+" to="\1"/>
         <path><pathelement location="${GDA-plugin.basedir}" /></path>
     </pathconvert>
     <pathconvert property="workspace.loc" setonempty="false">
-        <regexpmapper from="(.*)_git/.+" to="\1"/>
+        <regexpmapper from="(.*)/plugins/.+" to="\1"/>
         <path><pathelement location="${GDA-plugin.basedir}" /></path>
     </pathconvert>
     <property name="workspace.git.loc" value="${workspace.loc}_git" />

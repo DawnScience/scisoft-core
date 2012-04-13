@@ -21,6 +21,7 @@ import gda.analysis.io.ScanFileHolderException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -65,6 +67,15 @@ import uk.ac.gda.util.io.FileUtils;
  * 
  */
 public class LoaderFactory {
+	
+	/**
+	 * A caching mechanism using soft references. Soft references attempt to keep things
+	 * in memory until the system is short on memory. It may be necessary to use WeakReferences
+	 * instead if people notice that the memory footprint is unfavourable.
+	 */
+	private static final Map<LoaderKey, SoftReference<Object>> SOFT_CACHE = new ConcurrentHashMap<LoaderKey, SoftReference<Object>>(89);
+	
+	
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
 	private static final Map<String, List<Class<? extends AbstractFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends AbstractFileLoader>>>(19);
@@ -223,12 +234,17 @@ public class LoaderFactory {
 	 */
 	public static DataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
 
-		if (!(new File(path)).exists())
-			throw new FileNotFoundException(path);
+		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setLoadMeta(willLoadMetadata);
+		
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null) return (DataHolder)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -242,6 +258,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this it should not be registered with LoaderFactory
 				DataHolder holder = loader.loadFile(mon);
+				recordSoftReference(key, holder);
 				return holder;
 			} catch (OutOfMemoryError ome) {
 				logger.error("There was not enough memory to load " + path);
@@ -252,6 +269,23 @@ public class LoaderFactory {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * May be null
+	 * @param key
+	 * @return the object referenced or null if it got garbaged or was not cached yet
+	 */
+	private static Object getSoftReference(LoaderKey key) {
+		
+        final SoftReference<Object> ref = SOFT_CACHE.get(key);
+        if (ref == null) return null;
+        return ref.get();
+	}
+	
+	private static void recordSoftReference(LoaderKey key, Object value) {
+		
+		SOFT_CACHE.put(key, new SoftReference(value));
 	}
 
 	/**
@@ -268,9 +302,17 @@ public class LoaderFactory {
 	 */
 	public static IMetaData getMetaData(final String path, final IMonitor mon) throws Exception {
 
+		
+		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setMeta(true);
+		
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null) return (IMetaData)cachedObject;
+
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
@@ -286,6 +328,7 @@ public class LoaderFactory {
 				// do this, it should not be registered with LoaderFactory
 				((IMetaLoader) loader).loadMetaData(mon);
 				IMetaData meta = ((IMetaLoader) loader).getMetaData();
+				recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {
 				logger.trace("Cannot load nexus meta data", ne);
@@ -307,9 +350,16 @@ public class LoaderFactory {
 	 */
 	public static AbstractDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
+		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setDatasetName(name);
+		
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null) return (AbstractDataset)cachedObject;
+
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -323,6 +373,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
 				final AbstractDataset set = ((IDataSetLoader) loader).loadSet(path, name, mon);
+				recordSoftReference(key, set);
 				return set;
 			} catch (Throwable ne) {
 				continue;
@@ -343,9 +394,17 @@ public class LoaderFactory {
 	 */
 	public static Map<String,ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon) throws Exception {
 
+		
+		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setDatasetNames(names);
+		
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null) return (Map<String,ILazyDataset>)cachedObject;
+
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -358,7 +417,9 @@ public class LoaderFactory {
 				// NOTE Assumes loader fails quickly and nicely
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
-				return ((IDataSetLoader) loader).loadSets(path, names, mon);
+				Map<String,ILazyDataset> sets = ((IDataSetLoader) loader).loadSets(path, names, mon);
+				recordSoftReference(key, sets);
+				return sets;
 			} catch (Throwable ne) {
 				continue;
 			}
@@ -379,9 +440,15 @@ public class LoaderFactory {
 	 */
 	public static AbstractDataset getSlice(final SliceObject object, final IMonitor mon) throws Exception {
 
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(object.getPath());
+		key.setSlice(object);
+		
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null) return (AbstractDataset)cachedObject;
+
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(object.getPath());
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
@@ -397,6 +464,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
 				final AbstractDataset set = ((ISliceLoader) loader).slice(object, mon);
+				recordSoftReference(key, set);
 				return set;
 			} catch (Exception ne) {
 				throw ne;
@@ -452,8 +520,7 @@ public class LoaderFactory {
 	 * @return AbstractFileLoader
 	 * @throws Exception
 	 */
-	public static AbstractFileLoader getLoader(Class<? extends AbstractFileLoader> clazz, final String path)
-			throws Exception {
+	public static AbstractFileLoader getLoader(Class<? extends AbstractFileLoader> clazz, final String path) throws Exception {
 
 		AbstractFileLoader loader;
 		try {

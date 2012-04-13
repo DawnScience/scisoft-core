@@ -21,7 +21,9 @@ import gda.analysis.io.ScanFileHolderException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class LoaderFactory {
 	 * in memory until the system is short on memory. It may be necessary to use WeakReferences
 	 * instead if people notice that the memory footprint is unfavourable.
 	 */
-	private static final Map<LoaderKey, SoftReference<Object>> SOFT_CACHE = new ConcurrentHashMap<LoaderKey, SoftReference<Object>>(89);
+	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new ConcurrentHashMap<LoaderKey, Reference<Object>>(89);
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
@@ -278,14 +280,19 @@ public class LoaderFactory {
 	 */
 	private static Object getSoftReference(LoaderKey key) {
 		
-        final SoftReference<Object> ref = SOFT_CACHE.get(key);
+		if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return null;
+        final Reference<Object> ref = SOFT_CACHE.get(key);
         if (ref == null) return null;
         return ref.get();
 	}
 	
 	private static void recordSoftReference(LoaderKey key, Object value) {
 		
-		SOFT_CACHE.put(key, new SoftReference(value));
+		if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return;
+		Reference<Object> ref = System.getProperty("uk.ac.diamond.scisoft.analysis.io.weakcaching")!=null
+				              ? new WeakReference<Object>(value)
+				              : new SoftReference<Object>(value);
+		SOFT_CACHE.put(key, ref);
 	}
 
 	/**

@@ -121,7 +121,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 	 * @param fy
 	 * @return point
 	 */
-	private double[] getPoint(double fx, double fy) {
+	public double[] getPoint(double fx, double fy) {
 		return new double[] { spt[0] + fx * len[0] * cang - fy * len[1] * sang,
 				spt[1] + fx * len[0] * sang + fy * len[1] * cang };
 	}

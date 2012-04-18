@@ -44,13 +44,13 @@ def _createparams(np, params, bounds):
     bounds -- list of tuples of bounds
     '''
     params = list(params)
-    pl = [ _param(params.pop(0)) for i in range(np) ]
+    pl = [ _param(params.pop(0)) for _i in range(np) ]
 
     bounds = list(bounds)
     nbound = len(bounds)
     if nbound > np:
         nbound = np
- 
+
     for i in range(nbound):
         b = bounds.pop(0)
         if b is not None:
@@ -61,7 +61,7 @@ def _createparams(np, params, bounds):
                 if b[1] is not None:
                     pl[i].upperLimit = b[1]
 #    print [(p.value, p.lowerLimit, p.upperLimit) for p in pl]
-    return pl
+    return pl, params, bounds
 
 class fitfunc(_absfn):
     '''Class to wrap an ordinary Jython function for fitting.
@@ -309,7 +309,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
         if isinstance(f, _jclass):
             # create bound function object
             np = _fn.nparams(f)
-            pl = _createparams(np, p0, bounds)
+            pl, p0, bounds = _createparams(np, p0, bounds)
             fnlist.append(f(pl))
         elif not _inspect.isfunction(f):
             # instantiated Java function
@@ -319,7 +319,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
             np = len(_inspect.getargspec(f)[0]) - 1
             if np < 1:
                 raise ValueError, "Function needs more than one argument (i.e. at least one parameter)"
-            pl = _createparams(np, p0, bounds)
+            pl, p0, bounds = _createparams(np, p0, bounds)
             fnlist.append(fitfunc(f, f.__name__, pl, args))
             mixed = True
 

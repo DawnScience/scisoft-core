@@ -138,7 +138,10 @@ data
     Dataset containing data that was fitted to
 
 parameters
-    List of fitted parameter values
+    Array of fitted parameter values
+
+parameter_bnds
+    List of parameter bounds
 
 residual
     Value of final residual (sum of squared differences between fitted function and data)

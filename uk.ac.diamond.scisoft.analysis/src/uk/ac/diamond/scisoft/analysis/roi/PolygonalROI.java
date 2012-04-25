@@ -117,9 +117,9 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 
 	/**
 	 * @param i
-	 * @return i-th point as ROI
+	 * @return i-th point as point ROI
 	 */
-	public ROIBase getPoint(int i) {
+	public PointROI getPoint(int i) {
 		return pts.get(i);
 	}
 

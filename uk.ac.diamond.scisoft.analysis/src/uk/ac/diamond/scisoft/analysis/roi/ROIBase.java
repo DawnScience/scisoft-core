@@ -28,14 +28,14 @@ public class ROIBase implements Serializable {
 	/**
 	 * @param point The start (or centre) point to set
 	 */
-	public void setPoint(double point[]) {
+	public void setPoint(double[] point) {
 		spt = point;
 	}
 
 	/**
 	 * @param point The start (or centre) point to set
 	 */
-	public void setPoint(int point[]) {
+	public void setPoint(int[] point) {
 		spt[0] = point[0];
 		spt[1] = point[1];
 	}

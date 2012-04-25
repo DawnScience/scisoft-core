@@ -121,6 +121,17 @@ public class SectorROI extends ROIBase implements Serializable {
 		this(30., 120., Math.PI*0.25, Math.PI*2./3.);
 	}
 
+	private final static double TWOPI = 2.0 * Math.PI;
+
+	/**
+	 * Create an annulus
+	 * @param sr 
+	 * @param er
+	 */
+	public SectorROI(double sr, double er) {
+		this(0., 0., sr, er, 0, TWOPI, 1.0, false, SectorROI.FULL);
+	}
+
 	/**
 	 * @param sr 
 	 * @param er
@@ -195,7 +206,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the radii.
+	 * @return Returns the radii
 	 */
 	public double[] getRadii() {
 		return rad;
@@ -203,14 +214,14 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	/**
 	 * @param index 
-	 * @return Returns the radii.
+	 * @return Returns the radius
 	 */
 	public double getRadius(int index) {
 		return rad[index];
 	}
 
 	/**
-	 * @return Returns the radii.
+	 * @return Returns the radii
 	 */
 	public int[] getIntRadii() {
 		return new int[] { (int) rad[0], (int) rad[1] };

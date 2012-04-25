@@ -23,8 +23,18 @@ import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
  * An elliptical region of interest
  */
 public class EllipticalROI extends ROIBase {
-	private double axis[]; // axes
+	private double saxis[]; // semi-axes
 	private double ang; // angles in radians
+
+	/**
+	 * Create a circular ROI
+	 * @param radius
+	 * @param ptx centre point x value
+	 * @param pty centre point y value
+	 */
+	public EllipticalROI(double radius, double ptx, double pty) {
+		this(radius, radius, 0, ptx, pty);
+	}
 
 	/**
 	 * Create an elliptical ROI
@@ -36,7 +46,7 @@ public class EllipticalROI extends ROIBase {
 	 */
 	public EllipticalROI(double major, double minor, double angle, double ptx, double pty) {
 		spt = new double[] { ptx, pty };
-		axis = new double[] { major, minor };
+		saxis = new double[] { major, minor };
 		ang = angle;
 	}
 
@@ -69,7 +79,7 @@ public class EllipticalROI extends ROIBase {
 	 * @return Returns the semi-axes
 	 */
 	public double[] getSemiAxes() {
-		return axis;
+		return saxis;
 	}
 
 	/**
@@ -79,7 +89,7 @@ public class EllipticalROI extends ROIBase {
 	public double getSemiAxis(int index) {
 		if (index < 0 || index > 1)
 			throw new IllegalArgumentException("Index should be 0 or 1");
-		return axis[index];
+		return saxis[index];
 	}
 
 	/**
@@ -87,10 +97,10 @@ public class EllipticalROI extends ROIBase {
 	 * @param semiaxis
 	 */
 	public void setSemiAxes(double[] semiaxis) {
-		if (axis.length < 2)
+		if (saxis.length < 2)
 			throw new IllegalArgumentException("Need at least two semi-axis values");
-		axis[0] = semiaxis[0];
-		axis[1] = semiaxis[1];
+		saxis[0] = semiaxis[0];
+		saxis[1] = semiaxis[1];
 	}
 
 	/**
@@ -101,7 +111,7 @@ public class EllipticalROI extends ROIBase {
 	public void setSemiAxis(int index, double semiaxis) {
 		if (index < 0 || index > 1)
 			throw new IllegalArgumentException("Index should be 0 or 1");
-		axis[index] = semiaxis;
+		saxis[index] = semiaxis;
 	}
 
 	/**
@@ -145,5 +155,12 @@ public class EllipticalROI extends ROIBase {
 	 */
 	public void setAngle(double angle) {
 		ang = angle;
+	}
+
+	/**
+	 * @return true if ellipse is circular (i.e. its axes have the same length)
+	 */
+	public boolean isCircular() {
+		return saxis[0] == saxis[1];
 	}
 }

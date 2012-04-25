@@ -24,15 +24,15 @@ import java.util.List;
 /**
  * Class for a polygonal ROI (really a list of point ROIs)
  */
-public class PolygonalROI extends ROIBase implements Serializable, Iterable<ROIBase> {
-	private List<ROIBase> pts;
+public class PolygonalROI extends PointROI implements Serializable, Iterable<PointROI> {
+	private List<PointROI> pts;
 
 	public PolygonalROI() {
 		this(new double[] {0,0});
 	}
 
 	public PolygonalROI(double[] start) {
-		pts = new ArrayList<ROIBase>();
+		pts = new ArrayList<PointROI>();
 		spt = start;
 		pts.add(this);
 	}
@@ -42,7 +42,7 @@ public class PolygonalROI extends ROIBase implements Serializable, Iterable<ROIB
 	 * @param point
 	 */
 	public void insertPoint(double[] point) {
-		ROIBase r = new ROIBase();
+		PointROI r = new PointROI();
 		r.spt = point;
 		pts.add(r);
 	}
@@ -56,12 +56,21 @@ public class PolygonalROI extends ROIBase implements Serializable, Iterable<ROIB
 	}
 
 	/**
+	 * Add point to polygon
+	 * @param x
+	 * @param y
+	 */
+	public void insertPoint(double x, double y) {
+		insertPoint(new double[] {x, y});
+	}
+
+	/**
 	 * Insert point to polygon at index
 	 * @param i index
 	 * @param point
 	 */
 	public void insertPoint(int i, double[] point) {
-		ROIBase r = new ROIBase();
+		PointROI r = new PointROI();
 		if (i == 0) { // copy current and then shift
 			r.spt = spt; 
 			pts.set(0, r);
@@ -71,6 +80,16 @@ public class PolygonalROI extends ROIBase implements Serializable, Iterable<ROIB
 			r.spt = point;
 			pts.add(i, r);
 		}
+	}
+
+	/**
+	 * Insert point to polygon at index
+	 * @param i index
+	 * @param x
+	 * @param y
+	 */
+	public void insertPoint(int i, double x, double y) {
+		insertPoint(i, new double[] {x, y});
 	}
 
 	/**
@@ -108,7 +127,7 @@ public class PolygonalROI extends ROIBase implements Serializable, Iterable<ROIB
 	 * @return iterator over points
 	 */
 	@Override
-	public Iterator<ROIBase> iterator() {
+	public Iterator<PointROI> iterator() {
 		return pts.iterator();
 	}
 

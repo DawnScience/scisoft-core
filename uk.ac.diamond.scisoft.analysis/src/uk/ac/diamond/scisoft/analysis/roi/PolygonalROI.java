@@ -28,13 +28,34 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	private List<PointROI> pts;
 
 	public PolygonalROI() {
+		super();
 		pts = new ArrayList<PointROI>();
 	}
 
 	public PolygonalROI(double[] start) {
-		this();
+		super(start);
+		pts = new ArrayList<PointROI>();
 		pts.add(this);
-		spt = start;
+	}
+
+	@Override
+	public void setPoint(double[] point) {
+		super.setPoint(point);
+		if (pts.size() == 0) {
+			pts.add(this);
+		}
+	}
+
+	/**
+	 * Set point of polygon at index
+	 * @param i index
+	 * @param point
+	 */
+	public void setPoint(int i, double[] point) {
+		if (i == 0)
+			setPoint(point);
+
+		pts.set(i, new PointROI(point));
 	}
 
 	/**
@@ -42,9 +63,7 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	 * @param point
 	 */
 	public void insertPoint(double[] point) {
-		PointROI r = new PointROI();
-		r.spt = point;
-		pts.add(r);
+		pts.add(new PointROI(point));
 	}
 
 	/**
@@ -70,17 +89,16 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	 * @param point
 	 */
 	public void insertPoint(int i, double[] point) {
-		PointROI r = new PointROI();
-		if (i == 0) { // copy current and then shift
-			if (pts.size() > 0) {
-				r.spt = spt;
-				pts.set(0, r);
+		if (i == 0) {
+			if (pts.size() == 0) {
+				setPoint(point);
+			} else { // copy current and then shift
+				pts.set(0, new PointROI(spt));
+				spt = point;
+				pts.add(0, this);
 			}
-			spt = point;
-			pts.add(0, this);
 		} else {
-			r.spt = point;
-			pts.add(i, r);
+			pts.add(i, new PointROI(point));
 		}
 	}
 

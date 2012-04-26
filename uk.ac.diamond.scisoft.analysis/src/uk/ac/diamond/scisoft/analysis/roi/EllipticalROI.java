@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.util.Arrays;
+
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
 
@@ -162,5 +164,13 @@ public class EllipticalROI extends ROIBase {
 	 */
 	public boolean isCircular() {
 		return saxis[0] == saxis[1];
+	}
+
+	@Override
+	public String toString() {
+		if (isCircular()) {
+			return String.format("Centre %s Radius %g", Arrays.toString(spt), saxis[0]);
+		}
+		return String.format("Centre %s Semi-axes %s Angle %g", Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
 	}
 }

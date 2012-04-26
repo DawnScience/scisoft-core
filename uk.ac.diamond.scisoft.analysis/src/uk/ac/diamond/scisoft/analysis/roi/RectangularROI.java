@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
 
@@ -475,6 +476,6 @@ public class RectangularROI extends ROIBase implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Start (%g, %g) Size (%g,%g) Angle %g", spt[0], spt[1], len[0], len[1], getAngleDegrees());
+		return String.format("Start %s Size %s Angle %g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
 	}
 }

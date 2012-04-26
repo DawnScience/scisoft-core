@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -562,6 +563,6 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Centre (%g, %g) Radii (%g,%g) Angles (%g, %g)", spt[0], spt[1], rad[0], rad[1], getAngleDegrees(0), getAngleDegrees(1));
+		return String.format("Centre %s Radii %s Angles (%g, %g)", Arrays.toString(spt), Arrays.toString(rad), getAngleDegrees(0), getAngleDegrees(1));
 	}
 }

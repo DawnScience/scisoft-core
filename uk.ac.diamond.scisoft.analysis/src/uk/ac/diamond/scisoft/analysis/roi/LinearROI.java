@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 
 /**
@@ -314,6 +315,6 @@ public class LinearROI extends ROIBase implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Start (%g, %g) Length %g Angle %g", spt[0], spt[1], len, getAngleDegrees());
+		return String.format("Start %s Length %g Angle %g", Arrays.toString(spt), len, getAngleDegrees());
 	}
 }

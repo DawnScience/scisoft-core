@@ -32,10 +32,12 @@ public class PointROI extends ROIBase {
 	}
 
 	public PointROI(double x, double y) {
+		this();
 		setPoint(x, y);
 	}
 
 	public PointROI(int[] point) {
+		this();
 		setPoint(point);
 	}
 

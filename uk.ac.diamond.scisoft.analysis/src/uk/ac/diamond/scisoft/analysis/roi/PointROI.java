@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.util.Arrays;
+
 /**
  * Class for point region of interest
  */
@@ -35,5 +37,10 @@ public class PointROI extends ROIBase {
 
 	public PointROI(int[] point) {
 		setPoint(point);
+	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(spt);
 	}
 }

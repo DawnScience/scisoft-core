@@ -28,13 +28,13 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	private List<PointROI> pts;
 
 	public PolygonalROI() {
-		this(new double[] {0,0});
+		pts = new ArrayList<PointROI>();
 	}
 
 	public PolygonalROI(double[] start) {
-		pts = new ArrayList<PointROI>();
-		spt = start;
+		this();
 		pts.add(this);
+		spt = start;
 	}
 
 	/**
@@ -72,8 +72,10 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	public void insertPoint(int i, double[] point) {
 		PointROI r = new PointROI();
 		if (i == 0) { // copy current and then shift
-			r.spt = spt; 
-			pts.set(0, r);
+			if (pts.size() > 0) {
+				r.spt = spt;
+				pts.set(0, r);
+			}
 			spt = point;
 			pts.add(0, this);
 		} else {
@@ -138,5 +140,10 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 			croi.insertPoint(pts.get(i).spt.clone());
 
 		return croi;
+	}
+
+	@Override
+	public String toString() {
+		return pts.toString();
 	}
 }

@@ -54,6 +54,7 @@ public class ROIBase implements Serializable {
 	 * @param y 
 	 */
 	public void setPoint(double x, double y) {
+		if (spt==null) spt = new double[2];
 		spt[0] = x;
 		spt[1] = y;
 	}

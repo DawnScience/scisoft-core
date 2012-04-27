@@ -70,6 +70,18 @@ public class SectorCoords {
 	}
 
 	/**
+	 * @param spt 
+	 * @param pt
+	 */
+	public SectorCoords(double[] spt, double[] pt) {
+		double px = pt[0] - spt[0];
+		double py = pt[1] - spt[1];
+		r = Math.hypot(px, py);
+		p = Math.atan2(py, px);
+		if (p < 0) p += 2*Math.PI;
+	}
+
+	/**
 	 * @param ca
 	 * @param cb
 	 * @param isCartesian

@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -104,6 +105,21 @@ public class ROIProfile {
 	 * @return box profile
 	 */
 	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi) {
+		
+		return ROIProfile.box(data, mask, rroi, false);
+	}
+	
+	/**
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param rroi
+	 * @param maskWithNans - normally masked pixels will use a multiply with 0 or 1 to mask. The plotting
+	 *                       deals with Nans. In this case we can simply 
+	 * @return box profile
+	 */
+	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
 		double ang = rroi.getAngle();
@@ -113,7 +129,14 @@ public class ROIProfile {
 		if (mask != null && data != null) {
 			if (data.isCompatibleWith(mask)) {
 				clip = true;
-				data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+				if (!maskWithNans || !(mask instanceof BooleanDataset)) {
+					// convertToAbstractDataset should not be necessart here? 
+					// AbstractDataset is already here, the data is loaded - is this right?
+					data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+				} else {
+					// Masks values to NaN, also changes Dtype to Float
+					data = Maths.nanalize(data, (BooleanDataset)mask);
+				}
 			}
 		}
 
@@ -129,8 +152,13 @@ public class ROIProfile {
 			if (dsets == null)
 				return null;
 
-			profiles[0] = dsets.get(1);
-			profiles[1] = dsets.get(0);
+			profiles[0] = maskWithNans
+					    ? processColumnNans(dsets.get(1), spt[0], data)
+					    : dsets.get(1);
+			
+			profiles[1] = maskWithNans
+					    ?  processRowNans(dsets.get(0), spt[1], data)
+					    : dsets.get(0);
 
 		} else {
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
@@ -149,6 +177,32 @@ public class ROIProfile {
 
 		return profiles;
 	}
+
+	private static AbstractDataset processColumnNans(AbstractDataset cols, int offset, AbstractDataset data) {
+		
+		
+        MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
+			for(int j = 0; j<data.getShape()[0]; j++) {
+				if (!Float.isNaN(data.getFloat(j, i+offset))) continue MAIN_LOOP; 
+			}
+			cols.set(Float.NaN, i);
+		}
+	    return cols;
+	}
+	
+	private static AbstractDataset processRowNans(AbstractDataset rows, int offset, AbstractDataset data) {
+		
+		
+        MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
+			for(int j = 0; j<data.getShape()[1]; j++) {
+				if (!Float.isNaN(data.getFloat(i+offset, j))) continue MAIN_LOOP; 
+			}
+			rows.set(Float.NaN, i);
+		}
+	    return rows;
+	}
+
+
 
 	/**
 	 * @param data

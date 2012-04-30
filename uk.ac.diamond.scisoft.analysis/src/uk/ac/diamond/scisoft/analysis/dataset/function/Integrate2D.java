@@ -115,6 +115,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 					csum = 0.0;
 					for (int a = 0; a < nx; a++) {
 						final double v = ids.getDouble(b + sy, a + sx);
+						if (Double.isNaN(v)) continue; 
 						csum += v;
 						sumy.set(v + sumy.getDouble(a), a);
 					}

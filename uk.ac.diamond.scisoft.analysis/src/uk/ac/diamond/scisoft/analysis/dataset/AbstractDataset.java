@@ -1379,7 +1379,7 @@ public abstract class AbstractDataset implements IDataset {
 	 *            the integer array specifying the n-D position
 	 * @return the index on the data array corresponding to that location
 	 */
-	protected int get1DIndex(final int... n) {
+	public int get1DIndex(final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
 		if (imax == 0) {

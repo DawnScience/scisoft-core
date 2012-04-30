@@ -115,8 +115,9 @@ public class ROIProfile {
 	 * @param mask
 	 *            used for clipping compensation (can be null)
 	 * @param rroi
-	 * @param maskWithNans - normally masked pixels will use a multiply with 0 or 1 to mask. The plotting
-	 *                       deals with Nans. In this case we can simply 
+	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
+	 *                       deals with Nans however, in this case we can set maskWithNans true and masked
+	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
 	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
@@ -141,7 +142,7 @@ public class ROIProfile {
 			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[0]);
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
-			// TODO Does this always work? This really makes large images profile better...
+			// TODO Does this always work? This makes large images profile better...
 			AbstractDataset slicedData = null;
 			try {
 			    slicedData = data.getSlice(new int[]{xtart,   ystart}, 
@@ -162,7 +163,6 @@ public class ROIProfile {
 			if (slicedMask != null && slicedData != null) {
 				if (slicedData.isCompatibleWith(slicedMask)) {
 					clip = true;
-					// TODO both multiply and nanalize create copies of the whole data passed in
 					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
 						// convertToAbstractDataset should not be necessart here? 
 						// AbstractDataset is already here, the data is loaded - is this right?

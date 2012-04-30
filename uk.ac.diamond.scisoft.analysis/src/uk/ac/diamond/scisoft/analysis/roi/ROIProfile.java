@@ -142,9 +142,15 @@ public class ROIProfile {
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This really makes large images profile better...
-			AbstractDataset slicedData = data.getSlice(new int[]{xtart,   ystart}, 
-					                                   new int[]{xend,    yend},
-					                                   new int[]{1,1});
+			AbstractDataset slicedData = null;
+			try {
+			    slicedData = data.getSlice(new int[]{xtart,   ystart}, 
+					                       new int[]{xend,    yend},
+					                       new int[]{1,1});
+			} catch (Exception ne) {
+				// We cannot process the profiles for a region totally outside the image!
+				return null;
+			}
 			
 			final AbstractDataset slicedMask = mask!=null
 					                         ? mask.getSlice(new int[]{xtart, ystart}, 

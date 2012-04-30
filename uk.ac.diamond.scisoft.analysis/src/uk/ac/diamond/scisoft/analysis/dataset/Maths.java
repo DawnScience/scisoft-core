@@ -9896,32 +9896,4 @@ public class Maths {
 		addFunctionName(ds, "clip");
 		return ds;
 	}
-
-	/**
-	 * This method will nanalize any data which the mask has set to false. NOTE
-	 * the data and the mask must be precisely the same in size and value order.
-	 * 
-	 * No compatibility test is done for speed reasons, instead a failure will occur
-	 * during the nanalise operation.
-	 * 
-	 * It always returns a FloatDataset for speed and size reasons, this being the
-	 * smallest Dtype which allows NaNs.
-	 * 
-	 * 
-	 * @param data
-	 * @param mask
-	 * @return clone of dataset with NaNs at the appropriate place.
-	 */
-	public static FloatDataset nanalize(AbstractDataset data, BooleanDataset mask) {
-		
-		FloatDataset nanalized = new FloatDataset(data.getShape());
-		float[]      buffer    = nanalized.getData();
-		for (int i = 0; i < buffer.length; i++) {
-			buffer[i] = mask.getElementBooleanAbs(i)
-					  ? (float)data.getElementDoubleAbs(i) // NOTE: Do not round, just loose precision.
-					  : Float.NaN;
-		}
-		return nanalized;
-	}
-
 }

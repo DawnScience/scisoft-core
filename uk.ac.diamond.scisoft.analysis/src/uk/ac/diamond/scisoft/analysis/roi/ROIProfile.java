@@ -21,6 +21,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
@@ -126,19 +127,6 @@ public class ROIProfile {
 		boolean clip = rroi.isClippingCompensation();
 		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
 
-		if (mask != null && data != null) {
-			if (data.isCompatibleWith(mask)) {
-				clip = true;
-				if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-					// convertToAbstractDataset should not be necessart here? 
-					// AbstractDataset is already here, the data is loaded - is this right?
-					data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
-				} else {
-					// Masks values to NaN, also changes Dtype to Float
-					data = Maths.nanalize(data, (BooleanDataset)mask);
-				}
-			}
-		}
 
 		if (len[0] == 0)
 			len[0] = 1;
@@ -146,21 +134,71 @@ public class ROIProfile {
 			len[1] = 1;
 
 		if (ang == 0.0) {
-			Integrate2D int2d = new Integrate2D(spt[0], spt[1], spt[0] + len[0], spt[1] + len[1]);
+			
+			final int xtart  = Math.max(0,  spt[1]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[1]);
+			final int ystart = Math.max(0,  spt[0]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[0]);
+			
+			// We slice down data to reduce the work the masking and the integrate needs to do.
+			// TODO Does this always work? This really makes large images profile better...
+			AbstractDataset slicedData = data.getSlice(new int[]{xtart,   ystart}, 
+					                                   new int[]{xend,    yend},
+					                                   new int[]{1,1});
+			
+			final AbstractDataset slicedMask = mask!=null
+					                         ? mask.getSlice(new int[]{xtart, ystart}, 
+					                                         new int[]{xend,  yend},
+					                                         new int[]{1,1})
+					                         : null;
+			
+			
+			if (slicedMask != null && slicedData != null) {
+				if (slicedData.isCompatibleWith(slicedMask)) {
+					clip = true;
+					// TODO both multiply and nanalize create copies of the whole data passed in
+					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
+						// convertToAbstractDataset should not be necessart here? 
+						// AbstractDataset is already here, the data is loaded - is this right?
+						slicedData = Maths.multiply(DatasetUtils.convertToAbstractDataset(slicedData), DatasetUtils.convertToAbstractDataset(slicedMask));
+					} else {
+						// Masks values to NaN, also changes Dtype to Float
+						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
+					}
+				}
+			}
 
-			List<AbstractDataset> dsets = int2d.value(data);
-			if (dsets == null)
-				return null;
+			
+			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
+
+			List<AbstractDataset> dsets = int2d.value(slicedData);
+			if (dsets == null) return null;
 
 			profiles[0] = maskWithNans
-					    ? processColumnNans(dsets.get(1), spt[0], data)
+					    ? processColumnNans(dsets.get(1), slicedData)
 					    : dsets.get(1);
 			
 			profiles[1] = maskWithNans
-					    ?  processRowNans(dsets.get(0), spt[1], data)
+					    ?  processRowNans(dsets.get(0), slicedData)
 					    : dsets.get(0);
 
 		} else {
+			
+			if (mask != null && data != null) {
+				if (data.isCompatibleWith(mask)) {
+					clip = true;
+					// TODO both multiply and nanalize create copies of the whole data passed in
+					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
+						// convertToAbstractDataset should not be necessart here? 
+						// AbstractDataset is already here, the data is loaded - is this right?
+						data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+					} else {
+						// Masks values to NaN, also changes Dtype to Float
+						data = nanalize(data, (BooleanDataset)mask);
+					}
+				}
+			}
+
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
 					len[1], ang, false);
 			List<AbstractDataset> dsets = rcmapint.value(data);
@@ -178,24 +216,52 @@ public class ROIProfile {
 		return profiles;
 	}
 
-	private static AbstractDataset processColumnNans(AbstractDataset cols, int offset, AbstractDataset data) {
+	/**
+	 * This method will nanalize any data which the mask has set to false. NOTE
+	 * the data and the mask must be precisely the same in size and value order.
+	 * 
+	 * No compatibility test is done for speed reasons, instead a failure will occur
+	 * during the nanalise operation.
+	 * 
+	 * It always returns a FloatDataset for speed and size reasons, this being the
+	 * smallest Dtype which allows NaNs.
+	 * 
+	 * 
+	 * @param data
+	 * @param mask
+	 * @return clone of dataset with NaNs at the appropriate place.
+	 */
+	public static FloatDataset nanalize(AbstractDataset data, BooleanDataset mask) {
+		
+		FloatDataset nanalized = new FloatDataset(data.getShape());
+		float[]      buffer    = nanalized.getData();
+		for (int i = 0; i < buffer.length; i++) {
+			buffer[i] = mask.getElementBooleanAbs(i)
+					  ? (float)data.getElementDoubleAbs(i) // NOTE: Do not round, just loose precision.
+					  : Float.NaN;
+		}
+		return nanalized;
+	}
+
+
+	private static AbstractDataset processColumnNans(AbstractDataset cols, AbstractDataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
 			for(int j = 0; j<data.getShape()[0]; j++) {
-				if (!Float.isNaN(data.getFloat(j, i+offset))) continue MAIN_LOOP; 
+				if (!Float.isNaN(data.getFloat(j, i))) continue MAIN_LOOP; 
 			}
 			cols.set(Float.NaN, i);
 		}
 	    return cols;
 	}
 	
-	private static AbstractDataset processRowNans(AbstractDataset rows, int offset, AbstractDataset data) {
+	private static AbstractDataset processRowNans(AbstractDataset rows, AbstractDataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
 			for(int j = 0; j<data.getShape()[1]; j++) {
-				if (!Float.isNaN(data.getFloat(i+offset, j))) continue MAIN_LOOP; 
+				if (!Float.isNaN(data.getFloat(i, j))) continue MAIN_LOOP; 
 			}
 			rows.set(Float.NaN, i);
 		}

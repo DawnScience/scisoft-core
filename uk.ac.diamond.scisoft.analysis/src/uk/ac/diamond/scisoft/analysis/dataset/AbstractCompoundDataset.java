@@ -517,7 +517,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
-	protected void calculateSummaryStats() {
+	protected void calculateSummaryStats(boolean ignoreNaNs, String name) {
 		IndexIterator iter = getIterator();
 		SummaryStatistics[] stats = new SummaryStatistics[isize];
 		for (int i = 0; i < isize; i++)
@@ -528,7 +528,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			boolean okay = true;
 			for (int i = 0; i < isize; i++) {
 				final double val = getElementDoubleAbs(iter.index + i);
-				if (Double.isInfinite(val) || Double.isNaN(val)) {
+				if (Double.isNaN(val) && ignoreNaNs) {
 					okay = false;
 					break;
 				}
@@ -543,11 +543,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		// now all the calculations are done, add the values into store
 		storedValues = new HashMap<String, Object>();
 		for (int i = 0; i < isize; i++)
-			storedValues.put("stats-"+i, stats[i]);
+			storedValues.put(name+i, stats[i]);
 	}
 
 	@Override
-	protected void calculateSummaryStats(final int axis) {
+	protected void calculateSummaryStats(final boolean ignoreNaNs, final int axis) {
 		int rank = getRank();
 
 		int[] oshape = getShape();
@@ -584,7 +584,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				getDoubleArray(darray, spos);
 				boolean skip = false;
 				for (int k = 0; k < isize; k++) {
-					if (Double.isInfinite(darray[k]) || Double.isNaN(darray[k]))
+					if (Double.isNaN(darray[k]) && ignoreNaNs)
 						skip = true;
 					
 				}
@@ -607,9 +607,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			}
 			var.set(darray, spos);
 		}
-		storedValues.put("sum-"+axis, sum);
-		storedValues.put("mean-"+axis, mean);
-		storedValues.put("var-"+axis, var);
+		storedValues.put(storeName(ignoreNaNs, "sum-"+axis), sum);
+		storedValues.put(storeName(ignoreNaNs, "mean-"+axis), mean);
+		storedValues.put(storeName(ignoreNaNs, "var-"+axis), var);
 	}
 
 	@Override
@@ -625,29 +625,32 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
-	public int[] maxPos() {
+	public int[] maxPos(boolean ignoreNaNs) {
 		abstractCompoundLogger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
-	public int[] minPos() {
+	public int[] minPos(boolean ignoreNaNs) {
 		abstractCompoundLogger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
+
+	protected final static String STATS_STORE_ITEM_NAME = STATS_STORE_NAME + "-";
 
 	/**
 	 * Calculate maximum values of elements over all items in dataset
 	 * @return double array of element-wise maxima
 	 */
 	public double[] maxItem() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double[] results = new double[isize];
 		for (int i = 0; i < isize; i++) {
-			results[i] = ((SummaryStatistics) storedValues.get("stats-"+i)).getMax();
+			results[i] = ((SummaryStatistics) storedValues.get(n + i)).getMax();
 		}
 		return results;
 	}
@@ -657,26 +660,28 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @return double array of element-wise minima
 	 */
 	public double[] minItem() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double[] results = new double[isize];
 		for (int i = 0; i < isize; i++) {
-			results[i] = ((SummaryStatistics) storedValues.get("stats-"+i)).getMin();
+			results[i] = ((SummaryStatistics) storedValues.get(n + i)).getMin();
 		}
 		return results;
 	}
 
 	@Override
 	public Object sum() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double[] results = new double[isize];
 		for (int i = 0; i < isize; i++) {
-			results[i] = ((SummaryStatistics) storedValues.get("stats-"+i)).getSum();
+			results[i] = ((SummaryStatistics) storedValues.get(n + i)).getSum();
 		}
 		return results;
 	}
@@ -718,38 +723,41 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Object mean() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double[] results = new double[isize];
 		for (int i = 0; i < isize; i++) {
-			results[i] = ((SummaryStatistics) storedValues.get("stats-"+i)).getMean();
+			results[i] = ((SummaryStatistics) storedValues.get(n + i)).getMean();
 		}
 		return results;
 	}
 
 	@Override
 	public Number variance() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double result = 0;
 		for (int i = 0; i < isize; i++)
-			result += ((SummaryStatistics) storedValues.get("stats-"+i)).getVariance();
+			result += ((SummaryStatistics) storedValues.get(n + i)).getVariance();
 		return result;
 	}
 
 	@Override
 	public Number rootMeanSquare() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
 		double result = 0;
 		for (int i = 0; i < isize; i++) {
-			final SummaryStatistics stats = (SummaryStatistics) storedValues.get("stats-"+i);
+			final SummaryStatistics stats = (SummaryStatistics) storedValues.get(n + i);
 			final double mean = stats.getMean();
 			result += stats.getVariance() + mean*mean;
 		}

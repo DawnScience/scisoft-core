@@ -255,7 +255,7 @@ public abstract class AbstractDataset implements IDataset {
 
 	@Override
 	public int hashCode() {
-		return (Integer) getMaxMin("hash");
+		return (Integer) getMaxMin(false, "hash");
 	}
 
 	@Override
@@ -2736,30 +2736,45 @@ public abstract class AbstractDataset implements IDataset {
 		storedValues.put(key, obj);
 	}
 
+	protected static String storeName(boolean ignoreNaNs, String name) {
+		return ignoreNaNs ? "nan" + name : name;
+	}
+
 	/**
 	 * Calculate summary statistics for a dataset
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param name
 	 */
-	protected void calculateSummaryStats() {
+	protected void calculateSummaryStats(boolean ignoreNaNs, String name) {
 		final IndexIterator iter = getIterator();
 		final SummaryStatistics stats = new SummaryStatistics();
 
-		while (iter.hasNext()) {
-			final double val = getElementDoubleAbs(iter.index);
-			if (Double.isInfinite(val) || Double.isNaN(val)) {
-				continue;
-			}
+		if (ignoreNaNs) {
+			while (iter.hasNext()) {
+				final double val = getElementDoubleAbs(iter.index);
+				if (Double.isNaN(val)) {
+					continue;
+				}
 
-			stats.addValue(val);
+				stats.addValue(val);
+			}
+		} else {
+			while (iter.hasNext()) {
+				final double val = getElementDoubleAbs(iter.index);
+				stats.addValue(val);
+			}
 		}
 
 		// now all the calculations are done, add the values into store
-		setStoredValue("stats", stats);
+		setStoredValue(name, stats);
 	}
 
 	/**
 	 * Calculate summary statistics for a dataset along an axis
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param axis
 	 */
-	protected void calculateSummaryStats(final int axis) {
+	protected void calculateSummaryStats(final boolean ignoreNaNs, final int axis) {
 		int rank = getRank();
 
 		int[] oshape = getShape();
@@ -2799,84 +2814,174 @@ public abstract class AbstractDataset implements IDataset {
 			}
 
 			final SummaryStatistics stats = new SummaryStatistics();
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				final double val = getDouble(spos);
-				if (Double.isInfinite(val) || Double.isNaN(val)) {
-					continue;
-				}
+			double amax = Double.NEGATIVE_INFINITY;
+			double amin = Double.POSITIVE_INFINITY;
+			boolean hasNaNs = false;
+			if (ignoreNaNs) {
+				for (int j = 0; j < alen; j++) {
+					spos[axis] = j;
+					final double val = getDouble(spos);
 
-				stats.addValue(val);
+					if (Double.isNaN(val)) {
+						hasNaNs = true;
+						continue;
+					}
+
+					if (val > amax) {
+						amax = val;
+					}
+					if (val < amin) {
+						amin = val;
+					}
+
+					stats.addValue(val);
+				}
+			} else {
+				for (int j = 0; j < alen; j++) {
+					spos[axis] = j;
+					final double val = getDouble(spos);
+
+					if (hasNaNs) {
+						if (!Double.isNaN(val))
+							stats.addValue(0);
+						continue;
+					}
+
+					if (Double.isNaN(val)) {
+						amax = Double.NaN;
+						amin = Double.NaN;
+						hasNaNs = true;
+					} else {
+						if (val > amax) {
+							amax = val;
+						}
+						if (val < amin) {
+							amin = val;
+						}
+					}
+					stats.addValue(val);
+				}
 			}
 
 			count.setAbs(qiter.index, (int) stats.getN());
 
-			final double amax = stats.getMax();
 			max.setObjectAbs(qiter.index, amax);
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				final double val = getDouble(spos);
-				if (val == amax) {
-					maxIndex.setAbs(qiter.index, j);
-					break;
+			min.setObjectAbs(qiter.index, amin);
+			boolean fmax = false;
+			boolean fmin = false;
+			if (hasNaNs) {
+				if (ignoreNaNs) {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						final double val = getDouble(spos);
+						if (Double.isNaN(val))
+							continue;
+
+						if (!fmax && val == amax) {
+							maxIndex.setAbs(qiter.index, j);
+							fmax = true;
+							if (fmin)
+								break;
+						}
+						if (!fmin && val == amin) {
+							minIndex.setAbs(qiter.index, j);
+							fmin = true;
+							if (fmax)
+								break;
+						}
+					}
+				} else {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						final double val = getDouble(spos);
+						if (Double.isNaN(val)) {
+							maxIndex.setAbs(qiter.index, j);
+							minIndex.setAbs(qiter.index, j);
+							break;
+						}
+					}					
 				}
-			}
-			final double amin = stats.getMin();
-			min.setObjectAbs(qiter.index, amax);
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				final double val = getDouble(spos);
-				if (val == amin) {
-					minIndex.setAbs(qiter.index, j);
-					break;
+			} else {
+				for (int j = 0; j < alen; j++) {
+					spos[axis] = j;
+					final double val = getDouble(spos);
+					if (!fmax && val == amax) {
+						maxIndex.setAbs(qiter.index, j);
+						fmax = true;
+						if (fmin)
+							break;
+					}
+					if (!fmin && val == amin) {
+						minIndex.setAbs(qiter.index, j);
+						fmin = true;
+						if (fmax)
+							break;
+					}
 				}
 			}
 			sum.setObjectAbs(qiter.index, stats.getSum());
 			mean.setAbs(qiter.index, stats.getMean());
 			var.setAbs(qiter.index, stats.getVariance());
 		}
-		setStoredValue("count-" + axis, count);
-		storedValues.put("max-" + axis, max);
-		storedValues.put("min-" + axis, min);
-		storedValues.put("sum-" + axis, sum);
-		storedValues.put("mean-" + axis, mean);
-		storedValues.put("var-" + axis, var);
-		storedValues.put("maxIndex-" + axis, maxIndex);
-		storedValues.put("minIndex-" + axis, minIndex);
+		setStoredValue(storeName(ignoreNaNs, "count-" + axis), count);
+		storedValues.put(storeName(ignoreNaNs, "max-" + axis), max);
+		storedValues.put(storeName(ignoreNaNs, "min-" + axis), min);
+		storedValues.put(storeName(ignoreNaNs, "sum-" + axis), sum);
+		storedValues.put(storeName(ignoreNaNs, "mean-" + axis), mean);
+		storedValues.put(storeName(ignoreNaNs, "var-" + axis), var);
+		storedValues.put(storeName(ignoreNaNs, "maxIndex-" + axis), maxIndex);
+		storedValues.put(storeName(ignoreNaNs, "minIndex-" + axis), minIndex);
 	}
 
 	/**
 	 * Calculate minimum and maximum for a dataset
+	 * @param ignoreNaNs if true, ignore NaNs
 	 */
-	protected void calculateMaxMin() {
+	protected void calculateMaxMin(boolean ignoreNaNs) {
 		IndexIterator iter = getIterator();
 		double amax = Double.NEGATIVE_INFINITY;
 		double amin = Double.POSITIVE_INFINITY;
 		double hash = 0;
-		boolean hasNans = false;
-		while (iter.hasNext()) {
-			if (hasNans) { // ignore rest of values once a NaN has been encountered
+		if (ignoreNaNs) {
+			while (iter.hasNext()) {
 				hash = (hash * 19) % Integer.MAX_VALUE;
-				continue;
+				final double val = getElementDoubleAbs(iter.index);
+				if (Double.isNaN(val)) {
+					continue;
+				} else if (!Double.isInfinite(val)) {
+					hash = (hash + val) % Integer.MAX_VALUE;
+				}
+
+				if (val > amax) {
+					amax = val;
+				}
+				if (val < amin) {
+					amin = val;
+				}
 			}
-			final double val = getElementDoubleAbs(iter.index);
-			if (Double.isInfinite(val) || Double.isNaN(val)) {
+		} else {
+			boolean hasNans = false;
+			while (iter.hasNext()) {
 				hash = (hash * 19) % Integer.MAX_VALUE;
+				if (hasNans) { // ignore rest of values once a NaN has been encountered
+					continue;
+				}
+				final double val = getElementDoubleAbs(iter.index);
 				if (Double.isNaN(val)) {
 					amax = Double.NaN;
 					amin = Double.NaN;
 					hasNans = true;
 					continue;
+				} else if (!Double.isInfinite(val)) {
+					hash = (hash + val) % Integer.MAX_VALUE;
 				}
-			} else {
-				hash = (hash * 19 + val) % Integer.MAX_VALUE;
-			}
 
-			if (val > amax) {
-				amax = val;
-			}
-			if (val < amin) {
-				amin = val;
+				if (val > amax) {
+					amax = val;
+				}
+				if (val < amin) {
+					amin = val;
+				}
 			}
 		}
 
@@ -2885,9 +2990,9 @@ public abstract class AbstractDataset implements IDataset {
 		for (int i = 0; i < rank; i++) {
 			ihash = ihash*17 + shape[i];
 		}
-		setStoredValue("max", fromDoubleToNumber(amax));
-		storedValues.put("min", fromDoubleToNumber(amin));
-		storedValues.put("hash", ihash);
+		setStoredValue(storeName(ignoreNaNs, "max"), fromDoubleToNumber(amax));
+		storedValues.put(storeName(ignoreNaNs, "min"), fromDoubleToNumber(amin));
+		storedValues.put(storeName(ignoreNaNs, "hash"), ihash);
 	}
 
 	private Number fromDoubleToNumber(double x) {
@@ -2927,32 +3032,57 @@ public abstract class AbstractDataset implements IDataset {
 		return null;
 	}
 
-	private SummaryStatistics getStatistics() {
-		SummaryStatistics stats = (SummaryStatistics) getStoredValue("stats");
+	protected final static String STATS_STORE_NAME = "stats";
+
+	private SummaryStatistics getStatistics(boolean ignoreNaNs) {
+		String n = storeName(ignoreNaNs, STATS_STORE_NAME);
+		SummaryStatistics stats = (SummaryStatistics) getStoredValue(n);
 		if (stats == null) {
-			calculateSummaryStats();
-			stats = (SummaryStatistics) getStoredValue("stats");
+			calculateSummaryStats(ignoreNaNs, n);
+			stats = (SummaryStatistics) getStoredValue(n);
 		}
 
 		return stats;
 	}
 
-	private Object getMaxMin(String key) {
+	@Override
+	public int[] maxPos() {
+		return maxPos(false);
+	}
+
+	@Override
+	public int[] minPos() {
+		return minPos(false);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return position of maximum value
+	 */
+	abstract public int[] maxPos(boolean ignoreNaNs);
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return position of minimum value
+	 */
+	abstract public int[] minPos(boolean ignoreNaNs);
+
+	private Object getMaxMin(boolean ignoreNaNs, String key) {
 		Object value = getStoredValue(key);
 		if (value == null) {
-			calculateMaxMin();
+			calculateMaxMin(ignoreNaNs);
 			value = getStoredValue(key);
 		}
 
 		return value;
 	}
 
-	private Object getStatistics(int axis, String stat) {
+	private Object getStatistics(boolean ignoreNaNs, int axis, String stat) {
 		axis = checkAxis(axis);
 		Object obj = getStoredValue(stat);
 
 		if (obj == null) {
-			calculateSummaryStats(axis);
+			calculateSummaryStats(ignoreNaNs, axis);
 			obj = getStoredValue(stat);
 		}
 
@@ -2961,19 +3091,37 @@ public abstract class AbstractDataset implements IDataset {
 
 	@Override
 	public Number max() {
-		return (Number) getMaxMin("max");
+		return max(false);
 	}
 
 	/**
+	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
 	public AbstractDataset max(int axis) {
-		return (AbstractDataset) getStatistics(axis, "max-" + axis);
+		return max(false, axis);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return maximum
+	 */
+	public Number max(boolean ignoreNaNs) {
+		return (Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"));
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param axis
+	 * @return maxima along axis in dataset
+	 */
+	public AbstractDataset max(boolean ignoreNaNs, int axis) {
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "max-" + axis));
 	}
 
 	@Override
 	public Number min() {
-		return (Number) getMaxMin("min");
+		return min(false);
 	}
 
 	/**
@@ -2981,7 +3129,24 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return minima along axis in dataset
 	 */
 	public AbstractDataset min(int axis) {
-		return (AbstractDataset) getStatistics(axis, "min-" + axis);
+		return min(false, axis);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return minimum
+	 */
+	public Number min(boolean ignoreNaNs) {
+		return (Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"));
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param axis
+	 * @return minima along axis in dataset
+	 */
+	public AbstractDataset min(boolean ignoreNaNs, int axis) {
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "min-" + axis));
 	}
 
 	/**
@@ -2990,7 +3155,17 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return absolute index
 	 */
 	public int argMax() {
-		return get1DIndex(maxPos());
+		return argMax(false);
+	}
+
+	/**
+	 * Find absolute index of maximum value
+	 * 
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return absolute index
+	 */
+	public int argMax(boolean ignoreNaNs) {
+		return get1DIndex(maxPos(ignoreNaNs));
 	}
 
 	/**
@@ -3000,16 +3175,37 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMax(int axis) {
-		return (IntegerDataset) getStatistics(axis, "maxIndex-" + axis);
+		return argMax(false, axis);
 	}
 
 	/**
-	 * Find absolute index of maximum value
+	 * Find indices of maximum values along given axis
+	 * 
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param axis
+	 * @return index dataset
+	 */
+	public IntegerDataset argMax(boolean ignoreNaNs, int axis) {
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "maxIndex-" + axis));
+	}
+
+	/**
+	 * Find absolute index of minimum value
 	 * 
 	 * @return absolute index
 	 */
 	public int argMin() {
-		return get1DIndex(minPos());
+		return argMin(false);
+	}
+
+	/**
+	 * Find absolute index of minimum value
+	 * 
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return absolute index
+	 */
+	public int argMin(boolean ignoreNaNs) {
+		return get1DIndex(minPos(ignoreNaNs));
 	}
 
 	/**
@@ -3019,7 +3215,18 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMin(int axis) {
-		return (IntegerDataset) getStatistics(axis, "minIndex-" + axis);
+		return argMax(false, axis);
+	}
+
+	/**
+	 * Find indices of minimum values along given axis
+	 * 
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param axis
+	 * @return index dataset
+	 */
+	public IntegerDataset argMin(boolean ignoreNaNs, int axis) {
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "minIndex-" + axis));
 	}
 
 	/**
@@ -3056,7 +3263,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
 	 */
 	public Object sum() {
-		return getStatistics().getSum();
+		return getStatistics(false).getSum();
 	}
 
 	/**
@@ -3064,7 +3271,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return sum along axis in dataset
 	 */
 	public AbstractDataset sum(int axis) {
-		return (AbstractDataset) getStatistics(axis, "sum-" + axis);
+		return (AbstractDataset) getStatistics(false, axis, "sum-" + axis);
 	}
 
 	/**
@@ -3080,7 +3287,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return sum over all items in dataset as appropriate to given dataset type
 	 */
 	public Object typedSum(int dtype) {
-		return fromDoubleToBiggestNumber(getStatistics().getSum(), dtype);
+		return fromDoubleToBiggestNumber(getStatistics(false).getSum(), dtype);
 	}
 
 	/**
@@ -3128,7 +3335,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	public Object mean() {
-		return getStatistics().getMean();
+		return getStatistics(false).getMean();
 	}
 
 	/**
@@ -3136,7 +3343,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return mean along axis in dataset
 	 */
 	public AbstractDataset mean(int axis) {
-		return (AbstractDataset) getStatistics(axis, "mean-" + axis);
+		return (AbstractDataset) getStatistics(false, axis, "mean-" + axis);
 	}
 
 	/**
@@ -3171,7 +3378,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return sample variance
 	 */
 	public Number variance(boolean isDatasetWholePopulation) {
-		SummaryStatistics stats = getStatistics();
+		SummaryStatistics stats = getStatistics(false);
 
 		if (isDatasetWholePopulation) {
 			StorelessUnivariateStatistic oldVar = stats.getVarianceImpl();
@@ -3189,7 +3396,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @see #variance(boolean)
 	 */
 	public AbstractDataset variance(int axis) {
-		return (AbstractDataset) getStatistics(axis, "var-" + axis);
+		return (AbstractDataset) getStatistics(false, axis, "var-" + axis);
 	}
 
 	/**
@@ -3218,7 +3425,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return standard deviation along axis in dataset
 	 */
 	public AbstractDataset stdDeviation(int axis) {
-		final AbstractDataset v = (AbstractDataset) getStatistics(axis, "var-" + axis);
+		final AbstractDataset v = (AbstractDataset) getStatistics(false, axis, "var-" + axis);
 		return Maths.sqrt(v);
 	}
 
@@ -3226,7 +3433,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return root mean square
 	 */
 	public Number rootMeanSquare() {
-		final SummaryStatistics stats = getStatistics();
+		final SummaryStatistics stats = getStatistics(false);
 		final double mean = stats.getMean();
 		return Math.sqrt(stats.getVariance() + mean * mean);
 	}
@@ -3236,8 +3443,8 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return root mean square along axis in dataset
 	 */
 	public AbstractDataset rootMeanSquare(int axis) {
-		AbstractDataset v = (AbstractDataset) getStatistics(axis, "var-" + axis);
-		AbstractDataset m = (AbstractDataset) getStatistics(axis, "mean-" + axis);
+		AbstractDataset v = (AbstractDataset) getStatistics(false, axis, "var-" + axis);
+		AbstractDataset m = (AbstractDataset) getStatistics(false, axis, "mean-" + axis);
 		AbstractDataset result = Maths.power(m, 2);
 		return Maths.sqrt(result.iadd(v));
 	}

@@ -1135,4 +1135,251 @@ public class Comparisons {
 		return r;
 	}
 
+	/**
+	 * Check item-wise for whether any a's elements are Not-a-Numbers
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is Not-a-Number.
+	 * @param a
+	 * @return dataset where item is true if any of its elements are NaNs
+	 */
+	public static BooleanDataset isNaN(AbstractDataset a) {
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		if (!a.hasFloatingPointElements()) {
+			return r;
+		}
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				r.setAbs(i++, Double.isNaN(a.getElementDoubleAbs(ita.index)));
+			}
+		} else {
+			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
+				while (ita.hasNext()) {
+					r.setAbs(i++, Double.isNaN(a.getElementDoubleAbs(ita.index)) || Double.isNaN(a.getElementDoubleAbs(ita.index + 1)));
+				}
+			} else {
+				while (ita.hasNext()) {
+					boolean br = false;
+					for (int j = 0; j < as; j++) {
+						if (Double.isNaN(a.getElementDoubleAbs(ita.index + j))) {
+							br = true;
+							break;
+						}
+					}
+					r.setAbs(i++, br);
+				}
+			}
+		}
+
+		return r;
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are infinite
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is infinite
+	 * @param a
+	 * @return dataset where item is true if any of its elements are infinite
+	 */
+	public static BooleanDataset isInfinite(AbstractDataset a) {
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		if (!a.hasFloatingPointElements()) {
+			return r;
+		}
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				r.setAbs(i++, Double.isInfinite(a.getElementDoubleAbs(ita.index)));
+			}
+		} else {
+			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
+				while (ita.hasNext()) {
+					r.setAbs(i++, Double.isInfinite(a.getElementDoubleAbs(ita.index)) || Double.isInfinite(a.getElementDoubleAbs(ita.index + 1)));
+				}
+			} else {
+				while (ita.hasNext()) {
+					boolean br = false;
+					for (int j = 0; j < as; j++) {
+						if (Double.isInfinite(a.getElementDoubleAbs(ita.index + j))) {
+							br = true;
+							break;
+						}
+					}
+					r.setAbs(i++, br);
+				}
+			}
+		}
+
+		return r;
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are positive infinite
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is positive infinite
+	 * @param a
+	 * @return dataset where item is true if any of its elements are positive infinite
+	 */
+	public static BooleanDataset isPositiveInfinite(AbstractDataset a) {
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		if (!a.hasFloatingPointElements()) {
+			return r;
+		}
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				final double rv = a.getElementDoubleAbs(ita.index);
+				r.setAbs(i++, Double.isInfinite(rv) && rv > 0);
+			}
+		} else {
+			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
+				while (ita.hasNext()) {
+					final double rv = a.getElementDoubleAbs(ita.index);
+					final double iv = a.getElementDoubleAbs(ita.index + 1);
+					r.setAbs(i++, (Double.isInfinite(rv) && rv > 0) || (Double.isInfinite(iv) && iv > 0));
+				}
+			} else {
+				while (ita.hasNext()) {
+					boolean br = false;
+					for (int j = 0; j < as; j++) {
+						final double rv = a.getElementDoubleAbs(ita.index + j);
+						if (Double.isInfinite(rv) && rv > 0) {
+							br = true;
+							break;
+						}
+					}
+					r.setAbs(i++, br);
+				}
+			}
+		}
+
+		return r;
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are negative infinite
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is negative infinite
+	 * @param a
+	 * @return dataset where item is true if any of its elements are negative infinite
+	 */
+	public static BooleanDataset isNegativeInfinite(AbstractDataset a) {
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		if (!a.hasFloatingPointElements()) {
+			return r;
+		}
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				final double rv = a.getElementDoubleAbs(ita.index);
+				r.setAbs(i++, Double.isInfinite(rv) && rv < 0);
+			}
+		} else {
+			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
+				while (ita.hasNext()) {
+					final double rv = a.getElementDoubleAbs(ita.index);
+					final double iv = a.getElementDoubleAbs(ita.index + 1);
+					r.setAbs(i++, (Double.isInfinite(rv) && rv < 0) || (Double.isInfinite(iv) && iv < 0));
+				}
+			} else {
+				while (ita.hasNext()) {
+					boolean br = false;
+					for (int j = 0; j < as; j++) {
+						final double rv = a.getElementDoubleAbs(ita.index + j);
+						if (Double.isInfinite(rv) && rv < 0) {
+							br = true;
+							break;
+						}
+					}
+					r.setAbs(i++, br);
+				}
+			}
+		}
+
+		return r;
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are finite (or not infinite and not Not-a-Number)
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is finite
+	 * @param a
+	 * @return dataset where item is true if any of its elements are finite
+	 */
+	public static BooleanDataset isFinite(AbstractDataset a) {
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		if (!a.hasFloatingPointElements()) {
+			r.fill(true);
+			return r;
+		}
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				final double rv = a.getElementDoubleAbs(ita.index);
+				r.setAbs(i++, !(Double.isInfinite(rv) || Double.isNaN(rv)));
+			}
+		} else {
+			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
+				while (ita.hasNext()) {
+					final double rv = a.getElementDoubleAbs(ita.index);
+					final double iv = a.getElementDoubleAbs(ita.index + 1);
+					r.setAbs(i++, !(Double.isInfinite(rv) || Double.isNaN(rv) || Double.isInfinite(iv) || Double.isNaN(iv)));
+				}
+			} else {
+				while (ita.hasNext()) {
+					boolean br = false;
+					for (int j = 0; j < as; j++) {
+						final double rv = a.getElementDoubleAbs(ita.index + j);
+						if (!(Double.isInfinite(rv) || Double.isNaN(rv))) {
+							br = true;
+							break;
+						}
+					}
+					r.setAbs(i++, br);
+				}
+			}
+		}
+
+		return r;
+	}
 }

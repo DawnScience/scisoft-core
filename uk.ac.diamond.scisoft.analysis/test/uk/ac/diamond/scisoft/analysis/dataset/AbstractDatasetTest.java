@@ -60,7 +60,47 @@ public class AbstractDatasetTest {
 	@Test
 	public void testMax() {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
-		System.out.println(a.max());
+		a.setShape(3,4);
+		assertEquals("Max", 11, a.max().doubleValue(), 1e-6);
+		assertEquals("Max 0", AbstractDataset.array(new double[] {8,9,10,11}), a.max(0));
+		assertEquals("Max 1", AbstractDataset.array(new double[] {3,7,11}), a.max(1));
+		assertEquals("Max arg", 11, a.argMax());
+		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(0));
+		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(1));
+		a.set(Double.NaN, 1,0);
+		System.out.println(a);
+		assertTrue("Max", Double.isNaN(a.max().doubleValue()));
+		assertTrue("Max 0", equalsWithNaNs(AbstractDataset.array(new double[] {Double.NaN,9,10,11}), a.max(0)));
+		assertTrue("Max 1", equalsWithNaNs(AbstractDataset.array(new double[] {3,Double.NaN,11}), a.max(1)));
+		assertEquals("Max arg", 4, a.argMax());
+		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {1,2,2,2}), a.argMax(0));
+		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,0,3}), a.argMax(1));
+		assertEquals("Max", 11, a.max(true).doubleValue(), 1e-6);
+		assertEquals("Max 0", AbstractDataset.array(new double[] {8,9,10,11}), a.max(true,0));
+		assertEquals("Max 1", AbstractDataset.array(new double[] {3,7,11}), a.max(true,1));
+		assertEquals("Max arg", 11, a.argMax(true));
+		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(true, 0));
+		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(true, 1));
+	}
+
+	private static boolean equalsWithNaNs(AbstractDataset a, AbstractDataset b) {
+		if (a.equals(b))
+			return true;
+
+		IndexIterator ita = a.getIterator();
+		IndexIterator itb = b.getIterator();
+		while (ita.hasNext() && itb.hasNext()) {
+			final double av = a.getElementDoubleAbs(ita.index);
+			final double bv = b.getElementDoubleAbs(itb.index);
+			if (Double.isNaN(av)) {
+				if (!Double.isNaN(bv))
+					return false;
+			} else {
+				if (av != bv)
+					return false;
+			}
+		}
+		return true;
 	}
 
 	@Test
@@ -103,8 +143,26 @@ public class AbstractDatasetTest {
 	@Test
 	public void testSort() {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		a.set(Double.NaN, 0);
+		a.setShape(3, 4);
+		a.sort(-1);
+		System.out.println(a);
+		assertEquals("First element", 1, a.getDouble(0,0), 1e-6);
+		assertTrue("0,3 element", Double.isNaN(a.getDouble(0,3)));
+		assertEquals("Final element", 11, a.getDouble(2,3), 1e-6);
+
+		a.sort(0);
+		System.out.println(a);
+		assertEquals("First element", 1, a.getDouble(0,0), 1e-6);
+		assertEquals("0,3 element", 7, a.getDouble(0,3), 1e-6);
+		assertTrue("Final element", Double.isNaN(a.getDouble(2,3)));
+
 		a.set(12, 0);
-		System.out.println(a.sort(null));
+		a.sort(null);
+		System.out.println(a);
+		assertEquals("First element", 2, a.getDouble(0), 1e-6);
+		assertEquals("2,2 element", 12, a.getDouble(2,2), 1e-6);
+		assertTrue("Final element", Double.isNaN(a.getDouble(2,3)));
 	}
 
 	@Test

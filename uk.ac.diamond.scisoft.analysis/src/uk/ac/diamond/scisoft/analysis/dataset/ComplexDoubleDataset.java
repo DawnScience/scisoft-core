@@ -361,33 +361,35 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public Object sum() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
-		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get("stats-0");
-		final SummaryStatistics istats = (SummaryStatistics) storedValues.get("stats-1");
+		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get(n + "0");
+		final SummaryStatistics istats = (SummaryStatistics) storedValues.get(n + "1");
 		return new Complex(rstats.getSum(), istats.getSum());
 	}
 
 	@Override
 	public Object mean() {
+		final String n = storeName(false, STATS_STORE_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats();
+			calculateSummaryStats(false, n);
 		}
 
-		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get("stats-0");
-		final SummaryStatistics istats = (SummaryStatistics) storedValues.get("stats-1");
+		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get(n + "0");
+		final SummaryStatistics istats = (SummaryStatistics) storedValues.get(n + "1");
 		return new Complex(rstats.getMean(), istats.getMean());
 	}
 
 	@Override
-	public int[] maxPos() {
+	public int[] maxPos(boolean ignoreNaNs) {
 		throw new UnsupportedOperationException("Cannot compare complex numbers");
 	}
 
 	@Override
-	public int[] minPos() {
+	public int[] minPos(boolean ignoreNaNs) {
 		throw new UnsupportedOperationException("Cannot compare complex numbers");
 	}
 

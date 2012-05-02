@@ -223,4 +223,37 @@ public class ComparisonsTest {
 			}
 		}
 	}
+
+	@Test
+	public void testFlags() {
+		AbstractDataset c;
+
+		c = AbstractDataset.array(new int[] {0, -1, 1});
+		checkDatasets(Comparisons.isFinite(c), new BooleanDataset(new boolean[] {true, true, true}));
+		checkDatasets(Comparisons.isInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isPositiveInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isNegativeInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isNaN(c), new BooleanDataset(new boolean[] {false, false, false}));
+
+		c = AbstractDataset.array(new double[] {0, -1, 1});
+		checkDatasets(Comparisons.isFinite(c), new BooleanDataset(new boolean[] {true, true, true}));
+		checkDatasets(Comparisons.isInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isPositiveInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isNegativeInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isNaN(c), new BooleanDataset(new boolean[] {false, false, false}));
+
+		c = AbstractDataset.array(new double[] {Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY});
+		checkDatasets(Comparisons.isFinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isInfinite(c), new BooleanDataset(new boolean[] {false, true, true}));
+		checkDatasets(Comparisons.isPositiveInfinite(c), new BooleanDataset(new boolean[] {false, false, true}));
+		checkDatasets(Comparisons.isNegativeInfinite(c), new BooleanDataset(new boolean[] {false, true, false}));
+		checkDatasets(Comparisons.isNaN(c), new BooleanDataset(new boolean[] {true, false, false}));
+
+		c = AbstractDataset.array(new double[] {Double.NaN, -Double.POSITIVE_INFINITY, -Double.NEGATIVE_INFINITY});
+		checkDatasets(Comparisons.isFinite(c), new BooleanDataset(new boolean[] {false, false, false}));
+		checkDatasets(Comparisons.isInfinite(c), new BooleanDataset(new boolean[] {false, true, true}));
+		checkDatasets(Comparisons.isPositiveInfinite(c), new BooleanDataset(new boolean[] {false, false, true}));
+		checkDatasets(Comparisons.isNegativeInfinite(c), new BooleanDataset(new boolean[] {false, true, false}));
+		checkDatasets(Comparisons.isNaN(c), new BooleanDataset(new boolean[] {true, false, false}));
+	}
 }

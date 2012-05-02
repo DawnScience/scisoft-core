@@ -670,27 +670,37 @@ public class FloatDataset extends AbstractDataset {
 		IndexIterator iter = getIterator();
 		List<Integer> posns = new ArrayList<Integer>();
 
-		while (iter.hasNext()) {
-			if (data[iter.index] == value) {
-				posns.add(iter.index);
+		if (Float.isNaN(value)) { // CLASS_TYPE // REAL_ONLY
+			while (iter.hasNext()) { // REAL_ONLY
+				if (Double.isNaN(data[iter.index])) { // REAL_ONLY
+					posns.add(iter.index); // REAL_ONLY
+				} // REAL_ONLY
+			} // REAL_ONLY
+		} else { // REAL_ONLY
+			while (iter.hasNext()) {
+				if (data[iter.index] == value) {
+					posns.add(iter.index);
+				}
 			}
-		}
+		} // REAL_ONLY
 		return posns;
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public int[] maxPos() {
+	public int[] maxPos(boolean ignoreNaNs) {
 		if (storedValues == null) {
-			calculateMaxMin();
+			calculateMaxMin(ignoreNaNs);
 		}
-		Object o = storedValues.get("maxpos");
+		String n = storeName(ignoreNaNs, "maxpos");
+		Object o = storedValues.get(n);
+
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(max().floatValue()); // PRIM_TYPE
+			max = findPositions(max(ignoreNaNs).floatValue()); // PRIM_TYPE
 			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
-			storedValues.put("maxpos", max);
+			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
 			max = (ArrayList<Integer>) o;
 		} else {
@@ -702,17 +712,18 @@ public class FloatDataset extends AbstractDataset {
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public int[] minPos() {
+	public int[] minPos(boolean ignoreNaNs) {
 		if (storedValues == null) {
-			calculateMaxMin();
+			calculateMaxMin(ignoreNaNs);
 		}
-		Object o = storedValues.get("minpos");
+		String n = storeName(ignoreNaNs, "minpos");
+		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(min().floatValue()); // PRIM_TYPE
+			min = findPositions(min(ignoreNaNs).floatValue()); // PRIM_TYPE
 			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
-			storedValues.put("minpos", min);
+			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
 			min = (ArrayList<Integer>) o;
 		} else {

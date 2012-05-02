@@ -125,3 +125,29 @@ def where(condition, x=None, y=None):
     else:
         raise ValueError, 'Both x and y must be specified'
 
+@_npwrapped
+def isnan(a):
+    '''Return true if a is a NaN, itemwise'''
+    return _cmps.isNaN(a)
+
+@_npwrapped
+def isinf(a):
+    '''Return true if a is infinite, itemwise'''
+    return _cmps.isInfinite(a)
+
+@_npwrapped
+def isposinf(a):
+    '''Return true if a is positive infinite, itemwise'''
+    return _cmps.isPositiveInfinite(a)
+
+@_npwrapped
+def isneginf(a):
+    '''Return true if a is negative infinite, itemwise'''
+    return _cmps.isNegativeInfinite(a)
+
+@_npwrapped
+def isfinite(a):
+    '''Return true if a is not infinite and not a NaN, itemwise'''
+    return _cmps.isFinite(a)
+
+

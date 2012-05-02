@@ -92,12 +92,18 @@ public interface IDataset extends ILazyDataset {
 	public void set(final Object obj, final int... pos);
 
 	/**
+	 * NOTE this does not return the minimum value if there are NaNs in the 
+	 * dataset. In that case you have to work out min and max for yourself.
+	 * 
 	 * @return Minimum value
 	 * @throws UnsupportedOperationException if comparisons not valid
 	 */
 	public Number min();
 
 	/**
+	 * NOTE this does not return the maximum value if there are NaNs in the 
+	 * dataset. In that case you have to work out min and max for yourself.
+	 * 
 	 * @return Maximum value
 	 * @throws UnsupportedOperationException if comparisons not valid
 	 */

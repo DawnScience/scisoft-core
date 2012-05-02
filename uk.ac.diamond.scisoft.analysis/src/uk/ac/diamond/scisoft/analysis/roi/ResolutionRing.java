@@ -46,6 +46,14 @@ public class ResolutionRing implements Serializable {
 		this.setEvenSpaced(evenSpacedRings);
 		this.setStandard(false);
 		}
+	public ResolutionRing(double wavelength, boolean visible, org.eclipse.swt.graphics.Color colour, boolean ice, boolean evenSpacedRings, boolean standard) {
+		this.wavelength = wavelength;
+		this.visible = visible;
+		this.colour = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
+		this.setIce(ice);
+		this.setEvenSpaced(evenSpacedRings);
+		this.setStandard(standard);
+		}
 	public ResolutionRing(double wavelength, boolean visible, Color colour, boolean ice, boolean evenSpacedRings,boolean standard) {
 		this.wavelength = wavelength;
 		this.visible = visible;
@@ -106,6 +114,10 @@ public class ResolutionRing implements Serializable {
 	 */
 	public Color getColour() {
 		return colour;
+	}
+	
+	public org.eclipse.swt.graphics.Color getSWTColour() {
+		return new org.eclipse.swt.graphics.Color(null, colour.getRed(), colour.getGreen(), colour.getBlue());
 	}
 
 	public void setIce(boolean ice) {

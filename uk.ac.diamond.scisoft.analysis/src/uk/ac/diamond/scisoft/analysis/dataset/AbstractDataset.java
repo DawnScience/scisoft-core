@@ -1202,6 +1202,14 @@ public abstract class AbstractDataset implements IDataset {
 		return elementClass(getDtype());
 	}
 
+	/**
+	 * @return true if dataset has elements which are floating point values
+	 */
+	public boolean hasFloatingPointElements() {
+		Class<?> cls = elementClass();
+		return cls == Float.class || cls == Double.class;
+	}
+
 	@Override
 	public int getElementsPerItem() {
 		return getElementsPerItem(getDtype());

@@ -105,8 +105,7 @@ limitations under the License.
          id="uk.ac.diamond.CBFlib"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="uk.ac.diamond.org.nfunk.jep"

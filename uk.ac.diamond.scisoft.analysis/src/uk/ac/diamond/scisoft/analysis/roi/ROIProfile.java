@@ -314,16 +314,20 @@ public class ROIProfile {
 				if (mask.isCompatibleWith(data))
 					pmapfint.setMask(mask);
 			pmapfint.setClip(clip);
-			List<AbstractDataset> dsetsf = pmapfint.value(data);
-			if (dsetsf == null)
+			List<AbstractDataset> dsetsfd = pmapfint.integral(data);
+			if (dsetsfd == null)
 				return null;
 
 			if (aver) {
-				profiles[0] = Maths.dividez(dsetsf.get(1), dsetsf.get(3));
-				profiles[1] = Maths.dividez(dsetsf.get(0), dsetsf.get(2));
+				List<AbstractDataset> dsetsfa = pmapfint.area(data);
+				if (dsetsfa == null)
+					return null;
+
+				profiles[0] = Maths.dividez(dsetsfd.get(1), dsetsfa.get(1));
+				profiles[1] = Maths.dividez(dsetsfd.get(0), dsetsfa.get(0));
 			} else {
-				profiles[0] = dsetsf.get(1);
-				profiles[1] = dsetsf.get(0);
+				profiles[0] = dsetsfd.get(1);
+				profiles[1] = dsetsfd.get(0);
 			}
 			return profiles;
 		}
@@ -334,16 +338,20 @@ public class ROIProfile {
 			if (mask.isCompatibleWith(data))
 				pmapint.setMask(mask);
 		pmapint.setClip(clip);
-		List<AbstractDataset> dsets = pmapint.value(data);
-		if (dsets == null)
+		List<AbstractDataset> dsetsd = pmapint.integral(data);
+		if (dsetsd == null)
 			return null;
 
 		if (aver) {
-			profiles[0] = Maths.dividez(dsets.get(1), dsets.get(3));
-			profiles[1] = Maths.dividez(dsets.get(0), dsets.get(2));
+			List<AbstractDataset> dsetsa = pmapint.area(data);
+			if (dsetsa == null)
+				return null;
+
+			profiles[0] = Maths.dividez(dsetsd.get(1), dsetsa.get(1));
+			profiles[1] = Maths.dividez(dsetsd.get(0), dsetsa.get(0));
 		} else {
-			profiles[0] = dsets.get(1);
-			profiles[1] = dsets.get(0);
+			profiles[0] = dsetsd.get(1);
+			profiles[1] = dsetsd.get(0);
 		}
 		
 		if (symmetry != SectorROI.NONE) {
@@ -356,23 +364,27 @@ public class ROIProfile {
 				if (mask.isCompatibleWith(data))
 					pmapsint.setMask(mask);
 			pmapsint.setClip(clip);
-			List<AbstractDataset> dsetss = pmapsint.value(data);
-			if (dsetss != null) {
+			List<AbstractDataset> dsetssd = pmapsint.integral(data);
+			if (dsetssd == null)
+				return null;
 
-				if (aver) {
-					symProfiles[0] = Maths.dividez(dsetss.get(1), dsetss.get(3));
-					symProfiles[1] = Maths.dividez(dsetss.get(0), dsetss.get(2));
-				} else {
-					symProfiles[0] = dsetss.get(1);
-					symProfiles[1] = dsetss.get(0);
-				}
-				if (sroi.isCombineSymmetry()) {
-					profiles[0] = Maths.add(profiles[0], symProfiles[0]);
-					profiles[1] = Maths.add(profiles[1], symProfiles[1]);
-				} else {
-					profiles[2] = symProfiles[0];
-					profiles[3] = symProfiles[1];
-				}
+			if (aver) {
+				List<AbstractDataset> dsetssa = pmapsint.area(data);
+				if (dsetssa == null)
+					return null;
+				
+				symProfiles[0] = Maths.dividez(dsetssd.get(1), dsetssa.get(1));
+				symProfiles[1] = Maths.dividez(dsetssd.get(0), dsetssa.get(0));
+			} else {
+				symProfiles[0] = dsetssd.get(1);
+				symProfiles[1] = dsetssd.get(0);
+			}
+			if (sroi.isCombineSymmetry()) {
+				profiles[0] = Maths.add(profiles[0], symProfiles[0]);
+				profiles[1] = Maths.add(profiles[1], symProfiles[1]);
+			} else {
+				profiles[2] = symProfiles[0];
+				profiles[3] = symProfiles[1];
 			}
 		}
 		return profiles;

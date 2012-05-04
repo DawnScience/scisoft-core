@@ -155,91 +155,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2)
 				throw new IllegalArgumentException("operating on 2d arrays only");
 
-			double dr = 1.0/dpp;
-			
-			//Find maximal radius on the detector
-			//int[] shape = ids.getShape();
-			//double ymax = Math.max(cy, shape[1] - cy);
-			//double xmax = Math.max(cx, shape[0] - cx);
-			//erad = Math.min(Math.sqrt(ymax*ymax + xmax*xmax), erad);
-			// work out azimuthal resolution as roughly equal to pixel at outer radius
-			int nr = (int) Math.ceil((erad - srad) / dr);
-			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
-			double dphi = (ephi - sphi) / np;
-			final double rdphi = dphi * erad;
-			if (nr == 0)
-				nr = 1;
-			if (np == 0)
-				np = 1;
-
-			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
-			AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
-			AbstractDataset usump = AbstractDataset.zeros(sump);
-			AbstractDataset usumr = AbstractDataset.zeros(sumr);
-			
-			double rad, phi;
-			double x, y;
-			double csum;			
-			
-			for (int r = 0; r < nr; r++) {
-				rad = srad + r*dr;
-				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
-				double tdphi = rdphi / rad;
-				// Check if rad == 0
-				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi))
-					tdphi = dphi;
-				if (tnp == 0)
-					tnp = 1;
-				csum = 0.0;
-
-				double msk = 1.0;
-				double tusump = 0;
-				double prj = (double)(np)/tnp;
-				for (int p = 0; p < tnp; p++) {
-					phi = sphi + p * tdphi;
-					
-					//Project current value on the corresponding range in azimuthal profile
-					int qmin = (int)(p*prj);
-					int qmax = (int)((p+1)*prj);
-					
-					x = cx + rad * Math.cos(phi);
-					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
-						if (!clip) {
-							tusump += rad*dr*tdphi;
-							for (int q = qmin; q < qmax; q++)
-								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
-						}
-						continue;
-					}
-					y = cy + rad * Math.sin(phi);
-					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
-						if (!clip) {
-							tusump += rad*dr*tdphi;
-							for (int q = qmin; q < qmax; q++)
-								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
-						}
-						continue;
-					}
-					if (mask != null)
-						msk = Maths.getBilinear(mask, y ,x);
-					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y, x);
-					csum += v;
-					tusump += rad*dr*tdphi*msk;
-					
-					for (int q = qmin; q < qmax; q++) {
-						sumr.set(v / prj + sumr.getDouble(q), q);
-						usumr.set(rad*dr*dphi*msk + usumr.getDouble(q), q);
-					}
-				}
-				sump.set(csum, r);
-				usump.set(tusump, r);
-			}
-
-			result.add(sumr);
-			result.add(sump);
-			result.add(usumr);
-			result.add(usump);
+			List<AbstractDataset> sum = integral(ids);
+			List<AbstractDataset> usum = area(ids);
+			result.add(sum.get(0));
+			result.add(sum.get(1));
+			result.add(usum.get(0));
+			result.add(usum.get(1));
 		}
 		return result;
 	}
@@ -328,4 +249,187 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		return result;
 	}
 	
+	/**
+	 * This method calculates normalisation area coefficients for mapping and integration of a Cartesian grid sampled data (pixels) to polar grid.
+	 * This values are only dependent on sector geometry and mask dataset and can be reused in mapping different datasets.
+	 * 
+	 * @param datasets
+	 *            input 2D dataset
+	 * @return 2 1D datasets for integral normalisation over radius and over azimuth (for given input and a uniform input)
+	 */
+	public List<AbstractDataset> area(IDataset... datasets) {
+		if (datasets.length == 0)
+			return null;
+
+		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+
+		for (IDataset ids : datasets) {
+			if (ids.getRank() != 2)
+				throw new IllegalArgumentException("operating on 2d arrays only");
+
+			double dr = 1.0/dpp;
+			
+			//Find maximal radius on the detector
+			//int[] shape = ids.getShape();
+			//double ymax = Math.max(cy, shape[1] - cy);
+			//double xmax = Math.max(cx, shape[0] - cx);
+			//erad = Math.min(Math.sqrt(ymax*ymax + xmax*xmax), erad);
+			// work out azimuthal resolution as roughly equal to pixel at outer radius
+			int nr = (int) Math.ceil((erad - srad) / dr);
+			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
+			double dphi = (ephi - sphi) / np;
+			final double rdphi = dphi * erad;
+			if (nr == 0)
+				nr = 1;
+			if (np == 0)
+				np = 1;
+
+			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			AbstractDataset usump = AbstractDataset.zeros(new int[] { nr }, dtype);
+			AbstractDataset usumr = AbstractDataset.zeros(new int[] { np }, dtype);
+			
+			double rad, phi;
+			double x, y;
+			
+			for (int r = 0; r < nr; r++) {
+				rad = srad + r*dr;
+				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
+				double tdphi = rdphi / rad;
+				// Check if rad == 0
+				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi))
+					tdphi = dphi;
+				if (tnp == 0)
+					tnp = 1;
+
+				double msk = 1.0;
+				double tusump = 0;
+				double prj = (double)(np)/tnp;
+				for (int p = 0; p < tnp; p++) {
+					phi = sphi + p * tdphi;
+					
+					//Project current value on the corresponding range in azimuthal profile
+					int qmin = (int)(p*prj);
+					int qmax = (int)((p+1)*prj);
+					
+					x = cx + rad * Math.cos(phi);
+					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
+						if (!clip) {
+							tusump += rad*dr*tdphi;
+							for (int q = qmin; q < qmax; q++)
+								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+						}
+						continue;
+					}
+					y = cy + rad * Math.sin(phi);
+					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
+						if (!clip) {
+							tusump += rad*dr*tdphi;
+							for (int q = qmin; q < qmax; q++)
+								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+						}
+						continue;
+					}
+					if (mask != null)
+						msk = Maths.getBilinear(mask, y ,x);
+					tusump += rad*dr*tdphi*msk;
+					
+					for (int q = qmin; q < qmax; q++) {
+						usumr.set(rad*dr*dphi*msk + usumr.getDouble(q), q);
+					}
+				}
+				usump.set(tusump, r);
+			}
+
+			result.add(usumr);
+			result.add(usump);
+		}
+		return result;
+	}
+	
+	/**
+	 * This method implements mapping and integration of a Cartesian grid sampled data (pixels) to polar grid to be used
+	 * with precalculated normalisation area values 
+	 * 
+	 * @param datasets
+	 *            input 2D dataset
+	 * @return 2 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
+	 */
+	public List<AbstractDataset> integral(IDataset... datasets) {
+		if (datasets.length == 0)
+			return null;
+
+		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+
+		for (IDataset ids : datasets) {
+			if (ids.getRank() != 2)
+				throw new IllegalArgumentException("operating on 2d arrays only");
+
+			double dr = 1.0/dpp;
+			
+			//Find maximal radius on the detector
+			//int[] shape = ids.getShape();
+			//double ymax = Math.max(cy, shape[1] - cy);
+			//double xmax = Math.max(cx, shape[0] - cx);
+			//erad = Math.min(Math.sqrt(ymax*ymax + xmax*xmax), erad);
+			// work out azimuthal resolution as roughly equal to pixel at outer radius
+			int nr = (int) Math.ceil((erad - srad) / dr);
+			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
+			double dphi = (ephi - sphi) / np;
+			final double rdphi = dphi * erad;
+			if (nr == 0)
+				nr = 1;
+			if (np == 0)
+				np = 1;
+
+			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
+			AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
+			
+			double rad, phi;
+			double x, y;
+			double csum;			
+			
+			for (int r = 0; r < nr; r++) {
+				rad = srad + r*dr;
+				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
+				double tdphi = rdphi / rad;
+				// Check if rad == 0
+				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi))
+					tdphi = dphi;
+				if (tnp == 0)
+					tnp = 1;
+				csum = 0.0;
+
+				double prj = (double)(np)/tnp;
+				for (int p = 0; p < tnp; p++) {
+					phi = sphi + p * tdphi;
+					
+					//Project current value on the corresponding range in azimuthal profile
+					int qmin = (int)(p*prj);
+					int qmax = (int)((p+1)*prj);
+					
+					x = cx + rad * Math.cos(phi);
+					if (x < 0. || x > (ids.getShape()[1] + 1.))
+						continue;
+					
+					y = cy + rad * Math.sin(phi);
+					if (y < 0. || y > (ids.getShape()[0] + 1.))
+						continue;
+					
+					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y, x);
+					csum += v;
+					
+					for (int q = qmin; q < qmax; q++) {
+						sumr.set(v / prj + sumr.getDouble(q), q);
+					}
+				}
+				sump.set(csum, r);
+			}
+
+			result.add(sumr);
+			result.add(sump);
+		}
+		return result;
+	}
+
 }

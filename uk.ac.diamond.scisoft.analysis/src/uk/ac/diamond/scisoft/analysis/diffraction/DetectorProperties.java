@@ -571,6 +571,16 @@ public class DetectorProperties {
 		}
 		return closestCoords;
 	}
+	
+	/**
+	 * @return The 2D location of the beam center on the image.
+	 */
+	public double[] getBeamLocation() {
+		
+        final Vector3d cen = new Vector3d();
+		pixelCoords(getBeamPosition(), cen);
+		return new double[]{cen.x, cen.y};
+	}
 
 	private double distBetweenPix(int p1x, int p1y, int p2x, int p2y) {
 		return Math.sqrt((p1x - p2x) * (p1x - p2x) + ((p1y - p2y) * (p1y - p2y)));

@@ -243,18 +243,24 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 				double msk = 1.0;
 				double tusump = 0;
+				
 				double prj = (double)(np)/tnp;
+				int qmin = 0;
+				int qmax = 0;
 				for (int p = 0; p < tnp; p++) {
 					phi = sphi + p * tdphi;
 					
 					//Project current value on the corresponding range in azimuthal profile
-					int qmin = (int)(p*prj);
-					int qmax = (int)((p+1)*prj);
+					if (doAzimuthal) {
+						qmin = (int)(p*prj);
+						qmax = (int)((p+1)*prj);
+					}
 					
 					x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
 						if (!clip && aver) {
-							tusump += rad*dr*tdphi;
+							if (doRadial)
+								tusump += rad*dr*tdphi;
 							if (doAzimuthal) {
 								for (int q = qmin; q < qmax; q++)
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
@@ -265,7 +271,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
 						if (!clip && aver) {
-							tusump += rad*dr*tdphi;
+							if (doRadial)
+								tusump += rad*dr*tdphi;
 							if (doAzimuthal) {
 								for (int q = qmin; q < qmax; q++)
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
@@ -273,7 +280,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						}
 						continue;
 					}
-					if (mask != null)
+					if (mask != null && aver)
 						msk = Maths.getBilinear(mask, y ,x);
 					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y, x);
 					if (doRadial) {
@@ -366,30 +373,36 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (shape[1] + 1.)) {
 						if (!clip) {
-							tusump += rad*dr*tdphi;
-							for (int q = qmin; q < qmax; q++)
-								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+							if (doRadial)
+								tusump += rad*dr*tdphi;
+							if (doAzimuthal)
+								for (int q = qmin; q < qmax; q++)
+									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
 						}
 						continue;
 					}
 					y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (shape[0] + 1.)) {
 						if (!clip) {
-							tusump += rad*dr*tdphi;
-							for (int q = qmin; q < qmax; q++)
-								usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+							if (doRadial)
+								tusump += rad*dr*tdphi;
+							if (doAzimuthal)
+								for (int q = qmin; q < qmax; q++)
+									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
 						}
 						continue;
 					}
 					if (mask != null)
 						msk = Maths.getBilinear(mask, y ,x);
-					tusump += rad*dr*tdphi*msk;
+					if (doRadial)
+						tusump += rad*dr*tdphi*msk;
 					
-					for (int q = qmin; q < qmax; q++) {
-						usumr.set(rad*dr*dphi*msk + usumr.getDouble(q), q);
-					}
+					if (doAzimuthal)
+						for (int q = qmin; q < qmax; q++)
+							usumr.set(rad*dr*dphi*msk + usumr.getDouble(q), q);
 				}
-				usump.set(tusump, r);
+				if (doRadial)
+					usump.set(tusump, r);
 			}
 
 			result.add(usumr);

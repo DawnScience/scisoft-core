@@ -124,12 +124,12 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		return output;
 	}
 
-	static String[] miniCBFheaderNames = { "# Pixel_size", "# Silicon sensor, thickness", "# Exposure_time",
-			"# Exposure_period", "# Tau =", "# Count_cutoff", "# Threshold_setting,", "# N_excluded_pixels =",
-			"# Excluded_pixels:", "# Flat_field:", "# Trim_directory:", "# Wavelength", "# Energy_range",
-			"# Detector_distance", "# Detector_Voffset", "# Beam_xy", "# Flux", "# Filter_transmission",
-			"# Start_angle", "# Angle_increment", "# Detector_2theta", "# Polarization", "# Alpha", "# Kappa", "# Phi",
-			"# Chi", "# Oscillation_axis", "# N_oscillations" };
+	static String[] miniCBFheaderNames = { "Pixel_size", "Silicon sensor, thickness", "Exposure_time",
+			"Exposure_period", "Tau =", "Count_cutoff", "Threshold_setting,", "N_excluded_pixels =",
+			"Excluded_pixels:", "Flat_field:", "Trim_directory:", "Wavelength", "Energy_range",
+			"Detector_distance", "Detector_Voffset", "Beam_xy", "Flux", "Filter_transmission",
+			"Start_angle", "Angle_increment", "Detector_2theta", "Polarization", "Alpha", "Kappa", "Phi",
+			"Chi", "Oscillation_axis", "N_oscillations" };
 
 	private ImageOrientation readMiniCBFHeader(cbf_handle_struct chs) throws ScanFileHolderException{
 		SWIGTYPE_p_p_char s = cbf.new_charPP();
@@ -158,7 +158,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 					continue;
 				for (int j = 0; j < miniCBFheaderNames.length; j++) {
 					found = false;
-					if (temp.contains(miniCBFheaderNames[j])) {
+					if (temp.startsWith(miniCBFheaderNames[j], 2)) {
 						metadata.put(miniCBFheaderNames[j], temp.substring(
 								temp.indexOf(miniCBFheaderNames[j]) + miniCBFheaderNames[j].length(), temp.length())
 								.trim());
@@ -208,12 +208,12 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	
 	private void createGDAMetadata() throws ScanFileHolderException{
 		try {
-			String pixelSize = getMetadataValue("# Pixel_size");
+			String pixelSize = getMetadataValue("Pixel_size");
 			String[] xypixVal = pixelSize.split("m x");
 			double xPxVal = Double.parseDouble(xypixVal[0])*1000;
 			double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;
 			
-			String tmp = getMetadataValue("# Beam_xy");
+			String tmp = getMetadataValue("Beam_xy");
 			String [] beamxy = tmp.split(",");
 			double beamPosX = Double.parseDouble(beamxy[0].split("\\(")[1]);
 			double beamPosY = Double.parseDouble(beamxy[1].split("\\)")[0]);
@@ -223,9 +223,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 //			double[] detectorOrigin = { 
 //					(Double.parseDouble(getMetadataValue("numPixels_x")) - beamPosX)* xPxVal ,
 //					(Double.parseDouble(getMetadataValue("numPixels_y")) - beamPosY)* yPXVal ,
-//					Double.parseDouble(getMetadataValue("# Detector_distance").split("m")[0])*1000 };
+//					Double.parseDouble(getMetadataValue("Detector_distance").split("m")[0])*1000 };
 			double[] detectorOrigin = {  beamPosX* xPxVal, beamPosY* yPXVal ,
-					Double.parseDouble(getMetadataValue("# Detector_distance").split("m")[0])*1000 };
+					Double.parseDouble(getMetadataValue("Detector_distance").split("m")[0])*1000 };
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
 			//System.out.println(detectorOrigin[0] +"  "+detectorOrigin[1]+"   "+detectorOrigin[2]);
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "milli*metre");
@@ -249,26 +249,26 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 			// "NXmonochromator:wavelength"
 			double lambda;
-			if (getMetadataValue("# Wavelength").contains("A"))
-				lambda = Double.parseDouble(getMetadataValue("# Wavelength").split("A")[0]);
-			else if(getMetadataValue("# Wavelength").contains("nm"))
-				lambda = Double.parseDouble(getMetadataValue("# Wavelength").split("nm")[0])*10;
+			if (getMetadataValue("Wavelength").contains("A"))
+				lambda = Double.parseDouble(getMetadataValue("Wavelength").split("A")[0]);
+			else if(getMetadataValue("Wavelength").contains("nm"))
+				lambda = Double.parseDouble(getMetadataValue("Wavelength").split("nm")[0])*10;
 			else
 				throw new ScanFileHolderException("The wavelength could not be parsed in from the mini cbf file header");
 			GDAMetadata.put("NXmonochromator:wavelength",lambda);
 			GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
 
 			// oscillation range
-			GDAMetadata.put("NXSample:rotation_start",Double.parseDouble(getMetadataValue("# Start_angle").split("deg.")[0]));
+			GDAMetadata.put("NXSample:rotation_start",Double.parseDouble(getMetadataValue("Start_angle").split("deg.")[0]));
 			GDAMetadata.put("NXSample:rotation_start:NXUnits","degree");
-			GDAMetadata.put("NXSample:rotation_range",Double.parseDouble(getMetadataValue("# Angle_increment").split("deg.")[0]));
+			GDAMetadata.put("NXSample:rotation_range",Double.parseDouble(getMetadataValue("Angle_increment").split("deg.")[0]));
 			GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
 			
 			//Exposure time
-			GDAMetadata.put("NXSample:exposure_time", Double.parseDouble(getMetadataValue("# Exposure_time").split("s")[0]));
+			GDAMetadata.put("NXSample:exposure_time", Double.parseDouble(getMetadataValue("Exposure_time").split("s")[0]));
 			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
 			
-			GDAMetadata.put("NXdetector:pixel_overload", Double.parseDouble(getMetadataValue("# Count_cutoff").split("counts")[0]));
+			GDAMetadata.put("NXdetector:pixel_overload", Double.parseDouble(getMetadataValue("Count_cutoff").split("counts")[0]));
 			GDAMetadata.put("NXdetector:pixel_overload:NXUnits", "counts");
 			
 			// This is new metadata
@@ -279,9 +279,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 					xPxVal,yPXVal,identityMatrix);
 
 			diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(lambda,
-					Double.parseDouble(getMetadataValue("# Start_angle").split("deg.")[0]),
-					Double.parseDouble(getMetadataValue("# Angle_increment").split("deg.")[0]), 
-					Double.parseDouble(getMetadataValue("# Exposure_time").split("s")[0]));
+					Double.parseDouble(getMetadataValue("Start_angle").split("deg.")[0]),
+					Double.parseDouble(getMetadataValue("Angle_increment").split("deg.")[0]), 
+					Double.parseDouble(getMetadataValue("Exposure_time").split("s")[0]));
 			
 			
 		} catch (NumberFormatException e) {

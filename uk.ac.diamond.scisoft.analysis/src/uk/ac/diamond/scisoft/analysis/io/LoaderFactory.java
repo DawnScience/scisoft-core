@@ -399,6 +399,7 @@ public class LoaderFactory {
 	 * @return IDataset
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<String,ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon) throws Exception {
 
 		

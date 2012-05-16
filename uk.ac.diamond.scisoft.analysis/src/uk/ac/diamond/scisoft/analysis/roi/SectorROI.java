@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -63,15 +64,18 @@ public class SectorROI extends ROIBase implements Serializable {
 	 */
 	public static final int INVERT = 6;
 
-	private static HashMap<Integer, String> symmetryText = new HashMap<Integer, String>();
+	private static Map<Integer, String> symmetryText = new HashMap<Integer, String>();
 	static {
-		symmetryText.put(SectorROI.NONE,     "N");
+		symmetryText.put(SectorROI.NONE,     "None");
 		symmetryText.put(SectorROI.FULL,     "Full");
 		symmetryText.put(SectorROI.XREFLECT, "L/R");
 		symmetryText.put(SectorROI.YREFLECT, "U/D");
 		symmetryText.put(SectorROI.CNINETY,  "+90");
 		symmetryText.put(SectorROI.ACNINETY, "-90");
-		symmetryText.put(SectorROI.INVERT,   "I");
+		symmetryText.put(SectorROI.INVERT,   "Invert");
+	}
+	public static Map<Integer, String> getSymmetriesPossible() {
+		return symmetryText;
 	}
 
 	/**
@@ -496,6 +500,15 @@ public class SectorROI extends ROIBase implements Serializable {
 		return "N";
 	}
 
+	/**
+	 * @return text for symmetry setting
+	 */
+	public static String getSymmetryText(int sym) {
+		if (symmetryText.containsKey(sym))
+			return symmetryText.get(sym);
+
+		return "N";
+	}
 	/**
 	 * @param combineSymmetry The combineSymmetry to set.
 	 */

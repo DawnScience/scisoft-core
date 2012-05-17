@@ -3,12 +3,8 @@
 	<name>uk.ac.diamond.scisoft.python</name>
 	<comment></comment>
 	<projects>
-		<project>ncsa.hdf</project>
-		<project>tp</project>
-		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
 		<project>uk.ac.diamond.scisoft.analysis.rcp</project>
-		<project>uk.ac.gda.common</project>
 		<project>uk.ac.gda.libs</project>
 	</projects>
 	<buildSpec>

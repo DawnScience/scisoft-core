@@ -3,12 +3,11 @@
 	<name>uk.ac.diamond.scisoft.analysis</name>
 	<comment></comment>
 	<projects>
-		<project>ncsa.hdf</project>
+		<project>org.dawb.hdf5</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.gda.common</project>
 		<project>uk.ac.gda.libs</project>
-		<project>uk.ac.gda.nexus</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

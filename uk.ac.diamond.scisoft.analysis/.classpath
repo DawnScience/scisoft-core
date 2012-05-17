@@ -5,7 +5,7 @@
 	<classpathentry excluding="doc/" kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="jars/jtransforms-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="jars/it.tidalwave.imageio.raw-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jars/jai_imageio.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/it.tidalwave.imageio.raw-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

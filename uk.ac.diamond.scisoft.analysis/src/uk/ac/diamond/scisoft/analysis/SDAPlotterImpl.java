@@ -224,7 +224,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			if (xAxes.length != yAxes.length)
 				throw new IllegalArgumentException("# xAxis does not match # yAxis");
 			for (int i = 0; i < xAxes.length; i++) {
-				String axisStr = AxisMapBean.XAXIS + i;
+				String axisStr = (i == 0) ? AxisMapBean.XAXIS : AxisMapBean.XAXIS + i;
 				dataBean.addAxis(axisStr, xAxes[i]);
 				// now add it to the plot data
 				try {

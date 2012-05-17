@@ -246,7 +246,8 @@ public class LoaderFactory {
 		if (cachedObject!=null) return (DataHolder)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null) return null;
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -319,7 +320,8 @@ public class LoaderFactory {
 		if (cachedObject!=null) return (IMetaData)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null) return null;
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
@@ -366,7 +368,8 @@ public class LoaderFactory {
 		if (cachedObject!=null) return (AbstractDataset)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null) return null;
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -412,7 +415,8 @@ public class LoaderFactory {
 		if (cachedObject!=null) return (Map<String,ILazyDataset>)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null) return null;
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
@@ -456,7 +460,8 @@ public class LoaderFactory {
 		if (cachedObject!=null) return (AbstractDataset)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(object.getPath());
-		if (it == null) return null;
+		if (it == null)
+			return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it

@@ -162,6 +162,11 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 
 	@Override
 	public String toString() {
+		/**
+		 * You cannot have pts.toString() if the pts contains this! It
+		 * is a recursive call. Fix to defect https://trac/scientific_software/ticket/1943
+		 */
+		if (pts.contains(this)) return super.toString();
 		return pts.toString();
 	}
 }

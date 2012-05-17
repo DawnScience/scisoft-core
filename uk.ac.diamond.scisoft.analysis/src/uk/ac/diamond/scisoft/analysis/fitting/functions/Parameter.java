@@ -228,4 +228,39 @@ public class Parameter implements Serializable, IParameter {
 	public String toString() {
 		return "Parameter is " + String.valueOf(value);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (fixed ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(lowerLimit);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(upperLimit);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(value);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Parameter other = (Parameter) obj;
+		if (fixed != other.fixed)
+			return false;
+		if (Double.doubleToLongBits(lowerLimit) != Double.doubleToLongBits(other.lowerLimit))
+			return false;
+		if (Double.doubleToLongBits(upperLimit) != Double.doubleToLongBits(other.upperLimit))
+			return false;
+		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+			return false;
+		return true;
+	}
 }

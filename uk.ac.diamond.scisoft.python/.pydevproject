@@ -8,4 +8,10 @@
 <path>/uk.ac.diamond.scisoft.python/src</path>
 <path>/uk.ac.diamond.scisoft.python/bin</path>
 </pydev_pathproperty>
+<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+<path>${TP_loc}/plugins/org.apache.commons.math_2.2.0.jar</path>
+<path>${TP_loc}/plugins/org.apache.xmlrpc_3.0.0.v20100427-1100.jar</path>
+</pydev_pathproperty>
+<pydev_variables_property name="org.python.pydev.PROJECT_VARIABLE_SUBSTITUTION">
+</pydev_variables_property>
 </pydev_project>

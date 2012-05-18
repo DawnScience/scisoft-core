@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -343,5 +344,36 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 
 		return residual;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (dirty ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + Arrays.hashCode(parameters);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AFunction other = (AFunction) obj;
+		if (dirty != other.dirty)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (!Arrays.equals(parameters, other.parameters))
+			return false;
+		return true;
 	}
 }

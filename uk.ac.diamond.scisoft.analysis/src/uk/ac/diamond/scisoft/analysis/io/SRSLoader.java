@@ -499,7 +499,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			
 			final String headStr = in.readLine();
 			//String[] vals = headStr.split("\t");
-			String[] vals = headStr.split("\\s{2,}|\\,\\s+|\\t");
+			String[] vals = splitRegex.split(headStr);
 			datasetNames.clear();
 			datasetNames.addAll(Arrays.asList(vals));
 

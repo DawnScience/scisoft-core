@@ -11,3 +11,4 @@
 
 # Ignores that are specific to this Eclipse project
 *.class
+*.pyc

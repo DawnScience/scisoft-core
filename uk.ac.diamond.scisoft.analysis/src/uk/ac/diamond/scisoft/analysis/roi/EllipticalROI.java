@@ -18,9 +18,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
-
 /**
  * An elliptical region of interest
  */
@@ -50,31 +47,6 @@ public class EllipticalROI extends ROIBase {
 		spt = new double[] { ptx, pty };
 		saxis = new double[] { major, minor };
 		ang = angle;
-	}
-
-	/**
-	 * Fit an ellipse to given polygon
-	 * @param polygon
-	 * @return ellipse ROI
-	 */
-	public static EllipticalROI fitEllipse(PolygonalROI polygon) {
-		int n = polygon.getSides();
-		double[] x = new double[n];
-		double[] y = new double[n];
-		int i = 0;
-		for (ROIBase r : polygon) {
-			x[i] = r.getPointX();
-			y[i] = r.getPointY();
-			i++;
-		}
-
-		DoubleDataset dx = new DoubleDataset(x);
-		DoubleDataset dy = new DoubleDataset(y);
-		EllipseFitter f = new EllipseFitter();
-		f.geometricFit(dx, dy, null);
-		double[] p = f.getParameters();
-		
-		return new EllipticalROI(p[0], p[1], p[2], p[3], p[4]);
 	}
 
 	/**

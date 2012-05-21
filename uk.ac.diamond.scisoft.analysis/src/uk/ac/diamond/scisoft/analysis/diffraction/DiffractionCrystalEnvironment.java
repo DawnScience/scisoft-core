@@ -17,15 +17,16 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 /**
- * add transmission and exp time 
+ * Container for parameters that a crystal is subject to in a diffraction experiment
  */
 public class DiffractionCrystalEnvironment {
+	//  TODO add transmission
+
 	private double wavelength;
 	private double phiStart;
 	private double phiRange;
 	private double exposureTime;
-	
-	
+
 	/**
 	 * @param wavelength in Angstroms
 	 */
@@ -35,23 +36,32 @@ public class DiffractionCrystalEnvironment {
 		this.phiRange = Double.NaN;
 		this.exposureTime = Double.NaN;
 	}
-	 
-	public DiffractionCrystalEnvironment(double wavelength,double phiStart, double phiRange, double exposureTime){
+
+	/**
+	 * 
+	 * @param wavelength in Angstroms
+	 * @param phiStart in degrees
+	 * @param phiRange in degrees
+	 * @param exposureTime in seconds
+	 */
+	public DiffractionCrystalEnvironment(double wavelength, double phiStart, double phiRange, double exposureTime) {
 		this.wavelength = wavelength;
 		this.phiStart = phiStart;
 		this.phiRange = phiRange;
 		this.exposureTime = exposureTime;
 	}
+
 	/**
 	 * null constructor
 	 */
-	public DiffractionCrystalEnvironment(){
+	public DiffractionCrystalEnvironment() {
 	}
 
 	@Override
-	public DiffractionCrystalEnvironment clone(){
-		return new DiffractionCrystalEnvironment(wavelength,phiStart,phiRange,exposureTime);
+	public DiffractionCrystalEnvironment clone() {
+		return new DiffractionCrystalEnvironment(wavelength, phiStart, phiRange, exposureTime);
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -68,6 +78,12 @@ public class DiffractionCrystalEnvironment {
 		return result;
 	}
 
+	private boolean equalOrBothNaNs(double a, double b) {
+		if (Double.isNaN(a) && Double.isNaN(b))
+			return true;
+		return a == b;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -77,13 +93,13 @@ public class DiffractionCrystalEnvironment {
 		if (getClass() != obj.getClass())
 			return false;
 		DiffractionCrystalEnvironment other = (DiffractionCrystalEnvironment) obj;
-		if (Double.doubleToLongBits(exposureTime) != Double.doubleToLongBits(other.exposureTime))
+		if (!equalOrBothNaNs(exposureTime, other.exposureTime))
 			return false;
-		if (Double.doubleToLongBits(phiRange) != Double.doubleToLongBits(other.phiRange))
+		if (!equalOrBothNaNs(phiRange, other.phiRange))
 			return false;
-		if (Double.doubleToLongBits(phiStart) != Double.doubleToLongBits(other.phiStart))
+		if (!equalOrBothNaNs(phiStart, other.phiStart))
 			return false;
-		if (Double.doubleToLongBits(wavelength) != Double.doubleToLongBits(other.wavelength))
+		if (!equalOrBothNaNs(wavelength, other.wavelength))
 			return false;
 		return true;
 	}
@@ -113,23 +129,21 @@ public class DiffractionCrystalEnvironment {
 	}
 	
 	/**
-	 * 
-	 * @return phi value for the start of the image in degrees
+	 * @return the phi value for the start of the image in degrees
 	 */
 	public double getPhiStart() {
 		return phiStart;
 	}
 
 	/**
-	 * 
-	 * @param phiStart phi at start of the diffraction image in degrees
+	 * Set the phi value at start of the diffraction image in degrees
+	 * @param phiStart 
 	 */
 	public void setPhiStart(double phiStart) {
 		this.phiStart = phiStart;
 	}
 
 	/**
-	 * 
 	 * @return the phi range of the image in degrees
 	 */
 	public double getPhiRange() {
@@ -137,7 +151,7 @@ public class DiffractionCrystalEnvironment {
 	}
 
 	/**
-	 * Set the 
+	 * Set the phi range in degrees
 	 * @param phiRange 
 	 */
 	public void setPhiRange(double phiRange) {
@@ -145,7 +159,6 @@ public class DiffractionCrystalEnvironment {
 	}
 	
 	/**
-	 * 
 	 * @return Exposure time in seconds
 	 */
 	public double getExposureTime() {
@@ -153,11 +166,10 @@ public class DiffractionCrystalEnvironment {
 	}
 
 	/**
-	 * 
-	 * @param exposureTime in seconds
+	 * Set the exposure time in seconds
+	 * @param exposureTime
 	 */
 	public void setExposureTime(double exposureTime) {
 		this.exposureTime = exposureTime;
 	}
-
 }

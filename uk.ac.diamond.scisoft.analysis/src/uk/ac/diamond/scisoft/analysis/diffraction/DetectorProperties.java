@@ -549,31 +549,35 @@ public class DetectorProperties {
 		int[] beamPos = pixelCoords(getBeamPosition());
 		double shortest = Double.MAX_VALUE;
 		int[] closestCoords = new int[2];
-		if (distBetweenPix(beamPos[0], beamPos[1], beamPos[0], 0) < shortest) {
+		double d = distBetweenPix(beamPos[0], beamPos[1], beamPos[0], 0); 
+		if (d < shortest) {
 			closestCoords[0] = beamPos[0];
 			closestCoords[1] = 0;
-			shortest = distBetweenPix(beamPos[0], beamPos[1], beamPos[0], 0);
+			shortest = d;
 		}
-		if (distBetweenPix(beamPos[0], beamPos[1], 0, beamPos[1]) < shortest) {
+		d = distBetweenPix(beamPos[0], beamPos[1], 0, beamPos[1]); 
+		if (d < shortest) {
 			closestCoords[0] = 0;
 			closestCoords[1] = beamPos[1];
-			shortest = distBetweenPix(beamPos[0], beamPos[1], 0, beamPos[1]);
+			shortest = d;
 		}
-		if (distBetweenPix(beamPos[0], beamPos[1], beamPos[0] - px, py) < shortest) {
+		d = distBetweenPix(beamPos[0], beamPos[1], beamPos[0] - px, py);
+		if (d < shortest) {
 			closestCoords[0] = px - beamPos[0];
 			closestCoords[1] = py;
-			shortest = distBetweenPix(beamPos[0], beamPos[1], beamPos[0] - px, py);
+			shortest = d;
 		}
-		if (distBetweenPix(beamPos[0], beamPos[1], px, beamPos[1] - py) < shortest) {
+		d = distBetweenPix(beamPos[0], beamPos[1], px, beamPos[1] - py);
+		if (d < shortest) {
 			closestCoords[0] = px;
 			closestCoords[1] = py - beamPos[1];
-			shortest = distBetweenPix(beamPos[0], beamPos[1], px, beamPos[1] - py);
+			shortest = d;
 		}
 		return closestCoords;
 	}
-	
+
 	/**
-	 * @return The 2D location of the beam center on the image.
+	 * @return The 2D location of the beam centre on the image.
 	 */
 	public double[] getBeamLocation() {
 		
@@ -583,17 +587,20 @@ public class DetectorProperties {
 	}
 
 	private double distBetweenPix(int p1x, int p1y, int p2x, int p2y) {
-		return Math.sqrt((p1x - p2x) * (p1x - p2x) + ((p1y - p2y) * (p1y - p2y)));
+		return Math.hypot(p2x - p1x, p2y - p1y);
 	}
 
-	public Vector3d vectorToClocestPiont() {
-		int[] closestCoords = pixelClosestToBeamCentre();
-		Vector3d beamToClosestPoint = new Vector3d();
-		beamToClosestPoint.sub(pixelPosition(closestCoords[0], closestCoords[1]), getBeamPosition());
-		return beamToClosestPoint;
-	}
+//	public Vector3d vectorToClosestPoint() {
+//		int[] closestCoords = pixelClosestToBeamCentre();
+//		Vector3d beamToClosestPoint = new Vector3d();
+//		beamToClosestPoint.sub(pixelPosition(closestCoords[0], closestCoords[1]), getBeamPosition());
+//		return beamToClosestPoint;
+//	}
 
-	public int distToCloestEdgeInPx() {
+	/**
+	 * @return distance to closest edge from beam centre in pixels
+	 */
+	public int distToClosestEdgeInPx() {
 		int[] closestCoords = pixelClosestToBeamCentre();
 		int[] beamPos = pixelCoords(getBeamPosition());
 		return (int) distBetweenPix(closestCoords[0], closestCoords[1], beamPos[0], beamPos[1]);

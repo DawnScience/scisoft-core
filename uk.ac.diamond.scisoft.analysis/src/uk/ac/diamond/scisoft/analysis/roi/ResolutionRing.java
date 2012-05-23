@@ -16,66 +16,61 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import java.awt.Color;
 import java.io.Serializable;
+
+import org.eclipse.swt.graphics.Color;
 
 /**
  * Class for Resolution rings in the diffraction viewer.
  */
 public class ResolutionRing implements Serializable {
 
-	private double wavelength;
+	private double resolution;
 	private boolean visible;
-	private Color colour;
+	private java.awt.Color colour;
 	private boolean ice;
 	private boolean evenSpaced;
 	private boolean standard;
 
 	/**
-	 * @param wavelength in Angstroms
-	 * @param visible
-	 * @param colour
-	 * @param ice
-	 *            flag to indicate whether the ring is set to be an ice ring
+	 * @param resolution in Angstroms
 	 */
-	public ResolutionRing(double wavelength, boolean visible, Color colour, boolean ice, boolean evenSpacedRings) {
-		this.wavelength = wavelength;
-		this.visible = visible;
-		this.colour = colour;
-		this.setIce(ice);
-		this.setEvenSpaced(evenSpacedRings);
-		this.setStandard(false);
-		}
-	public ResolutionRing(double wavelength, boolean visible, org.eclipse.swt.graphics.Color colour, boolean ice, boolean evenSpacedRings, boolean standard) {
-		this.wavelength = wavelength;
-		this.visible = visible;
-		this.colour = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
-		this.setIce(ice);
-		this.setEvenSpaced(evenSpacedRings);
-		this.setStandard(standard);
-		}
-	public ResolutionRing(double wavelength, boolean visible, Color colour, boolean ice, boolean evenSpacedRings,boolean standard) {
-		this.wavelength = wavelength;
-		this.visible = visible;
-		this.colour = colour;
-		this.setIce(ice);
-		this.setEvenSpaced(evenSpacedRings);
-		this.setStandard(standard);
-	}
-	public ResolutionRing(double wavelength, boolean visible, Color colour) {
-		this.wavelength = wavelength;
-		this.visible = visible;
-		this.colour = colour;
-		this.setIce(false);
-		this.setEvenSpaced(false);
-		this.setStandard(false);
+	public ResolutionRing(double resolution) {
+		this(resolution, true, java.awt.Color.ORANGE, false, false, false);
 	}
 
-	public ResolutionRing(double wavelength) {
-		this.wavelength = wavelength;
-		this.visible = true;
-		this.colour = Color.ORANGE;
-		this.setStandard(false);
+	/**
+	 * @param resolution in Angstroms
+	 * @param visible
+	 * @param colour
+	 * @param ice if true, then ring is an ice ring
+	 * @param evenSpacedRings
+	 */
+	public ResolutionRing(double resolution, boolean visible, Color colour, boolean ice, boolean evenSpacedRings) {
+		this(resolution, visible, colour, ice, evenSpacedRings, false);
+	}
+
+	/**
+	 * @param resolution in Angstroms
+	 * @param visible
+	 * @param colour
+	 * @param ice if true, then ring is an ice ring
+	 * @param evenSpacedRings
+	 * @param standard
+	 */
+	public ResolutionRing(double resolution, boolean visible, Color colour, boolean ice, boolean evenSpacedRings,
+			boolean standard) {
+		this(resolution, visible, new java.awt.Color(colour.getRed(), colour.getGreen(), colour.getBlue()), ice,
+				evenSpacedRings, standard);
+	}
+
+	private ResolutionRing(double resolution, boolean visible, java.awt.Color colour, boolean ice, boolean evenSpacedRings,boolean standard) {
+		this.resolution = resolution;
+		this.visible = visible;
+		this.colour = colour;
+		this.setIce(ice);
+		this.setEvenSpaced(evenSpacedRings);
+		this.setStandard(standard);
 	}
 
 	public void setVisible(boolean visable) {
@@ -87,37 +82,26 @@ public class ResolutionRing implements Serializable {
 	}
 
 	/**
-	 * @param wavelength
-	 *            The wavelength in Angstroms to set.
+	 * @param resolution
+	 *            The resolution in Angstroms to set.
 	 */
-	public void setWavelength(double wavelength) {
-		this.wavelength = wavelength;
+	public void setResolution(double resolution) {
+		this.resolution = resolution;
 	}
 
 	/**
-	 * @return Returns the wavelength in Angstroms
+	 * @return Returns the resolution in Angstroms
 	 */
-	public double getWavelength() {
-		return wavelength;
+	public double getResolution() {
+		return resolution;
 	}
 
-	/**
-	 * @param colour
-	 *            The colour to set.
-	 */
-	public void setColour(Color colour) {
-		this.colour = colour;
-	}
-
-	/**
-	 * @return Returns the colour.
-	 */
 	public Color getColour() {
-		return colour;
+		return new Color(null, colour.getRed(), colour.getGreen(), colour.getBlue());
 	}
-	
-	public org.eclipse.swt.graphics.Color getSWTColour() {
-		return new org.eclipse.swt.graphics.Color(null, colour.getRed(), colour.getGreen(), colour.getBlue());
+
+	public java.awt.Color getAWTColour() {
+		return colour;
 	}
 
 	public void setIce(boolean ice) {
@@ -135,6 +119,7 @@ public class ResolutionRing implements Serializable {
 	public boolean isEvenSpaced() {
 		return evenSpaced;
 	}
+
 	/**
 	 * @param standard The standard to set.
 	 */

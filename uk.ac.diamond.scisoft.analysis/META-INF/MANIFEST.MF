@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Analysis Plug-in
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis
-Bundle-Version: 1.3.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Diamond Light Source
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4;bundle-version="4.5.0",

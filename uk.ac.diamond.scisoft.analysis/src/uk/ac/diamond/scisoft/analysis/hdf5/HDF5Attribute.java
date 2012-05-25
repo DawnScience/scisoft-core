@@ -23,33 +23,32 @@ import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
  * Represent an attribute using a dataset
  */
 public class HDF5Attribute {
-
+	private HDF5File file;
 	private String node;
 	private String name;
 	private String type;
 	private AbstractDataset value;
 
 	/**
-	 * Create an attribute with node, name and value
-	 * @param nodeName
-	 * @param attrName
-	 * @param attrValue (usually, this is a Java array)
-	 */
-	public HDF5Attribute(final String nodeName, final String attrName, final Object attrValue) {
-		this(nodeName, attrName, attrValue, false);
-	}
-
-	/**
-	 * Create an attribute with node, name, value and sign
+	 * Create an attribute with file, node, name, value and sign
+	 * @param hdf5File
 	 * @param nodeName
 	 * @param attrName
 	 * @param attrValue (usually, this is a Java array)
 	 * @param isUnsigned true if items are unsigned but held in signed primitives
 	 */
-	public HDF5Attribute(final String nodeName, final String attrName, final Object attrValue, boolean isUnsigned) {
+	public HDF5Attribute(final HDF5File hdf5File, final String nodeName, final String attrName, final Object attrValue, final boolean isUnsigned) {
+		file = hdf5File;
 		node = nodeName;
 		name = attrName;
 		value = AbstractDataset.array(attrValue, isUnsigned);
+	}
+
+	/**
+	 * @return hdf5 file of attribute
+	 */
+	public HDF5File getHDF5File() {
+		return file;
 	}
 
 	/**

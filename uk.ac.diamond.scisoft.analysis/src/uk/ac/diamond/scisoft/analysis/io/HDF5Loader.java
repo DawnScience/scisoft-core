@@ -515,7 +515,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			group = new HDF5Group(oid);
 			if (pool != null)
 				pool.put(oid, group);
-			if (copyAttributes(name, group, gid)) {
+			if (copyAttributes(f, name, group, gid)) {
 				final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
 				try {
 					return copyNAPIMountNode(f, pool, link, keepBitWidth);
@@ -696,7 +696,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			} else {
 				// create a new scalar dataset
 				HDF5Dataset d = new HDF5Dataset(oid);
-				if (copyAttributes(path, d, did)) {
+				if (copyAttributes(f, path, d, did)) {
 					final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
 					return copyNAPIMountNode(f, pool, link, keepBitWidth);
 				}
@@ -739,7 +739,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	private static final String NAPISCHEME = "nxfile";
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final HDF5Node nn, final HObject oo) {
+	private static boolean copyAttributes(final HDF5File f, final HDF5Node nn, final HObject oo) {
 		boolean hasNAPIMount = false;
 
 		try {
@@ -749,7 +749,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? HDF5File.ROOT : oo
 						.getFullName();
 				for (Attribute a : attributes) {
-					HDF5Attribute h = new HDF5Attribute(fname, a.getName(), a.getValue(), a.isUnsigned());
+					HDF5Attribute h = new HDF5Attribute(f, fname, a.getName(), a.getValue(), a.isUnsigned());
 					h.setTypeName(getTypeName(a.getType()));
 					nn.addAttribute(h);
 					if (a.getName().equals(NAPIMOUNT)) {
@@ -764,13 +764,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final String name, final HDF5Node nn, final int id) {
+	private static boolean copyAttributes(final HDF5File f, final String name, final HDF5Node nn, final int id) {
 		boolean hasNAPIMount = false;
 
 		try {
 			final List<Attribute> attributes = H5File.getAttribute(id);
 			for (Attribute a : attributes) {
-				HDF5Attribute h = new HDF5Attribute(name, a.getName(), a.getValue(), a.isUnsigned());
+				HDF5Attribute h = new HDF5Attribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
@@ -884,7 +884,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 
 			HDF5Dataset nd = new HDF5Dataset(oid);
-			if (copyAttributes(nd, oo)) {
+			if (copyAttributes(file, nd, oo)) {
 				final String link = nd.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
 			}
@@ -945,7 +945,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			}
 			H5Group og = (H5Group) oo;
 			HDF5Group ng = new HDF5Group(oid);
-			if (copyAttributes(ng, og)) {
+			if (copyAttributes(file, ng, og)) {
 				final String link = ng.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
 			}

@@ -198,9 +198,21 @@ public class FileOperationBean implements Serializable {
 	
 	public static final int DELETEGRIDIMGTEMPDIR = 7;
 	
+	/**
+	 * 
+	 * @param downsample Set to true if a thumb nail is to be created and no meta data is required
+	 * @return The DataBean with the image in the file specified loaded
+	 */
 	public DataBean loadImage(boolean downsample) {
 		return loadImage(downsample, !downsample);
 	}
+
+	/**
+	 * 
+	 * @param downsample Set to true if a thumb nail is to be created
+	 * @param loadMetaData Set to true if the meta data is to be loaded 
+	 * @return The DataBean with the image in the file specified loaded
+	 */
 	public DataBean loadImage(boolean downsample, boolean loadMetaData) {
 
 		DataBean db = new DataBean(GuiPlotMode.TWOD);

@@ -100,7 +100,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 				if (loadData)
 					input = reader.read(0);
 			} catch (IllegalArgumentException e) { // catch bad number of bits
-//			} catch (Exception e) {
+				logger.warn("Exception using TIFFImageReader for file:" + fileName,e);
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
 				if (loadData)

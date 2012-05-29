@@ -199,12 +199,15 @@ public class FileOperationBean implements Serializable {
 	public static final int DELETEGRIDIMGTEMPDIR = 7;
 	
 	public DataBean loadImage(boolean downsample) {
+		return loadImage(downsample, !downsample);
+	}
+	public DataBean loadImage(boolean downsample, boolean loadMetaData) {
 
 		DataBean db = new DataBean(GuiPlotMode.TWOD);
 		Iterator<String> iter = files.iterator();
 		while (iter.hasNext()) {
 			String filename = iter.next();
-			AbstractDataset ds = ImageThumbnailLoader.loadImage(filename,downsample);
+			AbstractDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetaData);
 			DataSetWithAxisInformation dsAxisInf = new DataSetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean(AxisMapBean.DIRECT);
 			dsAxisInf.setData(ds);

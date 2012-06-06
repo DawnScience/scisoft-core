@@ -32,6 +32,10 @@ public class SimplePlotServer extends AbstractPlotServer {
 	 * Constructor to initialise all the collection objects
 	 */
 	public SimplePlotServer() {
+		this(false);
+	}
+	public SimplePlotServer(boolean removeOnGet) {
+		super(removeOnGet);
 		basePath = System.getProperty(LocalProperties.GDA_DATA);
 	}
 

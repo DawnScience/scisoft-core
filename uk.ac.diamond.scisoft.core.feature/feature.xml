@@ -232,12 +232,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="uk.ac.diamond.sda.jscience"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="uk.ac.diamond.sda.meta"
          download-size="0"
          install-size="0"

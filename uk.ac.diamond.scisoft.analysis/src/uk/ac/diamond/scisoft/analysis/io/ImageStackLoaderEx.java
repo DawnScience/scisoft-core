@@ -113,7 +113,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 			}
 			DataHolder data = null;
 			try {
-				data = LoaderFactory.getData(filename, mon);
+				data = LoaderFactory.getData(filename, false, mon); //we are not interested in the meta data
 			} catch (Exception e) {
 				throw new ScanFileHolderException("Cannot load image in image stack", e);
 			}

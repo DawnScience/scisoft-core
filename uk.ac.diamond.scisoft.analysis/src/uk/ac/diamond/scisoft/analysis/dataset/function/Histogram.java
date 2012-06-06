@@ -162,7 +162,8 @@ public class Histogram implements DatasetToDatasetFunction {
 							continue;
 						h[nbins-1]++;
 					} else {
-						h[(int) ((val-lo)/span)]++;
+						if(((int) ((val-lo)/span))<h.length)
+							h[(int) ((val-lo)/span)]++;
 					}
 				}
 				result.add(histo);

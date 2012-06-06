@@ -27,16 +27,22 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	private Map<String, GuiBean> guiStore;
 	private Map<String, DataBean> dataStore;
+	private final boolean removeOnGet;
 
 	public AbstractPlotServer() {
+		this(false);
+	}
+	public AbstractPlotServer(boolean removeOnGet) {
 		super();
 		guiStore = new HashMap<String, GuiBean>();
 		dataStore = new HashMap<String, DataBean>();
+		this.removeOnGet = removeOnGet;
+		
 	}
 
 	@Override
 	public DataBean getData(String guiName) throws Exception {
-		return dataStore.get(guiName);
+		return removeOnGet ? dataStore.remove(guiName):  dataStore.get(guiName);
 	}
 
 	@Override
@@ -46,7 +52,7 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public GuiBean getGuiState(String guiName) throws Exception {
-		return guiStore.get(guiName);
+		return removeOnGet ? guiStore.remove(guiName):  guiStore.get(guiName);
 	}
 
 	@Override
@@ -77,5 +83,5 @@ abstract public class AbstractPlotServer implements PlotServer {
 	protected Map<String, DataBean> getDataStore() {
 		return dataStore;
 	}
-
+	
 }

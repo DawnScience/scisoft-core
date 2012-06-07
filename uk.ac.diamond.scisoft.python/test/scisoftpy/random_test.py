@@ -63,8 +63,7 @@ class Test(unittest.TestCase):
         rnd.seed(12343)
         print rnd.rand(2,3)
         a = rnd.rand(200,300)
-        print a.mean(), a.rms()
-
+        print a.mean(), a.std()
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@ _asIterable = _dnp.asIterable
 _toList = _dnp.toList
 _asDS = _dnp.asDataset
 
-from scisoftpy.maths import ndarraywrapped as _npwrapped
+from scisoftpy.jython.jymaths import ndarraywrapped as _npwrapped
 import java.lang.Class as _jclass #@UnresolvedImport
 
 #from jarray import array as _jarray

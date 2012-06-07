@@ -697,8 +697,8 @@ public class DoubleDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(max(ignoreNaNs).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
+			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -720,8 +720,8 @@ public class DoubleDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(min(ignoreNaNs).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
+			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {

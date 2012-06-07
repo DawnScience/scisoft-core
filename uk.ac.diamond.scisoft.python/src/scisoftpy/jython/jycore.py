@@ -244,6 +244,11 @@ def _isslice(rank, shape, key):
 
 import jycomparisons as _cmps
 
+# prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
+import java.lang.Boolean as _jbool
+_jtrue = _jbool(1)
+_jfalse = _jbool(0)
+
 class ndarray:
     """
     Class to hold special methods and non-overloading names
@@ -473,22 +478,22 @@ class ndarray:
     def argmax(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
-                return self.argMax(True)
+                return self.argMax(_jtrue)
             return self.argMax()
         else:
             if ignore_nans:
-                return self.argMax(True, axis)
+                return self.argMax(_jtrue, axis)
             return self.argMax(axis)
 
     @_ndwrapped
     def argmin(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
-                return self.argMin(True)
+                return self.argMin(_jtrue)
             return self.argMin()
         else:
             if ignore_nans:
-                return self.argMin(True, axis)
+                return self.argMin(_jtrue, axis)
             return self.argMin(axis)
 
     # properties
@@ -560,6 +565,7 @@ class ndarrayA(ndarray, _booleands):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -567,6 +573,7 @@ class ndarrayA(ndarray, _booleands):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -633,6 +640,7 @@ class ndarrayB(ndarray, _byteds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -640,6 +648,7 @@ class ndarrayB(ndarray, _byteds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -706,6 +715,7 @@ class ndarrayS(ndarray, _shortds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -713,6 +723,7 @@ class ndarrayS(ndarray, _shortds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -779,6 +790,7 @@ class ndarrayI(ndarray, _integerds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -786,6 +798,7 @@ class ndarrayI(ndarray, _integerds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -852,6 +865,7 @@ class ndarrayL(ndarray, _longds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -859,6 +873,7 @@ class ndarrayL(ndarray, _longds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -925,6 +940,7 @@ class ndarrayF(ndarray, _floatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -932,6 +948,7 @@ class ndarrayF(ndarray, _floatds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -998,6 +1015,7 @@ class ndarrayD(ndarray, _doubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1005,6 +1023,7 @@ class ndarrayD(ndarray, _doubleds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1071,6 +1090,7 @@ class ndarrayC(ndarray, _complexfloatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1078,6 +1098,7 @@ class ndarrayC(ndarray, _complexfloatds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1163,6 +1184,7 @@ class ndarrayZ(ndarray, _complexdoubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1170,6 +1192,7 @@ class ndarrayZ(ndarray, _complexdoubleds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1260,6 +1283,7 @@ class ndarrayCB(ndarray, _compoundbyteds):
     # this code cannot put in ndarray superclass as there is a problem when
     # wrapping methods with same name in superclass
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1267,6 +1291,7 @@ class ndarrayCB(ndarray, _compoundbyteds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1338,6 +1363,7 @@ class ndarrayCS(ndarray, _compoundshortds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1345,6 +1371,7 @@ class ndarrayCS(ndarray, _compoundshortds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1416,6 +1443,7 @@ class ndarrayCI(ndarray, _compoundintegerds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1423,6 +1451,7 @@ class ndarrayCI(ndarray, _compoundintegerds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1494,6 +1523,7 @@ class ndarrayCL(ndarray, _compoundlongds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1501,6 +1531,7 @@ class ndarrayCL(ndarray, _compoundlongds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1572,6 +1603,7 @@ class ndarrayCF(ndarray, _compoundfloatds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1579,6 +1611,7 @@ class ndarrayCF(ndarray, _compoundfloatds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1650,6 +1683,7 @@ class ndarrayCD(ndarray, _compounddoubleds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1657,6 +1691,7 @@ class ndarrayCD(ndarray, _compounddoubleds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:
@@ -1770,6 +1805,7 @@ class ndarrayRGB(ndarray, _rgbds):
     # wrapping methods with same name in superclass
     @_ndwrapped
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.max(self, ignore_nans)
         else:
@@ -1777,6 +1813,7 @@ class ndarrayRGB(ndarray, _rgbds):
 
     @_ndwrapped
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
             return self.ndcls.min(self, ignore_nans)
         else:

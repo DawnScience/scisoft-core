@@ -366,4 +366,9 @@ def _key2slice(key, shape):
             s.append(slice(k,k+1))
             b.append(False)
 
+    if len(s) < rank:
+        l = rank - len(key)
+        s.extend([None]*l)
+        b.extend([True]*l)
+        
     return s, b

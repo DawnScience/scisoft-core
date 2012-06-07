@@ -3075,7 +3075,7 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	abstract public int[] minPos(boolean ignoreNaNs);
 
-	private Object getMaxMin(boolean ignoreNaNs, String key) {
+	protected Object getMaxMin(boolean ignoreNaNs, String key) {
 		Object value = getStoredValue(key);
 		if (value == null) {
 			calculateMaxMin(ignoreNaNs);
@@ -3223,7 +3223,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMin(int axis) {
-		return argMax(false, axis);
+		return argMin(false, axis);
 	}
 
 	/**

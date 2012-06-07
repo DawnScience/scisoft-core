@@ -689,8 +689,8 @@ public class ByteDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(max(ignoreNaNs).byteValue()); // PRIM_TYPE
-			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
+			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).byteValue()); // PRIM_TYPE
+			// max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -712,8 +712,8 @@ public class ByteDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(min(ignoreNaNs).byteValue()); // PRIM_TYPE
-			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
+			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).byteValue()); // PRIM_TYPE
+			// min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {

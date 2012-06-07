@@ -103,6 +103,7 @@ if sys.hexversion < 0x02040000:
 import os
 if os.name == 'java':
     from jython.jycore import *
+    from jython.jymaths import *
     from jython.jycomparisons import *
 
     import fit    
@@ -113,9 +114,6 @@ else:
     from python.pymaths import *
     from python.pycomparisons import *
     
-
-from maths import *
-
 '''
 Imports should work with python+numpy only agreed with MB 11 Nov 2011
 '''

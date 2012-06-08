@@ -52,6 +52,10 @@ public abstract class AbstractFileLoader implements IFileLoader {
 		return;
 	}
 
+	/**
+	 * @param mon
+	 * @return false if cancelled
+	 */
 	protected boolean monitorIncrement(IMonitor mon) {
 		if (mon!=null) {
 			mon.worked(1);

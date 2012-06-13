@@ -234,6 +234,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	HDF5File tFile = null;
 
+	private LoadFileThread loaderThread = null;
+
 	class LoadFileThread extends Thread {
 		private IMonitor mon;
 
@@ -257,7 +259,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					return;
 				}
 
-				tFile = createTreeBF(fid, keepBitWidth);
+				tFile = createTreeBF(mon, fid, keepBitWidth);
 			} catch (Exception le) {
 				syncException = new ScanFileHolderException("Problem loading file: " + fileName, le);
 			} finally {
@@ -279,14 +281,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 		if (syncException != null)
 			throw syncException;
-	}
-
-	/**
-	 * Check number and return true once that number reaches the limit 
-	 * @return true once done
-	 */
-	private synchronized boolean checkSyncNodes() {
-		return syncNodes >= syncLimit;
 	}
 
 	private synchronized void updateSyncNodes(int nodes) throws ScanFileHolderException {
@@ -321,7 +315,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
 		if (async) {
-			new LoadFileThread(mon).start();
+			loaderThread = new LoadFileThread(mon);
+			loaderThread.start();
 			try {
 				Thread.sleep(100l);
 			} catch (InterruptedException e) {
@@ -356,6 +351,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	}
 
 	/**
+	 * @return true if still loading file
+	 */
+	public boolean isLoading() {
+		if (loaderThread == null)
+			return false;
+		return loaderThread.isAlive();
+	}
+
+	/**
 	 * @param fid file ID
 	 * @param keepBitWidth
 	 * @return a HDF5 tree
@@ -376,12 +380,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	/**
 	 * Breadth-first tree walk
+	 * @param mon
 	 * @param fid file ID
 	 * @param keepBitWidth
 	 * @return a HDF5 tree
 	 * @throws Exception
 	 */
-	private HDF5File createTreeBF(final int fid, final boolean keepBitWidth) throws Exception {
+	private HDF5File createTreeBF(final IMonitor mon, final int fid, final boolean keepBitWidth) throws Exception {
 		final long oid = fileName.hashCode(); // include file name in ID
 		HDF5File f = new HDF5File(oid, fileName);
 		f.setHostname(host);
@@ -409,6 +414,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 		tFile = f;
 
+		if (!monitorIncrement(mon)) {
+			updateSyncNodes(syncLimit); // notify if finished
+			return null;
+		}
+
 		do {
 			Queue<String> q = iqueue;
 			iqueue = oqueue;
@@ -425,11 +435,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				HDF5NodeLink ol = f.findNodeLink(nn.substring(0, i));
 				HDF5Group og = (HDF5Group) ol.getDestination();
 				og.addNode(f, nn.substring(0, i+1), nn.substring(i + 1, nn.length() - 1), n);
-				if (checkSyncNodes())
-					break;
 			}
-			if (checkSyncNodes())
-				break;
+			if (!monitorIncrement(mon)) {
+				updateSyncNodes(syncLimit); // notify if finished
+				return null;
+			}
 		} while (oqueue.size() > 0);
 
 		updateSyncNodes(syncLimit); // notify if finished

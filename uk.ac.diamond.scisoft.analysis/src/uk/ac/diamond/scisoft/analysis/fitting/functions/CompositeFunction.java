@@ -300,4 +300,14 @@ public class CompositeFunction extends AFunction {
 		return functionMap.get(count).partialDeriv(parameter - count, position);
 	}
 
+	/**
+	 * Attempts to cast and return the function at i as a Peak
+	 * @param i
+	 * @return IPeak
+	 * @throws ClassCastException
+	 */
+	public IPeak getPeak(int i) {
+		return (IPeak)getFunction(i);
+	}
+
 }

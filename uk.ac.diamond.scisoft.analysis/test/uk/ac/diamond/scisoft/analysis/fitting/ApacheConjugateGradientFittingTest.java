@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
@@ -46,10 +47,10 @@ public class ApacheConjugateGradientFittingTest {
 	static double fwhm;
 	static double area;
 	static double delta = 0.1;
-	private static List<APeak> fittedGaussian;
-	private static List<APeak> fittedLorenzian;
-	private static List<APeak> fittedPearsonVII;
-	private static List<APeak> fittedPseudoVoigt;
+	private static List<CompositeFunction> fittedGaussian;
+	private static List<CompositeFunction> fittedLorenzian;
+	private static List<CompositeFunction> fittedPearsonVII;
+	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
 		fittedGaussian = Generic1DFitter.fitPeaks(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new ApacheConjugateGradient(),
@@ -103,61 +104,61 @@ public class ApacheConjugateGradientFittingTest {
 
 	@Test
 	public void testPeakPosGaussian() {
-		Assert.assertEquals(pos, fittedGaussian.get(0).getPosition(), delta);
+		Assert.assertEquals(pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosLorenzian() {
-		Assert.assertEquals(pos, fittedLorenzian.get(0).getPosition(), delta);
+		Assert.assertEquals(pos, fittedLorenzian.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosPearsonVII() {
-		Assert.assertEquals(pos, fittedPearsonVII.get(0).getPosition(), delta);
+		Assert.assertEquals(pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosPseudoVoigt() {
-		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPosition(), delta);
+		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(fwhm, fittedGaussian.get(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMLorenzian() {
-		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(area, fittedGaussian.get(0).getArea(), delta);
+		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaLorenzian() {
-		Assert.assertEquals(area, fittedLorenzian.get(0).getArea(), delta);
+		Assert.assertEquals(area, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(area, fittedPearsonVII.get(0).getArea(), delta);
+		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getArea(), delta);
+		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

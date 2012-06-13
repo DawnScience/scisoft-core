@@ -62,7 +62,7 @@ public class Generic1DFitter implements Serializable {
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset currentDataset, APeak function, int numPeaks) {
+	public static List<CompositeFunction> fitPeaks(AbstractDataset currentDataset, APeak function, int numPeaks) {
 		DoubleDataset xData = DoubleDataset.arange(currentDataset.getSize());
 		return fitPeaks(xData, currentDataset, function, numPeaks);
 	}
@@ -82,7 +82,7 @@ public class Generic1DFitter implements Serializable {
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
+	public static List<CompositeFunction> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
 		int tempSmooting = (int) (xdata.getSize() * 0.01);
 		int smoothing;
 		if (tempSmooting > defaultSmoothing) {
@@ -115,7 +115,7 @@ public class Generic1DFitter implements Serializable {
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks) {
 		return fitPeaks(xdata, ydata, function, optimiser, smoothing, numPeaks, 0.0, false, false);
 	}
@@ -150,7 +150,7 @@ public class Generic1DFitter implements Serializable {
 	 *            - Boolean - true if height is the stopping measure and false if it is area.
 	 * @return list of FittedPeaks
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure){
 		return fitPeaks(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, new IAnalysisMonitor() {
@@ -195,7 +195,7 @@ public class Generic1DFitter implements Serializable {
 	 * 			  - IAnalysisMonitor - instance of IAnalysisMonitor class allowing jobs to be stopped
 	 * @return list of FittedPeaks or null if job is stopped
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IAnalysisMonitor monitor) {
 
@@ -205,7 +205,7 @@ public class Generic1DFitter implements Serializable {
 			return null;
 		}
 
-		List<APeak> fittedPeaks = fitFunction(peaks, function, xdata, ydata, optimiser, numPeaks, threshold,
+		List<CompositeFunction> fittedPeaks = fitFunction(peaks, function, xdata, ydata, optimiser, numPeaks, threshold,
 				autoStopping, heightMeasure, monitor);
 
 		return fittedPeaks;
@@ -215,11 +215,11 @@ public class Generic1DFitter implements Serializable {
 		return parseDataDerivative(xdata, ydata, smoothing);
 	}
 
-	private static List<APeak> fitFunction(List<IdentifiedPeak> initialPeaks, APeak function, AbstractDataset xData,
+	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, APeak function, AbstractDataset xData,
 			AbstractDataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IAnalysisMonitor monitor) {
 
-		ArrayList<APeak> peaks = new ArrayList<APeak>();
+		ArrayList<CompositeFunction> peaks = new ArrayList<CompositeFunction>();
 		if (numPeaks == 0) {
 			numPeaks = initialPeaks.size();
 		}
@@ -254,7 +254,7 @@ public class Generic1DFitter implements Serializable {
 				comp.addFunction(offset);
 				optimiser.optimize(new AbstractDataset[] { x }, y, comp);
 
-				peaks.add(localPeak);
+				peaks.add(comp);
 			} catch (IllegalArgumentException e1) {
 				logger.error("There was a problem optimising the peak", e1);
 			} catch (InstantiationException e1) {
@@ -273,30 +273,30 @@ public class Generic1DFitter implements Serializable {
 		if(autoStopping) {
 			if(heightMeasure) {
 
-				Collections.sort(peaks, new Comparator<APeak>() {
+				Collections.sort(peaks, new Comparator<CompositeFunction>() {
 
 					@Override
-					public int compare(APeak o1, APeak o2) {
-						return (int) Math.signum(o1.getHeight() - o2.getHeight());
+					public int compare(CompositeFunction o1, CompositeFunction o2) {
+						return (int) Math.signum(((APeak)o1.getFunction(0)).getHeight() - ((APeak)o2.getFunction(0)).getHeight());
 					}
 				});
 
 				for (int i = 1; i < peaks.size(); i++) {
-					if(peaks.get(i).getHeight() < (peaks.get(0).getHeight()*threshold)) return peaks.subList(0, i);
+					if(((APeak)peaks.get(i).getFunction(0)).getHeight() < (((APeak)peaks.get(0).getFunction(0)).getHeight()*threshold)) return peaks.subList(0, i);
 				}
 
 			} else {
 
-				Collections.sort(peaks, new Comparator<APeak>() {
+				Collections.sort(peaks, new Comparator<CompositeFunction>() {
 
 					@Override
-					public int compare(APeak o1, APeak o2) {
-						return (int) Math.signum(o1.getArea() - o2.getArea());
+					public int compare(CompositeFunction o1, CompositeFunction o2) {
+						return (int) Math.signum(((APeak)o1.getFunction(0)).getArea() - ((APeak)o2.getFunction(0)).getArea());
 					}
 				});
 
 				for (int i = 1; i < peaks.size(); i++) {
-					if(peaks.get(i).getArea() < (peaks.get(0).getArea()*threshold)) return peaks.subList(0, i);
+					if(((APeak)peaks.get(i).getFunction(0)).getArea() < (((APeak)peaks.get(0).getFunction(0)).getArea()*threshold)) return peaks.subList(0, i);
 				}
 
 			}

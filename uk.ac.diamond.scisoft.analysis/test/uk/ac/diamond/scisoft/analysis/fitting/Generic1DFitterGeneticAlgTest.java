@@ -173,13 +173,13 @@ public class Generic1DFitterGeneticAlgTest {
 
 	private void FittingTestGeneticAlg(int[] peakPos, DoubleDataset data, APeak peakFunction) {
 
-		List<APeak> fittedPeakList = Generic1DFitter.fitPeaks(xAxis, data, peakFunction, new GeneticAlg(0.0001),
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeaks(xAxis, data, peakFunction, new GeneticAlg(0.0001),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
 		
 		double[] fittedPeakPos = new double[fittedPeakList.size()];
 		int i = 0;
-		for (APeak p : fittedPeakList) {
-			fittedPeakPos[i++] = p.getPosition();
+		for (CompositeFunction p : fittedPeakList) {
+			fittedPeakPos[i++] = p.getPeak(0).getPosition();
 		}
 		Arrays.sort(fittedPeakPos);
 		Arrays.sort(peakPos);

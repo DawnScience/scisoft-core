@@ -53,11 +53,11 @@ public class ApacheConjugateGradientFittingTest {
 	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeaks(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new ApacheConjugateGradient(),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new ApacheConjugateGradient(),
 				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeaks(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeaks(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeaks(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
 	}
 
 	@BeforeClass

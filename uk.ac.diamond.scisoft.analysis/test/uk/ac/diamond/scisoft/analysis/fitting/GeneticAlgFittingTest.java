@@ -54,13 +54,13 @@ public class GeneticAlgFittingTest {
 	
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeaks(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new GeneticAlg(accuracy),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new GeneticAlg(accuracy),
 				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeaks(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new GeneticAlg(
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new GeneticAlg(
 				accuracy), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeaks(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
 				accuracy), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeaks(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
 				accuracy), smoothing, numPeaks);
 	}
 

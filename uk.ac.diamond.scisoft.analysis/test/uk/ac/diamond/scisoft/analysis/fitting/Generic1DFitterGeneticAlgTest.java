@@ -173,7 +173,7 @@ public class Generic1DFitterGeneticAlgTest {
 
 	private void FittingTestGeneticAlg(int[] peakPos, DoubleDataset data, APeak peakFunction) {
 
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeaks(xAxis, data, peakFunction, new GeneticAlg(0.0001),
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new GeneticAlg(0.0001),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
 		
 		double[] fittedPeakPos = new double[fittedPeakList.size()];

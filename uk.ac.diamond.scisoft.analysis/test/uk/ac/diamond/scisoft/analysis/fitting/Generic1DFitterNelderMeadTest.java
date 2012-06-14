@@ -182,7 +182,7 @@ public class Generic1DFitterNelderMeadTest {
 	}
 	
 	private void FittingTest(int[] peakPos, DoubleDataset data, APeak peakFunction) {
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeaks(xAxis, data, peakFunction, new NelderMead(0.00001),
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new NelderMead(0.00001),
 				smoothing, numPeaks, threashold, autoStopping, backgroundDominated);
 		double[] fittedPeakPos = new double[fittedPeakList.size()];
 		int i = 0;

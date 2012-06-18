@@ -199,7 +199,7 @@ def hypot(a, b):
 @ndarraywrapped
 def sinh(a):
     '''Hyperbolic sine of input'''
-    return _maths.sin(a)
+    return _maths.sinh(a)
 
 @ndarraywrapped
 def cosh(a):

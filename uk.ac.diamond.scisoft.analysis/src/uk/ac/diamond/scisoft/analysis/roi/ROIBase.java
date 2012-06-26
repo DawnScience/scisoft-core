@@ -25,20 +25,17 @@ public class ROIBase implements Serializable {
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
 
-	public ROIBase() {
-	}
-
 	/**
 	 * @param point The start (or centre) point to set
 	 */
-	public void setPoint(double point[]) {
+	public void setPoint(double[] point) {
 		spt = point;
 	}
 
 	/**
 	 * @param point The start (or centre) point to set
 	 */
-	public void setPoint(int point[]) {
+	public void setPoint(int[] point) {
 		spt[0] = point[0];
 		spt[1] = point[1];
 	}
@@ -62,11 +59,19 @@ public class ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the start (or centre) point
+	 * @return Returns reference to the start (or centre) point
 	 */
-	public double[] getPoint() {
+	public double[] getPointRef() {
 		return spt;
 	}
+
+	/**
+	 * @return Returns copy of the start (or centre) point
+	 */
+	public double[] getPoint() {
+		return spt.clone();
+	}
+
 
 	/**
 	 * @return Returns the start (or centre) point

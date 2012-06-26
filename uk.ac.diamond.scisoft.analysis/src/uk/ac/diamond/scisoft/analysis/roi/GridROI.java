@@ -71,7 +71,7 @@ public class GridROI extends RectangularROI implements Serializable {
 
 	@Override
 	public GridROI copy() {
-		GridROI croi = new GridROI(getPoint()[0], getPoint()[1], getLengths()[0], getLengths()[1], getAngle(), xSpacing,
+		GridROI croi = new GridROI(getPointX(), getPointY(), getLength(0), getLength(1), getAngle(), xSpacing,
 				ySpacing, gridLinesOn, midPointOn, gridPref);
 		croi.setPlot(plot);
 		return croi;
@@ -97,8 +97,8 @@ public class GridROI extends RectangularROI implements Serializable {
 	 * @return grid points
 	 */
 	public double[][] getGridPoints() {
-		double[] len = getLengths();
-		double[] spt = getPoint();
+		final double[] len = getLengths();
+		final double[] spt = getPointRef();
 		int xGrids = (int) ((len[0] / xSpacing) + 0.5);
 		int yGrids = (int) ((len[1] / ySpacing) + 0.5);
 		double[] xLocs = new double[xGrids];
@@ -235,7 +235,7 @@ public class GridROI extends RectangularROI implements Serializable {
 		double cang = Math.cos(getAngle());
 		double sang = Math.sin(getAngle());
 		
-		double[] spt = getPoint();
+		final double[] spt = getPointRef();
 		double[] beam = getBeamCentre();
 		double[] ppmm = new double[] { gridPref.getResolutionX(), gridPref.getResolutionY() };
 		

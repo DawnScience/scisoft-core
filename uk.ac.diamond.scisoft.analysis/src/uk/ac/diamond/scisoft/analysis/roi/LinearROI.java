@@ -71,8 +71,8 @@ public class LinearROI extends ROIBase implements Serializable {
 		this.spt = new double[] {spt[0], spt[1]};
 		double x = ept[0] - spt[0];
 		double y = ept[1] - spt[1];
-		len = Math.sqrt(x*x + y*y);
-		ang = Math.atan2(y,x);
+		len = Math.hypot(x, y);
+		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
 		calcTrig();
 		crossHair = false;
@@ -88,8 +88,8 @@ public class LinearROI extends ROIBase implements Serializable {
 		spt[1] = pt[1];
 		double x = ept[0] - pt[0];
 		double y = ept[1] - pt[1];
-		len = Math.sqrt(x*x + y*y);
-		ang = Math.atan2(y,x);
+		len = Math.hypot(x, y);
+		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
 		calcTrig();
 	}
@@ -135,8 +135,8 @@ public class LinearROI extends ROIBase implements Serializable {
 	public void setEndPoint(double eptx, double epty) {
 		double x = eptx - spt[0];
 		double y = epty - spt[1];
-		len = Math.sqrt(x*x + y*y);
-		ang = Math.atan2(y,x);
+		len = Math.hypot(x, y);
+		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
 		calcTrig();
 	}
@@ -155,8 +155,8 @@ public class LinearROI extends ROIBase implements Serializable {
 	public void setEndPoint(int[] ept) {
 		double x = ept[0] - spt[0];
 		double y = ept[1] - spt[1];
-		len = Math.sqrt(x*x + y*y);
-		ang = Math.atan2(y,x);
+		len = Math.hypot(x, y);
+		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
 		calcTrig();
 	}

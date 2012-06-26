@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
  * Class for rectangular region of interest
  */
 public class RectangularROI extends ROIBase implements Serializable {
-	private double len[]; // width and height
+	private double[] len; // width and height
 	private double ang;   // angle in radians
 	private boolean clippingCompensation; // compensate for clipping
 	private double cang, sang; // cosine and sine of angle
@@ -99,7 +99,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @param len
+	 * @param len (width, height)
 	 */
 	public void setLengths(double len[]) {
 		this.len[0] = len[0];
@@ -107,8 +107,8 @@ public class RectangularROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @param major
-	 * @param minor
+	 * @param major (width)
+	 * @param minor (height)
 	 */
 	public void setLengths(double major, double minor) {
 		this.len[0] = major;
@@ -159,7 +159,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * Change line to have specified mid point
+	 * Change rectangle to have specified mid point
 	 * @param mpt
 	 */
 	public void setMidPoint(double[] mpt) {
@@ -168,7 +168,15 @@ public class RectangularROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return lengths
+	 * @param index (0 for width, 1 for height)
+	 * @return length
+	 */
+	public double getLength(int index) {
+		return len[index];
+	}
+
+	/**
+	 * @return reference to the lengths
 	 */
 	public double[] getLengths() {
 		return len;
@@ -229,7 +237,6 @@ public class RectangularROI extends ROIBase implements Serializable {
 		croi.setPlot(plot);
 		return croi;
 	}
-
 
 	/**
 	 * @param pt

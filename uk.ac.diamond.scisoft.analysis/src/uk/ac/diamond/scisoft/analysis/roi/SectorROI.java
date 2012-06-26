@@ -211,7 +211,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the radii
+	 * @return Returns reference to the radii
 	 */
 	public double[] getRadii() {
 		return rad;
@@ -292,7 +292,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the angles
+	 * @return Returns reference to the angles
 	 */
 	public double[] getAngles() {
 		return ang;

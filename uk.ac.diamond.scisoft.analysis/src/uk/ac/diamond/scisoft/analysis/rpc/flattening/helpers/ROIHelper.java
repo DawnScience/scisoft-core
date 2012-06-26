@@ -32,7 +32,7 @@ abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {
 
 	public Map<String, Object> flatten(ROIBase roi, String typeName, IRootFlattener rootFlattener) {
 		Map<String, Object> outMap = createMap(typeName);
-		outMap.put(SPT, rootFlattener.flatten(roi.getPoint()));
+		outMap.put(SPT, rootFlattener.flatten(roi.getPointRef()));
 		outMap.put(PLOT, rootFlattener.flatten(roi.isPlot()));
 		return outMap;
 	}

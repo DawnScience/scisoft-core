@@ -49,7 +49,7 @@ public class BasicFlatteningTest {
 		RectangularROI rectangularROI = new RectangularROI(100.0, 2.3);
 		RectangularROI unflattenedROI = (RectangularROI)f.unflatten(f.flatten(rectangularROI));
 		Assert.assertEquals(rectangularROI.getAngle(), unflattenedROI.getAngle(), 0.0);
-		Assert.assertArrayEquals(rectangularROI.getPoint(), unflattenedROI.getPoint(), 0.0);
+		Assert.assertArrayEquals(rectangularROI.getPointRef(), unflattenedROI.getPointRef(), 0.0);
 		Assert.assertArrayEquals(rectangularROI.getLengths(), unflattenedROI.getLengths(), 0.0);
 	}
 

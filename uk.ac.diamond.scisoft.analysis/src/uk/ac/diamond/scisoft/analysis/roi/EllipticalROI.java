@@ -22,7 +22,7 @@ import java.util.Arrays;
  * An elliptical region of interest
  */
 public class EllipticalROI extends ROIBase {
-	private double saxis[]; // semi-axes
+	private double[] saxis; // semi-axes
 	private double ang; // angles in radians
 
 	/**
@@ -50,7 +50,7 @@ public class EllipticalROI extends ROIBase {
 	}
 
 	/**
-	 * @return Returns the semi-axes
+	 * @return Returns reference to the semi-axes
 	 */
 	public double[] getSemiAxes() {
 		return saxis;

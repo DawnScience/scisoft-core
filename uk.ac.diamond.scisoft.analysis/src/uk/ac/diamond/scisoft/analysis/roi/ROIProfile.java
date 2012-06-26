@@ -302,9 +302,9 @@ public class ROIProfile {
 	 * @return sector profile
 	 */
 	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
-		double[] spt = sroi.getPoint();
-		double[] rad = sroi.getRadii();
-		double[] ang = sroi.getAngles();
+		final double[] spt = sroi.getPointRef();
+		final double[] rad = sroi.getRadii();
+		final double[] ang = sroi.getAngles();
 		int symmetry = sroi.getSymmetry();
 		boolean clip = sroi.isClippingCompensation();
 		boolean aver = sroi.isAverageArea();
@@ -430,9 +430,9 @@ public class ROIProfile {
 	 * @return sector profile
 	 */
 	public static AbstractDataset[] area(int[] shape, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
-		double[] spt = sroi.getPoint();
-		double[] rad = sroi.getRadii();
-		double[] ang = sroi.getAngles();
+		final double[] spt = sroi.getPointRef();
+		final double[] rad = sroi.getRadii();
+		final double[] ang = sroi.getAngles();
 		int symmetry = sroi.getSymmetry();
 		boolean clip = sroi.isClippingCompensation();
 		double dpp = sroi.getDpp();

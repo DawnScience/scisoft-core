@@ -59,10 +59,17 @@ public class ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the start (or centre) point
+	 * @return Returns reference to the start (or centre) point
+	 */
+	public double[] getPointRef() {
+		return spt;
+	}
+
+	/**
+	 * @return Returns copy of the start (or centre) point
 	 */
 	public double[] getPoint() {
-		return spt;
+		return spt.clone();
 	}
 
 	/**

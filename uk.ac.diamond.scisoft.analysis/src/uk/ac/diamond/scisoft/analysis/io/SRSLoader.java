@@ -154,7 +154,10 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			
 			if (result.getMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
-			
+
+			if (loadMetadata) {
+				result.setMetadata(getMetaData());
+			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
 		} finally {

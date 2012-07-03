@@ -175,10 +175,11 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			data.setStoredValue("hash", hash);
 
 			data.setName(DEF_IMAGE_NAME);
-			//data.setMetadataMap(GDAMetadata);
-			data.setMetadata(getMetaData());
-			output.addDataset("ADSC Image", data, getMetaData());
-
+			output.addDataset("ADSC Image", data);
+			if (loadMetadata) {
+				data.setMetadata(getMetaData());
+				output.setMetadata(data.getMetadata());
+			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem reading the ADSC image", e);
 		} finally {

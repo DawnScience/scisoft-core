@@ -160,6 +160,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 		DataHolder output = new DataHolder();
 
 		output.addDataset("Ruby_Image", data);
+		if (loadMetadata) {
+			data.setMetadata(getMetaData());
+			output.setMetadata(data.getMetadata());
+		}
 
 		return output;
 

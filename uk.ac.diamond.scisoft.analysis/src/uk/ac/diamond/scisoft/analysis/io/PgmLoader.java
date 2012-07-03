@@ -101,7 +101,12 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 				fi = null;
 			}
 		}
+
 		output.addDataset("Portable Grey Map", data);
+		if (loadMetadata) {
+			data.setMetadata(getMetaData());
+			output.setMetadata(data.getMetadata());
+		}
 		return output;
 	}
 

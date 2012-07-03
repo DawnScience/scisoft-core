@@ -217,7 +217,10 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 				set.setName(n);
 				result.addDataset(n, set);
 			}		
-			
+
+			if (loadMetadata) {
+				result.setMetadata(getMetaData());
+			}
 			return result;
 			
 		} catch (Exception e) {

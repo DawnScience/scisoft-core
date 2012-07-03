@@ -211,6 +211,51 @@ public class AbstractDatasetTest {
 		assertEquals(2, ds.getShape().length);
 		assertEquals(2, ds.getShape()[0]);
 		assertEquals(5, ds.getShape()[1]);
+
+		int[] os, ns;
+		os = new int[] { 2, 1, 5 };
+		ns = AbstractDataset.squeezeShape(os, false);
+		assertEquals(2, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(5, ns[1]);
+		ns = AbstractDataset.squeezeShape(os, true);
+		assertEquals(3, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(1, ns[1]);
+		assertEquals(5, ns[2]);
+
+		os = new int[] { 2, 1, 5, 1 };
+		ns = AbstractDataset.squeezeShape(os, false);
+		assertEquals(2, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(5, ns[1]);
+		ns = AbstractDataset.squeezeShape(os, true);
+		assertEquals(3, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(1, ns[1]);
+		assertEquals(5, ns[2]);
+
+		os = new int[] { 1, 2, 1, 5 };
+		ns = AbstractDataset.squeezeShape(os, false);
+		assertEquals(2, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(5, ns[1]);
+		ns = AbstractDataset.squeezeShape(os, true);
+		assertEquals(3, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(1, ns[1]);
+		assertEquals(5, ns[2]);
+
+		os = new int[] { 1, 2, 1, 5, 1 };
+		ns = AbstractDataset.squeezeShape(os, false);
+		assertEquals(2, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(5, ns[1]);
+		ns = AbstractDataset.squeezeShape(os, true);
+		assertEquals(3, ns.length);
+		assertEquals(2, ns[0]);
+		assertEquals(1, ns[1]);
+		assertEquals(5, ns[2]);
 	}
 
 	/**

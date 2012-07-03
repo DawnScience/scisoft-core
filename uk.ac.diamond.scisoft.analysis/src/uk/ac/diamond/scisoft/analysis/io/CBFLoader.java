@@ -115,11 +115,10 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		chs.delete(); // this also closes the file
 
+		output.addDataset(fileName, data);
 		if (loadMetadata) {
 			data.setMetadata(getMetaData());
-			output.addDataset(fileName, data, data.getMetadata());
-		} else {
-			output.addDataset(fileName, data);
+			output.setMetadata(data.getMetadata());
 		}
 		return output;
 	}

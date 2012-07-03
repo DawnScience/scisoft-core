@@ -629,10 +629,10 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 	public void loadMetaData(IMonitor mon) throws Exception {
 		boolean tmp = loadMetadata;
 		try {
-			this.loadMetadata = true;
+			loadMetadata = true;
 			loadFile(); // TODO Implement a method for loading meta which does not load the image
 		} finally {
-			this.loadMetadata =tmp;
+			loadMetadata = tmp;
 		}
 	}
 

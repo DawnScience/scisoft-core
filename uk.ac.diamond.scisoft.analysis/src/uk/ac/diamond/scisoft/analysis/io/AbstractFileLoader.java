@@ -49,7 +49,6 @@ public abstract class AbstractFileLoader implements IFileLoader {
 	@Override
 	public void setLoadMetadata(boolean willLoadMetadata) {
 		loadMetadata = willLoadMetadata;
-		return;
 	}
 
 	/**

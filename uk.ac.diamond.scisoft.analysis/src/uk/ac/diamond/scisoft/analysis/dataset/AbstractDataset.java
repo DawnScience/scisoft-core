@@ -1760,32 +1760,42 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Remove dimensions of 1 in shape of a dataset from end only if true
+	 * Remove dimensions of 1 in shape of a dataset - from both ends only, if true
 	 * 
-	 * @param onlyFromEnd
+	 * @param onlyFromEnds
 	 */
 	@Override
-	public AbstractDataset squeeze(boolean onlyFromEnd) {
-		shape = squeezeShape(shape, onlyFromEnd);
+	public AbstractDataset squeeze(boolean onlyFromEnds) {
+		shape = squeezeShape(shape, onlyFromEnds);
 		return this;
 	}
 
 	/**
-	 * Remove dimensions of 1 in given shape from end only if true
+	 * Remove dimensions of 1 in given shape - from both ends only, if true
 	 * 
 	 * @param oshape
-	 * @param onlyFromEnd
+	 * @param onlyFromEnds
 	 * @return newly squeezed shape
 	 */
-	public static int[] squeezeShape(final int[] oshape, boolean onlyFromEnd) {
+	public static int[] squeezeShape(final int[] oshape, boolean onlyFromEnds) {
 		int unitDims = 0;
 		int rank = oshape.length;
+		int start = 0;
 
-		if (onlyFromEnd) {
-			for (int i = rank - 1; i >= 0; i--) {
+		if (onlyFromEnds) {
+			int i = rank - 1;
+			for (; i >= 0; i--) {
 				if (oshape[i] == 1) {
 					unitDims++;
 				} else {
+					break;
+				}
+			}
+			for (int j = 0; j <= i; j++) {
+				if (oshape[j] == 1) {
+					unitDims++;
+				} else {
+					start = j;
 					break;
 				}
 			}
@@ -1805,10 +1815,10 @@ public abstract class AbstractDataset implements IDataset {
 		if (unitDims == rank)
 			return newDims; // scalar dataset
 
-		if (onlyFromEnd) {
+		if (onlyFromEnds) {
 			rank = newDims.length;
 			for (int i = 0; i < rank; i++) {
-				newDims[i] = oshape[i];
+				newDims[i] = oshape[i+start];
 			}
 		} else {
 			int j = 0;

@@ -137,9 +137,9 @@ public class ROIProfile {
 		if (ang == 0.0) {
 			
 			final int xtart  = Math.max(0,  spt[1]);
-			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[1]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
 			final int ystart = Math.max(0,  spt[0]);
-			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[0]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
@@ -172,6 +172,10 @@ public class ROIProfile {
 						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
 					}
 				}
+			}
+
+			if (slicedData==null){
+				slicedData = data;
 			}
 
 			

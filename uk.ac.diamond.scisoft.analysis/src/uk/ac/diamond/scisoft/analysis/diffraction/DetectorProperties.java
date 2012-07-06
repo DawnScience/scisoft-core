@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.vecmath.Matrix3d;
@@ -48,6 +49,7 @@ public class DetectorProperties {
 	private Matrix3d invOrientation; // its inverse
 	private Matrix3d ta;
 	private Matrix3d tb;
+	private HashSet<IDetectorPropertyListener> detectorPropListeners;
 
 	
 	/**
@@ -584,6 +586,34 @@ public class DetectorProperties {
         final Vector3d cen = new Vector3d();
 		pixelCoords(getBeamPosition(), cen);
 		return new double[]{cen.x, cen.y};
+	}
+	
+	// TODO FIXME Karl to check
+	public void setBeamLocation(double[] loc) {
+		// Code to set beam center
+		
+		// Tell listeners
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "Beam Center"));
+	}
+	
+	public void addDetectorPropertyListener(IDetectorPropertyListener l) {
+		if (detectorPropListeners==null) detectorPropListeners = new HashSet<IDetectorPropertyListener>(5);
+		detectorPropListeners.add(l);
+	}
+	/**
+	 * Call from dispose of part listening to listen to detector properties changing
+	 * @param l
+	 */
+	public void removeDetectorPropertyListener(IDetectorPropertyListener l) {
+		if (detectorPropListeners==null) return;
+		detectorPropListeners.remove(l);
+	}
+	
+	protected void fireDetectorPropertyListeners(DetectorPropertyEvent evt) {
+		if (detectorPropListeners==null) return;
+		for (IDetectorPropertyListener l : detectorPropListeners) {
+			l.detectorPropertiesChanged(evt);
+		}
 	}
 
 	private double distBetweenPix(int p1x, int p1y, int p2x, int p2y) {

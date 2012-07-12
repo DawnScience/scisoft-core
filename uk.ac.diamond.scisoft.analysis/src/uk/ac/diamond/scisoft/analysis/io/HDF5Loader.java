@@ -1475,8 +1475,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 									j++;
 								}
 							}
-						} else { // shape was squeezed then need to translate to true slice
+						} else { // shape was squeezed (and could have been extended again) then need to translate to true slice
 							int j = 0;
+							while (shape[j] == 1 && j < rank)
+								j++;
+
 							for (int i = 0; i < trank; i++) {
 								if (trueShape[i] == 1) {
 									tstart[i] = 0;
@@ -1713,13 +1716,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					if (schunk == null) {
 						all = true;
 					} else {
-						int j = rank - 1; // find last chunked dimension that is sliced across
-						while (j >= 0) {
-							if (schunk[j] > 1 && dsize[j] <= 1)
-								break;
-							j--;
+						if (Arrays.equals(dims, schunk)) {
+							all = true;
+						} else {
+							int j = rank - 1; // find last chunked dimension that is sliced across
+							while (j >= 0) {
+								if (schunk[j] > 1 && dsize[j] <= 1)
+									break;
+								j--;
+							}
+							all = j < 0;
 						}
-						all = j < 0;
 					}
 
 					if (schunk == null || all) {

@@ -82,6 +82,38 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
+	public void plot(String plotName, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName)
+			throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName, String yAxisName)
+			throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
 	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
 		throw newShouldNotBeCalled();
 
@@ -419,5 +451,4 @@ public class MockSDAPlotter implements ISDAPlotter {
 	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
 		throw newShouldNotBeCalled();
 	}
-
 }

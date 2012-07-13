@@ -66,6 +66,21 @@ public class SDAPlotter {
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
+	 * @param yAxis
+	 *            The dataset to use as the Y axis
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void plot(String plotName, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().plot(plotName, yAxis, xAxisName, yAxisName);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
 	 * @param yAxis
@@ -74,6 +89,23 @@ public class SDAPlotter {
 	 */
 	public static void plot(String plotName, final String title, final IDataset yAxis) throws Exception {
 		getPlotterImpl().plot(plotName, title, yAxis);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void plot(String plotName, final String title, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().plot(plotName, title, yAxis, xAxisName, yAxisName);
 	}
 
 	/**
@@ -136,6 +168,23 @@ public class SDAPlotter {
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param xAxis
+	 *            The dataset to use as the X values (can be null)
+	 * @param yAxes
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().plot(plotName, xAxis, yAxes, xAxisName, yAxisName);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
 	 *            The dataset to use as the X values
 	 * @param yAxis
 	 *            The dataset to use as the Y values
@@ -143,6 +192,23 @@ public class SDAPlotter {
 	 */
 	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxis) throws Exception {
 		getPlotterImpl().plot(plotName, title, xAxis, yAxis);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxis, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().plot(plotName, title, xAxis, yAxis, xAxisName, yAxisName);
 	}
 
 	/**

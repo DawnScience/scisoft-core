@@ -99,6 +99,38 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
+	public void plot(String plotName, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		request("line", yAxis, plotName);
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to title argument");
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to title argument");
+	}
+
+	@Override
+	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName) throws Exception {
+		request("line", xAxis, yAxes, plotName);
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName)
+			throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to title argument");
+	}
+
+	@Override
+	public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName, String yAxisName)
+			throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to title argument");
+	}
+
+	@Override
 	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
 		request("updateline", yAxis, null, plotName);
 	}
@@ -405,4 +437,5 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	public String[] getGuiNames() throws Exception {
 		return (String[]) request("getguinames");
 	}
+
 }

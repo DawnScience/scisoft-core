@@ -55,6 +55,20 @@ public interface ISDAPlotter {
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
+
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
 	 * @param yAxis
@@ -62,6 +76,21 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void plot(String plotName, final String title, final IDataset yAxis) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final String title, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * @param plotName
@@ -103,6 +132,23 @@ public interface ISDAPlotter {
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
 	 * @param xAxis
 	 *            The dataset to use as the X values (can be null)
 	 * @param yAxes
@@ -110,6 +156,21 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void plot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
+	 *            The dataset to use as the X values (can be null)
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * @param plotName
@@ -123,6 +184,23 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * @param plotName
@@ -147,6 +225,23 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxes
+	 *            The dataset to use as the X values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @param xAxisName
+	 *            The name of xAxis, null if none
+	 * @param yAxisName
+	 *            The name of dataset, null if none
+	 * @throws Exception
+	 */
+	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Diamond Light Source Ltd.
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.util.TestUtils;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 // TODO FIXME Loader not functional as yet
+@Ignore("Loader not functional as yet")
 public class Fit2DLoaderTest {
 	
 	static String testScratchDirectoryName = null;
@@ -28,13 +31,13 @@ public class Fit2DLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(Fit2DLoaderTest.class.getCanonicalName());
 
 	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
 		
 	}
 	
-	//@Test
+	@Test
 	public void testSimpleParse()  throws Exception {
 		
 		final String path = testFileFolder+"/BAp4_background2.f2d";

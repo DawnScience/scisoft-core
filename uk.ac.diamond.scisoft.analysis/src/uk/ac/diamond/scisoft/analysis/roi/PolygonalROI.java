@@ -41,7 +41,8 @@ public class PolygonalROI extends PointROI implements Serializable, Iterable<Poi
 	@Override
 	public void setPoint(double[] point) {
 		super.setPoint(point);
-		if (pts.size() == 0) {
+		if (pts==null || pts.size() == 0) {
+			if (pts==null) pts = new ArrayList<PointROI>();
 			pts.add(this);
 		}
 	}

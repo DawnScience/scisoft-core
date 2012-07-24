@@ -467,7 +467,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			if (t == HDF5Constants.H5O_TYPE_GROUP) {
 				return createGroup(fid, f, -1, pool, queue, name, keepBitWidth);
 			} else if (t == HDF5Constants.H5O_TYPE_DATASET) {
-				return createDataset(fid, f, -1, pool, name, null, keepBitWidth);
+				return createDataset(fid, f, -1, pool, name, keepBitWidth);
 			} else if (t == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 				logger.error("Named datatype not supported"); // TODO
 			} else {
@@ -602,7 +602,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 						}
 
 						// System.err.println("D: " + oname);
-						HDF5Node n = createDataset(gid, f, oid, pool, name + oname, oname, keepBitWidth);
+						HDF5Node n = createDataset(fid, f, oid, pool, name + oname, keepBitWidth);
 
 						if (n != null)
 							group.addNode(f, name, oname, n);
@@ -663,12 +663,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	 * @param oid object ID
 	 * @param pool
 	 * @param path of dataset (can full path or relative)
-	 * @param name dataset (can be null)
 	 * @param keepBitWidth
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createDataset(final int lid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final String path, final String name, final boolean keepBitWidth) throws Exception {
+	private static HDF5Node createDataset(final int lid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final String path, final boolean keepBitWidth) throws Exception {
 		byte[] idbuf = null;
 		if (oid == -1) {
 			try {
@@ -688,7 +687,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 		int did = -1, tid = -1, tclass = -1;
 		try {
-			did = H5.H5Dopen(lid, name == null ? path : name, HDF5Constants.H5P_DEFAULT);
+			did = H5.H5Dopen(lid, path, HDF5Constants.H5P_DEFAULT);
 			tid = H5.H5Dget_type(did);
 
 			tclass = H5.H5Tget_class(tid);
@@ -710,13 +709,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
 					return copyNAPIMountNode(f, pool, link, keepBitWidth);
 				}
-				String sname;
-				if (name == null) {
-					int i = path.lastIndexOf(HDF5Node.SEPARATOR);
-					sname = i >= 0 ? path.substring(i + 1) : path;
-				} else {
-					sname = name;
-				}
+				int i = path.lastIndexOf(HDF5Node.SEPARATOR);
+				final String sname = i >= 0 ? path.substring(i + 1) : path;
 				if (createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
 						d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
 					if (pool != null)
@@ -726,7 +720,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 				logger.error("Could not create a lazy dataset from {}", path);
 			}
 		} catch (HDF5Exception ex) {
-			logger.error("Could not open dataset", ex);
+			logger.error(String.format("Could not open dataset %s in %s", path, f), ex);
 		} finally {
 			if (tid >= 0) {
 				try {
@@ -2118,7 +2112,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 								list.add(d.getDataset());
 							}
 						} catch (HDF5Exception ex) {
-							logger.error("Could not open dataset", ex);
+							logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
 						} finally {
 							if (tid >= 0) {
 								try {

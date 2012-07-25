@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="uk.ac.diamond.scisoft.analysis.io.loader" name="Loader Factory Extension" schema="schema/uk.ac.diamond.scisoft.analysis.io.loader.exsd"/>
+
+</plugin>

@@ -41,12 +41,32 @@ public class ROIProfile {
 	 *            size
 	 * @return line profile
 	 */
-	public static AbstractDataset[] line(IDataset data, LinearROI lroi, double step) {
+	public static AbstractDataset[] line(AbstractDataset data, LinearROI lroi, double step) {
+		
+		return ROIProfile.line(data, null, lroi, step, false);
+	}
+	
+	public static AbstractDataset[] line(AbstractDataset data, AbstractDataset mask, LinearROI lroi, double step, boolean maskWithNans) {
+
 		int[] spt = lroi.getIntPoint();
 		int[] ept = lroi.getIntEndPoint();
 		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
 
 		LineSample ls = new LineSample(spt[0], spt[1], ept[0], ept[1], step);
+
+		if (mask != null && data != null) {
+			if (data.isCompatibleWith(mask)) {
+				// TODO both multiply and nanalize create copies of the whole data passed in
+				if (!maskWithNans || !(mask instanceof BooleanDataset)) {
+					// convertToAbstractDataset should not be necessart here? 
+					// AbstractDataset is already here, the data is loaded - is this right?
+					data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+				} else {
+					// Masks values to NaN, also changes Dtype to Float
+					data = nanalize(data, (BooleanDataset)mask);
+				}
+			}
+		}
 
 		List<AbstractDataset> dsets = ls.value(data);
 

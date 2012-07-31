@@ -607,7 +607,8 @@ public class LoaderFactory {
 	 * @return loader class
 	 */
 	public static Class<? extends AbstractFileLoader> getLoaderClass(String extension) {
-		return LOADERS.get(extension).get(0);
+		List<Class<? extends AbstractFileLoader>> loader = LOADERS.get(extension); 
+		return (loader!=null) ? loader.get(0) : null;
 	}
 
 	private static Iterator<Class<? extends AbstractFileLoader>> getIterator(String path) throws IllegalAccessException {

@@ -74,7 +74,7 @@ public class AWTImageUtils {
 				break;
 			case DataBuffer.TYPE_USHORT:
 				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
-				data[i] = keepBitWidth ? new ShortDataset(tmp) : tmp;
+				data[i] = keepBitWidth ? new ShortDataset(tmp) : new UnsignedShortDataset(tmp);
 				break;
 			case DataBuffer.TYPE_INT:
 				data[i] = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);

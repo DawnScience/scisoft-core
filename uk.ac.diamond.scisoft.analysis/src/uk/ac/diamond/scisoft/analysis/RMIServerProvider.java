@@ -25,10 +25,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * A simple interface to Java RMI so that objects can be exported using the defaults encoded in this class.
@@ -59,6 +62,24 @@ public class RMIServerProvider {
 
 	private RMIServerProvider() {
 	}
+	
+	private Collection<RMIServerPortListener> portListeners;
+	
+	public void addPortListener(RMIServerPortListener l) {
+		if (portListeners==null) portListeners = new HashSet<RMIServerPortListener>();
+		portListeners.add(l);
+	}
+	public void removePortListener(RMIServerPortListener l) {
+		if (portListeners==null) return;
+		portListeners.remove(l);
+	}
+	protected void firePortListeners(boolean volatilePort) {
+		if (portListeners==null) return;
+		final RMIServerPortEvent evt = new RMIServerPortEvent(this, port, volatilePort);
+		for (RMIServerPortListener l : portListeners) {
+			l.portAssigned(evt);
+		}
+	}
 
 	/**
 	 * Export the remote object given under the named service.
@@ -83,7 +104,8 @@ public class RMIServerProvider {
 			try {
 				s = new ServerSocket(0);
 				port = s.getLocalPort();
-
+				firePortListeners(true);
+				
 			} finally {
 				if (s != null) {
 					s.close();
@@ -126,6 +148,7 @@ public class RMIServerProvider {
 					+ "setPort must be called before any handlers are added.");
 
 		port = rmiPortNumber;
+		firePortListeners(false);
 	}
 
 	/**

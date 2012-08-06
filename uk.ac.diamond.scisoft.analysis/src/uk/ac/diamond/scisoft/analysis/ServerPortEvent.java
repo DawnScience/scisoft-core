@@ -16,13 +16,33 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import java.util.EventListener;
+import java.util.EventObject;
 
-public interface RMIServerPortListener extends EventListener {
+public class ServerPortEvent extends EventObject {
 
-	/**
-	 * Called when the port that the RMIServerProvider has changes.
-	 * @param evt
-	 */
-	public void portAssigned(RMIServerPortEvent evt);
+	private int port;
+	private boolean volatilePort;
+
+	public ServerPortEvent(Object arg0, int port, boolean volatilePort) {
+		super(arg0);
+		this.port = port;
+		this.volatilePort = volatilePort;
+	}
+
+	public boolean isVolatilePort() {
+		return volatilePort;
+	}
+
+	public void setVolatilePort(boolean volatilePort) {
+		this.volatilePort = volatilePort;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 }

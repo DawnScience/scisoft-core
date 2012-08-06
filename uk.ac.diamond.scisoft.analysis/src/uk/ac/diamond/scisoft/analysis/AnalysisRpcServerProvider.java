@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 /**
  * A simple interface to Analysis RPC so that classes can be exported using the defaults encoded in this class.
  */
-public class AnalysisRpcServerProvider {
+public class AnalysisRpcServerProvider extends ServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcServerProvider.class);
 	
 	private static AnalysisRpcServerProvider instance = new AnalysisRpcServerProvider();
@@ -85,6 +85,7 @@ public class AnalysisRpcServerProvider {
 				server.start();
 				port = server.getPort();
 				logger.info("Starting Analysis RPC Server on port " + port);
+				firePortListeners(port, true);
 			} catch (AnalysisRpcException e) {
 				logger.error("Failed to start AnalysisRpcServer", e);
 				throw new AnalysisRpcException(e);

@@ -484,3 +484,15 @@ def tensordot(a, b, axes=2):
             raise ValueError, 'Given axes has wrong type'
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
+
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _utils
+
+@ndarraywrapped
+def crossings(y, value, x=None):
+    '''Finds the crossing points where a (poly-)line defined by a 1D y array has the given
+    values and return the (linearly) interpolated index or x value if an x array is given 
+    '''
+    if x is None:
+        return _utils.crossings(y, value)
+    else:
+        return _utils.crossings(x, y, value)

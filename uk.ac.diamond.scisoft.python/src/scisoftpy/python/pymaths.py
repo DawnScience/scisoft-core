@@ -41,10 +41,6 @@ multiply = _np.multiply
 
 divide = _np.divide
 
-def dividez(a, b):
-    '''Divide one array-like object by another with items that are zero divisors set to zero'''
-    pass
-
 floor_divide = _np.floor_divide
 
 remainder = _np.remainder
@@ -55,7 +51,7 @@ mod = _np.mod
 
 reciprocal = _np.reciprocal
 
-abs = _np.abs
+abs = _np.abs #@ReservedAssignment
 
 absolute = _np.absolute
 
@@ -66,13 +62,6 @@ angle = _np.angle
 conjugate = _np.conjugate
 
 conj = _np.conj
-
-def phase(a, keepzeros=False):
-    '''Calculate phase of input by dividing by amplitude
-    
-    keepzeros -- if True, pass zeros through, else return complex NaNs
-    '''
-    pass
 
 sin = _np.sin
 cos = _np.cos
@@ -102,10 +91,6 @@ expm1 = _np.expm1
 
 sqrt = _np.sqrt
 
-def cbrt(a):
-    '''Cube root of input'''
-    return _np.power(a, 1./3.)
-
 square = _np.square
 power = _np.power
 
@@ -124,26 +109,6 @@ negative = _np.negative
 
 clip = _np.clip
 
-
-def skewness(a, axis=None):
-    '''Skewness of input'''
-    pass
-
-
-def kurtosis(a, axis=None):
-    '''Kurtosis of input'''
-    pass
-
-median = _np.median
-
-def iqr(a, axis=None):
-    '''Interquartile range of input'''
-    pass
-
-def quantile(a, q):
-    '''Quantile of input'''
-    pass
-
 prod = _np.prod
 sum = _np.sum #@ReservedAssignment
 
@@ -158,23 +123,7 @@ amin = _np.amin
 cumprod = _np.cumprod
 cumsum = _np.cumsum
 
-def residual(a, b):
-    '''Residual (sum of squared difference) of two inputs'''
-    return square(a-b)
-
 diff = _np.diff
-
-#def histogram(a, bins=10, range=None, normed=False, weights=None, new=None):
-#    '''Histogram of input'''
-
-def equaldataset(lhs, rhs):
-    '''Compare two ndarrays for equality, or two representations of abstract dataserts via abstract descriptors'''
-    if isinstance(lhs, _np.ndarray) and isinstance(rhs, _np.ndarray):
-        match = lhs == rhs
-        if isinstance(match, _np.ndarray) and match.all():
-            return True
-    # TODO add check for dataset descriptors
-    return False
 
 dot = _np.dot
 vdot = _np.vdot

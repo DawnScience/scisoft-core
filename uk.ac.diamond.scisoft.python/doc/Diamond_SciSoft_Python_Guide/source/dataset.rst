@@ -41,10 +41,11 @@ Implemented NumPy methods (1.3)
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed
 
 Non-NumPy
- * Array methods: cast, minpos, maxpos, index
- * Maths: cbrt
- * Stats: rms, skew, kurtosis, median, iqr
- * Import/export JAMA [#JAMA]_ in Jython only
+ * Array methods: cast, minpos, maxpos, index (Jython only)
+ * Maths: dividez, cbrt
+ * Stats: rms, skewness, kurtosis, iqr, quantile
+ * Import/export JAMA [#JAMA]_ (Jython only)
+ * phase, residual, normalise, centroid, crossings
 
 This is an example of dataset usage::
 

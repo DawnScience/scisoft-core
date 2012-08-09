@@ -151,17 +151,6 @@ meshgrid = _np.meshgrid
 
 indices = _np.indices
 
-def normalise(a, allelements=True):
-    '''Normalise array so all elements lie between 0 and 1
-    Keyword argument:
-    allelements -- if True, then normalise for all elements rather than per-element
-    '''
-    range_ = _np.ptp(a)
-    bottom = a.min()
-    n = a - bottom
-    n /= range_
-    return n
-
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items
 #    '''

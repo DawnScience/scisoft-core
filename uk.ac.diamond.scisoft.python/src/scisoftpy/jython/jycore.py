@@ -2155,16 +2155,6 @@ def indices(dimensions, dtype=int32):
     return ind
 
 @_ndwrapped
-def normalise(a, allelements=True):
-    '''Normalise array so all elements lie between 0 and 1
-    Keyword argument:
-    allelements -- if True, then normalise for all elements rather than per-element
-    '''
-    if isinstance(a, _abscompoundds):
-        return _dsutils.norm(a, allelements)
-    return _dsutils.norm(a)
-
-@_ndwrapped
 def compoundarray(a, view=True):
     '''Create a compound array from an nd array by grouping last axis items into compound items
     '''

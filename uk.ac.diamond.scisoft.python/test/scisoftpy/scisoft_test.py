@@ -185,6 +185,24 @@ class Test(unittest.TestCase):
 
         help(np)
 
+    def testCentroid(self):
+        print 'Centroid testing'
+        a = np.arange(12.)
+        x = np.arange(12.) + 2
+        ca = np.centroid(a)
+        self.assertEquals(ca[0], 539./66)
+        ca = np.centroid(a, x)
+        self.assertEquals(ca[0], 539./66 + 1.5)
+        a.shape = (3,4)
+        ca = np.centroid(a)
+        self.assertEquals(ca[0], 131./66)
+        self.assertEquals(ca[1], 147./66)
+        x = np.arange(3.) + 2
+        y = np.arange(4.) + 3
+        ca = np.centroid(a, [x,y])
+        self.assertEquals(ca[0], 131./66 + 1.5)
+        self.assertEquals(ca[1], 312./66) #147./66 + 2.5)
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

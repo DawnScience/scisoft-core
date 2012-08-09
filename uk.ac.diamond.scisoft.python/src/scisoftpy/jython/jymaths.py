@@ -82,11 +82,6 @@ def divide(a, b):
     return _maths.divide(a, b)
 
 @ndarraywrapped
-def dividez(a, b):
-    '''Divide one array-like object by another with items that are zero divisors set to zero'''
-    return _maths.dividez(a, b)
-
-@ndarraywrapped
 def floor_divide(a, b):
     '''Calculate largest integers smaller or equal to division'''
     return _maths.floorDivide(a, b)
@@ -147,14 +142,6 @@ def conjugate(a):
     return _maths.conjugate(a)
 
 conj = conjugate
-
-@ndarraywrapped
-def phase(a, keepzeros=False):
-    '''Calculate phase of input by dividing by amplitude
-    
-    keepzeros -- if True, pass zeros through, else return complex NaNs
-    '''
-    return _maths.phaseAsComplexNumber(a, keepzeros)
 
 @ndarraywrapped
 def sin(a):
@@ -262,11 +249,6 @@ def sqrt(a):
     return _maths.sqrt(a)
 
 @ndarraywrapped
-def cbrt(a):
-    '''Cube root of input'''
-    return _maths.cbrt(a)
-
-@ndarraywrapped
 def square(a):
     '''Square of input'''
     return _maths.square(a)
@@ -320,40 +302,12 @@ def clip(a, a_min, a_max):
     return _maths.clip(a, a_min, a_max)
 
 @ndarraywrapped
-def skewness(a, axis=None):
-    '''Skewness of input'''
-    if axis is None:
-        return _stats.skewness(a)
-    else:
-        return _stats.skewness(a, axis)
-
-@ndarraywrapped
-def kurtosis(a, axis=None):
-    '''Kurtosis of input'''
-    if axis is None:
-        return _stats.kurtosis(a)
-    else:
-        return _stats.kurtosis(a, axis)
-
-@ndarraywrapped
 def median(a, axis=None):
     '''Median of input'''
     if axis is None:
         return _stats.median(a)
     else:
         return _stats.median(a, axis)
-
-@ndarraywrapped
-def iqr(a, axis=None):
-    '''Interquartile range of input'''
-    if axis is None:
-        return _stats.iqr(a)
-    else:
-        return _stats.iqr(a, axis)
-
-def quantile(a, q):
-    '''Quantile of input'''
-    return _stats.quantile(a, q)
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
@@ -403,10 +357,6 @@ def cumsum(a, axis=None):
         return _stats.cumulativeSum(a)
     else:
         return _stats.cumulativeSum(a, axis)
-
-def residual(a, b):
-    '''Residual (sum of squared difference) of two inputs'''
-    return _stats.residual(a, b)
 
 @ndarraywrapped
 def diff(a, order=1, axis=-1):
@@ -485,14 +435,3 @@ def tensordot(a, b, axes=2):
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _utils
-
-@ndarraywrapped
-def crossings(y, value, x=None):
-    '''Finds the crossing points where a (poly-)line defined by a 1D y array has the given
-    values and return the (linearly) interpolated index or x value if an x array is given 
-    '''
-    if x is None:
-        return _utils.crossings(y, value)
-    else:
-        return _utils.crossings(x, y, value)

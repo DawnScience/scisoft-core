@@ -8,4 +8,13 @@
 <path>/uk.ac.diamond.scisoft.python/src</path>
 <path>/uk.ac.diamond.scisoft.python/bin</path>
 </pydev_pathproperty>
+<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+<path>${tpp_loc}/org.apache.commons.math_2.2.0.jar</path>
+<path>${tpp_loc}/uk.ac.diamond.jama_1.0.1.jar</path>
+<path>${tpp_loc}/org.apache.xmlrpc_3.0.0.v20100427-1100.jar</path>
+</pydev_pathproperty>
+<pydev_variables_property name="org.python.pydev.PROJECT_VARIABLE_SUBSTITUTION">
+<key>tpp_loc</key>
+<value>/here/lies/third-party/plugins</value>
+</pydev_variables_property>
 </pydev_project>

@@ -135,7 +135,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		DataHolder output = new DataHolder();
 		output.addDataset(fileName, data, data.getMetadata());
 		if (loadMetadata) {
-			data.setMetadata(getMetaData());
+			data.setMetadata(getMetaData(data));
 			output.setMetadata(data.getMetadata());
 		}
 		return output;
@@ -162,8 +162,14 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 
 	@Override
 	public IMetaData getMetaData() {
-		if (metadata == null)
+		return getMetaData(null);
+	}
+	
+	public IMetaData getMetaData(AbstractDataset data) {
+		if (metadata == null) {
+			if (data!=null) return data.getMetadata(); // Might be null or might be set in AWTImageUtils.
 			return null;
+		}
 
 		return new MetaDataAdapter() {
 			@Override

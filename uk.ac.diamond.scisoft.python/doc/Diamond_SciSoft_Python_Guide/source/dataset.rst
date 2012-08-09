@@ -43,7 +43,7 @@ Implemented NumPy methods (1.3)
 Non-NumPy
  * Array methods: cast, minpos, maxpos, index (Jython only)
  * Maths: dividez, cbrt
- * Stats: rms, skewness, kurtosis, iqr, quantile
+ * Stats: skewness, kurtosis, iqr, quantile
  * Import/export JAMA [#JAMA]_ (Jython only)
  * phase, residual, normalise, centroid, crossings
 

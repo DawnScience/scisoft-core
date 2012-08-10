@@ -16,7 +16,8 @@
 
 import h5py #@UnresolvedImport
 
-#NeXusError = h5py.Crap
+if h5py.version.version_tuple[0] < 2:
+    raise ImportError, 'Installed h5py is too old - it must be at least version 2'
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group

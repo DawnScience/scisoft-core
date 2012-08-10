@@ -69,7 +69,7 @@ public class Stats {
 		return m;
 	}
 
-	static private AbstractDataset getQStatistics(final AbstractDataset a, int axis, String stat) {
+	static private AbstractDataset getQStatistics(final AbstractDataset a, int axis, final String stat) {
 		axis = a.checkAxis(axis);
 		Object obj = a.getStoredValue(stat);
 		final int is = a.getElementsPerItem();
@@ -87,28 +87,24 @@ public class Stats {
 					((AbstractCompoundDataset) a).copyElements(w, j);
 					w.sort(axis);
 
-					AbstractDataset c;
 					CompoundDoubleDataset s;
-
-					c = pQuantile(w, axis, 0.5);
+					final AbstractDataset c = pQuantile(w, axis, 0.5);
 					if (j == 0) {
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("median-" + axis, c);
+						a.setStoredValue("median-" + axis, s);
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("quartile1-" + axis, c);
+						a.setStoredValue("quartile1-" + axis, s);
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("quartile3-" + axis, c);
+						a.setStoredValue("quartile3-" + axis, s);
 					}
 					s = (CompoundDoubleDataset) a.getStoredValue("median-" + axis);
 					s.setElements(c, j);
 
-					c = pQuantile(w, axis, 0.25);
 					s = (CompoundDoubleDataset) a.getStoredValue("quartile1-" + axis);
-					s.setElements(c, j);
+					s.setElements(pQuantile(w, axis, 0.25), j);
 
-					c = pQuantile(w, axis, 0.75);
 					s = (CompoundDoubleDataset) a.getStoredValue("quartile3-" + axis);
-					s.setElements(c, j);
+					s.setElements(pQuantile(w, axis, 0.75), j);
 				}
 			}
 			obj = a.getStoredValue(stat);
@@ -196,7 +192,7 @@ public class Stats {
 	 * @param q
 	 * @return point at which CDF has value q
 	 */
-	public static double quantile(AbstractDataset a, double q) {
+	public static double quantile(final AbstractDataset a, final double q) {
 		if (q < 0 || q > 1) {
 			throw new IllegalArgumentException("Quantile requested is outside [0,1]");
 		}
@@ -210,7 +206,7 @@ public class Stats {
 	 * @param values
 	 * @return points at which CDF has given values
 	 */
-	public static double[] quantile(AbstractDataset a, double... values) {
+	public static double[] quantile(final AbstractDataset a, final double... values) {
 		final double[] points  = new double[values.length];
 		for (int i = 0; i < points.length; i++) {
 			final double q = values[i];
@@ -224,11 +220,54 @@ public class Stats {
 	}
 
 	/**
+	 * Calculate quantiles of dataset which is defined as the inverse of the cumulative distribution function (CDF)
+	 * @param a
+	 * @param axis
+	 * @param values
+	 * @return points at which CDF has given values
+	 */
+	public static AbstractDataset[] quantile(final AbstractDataset a, final int axis, final double... values) {
+		final AbstractDataset[] points  = new AbstractDataset[values.length];
+		final int is = a.getElementsPerItem();
+
+		if (is == 1) {
+			AbstractDataset s = DatasetUtils.sort(a, axis);
+			for (int i = 0; i < points.length; i++) {
+				final double q = values[i];
+				if (q < 0 || q > 1) {
+					throw new IllegalArgumentException("Quantile requested is outside [0,1]");
+				}
+				points[i] = pQuantile(s, axis, q);
+			}
+		} else {
+			AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
+			for (int j = 0; j < is; j++) {
+				((AbstractCompoundDataset) a).copyElements(w, j);
+				w.sort(axis);
+
+				for (int i = 0; i < points.length; i++) {
+					final double q = values[i];
+					if (q < 0 || q > 1) {
+						throw new IllegalArgumentException("Quantile requested is outside [0,1]");
+					}
+					final AbstractDataset c = pQuantile(w, axis, q);
+					if (j == 0) {
+						points[i] = AbstractDataset.zeros(is, c.shape, c.getDtype());
+					}
+					((CompoundDoubleDataset) points[i]).setElements(c, j);
+				}
+			}
+		}
+
+		return points;
+	}
+
+	/**
 	 * @param a dataset
 	 * @param axis
 	 * @return median
 	 */
-	public static AbstractDataset median(final AbstractDataset a, int axis) {
+	public static AbstractDataset median(final AbstractDataset a, final int axis) {
 		return getQStatistics(a, axis, "median-" + axis);
 	}
 
@@ -266,7 +305,7 @@ public class Stats {
 	 * @param axis
 	 * @return range
 	 */
-	public static AbstractDataset iqr(final AbstractDataset a, int axis) {
+	public static AbstractDataset iqr(final AbstractDataset a, final int axis) {
 		AbstractDataset q3 = getQStatistics(a, axis, "quartile3-" + axis);
 
 		return Maths.subtract(q3, a.getStoredValue("quartile1-" + axis));
@@ -341,7 +380,7 @@ public class Stats {
 		return kurts;
 	}
 
-	static private void calculateHigherMoments(final AbstractDataset a, int axis) {
+	static private void calculateHigherMoments(final AbstractDataset a, final int axis) {
 		int rank = a.getRank();
 
 		int[] oshape = a.getShape();
@@ -382,7 +421,7 @@ public class Stats {
 		a.setStoredValue("kurtosis-"+axis, ku);
 	}
 
-	static private DoubleDataset getHigherStatistic(final AbstractDataset a, int axis, String stat) {
+	static private DoubleDataset getHigherStatistic(final AbstractDataset a, int axis, final String stat) {
 		axis = a.checkAxis(axis);
 
 		DoubleDataset obj = (DoubleDataset) a.getStoredValue(stat);
@@ -399,7 +438,7 @@ public class Stats {
 	 * @param axis
 	 * @return skewness
 	 */
-	public static AbstractDataset skewness(final AbstractDataset a, int axis) {
+	public static AbstractDataset skewness(final AbstractDataset a, final int axis) {
 		return getHigherStatistic(a, axis, "skewness-" + axis);
 	}
 
@@ -408,7 +447,7 @@ public class Stats {
 	 * @param axis
 	 * @return kurtosis
 	 */
-	public static AbstractDataset kurtosis(final AbstractDataset a, int axis) {
+	public static AbstractDataset kurtosis(final AbstractDataset a, final int axis) {
 		return getHigherStatistic(a, axis, "kurtosis-" + axis);
 	}
 
@@ -425,7 +464,7 @@ public class Stats {
 	 * @param dtype
 	 * @return product of all items in dataset
 	 */
-	public static Object typedProduct(final AbstractDataset a, int dtype) {
+	public static Object typedProduct(final AbstractDataset a, final int dtype) {
 
 		if (a.isComplex()) {
 			IndexIterator it = a.getIterator();
@@ -497,7 +536,7 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset product(final AbstractDataset a, int axis) {
+	public static AbstractDataset product(final AbstractDataset a, final int axis) {
 		return typedProduct(a, a.getDtype(), axis);
 	}
 

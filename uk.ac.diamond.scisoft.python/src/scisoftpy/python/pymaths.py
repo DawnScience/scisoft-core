@@ -120,6 +120,7 @@ ptp = _np.ptp
 amax = _np.amax
 amin = _np.amin
 
+median = _np.median
 cumprod = _np.cumprod
 cumsum = _np.cumsum
 

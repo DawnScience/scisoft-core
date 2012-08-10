@@ -90,14 +90,25 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		ReentrantLock l;
 		try {
 			l = openFiles.get(file);
+			logger.trace(String.format("Get lock for %s (thd %x)", file, Thread.currentThread().getId()));
 			if (l == null) {
 				l = new ReentrantLock();
+				logger.trace(" Lock created for {}", file);
 				openFiles.put(file, l);
+			} else {
+				logger.trace(String.format(" Lock exists for %s (%b)", file, l.isLocked()));
 			}
 		} finally {
 			globalLock.unlock();
 		}
-		l.lock();
+
+		if (l.tryLock()) {
+			logger.trace(String.format(" Lock free for %s (or held by current thd %x)", file, Thread.currentThread().getId()));
+		} else {
+			logger.trace("  Wait for held lock for {}", file);
+			l.lock();
+			logger.trace(String.format("  Hold lock for %s (thd %x)", file, Thread.currentThread().getId()));
+		}
 	}
 
 	private static void releaseAccess(final String file) {
@@ -106,6 +117,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			ReentrantLock l = openFiles.get(file);
 			if (l != null) {
 				l.unlock();
+				logger.trace(String.format("Release lock for %s (thd %x, %d)", file, Thread.currentThread().getId(), l.getHoldCount()));
 				if (!l.hasQueuedThreads()) {
 					openFiles.remove(file);
 				}
@@ -303,6 +315,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			return null;
 		}
 
+		logger.trace(String.format("Loading in thd %x\n", Thread.currentThread().getId()));
 		File f = new File(fileName);
 		if (!f.exists()) {
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
@@ -687,6 +700,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 		int did = -1, tid = -1, tclass = -1;
 		try {
+//			Thread.sleep(200);
+
 			did = H5.H5Dopen(lid, path, HDF5Constants.H5P_DEFAULT);
 			tid = H5.H5Dget_type(did);
 
@@ -1263,6 +1278,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		final int[] trueShape;
 
 		try {
+//			Thread.sleep(200);
 			sid = H5.H5Dget_space(did);
 
 			int tclass = H5.H5Tget_class(tid);

@@ -68,15 +68,23 @@ def iqr(a, axis=None):
     else:
         return _stats.iqr(a, axis)
 
-def quantile(a, q):
+@_ndwrapped
+def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
     a - data
-    q - probability value(s)'''
+    q - probability value(s)
+    axis - can be None'''
     q = _toList(q)
-    if len(q) == 1:
-        return _stats.quantile(a, q)[0]
-    return _stats.quantile(a, q)
+    if axis is None:
+        if len(q) == 1:
+            return _stats.quantile(a, q)[0]
+        return _stats.quantile(a, q)
+    else:
+        if len(q) == 1:
+            return _stats.quantile(a, axis, q)[0]
+        return _stats.quantile(a, axis, q)
+
 
 def residual(a, b):
     '''Residual (sum of squared difference) of two inputs'''

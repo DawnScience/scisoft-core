@@ -301,14 +301,6 @@ def clip(a, a_min, a_max):
     '''Clip input to given bounds (replace NaNs with midpoint of bounds)'''
     return _maths.clip(a, a_min, a_max)
 
-@ndarraywrapped
-def median(a, axis=None):
-    '''Median of input'''
-    if axis is None:
-        return _stats.median(a)
-    else:
-        return _stats.median(a, axis)
-
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
     '''Product of input'''
@@ -341,6 +333,14 @@ def amax(a, axis=None):
 def amin(a, axis=None):
     '''Minimum of input'''
     return a.min(axis)
+
+@ndarraywrapped
+def median(a, axis=None):
+    '''Median of input'''
+    if axis is None:
+        return _stats.median(a)
+    else:
+        return _stats.median(a, axis)
 
 @ndarraywrapped
 def cumprod(a, axis=None):

@@ -63,16 +63,41 @@ def kurtosis(a, axis=None):
     '''Kurtosis of input'''
     raise NotImplementedError
 
-def iqr(a, axis=None):
-    '''Interquartile range of input'''
-    raise NotImplementedError
-
-def quantile(a, q):
+def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
     a - data
-    q - probability value(s)'''
-    raise NotImplementedError
+    q - probability value(s)
+    axis - can be None'''
+    from pycore import toList
+    from math import floor
+    q = toList(q)
+    sa = _np.sort(a, axis=axis)
+    if axis is None:
+        size = sa.size
+    else:
+        size = sa.shape[axis]
+
+    x = [ (size - 1)*p for p in q ]
+    n = [ int(floor(f)) for f in x ]
+    x = [ f - i for f, i in zip(x,n) ]
+    if axis is None:
+        return [ sa[i]*(1-f) + sa[i+1]*f for f, i in zip(x,n) ]
+    else:
+        slices = [ slice(d) for d in sa.shape ]
+        result = []
+        for f, i in zip(x, n):
+            slices[axis] = i
+            r = sa[slices]*(1-f)
+            slices[axis] = i+1
+            r += sa[slices]*f
+            result.append(r)
+        return result
+
+def iqr(a, axis=None):
+    '''Interquartile range of input'''
+    result = quantile(a, [0.25, 0.75], axis=axis)
+    return result[1] - result[0]
 
 def residual(a, b):
     '''Residual (sum of squared difference) of two inputs'''

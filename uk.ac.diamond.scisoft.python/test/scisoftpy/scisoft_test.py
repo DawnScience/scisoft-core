@@ -203,7 +203,28 @@ class Test(unittest.TestCase):
         self.assertEquals(ca[0], 131./66 + 1.5)
         self.assertEquals(ca[1], 312./66) #147./66 + 2.5)
 
+    def testQuantile(self):
+        print 'Quantile testing'
+        a = np.array([6., 47., 49., 15., 42., 41., 7., 39., 43., 40., 36., 21.])
+        ans = [19.5, 39.5, 42.25]
+        self.assertEquals(np.median(a), ans[1])
+        iqr = np.iqr(a)
+        self.assertEquals(iqr, ans[2] - ans[0])
+        qs = np.quantile(a, [0.25, 0.5, 0.75])
+        self.checkitems(ans, np.array(qs))
+        a.shape = (3,4)
+        qs = np.quantile(a, [0.25, 0.5, 0.75], axis=1)
+        self.checkitems([12.75, 31., 32.25], qs[0])
+        self.checkitems([31., 40., 38.], qs[1])
+        self.checkitems([47.5, 41.25, 40.75], qs[2])
+        iqr = np.iqr(a, axis=1)
+        print type(iqr)
+        self.assertEquals(-12.75 + 47.5, iqr[0])
+        self.assertEquals(-31. + 41.25, iqr[1])
+        self.assertEquals(-32.25 + 40.75, iqr[2])
+
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']
-    unittest.main()
+    unittest.main(defaultTest='Test.testQuantile')

@@ -26,6 +26,13 @@ public class EllipticalROI extends ROIBase {
 	private double ang; // angles in radians
 
 	/**
+	 * No argument constructor need for serialization
+	 */
+	public EllipticalROI() {
+		this(1, 1, 0, 0, 0);
+	}
+
+	/**
 	 * Create a circular ROI
 	 * @param radius
 	 * @param ptx centre point x value

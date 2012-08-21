@@ -2718,11 +2718,23 @@ public abstract class AbstractDataset implements IDataset {
 
 	/**
 	 * Calculate residual of dataset with object o
+	 * See {@link #residual(Object o, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @param o
 	 * @return sum of the squares of the differences
 	 */
-	abstract public double residual(final Object o);
+	public double residual(final Object o) {
+		return residual(o, false);
+	}
+
+	/**
+	 * Calculate residual of dataset with object o
+	 * 
+	 * @param o
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return sum of the squares of the differences
+	 */
+	abstract public double residual(final Object o, boolean ignoreNaNs);
 
 	/**
 	 * Get value from store
@@ -3056,6 +3068,9 @@ public abstract class AbstractDataset implements IDataset {
 	protected final static String STATS_STORE_NAME = "stats";
 
 	private SummaryStatistics getStatistics(boolean ignoreNaNs) {
+		if (!hasFloatingPointElements())
+			ignoreNaNs = true;
+
 		String n = storeName(ignoreNaNs, STATS_STORE_NAME);
 		SummaryStatistics stats = (SummaryStatistics) getStoredValue(n);
 		if (stats == null) {
@@ -3088,7 +3103,11 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	abstract public int[] minPos(boolean ignoreNaNs);
 
-	protected Object getMaxMin(boolean ignoreNaNs, String key) {
+	private Object getMaxMin(boolean ignoreNaNs, String key) {
+		if (!hasFloatingPointElements())
+			ignoreNaNs = false;
+
+		key = storeName(ignoreNaNs, key);
 		Object value = getStoredValue(key);
 		if (value == null) {
 			calculateMaxMin(ignoreNaNs);
@@ -3099,6 +3118,10 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	private Object getStatistics(boolean ignoreNaNs, int axis, String stat) {
+		if (!hasFloatingPointElements())
+			ignoreNaNs = false;
+
+		stat = storeName(ignoreNaNs, stat);
 		axis = checkAxis(axis);
 		Object obj = getStoredValue(stat);
 
@@ -3110,12 +3133,24 @@ public abstract class AbstractDataset implements IDataset {
 		return obj;
 	}
 
+	/**
+	 * See {@link #max(boolean ignoreNaNs)} with ignoreNaNs = false
+	 */
 	@Override
 	public Number max() {
 		return max(false);
 	}
 
 	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return maximum
+	 */
+	public Number max(boolean ignoreNaNs) {
+		return (Number) getMaxMin(ignoreNaNs, "max");
+	}
+
+	/**
+	 * See {@link #max(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
@@ -3125,27 +3160,31 @@ public abstract class AbstractDataset implements IDataset {
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs
-	 * @return maximum
-	 */
-	public Number max(boolean ignoreNaNs) {
-		return (Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"));
-	}
-
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
 	public AbstractDataset max(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "max-" + axis));
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "max-" + axis);
 	}
 
+	/**
+	 * See {@link #min(boolean ignoreNaNs)} with ignoreNaNs = false
+	 */
 	@Override
 	public Number min() {
 		return min(false);
 	}
 
 	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @return minimum
+	 */
+	public Number min(boolean ignoreNaNs) {
+		return (Number) getMaxMin(ignoreNaNs, "min");
+	}
+
+	/**
+	 * See {@link #min(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
@@ -3155,23 +3194,16 @@ public abstract class AbstractDataset implements IDataset {
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs
-	 * @return minimum
-	 */
-	public Number min(boolean ignoreNaNs) {
-		return (Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"));
-	}
-
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
 	public AbstractDataset min(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "min-" + axis));
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "min-" + axis);
 	}
 
 	/**
-	 * Find absolute index of maximum value
+	 * Find absolute index of maximum value.
+	 * See {@link #argMax(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
 	 */
@@ -3190,7 +3222,8 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Find indices of maximum values along given axis
+	 * Find indices of maximum values along given axis.
+	 * See {@link #argMax(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * 
 	 * @param axis
 	 * @return index dataset
@@ -3207,11 +3240,12 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMax(boolean ignoreNaNs, int axis) {
-		return (IntegerDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "maxIndex-" + axis));
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, "maxIndex-" + axis);
 	}
 
 	/**
-	 * Find absolute index of minimum value
+	 * Find absolute index of minimum value.
+	 * See {@link #argMin(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
 	 */
@@ -3230,7 +3264,8 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Find indices of minimum values along given axis
+	 * Find indices of minimum values along given axis.
+	 * See {@link #argMin(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * 
 	 * @param axis
 	 * @return index dataset
@@ -3247,7 +3282,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMin(boolean ignoreNaNs, int axis) {
-		return (IntegerDataset) getStatistics(ignoreNaNs, axis, storeName(ignoreNaNs, "minIndex-" + axis));
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, "minIndex-" + axis);
 	}
 
 	/**
@@ -3281,18 +3316,71 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
+	 * See {@link #count(boolean ignoreNaNs)} with ignoreNaNs = false
+	 * @return number of items in dataset
 	 */
-	public Object sum() {
-		return getStatistics(false).getSum();
+	public long count() {
+		return count(false);
 	}
 
 	/**
+	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
+	 * @return number of items in dataset
+	 */
+	public long count(boolean ignoreNaNs) {
+		return getStatistics(ignoreNaNs).getN();
+	}
+
+	/**
+	 * See {@link #count(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * @param axis
+	 * @return number of items along axis in dataset
+	 */
+	public AbstractDataset count(int axis) {
+		return count(false, axis);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
+	 * @param axis
+	 * @return number of items along axis in dataset
+	 */
+	public AbstractDataset count(boolean ignoreNaNs, int axis) {
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "count-" + axis);
+	}
+
+	/**
+	 * See {@link #sum(boolean ignoreNaNs)} with ignoreNaNs = false
+	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
+	 */
+	public Object sum() {
+		return sum(false);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
+	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
+	 */
+	public Object sum(boolean ignoreNaNs) {
+		return getStatistics(ignoreNaNs).getSum();
+	}
+
+	/**
+	 * See {@link #sum(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
 	public AbstractDataset sum(int axis) {
-		return (AbstractDataset) getStatistics(false, axis, "sum-" + axis);
+		return sum(false, axis);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
+	 * @param axis
+	 * @return sum along axis in dataset
+	 */
+	public AbstractDataset sum(boolean ignoreNaNs, int axis) {
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "sum-" + axis);
 	}
 
 	/**
@@ -3353,18 +3441,37 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
+	 * See {@link #mean(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	public Object mean() {
-		return getStatistics(false).getMean();
+		return mean(false);
 	}
 
 	/**
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return mean of all items in dataset as a double, array of doubles or a complex number
+	 */
+	public Object mean(boolean ignoreNaNs) {
+		return getStatistics(ignoreNaNs).getMean();
+	}
+
+	/**
+	 * See {@link #mean(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param axis
 	 * @return mean along axis in dataset
 	 */
 	public AbstractDataset mean(int axis) {
-		return (AbstractDataset) getStatistics(false, axis, "mean-" + axis);
+		return mean(false, axis);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return mean along axis in dataset
+	 */
+	public AbstractDataset mean(boolean ignoreNaNs, int axis) {
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "mean-" + axis);
 	}
 
 	/**

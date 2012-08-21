@@ -93,7 +93,7 @@ public interface IDataset extends ILazyDataset {
 
 	/**
 	 * NOTE this does not return the minimum value if there are NaNs in the 
-	 * dataset. In that case you have to work out min and max for yourself.
+	 * dataset.
 	 * 
 	 * @return Minimum value
 	 * @throws UnsupportedOperationException if comparisons not valid
@@ -102,7 +102,7 @@ public interface IDataset extends ILazyDataset {
 
 	/**
 	 * NOTE this does not return the maximum value if there are NaNs in the 
-	 * dataset. In that case you have to work out min and max for yourself.
+	 * dataset.
 	 * 
 	 * @return Maximum value
 	 * @throws UnsupportedOperationException if comparisons not valid

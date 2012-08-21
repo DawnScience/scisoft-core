@@ -676,13 +676,14 @@ public class FloatDataset extends AbstractDataset {
 					posns.add(iter.index); // REAL_ONLY
 				} // REAL_ONLY
 			} // REAL_ONLY
-		} else { // REAL_ONLY
+		} else // REAL_ONLY
+		{
 			while (iter.hasNext()) {
 				if (data[iter.index] == value) {
 					posns.add(iter.index);
 				}
 			}
-		} // REAL_ONLY
+		}
 		return posns;
 	}
 
@@ -697,8 +698,11 @@ public class FloatDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).floatValue()); // PRIM_TYPE
-			// max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
+			if (ignoreNaNs)
+				max = findPositions(max(ignoreNaNs).floatValue()); // PRIM_TYPE
+			else
+				max = findPositions(max().floatValue()); // PRIM_TYPE
+			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -720,8 +724,8 @@ public class FloatDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).floatValue()); // PRIM_TYPE
-			// min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min(ignoreNaNs).floatValue()); // PRIM_TYPE
+			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -952,7 +956,7 @@ public class FloatDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof AbstractDataset) {
 			AbstractDataset bds = (AbstractDataset) b;
@@ -962,12 +966,25 @@ public class FloatDataset extends AbstractDataset {
 			IndexIterator it2 = bds.getIterator();
 
 			double comp = 0;
-			while (it1.hasNext() && it2.hasNext()) {
-				final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-				final double err = diff * diff - comp;
-				final double temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+			if (ignoreNaNs) { // REAL_ONLY
+				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY
+					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY
+					if (Double.isNaN(diff)) // REAL_ONLY
+						continue; // REAL_ONLY
+					final double err = diff * diff - comp; // REAL_ONLY
+					final double temp = sum + err; // REAL_ONLY
+					comp = (temp - sum) - err; // REAL_ONLY
+					sum = temp; // REAL_ONLY
+				} // REAL_ONLY
+			} else // REAL_ONLY
+			{
+				while (it1.hasNext() && it2.hasNext()) {
+					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+					final double err = diff * diff - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
 			}
 		} else {
 			final double v = toReal(b);

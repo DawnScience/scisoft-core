@@ -172,7 +172,7 @@ public class DoubleDataset extends AbstractDataset {
 		name = new String(dataset.name);
 		odata = data = createArray(size);
 		metadataStructure = dataset.metadataStructure;
-		
+
 		IndexIterator iter = dataset.getIterator();
 		for (int i = 0; iter.hasNext(); i++) {
 			data[i] = dataset.getElementDoubleAbs(iter.index); // GET_ELEMENT_WITH_CAST
@@ -422,11 +422,11 @@ public class DoubleDataset extends AbstractDataset {
 		try {
 			if (!isPositionInShape(pos)) {
 				int[] nshape = shape.clone();
-	
+
 				for (int i = 0; i < pos.length; i++)
 					if (pos[i] >= nshape[i])
 						nshape[i] = pos[i] + 1;
-	
+
 				allocateArray(nshape);
 			}
 			setAbs(get1DIndex(pos), value);
@@ -444,7 +444,7 @@ public class DoubleDataset extends AbstractDataset {
 		if (pos == null || pos.length == 0) {
 			pos = new int[shape.length];
 		}
-	
+
 		setItem(toReal(obj), pos); // FROM_OBJECT
 	}
 
@@ -452,7 +452,7 @@ public class DoubleDataset extends AbstractDataset {
 		if (data == null) {
 			throw new IllegalStateException("Data buffer in dataset is null");
 		}
-	
+
 		if (dataShape != null) {
 			// see if reserved space is sufficient
 			if (isShapeInDataShape(nshape)) {
@@ -464,33 +464,33 @@ public class DoubleDataset extends AbstractDataset {
 				return;
 			}
 		}
-	
+
 		final IndexIterator iter = getIterator();
-	
+
 		// not enough room so need to expand the allocated memory
 		if (dataShape == null)
 			dataShape = shape.clone();
 		expandDataShape(nshape);
 		dataSize = calcSize(dataShape);
-	
+
 		final double[] ndata = createArray(dataSize); // PRIM_TYPE
 		final int[] oshape = shape;
-	
+
 		// now this object has the new dimensions so specify them correctly
 		shape = nshape;
 		size = calcSize(nshape);
-	
+
 		// make sure that all the data is set to NaN, minimum value or false
 		Arrays.fill(ndata, Double.NaN); // CLASS_TYPE // DEFAULT_VAL
-	
+
 		// now copy the data back to the correct positions
 		final IndexIterator niter = getSliceIterator(null, oshape, null);
-	
+
 		while (niter.hasNext() && iter.hasNext())
 			ndata[niter.index] = data[iter.index];
-	
+
 		odata = data = ndata;
-	
+
 		// if fully expanded then reset the reserved space dimensions
 		if (dataSize == size) {
 			dataShape = null;
@@ -505,7 +505,7 @@ public class DoubleDataset extends AbstractDataset {
 		for (int i = 0; iter.hasNext() && i < nsize; i++) {
 			ndata[i] = data[iter.index];
 		}
-	
+
 		odata = data = ndata;
 		size = nsize;
 		shape = newShape;
@@ -676,13 +676,14 @@ public class DoubleDataset extends AbstractDataset {
 					posns.add(iter.index); // REAL_ONLY
 				} // REAL_ONLY
 			} // REAL_ONLY
-		} else { // REAL_ONLY
+		} else // REAL_ONLY
+		{
 			while (iter.hasNext()) {
 				if (data[iter.index] == value) {
 					posns.add(iter.index);
 				}
 			}
-		} // REAL_ONLY
+		}
 		return posns;
 	}
 
@@ -697,8 +698,11 @@ public class DoubleDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
+			if (ignoreNaNs) // BOOLEAN_OMIT
+				max = findPositions(max(ignoreNaNs).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			else // BOOLEAN_OMIT
+				max = findPositions(max().doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -720,8 +724,8 @@ public class DoubleDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min(ignoreNaNs).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -952,36 +956,49 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
-			checkCompatibility(bds);
+		if (b instanceof AbstractDataset) { // BOOLEAN_OMIT
+			AbstractDataset bds = (AbstractDataset) b; // BOOLEAN_OMIT
+			checkCompatibility(bds); // BOOLEAN_OMIT
 
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
 
 			double comp = 0; // BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) {
-				final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
-				final double err = diff * diff - comp; // BOOLEAN_OMIT
-				final double temp = sum + err; // BOOLEAN_OMIT
-				comp = (temp - sum) - err; // BOOLEAN_OMIT
-				sum = temp; // BOOLEAN_OMIT
-			}
-		} else {
+			if (ignoreNaNs) { // REAL_ONLY // BOOLEAN_OMIT
+				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
+					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
+					if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
+						continue; // REAL_ONLY // BOOLEAN_OMIT
+					final double err = diff * diff - comp; // REAL_ONLY // BOOLEAN_OMIT
+					final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
+					comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
+					sum = temp; // REAL_ONLY // BOOLEAN_OMIT
+				} // REAL_ONLY // BOOLEAN_OMIT
+			} else // REAL_ONLY // BOOLEAN_OMIT
+			{ // BOOLEAN_OMIT
+				while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
+					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
+					final double err = diff * diff - comp; // BOOLEAN_OMIT
+					final double temp = sum + err; // BOOLEAN_OMIT
+					comp = (temp - sum) - err; // BOOLEAN_OMIT
+					sum = temp; // BOOLEAN_OMIT
+				} // BOOLEAN_OMIT
+			} // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
 			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator();
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
 
 			double comp = 0; // BOOLEAN_OMIT
-			while (it1.hasNext()) {
+			while (it1.hasNext()) { // BOOLEAN_OMIT
 				final double diff = data[it1.index] - v; // BOOLEAN_OMIT
 				final double err = diff * diff - comp; // BOOLEAN_OMIT
 				final double temp = sum + err; // BOOLEAN_OMIT
 				comp = (temp - sum) - err; // BOOLEAN_OMIT
 				sum = temp; // BOOLEAN_OMIT
-			}
-		}
+			} // BOOLEAN_OMIT
+		} // BOOLEAN_OMIT
 		return sum;
 	}
 }

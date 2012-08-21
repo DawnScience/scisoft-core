@@ -644,11 +644,13 @@ public class BooleanDatasetBase extends AbstractDataset {
 		IndexIterator iter = getIterator();
 		List<Integer> posns = new ArrayList<Integer>();
 
+		{
 			while (iter.hasNext()) {
 				if (data[iter.index] == value) {
 					posns.add(iter.index);
 				}
 			}
+		}
 		return posns;
 	}
 
@@ -663,7 +665,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
+			max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -685,7 +687,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -832,23 +834,11 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
-			checkCompatibility(bds);
 
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
 
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
 
-			while (it1.hasNext()) {
-			}
-		}
 		return sum;
 	}
 }

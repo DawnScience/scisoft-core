@@ -670,11 +670,13 @@ public class ShortDataset extends AbstractDataset {
 		IndexIterator iter = getIterator();
 		List<Integer> posns = new ArrayList<Integer>();
 
+		{
 			while (iter.hasNext()) {
 				if (data[iter.index] == value) {
 					posns.add(iter.index);
 				}
 			}
+		}
 		return posns;
 	}
 
@@ -689,8 +691,11 @@ public class ShortDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).shortValue()); // PRIM_TYPE
-			// max = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "max"))).intValue() != 0); // BOOLEAN_USE
+			if (ignoreNaNs)
+				max = findPositions(max(ignoreNaNs).shortValue()); // PRIM_TYPE
+			else
+				max = findPositions(max().shortValue()); // PRIM_TYPE
+			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -712,8 +717,8 @@ public class ShortDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).shortValue()); // PRIM_TYPE
-			// min = findPositions(((Number) getMaxMin(ignoreNaNs, storeName(ignoreNaNs, "min"))).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min(ignoreNaNs).shortValue()); // PRIM_TYPE
+			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -930,7 +935,7 @@ public class ShortDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof AbstractDataset) {
 			AbstractDataset bds = (AbstractDataset) b;
@@ -940,12 +945,14 @@ public class ShortDataset extends AbstractDataset {
 			IndexIterator it2 = bds.getIterator();
 
 			double comp = 0;
-			while (it1.hasNext() && it2.hasNext()) {
-				final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-				final double err = diff * diff - comp;
-				final double temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+			{
+				while (it1.hasNext() && it2.hasNext()) {
+					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+					final double err = diff * diff - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
 			}
 		} else {
 			final double v = toReal(b);

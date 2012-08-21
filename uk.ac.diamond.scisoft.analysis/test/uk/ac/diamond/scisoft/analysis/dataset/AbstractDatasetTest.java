@@ -1084,5 +1084,21 @@ public class AbstractDatasetTest {
 		AbstractDataset a = AbstractDataset.arange(1024*1024, AbstractDataset.INT32);
 
 		assertEquals("Typed sum", -524288, a.typedSum(AbstractDataset.INT32));
+
+		a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		a.setShape(3,4);
+		assertEquals("Sum", 11*6, ((Number) a.sum()).doubleValue(), 1e-6);
+		a.set(Double.NaN, 0,0);
+		assertTrue("Sum", Double.isNaN(((Number) a.sum()).doubleValue()));
+		assertEquals("Sum", 11*6, ((Number) a.sum(true)).doubleValue(), 1e-6);
 	}
+
+	@Test
+	public void testMakeFinite() {
+		AbstractDataset a = AbstractDataset.array(new double[] {0, Double.POSITIVE_INFINITY, Double.NaN, Double.NEGATIVE_INFINITY });
+		DatasetUtils.makeFinite(a);
+
+		assertTrue("Make finite", AbstractDataset.array(new double[] {0, Double.MAX_VALUE, 0, -Double.MAX_VALUE}).equals(a));
+	}
+	
 }

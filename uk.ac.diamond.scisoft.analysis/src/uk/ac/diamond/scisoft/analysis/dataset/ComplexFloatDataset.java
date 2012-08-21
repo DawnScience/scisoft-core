@@ -733,7 +733,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof AbstractDataset) {
 			AbstractDataset bds = (AbstractDataset) b;
@@ -745,24 +745,46 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 			switch (bds.getDtype()) {
 			case COMPLEX64: case COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					double diff, err, temp;
-					diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-					err = diff*diff - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+				if (ignoreNaNs) {
+					while (it1.hasNext() && it2.hasNext()) {
+						double diffr, diffi, err, temp;
+						diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+						if (Double.isNaN(diffr) || Double.isNaN(diffi))
+							continue;
 
-					diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-					err = diff*diff - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+						err = diffr*diffr - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+
+						err = diffi*diffi - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					while (it1.hasNext() && it2.hasNext()) {
+						double diff, err, temp;
+						diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						err = diff*diff - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+
+						diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+						err = diff*diff - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 				break;
 			default:
 				while (it1.hasNext() && it2.hasNext()) {
 					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+					if (ignoreNaNs && Double.isInfinite(diff))
+						continue;
 					final double err  = diff*diff - comp;
 					final double temp = sum + err;
 					comp = (temp - sum) - err;
@@ -772,22 +794,46 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			}
 		} else {
 			final Complex zv = new Complex(toReal(b), toImag(b));
+			if (ignoreNaNs) {
+				if (zv.isNaN())
+					return sum;
+			}
 			IndexIterator it1 = getIterator();
 
 			double comp = 0;
-			while (it1.hasNext()) {
-				double diff, err, temp;
-				diff = data[it1.index] - zv.getReal();
-				err = diff*diff - comp;
-				temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+			if (ignoreNaNs) {
+				while (it1.hasNext()) {
+					double diffr, diffi, err, temp;
+					diffr = data[it1.index] - zv.getReal();
+					diffi = data[it1.index + 1] - zv.getImaginary();
+					if (Double.isNaN(diffr) || Double.isNaN(diffi))
+						continue;
 
-				diff = data[it1.index + 1] - zv.getImaginary();
-				err = diff*diff - comp;
-				temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+					err = diffr*diffr - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					err = diffi*diffi - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
+			} else {
+				while (it1.hasNext()) {
+					double diff, err, temp;
+					diff = data[it1.index] - zv.getReal();
+					err = diff*diff - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					diff = data[it1.index + 1] - zv.getImaginary();
+					err = diff*diff - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
 			}
 		}
 		return sum;

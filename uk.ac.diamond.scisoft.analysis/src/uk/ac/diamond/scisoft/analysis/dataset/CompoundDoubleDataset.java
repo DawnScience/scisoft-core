@@ -1236,7 +1236,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof AbstractDataset) {
 			final AbstractDataset bds = (AbstractDataset) b;
@@ -1250,6 +1250,20 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				double comp = 0;
 				while (it1.hasNext() && it2.hasNext()) {
 					final double db = bds.getElementDoubleAbs(it2.index);
+					if (ignoreNaNs) {
+						if (Double.isNaN(db))
+							continue;
+						boolean skip = false;
+						for (int i = 0; i < isize; i++) {
+							if (Double.isNaN(data[it1.index + i])) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
+							continue;
+						}
+					}
 					for (int i = 0; i < isize; i++) {
 						final double diff = data[it1.index + i] - db;
 						final double err = diff * diff - comp;
@@ -1261,6 +1275,19 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			} else if (bis == isize) {
 				double comp = 0;
 				while (it1.hasNext() && it2.hasNext()) {
+					if (ignoreNaNs) {
+						boolean skip = false;
+						for (int i = 0; i < isize; i++) {
+							if (Double.isNaN(data[it1.index + i])
+									|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
+							continue;
+						}
+					}
 					for (int i = 0; i < isize; i++) {
 						final double diff = data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i);
 						final double err = diff * diff - comp;
@@ -1277,8 +1304,33 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			final double[] vr = toDoubleArray(b, isize);
 			final IndexIterator it1 = getIterator();
 
+			if (ignoreNaNs) {
+				boolean skip = false;
+				for (int i = 0; i < isize; i++) {
+					if (Double.isNaN(vr[i])) {
+						skip = true;
+						break;
+					}
+				}
+				if (skip) {
+					return sum;
+				}
+			}
+
 			double comp = 0;
 			while (it1.hasNext()) {
+				if (ignoreNaNs) {
+					boolean skip = false;
+					for (int i = 0; i < isize; i++) {
+						if (Double.isNaN(data[it1.index + i])) {
+							skip = true;
+							break;
+						}
+					}
+					if (skip) {
+						continue;
+					}
+				}
 				for (int i = 0; i < isize; i++) {
 					final double diff = data[it1.index + i] - vr[i];
 					final double err = diff * diff - comp;

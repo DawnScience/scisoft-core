@@ -57,6 +57,11 @@ public class ComparisonsTest {
 
 		c = Comparisons.equalTo(new DoubleDataset(new int[]{}).fill(1), 1);
 		checkDatasets(c, new BooleanDataset(new boolean[] {true}));
+
+		c = Comparisons.equalTo(a, 3);
+		checkDatasets(c, new BooleanDataset(new boolean[] {false, false, true, false, false, false}));
+		c = Comparisons.equalTo(3, a);
+		checkDatasets(c, new BooleanDataset(new boolean[] {false, false, true, false, false, false}));
 	}
 
 	@Test
@@ -65,6 +70,8 @@ public class ComparisonsTest {
 		BooleanDataset d = new BooleanDataset(new boolean[] {false, false, true, true, true, true});
 		checkDatasets(c, d);
 
+		checkDatasets(Comparisons.almostEqualTo(a, 3, 0.1, 1e-3), new BooleanDataset(
+				new boolean[] {false, false, true, false, false, false}));
 		checkDatasets(Comparisons.almostEqualTo(3, a, 0.1, 1e-3), new BooleanDataset(
 				new boolean[] {false, false, true, false, false, false}));
 	}
@@ -77,6 +84,8 @@ public class ComparisonsTest {
 
 		checkDatasets(Comparisons.greaterThan(3, a), new BooleanDataset(
 				new boolean[] {true, true, false, false, true, true}));
+		checkDatasets(Comparisons.greaterThan(a, 3), new BooleanDataset(
+				new boolean[] {false, false, false, true, false, false}));
 	}
 
 	@Test
@@ -87,7 +96,9 @@ public class ComparisonsTest {
 
 		checkDatasets(Comparisons.greaterThanOrEqualTo(3, a), new BooleanDataset(
 				new boolean[] {true, true, true, false, true, true}));
-}
+		checkDatasets(Comparisons.greaterThanOrEqualTo(a, 3), new BooleanDataset(
+				new boolean[] {false, false, true, true, false, false}));
+	}
 
 	@Test
 	public void testLessThan() {
@@ -97,6 +108,8 @@ public class ComparisonsTest {
 
 		checkDatasets(Comparisons.lessThan(3, a), new BooleanDataset(
 				new boolean[] {false, false, false, true, false, false}));
+		checkDatasets(Comparisons.lessThan(a, 3), new BooleanDataset(
+				new boolean[] {true, true, false, false, true, true}));
 	}
 
 	@Test
@@ -107,6 +120,8 @@ public class ComparisonsTest {
 
 		checkDatasets(Comparisons.lessThanOrEqualTo(3, a), new BooleanDataset(
 				new boolean[] {false, false, true, true, false, false}));
+		checkDatasets(Comparisons.lessThanOrEqualTo(a, 3), new BooleanDataset(
+				new boolean[] {true, true, true, false, true, true}));
 	}
 
 	@Test

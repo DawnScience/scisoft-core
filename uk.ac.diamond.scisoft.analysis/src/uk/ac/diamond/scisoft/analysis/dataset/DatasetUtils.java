@@ -2074,6 +2074,67 @@ public class DatasetUtils {
 	}
 
 	/**
+	 * Make floating point datasets contain only finite values. Infinities and NaNs are replaced
+	 * by +/- MAX_VALUE and 0, respectively.
+	 * All other dataset types are ignored.
+	 * 
+	 * @param a dataset
+	 */
+	public static void makeFinite(AbstractDataset a) {
+		if (a instanceof DoubleDataset) {
+			final DoubleDataset set = (DoubleDataset) a;
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				final double x = data[it.index];
+				if (Double.isNaN(x))
+					data[it.index] = 0;
+				else if (Double.isInfinite(x))
+					data[it.index] = x > 0 ? Double.MAX_VALUE : -Double.MAX_VALUE;
+			}
+		} else if (a instanceof FloatDataset) {
+			final FloatDataset set = (FloatDataset) a;
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				final float x = data[it.index];
+				if (Float.isNaN(x))
+					data[it.index] = 0;
+				else if (Float.isInfinite(x))
+					data[it.index] = x > 0 ? Float.MAX_VALUE : -Float.MAX_VALUE;
+			}
+		} else if (a instanceof CompoundDoubleDataset) {
+			final CompoundDoubleDataset set = (CompoundDoubleDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final double[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					final double x = data[it.index + j];
+					if (Double.isNaN(x))
+						data[it.index + j] = 0;
+					else if (Double.isInfinite(x))
+						data[it.index + j] = x > 0 ? Double.MAX_VALUE : -Double.MAX_VALUE;
+				}
+			}
+		} else if (a instanceof CompoundFloatDataset) {
+			final CompoundFloatDataset set = (CompoundFloatDataset) a;
+			final int is = set.getElementsPerItem();
+			final IndexIterator it = set.getIterator();
+			final float[] data = set.getData();
+			while (it.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					final float x = data[it.index + j];
+					if (Float.isNaN(x))
+						data[it.index + j] = 0;
+					else if (Float.isInfinite(x))
+						data[it.index + j] = x > 0 ? Float.MAX_VALUE : -Float.MAX_VALUE;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Find absolute index of first value in dataset that is greater than given number
 	 * @param a
 	 * @param n

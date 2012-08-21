@@ -60,7 +60,7 @@ public class Stats {
 		return s;
 	}
 
-	static private Object getQStatistics(final AbstractDataset a, String stat) {
+	static private Object getQStatistics(final AbstractDataset a, final String stat) {
 		Object m = a.getStoredValue(stat);
 		if (m == null) {
 			calcQuartileStats(a);
@@ -311,43 +311,77 @@ public class Stats {
 		return Maths.subtract(q3, a.getStoredValue("quartile1-" + axis));
 	}
 
-	static private Object getFourthMoment(final AbstractDataset a) {
-		Object obj = a.getStoredValue("moment4");
+	static private Object getFourthMoment(final AbstractDataset a, final boolean ignoreNaNs) {
+		String n = AbstractDataset.storeName(ignoreNaNs, "moment4");
+		Object obj = a.getStoredValue(n);
 		if (obj == null) {
 			final int is = a.getElementsPerItem();
 			final IndexIterator iter = a.getIterator();
 
 			if (is == 1) {
 				FourthMoment moment = new FourthMoment();
-
-				while (iter.hasNext()) {
-					moment.increment(a.getElementDoubleAbs(iter.index));
+				if (ignoreNaNs) {
+					while (iter.hasNext()) {
+						final double x = a.getElementDoubleAbs(iter.index);
+						if (Double.isNaN(x))
+							continue;
+						moment.increment(x);
+					}
+				} else {
+					while (iter.hasNext()) {
+						moment.increment(a.getElementDoubleAbs(iter.index));
+					}
 				}
-				a.setStoredValue("moment4", moment);
+				a.setStoredValue(n, moment);
 			} else {
 				FourthMoment[] moments = new FourthMoment[is];
 
 				for (int j = 0; j < is; j++) {
 					moments[j] = new FourthMoment();
 				}
-				while (iter.hasNext()) {
-					for (int j = 0; j < is; j++)
-						moments[j].increment(a.getElementDoubleAbs(iter.index + j));
+				if (ignoreNaNs) {
+					while (iter.hasNext()) {
+						boolean skip = false;
+						for (int j = 0; j < is; j++) {
+							if (Double.isNaN(a.getElementDoubleAbs(iter.index + j))) {
+								skip = true;
+								break;
+							}
+						}
+						if (!skip)
+							for (int j = 0; j < is; j++)
+								moments[j].increment(a.getElementDoubleAbs(iter.index + j));
+					}
+				} else {
+					while (iter.hasNext()) {
+						for (int j = 0; j < is; j++)
+							moments[j].increment(a.getElementDoubleAbs(iter.index + j));
+					}
 				}
-				a.setStoredValue("moment4", moments);
+				a.setStoredValue(n, moments);
 			}
-			obj = a.getStoredValue("moment4");
+			obj = a.getStoredValue(n);
 		}
 
 		return obj;
 	}
 
 	/**
+	 * See {@link #skewness(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @return skewness
 	 */
 	public static Object skewness(final AbstractDataset a) {
-		Object m = getFourthMoment(a);
+		return skewness(a, false);
+	}
+
+	/**
+	 * @param a dataset
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return skewness
+	 */
+	public static Object skewness(final AbstractDataset a, final boolean ignoreNaNs) {
+		Object m = getFourthMoment(a, ignoreNaNs);
 		if (m instanceof FourthMoment) {
 			return Double.valueOf((new Skewness((FourthMoment) m)).getResult());
 		}
@@ -362,11 +396,21 @@ public class Stats {
 	}
 
 	/**
+	 * See {@link #kurtosis(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @return kurtosis
 	 */
 	public static Object kurtosis(final AbstractDataset a) {
-		Object m = getFourthMoment(a);
+		return kurtosis(a, false);
+	}
+
+	/**
+	 * @param a dataset
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return kurtosis
+	 */
+	public static Object kurtosis(final AbstractDataset a, final boolean ignoreNaNs) {
+		Object m = getFourthMoment(a, ignoreNaNs);
 		if (m instanceof FourthMoment) {
 			return Double.valueOf((new Kurtosis((FourthMoment) m)).getResult());
 		}
@@ -380,53 +424,112 @@ public class Stats {
 		return kurts;
 	}
 
-	static private void calculateHigherMoments(final AbstractDataset a, final int axis) {
-		int rank = a.getRank();
-
-		int[] oshape = a.getShape();
-		int alen = oshape[axis];
+	static private void calculateHigherMoments(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+		final int rank = a.getRank();
+		final int is = a.getElementsPerItem();
+		final int[] oshape = a.getShape();
+		final int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
-		DoubleDataset sk = new DoubleDataset(nshape);
-		DoubleDataset ku = new DoubleDataset(nshape);
+		final int[] nshape = AbstractDataset.squeezeShape(oshape, false);
+		final AbstractDataset sk;
+		final AbstractDataset ku;
 
-		IndexIterator qiter = sk.getIterator(true);
-		int[] qpos = qiter.getPos();
-		int[] spos = oshape;
 
-		while (qiter.hasNext()) {
-			int i = 0;
-			for (; i < axis; i++) {
-				spos[i] = qpos[i];
+		if (is == 1) {
+			sk = new DoubleDataset(nshape);
+			ku = new DoubleDataset(nshape);
+			final IndexIterator qiter = sk.getIterator(true);
+			final int[] qpos = qiter.getPos();
+			final int[] spos = oshape;
+
+			while (qiter.hasNext()) {
+				int i = 0;
+				for (; i < axis; i++) {
+					spos[i] = qpos[i];
+				}
+				spos[i++] = 0;
+				for (; i < rank; i++) {
+					spos[i] = qpos[i - 1];
+				}
+
+				FourthMoment moment = new FourthMoment();
+				if (ignoreNaNs) {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						final double val = a.getDouble(spos);
+						if (Double.isNaN(val))
+							continue;
+
+						moment.increment(val);
+					}
+				} else {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						moment.increment(a.getDouble(spos));
+					}
+				}
+				sk.set((new Skewness(moment)).getResult(), spos);
+				ku.set((new Kurtosis(moment)).getResult(), spos);
 			}
-			spos[i++] = 0;
-			for (; i < rank; i++) {
-				spos[i] = qpos[i-1];
-			}
+		} else {
+			sk = new CompoundDoubleDataset(is, nshape);
+			ku = new CompoundDoubleDataset(is, nshape);
+			final IndexIterator qiter = sk.getIterator(true);
+			final int[] qpos = qiter.getPos();
+			final int[] spos = oshape;
+			final double[] s = new double[is];
+			final double[] k = new double[is];
 
-			FourthMoment moment = new FourthMoment();
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				final double val = a.getDouble(spos);
-				if (Double.isInfinite(val) || Double.isNaN(val))
-					continue;
+			while (qiter.hasNext()) {
+				int i = 0;
+				for (; i < axis; i++) {
+					spos[i] = qpos[i];
+				}
+				spos[i++] = 0;
+				for (; i < rank; i++) {
+					spos[i] = qpos[i-1];
+				}
+				FourthMoment[] moments = new FourthMoment[is];
 
-				moment.increment(val);
+				for (int j = 0; j < is; j++) {
+					moments[j] = new FourthMoment();
+				}
+				int index = a.get1DIndex(spos);
+				if (ignoreNaNs) {
+					boolean skip = false;
+					for (int j = 0; j < is; j++) {
+						if (Double.isNaN(a.getElementDoubleAbs(index + j))) {
+							skip = true;
+							break;
+						}
+					}
+					if (!skip)
+						for (int j = 0; j < is; j++)
+							moments[j].increment(a.getElementDoubleAbs(index + j));
+				} else {
+					for (int j = 0; j < is; j++)
+						moments[j].increment(a.getElementDoubleAbs(index + j));
+				}
+				for (int j = 0; j < is; j++) {
+					s[j] = (new Skewness(moments[j])).getResult(); 
+					k[j] = (new Kurtosis(moments[j])).getResult(); 
+				}
+				sk.set(s, spos);
+				ku.set(k, spos);
 			}
-			sk.set((new Skewness(moment)).getResult(), spos);
-			ku.set((new Kurtosis(moment)).getResult(), spos);
 		}
-		a.setStoredValue("skewness-"+axis, sk);
-		a.setStoredValue("kurtosis-"+axis, ku);
+
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, "skewness-" + axis), sk);
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, "kurtosis-" + axis), ku);
 	}
 
-	static private DoubleDataset getHigherStatistic(final AbstractDataset a, int axis, final String stat) {
+	static private DoubleDataset getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, int axis, String stat) {
 		axis = a.checkAxis(axis);
 
 		DoubleDataset obj = (DoubleDataset) a.getStoredValue(stat);
 		if (obj == null) {
-			calculateHigherMoments(a, axis);
+			calculateHigherMoments(a, ignoreNaNs, axis);
 			obj = (DoubleDataset) a.getStoredValue(stat);
 		}
 
@@ -434,48 +537,103 @@ public class Stats {
 	}
 
 	/**
+	 * See {@link #skewness(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @param axis
 	 * @return skewness
 	 */
 	public static AbstractDataset skewness(final AbstractDataset a, final int axis) {
-		return getHigherStatistic(a, axis, "skewness-" + axis);
+		return skewness(a, false, axis);
 	}
 
 	/**
+	 * @param a dataset
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return skewness
+	 */
+	public static AbstractDataset skewness(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, "skewness-" + axis));
+	}
+
+	/**
+	 * See {@link #kurtosis(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @param axis
 	 * @return kurtosis
 	 */
 	public static AbstractDataset kurtosis(final AbstractDataset a, final int axis) {
-		return getHigherStatistic(a, axis, "kurtosis-" + axis);
+		return kurtosis(a, false, axis);
 	}
 
 	/**
+	 * @param a dataset
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return kurtosis
+	 */
+	public static AbstractDataset kurtosis(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, "kurtosis-" + axis));
+	}
+
+	/**
+	 * See {@link #product(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return product of all items in dataset
 	 */
 	public static Object product(final AbstractDataset a) {
-		return typedProduct(a, a.getDtype());
+		return product(a, false);
 	}
 
 	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return product of all items in dataset
+	 */
+	public static Object product(final AbstractDataset a, final boolean ignoreNaNs) {
+		return typedProduct(a, a.getDtype(), ignoreNaNs);
+	}
+
+	/**
+	 * See {@link #typedProduct(AbstractDataset a, int dtype, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @param dtype
 	 * @return product of all items in dataset
 	 */
 	public static Object typedProduct(final AbstractDataset a, final int dtype) {
+		return typedProduct(a, dtype, false);
+	}
+
+	/**
+	 * @param a
+	 * @param dtype
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return product of all items in dataset
+	 */
+	public static Object typedProduct(final AbstractDataset a, final int dtype, final boolean ignoreNaNs) {
 
 		if (a.isComplex()) {
 			IndexIterator it = a.getIterator();
 			double rv = 1, iv = 0;
 
-			while (it.hasNext()) {
-				final double r1 = a.getElementDoubleAbs(it.index);
-				final double i1 = a.getElementDoubleAbs(it.index + 1);
-				final double tv = r1*rv - i1*iv;
-				iv = r1*iv + i1*rv;
-				rv = tv;
+			if (ignoreNaNs) {
+				while (it.hasNext()) {
+					final double r1 = a.getElementDoubleAbs(it.index);
+					final double i1 = a.getElementDoubleAbs(it.index + 1);
+					if (Double.isNaN(r1) || Double.isNaN(i1))
+						continue;
+					final double tv = r1*rv - i1*iv;
+					iv = r1*iv + i1*rv;
+					rv = tv;
+				}
+			} else {
+				while (it.hasNext()) {
+					final double r1 = a.getElementDoubleAbs(it.index);
+					final double i1 = a.getElementDoubleAbs(it.index + 1);
+					final double tv = r1*rv - i1*iv;
+					iv = r1*iv + i1*rv;
+					rv = tv;
+				}
 			}
 
 			return new Complex(rv, iv);
@@ -510,8 +668,17 @@ public class Stats {
 			return lresults;
 		case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
 			double dresult = 1.;
-			while (it.hasNext()) {
-				dresult *= a.getElementDoubleAbs(it.index);
+			if (ignoreNaNs) {
+				while (it.hasNext()) {
+					final double x = a.getElementDoubleAbs(it.index);
+					if (Double.isNaN(x))
+						continue;
+					dresult *= x;
+				}
+			} else {
+				while (it.hasNext()) {
+					dresult *= a.getElementDoubleAbs(it.index);
+				}
 			}
 			return Double.valueOf(dresult);
 		case AbstractDataset.ARRAYFLOAT32:
@@ -521,9 +688,25 @@ public class Stats {
 			for (int j = 0; j < is; j++) {
 				dresults[j] = 1.;
 			}
-			while (it.hasNext()) {
-				for (int j = 0; j < is; j++)
-					dresults[j] *= a.getElementDoubleAbs(it.index+j);
+			if (ignoreNaNs) {
+				while (it.hasNext()) {
+					boolean skip = false;
+					for (int j = 0; j < is; j++) {
+						if (Double.isNaN(a.getElementDoubleAbs(it.index + j))) {
+							skip = true;
+							break;
+						}
+					}
+					if (!skip)
+						for (int j = 0; j < is; j++) {
+							dresults[j] *= a.getElementDoubleAbs(it.index + j);
+						}
+				}
+			} else {
+				while (it.hasNext()) {
+					for (int j = 0; j < is; j++)
+						dresults[j] *= a.getElementDoubleAbs(it.index + j);
+				}
 			}
 			return dresults;
 		}
@@ -532,21 +715,44 @@ public class Stats {
 	}
 
 	/**
+	 * See {@link #product(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
 	public static AbstractDataset product(final AbstractDataset a, final int axis) {
-		return typedProduct(a, a.getDtype(), axis);
+		return product(a, false, axis);
 	}
 
 	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return product of items along axis in dataset
+	 */
+	public static AbstractDataset product(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+		return typedProduct(a, a.getDtype(), ignoreNaNs, axis);
+	}
+
+	/**
+	 * See {@link #typedProduct(AbstractDataset a, int dtype, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param dtype
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, int axis) {
+	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, final int axis) {
+		return typedProduct(a, dtype, false, axis);
+	}
+
+	/**
+	 * @param a
+	 * @param dtype
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return product of items along axis in dataset
+	 */
+	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, final boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		final int rank = a.getRank();
 		final int[] oshape = a.getShape();
@@ -577,24 +783,50 @@ public class Stats {
 				switch (dtype) {
 				case AbstractDataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						final float r1 = af.getReal(spos);
-						final float i1 = af.getImag(spos);
-						final double tv = r1*rv - i1*iv;
-						iv = r1*iv + i1*rv;
-						rv = tv;
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final float r1 = af.getReal(spos);
+							final float i1 = af.getImag(spos);
+							if (Float.isNaN(r1) || Float.isNaN(i1))
+								continue;
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final float r1 = af.getReal(spos);
+							final float i1 = af.getImag(spos);
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+						}
 					}
 					break;
 				case AbstractDataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						final double r1 = ad.getReal(spos);
-						final double i1 = ad.getImag(spos);
-						final double tv = r1*rv - i1*iv;
-						iv = r1*iv + i1*rv;
-						rv = tv;
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final double r1 = ad.getReal(spos);
+							final double i1 = ad.getImag(spos);
+							if (Double.isNaN(r1) || Double.isNaN(i1))
+								continue;
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final double r1 = ad.getReal(spos);
+							final double i1 = ad.getImag(spos);
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+						}
 					}
 					break;
 				}
@@ -673,9 +905,19 @@ public class Stats {
 					break;
 				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
 					double dresult = 1.;
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						dresult *= a.getDouble(spos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final double x = a.getDouble(spos); 
+							if (Double.isNaN(x))
+								continue;
+							dresult *= x;
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							dresult *= a.getDouble(spos);
+						}
 					}
 					result.set(dresult, qpos);
 					break;
@@ -684,11 +926,29 @@ public class Stats {
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
 					}
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						final float[] va = (float[]) a.getObject(spos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] *= va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final float[] va = (float[]) a.getObject(spos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Float.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] *= va[k];
+								}
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final float[] va = (float[]) a.getObject(spos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] *= va[k];
+							}
 						}
 					}
 					result.set(dresults, qpos);
@@ -698,11 +958,29 @@ public class Stats {
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
 					}
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						final double[] va = (double[]) a.getObject(spos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] *= va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final double[] va = (double[]) a.getObject(spos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Double.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] *= va[k];
+								}
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							spos[axis] = j;
+							final double[] va = (double[]) a.getObject(spos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] *= va[k];
+							}
 						}
 					}
 					result.set(dresults, qpos);
@@ -715,19 +993,40 @@ public class Stats {
 	}
 
 	/**
+	 * See {@link #cumulativeProduct(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return cumulative product of items in flattened dataset
 	 */
 	public static AbstractDataset cumulativeProduct(final AbstractDataset a) {
-		return cumulativeProduct(a.flatten(), 0);
+		return cumulativeProduct(a, false);
 	}
 
 	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return cumulative product of items along axis in dataset
+	 */
+	public static AbstractDataset cumulativeProduct(final AbstractDataset a, boolean ignoreNaNs) {
+		return cumulativeProduct(a.flatten(), ignoreNaNs, 0);
+	}
+
+	/**
+	 * See {@link #cumulativeProduct(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return cumulative product of items along axis in dataset
 	 */
 	public static AbstractDataset cumulativeProduct(final AbstractDataset a, int axis) {
+		return cumulativeProduct(a, false, axis);
+	}
+
+	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return cumulative product of items along axis in dataset
+	 */
+	public static AbstractDataset cumulativeProduct(final AbstractDataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
@@ -746,26 +1045,54 @@ public class Stats {
 				switch (dtype) {
 				case AbstractDataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final float r1 = af.getReal(pos);
-						final float i1 = af.getImag(pos);
-						final double tv = r1*rv - i1*iv;
-						iv = r1*iv + i1*rv;
-						rv = tv;
-						af.set((float) rv, (float) iv, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float r1 = af.getReal(pos);
+							final float i1 = af.getImag(pos);
+							if (Float.isNaN(r1) || Float.isNaN(i1))
+								continue;
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+							af.set((float) rv, (float) iv, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float r1 = af.getReal(pos);
+							final float i1 = af.getImag(pos);
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+							af.set((float) rv, (float) iv, pos);
+						}
 					}
 					break;
 				case AbstractDataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final double r1 = ad.getReal(pos);
-						final double i1 = ad.getImag(pos);
-						final double tv = r1*rv - i1*iv;
-						iv = r1*iv + i1*rv;
-						rv = tv;
-						ad.set(rv, iv, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double r1 = ad.getReal(pos);
+							final double i1 = ad.getImag(pos);
+							if (Double.isNaN(r1) || Double.isNaN(i1))
+								continue;
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+							ad.set(rv, iv, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double r1 = ad.getReal(pos);
+							final double i1 = ad.getImag(pos);
+							final double tv = r1*rv - i1*iv;
+							iv = r1*iv + i1*rv;
+							rv = tv;
+							ad.set(rv, iv, pos);
+						}
 					}
 					break;
 				}
@@ -849,10 +1176,21 @@ public class Stats {
 					break;
 				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
 					double dresult = 1.;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						dresult *= a.getDouble(pos);
-						result.set(dresult, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double x = a.getDouble(pos);
+							if (Double.isNaN(x))
+								continue;
+							dresult *= x;
+							result.set(dresult, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							dresult *= a.getDouble(pos);
+							result.set(dresult, pos);
+						}
 					}
 					break;
 				case AbstractDataset.ARRAYFLOAT32:
@@ -861,13 +1199,32 @@ public class Stats {
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
 					}
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final float[] va = (float[]) a.getObject(pos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] *= va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float[] va = (float[]) a.getObject(pos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Float.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] *= va[k];
+								}
+							result.set(dresults, pos);
 						}
-						result.set(dresults, pos);
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float[] va = (float[]) a.getObject(pos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] *= va[k];
+							}
+							result.set(dresults, pos);
+						}
 					}
 					break;
 				case AbstractDataset.ARRAYFLOAT64:
@@ -876,13 +1233,32 @@ public class Stats {
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
 					}
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final double[] va = (double[]) a.getObject(pos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] *= va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double[] va = (double[]) a.getObject(pos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Double.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] *= va[k];
+								}
+							result.set(dresults, pos);
 						}
-						result.set(dresults, pos);
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double[] va = (double[]) a.getObject(pos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] *= va[k];
+							}
+							result.set(dresults, pos);
+						}
 					}
 					break;
 				}
@@ -893,19 +1269,40 @@ public class Stats {
 	}
 
 	/**
+	 * See {@link #cumulativeSum(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return cumulative sum of items in flattened dataset
 	 */
 	public static AbstractDataset cumulativeSum(final AbstractDataset a) {
-		return cumulativeSum(a.flatten(), 0);
+		return cumulativeSum(a, false);
 	}
 
 	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return cumulative sum of items in flattened dataset
+	 */
+	public static AbstractDataset cumulativeSum(final AbstractDataset a, boolean ignoreNaNs) {
+		return cumulativeSum(a.flatten(), ignoreNaNs, 0);
+	}
+
+	/**
+	 * See {@link #cumulativeSum(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return cumulative sum of items along axis in dataset
 	 */
 	public static AbstractDataset cumulativeSum(final AbstractDataset a, int axis) {
+		return cumulativeSum(a, false, axis);
+	}
+
+	/**
+	 * @param a
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @param axis
+	 * @return cumulative sum of items along axis in dataset
+	 */
+	public static AbstractDataset cumulativeSum(final AbstractDataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
@@ -924,20 +1321,46 @@ public class Stats {
 				switch (dtype) {
 				case AbstractDataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						rv += af.getReal(pos);
-						iv += af.getImag(pos);
-						af.set((float) rv, (float) iv, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float x = af.getReal(pos);
+							final float y = af.getImag(pos);
+							if (Float.isNaN(x) || Float.isNaN(y))
+								continue;
+							rv += x;
+							iv += y;
+							af.set((float) rv, (float) iv, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							rv += af.getReal(pos);
+							iv += af.getImag(pos);
+							af.set((float) rv, (float) iv, pos);
+						}
 					}
 					break;
 				case AbstractDataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						rv += ad.getReal(pos);
-						iv += ad.getImag(pos);
-						ad.set(rv, iv, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double x = ad.getReal(pos);
+							final double y = ad.getImag(pos);
+							if (Double.isNaN(x) || Double.isNaN(y))
+								continue;
+							rv += x;
+							iv += y;
+							ad.set(rv, iv, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							rv += ad.getReal(pos);
+							iv += ad.getImag(pos);
+							ad.set(rv, iv, pos);
+						}
 					}
 					break;
 				}
@@ -1009,34 +1432,83 @@ public class Stats {
 					break;
 				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
 					double dresult = 0.;
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						dresult += a.getDouble(pos);
-						result.set(dresult, pos);
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double x = a.getDouble(pos);
+							if (Double.isNaN(x))
+								continue;
+							dresult += x;
+							result.set(dresult, pos);
+						}
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							dresult += a.getDouble(pos);
+							result.set(dresult, pos);
+						}
 					}
 					break;
 				case AbstractDataset.ARRAYFLOAT32:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final float[] va = (float[]) a.getObject(pos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] += va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float[] va = (float[]) a.getObject(pos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Float.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] += va[k];
+								}
+							result.set(dresults, pos);
 						}
-						result.set(dresults, pos);
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final float[] va = (float[]) a.getObject(pos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] += va[k];
+							}
+							result.set(dresults, pos);
+						}
 					}
 					break;
 				case AbstractDataset.ARRAYFLOAT64:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
-					for (int j = 0; j < alen; j++) {
-						pos[axis] = j;
-						final double[] va = (double[]) a.getObject(pos);
-						for (int k = 0; k < is; k++) {
-							dresults[k] += va[k];
+					if (ignoreNaNs) {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double[] va = (double[]) a.getObject(pos);
+							boolean skip = false;
+							for (int k = 0; k < is; k++) {
+								if (Double.isNaN(va[k])) {
+									skip = true;
+									break;
+								}
+							}
+							if (!skip)
+								for (int k = 0; k < is; k++) {
+									dresults[k] += va[k];
+								}
+							result.set(dresults, pos);
 						}
-						result.set(dresults, pos);
+					} else {
+						for (int j = 0; j < alen; j++) {
+							pos[axis] = j;
+							final double[] va = (double[]) a.getObject(pos);
+							for (int k = 0; k < is; k++) {
+								dresults[k] += va[k];
+							}
+							result.set(dresults, pos);
+						}
 					}
 					break;
 				}

@@ -2759,32 +2759,97 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
+	 * Calculate minimum and maximum for a dataset
+	 * @param ignoreNaNs if true, ignore NaNs
+	 */
+	protected void calculateMaxMin(final boolean ignoreNaNs) {
+		IndexIterator iter = getIterator();
+		double amax = Double.NEGATIVE_INFINITY;
+		double amin = Double.POSITIVE_INFINITY;
+		double hash = 0;
+		boolean hasNaNs = false;
+
+		while (iter.hasNext()) {
+			final double val = getElementDoubleAbs(iter.index);
+			if (Double.isNaN(val)) {
+				hash = (hash * 19) % Integer.MAX_VALUE;
+				if (ignoreNaNs)
+					continue;
+				hasNaNs = true;
+			} else if (Double.isInfinite(val)) {
+				hash = (hash * 19) % Integer.MAX_VALUE;
+			} else {
+				hash = (hash * 19 + val) % Integer.MAX_VALUE;
+			}
+
+			if (val > amax) {
+				amax = val;
+			}
+			if (val < amin) {
+				amin = val;
+			}
+		}
+
+		setStoredValue(storeName(ignoreNaNs, "max"), hasNaNs ? Double.NaN : fromDoubleToNumber(amax));
+		storedValues.put(storeName(ignoreNaNs, "min"), hasNaNs ? Double.NaN : fromDoubleToNumber(amin));
+
+		int ihash = ((int) hash)*19 + getDtype()*17 + getElementsPerItem();
+		int rank = shape.length;
+		for (int i = 0; i < rank; i++) {
+			ihash = ihash*17 + shape[i];
+		}
+		storedValues.put("hash", ihash);
+	}
+
+	/**
 	 * Calculate summary statistics for a dataset
 	 * @param ignoreNaNs if true, ignore NaNs
 	 * @param name
 	 */
-	protected void calculateSummaryStats(boolean ignoreNaNs, String name) {
+	protected void calculateSummaryStats(final boolean ignoreNaNs, final String name) {
 		final IndexIterator iter = getIterator();
 		final SummaryStatistics stats = new SummaryStatistics();
 
-		if (ignoreNaNs) {
+		if (storedValues == null || !storedValues.containsKey("hash")) {
+			boolean hasNaNs = false;
+			double hash = 0;
+
 			while (iter.hasNext()) {
 				final double val = getElementDoubleAbs(iter.index);
 				if (Double.isNaN(val)) {
-					continue;
+					hash = (hash * 19) % Integer.MAX_VALUE;
+					if (ignoreNaNs)
+						continue;
+					hasNaNs = true;
+				} else if (Double.isInfinite(val)) {
+					hash = (hash * 19) % Integer.MAX_VALUE;
+				} else {
+					hash = (hash * 19 + val) % Integer.MAX_VALUE;
 				}
-
 				stats.addValue(val);
 			}
+
+			setStoredValue(storeName(ignoreNaNs, "max"), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMax()));
+			storedValues.put(storeName(ignoreNaNs, "min"), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMin()));
+			storedValues.put(name, stats);
+
+			int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
+			int rank = shape.length;
+			for (int i = 0; i < rank; i++) {
+				ihash = ihash * 17 + shape[i];
+			}
+			storedValues.put("hash", ihash);
 		} else {
 			while (iter.hasNext()) {
 				final double val = getElementDoubleAbs(iter.index);
+				if (Double.isNaN(val) && ignoreNaNs) {
+						continue;
+				}
 				stats.addValue(val);
 			}
-		}
 
-		// now all the calculations are done, add the values into store
-		setStoredValue(name, stats);
+			storedValues.put(name, stats);
+		}
 	}
 
 	/**
@@ -2917,7 +2982,7 @@ public abstract class AbstractDataset implements IDataset {
 							minIndex.setAbs(qiter.index, j);
 							break;
 						}
-					}					
+					}
 				}
 			} else {
 				for (int j = 0; j < alen; j++) {
@@ -2949,78 +3014,6 @@ public abstract class AbstractDataset implements IDataset {
 		storedValues.put(storeName(ignoreNaNs, "var-" + axis), var);
 		storedValues.put(storeName(ignoreNaNs, "maxIndex-" + axis), maxIndex);
 		storedValues.put(storeName(ignoreNaNs, "minIndex-" + axis), minIndex);
-	}
-
-	/**
-	 * Calculate minimum and maximum for a dataset
-	 * @param ignoreNaNs if true, ignore NaNs
-	 */
-	protected void calculateMaxMin(boolean ignoreNaNs) {
-		IndexIterator iter = getIterator();
-		double amax = Double.NEGATIVE_INFINITY;
-		double amin = Double.POSITIVE_INFINITY;
-		double hash = 0;
-		if (ignoreNaNs) {
-			while (iter.hasNext()) {
-				final double val = getElementDoubleAbs(iter.index);
-				if (Double.isNaN(val)) {
-					hash = (hash * 19) % Integer.MAX_VALUE;
-					continue;
-				} else if (Double.isInfinite(val)) {
-					hash = (hash * 19) % Integer.MAX_VALUE;
-				} else {
-					hash = (hash * 19 + val) % Integer.MAX_VALUE;
-				}
-
-				if (val > amax) {
-					amax = val;
-				}
-				if (val < amin) {
-					amin = val;
-				}
-			}
-		} else {
-			boolean hasNans = false;
-			while (iter.hasNext()) {
-				final double val = getElementDoubleAbs(iter.index);
-				if (hasNans) { // ignore rest of values once a NaN has been encountered
-					if (Double.isNaN(val) || Double.isInfinite(val)) {
-						hash = (hash * 19) % Integer.MAX_VALUE;
-					} else {
-						hash = (hash * 19 + val) % Integer.MAX_VALUE;
-					}
-					continue;
-				}
-				if (Double.isNaN(val)) {
-					amax = Double.NaN;
-					amin = Double.NaN;
-					hasNans = true;
-					hash = (hash * 19) % Integer.MAX_VALUE;
-					continue;
-				} else if (Double.isInfinite(val)) {
-					hash = (hash * 19) % Integer.MAX_VALUE;
-				} else {
-					hash = (hash * 19 + val) % Integer.MAX_VALUE;
-				}
-
-				if (val > amax) {
-					amax = val;
-				}
-				if (val < amin) {
-					amin = val;
-				}
-			}
-		}
-
-		setStoredValue(storeName(ignoreNaNs, "max"), fromDoubleToNumber(amax));
-		storedValues.put(storeName(ignoreNaNs, "min"), fromDoubleToNumber(amin));
-
-		int ihash = ((int) hash)*19 + getDtype()*17 + getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			ihash = ihash*17 + shape[i];
-		}
-		storedValues.put("hash", ihash);
 	}
 
 	private Number fromDoubleToNumber(double x) {

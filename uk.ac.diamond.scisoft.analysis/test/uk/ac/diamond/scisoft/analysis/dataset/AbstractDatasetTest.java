@@ -81,6 +81,41 @@ public class AbstractDatasetTest {
 		assertEquals("Max arg", 11, a.argMax(true));
 		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(true, 0));
 		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(true, 1));
+
+		// test other code path
+		AbstractDataset b = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		b.setShape(3,4);
+		b.mean(); // trigger summary stats calculation
+		assertEquals("Max", 11, b.max().doubleValue(), 1e-6);
+		assertEquals("Max arg", 11, b.argMax());
+		b.set(Double.NaN, 1, 0);
+		b.mean(); // trigger summary stats calculation
+		assertTrue("Max", Double.isNaN(b.max().doubleValue()));
+		assertEquals("Max arg", 4, b.argMax());
+		b.mean(true);
+		assertEquals("Max", 11, b.max(true).doubleValue(), 1e-6);
+		assertEquals("Max arg", 11, b.argMax(true));
+	}
+
+	@Test
+	public void testHash() {
+		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		a.setShape(3,4);
+		AbstractDataset b = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		b.setShape(3,4);
+
+		b.mean(); // trigger other code path
+		assertEquals("Hash code", a.hashCode(), b.hashCode());
+
+		a.set(Double.POSITIVE_INFINITY, 1, 0);
+		b.set(Double.POSITIVE_INFINITY, 1, 0);
+		b.mean(); // trigger other code path
+		assertEquals("Hash code", a.hashCode(), b.hashCode());
+
+		a.set(Double.NaN, 0, 1);
+		b.set(Double.NaN, 0, 1);
+		b.mean(); // trigger other code path
+		assertEquals("Hash code", a.hashCode(), b.hashCode());
 	}
 
 	private static boolean equalsWithNaNs(AbstractDataset a, AbstractDataset b) {

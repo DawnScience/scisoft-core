@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -117,4 +118,16 @@ public class StatsTest {
 		assertEquals("100-percentile not max!", ta.max().doubleValue(), Stats.quantile(ta, 1), 1e-5);
 	}
 
+	@Test
+	public void TestNaNs() {
+		AbstractDataset a = AbstractDataset.arange(1, 7, 1, AbstractDataset.FLOAT64);
+
+		assertEquals("Sum", 21, ((Number) a.sum()).doubleValue(), 1e-6);
+		assertEquals("Product", 720, (Double) Stats.product(a), 1e-6);
+		a.set(Double.NaN, 0);
+		assertTrue("Sum", Double.isNaN(((Number) a.sum()).doubleValue()));
+		assertTrue("Product", Double.isNaN((Double) Stats.product(a)));
+		assertEquals("Sum", 20, ((Number) a.sum(true)).doubleValue(), 1e-6);
+		assertEquals("Product", 720, (Double) Stats.product(a, true), 1e-6);
+	}
 }

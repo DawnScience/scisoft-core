@@ -59,7 +59,6 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 	 */
 	public MARLoader(String FileName) {
 		super(FileName);
-		
 	}
 
 	@Override

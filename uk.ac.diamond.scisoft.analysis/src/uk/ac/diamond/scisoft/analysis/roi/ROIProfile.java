@@ -126,10 +126,9 @@ public class ROIProfile {
 	 * @return box profile
 	 */
 	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi) {
-		
-		return ROIProfile.box(data, mask, rroi, false);
+		return box(data, mask, rroi, false);
 	}
-	
+
 	/**
 	 * @param data
 	 * @param mask

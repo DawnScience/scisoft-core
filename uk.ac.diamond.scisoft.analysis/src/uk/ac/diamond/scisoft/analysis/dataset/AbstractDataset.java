@@ -2962,12 +2962,14 @@ public abstract class AbstractDataset implements IDataset {
 		double hash = 0;
 		if (ignoreNaNs) {
 			while (iter.hasNext()) {
-				hash = (hash * 19) % Integer.MAX_VALUE;
 				final double val = getElementDoubleAbs(iter.index);
 				if (Double.isNaN(val)) {
+					hash = (hash * 19) % Integer.MAX_VALUE;
 					continue;
-				} else if (!Double.isInfinite(val)) {
-					hash = (hash + val) % Integer.MAX_VALUE;
+				} else if (Double.isInfinite(val)) {
+					hash = (hash * 19) % Integer.MAX_VALUE;
+				} else {
+					hash = (hash * 19 + val) % Integer.MAX_VALUE;
 				}
 
 				if (val > amax) {
@@ -2980,18 +2982,25 @@ public abstract class AbstractDataset implements IDataset {
 		} else {
 			boolean hasNans = false;
 			while (iter.hasNext()) {
-				hash = (hash * 19) % Integer.MAX_VALUE;
+				final double val = getElementDoubleAbs(iter.index);
 				if (hasNans) { // ignore rest of values once a NaN has been encountered
+					if (Double.isNaN(val) || Double.isInfinite(val)) {
+						hash = (hash * 19) % Integer.MAX_VALUE;
+					} else {
+						hash = (hash * 19 + val) % Integer.MAX_VALUE;
+					}
 					continue;
 				}
-				final double val = getElementDoubleAbs(iter.index);
 				if (Double.isNaN(val)) {
 					amax = Double.NaN;
 					amin = Double.NaN;
 					hasNans = true;
+					hash = (hash * 19) % Integer.MAX_VALUE;
 					continue;
-				} else if (!Double.isInfinite(val)) {
-					hash = (hash + val) % Integer.MAX_VALUE;
+				} else if (Double.isInfinite(val)) {
+					hash = (hash * 19) % Integer.MAX_VALUE;
+				} else {
+					hash = (hash * 19 + val) % Integer.MAX_VALUE;
 				}
 
 				if (val > amax) {
@@ -3003,14 +3012,15 @@ public abstract class AbstractDataset implements IDataset {
 			}
 		}
 
+		setStoredValue(storeName(ignoreNaNs, "max"), fromDoubleToNumber(amax));
+		storedValues.put(storeName(ignoreNaNs, "min"), fromDoubleToNumber(amin));
+
 		int ihash = ((int) hash)*19 + getDtype()*17 + getElementsPerItem();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			ihash = ihash*17 + shape[i];
 		}
-		setStoredValue(storeName(ignoreNaNs, "max"), fromDoubleToNumber(amax));
-		storedValues.put(storeName(ignoreNaNs, "min"), fromDoubleToNumber(amin));
-		storedValues.put(storeName(ignoreNaNs, "hash"), ihash);
+		storedValues.put("hash", ihash);
 	}
 
 	private Number fromDoubleToNumber(double x) {

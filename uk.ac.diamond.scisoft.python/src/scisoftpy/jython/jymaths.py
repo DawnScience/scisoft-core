@@ -485,6 +485,10 @@ def tensordot(a, b, axes=2):
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
+@ndarraywrapped
+def derivative(x, y, n):
+    return _maths.derivative(x, y, n)
+
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _utils
 
 @ndarraywrapped
@@ -496,3 +500,13 @@ def crossings(y, value, x=None):
         return _utils.crossings(y, value)
     else:
         return _utils.crossings(x, y, value)
+    
+@ndarraywrapped
+def findFirstValuesGreaterThanorEqualTo(y, value):
+    '''Finds the first value in a dataset that is greater than or equal to the given value'''
+    return y.getElementDoubleAbs(int(_utils.findIndexGreaterThanorEqualTo(y, value)))
+
+@ndarraywrapped
+def findFirstValuesLessThanorEqualTo(y, value):
+    '''Finds the first value in a dataset that is greater than or equal to the given value'''
+    return y.getElementDoubleAbs(int(_utils.findIndexLessThanorEqualTo(y, value)))

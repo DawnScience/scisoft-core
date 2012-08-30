@@ -117,4 +117,19 @@ public class StatsTest {
 		assertEquals("100-percentile not max!", ta.max().doubleValue(), Stats.quantile(ta, 1), 1e-5);
 	}
 
+	/**
+	 * quantile
+	 * Create a dataset with 1000 points with values 0 to 999 out of order
+	 * use Stats.quantile to get the value of the dataset below which 0.25 of the population is the dataset has values below or equal to it
+	 */
+	@Test 
+	public void TestQuantile(){
+		int[] data = new int[1000];
+		for(int i=0; i< data.length; i++){
+			data[i] = data.length-i;
+		}
+		IntegerDataset id = new IntegerDataset(data, data.length);
+		double[] quantile = Stats.quantile(id, 0.25, .75);
+		assertEquals(quantile[0], data.length * 0.25, 1.0);
+	}
 }

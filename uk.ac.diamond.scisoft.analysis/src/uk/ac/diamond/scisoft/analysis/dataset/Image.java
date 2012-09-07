@@ -16,12 +16,16 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
+import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Delaunay_Triangulation;
+import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Point_dt;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
@@ -97,4 +101,43 @@ public class Image {
 
 		return shift;
 	}
+	
+	public static AbstractDataset regrid(
+			AbstractDataset data, 
+			AbstractDataset x, 
+			AbstractDataset y, 
+			AbstractDataset gridX, 
+			AbstractDataset gridY) {
+		
+		// create a list of all the points
+		ArrayList<Point_dt> points = new ArrayList<Point_dt>();
+		IndexIterator it = data.getIterator();
+		while(it.hasNext()){
+			points.add(new Point_dt(
+					x.getElementDoubleAbs(it.index), 
+					y.getElementDoubleAbs(it.index),
+					data.getElementDoubleAbs(it.index)));
+		}
+		
+		// create the Delauney_triangulation_Mesh
+		Delaunay_Triangulation dt = new Delaunay_Triangulation(points.toArray(new Point_dt[0]));
+		
+		IndexIterator itx = gridX.getIterator();
+		DoubleDataset result = new DoubleDataset(gridX.shape[0], gridY.shape[0]);
+		while(itx.hasNext()){
+			int xindex = itx.index;
+			double xpos = gridX.getDouble(xindex);
+			IndexIterator ity = gridY.getIterator();
+			
+			while(ity.hasNext()){
+				int yindex = ity.index;
+				double ypos = gridX.getDouble(yindex);
+				double value = dt.z(xpos, ypos);
+				result.set(value, xindex,yindex);
+			}
+		}
+		
+		return result;
+	}
+	
 }

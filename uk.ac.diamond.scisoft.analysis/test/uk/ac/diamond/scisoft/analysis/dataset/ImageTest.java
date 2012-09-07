@@ -38,7 +38,7 @@ public class ImageTest {
 		
 		AbstractDataset y = DatasetUtils.transpose(x);
 		
-		AbstractDataset lin = DoubleDataset.arange(0,1000,5);
+		AbstractDataset lin = DoubleDataset.arange(-100,900,5);
 		
 		// now apply the Transform
 		

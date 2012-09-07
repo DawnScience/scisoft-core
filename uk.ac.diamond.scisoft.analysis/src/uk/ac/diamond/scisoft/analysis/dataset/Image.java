@@ -132,8 +132,12 @@ public class Image {
 			while(ity.hasNext()){
 				int yindex = ity.index;
 				double ypos = gridX.getDouble(yindex);
-				double value = dt.z(xpos, ypos);
-				result.set(value, xindex,yindex);
+				if(dt.contains(xpos, ypos)){
+					result.set(dt.z(xpos, ypos), xindex,yindex);
+				} else {
+					result.set(Double.NaN, xindex,yindex);
+				}
+				
 			}
 		}
 		

@@ -16,11 +16,13 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.io.Serializable;
+
 /**
  * Class that wrappers the Fermi function from Fermi-Dirac distribution
  * y(x) = scale / (exp((x - mu)/kT) + 1) + C
  */
-public class Fermi extends AFunction {
+public class Fermi extends AFunction implements Serializable{
 	
 	private static String cname = "Fermi";
 
@@ -30,10 +32,10 @@ public class Fermi extends AFunction {
 
 	private static String cdescription = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
 
-	private static double[] defaultparams = new double[]{0,0,0,0};
+	private static double[] params = new double[]{0,0,0,0};
 
 	public Fermi(){
-		super(defaultparams);
+		this(params);
 	}
 
 	public Fermi(double... params) {

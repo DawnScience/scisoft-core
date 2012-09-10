@@ -27,6 +27,7 @@ public class Polynomial extends AFunction {
 	private static String cname = "Polynomial";
 	private static String cdescription = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	final double[] a;
+	private String[] paramNames;
 	final int nparams; // actually degree + 1
 	/**
 	 * Basic constructor, not advisable to use
@@ -38,6 +39,11 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+		paramNames = new String[nparams];
+		for(int i=0; i<paramNames.length; i++){
+			paramNames[i] = "Parameter"+i;
+			setParameterName(paramNames[i], i);
+		}
 	}
 
 	/**
@@ -51,6 +57,11 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+		paramNames = new String[nparams];
+		for(int i=0; i<paramNames.length; i++){
+			paramNames[i] = "Parameter"+i;
+			setParameterName(paramNames[i], i);
+		}
 	}
 
 	/**
@@ -64,6 +75,11 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+		paramNames = new String[nparams];
+		for(int i=0; i<paramNames.length; i++){
+			paramNames[i] = "Parameter"+i;
+			setParameterName(paramNames[i], i);
+		}
 	}
 
 	/**
@@ -77,6 +93,11 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+		paramNames = new String[nparams];
+		for(int i=0; i<paramNames.length; i++){
+			paramNames[i] = "Parameter"+i;
+			setParameterName(paramNames[i], i);
+		}
 	}
 
 	/**
@@ -103,6 +124,11 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+		paramNames = new String[nparams];
+		for(int i=0; i<paramNames.length; i++){
+			paramNames[i] = "Parameter"+i;
+			setParameterName(paramNames[i], i);
+		}
 	}
 
 	private void calcCachedParameters() {

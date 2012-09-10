@@ -23,18 +23,35 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  */
 public class Cubic extends AFunction {
 	private static String cname = "Cubic";
-
+	private static String cdescription = "y(x) = ax^3 + bx^2 + cx + d";
+	private static String[] paramNames = new String[]{"A", "B", "C", "D"};
+	@SuppressWarnings("unused")
+	private static double[] params = new double[]{0,0,0,0};
 	/**
 	 * Basic constructor, not advisable to use
 	 */
 	public Cubic() {
 		super(4);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
+	}
+
+	public Cubic(double A, double B, double C, double D) {
+		super(4);
+		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Cubic(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	/**
@@ -73,6 +90,9 @@ public class Cubic extends AFunction {
 		getParameter(3).setValue((minD + maxD) / 2.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	double a, b, c, d;

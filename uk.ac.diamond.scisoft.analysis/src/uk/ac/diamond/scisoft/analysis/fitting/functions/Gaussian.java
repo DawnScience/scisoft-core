@@ -26,10 +26,10 @@ public class Gaussian extends APeak implements IPeak {
 	private static String cname = "Gaussian";
 	private static String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
 	private static String[] paramNames = new String[]{"pos", "FWHM", "area"};
-	private static double[] defaultparams = new double[]{0,0,0};
+	private static double[] params = new double[]{0,0,0};
 
 	public Gaussian(){
-		super(defaultparams);
+		this(params);
 	}
 
 	/**

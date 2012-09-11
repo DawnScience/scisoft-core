@@ -38,8 +38,8 @@ public class Cubic extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Cubic(double A, double B, double C, double D) {
-		super(4);
+	public Cubic(double[] params) {
+		super(params);
 		name = cname;
 		description = cdescription;
 		for(int i =0; i<paramNames.length;i++)

@@ -27,7 +27,13 @@ import org.apache.commons.math.special.Gamma;
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static String cname = "PearsonVII";
+	private static String[] paramNames = new String[]{"Min Peak Position", "Max Peak Position", "Max FWHM", "Max Area"};
+	private static String cdescription = "y(x) = PearsonVII distribution";
+	private static double[] params = new double[]{0,0,0,0};
 
+	public PearsonVII(){
+		this(params);
+	}
 	/**
 	 * Constructor which takes the three properties required, which are
 	 * 
@@ -43,11 +49,17 @@ public class PearsonVII extends APeak implements IPeak {
 	public PearsonVII(double[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public PearsonVII(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	double defaultMixing = 2;
@@ -77,6 +89,9 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setValue(peakParameters.getArea()/2);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	/**
@@ -117,6 +132,9 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setValue(maxArea / 10);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 	
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double mixing) {
@@ -139,6 +157,9 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setValue(maxArea / 10);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}	
 
 	public PearsonVII createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {

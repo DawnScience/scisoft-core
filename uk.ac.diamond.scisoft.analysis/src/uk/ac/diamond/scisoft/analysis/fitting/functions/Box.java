@@ -27,7 +27,14 @@ public class Box extends AFunction {
 
 	private double mu1, kT1, mu2, kT2, scale;
 	private Fermi fermi1, fermi2; 
-	
+	private static String cdescription = "y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
+	private static String[] paramNames = new String[]{"mu1", "kT1", "mu2", "kT2", "scale"};
+	private static double[] params = new double[]{0,0,0,0,0};
+
+	public Box(){
+		this(params);
+	}
+
 	public Box(double... params) {
 		super(params);
 		
@@ -38,6 +45,9 @@ public class Box extends AFunction {
 		fermi2 = new Fermi(fermi2Params);
 		
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Box(IParameter[] params) {
@@ -50,6 +60,9 @@ public class Box extends AFunction {
 		fermi2 = new Fermi(fermi2Params);
 		
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	

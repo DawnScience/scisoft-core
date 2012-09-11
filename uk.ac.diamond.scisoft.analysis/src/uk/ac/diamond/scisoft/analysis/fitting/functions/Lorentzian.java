@@ -28,7 +28,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  */
 public class Lorentzian extends APeak {
 	private static String cname = "Lorentzian";
+	private static String[] paramNames = new String[]{"Position", "Height", "Half width"};
+	private static double[] params = new double[]{0,0,0};
+	private static String cdescription = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
 
+	public Lorentzian(){
+		this(params);
+	}
 	/**
 	 * Constructor which takes the three properties required, which are
 	 * 
@@ -43,11 +49,17 @@ public class Lorentzian extends APeak {
 	public Lorentzian(double... params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Lorentzian(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Lorentzian(IdentifiedPeak peakParameters) {
@@ -69,6 +81,9 @@ public class Lorentzian extends APeak {
 		getParameter(2).setValue(peakParameters.getFWHM()/4);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	/**
@@ -102,6 +117,9 @@ public class Lorentzian extends APeak {
 		getParameter(2).setValue(maxHalfWidth / 10.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Lorentzian createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {

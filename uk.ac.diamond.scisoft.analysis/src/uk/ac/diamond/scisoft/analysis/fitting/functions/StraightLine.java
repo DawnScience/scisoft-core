@@ -22,6 +22,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  */
 public class StraightLine extends AFunction {
 	private static String cname = "Linear";
+	private static String[] paramNames = new String[]{"M", "Constant"};
+	private static String cdescription = "y(x) = m*x + c";
 
 	/**
 	 * Basic constructor, not advisable to use.
@@ -29,11 +31,25 @@ public class StraightLine extends AFunction {
 	public StraightLine() {
 		super(2);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
+	}
+
+	public StraightLine(double[] params){
+		super(params);
+		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public StraightLine(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	/**
@@ -60,6 +76,9 @@ public class StraightLine extends AFunction {
 		getParameter(1).setValue((minC + maxC) / 2.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	double a, b;

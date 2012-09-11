@@ -22,6 +22,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  */
 public class Quadratic extends AFunction {
 	private static String cname = "Quadratic";
+	private static String[] paramNames = new String[]{"A", "B", "C"};
+	private static String cdescription = "y(x) = ax^2 + bx + c";
 
 	/**
 	 * Basic constructor, not advisable to use
@@ -29,11 +31,17 @@ public class Quadratic extends AFunction {
 	public Quadratic() {
 		super(3);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Quadratic(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	/**
@@ -68,6 +76,9 @@ public class Quadratic extends AFunction {
 		getParameter(2).setValue((minC + maxC) / 2.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 	
 	/**
@@ -78,6 +89,9 @@ public class Quadratic extends AFunction {
 		super(Params);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	double a, b, c;

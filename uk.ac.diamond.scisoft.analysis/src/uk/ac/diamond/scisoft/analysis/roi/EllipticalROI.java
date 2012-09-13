@@ -145,6 +145,30 @@ public class EllipticalROI extends ROIBase {
 		return saxis[0] == saxis[1];
 	}
 
+	/**
+	 * Get point on ellipse at given angle
+	 * @param angle in radians
+	 * @return point 
+	 */
+	public double[] getPoint(double angle) {
+		double ca = Math.cos(ang);
+		double sa = Math.sin(ang);
+		double cb = Math.cos(angle);
+		double sb = Math.sin(angle);
+
+		return new double[] { spt[0] + saxis[0]*ca*cb - saxis[1]*sa*sb, 
+				spt[1] + saxis[0]*sa*cb + saxis[1]*ca*sb};
+	}
+
+	/**
+	 * Get point on ellipse at given angle
+	 * @param angle in degrees
+	 * @return point 
+	 */
+	public double[] getPointDegrees(double angle) {
+		return getPoint(Math.toRadians(angle));
+	}
+
 	@Override
 	public String toString() {
 		if (isCircular()) {

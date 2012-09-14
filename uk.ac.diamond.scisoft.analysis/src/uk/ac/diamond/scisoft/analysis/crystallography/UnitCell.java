@@ -27,6 +27,30 @@ public class UnitCell extends LatticeCell {
 	private double[] angles;
 
 	/**
+	 * Cubic unit cell
+	 * @param length
+	 */
+	public UnitCell(double length) {
+		this(new double[] { length, length, length });
+	}
+
+	/**
+	 * Cuboid unit cell
+	 * @param lengths
+	 */
+	public UnitCell(double[] lengths) {
+		super();
+		this.setLengths(lengths);
+		this.setAngles(new double[] { 90, 90, 90 });
+
+		a = new Vector3d(lengths[0], 0, 0);
+
+		b = new Vector3d(0, lengths[1], 0);
+
+		c = new Vector3d(0, 0, lengths[2]);
+	}
+
+	/**
 	 * @param lengths
 	 * @param angles (in degrees)
 	 */

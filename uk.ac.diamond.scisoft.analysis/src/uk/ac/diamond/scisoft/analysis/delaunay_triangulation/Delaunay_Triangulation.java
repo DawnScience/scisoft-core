@@ -973,6 +973,9 @@ public class Delaunay_Triangulation {
 
 	private void flip(Triangle_dt t, int mc) {
 
+		if (t.a == t.b) {
+			System.out.println("Interesting");
+		}
 		Triangle_dt u = t.abnext, v;
 		t._mc = mc;
 		if (u.halfplane || !u.circumcircle_contains(t.c))

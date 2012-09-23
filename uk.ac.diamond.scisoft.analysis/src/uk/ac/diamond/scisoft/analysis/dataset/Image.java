@@ -17,12 +17,17 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ibm.media.codec.audio.ArrayToPCM;
+
+import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
+import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Delaunay_Triangulation;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Point_dt;
@@ -102,7 +107,7 @@ public class Image {
 		return shift;
 	}
 	
-	public static AbstractDataset regrid(
+	public static AbstractDataset regrid_delaunay(
 			AbstractDataset data, 
 			AbstractDataset x, 
 			AbstractDataset y, 
@@ -113,14 +118,19 @@ public class Image {
 		ArrayList<Point_dt> points = new ArrayList<Point_dt>();
 		IndexIterator it = data.getIterator();
 		while(it.hasNext()){
-			points.add(new Point_dt(
-					x.getElementDoubleAbs(it.index), 
-					y.getElementDoubleAbs(it.index),
-					data.getElementDoubleAbs(it.index)));
+			
+			Point_dt point_dt = new Point_dt(
+					x.getElementDoubleAbs(it.index)*1000000, 
+					y.getElementDoubleAbs(it.index)*1000000,
+					data.getElementDoubleAbs(it.index));
+			points.add(point_dt);
 		}
 		
+		Point_dt[] pointArray = points.toArray(new Point_dt[0]);
+		
+		
 		// create the Delauney_triangulation_Mesh
-		Delaunay_Triangulation dt = new Delaunay_Triangulation(points.toArray(new Point_dt[0]));
+		Delaunay_Triangulation dt = new Delaunay_Triangulation(pointArray);
 		
 		IndexIterator itx = gridX.getIterator();
 		DoubleDataset result = new DoubleDataset(gridX.shape[0], gridY.shape[0]);
@@ -142,6 +152,67 @@ public class Image {
 		}
 		
 		return result;
+	}
+	
+	public static AbstractDataset regrid(
+			AbstractDataset data, 
+			AbstractDataset x, 
+			AbstractDataset y, 
+			AbstractDataset gridX, 
+			AbstractDataset gridY) {
+		
+		// create the output array
+		DoubleDataset result = new DoubleDataset(gridY.shape[0], gridX.shape[0]);
+
+		IndexIterator it = data.getIterator();
+		while(it.hasNext()){
+			double xpos = x.getElementDoubleAbs(it.index);
+			double ypos = y.getElementDoubleAbs(it.index);
+			double dvalue = data.getElementDoubleAbs(it.index);
+			int xind = getLowerIndex(xpos,gridX);
+			int yind = getLowerIndex(ypos,gridY);
+			
+			double x1 = gridX.getDouble(xind+1);
+			double x0 = gridX.getDouble(xind);
+			double dx = Math.abs(x1 - x0);
+			double y1 = gridY.getDouble(yind+1);
+			double y0 = gridY.getDouble(yind);
+			double dy = Math.abs(y1 - y0);
+			
+			// now work out the 4 weightings
+			double ux0 = Math.abs(dx - Math.abs(xpos-x0));
+			double uy0 = Math.abs(dy - Math.abs(ypos-y0));
+			double ux1 = Math.abs(dx - Math.abs(xpos-x1));
+			double uy1 = Math.abs(dy - Math.abs(ypos-y1));
+			
+			double area = dx*dy;
+			
+			double w00 = ((ux0*uy0)/area);
+			double w01 = ((ux0*uy1)/area);
+			double w10 = ((ux1*uy0)/area);
+			double w11 = ((ux1*uy1)/area);
+			
+			if (Math.abs(w00+w10+w01+w11 -1.0) > 0.000001) {
+				System.out.println(w00+w10+w01+w11);
+			}
+			
+			double new00 = result.getDouble(yind,xind)+(w00*dvalue);
+			result.set(new00, yind, xind);
+			double new01 = result.getDouble(yind,xind+1)+(w01*dvalue);
+			result.set(new01, yind, xind+1);
+			double new10 = result.getDouble(yind+1,xind)+(w10*dvalue);
+			result.set(new10, yind+1, xind);
+			double new11 = result.getDouble(yind+1,xind+1)+(w11*dvalue);
+			result.set(new11, yind+1, xind+1);
+		}
+		
+		return result;
+	}
+	
+	private static int getLowerIndex(double point, AbstractDataset axis) {
+		AbstractDataset mins = Maths.abs(Maths.subtract(axis, point));
+		return mins.minPos()[0];
+		
 	}
 	
 }

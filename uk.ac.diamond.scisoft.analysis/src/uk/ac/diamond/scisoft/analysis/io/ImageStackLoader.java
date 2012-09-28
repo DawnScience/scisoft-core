@@ -35,11 +35,11 @@ public class ImageStackLoader implements ILazyLoader {
 		return dtype;
 	}
 
-	public ImageStackLoader(List<String> imageFilenames) throws Exception {
+	public ImageStackLoader(List<String> imageFilenames, IMonitor mon) throws Exception {
 		this.imageFilenames = imageFilenames;
 		// load the first image to get the shape of the whole thing
 		int stack = imageFilenames.size();
-		DataHolder dh = LoaderFactory.getData(imageFilenames.get(0), null);
+		DataHolder dh = LoaderFactory.getData(imageFilenames.get(0), mon);
 		if ( dh == null)
 			throw new ScanFileHolderException("Unable to load " + imageFilenames.get(0));
 		AbstractDataset data = dh.getDataset(0);

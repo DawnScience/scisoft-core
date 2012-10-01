@@ -49,7 +49,7 @@ public class DetectorProperties {
 	private Matrix3d invOrientation; // its inverse
 	private Matrix3d ta;
 	private Matrix3d tb;
-	private HashSet<IDetectorPropertyListener> detectorPropListeners;
+	private static HashSet<IDetectorPropertyListener> detectorPropListeners; // TODO Check - should it really be static?
 
 	
 	/**
@@ -503,6 +503,15 @@ public class DetectorProperties {
 		}
 	}
 
+	// TODO: Implement this ....
+//	public void setBeamPosition(Vector3d d) {
+//		try {
+//			setBeamVector(d);
+//		} catch (IllegalArgumentException e) {
+//			throw new IllegalStateException("No intersection when beam is parallel to detector");
+//		}
+//	}
+	
 	/**
 	 * @param d
 	 * @return point of intersection of direction vector with detector
@@ -591,13 +600,18 @@ public class DetectorProperties {
 	// TODO FIXME Karl to check
 	public void setBeamLocation(double[] loc) {
 		// Code to set beam center
+		// Get position vector of loc's top-left corner
+		Vector3d d = pixelPosition(loc[0], loc[1]);
+		// Use this as the new beam vector
+		setBeamVector(d);
 		
 		// Tell listeners
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "Beam Center"));
 	}
 	
 	public void addDetectorPropertyListener(IDetectorPropertyListener l) {
-		if (detectorPropListeners==null) detectorPropListeners = new HashSet<IDetectorPropertyListener>(5);
+		if (detectorPropListeners==null) 
+			detectorPropListeners = new HashSet<IDetectorPropertyListener>(5);
 		detectorPropListeners.add(l);
 	}
 	/**
@@ -605,12 +619,14 @@ public class DetectorProperties {
 	 * @param l
 	 */
 	public void removeDetectorPropertyListener(IDetectorPropertyListener l) {
-		if (detectorPropListeners==null) return;
+		if (detectorPropListeners==null) 
+			return;
 		detectorPropListeners.remove(l);
 	}
 	
 	protected void fireDetectorPropertyListeners(DetectorPropertyEvent evt) {
-		if (detectorPropListeners==null) return;
+		if (detectorPropListeners==null) 
+			return;
 		for (IDetectorPropertyListener l : detectorPropListeners) {
 			l.detectorPropertiesChanged(evt);
 		}

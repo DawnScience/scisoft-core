@@ -59,19 +59,23 @@ public class Median implements DatasetToDatasetFunction {
 			if (ishape.length > 1)
 				throw new IllegalArgumentException("Only 1D input datasets are supported");
 			
-			AbstractDataset filterFunction = AbstractDataset.zeros(is , ishape, dt);
+			AbstractDataset filtered = AbstractDataset.zeros(is , ishape, dt);
 			
-			final PositionIterator iterPos = filterFunction.getPositionIterator();
+			final PositionIterator iterPos = filtered.getPositionIterator();
+			final int[] pos = iterPos.getPos();
+			final int size = dataset.getSize();
+			final int[] start = new int[1];
+			final int[] stop = new int[1];
+			final int[] step = new int[] {1};
 			while (iterPos.hasNext()) {
-				int idx = iterPos.getPos()[0];
-				int idxStart = Math.max(idx - this.window, 0);
-				int idxStop = Math.min(idx + this.window, dataset.getSize()-1);
-				AbstractDataset windowSlice = dataset.getSlice(new int[] {idxStart}, new int[] {idxStop}, new int[] {1});
+				int idx = pos[0];
+				start[0] = Math.max(idx - this.window, 0);
+				stop[0] = Math.min(idx + this.window + 1, size); // exclusive
 				
-				filterFunction.set(Stats.median(windowSlice), iterPos.getPos());
+				filtered.set(Stats.median(dataset.getSlice(start, stop, step)), pos);
 			}
 			
-			result.add(filterFunction);
+			result.add(filtered);
 		}
 		return result;
 	}

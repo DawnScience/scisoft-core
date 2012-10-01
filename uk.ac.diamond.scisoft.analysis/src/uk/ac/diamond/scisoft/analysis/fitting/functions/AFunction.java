@@ -49,6 +49,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	 */
 	protected String name = "default";
 
+	/**
+	 * The description of the function
+	 */
+	protected String description = "default";
+
 	protected boolean dirty = true;
 
 	/**
@@ -112,8 +117,28 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String newDescription) {
+		description = newDescription;
+	}
+
+	@Override
 	public IParameter getParameter(int index) {
 		return parameters[index];
+	}
+
+	@Override
+	public String getParameterName(int index) {
+		return parameters[index].getName();
+	}
+
+	@Override
+	public void setParameterName(String name, int index) {
+		parameters[index].setName(name);
 	}
 
 	@Override

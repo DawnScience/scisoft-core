@@ -31,6 +31,14 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 public class PseudoVoigt extends APeak implements IPeak{
 	private static final double FWHM_TO_SIGMA = 1./Math.sqrt(8.*Math.log(2.));
 	private static String cname = "PseudoVoigt";
+	private static String[] paramNames = new String[]{"Position", "GaussianFWHM", "LorentzianFWHM", "area", "mix"};
+	private static String cdescription = "y(x) =  Pseudo Voigt";
+	private static double[] params = new double[]{0,0,0,0,0};
+
+
+	public PseudoVoigt(){
+		this(params[0],params[1],params[2],params[3],params[4]);
+	}
 
 	/**
 	 * 
@@ -43,6 +51,9 @@ public class PseudoVoigt extends APeak implements IPeak{
 	public PseudoVoigt(double position, double gaussianFWHM, double lorentzianFWHM, double area, double mix) {
 		super(position, gaussianFWHM, lorentzianFWHM, area, mix);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 	
 	/**
@@ -52,6 +63,9 @@ public class PseudoVoigt extends APeak implements IPeak{
 	public PseudoVoigt(IParameter[] params) {
 		super(params);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public PseudoVoigt(IdentifiedPeak peakParameters){
@@ -85,6 +99,9 @@ public class PseudoVoigt extends APeak implements IPeak{
 		getParameter(4).setUpperLimit(1.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 	/**
 	 * @param minPos
@@ -121,6 +138,9 @@ public class PseudoVoigt extends APeak implements IPeak{
 		getParameter(4).setValue(0.5);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public PseudoVoigt createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM){

@@ -31,6 +31,8 @@ public class Parameter implements Serializable, IParameter {
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(Parameter.class);
 
+	private String name = "";
+
 	private double value = 0.0;
 
 	private double upperLimit = Double.MAX_VALUE;
@@ -84,6 +86,16 @@ public class Parameter implements Serializable, IParameter {
 		this.value = value;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
+	}
+
+	/**
+	 * Function that gets the name of the parameter
+	 * 
+	 * @return The Name of the parameter
+	 */
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -205,6 +217,17 @@ public class Parameter implements Serializable, IParameter {
 		}
 
 		this.upperLimit = upperLimit;
+	}
+
+	/**
+	 * Function sets the name of the parameter
+	 * 
+	 * @param name
+	 *            The new String name of the parameter
+	 */
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

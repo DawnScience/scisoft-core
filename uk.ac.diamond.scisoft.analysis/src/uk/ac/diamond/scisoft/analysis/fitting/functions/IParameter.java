@@ -19,6 +19,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 public interface IParameter {
 
 	/**
+	 * Function that gets the name of the parameter
+	 * 
+	 * @return The Name of the parameter
+	 */
+	public String getName();
+
+	/**
 	 * Function that gets the value of the parameter
 	 * 
 	 * @return The Value of the parameter
@@ -78,6 +85,15 @@ public interface IParameter {
 	 *            The new double value which is the upper limit
 	 */
 	public void setUpperLimit(double upperLimit);
+
+	
+	/**
+	 * Function sets the name of the parameter
+	 * 
+	 * @param name
+	 *            The new String name of the parameter
+	 */
+	public void setName(String name);
 
 	/**
 	 * Function sets the value of the parameter

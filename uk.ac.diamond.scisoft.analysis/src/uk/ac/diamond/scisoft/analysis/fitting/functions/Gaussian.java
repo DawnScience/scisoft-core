@@ -24,6 +24,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 public class Gaussian extends APeak implements IPeak {
 	private static final double FWHM_TO_SIGMA = 1./Math.sqrt(8.*Math.log(2.));
 	private static String cname = "Gaussian";
+	private static String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
+	private static String[] paramNames = new String[]{"pos", "FWHM", "area"};
+	private static double[] params = new double[]{0,0,0};
+
+	public Gaussian(){
+		this(params);
+	}
 
 	/**
 	 * Constructor which takes the three properties required, which are
@@ -37,12 +44,15 @@ public class Gaussian extends APeak implements IPeak {
 	 * @param params
 	 */
 	public Gaussian(double... params) {
-		// make sure that there are 3 parameters, otherwise, throw a sencible error
+		// make sure that there are 3 parameters, otherwise, throw a sensible error
 		if(params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Gaussian(IParameter[] params) {
@@ -51,6 +61,9 @@ public class Gaussian extends APeak implements IPeak {
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters){
@@ -71,6 +84,9 @@ public class Gaussian extends APeak implements IPeak {
 		getParameter(2).setLimits(-maxArea,maxArea);
 		getParameter(2).setValue(peakParameters.getArea());
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
 	}
 	
 	/**
@@ -102,6 +118,10 @@ public class Gaussian extends APeak implements IPeak {
 		getParameter(2).setValue(maxArea / 2.0);
 
 		name = cname;
+		description = cdescription;
+		for(int i =0; i<paramNames.length;i++)
+			setParameterName(paramNames[i], i);
+		
 	}
 	
 	public Gaussian createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {

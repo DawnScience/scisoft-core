@@ -51,7 +51,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	transient protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
 	protected String fileName;
-	protected List<String> datasetNames = new ArrayList<String>();
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
 	protected List<String> extraHeaders = new ArrayList<String>();
 	
@@ -461,6 +460,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return null;
 	}
 	
+	protected List<String> datasetNames = new ArrayList<String>();
+	protected Map<String,int[]>   dataShapes;
+	protected Map<String,Integer> dataSizes;
 	@Override
 	public IMetaData getMetaData() {
 		return new ExtendedMetadataAdapter() {
@@ -475,6 +477,14 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
 				return textMetadata.keySet();
+			}
+			@Override
+			public Map<String, Integer> getDataSizes() {
+				return dataSizes;
+			}
+			@Override
+			public Map<String, int[]> getDataShapes() {
+				return dataShapes;
 			}
 			
 			@Override
@@ -505,7 +515,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			String[] vals = splitRegex.split(headStr);
 			datasetNames.clear();
 			datasetNames.addAll(Arrays.asList(vals));
-
+			
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
 		} finally {

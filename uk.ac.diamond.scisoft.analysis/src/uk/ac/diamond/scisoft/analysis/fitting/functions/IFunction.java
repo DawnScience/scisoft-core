@@ -41,6 +41,21 @@ public interface IFunction {
 	public void setName(String newName);
 
 	/**
+	 * Function that gets the description of the function
+	 * 
+	 * @return The description of the function
+	 */
+	public String getDescription();
+
+	/**
+	 * Sets the description parameter
+	 * 
+	 * @param newDescription
+	 *            The functions new description
+	 */
+	public void setDescription(String newDescription);
+
+	/**
 	 * The key function of the object which returns the evaluation at particular values
 	 * 
 	 * @param values
@@ -57,6 +72,25 @@ public interface IFunction {
 	 * @return A link to the parameter
 	 */
 	public IParameter getParameter(int index);
+
+	/**
+	 * Function that gets the parameter name at a particular index in the function
+	 * 
+	 * @param index
+	 *            The index to retrieve
+	 * @return A pointer to the name parameter
+	 */
+	public String getParameterName(int index);
+
+	/**
+	 * Function that sets the parameter names  of the function
+	 * 
+	 * @param name
+	 *           A string array with the parameter name
+	 * @param index
+	 *           The index of the parameter name
+	 */
+	public void setParameterName(String name, int index);
 
 	/**
 	 * Gets all the parameters in the list

@@ -49,7 +49,7 @@ public class DetectorProperties {
 	private Matrix3d invOrientation; // its inverse
 	private Matrix3d ta;
 	private Matrix3d tb;
-	private static HashSet<IDetectorPropertyListener> detectorPropListeners; // TODO Check - should it really be static?
+	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
 
 	
 	/**
@@ -233,6 +233,8 @@ public class DetectorProperties {
 	 */
 	public void setOrigin(Vector3d origin) {
 		this.origin = origin;
+		// Tell listeners
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "Origin"));
 	}
 
 	/**

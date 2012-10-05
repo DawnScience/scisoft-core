@@ -18,11 +18,11 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.EventListener;
 
-public interface IDetectorPropertyListener extends EventListener {
+public interface IDiffractionCrystalEnvironmentListener extends EventListener {
 
 	/**
-	 * Fired when detector property changes.
+	 * Fired when diffraction crystal environment changes.
 	 * @param evt
 	 */
-	public void detectorPropertiesChanged(DetectorPropertyEvent evt);
+	public void diffractionCrystalEnvironmentChanged(DiffractionCrystalEnvironmentEvent evt);
 }

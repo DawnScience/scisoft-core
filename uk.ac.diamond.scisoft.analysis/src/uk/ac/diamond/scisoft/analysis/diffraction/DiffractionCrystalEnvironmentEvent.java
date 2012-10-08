@@ -16,13 +16,24 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import java.util.EventListener;
+import java.util.EventObject;
 
-public interface IDetectorPropertyListener extends EventListener {
+// TODO Karl check if event member data is ok :)
+public class DiffractionCrystalEnvironmentEvent extends EventObject {
 
-	/**
-	 * Fired when detector property changes.
-	 * @param evt
-	 */
-	public void detectorPropertiesChanged(DetectorPropertyEvent evt);
+	private String propertyName;
+
+	public DiffractionCrystalEnvironmentEvent(Object source, String propertyName) {
+		super(source);
+		this.propertyName = propertyName;
+	}
+
+	public String getPropertyName() {
+		return propertyName;
+	}
+
+	public void setPropertyName(String propertyName) {
+		this.propertyName = propertyName;
+	}
+
 }

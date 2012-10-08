@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.HashSet;
+
 /**
  * Container for parameters that a crystal is subject to in a diffraction experiment
  */
@@ -26,6 +28,7 @@ public class DiffractionCrystalEnvironment {
 	private double phiStart;
 	private double phiRange;
 	private double exposureTime;
+	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
 
 	/**
 	 * @param wavelength in Angstroms
@@ -118,6 +121,8 @@ public class DiffractionCrystalEnvironment {
 	public void setWavelengthFromEnergykeV(double keV) {
 		// lambda(A) = 10^7 * (h*c/e) / energy(keV)
 		this.wavelength = 1./(0.0806554465*keV); // constant from NIST CODATA 2006
+		// Tell listeners
+		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, "Wavelength"));
 	}
 
 	/**
@@ -126,6 +131,7 @@ public class DiffractionCrystalEnvironment {
 	 */
 	public void setWavelength(double wavelength) {
 		this.wavelength = wavelength;
+		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, "Wavelength"));
 	}
 	
 	/**
@@ -172,4 +178,28 @@ public class DiffractionCrystalEnvironment {
 	public void setExposureTime(double exposureTime) {
 		this.exposureTime = exposureTime;
 	}
+	
+	public void addDiffractionCrystalEnvironmentListener(IDiffractionCrystalEnvironmentListener l) {
+		if (diffCrystEnvListeners==null) 
+			diffCrystEnvListeners = new HashSet<IDiffractionCrystalEnvironmentListener>(5);
+		diffCrystEnvListeners.add(l);
+	}
+	/**
+	 * Call from dispose of part listening to diffraction crystal environment changing
+	 * @param l
+	 */
+	public void removeDiffractionCrystalEnvironmentListener(IDiffractionCrystalEnvironmentListener l) {
+		if (diffCrystEnvListeners==null) 
+			return;
+		diffCrystEnvListeners.remove(l);
+	}
+	
+	protected void fireDiffractionCrystalEnvironmentListeners(DiffractionCrystalEnvironmentEvent evt) {
+		if (diffCrystEnvListeners==null) 
+			return;
+		for (IDiffractionCrystalEnvironmentListener l : diffCrystEnvListeners) {
+			l.diffractionCrystalEnvironmentChanged(evt);
+		}
+	}
+
 }

@@ -325,7 +325,7 @@ class TIFFSaver(JavaSaver, _tiffsave):
 
 class TextSaver(JavaSaver, _rawtxtsave):
     def __init__(self, name, signed, bits):
-        _rawtextsave.__init__(self, name) #@UndefinedVariable
+        _rawtxtsave.__init__(self, name) #@UndefinedVariable
 
 class BinarySaver(JavaSaver, _rawbinsave):
     def __init__(self, name, signed, bits):

@@ -17,26 +17,26 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.media.codec.audio.ArrayToPCM;
-
-import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
+import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Delaunay_Triangulation;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Point_dt;
+import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Image processing package
  */
 public class Image {
+	private static final int UP_SCALE = 2;
 	/**
 	 * Setup the logging facilities
 	 */
@@ -154,7 +154,7 @@ public class Image {
 		return result;
 	}
 	
-	public static AbstractDataset regrid(
+	public static AbstractDataset regrid_kabsch(
 			AbstractDataset data, 
 			AbstractDataset x, 
 			AbstractDataset y, 
@@ -162,7 +162,8 @@ public class Image {
 			AbstractDataset gridY) {
 		
 		// create the output array
-		DoubleDataset result = new DoubleDataset(gridY.shape[0], gridX.shape[0]);
+		DoubleDataset result = new DoubleDataset(gridY.shape[0]+1, gridX.shape[0]+1);
+		IntegerDataset count = new IntegerDataset(gridY.shape[0]+1, gridX.shape[0]+1);
 
 		IndexIterator it = data.getIterator();
 		while(it.hasNext()){
@@ -172,38 +173,45 @@ public class Image {
 			int xind = getLowerIndex(xpos,gridX);
 			int yind = getLowerIndex(ypos,gridY);
 			
-			double x1 = gridX.getDouble(xind+1);
-			double x0 = gridX.getDouble(xind);
-			double dx = Math.abs(x1 - x0);
-			double y1 = gridY.getDouble(yind+1);
-			double y0 = gridY.getDouble(yind);
-			double dy = Math.abs(y1 - y0);
+			if (xind >= 0 && xind < gridX.getShape()[0]-1 && yind >= 0 && yind < gridY.getShape()[0]-1) {
 			
-			// now work out the 4 weightings
-			double ux0 = Math.abs(dx - Math.abs(xpos-x0));
-			double uy0 = Math.abs(dy - Math.abs(ypos-y0));
-			double ux1 = Math.abs(dx - Math.abs(xpos-x1));
-			double uy1 = Math.abs(dy - Math.abs(ypos-y1));
-			
-			double area = dx*dy;
-			
-			double w00 = ((ux0*uy0)/area);
-			double w01 = ((ux0*uy1)/area);
-			double w10 = ((ux1*uy0)/area);
-			double w11 = ((ux1*uy1)/area);
-			
-			if (Math.abs(w00+w10+w01+w11 -1.0) > 0.000001) {
-				System.out.println(w00+w10+w01+w11);
+				double x1 = gridX.getDouble(xind+1);
+				double x0 = gridX.getDouble(xind);
+				double dx = Math.abs(x1 - x0);
+				double y1 = gridY.getDouble(yind+1);
+				double y0 = gridY.getDouble(yind);
+				double dy = Math.abs(y1 - y0);
+				
+				// now work out the 4 weightings
+				double ux0 = Math.abs(dx - Math.abs(xpos-x0));
+				double uy0 = Math.abs(dy - Math.abs(ypos-y0));
+				double ux1 = Math.abs(dx - Math.abs(xpos-x1));
+				double uy1 = Math.abs(dy - Math.abs(ypos-y1));
+				
+				double area = dx*dy;
+				
+				double w00 = ((ux0*uy0)/area);
+				double w01 = ((ux0*uy1)/area);
+				double w10 = ((ux1*uy0)/area);
+				double w11 = ((ux1*uy1)/area);
+				
+				if (Math.abs(w00+w10+w01+w11 -1.0) > 0.000001) {
+					System.out.println(w00+w10+w01+w11);
+				}
+				
+				double new00 = result.getDouble(yind,xind)+(w00*dvalue);
+				result.set(new00, yind, xind);
+				count.set(count.get(yind, xind)+1, yind, xind);
+				double new01 = result.getDouble(yind,xind+1)+(w01*dvalue);
+				result.set(new01, yind, xind+1);
+				count.set(count.get(yind, xind+1)+1, yind, xind+1);
+				double new10 = result.getDouble(yind+1,xind)+(w10*dvalue);
+				result.set(new10, yind+1, xind);
+				count.set(count.get(yind+1, xind)+1, yind+1, xind);
+				double new11 = result.getDouble(yind+1,xind+1)+(w11*dvalue);
+				result.set(new11, yind+1, xind+1);
+				count.set(count.get(yind+1, xind+1)+1, yind+1, xind+1);
 			}
-			
-			double new00 = result.getDouble(yind,xind)+(w00*dvalue);
-			result.set(new00, yind, xind);
-			double new01 = result.getDouble(yind,xind+1)+(w01*dvalue);
-			result.set(new01, yind, xind+1);
-			double new10 = result.getDouble(yind+1,xind)+(w10*dvalue);
-			result.set(new10, yind+1, xind);
-			double new11 = result.getDouble(yind+1,xind+1)+(w11*dvalue);
-			result.set(new11, yind+1, xind+1);
 		}
 		
 		return result;
@@ -213,6 +221,25 @@ public class Image {
 		AbstractDataset mins = Maths.abs(Maths.subtract(axis, point));
 		return mins.minPos()[0];
 		
+	}
+	
+	private static int[] getMinDistance(double x, double y, AbstractDataset gridX, AbstractDataset gridY) {
+		AbstractDataset xDiff = Maths.subtract(gridX, x);
+		AbstractDataset YDiff = Maths.subtract(gridY, y);
+		xDiff.ipower(2);
+		YDiff.ipower(2);
+		xDiff.iadd(YDiff);
+		return xDiff.minPos();
+	}
+	
+	public static AbstractDataset regrid(
+			AbstractDataset data, 
+			AbstractDataset x, 
+			AbstractDataset y, 
+			AbstractDataset gridX, 
+			AbstractDataset gridY) {
+		
+		return regrid_kabsch(data, x, y, gridX, gridY);
 	}
 	
 }

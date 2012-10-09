@@ -135,4 +135,34 @@ public class ROIBase implements Serializable {
 	public boolean isPlot() {
 		return plot;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ROIBase) {
+			ROIBase that = (ROIBase) obj;
+			if (spt == null || that.spt == null)
+				return false;
+			if (spt.length != that.spt.length)
+				return false;
+
+			for (int i = spt.length-1; i>=0; i--) {
+				if (Double.doubleToLongBits(spt[i]) != Double.doubleToLongBits(that.spt[i]))
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		if (spt == null || spt.length == 0)
+			return 0;
+		int h = 0;
+		for (int i = spt.length-1; i>=0; i--) {
+			long l = Double.doubleToLongBits(spt[i]) + 31;
+			h = (int) (h*17L + l);
+		}
+		return h;
+	}
 }

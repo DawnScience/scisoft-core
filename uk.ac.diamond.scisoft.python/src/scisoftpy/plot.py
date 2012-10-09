@@ -19,6 +19,8 @@ Wrapper of plotting functionality in GDA
 '''
 
 import os
+import sys
+
 if os.name == 'java':
     import jython.jyplot as _plot
     _plot_set_port = _plot.setremoteport
@@ -67,7 +69,6 @@ _plot_setdatabean = _plot.plot_setdatabean
 getguinames = _plot.plot_getguinames
 window_manager = _plot.plot_window_manager
 
-import sys
 try:
     import io as _io
     
@@ -159,11 +160,19 @@ def line(x, y=None, name=None):
             _plot_line(name, None, yl)
     else:
         xl = _toList(x)
-        xLength = xl[0].shape[0]
         yl = _toList(y)
-        for i in yl:
-            if xLength != i.shape[0]:
-                raise AttributeError("length of y does not match the length of x" ) 
+        if len(xl) == 1:
+            xLength = xl[0].shape[0]
+            for i in yl:
+                if xLength != i.shape[0]:
+                    raise AttributeError("length of y does not match the length of x" ) 
+        elif len(xl) != len(yl):
+            raise ValueError("number of x datasets should be equal to number of y datasets")
+        else:
+            for i,j in zip(xl,yl):
+                if i.shape[0] != j.shape[0]:
+                    raise AttributeError("length of y does not match the length of x" ) 
+            
         _plot_line(name, xl, yl)
 
 def updateline(x, y=None, name=None):
@@ -191,11 +200,19 @@ def updateline(x, y=None, name=None):
             _plot_updateline(name, None, yl)
     else:
         xl = _toList(x)
-        xLength = xl[0].shape[0]
         yl = _toList(y)
-        for i in yl:
-            if xLength != i.shape[0]:
-                raise AttributeError("length of y does not match the length of x" ) 
+        if len(xl) == 1:
+            xLength = xl[0].shape[0]
+            for i in yl:
+                if xLength != i.shape[0]:
+                    raise AttributeError("length of y does not match the length of x" ) 
+        elif len(xl) != len(yl):
+            raise ValueError("number of x datasets should be equal to number of y datasets")
+        else:
+            for i,j in zip(xl,yl):
+                if i.shape[0] != j.shape[0]:
+                    raise AttributeError("length of y does not match the length of x" ) 
+            
         _plot_updateline(name, xl, yl)
 
 plot = line

@@ -16,35 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+
 
 /**
- * Class for a polygonal ROI is a closed form of a polyline ROI (end point is implicitly the start point)
+ * Wrapper for a list of polyline ROIs
  */
-public class PolygonalROI extends PolylineROI implements Serializable, Iterable<PointROI> {
+public class PolylineROIList extends ArrayList<PolylineROI> implements ROIList<PolylineROI> {
 
-	public PolygonalROI() {
-		super();
-	}
-
-	public PolygonalROI(double[] start) {
-		super(start);
-	}
-
-	/**
-	 * @return number of sides
-	 */
-	@Override
-	public int getSides() {
-		return super.getSides() + 1;
-	}
-
-	@Override
-	public PolygonalROI copy() {
-		PolygonalROI croi = new PolygonalROI(spt.clone());
-		for (int i = 1, imax = pts.size(); i < imax; i++)
-			croi.insertPoint(pts.get(i).spt.clone());
-
-		return croi;
-	}
 }

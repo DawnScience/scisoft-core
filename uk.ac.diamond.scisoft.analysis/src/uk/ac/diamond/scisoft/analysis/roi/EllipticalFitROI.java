@@ -24,9 +24,9 @@ import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
  */
 public class EllipticalFitROI extends EllipticalROI {
 
-	private PolygonalROI proi;
+	private PolylineROI proi;
 
-	public EllipticalFitROI(PolygonalROI points) {
+	public EllipticalFitROI(PolylineROI points) {
 		super(1, 0, 0);
 		setPoints(points);
 	}
@@ -35,12 +35,11 @@ public class EllipticalFitROI extends EllipticalROI {
 	 * Fit an ellipse to given polygon
 	 * @return ellipse parameters
 	 */
-	private static double[] fitEllipse(PolygonalROI polygon) {
-		int n = polygon.getSides();
+	private static double[] fitEllipse(final int n, final Iterable<PointROI> polygon) {
 		double[] x = new double[n];
 		double[] y = new double[n];
 		int i = 0;
-		for (ROIBase r : polygon) {
+		for (PointROI r : polygon) {
 			x[i] = r.getPointX();
 			y[i] = r.getPointY();
 			i++;
@@ -57,9 +56,9 @@ public class EllipticalFitROI extends EllipticalROI {
 	 * Set points which are then used to fit ellipse
 	 * @param points
 	 */
-	public void setPoints(PolygonalROI points) {
+	public void setPoints(PolylineROI points) {
 		proi = points;
-		final double[] p = fitEllipse(points);
+		final double[] p = fitEllipse(points.getSides(), points);
 
 		setSemiAxis(0, p[0]);
 		setSemiAxis(1, p[1]);
@@ -70,7 +69,7 @@ public class EllipticalFitROI extends EllipticalROI {
 	/**
 	 * @return points in polygon for fitting
 	 */
-	public PolygonalROI getPoints() {
+	public PolylineROI getPoints() {
 		return proi;
 	}
 

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,10 +77,10 @@ public class LoaderFactory {
 	
 	/**
 	 * A caching mechanism using soft references. Soft references attempt to keep things
-	 * in memory until the system is short on memory. It may be necessary to use WeakReferences
-	 * instead if people notice that the memory footprint is unfavourable.
+	 * in memory until the system is short on memory. Hashtable used because it is synchronized
+	 * which should reduce chances of getting the wrong data for the key.
 	 */
-	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new ConcurrentHashMap<LoaderKey, Reference<Object>>(89);
+	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<Object>>(89);
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
@@ -321,6 +322,7 @@ public class LoaderFactory {
 		return null;
 	}
 
+	private static Object LOCK = new Object();
 	/**
 	 * May be null
 	 * @param key
@@ -328,19 +330,23 @@ public class LoaderFactory {
 	 */
 	private static Object getSoftReference(LoaderKey key) {
 		
-		if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return null;
-        final Reference<Object> ref = SOFT_CACHE.get(key);
-        if (ref == null) return null;
-        return ref.get();
+		synchronized (LOCK) {
+			if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return null;
+	        final Reference<Object> ref = SOFT_CACHE.get(key);
+	        if (ref == null) return null;
+	        return ref.get();
+		}
 	}
 	
 	private static void recordSoftReference(LoaderKey key, Object value) {
 		
-		if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return;
-		Reference<Object> ref = System.getProperty("uk.ac.diamond.scisoft.analysis.io.weakcaching")!=null
-				              ? new WeakReference<Object>(value)
-				              : new SoftReference<Object>(value);
-		SOFT_CACHE.put(key, ref);
+		synchronized (LOCK) {
+			if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return;
+			Reference<Object> ref = System.getProperty("uk.ac.diamond.scisoft.analysis.io.weakcaching")!=null
+					              ? new WeakReference<Object>(value)
+					              : new SoftReference<Object>(value);
+			SOFT_CACHE.put(key, ref);
+		}
 	}
 
 	/**

@@ -17,7 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -40,6 +42,11 @@ public class SliceObject {
     private int    x=-1;
     private int    y=-1;
     private boolean isRange;
+    private Map<Integer,String> nexusAxes;
+    
+    public SliceObject() {
+    	this.nexusAxes = new HashMap<Integer, String>(3);
+    }
     
 	public void clear() {
 		path=null;
@@ -66,6 +73,7 @@ public class SliceObject {
 		result = prime * result + Arrays.hashCode(fullShape);
 		result = prime * result + (isRange ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nexusAxes == null) ? 0 : nexusAxes.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		result = prime * result + ((shapeMessage == null) ? 0 : shapeMessage.hashCode());
 		result = prime * result + Arrays.hashCode(sliceStart);
@@ -98,6 +106,11 @@ public class SliceObject {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (nexusAxes == null) {
+			if (other.nexusAxes != null)
+				return false;
+		} else if (!nexusAxes.equals(other.nexusAxes))
 			return false;
 		if (path == null) {
 			if (other.path != null)
@@ -167,6 +180,7 @@ public class SliceObject {
     	ret.sliceStart = sliceStart;
     	ret.sliceStop  = sliceStop;
     	ret.sliceStep  = sliceStep;
+    	ret.nexusAxes.putAll(nexusAxes);
 		return ret;
     }
     
@@ -223,6 +237,21 @@ public class SliceObject {
 	public void setFullShape(int[] fullShape) {
 		this.fullShape = fullShape;
 	}
+
+	public Map<Integer, String> getNexusAxes() {
+		return nexusAxes;
+	}
+
+	public void setNexusAxes(Map<Integer, String> nexusAxes) {
+		this.nexusAxes = nexusAxes;
+	}
     
+	public void setNexusAxis(int iaxis, String name) {
+		nexusAxes.put(iaxis, name);
+	}
+
+	public String getNexusAxis(int inexusAxis) {
+		return nexusAxes.get(inexusAxis);
+	}
     
 }

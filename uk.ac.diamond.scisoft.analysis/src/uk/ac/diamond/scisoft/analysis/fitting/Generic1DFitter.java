@@ -220,7 +220,32 @@ public class Generic1DFitter implements Serializable {
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IAnalysisMonitor monitor) {
 
-		List<IdentifiedPeak> peaks = parseDataDerivative(xdata, ydata, smoothing);
+		return fitPeakFunctions((List<IdentifiedPeak>)null, xdata, ydata, function, optimiser, smoothing, numPeaks,
+				threshold, autoStopping, heightMeasure, monitor);
+	}
+	
+	/**
+	 * 
+	 * @param peaks -  may be null if new peaks are required.
+	 * @param xdata
+	 * @param ydata
+	 * @param function
+	 * @param optimiser
+	 * @param smoothing
+	 * @param numPeaks
+	 * @param threshold
+	 * @param autoStopping
+	 * @param heightMeasure
+	 * @param monitor
+	 * @return list of peaks
+	 */
+	public static List<CompositeFunction> fitPeakFunctions(List<IdentifiedPeak> peaks, AbstractDataset xdata, AbstractDataset ydata, APeak function,
+			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
+			boolean heightMeasure, IAnalysisMonitor monitor) {
+
+		if (peaks==null) {
+			peaks = parseDataDerivative(xdata, ydata, smoothing);
+		}
 		if (peaks == null || peaks.size() <= 0) {
 			logger.error("No peaks found");
 			return null;
@@ -231,6 +256,7 @@ public class Generic1DFitter implements Serializable {
 
 		return fittedPeaks;
 	}
+
 
 	public static List<IdentifiedPeak> findPeaks(AbstractDataset xdata, AbstractDataset ydata, int smoothing) {
 		return parseDataDerivative(xdata, ydata, smoothing);
@@ -326,7 +352,7 @@ public class Generic1DFitter implements Serializable {
 		return peaks;
 	}
 
-	private static List<IdentifiedPeak> parseDataDerivative(AbstractDataset xdata, AbstractDataset ydata, int smooth) {
+	public static List<IdentifiedPeak> parseDataDerivative(AbstractDataset xdata, AbstractDataset ydata, int smooth) {
 		boolean verbose = false;
 		ArrayList<IdentifiedPeak> peaks = new ArrayList<IdentifiedPeak>();
 

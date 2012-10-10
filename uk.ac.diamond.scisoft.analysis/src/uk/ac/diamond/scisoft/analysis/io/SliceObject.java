@@ -42,6 +42,10 @@ public class SliceObject {
     private int    x=-1;
     private int    y=-1;
     private boolean isRange;
+    
+    /**
+     * Dataset name required for dimension where 1 is the first.
+     */
     private Map<Integer,String> nexusAxes;
     
     public SliceObject() {
@@ -246,12 +250,12 @@ public class SliceObject {
 		this.nexusAxes = nexusAxes;
 	}
     
-	public void setNexusAxis(int iaxis, String name) {
-		nexusAxes.put(iaxis, name);
+	public void setNexusAxis(int inexusDim, String name) {
+		nexusAxes.put(inexusDim, name);
 	}
 
-	public String getNexusAxis(int inexusAxis) {
-		return nexusAxes.get(inexusAxis);
+	public String getNexusAxis(int inexusDim) {
+		return nexusAxes.get(inexusDim);
 	}
     
 }

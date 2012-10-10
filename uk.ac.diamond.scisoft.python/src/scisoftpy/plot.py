@@ -413,7 +413,7 @@ def getroi(bean):
 
 def setroi(bean, roi):
     '''Set region of interest in bean'''
-    if bean:
+    if bean is not None and isinstance(bean, _guibean):
         bean[parameters.roi] = roi
 
 def delroi(bean, roi=None):

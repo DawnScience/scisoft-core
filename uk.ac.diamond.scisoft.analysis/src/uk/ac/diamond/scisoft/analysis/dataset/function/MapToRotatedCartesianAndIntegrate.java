@@ -32,6 +32,8 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 	int ox, oy;
 	int h, w;
 	double phi;
+	private double cp;
+	private double sp;
 
 	/**
 	 * Set up mapping of rotated 2D dataset
@@ -71,6 +73,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 		} else {
 			phi = angle;	
 		}
+
+		// work out cosine and sine
+		cp = Math.cos(phi);
+		sp = Math.sin(phi);
 	}
 
 	/**
@@ -84,6 +90,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 		w = len[0];
 		h = len[1];
 		phi = roi.getAngle();
+		// work out cosine and sine
+		cp = Math.cos(phi);
+		sp = Math.sin(phi);
+
 	}
 
 	/**
@@ -104,10 +114,6 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2)
 				return null;
-
-			// work out cosine and sine
-			double cp = Math.cos(phi);
-			double sp = Math.sin(phi);
 
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			AbstractDataset sumx = AbstractDataset.zeros(new int[] { h }, dtype);

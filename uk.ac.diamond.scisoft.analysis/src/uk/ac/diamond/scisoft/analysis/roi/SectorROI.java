@@ -568,8 +568,7 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	@Override
 	public void downsample(double subFactor) {
-		spt[0] /= subFactor;
-		spt[1] /= subFactor;
+		super.downsample(subFactor);
 		rad[0] /= subFactor;
 		rad[1] /= subFactor;
 	}

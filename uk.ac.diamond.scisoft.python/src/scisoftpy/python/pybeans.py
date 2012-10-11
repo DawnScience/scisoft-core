@@ -15,7 +15,7 @@
 ###
 
 import numpy #@UnresolvedImport @UnusedImport
-import pymaths
+import pyscisoft
 
 exception = Exception
 
@@ -162,7 +162,7 @@ class datasetwithaxisinformation(object):
         
     def __eq__(self, other):
         return (isinstance(other, datasetwithaxisinformation) 
-                and self.axisMap == other.axisMap and pymaths.equaldataset(self.data, other.data))
+                and self.axisMap == other.axisMap and pyscisoft.equaldataset(self.data, other.data))
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -186,7 +186,7 @@ class databean(object):
         if not isinstance(other, databean) or self.data != other.data:
             return False
         for k, v in self.axisData.iteritems():
-            if not pymaths.equaldataset(v, other.axisData.get(k)):
+            if not pyscisoft.equaldataset(v, other.axisData.get(k)):
                 return False
         return True
 

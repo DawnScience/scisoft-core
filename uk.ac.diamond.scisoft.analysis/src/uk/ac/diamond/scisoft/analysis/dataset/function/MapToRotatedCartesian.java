@@ -31,7 +31,8 @@ import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 	int ox, oy;
 	int h, w;
-	double phi;
+	private double cp;
+	private double sp;
 
 	/**
 	 * Set up mapping of rotated 2D dataset
@@ -50,7 +51,9 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 		oy = y;
 		h = height;
 		w = width;
-		phi = Math.toRadians(angle);
+		double phi = Math.toRadians(angle);
+		cp = Math.cos(phi);
+		sp = Math.sin(phi);
 	}
 
 	/**
@@ -62,28 +65,31 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 	 * @param isDegrees
 	 */
 	public MapToRotatedCartesian(int x, int y, int width, int height, double angle, boolean isDegrees) {
-		ox = x;
-		oy = y;
-		h = height;
-		w = width;
-		if (isDegrees) {
-			phi = Math.toRadians(angle);
-		} else {
-			phi = angle;	
-		}
+		this(x, y, width, height, isDegrees ? Math.toRadians(angle) : angle);
 	}
 
 	/**
 	 * @param roi
 	 */
 	public MapToRotatedCartesian(RectangularROI roi) {
-		int[] pt = roi.getIntPoint();
-		int[] len = roi.getIntLengths();
-		ox = pt[0];
-		oy = pt[1];
-		w = len[0];
-		h = len[1];
-		phi = roi.getAngle();
+		this((int) roi.getPointX(), (int) roi.getPointY(), (int) roi.getLength(0), (int) roi.getLength(1), roi.getAngle());
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return position of indexed point on grid
+	 */
+	public int[] getPoint(int i, int j) {
+		return new int[] {(int) (oy + j * sp + i * cp), (int) (ox + j * cp - i * sp)};
+	}
+
+	/**
+	 * @param pos
+	 * @return position of point on grid
+	 */
+	public int[] getPoint(int[] pos) {
+		return getPoint(pos[0], pos[1]);
 	}
 
 	/**
@@ -107,8 +113,6 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 			int[] os = new int[] { h, w };
 
 			// work out cosine and sine
-			double cp = Math.cos(phi);
-			double sp = Math.sin(phi);
 
 			AbstractDataset newmap = AbstractDataset.zeros(os, AbstractDataset.getBestFloatDType(ids.elementClass()));
 			AbstractDataset unitmap = AbstractDataset.zeros(newmap);

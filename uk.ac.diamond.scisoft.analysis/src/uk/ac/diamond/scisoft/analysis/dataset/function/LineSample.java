@@ -30,6 +30,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 public class LineSample implements DatasetToDatasetFunction {
 	int sx, sy, ex, ey;
 	double step;
+	private double rad;
+	private double sp;
+	private double cp;
 
 	/**
 	 * Set up line sampling
@@ -46,6 +49,19 @@ public class LineSample implements DatasetToDatasetFunction {
 		this.ex = ex;
 		this.ey = ey;
 		this.step = step;
+		rad = Math.hypot(ex - sx, ey - sy);
+		double phi = Math.atan2(ey - sy, ex - sx);
+		cp = Math.cos(phi);
+		sp = Math.sin(phi);
+	}
+
+	/**
+	 * @param i
+	 * @return position of indexed point on line
+	 */
+	public int[] getPoint(int i) {
+		final double r = step * i;
+		return new int[] {(int) (sy + r * sp), (int) (sx + r * cp)};
 	}
 
 	/**
@@ -65,9 +81,6 @@ public class LineSample implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2)
 				return null;
 
-			double rad = Math.hypot(ex - sx, ey - sy);
-			double phi = Math.atan2(ey - sy, ex - sx);
-
 			int nr = ((int) Math.floor(rad / step)) + 1;
 
 			AbstractDataset linsample = AbstractDataset.zeros(new int[] { nr },
@@ -76,8 +89,8 @@ public class LineSample implements DatasetToDatasetFunction {
 			double x, y;
 			for (int i = 0; i < nr; i++) {
 				final double r = step * i;
-				x = sx + r * Math.cos(phi);
-				y = sy + r * Math.sin(phi);
+				x = sx + r * cp;
+				y = sy + r * sp;
 				linsample.setObjectAbs(i, Maths.getBilinear(ids, y, x));
 			}
 

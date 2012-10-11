@@ -25,8 +25,11 @@ import java.util.List;
  * Class for a polyline ROI (really a list of point ROIs)
  */
 public class PolylineROI extends PointROI implements Serializable, Iterable<PointROI> {
-	protected List<PointROI> pts;
+	protected List<PointROI> pts; // first element should point to this if size > 0
 
+	/**
+	 * Zero point line
+	 */
 	public PolylineROI() {
 		super();
 		pts = new ArrayList<PointROI>();
@@ -88,8 +91,10 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	public void insertPoint(PointROI point) {
 		if (pts.size() == 0) {
 			super.setPoint(point.spt);
+			pts.add(this);
+		} else {
+			pts.add(point);
 		}
-		pts.add(point);
 	}
 
 	/**
@@ -159,6 +164,14 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	 * @return number of sides
 	 */
 	public int getSides() {
+		final int size = pts.size();
+		return size == 0 ? 0 : size - 1;
+	}
+
+	/**
+	 * @return number of points
+	 */
+	public int getNumberOfPoints() {
 		return pts.size();
 	}
 

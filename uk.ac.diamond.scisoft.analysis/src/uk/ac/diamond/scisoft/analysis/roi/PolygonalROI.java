@@ -32,11 +32,11 @@ public class PolygonalROI extends PolylineROI implements Serializable, Iterable<
 	}
 
 	/**
-	 * @return number of sides
+	 * @return number of sides (or points)
 	 */
 	@Override
 	public int getSides() {
-		return super.getSides() + 1;
+		return super.getNumberOfPoints();
 	}
 
 	@Override

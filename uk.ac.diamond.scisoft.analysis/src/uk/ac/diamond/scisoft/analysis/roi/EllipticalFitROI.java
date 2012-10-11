@@ -58,7 +58,7 @@ public class EllipticalFitROI extends EllipticalROI {
 	 */
 	public void setPoints(PolylineROI points) {
 		proi = points;
-		final double[] p = fitEllipse(points.getSides(), points);
+		final double[] p = fitEllipse(points.getNumberOfPoints(), points);
 
 		setSemiAxis(0, p[0]);
 		setSemiAxis(1, p[1]);

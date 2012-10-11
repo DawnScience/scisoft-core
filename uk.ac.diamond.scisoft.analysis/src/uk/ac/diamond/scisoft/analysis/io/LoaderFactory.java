@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -330,22 +331,30 @@ public class LoaderFactory {
 	 */
 	private static Object getSoftReference(LoaderKey key) {
 		
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
 		synchronized (LOCK) {
-			if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return null;
-	        final Reference<Object> ref = SOFT_CACHE.get(key);
-	        if (ref == null) return null;
-	        return ref.get();
+			try {
+		        final Reference<Object> ref = SOFT_CACHE.get(key);
+		        if (ref == null) return null;
+		        return ref.get();
+			} catch (Throwable ne) {
+				return null;
+			}
 		}
 	}
 	
-	private static void recordSoftReference(LoaderKey key, Object value) {
+	private static boolean recordSoftReference(LoaderKey key, Object value) {
 		
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return false;
 		synchronized (LOCK) {
-			if (System.getProperty("uk.ac.diamond.scisoft.analysis.io.nocaching")!=null) return;
-			Reference<Object> ref = System.getProperty("uk.ac.diamond.scisoft.analysis.io.weakcaching")!=null
-					              ? new WeakReference<Object>(value)
-					              : new SoftReference<Object>(value);
-			SOFT_CACHE.put(key, ref);
+			try {
+				Reference<Object> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
+						              ? new WeakReference<Object>(value)
+						              : new SoftReference<Object>(value);
+				return SOFT_CACHE.put(key, ref)!=null;
+			} catch (Throwable ne) {
+				return false;
+			}
 		}
 	}
 

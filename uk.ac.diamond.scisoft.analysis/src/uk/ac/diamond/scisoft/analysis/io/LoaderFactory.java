@@ -402,7 +402,7 @@ public class LoaderFactory {
 				recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {
-				logger.trace("Cannot load nexus meta data", ne);
+				//logger.trace("Cannot load nexus meta data", ne);
 				continue;
 			}
 		}

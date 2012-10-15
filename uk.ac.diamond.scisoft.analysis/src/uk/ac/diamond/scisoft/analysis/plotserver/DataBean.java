@@ -191,7 +191,10 @@ public class DataBean implements Serializable {
 		}
 		plotParameters.put(key, value);
 	}
-	
+
+	/**
+	 * @return GUI parameters as a GUI bean
+	 */
 	public GuiBean getGuiParameters() {
 		return plotParameters;
 	}

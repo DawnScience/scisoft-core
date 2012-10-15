@@ -50,6 +50,12 @@ public class CircularROI extends ROIBase {
 		rad = Math.abs(radius);
 	}
 
+	@Override
+	public void downsample(double subFactor) {
+		super.downsample(subFactor);
+		rad /= subFactor;
+	}
+
 	/**
 	 * @return radius
 	 */

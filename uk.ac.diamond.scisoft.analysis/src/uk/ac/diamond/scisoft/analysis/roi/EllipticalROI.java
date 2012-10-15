@@ -56,6 +56,13 @@ public class EllipticalROI extends ROIBase {
 		ang = angle;
 	}
 
+	@Override
+	public void downsample(double subFactor) {
+		super.downsample(subFactor);
+		saxis[0] /= subFactor;
+		saxis[1] /= subFactor;
+	}
+
 	/**
 	 * @return Returns reference to the semi-axes
 	 */

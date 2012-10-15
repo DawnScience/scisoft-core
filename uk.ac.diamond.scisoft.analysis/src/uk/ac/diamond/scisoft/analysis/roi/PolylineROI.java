@@ -48,6 +48,15 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	}
 
 	@Override
+	public void downsample(double subFactor) {
+		spt[0] /= subFactor;
+		spt[1] /= subFactor;
+		for (int i = 1, imax = pts.size(); i < imax; i++) { // don't call for first point
+			pts.get(i).downsample(subFactor);
+		}
+	}
+
+	@Override
 	public void setPoint(double[] point) {
 		super.setPoint(point);
 		if (pts.size() == 0) {

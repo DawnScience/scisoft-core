@@ -31,6 +31,12 @@ public class EllipticalFitROI extends EllipticalROI {
 		setPoints(points);
 	}
 
+	@Override
+	public void downsample(double subFactor) {
+		super.downsample(subFactor);
+		proi.downsample(subFactor);
+	}
+
 	/**
 	 * Fit an ellipse to given polygon
 	 * @return ellipse parameters

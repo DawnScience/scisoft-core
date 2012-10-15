@@ -44,7 +44,7 @@ public class PolygonalROI extends PolylineROI implements Serializable, Iterable<
 		PolygonalROI croi = new PolygonalROI(spt.clone());
 		for (int i = 1, imax = pts.size(); i < imax; i++)
 			croi.insertPoint(pts.get(i).spt.clone());
-
+		croi.setPlot(plot);
 		return croi;
 	}
 }

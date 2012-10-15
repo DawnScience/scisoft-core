@@ -26,6 +26,10 @@ public class EllipticalFitROI extends EllipticalROI {
 
 	private PolylineROI proi;
 
+	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
+		super(major, minor, angle, ptx, pty);
+	}
+
 	public EllipticalFitROI(PolylineROI points) {
 		super(1, 0, 0);
 		setPoints(points);
@@ -35,6 +39,14 @@ public class EllipticalFitROI extends EllipticalROI {
 	public void downsample(double subFactor) {
 		super.downsample(subFactor);
 		proi.downsample(subFactor);
+	}
+
+	@Override
+	public EllipticalFitROI copy() {
+		EllipticalFitROI croi = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
+		croi.proi = proi.copy();
+		croi.setPlot(plot);
+		return croi;
 	}
 
 	/**

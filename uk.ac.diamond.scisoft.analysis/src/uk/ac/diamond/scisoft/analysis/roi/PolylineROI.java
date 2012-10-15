@@ -36,15 +36,13 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	}
 
 	public PolylineROI(double[] start) {
-		super(start);
+		super();
 		pts = new ArrayList<PointROI>();
-		pts.add(this);
+		setPoint(start);
 	}
 
 	public PolylineROI(double x, double y) {
-		super(x, y);
-		pts = new ArrayList<PointROI>();
-		pts.add(this);
+		this(new double[] {x, y});
 	}
 
 	@Override
@@ -221,7 +219,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		PolylineROI croi = new PolylineROI(spt.clone());
 		for (int i = 1, imax = pts.size(); i < imax; i++)
 			croi.insertPoint(pts.get(i).spt.clone());
-
+		croi.setPlot(plot);
 		return croi;
 	}
 

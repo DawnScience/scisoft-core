@@ -63,6 +63,13 @@ public class EllipticalROI extends ROIBase {
 		saxis[1] /= subFactor;
 	}
 
+	@Override
+	public EllipticalROI copy() {
+		EllipticalROI croi = new EllipticalROI(saxis[0], saxis[1], ang, spt[0], spt[1]);
+		croi.setPlot(plot);
+		return croi;
+	}
+
 	/**
 	 * @return Returns reference to the semi-axes
 	 */

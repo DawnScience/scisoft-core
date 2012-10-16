@@ -20,14 +20,18 @@ from jycore import asDataset as _asDs
 
 roibase = _roi.ROIBase
 
+point = _roi.PointROI
 line = _roi.LinearROI
+rectangle = _roi.RectangularROI
+sector = _roi.SectorROI
+circle = _roi.CircularROI
+ellipse = _roi.EllipticalROI
 
-rect = _roi.RectangularROI
-sect = _roi.SectorROI
-
-linelist = _roi.LinearROIList
-rectlist = _roi.RectangularROIList
-sectlist = _roi.SectorROIList
+line_list = _roi.LinearROIList
+rectangle_list = _roi.RectangularROIList
+sector_list = _roi.SectorROIList
+circle_list = _roi.CircularROIList
+ellipse_list = _roi.EllipticalROIList
 
 ROIProfile = _roi.ROIProfile
 
@@ -41,12 +45,12 @@ def profile(data, roi, step=None, mask=None):
         if step is None:
             raise ValueError, "step value required"
         return _roi.ROIProfile.line(data, roi, step)
-    if isinstance(roi, rect):
+    if isinstance(roi, rectangle):
         if mask is None:
             return _roi.ROIProfile.box(data, roi)
         else:
             return _roi.ROIProfile.box(data, mask, roi)
-    if isinstance(roi, sect):
+    if isinstance(roi, sector):
         if mask is None:
             return _roi.ROIProfile.sector(data, roi)
         else:

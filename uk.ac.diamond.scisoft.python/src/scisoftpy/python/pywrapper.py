@@ -65,4 +65,4 @@ class abstractdatasetdescriptor(object):
     
 #Use this class to wrap a Binary object, typically a str of bytes
 import xmlrpclib
-binaryWrapper = xmlrpclib.Binary
+binarywrapper = xmlrpclib.Binary

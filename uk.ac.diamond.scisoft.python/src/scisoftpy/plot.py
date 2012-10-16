@@ -422,11 +422,21 @@ def setdatabean(bean, name=None):
             name = _PVNAME
         _plot_setdatabean(name, bean)
 
-def getroi(bean):
-    '''Get region of interest from bean'''
+def getroi(bean, roi=None):
+    '''Get region of interest from bean
+
+    Arguments:
+    bean -- GUI bean
+    roi  -- class of ROI to retrieve. If None, then get anyway
+    '''
     if bean is None:
         return None
-    return bean[parameters.roi]
+    r = bean[parameters.roi]
+    if roi is None:
+        return r
+    if r is None or not isinstance(r, roi):
+        return None
+    return r
 
 def setroi(bean, roi):
     '''Set region of interest in bean'''
@@ -447,11 +457,25 @@ def delroi(bean, roi=None):
             bean[parameters.roi] = None
     return bean
 
-def getrois(bean):
-    '''Get list of regions of interest from bean'''
+def getrois(bean, roi=None):
+    '''Get list of regions of interest from bean
+
+    Arguments:
+    bean -- GUI bean
+    roi  -- class of ROI to retrieve. If None, then get anyway
+    '''
     if bean is None:
         return None
-    return bean[parameters.roilist]
+    rs = bean[parameters.roilist]
+    if roi is None:
+        return rs
+    if rs is None:
+        return None
+    try:
+        iter(rs)
+    except:
+        rs = [rs]
+    return [ r for r in rs if isinstance(r, roi)]
 
 def setrois(bean, roilist):
     '''Set list of regions of interest in bean'''
@@ -493,57 +517,28 @@ def delrois(bean, roi=None):
 
 def getline(bean):
     '''Get linear region of interest'''
-    r = getroi(bean)
-    if r is None or not isinstance(r, roi.line):
-        return None
-    return r
+    return getroi(bean, roi=roi.line)
 
 def getlines(bean):
     '''Get list of linear regions of interest'''
-    rs = getrois(bean)
-    if rs is None:
-        return None
-    try:
-        iter(rs)
-    except:
-        rs = [rs]
-    return [ r for r in rs if isinstance(r, roi.line)]
+    return getrois(bean, roi=roi.line)
 
 def getrect(bean):
     '''Get rectangular region of interest'''
-    r = getroi(bean)
-    if r is None or not isinstance(r, roi.rect):
-        return None
-    return r
+    return getroi(bean, roi=roi.rectangle)
 
 def getrects(bean):
     '''Get list of rectangular regions of interest'''
-    rs = getrois(bean)
-    if rs is None:
-        return None
-    try:
-        iter(rs)
-    except:
-        rs = [rs]
-    return [ r for r in rs if isinstance(r, roi.rect)]
+    return getrois(bean, roi=roi.rectangle)
 
 def getsect(bean):
     '''Get sector region of interest'''
-    r = getroi(bean)
-    if r is None or not isinstance(r, roi.sect):
-        return None
-    return r
+    return getroi(bean, roi=roi.sector)
 
 def getsects(bean):
     '''Get list of sector regions of interest'''
-    rs = getrois(bean)
-    if rs is None:
-        return None
-    try:
-        iter(rs)
-    except:
-        rs = [rs]
-    return [ r for r in rs if isinstance(r, roi.sect)]
+    return getrois(bean, roi=roi.sector)
+
 
 def getfiles(bean):
     '''Get list of selected files'''

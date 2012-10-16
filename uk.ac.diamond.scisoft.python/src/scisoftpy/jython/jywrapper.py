@@ -22,5 +22,5 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.AbstractDatasetDescriptor a
 abstractdatasetdescriptor=_abstractdatasetdescriptor
 
 # In java a wrapper isn't necessary, simply use a byte[]
-# Set to None so that if someone tries to instatiate it give an error
-binaryWrapper=None
+# Set to None so that if someone tries to instantiate it give an error
+binarywrapper=None

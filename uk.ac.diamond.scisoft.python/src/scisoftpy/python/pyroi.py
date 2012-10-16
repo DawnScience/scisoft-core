@@ -39,24 +39,27 @@ class roibase(object):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self.__dict__.__repr__())
 
+class point(roibase):
+    pass
+
 class line(roibase):
     _LEN = "len"
     _ANG = "ang"
     _CROSS_HAIR = "crossHair"
 
-    def __init__(self, len=0.0, ang=0.0, crossHair=False, **kwargs):
+    def __init__(self, len=0.0, ang=0.0, crossHair=False, **kwargs): #@ReservedAssignment
         super(line, self).__init__(**kwargs)
         self.len = len
         self.ang = ang
         self.crossHair = crossHair
 
-class rect(roibase):
+class rectangle(roibase):
     _LEN = "len"
     _ANG = "ang"
     _CLIPPING_COMPENSATION = "clippingCompensation"
     
-    def __init__(self, len=[0.0,0.0], ang=0.0, clippingCompensation=False, **kwargs):
-        super(rect, self).__init__(**kwargs)
+    def __init__(self, len=[0.0,0.0], ang=0.0, clippingCompensation=False, **kwargs): #@ReservedAssignment
+        super(rectangle, self).__init__(**kwargs)
         self.len = len
         self.ang = ang
         self.clippingCompensation = clippingCompensation
@@ -64,25 +67,25 @@ class rect(roibase):
     def getAngleDegrees(self):
         return _math.degrees(self.ang)
 
-class sect(roibase):
-    _ANG = "ang";
-    _RAD = "rad";
-    _CLIPPING_COMPENSATION = "clippingCompensation";
-    _SYMMETRY = "symmetry";
-    _COMBINE_SYMMETRY = "combineSymmetry";
-    _AVERAGE_AREA = "averageArea";
+class sector(roibase):
+    _ANG = "ang"
+    _RAD = "rad"
+    _CLIPPING_COMPENSATION = "clippingCompensation"
+    _SYMMETRY = "symmetry"
+    _COMBINE_SYMMETRY = "combineSymmetry"
+    _AVERAGE_AREA = "averageArea"
     
     # Symmetry options
-    NONE = 0;
-    FULL = 1;
-    XREFLECT = 2;
-    YREFLECT = 3;
-    CNINETY = 4;
-    ACNINETY = 5;
-    INVERT = 6;
+    NONE = 0
+    FULL = 1
+    XREFLECT = 2
+    YREFLECT = 3
+    CNINETY = 4
+    ACNINETY = 5
+    INVERT = 6
 
     def __init__(self, ang=[0.0, 0.0], rad=[0.0, 0.0], clippingCompensation=False, symmetry=NONE, combineSymmetry=False, averageArea=False, **kwargs):
-        super(sect, self).__init__(**kwargs)
+        super(sector, self).__init__(**kwargs)
         self.ang = ang
         self.rad = rad
         self.clippingCompensation = clippingCompensation
@@ -90,27 +93,54 @@ class sect(roibase):
         self.combineSymmetry = combineSymmetry
         self.averageArea = averageArea
 
-class roilist(list):
+class circle(roibase):
+    _RAD = "rad"
+    
+    def __init__(self, rad=1.0, **kwargs): #@ReservedAssignment
+        super(circle, self).__init__(**kwargs)
+        self.rad = rad
+
+class ellipse(roibase):
+    _SAXIS = "saxis"
+    _ANG = "ang"
+    
+    def __init__(self, saxis=[0.0,0.0], ang=0.0, **kwargs): #@ReservedAssignment
+        super(ellipse, self).__init__(**kwargs)
+        self.saxis = saxis
+        self.ang = ang
+    
+    def getAngleDegrees(self):
+        return _math.degrees(self.ang)
+
+class roi_list(list):
     def __init__(self):
-        super(roilist, self).__init__()
+        super(roi_list, self).__init__()
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and super(roilist, self).__eq__(other)
+        return isinstance(other, self.__class__) and super(roi_list, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
-class linelist(roilist):
+class line_list(roi_list):
     def __init__(self):
-        super(linelist, self).__init__()
+        super(line_list, self).__init__()
 
-class rectlist(roilist):
+class rectangle_list(roi_list):
     def __init__(self):
-        super(rectlist, self).__init__()
+        super(rectangle_list, self).__init__()
 
-class sectlist(roilist):
+class sector_list(roi_list):
     def __init__(self):
-        super(sectlist, self).__init__()
+        super(sector_list, self).__init__()
+
+class circle_list(roi_list):
+    def __init__(self):
+        super(circle_list, self).__init__()
+
+class ellipse_list(roi_list):
+    def __init__(self):
+        super(ellipse_list, self).__init__()
 
 
 def profile(*args):

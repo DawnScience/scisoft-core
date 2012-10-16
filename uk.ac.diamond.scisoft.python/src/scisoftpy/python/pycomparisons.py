@@ -20,9 +20,9 @@ Comparisons package
 
 import numpy as _np #@UnresolvedImport
 
-all = _np.all
+all = _np.all #@ReservedAssignment
 
-any = _np.any
+any = _np.any #@ReservedAssignment
 
 greater = _np.greater
 

@@ -117,7 +117,7 @@ class Test(unittest.TestCase):
         return base
 
     def _createRectangularROI(self):
-        rect = dnp.roi.rect()
+        rect = dnp.roi.rectangle()
         rect.spt = [1.0, 2.7]
         rect.plot = True
         rect.len = [8.2, 16.3]
@@ -125,7 +125,7 @@ class Test(unittest.TestCase):
         return rect
 
     def _createSectorROI(self):
-        sect = dnp.roi.sect()
+        sect = dnp.roi.sector()
         sect.spt = [1.0, 2.7]
         sect.plot = True
         sect.ang = [0.0, 1.0]
@@ -292,19 +292,19 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(self._createSectorROI())
 
     def testLinearROIList(self):
-        lineList = dnp.roi.linelist()
+        lineList = dnp.roi.line_list()
         lineList.append(self._createLinearROI())
         lineList.append(self._createLinearROI())
         self._flattenAndUnflatten(lineList)
         
     def testRectangularROIList(self):
-        rectList = dnp.roi.rectlist()
+        rectList = dnp.roi.rectangle_list()
         rectList.append(self._createRectangularROI())
         rectList.append(self._createRectangularROI())
         self._flattenAndUnflatten(rectList)
 
     def testSectorROIList(self):
-        sectList = dnp.roi.sectlist()
+        sectList = dnp.roi.sector_list()
         sectList.append(self._createSectorROI())
         sectList.append(self._createSectorROI())
         self._flattenAndUnflatten(sectList)

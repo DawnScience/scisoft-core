@@ -19,11 +19,15 @@ Region of interest package
 
 Classes available:
     line is a linear ROI
-    rect is a rectangular ROI
-    sect is a sector ROI
-    linelist is a list of ROIs
-    rectlist is a list of ROIs
-    sectlist is a list of ROIs
+    rectangle (rect) is a rectangular ROI
+    sector (sect) is a sector ROI
+    circle is a circular ROI
+    ellipse is an elliptical ROI
+    line_list (linelist) is a list of ROIs
+    rectangle_list (rectlist) is a list of ROIs
+    sector_list (sectlist) is a list of ROIs
+    circle_list is a list of ROIs
+    ellipse_list is a list of ROIs
 '''
 
 import os
@@ -34,20 +38,23 @@ else:
 
  
 
-roibase = _roi.roibase
+_roibase = _roi.roibase
 line = _roi.line
+rectangle = rect = _roi.rectangle
+sector = sect = _roi.sector
+circle = _roi.circle
+ellipse = _roi.ellipse
 
-rect = _roi.rect
-sect = _roi.sect
-
-linelist = _roi.linelist
-rectlist = _roi.rectlist
-sectlist = _roi.sectlist
+line_list = linelist = _roi.line_list
+rectangle_list = rectlist = _roi.rectangle_list
+sector_list = sectlist = _roi.sector_list
+circle_list = _roi.circle_list
+ellipse_list = _roi.ellipse_list
 
 def isroi(r):
     '''True if r is a ROI
     '''
-    return issubclass(type(r), roibase)
+    return issubclass(type(r), _roibase)
 
 profile = _roi.profile
 

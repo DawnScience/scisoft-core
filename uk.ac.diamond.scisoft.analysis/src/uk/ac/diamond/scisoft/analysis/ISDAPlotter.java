@@ -296,6 +296,37 @@ public interface ISDAPlotter {
 	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
+	 * Allows the plotting of an image to the defined view with its side plot profile
+	 * 
+	 * @param plotName
+	 * @param imageFileName
+	 * @throws Exception
+	 */
+	public void imagePlotProfile(String plotName, String imageFileName) throws Exception;
+
+	/**
+	 * Allows the plotting of an image to the defined view with its side plot profile
+	 * 
+	 * @param plotName
+	 * @param image
+	 * @throws Exception
+	 */
+	public void imagePlotProfile(String plotName, IDataset image) throws Exception;
+
+	/**
+	 * Allows the plotting of an image to the defined view with its side plot profile
+	 * 
+	 * @param plotName
+	 * @param xAxis
+	 *            can be null
+	 * @param yAxis
+	 *            can be null
+	 * @param image
+	 * @throws Exception
+	 */
+	public void imagePlotProfile(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception;
+
+	/**
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName

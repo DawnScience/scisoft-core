@@ -354,6 +354,94 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
+	 * Allows the plotting of an image to the defined view with its side plot profiles
+	 * 
+	 * @param plotName
+	 * @param imageFileName
+	 * @throws Exception
+	 */
+	@Override
+	public void imagePlotProfile(String plotName, String imageFileName) throws Exception {
+		DataHolder dh = null;
+		try {
+			// This is the bit that can take a while.
+			dh = LoaderFactory.getData(imageFileName, null);
+		} catch (Exception ne) {
+			logger.error("Cannot load file " + imageFileName, ne);
+			throw ne;
+		}
+		try {
+			IDataset dataSet = dh.getDataset(0);
+			dataSet.setName(imageFileName);
+			imagePlotProfile(plotName, dataSet);
+		} catch (Exception e) {
+			logger.error("Cannot plot non-image file from  " + imageFileName, e);
+			throw e;
+		}
+	}
+
+	/**
+	 * Allows the plotting of an image to the defined view with its side plot profiles
+	 * 
+	 * @param plotName
+	 * @param image
+	 * @throws Exception
+	 */
+	@Override
+	public void imagePlotProfile(String plotName, IDataset image) throws Exception {
+		imagePlotProfile(plotName, null, null, image);
+	}
+
+	/**
+	 * Allows the plotting of an image to the defined view with its side plot profiles
+	 * 
+	 * @param plotName
+	 * @param xAxis
+	 *            can be null
+	 * @param yAxis
+	 *            can be null
+	 * @param image
+	 * @throws Exception
+	 */
+	@Override
+	public void imagePlotProfile(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
+		if (!isDataND(image, 2)) {
+			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());
+			throw new Exception("Input dataset has incorrect rank: it should be 2");
+		}
+		if (xAxis != null && !isDataND(xAxis, 1)) {
+			String msg = String.format("X axis dataset has incorrect rank: it has %d dimensions when it should be 1",
+					xAxis.getRank());
+			logger.error(msg);
+			throw new Exception(msg);
+		}
+		if (yAxis != null && !isDataND(yAxis, 1)) {
+			String msg = String.format("Y axis dataset has incorrect rank: it has %d dimensions when it should be 1",
+					yAxis.getRank());
+			logger.error(msg);
+			throw new Exception(msg);
+		}
+		DataBean dataBean = new DataBean(GuiPlotMode.TWOD1DPROFILE);
+		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		AxisMapBean amb = new AxisMapBean(AxisMapBean.DIRECT);
+		axisData.setAxisMap(amb);
+		axisData.setData(image);
+		try {
+			dataBean.addData(axisData);
+		} catch (DataBeanException e) {
+			e.printStackTrace();
+		}
+
+		if (xAxis != null) {
+			dataBean.addAxis(AxisMapBean.XAXIS, xAxis);
+		}
+		if (yAxis != null) {
+			dataBean.addAxis(AxisMapBean.YAXIS, yAxis);
+		}
+		sendBeansToServer(plotName, dataBean, null);
+	}
+
+	/**
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName

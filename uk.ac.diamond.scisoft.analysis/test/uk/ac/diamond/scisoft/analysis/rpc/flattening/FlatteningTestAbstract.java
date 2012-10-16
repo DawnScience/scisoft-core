@@ -48,6 +48,10 @@ import uk.ac.diamond.scisoft.analysis.plotserver.FileOperationBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiParameters;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
+import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
+import uk.ac.diamond.scisoft.analysis.roi.CircularROIList;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList;
 import uk.ac.diamond.scisoft.analysis.roi.GridPreferences;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROIList;
@@ -456,7 +460,7 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
-	public void testRectanglularROI() {
+	public void testRectangularROI() {
 		flattenAndUnflatten(new RectangularROI(1.1, -2, 5.0, 10.0, 0.6, true));
 		flattenAndUnflatten(new RectangularROI(-11.2, 2.8, 5.7, 10.2, 0.4, false));
 	}
@@ -470,6 +474,16 @@ abstract public class FlatteningTestAbstract {
 		sector.setAverageArea(true);
 		sector.setCombineSymmetry(true);
 		flattenAndUnflatten(sector);
+	}
+
+	@Test
+	public void testCircularROI() {
+		flattenAndUnflatten(new CircularROI(1.1, -2, 5.0));
+	}
+
+	@Test
+	public void testEllipticalROI() {
+		flattenAndUnflatten(new EllipticalROI(1.1, 0.23, -2, 5.0, -23.5));
 	}
 
 	@Test
@@ -494,6 +508,20 @@ abstract public class FlatteningTestAbstract {
 		sList.add(new SectorROI(0.2, 15.2, 0.1, 0.2, 0.01, -0.2, 1.0, true, SectorROI.XREFLECT));
 		sList.add(new SectorROI(0.3, -12, 0.0, 1.1, 0.651, -0.2, 1.0, true, SectorROI.INVERT));
 		flattenAndUnflatten(sList);
+	}
+
+	@Test
+	public void testCircularROIList() {
+		CircularROIList cList = new CircularROIList();
+		cList.add(new CircularROI(1.1, -2, 5.0));
+		flattenAndUnflatten(cList);
+	}
+
+	@Test
+	public void testEllipticalROIList() {
+		EllipticalROIList eList = new EllipticalROIList();
+		eList.add(new EllipticalROI(1.1, 0.23, -2, 5.0, -23.5));
+		flattenAndUnflatten(eList);
 	}
 
 	@Test

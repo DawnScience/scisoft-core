@@ -26,7 +26,11 @@ import java.util.Map;
  * this interface will be implemented in an object that will then be 
  * associated with a DataHolder or dataset using setMetaData(IMetaData)
  */
-public interface IMetaData extends Cloneable {
+public interface IMetaData extends Cloneable, Serializable {
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	static final long serialVersionUID = 8640458661665962384L;
 
 	/**
 	 * Returns a collection of dataset names or null if not implemented

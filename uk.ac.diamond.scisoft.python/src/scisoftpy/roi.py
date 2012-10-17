@@ -18,16 +18,18 @@
 Region of interest package
 
 Classes available:
+    point is a point ROI
     line is a linear ROI
     rectangle (rect) is a rectangular ROI
     sector (sect) is a sector ROI
     circle is a circular ROI
     ellipse is an elliptical ROI
-    line_list (linelist) is a list of ROIs
-    rectangle_list (rectlist) is a list of ROIs
-    sector_list (sectlist) is a list of ROIs
-    circle_list is a list of ROIs
-    ellipse_list is a list of ROIs
+    point_list is a list of point ROIs
+    line_list (linelist) is a list of linear ROIs
+    rectangle_list (rectlist) is a list of rectangular ROIs
+    sector_list (sectlist) is a list of sector ROIs
+    circle_list is a list of circular ROIs
+    ellipse_list is a list of elliptical ROIs
 '''
 
 import os
@@ -39,12 +41,14 @@ else:
  
 
 _roibase = _roi.roibase
+point = _roi.point
 line = _roi.line
 rectangle = rect = _roi.rectangle
 sector = sect = _roi.sector
 circle = _roi.circle
 ellipse = _roi.ellipse
 
+point_list = _roi.point_list
 line_list = linelist = _roi.line_list
 rectangle_list = rectlist = _roi.rectangle_list
 sector_list = sectlist = _roi.sector_list

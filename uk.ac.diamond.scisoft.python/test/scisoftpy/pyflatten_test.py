@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
             self.assertTrue(isinstance(actual, Exception))
             self.assertEquals(str(expected), str(actual))
         elif isinstance(expected, (dnp.ndarray)):
-            self.assertTrue(dnp.maths.equaldataset(expected, actual))
+            self.assertTrue(dnp.equaldataset(expected, actual))
         else:
             self.assertEquals(expected, actual)
     
@@ -111,10 +111,16 @@ class Test(unittest.TestCase):
         return ds
 
     def _createROIBase(self):
-        base = dnp.roi.roibase()
+        base = dnp.roi._roibase()
         base.spt = [1.0, 2.7]
         base.plot = True
         return base
+
+    def _createPointROI(self):
+        point = dnp.roi.point()
+        point.spt = [1.0, 2.7]
+        point.plot = True
+        return point
 
     def _createRectangularROI(self):
         rect = dnp.roi.rectangle()
@@ -145,6 +151,21 @@ class Test(unittest.TestCase):
         line.crossHair = True
         return line
         
+    def _createCircularROI(self):
+        circle = dnp.roi.circle()
+        circle.spt = [1.0, 2.7]
+        circle.plot = True
+        circle.rad = 15.0
+        return circle
+
+    def _createEllipticalROI(self):
+        ellipse = dnp.roi.ellipse()
+        ellipse.spt = [1.0, 2.7]
+        ellipse.plot = True
+        ellipse.saxis = [15.0, 24]
+        ellipse.ang = 0.4
+        return ellipse
+    
     def testInteger(self): 
         self._flattenAndUnflatten(18)
         self._flattenAndUnflatten(-7)
@@ -278,9 +299,12 @@ class Test(unittest.TestCase):
 
     def testROIBase(self):
         self._flattenAndUnflatten(self._createROIBase())
-        roibase = dnp.roi.roibase()
+        roibase = dnp.roi._roibase()
         roibase.spt = None
         self._flattenAndUnflatten(roibase)
+        
+    def testPointROI(self):
+        self._flattenAndUnflatten(self._createPointROI())
         
     def testLinearROI(self):
         self._flattenAndUnflatten(self._createLinearROI())
@@ -290,6 +314,18 @@ class Test(unittest.TestCase):
 
     def testSectorROI(self):
         self._flattenAndUnflatten(self._createSectorROI())
+
+    def testCircularROI(self):
+        self._flattenAndUnflatten(self._createCircularROI())
+
+    def testEllipticalrROI(self):
+        self._flattenAndUnflatten(self._createEllipticalROI())
+
+    def testPointROIList(self):
+        pointList = dnp.roi.point_list()
+        pointList.append(self._createPointROI())
+        pointList.append(self._createPointROI())
+        self._flattenAndUnflatten(pointList)
 
     def testLinearROIList(self):
         lineList = dnp.roi.line_list()
@@ -309,6 +345,18 @@ class Test(unittest.TestCase):
         sectList.append(self._createSectorROI())
         self._flattenAndUnflatten(sectList)
         
+    def testCircularROIList(self):
+        circleList = dnp.roi.circle_list()
+        circleList.append(self._createCircularROI())
+        circleList.append(self._createCircularROI())
+        self._flattenAndUnflatten(circleList)
+
+    def testEllipticalROIList(self):
+        ellipseList = dnp.roi.ellipse_list()
+        ellipseList.append(self._createEllipticalROI())
+        ellipseList.append(self._createEllipticalROI())
+        self._flattenAndUnflatten(ellipseList)
+
     def testDataSetWithAxisInformation(self):
         self._flattenAndUnflatten(self._createDataSetWithAxisInformation())
         
@@ -355,16 +403,16 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(dnp.rpc.typednone("java.lang.Double"))
         self._flattenAndUnflatten(dnp.rpc.typednone("uk.ac.diamond.scisoft.analysis.roi.RectangularROIList"))
     
-    def testCheckFlattanableFalse(self):
+    def testCheckFlattenableFalse(self):
         self.assertFalse(dnp.flatten.canflatten(object()))
         
-    def testCheckUnFlattanableFalse(self):
+    def testCheckUnFlattenableFalse(self):
         self.assertFalse(dnp.flatten.canunflatten(object()))
         
-    def testFlattanableUnsupported(self):
+    def testFlattenableUnsupported(self):
         self.assertRaises(TypeError, dnp.flatten.flatten, object())
         
-    def testUnFlattanableUnsupported(self):
+    def testUnFlattenableUnsupported(self):
         self.assertRaises(TypeError, dnp.flatten.unflatten, object())
         
         

@@ -421,7 +421,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			logger.error(msg);
 			throw new Exception(msg);
 		}
-		DataBean dataBean = new DataBean(GuiPlotMode.TWOD1DPROFILE);
+		DataBean dataBean = new DataBean(GuiPlotMode.TWOD_ROIPROFILES);
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean(AxisMapBean.DIRECT);
 		axisData.setAxisMap(amb);

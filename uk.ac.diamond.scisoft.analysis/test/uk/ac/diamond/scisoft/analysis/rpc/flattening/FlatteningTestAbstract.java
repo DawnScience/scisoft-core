@@ -64,6 +64,11 @@ import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcDoubleParser;
 
 abstract public class FlatteningTestAbstract {
 
+	/**
+	 * Waiting period for server to start up (in milliseconds)
+	 */
+	public static final long SERVER_WAIT_TIME = 200;
+
 	protected static IRootFlattener flattener;
 
 	@BeforeClass

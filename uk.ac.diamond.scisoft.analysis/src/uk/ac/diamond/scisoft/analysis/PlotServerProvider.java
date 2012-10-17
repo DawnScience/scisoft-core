@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.factory.Finder;
 import gda.observable.IObservable;
 
 import org.slf4j.Logger;
@@ -45,7 +44,6 @@ public class PlotServerProvider {
 	}
 	
 	public synchronized static PlotServer getPlotServer() {
-		plotServer=Finder.getInstance().find(PLOT_SERVER_NAME);
 		if (plotServer == null) {
 			logger.info("PlotServer instance not set - using local created PlotServer instead");
 			try {

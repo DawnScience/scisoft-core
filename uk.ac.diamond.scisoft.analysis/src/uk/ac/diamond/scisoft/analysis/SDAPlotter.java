@@ -305,17 +305,6 @@ public class SDAPlotter {
 	 * Allows the plotting of an image to the defined view with its side plot profiles
 	 * 
 	 * @param plotName
-	 * @param imageFileName
-	 * @throws Exception
-	 */
-	public static void imagePlotProfile(String plotName, String imageFileName) throws Exception {
-		getPlotterImpl().imagePlotProfile(plotName, imageFileName);
-	}
-
-	/**
-	 * Allows the plotting of an image to the defined view with its side plot profiles
-	 * 
-	 * @param plotName
 	 * @param image
 	 * @throws Exception
 	 */

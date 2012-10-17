@@ -156,11 +156,6 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlotProfile(String plotName, String imageFileName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to imageFileName argument");
-	}
-
-	@Override
 	public void imagePlotProfile(String plotName, IDataset image) throws Exception {
 		request("image", image, null, null, plotName);
 	}

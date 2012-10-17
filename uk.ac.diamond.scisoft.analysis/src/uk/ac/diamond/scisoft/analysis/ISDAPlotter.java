@@ -299,15 +299,6 @@ public interface ISDAPlotter {
 	 * Allows the plotting of an image to the defined view with its side plot profile
 	 * 
 	 * @param plotName
-	 * @param imageFileName
-	 * @throws Exception
-	 */
-	public void imagePlotProfile(String plotName, String imageFileName) throws Exception;
-
-	/**
-	 * Allows the plotting of an image to the defined view with its side plot profile
-	 * 
-	 * @param plotName
 	 * @param image
 	 * @throws Exception
 	 */

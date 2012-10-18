@@ -55,6 +55,8 @@ import uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList;
 import uk.ac.diamond.scisoft.analysis.roi.GridPreferences;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROIList;
+import uk.ac.diamond.scisoft.analysis.roi.PointROI;
+import uk.ac.diamond.scisoft.analysis.roi.PointROIList;
 import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROIList;
@@ -63,6 +65,11 @@ import uk.ac.diamond.scisoft.analysis.roi.SectorROIList;
 import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcDoubleParser;
 
 abstract public class FlatteningTestAbstract {
+
+	/**
+	 * Waiting period for server to start up (in milliseconds)
+	 */
+	public static final long SERVER_WAIT_TIME = 200;
 
 	protected static IRootFlattener flattener;
 
@@ -447,6 +454,20 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
+	public void testPointROI() {
+		flattenAndUnflatten(new PointROI());
+
+		PointROI point = new PointROI();
+		point.setPoint(new double[] { -0.3, 2.0 });
+		flattenAndUnflatten(point);
+
+		point.setPlot(true);
+		flattenAndUnflatten(point);
+		point.setPlot(false);
+		flattenAndUnflatten(point);
+	}
+
+	@Test
 	public void testLinearROI() {
 		flattenAndUnflatten(new LinearROI(1.1, 0.6));
 
@@ -484,6 +505,14 @@ abstract public class FlatteningTestAbstract {
 	@Test
 	public void testEllipticalROI() {
 		flattenAndUnflatten(new EllipticalROI(1.1, 0.23, -2, 5.0, -23.5));
+	}
+
+	@Test
+	public void testPointROIList() {
+		PointROIList pList = new PointROIList();
+		pList.add(new PointROI(1, -3.4));
+		pList.add(new PointROI(-235.6, 0));
+		flattenAndUnflatten(pList);
 	}
 
 	@Test

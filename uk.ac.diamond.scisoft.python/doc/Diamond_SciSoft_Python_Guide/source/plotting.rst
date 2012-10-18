@@ -258,6 +258,8 @@ The regions of interest defined are in the ROI package::
 
 These are
 
+ *point*
+   A single point defined by its coordinates
  *line*
    A line segment defined by its starting point, length and angle
  *rectangle*

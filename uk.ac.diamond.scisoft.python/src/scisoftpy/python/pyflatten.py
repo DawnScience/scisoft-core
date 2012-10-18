@@ -87,6 +87,10 @@ class roiHelper(flatteningHelper):
         return roiHelper(_roi.roibase, "uk.ac.diamond.scisoft.analysis.roi.ROIBase")
         
     @staticmethod
+    def getPointHelper():
+        return roiHelper(_roi.point, "uk.ac.diamond.scisoft.analysis.roi.PointROI")
+        
+    @staticmethod
     def getRectangleHelper():
         return roiHelper(_roi.rectangle, "uk.ac.diamond.scisoft.analysis.roi.RectangularROI")
         
@@ -321,6 +325,10 @@ class roiListHelper(flatteningHelper):
         return rval
 
     @staticmethod
+    def getPointListHelper():
+        return roiListHelper(_roi.point_list, "uk.ac.diamond.scisoft.analysis.roi.PointROIList")
+
+    @staticmethod
     def getLineListHelper():
         return roiListHelper(_roi.line_list, "uk.ac.diamond.scisoft.analysis.roi.LinearROIList")
 
@@ -440,12 +448,12 @@ class exceptionHelper(flatteningHelper):
     def unflatten(self, obj):
         return Exception(obj[CONTENT])
     
-helpers = [noneHelper(), roiListHelper.getLineListHelper(),
+helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPointListHelper(),
            roiListHelper.getSectorListHelper(), roiListHelper.getRectangleListHelper(),
            roiListHelper.getCircleListHelper(), roiListHelper.getEllipseListHelper(),
            roiHelper.getRectangleHelper(), roiHelper.getSectorHelper(),
            roiHelper.getCircleHelper(), roiHelper.getEllipseHelper(),
-           roiHelper.getLineHelper(), roiHelper.getROIBaseHelper(), 
+           roiHelper.getLineHelper(), roiHelper.getPointHelper(), roiHelper.getROIBaseHelper(), 
            ndArrayHelper(), guiBeanHelper(),
            guiParametersHelper(), plotModeHelper(), axisMapBeanHelper(),
            datasetWithAxisInformationHelper(), dataBeanHelper(),

@@ -41,6 +41,8 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.MapHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.NoneFlatteningHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.ObjectArrayHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PassThroughFlatteningHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PointROIHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PointROIListHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PrimitiveBoolArrayHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PrimitiveDoubleArrayHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.PrimitiveIntArrayHelper;
@@ -81,6 +83,7 @@ public class RootFlattener implements IRootFlattener {
 		flatteningHelpers.add(new SectorROIHelper());
 		flatteningHelpers.add(new LinearROIHelper());
 		flatteningHelpers.add(new RectangularROIHelper());
+		flatteningHelpers.add(new PointROIHelper());
 		flatteningHelpers.add(new ROIBaseHelper());
 		flatteningHelpers.add(new GuiParametersHelper());
 		flatteningHelpers.add(new GuiPlotModeHelper());
@@ -89,6 +92,7 @@ public class RootFlattener implements IRootFlattener {
 		flatteningHelpers.add(new SectorROIListHelper());
 		flatteningHelpers.add(new RectangularROIListHelper());
 		flatteningHelpers.add(new LinearROIListHelper());
+		flatteningHelpers.add(new PointROIListHelper());
 		flatteningHelpers.add(new AxisMapBeanHelper());
 		flatteningHelpers.add(new AbstractDatasetHelper());
 		flatteningHelpers.add(new UUIDHelper());

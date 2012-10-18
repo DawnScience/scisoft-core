@@ -27,6 +27,7 @@ sector = _roi.SectorROI
 circle = _roi.CircularROI
 ellipse = _roi.EllipticalROI
 
+point_list = _roi.PointROIList
 line_list = _roi.LinearROIList
 rectangle_list = _roi.RectangularROIList
 sector_list = _roi.SectorROIList

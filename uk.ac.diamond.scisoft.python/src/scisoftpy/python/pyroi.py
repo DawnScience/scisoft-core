@@ -40,7 +40,8 @@ class roibase(object):
         return '%s(%s)' % (self.__class__.__name__, self.__dict__.__repr__())
 
 class point(roibase):
-    pass
+    def __init__(self, **kwargs):
+        super(point, self).__init__(**kwargs)
 
 class line(roibase):
     _LEN = "len"
@@ -121,6 +122,10 @@ class roi_list(list):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+class point_list(roi_list):
+    def __init__(self):
+        super(point_list, self).__init__()
 
 class line_list(roi_list):
     def __init__(self):

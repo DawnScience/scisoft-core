@@ -246,6 +246,47 @@ public class ROIProfile {
 	}
 
 	/**
+	 * type of boxline profile
+	 */
+	public enum BoxLineType{
+		VERTICAL_TYPE,
+		HORIZONTAL_TYPE
+	}
+	/**
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param rroi
+	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
+	 *                       deals with Nans however, in this case we can set maskWithNans true and masked
+	 *                       pixels are NaN instead of 0.
+	 * @return box line profiles
+	 */
+	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, BoxLineType type) {
+
+		double[] startpt = rroi.getPoint();
+		double[] endpt = rroi.getEndPoint();
+		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+
+		// get the left and right side line profile of the rectangle
+		double[] righttoppt = { new Double(endpt[0]), new Double(startpt[1]) };
+		double[] leftbottompt = { new Double(startpt[0]), new Double(endpt[1]) };
+		LinearROI line1 = null, line2 = null;
+		
+		if(type == BoxLineType.VERTICAL_TYPE){
+			line1 = new LinearROI(startpt, leftbottompt);
+			line2 = new LinearROI(righttoppt, endpt);
+		} else if(type == BoxLineType.HORIZONTAL_TYPE){
+			line1 = new LinearROI(startpt, righttoppt);
+			line2 = new LinearROI(leftbottompt, endpt);
+		}
+		
+		profiles[0] = ROIProfile.line(data, mask, line1, 1d, maskWithNans)[0];
+		profiles[1] = ROIProfile.line(data, mask, line2, 1d, maskWithNans)[0];
+		return profiles;
+	}
+
+	/**
 	 * This method will nanalize any data which the mask has set to false. NOTE
 	 * the data and the mask must be precisely the same in size and value order.
 	 * 

@@ -34,6 +34,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 public class AxisValues implements Iterable<Double>, Serializable {
 
 	private DoubleDataset values = null;
+	private String name;
 
 	private double minValue;
 	private double maxValue;
@@ -409,6 +410,16 @@ public class AxisValues implements Iterable<Double>, Serializable {
 		};
 
 		return iterator;
+	}
+
+	public String getName() {
+		if (name!=null)   return name;
+		if (values!=null) return values.getName();
+		return null;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

@@ -21,11 +21,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheMultiDirectional;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
+import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.LeastSquares;
-import uk.ac.diamond.scisoft.analysis.optimize.LinearLeastSquares;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
@@ -124,8 +124,9 @@ public class Fitter {
 	 * @param yAxis
 	 * @param rcond relative condition number used to limit singular values to use (try 1e-15)
 	 * @param degree of polynomial
+	 * @throws Exception 
 	 */
-	public static Polynomial polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final int degree) {
+	public static Polynomial polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final int degree) throws Exception {
 		Polynomial polynomial = new Polynomial(degree);
 		polyFit(coords, yAxis, rcond, polynomial);
 		return polynomial;
@@ -137,13 +138,20 @@ public class Fitter {
 	 * @param yAxis
 	 * @param rcond relative condition number used to limit singular values to use (try 1e-15)
 	 * @param polynomial
+	 * @throws Exception 
 	 */
-	public static void polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final Polynomial polynomial) {
-		LinearLeastSquares lsq = new LinearLeastSquares(rcond);
-		AbstractDataset matrix = polynomial.makeMatrix(coords[0]);
+	public static void polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final Polynomial polynomial) throws Exception {
+		//determine polynomial order from number of parameters in polynomial
+		int polyOrder = polynomial.getNoOfParameters()-1;
 		
-		double[] values = lsq.solve(matrix, yAxis, AbstractDataset.ones(yAxis));
-		polynomial.setParameterValues(values);
+		double[] values = ApachePolynomial.polynomialFit(coords[0], yAxis, polyOrder);
+		
+		//the polynomial object expects the coefficient array to be in the reverse order to the Apache answer 
+		double[] flipped = values.clone();
+		for (int i = 0; i < flipped.length; i++)
+			flipped[flipped.length-1-i] = values[i];
+		
+		polynomial.setParameterValues(flipped);
 	}
 
 	/**

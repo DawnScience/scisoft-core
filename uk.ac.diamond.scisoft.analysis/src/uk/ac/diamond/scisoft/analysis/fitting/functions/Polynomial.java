@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.text.DecimalFormat;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
@@ -226,4 +228,25 @@ public class Polynomial extends AFunction {
 			setParameterName(paramNames[i], i);
 		}
 	}
+	
+	public String getStringEquation(){
+		
+		StringBuilder out = new StringBuilder();
+		
+		DecimalFormat df = new DecimalFormat("0.#####E0");
+		
+		for (int i = nparams-1; i >= 2; i--) {
+			out.append(df.format(parameters[nparams - 1 -i].getValue()));
+			out.append(String.format("x^%d + ", i));
+		}
+		
+		if (nparams >= 2)
+			out.append(df.format(parameters[nparams-2].getValue()) + "x + ");
+		if (nparams >= 1)
+			out.append(df.format(parameters[nparams-1].getValue()));
+		
+		return out.toString();
+	}
+	
+	
 }

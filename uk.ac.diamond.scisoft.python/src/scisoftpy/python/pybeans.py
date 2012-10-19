@@ -20,7 +20,6 @@ import pyscisoft
 exception = Exception
 
 class guibean(dict):
-    
     def __init__(self):
         pass
 
@@ -44,38 +43,38 @@ class _parameters(object):
             return self._rep
         
     def __init__(self):
-        self.plotmode = self._parametershelper (self, "plotmode", "PlotMode")
-        self.title = self._parametershelper (self, "title", "Title")
-        self.roi = self._parametershelper (self, "roi", "ROI")
-        self.roilist = self._parametershelper (self, "roilist", "ROIList")
-        self.plotid = self._parametershelper (self, "plotid", "PlotID")
-        self.plotop = self._parametershelper (self, "plotop", "PlotOp")
-        self.fileop = self._parametershelper (self, "fileop", "FileOp")
-        self.filename = self._parametershelper (self, "filename", "Filename")
-        self.fileselect = self._parametershelper (self, "fileselect", "FileList")
-        self.dispview = self._parametershelper (self, "dispview", "DisplayOnView")
-        self.imagegridxpos = self._parametershelper (self, "imagegridxpos", "IGridX")
-        self.imagegridypos = self._parametershelper (self, "imagegridypos", "IGridY")
-        self.imagegridsize = self._parametershelper (self, "imagegridsize", "IGridSize")
-        self.metadatanodepath = self._parametershelper (self, "metadatanodepath", "NodePath")
+        self.plotmode = self._parametershelper(self, "plotmode", "PlotMode")
+        self.title = self._parametershelper(self, "title", "Title")
+        self.roi = self._parametershelper(self, "roi", "ROI")
+        self.roilist = self._parametershelper(self, "roilist", "ROIList")
+        self.plotid = self._parametershelper(self, "plotid", "PlotID")
+        self.plotop = self._parametershelper(self, "plotop", "PlotOp")
+        self.fileop = self._parametershelper(self, "fileop", "FileOp")
+        self.filename = self._parametershelper(self, "filename", "Filename")
+        self.fileselect = self._parametershelper(self, "fileselect", "FileList")
+        self.dispview = self._parametershelper(self, "dispview", "DisplayOnView")
+        self.imagegridxpos = self._parametershelper(self, "imagegridxpos", "IGridX")
+        self.imagegridypos = self._parametershelper(self, "imagegridypos", "IGridY")
+        self.imagegridsize = self._parametershelper(self, "imagegridsize", "IGridSize")
+        self.metadatanodepath = self._parametershelper(self, "metadatanodepath", "NodePath")
         self.treenodepath = self._parametershelper(self, "treenodepath", "TreeNodePath")
         self.gridpreferences = self._parametershelper(self, "GRIDPREFERENCES", "GridPrefs")
-        self.imagegridstore = self._parametershelper (self, "imagegridstore", "ImageGridStore")
-        self.volumeheadersize = self._parametershelper (self, "volumeheadersize", "RawVolumeHeaderSize")
-        self.volumevoxeltype = self._parametershelper (self, "volumevoxeltype", "RawVolumeVoxelType")
-        self.volumexdim = self._parametershelper (self, "volumexdim", "RawVolumeVoxelXDim")
-        self.volumeydim = self._parametershelper (self, "volumeydim", "RawVolumeVoxelYDim")
-        self.volumezdim = self._parametershelper (self, "volumezdim", "RawVolumeVoxelZDim")
-        self.imagegridliveview = self._parametershelper (self, "imagegridliveview", "ImageGridLiveView")
-        self.fittedpeaks = self._parametershelper (self, "fittedpeaks", "FittedPeaks")
+        self.imagegridstore = self._parametershelper(self, "imagegridstore", "ImageGridStore")
+        self.volumeheadersize = self._parametershelper(self, "volumeheadersize", "RawVolumeHeaderSize")
+        self.volumevoxeltype = self._parametershelper(self, "volumevoxeltype", "RawVolumeVoxelType")
+        self.volumexdim = self._parametershelper(self, "volumexdim", "RawVolumeVoxelXDim")
+        self.volumeydim = self._parametershelper(self, "volumeydim", "RawVolumeVoxelYDim")
+        self.volumezdim = self._parametershelper(self, "volumezdim", "RawVolumeVoxelZDim")
+        self.imagegridliveview = self._parametershelper(self, "imagegridliveview", "ImageGridLiveView")
+        self.fittedpeaks = self._parametershelper(self, "fittedpeaks", "FittedPeaks")
         self.masking = self._parametershelper(self, "masking", "Masking")
         self.calibrationpeaks = self._parametershelper(self, "calibrationpeaks", "CalibrationPeaks")
         self.calibrationfunctionncd = self._parametershelper(self, "calibrationfunctionncd", "CalibrationFunction")
         self.onedfile = self._parametershelper(self, "onedfile", "OneDFile")
         
-    def get(self, str):
-        '''Return the GUIParemeter with the given name, or return None for no matching'''
-        return self._str_to_params.get(str)
+    def get(self, parametername):
+        '''Return the GUIParameter with the given name, or return None for no matching'''
+        return self._str_to_params.get(parametername)
     
 parameters = _parameters()
 
@@ -101,21 +100,22 @@ class _plotmode(object):
         
         
     def __init__(self):
-        self.oned = self._plotmodehelper (self, "oned", "ONED")
-        self.oned_threed = self._plotmodehelper (self, "oned_threed", "ONED_THREED")
-        self.twod = self._plotmodehelper (self, "twod", "TWOD")
-        self.surf2d = self._plotmodehelper (self, "surf2d", "SURF2D")
-        self.scatter2d = self._plotmodehelper (self, "scatter2d", "SCATTER2D")
-        self.scatter3d = self._plotmodehelper (self, "scatter3d", "SCATTER3D")
-        self.multi2d = self._plotmodehelper (self, "multi2d", "MULTI2D")
-        self.imgexpl = self._plotmodehelper (self, "imgexpl", "IMGEXPL")
-        self.volume = self._plotmodehelper (self, "volume", "VOLUME")
-        self.empty = self._plotmodehelper (self, "empty", "EMPTY")
+        self.oned = self._plotmodehelper(self, "oned", "ONED")
+        self.oned_threed = self._plotmodehelper(self, "oned_threed", "ONED_THREED")
+        self.twod = self._plotmodehelper(self, "twod", "TWOD")
+        self.twod_roiprofiles = self._plotmodehelper(self, "twod_roiprofiles", "TWOD_ROIPROFILES")
+        self.surf2d = self._plotmodehelper(self, "surf2d", "SURF2D")
+        self.scatter2d = self._plotmodehelper(self, "scatter2d", "SCATTER2D")
+        self.scatter3d = self._plotmodehelper(self, "scatter3d", "SCATTER3D")
+        self.multi2d = self._plotmodehelper(self, "multi2d", "MULTI2D")
+        self.imgexpl = self._plotmodehelper(self, "imgexpl", "IMGEXPL")
+        self.volume = self._plotmodehelper(self, "volume", "VOLUME")
+        self.empty = self._plotmodehelper(self, "empty", "EMPTY")
         
-    def get(self, str):
+    def get(self, modename):
         '''Return the GuiPlotMode with the given name, or return None for no matching'''
-        return self._str_to_modes.get(str)
-    
+        return self._str_to_modes.get(modename)
+
 plotmode = _plotmode()
 
 class axismapbean(object):   
@@ -148,7 +148,6 @@ class axismapbean(object):
         return 'axismapbean(%s)' % self.__dict__.__repr__()
 
 class datasetwithaxisinformation(object):
-    
     _DATA = "data"
     _AXIS_MAP = "axisMap"
     
@@ -174,7 +173,6 @@ class datasetwithaxisinformation(object):
         return 'datasetWithAxisInformation(%s)' % self.__dict__.__repr__()
         
 class databean(object):
-    
     _DATA = "data"
     _AXIS_DATA = "axisData"
     

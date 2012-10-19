@@ -32,5 +32,5 @@ rpcserver=_rpc.rpcserver
 rpcclient=_rpc.rpcclient
 typednone=_wrapper.typednone
 abstractdatasetdescriptor=_wrapper.abstractdatasetdescriptor
-binarywrapper=_wrapper.binaryWrapper
+binarywrapper=_wrapper.binarywrapper
 settemplocation=_flatten.settemplocation

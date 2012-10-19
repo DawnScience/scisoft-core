@@ -37,6 +37,8 @@ abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFl
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("test/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackxmlrpc.py");
 
+		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
+
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL("http://127.0.0.1:8713/xmlrpc"));
 		client = new XmlRpcClient();

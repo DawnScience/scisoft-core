@@ -32,6 +32,8 @@ abstract public class FlatteningViaAnalysisRpcToPythonTestAbstract extends Flatt
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("test/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackanalysisrpc.py");
 
+		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
+
 		client = new AnalysisRpcClient(8714);
 	}
 

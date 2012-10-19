@@ -89,7 +89,7 @@ class rpcserver(object):
 
 class rpcclient(object):
     '''
-    An AnlysisRpc Client, used to connect to an AnalysisRpc server
+    An AnalysisRpc Client, used to connect to an AnalysisRpc server
     in another process.
     Calls to the server can be made either with the request method
     or as an attribute of the rpcclient instance.

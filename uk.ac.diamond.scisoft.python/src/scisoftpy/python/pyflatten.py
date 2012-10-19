@@ -87,16 +87,29 @@ class roiHelper(flatteningHelper):
         return roiHelper(_roi.roibase, "uk.ac.diamond.scisoft.analysis.roi.ROIBase")
         
     @staticmethod
-    def getRectHelper():
-        return roiHelper(_roi.rect, "uk.ac.diamond.scisoft.analysis.roi.RectangularROI")
+    def getPointHelper():
+        return roiHelper(_roi.point, "uk.ac.diamond.scisoft.analysis.roi.PointROI")
         
     @staticmethod
-    def getSectHelper():
-        return roiHelper(_roi.sect, "uk.ac.diamond.scisoft.analysis.roi.SectorROI")
+    def getRectangleHelper():
+        return roiHelper(_roi.rectangle, "uk.ac.diamond.scisoft.analysis.roi.RectangularROI")
+        
+    @staticmethod
+    def getSectorHelper():
+        return roiHelper(_roi.sector, "uk.ac.diamond.scisoft.analysis.roi.SectorROI")
 
     @staticmethod
     def getLineHelper():
         return roiHelper(_roi.line, "uk.ac.diamond.scisoft.analysis.roi.LinearROI")
+
+    @staticmethod
+    def getCircleHelper():
+        return roiHelper(_roi.circle, "uk.ac.diamond.scisoft.analysis.roi.CircularROI")
+
+    @staticmethod
+    def getEllipseHelper():
+        return roiHelper(_roi.ellipse, "uk.ac.diamond.scisoft.analysis.roi.EllipticalROI")
+
 
 class axisMapBeanHelper(flatteningHelper):
 
@@ -170,7 +183,7 @@ class passThroughHelper(object):
         return obj
 
     def canflatten(self, obj):
-        return isinstance(obj, (str, int, long, float, _wrapper.binaryWrapper))
+        return isinstance(obj, (str, int, long, float, _wrapper.binarywrapper))
 
     def canunflatten(self, obj):
         return self.canflatten(obj)
@@ -312,17 +325,29 @@ class roiListHelper(flatteningHelper):
         return rval
 
     @staticmethod
+    def getPointListHelper():
+        return roiListHelper(_roi.point_list, "uk.ac.diamond.scisoft.analysis.roi.PointROIList")
+
+    @staticmethod
     def getLineListHelper():
-        return roiListHelper(_roi.linelist, "uk.ac.diamond.scisoft.analysis.roi.LinearROIList")
+        return roiListHelper(_roi.line_list, "uk.ac.diamond.scisoft.analysis.roi.LinearROIList")
 
     @staticmethod
-    def getRectListHelper():
-        return roiListHelper(_roi.rectlist, "uk.ac.diamond.scisoft.analysis.roi.RectangularROIList")
+    def getRectangleListHelper():
+        return roiListHelper(_roi.rectangle_list, "uk.ac.diamond.scisoft.analysis.roi.RectangularROIList")
 
     @staticmethod
-    def getSectListHelper():
-        return roiListHelper(_roi.sectlist, "uk.ac.diamond.scisoft.analysis.roi.SectorROIList")
-            
+    def getSectorListHelper():
+        return roiListHelper(_roi.sector_list, "uk.ac.diamond.scisoft.analysis.roi.SectorROIList")
+
+    @staticmethod
+    def getCircleListHelper():
+        return roiListHelper(_roi.circle_list, "uk.ac.diamond.scisoft.analysis.roi.CircularROIList")
+
+    @staticmethod
+    def getEllipseListHelper():
+        return roiListHelper(_roi.ellipse_list, "uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList")
+
 class listAndTupleHelper(object):
     def flatten(self, obj):
         outList = []
@@ -423,10 +448,12 @@ class exceptionHelper(flatteningHelper):
     def unflatten(self, obj):
         return Exception(obj[CONTENT])
     
-helpers = [noneHelper(), roiListHelper.getLineListHelper(),
-           roiListHelper.getSectListHelper(), roiListHelper.getRectListHelper(),
-           roiHelper.getRectHelper(), roiHelper.getSectHelper(),
-           roiHelper.getLineHelper(), roiHelper.getROIBaseHelper(), 
+helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPointListHelper(),
+           roiListHelper.getSectorListHelper(), roiListHelper.getRectangleListHelper(),
+           roiListHelper.getCircleListHelper(), roiListHelper.getEllipseListHelper(),
+           roiHelper.getRectangleHelper(), roiHelper.getSectorHelper(),
+           roiHelper.getCircleHelper(), roiHelper.getEllipseHelper(),
+           roiHelper.getLineHelper(), roiHelper.getPointHelper(), roiHelper.getROIBaseHelper(), 
            ndArrayHelper(), guiBeanHelper(),
            guiParametersHelper(), plotModeHelper(), axisMapBeanHelper(),
            datasetWithAxisInformationHelper(), dataBeanHelper(),
@@ -442,7 +469,7 @@ def flatten(obj):
             return thisHelper.flatten(obj)
     raise TypeError("Object " + repr(obj) + " cannot be flattened")
         
-def unflatten(obj):  
+def unflatten(obj):
     for thisHelper in helpers:
         if thisHelper.canunflatten(obj):
             return thisHelper.unflatten(obj)

@@ -85,7 +85,12 @@ public class GuiPlotMode implements Serializable {
 	 * specify 2D plotting mode
 	 */
 	public final static GuiPlotMode TWOD = new GuiPlotMode("TWOD");
-	
+
+	/**
+	 * specify 2D plotting mode with side plot profiles
+	 */
+	public final static GuiPlotMode TWOD_ROIPROFILES = new GuiPlotMode("TWOD_ROIPROFILES");
+
 	/**
 	 * specify SURF2D plotting mode
 	 */

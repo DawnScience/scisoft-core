@@ -60,6 +60,7 @@ _plot_name_remapper = {
     'plot_updatestack': 'updateStackPlot',
     'plot_image': 'imagePlot',
     'plot_images': 'imagesPlot',
+    'plot_imageProfile': 'imagePlotProfile',
     'plot_surface': 'surfacePlot',
     'plot_points2d': 'scatter2DPlot',
     'plot_updatepoints2d': 'scatter2DPlotOver',
@@ -134,7 +135,7 @@ class plotter(object):
     def __getattr__(self, plot_method_name):
         plotter_method_name = _plot_name_remapper.get(plot_method_name)
         if plotter_method_name is None:
-            raise AttributeError
+            raise AttributeError('No such method name:%s' % plot_method_name)
         return _plot_method(self._doplot, plotter_method_name)
     
     plot_orders = { "none": imageorder.IMAGEORDERNONE, "alpha": imageorder.IMAGEORDERALPHANUMERICAL, "chrono": imageorder.IMAGEORDERCHRONOLOGICAL}

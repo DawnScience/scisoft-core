@@ -258,13 +258,19 @@ The regions of interest defined are in the ROI package::
 
 These are
 
+ *point*
+   A single point defined by its coordinates
  *line*
    A line segment defined by its starting point, length and angle
- *rect*
+ *rectangle*
    A rectangle defined by its starting point, width, height and 
    angle
- *sect*
+ *sector*
    A sector defined by its centre point, bounds on radius and azimuthal angle
+ *circle*
+   A circle defined by its centre point and radius
+ *ellipse*
+   An ellipse defined by its centre point, major and minor semi-axes and azimuthal angle
 
 As mentioned in the previous section, the current ROI and any ROIs stored in
 the table are sent via a GUI bean back to the plot view.
@@ -274,7 +280,7 @@ and the table of ROIs under the key ``parameters.roilist``. The values
 held under those keys depend on which side panel is active.
 
 When the line profile tool is being used, the ``parameters.roi`` item is a
-linear ROI object and any stored ROIs are held in a Jython list of linear ROIs::
+linear ROI object and any stored ROIs are held in a Python list of linear ROIs::
 
     cr = gb[dpl.parameters.roi]
 
@@ -313,11 +319,11 @@ linear ROI object and any stored ROIs are held in a Jython list of linear ROIs::
     dpl.delrois(gb)
 
     # delete list of sector ROIs (if exists) from bean
-    dpl.delrois(gb, dpl.roi.sect)
+    dpl.delrois(gb, dpl.roi.sector)
 
     # import region of interest package
     import scisoftpy.roi as droi
-    list = droi.linelist()
+    list = droi.line_list()
     list.add(roi)
     gb[dpl.parameters.roilist] = list
 

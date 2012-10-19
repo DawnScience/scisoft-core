@@ -35,6 +35,7 @@ class _plotmode:
     oned = _guiplotmode.ONED
     oned_threed = _guiplotmode.ONED_THREED
     twod = _guiplotmode.TWOD
+    twod_roiprofiles =  _guiplotmode.TWOD_ROIPROFILES
     surf2d = _guiplotmode.SURF2D
     scatter2d = _guiplotmode.SCATTER2D
     scatter3d = _guiplotmode.SCATTER3D

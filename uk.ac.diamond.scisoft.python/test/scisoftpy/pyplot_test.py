@@ -32,7 +32,8 @@ class Test(unittest.TestCase):
         self.rpcserver.add_handler('SDAPlotter', lambda plotter_method_name, *args: (plotter_method_name, args))
         thread.start_new_thread(self.rpcserver.serve_forever, ())
         
-        self.plot = plot.plotter(PORT)
+        self.plot = plot.plotter()
+        plot.setremoteport(PORT)
 
     def tearDown(self):
         self.rpcserver.shutdown()
@@ -59,12 +60,12 @@ class Test(unittest.TestCase):
 
     def testOrder(self):
         '''Tests that the order returned match those expected in SDAPlotter'''
-        self.assertEquals(0, self.plot.order('none'))
-        self.assertEquals(1, self.plot.order('alpha'))
-        self.assertEquals(2, self.plot.order('chrono'))
+        self.assertEquals(0, self.plot.plot_orders['none'])
+        self.assertEquals(1, self.plot.plot_orders['alpha'])
+        self.assertEquals(2, self.plot.plot_orders['chrono'])
 
     def testOrderInvalid(self):
-        self.assertRaises(ValueError, self.plot.order, ('unknown_order',))
+        self.assertRaises(KeyError, self.plot.plot_orders.__getitem__, 'unknown_order')
 
 
 if __name__ == "__main__":

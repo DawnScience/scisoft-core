@@ -92,6 +92,11 @@ public class AxisValues implements Iterable<Double>, Serializable {
 		setValues(data);
 	}
 
+	public AxisValues(String name, AbstractDataset data) {
+		this.name=name;
+		if (data!=null) setValues(data);
+	}
+
 	/**
 	 * Add a new entry into the collection
 	 * 
@@ -420,6 +425,10 @@ public class AxisValues implements Iterable<Double>, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isData() {
+		return values!=null;
 	}
 
 }

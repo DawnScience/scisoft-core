@@ -30,6 +30,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.gda.monitor.IMonitor;
@@ -694,5 +695,14 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 				};
 			}
 		};
+	}
+	
+	@Override
+	public IMetaData getMetaData(AbstractDataset data) {
+		if (metadata == null) {
+			if (data!=null) return data.getMetadata(); 
+			return null;
+		}
+		return getMetaData();
 	}
 }

@@ -43,6 +43,11 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 public class Step extends AFunction {
 	private static String cname = "Step";
 
+	public Step() {
+		super(new double[]{0,0,0,0,0,0,0});
+		name = cname;
+	}
+
 	public Step(IParameter[] params) {
 		super(params);
 		name = cname;

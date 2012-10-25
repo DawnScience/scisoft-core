@@ -30,6 +30,9 @@ public class CubicSpline extends AFunction {
 	double[] x = null;
 	double[] y = null;
 	
+	public CubicSpline() {
+		this(4);
+	}
 	public CubicSpline(int numberOfParameters) {
 		super(numberOfParameters);
 		name = cname;

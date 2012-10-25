@@ -46,7 +46,10 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unchecked")
 public final class FunctionFactory {
 
+	private static final Map<String, Class<? extends AFunction>> FUNCTIONS;
 	static {
+		
+		FUNCTIONS = new TreeMap<String, Class<? extends AFunction>>();
 		/**
 		 * Functions *must* have a zero argument constructor.
 		 */
@@ -71,7 +74,6 @@ public final class FunctionFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(FunctionFactory.class);
 	
-	private static final Map<String, Class<? extends AFunction>> FUNCTIONS = new TreeMap<String, Class<? extends AFunction>>();
 	/**
 	 * Register functions with factory.
 	 * @param classes
@@ -95,10 +97,11 @@ public final class FunctionFactory {
 	 */
 	public static void registerFunction(Class<? extends AFunction> clazz) throws Exception {
 		final AFunction function = clazz.newInstance();
-		if (!FUNCTIONS.containsKey(function.getName())) {
-			FUNCTIONS.put(function.getName(), clazz);
+		final String    name     = function.getName();
+		if (!FUNCTIONS.containsKey(name)) {
+			FUNCTIONS.put(name, clazz);
 		} else {
-			throw new Exception("The function "+function.getName()+" is registered twice!!");
+			throw new Exception("The function "+name+" is registered twice!!");
 		}	
 	}
 

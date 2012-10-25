@@ -41,6 +41,11 @@ public class GaussianND extends AFunction {
 	 */
 	private static transient final Logger logger = LoggerFactory.getLogger(GaussianND.class);
 
+	public GaussianND() {
+		super(new double[]{0,0,0});
+		name = cname;
+	}
+
 	public GaussianND(IParameter[] params) {
 		super(params);
 		name = cname;

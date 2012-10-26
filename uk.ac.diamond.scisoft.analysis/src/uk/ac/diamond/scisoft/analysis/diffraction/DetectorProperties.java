@@ -83,6 +83,56 @@ public class DetectorProperties {
 			final double pixelWidthInmm, Matrix3d orientation) {
 		this(origin, new Vector3d(0, 0, 1), heightInPixels, widthInPixels, pixelHeightInmm, pixelWidthInmm, orientation);
 	}
+
+	/**
+	 * This assumes beam is along z-axis
+	 * 
+	 * @param origin
+	 *            The local origin of the detector plane relative to the reference frame. This origin indicates the top
+	 *            left corner of the detector's (0,0) pixel. Distances in mm
+	 * @param heightInPixels
+	 *            Detector height in pixels
+	 * @param widthInPixels
+	 *            Detector width in pixels
+	 * @param pixelHeightInmm
+	 *            pixel height in mm
+	 * @param pixelWidthInmm
+	 *            pixel width in mm
+	 * @param detectorRotationX value describing the orientation of the detector relative to the reference frame
+	 * @param detectorRotationY value describing the orientation of the detector relative to the reference frame
+	 * @param detectorRotationZ value describing the orientation of the detector relative to the reference frame
+	 */
+	public DetectorProperties(Vector3d origin, final int heightInPixels, final int widthInPixels, final double pixelHeightInmm,
+			final double pixelWidthInmm, final double detectorRotationX, final double detectorRotationY, final double detectorRotationZ) {
+		
+		Matrix3d rotX = new Matrix3d();
+		rotX.rotX(detectorRotationX);
+		Matrix3d rotY = new Matrix3d();
+		rotY.rotY(detectorRotationY);
+		Matrix3d rotZ = new Matrix3d();
+		rotZ.rotZ(detectorRotationZ);
+
+		Matrix3d euler = new Matrix3d();
+		euler.mul(rotX, rotY);
+		euler.mul(rotZ);
+		
+		this.origin = origin;
+		this.beamVector = new Vector3d(0, 0, 1);
+		this.beamVector.normalize();
+		px = widthInPixels;
+		py = heightInPixels;
+		vPxSize = pixelHeightInmm;
+		hPxSize = pixelWidthInmm;
+		
+		this.orientation = euler;
+		if (this.orientation == null) {
+			this.orientation = new Matrix3d();
+			this.orientation.setIdentity();
+		}
+		calcInverse();
+		detectorPropertiesOriginal = new DetectorProperties(this);
+	}
+
 	
 	/**
 	 * @param origin

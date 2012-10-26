@@ -29,6 +29,7 @@ public class DiffractionCrystalEnvironment {
 	private double phiRange;
 	private double exposureTime;
 	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
+	private DiffractionCrystalEnvironment diffEnvOrig;
 
 	/**
 	 * @param wavelength in Angstroms
@@ -38,6 +39,7 @@ public class DiffractionCrystalEnvironment {
 		this.phiStart = Double.NaN;
 		this.phiRange = Double.NaN;
 		this.exposureTime = Double.NaN;
+		this.diffEnvOrig = new DiffractionCrystalEnvironment(this); 
 	}
 
 	/**
@@ -52,6 +54,7 @@ public class DiffractionCrystalEnvironment {
 		this.phiStart = phiStart;
 		this.phiRange = phiRange;
 		this.exposureTime = exposureTime;
+		this.diffEnvOrig = new DiffractionCrystalEnvironment(this); 
 	}
 
 	/**
@@ -60,9 +63,28 @@ public class DiffractionCrystalEnvironment {
 	public DiffractionCrystalEnvironment() {
 	}
 
+	/*
+	 *  @param diffenv The DiffractionCrystalEnvironment to copy
+	 */
+	public DiffractionCrystalEnvironment(DiffractionCrystalEnvironment diffenv) {
+		wavelength = diffenv.getWavelength();
+		phiStart = diffenv.getPhiStart();
+		phiRange = diffenv.getPhiRange();
+		exposureTime = diffenv.getExposureTime();
+		
+		// Avoid recursive loop
+		if (diffenv.getOriginal() != null)
+			diffEnvOrig = new DiffractionCrystalEnvironment(this);
+	}
+
+	
 	@Override
 	public DiffractionCrystalEnvironment clone() {
 		return new DiffractionCrystalEnvironment(wavelength, phiStart, phiRange, exposureTime);
+	}
+	
+	public DiffractionCrystalEnvironment getOriginal() {
+		return diffEnvOrig;
 	}
 
 	@Override

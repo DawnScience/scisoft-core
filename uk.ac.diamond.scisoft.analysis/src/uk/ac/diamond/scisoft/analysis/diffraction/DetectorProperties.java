@@ -50,7 +50,7 @@ public class DetectorProperties {
 	private Matrix3d ta;
 	private Matrix3d tb;
 	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
-
+	private DetectorProperties detectorPropertiesOriginal;
 	
 	/**
 	 * Null constructor
@@ -108,17 +108,43 @@ public class DetectorProperties {
 		
 		this.origin = origin;
 		this.beamVector = beamVector;
-		beamVector.normalize();
+		this.beamVector.normalize();
 		px = widthInPixels;
 		py = heightInPixels;
 		vPxSize = pixelHeightInmm;
 		hPxSize = pixelWidthInmm;
+		
 		this.orientation = orientation;
 		if (this.orientation == null) {
 			this.orientation = new Matrix3d();
 			this.orientation.setIdentity();
 		}
 		calcInverse();
+		detectorPropertiesOriginal = new DetectorProperties(this);
+	}
+
+	/**
+	 * @param detprop
+	 *            the DetectorProperties to copy
+	 */
+	protected DetectorProperties(DetectorProperties detprop) {
+		origin = (Vector3d) detprop.origin.clone();
+		beamVector = (Vector3d) detprop.beamVector.clone();
+		beamVector.normalize();
+		px = detprop.getPx();
+		py = detprop.getPy();
+		vPxSize = detprop.getVPxSize();
+		hPxSize = detprop.getHPxSize();
+		
+		orientation = (Matrix3d) detprop.orientation.clone();
+		if (orientation == null) {
+			orientation = new Matrix3d();
+			orientation.setIdentity();
+		}
+		calcInverse();
+		// Avoid recursive loop 
+		if (detprop.getOriginal() != null)
+			detectorPropertiesOriginal = new DetectorProperties(this); 
 	}
 
 	@Override
@@ -280,6 +306,7 @@ public class DetectorProperties {
 	 */
 	public void setVPxSize(final double pxSize) {
 		vPxSize = pxSize;
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "VPxSize"));
 	}
 
 	/**
@@ -295,6 +322,7 @@ public class DetectorProperties {
 	 */
 	public void setHPxSize(final double pxSize) {
 		hPxSize = pxSize;
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "HPxSize"));
 	}
 
 	/**
@@ -711,5 +739,48 @@ public class DetectorProperties {
 	 */
 	public boolean inImage(final Vector3d p) {
 		return inImage(pixelCoords(p));
+	}
+
+	public void restoreOrigin() {
+		setOrigin((Vector3d) detectorPropertiesOriginal.getOrigin().clone());
+	}
+
+	public void restoreBeamVector() {
+		setBeamVector((Vector3d) detectorPropertiesOriginal.getBeamVector().clone());
+	}
+
+	public void restorePx() {
+		setPx(detectorPropertiesOriginal.getPx());
+	}
+
+	public void restorePy() {
+		setPy(detectorPropertiesOriginal.getPy());
+	}
+
+	public void restoreVPxSize() {
+		setVPxSize(detectorPropertiesOriginal.getVPxSize());
+	}
+
+	public void restoreHPxSize() {
+		setHPxSize(detectorPropertiesOriginal.getHPxSize());
+	}
+
+	public void restoreOrientation() {
+		setOrientation((Matrix3d) detectorPropertiesOriginal.getOrientation().clone());
+	}
+	
+	public void restoreOriginal() {
+		restoreOrigin();
+		restoreBeamVector();
+		restoreBeamVector();
+		restorePx();
+		restorePy();
+		restoreVPxSize();
+		restoreHPxSize();
+		restoreOrientation();
+	}
+
+	public DetectorProperties getOriginal() {
+		return detectorPropertiesOriginal;
 	}
 }

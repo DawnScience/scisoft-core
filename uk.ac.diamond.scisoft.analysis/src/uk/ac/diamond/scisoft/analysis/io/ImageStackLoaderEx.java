@@ -136,14 +136,49 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	}
 
 	@Override
-	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
-		
-		if (step == null) {
-			step = new int[shape.length];
-			Arrays.fill(step, 1);
+	public AbstractDataset getDataset(IMonitor mon, int[] _shape, int[] _start, int[] _stop, int[] _step) throws ScanFileHolderException {
+
+		/**
+		 * If there is only 1 file then the shape os [1,width,height] but applications may just give slice arguments for the last two indices.
+		 * In that case add a value for the first index and squeeze the end result to match the rank of _shape
+		 */
+		if (_step == null) {
+			_step = new int[shape.length];
+			Arrays.fill(_step, 1);
 		}
-		//check slice values are valid given shape of  whole dataset
+		
+		
+		int [] shape = _shape;
+		int [] start = _start;
+		int [] stop = _stop;
+		int [] step = _step;
+		if( this.shape[0] == 1 && _shape.length == this.shape.length-1){
+			shape = new int[shape.length+1];
+			start = new int[start.length+1];
+			stop = new int[stop.length+1];
+			step = new int[step.length+1];
+			start[0]=0;
+			stop[0]=1;
+			step[0]=1;
+			shape[0]=1;
+			System.arraycopy(_shape, 0, shape, 1, _shape.length);
+			System.arraycopy(_start, 0, start, 1, _start.length);
+			System.arraycopy(_stop, 0, stop, 1, _stop.length);
+			System.arraycopy(_step, 0, step, 1, _step.length);
+		}
+
+		
+		AbstractDataset res=getDatasetEx(mon, shape, start, stop, step);
+		if( this.shape[0] == 1 && _shape.length == this.shape.length-1){
+			res.squeeze();
+		}
+		return res;
+	}
+	
+	public AbstractDataset getDatasetEx(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+		
 		AbstractDataset.checkSlice(this.shape, start, stop, start, stop, step);
+		//check slice values are valid given shape of  whole dataset
 
 		final int[] newShape = AbstractDataset.checkSlice(shape, start, stop, start, stop, step);
 

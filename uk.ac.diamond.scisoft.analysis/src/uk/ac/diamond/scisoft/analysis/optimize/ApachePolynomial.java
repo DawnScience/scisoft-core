@@ -48,7 +48,7 @@ public class ApachePolynomial {
 	 * @return result The smoothed data set
 	 * @throws OptimizationException 
 	 */
-	public static AbstractDataset getPolynomialSmoothed(final AbstractDataset x, final AbstractDataset y,int windowSize, int polyOrder) throws OptimizationException{
+	public static AbstractDataset getPolynomialSmoothed(final AbstractDataset x, final AbstractDataset y,int windowSize, int polyOrder) throws Exception{
 		//Could probably do with more sanity check on relative size of window vs polynomial but doesnt seem to trip up
 		// So we'll see how it goes...
 		

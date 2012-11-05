@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+
 
 /**
  * Utility class to calculate various aspects of resolution from crystallographic images
@@ -252,6 +254,44 @@ public class Resolution {
 		return radiusVector.length() / detector.getVPxSize();
 	}
 
+	/**
+	 * Calculate a resolution ellipse
+	 * @param detector
+	 * @param difExp
+	 * @param d
+	 * @return elliptical roi
+	 */
+	public static EllipticalROI ellipseFromResolution(DetectorProperties detector,
+			DiffractionCrystalEnvironment difExp, double d) {
+		double alpha = 2*(Math.asin(difExp.getWavelength() / (2 * d)));
+		Vector3d beam = new Vector3d(detector.getBeamVector());
+		Vector3d normal = detector.getNormal();
+
+		Vector3d major = new Vector3d();
+		Vector3d minor = new Vector3d();
+		minor.cross(normal, beam);
+		double eta = minor.length();
+		major.cross(normal, minor);
+		double angle = major.angle(detector.getHorizontalVector());
+
+		Vector3d intersect = detector.getBeamPosition();
+		double r = detector.getBeamPosition().length();
+		double se = Math.sin(eta);
+		double ce = Math.cos(eta);
+		double sa = Math.sin(alpha);
+		double ca = Math.cos(alpha);
+
+		double a = r*ce*sa*ca/(ca*ca - se*se);
+		double x = r*se*sa*sa/(ca*ca - se*se);
+		double te = se/ce;
+		double b = r*sa/Math.sqrt(ca*ca - sa*sa*te*te);
+
+		major.scale(x/major.length());
+		intersect.sub(major);
+		Vector3d centre = new Vector3d();
+		detector.pixelCoords(intersect, centre);
+		return new EllipticalROI(a, b, angle, centre.x, centre.y);
+	}
 
 	/**
 	 * Calculates the vector between pixels on the detector.

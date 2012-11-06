@@ -18,22 +18,20 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.EventObject;
 
-// TODO Karl check if event member data is ok :)
 public class DiffractionCrystalEnvironmentEvent extends EventObject {
+	protected static enum EventType {
+		WAVELENGTH,
+	}
 
-	private String propertyName;
+	private EventType type;
 
-	public DiffractionCrystalEnvironmentEvent(Object source, String propertyName) {
+	public DiffractionCrystalEnvironmentEvent(Object source, EventType propertyType) {
 		super(source);
-		this.propertyName = propertyName;
+		type = propertyType;
 	}
 
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public boolean hasWavelengthChanged() {
+		return type == EventType.WAVELENGTH;
 	}
 
 }

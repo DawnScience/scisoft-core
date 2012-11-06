@@ -16,12 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Container for parameters that a crystal is subject to in a diffraction experiment
  */
-public class DiffractionCrystalEnvironment {
+public class DiffractionCrystalEnvironment implements Serializable {
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	static final long serialVersionUID = 4306363319254548387L;
 	//  TODO add transmission
 
 	private double wavelength;

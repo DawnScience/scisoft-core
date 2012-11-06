@@ -178,15 +178,15 @@ public class DetectorProperties {
 	 *            the DetectorProperties to copy
 	 */
 	protected DetectorProperties(DetectorProperties detprop) {
-		origin = (Vector3d) detprop.origin.clone();
-		beamVector = (Vector3d) detprop.beamVector.clone();
+		origin = new Vector3d(detprop.origin);
+		beamVector = new Vector3d(detprop.beamVector);
 		beamVector.normalize();
 		px = detprop.getPx();
 		py = detprop.getPy();
 		vPxSize = detprop.getVPxSize();
 		hPxSize = detprop.getHPxSize();
 		
-		orientation = (Matrix3d) detprop.orientation.clone();
+		orientation = new Matrix3d(detprop.orientation);
 		if (orientation == null) {
 			orientation = new Matrix3d();
 			orientation.setIdentity();
@@ -199,7 +199,7 @@ public class DetectorProperties {
 
 	@Override
 	public  DetectorProperties clone() {
-		return new DetectorProperties((Vector3d)origin.clone(), (Vector3d)beamVector.clone(), px, py, vPxSize, hPxSize, (Matrix3d)orientation.clone());
+		return new DetectorProperties(new Vector3d(origin), new Vector3d(beamVector), px, py, vPxSize, hPxSize, new Matrix3d(orientation));
 	}
 
 	@Override
@@ -622,7 +622,7 @@ public class DetectorProperties {
 
 	private Vector3d[] cornerPositions() {
 		Vector3d[] corners = new Vector3d[4];
-		corners[0] = (Vector3d) origin.clone();
+		corners[0] = new Vector3d(origin);
 		corners[1] = pixelPosition(px, 0);
 		corners[2] = pixelPosition(0, py);
 		corners[3] = pixelPosition(px, py);
@@ -792,11 +792,11 @@ public class DetectorProperties {
 	}
 
 	public void restoreOrigin() {
-		setOrigin((Vector3d) detectorPropertiesOriginal.getOrigin().clone());
+		setOrigin( new Vector3d(detectorPropertiesOriginal.getOrigin()));
 	}
 
 	public void restoreBeamVector() {
-		setBeamVector((Vector3d) detectorPropertiesOriginal.getBeamVector().clone());
+		setBeamVector(new Vector3d(detectorPropertiesOriginal.getBeamVector()));
 	}
 
 	public void restorePx() {
@@ -816,7 +816,7 @@ public class DetectorProperties {
 	}
 
 	public void restoreOrientation() {
-		setOrientation((Matrix3d) detectorPropertiesOriginal.getOrientation().clone());
+		setOrientation( new Matrix3d(detectorPropertiesOriginal.getOrientation()));
 	}
 	
 	public void restoreOriginal() {

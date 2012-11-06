@@ -25,6 +25,8 @@ import java.util.List;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventType;
+
 /**
  * This class will contain the information describing the properties of the detector that are relevant to diffraction
  * calculations. The Diamond reference frame is defined so its origin is at the intersection of the beam and the sample.
@@ -55,7 +57,9 @@ public class DetectorProperties implements Serializable {
 	private Matrix3d invOrientation; // its inverse
 	private Matrix3d ta;
 	private Matrix3d tb;
+	// TODO move controller away from model?
 	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
+	// TODO decide whether to move this controller
 	private DetectorProperties detectorPropertiesOriginal;
 	
 	/**
@@ -316,7 +320,7 @@ public class DetectorProperties implements Serializable {
 	public void setOrigin(Vector3d origin) {
 		this.origin = origin;
 		// Tell listeners
-		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "Origin"));
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
 	}
 
 	/**
@@ -362,7 +366,7 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void setVPxSize(final double pxSize) {
 		vPxSize = pxSize;
-		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "VPxSize"));
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.VPXSIZE));
 	}
 
 	/**
@@ -378,7 +382,7 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void setHPxSize(final double pxSize) {
 		hPxSize = pxSize;
-		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "HPxSize"));
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.HPXSIZE));
 	}
 
 	/**
@@ -692,7 +696,7 @@ public class DetectorProperties implements Serializable {
 		setBeamVector(d);
 		
 		// Tell listeners
-		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, "Beam Center"));
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.BEAM_CENTRE));
 	}
 	
 	public void addDetectorPropertyListener(IDetectorPropertyListener l) {

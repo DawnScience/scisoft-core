@@ -18,22 +18,38 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.EventObject;
 
-// TODO Karl check if event member data is ok :)
 public class DetectorPropertyEvent extends EventObject {
+	protected static enum EventType {
+		ORIGIN,
+		BEAM_CENTRE,
+		HPXSIZE,
+		VPXSIZE,
+	}
 
-	private String propertyName;
+	private EventType type;
 
-	public DetectorPropertyEvent(Object source, String propertyName) {
+	public DetectorPropertyEvent(Object source, EventType propertyType) {
 		super(source);
-		this.propertyName = propertyName;
+		type = propertyType;
 	}
 
-	public String getPropertyName() {
-		return propertyName;
+	public EventType getType() {
+		return type;
 	}
 
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public boolean hasOriginChanged() {
+		return type == EventType.ORIGIN;
 	}
 
+	public boolean hasBeamCentreChanged() {
+		return type == EventType.BEAM_CENTRE;
+	}
+
+	public boolean hasHPxSizeChanged() {
+		return type == EventType.HPXSIZE;
+	}
+
+	public boolean hasVPxSizeChanged() {
+		return type == EventType.VPXSIZE;
+	}
 }

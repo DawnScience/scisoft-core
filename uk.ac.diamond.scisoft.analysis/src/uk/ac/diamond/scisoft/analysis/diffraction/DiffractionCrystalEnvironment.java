@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironmentEvent.EventType;
+
 /**
  * Container for parameters that a crystal is subject to in a diffraction experiment
  */
@@ -33,7 +35,9 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	private double phiStart;
 	private double phiRange;
 	private double exposureTime;
+	// TODO move controller away from model?
 	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
+	// TODO decide whether to move this controller
 	private DiffractionCrystalEnvironment diffEnvOrig;
 
 	/**
@@ -149,7 +153,7 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		// lambda(A) = 10^7 * (h*c/e) / energy(keV)
 		this.wavelength = 1./(0.0806554465*keV); // constant from NIST CODATA 2006
 		// Tell listeners
-		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, "Wavelength"));
+		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, EventType.WAVELENGTH));
 	}
 
 	/**
@@ -158,7 +162,7 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	 */
 	public void setWavelength(double wavelength) {
 		this.wavelength = wavelength;
-		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, "Wavelength"));
+		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, EventType.WAVELENGTH));
 	}
 	
 	/**

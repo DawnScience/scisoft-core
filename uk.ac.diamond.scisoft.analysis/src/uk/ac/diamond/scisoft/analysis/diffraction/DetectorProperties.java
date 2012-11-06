@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,7 +38,12 @@ import javax.vecmath.Vector3d;
  * image coordinates start off with (0,0) in the top-left corner of the image and end at (width-1,height-1) in the
  * bottom-right corner pixel.
  */
-public class DetectorProperties {
+public class DetectorProperties implements Serializable {
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	static final long serialVersionUID = 3928760686423603813L; 
+
 	private Vector3d origin; // top left corner of detector's (0,0) pixel
 	private Vector3d beamVector; // unit vector in beam direction
 	private Vector3d normal; // unit vector perpendicular to detector surface

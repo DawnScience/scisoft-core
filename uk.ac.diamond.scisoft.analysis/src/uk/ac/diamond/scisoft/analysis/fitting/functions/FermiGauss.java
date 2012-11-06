@@ -140,13 +140,18 @@ public class FermiGauss extends AFunction implements Serializable{
 		
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
-		if (sigma <= 0.0) return new DoubleDataset(fermiDS); 
+		if (sigma == 0.0) return new DoubleDataset(fermiDS);
+		
+		double localSigma = sigma;
+		
+		if (sigma < 0.0) localSigma = -sigma;
+		
 		
 		DoubleDataset conv = DoubleDataset.ones(xAxis.getShape());
 		conv.setName("Convolution");
 		
 		for (int i = 0; i < conv.getShape()[0]; i++) {
-			Gaussian gauss = new Gaussian(xAxis.getDouble(i), sigma, 1.0);
+			Gaussian gauss = new Gaussian(xAxis.getDouble(i), localSigma, 1.0);
 			DoubleDataset gaussDS = gauss.makeDataset(xAxis);
 			gaussDS.idivide(gaussDS.sum());
 			

@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.util.EventObject;
 
 public class DetectorPropertyEvent extends EventObject {
-	protected static enum EventType {
+	static enum EventType {
 		ORIGIN,
 		BEAM_CENTRE,
 		HPXSIZE,

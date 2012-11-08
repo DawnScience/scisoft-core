@@ -29,15 +29,15 @@ public class HKL implements Serializable {
 		hkl = new int[] {h, k, l};
 	}
 	
-	public Integer getH() {
+	public int getH() {
 		return hkl[0];
 	}
 	
-	public Integer getK() {
+	public int getK() {
 		return hkl[1];
 	}
 	
-	public Integer getL() {
+	public int getL() {
 		return hkl[2];
 	}
 	
@@ -45,11 +45,11 @@ public class HKL implements Serializable {
 		return hkl;
 	}
 	
-	public Integer getMaxIndex() {
+	public int getMaxIndex() {
 		return Math.max(Math.max(getH(), getK()), getL());
 	}
 	
-	public Integer getMinIndex() {
+	public int getMinIndex() {
 		return Math.min(Math.min(getH(), getK()), getL());
 	}
 	

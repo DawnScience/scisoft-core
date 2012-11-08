@@ -148,8 +148,8 @@ public class DSpacing {
 		}
 		double angle = major.angle(detector.getHorizontalVector());
 
-		Vector3d intersect = detector.getBeamPosition();
-		double r = detector.getBeamPosition().length();
+		Vector3d intersect = detector.getBeamCentrePosition();
+		double r = intersect.length();
 		double se = Math.sin(eta);
 		double ce = Math.cos(eta);
 		double sa = Math.sin(alpha);

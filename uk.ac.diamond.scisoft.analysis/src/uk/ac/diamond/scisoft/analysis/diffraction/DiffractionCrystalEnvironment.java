@@ -37,8 +37,6 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	private double exposureTime;
 	// TODO move controller away from model?
 	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
-	// TODO decide whether to move this controller
-	private DiffractionCrystalEnvironment diffEnvOrig;
 
 	/**
 	 * @param wavelength in Angstroms
@@ -48,7 +46,6 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		this.phiStart = Double.NaN;
 		this.phiRange = Double.NaN;
 		this.exposureTime = Double.NaN;
-		this.diffEnvOrig = new DiffractionCrystalEnvironment(this); 
 	}
 
 	/**
@@ -63,7 +60,6 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		this.phiStart = phiStart;
 		this.phiRange = phiRange;
 		this.exposureTime = exposureTime;
-		this.diffEnvOrig = new DiffractionCrystalEnvironment(this); 
 	}
 
 	/**
@@ -80,10 +76,6 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		phiStart = diffenv.getPhiStart();
 		phiRange = diffenv.getPhiRange();
 		exposureTime = diffenv.getExposureTime();
-		
-		// Avoid recursive loop
-		if (diffenv.getOriginal() != null)
-			diffEnvOrig = new DiffractionCrystalEnvironment(this);
 	}
 
 	
@@ -92,10 +84,6 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		return new DiffractionCrystalEnvironment(wavelength, phiStart, phiRange, exposureTime);
 	}
 	
-	public DiffractionCrystalEnvironment getOriginal() {
-		return diffEnvOrig;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -49,18 +49,17 @@ public class DetectorProperties implements Serializable {
 	private Vector3d origin; // top left corner of detector's (0,0) pixel
 	private Vector3d beamVector; // unit vector in beam direction
 	private Vector3d normal; // unit vector perpendicular to detector surface
-	private int px;
-	private int py;
-	private double vPxSize;
-	private double hPxSize;
+	private int px; // width in pixels
+	private int py; // height in pixels
+	private double hPxSize; // horizontal pixel size (in mm)
+	private double vPxSize; // vertical pixel size (in mm)
 	private Matrix3d orientation; // transformation from reference frame to detector frame
 	private Matrix3d invOrientation; // its inverse
 	private Matrix3d ta;
 	private Matrix3d tb;
 	// TODO move controller away from model?
+	private boolean fire = true;
 	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
-	// TODO decide whether to move this controller
-	private DetectorProperties detectorPropertiesOriginal;
 	
 	/**
 	 * Null constructor
@@ -80,18 +79,18 @@ public class DetectorProperties implements Serializable {
 	 *            Detector height in pixels
 	 * @param widthInPixels
 	 *            Detector width in pixels
-	 * @param pixelHeightInmm
+	 * @param pixelHeightInMM
 	 *            pixel height in mm
-	 * @param pixelWidthInmm
+	 * @param pixelWidthInMM
 	 *            pixel width in mm
 	 * @param orientation
 	 *            matrix describing the orientation of the detector relative to the reference frame. This matrix's
 	 *            columns describes the direction of decreasing image rows, the direction of decreasing image columns
 	 *            and the detector plane normal.
 	 */
-	public DetectorProperties(Vector3d origin, final int heightInPixels, final int widthInPixels, final double pixelHeightInmm,
-			final double pixelWidthInmm, Matrix3d orientation) {
-		this(origin, new Vector3d(0, 0, 1), heightInPixels, widthInPixels, pixelHeightInmm, pixelWidthInmm, orientation);
+	public DetectorProperties(Vector3d origin, final int heightInPixels, final int widthInPixels, final double pixelHeightInMM,
+			final double pixelWidthInMM, Matrix3d orientation) {
+		this(origin, new Vector3d(0, 0, 1), heightInPixels, widthInPixels, pixelHeightInMM, pixelWidthInMM, orientation);
 	}
 
 	/**
@@ -104,17 +103,17 @@ public class DetectorProperties implements Serializable {
 	 *            Detector height in pixels
 	 * @param widthInPixels
 	 *            Detector width in pixels
-	 * @param pixelHeightInmm
+	 * @param pixelHeightInMM
 	 *            pixel height in mm
-	 * @param pixelWidthInmm
+	 * @param pixelWidthInMM
 	 *            pixel width in mm
 	 * @param detectorRotationX value describing the orientation of the detector relative to the reference frame
 	 * @param detectorRotationY value describing the orientation of the detector relative to the reference frame
 	 * @param detectorRotationZ value describing the orientation of the detector relative to the reference frame
 	 */
-	public DetectorProperties(Vector3d origin, final int heightInPixels, final int widthInPixels, final double pixelHeightInmm,
-			final double pixelWidthInmm, final double detectorRotationX, final double detectorRotationY, final double detectorRotationZ) {
-		
+	public DetectorProperties(Vector3d origin, final int heightInPixels, final int widthInPixels, final double pixelHeightInMM,
+			final double pixelWidthInMM, final double detectorRotationX, final double detectorRotationY, final double detectorRotationZ) {
+		this();
 		Matrix3d rotX = new Matrix3d();
 		rotX.rotX(detectorRotationX);
 		Matrix3d rotY = new Matrix3d();
@@ -131,8 +130,8 @@ public class DetectorProperties implements Serializable {
 		this.beamVector.normalize();
 		px = widthInPixels;
 		py = heightInPixels;
-		vPxSize = pixelHeightInmm;
-		hPxSize = pixelWidthInmm;
+		vPxSize = pixelHeightInMM;
+		hPxSize = pixelWidthInMM;
 		
 		this.orientation = euler;
 		if (this.orientation == null) {
@@ -140,7 +139,6 @@ public class DetectorProperties implements Serializable {
 			this.orientation.setIdentity();
 		}
 		calcInverse();
-		detectorPropertiesOriginal = new DetectorProperties(this);
 	}
 
 	
@@ -154,25 +152,25 @@ public class DetectorProperties implements Serializable {
 	 *            Detector height in pixels
 	 * @param widthInPixels
 	 *            Detector width in pixels
-	 * @param pixelHeightInmm
+	 * @param pixelHeightInMM
 	 *            pixel height in mm
-	 * @param pixelWidthInmm
+	 * @param pixelWidthInMM
 	 *            pixel width in mm
 	 * @param orientation
 	 *            matrix describing the orientation of the detector relative to the reference frame. This matrix's
 	 *            columns describes the direction of decreasing image rows, the direction of decreasing image columns
 	 *            and the detector plane normal.
 	 */
-	public DetectorProperties(Vector3d origin, Vector3d beamVector, final int heightInPixels, final int widthInPixels, final double pixelHeightInmm,
-			final double pixelWidthInmm, Matrix3d orientation) {
-		
+	public DetectorProperties(Vector3d origin, Vector3d beamVector, final int heightInPixels, final int widthInPixels, final double pixelHeightInMM,
+			final double pixelWidthInMM, Matrix3d orientation) {
+		this();
 		this.origin = origin;
 		this.beamVector = beamVector;
 		this.beamVector.normalize();
 		px = widthInPixels;
 		py = heightInPixels;
-		vPxSize = pixelHeightInmm;
-		hPxSize = pixelWidthInmm;
+		vPxSize = pixelHeightInMM;
+		hPxSize = pixelWidthInMM;
 		
 		this.orientation = orientation;
 		if (this.orientation == null) {
@@ -180,7 +178,6 @@ public class DetectorProperties implements Serializable {
 			this.orientation.setIdentity();
 		}
 		calcInverse();
-		detectorPropertiesOriginal = new DetectorProperties(this);
 	}
 
 	/**
@@ -188,6 +185,7 @@ public class DetectorProperties implements Serializable {
 	 *            the DetectorProperties to copy
 	 */
 	protected DetectorProperties(DetectorProperties detprop) {
+		this();
 		origin = new Vector3d(detprop.origin);
 		beamVector = new Vector3d(detprop.beamVector);
 		beamVector.normalize();
@@ -196,20 +194,18 @@ public class DetectorProperties implements Serializable {
 		vPxSize = detprop.getVPxSize();
 		hPxSize = detprop.getHPxSize();
 		
-		orientation = new Matrix3d(detprop.orientation);
-		if (orientation == null) {
+		if (detprop.orientation == null) {
 			orientation = new Matrix3d();
 			orientation.setIdentity();
+		} else {
+			orientation = new Matrix3d(detprop.orientation);
 		}
 		calcInverse();
-		// Avoid recursive loop 
-		if (detprop.getOriginal() != null)
-			detectorPropertiesOriginal = new DetectorProperties(this); 
 	}
 
 	@Override
 	public  DetectorProperties clone() {
-		return new DetectorProperties(new Vector3d(origin), new Vector3d(beamVector), px, py, vPxSize, hPxSize, new Matrix3d(orientation));
+		return new DetectorProperties(this);
 	}
 
 	@Override
@@ -531,13 +527,13 @@ public class DetectorProperties implements Serializable {
 	 *            position vector
 	 * @param t
 	 *            output vector (x and y components are pixel coordinates)
-	 * @param pos
-	 *            integer pixel coordinates
+	 * @param coords
+	 *            double pixel coordinates
 	 */
-	public void pixelCoords(final Vector3d p, Vector3d t, int[] pos) {
+	public void pixelCoords(final Vector3d p, Vector3d t, double[] coords) {
 		pixelCoords(p, t);
-		pos[0] = (int) Math.floor(t.x);
-		pos[1] = (int) Math.floor(t.y);
+		coords[0] = t.x;
+		coords[1] = t.y;
 	}
 
 	/**
@@ -545,12 +541,41 @@ public class DetectorProperties implements Serializable {
 	 * 
 	 * @param p
 	 *            position vector
-	 * @param pos
+	 * @param t
+	 *            output vector (x and y components are pixel coordinates)
+	 * @param coords
 	 *            integer pixel coordinates
 	 */
-	public void pixelCoords(final Vector3d p, int[] pos) {
+	public void pixelCoords(final Vector3d p, Vector3d t, int[] coords) {
+		pixelCoords(p, t);
+		coords[0] = (int) Math.floor(t.x);
+		coords[1] = (int) Math.floor(t.y);
+	}
+
+	/**
+	 * from position on detector, work out pixel coordinates
+	 * 
+	 * @param p
+	 *            position vector
+	 * @param coords
+	 *            double pixel coordinates
+	 */
+	public void pixelCoords(final Vector3d p, double[] coords) {
 		Vector3d t = new Vector3d();
-		pixelCoords(p, t, pos);
+		pixelCoords(p, t, coords);
+	}
+
+	/**
+	 * from position on detector, work out pixel coordinates
+	 * 
+	 * @param p
+	 *            position vector
+	 * @param coords
+	 *            integer pixel coordinates
+	 */
+	public void pixelCoords(final Vector3d p, int[] coords) {
+		Vector3d t = new Vector3d();
+		pixelCoords(p, t, coords);
 	}
 
 	/**
@@ -561,9 +586,22 @@ public class DetectorProperties implements Serializable {
 	 * @return integer array of pixel coordinates
 	 */
 	public int[] pixelCoords(final Vector3d p) {
-		int[] pos = new int[2];
-		pixelCoords(p, pos);
-		return pos;
+		int[] coords = new int[2];
+		pixelCoords(p, coords);
+		return coords;
+	}
+
+	/**
+	 * from position on detector, work out pixel coordinates
+	 * 
+	 * @param p
+	 *            position vector
+	 * @return integer array of pixel coordinates
+	 */
+	public double[] pixelPreciseCoords(final Vector3d p) {
+		double[] coords = new double[2];
+		pixelCoords(p, coords);
+		return coords;
 	}
 
 	/**
@@ -585,7 +623,7 @@ public class DetectorProperties implements Serializable {
 	/**
 	 * @return position of intersection of direct beam with detector
 	 */
-	public Vector3d getBeamPosition() {
+	public Vector3d getBeamCentrePosition() {
 		try {
 			return intersect(beamVector);
 		} catch (IllegalArgumentException e) {
@@ -593,21 +631,12 @@ public class DetectorProperties implements Serializable {
 		}
 	}
 
-	// TODO: Implement this ....
-//	public void setBeamPosition(Vector3d d) {
-//		try {
-//			setBeamVector(d);
-//		} catch (IllegalArgumentException e) {
-//			throw new IllegalStateException("No intersection when beam is parallel to detector");
-//		}
-//	}
-	
 	/**
 	 * @param d
 	 * @return point of intersection of direction vector with detector
 	 */
 	public Vector3d intersect(final Vector3d d) {
-		Vector3d pos = new Vector3d(d);
+		Vector3d pos = new Vector3d();
 		intersect(d, pos);
 		return pos;
 	}
@@ -644,65 +673,60 @@ public class DetectorProperties implements Serializable {
 	 * @return The pixel position on the edge of the detector which is closest to the beam centre
 	 */
 	public int[] pixelClosestToBeamCentre() {
-		if (!inImage(getBeamPosition()))
+		if (!inImage(getBeamCentrePosition()))
 			throw new IllegalArgumentException(
 					"The beam does not intersect the detector. There is no complete resolution ring");
-		int[] beamPos = pixelCoords(getBeamPosition());
+		double[] beamCentre = pixelPreciseCoords(getBeamCentrePosition());
 		double shortest = Double.MAX_VALUE;
 		int[] closestCoords = new int[2];
-		double d = distBetweenPix(beamPos[0], beamPos[1], beamPos[0], 0); 
+		double d = distBetweenPix(beamCentre[0], beamCentre[1], beamCentre[0], 0); 
 		if (d < shortest) {
-			closestCoords[0] = beamPos[0];
+			closestCoords[0] = (int) beamCentre[0];
 			closestCoords[1] = 0;
 			shortest = d;
 		}
-		d = distBetweenPix(beamPos[0], beamPos[1], 0, beamPos[1]); 
+		d = distBetweenPix(beamCentre[0], beamCentre[1], 0, beamCentre[1]); 
 		if (d < shortest) {
 			closestCoords[0] = 0;
-			closestCoords[1] = beamPos[1];
+			closestCoords[1] = (int) beamCentre[1];
 			shortest = d;
 		}
-		d = distBetweenPix(beamPos[0], beamPos[1], beamPos[0] - px, py);
+		d = distBetweenPix(beamCentre[0], beamCentre[1], beamCentre[0] - px, py);
 		if (d < shortest) {
-			closestCoords[0] = px - beamPos[0];
+			closestCoords[0] = (int) (px - beamCentre[0]);
 			closestCoords[1] = py;
 			shortest = d;
 		}
-		d = distBetweenPix(beamPos[0], beamPos[1], px, beamPos[1] - py);
+		d = distBetweenPix(beamCentre[0], beamCentre[1], px, beamCentre[1] - py);
 		if (d < shortest) {
 			closestCoords[0] = px;
-			closestCoords[1] = py - beamPos[1];
+			closestCoords[1] = (int) (py - beamCentre[1]);
 			shortest = d;
 		}
 		return closestCoords;
 	}
 
 	/**
-	 * @return The 2D location of the beam centre on the image in pixels.
+	 * @return pixel double coordinates of the beam centre (where beam intersects detector)
 	 */
-	public double[] getBeamLocation() {
-		
+	public double[] getBeamCentreCoords() {
         final Vector3d cen = new Vector3d();
-		pixelCoords(getBeamPosition(), cen);
+		pixelCoords(getBeamCentrePosition(), cen);
 		return new double[]{cen.x, cen.y};
 	}
 	
 	/**
-	 * location in pixels
-	 * @param loc
+	 * Set beam centre (where beam intersects detector)
+	 * @param coords
 	 */
-	// TODO FIXME Karl to check
-	public void setBeamLocation(double[] loc) {
-		// Code to set beam center
-		// Get position vector of loc's top-left corner
-		Vector3d d = pixelPosition(loc[0], loc[1]);
-		// Use this as the new beam vector
-		setBeamVector(d);
-		
+	public void setBeamCentreCoords(double[] coords) {
+		Vector3d oc = getBeamCentrePosition(); // old beam centre
+		oc.sub(pixelPosition(coords[0], coords[1]));
+		origin.add(oc); // shift origin accordingly
 		// Tell listeners
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.BEAM_CENTRE));
 	}
-	
+
 	public void addDetectorPropertyListener(IDetectorPropertyListener l) {
 		if (detectorPropListeners==null) 
 			detectorPropListeners = new HashSet<IDetectorPropertyListener>(5);
@@ -718,13 +742,14 @@ public class DetectorProperties implements Serializable {
 	}
 	
 	protected void fireDetectorPropertyListeners(DetectorPropertyEvent evt) {
-		if (detectorPropListeners==null)  return;
+		if (detectorPropListeners==null || !fire) 
+			return;
 		for (IDetectorPropertyListener l : detectorPropListeners) {
 			l.detectorPropertiesChanged(evt);
 		}
 	}
 
-	private double distBetweenPix(int p1x, int p1y, int p2x, int p2y) {
+	private static double distBetweenPix(double p1x, double p1y, double p2x, double p2y) {
 		return Math.hypot(p2x - p1x, p2y - p1y);
 	}
 
@@ -740,8 +765,8 @@ public class DetectorProperties implements Serializable {
 	 */
 	public int distToClosestEdgeInPx() {
 		int[] closestCoords = pixelClosestToBeamCentre();
-		int[] beamPos = pixelCoords(getBeamPosition());
-		return (int) distBetweenPix(closestCoords[0], closestCoords[1], beamPos[0], beamPos[1]);
+		double[] beamCoords = pixelPreciseCoords(getBeamCentrePosition());
+		return (int) distBetweenPix(closestCoords[0], closestCoords[1], beamCoords[0], beamCoords[1]);
 	}
 
 	/**
@@ -753,7 +778,7 @@ public class DetectorProperties implements Serializable {
 		double length = -Double.MAX_VALUE;
 		for (int i = 0; i < 4; i++) {
 			Vector3d tempVec = new Vector3d();
-			tempVec.sub(corners[i], getBeamPosition());
+			tempVec.sub(corners[i], getBeamCentrePosition());
 			double vecLength = tempVec.length();
 			if (vecLength > length) {
 				longVec = tempVec;
@@ -783,16 +808,24 @@ public class DetectorProperties implements Serializable {
 	 * @param y
 	 * @return true if given pixel coordinate is within bounds
 	 */
-	public boolean inImage(final int x, final int y) {
+	public boolean inImage(final double x, final double y) {
 		return x >= 0 && y < px && y >= 0 && y < py;
 	}
 
 	/**
-	 * @param pos
+	 * @param coords
 	 * @return true if given pixel coordinate is within bounds
 	 */
-	public boolean inImage(int[] pos) {
-		return inImage(pos[0], pos[1]);
+	public boolean inImage(double[] coords) {
+		return inImage(coords[0], coords[1]);
+	}
+
+	/**
+	 * @param coords
+	 * @return true if given pixel coordinate is within bounds
+	 */
+	public boolean inImage(int[] coords) {
+		return inImage(coords[0], coords[1]);
 	}
 
 	/**
@@ -800,49 +833,22 @@ public class DetectorProperties implements Serializable {
 	 * @return true if given pixel position vector is within bounds
 	 */
 	public boolean inImage(final Vector3d p) {
-		return inImage(pixelCoords(p));
+		return inImage(pixelPreciseCoords(p));
 	}
 
-	public void restoreOrigin() {
-		setOrigin( new Vector3d(detectorPropertiesOriginal.getOrigin()));
-	}
-
-	public void restoreBeamVector() {
-		setBeamVector(new Vector3d(detectorPropertiesOriginal.getBeamVector()));
-	}
-
-	public void restorePx() {
-		setPx(detectorPropertiesOriginal.getPx());
-	}
-
-	public void restorePy() {
-		setPy(detectorPropertiesOriginal.getPy());
-	}
-
-	public void restoreVPxSize() {
-		setVPxSize(detectorPropertiesOriginal.getVPxSize());
-	}
-
-	public void restoreHPxSize() {
-		setHPxSize(detectorPropertiesOriginal.getHPxSize());
-	}
-
-	public void restoreOrientation() {
-		setOrientation( new Matrix3d(detectorPropertiesOriginal.getOrientation()));
-	}
-	
-	public void restoreOriginal() {
-		restoreOrigin();
-		restoreBeamVector();
-		restoreBeamVector();
-		restorePx();
-		restorePy();
-		restoreVPxSize();
-		restoreHPxSize();
-		restoreOrientation();
-	}
-
-	public DetectorProperties getOriginal() {
-		return detectorPropertiesOriginal;
+	/**
+	 * 
+	 * @param original
+	 */
+	public void restore(DetectorProperties original) {
+		fire = false;
+		setOrigin(new Vector3d(original.getOrigin()));
+		setBeamVector(new Vector3d(original.getBeamVector()));
+		setPx(original.getPx());
+		setPy(original.getPy());
+		setVPxSize(original.getVPxSize());
+		setHPxSize(original.getHPxSize());
+		fire = true;
+		setOrientation(new Matrix3d(original.getOrientation()));
 	}
 }

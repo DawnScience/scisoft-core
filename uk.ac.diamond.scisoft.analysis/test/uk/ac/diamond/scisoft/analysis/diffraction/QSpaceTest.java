@@ -55,7 +55,7 @@ public class QSpaceTest {
 
 		// fake a pixel coordinate so 2*sin(theta) = 1 or theta = 30 degrees
 		// i.e. equilateral triangle
-		int[] bp = detprops.pixelCoords(detprops.getBeamPosition());
+		int[] bp = detprops.pixelCoords(detprops.getBeamCentrePosition());
 //		System.out.println("Beam on detector is " + Arrays.toString(bp));
 		double projlen = Math.tan(Math.toRadians(60.))*origin[2];
 //		System.out.println("coords are " + (projlen/pxdim[0]) + ", 0");

@@ -44,7 +44,6 @@ public class DetectorPropertiesTest {
 	static Matrix3d orientationMatrix = new Matrix3d(0.984657762021401, 0.017187265168157, -0.17364817766693,
 			0.012961831885909, 0.985184016468007, 0.171010071662834, 0.174014604574351, -0.170637192932859,
 			0.969846310392954);
-	static DetectorProperties det;
 	static double lambda = 1.001;
 
 	private static String testScratchDirectoryName;
@@ -142,4 +141,20 @@ public class DetectorPropertiesTest {
 		if(!orientationMatrix.equals(det.getOrientation()))
 			Assert.fail("The orientation matrices are not equal");
 	}
+
+	@Test
+	public void testBeamCentre() {
+		DetectorProperties det = new DetectorProperties(detectorOrigin, imageSizePix[0], imageSizePix[1],
+				pixelSize, pixelSize, orientationMatrix);
+
+		double[] bc1 = det.getBeamCentreCoords();
+		System.out.printf("Initial centre: %f, %f\n", bc1[0], bc1[1]);
+		bc1[0] -= 75;
+		bc1[1] += 120;
+		det.setBeamCentreCoords(bc1);
+		double[] bc2 = det.getBeamCentreCoords();
+		Assert.assertEquals("X coord", bc1[0], bc2[0], 1e-7);
+		Assert.assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
+	}
+	
 }

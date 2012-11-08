@@ -678,7 +678,7 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return The 2D location of the beam centre on the image.
+	 * @return The 2D location of the beam centre on the image in pixels.
 	 */
 	public double[] getBeamLocation() {
 		
@@ -687,6 +687,10 @@ public class DetectorProperties implements Serializable {
 		return new double[]{cen.x, cen.y};
 	}
 	
+	/**
+	 * location in pixels
+	 * @param loc
+	 */
 	// TODO FIXME Karl to check
 	public void setBeamLocation(double[] loc) {
 		// Code to set beam center
@@ -709,14 +713,12 @@ public class DetectorProperties implements Serializable {
 	 * @param l
 	 */
 	public void removeDetectorPropertyListener(IDetectorPropertyListener l) {
-		if (detectorPropListeners==null) 
-			return;
+		if (detectorPropListeners==null)  return;
 		detectorPropListeners.remove(l);
 	}
 	
 	protected void fireDetectorPropertyListeners(DetectorPropertyEvent evt) {
-		if (detectorPropListeners==null) 
-			return;
+		if (detectorPropListeners==null)  return;
 		for (IDetectorPropertyListener l : detectorPropListeners) {
 			l.detectorPropertiesChanged(evt);
 		}

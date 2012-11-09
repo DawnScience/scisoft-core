@@ -17,16 +17,14 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import gda.analysis.io.ScanFileHolderException;
-
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.diamond.scisoft.analysis.io.PNGScaledSaver;
 
 
 public class ImageTest {
 
 	@Test
+	// TODO not really a test as such, but checks to make sure there are no execution errors
 	public void testregrid() throws ScanFileHolderException {
 		
 		AbstractDataset ds = Random.rand(new int[] {100,100});
@@ -43,17 +41,32 @@ public class ImageTest {
 		// now apply the Transform
 		
 		AbstractDataset result = Image.regrid(ds, x, y, lin, lin);
-		
-		
-		DataHolder dh = new DataHolder();
-		dh.addDataset("image", ds);
-		PNGScaledSaver saveorig= new PNGScaledSaver("/tmp/im/orig.png", 0, 255);
-		saveorig.saveFile(dh);
-		
-		dh.clear();
-		dh.addDataset("image", result);
-		PNGScaledSaver saveremapped = new PNGScaledSaver("/tmp/im/remapped.png", 0, 255);
-		saveremapped.saveFile(dh);
 	}
 	
+	@Test
+	public void testMedianFilter() {
+		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset result = Image.medianFilter(ds, new int[] {3});
+		assertEquals(result.getDouble(2), ds.getDouble(2), 0.001);
+		
+		ds = ds.reshape(new int[] {10,100});
+		result = Image.medianFilter(ds, new int[] {3,3});
+		assertEquals(result.getDouble(5,5), ds.getDouble(5,5), 0.001);
+		
+		ds = ds.reshape(new int[] {10,10,10});
+		result = Image.medianFilter(ds, new int[] {3,3,3});
+		assertEquals(result.getDouble(5,5,5), ds.getDouble(5,5,5), 0.001);
+		
+		ds = IntegerDataset.arange(1000);
+		result = Image.medianFilter(ds, new int[] {3});
+		assertEquals(result.getDouble(2), ds.getDouble(2), 0.001);
+		
+		ds = ds.reshape(new int[] {10,100});
+		result = Image.medianFilter(ds, new int[] {3,3});
+		assertEquals(result.getDouble(5,5), ds.getDouble(5,5), 0.001);
+		
+		ds = ds.reshape(new int[] {10,10,10});
+		result = Image.medianFilter(ds, new int[] {3,3,3});
+		assertEquals(result.getDouble(5,5,5), ds.getDouble(5,5,5), 0.001);
+	}
 }

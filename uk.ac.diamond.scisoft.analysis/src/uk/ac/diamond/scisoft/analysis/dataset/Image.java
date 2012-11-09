@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,6 +227,39 @@ public class Image {
 			AbstractDataset gridY) {
 		
 		return regrid_kabsch(data, x, y, gridX, gridY);
+	}
+	
+	public static AbstractDataset medianFilter(AbstractDataset input, int[] kernel) {
+		// check to see if the kernel shape in the correct dimensionality.
+		if (kernel.length != input.getShape().length)
+			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
+
+		AbstractDataset result = input.clone();
+		int[] offset = kernel.clone();
+		for (int i = 0; i < offset.length; i++) {
+			offset[i] = -kernel[i]/2;
+		}
+		IndexIterator iter = input.getIterator(true);
+		while (iter.hasNext()) {
+			int[] pos = iter.getPos();
+			int[] start = pos.clone();
+			int[] stop = pos.clone();
+			for (int i = 0; i < pos.length; i++) {
+				start[i] = pos[i] + offset[i];
+				stop[i] = start[i] + kernel[i];
+				if (start[i] < 0) start[i] = 0;
+				if (stop[i] >= input.getShape()[i]) stop[i] = input.getShape()[i];
+			}
+			AbstractDataset slice = input.getSlice(start, stop, null);
+			result.set(Stats.median(slice), pos);
+			System.out.println(ArrayUtils.toString(pos));
+			System.out.println(ArrayUtils.toString(start));
+			System.out.println(ArrayUtils.toString(stop));
+			System.out.println(slice);
+			System.out.println(result.getDouble(pos));
+		}
+
+		return result;
 	}
 	
 }

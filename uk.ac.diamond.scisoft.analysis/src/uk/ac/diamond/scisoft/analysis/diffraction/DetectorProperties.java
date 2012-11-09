@@ -25,7 +25,6 @@ import java.util.List;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventType;
 
 /**

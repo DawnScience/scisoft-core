@@ -606,7 +606,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			GDAMetadata.put("NXSample:exposure_time", getMetadataValue("exposureTime"));
 			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
 			
-			detProps = new DetectorProperties(new Vector3d(detectorOrigin), imageLength, imageWidth,pixelSizeX, pixelSizeY,euler );
+			detProps = new DetectorProperties(new Vector3d(detectorOrigin), imageLength, imageWidth, pixelSizeX, pixelSizeY, euler);
 			diffEnv = new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, (Double) getMetadataValue("exposureTime"));
 			
 		} catch (NumberFormatException e) {
@@ -643,6 +643,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 		final Map<String,String> vals = createStringMap();
 		
 		public MARMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			super(new File(fileName));
 			this.props = props;
 			this.env = env;
 		}
@@ -687,13 +688,13 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 
 		@Override
 		public MARMetadataAdapter clone() {
-			return new MARMetadataAdapter(props.clone(), env.clone());
+			return new MARMetadataAdapter(props == null ? null : props.clone(), env == null ? null : env.clone());
 		}
 	}
 
 	@Override
 	public IMetaData getMetaData() {
-		return new MARMetadataAdapter(detProps.clone(), diffEnv.clone());
+		return new MARMetadataAdapter(detProps == null ? null : detProps.clone(), diffEnv == null ? null : diffEnv.clone());
 	}
 	
 	@Override

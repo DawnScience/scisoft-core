@@ -122,11 +122,6 @@ public class Image {
 			}
 			AbstractDataset slice = input.getSlice(start, stop, null);
 			result.set(Stats.median(slice), pos);
-			System.out.println(ArrayUtils.toString(pos));
-			System.out.println(ArrayUtils.toString(start));
-			System.out.println(ArrayUtils.toString(stop));
-			System.out.println(slice);
-			System.out.println(result.getDouble(pos));
 		}
 
 		return result;

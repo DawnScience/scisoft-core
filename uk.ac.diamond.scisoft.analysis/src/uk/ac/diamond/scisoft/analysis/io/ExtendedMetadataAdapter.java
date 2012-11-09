@@ -81,4 +81,9 @@ public class ExtendedMetadataAdapter extends MetaDataAdapter implements IExtende
 	public String getScanCommand() {
 		return null;
 	}
+
+	@Override
+	public ExtendedMetadataAdapter clone() {
+		return filesize < 0 ? new ExtendedMetadataAdapter() : new ExtendedMetadataAdapter(new File(path));
+	}	
 }

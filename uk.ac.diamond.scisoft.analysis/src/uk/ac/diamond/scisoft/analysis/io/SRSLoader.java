@@ -466,10 +466,10 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	protected Map<String,Integer> dataSizes;
 	@Override
 	public IMetaData getMetaData() {
-		return new ExtendedMetadataAdapter() {
+		return new ExtendedMetadataAdapter(new File(fileName)) {
 			@Override
 			public Collection<String> getDataNames() {
-				return datasetNames;
+				return Collections.unmodifiableCollection(datasetNames);
 			}
 			@Override
 			public String getMetaValue(String key) {

@@ -27,6 +27,7 @@ import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.vecmath.Matrix3d;
@@ -962,6 +963,51 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
+	private class CBFMetadataAdapter extends DiffractionMetaDataAdapter {
+		private final DetectorProperties props;
+		private final DiffractionCrystalEnvironment env;
+
+		public CBFMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			this.props = props;
+			this.env = env;
+		}
+
+		@Override
+		public String getMetaValue(String key) throws Exception {
+			return metadata.get(key);
+		}
+
+		@Override
+		public Collection<String> getMetaNames() throws Exception {
+			return Collections.unmodifiableCollection(metadata.keySet());
+		}
+
+		@Override
+		public DetectorProperties getDetector2DProperties() {
+			return props;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
+			return env;
+		}
+
+		@Override
+		public DetectorProperties getOriginalDetector2DProperties() {
+			return detectorProperties;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
+			return diffractionCrystalEnvironment;
+		}
+
+		@Override
+		public CBFMetadataAdapter clone() {
+			return new CBFMetadataAdapter(props.clone(), env.clone());
+		}
+	}
+
 	@Override
 	public IMetaData getMetaData() {
 		if (detectorProperties == null || diffractionCrystalEnvironment == null) {
@@ -973,60 +1019,11 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 				@Override
 				public Collection<String> getMetaNames() throws Exception {
-					return metadata.keySet();
+					return Collections.unmodifiableCollection(metadata.keySet());
 				}
 			};
 		}
 
-		return new DiffractionMetaDataAdapter() {
-
-			@Override
-			public DetectorProperties getDetector2DProperties() {
-				return detectorProperties;
-			}
-
-			@Override
-			public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-				return diffractionCrystalEnvironment;
-			}
-
-			@Override
-			public String getMetaValue(String key) throws Exception {
-				return metadata.get(key);
-			}
-
-			@Override
-			public Collection<String> getMetaNames() throws Exception {
-				// TODO Auto-generated method stub
-				return metadata.keySet();
-			}
-
-			@Override
-			public DiffractionMetaDataAdapter clone() {
-				final HashMap<String, String> internalMetadata = new HashMap<String, String>();
-				internalMetadata.putAll(metadata);
-				return new DiffractionMetaDataAdapter() {
-					@Override
-					public DetectorProperties getDetector2DProperties() {
-						return detectorProperties.clone();
-					}
-
-					@Override
-					public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-						return diffractionCrystalEnvironment.clone();
-					}
-
-					@Override
-					public String getMetaValue(String key) throws Exception {
-						return internalMetadata.get(key);
-					}
-
-					@Override
-					public Collection<String> getMetaNames() throws Exception {
-						return internalMetadata.keySet();
-					}
-				};
-			}
-		};
+		return new CBFMetadataAdapter(detectorProperties.clone(), diffractionCrystalEnvironment.clone());
 	}
 }

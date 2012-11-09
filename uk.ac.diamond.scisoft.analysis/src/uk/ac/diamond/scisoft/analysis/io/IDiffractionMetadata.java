@@ -29,4 +29,8 @@ public interface IDiffractionMetadata extends IMetaData {
 	public DetectorProperties getDetector2DProperties();
 	
 	public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment();
+
+	public DetectorProperties getOriginalDetector2DProperties();
+
+	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment();
 }

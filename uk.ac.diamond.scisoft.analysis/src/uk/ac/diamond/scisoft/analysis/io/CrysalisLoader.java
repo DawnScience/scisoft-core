@@ -226,7 +226,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 			}
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
-				return textMetadata.keySet();
+				return Collections.unmodifiableCollection(textMetadata.keySet());
 			}
 		
 			@Override
@@ -235,7 +235,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 				int width = Integer.parseInt(textMetadata.get("ny"));
                 final Map<String,int[]> ret = new HashMap<String,int[]>(1);
                 ret.put("Crysalis Img", new int[]{width,height});
-                return ret;
+                return Collections.unmodifiableMap(ret);
 			}
 			
 			@Override

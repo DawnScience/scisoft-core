@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.imageio.ImageReader;
@@ -174,7 +175,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		return new MetaDataAdapter() {
 			@Override
 			public Collection<String> getMetaNames() throws Exception {
-				return metadata.keySet();
+				return Collections.unmodifiableCollection(metadata.keySet());
 			}
 
 			@Override

@@ -283,7 +283,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 			
 			@Override
 			public Collection<String> getMetaNames() {
-				return metaData.keySet();	
+				return Collections.unmodifiableCollection(metaData.keySet());	
 			}
 			
 			@Override

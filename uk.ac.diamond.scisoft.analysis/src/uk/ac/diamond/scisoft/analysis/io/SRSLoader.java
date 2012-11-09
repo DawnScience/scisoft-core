@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -476,15 +477,15 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			}			
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
-				return textMetadata.keySet();
+				return Collections.unmodifiableCollection(textMetadata.keySet());
 			}
 			@Override
 			public Map<String, Integer> getDataSizes() {
-				return dataSizes;
+				return Collections.unmodifiableMap(dataSizes);
 			}
 			@Override
 			public Map<String, int[]> getDataShapes() {
-				return dataShapes;
+				return Collections.unmodifiableMap(dataShapes);
 			}
 			
 			@Override

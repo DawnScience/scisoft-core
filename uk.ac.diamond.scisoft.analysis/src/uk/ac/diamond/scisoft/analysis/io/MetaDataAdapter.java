@@ -72,5 +72,4 @@ public class MetaDataAdapter implements IMetaData {
 	public MetaDataAdapter clone() {
 		return null;
 	}
-
 }

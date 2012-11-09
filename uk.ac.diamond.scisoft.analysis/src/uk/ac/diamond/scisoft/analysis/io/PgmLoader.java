@@ -179,7 +179,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
-				return textMetadata.keySet();
+				return Collections.unmodifiableCollection(textMetadata.keySet());
 			}		
 			@Override
 			public Collection<String> getDataNames() {

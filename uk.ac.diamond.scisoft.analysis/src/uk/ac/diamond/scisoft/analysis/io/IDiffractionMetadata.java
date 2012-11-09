@@ -30,7 +30,11 @@ public interface IDiffractionMetadata extends IMetaData {
 	
 	public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment();
 	
-	static class stub {
+	public DetectorProperties getOriginalDetector2DProperties();
+
+	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment();
+	
+	static class Creater {
 		/**
 		 * Static method to obtain a DiffractionMetaDataAdapter populated with default values to
 		 * act as a starting point for images without metadata

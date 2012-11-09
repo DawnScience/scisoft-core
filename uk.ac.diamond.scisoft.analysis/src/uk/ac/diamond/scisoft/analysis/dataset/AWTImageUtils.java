@@ -29,6 +29,7 @@ import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,7 +102,7 @@ public class AWTImageUtils {
 		ret.setMetadata(new MetaDataAdapter() {
 			@Override
 			public Collection<String> getMetaNames() throws Exception {
-				return metadata.keySet();
+				return Collections.unmodifiableCollection(metadata.keySet());
 			}
 
 			@Override

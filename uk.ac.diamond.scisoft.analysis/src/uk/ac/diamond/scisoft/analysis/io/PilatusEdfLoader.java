@@ -149,7 +149,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 			
 			@Override
 			public Collection<String> getMetaNames() throws Exception{
-				return textMetadata.keySet();
+				return Collections.unmodifiableCollection(textMetadata.keySet());
 			}
 			
 			@Override
@@ -158,7 +158,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				int width = Integer.parseInt(textMetadata.get("Dim_2"));
                 final Map<String,int[]> ret = new HashMap<String,int[]>(1);
                 ret.put("ESRF Pilatus Data", new int[]{width,height});
-                return ret;
+                return Collections.unmodifiableMap(ret);
 			}
 			
 			@Override

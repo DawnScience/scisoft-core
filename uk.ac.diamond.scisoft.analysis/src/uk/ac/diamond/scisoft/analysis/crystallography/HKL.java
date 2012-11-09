@@ -19,9 +19,17 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * Changed to have getter and setter methods and no argument constructor
+ * so that will function as a bean (e.g. will serialise to XML if needed).
+ */
 public class HKL implements Serializable {
 	
 	private int[] hkl;
+	
+	public HKL() {
+		hkl = new int[3];
+	}
 	
 	public HKL(int h, int k, int l) {
 		super();
@@ -39,6 +47,18 @@ public class HKL implements Serializable {
 	
 	public int getL() {
 		return hkl[2];
+	}
+	
+	public void setH(int h) {
+		hkl[0]=h;
+	}
+	
+	public void setK(int k) {
+		hkl[1]=k;
+	}
+	
+	public void setL(int l) {
+		hkl[2]=l;
 	}
 	
 	public int[] getIndices() {

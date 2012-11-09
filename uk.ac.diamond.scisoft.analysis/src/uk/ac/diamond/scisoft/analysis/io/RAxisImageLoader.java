@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -512,7 +513,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 			public Collection<String> getMetaNames() throws Exception{
 				HashSet<String> set = new HashSet<String>(metadata.keySet());
 				set.addAll(GDAMetadata.keySet());
-				return set;
+				return Collections.unmodifiableCollection(set);
 			}
 
 			@Override
@@ -521,7 +522,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 				int width = (Integer) metadata.get("nSlow");
 				final Map<String, int[]> ret = new HashMap<String, int[]>(1);
 				ret.put("RAXIS osc", new int[] { width, height });
-				return ret;
+				return Collections.unmodifiableMap(ret);
 			}
 		};
 	}

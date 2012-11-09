@@ -26,7 +26,6 @@ public class MetaDataAdapter implements IMetaData {
 	protected Collection<Object> adapterUserObjects;
 
 	public MetaDataAdapter() {
-
 	}
 
 	public MetaDataAdapter(Collection<String> names) {
@@ -70,7 +69,12 @@ public class MetaDataAdapter implements IMetaData {
 
 	@Override
 	public MetaDataAdapter clone() {
-		return null;
+		if (adapterUserObjects == null) {
+			if (adapterDataNames == null) {
+				return new MetaDataAdapter();
+			}
+			return new MetaDataAdapter(adapterDataNames);
+		}
+		return new MetaDataAdapter(adapterDataNames, adapterUserObjects);
 	}
-
 }

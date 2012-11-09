@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -636,64 +637,63 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 		}
 	}
 
+	private class MARMetadataAdapter extends DiffractionMetaDataAdapter {
+		private final DetectorProperties props;
+		private final DiffractionCrystalEnvironment env;
+		final Map<String,String> vals = createStringMap();
+		
+		public MARMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			this.props = props;
+			this.env = env;
+		}
+
+		@Override
+		public String getMetaValue(String key)  throws Exception{
+			return vals.get(key);
+		}
+
+		@Override
+		public Collection<String> getMetaNames() throws Exception{
+			return Collections.unmodifiableCollection(vals.keySet());
+		}			
+
+		private Map<String, String> createStringMap() {
+			Map<String, String> ret = new HashMap<String,String>(7);
+			for (String key : metadataTable.keySet()) {
+				ret.put(key, metadataTable.get(key).toString().trim());
+			}
+			return ret;
+		}
+
+		@Override
+		public DetectorProperties getDetector2DProperties() {
+			return props;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
+			return env;
+		}
+
+		@Override
+		public DetectorProperties getOriginalDetector2DProperties() {
+			return detProps;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
+			return diffEnv;
+		}
+
+		@Override
+		public MARMetadataAdapter clone() {
+			return new MARMetadataAdapter(props.clone(), env.clone());
+		}
+	}
+
 	@Override
 	public IMetaData getMetaData() {
-		return new DiffractionMetaDataAdapter() {
-			final Map<String,String> vals = createStringMap();
-			
-			@Override
-			public String getMetaValue(String key)  throws Exception{
-				return vals.get(key);
-			}
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return vals.keySet();
-			}			
-
-			private Map<String, String> createStringMap() {
-				Map<String, String> ret = new HashMap<String,String>(7);
-				for (String key : metadataTable.keySet()) {
-					ret.put(key, metadataTable.get(key).toString().trim());
-				}
-				return ret;
-			}
-
-			@Override
-			public DetectorProperties getDetector2DProperties() {
-				return detProps;
-			}
-			
-			@Override
-			public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-				return diffEnv;
-			}
-			
-			@Override
-			public DiffractionMetaDataAdapter clone() {
-				final HashMap<String, String> localMetadata = new HashMap<String, String>();
-				localMetadata.putAll(vals);
-				return new DiffractionMetaDataAdapter(){
-					@Override
-					public String getMetaValue(String key)  throws Exception{
-						return localMetadata.get(key);
-					}
-					@Override
-					public Collection<String> getMetaNames() throws Exception{
-						return localMetadata.keySet();
-					}
-
-					@Override
-					public DetectorProperties getDetector2DProperties() {
-						return detProps.clone();
-					}
-					
-					@Override
-					public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-						return diffEnv.clone();
-					}
-				};
-			}
-		};
+		return new MARMetadataAdapter(detProps.clone(), diffEnv.clone());
 	}
 	
 	@Override

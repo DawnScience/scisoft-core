@@ -47,4 +47,14 @@ public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implemen
 	public DiffractionMetaDataAdapter clone(){
 		return null;
 	}
+
+	@Override
+	public DetectorProperties getOriginalDetector2DProperties() {
+		return null;
+	}
+	
+	@Override
+	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
+		return null;
+	}
 }

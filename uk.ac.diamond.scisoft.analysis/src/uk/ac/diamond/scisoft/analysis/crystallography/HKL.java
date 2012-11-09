@@ -34,7 +34,7 @@ import org.jscience.physics.amount.Amount;
 public class HKL implements Serializable {
 	
 	private int[] hkl;
-	private String name;
+	private String ringName;
 	private Amount<Length> d;
 	
 	public HKL() {
@@ -105,7 +105,7 @@ public class HKL implements Serializable {
 		int result = 1;
 		result = prime * result + ((d == null) ? 0 : d.hashCode());
 		result = prime * result + Arrays.hashCode(hkl);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((ringName == null) ? 0 : ringName.hashCode());
 		return result;
 	}
 
@@ -125,20 +125,20 @@ public class HKL implements Serializable {
 			return false;
 		if (!Arrays.equals(hkl, other.hkl))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (ringName == null) {
+			if (other.ringName != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!ringName.equals(other.ringName))
 			return false;
 		return true;
 	}
 
-	public String getName() {
-		return name;
+	public String getRingName() {
+		return ringName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setRingName(String name) {
+		this.ringName = name;
 	}
 
 	public Amount<Length> getD() {
@@ -154,6 +154,7 @@ public class HKL implements Serializable {
 	 * @return d in nanometers
 	 */
 	public double getDNano() {
+		if (d==null) return Double.NaN;
 		return d.doubleValue(CalibrationStandards.NANOMETER);
 	}
 

@@ -34,10 +34,6 @@ public class CalibrantSpacing implements Serializable{
 		if (hkls!=null) hkls.clear();
 	}
 
-	public List<HKL> getExpressions() {
-		return hkls;
-	}
-
 	public void setHKLs(List<HKL> calibrationData) {
 		this.hkls = calibrationData;
 	}

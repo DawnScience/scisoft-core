@@ -34,7 +34,7 @@ public interface IDiffractionMetadata extends IMetaData {
 
 	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment();
 	
-	static class Creater {
+	static class Creator {
 		/**
 		 * Static method to obtain a DiffractionMetaDataAdapter populated with default values to
 		 * act as a starting point for images without metadata

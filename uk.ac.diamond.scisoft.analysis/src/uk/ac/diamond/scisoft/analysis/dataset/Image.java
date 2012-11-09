@@ -170,5 +170,16 @@ public class Image {
 
 		return result;
 	}
+	
+	public static AbstractDataset sobelFilter(AbstractDataset input) {
+		//TODO should be extended for Nd but 2D is all that is required for now.
+		if(input.getShape().length != 2) throw new IllegalArgumentException("The sobel filter only works on 2D datasets");
+		DoubleDataset kernel = new DoubleDataset(new double[] {-1,0,1,-2,0,2,-1,0,1}, 3 ,3);
+		AbstractDataset result = convolutionFilter(input, kernel);
+		kernel = new DoubleDataset(new double[] {-1,-2,-1,0,0,0,1,2,1}, 3 ,3);
+		result.iadd(convolutionFilter(input, kernel));
+		return result;
+		
+	}
 
 }

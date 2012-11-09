@@ -68,4 +68,11 @@ public class ImageTest {
 		assertEquals(ds.getDouble(5,5,5)*27, result.getDouble(5,5,5), 0.001);
 		
 	}
+	
+	
+	@Test
+	public void testSobelFilter() {
+		AbstractDataset ds = Random.rand(new int[] {100,100});
+		Image.sobelFilter(ds);
+	}
 }

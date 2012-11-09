@@ -22,21 +22,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Delaunay_Triangulation;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Point_dt;
-import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Image processing package
  */
 public class Image {
-	private static final int UP_SCALE = 2;
+
 	/**
 	 * Setup the logging facilities
 	 */
@@ -221,15 +216,6 @@ public class Image {
 		AbstractDataset mins = Maths.abs(Maths.subtract(axis, point));
 		return mins.minPos()[0];
 		
-	}
-	
-	private static int[] getMinDistance(double x, double y, AbstractDataset gridX, AbstractDataset gridY) {
-		AbstractDataset xDiff = Maths.subtract(gridX, x);
-		AbstractDataset YDiff = Maths.subtract(gridY, y);
-		xDiff.ipower(2);
-		YDiff.ipower(2);
-		xDiff.iadd(YDiff);
-		return xDiff.minPos();
 	}
 	
 	public static AbstractDataset regrid(

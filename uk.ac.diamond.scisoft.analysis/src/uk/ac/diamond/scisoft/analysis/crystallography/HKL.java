@@ -19,24 +19,44 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import javax.measure.quantity.Length;
+
+import org.jscience.physics.amount.Amount;
+
 /**
- * Changed to have getter and setter methods and no argument constructor
- * so that will function as a bean (e.g. will serialise to XML if needed).
+ * This class is a bean to hold h,k,l and d information. 
+ * 
+ * It does not offer calculation between the values, just holding them.
+ * 
+ * Normally if d is set, h,k and l are not needed but it is up to the 
+ * user of the data to decide what happens with it.
  */
 public class HKL implements Serializable {
 	
 	private int[] hkl;
+	private String name;
+	private Amount<Length> d;
 	
 	public HKL() {
-		hkl = new int[3];
+		this(new int[3]);
 	}
 	
-	public HKL(int h, int k, int l) {
-		super();
-		
-		hkl = new int[] {h, k, l};
+	public HKL(int... hkl) {
+		this(hkl[0], hkl[1], hkl[2], null);
 	}
 	
+	/**
+	 * Used in CalibrationStandards
+	 * @param h
+	 * @param k
+	 * @param l
+	 * @param d
+	 */
+	HKL(int h, int k, int l, Amount<Length> d) {
+		this.hkl = new int[]{h,k,l};
+		this.d   = d;
+	}
+
 	public int getH() {
 		return hkl[0];
 	}
@@ -83,7 +103,9 @@ public class HKL implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((d == null) ? 0 : d.hashCode());
 		result = prime * result + Arrays.hashCode(hkl);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -96,8 +118,50 @@ public class HKL implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		HKL other = (HKL) obj;
+		if (d == null) {
+			if (other.d != null)
+				return false;
+		} else if (!d.equals(other.d))
+			return false;
 		if (!Arrays.equals(hkl, other.hkl))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Amount<Length> getD() {
+		return d;
+	}
+
+	public void setD(Amount<Length> d) {
+		this.d = d;
+	}
+	
+	/**
+	 * d in nanometers
+	 * @return d in nanometers
+	 */
+	public double getDNano() {
+		return d.doubleValue(CalibrationStandards.NANOMETER);
+	}
+
+	/**
+	 * @param d in nanometers
+	 */
+	public void setDNano(double d) {
+		this.d = Amount.valueOf(d, CalibrationStandards.NANOMETER);
+	}
+
 }

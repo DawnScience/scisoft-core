@@ -25,6 +25,7 @@ import java.util.List;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventType;
 
 /**
@@ -201,6 +202,35 @@ public class DetectorProperties implements Serializable {
 			orientation = new Matrix3d(detprop.orientation);
 		}
 		calcInverse();
+	}
+	
+	/**
+	 * Method to produce a Detector properties object populated with sensible default values
+	 * 
+	 * @param shape
+	 *            shape from the AbstractDataset the detector properties are created for
+	 *            Used to produce the initial detector origin
+	 *            
+	 */
+	public static DetectorProperties getDefaultDetectorProperties(int[] shape) {
+		int heightInPixels = shape[0];
+		int widthInPixels = shape[1];
+		
+		// Set a few default values
+		double pixelSizeX = 0.1024;
+		double pixelSizeY = 0.1024;
+		double distance = 200.00;
+
+		// Create the detector origin vector based on the above
+		double[] detectorOrigin = { (widthInPixels - widthInPixels/2d) * pixelSizeX, (heightInPixels - heightInPixels/2d) * pixelSizeY, distance };
+		
+		// The rotation of the detector relative to the reference frame - assume no rotation
+		double detectorRotationX = 0.0; 
+		double detectorRotationY = 0.0; 
+		double detectorRotationZ = 0.0; 
+
+		return new DetectorProperties(new Vector3d(detectorOrigin), heightInPixels, widthInPixels, 
+				pixelSizeX, pixelSizeY, detectorRotationX, detectorRotationY, detectorRotationZ);
 	}
 
 	@Override

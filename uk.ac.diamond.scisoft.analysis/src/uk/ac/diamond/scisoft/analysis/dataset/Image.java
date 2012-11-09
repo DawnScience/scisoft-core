@@ -19,24 +19,20 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Delaunay_Triangulation;
 import uk.ac.diamond.scisoft.analysis.delaunay_triangulation.Point_dt;
-import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Image processing package
  */
 public class Image {
-	private static final int UP_SCALE = 2;
+
 	/**
 	 * Setup the logging facilities
 	 */
@@ -223,15 +219,6 @@ public class Image {
 		
 	}
 	
-	private static int[] getMinDistance(double x, double y, AbstractDataset gridX, AbstractDataset gridY) {
-		AbstractDataset xDiff = Maths.subtract(gridX, x);
-		AbstractDataset YDiff = Maths.subtract(gridY, y);
-		xDiff.ipower(2);
-		YDiff.ipower(2);
-		xDiff.iadd(YDiff);
-		return xDiff.minPos();
-	}
-	
 	public static AbstractDataset regrid(
 			AbstractDataset data, 
 			AbstractDataset x, 
@@ -240,6 +227,34 @@ public class Image {
 			AbstractDataset gridY) {
 		
 		return regrid_kabsch(data, x, y, gridX, gridY);
+	}
+	
+	public static AbstractDataset medianFilter(AbstractDataset input, int[] kernel) {
+		// check to see if the kernel shape in the correct dimensionality.
+		if (kernel.length != input.getShape().length)
+			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
+
+		AbstractDataset result = input.clone();
+		int[] offset = kernel.clone();
+		for (int i = 0; i < offset.length; i++) {
+			offset[i] = -kernel[i]/2;
+		}
+		IndexIterator iter = input.getIterator(true);
+		while (iter.hasNext()) {
+			int[] pos = iter.getPos();
+			int[] start = pos.clone();
+			int[] stop = pos.clone();
+			for (int i = 0; i < pos.length; i++) {
+				start[i] = pos[i] + offset[i];
+				stop[i] = start[i] + kernel[i];
+				if (start[i] < 0) start[i] = 0;
+				if (stop[i] >= input.getShape()[i]) stop[i] = input.getShape()[i];
+			}
+			AbstractDataset slice = input.getSlice(start, stop, null);
+			result.set(Stats.median(slice), pos);
+		}
+
+		return result;
 	}
 	
 }

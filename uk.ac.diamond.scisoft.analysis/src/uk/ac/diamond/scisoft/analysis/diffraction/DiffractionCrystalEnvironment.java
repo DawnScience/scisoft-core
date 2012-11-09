@@ -78,6 +78,14 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		exposureTime = diffenv.getExposureTime();
 	}
 
+	public static DiffractionCrystalEnvironment getDefaultDiffractionCrystalEnvironment() {
+		double lambda = 0.9;
+		double startOmega = 0.0;
+		double rangeOmega = 1.0;
+		double exposureTime = 1.0;
+		
+		return new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, exposureTime);
+	}
 	
 	@Override
 	public DiffractionCrystalEnvironment clone() {

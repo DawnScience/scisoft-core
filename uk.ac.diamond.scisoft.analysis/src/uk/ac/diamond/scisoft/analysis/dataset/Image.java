@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,4 +256,49 @@ public class Image {
 		return result;
 	}
 	
+	public static AbstractDataset convolutionFilter(AbstractDataset input, AbstractDataset kernel) {
+		// check to see if the kernel shape in the correct dimensionality.
+		if (kernel.getShape().length != input.getShape().length)
+			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
+
+		AbstractDataset result = input.clone();
+		int[] kShape = kernel.getShape();
+		int[] offset = kShape.clone();
+		for (int i = 0; i < offset.length; i++) {
+			offset[i] = -kShape[i] / 2;
+		}
+		IndexIterator iter = input.getIterator(true);
+		while (iter.hasNext()) {
+			int[] pos = iter.getPos();
+			int[] start = pos.clone();
+			int[] stop = pos.clone();
+			int[] kStart = kShape.clone();
+			int[] kStop = kShape.clone();
+			boolean kClipped = false;
+			for (int i = 0; i < pos.length; i++) {
+				start[i] = pos[i] + offset[i];
+				stop[i] = start[i] + kShape[i];
+				kStart[i] = 0;
+				if (start[i] < 0) {
+					kStart[i] = kStart[i] - start[i];
+					start[i] = 0;
+					kClipped = true;
+				}
+				if (stop[i] >= input.getShape()[i]) {
+					kStop[i] = kStop[i] - (stop[i] - input.getShape()[i]);
+					stop[i] = input.getShape()[i];
+					kClipped = true;
+				}
+			}
+			AbstractDataset tempKernel = kernel;
+			if (kClipped)
+				tempKernel = kernel.getSlice(kStart, kStop, null);
+			AbstractDataset slice = input.getSlice(start, stop, null);
+			slice.imultiply(tempKernel);
+			result.set(slice.sum(), pos);
+		}
+
+		return result;
+	}
+
 }

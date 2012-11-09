@@ -49,4 +49,23 @@ public class ImageTest {
 		result = Image.medianFilter(ds, new int[] {3,3,3});
 		assertEquals(result.getDouble(5,5,5), ds.getDouble(5,5,5), 0.001);
 	}
+	
+	@Test
+	public void testConvolutionFilter() {
+		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset kernel = DoubleDataset.ones(27);
+		AbstractDataset result = Image.convolutionFilter(ds, kernel);
+		assertEquals(120, result.getDouble(2), 0.001);
+		
+		ds = ds.reshape(new int[] {10,100});
+		kernel = kernel.reshape(3,9);
+		result = Image.convolutionFilter(ds, kernel);
+		assertEquals(ds.getDouble(5,5)*27, result.getDouble(5,5), 0.001);
+		
+		ds = ds.reshape(new int[] {10,10,10});
+		kernel = kernel.reshape(3,3,3);
+		result = Image.convolutionFilter(ds, kernel);
+		assertEquals(ds.getDouble(5,5,5)*27, result.getDouble(5,5,5), 0.001);
+		
+	}
 }

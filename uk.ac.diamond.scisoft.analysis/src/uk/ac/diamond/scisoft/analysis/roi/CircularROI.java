@@ -90,6 +90,22 @@ public class CircularROI extends ROIBase {
 		return getPoint(Math.toRadians(angle));
 	}
 
+	/**
+	 * Get centre point
+	 * @return x and y coordinates in double array
+	 */
+	public double[] getCentre() {
+		return getPoint();
+	}
+
+	/**
+	 * Set centre point
+	 * @param centre
+	 */
+	public void setCentre(double... centre) {
+		setPoint(centre);
+	}
+
 	@Override
 	public String toString() {
 		return String.format("Centre %s Radius %g", Arrays.toString(spt), rad);

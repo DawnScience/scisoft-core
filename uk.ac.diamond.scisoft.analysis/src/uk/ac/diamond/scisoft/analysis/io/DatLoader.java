@@ -279,7 +279,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new ExtendedMetadataAdapter() {
+		return new ExtendedMetadataAdapter(new File(fileName)) {
 			
 			@Override
 			public Collection<String> getMetaNames() {

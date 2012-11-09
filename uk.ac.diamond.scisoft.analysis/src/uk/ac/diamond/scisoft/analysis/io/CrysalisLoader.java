@@ -219,7 +219,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	@Override
 	public IMetaData getMetaData() {
 		return new MetaDataAdapter() {
-			
+
 			@Override
 			public String getMetaValue(String key) {
 				return textMetadata.get(key);	

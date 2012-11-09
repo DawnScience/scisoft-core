@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -968,6 +969,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		private final DiffractionCrystalEnvironment env;
 
 		public CBFMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			super(new File(fileName));
 			this.props = props;
 			this.env = env;
 		}

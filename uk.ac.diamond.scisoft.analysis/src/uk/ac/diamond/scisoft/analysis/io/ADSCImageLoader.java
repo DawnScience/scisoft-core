@@ -334,95 +334,74 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
+	private class ADSCMetadataAdapter extends DiffractionMetaDataAdapter {
+		private final DetectorProperties props;
+		private final DiffractionCrystalEnvironment env;
+
+		public ADSCMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			super(new File(fileName));
+			this.props = props;
+			this.env = env;
+		}
+
+		@Override
+		public Map<String,int[]> getDataShapes() {
+			int height = Integer.parseInt(metadata.get("SIZE1"));
+			int width = Integer.parseInt(metadata.get("SIZE2"));
+            final Map<String,int[]> ret = new HashMap<String,int[]>(1);
+            ret.put("ADSC Image", new int[]{width,height});
+            return ret;
+		}
+		
+		@Override
+		public Date getCreation() {
+			return date;
+		}
+
+		@Override
+		public Collection<String> getDataNames() {
+			return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
+		}
+
+		@Override
+		public String getMetaValue(String key) throws Exception {
+			return metadata.get(key);
+		}
+
+		@Override
+		public Collection<String> getMetaNames() throws Exception {
+			return Collections.unmodifiableCollection(metadata.keySet());
+		}
+
+		@Override
+		public DetectorProperties getDetector2DProperties() {
+			return props;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
+			return env;
+		}
+
+		@Override
+		public DetectorProperties getOriginalDetector2DProperties() {
+			return detectorProperties;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
+			return diffractionCrystalEnvironment;
+		}
+
+		@Override
+		public ADSCMetadataAdapter clone() {
+			return new ADSCMetadataAdapter(props.clone(), env.clone());
+		}
+	}
+
 	@Override
 	public IDiffractionMetadata getMetaData() {
-		
-		return new DiffractionMetaDataAdapter(new File(fileName)){
-
-			@Override
-			public DetectorProperties getDetector2DProperties() {
-				return detectorProperties;
-			}
-
-			@Override
-			public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-				return diffractionCrystalEnvironment;
-			}
-			
-			@Override
-			public Serializable getMetaValue(String key) {
-				return metadata.get(key);
-			}
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return metadata.keySet();
-			}
-			
-			@Override
-			public Map<String,int[]> getDataShapes() {
-				int height = Integer.parseInt(metadata.get("SIZE1"));
-				int width = Integer.parseInt(metadata.get("SIZE2"));
-                final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-                ret.put("ADSC Image", new int[]{width,height});
-                return ret;
-			}
-			
-			@Override
-			public Date getCreation() {
-				return date;
-			}
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
-			}
-			
-
-			@Override
-			public DiffractionMetaDataAdapter clone(){
-				final HashMap<String, String> newMetadataMap = new HashMap<String,String>(metadata);
-				final DetectorProperties localDetProps = detectorProperties.clone();
-				final DiffractionCrystalEnvironment localDiffCrystEnv = diffractionCrystalEnvironment.clone();
-				return new DiffractionMetaDataAdapter(new File(fileName)){
-					@Override
-					public DetectorProperties getDetector2DProperties() {
-						return localDetProps;
-					}
-
-					@Override
-					public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-						return localDiffCrystEnv;
-					}
-					
-					@Override
-					public String getMetaValue(String key) {
-						return newMetadataMap.get(key);
-					}
-					@Override
-					public Collection<String> getMetaNames() {
-						return newMetadataMap.keySet();
-					}
-					
-					@Override
-					public Map<String,int[]> getDataShapes() {
-						int height = Integer.parseInt(newMetadataMap.get("SIZE1"));
-						int width = Integer.parseInt(newMetadataMap.get("SIZE2"));
-		                final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-		                ret.put("ADSC Image", new int[]{width,height});
-		                return ret;
-					}
-					
-					@Override
-					public Date getCreation() {
-						return new Date(date.getTime());
-					}
-					
-					@Override
-					public Collection<String> getDataNames() {
-						return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
-					}
-				};
-			}
-		};
+		return new ADSCMetadataAdapter(detectorProperties == null ? null : detectorProperties.clone(), diffractionCrystalEnvironment == null ? null : diffractionCrystalEnvironment.clone());
 	}
 
 	

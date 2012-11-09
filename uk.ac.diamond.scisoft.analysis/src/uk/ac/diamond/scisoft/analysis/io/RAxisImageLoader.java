@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -28,9 +29,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import javax.vecmath.Vector3d;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
+import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
+import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.gda.monitor.IMonitor;
 
 /**
@@ -43,6 +48,9 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 	private HashMap<String, Object> metadata = new HashMap<String, Object>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
 	private boolean keepBitWidth = false;
+
+	private DetectorProperties detProps;
+	private DiffractionCrystalEnvironment diffEnv;
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -470,6 +478,9 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 			GDAMetadata.put("NXSample:exposure_time", (Float) metadata.get("minutes") * 60);
 			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
 
+			detProps = new DetectorProperties(new Vector3d(detectorOrigin), (Integer) metadata.get("nSlow"), (Integer) metadata.get("nFast"), (Float) metadata.get("sizeSlow"), (Float) metadata.get("sizeFast"), null);
+			diffEnv = new DiffractionCrystalEnvironment((Float) metadata.get("wavelength"), st, (Float) metadata.get("phiend"), (Double) metadata.get("minutes") * 60);
+
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem creating the GDA metatdata", e);
 		}
@@ -497,33 +508,69 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 		}
 	}
 
+	private class RAxisMetadataAdapter extends DiffractionMetaDataAdapter {
+		private final DetectorProperties props;
+		private final DiffractionCrystalEnvironment env;
+		
+		public RAxisMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
+			super(new File(fileName));
+			this.props = props;
+			this.env = env;
+		}
+
+		@Override
+		public String getMetaValue(String key) {
+			if (metadata.containsKey(key))
+				return metadata.get(key).toString();
+			else if (GDAMetadata.containsKey(key))
+				return GDAMetadata.get(key).toString();
+			return null;
+		}
+
+		@Override
+		public Collection<String> getMetaNames() throws Exception{
+			HashSet<String> set = new HashSet<String>(metadata.keySet());
+			set.addAll(GDAMetadata.keySet());
+			return Collections.unmodifiableCollection(set);
+		}
+
+		@Override
+		public Map<String, int[]> getDataShapes() {
+			int height = (Integer) metadata.get("nFast");
+			int width = (Integer) metadata.get("nSlow");
+			final Map<String, int[]> ret = new HashMap<String, int[]>(1);
+			ret.put("RAXIS osc", new int[] { width, height });
+			return Collections.unmodifiableMap(ret);
+		}
+
+		@Override
+		public DetectorProperties getDetector2DProperties() {
+			return props;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
+			return env;
+		}
+
+		@Override
+		public DetectorProperties getOriginalDetector2DProperties() {
+			return detProps;
+		}
+
+		@Override
+		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
+			return diffEnv;
+		}
+
+		@Override
+		public RAxisMetadataAdapter clone() {
+			return new RAxisMetadataAdapter(props == null ? null : props.clone(), env == null ? null : env.clone());
+		}
+	}
+
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
-			@Override
-			public String getMetaValue(String key) {
-				if (metadata.containsKey(key))
-					return metadata.get(key).toString();
-				else if (GDAMetadata.containsKey(key))
-					return GDAMetadata.get(key).toString();
-				return null;
-			}
-
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				HashSet<String> set = new HashSet<String>(metadata.keySet());
-				set.addAll(GDAMetadata.keySet());
-				return Collections.unmodifiableCollection(set);
-			}
-
-			@Override
-			public Map<String, int[]> getDataShapes() {
-				int height = (Integer) metadata.get("nFast");
-				int width = (Integer) metadata.get("nSlow");
-				final Map<String, int[]> ret = new HashMap<String, int[]>(1);
-				ret.put("RAXIS osc", new int[] { width, height });
-				return Collections.unmodifiableMap(ret);
-			}
-		};
+		return new RAxisMetadataAdapter(detProps == null ? null : detProps.clone(), diffEnv == null ? null : diffEnv.clone());
 	}
 }

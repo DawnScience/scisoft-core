@@ -41,8 +41,24 @@ public class CalibrationFactory {
 	 * @return CalibrationStandards
 	 */
 	public static CalibrationStandards getCalibrationStandards() {
-		return createCalibrationStandards();
+		return getCalibrationStandards(false);
 	}
+	
+	private static CalibrationStandards staticInstance;
+	/**
+	 * 
+	 * @param createNew
+	 * @return cs
+	 */
+	public static CalibrationStandards getCalibrationStandards(boolean createNew) {
+		if (createNew) {
+			return createCalibrationStandards();
+		} else {
+			if (staticInstance==null) staticInstance = createCalibrationStandards();
+			return staticInstance;
+		}
+	}
+
 
 	/**
 	 * Call to save CalibrationStandards to disk
@@ -57,6 +73,13 @@ public class CalibrationFactory {
 			calFile.createNewFile();
 			encoder = new XMLEncoder(new FileOutputStream(getCalibrantFile()));
 			encoder.writeObject(cs);
+			
+			CalibrationStandards old = staticInstance;
+			staticInstance = cs;
+			if (old!=null) {
+				staticInstance.addCalibrantSelectionListeners(old.getCalibrantSelectionListeners());
+				old.dispose();
+			}
 		} finally  {
 			if (encoder!=null) encoder.close();
 		}

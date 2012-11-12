@@ -209,8 +209,7 @@ public class CalibrationStandards implements Serializable{
 	}
 	
 	/**
-	 * TODO There is a problem if this is used globally because there is no
-	 * single place to listen to selected calibrant changing.
+	 * 
 	 * @param calibrant
 	 */
 	protected void fireCalibrantSelectionListeners(String calibrant) {
@@ -235,5 +234,19 @@ public class CalibrationStandards implements Serializable{
 	 */ 
 	public CalibrantSpacing getCalibrant() {
 		return getCalibrationPeakMap(getSelectedCalibrant());
+	}
+
+	Collection<CalibrantSelectedListener> getCalibrantSelectionListeners() {
+		return listeners;
+	}
+	void addCalibrantSelectionListeners(Collection<CalibrantSelectedListener> ls) {
+		if (ls==null) return;
+		if (listeners==null) listeners = new HashSet<CalibrantSelectedListener>(7);
+		listeners.addAll(ls);
+	}
+
+	public void dispose() {
+		listeners.clear();
+		cal2peaks.clear();
 	}
 }

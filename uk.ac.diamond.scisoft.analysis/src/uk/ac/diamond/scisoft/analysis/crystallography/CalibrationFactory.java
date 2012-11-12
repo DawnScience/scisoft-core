@@ -21,6 +21,8 @@ import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +56,10 @@ public class CalibrationFactory {
 		if (createNew) {
 			return createCalibrationStandards();
 		} else {
-			if (staticInstance==null) staticInstance = createCalibrationStandards();
+			if (staticInstance==null) {
+				staticInstance = createCalibrationStandards();
+				staticInstance.setUnmodifiable(true);
+			}
 			return staticInstance;
 		}
 	}
@@ -74,15 +79,16 @@ public class CalibrationFactory {
 			encoder = new XMLEncoder(new FileOutputStream(getCalibrantFile()));
 			encoder.writeObject(cs);
 			
-			CalibrationStandards old = staticInstance;
-			staticInstance = cs;
-			if (old!=null) {
-				staticInstance.addCalibrantSelectionListeners(old.getCalibrantSelectionListeners());
-				old.dispose();
-			}
 		} finally  {
 			if (encoder!=null) encoder.close();
 		}
+		
+		CalibrationStandards old = staticInstance;
+		staticInstance = cs;
+		if (old!=null && !old.getSelectedCalibrant().equals(cs.getSelectedCalibrant())) {
+		    fireCalibrantSelectionListeners(cs, cs.getSelectedCalibrant());
+		}
+
 	}
 	static CalibrationStandards readCalibrationStandards() throws Exception {
 		XMLDecoder decoder=null;
@@ -112,7 +118,7 @@ public class CalibrationFactory {
 				cs = null;
 			}
 		}
-		if (cs==null) {
+		if (cs==null || cs.isEmpty()) {
 			cs = new CalibrationStandards();
 			cs.setVersion("1.0");
 			cs.setCal2peaks(CalibrationStandards.createDefaultCalibrants());
@@ -127,6 +133,39 @@ public class CalibrationFactory {
 		return cs;
 	}
 	
+	private static Collection<CalibrantSelectedListener> listeners;
+	private static boolean processingListeners = false;
+	/**
+	 * 
+	 * @param calibrant
+	 */
+	static void fireCalibrantSelectionListeners(CalibrationStandards standards, String calibrant) {
+		if (listeners==null)     return;
+		if (processingListeners) return;
+		
+		try {
+			processingListeners = true;
+			final CalibrantSelectionEvent evt = new CalibrantSelectionEvent(standards, calibrant);
+			for (CalibrantSelectedListener l : listeners) {
+				try {
+				    l.calibrantSelectionChanged(evt);
+				} catch (Throwable ne) {
+					logger.error("Cannot fire calibrant selection changed!", ne);
+				}
+			}
+		} finally {
+			processingListeners = false;
+		}
+	}
+
+	public static void addCalibrantSelectionListener(CalibrantSelectedListener l) {
+		if (listeners==null) listeners = new HashSet<CalibrantSelectedListener>(7);
+		listeners.add(l);
+	}
+	public static void removeCalibrantSelectionListener(CalibrantSelectedListener l) {
+		if (listeners==null) return;
+		listeners.remove(l);
+	}
 
 
 }

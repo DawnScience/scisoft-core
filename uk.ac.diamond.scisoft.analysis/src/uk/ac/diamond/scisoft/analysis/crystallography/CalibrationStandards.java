@@ -18,8 +18,7 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,8 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.jscience.physics.amount.Amount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Since we cannot have eclipse preferences in this plugin, but
@@ -39,6 +40,8 @@ import org.jscience.physics.amount.Amount;
  * cloned by the UI when the user is creating another calibrant list.
  */
 public class CalibrationStandards implements Serializable{
+	
+	private static final Logger logger = LoggerFactory.getLogger(CalibrationStandards.class);
 	
 	public final static Unit<Length> NANOMETER = SI.NANO(SI.METER);
 
@@ -189,9 +192,6 @@ public class CalibrationStandards implements Serializable{
 	}
 	public void setCal2peaks(Map<String, CalibrantSpacing> cal2peaks) {
 		this.cal2peaks = cal2peaks;
-		if (selectedCalibrant==null) {
-			selectedCalibrant = cal2peaks.keySet().iterator().next();
-		}
 	}
 	public void setVersion(String version) {
 		this.version = version;
@@ -201,33 +201,16 @@ public class CalibrationStandards implements Serializable{
 		return selectedCalibrant;
 	}
 
-	private Collection<CalibrantSelectedListener> listeners;
 	
 	public void setSelectedCalibrant(String selectedCalibrant) {
-		this.selectedCalibrant = selectedCalibrant;
-		fireCalibrantSelectionListeners(selectedCalibrant);
-	}
-	
-	/**
-	 * 
-	 * @param calibrant
-	 */
-	protected void fireCalibrantSelectionListeners(String calibrant) {
-		if (listeners==null) return;
-		final CalibrantSelectionEvent evt = new CalibrantSelectionEvent(this, calibrant);
-		for (CalibrantSelectedListener l : listeners) {
-			l.calibrantSelectionChanged(evt);
-		}
+		setSelectedCalibrant(selectedCalibrant, false);
 	}
 
-	public void addCalibrantSelectionListener(CalibrantSelectedListener l) {
-		if (listeners==null) listeners = new HashSet<CalibrantSelectedListener>(7);
-		listeners.add(l);
+	public void setSelectedCalibrant(String selCal, boolean fireListeners) {
+		this.selectedCalibrant = selCal;
+		if (fireListeners) CalibrationFactory.fireCalibrantSelectionListeners(this, selectedCalibrant);
 	}
-	public void removeCalibrantSelectionListener(CalibrantSelectedListener l) {
-		if (listeners==null) return;
-		listeners.remove(l);
-	}
+
 	/**
 	 * The current selected calibrant.
 	 * @return fred
@@ -236,17 +219,15 @@ public class CalibrationStandards implements Serializable{
 		return getCalibrationPeakMap(getSelectedCalibrant());
 	}
 
-	Collection<CalibrantSelectedListener> getCalibrantSelectionListeners() {
-		return listeners;
-	}
-	void addCalibrantSelectionListeners(Collection<CalibrantSelectedListener> ls) {
-		if (ls==null) return;
-		if (listeners==null) listeners = new HashSet<CalibrantSelectedListener>(7);
-		listeners.addAll(ls);
+	public void setUnmodifiable(boolean b) {
+		if (b) {
+		    this.cal2peaks = Collections.unmodifiableMap(cal2peaks);
+		} else {
+			this.cal2peaks = new LinkedHashMap<String, CalibrantSpacing>(cal2peaks);
+		}
 	}
 
-	public void dispose() {
-		listeners.clear();
-		cal2peaks.clear();
+	public boolean isEmpty() {
+		return cal2peaks==null || cal2peaks.isEmpty();
 	}
 }

@@ -62,8 +62,12 @@ public class CalibrationStandards implements Serializable{
 		return cal2peaks.get(calibrant);
 	}
 	
-	public void addCalibrant(CalibrantSpacing cs) {
-		cal2peaks.put(cs.getName(), cs);
+	public CalibrantSpacing addCalibrant(CalibrantSpacing cs) {
+		return cal2peaks.put(cs.getName(), cs);
+	}
+
+	public CalibrantSpacing removeCalibrant(String calibrantName) {
+		return cal2peaks.remove(calibrantName);
 	}
 
 	/**
@@ -204,6 +208,11 @@ public class CalibrationStandards implements Serializable{
 		fireCalibrantSelectionListeners(selectedCalibrant);
 	}
 	
+	/**
+	 * TODO There is a problem if this is used globally because there is no
+	 * single place to listen to selected calibrant changing.
+	 * @param calibrant
+	 */
 	protected void fireCalibrantSelectionListeners(String calibrant) {
 		if (listeners==null) return;
 		final CalibrantSelectionEvent evt = new CalibrantSelectionEvent(this, calibrant);

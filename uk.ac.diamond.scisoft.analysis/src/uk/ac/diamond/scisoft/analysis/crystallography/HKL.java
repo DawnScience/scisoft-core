@@ -40,6 +40,9 @@ public class HKL implements Serializable {
 	public HKL() {
 		this(new int[3]);
 	}
+	public HKL(Amount<Length> d) {
+		this(-1,-1,-1,d);
+	}
 	
 	public HKL(int... hkl) {
 		this(hkl[0], hkl[1], hkl[2], null);

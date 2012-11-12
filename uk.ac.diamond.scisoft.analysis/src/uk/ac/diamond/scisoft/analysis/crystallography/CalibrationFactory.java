@@ -26,6 +26,7 @@ import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.osgi.framework.Version;
 
 /**
  * CalibrationFactory when we go to e4 like all xxxFactory classes this will become
@@ -71,6 +72,7 @@ public class CalibrationFactory {
 	 * @throws Exception
 	 */
 	static void saveCalibrationStandards(CalibrationStandards cs) throws Exception {
+		if (cs == null) return;
 		XMLEncoder encoder=null;
 		try {
 			final File calFile = getCalibrantFile();
@@ -85,7 +87,7 @@ public class CalibrationFactory {
 		
 		CalibrationStandards old = staticInstance;
 		staticInstance = cs;
-		if (old!=null && !old.getSelectedCalibrant().equals(cs.getSelectedCalibrant())) {
+		if (old!=null && old.getSelectedCalibrant()!=null && !old.getSelectedCalibrant().equals(cs.getSelectedCalibrant())) {
 		    fireCalibrantSelectionListeners(cs, cs.getSelectedCalibrant());
 		}
 
@@ -118,10 +120,12 @@ public class CalibrationFactory {
 				cs = null;
 			}
 		}
-		if (cs==null || cs.isEmpty()) {
+		if (cs==null || cs.isEmpty() || isOldVersion("1.0.0", cs.getVersion())) {
 			cs = new CalibrationStandards();
-			cs.setVersion("1.0");
+			cs.setVersion("1.0.0"); // Versions are so that we can wipe out configurations with new Dawn versions if we have to
+			                        // TODO consider new file for this instead.
 			cs.setCal2peaks(CalibrationStandards.createDefaultCalibrants());
+			cs.setSelectedCalibrant("Silicon", false);
 			try {
 				saveCalibrationStandards(cs);
 			} catch (Exception e) {
@@ -133,6 +137,13 @@ public class CalibrationFactory {
 		return cs;
 	}
 	
+	private static boolean isOldVersion(String versionCompare, String versionWith) {
+		Version compare = new Version(versionCompare);
+		Version with    = new Version(versionWith);
+		int c    =  compare.compareTo(with);
+		return c > 0;
+	}
+
 	private static Collection<CalibrantSelectedListener> listeners;
 	private static boolean processingListeners = false;
 	/**

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.measure.quantity.Length;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
@@ -41,8 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CalibrationStandards implements Serializable{
 	
-	private static final Logger logger = LoggerFactory.getLogger(CalibrationStandards.class);
-	
+
 	public final static Unit<Length> NANOMETER = SI.NANO(SI.METER);
 
 	private Map<String, CalibrantSpacing> cal2peaks;	
@@ -181,6 +181,22 @@ public class CalibrationStandards implements Serializable{
 		calibrant.addHKL(new HKL(6, 4, 2,Amount.valueOf(0.07257, NANOMETER)));		
 		tmp.put(calibrant.getName(), calibrant);
 		
+		calibrant = new CalibrantSpacing("Cr2O3");
+		calibrant.addHKL(new HKL(Amount.valueOf(3.645, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.672, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.487, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.181, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.819, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.676, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.467, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.433, NonSI.ANGSTROM)));
+		tmp.put(calibrant.getName(), calibrant);
+		
+		calibrant = new CalibrantSpacing("Bees Wax");
+		calibrant.addHKL(new HKL(Amount.valueOf(3.6, NonSI.ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.4, NonSI.ANGSTROM)));
+		tmp.put(calibrant.getName(), calibrant);
+
 		return tmp;
 
 	}

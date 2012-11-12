@@ -57,5 +57,6 @@ Import-Package: Jama,
  ncsa.hdf.object.h5,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.swt.graphics,
+ org.osgi.framework;version="1.6.0",
  org.slf4j;version="[1.5.0,2.0.0)"
 Eclipse-BuddyPolicy: registered

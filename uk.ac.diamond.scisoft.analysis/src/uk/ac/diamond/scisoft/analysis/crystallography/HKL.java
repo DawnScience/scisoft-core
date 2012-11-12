@@ -45,6 +45,13 @@ public class HKL implements Serializable {
 		this(hkl[0], hkl[1], hkl[2], null);
 	}
 	
+	@Override
+	public HKL clone() {
+		HKL ret = new HKL(getH(), getK(), getL());
+		ret.setDNano(getDNano());
+		return ret;
+	}
+	
 	/**
 	 * Used in CalibrationStandards
 	 * @param h

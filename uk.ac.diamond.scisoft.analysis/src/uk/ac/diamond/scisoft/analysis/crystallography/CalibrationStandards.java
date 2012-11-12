@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,10 @@ public class CalibrationStandards implements Serializable{
 		return cal2peaks.get(calibrant);
 	}
 	
+	public void addCalibrant(CalibrantSpacing cs) {
+		cal2peaks.put(cs.getName(), cs);
+	}
+
 	/**
 	 * Calling this method saves this CalibrationStandards as the persisted one
 	 * for all of Dawn. Only call when sure that this is the required standards.
@@ -191,7 +197,34 @@ public class CalibrationStandards implements Serializable{
 		return selectedCalibrant;
 	}
 
+	private Collection<CalibrantSelectedListener> listeners;
+	
 	public void setSelectedCalibrant(String selectedCalibrant) {
 		this.selectedCalibrant = selectedCalibrant;
+		fireCalibrantSelectionListeners(selectedCalibrant);
+	}
+	
+	protected void fireCalibrantSelectionListeners(String calibrant) {
+		if (listeners==null) return;
+		final CalibrantSelectionEvent evt = new CalibrantSelectionEvent(this, calibrant);
+		for (CalibrantSelectedListener l : listeners) {
+			l.calibrantSelectionChanged(evt);
+		}
+	}
+
+	public void addCalibrantSelectionListener(CalibrantSelectedListener l) {
+		if (listeners==null) listeners = new HashSet<CalibrantSelectedListener>(7);
+		listeners.add(l);
+	}
+	public void removeCalibrantSelectionListener(CalibrantSelectedListener l) {
+		if (listeners==null) return;
+		listeners.remove(l);
+	}
+	/**
+	 * The current selected calibrant.
+	 * @return fred
+	 */ 
+	public CalibrantSpacing getCalibrant() {
+		return getCalibrationPeakMap(getSelectedCalibrant());
 	}
 }

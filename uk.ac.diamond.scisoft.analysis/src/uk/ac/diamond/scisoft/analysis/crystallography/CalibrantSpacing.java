@@ -41,6 +41,18 @@ public class CalibrantSpacing implements Serializable{
 	public List<HKL> getHKLs() {
 		return hkls;
 	}
+	
+	/**
+	 * A deep copy
+	 */
+	@Override
+	public CalibrantSpacing clone() {
+		final CalibrantSpacing ret = new CalibrantSpacing();
+		for (HKL hkl : hkls) {
+			ret.addHKL(hkl.clone());
+		}
+		return ret;
+	}
 
 	
 	public void addHKL(HKL ring) {

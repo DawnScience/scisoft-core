@@ -46,6 +46,7 @@ public class CalibrantSpacing implements Serializable{
 	public void addHKL(HKL ring) {
 		if (hkls==null) hkls =  new ArrayList<HKL>(7);
 		hkls.add(ring);
+		if (ring.getRingName()==null) ring.setRingName("Position "+hkls.size());
 	}
 
 	public String getName() {

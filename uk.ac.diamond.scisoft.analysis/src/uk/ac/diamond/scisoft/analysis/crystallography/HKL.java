@@ -28,7 +28,7 @@ import org.jscience.physics.amount.Amount;
  * 
  * It does not offer calculation between the values, just holding them.
  * 
- * Normally if d is set, h,k and l are not needed but it is up to the 
+ * Often if d is set, h,k and l are not needed but it is up to the 
  * user of the data to decide what happens with it.
  */
 public class HKL implements Serializable {

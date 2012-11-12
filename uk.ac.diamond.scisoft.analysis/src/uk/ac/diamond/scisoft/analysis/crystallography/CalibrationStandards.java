@@ -27,15 +27,39 @@ import javax.measure.unit.Unit;
 
 import org.jscience.physics.amount.Amount;
 
-
+/**
+ * Since we cannot have eclipse preferences in this plugin, but
+ * we should access them here, we use the user.home to store the 
+ * properties and to register them here.
+ * 
+ * This classes uses a singleton pattern to read the calibrants from
+ * disk.
+ */
 public class CalibrationStandards {
-
-	private static final Map<String, CalibrantSpacing> cal2peaks;
 	
 	public final static Unit<Length> NANOMETER = SI.NANO(SI.METER);
 	
-	static {
-		
+	private static CalibrationStandards staticInstance;
+	public static CalibrationStandards getInstance() {
+		if (staticInstance==null) staticInstance = new CalibrationStandards();
+		return staticInstance;
+	}
+
+
+	private final Map<String, CalibrantSpacing> cal2peaks;	
+	private CalibrationStandards() {
+	    cal2peaks = createDefaultCalibrants();
+	}
+
+	public Set<String> getCalibrantList() {
+		return cal2peaks.keySet();
+	}
+	
+	public CalibrantSpacing getCalibrationPeakMap(String calibrant) {
+		return cal2peaks.get(calibrant);
+	}
+	
+	private static Map<String, CalibrantSpacing> createDefaultCalibrants() {
 		LinkedHashMap<String, CalibrantSpacing> tmp = new LinkedHashMap<String, CalibrantSpacing>();
 		
 		CalibrantSpacing calibrant = new CalibrantSpacing("Collagen Wet");
@@ -129,15 +153,7 @@ public class CalibrationStandards {
 		calibrant.addHKL(new HKL(6, 4, 2,Amount.valueOf(0.07257, NANOMETER)));		
 		tmp.put(calibrant.getName(), calibrant);
 		
-		cal2peaks = Collections.unmodifiableMap(tmp);
-	}
+		return Collections.unmodifiableMap(tmp);
 
-	public static Set<String> getCalibrantList() {
-		return cal2peaks.keySet();
 	}
-	
-	public static CalibrantSpacing getCalibrationPeakMap(String calibrant) {
-		return cal2peaks.get(calibrant);
-	}
-	
 }

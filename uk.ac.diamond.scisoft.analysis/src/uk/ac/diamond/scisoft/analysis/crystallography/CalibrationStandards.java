@@ -16,10 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import java.util.Collections;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
@@ -32,34 +33,48 @@ import org.jscience.physics.amount.Amount;
  * we should access them here, we use the user.home to store the 
  * properties and to register them here.
  * 
- * This classes uses a singleton pattern to read the calibrants from
- * disk.
+ * This class is a bean which is persisted to disk and can be deep
+ * cloned by the UI when the user is creating another calibrant list.
  */
-public class CalibrationStandards {
+public class CalibrationStandards implements Serializable{
 	
 	public final static Unit<Length> NANOMETER = SI.NANO(SI.METER);
+
+	private Map<String, CalibrantSpacing> cal2peaks;	
+	private String version;
+	private String selectedCalibrant;
+	/**
+	 * Used for bean contract, use CalibrationStandards.getInstance() instead.
+	 */
+	public CalibrationStandards() {	
+		this.version = null;
+		cal2peaks    = null;
+	}
 	
-	private static CalibrationStandards staticInstance;
-	public static CalibrationStandards getInstance() {
-		if (staticInstance==null) staticInstance = new CalibrationStandards();
-		return staticInstance;
-	}
-
-
-	private final Map<String, CalibrantSpacing> cal2peaks;	
-	private CalibrationStandards() {
-	    cal2peaks = createDefaultCalibrants();
-	}
-
-	public Set<String> getCalibrantList() {
-		return cal2peaks.keySet();
+	public List<String> getCalibrantList() {
+		// cal2peaks must be a LinkedHashMap for this to work.
+		return new ArrayList<String>(cal2peaks.keySet());
 	}
 	
 	public CalibrantSpacing getCalibrationPeakMap(String calibrant) {
 		return cal2peaks.get(calibrant);
 	}
 	
-	private static Map<String, CalibrantSpacing> createDefaultCalibrants() {
+	/**
+	 * Calling this method saves this CalibrationStandards as the persisted one
+	 * for all of Dawn. Only call when sure that this is the required standards.
+	 * @throws Exception
+	 */
+	public void save() throws Exception {
+		CalibrationFactory.saveCalibrationStandards(this);
+	}
+	
+	/**
+	 * Default list of calibrants TODO add whatever Alun needs.
+	 * 
+	 * @return map
+	 */
+	static Map<String, CalibrantSpacing> createDefaultCalibrants() {
 		LinkedHashMap<String, CalibrantSpacing> tmp = new LinkedHashMap<String, CalibrantSpacing>();
 		
 		CalibrantSpacing calibrant = new CalibrantSpacing("Collagen Wet");
@@ -153,7 +168,30 @@ public class CalibrationStandards {
 		calibrant.addHKL(new HKL(6, 4, 2,Amount.valueOf(0.07257, NANOMETER)));		
 		tmp.put(calibrant.getName(), calibrant);
 		
-		return Collections.unmodifiableMap(tmp);
+		return tmp;
 
+	}
+	public Map<String, CalibrantSpacing> getCal2peaks() {
+		return cal2peaks;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setCal2peaks(Map<String, CalibrantSpacing> cal2peaks) {
+		this.cal2peaks = cal2peaks;
+		if (selectedCalibrant==null) {
+			selectedCalibrant = cal2peaks.keySet().iterator().next();
+		}
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getSelectedCalibrant() {
+		return selectedCalibrant;
+	}
+
+	public void setSelectedCalibrant(String selectedCalibrant) {
+		this.selectedCalibrant = selectedCalibrant;
 	}
 }

@@ -103,7 +103,6 @@ class _plotmode(object):
         self.oned = self._plotmodehelper(self, "oned", "ONED")
         self.oned_threed = self._plotmodehelper(self, "oned_threed", "ONED_THREED")
         self.twod = self._plotmodehelper(self, "twod", "TWOD")
-        self.twod_roiprofiles = self._plotmodehelper(self, "twod_roiprofiles", "TWOD_ROIPROFILES")
         self.surf2d = self._plotmodehelper(self, "surf2d", "SURF2D")
         self.scatter2d = self._plotmodehelper(self, "scatter2d", "SCATTER2D")
         self.scatter3d = self._plotmodehelper(self, "scatter3d", "SCATTER3D")

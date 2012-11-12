@@ -354,34 +354,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Allows the plotting of an image to the defined view with its side plot profiles
-	 * 
-	 * @param plotName
-	 * @param image
-	 * @throws Exception
-	 */
-	@Override
-	public void imagePlotProfile(String plotName, IDataset image) throws Exception {
-		imagePlotProfile(plotName, null, null, image);
-	}
-
-	/**
-	 * Allows the plotting of an image to the defined view with its side plot profiles
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 *            can be null
-	 * @param yAxis
-	 *            can be null
-	 * @param image
-	 * @throws Exception
-	 */
-	@Override
-	public void imagePlotProfile(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
-		imagePlot(plotName, xAxis, yAxis, image, true);
-	}
-
-	/**
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName
@@ -425,23 +397,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 *            can be null
-	 * @param yAxis
-	 *            can be null
-	 * @param image
-	 * @throws Exception
-	 */
-
-	@Override
-	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
-		imagePlot(plotName, xAxis, yAxis, image, false);
-	}
-
-	/**
 	 * Allows the plotting of an image to the defined view with its side plot profiles
 	 * 
 	 * @param plotName
@@ -450,11 +405,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param yAxis
 	 *            can be null
 	 * @param image
-	 * @param withProfile
-	 *            if true the plot mode with Roi profiles will be used
 	 * @throws Exception
 	 */
-	private void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, boolean withProfile) throws Exception {
+	@Override
+	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
 		if (!isDataND(image, 2)) {
 			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());
 			throw new Exception("Input dataset has incorrect rank: it should be 2");
@@ -471,11 +425,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			logger.error(msg);
 			throw new Exception(msg);
 		}
-		DataBean dataBean = null;
-		if(withProfile)
-			dataBean = new DataBean(GuiPlotMode.TWOD_ROIPROFILES);
-		else
-			dataBean = new DataBean(GuiPlotMode.TWOD);
+		DataBean dataBean = new DataBean(GuiPlotMode.TWOD);
 
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean(AxisMapBean.DIRECT);

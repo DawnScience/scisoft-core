@@ -144,16 +144,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlotProfile(String plotName, IDataset image) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void imagePlotProfile(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
 		throw newShouldNotBeCalled();
 

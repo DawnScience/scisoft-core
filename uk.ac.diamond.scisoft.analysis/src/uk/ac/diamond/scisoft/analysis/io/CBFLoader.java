@@ -1003,11 +1003,6 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
 			return diffractionCrystalEnvironment;
 		}
-
-		@Override
-		public CBFMetadataAdapter clone() {
-			return new CBFMetadataAdapter(props.clone(), env.clone());
-		}
 	}
 
 	@Override

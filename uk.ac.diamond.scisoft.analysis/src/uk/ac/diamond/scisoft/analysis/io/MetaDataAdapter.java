@@ -68,7 +68,7 @@ public class MetaDataAdapter implements IMetaData {
 	}
 
 	@Override
-	public MetaDataAdapter clone() {
+	public IMetaData clone() {
 		if (adapterUserObjects == null) {
 			if (adapterDataNames == null) {
 				return new MetaDataAdapter();

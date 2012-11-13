@@ -393,10 +393,6 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			return diffractionCrystalEnvironment;
 		}
 
-		@Override
-		public ADSCMetadataAdapter clone() {
-			return new ADSCMetadataAdapter(props.clone(), env.clone());
-		}
 	}
 
 	@Override

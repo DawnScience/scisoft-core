@@ -686,10 +686,6 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			return diffEnv;
 		}
 
-		@Override
-		public MARMetadataAdapter clone() {
-			return new MARMetadataAdapter(props == null ? null : props.clone(), env == null ? null : env.clone());
-		}
 	}
 
 	@Override

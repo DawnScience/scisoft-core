@@ -34,6 +34,9 @@ public interface IDiffractionMetadata extends IMetaData {
 
 	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment();
 	
+	@Override
+	public IDiffractionMetadata clone();
+	
 	static class Creator {
 		/**
 		 * Static method to obtain a DiffractionMetaDataAdapter populated with default values to

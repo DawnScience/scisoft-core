@@ -568,11 +568,6 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader 
 		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
 			return diffEnv;
 		}
-
-		@Override
-		public RAxisMetadataAdapter clone() {
-			return new RAxisMetadataAdapter(props == null ? null : props.clone(), env == null ? null : env.clone());
-		}
 	}
 
 	@Override

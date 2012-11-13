@@ -24,6 +24,8 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
 public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implements IDiffractionMetadata {
 
+	private DiffractionCrystalEnvironment originalClonedEnv,  clonedEnv;
+	private DetectorProperties            originalClonedProp, clonedProp;
 	
 	public DiffractionMetaDataAdapter() {
 		
@@ -35,26 +37,32 @@ public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implemen
 
 	@Override
 	public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-		return null;
+		return clonedEnv!=null ? clonedEnv : null;
 	}
 
 	@Override
 	public DetectorProperties getDetector2DProperties() {
-		return null;
+		return clonedProp!=null ? clonedProp : null;
 	}
 	
 	@Override
-	public DiffractionMetaDataAdapter clone(){
-		return null;
+	public IDiffractionMetadata clone(){
+		DiffractionMetaDataAdapter ad = new DiffractionMetaDataAdapter();
+		if (getDetector2DProperties()!=null)         ad.clonedProp = getDetector2DProperties().clone();
+		if (getOriginalDetector2DProperties()!=null) ad.originalClonedProp = getOriginalDetector2DProperties().clone();
+		
+		if (getDiffractionCrystalEnvironment()!=null)ad.clonedEnv = getDiffractionCrystalEnvironment().clone();
+		if (getOriginalDiffractionCrystalEnvironment()!=null)ad.originalClonedEnv = getOriginalDiffractionCrystalEnvironment().clone();
+	    return ad;
 	}
-
+	
 	@Override
 	public DetectorProperties getOriginalDetector2DProperties() {
-		return null;
+		return originalClonedProp!=null ? originalClonedProp : null;
 	}
 	
 	@Override
 	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
-		return null;
+		return originalClonedEnv!=null ? originalClonedEnv : null;
 	}
 }

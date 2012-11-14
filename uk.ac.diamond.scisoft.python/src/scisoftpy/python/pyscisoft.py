@@ -66,9 +66,9 @@ def kurtosis(a, axis=None):
 def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
-    a - data
-    q - probability value(s)
-    axis - can be None'''
+    a -- data
+    q -- probability value(s)
+    axis -- can be None'''
     from pycore import toList
     from math import floor
     q = toList(q)

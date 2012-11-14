@@ -132,3 +132,4 @@ inner = _np.inner
 #outer = _np.outer
 tensordot = _np.tensordot
 
+gradient = _np.gradient

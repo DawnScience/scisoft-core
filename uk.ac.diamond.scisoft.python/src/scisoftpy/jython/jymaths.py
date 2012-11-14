@@ -435,3 +435,27 @@ def tensordot(a, b, axes=2):
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
+@ndarraywrapped
+def gradient(f, *varargs):
+    '''Gradient of array
+    
+    f -- array
+    *varargs -- 0, 1, N scalars for sample distance, or datasets for sample points
+    '''
+
+    if varargs is None or len(varargs) == 0:
+        g = _maths.gradient(f)
+    else:
+        # check for scalars, etc
+        from jycore import ndarray as _nd, arange as _ar
+        xlist = []
+        for i in range(len(varargs)):
+            x = varargs[i]
+            if not isinstance(x, _nd):
+                x = _ar(f.shape[i])*x
+            xlist.append(x)
+        g = _maths.gradient(f, xlist)
+
+    if len(g) == 1:
+        return g[0]
+    return g

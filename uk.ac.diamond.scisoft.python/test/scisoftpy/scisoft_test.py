@@ -224,7 +224,22 @@ class Test(unittest.TestCase):
         self.assertEquals(-32.25 + 40.75, iqr[2])
 
 
+    def testGradient(self):
+        print 'Gradient testing'
+        x = np.array([1, 2, 4, 7, 11, 16], dtype=np.float)
+        g = np.gradient(x)
+        self.checkitems([1., 1.5, 2.5, 3.5, 4.5, 5.], g)
+        g = np.gradient(x, 2)
+        self.checkitems([0.5, 0.75, 1.25, 1.75, 2.25, 2.5], g)
+        a = np.arange(6, dtype=np.float)*2
+        g = np.gradient(x, a)
+        self.checkitems([0.5, 0.75, 1.25, 1.75, 2.25, 2.5], g)
+
+        g = np.gradient(np.array([[1, 2, 6], [3, 4, 5]], dtype=np.float))
+        self.checkitems([[2., 2., -1.], [2., 2., -1.]], g[0])
+        self.checkitems([[1., 2.5, 4.], [1., 1., 1.]], g[1])
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']
-    unittest.main(defaultTest='Test.testQuantile')
+    unittest.main()#defaultTest='Test.testQuantile')

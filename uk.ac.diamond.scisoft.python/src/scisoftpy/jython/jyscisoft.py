@@ -72,9 +72,9 @@ def iqr(a, axis=None):
 def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
-    a - data
-    q - probability value(s)
-    axis - can be None'''
+    a -- data
+    q -- probability value(s)
+    axis -- can be None'''
     q = _toList(q)
     if axis is None:
         if len(q) == 1:
@@ -113,6 +113,6 @@ def centroid(weights, coords=None):
     coordinates (list of 1D arrays), if given, and returns it as a list
     '''
     if coords is None:
-        return _dsutils.centroid(weights, None)
+        return _dsutils.centroid(weights)
     from jycore import toList
     return _dsutils.centroid(weights, toList(coords))

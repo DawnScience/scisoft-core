@@ -31,7 +31,6 @@ plot_updateline = _plotter.updatePlot
 plot_stack = _plotter.stackPlot
 plot_updatestack = _plotter.updateStackPlot
 plot_image = _plotter.imagePlot
-plot_imageprofile = _plotter.imagePlotProfile
 plot_images = _plotter.imagesPlot
 plot_surface = _plotter.surfacePlot
 plot_points2d = _plotter.scatter2DPlot

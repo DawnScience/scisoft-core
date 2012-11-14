@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.complex.Complex;
@@ -1523,6 +1524,51 @@ public class MathsTest {
 		tdata = new int[] {1,  2,  6, -4,  5};
 		AbstractDataset ta = new IntegerDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
+	}
+
+	@Test
+	public void testGradient() {
+		double[] data = {1, 2, 4, 7, 11, 16};
+		double[] tdata;
+
+		AbstractDataset a = new DoubleDataset(data, null);
+		AbstractDataset d = Maths.gradient(a).get(0);
+		tdata = new double[] {1., 1.5, 2.5, 3.5, 4.5, 5.};
+		AbstractDataset ta = new DoubleDataset(tdata, null);
+		checkDatasets(null, null, d, ta);
+
+		AbstractDataset b = AbstractDataset.arange(a.getShape()[0], a.getDtype());
+		b.imultiply(2);
+		tdata = new double[] {0.5 , 0.75, 1.25, 1.75, 2.25, 2.5};
+		ta = new DoubleDataset(tdata, null);
+		d = Maths.gradient(a, b).get(0);
+		checkDatasets(null, null, d, ta);
+		
+		data = new double[] {1, 2, 6, 3, 4, 5};
+		a = new DoubleDataset(data, 2, 3);
+		List<AbstractDataset> l = Maths.gradient(a);
+		tdata = new double[] { 2., 2., -1., 2., 2., -1.};
+		ta = new DoubleDataset(tdata, 2, 3);
+		checkDatasets(null, null, l.get(0), ta);
+		tdata = new double[] { 1., 2.5, 4., 1., 1., 1.};
+		ta = new DoubleDataset(tdata, 2, 3);
+		checkDatasets(null, null, l.get(1), ta);
+
+		b = AbstractDataset.arange(a.getShape()[0], a.getDtype());
+		b.imultiply(2);
+		AbstractDataset c = AbstractDataset.arange(a.getShape()[1], a.getDtype());
+		c.imultiply(-1.5);
+
+		l = Maths.gradient(a, b, c);
+		tdata = new double[] { 2., 2., -1., 2., 2., -1.};
+		ta = new DoubleDataset(tdata, 2, 3);
+		ta.idivide(2);
+		checkDatasets(null, null, l.get(0), ta);
+		tdata = new double[] { 1., 2.5, 4., 1., 1., 1.};
+		ta = new DoubleDataset(tdata, 2, 3);
+		ta.idivide(-1.5);
+		checkDatasets(null, null, l.get(1), ta);
+
 	}
 
 	/**

@@ -59,7 +59,10 @@ class Test(unittest.TestCase):
         print 'Fit: ', fr  # print fit result
         self.checkitems([3., 1.5], fr.parameters)
 
-        fr = fit.fit([myfunc, fit.function.offset], self.x, d[:-1], [2.5, 1.2, 0.1], [(0,4), 0, (-0.2,0.7)])
+        fr = fit.fit([myfunc, fit.function.offset], self.x[:-1], d[:-1], [2.5, 1.2, 0.1], [(0,4), 0, (-0.2,0.7)])
+        fr = fit.fit(fit.function.offset, self.x, d, 0.3, (-0.2,1.7))
+        print fr
+
 
     def testPoly(self):
         fr = fit.polyfit(self.x, self.y, 1)
@@ -89,4 +92,4 @@ class Test(unittest.TestCase):
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+    unittest.main() #defaultTest='Test.testFit')

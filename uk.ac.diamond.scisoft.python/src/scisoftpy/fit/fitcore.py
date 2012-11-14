@@ -31,10 +31,6 @@ _asDS = _dnp.asDataset
 from scisoftpy.jython.jymaths import ndarraywrapped as _npwrapped
 import java.lang.Class as _jclass #@UnresolvedImport
 
-#from jarray import array as _jarray
-
-#Parameter = _param
-
 import function as _fn
 
 def _createparams(np, params, bounds):
@@ -43,6 +39,10 @@ def _createparams(np, params, bounds):
     params -- list of initial values
     bounds -- list of tuples of bounds
     '''
+
+    if np > len(params):
+        raise ValueError, "Number of parameters supplied is less than that required"
+
     pl = [ _param(params.pop(0)) for _i in range(np) ]
 
     nbound = len(bounds)
@@ -86,7 +86,7 @@ class fitfunc(_absfn):
         '''Evaluate function at single set of coordinates
         '''
         try:
-            l = [ p for p in self.parameterValues ]
+            l = [p for p in self.parameterValues]
             l.append(_dnp.array(coords))
             l.append(self.args)
             v = self.func(*l)
@@ -95,20 +95,20 @@ class fitfunc(_absfn):
             raise ValueError, 'Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues
 
     @_npwrapped
-    def makeDataset(self, coords):
+    def makeDataset(self, *coords):
         '''Evaluate function across given coordinates
         '''
         try:
-            l = [ p for p in self.parameterValues ]
-            l.append([ _dnp.Sciwrap(c) for c in coords])
-            l.append(self.args )
+            l = [p for p in self.parameterValues]
+            l.append([_dnp.Sciwrap(c) for c in coords])
+            l.append(self.args)
             d = self.func(*l)
             d.name = self.name
             return d
         except ValueError:
             raise ValueError, 'Problem with function \"' + self.name + '\" with params  ' + self.parameterValues
 
-    def residual(self, allvalues, data, coords):
+    def residual(self, allvalues, data, *coords):
         '''Find residual as sum of squared differences of function and data
         
         Arguments:
@@ -117,8 +117,8 @@ class fitfunc(_absfn):
         coords    -- coordinates over which the function is evaluated
         '''
         try:
-            l = [ p for p in self.parameterValues ]
-            l.append([ _dnp.Sciwrap(c) for c in coords])
+            l = [p for p in self.parameterValues]
+            l.append([_dnp.Sciwrap(c) for c in coords])
             l.append(self.args)
             d = self.func(*l)
             return _dnp.residual(d, data)
@@ -145,7 +145,7 @@ class cfitfunc(_compfn):
         '''
         vt = None
         for n in range(self.noOfFunctions):
-            v = _dnp.Sciwrap(self.getFunction(n).makeDataset(coords))
+            v = _dnp.Sciwrap(self.getFunction(n).makeDataset(*coords))
             if vt is None:
                 vt = v
             else:
@@ -226,12 +226,12 @@ class fitresult(object):
         '''
         nf = self.func.noOfFunctions
         if nf > 1:
-            fdata = [ self.func.makeDataset(self.coords) ]
+            fdata = [self.func.makeDataset(self.coords)]
             fdata[0].name = "Composite function"
             for n in range(nf):
                 fdata.append(self.func.getFunction(n).makeDataset(self.coords))
         elif nf == 1:
-            fdata = [ self.func.getFunction(0).makeDataset(self.coords) ]
+            fdata = [self.func.getFunction(0).makeDataset(self.coords)]
         else:
             fdata = []
 
@@ -246,13 +246,13 @@ class fitresult(object):
     def _parameters(self):
         '''Array of all parameter values
         '''
-        return _asDS([ p for p in self.func.getParameterValues() ])
+        return _asDS([p for p in self.func.getParameterValues()])
     parameters = property(_parameters)
 
     def _parameter_bnds(self):
         '''List of all parameter bounds
         '''
-        return [ (p.getLowerLimit(), p.getUpperLimit()) for p in self.func.getParameters() ]
+        return [(p.getLowerLimit(), p.getUpperLimit()) for p in self.func.getParameters()]
     parameter_bnds = property(_parameter_bnds)
 
     def _residual(self):
@@ -273,7 +273,7 @@ class fitresult(object):
         out = "Fit parameters:\n"
         for n in range(nf):
             f = self.func.getFunction(n)
-            p = [ q for q in f.getParameterValues() ]
+            p = [q for q in f.getParameterValues()]
             np = len(p)
             out += "    function '%s' (%d) has %d parameters = %s\n" % (f.name, n, np, p)
         return out
@@ -338,14 +338,13 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     for i in range(len(coords)): # check and slice coordinates to match data
         c = coords[i]
         if c.shape != data.shape:
-            ns = [ slice(d) for d in data.shape ]
+            ns = [slice(d) for d in data.shape]
             coords[i] = c[ns]
 
     if seed:
         _fitter.seed = int(seed)
 
     import time
-
     start = -time.time()
     
     # use the appropriate fitter for the task
@@ -383,7 +382,7 @@ def _polycoeff(roots):
     oc = [1.0]
     for n in range(nr):
         r = -roots[n]
-        nc = [ r*c for c in oc ]
+        nc = [r*c for c in oc]
         for m in range(n):
             oc[m+1] += nc[m]
         oc.append(nc[n])
@@ -528,5 +527,4 @@ def makeellipse(p, t=None):
         t = _dnp.arange(100)*_dnp.pi/50.
 
     return _efitter.generateCoordinates(_asDS(t), p)
-
 

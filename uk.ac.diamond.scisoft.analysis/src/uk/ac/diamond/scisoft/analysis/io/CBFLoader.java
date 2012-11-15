@@ -207,7 +207,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		return new ImageOrientation(xDimension, yDimension);
 	}
 	
-	private void createGDAMetadata() throws ScanFileHolderException{
+	private void createGDAMetadata() throws ScanFileHolderException {
 		try {
 			String pixelSize = getMetadataValue("Pixel_size");
 			String[] xypixVal = pixelSize.split("m x");
@@ -226,7 +226,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 //					(Double.parseDouble(getMetadataValue("numPixels_y")) - beamPosY)* yPXVal ,
 //					Double.parseDouble(getMetadataValue("Detector_distance").split("m")[0])*1000 };
 			double[] detectorOrigin = {  beamPosX* xPxVal, beamPosY* yPXVal ,
-					Double.parseDouble(getMetadataValue("Detector_distance").split("m")[0])*1000 };
+					getFirstDouble("Detector_distance", "m")*1000 };
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
 			//System.out.println(detectorOrigin[0] +"  "+detectorOrigin[1]+"   "+detectorOrigin[2]);
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "milli*metre");
@@ -237,8 +237,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			
 			// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
 			double[] detectorShape = {
-					Double.parseDouble(getMetadataValue("numPixels_x")) * xPxVal,
-					Double.parseDouble(getMetadataValue("numPixels_y")) * yPXVal,0,0,0,0 };
+					getDouble("numPixels_x") * xPxVal,
+					getDouble("numPixels_y") * yPXVal,0,0,0,0 };
 			GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
 			GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXunits","milli*metre");
 			
@@ -251,39 +251,36 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			// "NXmonochromator:wavelength"
 			double lambda;
 			if (getMetadataValue("Wavelength").contains("A"))
-				lambda = Double.parseDouble(getMetadataValue("Wavelength").split("A")[0]);
+				lambda = getFirstDouble("Wavelength", "A");
 			else if(getMetadataValue("Wavelength").contains("nm"))
-				lambda = Double.parseDouble(getMetadataValue("Wavelength").split("nm")[0])*10;
+				lambda = getFirstDouble("Wavelength", "nm")*10;
 			else
 				throw new ScanFileHolderException("The wavelength could not be parsed in from the mini cbf file header");
 			GDAMetadata.put("NXmonochromator:wavelength",lambda);
 			GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
 
 			// oscillation range
-			GDAMetadata.put("NXSample:rotation_start",Double.parseDouble(getMetadataValue("Start_angle").split("deg.")[0]));
+			GDAMetadata.put("NXSample:rotation_start", getFirstDouble("Start_angle", "deg"));
 			GDAMetadata.put("NXSample:rotation_start:NXUnits","degree");
-			GDAMetadata.put("NXSample:rotation_range",Double.parseDouble(getMetadataValue("Angle_increment").split("deg.")[0]));
+			GDAMetadata.put("NXSample:rotation_range", getFirstDouble("Angle_increment", "deg"));
 			GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
 			
 			//Exposure time
-			GDAMetadata.put("NXSample:exposure_time", Double.parseDouble(getMetadataValue("Exposure_time").split("s")[0]));
+			GDAMetadata.put("NXSample:exposure_time", getFirstDouble("Exposure_time", "s"));
 			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
 			
-			GDAMetadata.put("NXdetector:pixel_overload", Double.parseDouble(getMetadataValue("Count_cutoff").split("counts")[0]));
+			GDAMetadata.put("NXdetector:pixel_overload", getFirstDouble("Count_cutoff", "counts"));
 			GDAMetadata.put("NXdetector:pixel_overload:NXUnits", "counts");
 			
 			// This is new metadata
 			Matrix3d identityMatrix = new Matrix3d();
 			identityMatrix.setIdentity();
 			detectorProperties = new DetectorProperties(new Vector3d(detectorOrigin),
-					Integer.parseInt(getMetadataValue("numPixels_x")), Integer.parseInt(getMetadataValue("numPixels_y")),
+					getInteger("numPixels_x"), getInteger("numPixels_y"),
 					xPxVal,yPXVal,identityMatrix);
 
-			diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(lambda,
-					Double.parseDouble(getMetadataValue("Start_angle").split("deg.")[0]),
-					Double.parseDouble(getMetadataValue("Angle_increment").split("deg.")[0]), 
-					Double.parseDouble(getMetadataValue("Exposure_time").split("s")[0]));
-			
+			diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(lambda, getFirstDouble("Start_angle", "deg"),
+					getFirstDouble("Angle_increment", "deg"), getFirstDouble("Exposure_time", "s"));
 			
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing numerical value from string ",e);
@@ -356,25 +353,25 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "array_id"));
-		CBFError.errorChecker(cbf.cbf_find_row(chs, metadata.get("diffrn_data_frame.array_id")));
+		CBFError.errorChecker(cbf.cbf_find_row(chs, getMetadataValue("diffrn_data_frame.array_id")));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
-		if (metadata.get("axis_set_id 1").equalsIgnoreCase("ELEMENT_X")) { // FIXME is this always the case?
-			isRowsX = Integer.valueOf(metadata.get("precedence 1")) == 1;
+		if (isMatch("axis_set_id 1", "ELEMENT_X")) { // FIXME is this always the case?
+			isRowsX = getInteger("precedence 1") == 1;
 
-			xLength = Integer.valueOf(metadata.get("SIZE 1"));
-			yLength = Integer.valueOf(metadata.get("SIZE 2"));
+			xLength = getInteger("SIZE 1");
+			yLength = getInteger("SIZE 2");
 
-			xIncreasing = metadata.get("direction 1").equalsIgnoreCase("increasing");
-			yIncreasing = metadata.get("direction 2").equalsIgnoreCase("increasing");
+			xIncreasing = isMatch("direction 1", "increasing");
+			yIncreasing = isMatch("direction 2", "increasing");
 		} else {
-			isRowsX = Integer.valueOf(metadata.get("precedence 2")) == 1;
+			isRowsX = getInteger("precedence 2") == 1;
 
-			xLength = Integer.valueOf(metadata.get("SIZE 2"));
-			yLength = Integer.valueOf(metadata.get("SIZE 1"));
+			xLength = getInteger("SIZE 2");
+			yLength = getInteger("SIZE 1");
 
-			xIncreasing = metadata.get("direction 2").equalsIgnoreCase("increasing");
-			yIncreasing = metadata.get("direction 1").equalsIgnoreCase("increasing");
+			xIncreasing = isMatch("direction 2", "increasing");
+			yIncreasing = isMatch("direction 1", "increasing");
 		}
 
 		return new ImageOrientation(xLength, yLength, xIncreasing, yIncreasing, isRowsX);
@@ -893,6 +890,38 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 //		}
 //	}
 	
+
+	private int getInteger(String key) throws ScanFileHolderException {
+		try {
+			return Integer.parseInt(getMetadataValue(key));
+		} catch (NumberFormatException e) {
+			throw new ScanFileHolderException("There was a problem parsing integer value from string",e);
+		}
+	}
+
+	private double getDouble(String key) throws ScanFileHolderException {
+		try {
+			return Double.parseDouble(getMetadataValue(key));
+		} catch (NumberFormatException e) {
+			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
+		}
+	}
+
+	private double getFirstDouble(String key, String split) throws ScanFileHolderException {
+		try {
+			return Double.parseDouble(getMetadataValue(key).split(split)[0]);
+		} catch (NumberFormatException e) {
+			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
+		}
+	}
+
+	private boolean isMatch(String key, String value) throws ScanFileHolderException {
+		try {
+			return getMetadataValue(key).equalsIgnoreCase(value);
+		} catch (NumberFormatException e) {
+			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
+		}
+	}
 
 	private String getMetadataValue(String key) throws ScanFileHolderException {
 		try {

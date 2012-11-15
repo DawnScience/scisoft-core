@@ -23,7 +23,6 @@ import javax.vecmath.Vector3d;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
@@ -89,7 +88,6 @@ public class DiffractionImageTest {
 	}
 
 	@Test
-	@Ignore("This is being ignored intil the MAR loader has been refactored to use the new metadata, 10 Nov 11")
 	public void testMAR() throws Exception {
 		DataHolder dh = new MARLoader(testfile2).loadFile();
 		IMetaData metadata = dh.getDataset(0).getMetadata();

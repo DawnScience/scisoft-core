@@ -289,7 +289,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			}
 
 			// goniostat parameters (128)
-			metadataTable.put("xtaltoDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
+			metadataTable.put("xtalToDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
 			// 1000*distance in millimetres
 			poss += 4;
 			metadataTable.put("beamX", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]) / 1000.0); 
@@ -324,7 +324,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			poss += 4;
 			metadataTable.put("startGamma", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]) / 1000.0); // 1000*gamma angle
 			poss += 4;
-			metadataTable.put("startXtaltoDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
+			metadataTable.put("startXtalToDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
 			// 1000*distance in mm (dist in um)
 			poss += 4;
 			metadataTable.put("stop2theta", (getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]) / 1000.0)); // 1000*two_theta angle
@@ -343,7 +343,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			metadataTable.put("stopGamma", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]) / 1000.0); // 1000*gamma angle
 
 			poss += 4;
-			metadataTable.put("stopXtaltoDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
+			metadataTable.put("stopXtalToDetector", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) / 1000.0); 
 			// 1000*distance in mm (dist in  um)
 			poss += 4;
 			metadataTable.put("rotationAxis", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // active rotation axis
@@ -417,9 +417,9 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			// X-ray source parameters 
 			metadataTable.put("sourceType", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // (code) - target, synch. etc
 			poss += 4;
-			metadataTable.put("sourcedx", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]));// Optics param. - (size microns)
+			metadataTable.put("sourceDx", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3]));// Optics param. - (size microns)
 			poss += 4;
-			metadataTable.put("sourcedy", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
+			metadataTable.put("sourceDy", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
 			poss += 4;
 			metadataTable.put("sourceWavelength", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]));
 			// wavelength (femtoMeters)
@@ -432,9 +432,9 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			poss += 4;
 			metadataTable.put("sourceBias", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // (Volts)
 			poss += 4;
-			metadataTable.put("sourcePolerizationX", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
+			metadataTable.put("sourcePolarizationX", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
 			poss += 4;
-			metadataTable.put("sourcePolerizationY", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]));// ()
+			metadataTable.put("sourcePolarizationY", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]));// ()
 			poss += 4;
 
 			poss += 16; // ignore reserve_source 4*sizeof(int32)
@@ -442,9 +442,9 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			//X-ray optics parameters
 			metadataTable.put("opticsType", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics type (code)
 			poss += 4;
-			metadataTable.put("opticsdx", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
+			metadataTable.put("opticsDx", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
 			poss += 4;
-			metadataTable.put("opticsdy", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
+			metadataTable.put("opticsDy", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (size microns)
 			poss += 4;
 			metadataTable.put("opticsWavelength", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]));
 			// Optics param. - (size microns)
@@ -461,9 +461,9 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			metadataTable.put("opticsAngle", getHeaderInt(hbd[poss],hbd[poss + 1], hbd[poss + 2],hbd[poss + 3])); // Optics param. - (microRadians)
 
 			poss += 4;
-			metadataTable.put("opticsPolerizationX", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
+			metadataTable.put("opticsPolarizationX", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
 			poss += 4;
-			metadataTable.put("opticsPolerizationY", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
+			metadataTable.put("opticsPolarizationY", getHeaderInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3])); // ()
 			poss += 4;
 
 			poss += 16; // 4*sizeof(int32) reserve_optics
@@ -543,7 +543,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			int imageLength = Integer.parseInt((String) getMetadataValue("ImageLength"));
 			double beamY = ((Double) getMetadataValue("beamY")).doubleValue();
 
-			double distance = ((Double) getMetadataValue("xtaltoDetector")).doubleValue();
+			double distance = ((Double) getMetadataValue("xtalToDetector")).doubleValue();
 			// NXGeometery:NXtranslation
 			double[] detectorOrigin = { (imageWidth - beamX) * pixelSizeX, (imageLength - beamY) * pixelSizeY, distance };
 

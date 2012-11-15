@@ -21,7 +21,6 @@ import gda.util.TestUtils;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.gda.util.OSUtils;
@@ -56,11 +55,11 @@ public class CBFLoaderThreadTest extends LoaderThreadTestBase {
 		super.testInTestThread();
 	}
 	
-	@Ignore
+	@Override
 	@Test
-	public void testWithTwentyThreads() {
+	public void testWithTenThreads() {
 		try {
-			super.testWithNThreads(20);
+			super.testWithNThreads(10);
 		} catch (ScanFileHolderException sfhe) {
 			if (((sfhe.getCause() instanceof OutOfMemoryError)) || (sfhe.toString().endsWith("Direct buffer memory")))
 				System.out.println("Out of memory: this is common and acceptable for this test");

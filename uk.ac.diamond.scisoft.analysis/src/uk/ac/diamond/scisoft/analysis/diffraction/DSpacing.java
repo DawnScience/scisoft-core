@@ -142,11 +142,11 @@ public class DSpacing {
 		minor.cross(normal, beam);
 		double eta = minor.length();
 		if (eta == 0) {
-			major = detector.getVerticalVector();
+			major = detector.getPixelColumn();
 		} else {
 			major.cross(normal, minor);
 		}
-		double angle = major.angle(detector.getHorizontalVector());
+		double angle = major.angle(detector.getPixelRow());
 
 		Vector3d intersect = detector.getBeamCentrePosition();
 		double r = intersect.length();

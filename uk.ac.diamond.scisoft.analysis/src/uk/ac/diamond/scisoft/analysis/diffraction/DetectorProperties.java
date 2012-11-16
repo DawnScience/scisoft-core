@@ -34,11 +34,13 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventTyp
  * <p>
  * The laboratory reference frame is oriented so that the z-axis is along the beam direction (or as close to that as
  * possible so it forms a orthogonal basis with its other two axis), its y-axis is anti-parallel to local direction of
- * gravity, and its x-axis is horizontal. The area detector has a reference frame that describes its orientation where
- * the image rows and columns are anti-parallel to the frame's x and y axes and the z-axis is anti-parallel to the area
- * detector's outward normal. The detector centre locates the top-left corner of the (0,0) pixel of the image where the
- * image coordinates start off with (0,0) in the top-left corner of the image and end at (width-1,height-1) in the
- * bottom-right corner pixel.
+ * gravity, and its x-axis is horizontal. The area detector has a frame that describes its orientation relative to the
+ * laboratory reference frame. In an idealised case, the detector frame coincides with the laboratory but has its origin
+ * situated at the top-left corner of the top-leftmost pixel of the corrected image that recorded by the detector. The
+ * image is presented as if seen from the beam source's perspective and image coordinates start off with (0,0) in the
+ * top-left corner of the image and end at (width-1,height-1) in the bottom-right corner pixel. Thus the image rows and
+ * columns are anti-parallel to the area detector frame's x and y axes and its z-axis is anti-parallel to the area
+ * detector's outward (to the sample) normal.
  */
 public class DetectorProperties implements Serializable {
 	/**
@@ -310,10 +312,10 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return a vector describing the horizontal component of the detector in space. This vector describes the
-	 *         horizontal component of a pixel.
+	 * @return a vector describing the row-wise component of a detector pixel in space.
+	 * I.e. the horizontal (in an image) edge of a pixel
 	 */
-	public Vector3d getHorizontalVector() {
+	public Vector3d getPixelRow() {
 		Vector3d horVec = new Vector3d(-hPxSize, 0, 0);
 
 		orientation.transform(horVec);
@@ -321,10 +323,10 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return a vector describing the vertical component of the detector in space. This vector describes the vertical
-	 *         component of a pixel.
+	 * @return a vector describing the column-wise component of a detector pixel in space
+	 * I.e. the vertical (in an image) edge of a pixel
 	 */
-	public Vector3d getVerticalVector() {
+	public Vector3d getPixelColumn() {
 		Vector3d vertVec = new Vector3d(0, -vPxSize, 0);
 
 		orientation.transform(vertVec);
@@ -442,11 +444,11 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * Set detector orientation using a set of Euler angles in ZXZ order
+	 * Set detector orientation using a set of (proper) Euler angles in ZXZ order
 	 * 
-	 * @param alpha
-	 * @param beta
-	 * @param gamma
+	 * @param alpha first angle about global z
+	 * @param beta second angle about local x
+	 * @param gamma third angle about local z
 	 */
 	public void setOrientationEulerZXZ(final double alpha, final double beta, final double gamma) {
 		if (orientation == null)
@@ -460,11 +462,11 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * Set detector orientation using a set of Euler angles in ZYZ order
+	 * Set detector orientation using a set of (proper) Euler angles in ZYZ order
 	 * 
-	 * @param alpha
-	 * @param beta
-	 * @param gamma
+	 * @param alpha first angle about global z
+	 * @param beta second angle about local y
+	 * @param gamma third angle about local z
 	 */
 	public void setOrientationEulerZYZ(final double alpha, final double beta, final double gamma) {
 		if (orientation == null)
@@ -475,6 +477,50 @@ public class DetectorProperties implements Serializable {
 		orientation.rotZ(gamma);
 		orientation.mul(tb);
 		calcInverse();
+	}
+
+	/**
+	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees
+	 * 
+	 * @param yaw rotate about vertical axis (positive is to the right, east or clockwise looking down)
+	 * @param pitch rotate about horizontal axis (positive is upwards)
+	 * @param roll rotate about normal (positive is clockwise looking along normal)
+	 */
+	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
+		if (orientation == null)
+			orientation = new Matrix3d();
+		ta.rotY(Math.toRadians(-yaw));
+		tb.rotX(Math.toRadians(pitch));
+		tb.mul(ta);
+		orientation.rotZ(Math.toRadians(-roll));
+		orientation.mul(tb);
+		calcInverse();
+	}
+
+	/**
+	 * Get detector normal (from face out to sample) as a set of yaw, pitch and roll angles in degrees.
+	 * Note, in the gimbal lock case (when pitch is +/- 90 degrees), roll is returned as zero.
+	 * @return yaw, pitch and roll as defined in {@link #setNormalAnglesInDegrees(double, double, double)}
+	 */
+	public double[] getNormalAnglesInDegrees() {
+		if (orientation == null)
+			return new double[3];
+
+		double sp = orientation.getM21();
+		double cp = Math.sqrt(1 - sp * sp);
+		double yaw;
+		double roll;
+		if (cp == 0) {
+			// gimbal lock case
+			yaw  = -Math.atan2(orientation.getM10(), orientation.getM00());
+			roll = 0;
+		} else {
+			yaw  = Math.atan2(orientation.getM20(), orientation.getM22());
+			roll = Math.atan2(orientation.getM01(), orientation.getM11());
+		}
+
+		double pitch = Math.asin(sp);
+		return new double[] {Math.toDegrees(yaw), Math.toDegrees(pitch), Math.toDegrees(roll)};
 	}
 
 	/**

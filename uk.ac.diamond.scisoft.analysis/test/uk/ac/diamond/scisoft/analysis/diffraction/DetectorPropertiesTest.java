@@ -156,5 +156,52 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("X coord", bc1[0], bc2[0], 1e-7);
 		Assert.assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
 	}
-	
+
+	@Test
+	public void testMatrixConvention() {
+		Matrix3d a = new Matrix3d();
+		double angle = Math.PI/6.; 
+		double answer = -Math.sin(angle);
+		a.rotX(angle);
+		Assert.assertEquals("X rotation", answer, a.getM12(), 1e-7);
+		a.rotY(angle);
+		Assert.assertEquals("Y rotation", answer, a.getM20(), 1e-7);
+		a.rotZ(angle);
+		Assert.assertEquals("Z rotation", answer, a.getM01(), 1e-7);
+	}
+
+	@Test
+	public void testEulerConversions() {
+		DetectorProperties det = new DetectorProperties();
+		double[] angle;
+
+		angle = det.getNormalAnglesInDegrees();
+		Assert.assertEquals("Yaw",   0, angle[0], 1e-7);
+		Assert.assertEquals("Pitch", 0, angle[1], 1e-7);
+		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 25, -35);
+		angle = det.getNormalAnglesInDegrees();
+		Assert.assertEquals("Yaw",   30, angle[0], 1e-7);
+		Assert.assertEquals("Pitch", 25, angle[1], 1e-7);
+		Assert.assertEquals("Roll",  -35, angle[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(-95, -65, 103);
+		angle = det.getNormalAnglesInDegrees();
+		Assert.assertEquals("Yaw",   -95, angle[0], 1e-7);
+		Assert.assertEquals("Pitch", -65, angle[1], 1e-7);
+		Assert.assertEquals("Roll",  103, angle[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(-95, 90, 103);
+		angle = det.getNormalAnglesInDegrees();
+		Assert.assertEquals("Yaw",   103-95, angle[0], 1e-7);
+		Assert.assertEquals("Pitch", 90, angle[1], 1e-7);
+		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(-95, -90, 103);
+		angle = det.getNormalAnglesInDegrees();
+		Assert.assertEquals("Yaw",   103+95-360, angle[0], 1e-7);
+		Assert.assertEquals("Pitch", -90, angle[1], 1e-7);
+		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+	}
 }

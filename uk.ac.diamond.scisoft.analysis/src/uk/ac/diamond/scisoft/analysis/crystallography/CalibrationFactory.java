@@ -87,7 +87,7 @@ public class CalibrationFactory {
 		
 		CalibrationStandards old = staticInstance;
 		staticInstance = cs;
-		if (old!=null && old.getSelectedCalibrant()!=null && !old.getSelectedCalibrant().equals(cs.getSelectedCalibrant())) {
+		if (old!=null && old.getSelectedCalibrant()!=null) {
 		    fireCalibrantSelectionListeners(cs, cs.getSelectedCalibrant());
 		}
 

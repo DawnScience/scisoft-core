@@ -26,12 +26,11 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.diffraction.Resolution;
 
 /**
  * Class that will test calculating
  */
-public class ResolutionTest {
+public class DSpacingTest {
 	DetectorProperties detector;
 	DiffractionCrystalEnvironment diffexp;
 
@@ -61,74 +60,6 @@ public class ResolutionTest {
 	}
 
 	/**
-	 * since the origin of the detector is pixel 00 the scattering vector to this pixel and the detector orientation
-	 * should be identical
-	 */
-	@Test
-	public void compareVectorToOrigin() {
-
-		Vector3d newOrigin = new Vector3d(130, 120, 200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(-130, 120, 200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(130, -120, 200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(130, 120, -200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(-130, -120, 200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(130, -120, -200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-
-		newOrigin = new Vector3d(-130, -120, -200);
-		detector.setOrigin(newOrigin);
-		assertEquals(detector.pixelPosition(0, 0), newOrigin);
-	}
-
-//	/**
-//	 * As a general check test the size of the detector a various orientations
-//	 */
-//	@Test
-//	public void testDetectorSize() {
-//		// detector size for assert
-//		double detSizeX = detector.getDetectorSizeH();
-//		double detSizeY = detector.getDetectorSizeV();
-//		double diagDetSize = Math.sqrt((detSizeX * detSizeX) + (detSizeY * detSizeY));
-//		int[] detectorCorners = { 0, 0, 0, 3072, 3072, 0, 3072, 3072 };
-//		Vector3d px1topx4;
-//
-//		px1topx4 = Resolution.pixelToPixelVector(detector, detectorCorners[0], detectorCorners[1], detectorCorners[6],
-//				detectorCorners[7]);
-//		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
-//
-//		Matrix3d newOri = detector.getOrientation();
-//		newOri.rotY(1.5);
-//		detector.setOrientation(newOri);
-//
-//		px1topx4 = Resolution.pixelToPixelVector(detector, detectorCorners[0], detectorCorners[1], detectorCorners[6],
-//				detectorCorners[7]);
-//		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
-//
-//		detector.setOrigin(new Vector3d(-150, 250, 389));
-//
-//		px1topx4 = Resolution.pixelToPixelVector(detector, detectorCorners[0], detectorCorners[1], detectorCorners[6],
-//				detectorCorners[7]);
-//		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
-//
-//	}
-
-	/**
 	 * Calculates the d spacing between peaks in pixels
 	 */
 	@Test
@@ -136,7 +67,7 @@ public class ResolutionTest {
 		int[] testingPix = { 854, 899, 864, 897,864, 897, 874, 894, 884, 892, 894, 889, 904, 886, 914, 884, 924, 882 };
 		double[] dspacing;
 		try {
-			dspacing = Resolution.peakDistances(testingPix, detector, diffexp);
+			dspacing = DSpacing.dSpacingsFromPixelCoords(detector, diffexp, testingPix);
 			double average = 0;
 
 			for (int i = 0; i < dspacing.length;) {

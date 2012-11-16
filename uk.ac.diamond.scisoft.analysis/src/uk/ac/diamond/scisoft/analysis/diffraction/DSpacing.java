@@ -56,12 +56,26 @@ public class DSpacing {
 
 		@Override
 		public boolean equals(Object obj) {
-			return Double.doubleToRawLongBits(x) == Double.doubleToRawLongBits(y);
+			if (obj instanceof Pair) {
+				Pair other = (Pair) obj;
+				if (this == other)
+					return true;
+
+				return Double.doubleToRawLongBits(x) == Double.doubleToRawLongBits(other.x) &&
+						Double.doubleToRawLongBits(y) == Double.doubleToRawLongBits(other.y);
+			}
+
+			return false;
 		}
 
 		@Override
 		public int hashCode() {
 			return (int) (Double.doubleToRawLongBits(x) * 17 + Double.doubleToRawLongBits(y));
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%f, %f)", x, y);
 		}
 	}
 
@@ -88,7 +102,7 @@ public class DSpacing {
 
 		Vector3d q = new Vector3d();
 		QSpace qspace = new QSpace(detector, diffExp);
-		double[] spacings = new double[coords.size()];
+		double[] spacings = new double[coords.size()-1];
 		Iterator<Pair> it = coords.iterator();
 		Pair p2 = it.next();
 		int i = 0;

@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import static org.junit.Assert.assertEquals;
 import gda.util.TestUtils;
 
 import javax.vecmath.Matrix3d;
@@ -155,6 +156,75 @@ public class DetectorPropertiesTest {
 		double[] bc2 = det.getBeamCentreCoords();
 		Assert.assertEquals("X coord", bc1[0], bc2[0], 1e-7);
 		Assert.assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
+	}
+
+	@Test
+	public void testDetectorOrigin() {
+		DetectorProperties detector = new DetectorProperties(detectorOrigin, beamCentre, imageSizePix[0], imageSizePix[1], pixelSize,
+				pixelSize, orientationMatrix);
+		Vector3d newOrigin;
+
+		newOrigin = new Vector3d(130, 120, 200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(-130, 120, 200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(130, -120, 200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(130, 120, -200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(-130, -120, 200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(130, -120, -200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+
+		newOrigin = new Vector3d(-130, -120, -200);
+		detector.setOrigin(newOrigin);
+		assertEquals(detector.pixelPosition(0, 0), newOrigin);
+	}
+
+	/**
+	 * As a general check test the size of the detector a various orientations
+	 */
+	@Test
+	public void testDetectorSize() {
+	DetectorProperties detector = new DetectorProperties(detectorOrigin, beamCentre, imageSizePix[0], imageSizePix[1], pixelSize,
+			pixelSize, orientationMatrix);
+		// detector size for assert
+		double detSizeX = detector.getDetectorSizeH();
+		double detSizeY = detector.getDetectorSizeV();
+		double diagDetSize = Math.sqrt((detSizeX * detSizeX) + (detSizeY * detSizeY));
+		int[] detectorCorners = { 0, 0, 0, 3072, 3072, 0, 3072, 3072 };
+		Vector3d px1topx4 = new Vector3d();
+
+		px1topx4.sub(detector.pixelPosition(detectorCorners[0], detectorCorners[1]),
+				detector.pixelPosition(detectorCorners[6], detectorCorners[7]));
+		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
+
+		Matrix3d newOri = detector.getOrientation();
+		newOri.rotY(1.5);
+		detector.setOrientation(newOri);
+
+		px1topx4.sub(detector.pixelPosition(detectorCorners[0], detectorCorners[1]),
+				detector.pixelPosition(detectorCorners[6], detectorCorners[7]));
+		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
+
+		detector.setOrigin(new Vector3d(-150, 250, 389));
+
+		px1topx4.sub(detector.pixelPosition(detectorCorners[0], detectorCorners[1]),
+				detector.pixelPosition(detectorCorners[6], detectorCorners[7]));
+		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
+
 	}
 
 	@Test

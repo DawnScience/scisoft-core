@@ -479,13 +479,15 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			public Collection<String> getMetaNames() throws Exception{
 				return Collections.unmodifiableCollection(textMetadata.keySet());
 			}
+			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Integer> getDataSizes() {
-				return Collections.unmodifiableMap(dataSizes);
+				return dataSizes == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(dataSizes);
 			}
+			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, int[]> getDataShapes() {
-				return Collections.unmodifiableMap(dataShapes);
+				return dataShapes == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(dataShapes);
 			}
 			
 			@Override

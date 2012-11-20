@@ -24,6 +24,7 @@ public class DetectorPropertyEvent extends EventObject {
 		BEAM_CENTRE,
 		HPXSIZE,
 		VPXSIZE,
+		NORMAL,
 	}
 
 	private EventType type;

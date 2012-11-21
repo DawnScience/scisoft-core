@@ -150,6 +150,7 @@ public class EllipticalROI extends ROIBase {
 	 */
 	public void setAngle(double angle) {
 		ang = angle;
+		checkAngle();
 	}
 
 	/**

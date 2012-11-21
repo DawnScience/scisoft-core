@@ -495,7 +495,7 @@ public class DetectorProperties implements Serializable {
 		orientation.rotZ(Math.toRadians(-roll));
 		orientation.mul(tb);
 		calcInverse();
-		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));
 	}
 
 	/**

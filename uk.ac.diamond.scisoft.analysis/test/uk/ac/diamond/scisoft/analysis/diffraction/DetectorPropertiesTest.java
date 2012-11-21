@@ -298,8 +298,12 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
 		Assert.assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
 
+		c = det.getBeamCentreCoords();
 		det.setNormalAnglesInDegrees(30, 0, 0);
 		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
 		Assert.assertEquals("Detector distance", 600*Math.cos(Math.toRadians(30)), det.getDetectorDistance(), 1e-7);
+		double[] d = det.getBeamCentreCoords();
+		Assert.assertEquals("Beam centre, x", c[0], d[0], 1e-7);
+		Assert.assertEquals("Beam centre, y", c[1], d[1], 1e-7);
 	}
 }

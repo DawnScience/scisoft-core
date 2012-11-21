@@ -527,7 +527,7 @@ public class DetectorProperties implements Serializable {
 	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
 		Vector3d c = getBeamCentrePosition();
 		Vector3d d = new Vector3d();
-		d.sub(c, origin);
+		d.sub(origin, c);
 		invOrientation.transform(d);  // relative beam centre in image frame
 
 		if (orientation == null)
@@ -979,5 +979,10 @@ public class DetectorProperties implements Serializable {
 		setHPxSize(original.getHPxSize());
 		fire = true;
 		setOrientation(new Matrix3d(original.getOrientation()));
+	}
+
+	@Override
+	public String toString() {
+		return "DP: o = " + origin + ", n = " + normal;
 	}
 }

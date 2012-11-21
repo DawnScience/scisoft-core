@@ -39,7 +39,7 @@ public class DetectorPropertyEvent extends EventObject {
 	}
 
 	public boolean hasOriginChanged() {
-		return type == EventType.ORIGIN;
+		return type == EventType.ORIGIN || type == EventType.NORMAL;
 	}
 
 	public boolean hasBeamCentreChanged() {
@@ -52,5 +52,9 @@ public class DetectorPropertyEvent extends EventObject {
 
 	public boolean hasVPxSizeChanged() {
 		return type == EventType.VPXSIZE;
+	}
+
+	public boolean hasNormalChanged() {
+		return type == EventType.NORMAL;
 	}
 }

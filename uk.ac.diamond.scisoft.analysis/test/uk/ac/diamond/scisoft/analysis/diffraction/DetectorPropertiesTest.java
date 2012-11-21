@@ -242,7 +242,7 @@ public class DetectorPropertiesTest {
 
 	@Test
 	public void testEulerConversions() {
-		DetectorProperties det = new DetectorProperties();
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100,100});
 		double[] angle;
 
 		angle = det.getNormalAnglesInDegrees();
@@ -273,5 +273,33 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("Yaw",   103+95-360, angle[0], 1e-7);
 		Assert.assertEquals("Pitch", -90, angle[1], 1e-7);
 		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+	}
+
+	@Test
+	public void testBeamCentreDistance() {
+		DetectorProperties det = new DetectorProperties(new Vector3d(500, 550, 600), 1000, 1100, 1, 1, null);
+		
+		Vector3d o = det.getOrigin();
+		Assert.assertEquals("Detector origin, x", 500, o.x, 1e-7);
+		Assert.assertEquals("Detector origin, y", 550, o.y, 1e-7);
+		Assert.assertEquals("Detector origin, z", 600, o.z, 1e-7);
+
+		double[] c = det.getBeamCentreCoords();
+		Assert.assertEquals("Beam centre, x", 500, c[0], 1e-7);
+		Assert.assertEquals("Beam centre, y", 550, c[1], 1e-7);
+
+		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		Assert.assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
+		det.setBeamCentreDistance(700);
+		Assert.assertEquals("Beam centre distance", 700, det.getBeamCentreDistance(), 1e-7);
+		Assert.assertEquals("Detector distance", 700, det.getDetectorDistance(), 1e-7);
+
+		det.setDetectorDistance(600);
+		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		Assert.assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 0, 0);
+		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		Assert.assertEquals("Detector distance", 600*Math.cos(Math.toRadians(30)), det.getDetectorDistance(), 1e-7);
 	}
 }

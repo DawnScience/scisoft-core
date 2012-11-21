@@ -28,7 +28,7 @@ import javax.vecmath.Vector3d;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventType;
 
 /**
- * This class will contain the information describing the properties of the detector that are relevant to diffraction
+ * This class will contain the information describing the properties of an area detector that are relevant to diffraction
  * calculations. The Diamond reference frame is defined so its origin is at the intersection of the beam and the sample.
  * [This is a volume but I guess it's the centre of this volume.]
  * <p>
@@ -69,6 +69,7 @@ public class DetectorProperties implements Serializable {
 	public DetectorProperties() {
 		ta = new Matrix3d();
 		tb = new Matrix3d();
+		normal = new Vector3d(0, 0, -1);
 	}
 	
 	/**
@@ -140,7 +141,7 @@ public class DetectorProperties implements Serializable {
 			this.orientation = new Matrix3d();
 			this.orientation.setIdentity();
 		}
-		calcInverse();
+		calcNormalAndInverse();
 	}
 
 	
@@ -179,7 +180,7 @@ public class DetectorProperties implements Serializable {
 			this.orientation = new Matrix3d();
 			this.orientation.setIdentity();
 		}
-		calcInverse();
+		calcNormalAndInverse();
 	}
 
 	/**
@@ -202,16 +203,15 @@ public class DetectorProperties implements Serializable {
 		} else {
 			orientation = new Matrix3d(detprop.orientation);
 		}
-		calcInverse();
+		calcNormalAndInverse();
 	}
-	
+
 	/**
-	 * Method to produce a Detector properties object populated with sensible default values
+	 * Produce a Detector properties object populated with sensible default values given image shape.
+	 * It produces a detector normal to the beam and centred on the beam with square pixels of 0.1024mm and set 200mm
+	 * from the sample.
 	 * 
-	 * @param shape
-	 *            shape from the AbstractDataset the detector properties are created for
-	 *            Used to produce the initial detector origin
-	 *            
+	 * @param shape image shape
 	 */
 	public static DetectorProperties getDefaultDetectorProperties(int[] shape) {
 		int heightInPixels = shape[0];
@@ -223,15 +223,9 @@ public class DetectorProperties implements Serializable {
 		double distance = 200.00;
 
 		// Create the detector origin vector based on the above
-		double[] detectorOrigin = { (widthInPixels - widthInPixels/2d) * pixelSizeX, (heightInPixels - heightInPixels/2d) * pixelSizeY, distance };
-		
-		// The rotation of the detector relative to the reference frame - assume no rotation
-		double detectorRotationX = 0.0; 
-		double detectorRotationY = 0.0; 
-		double detectorRotationZ = 0.0; 
+		Vector3d dOrigin = new Vector3d((widthInPixels - widthInPixels/2d) * pixelSizeX, (heightInPixels - heightInPixels/2d) * pixelSizeY, distance);
 
-		return new DetectorProperties(new Vector3d(detectorOrigin), heightInPixels, widthInPixels, 
-				pixelSizeX, pixelSizeY, detectorRotationX, detectorRotationY, detectorRotationZ);
+		return new DetectorProperties(dOrigin, heightInPixels, widthInPixels, pixelSizeX, pixelSizeY, null);
 	}
 
 	@Override
@@ -293,12 +287,9 @@ public class DetectorProperties implements Serializable {
 
 	
 
-	private void calcInverse() {
+	private void calcNormalAndInverse() {
 		// calculate the vector from the origin of the detector that is perpendicular to the plane of the detector.
-		if (normal == null)
-			normal = new Vector3d(0, 0, 1);
-		else
-			normal.set(0, 0, 1);
+		normal.set(0, 0, -1);
 
 		orientation.transform(normal);
 
@@ -347,6 +338,51 @@ public class DetectorProperties implements Serializable {
 	public void setOrigin(Vector3d origin) {
 		this.origin = origin;
 		// Tell listeners
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
+	}
+
+	/**
+	 * Get distance from sample to beam centre.
+	 * @return distance can be infinity if direct beam does not intersect detector.
+	 */
+	public double getBeamCentreDistance() {
+		try {
+			return getBeamCentrePosition().length();
+		} catch (IllegalStateException e) {
+			return Double.POSITIVE_INFINITY;
+		}
+	}
+
+	/**
+	 * Set distance from sample to beam centre.
+	 * <p>
+	 * Can throw an exception if direct beam does not intersect detector.
+	 * @param distance
+	 */
+	public void setBeamCentreDistance(double distance) {
+		distance -= getBeamCentrePosition().length();
+		Vector3d b = new Vector3d(beamVector);
+		b.scale(distance);
+		origin.add(b);
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
+	}
+
+	/**
+	 * Get distance from sample to detector
+	 * @return distance from sample to closest point on detector 
+	 */
+	public double getDetectorDistance() {
+		return -normal.dot(origin);
+	}
+
+	/**
+	 * Set distance from sample to detector
+	 * @param distance
+	 */
+	public void setDetectorDistance(double distance) {
+		Vector3d b = new Vector3d(normal);
+		b.scale(getDetectorDistance()-distance);
+		origin.add(b);
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
 	}
 
@@ -440,7 +476,7 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void setOrientation(Matrix3d orientation) {
 		this.orientation = orientation;
-		calcInverse();
+		calcNormalAndInverse();
 	}
 
 	/**
@@ -458,7 +494,7 @@ public class DetectorProperties implements Serializable {
 		tb.mul(ta);
 		orientation.rotZ(gamma);
 		orientation.mul(tb);
-		calcInverse();
+		calcNormalAndInverse();
 	}
 
 	/**
@@ -476,17 +512,24 @@ public class DetectorProperties implements Serializable {
 		tb.mul(ta);
 		orientation.rotZ(gamma);
 		orientation.mul(tb);
-		calcInverse();
+		calcNormalAndInverse();
 	}
 
 	/**
-	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees
+	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees.
+	 * <p>
+	 * Note, this re-orients the detector about the beam centre and therefore alters the detector origin.
 	 * 
 	 * @param yaw rotate about vertical axis (positive is to the right, east or clockwise looking down)
 	 * @param pitch rotate about horizontal axis (positive is upwards)
 	 * @param roll rotate about normal (positive is clockwise looking along normal)
 	 */
 	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
+		Vector3d c = getBeamCentrePosition();
+		Vector3d d = new Vector3d();
+		d.sub(c, origin);
+		invOrientation.transform(d);  // relative beam centre in image frame
+
 		if (orientation == null)
 			orientation = new Matrix3d();
 		ta.rotY(Math.toRadians(-yaw));
@@ -494,7 +537,13 @@ public class DetectorProperties implements Serializable {
 		tb.mul(ta);
 		orientation.rotZ(Math.toRadians(-roll));
 		orientation.mul(tb);
-		calcInverse();
+		calcNormalAndInverse();
+
+		// set origin back from beam centre
+		orientation.transform(d);
+		c.add(d);
+		origin = c;
+
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));
 	}
 
@@ -697,6 +746,9 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
+	 * Get beam centre position.
+	 * <p>
+	 * Can throw an illegal state exception when there is no intersection
 	 * @return position of intersection of direct beam with detector
 	 */
 	public Vector3d getBeamCentrePosition() {
@@ -708,28 +760,28 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @param d
-	 * @return point of intersection of direction vector with detector
+	 * @param v vector
+	 * @return point of intersection of vector with detector
 	 */
-	public Vector3d intersect(final Vector3d d) {
+	public Vector3d intersect(final Vector3d v) {
 		Vector3d pos = new Vector3d();
-		intersect(d, pos);
+		intersect(v, pos);
 		return pos;
 	}
 
 	/**
-	 * calculate point of intersection of direction vector with detector
+	 * Calculate point of intersection of vector with detector
 	 * 
-	 * @param d
-	 *            direction vector (does not have to be a unit vector)
+	 * @param v
+	 *            vector (does not have to be a unit vector)
 	 * @param p
 	 *            position vector of intersection
 	 */
-	public void intersect(final Vector3d d, Vector3d p) {
-		p.set(d);
-		double t = normal.dot(d);
+	public void intersect(final Vector3d v, Vector3d p) {
+		p.set(v);
+		double t = normal.dot(v);
 		if (t == 0) {
-			throw new IllegalArgumentException("No intersection possible as direction vector is parallel to detector");
+			throw new IllegalArgumentException("No intersection possible as vector is parallel to detector");
 		}
 		t = normal.dot(origin) / t;
 		p.scale(t);
@@ -745,13 +797,12 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Can throw illegal state exception
 	 * @return The pixel position on the edge of the detector which is closest to the beam centre
 	 */
-	public int[] pixelClosestToBeamCentre() {
+	private int[] pixelClosestToBeamCentre() {
 		if (!inImage(getBeamCentrePosition()))
-			throw new IllegalArgumentException(
-					"The beam does not intersect the detector. There is no complete resolution ring");
+			throw new IllegalStateException("The beam does not intersect the detector");
 		double[] beamCentre = pixelPreciseCoords(getBeamCentrePosition());
 		double shortest = Double.MAX_VALUE;
 		int[] closestCoords = new int[2];
@@ -783,17 +834,17 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return pixel double coordinates of the beam centre (where beam intersects detector)
+	 * @return pixel coordinates of the beam centre (where beam intersects detector)
 	 */
 	public double[] getBeamCentreCoords() {
-        final Vector3d cen = new Vector3d();
+		final Vector3d cen = new Vector3d();
 		pixelCoords(getBeamCentrePosition(), cen);
-		return new double[]{cen.x, cen.y};
+		return new double[] { cen.x, cen.y };
 	}
-	
+
 	/**
 	 * Set beam centre (where beam intersects detector)
-	 * @param coords
+	 * @param coords in image
 	 */
 	public void setBeamCentreCoords(double[] coords) {
 		Vector3d oc = getBeamCentrePosition(); // old beam centre
@@ -808,6 +859,7 @@ public class DetectorProperties implements Serializable {
 			detectorPropListeners = new HashSet<IDetectorPropertyListener>(5);
 		detectorPropListeners.add(l);
 	}
+
 	/**
 	 * Call from dispose of part listening to listen to detector properties changing
 	 * @param l
@@ -816,7 +868,7 @@ public class DetectorProperties implements Serializable {
 		if (detectorPropListeners==null)  return;
 		detectorPropListeners.remove(l);
 	}
-	
+
 	protected void fireDetectorPropertyListeners(DetectorPropertyEvent evt) {
 		if (detectorPropListeners==null || !fire) 
 			return;
@@ -837,6 +889,7 @@ public class DetectorProperties implements Serializable {
 //	}
 
 	/**
+	 * Can throw illegal state exception if beam does not intersect detector
 	 * @return distance to closest edge from beam centre in pixels
 	 */
 	public int distToClosestEdgeInPx() {

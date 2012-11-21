@@ -125,7 +125,7 @@ public class DSpacing {
 	 */
 	public static double radiusFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment difExp,
 			double dSpacing) {
-		double theta = 2*(Math.asin(difExp.getWavelength() / (2 * dSpacing)));
+		double theta = 2 * Math.asin(difExp.getWavelength() / (2 * dSpacing));
 		Vector3d radiusVector = new Vector3d(0, Math.sin(theta), Math.cos(theta));
 		Vector3d beam = new Vector3d(detector.getBeamVector());
 		Vector3d normal = detector.getNormal();
@@ -147,7 +147,7 @@ public class DSpacing {
 	 */
 	public static EllipticalROI ellipseFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment difExp,
 			double dSpacing) {
-		double alpha = 2*(Math.asin(difExp.getWavelength() / (2 * dSpacing)));
+		double alpha = 2 * Math.asin(difExp.getWavelength() / (2 * dSpacing));
 		Vector3d beam = new Vector3d(detector.getBeamVector());
 		Vector3d normal = detector.getNormal();
 

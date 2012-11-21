@@ -28,7 +28,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -36,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -289,10 +287,11 @@ public class LoaderFactory {
 		
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
-		key.setLoadMeta(willLoadMetadata);
-		
+		key.setMetadata(willLoadMetadata);
+
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (DataHolder)cachedObject;
+		// check for type as it could be an IMetadata object
+		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -310,6 +309,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this it should not be registered with LoaderFactory
 				DataHolder holder = loader.loadFile(mon);
+				key.setMetadata(holder.getMetadata() != null);
 				recordSoftReference(key, holder);
 				return holder;
 			} catch (OutOfMemoryError ome) {
@@ -323,14 +323,45 @@ public class LoaderFactory {
 		return null;
 	}
 
-	private static Object LOCK = new Object();
+	private final static Object LOCK = new Object();
+
 	/**
 	 * May be null
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
 	private static Object getSoftReference(LoaderKey key) {
+		Object o = getReference(key);
+		if (o != null) {
+			return o;
+		}
+		if (key.hasMetadata()) { // wanted metadata but none there
+			return null;
+		}
+		key.setMetadata(true); // try with unwanted metadata
+		return getReference(key);
+	}
+
+	/**
+	 * May be null
+	 * @param key
+	 * @return the object referenced or null if it got garbaged or was not cached yet
+	 */
+	private static Object getSoftReferenceWithMetadata(LoaderKey key) {
+		Object o = getReference(key);
+		if (o != null)
+			return o;
+
+		LoaderKey k = findKeyWithMetadata(key);
+		return getReference(k);
+	}
 		
+	/**
+	 * May be null
+	 * @param key
+	 * @return the object referenced or null if it got garbaged or was not cached yet
+	 */
+	private static Object getReference(LoaderKey key) {
 		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
 		synchronized (LOCK) {
 			try {
@@ -342,7 +373,21 @@ public class LoaderFactory {
 			}
 		}
 	}
-	
+
+	private static LoaderKey findKeyWithMetadata(LoaderKey key) {
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
+		synchronized (LOCK) {
+			final String path = key.getFilePath();
+			for (LoaderKey k : SOFT_CACHE.keySet()) {
+				if (k.getFilePath().equals(path) && k.hasMetadata()) {
+					return k;
+				}
+			}
+			return null;
+		}
+
+	}
+
 	private static boolean recordSoftReference(LoaderKey key, Object value) {
 		
 		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return false;
@@ -376,10 +421,18 @@ public class LoaderFactory {
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
-		key.setMeta(true);
+		key.setMetadata(true);
 		
-		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (IMetaData)cachedObject;
+		Object cachedObject = getSoftReferenceWithMetadata(key);
+		if (cachedObject!=null) {
+			if (cachedObject instanceof DataHolder)
+				return ((DataHolder) cachedObject).getMetadata();
+			if (cachedObject instanceof AbstractDataset)
+				return ((AbstractDataset) cachedObject).getMetadata();
+			if (cachedObject instanceof IMetaData)
+				return (IMetaData)cachedObject;
+			logger.warn("Cached object is not a metadata object or contain one");
+		}
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -445,6 +498,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
 				final AbstractDataset set = ((IDataSetLoader) loader).loadSet(path, name, mon);
+				key.setMetadata(set.getMetadata() != null);
 				recordSoftReference(key, set);
 				return set;
 			} catch (Throwable ne) {
@@ -517,7 +571,7 @@ public class LoaderFactory {
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(object.getPath());
 		key.setSlice(object);
-		
+
 		final Object cachedObject = getSoftReference(key);
 		if (cachedObject!=null) return (AbstractDataset)cachedObject;
 
@@ -539,6 +593,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
 				final AbstractDataset set = ((ISliceLoader) loader).slice(object, mon);
+				key.setMetadata(set.getMetadata() != null);
 				recordSoftReference(key, set);
 				return set;
 			} catch (Exception ne) {

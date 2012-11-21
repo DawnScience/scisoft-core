@@ -26,19 +26,18 @@ public class LoaderKey {
 
 	private String  filePath;
 	private long    dataStamp;
-	private boolean isMeta;
-	private boolean isLoadMeta;
 	private String  datasetName;
 	private List<String> datasetNames;
 	private SliceObject slice;
-	
+	private boolean metadata;
+
 	public LoaderKey() {
-		
 	}
-	
+
 	public String getFilePath() {
 		return filePath;
 	}
+
 	/**
 	 * Gets date stamp of file, may throw exception
 	 * @param filePath
@@ -47,24 +46,23 @@ public class LoaderKey {
 		this.filePath  = filePath;
 		this.dataStamp = (new File(filePath)).lastModified();
 	}
+
 	public long getDataStamp() {
 		return dataStamp;
 	}
+
 	public void setDataStamp(long dataStamp) {
 		this.dataStamp = dataStamp;
 	}
-	public boolean isMeta() {
-		return isMeta;
-	}
-	public void setMeta(boolean isMeta) {
-		this.isMeta = isMeta;
-	}
+
 	public String getDatasetName() {
 		return datasetName;
 	}
+
 	public void setDatasetName(String datasetName) {
 		this.datasetName = datasetName;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -73,11 +71,11 @@ public class LoaderKey {
 		result = prime * result + ((datasetName == null) ? 0 : datasetName.hashCode());
 		result = prime * result + ((datasetNames == null) ? 0 : datasetNames.hashCode());
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-		result = prime * result + (isLoadMeta ? 1231 : 1237);
-		result = prime * result + (isMeta ? 1231 : 1237);
+		result = prime * result + (metadata ? 1231 : 1237);
 		result = prime * result + ((slice == null) ? 0 : slice.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -104,9 +102,7 @@ public class LoaderKey {
 				return false;
 		} else if (!filePath.equals(other.filePath))
 			return false;
-		if (isLoadMeta != other.isLoadMeta)
-			return false;
-		if (isMeta != other.isMeta)
+		if (metadata != other.metadata)
 			return false;
 		if (slice == null) {
 			if (other.slice != null)
@@ -114,14 +110,6 @@ public class LoaderKey {
 		} else if (!slice.equals(other.slice))
 			return false;
 		return true;
-	}
-
-	public boolean isLoadMeta() {
-		return isLoadMeta;
-	}
-
-	public void setLoadMeta(boolean isLoadMeta) {
-		this.isLoadMeta = isLoadMeta;
 	}
 
 	public List<String> getDatasetNames() {
@@ -138,5 +126,25 @@ public class LoaderKey {
 
 	public void setSlice(SliceObject slice) {
 		this.slice = slice;
+	}
+
+	@Override
+	public String toString() {
+		return hashCode() + ":" + filePath + "; " + datasetName + ", " + datasetNames + ", " + metadata;
+	}
+
+	/**
+	 * @return true if has metadata
+	 */
+	public boolean hasMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Set has or want metadata
+	 * @param metadata
+	 */
+	public void setMetadata(boolean metadata) {
+		this.metadata = metadata;
 	}
 }

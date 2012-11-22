@@ -562,7 +562,9 @@ public class DetectorProperties implements Serializable {
 		double roll;
 		if (cp == 0) {
 			// gimbal lock case
-			yaw  = -Math.atan2(orientation.getM10(), orientation.getM00());
+			yaw  = Math.atan2(orientation.getM10(), orientation.getM00());
+			if (yaw != 0)
+				yaw = -yaw;
 			roll = 0;
 		} else {
 			yaw  = Math.atan2(orientation.getM20(), orientation.getM22());

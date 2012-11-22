@@ -353,7 +353,7 @@ public class LoaderFactory {
 			return o;
 
 		LoaderKey k = findKeyWithMetadata(key);
-		return getReference(k);
+		return k == null ? null : getReference(k);
 	}
 		
 	/**

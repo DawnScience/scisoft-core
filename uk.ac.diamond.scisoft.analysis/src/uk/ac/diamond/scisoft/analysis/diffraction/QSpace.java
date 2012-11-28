@@ -111,27 +111,13 @@ public class QSpace {
 	 * @param q
 	 * @param p output position vector in reference frame
 	 * @param t output vector (x and y components are pixel coordinates)
-	 * @param pos
 	 */
-	public void pixelPosition(final Vector3d q, Vector3d p, Vector3d t, int[] pos) {
+	public void pixelPosition(final Vector3d q, Vector3d p, Vector3d t) {
 		t.set(q);
 		t.add(ki);
 		t.normalize();
 		detProps.intersect(t, p);
-		if (pos == null)
-			detProps.pixelCoords(p, t);
-		else
-			detProps.pixelCoords(p, t, pos);
-	}
-
-	/**
-	 * Calculate pixel position from given q
-	 * @param q
-	 * @param p output position vector in reference frame
-	 * @param t output vector (x and y components are pixel coordinates)
-	 */
-	public void pixelPosition(final Vector3d q, Vector3d p, Vector3d t) {
-		pixelPosition(q, p, t, null);
+		detProps.pixelCoords(p, t);
 	}
 
 	/**

@@ -21,11 +21,15 @@ import static org.junit.Assert.assertEquals;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 
 /**
  * Class that will test calculating
@@ -74,11 +78,109 @@ public class DSpacingTest {
 				average += dspacing[i++];
 			}
 			average = average / dspacing.length;
-			assertEquals(164, average, 1); // 171 <- is the old value but the method appears to be mathematically
+			assertEquals(161, average, 1); // 171 <- is the old value but the method appears to be mathematically
 											// correct
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
+	@Test
+	public void testEllipses() {
+		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(0.5);
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
+
+		ROIBase roi = DSpacing.conicFromDSpacing(det, env, 1);
+		EllipticalROI eroi = (EllipticalROI) roi;
+		Assert.assertTrue("Circle", eroi.isCircular());
+		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertEquals("Angle", -30, eroi.getAngleDegrees(), 1e-7);
+		Assert.assertTrue("Circle", eroi.isCircular());
+		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertEquals("Angle", 30, eroi.getAngleDegrees(), 1e-7);
+		Assert.assertTrue("Circle", eroi.isCircular());
+		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 0, 0);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 180, eroi.getAngleDegrees(), 1e-7);
+//		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
+
+		det.setNormalAnglesInDegrees(-30, 0, 0);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 0, eroi.getAngleDegrees(), 1e-7);
+//		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 30, 0);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -30, 0);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", -90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 30, 30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", -30+90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 30, -30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 30+90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -30, 30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", -30-90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -30, -30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 30-90, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 0, 30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 180-30, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 0, -30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", -180+30, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(-30, 0, 30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", -30, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(-30, 0, -30);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 30, eroi.getAngleDegrees(), 1e-7);
 	}
 }

@@ -227,10 +227,13 @@ public class DetectorPropertiesTest {
 
 	}
 
+	/**
+	 * Check that vecmath has active transformation
+	 */
 	@Test
 	public void testMatrixConvention() {
 		Matrix3d a = new Matrix3d();
-		double angle = Math.PI/6.; 
+		double angle = Math.PI/6.;
 		double answer = -Math.sin(angle);
 		a.rotX(angle);
 		Assert.assertEquals("X rotation", answer, a.getM12(), 1e-7);
@@ -264,13 +267,13 @@ public class DetectorPropertiesTest {
 
 		det.setNormalAnglesInDegrees(-95, 90, 103);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   103-95, angle[0], 1e-7);
+		Assert.assertEquals("Yaw",   -95-103+360, angle[0], 1e-7);
 		Assert.assertEquals("Pitch", 90, angle[1], 1e-7);
 		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(-95, -90, 103);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   103+95-360, angle[0], 1e-7);
+		Assert.assertEquals("Yaw",   -95+103, angle[0], 1e-7);
 		Assert.assertEquals("Pitch", -90, angle[1], 1e-7);
 		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
 	}
@@ -305,5 +308,179 @@ public class DetectorPropertiesTest {
 		double[] d = det.getBeamCentreCoords();
 		Assert.assertEquals("Beam centre, x", c[0], d[0], 1e-7);
 		Assert.assertEquals("Beam centre, y", c[1], d[1], 1e-7);
+	}
+
+	@Test
+	public void testDetectorOrientation() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100,100});
+		Vector3d row = new Vector3d(-1, 0, 0);
+		double roll = 0;
+
+		// check yaw
+		Assert.assertEquals("Normal to row", 90, Math.toDegrees(det.getNormal().angle(row)), 1e-7);
+		double yaw = 30;
+		det.setNormalAnglesInDegrees(yaw, 0, 0);
+		Vector3d n = det.getNormal();
+		Assert.assertEquals("Normal to row", 90+yaw, Math.toDegrees(n.angle(row)), 1e-7);
+		Assert.assertEquals("Normal x", Math.sin(Math.toRadians(yaw)), n.x, 1e-7);
+		Assert.assertEquals("Normal y", 0, n.y, 1e-7);
+		Assert.assertEquals("Normal z", -Math.cos(Math.toRadians(yaw)), n.z, 1e-7);
+
+		// check pitch
+		double pitch = 30;
+		det.setNormalAnglesInDegrees(0, pitch, 0);
+		n = det.getNormal();
+		Assert.assertEquals("Normal to row", 90, Math.toDegrees(n.angle(row)), 1e-7);
+		Assert.assertEquals("Normal to beam", 180-pitch, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
+		Assert.assertEquals("Normal x", 0, n.x, 1e-7);
+		Assert.assertEquals("Normal y", Math.sin(Math.toRadians(pitch)), n.y, 1e-7);
+		Assert.assertEquals("Normal z", -Math.cos(Math.toRadians(pitch)), n.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 0);
+		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+
+		roll = 30;
+		det.setNormalAnglesInDegrees(0, 0, roll);
+		n = new Vector3d(det.getNormal());
+		Assert.assertEquals("Normal", 180, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
+		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+
+		roll = 60;
+		det.setNormalAnglesInDegrees(0, 0, roll);
+		Assert.assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
+		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+
+		// test normal is same for any roll...
+		Vector3d na = getNormal(30, 0, 0);
+		Vector3d nb = getNormal(0, 30, 0);
+		Vector3d nc = getNormal(30, 30, 0);
+
+		getNormal(0, 0, 30);
+
+		n = getNormal(30, 0, 30);
+		Assert.assertTrue("Normals rolled", n.epsilonEquals(na, 1e-7));
+		n = getNormal(0, 30, 30);
+		Assert.assertTrue("Normals rolled", n.epsilonEquals(nb, 1e-7));
+		n = getNormal(30, 30, 30);
+		Assert.assertTrue("Normals rolled", n.epsilonEquals(nc, 1e-7));
+
+		// check normal to row angle
+		det.setNormalAnglesInDegrees(0, 0, 0);
+		Assert.assertEquals("Normal to row", 90, Math.toDegrees(row.angle(det.getNormal())), 1e-7);
+		det.setNormalAnglesInDegrees(30, 0, roll);
+		nb = det.getNormal();
+		Assert.assertEquals("Normals rolled", 0, Math.toDegrees(na.angle(nb)), 1e-7);
+//		Assert.assertEquals("Normal to row", 90, Math.toDegrees(det.getPixelRow().angle(det.getNormal())), 1e-7);
+//
+//		System.err.printf("Row-nNorm %f\n", Math.toDegrees(row.angle(det.getNormal())));
+//		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+
+	}
+
+	private Vector3d getNormal(double... angles) {
+		Matrix3d ta;
+		Vector3d va;
+
+		ta = DetectorProperties.inverseMatrixFromEulerAngles(angles[0], angles[1], angles[2]);
+		va = new Vector3d(0, 0, -1);
+		ta.transform(va);
+//		System.err.println(Arrays.toString(angles) + ": " + va);
+		return va;
+	}
+
+	public Vector3d findMajor(final Vector3d beam, final Vector3d normal) {
+		Vector3d u = new Vector3d();
+		Vector3d v = new Vector3d(-1, 0, 0);
+
+		u.cross(normal, beam);
+		if (u.length() != 0) {
+			v.cross(u, normal);
+			v.normalize();
+		}
+		return v;
+	}
+
+	@Test
+	public void testMajorAxis() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
+
+		final Vector3d beam = det.getBeamVector();
+		Vector3d major = findMajor(beam, det.getNormal());
+		double angle = 0;
+
+		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
+		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
+		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+
+		angle = 30;
+		det.setNormalAnglesInDegrees(angle, 0, 0);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
+		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(0, angle, 0);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", 0, major.x, 1e-7);
+		Assert.assertEquals("Maj y", Math.cos(Math.toRadians(angle)), major.y, 1e-7);
+		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, angle);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
+		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
+		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(-angle, 0, 0);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", -Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
+		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -angle, 0);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", 0, major.x, 1e-7);
+		Assert.assertEquals("Maj y", -Math.cos(Math.toRadians(angle)), major.y, 1e-7);
+		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -angle);
+		major = findMajor(beam, det.getNormal());
+		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
+		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
+		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+	}
+
+
+	@Test
+	public void testMatrixMultiply() {
+		Matrix3d a = new Matrix3d();
+		a.setM01(1);
+		a.setM10(1);
+		a.setM22(1);
+
+		Matrix3d b = new Matrix3d();
+		b.setM00(1);
+		b.setM11(-1);
+		b.setM22(1);
+
+		Matrix3d c = new Matrix3d();
+		c.mul(b, a);
+		Assert.assertEquals("M01", 1, c.getM01(), 1e-7);
+		Assert.assertEquals("M10", -1, c.getM10(), 1e-7);
+		Assert.assertEquals("M22", 1, c.getM22(), 1e-7);
+
+		c.mul(a, b);
+		Assert.assertEquals("M01", -1, c.getM01(), 1e-7);
+		Assert.assertEquals("M10", 1, c.getM10(), 1e-7);
+		Assert.assertEquals("M22", 1, c.getM22(), 1e-7);
+
+		// this.mul(other) == this x mul
+		a.mul(b);
+		Assert.assertEquals("M01", a.getM01(), c.getM01(), 1e-7);
+		Assert.assertEquals("M10", a.getM10(), c.getM10(), 1e-7);
+		Assert.assertEquals("M22", a.getM22(), c.getM22(), 1e-7);
 	}
 }

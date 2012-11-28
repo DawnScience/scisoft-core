@@ -17,10 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
@@ -55,11 +52,8 @@ public class DetectorProperties implements Serializable {
 	private int py; // height in pixels
 	private double hPxSize; // horizontal pixel size (in mm)
 	private double vPxSize; // vertical pixel size (in mm)
-	private Matrix3d orientation; // transformation from reference frame to detector frame
+	private Matrix3d orientation; // passive transformation from reference frame to detector frame
 	private Matrix3d invOrientation; // its inverse
-	private Matrix3d ta;
-	private Matrix3d tb;
-	// TODO move controller away from model?
 	private boolean fire = true;
 	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
 	
@@ -67,8 +61,6 @@ public class DetectorProperties implements Serializable {
 	 * Null constructor
 	 */
 	public DetectorProperties() {
-		ta = new Matrix3d();
-		tb = new Matrix3d();
 		normal = new Vector3d(0, 0, -1);
 	}
 	
@@ -136,12 +128,12 @@ public class DetectorProperties implements Serializable {
 		vPxSize = pixelHeightInMM;
 		hPxSize = pixelWidthInMM;
 		
-		this.orientation = euler;
-		if (this.orientation == null) {
-			this.orientation = new Matrix3d();
-			this.orientation.setIdentity();
+		orientation = euler;
+		if (orientation == null) {
+			orientation = new Matrix3d();
+			orientation.setIdentity();
 		}
-		calcNormalAndInverse();
+		calcNormal(true);
 	}
 
 	
@@ -180,7 +172,7 @@ public class DetectorProperties implements Serializable {
 			this.orientation = new Matrix3d();
 			this.orientation.setIdentity();
 		}
-		calcNormalAndInverse();
+		calcNormal(true);
 	}
 
 	/**
@@ -203,7 +195,7 @@ public class DetectorProperties implements Serializable {
 		} else {
 			orientation = new Matrix3d(detprop.orientation);
 		}
-		calcNormalAndInverse();
+		calcNormal(true);
 	}
 
 	/**
@@ -285,21 +277,24 @@ public class DetectorProperties implements Serializable {
 		return true;
 	}
 
-	
+	private void calcNormal(boolean fromPassive) {
+		if (fromPassive) {
+			if (invOrientation == null)
+				invOrientation = new Matrix3d();
 
-	private void calcNormalAndInverse() {
+			invOrientation.transpose(orientation); // assume it's orthogonal
+			// invOrientation.invert(orientation);
+		} else {
+			if (orientation == null)
+				orientation = new Matrix3d();
+
+			orientation.transpose(invOrientation); // assume it's orthogonal
+		}
+		
 		// calculate the vector from the origin of the detector that is perpendicular to the plane of the detector.
 		normal.set(0, 0, -1);
 
-		orientation.transform(normal);
-
-		if (invOrientation == null)
-			invOrientation = new Matrix3d(orientation);
-		else
-			invOrientation.set(orientation);
-
-		invOrientation.transpose(); // assume it's orthogonal
-		// invOrientation.invert();
+		invOrientation.transform(normal); // use active transformation
 	}
 
 	/**
@@ -309,7 +304,7 @@ public class DetectorProperties implements Serializable {
 	public Vector3d getPixelRow() {
 		Vector3d horVec = new Vector3d(-hPxSize, 0, 0);
 
-		orientation.transform(horVec);
+		invOrientation.transform(horVec);
 		return horVec;
 	}
 
@@ -320,12 +315,12 @@ public class DetectorProperties implements Serializable {
 	public Vector3d getPixelColumn() {
 		Vector3d vertVec = new Vector3d(0, -vPxSize, 0);
 
-		orientation.transform(vertVec);
+		invOrientation.transform(vertVec);
 		return vertVec;
 	}
 
 	/**
-	 * @return origin of the detector (top-left corner of (0,0) pixel)
+	 * @return reference to origin of the detector (top-left corner of (0,0) pixel)
 	 */
 	public Vector3d getOrigin() {
 		return origin;
@@ -463,20 +458,29 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return detector normal
+	 * @return reference to detector normal (do not change)
 	 */
 	public Vector3d getNormal() {
 		return normal;
 	}
 
 	/**
-	 * @param orientation
-	 *            matrix describing the orientation of the detector relative to the origin of the detector that
-	 *            describes the position of the detector relative to the crystal in space.
+	 * Get orientation of the detector as described by a passive transformation from the laboratory
+	 * frame to the detector frame
+	 * @return reference to matrix
+	 */
+	public Matrix3d getOrientation() {
+		return orientation;
+	}
+
+	/**
+	 * Set the detector orientation by a passive transformation from the laboratory
+	 * frame to the detector frame
+	 * @param orientation passive transformation matrix (vecmath is active)
 	 */
 	public void setOrientation(Matrix3d orientation) {
 		this.orientation = orientation;
-		calcNormalAndInverse();
+		calcNormal(true);
 	}
 
 	/**
@@ -487,14 +491,16 @@ public class DetectorProperties implements Serializable {
 	 * @param gamma third angle about local z
 	 */
 	public void setOrientationEulerZXZ(final double alpha, final double beta, final double gamma) {
-		if (orientation == null)
-			orientation = new Matrix3d();
-		ta.rotZ(alpha);
+		if (invOrientation == null)
+			invOrientation = new Matrix3d();
+		Matrix3d ta = new Matrix3d();
+		Matrix3d tb = new Matrix3d();
+		ta.rotZ(gamma);
 		tb.rotX(beta);
 		tb.mul(ta);
-		orientation.rotZ(gamma);
-		orientation.mul(tb);
-		calcNormalAndInverse();
+		invOrientation.rotZ(alpha);
+		invOrientation.mul(tb);
+		calcNormal(false);
 	}
 
 	/**
@@ -505,14 +511,58 @@ public class DetectorProperties implements Serializable {
 	 * @param gamma third angle about local z
 	 */
 	public void setOrientationEulerZYZ(final double alpha, final double beta, final double gamma) {
-		if (orientation == null)
-			orientation = new Matrix3d();
-		ta.rotZ(alpha);
+		if (invOrientation == null)
+			invOrientation = new Matrix3d();
+		Matrix3d ta = new Matrix3d();
+		Matrix3d tb = new Matrix3d();
+		ta.rotZ(gamma);
 		tb.rotY(beta);
 		tb.mul(ta);
-		orientation.rotZ(gamma);
-		orientation.mul(tb);
-		calcNormalAndInverse();
+		invOrientation.rotZ(alpha);
+		invOrientation.mul(tb);
+		calcNormal(false);
+	}
+
+	/**
+	 * Generate passive inverse transformation matrix from Euler angles given in degrees
+	 * @param yaw
+	 * @param pitch
+	 * @param roll
+	 * @return transformation matrix
+	 */
+	protected static Matrix3d inverseMatrixFromEulerAngles(final double yaw, final double pitch, final double roll) {
+		return inverseMatrixFromEulerAngles(yaw, pitch, roll, null);
+	}
+
+	/**
+	 * Generate passive inverse transformation matrix from Euler angles given in degrees
+	 * @param yaw
+	 * @param pitch
+	 * @param roll
+	 * @param transform (can be null)
+	 * @return transformation matrix
+	 */
+	protected static Matrix3d inverseMatrixFromEulerAngles(final double yaw, final double pitch, final double roll, Matrix3d transform) {
+		if (transform == null)
+			transform = new Matrix3d();
+		Matrix3d ta = new Matrix3d();
+		Matrix3d tb = new Matrix3d();
+
+		/*
+		 * Vecmath rotation matrices are active transformation - i.e. they rotate a vector to a new vector as opposed
+		 * to passive transformations which give the new representation of the same vector.
+		 * 
+		 * The transformation required is a -ve yaw rotation about y, +ve pitch rotation about x',
+		 * then -ve roll rotation about z''.
+		 * As an extrinsic composition, this becomes Rz(-roll) Rx(pitch) Ry(-yaw)
+		 * 
+		 */
+		ta.rotZ(Math.toRadians(-roll));
+		tb.rotX(Math.toRadians(pitch));
+		transform.rotY(Math.toRadians(-yaw));
+		tb.mul(ta);
+		transform.mul(tb);
+		return transform;
 	}
 
 	/**
@@ -528,19 +578,13 @@ public class DetectorProperties implements Serializable {
 		Vector3d c = getBeamCentrePosition();
 		Vector3d d = new Vector3d();
 		d.sub(origin, c);
-		invOrientation.transform(d);  // relative beam centre in image frame
+		orientation.transform(d);  // relative beam centre in image frame
 
-		if (orientation == null)
-			orientation = new Matrix3d();
-		ta.rotY(Math.toRadians(-yaw));
-		tb.rotX(Math.toRadians(pitch));
-		tb.mul(ta);
-		orientation.rotZ(Math.toRadians(-roll));
-		orientation.mul(tb);
-		calcNormalAndInverse();
+		invOrientation = inverseMatrixFromEulerAngles(yaw, pitch, roll, invOrientation);
+		calcNormal(false);
 
 		// set origin back from beam centre
-		orientation.transform(d);
+		invOrientation.transform(d);
 		c.add(d);
 		origin = c;
 
@@ -553,34 +597,31 @@ public class DetectorProperties implements Serializable {
 	 * @return yaw, pitch and roll as defined in {@link #setNormalAnglesInDegrees(double, double, double)}
 	 */
 	public double[] getNormalAnglesInDegrees() {
-		if (orientation == null)
+		if (invOrientation == null)
 			return new double[3];
 
-		double sp = orientation.getM21();
+		double sp = invOrientation.getM12();
 		double cp = Math.sqrt(1 - sp * sp);
 		double yaw;
 		double roll;
 		if (cp == 0) {
 			// gimbal lock case
-			yaw  = Math.atan2(orientation.getM10(), orientation.getM00());
-			if (yaw != 0)
-				yaw = -yaw;
+			yaw  = Math.atan2(-invOrientation.getM20(), invOrientation.getM00());
 			roll = 0;
 		} else {
-			yaw  = Math.atan2(orientation.getM20(), orientation.getM22());
-			roll = Math.atan2(orientation.getM01(), orientation.getM11());
+			yaw  = Math.atan2(invOrientation.getM02(), invOrientation.getM22());
+			roll = Math.atan2(invOrientation.getM10(), invOrientation.getM11());
 		}
+		if (yaw != 0)
+			yaw = -yaw;
+		if (roll != 0)
+			roll = -roll;
 
 		double pitch = Math.asin(sp);
-		return new double[] {Math.toDegrees(yaw), Math.toDegrees(pitch), Math.toDegrees(roll)};
-	}
+		if (pitch != 0)
+			pitch = -pitch;
 
-	/**
-	 * @return orientation matrix describing the orientation of the detector relative to the origin of the detector that
-	 *         describes the position of the detector relative to the crystal in space.
-	 */
-	public Matrix3d getOrientation() {
-		return orientation;
+		return new double[] {Math.toDegrees(yaw), Math.toDegrees(pitch), Math.toDegrees(roll)};
 	}
 
 	/**
@@ -593,7 +634,7 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return Returns the beam unit vector.
+	 * @return reference to the beam direction unit vector
 	 */
 	public Vector3d getBeamVector() {
 		return beamVector;
@@ -604,15 +645,8 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void pixelPosition(final double x, final double y, Vector3d p) {
 		p.set(-hPxSize * x, -vPxSize * y, 0);
-		orientation.transform(p);
+		invOrientation.transform(p);
 		p.add(origin);
-	}
-
-	/**
-	 * from image coordinates, work out position of pixel's top-left corner
-	 */
-	public void pixelPosition(final int x, final int y, Vector3d p) {
-		pixelPosition((double) x, (double) y, p);
 	}
 
 	/**
@@ -625,13 +659,6 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return position vector of pixel's top-left corner
-	 */
-	public Vector3d pixelPosition(final int x, final int y) {
-		return pixelPosition((double) x, (double) y);
-	}
-
-	/**
 	 * from position on detector, work out pixel coordinates
 	 * 
 	 * @param p
@@ -640,43 +667,10 @@ public class DetectorProperties implements Serializable {
 	 *            output vector (x and y components are pixel coordinates)
 	 */
 	public void pixelCoords(final Vector3d p, Vector3d t) {
-		t.set(p);
-		t.sub(origin);
-		invOrientation.transform(t);
+		t.sub(p, origin);
+		orientation.transform(t);
 		t.x /= -hPxSize;
 		t.y /= -vPxSize;
-	}
-
-	/**
-	 * from position on detector, work out pixel coordinates
-	 * 
-	 * @param p
-	 *            position vector
-	 * @param t
-	 *            output vector (x and y components are pixel coordinates)
-	 * @param coords
-	 *            double pixel coordinates
-	 */
-	public void pixelCoords(final Vector3d p, Vector3d t, double[] coords) {
-		pixelCoords(p, t);
-		coords[0] = t.x;
-		coords[1] = t.y;
-	}
-
-	/**
-	 * from position on detector, work out pixel coordinates
-	 * 
-	 * @param p
-	 *            position vector
-	 * @param t
-	 *            output vector (x and y components are pixel coordinates)
-	 * @param coords
-	 *            integer pixel coordinates
-	 */
-	public void pixelCoords(final Vector3d p, Vector3d t, int[] coords) {
-		pixelCoords(p, t);
-		coords[0] = (int) Math.floor(t.x);
-		coords[1] = (int) Math.floor(t.y);
 	}
 
 	/**
@@ -689,7 +683,9 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void pixelCoords(final Vector3d p, double[] coords) {
 		Vector3d t = new Vector3d();
-		pixelCoords(p, t, coords);
+		pixelCoords(p, t);
+		coords[0] = t.x;
+		coords[1] = t.y;
 	}
 
 	/**
@@ -702,7 +698,9 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void pixelCoords(final Vector3d p, int[] coords) {
 		Vector3d t = new Vector3d();
-		pixelCoords(p, t, coords);
+		pixelCoords(p, t);
+		coords[0] = (int) Math.floor(t.x);
+		coords[1] = (int) Math.floor(t.y);
 	}
 
 	/**
@@ -741,13 +739,6 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return scattering angle (two-theta) associated with pixel
-	 */
-	public double pixelScatteringAngle(final int x, final int y) {
-		return pixelScatteringAngle((double) x, (double) y);
-	}
-
-	/**
 	 * Get beam centre position.
 	 * <p>
 	 * Can throw an illegal state exception when there is no intersection
@@ -780,13 +771,12 @@ public class DetectorProperties implements Serializable {
 	 *            position vector of intersection
 	 */
 	public void intersect(final Vector3d v, Vector3d p) {
-		p.set(v);
 		double t = normal.dot(v);
 		if (t == 0) {
 			throw new IllegalArgumentException("No intersection possible as vector is parallel to detector");
 		}
 		t = normal.dot(origin) / t;
-		p.scale(t);
+		p.scale(t, v);
 	}
 
 	private Vector3d[] cornerPositions() {
@@ -839,9 +829,7 @@ public class DetectorProperties implements Serializable {
 	 * @return pixel coordinates of the beam centre (where beam intersects detector)
 	 */
 	public double[] getBeamCentreCoords() {
-		final Vector3d cen = new Vector3d();
-		pixelCoords(getBeamCentrePosition(), cen);
-		return new double[] { cen.x, cen.y };
+		return pixelPreciseCoords(getBeamCentrePosition());
 	}
 
 	/**
@@ -905,15 +893,15 @@ public class DetectorProperties implements Serializable {
 	 */
 	public Vector3d getLongestVector() {
 		Vector3d[] corners = cornerPositions();
-		Vector3d longVec = new Vector3d();
+		Vector3d longVec = null;
 		double length = -Double.MAX_VALUE;
 		for (int i = 0; i < 4; i++) {
-			Vector3d tempVec = new Vector3d();
-			tempVec.sub(corners[i], getBeamCentrePosition());
-			double vecLength = tempVec.length();
-			if (vecLength > length) {
-				longVec = tempVec;
-				length = longVec.length();
+			Vector3d c = corners[i];
+			c.sub(getBeamCentrePosition());
+			double l = c.length();
+			if (l > length) {
+				longVec = c;
+				length = l;
 			}
 		}
 		return longVec;
@@ -924,39 +912,30 @@ public class DetectorProperties implements Serializable {
 	 */
 	public double getMaxScatteringAngle() {
 		Vector3d[] corners = cornerPositions();
-		List<Double> dots = new ArrayList<Double>();
-
+		double angle = -Double.MAX_VALUE;
 		for (int i = 0; i < 4; i++) {
-			corners[i].normalize();
-			dots.add(corners[i].dot(beamVector));
+			double a = corners[i].angle(beamVector);
+			if (a > angle) {
+				angle = a;
+			}
 		}
-		Collections.sort(dots);
-		return Math.acos(dots.get(0)); // use smallest cos(two-theta)
-	}
-
-	/**
-	 * @param x
-	 * @param y
-	 * @return true if given pixel coordinate is within bounds
-	 */
-	public boolean inImage(final double x, final double y) {
-		return x >= 0 && y < px && y >= 0 && y < py;
+		return angle;
 	}
 
 	/**
 	 * @param coords
 	 * @return true if given pixel coordinate is within bounds
 	 */
-	public boolean inImage(double[] coords) {
-		return inImage(coords[0], coords[1]);
-	}
+	public boolean inImage(double... coords) {
+		if (coords == null || coords.length == 0)
+			throw new IllegalArgumentException("Need at least one coordinate");
 
-	/**
-	 * @param coords
-	 * @return true if given pixel coordinate is within bounds
-	 */
-	public boolean inImage(int[] coords) {
-		return inImage(coords[0], coords[1]);
+		final double x = coords[0];
+		if (coords.length == 1) {
+			return x >= 0 && x < px;
+		}
+		final double y = coords[1];
+		return x >= 0 && x < px && y >= 0 && y < py;
 	}
 
 	/**

@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -23,11 +26,14 @@ import java.util.Set;
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 
 /**
  * Utility class to hold methods that calculate or use d-spacings
  */
 public class DSpacing {
+
+	private static Logger logger = LoggerFactory.getLogger(DSpacing.class);
 
 	/**
 	 * Calculate d-spacings from given positions of Bragg diffraction spots
@@ -139,47 +145,67 @@ public class DSpacing {
 	}
 
 	/**
-	 * Calculate an ellipse
+	 * Calculate a conic section
 	 * @param detector
-	 * @param difExp
+	 * @param diffExp
 	 * @param dSpacing
-	 * @return elliptical roi
+	 * @return roi
 	 */
-	public static EllipticalROI ellipseFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment difExp,
+	public static ROIBase conicFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
 			double dSpacing) {
-		double alpha = 2 * Math.asin(difExp.getWavelength() / (2 * dSpacing));
-		Vector3d beam = new Vector3d(detector.getBeamVector());
-		Vector3d normal = detector.getNormal();
+
+		double alpha = 2 * Math.asin(diffExp.getWavelength() / (2 * dSpacing));
+		logger.debug("D-spacing {} gives cone of semi-angle {} degrees", dSpacing, Math.toDegrees(alpha));
+
+		final Vector3d normal = detector.getNormal();
 
 		Vector3d major = new Vector3d();
 		Vector3d minor = new Vector3d();
-		minor.cross(normal, beam);
-		double eta = minor.length();
-		if (eta == 0) {
-			major = detector.getPixelRow();
+		minor.cross(normal, detector.getBeamVector());
+		double se = minor.length();
+		double ce = Math.sqrt(1. - se*se);
+		if (se == 0) {
+			major.set(-1, 0, 0);
 		} else {
-			major.cross(normal, minor);
+			minor.normalize();
+			major.cross(minor, normal);
 		}
-		double angle = major.angle(detector.getPixelRow());
 
-		Vector3d intersect = detector.getBeamCentrePosition();
-		double r = intersect.length();
-		double se = Math.sin(eta);
-		double ce = Math.cos(eta);
+		Vector3d intersect = null;
+		double r = 0;
+		try {
+			intersect = detector.getBeamCentrePosition();
+			r = intersect.length();
+		} catch (IllegalStateException e) {
+			// parabolic case TODO
+		}
+		// TODO test for intersection behind sample (aka hyperbolic case)
+
 		double sa = Math.sin(alpha);
 		double ca = Math.cos(alpha);
 
-		double x = r*se*sa*sa/(ca*ca - se*se);
-		major.scale(x/major.length());
-		intersect.sub(major);
+		Vector3d row = detector.getPixelRow();
+		row.normalize();
+		minor.cross(row, major); // reuse vector
+		double angle = row.angle(major);
+		if (minor.dot(normal) < 0) {
+			angle = -angle;
+		}
+		if (se != 0) {
+			double x = r*se*sa*sa/(ca*ca - se*se);
+			major.scale(x/major.length());
+			intersect.add(major);
+		}
 		Vector3d centre = new Vector3d();
 
 		r /= detector.getVPxSize();
-		double a = r*ce*sa*ca/(ca*ca - se*se);
+		double a = r*ce*sa*ca/(ca*ca - se*se); // if alpha = 90 - eta it's the parabolic case TODO
 		double te = se/ce;
 		double b = r*sa/Math.sqrt(ca*ca - sa*sa*te*te);
 
 		detector.pixelCoords(intersect, centre);
-		return new EllipticalROI(a, b, angle, centre.x, centre.y);
+
+		EllipticalROI eroi = new EllipticalROI(a, b, angle, centre.x, centre.y);
+		return eroi;
 	}
 }

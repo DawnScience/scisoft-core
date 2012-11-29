@@ -40,17 +40,16 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
-// TODO Not sure if org.eclipse.core could break GDA server.
-// Been told verbally that the GDA server now can resolve core and resources.
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.gda.monitor.IMonitor;
 import uk.ac.gda.util.io.FileUtils;
+// TODO Not sure if org.eclipse.core could break GDA server.
+// Been told verbally that the GDA server now can resolve core and resources.
 
 /**
  * A class which gives a single point of entry to loading data files
@@ -71,6 +70,7 @@ import uk.ac.gda.util.io.FileUtils;
  *    
  * 2. IDataSetLoader to load a single data set without loading the rest of the file.
  * 
+ * see LoaderFactoryExtensions which boots up the extensions from reading the extenion points.
  */
 public class LoaderFactory {
 	
@@ -103,18 +103,6 @@ public class LoaderFactory {
 	 */
 	static {
 		try {
-			
-			try {
-			    final IConfigurationElement[] ele = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.io.loader");
-		        for (IConfigurationElement i : ele) {
-		        	final String high = i.getAttribute("high_priority");
-		        	if (high==null || "".equals(high)) continue;
-		        	if ("true".equals(high)) LoaderFactory.registerLoader(i);
-		        }
-			     
-			} catch (Exception ne) {
-				logger.error("Cannot notify model listeners");
-			}
 			
 		    LoaderFactory.registerLoader("npy",  NumPyFileLoader.class);
 		    LoaderFactory.registerLoader("img",  ADSCImageLoader.class);
@@ -158,21 +146,13 @@ public class LoaderFactory {
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
 		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
+		    	
+		    /**
+		     * Tell the extension points to load in.
+		     */
+		    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService)Activator.getService(ILoaderFactoryExtensionService.class);
+		    if (service!=null) service.registerExtensionPoints();
 		    
-			try {
-			    final IConfigurationElement[] ele = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.io.loader");
-		        for (IConfigurationElement i : ele) {
-		        	final String high = i.getAttribute("high_priority");
-		        	if (high==null || "".equals(high) || "false".equals(high)) {
-		        	    LoaderFactory.registerLoader(i);
-		        	}
-		        }
-			     
-			} catch (Exception ne) {
-				logger.error("Cannot notify model listeners");
-			}
-
-
 		} catch (Exception ne) {
 			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
 		}
@@ -191,21 +171,6 @@ public class LoaderFactory {
 		return LOADERS.keySet();
 	}
 
-	/**
-	 * Called to register a loader loaded from an extension point
-	 * @param i
-	 */
-	private static void registerLoader(IConfigurationElement i) {
-		try {
-			final AbstractFileLoader loader = (AbstractFileLoader)i.createExecutableExtension("class");
-			final String[] exts = i.getAttribute("file_extension").split(",");
-			for (String ext : exts) {
-				LoaderFactory.registerLoader(ext.trim(), loader.getClass());
-			}
-		} catch (Throwable ne) {
-			logger.error("Cannot add loader "+i.getAttribute("class"), ne);
-		}
-	}
 
 	/**
 	 * Call to load any file type into memory. By default loads all data sets, therefore

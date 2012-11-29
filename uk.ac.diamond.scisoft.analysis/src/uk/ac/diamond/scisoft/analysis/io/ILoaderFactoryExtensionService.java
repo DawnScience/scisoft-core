@@ -1,5 +1,5 @@
-/*
- * Copyright 2011 Diamond Light Source Ltd.
+/*-
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.roi;
+package uk.ac.diamond.scisoft.analysis.io;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
-
-public class ResolutionRingList extends ArrayList<ResolutionRing> implements Serializable {
-
+public interface ILoaderFactoryExtensionService {
+	/**
+	 * Loads external loaders into the factory.
+	 */
+	public void registerExtensionPoints();
 }

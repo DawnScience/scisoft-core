@@ -1,0 +1,59 @@
+<project name="plugin-uk.ac.diamond.scisoft.analysis.test" basedir=".">
+
+    <dirname property="GDA-plugin.basedir" file="${ant.file.${ant.project.name}}" />
+    <pathconvert property="workspace.loc" setonempty="false">
+        <regexpmapper from="(.*)_git/.+" to="\1"/>
+        <path><pathelement location="${GDA-plugin.basedir}" /></path>
+    </pathconvert>
+    <pathconvert property="workspace.loc" setonempty="false">
+        <regexpmapper from="(.*)/plugins/.+" to="\1"/>
+        <path><pathelement location="${GDA-plugin.basedir}" /></path>
+    </pathconvert>
+    <property name="workspace.git.loc" value="${workspace.loc}_git" />
+    <pathconvert property="GDA-plugin.host.basedir" setonempty="false">
+            <regexpmapper from="(.*).test" to="\1"/>
+            <path><pathelement location="${GDA-plugin.basedir}" /></path>
+    </pathconvert>
+    <import file="${workspace.loc}/builder/build-common.xml" />
+
+    <!-- ====================================================================
+           Build
+         ==================================================================== -->    
+
+    <!-- ====================================================================
+           Invoke the tests
+         ==================================================================== -->
+
+    <target name="junit-tests" depends="toolCheck, set-ncsa-hdf-context-SDA-else-GDA, set-test-base">
+        <condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
+            <os family="windows" />
+        </condition>
+        <property name="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1536m" />
+        <junit-call description="${ant.project.name} Java JUnit tests" forkmode="perTest" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory}">
+            <!-- forkmode=perTest, since some tests can trigger a JVM out-of-memory crash, whence following tests will erroneously report failure unless in a new JVM -->
+            <formatter type="xml" />
+            <classpath>
+                <pathelement location="${junitjar.loc}" />
+                <pathelement location="${jythonjar.loc}"/>
+                <pathelement location="${GDA-plugin.basedir}/bin" />
+                <pathelement location="${GDA-plugin.basedir}/testfiles/logging" />  <!-- to pick up logback-test.xml -->
+                <pathelement location="${GDA-plugin.host.basedir}/bin" />
+                <pathelement location="${GDA-plugin.host.basedir}/jars/*" />
+                <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
+                <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
+                <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
+                <pathelement path="${workspace.loc}/tp/plugins/com.springsource.slf4j.api_1.5.6.jar" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
+                <pathelement path="${workspace.loc}/tp/plugins/com.springsource.slf4j.org.apache.commons.logging_1.5.6.jar" />  <!--ensure that matching imp appears first in classpath -->
+                <pathelement location="${workspace.loc}/tp/plugins/*" />
+                <path refid="ncsa.hdf.classpath" />
+                <path refid="libs.jars.path" />
+            </classpath>
+            <batchtest todir="@{report.dir}">
+                <fileset dir="${GDA-plugin.basedir}/src">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit-call>
+    </target>
+
+</project>

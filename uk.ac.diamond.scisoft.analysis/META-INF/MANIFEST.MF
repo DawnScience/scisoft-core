@@ -16,7 +16,7 @@ Require-Bundle: org.junit4;bundle-version="4.5.0",
  uk.ac.diamond.org.jscience;bundle-version="4.3.1",
  org.apache.commons.math;bundle-version="2.2.0",
  org.apache.commons.lang;bundle-version="2.4.0",
- com.springsource.org.mockito;bundle-version="1.8.4"
+ org.mockito.mockito-core;bundle-version="1.9.5"
 Export-Package: gda.analysis.io,
  uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,

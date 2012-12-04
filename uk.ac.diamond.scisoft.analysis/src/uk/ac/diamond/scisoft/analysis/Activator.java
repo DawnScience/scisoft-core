@@ -22,22 +22,24 @@ import org.osgi.framework.ServiceReference;
 
 public class Activator implements BundleActivator {
 
+	@SuppressWarnings("unused")
 	private static Activator     activator;
 	private static BundleContext context;
 	
 	@Override
 	public void start(BundleContext c) throws Exception {
-		activator= this;
+		activator = this;
 		context = c;
 	}
 
 	@Override
 	public void stop(BundleContext c) throws Exception {
-		activator= null;
+		activator = null;
 		context = c;
 	}
 	
 	public static Object getService(final Class<?> serviceClass) {
+		if (context == null) return null;
 		ServiceReference<?> ref = context.getServiceReference(serviceClass);
 		if (ref==null) return null;
 		return context.getService(ref);

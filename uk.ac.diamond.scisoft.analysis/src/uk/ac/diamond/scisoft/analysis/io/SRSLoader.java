@@ -461,9 +461,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return null;
 	}
 	
-	protected List<String> datasetNames = new ArrayList<String>();
-	protected Map<String,int[]>   dataShapes;
-	protected Map<String,Integer> dataSizes;
+	protected List<String> datasetNames      = new ArrayList<String>(7);
+	protected Map<String,int[]>   dataShapes = new HashMap<String,int[]>(7);
+	protected Map<String,Integer> dataSizes  = new HashMap<String,Integer>(7);;
 	@Override
 	public IMetaData getMetaData() {
 		return new ExtendedMetadataAdapter(new File(fileName)) {
@@ -482,12 +482,12 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Integer> getDataSizes() {
-				return dataSizes == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(dataSizes);
+				return Collections.unmodifiableMap(dataSizes);
 			}
 			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, int[]> getDataShapes() {
-				return dataShapes == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(dataShapes);
+				return Collections.unmodifiableMap(dataShapes);
 			}
 			
 			@Override

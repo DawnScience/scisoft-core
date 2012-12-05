@@ -56,8 +56,10 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 
 		if (loader!=null) {
 			LazyDataset lazyDataset = new LazyDataset("Pilatus", loader.dtype, loader.getShape(), loader);
-			currentDataHolder.addDataset("Pilatus", lazyDataset);
+			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
+			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());
+			dataSizes.put(lazyDataset.getName(), lazyDataset.getSize());
 		}
 
 	}

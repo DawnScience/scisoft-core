@@ -88,13 +88,13 @@ public class LoaderFactory {
 	private static final Map<String, Class<? extends java.io.InputStream>>     UNZIPERS = new HashMap<String, Class<? extends java.io.InputStream>>(3);
 
 	/**
-	 *      
-	 * It is intended to add a catch all loader which is based on FabioFile
 	 * 
 	 * Loaders can be registered at run time using registerLoader(...)
 	 * 
 	 * There is no need for an extension point now and no dependency on eclipse.
-	 * To change a loader from an external plugin for example:
+	 * Instead an osgi service contributing the loaders is looked for.
+	 * 
+	 * To change a loader programmatically (not advised)
 	 * 
 	 * 1. LoaderFactory.getSupportedExtensions();
 	 * 2. LoaderFactory.clearLoader("h5");

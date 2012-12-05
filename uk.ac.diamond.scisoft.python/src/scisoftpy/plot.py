@@ -467,38 +467,40 @@ def getrois(bean, roi=None):
     if bean is None:
         return None
     rs = bean[parameters.roilist]
-    if roi is None:
-        return rs
     if rs is None:
         return None
     try:
         iter(rs)
     except:
         rs = [rs]
-    return [ r for r in rs if isinstance(r, roi)]
+    if roi is None:
+        return [r for r in rs]
+    return [r for r in rs if isinstance(r, roi)]
 
 def setrois(bean, roilist):
     '''Set list of regions of interest in bean'''
-    if bean:
-        if not isinstance(roilist, (roi.linelist, roi.rectlist, roi.sectlist)):
-            r = roilist[0]
-            if isinstance(r, roi.line):
-                rtype = roi.line
-                nlist = roi.linelist()
-            elif isinstance(r, roi.rect):
-                rtype = roi.rect
-                nlist = roi.rectlist()
-            elif isinstance(r, roi.sect):
-                rtype = roi.sect
-                nlist = roi.sectlist()
-            else:
-                raise TypeError, "Type of first item not support"
+    if not bean:
+        raise ValueError, "No bean given"
 
-            for r in roilist:
-                if isinstance(r, rtype):
-                    nlist.add(r)
-            roilist = nlist
-        bean[parameters.roilist] = roilist
+    if not isinstance(roilist, (roi.linelist, roi.rectlist, roi.sectlist)):
+        r = roilist[0]
+        if isinstance(r, roi.line):
+            rtype = roi.line
+            nlist = roi.linelist()
+        elif isinstance(r, roi.rect):
+            rtype = roi.rect
+            nlist = roi.rectlist()
+        elif isinstance(r, roi.sect):
+            rtype = roi.sect
+            nlist = roi.sectlist()
+        else:
+            raise TypeError, "Type of first item not support"
+
+        for r in roilist:
+            if isinstance(r, rtype):
+                nlist.add(r)
+        roilist = nlist
+    bean[parameters.roilist] = roilist
 
 def delrois(bean, roi=None):
     '''Delete list of regions of interest from bean

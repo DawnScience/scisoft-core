@@ -56,10 +56,11 @@ public class LinearROI extends ROIBase implements Serializable {
 	}
 
 	/**
+	 * New line from origin to point
 	 * @param pt 
 	 */
 	public LinearROI(double[] pt) {
-		this(pt, new double[] {0, 0});
+		this(new double[] {0, 0}, pt);
 	}
 
 	/**
@@ -247,7 +248,8 @@ public class LinearROI extends ROIBase implements Serializable {
 	 */
 	@Override
 	public LinearROI copy() {
-		LinearROI roi = new LinearROI(spt);
+		LinearROI roi = new LinearROI();
+		roi.setPoint(spt.clone());
 		roi.setPlot(plot);
 		roi.setAngle(ang);
 		roi.setLength(len);

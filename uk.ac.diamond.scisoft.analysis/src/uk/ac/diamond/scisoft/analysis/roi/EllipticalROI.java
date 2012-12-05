@@ -54,6 +54,7 @@ public class EllipticalROI extends ROIBase {
 		spt = new double[] { ptx, pty };
 		saxis = new double[] { major, minor };
 		ang = angle;
+		checkAngle();
 	}
 
 	@Override

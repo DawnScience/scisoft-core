@@ -112,6 +112,7 @@ Export-Package: uk.ac.diamond.scisoft.python,
  org.w3c.dom.html;version="2.5.3"
 Bundle-Vendor: Diamond Light Source
 Import-Package: org.dawb.common.util.eclipse,
- org.slf4j
+ org.slf4j,
+ uk.ac.diamond.scisoft.analysis.rcp.plotting
 Bundle-ClassPath: jython2.5/jython.jar,
  .

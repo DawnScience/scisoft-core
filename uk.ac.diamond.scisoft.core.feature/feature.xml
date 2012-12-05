@@ -225,12 +225,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.jython"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="javax.vecmath"
          download-size="0"
          install-size="0"

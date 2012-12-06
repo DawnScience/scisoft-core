@@ -20,7 +20,6 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -126,22 +125,16 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 	public void loadMetaData(IMonitor mon) throws Exception {
         super.loadMetaData(mon);
         
-		PIL_BLOCK: if (textMetadata.containsKey("pilatus100k_path_template")) {
+        // Cannot do this if decorator, this means that the I16 data folder would parse all
+        // the ascii files in the whole directory!!
+        
+		if (textMetadata.containsKey("pilatus100k_path_template")) {
 			
-			if (!datasetNames.contains("path")) break PIL_BLOCK;
-			
-			final DataHolder holder = loadFile(mon); // Yuck but it's ok for this specific version.
-			dataShapes = new HashMap<String,int[]>  (holder.size());
-			dataSizes  = new HashMap<String,Integer>(holder.size());
-			datasetNames.clear();
-			
-			for (String name : holder.getNames()) {
-
-				datasetNames.add(name);
-				dataShapes.put(name, holder.getLazyDataset(name).getShape());
-				dataSizes.put(name,  holder.getLazyDataset(name).getSize());
-			}
-
+			if (!datasetNames.contains("path")) return;
+			/**
+			 * IMPORTANT DO NOT PARSE WHOLE FILE HERE! It will break the decorators!
+			 */
+			datasetNames.add("Pilatus");
 		}
 		
 	}

@@ -137,6 +137,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			String[] vals = splitRegex.split(headStr);
 			datasetNames.clear();
 			datasetNames.addAll(Arrays.asList(vals));
+			dataShapes.clear();
+			dataSizes.clear();
 			
 			List<?> [] columns = new List<?>[vals.length];
 
@@ -224,7 +226,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @param storeStrings
 	 * @param useImageLoader
 	 */
-	protected static void convertToDatasets(DataHolder holder, String[] names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
+	protected final void convertToDatasets(DataHolder holder, String[] names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
 		for (int i = 0; i < names.length; i++) {
 			if (columns[i] != null) {
 				final AbstractDataset ds = AbstractDataset.array(columns[i]);
@@ -249,6 +251,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 							String name = names[i] + "_image";
 							LazyDataset lazyDataset = new LazyDataset(name, loader.dtype, loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);
+							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
+							if (dataSizes!=null)  dataSizes.put(name, lazyDataset.getSize());
+							
 						} catch (Exception ex) {
 							logger.warn("Unable to treat " + sds.getAbs(0) + " as an image file", ex);
 						}

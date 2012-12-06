@@ -67,13 +67,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="uk.ac.gda.nexus"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.springsource.slf4j.api"
          download-size="0"
          install-size="0"
@@ -108,13 +101,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="uk.ac.diamond.org.nfunk.jep"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.math"
          download-size="0"
          install-size="0"
@@ -130,13 +116,6 @@ limitations under the License.
 
    <plugin
          id="com.springsource.slf4j.org.apache.commons.logging"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.sourceforge.nattable.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

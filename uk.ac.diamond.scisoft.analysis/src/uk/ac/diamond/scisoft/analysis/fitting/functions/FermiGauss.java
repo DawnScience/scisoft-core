@@ -33,9 +33,9 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	private static String cname = "Fermi * Gaussian";
 
-	private static String[] paramNames = new String[]{"mu", "kT", "scaleM", "scaleC", "Constant", "sigma"};
+	private static String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
 
-	private double mu, kT, scaleM, scaleC, C, sigma;
+	private double mu, kT, scaleM, scaleC, C, sigma, temperature, fwhm;
 
 	private double[] gaussianArray;
 
@@ -114,11 +114,11 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	private void calcCachedParameters() {
 		mu = getParameterValue(0);
-		kT = getParameterValue(1);
+		temperature = getParameterValue(1);
 		scaleM = getParameterValue(2);
 		scaleC = getParameterValue(3);
 		C = getParameterValue(4);
-		sigma = getParameterValue(5);
+		fwhm = getParameterValue(5);
 		
 		markParametersClean();
 	}
@@ -140,12 +140,9 @@ public class FermiGauss extends AFunction implements Serializable{
 		
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
-		if (sigma == 0.0) return new DoubleDataset(fermiDS);
+		if (fwhm == 0.0) return new DoubleDataset(fermiDS);
 		
-		double localSigma = sigma;
-		
-		if (sigma < 0.0) localSigma = -sigma;
-		
+		double localSigma = Math.abs(fwhm/2.35482); // convert to sigma
 		
 		DoubleDataset conv = DoubleDataset.ones(xAxis.getShape());
 		conv.setName("Convolution");
@@ -158,13 +155,6 @@ public class FermiGauss extends AFunction implements Serializable{
 			gaussDS.imultiply(fermiDS);
 			
 			conv.set(gaussDS.sum(), i);
-			
-//			try {
-//				SDAPlotter.plot("Plot 1", xAxis, new IDataset[] {fermiDS, conv, values});
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 		}
 		
 		
@@ -173,6 +163,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	
 	public AbstractDataset getFermiDS(IDataset xAxis) {
 		calcCachedParameters();
+		kT = temperature*8.6173324e-5;
 		Fermi fermi = new Fermi(mu,kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
 		AbstractDataset fermiDS = fermi.makeDataset(xAxis);

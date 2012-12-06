@@ -10,11 +10,11 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.math;bundle-version="[2.2.0,3.0.0)",
  uk.ac.diamond.scisoft.analysis;bundle-version="[1.3.0,2.0.0)",
  uk.ac.diamond.scisoft.analysis.rcp;bundle-version="[1.3.0,2.0.0)",
- uk.ac.diamond.jython;bundle-version="[2.5.3,3.0.0)",
- uk.ac.diamond.jama;bundle-version="1.0.1"
+ uk.ac.diamond.jython;bundle-version="[2.5.3,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: uk.ac.diamond.scisoft.python
 Bundle-Vendor: Diamond Light Source
-Import-Package: org.dawb.common.util.eclipse,
+Import-Package: Jama,
+ org.dawb.common.util.eclipse,
  org.slf4j;version="1.5.6"

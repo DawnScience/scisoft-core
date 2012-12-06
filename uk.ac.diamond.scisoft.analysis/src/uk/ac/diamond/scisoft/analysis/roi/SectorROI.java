@@ -156,7 +156,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @param ep
 	 */
 	public SectorROI(double ptx, double pty, double sr, double er, double sp, double ep) {
-		this(ptx, pty, sr, er, sp, ep, 1.0, false);
+		this(ptx, pty, sr, er, sp, ep, 1.0, true);
 	}
 
 	/**

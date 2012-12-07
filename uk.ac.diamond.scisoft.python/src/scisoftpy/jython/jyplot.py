@@ -15,7 +15,7 @@
 ###
 
 from uk.ac.diamond.scisoft.analysis import SDAPlotter as _plotter,\
-    PlotServiceProvider as _provider, RMIClientProvider
+    PlotServiceProvider as _provider, RMIClientProvider as _rmiprovider
 
 try:
     from uk.ac.diamond.scisoft.analysis.rcp.plotting import RMIPlotWindowManger as _manager
@@ -63,7 +63,7 @@ plot_orders = { "none": _plotter.IMAGEORDERNONE, "alpha": _plotter.IMAGEORDERALP
 
 def setremoteport(rmiport=0, **kwargs):
     '''Sets the RMI Connection Port to the rmiport arg'''
-    RMIClientProvider.getInstance().setPort(rmiport)
+    _rmiprovider.getInstance().setPort(rmiport)
     _provider.setPlotService(None)
     if _manager is not None:
         _manager.clearManager()

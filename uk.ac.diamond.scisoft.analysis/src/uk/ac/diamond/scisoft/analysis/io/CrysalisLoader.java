@@ -25,9 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -218,30 +215,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
-
-			@Override
-			public String getMetaValue(String key) {
-				return textMetadata.get(key);	
-			}
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return Collections.unmodifiableCollection(textMetadata.keySet());
-			}
-		
-			@Override
-			public Map<String,int[]> getDataShapes() {
-				int height = Integer.parseInt(textMetadata.get("nx"));
-				int width = Integer.parseInt(textMetadata.get("ny"));
-                final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-                ret.put("Crysalis Img", new int[]{width,height});
-                return Collections.unmodifiableMap(ret);
-			}
-			
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(Arrays.asList(new String[]{"Crysalis Img"}));
-			}
-		};
+		Metadata md = new Metadata(textMetadata);
+		int width = Integer.parseInt(textMetadata.get("nx"));
+		int height = Integer.parseInt(textMetadata.get("ny"));
+		md.setDataInfo("Crysalis Img", height, width);
+		return md;
 	}
 }

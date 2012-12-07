@@ -23,7 +23,7 @@ import java.util.Map;
 public class MetaDataAdapter implements IMetaData {
 
 	protected Collection<String> adapterDataNames;
-	protected Collection<Object> adapterUserObjects;
+	protected Collection<Serializable> adapterUserObjects;
 
 	public MetaDataAdapter() {
 	}
@@ -32,7 +32,7 @@ public class MetaDataAdapter implements IMetaData {
 		this.adapterDataNames = names;
 	}
 
-	public MetaDataAdapter(Collection<String> names, final Collection<Object> userObjects) {
+	public MetaDataAdapter(Collection<String> names, final Collection<Serializable> userObjects) {
 		this.adapterDataNames = names;
 		this.adapterUserObjects = userObjects;
 	}
@@ -43,7 +43,7 @@ public class MetaDataAdapter implements IMetaData {
 	}
 
 	@Override
-	public Collection<Object> getUserObjects() {
+	public Collection<Serializable> getUserObjects() {
 		return adapterUserObjects;
 	}
 

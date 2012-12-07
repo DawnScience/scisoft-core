@@ -113,6 +113,13 @@ public class ADSCImageTest {
 		IDiffractionMetadata md, cmd;
 		data = loader.getDataset(0);
 		md = (IDiffractionMetadata) data.getMetadata();
+		
+		// test cloning
+		cmd = md.clone();
+		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
+		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
+
+		// test cloning serialization
 		cmd = (IDiffractionMetadata) SerializationUtils.clone(md);
 		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
 		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());

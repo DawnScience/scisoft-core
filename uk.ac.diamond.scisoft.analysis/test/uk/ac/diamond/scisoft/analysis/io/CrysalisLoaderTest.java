@@ -19,8 +19,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.util.TestUtils;
 import junit.framework.Assert;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 /**
  * RubyLoaderTest Class
@@ -43,7 +46,7 @@ public class CrysalisLoaderTest {
 	 */
 	@Test
 	public void testLoadFile() throws Exception {
-		new CrysalisLoader( TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
+		new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
 	}
 
 	/**
@@ -53,7 +56,13 @@ public class CrysalisLoaderTest {
 	 */
 	@Test
 	public void testLoaderFactory() throws Exception {
-		
-		if (LoaderFactory.getData( TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img", null) == null) throw new Exception();
+		if (LoaderFactory.getData(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img", null) == null) throw new Exception();
+	}
+
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder loader = new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
+		AbstractDataset data = loader.getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
 	}
 }

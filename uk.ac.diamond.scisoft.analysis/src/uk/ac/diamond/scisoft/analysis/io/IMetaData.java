@@ -75,11 +75,11 @@ public interface IMetaData extends Cloneable, Serializable {
 	 * 
 	 * @return collection
 	 */
-	public Collection<Object> getUserObjects();
+	public Collection<Serializable> getUserObjects();
 
 	/**
 	 * Copy of metadata
-	 * @return copy
+	 * @return deep copy
 	 */
 	public IMetaData clone();
 }

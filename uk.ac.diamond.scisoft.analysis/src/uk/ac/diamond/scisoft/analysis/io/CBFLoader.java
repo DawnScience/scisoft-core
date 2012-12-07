@@ -291,17 +291,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
 			((DiffractionMetadata) diffMetadata).setMetadata(metadata);
 		} catch (ScanFileHolderException e) {
-			diffMetadata = new MetaDataAdapter() {
-				@Override
-				public String getMetaValue(String key) throws Exception {
-					return metadata.get(key);
-				}
-
-				@Override
-				public Collection<String> getMetaNames() throws Exception {
-					return Collections.unmodifiableCollection(metadata.keySet());
-				}
-			};
+			diffMetadata = new Metadata(metadata);
 		}
 	}
 

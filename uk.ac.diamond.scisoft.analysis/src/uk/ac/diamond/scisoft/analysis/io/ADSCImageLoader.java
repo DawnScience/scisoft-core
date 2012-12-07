@@ -280,7 +280,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 				getDouble("OSC_START"), getDouble("OSC_RANGE"), getDouble("TIME"));
 
 		diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
-		diffMetadata.setImageInfo("ADSC Image", getInteger("SIZE1"), getInteger("SIZE2"));
+		diffMetadata.setDataInfo("ADSC Image", getInteger("SIZE1"), getInteger("SIZE2"));
 		diffMetadata.setMetadata(metadata);
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		try {

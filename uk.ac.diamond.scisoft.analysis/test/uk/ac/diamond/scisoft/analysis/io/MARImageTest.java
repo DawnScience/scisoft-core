@@ -119,5 +119,4 @@ public class MARImageTest {
 		AbstractDataset data = loader.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 	}
-
 }

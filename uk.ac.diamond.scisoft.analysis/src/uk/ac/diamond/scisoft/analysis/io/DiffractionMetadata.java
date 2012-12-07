@@ -17,84 +17,26 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
-public class DiffractionMetadata extends ExtendedMetadataAdapter implements IDiffractionMetadata {
+public class DiffractionMetadata extends ExtendedMetadata implements IDiffractionMetadata {
 	private static final long serialVersionUID = IMetaData.serialVersionUID;
 
-	private final DetectorProperties props, oProps;
-	private final DiffractionCrystalEnvironment env, oEnv;
-	private Map<String, ? extends Serializable> metadata;
-	private Date date;
-	private static List<String> dataNames = new ArrayList<String>(1);
-	private final Map<String,int[]> shapes = new HashMap<String,int[]>(1);
+	private DetectorProperties props, oProps;
+	private DiffractionCrystalEnvironment env, oEnv;
 
 	public DiffractionMetadata(String filename, DetectorProperties props, DiffractionCrystalEnvironment env) {
 		super(new File(filename));
+		setDiffractionMetadata(props, env);
+	}
+
+	void setDiffractionMetadata(DetectorProperties props, DiffractionCrystalEnvironment env) {
 		oProps = props;
 		this.props = oProps == null ? null : oProps.clone();
 		oEnv = env;
 		this.env = oEnv == null ? null : oEnv.clone();
-	}
-
-	void setCreationDate(Date date) {
-		this.date = date;
-	}
-
-	void setMetadata(Map<String, ? extends Serializable> metadata) {
-		this.metadata = metadata;
-	}
-
-	void setImageInfo(String imageName, int s1, int s2) {
-		dataNames.add(0, imageName);
-		shapes.put(imageName, new int[] {s2, s1});
-	}
-
-	@Override
-	public Date getCreation() {
-		return date;
-	}
-
-	@Override
-	public Collection<String> getDataNames() {
-		return Collections.unmodifiableCollection(dataNames);
-	}
-
-	@Override
-	public Map<String, int[]> getDataShapes() {
-		return Collections.unmodifiableMap(shapes);
-	}
-
-	@Override
-	public Map<String, Integer> getDataSizes() {
-		Map<String, Integer> sizes = new HashMap<String, Integer>(1);
-		if (dataNames.size() > 0) {
-			String name = dataNames.get(0);
-			int[] shape = shapes.get(name);
-			sizes.put(name, shape[0] * shape[1]);
-			return Collections.unmodifiableMap(sizes);
-		}
-		return null;
-	}
-
-	@Override
-	public String getMetaValue(String key) throws Exception {
-		return metadata.get(key).toString();
-	}
-
-	@Override
-	public Collection<String> getMetaNames() throws Exception {
-		return Collections.unmodifiableCollection(metadata.keySet());
 	}
 
 	@Override
@@ -119,15 +61,11 @@ public class DiffractionMetadata extends ExtendedMetadataAdapter implements IDif
 
 	@Override
 	public IDiffractionMetadata clone() {
-		DiffractionMetadata c = new DiffractionMetadata(getFileName(), oProps, env);
-		c.setCreationDate(date);
-		c.setMetadata(metadata);
-		if (dataNames.size() > 0) {
-			String name = dataNames.get(0);
-			int[] shape = shapes.get(name);
-			if(shape!= null && shape.length>0)
-				c.setImageInfo(name, shape[0], shape[1]);
-		}
+		DiffractionMetadata c = (DiffractionMetadata) super.clone();
+		c.oEnv = oEnv;
+		c.env = env.clone();
+		c.oProps = oProps;
+		c.props = props.clone();
 		return c;
 	}
 }

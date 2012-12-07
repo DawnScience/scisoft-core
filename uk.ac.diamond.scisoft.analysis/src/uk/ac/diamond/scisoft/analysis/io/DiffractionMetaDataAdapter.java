@@ -24,8 +24,8 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
 public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implements IDiffractionMetadata {
 
-	private DiffractionCrystalEnvironment originalClonedEnv,  clonedEnv;
-	private DetectorProperties            originalClonedProp, clonedProp;
+	private DiffractionCrystalEnvironment originalEnv,  clonedEnv;
+	private DetectorProperties            originalProp, clonedProp;
 	
 	public DiffractionMetaDataAdapter() {
 		
@@ -37,32 +37,32 @@ public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implemen
 
 	@Override
 	public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-		return clonedEnv!=null ? clonedEnv : null;
+		return clonedEnv;
 	}
 
 	@Override
 	public DetectorProperties getDetector2DProperties() {
-		return clonedProp!=null ? clonedProp : null;
+		return clonedProp;
 	}
 	
 	@Override
 	public IDiffractionMetadata clone(){
 		DiffractionMetaDataAdapter ad = new DiffractionMetaDataAdapter();
 		if (getDetector2DProperties()!=null)         ad.clonedProp = getDetector2DProperties().clone();
-		if (getOriginalDetector2DProperties()!=null) ad.originalClonedProp = getOriginalDetector2DProperties().clone();
+		if (getOriginalDetector2DProperties()!=null) ad.originalProp = getOriginalDetector2DProperties();
 		
 		if (getDiffractionCrystalEnvironment()!=null)ad.clonedEnv = getDiffractionCrystalEnvironment().clone();
-		if (getOriginalDiffractionCrystalEnvironment()!=null)ad.originalClonedEnv = getOriginalDiffractionCrystalEnvironment().clone();
+		if (getOriginalDiffractionCrystalEnvironment()!=null)ad.originalEnv = getOriginalDiffractionCrystalEnvironment();
 	    return ad;
 	}
 	
 	@Override
 	public DetectorProperties getOriginalDetector2DProperties() {
-		return originalClonedProp!=null ? originalClonedProp : null;
+		return originalProp;
 	}
 	
 	@Override
 	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
-		return originalClonedEnv!=null ? originalClonedEnv : null;
+		return originalEnv;
 	}
 }

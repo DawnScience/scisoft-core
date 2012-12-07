@@ -16,12 +16,15 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.util.TestUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import gda.util.TestUtils;
 import junit.framework.Assert;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -75,6 +78,12 @@ public class ADSCImageTest {
 		AbstractDataset data = loader.getDataset(0);
 		IExtendedMetadata metadata = (IExtendedMetadata) data.getMetadata();
 		Date date = metadata.getCreation();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+		try {
+			Assert.assertTrue(sdf.parse((String)metadata.getMetaValue("DATE")).equals(date));
+		} catch (Exception e) {
+			throw new Exception("Could not parse the date from the header", e);
+		}
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(date);
 		String[] parsedTime = gc.getTime().toString().split(" ");
@@ -97,5 +106,16 @@ public class ADSCImageTest {
 		System.out.println("File owner is "+metadata.getFileOwner());
 	}
 	
-	
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
+		AbstractDataset data;
+		IDiffractionMetadata md, cmd;
+		data = loader.getDataset(0);
+		md = (IDiffractionMetadata) data.getMetadata();
+		cmd = (IDiffractionMetadata) SerializationUtils.clone(md);
+		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
+		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
+		SerializationUtils.clone(new ADSCImageLoader("/dls/sci-scratch/ExampleData/ADSC-Q315/adsc/F6_1_137.img").loadFile().getDataset(0));
+	}
 }

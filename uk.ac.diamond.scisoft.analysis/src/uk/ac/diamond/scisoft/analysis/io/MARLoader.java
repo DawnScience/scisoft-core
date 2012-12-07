@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,13 +46,12 @@ import com.sun.media.imageio.plugins.tiff.TIFFField;
  * hashmap as string object pairs. The MAR header is read as a stream of bytes
  * the value of which is determined in a C header file. Most values are 32bit ints.
  */
-public class MARLoader extends TIFFImageLoader implements IMetaLoader {
+public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializable {
 	static final int MAX_IMAGES = 9;
 	static final int MAR_HEADER_SIZE = 3072;
 	private boolean littleEndian;
-	Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
-	private DetectorProperties detProps;
-	private DiffractionCrystalEnvironment diffEnv;
+	private Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
+	private DiffractionMetadata diffMetadata;
 	
 	/**
 	 * @param FileName
@@ -518,7 +515,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			throw new ScanFileHolderException("Problem loading MAR metadata", e);
 		}
 
-		return createGDAMetatdata();
+		return createGDAMetadata();
 	}
 
 	private int getHeaderInt(int pos1, int pos2, int pos3, int pos4) {
@@ -530,7 +527,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 		return headerInt;
 	}
 
-	private Map<String, Serializable> createGDAMetatdata() throws ScanFileHolderException {
+	private Map<String, Serializable> createGDAMetadata() throws ScanFileHolderException {
 		Map<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
 
 		try {
@@ -605,16 +602,21 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 			//Exposure time
 			GDAMetadata.put("NXSample:exposure_time", getMetadataValue("exposureTime"));
 			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
-			
-			detProps = new DetectorProperties(new Vector3d(detectorOrigin), imageLength, imageWidth, pixelSizeX, pixelSizeY, euler);
-			diffEnv = new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, (Double) getMetadataValue("exposureTime"));
-			
+			createMetadata(detectorOrigin, imageLength, imageWidth, pixelSizeX, pixelSizeY, euler, lambda, startOmega, rangeOmega);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing numerical value from string", e);
 		} catch (ScanFileHolderException e) {
 			throw new ScanFileHolderException("A problem occoured parsing the internal metatdata into the GDA metadata", e);
 		}
 		return GDAMetadata;
+	}
+
+	private void createMetadata(double[] detectorOrigin, int imageLength, int imageWidth, double pixelSizeX, double pixelSizeY, Matrix3d euler, double lambda, double startOmega, double rangeOmega) throws ScanFileHolderException {
+		DetectorProperties detProps = new DetectorProperties(new Vector3d(detectorOrigin), imageLength, imageWidth, pixelSizeX, pixelSizeY, euler);
+		DiffractionCrystalEnvironment diffEnv = new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, (Double) getMetadataValue("exposureTime"));
+
+		diffMetadata = new DiffractionMetadata(fileName, detProps, diffEnv);
+		diffMetadata.setMetadata(createStringMap());
 	}
 
 	private Serializable getMetadataValue(String key) throws ScanFileHolderException {
@@ -637,60 +639,17 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader {
 		}
 	}
 
-	private class MARMetadataAdapter extends DiffractionMetaDataAdapter {
-		private final DetectorProperties props;
-		private final DiffractionCrystalEnvironment env;
-		final Map<String,String> vals = createStringMap();
-		
-		public MARMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
-			super(new File(fileName));
-			this.props = props;
-			this.env = env;
+	private Map<String, String> createStringMap() {
+		Map<String, String> ret = new HashMap<String,String>(7);
+		for (String key : metadataTable.keySet()) {
+			ret.put(key, metadataTable.get(key).toString().trim());
 		}
-
-		@Override
-		public String getMetaValue(String key)  throws Exception{
-			return vals.get(key);
-		}
-
-		@Override
-		public Collection<String> getMetaNames() throws Exception{
-			return Collections.unmodifiableCollection(vals.keySet());
-		}			
-
-		private Map<String, String> createStringMap() {
-			Map<String, String> ret = new HashMap<String,String>(7);
-			for (String key : metadataTable.keySet()) {
-				ret.put(key, metadataTable.get(key).toString().trim());
-			}
-			return ret;
-		}
-
-		@Override
-		public DetectorProperties getDetector2DProperties() {
-			return props;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-			return env;
-		}
-
-		@Override
-		public DetectorProperties getOriginalDetector2DProperties() {
-			return detProps;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
-			return diffEnv;
-		}
-
+		return ret;
 	}
 
 	@Override
 	public IMetaData getMetaData() {
-		return new MARMetadataAdapter(detProps == null ? null : detProps.clone(), diffEnv == null ? null : diffEnv.clone());
+		return diffMetadata;
 	}
 	
 	@Override

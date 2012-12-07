@@ -19,8 +19,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.util.TestUtils;
 import junit.framework.Assert;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 /**
  *
@@ -166,6 +169,13 @@ public class CBFLoaderTest {
 		if (LoaderFactory.getData(testpath + "F6_1_001_bothReverse.cbf", null)==null) throw new Exception();
 		if (LoaderFactory.getData(testpath + "xtal5e_1_0010.cbf", null)==null) throw new Exception();
 		if (LoaderFactory.getData(testpath + "insulin_pilatus6mconverted_orig.cbf", null)==null) throw new Exception();
+	}
+
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder loader = new CBFLoader(testpath + "xtal5e_1_0010.cbf").loadFile();
+		AbstractDataset data = loader.getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
 	}
 
 	private int[] iterateAllOld(int xLength, int yLength, boolean isRowsX, boolean xIncreasing, boolean yIncreasing) {

@@ -18,19 +18,13 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.vecmath.Matrix3d;
@@ -52,14 +46,15 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 	private String fileName = "";
 
 	private HashMap<String, String>      metadata    = new HashMap<String, String>();
-	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
+//	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
 	private Vector<String> extraHeaders;
 	DetectorProperties detectorProperties;
 	DiffractionCrystalEnvironment diffractionCrystalEnvironment;
 	private boolean keepBitWidth = false;
 
 	private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
-	private Date date;
+
+	private DiffractionMetadata diffMetadata;
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -102,7 +97,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		this.fileName = fileName;
 		// New file, new meta data 
 		metadata.clear();
-		GDAMetadata.clear();
+//		GDAMetadata.clear();
 	}
 
 	@Override
@@ -216,7 +211,10 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			while (true) {
 				line = in.readLine();
 				if (line.contains("}")) {// stop at end of header
-					createGDAMetatdata();
+					double[] detectorOrigin = { getDouble("BEAM_CENTER_Y"), getDouble("BEAM_CENTER_X"),
+							getDouble("DISTANCE") };
+//					createGDAMetadata(detectorOrigin);
+					createMetadata(detectorOrigin);
 					return;
 				} else if (line.contains("=")) {
 					String[] keyvalue = line.split("=");
@@ -230,48 +228,48 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
-	private void createGDAMetatdata() throws ScanFileHolderException {
+//	private void createGDAMetadata(double[] detectorOrigin) throws ScanFileHolderException {
 		// NXGeometry:NXtranslation
 //		double pixelsize = getDouble("PIXEL_SIZE");
 //		double x = getInteger("SIZE1") * pixelsize;
 //		double y = getInteger("SIZE2") * pixelsize;
 		// bodge since bean centre of diamond ADSC detectors are in a DIFFERENT REFERENCE FRAME!!!!!!!!
-		double[] detectorOrigin = { getDouble("BEAM_CENTER_Y"), getDouble("BEAM_CENTER_X"),
-				getDouble("DISTANCE") };
 //		double[] detectorOrigin = { x - getDouble("BEAM_CENTER_X"), y - getDouble("BEAM_CENTER_Y"),
 //				getDouble("DISTANCE") };
-		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
-		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "milli*meter");
+//		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
+//		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "milli*meter");
+//
+//		// NXGeometery:NXOrientation
+//		double[] directionCosine = { 1, 0, 0, 0, 1, 0 }; // to form identity matrix as no header data
+//		GDAMetadata.put("NXdetector:NXgeometery:NXorientation", directionCosine);
+//		// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
+//		double[] detectorShape = { getDouble("SIZE1") * getDouble("PIXEL_SIZE"),
+//				getDouble("SIZE2") * getDouble("PIXEL_SIZE"), 0, 0, 0, 0 };
+//		GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
+//		GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXshape", "milli*metre");
+//
+//		// NXGeometery:NXFloat
+//		double[] pixelSize = { getDouble("PIXEL_SIZE"), getDouble("PIXEL_SIZE") };
+//		GDAMetadata.put("NXdetector:x_pixel_size", pixelSize[0]);
+//		GDAMetadata.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
+//		GDAMetadata.put("NXdetector:y_pixel_size", pixelSize[1]);
+//		GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
+//		// "NXmonochromator:wavelength"
+//		GDAMetadata.put("NXmonochromator:wavelength", getDouble("WAVELENGTH"));
+//		GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
+//
+//		// oscillation range
+//		GDAMetadata.put("NXSample:rotation_start", getDouble("OSC_START"));
+//		GDAMetadata.put("NXSample:rotation_start:NXUnits", "degree");
+//		GDAMetadata.put("NXSample:rotation_range", getDouble("OSC_RANGE"));
+//		GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
+//
+//		// Exposure time
+//		GDAMetadata.put("NXSample:exposure_time", getDouble("TIME"));
+//		GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
+//	}
 
-		// NXGeometery:NXOrientation
-		double[] directionCosine = { 1, 0, 0, 0, 1, 0 }; // to form identity matrix as no header data
-		GDAMetadata.put("NXdetector:NXgeometery:NXorientation", directionCosine);
-		// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
-		double[] detectorShape = { getDouble("SIZE1") * getDouble("PIXEL_SIZE"),
-				getDouble("SIZE2") * getDouble("PIXEL_SIZE"), 0, 0, 0, 0 };
-		GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
-		GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXshape", "milli*metre");
-
-		// NXGeometery:NXFloat
-		double[] pixelSize = { getDouble("PIXEL_SIZE"), getDouble("PIXEL_SIZE") };
-		GDAMetadata.put("NXdetector:x_pixel_size", pixelSize[0]);
-		GDAMetadata.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
-		GDAMetadata.put("NXdetector:y_pixel_size", pixelSize[1]);
-		GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
-		// "NXmonochromator:wavelength"
-		GDAMetadata.put("NXmonochromator:wavelength", getDouble("WAVELENGTH"));
-		GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
-
-		// oscillation range
-		GDAMetadata.put("NXSample:rotation_start", getDouble("OSC_START"));
-		GDAMetadata.put("NXSample:rotation_start:NXUnits", "degree");
-		GDAMetadata.put("NXSample:rotation_range", getDouble("OSC_RANGE"));
-		GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
-
-		// Exposure time
-		GDAMetadata.put("NXSample:exposure_time", getDouble("TIME"));
-		GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
-
+	private void createMetadata(double[] detectorOrigin) throws ScanFileHolderException {
 		// This is new metadata
 		Matrix3d identityMatrix = new Matrix3d();
 		identityMatrix.setIdentity();
@@ -280,13 +278,17 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 
 		diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(getDouble("WAVELENGTH"),
 				getDouble("OSC_START"), getDouble("OSC_RANGE"), getDouble("TIME"));
+
+		diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+		diffMetadata.setImageInfo("ADSC Image", getInteger("SIZE1"), getInteger("SIZE2"));
+		diffMetadata.setMetadata(metadata);
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		try {
-			date = sdf.parse(metadata.get("DATE"));
+			Date date = sdf.parse(metadata.get("DATE"));
+			diffMetadata.setCreationDate(date);
 		} catch (ParseException e) {
 			throw new ScanFileHolderException("Could not parse the date from the header", e);
 		}
-
 	}
 
 	private int getInteger(String key) throws ScanFileHolderException {
@@ -330,73 +332,8 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
-	private class ADSCMetadataAdapter extends DiffractionMetaDataAdapter {
-		private final DetectorProperties props;
-		private final DiffractionCrystalEnvironment env;
-
-		public ADSCMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
-			super(new File(fileName));
-			this.props = props;
-			this.env = env;
-		}
-
-		@Override
-		public Map<String,int[]> getDataShapes() {
-            final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-            try {
-				ret.put("ADSC Image", new int[] {getInteger("SIZE2"), getInteger("SIZE1")});
-			} catch (ScanFileHolderException e) {
-			}
-            return ret;
-		}
-		
-		@Override
-		public Date getCreation() {
-			return date;
-		}
-
-		@Override
-		public Collection<String> getDataNames() {
-			return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ADSC Image"}));
-		}
-
-		@Override
-		public String getMetaValue(String key) throws Exception {
-			return metadata.get(key);
-		}
-
-		@Override
-		public Collection<String> getMetaNames() throws Exception {
-			return Collections.unmodifiableCollection(metadata.keySet());
-		}
-
-		@Override
-		public DetectorProperties getDetector2DProperties() {
-			return props;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-			return env;
-		}
-
-		@Override
-		public DetectorProperties getOriginalDetector2DProperties() {
-			return detectorProperties;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
-			return diffractionCrystalEnvironment;
-		}
-
-	}
-
 	@Override
-	public IDiffractionMetadata getMetaData() {
-		return new ADSCMetadataAdapter(detectorProperties == null ? null : detectorProperties.clone(), diffractionCrystalEnvironment == null ? null : diffractionCrystalEnvironment.clone());
+	public IMetaData getMetaData() {
+		return diffMetadata;
 	}
-
-	
-
 }

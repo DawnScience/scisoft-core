@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -62,8 +61,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	private String fileName = null;
 	private HashMap<String, String> metadata = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
-	private DetectorProperties detectorProperties;
-	private DiffractionCrystalEnvironment diffractionCrystalEnvironment;
+	private IMetaData diffMetadata;
 
 	static {
 		CBFlib.loadLibrary();
@@ -132,7 +130,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			"Start_angle", "Angle_increment", "Detector_2theta", "Polarization", "Alpha", "Kappa", "Phi",
 			"Chi", "Oscillation_axis", "N_oscillations" };
 
-	private ImageOrientation readMiniCBFHeader(cbf_handle_struct chs) throws ScanFileHolderException{
+	private ImageOrientation readMiniCBFHeader(cbf_handle_struct chs) throws ScanFileHolderException {
 		SWIGTYPE_p_p_char s = cbf.new_charPP();
 //		String convention;
 
@@ -272,21 +270,41 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			GDAMetadata.put("NXdetector:pixel_overload", getFirstDouble("Count_cutoff", "counts"));
 			GDAMetadata.put("NXdetector:pixel_overload:NXUnits", "counts");
 			
+			createMetadata(detectorOrigin, xPxVal, yPXVal, lambda);
+		} catch (NumberFormatException e) {
+			throw new ScanFileHolderException("There was a problem parsing numerical value from string ",e);
+		}
+	}
+
+	private void createMetadata(double[] detectorOrigin, double xPxVal, double yPXVal, double lambda) {
+		try {
 			// This is new metadata
 			Matrix3d identityMatrix = new Matrix3d();
 			identityMatrix.setIdentity();
-			detectorProperties = new DetectorProperties(new Vector3d(detectorOrigin),
-					getInteger("numPixels_x"), getInteger("numPixels_y"),
-					xPxVal,yPXVal,identityMatrix);
+			DetectorProperties detectorProperties = new DetectorProperties(new Vector3d(detectorOrigin),
+					getInteger("numPixels_x"), getInteger("numPixels_y"), xPxVal, yPXVal, identityMatrix);
 
-			diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(lambda, getFirstDouble("Start_angle", "deg"),
-					getFirstDouble("Angle_increment", "deg"), getFirstDouble("Exposure_time", "s"));
-			
-		} catch (NumberFormatException e) {
-			throw new ScanFileHolderException("There was a problem parsing numerical value from string ",e);
-		} 
+			DiffractionCrystalEnvironment diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(lambda,
+					getFirstDouble("Start_angle", "deg"), getFirstDouble("Angle_increment", "deg"), getFirstDouble(
+							"Exposure_time", "s"));
+
+			diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+			((DiffractionMetadata) diffMetadata).setMetadata(metadata);
+		} catch (ScanFileHolderException e) {
+			diffMetadata = new MetaDataAdapter() {
+				@Override
+				public String getMetaValue(String key) throws Exception {
+					return metadata.get(key);
+				}
+
+				@Override
+				public Collection<String> getMetaNames() throws Exception {
+					return Collections.unmodifiableCollection(metadata.keySet());
+				}
+			};
+		}
 	}
-	 
+
 	private ImageOrientation readCBFHeaderData(cbf_handle_struct chs)throws ScanFileHolderException{
 		
 		int xLength = 0;
@@ -981,7 +999,6 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	}
 
-
 	@Override
 	public void loadMetaData(IMonitor mon) throws Exception {
 		cbf_handle_struct chs = new cbf_handle_struct(fileName);
@@ -993,63 +1010,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
-	private class CBFMetadataAdapter extends DiffractionMetaDataAdapter {
-		private final DetectorProperties props;
-		private final DiffractionCrystalEnvironment env;
-
-		public CBFMetadataAdapter(DetectorProperties props, DiffractionCrystalEnvironment env) {
-			super(new File(fileName));
-			this.props = props;
-			this.env = env;
-		}
-
-		@Override
-		public String getMetaValue(String key) throws Exception {
-			return metadata.get(key);
-		}
-
-		@Override
-		public Collection<String> getMetaNames() throws Exception {
-			return Collections.unmodifiableCollection(metadata.keySet());
-		}
-
-		@Override
-		public DetectorProperties getDetector2DProperties() {
-			return props;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getDiffractionCrystalEnvironment() {
-			return env;
-		}
-
-		@Override
-		public DetectorProperties getOriginalDetector2DProperties() {
-			return detectorProperties;
-		}
-
-		@Override
-		public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
-			return diffractionCrystalEnvironment;
-		}
-	}
-
 	@Override
 	public IMetaData getMetaData() {
-		if (detectorProperties == null || diffractionCrystalEnvironment == null) {
-			return new MetaDataAdapter() {
-				@Override
-				public String getMetaValue(String key) throws Exception {
-					return metadata.get(key);
-				}
-
-				@Override
-				public Collection<String> getMetaNames() throws Exception {
-					return Collections.unmodifiableCollection(metadata.keySet());
-				}
-			};
-		}
-
-		return new CBFMetadataAdapter(detectorProperties.clone(), diffractionCrystalEnvironment.clone());
+		return diffMetadata;
 	}
 }

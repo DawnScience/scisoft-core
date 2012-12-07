@@ -22,9 +22,11 @@ import javax.vecmath.Vector3d;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
@@ -124,4 +126,18 @@ public class DiffractionImageTest {
 		px1topx4.sub(detprops.pixelPosition(detectorCorners[0], detectorCorners[1]),detprops.pixelPosition(detprops.getPx(), detprops.getPy()));
 		Assert.assertEquals(diagDetSize, px1topx4.length(), 0.00001);
 	}
+
+	@Test
+	public void testSerializability() throws Exception {
+		AbstractDataset data;
+		data = new ADSCImageLoader(testfile1).loadFile().getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
+
+		data = new MARLoader(testfile2).loadFile().getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
+
+		data = new CBFLoader(testfile3).loadFile().getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
+}
+
 }

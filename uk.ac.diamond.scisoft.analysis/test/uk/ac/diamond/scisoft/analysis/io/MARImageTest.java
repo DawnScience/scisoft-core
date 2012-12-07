@@ -22,6 +22,7 @@ import gda.util.TestUtils;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -110,6 +111,13 @@ public class MARImageTest {
 	@Test
 	public void testLoadFile4() throws Exception {
 		new MARLoader(testfile4).loadFile();
+	}
+
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder loader = new MARLoader(testfile2).loadFile();
+		AbstractDataset data = loader.getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
 	}
 
 }

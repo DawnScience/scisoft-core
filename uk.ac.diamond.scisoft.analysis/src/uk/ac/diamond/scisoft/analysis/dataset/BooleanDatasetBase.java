@@ -665,6 +665,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
+			// TODO this test is necessary because Jython thinks max(boolean) is max(int)!
 			max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);

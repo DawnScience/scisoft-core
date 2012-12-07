@@ -3445,7 +3445,9 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	public Object mean() {
-		return mean(false);
+// TODO this is necessary because Jython coerces boolean to int!
+		return getStatistics(false).getMean();
+//		return mean(false);
 	}
 
 	/**

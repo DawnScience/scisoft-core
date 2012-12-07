@@ -125,7 +125,7 @@ public class DiffractionMetadata extends ExtendedMetadataAdapter implements IDif
 		if (dataNames.size() > 0) {
 			String name = dataNames.get(0);
 			int[] shape = shapes.get(name);
-			if(shape.length>0)
+			if(shape!= null && shape.length>0)
 				c.setImageInfo(name, shape[0], shape[1]);
 		}
 		return c;

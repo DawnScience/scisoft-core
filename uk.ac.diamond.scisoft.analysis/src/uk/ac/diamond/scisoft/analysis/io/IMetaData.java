@@ -24,7 +24,7 @@ import java.util.Map;
  * This interface describes the minimal metadata information that should be 
  * associated with an AbstractDataset or DataHolder. It is intended that
  * this interface will be implemented in an object that will then be 
- * associated with a DataHolder or dataset using setMetaData(IMetaData).
+ * associated with a DataHolder or dataset using setMetadata(IMetaData).
  * <p>
  * All returned collections and maps are <b>unmodifiable</b>.
  */
@@ -43,15 +43,15 @@ public interface IMetaData extends Cloneable, Serializable {
 
 	/**
 	 * Can be implemented to return sizes of datasets
-	 * 
+	 * (size can be null if it is not known)
 	 * @return map of sizes
 	 */
 	public Map<String, Integer> getDataSizes();
 
 	/**
 	 * Can be implemented to return shapes of dataset
-	 * 
-	 * @return map of sizes
+	 * (shape can be null if it is not known)
+	 * @return map of shapes
 	 */
 	public Map<String, int[]> getDataShapes();
 
@@ -71,7 +71,7 @@ public interface IMetaData extends Cloneable, Serializable {
 	public Collection<String> getMetaNames() throws Exception;
 
 	/**
-	 * May be implemented to provide custom metadata in the form of a collection of objects
+	 * May be implemented to provide custom metadata in the form of a collection of serializable objects
 	 * 
 	 * @return collection
 	 */

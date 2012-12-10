@@ -18,20 +18,23 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.SerializationUtils;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+
+/**
+ * Basic implementation of metadata
+ */
 public class Metadata implements IMetaData {
 	private static final long serialVersionUID = IMetaData.serialVersionUID;
 
 	private Map<String, ? extends Serializable> metadata;
-	private List<String> dataNames = new ArrayList<String>(1);
 	private Map<String,int[]> shapes = new HashMap<String,int[]>(1);
 	private Collection<Serializable> userObjects;
 
@@ -39,10 +42,18 @@ public class Metadata implements IMetaData {
 		this.metadata = metadata;
 	}
 
+	/**
+	 * Set metadata map
+	 * @param metadata
+	 */
 	void setMetadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
 	}
-	
+
+	/**
+	 * Internal use only
+	 * @return metadata map
+	 */
 	Map<String, ? extends Serializable> getInternalMetadata() {
 		return metadata;
 	}
@@ -66,7 +77,7 @@ public class Metadata implements IMetaData {
 
 	@Override
 	public Collection<String> getDataNames() {
-		return Collections.unmodifiableCollection(dataNames);
+		return Collections.unmodifiableCollection(shapes.keySet());
 	}
 
 	@Override
@@ -77,11 +88,14 @@ public class Metadata implements IMetaData {
 	@Override
 	public Map<String, Integer> getDataSizes() {
 		Map<String, Integer> sizes = new HashMap<String, Integer>(1);
-		if (dataNames.size() > 0) {
-			String name = dataNames.get(0);
-			int[] shape = shapes.get(name);
+		for (Entry<String, int[]> e : shapes.entrySet()) {
+			int[] shape = e.getValue();
 			if (shape != null && shape.length > 1)
-				sizes.put(name, shape[0] * shape[1]);
+				sizes.put(e.getKey(), AbstractDataset.calcSize(shape));
+			else
+				sizes.put(e.getKey(), null);
+		}
+		if (sizes.size() > 0) {
 			return Collections.unmodifiableMap(sizes);
 		}
 		return null;
@@ -121,11 +135,10 @@ public class Metadata implements IMetaData {
 					md.put(k, null);
 				}
 			}
-			c.dataNames = new ArrayList<String>(dataNames);
 			c.shapes = new HashMap<String, int[]>(1);
-			for (String n : shapes.keySet()) {
-				int[] s = shapes.get(n);
-				c.shapes.put(n, s == null ? null : s.clone());
+			for (Entry<String, int[]> e : shapes.entrySet()) {
+				int[] s = e.getValue();
+				c.shapes.put(e.getKey(), s == null ? null : s.clone());
 			}
 		} catch (CloneNotSupportedException e) {
 		}

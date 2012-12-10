@@ -406,28 +406,11 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
-			
-			@Override
-			public String getMetaValue(String key) {
-				return null; // not implemented as yet
-			}
-			
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(allDataSetNames);
-			}
-
-			@Override
-			public Map<String, Integer> getDataSizes() {
-				return allDataSetSizes;
-			}
-
-			@Override
-			public Map<String, int[]> getDataShapes() {
-				return allDataSetRanks;
-			}
-		};
+		Metadata md = new Metadata();
+		for (Entry<String, int[]> e : allDataSetRanks.entrySet()) {
+			md.addDataInfo(e.getKey(), e.getValue());
+		}
+		return md;
 	}
 
 	private Map<String, Integer> getDataSizes(String path, List<String> sets, IMonitor mon) {

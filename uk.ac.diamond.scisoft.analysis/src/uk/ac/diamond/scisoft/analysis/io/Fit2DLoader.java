@@ -48,7 +48,9 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
-	
+	private Metadata metadata;
+	private static final String DATA_NAME = "ESRF Pilatus Data";
+
 	/**
 	 * @param fileName
 	 */
@@ -120,12 +122,12 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 				fi = null;
 			}
 		}
-		if (data != null) {
-			output.addDataset("ESRF Pilatus Data", data);
-			if (loadMetadata) {
-				data.setMetadata(getMetaData());
-				output.setMetadata(data.getMetadata());
-			}
+
+		output.addDataset(DATA_NAME, data);
+		if (loadMetadata) {
+			createMetadata();
+			data.setMetadata(metadata);
+			output.setMetadata(metadata);
 		}
 		return output;
 	}
@@ -137,39 +139,21 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 		try {
 			final String line       = br.readLine();
 			readMetaData(br, line.length()+1, mon);
+			createMetadata();
 		} finally {
 			br.close();
 		}
 	}
 	
+	private void createMetadata() {
+		metadata = new Metadata(textMetadata);
+		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Dim_2")),
+				Integer.parseInt(textMetadata.get("Dim_1")));
+	}
+
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
-			
-			@Override
-			public String getMetaValue(String key) {
-				return textMetadata.get(key);	
-			}
-			
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return Collections.unmodifiableCollection(textMetadata.keySet());
-			}
-			
-			@Override
-			public Map<String,int[]> getDataShapes() {
-				int height = Integer.parseInt(textMetadata.get("Dim_1"));
-				int width = Integer.parseInt(textMetadata.get("Dim_2"));
-                final Map<String,int[]> ret = new HashMap<String,int[]>(1);
-                ret.put("ESRF Pilatus Data", new int[]{width,height});
-                return Collections.unmodifiableMap(ret);
-			}
-			
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(Arrays.asList(new String[]{"ESRF Pilatus Data"}));
-			}
-		};
+		return metadata;
 	}
 	
 	private int readMetaData(final BufferedReader br, int index, final IMonitor mon) throws Exception {

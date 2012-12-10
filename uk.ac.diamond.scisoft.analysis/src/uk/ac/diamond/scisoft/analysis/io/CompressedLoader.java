@@ -92,7 +92,7 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 	@Override
 	public IMetaData getMetaData() {
 		if (loader instanceof IMetaLoader) return ((IMetaLoader)loader).getMetaData();
-		return new MetaDataAdapter();
+		return new Metadata();
 	}
 	
 }

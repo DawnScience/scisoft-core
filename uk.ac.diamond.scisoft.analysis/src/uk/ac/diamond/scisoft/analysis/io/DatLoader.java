@@ -26,13 +26,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -110,6 +109,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	protected Map<String, List<Double>> vals;
 	protected int                       columnIndex;
 
+	private ExtendedMetadata metadata;
+
 	public DatLoader() {
 	
 	}
@@ -144,10 +145,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	 */
 	@Override
 	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
-		
         final DataHolder result = loadFile(null, mon);
 		return result;
-
 	}
 
 	private DataHolder loadFile(final String name, final IMonitor mon) throws ScanFileHolderException {
@@ -219,7 +218,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 			}		
 
 			if (loadMetadata) {
-				result.setMetadata(getMetaData());
+				createMetadata();
+				result.setMetadata(metadata);
 			}
 			return result;
 			
@@ -275,35 +275,20 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 		} finally {
 			br.close();
 		}
+		createMetadata();
 	}
-	
+
+	private void createMetadata() {
+		metadata = new ExtendedMetadata(new File(fileName));
+		metadata.setMetadata(metaData);
+		for (Entry<String, List<Double>> e : vals.entrySet()) {
+			metadata.addDataInfo(e.getKey(), e.getValue().size());
+		}
+	}
+
 	@Override
 	public IMetaData getMetaData() {
-		return new ExtendedMetadataAdapter(new File(fileName)) {
-			
-			@Override
-			public Collection<String> getMetaNames() {
-				return Collections.unmodifiableCollection(metaData.keySet());	
-			}
-			
-			@Override
-			public String getMetaValue(String key) {
-				return metaData.get(key);
-			}
-			
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(vals.keySet());
-			}
-			
-			@Override
-			public String getScanCommand() {
-				if(metaData.containsKey("command")) {
-					return metaData.get("command");
-				} 
-				return null;
-			}
-		};
+		return metadata;
 	}
 
 	private static Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
@@ -314,7 +299,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	 * and if it finds "#S" and "#D" it thinks that the file is a multi-scan
 	 * spec file and throws an exception.
 	 * 
-	 * Example of multi-scan spec file characteritic lines:
+	 * Example of multi-scan spec file characteristic lines:
 	   #S 1  ascan  pvo -0.662 1.338  20 0.1
        #D Sat Apr 02 10:19:13 2011
 	 * 

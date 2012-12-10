@@ -25,6 +25,7 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.util.Collection;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -231,4 +232,10 @@ public class SRSLoaderTest {
 
 	}
 
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder dh = new SRSLoader("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat").loadFile();
+		AbstractDataset data = dh.getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
+	}
 }

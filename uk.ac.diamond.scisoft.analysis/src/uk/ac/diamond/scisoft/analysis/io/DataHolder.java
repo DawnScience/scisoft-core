@@ -61,7 +61,7 @@ public class DataHolder implements IMetadataProvider {
 	public DataHolder() {
 		data = new Vector<ILazyDataset>();
 		names = new Vector<String>();
-		metadata = new MetaDataAdapter();
+		metadata = new Metadata(null);
 	}
 
 	/**

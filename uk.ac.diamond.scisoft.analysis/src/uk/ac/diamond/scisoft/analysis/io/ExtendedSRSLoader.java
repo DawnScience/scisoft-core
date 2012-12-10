@@ -58,9 +58,7 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
 			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());
-			dataSizes.put(lazyDataset.getName(), lazyDataset.getSize());
 		}
-
 	}
 	
 	private ImageStackLoader getImageStackV1(AbstractDataset paths, IMonitor mon) {

@@ -45,6 +45,14 @@ public class Metadata implements IMetaData {
 		this.metadata = metadata;
 	}
 
+	public Metadata(Collection<String> names) {
+		if (names != null) {
+			for (String n : names) {
+				shapes.put(n, null);
+			}
+		}
+	}
+
 	/**
 	 * Set metadata map
 	 * @param metadata

@@ -490,7 +490,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 		md.putAll(metadata);
 		md.putAll(GDAMetadata);
 		diffMetadata.setMetadata(md);
-		diffMetadata.setDataInfo("RAXIS osc", ny, nx);
+		diffMetadata.addDataInfo("RAXIS osc", ny, nx);
 	}
 
 	@Override

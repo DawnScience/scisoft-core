@@ -33,6 +33,7 @@ public class Metadata implements IMetaData {
 	private Map<String, ? extends Serializable> metadata;
 	private List<String> dataNames = new ArrayList<String>(1);
 	private Map<String,int[]> shapes = new HashMap<String,int[]>(1);
+	private Collection<Serializable> userObjects;
 
 	public Metadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
@@ -46,9 +47,21 @@ public class Metadata implements IMetaData {
 		return metadata;
 	}
 
-	void setDataInfo(String imageName, int... shape) {
-		dataNames.add(0, imageName);
-		shapes.put(imageName, shape);
+	/**
+	 * Set user objects
+	 * @param objects
+	 */
+	void setUserObjects(Collection<Serializable> objects) {
+		userObjects = objects;
+	}
+
+	/**
+	 * Add name and shape of a dataset to metadata
+	 * @param name
+	 * @param shape (can be null or zero-length)
+	 */
+	void addDataInfo(String name, int... shape) {
+		shapes.put(name, shape == null || shape.length == 0 ? null : shape);
 	}
 
 	@Override
@@ -86,7 +99,7 @@ public class Metadata implements IMetaData {
 
 	@Override
 	public Collection<Serializable> getUserObjects() {
-		return null;
+		return userObjects;
 	}
 
 	@Override

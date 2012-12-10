@@ -35,7 +35,7 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadata(File f) {
-		super(null);
+		super();
 		setFile(f);
 	}
 

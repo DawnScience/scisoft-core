@@ -38,6 +38,9 @@ public class Metadata implements IMetaData {
 	private Map<String,int[]> shapes = new HashMap<String,int[]>(1);
 	private Collection<Serializable> userObjects;
 
+	public Metadata() {
+	}
+
 	public Metadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
 	}
@@ -103,12 +106,13 @@ public class Metadata implements IMetaData {
 
 	@Override
 	public Serializable getMetaValue(String key) throws Exception {
-		return metadata.get(key);
+		return metadata == null ? null : metadata.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<String> getMetaNames() throws Exception {
-		return Collections.unmodifiableCollection(metadata.keySet());
+		return metadata == null ? (Collection<String>) Collections.EMPTY_SET : Collections.unmodifiableCollection(metadata.keySet());
 	}
 
 	@Override
@@ -121,18 +125,20 @@ public class Metadata implements IMetaData {
 		Metadata c = null;
 		try {
 			c = (Metadata) super.clone();
-			HashMap<String, Serializable> md = new HashMap<String, Serializable>();
-			c.metadata = md;
-			ByteArrayOutputStream os = new ByteArrayOutputStream(512);
-			for (String k : metadata.keySet()) {
-				Serializable v = metadata.get(k);
-				if (v != null) {
-					SerializationUtils.serialize(v, os);
-					Serializable nv = (Serializable) SerializationUtils.deserialize(os.toByteArray());
-					os.reset();
-					md.put(k, nv);
-				} else {
-					md.put(k, null);
+			if (metadata != null) {
+				HashMap<String, Serializable> md = new HashMap<String, Serializable>();
+				c.metadata = md;
+				ByteArrayOutputStream os = new ByteArrayOutputStream(512);
+				for (String k : metadata.keySet()) {
+					Serializable v = metadata.get(k);
+					if (v != null) {
+						SerializationUtils.serialize(v, os);
+						Serializable nv = (Serializable) SerializationUtils.deserialize(os.toByteArray());
+						os.reset();
+						md.put(k, nv);
+					} else {
+						md.put(k, null);
+					}
 				}
 			}
 			c.shapes = new HashMap<String, int[]>(1);

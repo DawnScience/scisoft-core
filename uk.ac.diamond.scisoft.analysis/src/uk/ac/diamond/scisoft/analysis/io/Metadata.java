@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,7 +36,8 @@ public class Metadata implements IMetaData {
 	private static final long serialVersionUID = IMetaData.serialVersionUID;
 
 	private Map<String, ? extends Serializable> metadata;
-	private Map<String,int[]> shapes = new HashMap<String,int[]>(1);
+	// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-427
+	private Map<String,int[]> shapes = new LinkedHashMap<String,int[]>(7);
 	private Collection<Serializable> userObjects;
 
 	public Metadata() {
@@ -79,6 +81,10 @@ public class Metadata implements IMetaData {
 
 	/**
 	 * Add name and shape of a dataset to metadata
+	 * 
+	 * NOTE shapes is LinkedHashMap here because the names collection 
+	 * maintained order. Now that we do not need this data 
+	 * 
 	 * @param name
 	 * @param shape (can be null or zero-length)
 	 */

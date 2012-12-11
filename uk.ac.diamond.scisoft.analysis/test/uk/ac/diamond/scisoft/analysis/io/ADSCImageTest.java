@@ -123,6 +123,5 @@ public class ADSCImageTest {
 		cmd = (IDiffractionMetadata) SerializationUtils.clone(md);
 		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
 		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
-		SerializationUtils.clone(new ADSCImageLoader("/dls/sci-scratch/ExampleData/ADSC-Q315/adsc/F6_1_137.img").loadFile().getDataset(0));
 	}
 }

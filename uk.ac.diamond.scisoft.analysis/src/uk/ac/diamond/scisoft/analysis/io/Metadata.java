@@ -36,7 +36,9 @@ public class Metadata implements IMetaData {
 	private static final long serialVersionUID = IMetaData.serialVersionUID;
 
 	private Map<String, ? extends Serializable> metadata;
-	// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-427
+	// NOTE shapes is LinkedHashMap here because the names collection 
+	// maintained order. Now that we do not need this collection but if we
+	// do not keep the shapes in a LinkedHashMap, we lose order.
 	private Map<String,int[]> shapes = new LinkedHashMap<String,int[]>(7);
 	private Collection<Serializable> userObjects;
 
@@ -81,10 +83,6 @@ public class Metadata implements IMetaData {
 
 	/**
 	 * Add name and shape of a dataset to metadata
-	 * 
-	 * NOTE shapes is LinkedHashMap here because the names collection 
-	 * maintained order. Now that we do not need this collection but if we
-	 * do not keep the shapes in a LinkedHashMap, we loose order.
 	 * 
 	 * @param name
 	 * @param shape (can be null or zero-length)

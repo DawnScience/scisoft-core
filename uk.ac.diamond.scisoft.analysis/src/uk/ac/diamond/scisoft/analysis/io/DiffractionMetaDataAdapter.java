@@ -22,6 +22,10 @@ import java.io.File;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
+/**
+ * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern
+ * is generally not serializable (unless the host class is serializable and has a null constructor)
+ */
 public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implements IDiffractionMetadata {
 
 	private DiffractionCrystalEnvironment originalEnv,  clonedEnv;

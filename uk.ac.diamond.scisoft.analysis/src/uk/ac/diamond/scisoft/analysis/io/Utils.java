@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -473,30 +475,58 @@ public class Utils {
 	}
 
 	/**
+	 * Faster parse for double
+	 * @param number
+	 * @return double value
+	 */
+	public static final double parseDouble(final String number) {
+		if (number==null) return Double.NaN;
+		
+		int offset = number.toLowerCase().indexOf('e');
+		if (offset<0) { // faster than parseDouble
+			BigDecimal base = new BigDecimal(number);
+			return base.scaleByPowerOfTen(0).doubleValue();// faster
+		} else {
+			return Double.parseDouble(number); // slow
+		}
+		
+	}
+	
+
+	/**
+	 * Slightly faster parse for double
+	 * @param number
+	 * @return double value
+	 */
+	public static final long parseLong(final String number) {
+		BigInteger base = new BigInteger(number);
+		return base.longValue(); // faster
+	}
+	
+	/**
 	 * Parse a string and try to convert it to the lowest precision Number object
 	 * @param text
 	 * @return a Number or null
 	 */
 	public static Number parseValue(String text) {
 		try {
-			return Byte.parseByte(text);
-		} catch (NumberFormatException be) {
-			try {
-				return Short.parseShort(text);
-			} catch (NumberFormatException se) {
-				try {
-					return Integer.parseInt(text);
-				} catch (NumberFormatException ie) {
-					try {
-						return Long.parseLong(text);
-					} catch (NumberFormatException le) {
-						try { // nb no float as precision
-							return Double.parseDouble(text);
-						} catch (NumberFormatException de) {
-							SRSLoader.logger.info("Value {} is not a number", text);
-						}
-					}
-				}
+			BigInteger base = new BigInteger(text);
+			int size = base.bitLength();
+			if (size>32) {
+				return base.longValue();
+			} else if (size>16) {
+				return base.intValue();
+			} else if (size>8) {
+				return base.shortValue();
+			} else {
+				return base.byteValue();
+			}
+			
+		} catch (Throwable be) {
+			try { // nb no float as precision
+				return parseDouble(text);
+			} catch (NumberFormatException de) {
+				SRSLoader.logger.info("Value {} is not a number", text);
 			}
 		}
 		return null;

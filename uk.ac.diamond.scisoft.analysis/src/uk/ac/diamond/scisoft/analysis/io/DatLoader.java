@@ -183,14 +183,14 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 					final String[] values = line.split("\\s+");
 					if (columnIndex>-1 && name!=null) {
 					    final String value = values[columnIndex];
-					    vals.get(name).add(Double.parseDouble(value.trim()));
+					    vals.get(name).add(Utils.parseDouble(value.trim()));
 					} else {
 						if (values.length != vals.size()) {
 							throw new ScanFileHolderException("Data and header must be the same size!");
 						}
 						final Iterator<String> it = vals.keySet().iterator();
 						for (String value : values) {
-							vals.get(it.next()).add(Double.parseDouble(value.trim())); // The dreaded slow Double.parseDouble() !! 
+							vals.get(it.next()).add(Utils.parseDouble(value.trim())); 
 						}
 					}
 					

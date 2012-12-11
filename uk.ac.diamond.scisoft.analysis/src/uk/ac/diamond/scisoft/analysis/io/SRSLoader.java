@@ -191,6 +191,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		}
 
 		for (int i = 0; i < cols; i++) {
+			
 			String text = data[i];
 			if (columns[i] != null) {
 				List<?> list = columns[i];

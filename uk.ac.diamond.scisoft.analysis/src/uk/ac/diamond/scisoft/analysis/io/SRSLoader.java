@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.gda.monitor.IMonitor;
@@ -477,7 +476,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return metadata;
 	}
 
-	private void createMetadata() {
+	protected void createMetadata() {
 		metadata = new ExtendedMetadata(new File(fileName));
 		metadata.setMetadata(textMetadata);
 

@@ -826,10 +826,15 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return pixel coordinates of the beam centre (where beam intersects detector)
+	 * @return pixel coordinates of the beam centre (where beam intersects detector).
+	 * In the case of it being undefined, NaNs are returned
 	 */
 	public double[] getBeamCentreCoords() {
-		return pixelPreciseCoords(getBeamCentrePosition());
+		try {
+			return pixelPreciseCoords(getBeamCentrePosition());
+		} catch (IllegalStateException e) {
+			return new double[] {Double.NaN, Double.NaN};
+		}
 	}
 
 	/**
@@ -837,9 +842,13 @@ public class DetectorProperties implements Serializable {
 	 * @param coords in image
 	 */
 	public void setBeamCentreCoords(double[] coords) {
-		Vector3d oc = getBeamCentrePosition(); // old beam centre
-		oc.sub(pixelPosition(coords[0], coords[1]));
-		origin.add(oc); // shift origin accordingly
+		try {
+			Vector3d oc = getBeamCentrePosition(); // old beam centre
+			oc.sub(pixelPosition(coords[0], coords[1]));
+			origin.add(oc); // shift origin accordingly
+		} catch (IllegalStateException e) {
+			// do nothing
+		}
 		// Tell listeners
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.BEAM_CENTRE));
 	}

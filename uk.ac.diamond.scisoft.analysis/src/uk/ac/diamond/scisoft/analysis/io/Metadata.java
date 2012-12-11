@@ -83,7 +83,8 @@ public class Metadata implements IMetaData {
 	 * Add name and shape of a dataset to metadata
 	 * 
 	 * NOTE shapes is LinkedHashMap here because the names collection 
-	 * maintained order. Now that we do not need this data 
+	 * maintained order. Now that we do not need this collection but if we
+	 * do not keep the shapes in a LinkedHashMap, we loose order.
 	 * 
 	 * @param name
 	 * @param shape (can be null or zero-length)

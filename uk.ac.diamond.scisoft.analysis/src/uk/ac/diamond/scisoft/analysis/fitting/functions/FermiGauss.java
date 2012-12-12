@@ -173,4 +173,33 @@ public class FermiGauss extends AFunction implements Serializable{
 		return fermiDS;
 	}
 	
+	
+	// Derived approximate fits for the solution see FermiGaussApproximateFWHM.py
+	private static double[] p0Coefficients = { -7.6839838e-11, -2.7999866e-08, -1.4025827e-09 };
+	private static double[] p1Coefficients = {  9.6493621e-08,  5.3075971e-06,  0.00084781716 };
+	private static double[] p2Coefficients = { -2.1193838e-05,  0.00044909062, -0.017089595 };
+	
+	/**
+	 * Method to approximate a gaussisan FWHM from an appparant temperature,
+	 * @param realTemperaure the real temperature the sample is at
+	 * @param fittedTemperature the temperature the fit has given
+	 * @return the FWHM of the convoluted gaussian assuming the temperature is set to the real temperature
+	 */
+	public double approximateFWHM(double realTemperaure, double fittedTemperature) {
+		
+		// first use the real temperature to approximate the paramters for the sigma fit from fitted temperature
+		double p0 = p0Coefficients[0]*realTemperaure*realTemperaure +
+				p0Coefficients[1]*realTemperaure + p0Coefficients[2];
+		double p1 = p1Coefficients[0]*realTemperaure*realTemperaure +
+				p1Coefficients[1]*realTemperaure + p1Coefficients[2];
+		double p2 = p2Coefficients[0]*realTemperaure*realTemperaure +
+				p2Coefficients[1]*realTemperaure + p2Coefficients[2];
+		
+		// now use the fitted coefficeints to get the sigma value
+		double fwhm = p0*fittedTemperature*fittedTemperature +
+				p1*fittedTemperature + p2;
+		
+		return fwhm;
+	}
+	
 }

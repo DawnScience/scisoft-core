@@ -22,6 +22,10 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
@@ -31,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
  * Utilities class
  */
 public class Utils {
+	protected static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
 	/**
 	 * @param b
@@ -474,6 +479,8 @@ public class Utils {
 		data.setStoredValue("hash", (int)hash);
 	}
 
+	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");
+
 	/**
 	 * Faster parse for double
 	 * @param number
@@ -482,27 +489,15 @@ public class Utils {
 	public static final double parseDouble(final String number) {
 		if (number==null) return Double.NaN;
 		
-		int offset = number.toLowerCase().indexOf('e');
-		if (offset<0) { // faster than parseDouble
+//		int offset = number.toLowerCase().indexOf('e');
+//		if (offset<0) { // faster than parseDouble
+		if (EXP_REGEX.matcher(number).matches()) {
 			BigDecimal base = new BigDecimal(number);
 			return base.scaleByPowerOfTen(0).doubleValue();// faster
-		} else {
-			return Double.parseDouble(number); // slow
 		}
-		
+		return Double.parseDouble(number); // slow
 	}
-	
 
-	/**
-	 * Slightly faster parse for double
-	 * @param number
-	 * @return double value
-	 */
-	public static final long parseLong(final String number) {
-		BigInteger base = new BigInteger(number);
-		return base.longValue(); // faster
-	}
-	
 	/**
 	 * Parse a string and try to convert it to the lowest precision Number object
 	 * @param text
@@ -512,21 +507,26 @@ public class Utils {
 		try {
 			BigInteger base = new BigInteger(text);
 			int size = base.bitLength();
-			if (size>32) {
+			if (size > 63) {
+				try {
+					return parseDouble(text);
+				} catch (NumberFormatException de) {
+					logger.info("Value {} is not a number", text);
+				}
+			} else if (size > 31) {
 				return base.longValue();
-			} else if (size>16) {
+			} else if (size > 15) {
 				return base.intValue();
-			} else if (size>8) {
+			} else if (size > 7) {
 				return base.shortValue();
 			} else {
 				return base.byteValue();
 			}
-			
 		} catch (Throwable be) {
 			try { // nb no float as precision
 				return parseDouble(text);
 			} catch (NumberFormatException de) {
-				SRSLoader.logger.info("Value {} is not a number", text);
+				logger.info("Value {} is not a number", text);
 			}
 		}
 		return null;

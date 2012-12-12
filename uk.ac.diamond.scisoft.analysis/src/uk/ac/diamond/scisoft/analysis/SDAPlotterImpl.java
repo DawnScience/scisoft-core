@@ -96,7 +96,15 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				logger.error("No datasets specified");
 				throw new IllegalArgumentException("No datasets specified");
 			}
-			return new IDataset[] { AbstractDataset.arange(yAxes[0].getSize(), AbstractDataset.INT32) };
+			int max = 0;
+			for (IDataset y : yAxes) {
+				if (y != null) {
+					int s = y.getSize();
+					if (s > max)
+						max = s;
+				}
+			}
+			return new IDataset[] { AbstractDataset.arange(max, AbstractDataset.INT32) };
 		}
 
 		return new IDataset[] { xAxis };
@@ -221,61 +229,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @throws Exception
 	 */
 	private void lplot(final String plotName, final String title, IDataset[] xAxes, final IDataset xAxis2, IDataset[] yAxes, final boolean updateMode) throws Exception {
-		for (IDataset x : xAxes) {
-			if (!isDataND(x, 1)) {
-				logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
-						x.getRank());
-				throw new Exception("Input x dataset has incorrect rank: it should be 1");
-			}
-		}
-		for (IDataset y : yAxes) {
-			if (!isDataND(y, 1)) {
-				logger.error("Input y dataset has incorrect rank: it has {} dimensions when it should be 1",
-						y.getRank());
-				throw new Exception("Input y dataset has incorrect rank: it should be 1");
-			}
-		}
-
-		logger.info("Plot sent to {}", plotName);
-
-		// Create the beans to transfer the data
-		DataBean dataBean = new DataBean(GuiPlotMode.ONED);
-		if (xAxes.length == 1) {
-			dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
-			for (int i = 0; i < yAxes.length; i++) {
-				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i]));
-				} catch (DataBeanException e) {
-					logger.error("Problem adding data to bean as axis key does not exist");
-					e.printStackTrace();
-				}
-			}
-		} else {
-			if (xAxes.length != yAxes.length)
-				throw new IllegalArgumentException("# xAxis does not match # yAxis");
-			for (int i = 0; i < xAxes.length; i++) {
-				String axisStr = (i == 0) ? AxisMapBean.XAXIS : AxisMapBean.XAXIS + i;
-				dataBean.addAxis(axisStr, xAxes[i]);
-				// now add it to the plot data
-				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i], axisStr));
-				} catch (DataBeanException e) {
-					logger.error("Problem adding data to bean as axis key does not exist");
-					e.printStackTrace();
-				}
-			}
-		}
-
-		if (xAxis2 != null)
-			dataBean.addAxis(AxisMapBean.XAXIS2, xAxis2);
-
-		if (updateMode)
-			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, "UPDATE");
-
-		if (title != null)
-			dataBean.putGuiParameter(GuiParameters.TITLE, title);
-
-		sendBeansToServer(plotName, dataBean, null);
+		lplot(plotName, title, xAxes, xAxis2, yAxes, null, null, updateMode);
 	}
 
 	/**
@@ -311,12 +265,12 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		// Create the beans to transfer the data
 		DataBean dataBean = new DataBean(GuiPlotMode.ONED);
 		if (xAxes.length == 1) {
-			if(xAxisName!=null)
+			if (xAxisName != null)
 				xAxes[0].setName(xAxisName);
 			dataBean.addAxis(AxisMapBean.XAXIS, xAxes[0]);
 			for (int i = 0; i < yAxes.length; i++) {
 				try {
-					if(yAxisName!=null)
+					if (yAxisName != null)
 						yAxes[i].setName(yAxisName);
 					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yAxes[i]));
 				} catch (DataBeanException e) {
@@ -340,7 +294,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			}
 		}
 
-		if (xAxis2 != null){
+		if (xAxis2 != null) {
 			xAxis2.setName("");
 			dataBean.addAxis(AxisMapBean.XAXIS2, xAxis2);
 		}

@@ -136,13 +136,21 @@ def clear(name=None):
     _plot_clear(name)
 
 def line(x, y=None, name=None):
-    '''Plot y dataset (or list of datasets), optionally against
-    any given x dataset in the named view
+    '''Plot y dataset (or list of datasets), optionally against any
+    given x dataset in the named view
 
     Arguments:
     x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
     name -- name of plot view to use (if None, use default name)
+
+    For example,
+    >>> import scisoftpy as dnp
+    >>> a = dnp.arange(1,10.)
+    >>> b = dnp.arange(3,14.)
+    >>> dnp.plot.line([a,a+12.3]) # plots two lines against array index
+    >>> dnp.plot.line(2*a, [a,a+12.3]) # plots two lines against 2*a
+    >>> dnp.plot.line([2*a, 3.5*b], [a,b]) # plots two lines against defined x values
     '''
     if not name:
         name = _PVNAME

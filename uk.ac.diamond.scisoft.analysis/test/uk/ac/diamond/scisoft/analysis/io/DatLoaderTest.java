@@ -19,8 +19,10 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class DatLoaderTest {
@@ -109,5 +111,12 @@ public class DatLoaderTest {
         for (String name : data.keySet()) {
 			if (!data.get(name).getName().equals(name)) throw new Exception("DatLoader did not set dataset name correctly!");
 		}
+	}
+
+	@Test
+	public void testSerializability() throws Exception {
+		DataHolder loader = new DatLoader("testfiles/gda/analysis/io/DatLoaderTest/MoFoil.dat").loadFile();
+		AbstractDataset data = loader.getDataset(0);
+		SerializationUtils.serialize(data.getMetadata());
 	}
 }

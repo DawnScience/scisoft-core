@@ -22,8 +22,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.imageio.ImageReader;
@@ -165,23 +163,13 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	public IMetaData getMetaData() {
 		return getMetaData(null);
 	}
-	
+
 	public IMetaData getMetaData(AbstractDataset data) {
 		if (metadata == null) {
 			if (data!=null) return data.getMetadata(); // Might be null or might be set in AWTImageUtils.
 			return null;
 		}
 
-		return new MetaDataAdapter() {
-			@Override
-			public Collection<String> getMetaNames() throws Exception {
-				return Collections.unmodifiableCollection(metadata.keySet());
-			}
-
-			@Override
-			public Serializable getMetaValue(String key) throws Exception {
-				return metadata.get(key);
-			}
-		};
+		return new Metadata(metadata);
 	}
 }

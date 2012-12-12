@@ -34,6 +34,11 @@ import uk.ac.gda.monitor.IMonitor;
  */
 public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 
+	private static final String PILATUS_DIR = "pilatus100k"; // sub-directory for 100k images 
+	private static final String PATH_DATASET = "path";       // path dataset name
+	private static final String PILATUS_KEY = "pilatus100k_path_template"; // metadata key for template string
+	private static final String DATA_NAME = "Pilatus";
+
 	public ExtendedSRSLoader(String filename) {
 		super(filename);
 	}
@@ -42,25 +47,24 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 
 		ImageStackLoader loader=null;
 
-		// TODO FIXME BODGE bodged format v1
 		// now we need to try to load in the the pilatus data
-		if (currentDataHolder.contains("path") && !textMetadata.containsKey("pilatus100k_path_template")) {
-			loader = getImageStackV1(currentDataHolder.getDataset("path"), mon);
-			
-	    // TODO FIXME BODGE bodged format v2
-		} else if (currentDataHolder.contains("path") && textMetadata.containsKey("pilatus100k_path_template")) {
-
-			loader = getImageStackV2(currentDataHolder.getDataset("path"), mon);
+		if (currentDataHolder.contains(PATH_DATASET)) {
+			AbstractDataset paths = currentDataHolder.getDataset(PATH_DATASET);
+			if (!textMetadata.containsKey(PILATUS_KEY)) {
+				// TODO FIXME BODGE bodged format v1
+				loader = getImageStackV1(paths, mon);
+			} else {
+			    // TODO FIXME BODGE bodged format v2
+				loader = getImageStackV2(paths, mon);
+			}
 		}
 
 		if (loader!=null) {
-			LazyDataset lazyDataset = new LazyDataset("Pilatus", loader.dtype, loader.getShape(), loader);
+			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.dtype, loader.getShape(), loader);
 			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
 			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());
-			dataSizes.put(lazyDataset.getName(), lazyDataset.getSize());
 		}
-
 	}
 	
 	private ImageStackLoader getImageStackV1(AbstractDataset paths, IMonitor mon) {
@@ -69,7 +73,7 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 		// build a list of all the pathnames
 		File base = new File(fileName);
 		File path = base.getParentFile();
-		path = new File(base.getParentFile(), "pilatus100k");
+		path = new File(base.getParentFile(), PILATUS_DIR);
 
 		for (int i = 0; i < paths.getShape()[0]; i++) {
 			File file = new File(path, String.format("test%d.tif", paths.getInt(i)));
@@ -91,22 +95,22 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 	private ImageStackLoader getImageStackV2(AbstractDataset paths, IMonitor mon) {
 		
 		ArrayList<String> files = new ArrayList<String>();
-		final String pilPath = textMetadata.get("pilatus100k_path_template");
+		final String pilPath = textMetadata.get(PILATUS_KEY);
 		
 		final File file = new File(fileName);
 		final File dir  = file.getParentFile();
 		
-		// Only works with 1D set which is likely ok, we are a very sepcific format here.
+		// Only works with 1D set which is likely ok, we are a very specific format here.
 		for (int index=0;index<paths.getSize();++index) {
 			final String subPath = String.format(pilPath, paths.getInt(index));
-			final String imgPath = dir.getAbsolutePath()+"/"+subPath;
+			final String imgPath = new File(dir, subPath).getAbsolutePath();
 			files.add(imgPath);
 		}	
 		
 		try {
 			return new ImageStackLoader(files, mon);
 		} catch (Exception e) {
-			logger.warn("Could not create ImageStackLoader, not populating pilatus stack");
+			logger.warn("Could not create ImageStackLoader, not populating Pilatus image stack");
 			return null;
 		}
 	}
@@ -117,7 +121,10 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 		DataHolder data = super.loadFile(mon);
 
 		appendPilatusData(data, mon);
-
+		if (loadMetadata) {
+			createMetadata();
+			data.setMetadata(getMetaData());
+		}
 		return data;
 	}
 	
@@ -128,15 +135,15 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
         // Cannot do this if decorator, this means that the I16 data folder would parse all
         // the ascii files in the whole directory!!
         
-		if (textMetadata.containsKey("pilatus100k_path_template")) {
+		if (textMetadata.containsKey(PILATUS_KEY)) {
 			
-			if (!datasetNames.contains("path")) return;
+			if (!datasetNames.contains(PATH_DATASET)) return;
 			/**
 			 * IMPORTANT DO NOT PARSE WHOLE FILE HERE! It will break the decorators!
 			 */
-			datasetNames.add("Pilatus");
+			datasetNames.add(DATA_NAME);
+			createMetadata();
 		}
-		
 	}
 
 	/**
@@ -151,7 +158,7 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 		 */
 		this.fileName = bean.getPath();
 		final DataHolder dh = loadFile(mon);
-		ILazyDataset imageStack = dh.getLazyDataset("Pilatus");
+		ILazyDataset imageStack = dh.getLazyDataset(DATA_NAME);
 		// ImageStackLoader does load the AbstractDataset at this point
 		return (AbstractDataset) imageStack.getSlice(bean.getSliceStart(), bean.getSliceStop(), bean.getSliceStep());
 	}

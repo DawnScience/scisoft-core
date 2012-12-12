@@ -27,9 +27,6 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,15 +35,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
-import uk.ac.diamond.scisoft.analysis.io.MetaDataAdapter;
+import uk.ac.diamond.scisoft.analysis.io.Metadata;
 
 /**
  * Helper methods to convert to/from AWT images and datasets
@@ -96,21 +85,9 @@ public class AWTImageUtils {
 	}
 
 	private static IntegerDataset createIntForShortDataset(IntegerDataset ret) {
-		
 		final Map<String,String> metadata = new HashMap<String, String>(1);
 		metadata.put("unsigned.short.data", "true");
-		ret.setMetadata(new MetaDataAdapter() {
-			@Override
-			public Collection<String> getMetaNames() throws Exception {
-				return Collections.unmodifiableCollection(metadata.keySet());
-			}
-
-			@Override
-			public Serializable getMetaValue(String key) throws Exception {
-				return metadata.get(key);
-			}
-		});
-		
+		ret.setMetadata(new Metadata(metadata));
 		return ret;
 	}
 

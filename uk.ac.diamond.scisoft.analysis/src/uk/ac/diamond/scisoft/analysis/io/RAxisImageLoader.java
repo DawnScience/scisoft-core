@@ -45,6 +45,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 	private boolean keepBitWidth = false;
 
 	private DiffractionMetadata diffMetadata;
+	private static final String DATA_NAME = "RAxis Image";
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -161,7 +162,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 			data.setStoredValue("hash", hash);
 
 			data.setName(DEF_IMAGE_NAME);
-			output.addDataset("RAxis Image", data);
+			output.addDataset(DATA_NAME, data);
 			if (loadMetadata) {
 				data.setMetadata(getMetaData());
 				output.setMetadata(data.getMetadata());
@@ -490,7 +491,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 		md.putAll(metadata);
 		md.putAll(GDAMetadata);
 		diffMetadata.setMetadata(md);
-		diffMetadata.setDataInfo("RAXIS osc", ny, nx);
+		diffMetadata.addDataInfo(DATA_NAME, ny, nx);
 	}
 
 	@Override

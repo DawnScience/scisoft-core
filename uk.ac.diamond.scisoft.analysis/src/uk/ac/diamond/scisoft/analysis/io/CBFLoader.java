@@ -26,8 +26,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 import javax.vecmath.Matrix3d;
@@ -61,7 +59,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	private String fileName = null;
 	private HashMap<String, String> metadata = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
-	private IMetaData diffMetadata;
+	private Metadata diffMetadata;
 
 	static {
 		CBFlib.loadLibrary();
@@ -289,7 +287,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 							"Exposure_time", "s"));
 
 			diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
-			((DiffractionMetadata) diffMetadata).setMetadata(metadata);
+			diffMetadata.setMetadata(metadata);
 		} catch (ScanFileHolderException e) {
 			diffMetadata = new Metadata(metadata);
 		}

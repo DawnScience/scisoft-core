@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -45,7 +42,9 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
-	
+	private Metadata metadata;
+	private static final String DATA_NAME = "Portable Grey Map";
+
 	public PgmLoader() {
 		
 	}
@@ -102,10 +101,11 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 		}
 
-		output.addDataset("Portable Grey Map", data);
+		output.addDataset(DATA_NAME, data);
 		if (loadMetadata) {
-			data.setMetadata(getMetaData());
-			output.setMetadata(data.getMetadata());
+		    createMetadata();
+			data.setMetadata(metadata);
+			output.setMetadata(metadata);
 		}
 		return output;
 	}
@@ -163,33 +163,23 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		try {
 		    readMetaData(br, mon);
+		    createMetadata();
 		} finally {
 			br.close();
 		}
 	}
 
+	private void createMetadata() {
+		metadata = new Metadata(textMetadata);
+		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Height")), Integer.parseInt(textMetadata.get("Width")));
+	}
 	
 	@Override
 	public IMetaData getMetaData() {
-		return new MetaDataAdapter() {
-			
-			@Override
-			public String getMetaValue(String key) {
-				return textMetadata.get(key);	
-			}
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return Collections.unmodifiableCollection(textMetadata.keySet());
-			}		
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(Arrays.asList(new String[]{"Portable Grey Map"}));
-			}
-		};
+		return metadata;
 	}
-	
+
 	public String getHeaderValue(String key) {
 		return textMetadata.get(key);	
 	}
-
 }

@@ -18,42 +18,82 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.SerializationUtils;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+
+/**
+ * Basic implementation of metadata
+ */
 public class Metadata implements IMetaData {
 	private static final long serialVersionUID = IMetaData.serialVersionUID;
 
 	private Map<String, ? extends Serializable> metadata;
-	private List<String> dataNames = new ArrayList<String>(1);
-	private Map<String,int[]> shapes = new HashMap<String,int[]>(1);
+	// NOTE shapes is LinkedHashMap here because the names collection 
+	// maintained order. Now that we do not need this collection but if we
+	// do not keep the shapes in a LinkedHashMap, we lose order.
+	private Map<String,int[]> shapes = new LinkedHashMap<String,int[]>(7);
+	private Collection<Serializable> userObjects;
+
+	public Metadata() {
+	}
 
 	public Metadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
 	}
 
+	public Metadata(Collection<String> names) {
+		if (names != null) {
+			for (String n : names) {
+				shapes.put(n, null);
+			}
+		}
+	}
+
+	/**
+	 * Set metadata map
+	 * @param metadata
+	 */
 	void setMetadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
 	}
-	
+
+	/**
+	 * Internal use only
+	 * @return metadata map
+	 */
 	Map<String, ? extends Serializable> getInternalMetadata() {
 		return metadata;
 	}
 
-	void setDataInfo(String imageName, int... shape) {
-		dataNames.add(0, imageName);
-		shapes.put(imageName, shape);
+	/**
+	 * Set user objects
+	 * @param objects
+	 */
+	void setUserObjects(Collection<Serializable> objects) {
+		userObjects = objects;
+	}
+
+	/**
+	 * Add name and shape of a dataset to metadata
+	 * 
+	 * @param name
+	 * @param shape (can be null or zero-length)
+	 */
+	void addDataInfo(String name, int... shape) {
+		shapes.put(name, shape == null || shape.length == 0 ? null : shape);
 	}
 
 	@Override
 	public Collection<String> getDataNames() {
-		return Collections.unmodifiableCollection(dataNames);
+		return Collections.unmodifiableCollection(shapes.keySet());
 	}
 
 	@Override
@@ -64,11 +104,14 @@ public class Metadata implements IMetaData {
 	@Override
 	public Map<String, Integer> getDataSizes() {
 		Map<String, Integer> sizes = new HashMap<String, Integer>(1);
-		if (dataNames.size() > 0) {
-			String name = dataNames.get(0);
-			int[] shape = shapes.get(name);
+		for (Entry<String, int[]> e : shapes.entrySet()) {
+			int[] shape = e.getValue();
 			if (shape != null && shape.length > 1)
-				sizes.put(name, shape[0] * shape[1]);
+				sizes.put(e.getKey(), AbstractDataset.calcSize(shape));
+			else
+				sizes.put(e.getKey(), null);
+		}
+		if (sizes.size() > 0) {
 			return Collections.unmodifiableMap(sizes);
 		}
 		return null;
@@ -76,17 +119,18 @@ public class Metadata implements IMetaData {
 
 	@Override
 	public Serializable getMetaValue(String key) throws Exception {
-		return metadata.get(key);
+		return metadata == null ? null : metadata.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<String> getMetaNames() throws Exception {
-		return Collections.unmodifiableCollection(metadata.keySet());
+		return metadata == null ? (Collection<String>) Collections.EMPTY_SET : Collections.unmodifiableCollection(metadata.keySet());
 	}
 
 	@Override
 	public Collection<Serializable> getUserObjects() {
-		return null;
+		return userObjects;
 	}
 
 	@Override
@@ -94,25 +138,26 @@ public class Metadata implements IMetaData {
 		Metadata c = null;
 		try {
 			c = (Metadata) super.clone();
-			HashMap<String, Serializable> md = new HashMap<String, Serializable>();
-			c.metadata = md;
-			ByteArrayOutputStream os = new ByteArrayOutputStream(512);
-			for (String k : metadata.keySet()) {
-				Serializable v = metadata.get(k);
-				if (v != null) {
-					SerializationUtils.serialize(v, os);
-					Serializable nv = (Serializable) SerializationUtils.deserialize(os.toByteArray());
-					os.reset();
-					md.put(k, nv);
-				} else {
-					md.put(k, null);
+			if (metadata != null) {
+				HashMap<String, Serializable> md = new HashMap<String, Serializable>();
+				c.metadata = md;
+				ByteArrayOutputStream os = new ByteArrayOutputStream(512);
+				for (String k : metadata.keySet()) {
+					Serializable v = metadata.get(k);
+					if (v != null) {
+						SerializationUtils.serialize(v, os);
+						Serializable nv = (Serializable) SerializationUtils.deserialize(os.toByteArray());
+						os.reset();
+						md.put(k, nv);
+					} else {
+						md.put(k, null);
+					}
 				}
 			}
-			c.dataNames = new ArrayList<String>(dataNames);
 			c.shapes = new HashMap<String, int[]>(1);
-			for (String n : shapes.keySet()) {
-				int[] s = shapes.get(n);
-				c.shapes.put(n, s == null ? null : s.clone());
+			for (Entry<String, int[]> e : shapes.entrySet()) {
+				int[] s = e.getValue();
+				c.shapes.put(e.getKey(), s == null ? null : s.clone());
 			}
 		} catch (CloneNotSupportedException e) {
 		}

@@ -20,6 +20,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern
+ * is generally not serializable (unless the host class is serializable and has a null constructor)
+ */
 public class MetaDataAdapter implements IMetaData {
 
 	protected Collection<String> adapterDataNames;

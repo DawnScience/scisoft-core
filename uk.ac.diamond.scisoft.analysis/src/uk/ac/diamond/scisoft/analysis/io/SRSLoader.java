@@ -27,11 +27,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ import uk.ac.gda.monitor.IMonitor;
  */
 public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLoader {
 	
-	transient protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
 	protected String fileName;
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
@@ -105,7 +104,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return loadFile(null);
 	}
 
-	private final Pattern splitRegex = Pattern.compile("\\s+");
+	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
 
 	/**
 	 * Function that loads in the standard SRS datafile
@@ -125,20 +124,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		try {
 			in = new BufferedReader(new FileReader(fileName));
 			String dataStr;
-			String headStr;
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
-			if (textMetadata.size() > 0)
-				result.setMetadata(getMetaData());
 
 			// read in the names of the different datasets which will be needed
-			headStr = in.readLine();
-			headStr = headStr.trim();//remove whitespace to prevent the following split on white
-			String[] vals = splitRegex.split(headStr);
-			datasetNames.clear();
-			datasetNames.addAll(Arrays.asList(vals));
-			dataShapes.clear();
-			dataSizes.clear();
+			String[] vals = readColumnHeaders(in);
 			
 			List<?> [] columns = new List<?>[vals.length];
 
@@ -150,7 +140,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					if (mon.isCancelled()) throw new ScanFileHolderException("Load cancelled!");
 				}
 
-				parseColumns(splitRegex.split(dataStr.trim()), columns);
+				parseColumns(SPLIT_REGEX.split(dataStr.trim()), columns);
 			}
 
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
@@ -158,7 +148,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			if (result.getMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
 
 			if (loadMetadata) {
-				result.setMetadata(getMetaData());
+				createMetadata();
+				result.setMetadata(metadata);
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
@@ -173,6 +164,16 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 		return result;
 
+	}
+
+	private String[] readColumnHeaders(BufferedReader in) throws IOException {
+		String headStr = in.readLine();
+		headStr = headStr.trim();//remove whitespace to prevent the following split on white
+		String[] vals = SPLIT_REGEX.split(headStr);
+		datasetNames.clear();
+		datasetNames.addAll(Arrays.asList(vals));
+		dataShapes.clear();
+		return vals;
 	}
 
 	/**
@@ -190,6 +191,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		}
 
 		for (int i = 0; i < cols; i++) {
+			
 			String text = data[i];
 			if (columns[i] != null) {
 				List<?> list = columns[i];
@@ -252,8 +254,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 							LazyDataset lazyDataset = new LazyDataset(name, loader.dtype, loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);
 							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
-							if (dataSizes!=null)  dataSizes.put(name, lazyDataset.getSize());
-							
 						} catch (Exception ex) {
 							logger.warn("Unable to treat " + sds.getAbs(0) + " as an image file", ex);
 						}
@@ -468,45 +468,26 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	
 	protected List<String> datasetNames      = new ArrayList<String>(7);
 	protected Map<String,int[]>   dataShapes = new HashMap<String,int[]>(7);
-	protected Map<String,Integer> dataSizes  = new HashMap<String,Integer>(7);;
+
+	private ExtendedMetadata metadata;
+
+	
 	@Override
 	public IMetaData getMetaData() {
-		return new ExtendedMetadataAdapter(new File(fileName)) {
-			@Override
-			public Collection<String> getDataNames() {
-				return Collections.unmodifiableCollection(datasetNames);
-			}
-			@Override
-			public String getMetaValue(String key) {
-				return textMetadata.get(key);
-			}			
-			@Override
-			public Collection<String> getMetaNames() throws Exception{
-				return Collections.unmodifiableCollection(textMetadata.keySet());
-			}
-			@SuppressWarnings("unchecked")
-			@Override
-			public Map<String, Integer> getDataSizes() {
-				return Collections.unmodifiableMap(dataSizes);
-			}
-			@SuppressWarnings("unchecked")
-			@Override
-			public Map<String, int[]> getDataShapes() {
-				return Collections.unmodifiableMap(dataShapes);
-			}
-			
-			@Override
-			public String getScanCommand() {
-				//if a new scan command there is, a new if condition there will be...
-				String scanCmd = textMetadata.get("cmd");
-				if(scanCmd == null)
-					scanCmd = textMetadata.get("command");
-				if(scanCmd == null)
-					scanCmd = textMetadata.get("scancommand");
-				return scanCmd;
-			}
+		return metadata;
+	}
 
-		};
+	protected void createMetadata() {
+		metadata = new ExtendedMetadata(new File(fileName));
+		metadata.setMetadata(textMetadata);
+
+		for (String n : datasetNames) {
+			metadata.addDataInfo(n, null);
+		}
+
+		for (Entry<String, int[]> e : dataShapes.entrySet()) {
+			metadata.addDataInfo(e.getKey(), e.getValue());
+		}
 	}
 
 	@Override
@@ -517,13 +498,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			in = new BufferedReader(new FileReader(fileName));
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
-			
-			final String headStr = in.readLine();
-			//String[] vals = headStr.split("\t");
-			String[] vals = splitRegex.split(headStr);
-			datasetNames.clear();
-			datasetNames.addAll(Arrays.asList(vals));
-			
+			readColumnHeaders(in);
+			createMetadata();
 		} catch (Exception e) {
 			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
 		} finally {

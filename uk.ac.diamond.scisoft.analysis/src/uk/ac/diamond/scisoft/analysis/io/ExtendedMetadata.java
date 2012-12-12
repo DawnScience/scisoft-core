@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 
 public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
@@ -34,7 +35,7 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadata(File f) {
-		super(null);
+		super();
 		setFile(f);
 	}
 
@@ -88,7 +89,16 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 
 	@Override
 	public String getScanCommand() {
-		return null;
+		Serializable scanCmd = null;
+		try {
+			scanCmd = getMetaValue("cmd");
+			if (scanCmd == null)
+				scanCmd = getMetaValue("command");
+			if (scanCmd == null)
+				scanCmd = getMetaValue("scancommand");
+		} catch (Exception e) {
+		}
+		return scanCmd == null ? null : scanCmd.toString();
 	}
 
 	@Override

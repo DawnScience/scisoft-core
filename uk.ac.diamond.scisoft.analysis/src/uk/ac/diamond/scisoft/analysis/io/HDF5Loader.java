@@ -20,18 +20,18 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -196,48 +196,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		DataHolder dh = null;
-		dh = new DataHolder();
-
 		HDF5File tree = loadTree(mon);
-		Map<String, ILazyDataset> map = createDatasetsMap(tree.getGroup());
-		
-		for (String key : map.keySet()) {
-			dh.addDataset(key, map.get(key));
-		}
-
+		DataHolder dh = createDataHolder(tree, loadMetadata);
 		if (loadMetadata)
-			dh.setMetadata(getMetaData());
+			metadata = (Metadata) dh.getMetadata();
 
 		return dh;
-	}
-
-	/**
-	 * @param group - group to investigate
-	 * @return a map of all the data in the group collected recursively
-	 */
-	public static Map<String, ILazyDataset> createDatasetsMap(HDF5Group group) {
-		HashMap<String, ILazyDataset> map = new HashMap<String, ILazyDataset>();
-		addAllDatasetsToMap(group, map);
-		return map;
-	}
-
-	/**
-	 * Adds the data items in a group to the given map recursively
-	 * @param group - group to investigate
-	 * @param map - the map to add items to, to aid the recursive method
-	 */
-	private static void addAllDatasetsToMap(HDF5Group group, Map<String, ILazyDataset> map) {
-		for (HDF5NodeLink l : group) {
-			if (l.isDestinationAGroup()) {
-				addAllDatasetsToMap((HDF5Group) l.getDestination(), map);
-			}
-			
-			if (l.isDestinationADataset()) {
-				ILazyDataset dataset = ((HDF5Dataset) l.getDestination()).getDataset();
-				map.put(l.getFullName(), dataset);
-			}
-		}
 	}
 
 	public HDF5File loadTree() throws ScanFileHolderException {
@@ -1911,75 +1875,75 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	@Override
 	public void loadMetaData(IMonitor mon) throws Exception {
 		loadTree(mon);
+		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
 	}
+
+	private Metadata metadata;
 
 	@Override
 	public IMetaData getMetaData() {
-		return createMetaData(tFile);
+		return metadata;
 	}
 
 	/**
-	 * Create metadata from tree
+	 * Create data holder from tree
 	 * @param tree
-	 * @return a metadata object
+	 * @param withMetadata
 	 */
-	public static IMetaData createMetaData(final HDF5File tree) {
+	public static DataHolder createDataHolder(HDF5File tree, boolean withMetadata) {
+		DataHolder dh = new DataHolder();
 		if (tree == null)
-			return null;
+			return dh;
 
-		final List<String> metanames = createMetaNames(tree.getNodeLink());
+		Map<String, ILazyDataset> lMap = new HashMap<String, ILazyDataset>();
+		Map<String, Serializable> aMap = withMetadata ? new HashMap<String, Serializable>() : null;
+		addToMaps(tree.getNodeLink(), lMap, aMap);
 
-		return new MetaDataAdapter() {
-			
-			@Override
-			public Collection<String> getMetaNames() throws Exception {
-				return Collections.unmodifiableCollection(metanames);
+		if (withMetadata) {
+			Metadata metadata = new Metadata(aMap);
+			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {
+				String n = e.getKey();
+				ILazyDataset l = e.getValue();
+				dh.addDataset(n, l);
+				metadata.addDataInfo(n, l.getShape());
 			}
-
-			@Override
-			public String getMetaValue(String key) throws Exception {
-				if (!metanames.contains(key))
-					return null;
-				
-				HDF5Node node = tree.findNodeLink(key).getDestination();
-				if (key.contains(HDF5Node.ATTRIBUTE)) {
-					return node.getAttribute(key.substring(key.indexOf(HDF5Node.ATTRIBUTE) + 1)).getFirstElement();
-				}
-
-				AbstractDataset a = (AbstractDataset) ((HDF5Dataset) node).getDataset();
-				return a.getRank() == 0 ? a.getString() : a.getString(0);
+			dh.setMetadata(metadata);
+		} else {
+			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {
+				dh.addDataset(e.getKey(), e.getValue());
 			}
-		};
-	}
-
-	private static List<String> createMetaNames(HDF5NodeLink link) {
-		List<String> list = new ArrayList<String>();
-		addMetadataToList(link, list);
-		return list;
+		}
+		return dh;
 	}
 
 	/**
-	 * Adds the attributes and scalar dataset items in a node to the given list recursively
+	 * Adds lazy datasets and the attributes and scalar dataset items in a node to the given maps recursively
 	 * @param link - link to node to investigate
-	 * @param list - the list to add items to, to aid the recursive method
+	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
+	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private static void addMetadataToList(HDF5NodeLink link, List<String> list) {
+	private static void addToMaps(HDF5NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
 		HDF5Node node = link.getDestination();
-		Iterator<String> iter = node.getAttributeNameIterator();
-		String name = link.getFullName() + HDF5Node.ATTRIBUTE;
-		while (iter.hasNext()) {
-			list.add(name + iter.next());
+		if (aMap != null) {
+			Iterator<String> iter = node.getAttributeNameIterator();
+			String name = link.getFullName() + HDF5Node.ATTRIBUTE;
+			while (iter.hasNext()) {
+				String attr = iter.next();
+				aMap.put(name + attr, node.getAttribute(attr).getFirstElement());
+			}
 		}
 
 		if (node instanceof HDF5Group) {
 			for (HDF5NodeLink l : (HDF5Group) node) {
-				addMetadataToList(l, list);
+				addToMaps(l, lMap, aMap);
 
 				if (l.isDestinationADataset()) {
-					HDF5Node n = l.getDestination();
-					ILazyDataset dataset = ((HDF5Dataset) n).getDataset();
-					if (dataset instanceof AbstractDataset) { // scalar dataset
-						list.add(l.getFullName());
+					HDF5Dataset d = (HDF5Dataset) l.getDestination();
+					ILazyDataset dataset = d.getDataset();
+					lMap.put(l.getFullName(), dataset);
+					if (aMap != null && dataset instanceof AbstractDataset) { // scalar dataset
+						AbstractDataset a = (AbstractDataset) dataset;
+						aMap.put(l.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
 					}
 				}
 			}

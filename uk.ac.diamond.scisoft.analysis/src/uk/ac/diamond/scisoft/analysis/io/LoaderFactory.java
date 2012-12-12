@@ -314,8 +314,7 @@ public class LoaderFactory {
 	 */
 	private static Object getSoftReferenceWithMetadata(LoaderKey key) {
 		Object o = getReference(key);
-		if (o != null)
-			return o;
+		if (o != null) return o;
 
 		LoaderKey k = findKeyWithMetadata(key);
 		return k == null ? null : getReference(k);
@@ -342,9 +341,8 @@ public class LoaderFactory {
 	private static LoaderKey findKeyWithMetadata(LoaderKey key) {
 		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
 		synchronized (LOCK) {
-			final String path = key.getFilePath();
 			for (LoaderKey k : SOFT_CACHE.keySet()) {
-				if (k.getFilePath().equals(path) && k.hasMetadata()) {
+				if (k.isSameFile(key) && k.hasMetadata()) {
 					return k;
 				}
 			}

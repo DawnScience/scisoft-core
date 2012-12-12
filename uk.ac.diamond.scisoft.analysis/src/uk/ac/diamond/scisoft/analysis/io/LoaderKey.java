@@ -25,7 +25,7 @@ import java.util.List;
 public class LoaderKey {
 
 	private String  filePath;
-	private long    dataStamp;
+	private long    dateStamp;
 	private String  datasetName;
 	private List<String> datasetNames;
 	private SliceObject slice;
@@ -44,15 +44,15 @@ public class LoaderKey {
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath  = filePath;
-		this.dataStamp = (new File(filePath)).lastModified();
+		this.dateStamp = (new File(filePath)).lastModified();
 	}
 
-	public long getDataStamp() {
-		return dataStamp;
+	public long getDatStamp() {
+		return dateStamp;
 	}
 
 	public void setDataStamp(long dataStamp) {
-		this.dataStamp = dataStamp;
+		this.dateStamp = dataStamp;
 	}
 
 	public String getDatasetName() {
@@ -67,7 +67,7 @@ public class LoaderKey {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (dataStamp ^ (dataStamp >>> 32));
+		result = prime * result + (int) (dateStamp ^ (dateStamp >>> 32));
 		result = prime * result + ((datasetName == null) ? 0 : datasetName.hashCode());
 		result = prime * result + ((datasetNames == null) ? 0 : datasetNames.hashCode());
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
@@ -85,7 +85,7 @@ public class LoaderKey {
 		if (getClass() != obj.getClass())
 			return false;
 		LoaderKey other = (LoaderKey) obj;
-		if (dataStamp != other.dataStamp)
+		if (dateStamp != other.dateStamp)
 			return false;
 		if (datasetName == null) {
 			if (other.datasetName != null)
@@ -146,5 +146,15 @@ public class LoaderKey {
 	 */
 	public void setMetadata(boolean metadata) {
 		this.metadata = metadata;
+	}
+
+	/**
+	 * @param other
+	 * @return true if file and date stamp are the same.
+	 */
+	public boolean isSameFile(LoaderKey other) {
+		if (dateStamp != other.dateStamp)               return false;
+		if (!getFilePath().equals(other.getFilePath())) return false;
+		return true;
 	}
 }

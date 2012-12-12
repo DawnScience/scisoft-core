@@ -462,7 +462,13 @@ public class LoaderFactory {
 				// NOTE Assumes loader fails quickly and nicely
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
-				final AbstractDataset set = ((IDataSetLoader) loader).loadSet(path, name, mon);
+				final AbstractDataset set;
+				if (loader instanceof IDataSetLoader) {
+					set = ((IDataSetLoader) loader).loadSet(path, name, mon);
+				} else {
+					DataHolder holder = loader.loadFile(mon);
+					set = holder.getDataset(name);
+				}
 				key.setMetadata(set.getMetadata() != null);
 				recordSoftReference(key, set);
 				return set;

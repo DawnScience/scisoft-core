@@ -42,7 +42,7 @@ public class RawTextLoader extends AbstractFileLoader {
 		fileName = filename;
 	}
 
-	private final Pattern splitRegex = Pattern.compile("\\s+");
+	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
 
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
@@ -63,14 +63,14 @@ public class RawTextLoader extends AbstractFileLoader {
 				}
 			}
 
-			String[] values = splitRegex.split(l.trim());
+			String[] values = SPLIT_REGEX.split(l.trim());
 			List<Object[]> rows = new ArrayList<Object[]>();
 			rows.add(parseRow(values));
 
 			l = br.readLine();
 			while (l != null) {
 				if (l.length() != 0) {
-					rows.add(parseRow(splitRegex.split(l.trim())));
+					rows.add(parseRow(SPLIT_REGEX.split(l.trim())));
 				}
 				l = br.readLine();
 			}

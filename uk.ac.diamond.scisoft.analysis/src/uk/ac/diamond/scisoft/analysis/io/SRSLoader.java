@@ -48,7 +48,7 @@ import uk.ac.gda.monitor.IMonitor;
  */
 public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLoader {
 	
-	transient protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
 	protected String fileName;
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
@@ -104,7 +104,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return loadFile(null);
 	}
 
-	private final Pattern splitRegex = Pattern.compile("\\s+");
+	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
 
 	/**
 	 * Function that loads in the standard SRS datafile
@@ -140,7 +140,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					if (mon.isCancelled()) throw new ScanFileHolderException("Load cancelled!");
 				}
 
-				parseColumns(splitRegex.split(dataStr.trim()), columns);
+				parseColumns(SPLIT_REGEX.split(dataStr.trim()), columns);
 			}
 
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
@@ -169,7 +169,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	private String[] readColumnHeaders(BufferedReader in) throws IOException {
 		String headStr = in.readLine();
 		headStr = headStr.trim();//remove whitespace to prevent the following split on white
-		String[] vals = splitRegex.split(headStr);
+		String[] vals = SPLIT_REGEX.split(headStr);
 		datasetNames.clear();
 		datasetNames.addAll(Arrays.asList(vals));
 		dataShapes.clear();

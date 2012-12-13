@@ -33,6 +33,12 @@ public interface IMetaData extends Cloneable, Serializable {
 	 * Update this when there are any serious changes to API
 	 */
 	static final long serialVersionUID = 8640458661665962384L;
+	
+	/**
+	 * 
+	 * @return the path to the original file, or null if there was not a file.
+	 */
+	public String getFilePath();
 
 	/**
 	 * Returns a collection of dataset names or null if not implemented

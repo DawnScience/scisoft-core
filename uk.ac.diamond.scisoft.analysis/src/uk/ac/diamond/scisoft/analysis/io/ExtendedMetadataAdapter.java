@@ -44,6 +44,7 @@ public class ExtendedMetadataAdapter extends MetaDataAdapter implements IExtende
 		filename = f.getName();
 		lastModified = new Date(f.lastModified());
 		path = f.getAbsolutePath();
+		setFilePath(path);
 	}
 
 	@Override

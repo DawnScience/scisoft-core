@@ -26,10 +26,14 @@ import java.util.Map;
  */
 public class MetaDataAdapter implements IMetaData {
 
+	private String filePath;
 	protected Collection<String> adapterDataNames;
 	protected Collection<Serializable> adapterUserObjects;
 
 	public MetaDataAdapter() {
+	}
+	public MetaDataAdapter(String filePath) {
+		this.filePath=filePath;
 	}
 
 	public MetaDataAdapter(Collection<String> names) {
@@ -73,12 +77,28 @@ public class MetaDataAdapter implements IMetaData {
 
 	@Override
 	public IMetaData clone() {
+		
+		MetaDataAdapter ret = null;
 		if (adapterUserObjects == null) {
 			if (adapterDataNames == null) {
-				return new MetaDataAdapter();
+				ret = new MetaDataAdapter();
+			} else {
+			    ret = new MetaDataAdapter(adapterDataNames);
 			}
-			return new MetaDataAdapter(adapterDataNames);
+		} else {
+		    ret = new MetaDataAdapter(adapterDataNames, adapterUserObjects);
 		}
-		return new MetaDataAdapter(adapterDataNames, adapterUserObjects);
+		if (ret!=null) ret.setFilePath(getFilePath());
+		return ret;
 	}
+	
+	@Override
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
 }

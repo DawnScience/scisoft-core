@@ -198,9 +198,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		HDF5File tree = loadTree(mon);
 		DataHolder dh = createDataHolder(tree, loadMetadata);
-		if (loadMetadata)
+		if (loadMetadata) {
 			metadata = (Metadata) dh.getMetadata();
-
+			metadata.setFilePath(fileName);
+		}
 		return dh;
 	}
 
@@ -1876,6 +1877,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 	public void loadMetaData(IMonitor mon) throws Exception {
 		loadTree(mon);
 		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
+		metadata.setFilePath(fileName);
 	}
 
 	private Metadata metadata;
@@ -1901,6 +1903,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 
 		if (withMetadata) {
 			Metadata metadata = new Metadata(aMap);
+			metadata.setFilePath(tree.getFilename());
 			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {
 				String n = e.getKey();
 				ILazyDataset l = e.getValue();

@@ -171,6 +171,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private void createMetadata() {
 		metadata = new Metadata(textMetadata);
+		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Height")), Integer.parseInt(textMetadata.get("Width")));
 	}
 	

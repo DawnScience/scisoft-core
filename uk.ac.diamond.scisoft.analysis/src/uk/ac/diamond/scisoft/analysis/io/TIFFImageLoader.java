@@ -170,6 +170,8 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 			return null;
 		}
 
-		return new Metadata(metadata);
+		Metadata md = new Metadata(metadata);
+		md.setFilePath(fileName);
+		return md;
 	}
 }

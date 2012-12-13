@@ -147,6 +147,7 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 	
 	private void createMetadata() {
 		metadata = new Metadata(textMetadata);
+		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Dim_2")),
 				Integer.parseInt(textMetadata.get("Dim_1")));
 	}

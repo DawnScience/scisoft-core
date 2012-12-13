@@ -41,6 +41,8 @@ public class Metadata implements IMetaData {
 	// do not keep the shapes in a LinkedHashMap, we lose order.
 	private Map<String,int[]> shapes = new LinkedHashMap<String,int[]>(7);
 	private Collection<Serializable> userObjects;
+	private String filePath;
+
 
 	public Metadata() {
 	}
@@ -163,4 +165,14 @@ public class Metadata implements IMetaData {
 		}
 		return c;
 	}
+	
+	@Override
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
 }

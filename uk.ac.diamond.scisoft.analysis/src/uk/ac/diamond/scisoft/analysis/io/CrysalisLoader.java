@@ -219,6 +219,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 		int width = Integer.parseInt(textMetadata.get("nx"));
 		int height = Integer.parseInt(textMetadata.get("ny"));
 		md.addDataInfo("Crysalis Img", height, width);
+		md.setFilePath(fileName);
 		return md;
 	}
 }

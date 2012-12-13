@@ -291,6 +291,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		} catch (ScanFileHolderException e) {
 			diffMetadata = new Metadata(metadata);
 		}
+		diffMetadata.setFilePath(fileName);
 	}
 
 	private ImageOrientation readCBFHeaderData(cbf_handle_struct chs)throws ScanFileHolderException{

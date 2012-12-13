@@ -45,6 +45,7 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 			filename = f.getName();
 			lastModified = new Date(f.lastModified());
 			path = f.getAbsolutePath();
+			setFilePath(path);
 		}
 	}
 

@@ -76,9 +76,30 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 		for (int i = 0; i < paths.getSize(); ++i) {
 			int n = paths.getInt(i);
 			File iFile = new File(dir, String.format(format, n));
-			if (!iFile.exists() && format2 != null)
-				iFile = new File(dir, String.format(format2, n));
+			if (!iFile.exists() && format2 != null) iFile = new File(dir, String.format(format2, n));
+			if (!iFile.exists()) continue;
 			files.add(iFile.getAbsolutePath());
+		}
+		
+		// fix to http://jira.diamond.ac.uk/browse/DAWNSCI-439
+		// We fudge loading if the names of the tifs were not matched.
+		if (files.isEmpty() && format2==null) {
+			try {
+				final String subDir = format.substring(0, format.lastIndexOf('/'));
+				final File imageDir = new File(dir, subDir);
+				if (imageDir.exists() && imageDir.list()!=null) {
+					final File[] fa = imageDir.listFiles();
+					for (int i = 0; i < fa.length; i++) {
+						final File f = fa[i];
+						if (f.getName().endsWith(".tif")) {
+						    files.add(f.getAbsolutePath());
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.warn("Could not create ImageStackLoader, not populating Pilatus image stack");
+				return null;
+			}
 		}
 
 		try {

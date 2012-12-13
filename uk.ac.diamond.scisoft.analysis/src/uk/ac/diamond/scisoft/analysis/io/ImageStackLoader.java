@@ -40,7 +40,7 @@ public class ImageStackLoader implements ILazyLoader {
 		// load the first image to get the shape of the whole thing
 		int stack = imageFilenames.size();
 		DataHolder dh = LoaderFactory.getData(imageFilenames.get(0), mon);
-		if ( dh == null)
+		if (dh == null)
 			throw new ScanFileHolderException("Unable to load " + imageFilenames.get(0));
 		AbstractDataset data = dh.getDataset(0);
 		dtype = data.getDtype(); 

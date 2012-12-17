@@ -3944,7 +3944,7 @@ public class Maths {
 	}
 
 	/**
-	 * Calculate gradient
+	 * Calculate gradient (or partial derivatives) by central difference
 	 * @param y
 	 * @param x one or more datasets for dependent variables
 	 * @return a list of datasets (one for each dimension in y)
@@ -3961,9 +3961,8 @@ public class Maths {
 				if (rx != rank && rx != 1) {
 					throw new IllegalArgumentException("Dependent datasets must be 1-D or match rank of first argument");
 				}
-				int len = y.shape[a];
 				if (rx == 1) {
-					if (len != x[a].shape[0]) {
+					if (y.shape[a] != x[a].shape[0]) {
 						throw new IllegalArgumentException("Length of dependent dataset must match axis length");
 					}
 				} else {

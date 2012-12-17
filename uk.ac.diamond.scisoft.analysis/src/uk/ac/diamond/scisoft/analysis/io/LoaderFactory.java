@@ -45,6 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.gda.monitor.IMonitor;
 import uk.ac.gda.util.io.FileUtils;
@@ -465,7 +467,11 @@ public class LoaderFactory {
 					set = ((IDataSetLoader) loader).loadSet(path, name, mon);
 				} else {
 					DataHolder holder = loader.loadFile(mon);
-					set = holder.getDataset(name);
+					ILazyDataset lazy = holder.getLazyDataset(name);
+					if (lazy instanceof IDataset)
+						set = DatasetUtils.convertToAbstractDataset(lazy);
+					else // this can load in very large datasets so beware!
+						set = DatasetUtils.convertToAbstractDataset(lazy.getSlice(mon));
 				}
 				key.setMetadata(set.getMetadata() != null);
 				recordSoftReference(key, set);

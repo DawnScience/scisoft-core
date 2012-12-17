@@ -296,6 +296,17 @@ public interface ISDAPlotter {
 	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
+	 * Update existing plot with new data, keeping zoom level
+	 * 
+	 * @param plotName
+	 * @param title
+	 * @param xAxes
+	 * @param yAxes
+	 * @throws Exception
+	 */
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
+
+	/**
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName

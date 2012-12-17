@@ -302,6 +302,18 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * Update existing plot with new data
+	 * 
+	 * @param plotName
+	 * @param xAxes
+	 * @param yAxes
+	 * @throws Exception
+	 */
+	public static void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+		getPlotterImpl().updatePlot(plotName, title, xAxes, yAxes);
+	}
+
+	/**
 	 * Allows the plotting of an image to the defined view
 	 * 
 	 * @param plotName

@@ -215,7 +215,12 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		lplot(plotName, null, validateXAxes(xAxes, yAxes), null, yAxes, true);
+		updatePlot(plotName, null, validateXAxes(xAxes, yAxes), yAxes);
+	}
+
+	@Override
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, true);
 	}
 
 	/**

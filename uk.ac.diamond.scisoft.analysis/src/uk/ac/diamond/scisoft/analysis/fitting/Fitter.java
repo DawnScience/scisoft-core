@@ -18,6 +18,12 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheMultiDirectional;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
@@ -27,10 +33,6 @@ import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.LeastSquares;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
 public class Fitter {
 	
@@ -183,6 +185,48 @@ public class Fitter {
 		optimizer.optimize(coords, yAxis, comp);
 
 		return comp;
+	};
+	
+	
+	public static AFunction GaussianFit(AbstractDataset data, AbstractDataset axis) {
+		
+		Gaussian gauss = new Gaussian(axis.min().doubleValue(), 
+				axis.max().doubleValue(), 
+				axis.peakToPeak().doubleValue(), 
+				Math.abs(axis.peakToPeak().doubleValue() * data.peakToPeak().doubleValue()));
+		Offset offset = new Offset(data.min().doubleValue(), data.max().doubleValue());
+		CompositeFunction comp = new CompositeFunction();
+		comp.addFunction(gauss);
+		comp.addFunction(offset);
+		
+		geneticFit(new AbstractDataset[] {axis}, data, comp);
+		return comp;
+	}
+	
+	
+	public static NDGaussianFitResult NDGaussianSimpleFit(AbstractDataset data, AbstractDataset... axis) {
+		
+		if (data.getShape().length != axis.length) {
+			//TODO make this better
+			throw new IllegalArgumentException("Incorrect number of Axis");
+		}
+		int dims = axis.length;
+		
+		// fist resolve the problem into n 1D problems
+		AFunction[] results = new AFunction[dims];
+		for (int i = 0; i < dims; i++) {
+			AbstractDataset flattened = data.clone();
+			for (int j = 0; j < dims-1; j++) {
+				if (j < i) {
+					flattened = flattened.sum(0);
+				} else {
+					flattened = flattened.sum(1);
+				}
+			}
+			results[i] = GaussianFit(flattened, axis[i]);
+		}
+		
+		return new NDGaussianFitResult(results);
 	}
 }
 

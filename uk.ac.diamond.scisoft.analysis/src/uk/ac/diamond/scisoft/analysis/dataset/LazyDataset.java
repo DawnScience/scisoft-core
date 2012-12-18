@@ -36,6 +36,7 @@ public class LazyDataset implements ILazyDataset {
 
 	protected String name;
 	protected int[] shape;
+	private int[] oShape; // original shape
 	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
 	protected ILazyLoader loader;
 	private int dtype;
@@ -50,6 +51,7 @@ public class LazyDataset implements ILazyDataset {
 	public LazyDataset(String name, int dtype, int[] shape, ILazyLoader loader) {
 		this.name = name;
 		this.shape = shape;
+		oShape = shape;
 		this.loader = loader;
 		this.dtype = dtype;
 		try {
@@ -190,19 +192,13 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public AbstractDataset getSlice(int[] start, int[] stop, int[] step) {
-		if (loader.isFileReadable()) {
-			try {
-				return loader.getDataset(null, shape, start, stop, step);
-			} catch (ScanFileHolderException e) {
-				// return a fake dataset to show that this has not worked, should not be used in general though.
-				logger.debug("Problem getting {}: {}",
-						String.format("slice %s %s %s", Arrays.toString(start), Arrays.toString(stop), Arrays.toString(step)),
-						e);
-				return new DoubleDataset(1);
-			}
+		try {
+			return getSlice(null, start, stop, step);
+		} catch (ScanFileHolderException e) {
+			// do nothing
 		}
 
-		return null; // TODO add interaction to use plot server to load dataset
+		return null;
 	}
 
 	@Override
@@ -217,10 +213,51 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
-		if (loader.isFileReadable())
-			return loader.getDataset(monitor, shape, start, stop, step);
+		if (!loader.isFileReadable())
+			return null; // TODO add interaction to use plot server to load dataset
 
-		return null; // TODO add interaction to use plot server to load dataset
+		int r = oShape.length;
+		int[] nshape = AbstractDataset.checkSlice(shape, start, stop, start, stop, step);
+		int[] nstart;
+		int[] nstop;
+		int[] nstep;
+
+		if (r < start.length) {
+			int d = start.length - r;
+			for (int i = 0; i < d; i++) {
+				if (nshape[i] != 1) {
+					throw new ScanFileHolderException("Slice too large for lazy dataset: new shape is " + Arrays.toString(nshape) + " cf " + Arrays.toString(shape));
+				}
+				if (start[i] != 0) {
+					throw new ScanFileHolderException("Start is not at beginning of lazy dataset: " + start[i]);
+				}
+			}
+			nstart = new int[r];
+			nstop = new int[r];
+			nstep = new int[r];
+			for (int i = 0; i < r; i++) {
+				nstart[i] = start[i+d];
+				nstop[i] = stop[i+d];
+				nstep[i] = step[i+d];
+			}
+		} else if (r > start.length) {
+			throw new ScanFileHolderException("Slice too small for lazy dataset: new shape is " + Arrays.toString(nshape) + " cf " + Arrays.toString(shape));
+		} else {
+			nstart = start;
+			nstop = stop;
+			nstep = step;
+		}
+
+		try {
+			AbstractDataset a = loader.getDataset(monitor, oShape, nstart, nstop, nstep);
+			a.setShape(nshape);
+			return a;
+		} catch (ScanFileHolderException e) {
+			// return a fake dataset to show that this has not worked, should not be used in general though.
+			logger.debug("Problem getting {}: {}", String.format("slice %s %s %s", Arrays.toString(start), Arrays.toString(stop),
+							Arrays.toString(step)), e);
+			return new DoubleDataset(1);
+		}
 	}
 
 	private IMetaData metadata = null;

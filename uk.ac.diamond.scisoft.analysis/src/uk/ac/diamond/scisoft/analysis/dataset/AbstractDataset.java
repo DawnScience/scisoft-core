@@ -978,7 +978,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @param lstart
 	 *            can be a reference to start if that is not null
 	 * @param lstop
-	 *            can be a reference to start if that is not null
+	 *            can be a reference to stop if that is not null
 	 * @param lstep
 	 * @returns newShape
 	 */

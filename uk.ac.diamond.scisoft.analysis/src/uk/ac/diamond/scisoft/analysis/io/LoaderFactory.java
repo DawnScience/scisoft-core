@@ -276,6 +276,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this it should not be registered with LoaderFactory
 				DataHolder holder = loader.loadFile(mon);
+				holder.setLoaderClass(clazz);
 				key.setMetadata(holder.getMetadata() != null);
 				recordSoftReference(key, holder);
 				return holder;

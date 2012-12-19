@@ -19,12 +19,12 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.IFileSaver;
 import gda.analysis.io.ScanFileHolderException;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -105,6 +105,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	}
 
 	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
+	private static final Pattern NUMBER_REGEX = Pattern.compile("^[-\\d].+");
 
 	/**
 	 * Function that loads in the standard SRS datafile
@@ -119,10 +120,10 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		DataHolder result = new DataHolder();
 
 		// then try to read the file given
-		BufferedReader in = null;
+		LineNumberReader in = null;
 		
 		try {
-			in = new BufferedReader(new FileReader(fileName));
+			in = new LineNumberReader(new FileReader(fileName));
 			String dataStr;
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
@@ -139,8 +140,16 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 					mon.worked(1);
 					if (mon.isCancelled()) throw new ScanFileHolderException("Load cancelled!");
 				}
-
-				parseColumns(SPLIT_REGEX.split(dataStr.trim()), columns);
+				dataStr = dataStr.trim();
+				if (NUMBER_REGEX.matcher(dataStr).matches()) {
+					parseColumns(SPLIT_REGEX.split(dataStr), columns);
+					in.mark(MARK_LIMIT);
+				} else {
+					// more metadata?
+					in.reset();
+					readMetadata(in, mon);
+					in.readLine(); // throw away line
+				}
 			}
 
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
@@ -163,12 +172,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		}
 
 		return result;
-
 	}
 
-	private String[] readColumnHeaders(BufferedReader in) throws IOException {
+	private String[] readColumnHeaders(LineNumberReader in) throws IOException {
 		String headStr = in.readLine();
-		headStr = headStr.trim();//remove whitespace to prevent the following split on white
+		headStr = headStr.trim(); // remove whitespace to prevent the following split on white
 		String[] vals = SPLIT_REGEX.split(headStr);
 		datasetNames.clear();
 		datasetNames.addAll(Arrays.asList(vals));
@@ -183,10 +191,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @throws ScanFileHolderException
 	 */
 	@SuppressWarnings("unchecked")
-	protected static void parseColumns(String[] data, List<?>[] columns) throws ScanFileHolderException {
+	protected void parseColumns(String[] data, List<?>[] columns) throws ScanFileHolderException {
 		int cols = data.length;
 		if (cols > columns.length) {
-			logger.warn("Number of columns on data line {} exceeds number of headers - ignoring excess columns", cols);
+			logger.warn("Number of columns ({}) on data line exceeds number of headers ({}) in {} - ignoring excess columns",
+					new Object[] {cols, columns.length, fileName});
 			cols = columns.length;
 		}
 
@@ -265,16 +274,18 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		}
 	}
 
-	private final int MARK_LIMIT = 1024;
-	private final Pattern numberRegex = Pattern.compile("^\\d.+");
+	private static final String EQUAL = "=";
+	private static final int MARK_LIMIT = 1024;
 
-	protected void readMetadata(BufferedReader in, IMonitor mon) throws ScanFileHolderException {
+	protected void readMetadata(LineNumberReader in, IMonitor mon) throws ScanFileHolderException {
 		
 		textMetadata.clear();
 		
 		// handling metadata in the file header
 		try {
 			String line;
+			in.setLineNumber(0);
+			in.mark(MARK_LIMIT);
 
 			while (true) {
 				
@@ -286,12 +297,14 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				if (line == null || line.contains("&END")) {
 					return;
 				}
+				if (line.length() == 0) {
+					continue;
+				}
 				if (line.contains("MetaDataAtStart")) { // stop at end of header
 					String[] bits = line.split("</?MetaDataAtStart>");
 					if (bits.length > 0) {
 						for (String s : bits) {
-							if (s.contains("=")) {
-								in.mark(MARK_LIMIT);
+							if (s.contains(EQUAL)) {
 								parseString(s);
 							} else {
 								extraHeaders.add(s);
@@ -300,16 +313,18 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 						continue;
 					}
 				}
-				if (line.length() == 0) {
-					continue;
-				}
 				
-				if (line.contains("=")) {
-					in.mark(MARK_LIMIT);
+				if (line.contains(EQUAL)) {
 					parseString(line);
 				} else {
-					if (numberRegex.matcher(line).matches()) {
-						in.reset(); // backtrack to last line with an equal sign
+					if (NUMBER_REGEX.matcher(line).matches()) {
+						int l = in.getLineNumber(); // backtrack to line before last line
+						if (l > 1) l -= 2;
+						else l = 0;
+						in.reset();
+						for (int i = 0; i < l; i++) {
+							in.readLine();
+						}
 						return;
 					}
 					extraHeaders.add(line);
@@ -324,47 +339,56 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	private void parseString(String line) {
 		String key = null;
 		String value = line.trim();
-		int i = value.indexOf('=');
-		int end = value.length();
-		while (i >= 0) {
+		int i;
+		
+		while ((i = value.indexOf(EQUAL)) >= 0) {
 			key = value.substring(0, i);
-			if (i == (end - 1))
-				break;
 			value = value.substring(i + 1).trim();
+			i = findStringAndAddMetadata(key, value);
+			if (i < 0)
+				break;
 
-			i = value.indexOf(',');
-			if (i >= 0) {
-				addMetadata(key, value.substring(0, i));
-				value = value.substring(i + 1).trim();
+			if (i >= value.length()) {
 				key = null;
-			} else {
 				break;
 			}
-			i = value.indexOf('=');
-			end = value.length();
+
+			if (value.charAt(i) == ',') // drop comma
+				i++;
+			value = value.substring(i).trim();
+			key = null;
 		}
 		if (key != null) {
-			addMetadata(key, value);
+			findStringAndAddMetadata(key, value);
 		}
 	}
 
-	private void addMetadata(String key, String value) {
-		String strippedValue = extractQuotedString(value, true);
+	private int findStringAndAddMetadata(String key, String value) {
+		String strippedValue = extractQuotedString(value, '\'');
 		if (strippedValue == null) {
-			strippedValue = extractQuotedString(value, false);
-			if (strippedValue == null)
-				strippedValue = value;
+			strippedValue = extractQuotedString(value, '"');
+			if (strippedValue == null) {
+				int i = value.indexOf(',');
+				if (i >= 0) {
+					strippedValue = value.substring(0, i);
+				}
+			}
 		}
+		if (strippedValue == null) {
+			textMetadata.put(key, value);
+			return value.length();
+		}
+
 		textMetadata.put(key, strippedValue);
+		return value.indexOf(strippedValue) + strippedValue.length() + 1;
 	}
 
-	private String extractQuotedString(String line, boolean single) {
-		char quote = single ? '\'' : '\"';
-		int start = findQuoteChar(line, quote, 0);
+	private String extractQuotedString(String line, char quote) {
+		int start = findQuoteChar(line, quote, -1);
 		if (start < 0)
 			return null;
 
-		int end = findQuoteChar(line, quote, start+1);
+		int end = findQuoteChar(line, quote, start);
 		if (end < 0) { 
 			logger.warn("String was not quoted correctly: {} from {} in {}", new Object[] {line.substring(start), line, fileName});
 			return line.substring(start+1);
@@ -374,13 +398,12 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	}
 
 	private int findQuoteChar(String line, char quote, int start) {
-		int i = line.indexOf(quote, start);
-		if (i <= 0) {
-			return i;
-		}
-		if (line.charAt(i-1) == '\\')
-			return findQuoteChar(line, quote, i+1);
-		return i;
+		do {
+			start = line.indexOf(quote, ++start);
+			if (start <= 0)
+				break;
+		} while (line.charAt(start-1) == '\\');
+		return start;
 	}
 
 	/**
@@ -492,10 +515,10 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 	@Override
 	public void loadMetaData(IMonitor mon) throws Exception {
-		BufferedReader in = null;
+		LineNumberReader in = null;
 		
 		try {
-			in = new BufferedReader(new FileReader(fileName));
+			in = new LineNumberReader(new FileReader(fileName));
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
 			readColumnHeaders(in);

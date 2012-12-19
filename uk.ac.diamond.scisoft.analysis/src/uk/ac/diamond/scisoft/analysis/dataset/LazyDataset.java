@@ -40,6 +40,7 @@ public class LazyDataset implements ILazyDataset {
 	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
 	protected ILazyLoader loader;
 	private int dtype;
+	private int rankOffset; // different between current and original rank
 
 	/**
 	 * Create a lazy dataset
@@ -137,10 +138,40 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public void setShape(int... shape) {
-		int nsize = AbstractDataset.calcSize(shape);
-		if (nsize != size) {
-			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
-					+ ") is not compatible with old shape (" + Arrays.toString(this.shape) + ")");
+		rankOffset = shape.length - oShape.length;
+		int[] tshape;
+		if (rankOffset > 0) {
+			boolean onlyOnes = true;
+			for (int i = 0; i < rankOffset; i++) {
+				if (shape[i] != 1) {
+					onlyOnes = false;
+					break;
+				}
+			}
+			if (!onlyOnes)
+				throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending ones to old shape");
+			tshape = Arrays.copyOfRange(shape, rankOffset, shape.length);
+		} else if (rankOffset < 0) {
+			boolean onlyOnes = true;
+			tshape = new int[oShape.length];
+			for (int i = 0; i < (-rankOffset); i++) {
+				tshape[i] = 1;
+				if (oShape[i] != 1) {
+					onlyOnes = false;
+					break;
+				}
+			}
+			if (!onlyOnes)
+				throw new IllegalArgumentException("New shape not allowed - can only decrease rank if old shape leads with ones");
+			for (int i = (-rankOffset); i < tshape.length; i++) {
+				tshape[i] = shape[i + rankOffset];
+			}
+		} else {
+			tshape = shape;
+		}
+		if (!Arrays.equals(tshape, oShape)) {
+			rankOffset = 0;
+			throw new IllegalArgumentException("New shape not allowed - can only increase or decrease rank of a lazy dataset");
 		}
 		this.shape = shape.clone();
 	}
@@ -222,26 +253,29 @@ public class LazyDataset implements ILazyDataset {
 		int[] nstop;
 		int[] nstep;
 
-		if (r < start.length) {
-			int d = start.length - r;
-			for (int i = 0; i < d; i++) {
-				if (nshape[i] != 1) {
-					throw new ScanFileHolderException("Slice too large for lazy dataset: new shape is " + Arrays.toString(nshape) + " cf " + Arrays.toString(shape));
-				}
-				if (start[i] != 0) {
-					throw new ScanFileHolderException("Start is not at beginning of lazy dataset: " + start[i]);
-				}
+		if (rankOffset < 0) {
+			nstart = new int[r];
+			nstop = new int[r];
+			nstep = new int[r];
+			for (int i = 0; i < -rankOffset; i++) {
+				nstart[i] = 0;
+				nstop[i] = 1;
+				nstep[i] = 1;
 			}
+			for (int i = 0; i < shape.length; i++) {
+				nstart[i - rankOffset] = start[i];
+				nstop[i - rankOffset] = stop[i];
+				nstep[i - rankOffset] = step[i];
+			}
+		} else if (rankOffset > 0) {
 			nstart = new int[r];
 			nstop = new int[r];
 			nstep = new int[r];
 			for (int i = 0; i < r; i++) {
-				nstart[i] = start[i+d];
-				nstop[i] = stop[i+d];
-				nstep[i] = step[i+d];
+				nstart[i] = start[i + rankOffset];
+				nstop[i] = stop[i + rankOffset];
+				nstep[i] = step[i + rankOffset];
 			}
-		} else if (r > start.length) {
-			throw new ScanFileHolderException("Slice too small for lazy dataset: new shape is " + Arrays.toString(nshape) + " cf " + Arrays.toString(shape));
 		} else {
 			nstart = start;
 			nstop = stop;

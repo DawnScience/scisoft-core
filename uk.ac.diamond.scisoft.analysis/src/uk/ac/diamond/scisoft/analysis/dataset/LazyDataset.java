@@ -183,7 +183,7 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public ILazyDataset squeeze(boolean onlyFromEnd) {
-		shape = AbstractDataset.squeezeShape(shape, onlyFromEnd);
+		setShape(AbstractDataset.squeezeShape(shape, onlyFromEnd));
 		return this;
 	}
 

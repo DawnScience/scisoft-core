@@ -56,6 +56,11 @@ public class DataHolder implements IMetadataProvider {
 	private IMetaData metadata;
 
 	/**
+	 * Loader class string
+	 */
+	private String loaderClass;
+
+	/**
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
@@ -265,6 +270,23 @@ public class DataHolder implements IMetadataProvider {
 	public void remove(int index) {
 		data.remove(index);
 		names.remove(index);
+	}
+
+	/**
+	 * @return class
+	 */
+	@SuppressWarnings("unchecked")
+	public Class<? extends AbstractFileLoader> getLoaderClass() {
+		try {
+			return (Class<? extends AbstractFileLoader>) Class.forName(loaderClass);
+		} catch (ClassNotFoundException e) {
+			logger.error("No class found for {}", loaderClass, e);
+		}
+		return null;
+	}
+
+	public void setLoaderClass(Class<? extends AbstractFileLoader> clazz) {
+		loaderClass = clazz.getName();
 	}
 
 }

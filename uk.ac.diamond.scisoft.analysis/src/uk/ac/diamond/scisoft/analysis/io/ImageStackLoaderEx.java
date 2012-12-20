@@ -48,6 +48,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	private int[] data_shapes;
 	AbstractDatasetRecord cache;
 	String parent;
+	private Class<? extends AbstractFileLoader> loaderClass;
 	
 	public int getDtype() {
 		return dtype;
@@ -112,14 +113,24 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				filename = new File(parent, filename).getAbsolutePath();
 			}
 			DataHolder data = null;
-			try {
-				data = LoaderFactory.getData(filename, mon);
-			} catch (Exception e) {
-				throw new ScanFileHolderException("Cannot load image in image stack", e);
+			if (loaderClass != null) {
+				try {
+					data = LoaderFactory.getData(loaderClass, filename, true, mon);
+				} catch (Exception e) {
+					// do nothing and try with all registered loaders
+				}
 			}
-
 			if (data == null) {
-				throw new ScanFileHolderException("Cannot load image in image stack");
+				try {
+					data = LoaderFactory.getData(filename, mon);
+				} catch (Exception e) {
+					throw new ScanFileHolderException("Cannot load image in image stack", e);
+				}
+				if (data == null) {
+					throw new ScanFileHolderException("Cannot load image in image stack");
+				}
+			} else if (loaderClass == null) {
+				loaderClass = data.getLoaderClass();
 			}
 
 			AbstractDataset abstractDataset = data.getDataset(0);

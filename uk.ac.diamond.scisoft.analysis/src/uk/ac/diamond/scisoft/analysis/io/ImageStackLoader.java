@@ -29,6 +29,7 @@ public class ImageStackLoader implements ILazyLoader {
 	List<String> imageFilenames;
 	int[] shape;
 	int dtype;
+	private Class<? extends AbstractFileLoader> loaderClass;
 	
 	
 	public int getDtype() {
@@ -42,6 +43,8 @@ public class ImageStackLoader implements ILazyLoader {
 		DataHolder dh = LoaderFactory.getData(imageFilenames.get(0), mon);
 		if (dh == null)
 			throw new ScanFileHolderException("Unable to load " + imageFilenames.get(0));
+		loaderClass = dh.getLoaderClass();
+
 		AbstractDataset data = dh.getDataset(0);
 		dtype = data.getDtype(); 
 		int[] data_shape = data.getShape();
@@ -70,15 +73,28 @@ public class ImageStackLoader implements ILazyLoader {
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
 		for (int i = start[0], j = 0; i < stop[0]; i += step[0], j++) {
-			
 			// load the file
-			DataHolder data;
-			try {
-				data = LoaderFactory.getData(imageFilenames.get(i), mon);
-			} catch (Exception e) {
-				throw new ScanFileHolderException("Cannot load image in image stack",e);
+			DataHolder data = null;
+			if (loaderClass != null) {
+				try {
+					data = LoaderFactory.getData(loaderClass, imageFilenames.get(i), true, mon);
+				} catch (Exception e) {
+					// do nothing and try with all registered loaders
+				}
 			}
-			
+			if (data == null) {
+				try {
+					data = LoaderFactory.getData(imageFilenames.get(i), mon);
+				} catch (Exception e) {
+					throw new ScanFileHolderException("Cannot load image in image stack", e);
+				}
+				if (data == null) {
+					throw new ScanFileHolderException("Cannot load image in image stack");
+				}
+			} else if (loaderClass == null) {
+				loaderClass = data.getLoaderClass();
+			}
+
 			AbstractDataset abstractDataset = data.getDataset(0);
 			
 			int[] imageStart = new int[] {start[1],start[2]};

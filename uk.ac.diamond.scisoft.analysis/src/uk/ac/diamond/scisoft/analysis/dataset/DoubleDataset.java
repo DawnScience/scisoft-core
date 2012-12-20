@@ -514,11 +514,6 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public DoubleDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public DoubleDataset getSlice(final SliceIterator siter) {
 		DoubleDataset result = new DoubleDataset(siter.getSliceShape());
 		double[] rdata = result.data; // PRIM_TYPE

@@ -82,6 +82,12 @@ public class LazyDatasetTest {
 		Slice[] slice;
 		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3)};
 		Assert.assertEquals("Full slice", d, ld.getSlice());
+		Assert.assertEquals("Full slice", d, ld.getSlice((Slice) null));
+		Assert.assertEquals("Full slice", d, ld.getSlice((Slice) null, null));
+		Assert.assertEquals("Full slice", d, ld.getSlice(null, null, null));
+		Assert.assertEquals("Full slice", d, ld.getSlice(null, null, new int[] {1, 1, 1, 1}));
+		Assert.assertEquals("Full slice", d, ld.getSlice(new int[4], null, new int[] {1, 1, 1, 1}));
+		Assert.assertEquals("Full slice", d, ld.getSlice(new int[4], new int[] { 1, 2, 3, 4 }, new int[] { 1, 1, 1, 1 }));
 		Assert.assertEquals("Part slice", d.getSlice(slice), ld.getSlice(slice));
 
 		AbstractDataset nd;

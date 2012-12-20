@@ -514,11 +514,6 @@ public class ShortDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ShortDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public ShortDataset getSlice(final SliceIterator siter) {
 		ShortDataset result = new ShortDataset(siter.getSliceShape());
 		short[] rdata = result.data; // PRIM_TYPE

@@ -394,11 +394,6 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public ComplexDoubleDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public ComplexDoubleDataset getSlice(final SliceIterator siter) {
 		ComplexDoubleDataset result = new ComplexDoubleDataset(siter.getSliceShape());
 		double[] rdata = result.data; // PRIM_TYPE

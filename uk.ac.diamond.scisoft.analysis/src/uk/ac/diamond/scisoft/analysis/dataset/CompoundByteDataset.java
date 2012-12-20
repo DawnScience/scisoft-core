@@ -624,11 +624,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundByteDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public CompoundByteDataset getSlice(final SliceIterator siter) {
 		CompoundByteDataset result = new CompoundByteDataset(isize, siter.getSliceShape());
 		byte[] rdata = result.data; // PRIM_TYPE

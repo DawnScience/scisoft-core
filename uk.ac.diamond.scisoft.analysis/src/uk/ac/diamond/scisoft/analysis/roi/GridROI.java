@@ -41,8 +41,18 @@ public class GridROI extends RectangularROI implements Serializable {
 		super(width, height, angle);
 	}
 
-	@SuppressWarnings("unused")
-	private GridROI(double ptx, double pty, double width, double height, double angle) {
+	
+	/**
+	 * If using this constructor, you should set x and y spacing and GridPreferences
+	 * at some point.
+	 * 
+	 * @param ptx
+	 * @param pty
+	 * @param width
+	 * @param height
+	 * @param angle
+	 */
+	public GridROI(double ptx, double pty, double width, double height, double angle) {
 		super(ptx, pty, width, height, angle);
 	}
 

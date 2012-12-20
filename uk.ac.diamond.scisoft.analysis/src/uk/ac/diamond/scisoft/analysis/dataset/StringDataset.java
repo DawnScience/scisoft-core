@@ -154,6 +154,13 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	@Override
+	public StringDataset getSlice(final int[] start, final int[] stop, final int[] step) {
+		StringDatasetBase result = (StringDatasetBase) super.getSlice(start, stop, step);
+
+		return new StringDataset(result.data, result.shape);
+	}
+
+	@Override
 	public int[] minPos() {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}

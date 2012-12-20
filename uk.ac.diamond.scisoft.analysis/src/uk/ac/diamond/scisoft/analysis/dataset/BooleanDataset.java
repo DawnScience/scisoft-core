@@ -160,7 +160,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	@Override
 	public BooleanDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		BooleanDatasetBase result = super.getSlice(start, stop, step);
+		BooleanDatasetBase result = (BooleanDatasetBase) super.getSlice(start, stop, step);
 
 		return new BooleanDataset(result.data, result.shape);
 	}

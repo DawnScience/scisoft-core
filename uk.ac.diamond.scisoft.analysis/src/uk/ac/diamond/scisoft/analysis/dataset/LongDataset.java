@@ -514,11 +514,6 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public LongDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public LongDataset getSlice(final SliceIterator siter) {
 		LongDataset result = new LongDataset(siter.getSliceShape());
 		long[] rdata = result.data; // PRIM_TYPE

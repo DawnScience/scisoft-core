@@ -487,11 +487,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public ObjectDatasetBase getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public ObjectDatasetBase getSlice(final SliceIterator siter) {
 		ObjectDatasetBase result = new ObjectDatasetBase(siter.getSliceShape());
 		Object[] rdata = result.data; // PRIM_TYPE

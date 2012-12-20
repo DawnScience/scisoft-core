@@ -2481,7 +2481,9 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	@Override
-	abstract public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step);
+	public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step) {
+		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+	}
 
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items

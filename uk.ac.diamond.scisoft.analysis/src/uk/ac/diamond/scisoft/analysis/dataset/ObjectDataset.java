@@ -153,6 +153,13 @@ public class ObjectDataset extends ObjectDatasetBase {
 	}
 
 	@Override
+	public ObjectDataset getSlice(final int[] start, final int[] stop, final int[] step) {
+		ObjectDatasetBase result = (ObjectDatasetBase) super.getSlice(start, stop, step);
+
+		return new ObjectDataset(result.data, result.shape);
+	}
+
+	@Override
 	public int[] minPos() {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}

@@ -514,11 +514,6 @@ public class IntegerDataset extends AbstractDataset {
 	}
 
 	@Override
-	public IntegerDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public IntegerDataset getSlice(final SliceIterator siter) {
 		IntegerDataset result = new IntegerDataset(siter.getSliceShape());
 		int[] rdata = result.data; // PRIM_TYPE

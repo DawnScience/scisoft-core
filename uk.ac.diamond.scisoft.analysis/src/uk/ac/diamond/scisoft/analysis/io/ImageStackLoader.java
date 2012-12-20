@@ -73,19 +73,28 @@ public class ImageStackLoader implements ILazyLoader {
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
 		for (int i = start[0], j = 0; i < stop[0]; i += step[0], j++) {
-			
 			// load the file
-			DataHolder data;
-			try {
-				if (loaderClass == null)
-					data = LoaderFactory.getData(imageFilenames.get(i), mon);
-				else {
-					data = LoaderFactory.getLoader(loaderClass, imageFilenames.get(i)).loadFile(mon);
+			DataHolder data = null;
+			if (loaderClass != null) {
+				try {
+					data = LoaderFactory.getData(loaderClass, imageFilenames.get(i), true, mon);
+				} catch (Exception e) {
+					// do nothing and try with all registered loaders
 				}
-			} catch (Exception e) {
-				throw new ScanFileHolderException("Cannot load image in image stack",e);
 			}
-			
+			if (data == null) {
+				try {
+					data = LoaderFactory.getData(imageFilenames.get(i), mon);
+				} catch (Exception e) {
+					throw new ScanFileHolderException("Cannot load image in image stack", e);
+				}
+				if (data == null) {
+					throw new ScanFileHolderException("Cannot load image in image stack");
+				}
+			} else if (loaderClass == null) {
+				loaderClass = data.getLoaderClass();
+			}
+
 			AbstractDataset abstractDataset = data.getDataset(0);
 			
 			int[] imageStart = new int[] {start[1],start[2]};

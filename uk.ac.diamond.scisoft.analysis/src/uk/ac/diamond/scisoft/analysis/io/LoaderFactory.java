@@ -72,7 +72,7 @@ import uk.ac.gda.util.io.FileUtils;
  *    
  * 2. IDataSetLoader to load a single data set without loading the rest of the file.
  * 
- * see LoaderFactoryExtensions which boots up the extensions from reading the extenion points.
+ * see LoaderFactoryExtensions which boots up the extensions from reading the extension points.
  */
 public class LoaderFactory {
 	
@@ -94,7 +94,7 @@ public class LoaderFactory {
 	 * Loaders can be registered at run time using registerLoader(...)
 	 * 
 	 * There is no need for an extension point now and no dependency on eclipse.
-	 * Instead an osgi service contributing the loaders is looked for.
+	 * Instead an OSGI service contributing the loaders is looked for.
 	 * 
 	 * To change a loader programmatically (not advised)
 	 * 
@@ -257,7 +257,6 @@ public class LoaderFactory {
 		key.setMetadata(willLoadMetadata);
 
 		final Object cachedObject = getSoftReference(key);
-		// check for type as it could be an IMetadata object
 		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
@@ -281,15 +280,62 @@ public class LoaderFactory {
 				recordSoftReference(key, holder);
 				return holder;
 			} catch (OutOfMemoryError ome) {
-				logger.error("There was not enough memory to load " + path);
+				logger.error("There was not enough memory to load {}", path);
 				throw new ScanFileHolderException("Out of memory in loader factory", ome);
 			} catch (Throwable ne) {
-				logger.trace("Loader error " + loader, ne);
+				logger.trace("Loader {} error", loader, ne);
 				continue;
 			}
 		}
 		return null;
 	}
+
+	/**
+	 * Call to load file into memory with specific loader class
+	 * 
+	 * @param loaderClass loader class
+	 * @param path to file
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param mon
+	 * @return data holder (can be null)
+	 * @throws ScanFileHolderException
+	 */
+	public static DataHolder getData(Class<? extends AbstractFileLoader> loaderClass, String path, boolean willLoadMetadata, IMonitor mon) throws ScanFileHolderException {
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setMetadata(willLoadMetadata);
+
+		final Object cachedObject = getSoftReference(key);
+		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
+
+		AbstractFileLoader loader;
+		try {
+			loader = getLoader(loaderClass, path);
+		} catch (Exception e) {
+			logger.error("Cannot create loader", e);
+			throw new ScanFileHolderException("Cannot create loader", e);
+		}
+		if (loader == null) {
+			logger.error("Cannot create loader");
+			throw new ScanFileHolderException("Cannot create loader");
+		}
+
+		loader.setLoadMetadata(willLoadMetadata);
+		try {
+			DataHolder holder = loader.loadFile(mon);
+			holder.setLoaderClass(loaderClass);
+			key.setMetadata(holder.getMetadata() != null);
+			recordSoftReference(key, holder);
+			return holder;
+		} catch (OutOfMemoryError ome) {
+			logger.error("There was not enough memory to load {}", path);
+			throw new ScanFileHolderException("Out of memory in loader factory", ome);
+		} catch (Throwable ne) {
+			logger.trace("Loader {} error", loader, ne);
+			throw new ScanFileHolderException("Loader error", ne);
+		}
+	}
+
 
 	private final static Object LOCK = new Object();
 

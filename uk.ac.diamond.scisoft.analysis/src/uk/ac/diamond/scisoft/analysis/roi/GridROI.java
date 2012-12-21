@@ -190,6 +190,12 @@ public class GridROI extends RectangularROI implements Serializable {
 		this.xSpacing = xSpacing;
 		this.ySpacing = ySpacing;
 	}
+	public void setxSpacing(double xSpacing) {
+		this.xSpacing = xSpacing;
+	}
+	public void setySpacing(double ySpacing) {
+		this.ySpacing = ySpacing;
+	}
 
 	/**
 	 * @return Returns true if midpoints are enabled, false otherwise

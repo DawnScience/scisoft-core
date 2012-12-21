@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 public class GridROI extends RectangularROI implements Serializable {
 
-	double xSpacing = 7;
-	double ySpacing = 7;
+	double xSpacing = 50;
+	double ySpacing = 50;
 	boolean midPointOn = true;
 	boolean gridLinesOn = false;
 	private GridPreferences gridPref = new GridPreferences();

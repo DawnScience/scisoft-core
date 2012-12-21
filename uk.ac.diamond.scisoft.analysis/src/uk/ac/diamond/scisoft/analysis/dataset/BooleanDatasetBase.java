@@ -488,11 +488,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public BooleanDatasetBase getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public BooleanDatasetBase getSlice(final SliceIterator siter) {
 		BooleanDatasetBase result = new BooleanDatasetBase(siter.getSliceShape());
 		boolean[] rdata = result.data; // PRIM_TYPE

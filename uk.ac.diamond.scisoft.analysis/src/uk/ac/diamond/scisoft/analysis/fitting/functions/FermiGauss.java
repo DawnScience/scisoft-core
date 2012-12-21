@@ -129,7 +129,10 @@ public class FermiGauss extends AFunction implements Serializable{
 		if (areParametersDirty())
 			calcCachedParameters();
 		
-		return 0.0;
+		
+		// only return the fermi function, not the convolution
+		AbstractDataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
+		return fermiDS.getDouble(0);
 	}
 	
 	@Override

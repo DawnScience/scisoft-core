@@ -624,11 +624,6 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundLongDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public CompoundLongDataset getSlice(final SliceIterator siter) {
 		CompoundLongDataset result = new CompoundLongDataset(isize, siter.getSliceShape());
 		long[] rdata = result.data; // PRIM_TYPE

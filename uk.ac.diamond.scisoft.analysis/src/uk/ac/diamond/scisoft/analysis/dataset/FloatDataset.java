@@ -514,11 +514,6 @@ public class FloatDataset extends AbstractDataset {
 	}
 
 	@Override
-	public FloatDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public FloatDataset getSlice(final SliceIterator siter) {
 		FloatDataset result = new FloatDataset(siter.getSliceShape());
 		float[] rdata = result.data; // PRIM_TYPE

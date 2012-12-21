@@ -514,11 +514,6 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ByteDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public ByteDataset getSlice(final SliceIterator siter) {
 		ByteDataset result = new ByteDataset(siter.getSliceShape());
 		byte[] rdata = result.data; // PRIM_TYPE

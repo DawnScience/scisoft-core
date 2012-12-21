@@ -214,6 +214,9 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public AbstractDataset getSlice(Slice... slice) {
 		final int rank = shape.length;
+		if (slice == null || slice.length == 0) {
+			return getSlice((int[]) null, null, null);
+		}
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
 		final int[] step = new int[rank];
@@ -247,12 +250,35 @@ public class LazyDataset implements ILazyDataset {
 		if (!loader.isFileReadable())
 			return null; // TODO add interaction to use plot server to load dataset
 
-		int r = oShape.length;
-		int[] nshape = AbstractDataset.checkSlice(shape, start, stop, start, stop, step);
+		int rank = shape.length;
+		int[] lstart;
+		int[] lstop;
+		int[] lstep;
+		if (step == null) {
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+
+		int[] nshape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 		int[] nstart;
 		int[] nstop;
 		int[] nstep;
 
+		int r = oShape.length;
 		if (rankOffset < 0) {
 			nstart = new int[r];
 			nstop = new int[r];
@@ -263,18 +289,18 @@ public class LazyDataset implements ILazyDataset {
 				nstep[i] = 1;
 			}
 			for (int i = 0; i < shape.length; i++) {
-				nstart[i - rankOffset] = start[i];
-				nstop[i - rankOffset] = stop[i];
-				nstep[i - rankOffset] = step[i];
+				nstart[i - rankOffset] = lstart[i];
+				nstop[i - rankOffset] = lstop[i];
+				nstep[i - rankOffset] = lstep[i];
 			}
 		} else if (rankOffset > 0) {
 			nstart = new int[r];
 			nstop = new int[r];
 			nstep = new int[r];
 			for (int i = 0; i < r; i++) {
-				nstart[i] = start[i + rankOffset];
-				nstop[i] = stop[i + rankOffset];
-				nstep[i] = step[i + rankOffset];
+				nstart[i] = lstart[i + rankOffset];
+				nstop[i] = lstop[i + rankOffset];
+				nstep[i] = lstep[i + rankOffset];
 			}
 		} else {
 			nstart = start;
@@ -282,16 +308,18 @@ public class LazyDataset implements ILazyDataset {
 			nstep = step;
 		}
 
+		AbstractDataset a;
 		try {
-			AbstractDataset a = loader.getDataset(monitor, oShape, nstart, nstop, nstep);
+			a = loader.getDataset(monitor, oShape, nstart, nstop, nstep);
 			a.setShape(nshape);
-			return a;
 		} catch (ScanFileHolderException e) {
 			// return a fake dataset to show that this has not worked, should not be used in general though.
 			logger.debug("Problem getting {}: {}", String.format("slice %s %s %s", Arrays.toString(start), Arrays.toString(stop),
 							Arrays.toString(step)), e);
-			return new DoubleDataset(1);
+			a = new DoubleDataset(1);
 		}
+		a.setName(name);
+		return a;
 	}
 
 	private IMetaData metadata = null;

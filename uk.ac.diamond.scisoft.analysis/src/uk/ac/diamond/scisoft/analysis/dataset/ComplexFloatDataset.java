@@ -390,11 +390,6 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public ComplexFloatDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
-	}
-
-	@Override
 	public ComplexFloatDataset getSlice(final SliceIterator siter) {
 		ComplexFloatDataset result = new ComplexFloatDataset(siter.getSliceShape());
 		float[] rdata = result.data; // PRIM_TYPE

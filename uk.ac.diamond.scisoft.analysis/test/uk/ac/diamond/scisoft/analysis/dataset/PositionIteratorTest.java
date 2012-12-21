@@ -95,14 +95,22 @@ public class PositionIteratorTest {
 	}
 
 	private void testDatasetAxes(AbstractDataset ta, int[] axes) {
-		PositionIterator iter = ta.getPositionIterator(axes);
-		int[] pos = iter.getPos();
 		int[] shape = ta.shape;
-		int endrank = shape.length - 1;
-		int[] tpos = new int[shape.length];
-
-		int[] step = new int[shape.length];
+		int rank = shape.length;
+		int[] step = new int[rank];
 		Arrays.fill(step, 1);
+		int[] start = new int[rank];
+		int[] stop = shape.clone();
+		testDatasetAxes(ta, axes, start , stop, step);
+	}
+
+	private void testDatasetAxes(AbstractDataset ta, int[] axes, int[] start, int[] stop, int[] step) {
+		int[] shape = ta.shape;
+		PositionIterator iter = new PositionIterator(shape, start, stop, step, axes);
+		int[] pos = iter.getPos();
+		int endrank = shape.length - 1;
+		int[] tpos = start;
+
 		for (int i = 0; i < axes.length; i++) {
 			step[axes[i]] = 0;
 		}
@@ -118,8 +126,8 @@ public class PositionIteratorTest {
 			for (; j >= 0; j--) {
 				if (step[j] > 0) {
 					tpos[j] += step[j];
-					if (tpos[j] >= shape[j]) {
-						tpos[j] = 0;
+					if (tpos[j] >= stop[j]) {
+						tpos[j] = start[j];
 					} else {
 						break;
 					}

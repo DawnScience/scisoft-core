@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.Arrays;
+
 
 /**
  * <p>Class to provide iteration through a dataset</p>
@@ -32,7 +34,9 @@ package uk.ac.diamond.scisoft.analysis.dataset;
  *
  */
 public class PositionIterator extends IndexIterator {
-	final private int[] shape;
+	private int[] start;
+	private int[] stop;
+	private int[] step;
 	final private int endrank;
 
 	final private boolean[] omit; // axes to miss out
@@ -40,7 +44,7 @@ public class PositionIterator extends IndexIterator {
 	/**
 	 * position in dataset
 	 */
-	final private int[] pos;
+	private int[] pos;
 	private boolean once;
 
 	/**
@@ -68,11 +72,10 @@ public class PositionIterator extends IndexIterator {
 	 * @param axes missing axes
 	 */
 	public PositionIterator(int[] shape, int[] axes) {
-		this.shape = shape;
-		endrank = shape.length - 1;
-		pos = new int[endrank + 1];
+		int rank = shape.length;
+		endrank = rank - 1;
 
-		omit = new boolean[endrank + 1];
+		omit = new boolean[rank];
 		for (int a : axes) {
 			if (a >= 0 && a <= endrank) {
 				omit[a] = true;
@@ -80,7 +83,57 @@ public class PositionIterator extends IndexIterator {
 				throw new IllegalArgumentException("Specified axis exceeds dataset rank");
 			}
 		}
+		start = new int[rank];
+		stop = shape.clone();
+		step = new int[rank];
+		Arrays.fill(step, 1);
+		reset();
+	}
 
+	/**
+	 * Constructor for an iterator that misses out several axes
+	 * @param shape
+	 * @param slice
+	 * @param axes missing axes
+	 */
+	public PositionIterator(int[] shape, Slice[] slice, int[] axes) {
+		this(shape, axes);
+		Slice.convertFromSlice(slice, shape, start, stop, step);
+		reset();
+	}
+
+	/**
+	 * Constructor for an iterator that misses out several axes
+	 * @param shape
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @param axes missing axes
+	 */
+	public PositionIterator(int[] shape, int[] start, int[] stop, int[] step, int[] axes) {
+		this(shape, axes);
+		int rank = shape.length;
+		if (step == null) {
+			this.step = new int[rank];
+			Arrays.fill(this.step, 1);
+		} else {
+			this.step = step;
+			for (int s : step) {
+				if (s < 0) {
+					throw new UnsupportedOperationException("Negative steps not implemented");
+				}
+			}
+		}
+		if (start == null) {
+			this.start = new int[rank];
+		} else {
+			this.start = start;
+		}
+		if (stop == null) {
+			this.stop = shape.clone();
+		} else {
+			this.stop = stop;
+		}
 		reset();
 	}
 
@@ -96,9 +149,9 @@ public class PositionIterator extends IndexIterator {
 			if (omit[j]) {
 				continue;
 			}
-			pos[j]++;
-			if (pos[j] >= shape[j]) {
-				pos[j] = 0;
+			pos[j] += step[j];
+			if (pos[j] >= stop[j]) {
+				pos[j] = start[j];
 			} else {
 				return true;
 			}
@@ -120,6 +173,7 @@ public class PositionIterator extends IndexIterator {
 
 	@Override
 	public void reset() {
+		pos = start.clone();
 		int j = 0;
 		for (; j <= endrank; j++) {
 			if (!omit[j])
@@ -131,11 +185,11 @@ public class PositionIterator extends IndexIterator {
 		}
 
 		if (omit[endrank]) {
-			pos[endrank] = 0;
+			pos[endrank] = start[endrank];
 			
 			for (int i = endrank - 1; i >= 0; i--) {
 				if (!omit[i]) {
-					pos[i]--;
+					pos[i] = -step[i];
 					break;
 				}
 			}

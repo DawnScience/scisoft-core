@@ -40,6 +40,7 @@ public class HKL implements Serializable {
 	public HKL() {
 		this(new int[3]);
 	}
+	
 	public HKL(Amount<Length> d) {
 		this(-1,-1,-1,d);
 	}
@@ -51,7 +52,7 @@ public class HKL implements Serializable {
 	@Override
 	public HKL clone() {
 		HKL ret = new HKL(getH(), getK(), getL());
-		ret.setDNano(getDNano());
+		ret.setD(d);
 		return ret;
 	}
 	
@@ -64,7 +65,7 @@ public class HKL implements Serializable {
 	 */
 	HKL(int h, int k, int l, Amount<Length> d) {
 		this.hkl = new int[]{h,k,l};
-		this.d   = d;
+		this.d   = d.copy();
 	}
 
 	public int getH() {
@@ -92,7 +93,7 @@ public class HKL implements Serializable {
 	}
 	
 	public int[] getIndices() {
-		return hkl;
+		return Arrays.copyOf(hkl, hkl.length);
 	}
 	
 	public int getMaxIndex() {
@@ -144,19 +145,19 @@ public class HKL implements Serializable {
 	}
 
 	public String getRingName() {
-		return ringName;
+		return new String(ringName);
 	}
 
 	public void setRingName(String name) {
-		this.ringName = name;
+		this.ringName = new String(name);
 	}
 
 	public Amount<Length> getD() {
-		return d;
+		return d.copy();
 	}
 
 	public void setD(Amount<Length> d) {
-		this.d = d;
+		this.d = d.copy();
 	}
 	
 	/**

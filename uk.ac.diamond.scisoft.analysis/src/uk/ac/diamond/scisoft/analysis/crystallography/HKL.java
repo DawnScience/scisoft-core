@@ -57,13 +57,13 @@ public class HKL implements Serializable {
 	}
 	
 	/**
-	 * Used in CalibrationStandards
+	 * Used for calibration standards
 	 * @param h
 	 * @param k
 	 * @param l
 	 * @param d
 	 */
-	HKL(int h, int k, int l, Amount<Length> d) {
+	public HKL(int h, int k, int l, Amount<Length> d) {
 		this.hkl = new int[]{h,k,l};
 		this.d   = d.copy();
 	}

@@ -271,7 +271,7 @@ public class DatasetUtils {
 	 * The 3rd dimension is left unchanged.
 	 * 
 	 * @param a
-	 * @param axes if zero length then axes order reversed
+	 * @param axes if null or zero length then axes order reversed
 	 * @return remapped copy of data
 	 */
 	public static AbstractDataset transpose(final IDataset a, int... axes) {

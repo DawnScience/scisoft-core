@@ -281,7 +281,7 @@ public class DatasetUtils {
 			return convertToAbstractDataset(a);
 		}
 
-		if (axes.length == 0) {
+		if (axes == null || axes.length == 0) {
 			axes = new int[rank];
 			for (int i = 0; i < rank; i++) {
 				axes[i] = rank-1-i;

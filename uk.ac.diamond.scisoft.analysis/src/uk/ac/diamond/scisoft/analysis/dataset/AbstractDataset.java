@@ -450,9 +450,11 @@ public abstract class AbstractDataset implements IDataset {
 		} else {
 			for (int i = 0; i < shape.length; i++) {
 				// make sure the indexes isn't zero or negative
-				if (shape[i] <= 0) {
+				if (shape[i] == 0) {
+					return 0;
+				} else if (shape[i] < 0) {
 					throw new IllegalArgumentException("The " + i + "-th is " + shape[i]
-							+ " which is an illegal argument as it is zero or negative");
+							+ " which is an illegal argument as it is negative");
 				}
 
 				size *= shape[i];

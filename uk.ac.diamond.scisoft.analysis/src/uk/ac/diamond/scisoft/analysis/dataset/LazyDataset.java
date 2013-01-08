@@ -200,7 +200,7 @@ public class LazyDataset implements ILazyDataset {
 		}
 		int rank = shape == null ? 0 : shape.length;
 
-		if (rank > 0 && shape[0] > 0) {
+		if (rank > 0 && shape[0] >= 0) {
 			out.append(shape[0]);
 		}
 		for (int i = 1; i < rank; i++) {

@@ -65,7 +65,7 @@ public class HKL implements Serializable {
 	 */
 	public HKL(int h, int k, int l, Amount<Length> d) {
 		this.hkl = new int[]{h,k,l};
-		this.d   = d.copy();
+		this.d   = d!=null ? d.copy() : null;
 	}
 
 	public int getH() {
@@ -145,19 +145,19 @@ public class HKL implements Serializable {
 	}
 
 	public String getRingName() {
-		return new String(ringName);
+		return ringName;
 	}
 
 	public void setRingName(String name) {
-		this.ringName = new String(name);
+		this.ringName = name;
 	}
 
 	public Amount<Length> getD() {
-		return d.copy();
+		return d!=null ? d.copy() : null;
 	}
 
 	public void setD(Amount<Length> d) {
-		this.d = d.copy();
+		this.d = d!=null ? d.copy() : null;
 	}
 	
 	/**

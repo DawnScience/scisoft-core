@@ -38,7 +38,7 @@ public class HKL implements Serializable {
 	private Amount<Length> d;
 	
 	public HKL() {
-		this(new int[3]);
+		hkl = new int[3];
 	}
 	
 	public HKL(Amount<Length> d) {

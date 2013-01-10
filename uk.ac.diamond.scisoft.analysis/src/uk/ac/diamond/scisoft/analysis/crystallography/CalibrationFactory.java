@@ -107,7 +107,19 @@ public class CalibrationFactory {
 	 * @return file
 	 */
 	private static File getCalibrantFile() {
-		return new File(System.getProperty("user.home")+"/.dawn/CalibrationStandards.xml");
+		File dir = new File(System.getProperty("user.home")+"/.dawn");
+		try {
+			dir.mkdirs();
+		} catch (Throwable ne) {
+			try {
+				logger.error("Cannot store calibration standards!", ne);
+				return File.createTempFile("CalibrationStandards", "xml");
+			} catch (Throwable neOther) {
+				logger.error("Cannot create files! Dawn will not function correctly. Please contact you support representative.", neOther);
+			    return null;
+			}
+		}
+		return new File(dir, "CalibrationStandards.xml");
 	}
 	
 	private static CalibrationStandards createCalibrationStandards() {

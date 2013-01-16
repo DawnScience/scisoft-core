@@ -1514,6 +1514,9 @@ public abstract class AbstractDataset implements IDataset {
 
 	private int stringPolicy = STRING_NORMAL;
 
+	private static final char OPEN_BLOCK = '[';
+	private static final char CLOSE_BLOCK = ']';
+
 	@Override
 	public String toString() {
 		final int rank = shape == null ? 0 : shape.length;
@@ -1523,18 +1526,19 @@ public abstract class AbstractDataset implements IDataset {
 			if (name != null && name.length() > 0) {
 				out.append("Dataset '");
 				out.append(name);
-				out.append("' has shape [");
+				out.append("' has shape ");
 			} else {
-				out.append("Dataset shape is [");
+				out.append("Dataset shape is ");
 			}
 
+			out.append(OPEN_BLOCK);
 			if (rank > 0 && shape[0] > 0) {
 				out.append(shape[0]);
 			}
 			for (int i = 1; i < rank; i++) {
 				out.append(", " + shape[i]);
 			}
-			out.append("]");
+			out.append(CLOSE_BLOCK);
 			return out.toString();
 		}
 
@@ -1572,7 +1576,7 @@ public abstract class AbstractDataset implements IDataset {
 			pos = start;
 		}
 		pos[end] = 0;
-		line.append('[');
+		line.append(OPEN_BLOCK);
 		line.append(getString(pos));
 
 		final int length = shape[end];
@@ -1599,7 +1603,7 @@ public abstract class AbstractDataset implements IDataset {
 				line.append(getString(pos));
 			}
 		}
-		line.append(']');
+		line.append(CLOSE_BLOCK);
 
 		// trim string down to limit
 		excess = line.length() - MAX_STRING_LENGTH - ELLIPSES.length() - 1;
@@ -1620,14 +1624,14 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	private void printBlocks(final StringBuilder out, final StringBuilder lead, final int level, final int[] pos) {
 		if (out.length() > 0) {
-			String last = out.substring(out.length() - 1);
-			if (!last.equals("[")) {
+			char last = out.charAt(out.length() - 1);
+			if (last != OPEN_BLOCK) {
 				out.append(lead);
 			}
 		}
 		final int end = getRank() - 1;
 		if (level != end) {
-			out.append('[');
+			out.append(OPEN_BLOCK);
 			int length = shape[level];
 
 			// first sub-block
@@ -1636,7 +1640,7 @@ public abstract class AbstractDataset implements IDataset {
 			newlead.append(SPACING);
 			printBlocks(out, newlead, level + 1, pos);
 			if (length < 2) { // escape
-				out.append(']');
+				out.append(CLOSE_BLOCK);
 				return;
 			}
 
@@ -1685,7 +1689,7 @@ public abstract class AbstractDataset implements IDataset {
 			// last sub-block
 			pos[level] = length - 1;
 			printBlocks(out, newlead, level + 1, pos);
-			out.append(']');
+			out.append(CLOSE_BLOCK);
 		} else {
 			out.append(makeLine(end, pos));
 		}

@@ -914,7 +914,7 @@ public class DatasetUtils {
 	public static void unwrapUnsigned(AbstractDataset a, final int bitWidth) {
 		final int dtype = a.getDtype();
 		final long lv = 1 << bitWidth;
-
+		final int isize = a.getElementsPerItem();
 		IndexIterator it = a.getIterator();
 
 		switch (dtype) {
@@ -964,6 +964,61 @@ public class DatasetUtils {
 				final double x = dds.getAbs(it.index);
 				if (x < 0)
 					dds.setAbs(it.index, x + doffset);
+			}
+			break;
+		case AbstractDataset.ARRAYINT8:
+			break;
+		case AbstractDataset.ARRAYINT16:
+			CompoundShortDataset csds = (CompoundShortDataset) a;
+			final short csoffset = (short) lv;
+			final short[] csa = new short[isize];
+			while (it.hasNext()) {
+				csds.getAbs(it.index, csa);
+				boolean dirty = false;
+				for (int i = 0; i < isize; i++) {
+					short x = csa[i];
+					if (x < 0) {
+						csa[i] = (short) (x + csoffset);
+						dirty = true;
+					}
+				}
+				if (dirty)
+					csds.setAbs(it.index, csa);
+			}
+			break;
+		case AbstractDataset.ARRAYINT32:
+			CompoundIntegerDataset cids = (CompoundIntegerDataset) a;
+			final int cioffset = (int) lv;
+			final int[] cia = new int[isize];
+			while (it.hasNext()) {
+				cids.getAbs(it.index, cia);
+				boolean dirty = false;
+				for (int i = 0; i < isize; i++) {
+					int x = cia[i];
+					if (x < 0) {
+						cia[i] = x + cioffset;
+						dirty = true;
+					}
+				}
+				if (dirty)
+					cids.setAbs(it.index, cia);
+			}
+			break;
+		case AbstractDataset.ARRAYINT64:
+			CompoundLongDataset clds = (CompoundLongDataset) a;
+			final long[] cla = new long[isize];
+			while (it.hasNext()) {
+				clds.getAbs(it.index, cla);
+				boolean dirty = false;
+				for (int i = 0; i < isize; i++) {
+					long x = cla[i];
+					if (x < 0) {
+						cla[i] = x + lv;
+						dirty = true;
+					}
+				}
+				if (dirty)
+					clds.setAbs(it.index, cla);
 			}
 			break;
 		default:

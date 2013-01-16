@@ -1988,7 +1988,18 @@ public abstract class AbstractDataset implements IDataset {
 				a = new ShortDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 8);
 				break;
-				// TODO array datasets
+			case AbstractDataset.ARRAYINT32:
+				a = new CompoundLongDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 32);
+				break;
+			case AbstractDataset.ARRAYINT16:
+				a = new CompoundIntegerDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 16);
+				break;
+			case AbstractDataset.ARRAYINT8:
+				a = new CompoundShortDataset(a);
+				DatasetUtils.unwrapUnsigned(a, 8);
+				break;
 			}
 
 		}

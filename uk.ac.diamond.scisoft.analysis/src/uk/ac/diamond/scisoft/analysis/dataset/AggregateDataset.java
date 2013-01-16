@@ -126,7 +126,11 @@ public class AggregateDataset implements ILazyDataset {
 				shape[0] += shapes[j][0];
 			}
 		}
-		size = AbstractDataset.calcSize(shape);
+		try {
+			size = AbstractDataset.calcSize(shape);
+		} catch (IllegalArgumentException e) {
+			size = Integer.MAX_VALUE; // this indicates that the entire dataset cannot be read in! 
+		}
 
 		// work out offsets from cumulative lengths
 		offset = new int[data.length];

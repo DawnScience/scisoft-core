@@ -938,14 +938,13 @@ public abstract class AbstractDataset implements IDataset {
 
 		for (int i = 0; i < rank; i++) {
 			if (axes[i]) {
-				start[i] = 0;
 				stop[i] = shape[i];
 			} else {
 				stop[i] = start[i] + 1;
 			}
 			step[i] = 1;
 		}
-		return (SliceIterator) getSliceIterator(pos, stop, step);
+		return (SliceIterator) getSliceIterator(start, stop, step);
 	}
 
 	/**

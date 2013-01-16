@@ -208,12 +208,12 @@ public class Stats {
 	 */
 	public static double[] quantile(final AbstractDataset a, final double... values) {
 		final double[] points  = new double[values.length];
+		final AbstractDataset s = calcQuartileStats(a);
 		for (int i = 0; i < points.length; i++) {
 			final double q = values[i];
 			if (q < 0 || q > 1) {
 				throw new IllegalArgumentException("Quantile requested is outside [0,1]");
 			}
-			final AbstractDataset s = calcQuartileStats(a);
 			points[i] = pQuantile(s, q);
 		}
 		return points;

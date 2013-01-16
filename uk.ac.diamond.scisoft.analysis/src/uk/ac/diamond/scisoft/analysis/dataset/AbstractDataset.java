@@ -255,7 +255,7 @@ public abstract class AbstractDataset implements IDataset {
 
 	@Override
 	public int hashCode() {
-		return (Integer) getMaxMin(false, "hash");
+		return getHash();
 	}
 
 	@Override
@@ -1371,6 +1371,9 @@ public abstract class AbstractDataset implements IDataset {
 		}
 
 		this.shape = shape.clone();
+
+		if (storedValues != null)
+			filterStoredValues(storedValues); // as it is dependent on shape
 	}
 
 	/**
@@ -2755,6 +2758,15 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	abstract public double residual(final Object o, boolean ignoreNaNs);
 
+	protected static final String STORE_HASH = "hash";
+	protected static final String STORE_SHAPELESS_HASH = "shapelessHash";
+	protected static final String STORE_MAX = "max";
+	protected static final String STORE_MIN = "min";
+	protected static final String STORE_MAX_POS = "maxPos";
+	protected static final String STORE_MIN_POS = "minPos";
+	protected final static String STORE_STATS = "stats";
+
+
 	/**
 	 * Get value from store
 	 * 
@@ -2790,6 +2802,30 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
+	 * Copy stored values from original to derived dataset
+	 * @param orig
+	 * @param derived
+	 * @param shapeChanged
+	 */
+	protected static void copyStoredValues(IDataset orig, AbstractDataset derived, boolean shapeChanged) {
+		if (orig instanceof AbstractDataset && ((AbstractDataset) orig).storedValues != null) {
+			derived.storedValues = new HashMap<String, Object>(((AbstractDataset) orig).storedValues);
+			if (shapeChanged) {
+				filterStoredValues(derived.storedValues);
+			}
+		}
+	}
+
+	private static void filterStoredValues(Map<String, Object> map) {
+		map.remove(STORE_HASH);
+		for (String n : map.keySet()) {
+			if (n.contains("-")) { // remove anything which is axis-specific
+				map.remove(n);
+			}
+		}
+	}
+
+	/**
 	 * Calculate minimum and maximum for a dataset
 	 * @param ignoreNaNs if true, ignore NaNs
 	 */
@@ -2821,15 +2857,9 @@ public abstract class AbstractDataset implements IDataset {
 			}
 		}
 
-		setStoredValue(storeName(ignoreNaNs, "max"), hasNaNs ? Double.NaN : fromDoubleToNumber(amax));
-		storedValues.put(storeName(ignoreNaNs, "min"), hasNaNs ? Double.NaN : fromDoubleToNumber(amin));
-
-		int ihash = ((int) hash)*19 + getDtype()*17 + getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			ihash = ihash*17 + shape[i];
-		}
-		storedValues.put("hash", ihash);
+		setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), (int) hash);
+		storedValues.put(storeName(ignoreNaNs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(amax));
+		storedValues.put(storeName(ignoreNaNs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(amin));
 	}
 
 	/**
@@ -2841,7 +2871,7 @@ public abstract class AbstractDataset implements IDataset {
 		final IndexIterator iter = getIterator();
 		final SummaryStatistics stats = new SummaryStatistics();
 
-		if (storedValues == null || !storedValues.containsKey("hash")) {
+		if (storedValues == null || !storedValues.containsKey(STORE_HASH)) {
 			boolean hasNaNs = false;
 			double hash = 0;
 
@@ -2860,16 +2890,10 @@ public abstract class AbstractDataset implements IDataset {
 				stats.addValue(val);
 			}
 
-			setStoredValue(storeName(ignoreNaNs, "max"), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMax()));
-			storedValues.put(storeName(ignoreNaNs, "min"), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMin()));
+			setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), (int) hash);
+			storedValues.put(storeName(ignoreNaNs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMax()));
+			storedValues.put(storeName(ignoreNaNs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMin()));
 			storedValues.put(name, stats);
-
-			int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
-			int rank = shape.length;
-			for (int i = 0; i < rank; i++) {
-				ihash = ihash * 17 + shape[i];
-			}
-			storedValues.put("hash", ihash);
 		} else {
 			while (iter.hasNext()) {
 				final double val = getElementDoubleAbs(iter.index);
@@ -3038,8 +3062,8 @@ public abstract class AbstractDataset implements IDataset {
 			var.setAbs(qiter.index, stats.getVariance());
 		}
 		setStoredValue(storeName(ignoreNaNs, "count-" + axis), count);
-		storedValues.put(storeName(ignoreNaNs, "max-" + axis), max);
-		storedValues.put(storeName(ignoreNaNs, "min-" + axis), min);
+		storedValues.put(storeName(ignoreNaNs, STORE_MAX + "-" + axis), max);
+		storedValues.put(storeName(ignoreNaNs, STORE_MIN + "-" + axis), min);
 		storedValues.put(storeName(ignoreNaNs, "sum-" + axis), sum);
 		storedValues.put(storeName(ignoreNaNs, "mean-" + axis), mean);
 		storedValues.put(storeName(ignoreNaNs, "var-" + axis), var);
@@ -3084,13 +3108,11 @@ public abstract class AbstractDataset implements IDataset {
 		return null;
 	}
 
-	protected final static String STATS_STORE_NAME = "stats";
-
 	private SummaryStatistics getStatistics(boolean ignoreNaNs) {
 		if (!hasFloatingPointElements())
 			ignoreNaNs = true;
 
-		String n = storeName(ignoreNaNs, STATS_STORE_NAME);
+		String n = storeName(ignoreNaNs, STORE_STATS);
 		SummaryStatistics stats = (SummaryStatistics) getStoredValue(n);
 		if (stats == null) {
 			calculateSummaryStats(ignoreNaNs, n);
@@ -3121,6 +3143,27 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return position of minimum value
 	 */
 	abstract public int[] minPos(boolean ignoreNaNs);
+
+	private int getHash() {
+		Object value = getStoredValue(STORE_HASH);
+		if (value == null) {
+			value = getStoredValue(STORE_SHAPELESS_HASH);
+			if (value == null) {
+				calculateMaxMin(false);
+				value = getStoredValue(STORE_SHAPELESS_HASH);
+			}
+
+			int ihash = ((Integer) value) * 19 + getDtype() * 17 + getElementsPerItem();
+			int rank = shape.length;
+			for (int i = 0; i < rank; i++) {
+				ihash = ihash * 17 + shape[i];
+			}
+			storedValues.put(STORE_HASH, ihash);
+			return ihash;
+		}
+
+		return (Integer) value;
+	}
 
 	private Object getMaxMin(boolean ignoreNaNs, String key) {
 		if (!hasFloatingPointElements())

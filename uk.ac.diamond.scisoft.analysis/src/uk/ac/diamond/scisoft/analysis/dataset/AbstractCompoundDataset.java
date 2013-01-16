@@ -134,13 +134,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public int hashCode() {
-		Object value = getStoredValue("hash");
-		if (value == null) {
-			calculateHash();
-			value = getStoredValue("hash");
-		}
-
-		return (Integer) value;
+		return getHash();
 	}
 
 	protected static double[] toDoubleArray(final Object b, final int itemSize) {
@@ -507,15 +501,29 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				}
 			}
 		}
-
-		int ihash = ((int) hash)*19 + getDtype()*17 + getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			ihash = ihash*17 + shape[i];
-		}
-		setStoredValue("hash", ihash);
+		setStoredValue(STORE_SHAPELESS_HASH, (int) hash);
 	}
 
+	private int getHash() {
+		Object value = getStoredValue(STORE_HASH);
+		if (value == null) {
+			value = getStoredValue(STORE_SHAPELESS_HASH);
+			if (value == null) {
+				calculateHash();
+				value = getStoredValue(STORE_SHAPELESS_HASH);
+			}
+
+			int ihash = ((Integer) value) * 19 + getDtype() * 17 + getElementsPerItem();
+			int rank = shape.length;
+			for (int i = 0; i < rank; i++) {
+				ihash = ihash * 17 + shape[i];
+			}
+			storedValues.put(STORE_HASH, ihash);
+			return ihash;
+		}
+
+		return (Integer) value;
+	}
 	@Override
 	protected void calculateSummaryStats(boolean ignoreNaNs, String name) {
 		IndexIterator iter = getIterator();
@@ -636,14 +644,14 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
-	protected final static String STATS_STORE_ITEM_NAME = STATS_STORE_NAME + "-";
+	protected final static String STORE_STATS_ITEM_NAME = STORE_STATS + "=";
 
 	/**
 	 * Calculate maximum values of elements over all items in dataset
 	 * @return double array of element-wise maxima
 	 */
 	public double[] maxItem() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -660,7 +668,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @return double array of element-wise minima
 	 */
 	public double[] minItem() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -674,7 +682,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Object sum() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -723,7 +731,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Object mean() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -737,7 +745,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Number variance() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -750,7 +758,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Number rootMeanSquare() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}

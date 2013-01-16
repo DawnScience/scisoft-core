@@ -361,7 +361,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public Object sum() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}
@@ -373,7 +373,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public Object mean() {
-		final String n = storeName(false, STATS_STORE_ITEM_NAME);
+		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, n);
 		}

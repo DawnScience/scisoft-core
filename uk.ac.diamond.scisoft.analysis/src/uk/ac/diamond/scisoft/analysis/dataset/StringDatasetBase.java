@@ -654,7 +654,7 @@ public class StringDatasetBase extends AbstractDataset {
 		if (storedValues == null) {
 			calculateMaxMin(ignoreNaNs);
 		}
-		String n = storeName(ignoreNaNs, "maxpos");
+		String n = storeName(ignoreNaNs, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
 		List<Integer> max = null;
@@ -678,7 +678,7 @@ public class StringDatasetBase extends AbstractDataset {
 		if (storedValues == null) {
 			calculateMaxMin(ignoreNaNs);
 		}
-		String n = storeName(ignoreNaNs, "minpos");
+		String n = storeName(ignoreNaNs, STORE_MIN_POS);
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {

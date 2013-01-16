@@ -356,6 +356,7 @@ public class DatasetUtils {
 				break;
 		}
 
+		AbstractDataset.copyStoredValues(a, ta, true);
 		return ta;
 	}
 

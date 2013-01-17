@@ -53,19 +53,21 @@ public class PlotServerProvider {
 				plotServer = new SimplePlotServer();
 			}
 
-			try {
-				// Start the Analysis RPC wrapper around the SDAPlotter
-				// This only happens on SDA
-				IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class,
-						SDAPlotterImpl.getDefaultInstance());
-				AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
-
-				// Because we are making a "real" PlotServer (as opposed to a proxy to one, such as over Corba)
-				// set the PlotService to be the same server, otherwise the PlotService will attempt connection
-				// via RMI
-				PlotServiceProvider.setPlotService(plotServer);
-			} catch (Exception e) {
-				logger.error("Error starting Analysis RPC wrapper", e);
+			if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable") == false) {
+				try {
+					// Start the Analysis RPC wrapper around the SDAPlotter
+					// This only happens on SDA
+					IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class,
+							SDAPlotterImpl.getDefaultInstance());
+					AnalysisRpcServerProvider.getInstance().addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
+	
+					// Because we are making a "real" PlotServer (as opposed to a proxy to one, such as over Corba)
+					// set the PlotService to be the same server, otherwise the PlotService will attempt connection
+					// via RMI
+					PlotServiceProvider.setPlotService(plotServer);
+				} catch (Exception e) {
+					logger.error("Error starting Analysis RPC wrapper", e);
+				}
 			}
 		}
 		return plotServer;

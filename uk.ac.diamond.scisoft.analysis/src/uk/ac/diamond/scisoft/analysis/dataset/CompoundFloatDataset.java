@@ -127,10 +127,6 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 			}
 		}
 
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
-		errorArray = dataset.errorArray;
-		errorCompoundData = dataset.errorCompoundData;
 	}
 
 	/**
@@ -150,12 +146,6 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 				data[j++] = (float) dataset.getElementDoubleAbs(iter.index + i); // GET_ELEMENT_WITH_CAST
 			}
 		}
-
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
-		errorArray = dataset.errorArray;
-		errorCompoundData = dataset.errorCompoundData;
-		metadataStructure = dataset.metadataStructure;
 	}
 
 	/**

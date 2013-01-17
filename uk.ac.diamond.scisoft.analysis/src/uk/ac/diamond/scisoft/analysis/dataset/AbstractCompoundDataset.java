@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -771,134 +773,112 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		}
 		return Math.sqrt(result);
 	}
-	
-	
-	
-	protected Object errorArray = null;
-	protected AbstractCompoundDataset errorCompoundData = null;
-	
-	public void setErrorArray(Object errorArray) {		
-		
-		double[] errorSquared = new double[isize];
-		
-		for (int i = 0; i < isize; i++) {
-			errorSquared[i] = Math.pow(AbstractCompoundDataset.toDoubleArray(errorArray, isize)[i],2);
+
+	@Override
+	public void setError(Serializable error) {		
+		double[] errors = toDoubleArray(error, isize);
+
+		if (errors == null) {
+			super.setError(error);
+		} else {
+			for (int i = 0; i < isize; i++) {
+				double x = errors[i];
+				errors[i] = x*x;
+			}
+			
+			errorData = errors;
 		}
-		
-		this.errorArray = errorSquared;
-		errorData = null;
-		errorValue = null;
-		errorCompoundData = null;
 	}
-	
-	public void setErrorCompoundData(AbstractCompoundDataset errorCompoundData) {
-		if(!this.isCompatibleWith(errorCompoundData)){
-			throw new IllegalArgumentException("Error Array Compound dataset is incompartable with this compound dataset");
-		}
-		
-		AbstractDataset[] abstractDatasetArray = new AbstractDataset[isize];
-		for (int i = 0; i < isize; i++) {
-			abstractDatasetArray[i] = Maths.square(errorCompoundData.getElements(i));
-		}		
-		
-		this.errorCompoundData = new CompoundDoubleDataset(abstractDatasetArray);
-		errorArray = null;
-		errorData = null;
-		errorValue = null;
-	}
-	
-	/**
-	 * Gets the error array from the dataset, or creates an error array if all 
-	 * values are the same
-	 * @return the AbstractDataset which contains the error information
-	 */
+
 	@Override
 	public AbstractCompoundDataset getError() {
-		
-		if (errorData != null) {
-			AbstractDataset[] abstractDatasetArray = new AbstractDataset[isize];
-			for (int i = 0; i < isize; i++) {
-				abstractDatasetArray[i] = Maths.sqrt(errorData);
+		if (errorData == null) {
+			return null;
+		}
+
+		double[] e = toDoubleArray(errorData, isize);
+		if (e != null) {
+			if (e == errorData) {
+				e = e.clone();
 			}
-			
-			return new CompoundDoubleDataset(abstractDatasetArray);
-		}
-		
-		if(errorArray != null) {
-			AbstractDataset[] abstractDatasetArray = new AbstractDataset[isize];
+			CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
 			for (int i = 0; i < isize; i++) {
-				DoubleDataset dds = new DoubleDataset(shape);
-				dds.fill(AbstractCompoundDataset.toDoubleArray(errorArray, isize)[i]);
-				abstractDatasetArray[i] = Maths.sqrt(dds);
+				e[i] = Math.sqrt(e[i]);
 			}
-			
-			return new CompoundDoubleDataset(abstractDatasetArray);
+			errors.fill(e);
+			return errors;
 		}
-		
-		if(errorValue != null) {
-			AbstractDataset[] abstractDatasetArray = new AbstractDataset[isize];
-			for (int i = 0; i < isize; i++) {
-				DoubleDataset dds = new DoubleDataset(shape);
-				dds.fill(errorValue.doubleValue());
-				abstractDatasetArray[i] = Maths.sqrt(dds);
-			}
-			
-			return new CompoundDoubleDataset(abstractDatasetArray);
+
+		if (errorData instanceof CompoundDoubleDataset) {
+			return (CompoundDoubleDataset) Maths.sqrt((AbstractDataset) errorData);
 		}
-	
-		AbstractDataset[] abstractDatasetArray = new AbstractDataset[isize];
-		for (int i = 0; i < isize; i++) {
-			abstractDatasetArray[i] = Maths.sqrt(errorCompoundData.getElements(i));
+
+		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
+		AbstractDataset err = (AbstractDataset) errorData;
+		IndexIterator it = err.getIterator();
+		int i = 0;
+		e = new double[isize];
+		while (it.hasNext()) {
+			Arrays.fill(e, Math.sqrt(err.getElementDoubleAbs(it.index)));
+			errors.setAbs(i, e);
+			i += isize;
 		}
-		
-		return new CompoundDoubleDataset(abstractDatasetArray);
-		
+		return errors;
 	}
-	
-	
+
 	/**
-	 * Gets the error value for a single point in the dataset
+	 * Gets the total error value for a single point in the dataset
 	 * @param pos of the point to be referenced 
-	 * @return the value of the error at this point as a float
+	 * @return the value of the error at this point
+	 */
+	@Override
+	public double getError(int... pos) {
+		double[] es = getSquaredErrorArray(pos);
+		if (es == null)
+			return 0;
+
+		// assume elements are independent
+		double e = 0;
+		for (int i = 0; i < isize; i++) {
+			e += es[i];
+		}
+
+		return Math.sqrt(e);
+	}
+
+	/**
+	 * Gets the error values for a single point in the dataset
+	 * @param pos of the point to be referenced 
+	 * @return the values of the error at this point
 	 */
 	public double[] getErrorArray(int... pos) {
-		
-		if (errorCompoundData != null) {
-			double[] doubleArray = new double[isize];
+		double[] e = getSquaredErrorArray(pos);
+		if (e != null) {
 			for (int i = 0; i < isize; i++) {
-				doubleArray[i] = Math.sqrt(errorCompoundData.getElements(i).getDouble(pos));
+				e[i] = Math.sqrt(e[i]);
 			}
-			
-			return doubleArray;
 		}
-		
-		if (errorData != null) {
-			double[] doubleArray = new double[isize];
-			for (int i = 0; i < isize; i++) {
-				doubleArray[i] = Math.sqrt(errorData.getDouble(pos));
-			}
-			
-			return doubleArray;
-		}
-		
-		if (errorValue != null) {
-			double[] doubleArray = new double[isize];
-			for (int i = 0; i < isize; i++) {
-				doubleArray[i] = Math.sqrt(errorValue.doubleValue());
-			}
-			
-			return doubleArray;
-		}
-		
-		double[] doubleArray = new double[isize];
-		for (int i = 0; i < isize; i++) {
-			doubleArray[i] = Math.sqrt(AbstractCompoundDataset.toDoubleArray(errorArray, isize)[i]);
-		}
-			
-		return doubleArray;
-
+		return e;
 	}
-	
 
+	private double[] getSquaredErrorArray(int... pos) {
+		if (errorData == null) {
+			return null;
+		}
+
+		double[] es = toDoubleArray(errorData, isize);
+		if (es == null) {
+			if (errorData instanceof CompoundDoubleDataset) {
+				es = ((CompoundDoubleDataset) errorData).getDoubleArray(pos);
+			} else {
+				es = new double[isize];
+				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
+			}
+		}
+		if (es == errorData) {
+			es = es.clone();
+		}
+		return es;
+	}
 }
 

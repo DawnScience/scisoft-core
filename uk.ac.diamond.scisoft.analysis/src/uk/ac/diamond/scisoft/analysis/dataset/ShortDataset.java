@@ -140,10 +140,6 @@ public class ShortDataset extends AbstractDataset {
 				data[i] = gdata[iter.index];
 			}
 		}
-
-		// now also populate the errors
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
 	}
 
 	/**
@@ -159,10 +155,6 @@ public class ShortDataset extends AbstractDataset {
 		for (int i = 0; iter.hasNext(); i++) {
 			data[i] = (short) dataset.getElementLongAbs(iter.index); // GET_ELEMENT_WITH_CAST
 		}
-
-		// now also populate the errors
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
 	}
 
 	@Override

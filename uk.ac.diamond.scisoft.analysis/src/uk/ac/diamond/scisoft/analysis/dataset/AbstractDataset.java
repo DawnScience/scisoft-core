@@ -3715,91 +3715,102 @@ public abstract class AbstractDataset implements IDataset {
 
 	/*
 	 * Note that all error values are stored internally already squared to 
-	 * ease calculation time on error propagation
+	 * ease calculation time on error propagation.
+	 * 
+	 * It must be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset
 	 */
-	protected Number errorValue = 0;
-	protected AbstractDataset errorData = null;
-	
-	/**
-	 * Sets the error for the dataset to a single value for all points in the dataset
-	 * @param errorValue The error value for all elements of the dataset 
-	 */
-	public void setError(Number errorValue) {
-		this.errorData = null;
-		if (errorValue instanceof Integer) {
-			this.errorValue = errorValue.intValue()*errorValue.intValue();
-			return;
-		}
-		if (errorValue instanceof Float) {
-			this.errorValue = errorValue.floatValue()*errorValue.floatValue();
-			return;
-		}
-		if (errorValue instanceof Long) {
-			this.errorValue = errorValue.longValue()*errorValue.longValue();
-			return;
-		}
-		if (errorValue instanceof Short) {
-			this.errorValue = errorValue.intValue()*errorValue.intValue();
-			return;
-		}
-		if (errorValue instanceof Byte) {
-			this.errorValue = errorValue.intValue()*errorValue.intValue();
-			return;
-		}
-
-		// If all else fails
-		this.errorValue = errorValue.doubleValue()*errorValue.doubleValue();
-		return;
-	}
-	
-	/**
-	 * Sets the error values for the dataset point by point.
-	 * @param errorArray The Abstract dataset which contains all the error values
-	 */
-	public void setError(AbstractDataset errorArray) {
-		if(!this.isCompatibleWith(errorArray)){
-			throw new IllegalArgumentException("Error array dataset is incompatible with this dataset");
-		}
-		this.errorData = Maths.square(errorArray);
-		this.errorValue = null;
-	}
+	protected Serializable errorData = 0;
 
 	/**
-	 * Gets the error array from the dataset, or creates an error array if all 
+	 * Set error for all points in the dataset
+	 * @param error can be a Number, a Complex, an array, a List or a dataset
+	 */
+	public void setError(Serializable error) {
+		final int is = getElementsPerItem();
+		double[] e = null;
+		if (is > 1) {
+			e = AbstractCompoundDataset.toDoubleArray(error, is);
+			if (e != null) {
+				if (e == error) {
+					e = e.clone();
+				}
+				for (int i = 0; i < is; i++) {
+					double x = e[i];
+					e[i] = x*x;
+				}
+				errorData = e;
+			} else if (error instanceof IDataset) {
+				AbstractDataset x = DatasetUtils.convertToAbstractDataset((IDataset) error);
+				if (!isCompatibleWith(x)) {
+					throw new IllegalArgumentException("Error dataset is incompatible with this dataset");
+				}
+				if (x instanceof AbstractCompoundDataset) {
+					int isize = x.getElementsPerItem();
+					if (isize != is && isize != 1) {
+						throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
+					}
+					x = x.cast(ARRAYFLOAT64);
+				} else {
+					x = x.cast(FLOAT64);
+				}
+				errorData = Maths.square(x);
+			} else {
+				throw new IllegalArgumentException("Type of error could not be handled");
+			}
+		} else if (error instanceof Number) {
+			double x = ((Number) error).doubleValue();
+			errorData = x*x;
+		} else if (error instanceof IDataset) {
+			AbstractDataset x = DatasetUtils.convertToAbstractDataset((IDataset) error);
+			if (!isCompatibleWith(x)) {
+				throw new IllegalArgumentException("Error dataset is incompatible with this dataset");
+			}
+			if (x instanceof AbstractCompoundDataset) {
+				if (x.getElementsPerItem() != 1) {
+					throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
+				}
+				x = x.cast(ARRAYFLOAT64);
+			} else {
+				x = x.cast(FLOAT64);
+			}
+			errorData = Maths.square(x);
+		} else {
+			throw new IllegalArgumentException("Type of error could not be handled");
+		}
+	}
+
+	/**
+	 * Get the error array from the dataset, or creates an error array if all 
 	 * values are the same
-	 * @return the AbstractDataset which contains the error information
+	 * @return the dataset which contains the error information (can be null)
 	 */
 	public AbstractDataset getError() {
 		if (errorData == null) {
-			DoubleDataset dataset = new DoubleDataset(shape);
-			dataset.fill(errorValue.doubleValue());
-			return Maths.sqrt(dataset);
+			return null;
 		}
-		return Maths.sqrt(errorData);
+
+		if (errorData instanceof DoubleDataset) {
+			return Maths.sqrt((DoubleDataset) errorData);
+		}
+
+		DoubleDataset errors = new DoubleDataset(shape);
+		errors.fill(Math.sqrt(toReal(errorData)));
+		return errors;
 	}
 
 	/**
-	 * Gets the error value for a single point in the dataset
+	 * Get the error value for a single point in the dataset
 	 * @param pos of the point to be referenced 
-	 * @return the value of the error at this point as a double
+	 * @return the value of the error at this point
 	 */
-	public double getErrorDouble(int... pos) {
+	public double getError(int... pos) {
 		if (errorData == null) {
-			return Math.sqrt(errorValue.doubleValue());
+			return 0;
 		}
-		return Math.sqrt(errorData.getDouble(pos));
-	}
-
-	/**
-	 * Gets the error value for a single point in the dataset
-	 * @param pos of the point to be referenced 
-	 * @return the value of the error at this point as a float
-	 */
-	public float getErrorFloat(int... pos) {
-		if (errorData == null) {
-			return errorValue.floatValue();
+		if (errorData instanceof DoubleDataset) {
+			return Math.sqrt(((IDataset) errorData).getDouble(pos));
 		}
-		return (float) Math.sqrt(errorData.getFloat(pos));
+		return Math.sqrt(toReal(errorData));
 	}
 
 	protected IMetaData metadataStructure = null;

@@ -378,7 +378,7 @@ public class AbstractCompoundDatasetTest {
 		
 		// finaly check the array setting
 		
-		a.setErrorArray(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
+		a.setError(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
 		
 		assertEquals(1.0, a.getErrorArray(0)[0], 0.001);
 		assertEquals(3.0, a.getErrorArray(0)[2], 0.001);
@@ -427,32 +427,33 @@ public class AbstractCompoundDatasetTest {
 		}
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		
-		a.setErrorArray(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
+		a.setError(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
 		
 		// should be squared
-		assertEquals(1.0, AbstractCompoundDataset.toDoubleArray(a.errorArray,5)[0], 0.001);
-		assertEquals(4.0, AbstractCompoundDataset.toDoubleArray(a.errorArray,5)[1], 0.001);
-		assertEquals(9.0, AbstractCompoundDataset.toDoubleArray(a.errorArray,5)[2], 0.001);
-		assertEquals(16.0, AbstractCompoundDataset.toDoubleArray(a.errorArray,5)[3], 0.001);
-		assertEquals(25.0, AbstractCompoundDataset.toDoubleArray(a.errorArray,5)[4], 0.001);
+		assertEquals(1.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[0], 0.001);
+		assertEquals(4.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[1], 0.001);
+		assertEquals(9.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[2], 0.001);
+		assertEquals(16.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[3], 0.001);
+		assertEquals(25.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[4], 0.001);
 		
 		// now for pulling out the full error array
 		AbstractCompoundDataset error = a.getError();
 	
-		a.setErrorCompoundData(error);
+		a.setError(error);
 		
 		// should also be squared
-		assertEquals(1.0, a.errorCompoundData.getElements(0).getDouble(0), 0.001);
-		assertEquals(4.0, a.errorCompoundData.getElements(1).getDouble(0), 0.001);
-		assertEquals(9.0, a.errorCompoundData.getElements(2).getDouble(0), 0.001);
-		assertEquals(16.0, a.errorCompoundData.getElements(3).getDouble(0), 0.001);
-		assertEquals(25.0, a.errorCompoundData.getElements(4).getDouble(0), 0.001);
+		AbstractCompoundDataset ae = (AbstractCompoundDataset) a.errorData;
+		assertEquals(1.0, ae.getElements(0).getDouble(0), 0.001);
+		assertEquals(4.0, ae.getElements(1).getDouble(0), 0.001);
+		assertEquals(9.0, ae.getElements(2).getDouble(0), 0.001);
+		assertEquals(16.0, ae.getElements(3).getDouble(0), 0.001);
+		assertEquals(25.0, ae.getElements(4).getDouble(0), 0.001);
 		
-		assertEquals(1.0, a.errorCompoundData.getElements(0).getDouble(99), 0.001);
-		assertEquals(4.0, a.errorCompoundData.getElements(1).getDouble(99), 0.001);
-		assertEquals(9.0, a.errorCompoundData.getElements(2).getDouble(99), 0.001);
-		assertEquals(16.0, a.errorCompoundData.getElements(3).getDouble(99), 0.001);
-		assertEquals(25.0, a.errorCompoundData.getElements(4).getDouble(99), 0.001);
+		assertEquals(1.0, ae.getElements(0).getDouble(99), 0.001);
+		assertEquals(4.0, ae.getElements(1).getDouble(99), 0.001);
+		assertEquals(9.0, ae.getElements(2).getDouble(99), 0.001);
+		assertEquals(16.0, ae.getElements(3).getDouble(99), 0.001);
+		assertEquals(25.0, ae.getElements(4).getDouble(99), 0.001);
 	
 	}
 

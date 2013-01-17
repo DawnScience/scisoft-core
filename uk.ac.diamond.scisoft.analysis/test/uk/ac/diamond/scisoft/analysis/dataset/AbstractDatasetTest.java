@@ -923,9 +923,9 @@ public class AbstractDatasetTest {
 		AbstractDataset a = AbstractDataset.arange(100, AbstractDataset.INT32);
 		a.setError(5);
 		
-		assertEquals(5.0, a.getErrorDouble(0), 0.001);
-		assertEquals(5.0, a.getErrorDouble(50), 0.001);
-		assertEquals(5.0, a.getErrorDouble(99), 0.001);
+		assertEquals(5.0, a.getError(0), 0.001);
+		assertEquals(5.0, a.getError(50), 0.001);
+		assertEquals(5.0, a.getError(99), 0.001);
 		
 		// now for pulling out the full error array
 		AbstractDataset error = a.getError();
@@ -944,9 +944,9 @@ public class AbstractDatasetTest {
 		// Now set the error as a whole array
 		a.setError(Maths.multiply(error, 2));
 		
-		assertEquals(10.0, a.getErrorDouble(0), 0.001);
-		assertEquals(10.0, a.getErrorDouble(50), 0.001);
-		assertEquals(10.0, a.getErrorDouble(99), 0.001);
+		assertEquals(10.0, a.getError(0), 0.001);
+		assertEquals(10.0, a.getError(50), 0.001);
+		assertEquals(10.0, a.getError(99), 0.001);
 		
 		// test pulling the error out again, to make sure its correct
 		AbstractDataset error2 = a.getError();
@@ -971,9 +971,9 @@ public class AbstractDatasetTest {
 		AbstractDataset a = AbstractDataset.zeros(new int[] {100,100}, AbstractDataset.INT32);
 		a.setError(5);
 		
-		assertEquals(5.0, a.getErrorDouble(0,0), 0.001);
-		assertEquals(5.0, a.getErrorDouble(50,50), 0.001);
-		assertEquals(5.0, a.getErrorDouble(99,99), 0.001);
+		assertEquals(5.0, a.getError(0,0), 0.001);
+		assertEquals(5.0, a.getError(50,50), 0.001);
+		assertEquals(5.0, a.getError(99,99), 0.001);
 		
 		// now for pulling out the full error array
 		AbstractDataset error = a.getError();
@@ -992,9 +992,9 @@ public class AbstractDatasetTest {
 		// Now set the error as a whole array
 		a.setError(Maths.multiply(error, 2));
 		
-		assertEquals(10.0, a.getErrorDouble(0,0), 0.001);
-		assertEquals(10.0, a.getErrorDouble(50,50), 0.001);
-		assertEquals(10.0, a.getErrorDouble(99,99), 0.001);
+		assertEquals(10.0, a.getError(0,0), 0.001);
+		assertEquals(10.0, a.getError(50,50), 0.001);
+		assertEquals(10.0, a.getError(99,99), 0.001);
 		
 		// test pulling the error out again, to make sure its correct
 		AbstractDataset error2 = a.getError();
@@ -1020,7 +1020,8 @@ public class AbstractDatasetTest {
 		a.setError(5);
 		
 		// should be squared
-		assertEquals(25.0, a.errorValue.doubleValue(), 0.001);
+		Number ne = (Number) a.errorData;
+		assertEquals(25.0, ne.doubleValue(), 0.001);
 		
 		// now for pulling out the full error array
 		AbstractDataset error = a.getError();
@@ -1028,9 +1029,10 @@ public class AbstractDatasetTest {
 		a.setError(Maths.multiply(error, 2));
 		
 		// should also be squared
-		assertEquals(100.0, a.errorData.getDouble(0), 0.001);
-		assertEquals(100.0, a.errorData.getDouble(50), 0.001);
-		assertEquals(100.0, a.errorData.getDouble(99), 0.001);	
+		AbstractDataset ae = (AbstractDataset) a.errorData;
+		assertEquals(100.0, ae.getDouble(0), 0.001);
+		assertEquals(100.0, ae.getDouble(50), 0.001);
+		assertEquals(100.0, ae.getDouble(99), 0.001);	
 	}
 
 	@Test

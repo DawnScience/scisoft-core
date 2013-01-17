@@ -127,10 +127,6 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 			}
 		}
 
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
-		errorArray = dataset.errorArray;
-		errorCompoundData = dataset.errorCompoundData;
 	}
 
 	/**
@@ -150,12 +146,6 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 				data[j++] = (short) dataset.getElementLongAbs(iter.index + i); // GET_ELEMENT_WITH_CAST
 			}
 		}
-
-		errorValue = dataset.errorValue;
-		errorData = dataset.errorData;
-		errorArray = dataset.errorArray;
-		errorCompoundData = dataset.errorCompoundData;
-		metadataStructure = dataset.metadataStructure;
 	}
 
 	/**

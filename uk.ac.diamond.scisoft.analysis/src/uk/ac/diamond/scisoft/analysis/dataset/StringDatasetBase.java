@@ -147,6 +147,8 @@ public class StringDatasetBase extends AbstractDataset {
 	 */
 	public StringDatasetBase(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 
 		odata = data = createArray(size);
 

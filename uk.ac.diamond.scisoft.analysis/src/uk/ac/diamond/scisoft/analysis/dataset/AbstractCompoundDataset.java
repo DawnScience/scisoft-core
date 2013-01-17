@@ -503,7 +503,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				}
 			}
 		}
-		setStoredValue(STORE_SHAPELESS_HASH, (int) hash);
+
+		int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
+		setStoredValue(STORE_SHAPELESS_HASH, ihash);
 	}
 
 	private int getHash() {
@@ -515,7 +517,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				value = getStoredValue(STORE_SHAPELESS_HASH);
 			}
 
-			int ihash = ((Integer) value) * 19 + getDtype() * 17 + getElementsPerItem();
+			int ihash = (Integer) value;
 			int rank = shape.length;
 			for (int i = 0; i < rank; i++) {
 				ihash = ihash * 17 + shape[i];

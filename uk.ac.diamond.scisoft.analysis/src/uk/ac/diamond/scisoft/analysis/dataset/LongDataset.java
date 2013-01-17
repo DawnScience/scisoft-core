@@ -148,6 +148,8 @@ public class LongDataset extends AbstractDataset {
 	 */
 	public LongDataset(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 
 		odata = data = createArray(size);
 

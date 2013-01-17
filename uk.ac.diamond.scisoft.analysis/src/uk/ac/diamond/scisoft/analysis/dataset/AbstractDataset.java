@@ -392,6 +392,10 @@ public abstract class AbstractDataset implements IDataset {
 		} else {
 			view.metadataStructure = orig.metadataStructure;
 		}
+		if (orig.getDtype() != view.getDtype() && view.storedValues != null) {
+			view.storedValues.remove(STORE_SHAPELESS_HASH);
+			view.storedValues.remove(STORE_HASH);
+		}
 	}
 
 	/**
@@ -2858,10 +2862,14 @@ public abstract class AbstractDataset implements IDataset {
 
 	private static void filterStoredValues(Map<String, Object> map) {
 		map.remove(STORE_HASH);
+		List<String> keys = new ArrayList<String>();
 		for (String n : map.keySet()) {
 			if (n.contains("-")) { // remove anything which is axis-specific
-				map.remove(n);
+				keys.add(n);
 			}
+		}
+		for (String n : keys) {
+			map.remove(n);
 		}
 	}
 
@@ -2897,7 +2905,8 @@ public abstract class AbstractDataset implements IDataset {
 			}
 		}
 
-		setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), (int) hash);
+		int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
+		setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), ihash);
 		storedValues.put(storeName(ignoreNaNs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(amax));
 		storedValues.put(storeName(ignoreNaNs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(amin));
 	}
@@ -2930,7 +2939,8 @@ public abstract class AbstractDataset implements IDataset {
 				stats.addValue(val);
 			}
 
-			setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), (int) hash);
+			int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
+			setStoredValue(storeName(ignoreNaNs, STORE_SHAPELESS_HASH), ihash);
 			storedValues.put(storeName(ignoreNaNs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMax()));
 			storedValues.put(storeName(ignoreNaNs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMin()));
 			storedValues.put(name, stats);
@@ -3193,7 +3203,7 @@ public abstract class AbstractDataset implements IDataset {
 				value = getStoredValue(STORE_SHAPELESS_HASH);
 			}
 
-			int ihash = ((Integer) value) * 19 + getDtype() * 17 + getElementsPerItem();
+			int ihash = (Integer) value;
 			int rank = shape.length;
 			for (int i = 0; i < rank; i++) {
 				ihash = ihash * 17 + shape[i];

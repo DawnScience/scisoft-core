@@ -147,6 +147,8 @@ public class ObjectDatasetBase extends AbstractDataset {
 	 */
 	public ObjectDatasetBase(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 
 		odata = data = createArray(size);
 

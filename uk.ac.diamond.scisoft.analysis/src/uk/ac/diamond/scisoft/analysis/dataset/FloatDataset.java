@@ -148,6 +148,8 @@ public class FloatDataset extends AbstractDataset {
 	 */
 	public FloatDataset(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 
 		odata = data = createArray(size);
 

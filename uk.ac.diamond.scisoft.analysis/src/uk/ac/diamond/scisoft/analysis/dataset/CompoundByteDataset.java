@@ -135,6 +135,8 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	 */
 	public CompoundByteDataset(final AbstractCompoundDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 		isize = dataset.isize;
 
 		odata = data = createArray(size);

@@ -129,6 +129,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	public ComplexFloatDataset(final AbstractDataset dataset) {
 		super(ISIZE, dataset.shape);
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 
 		IndexIterator iter = dataset.getIterator();
 		int disize = dataset.getElementsPerItem();

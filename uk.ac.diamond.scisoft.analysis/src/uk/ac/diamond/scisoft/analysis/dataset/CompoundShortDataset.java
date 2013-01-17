@@ -135,6 +135,8 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	 */
 	public CompoundShortDataset(final AbstractCompoundDataset dataset) {
 		copyToView(dataset, this, true, false);
+		dataShape = null;
+		dataSize = 0;
 		isize = dataset.isize;
 
 		odata = data = createArray(size);

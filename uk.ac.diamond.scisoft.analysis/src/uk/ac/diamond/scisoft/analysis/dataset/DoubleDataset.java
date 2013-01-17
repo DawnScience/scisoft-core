@@ -148,7 +148,9 @@ public class DoubleDataset extends AbstractDataset {
 	 */
 	public DoubleDataset(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
-		
+		dataShape = null;
+		dataSize = 0;
+
 		odata = data = createArray(size);
 
 		IndexIterator iter = dataset.getIterator();

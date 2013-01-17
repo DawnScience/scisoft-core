@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -33,7 +35,7 @@ public class StatsTest {
 	 */
 	@SuppressWarnings("null")
 	@Test
-	public void TestRand() {
+	public void testRand() {
 		Random.seed(103);
 		DoubleDataset ta = Random.rand(100000);
 
@@ -69,7 +71,7 @@ public class StatsTest {
 	 * Normal distribution
 	 */
 	@Test
-	public void TestRandn() {
+	public void testRandn() {
 		Random.seed(103);
 		DoubleDataset ta = Random.randn(100000);
 
@@ -86,7 +88,7 @@ public class StatsTest {
 	 * Exponential distribution
 	 */
 	@Test
-	public void TestRandExp() {
+	public void testRandExp() {
 		Random.seed(103);
 		double beta = 0.3;
 		DoubleDataset ta = Random.exponential(beta, 100000);
@@ -104,7 +106,7 @@ public class StatsTest {
 	 * Poisson distribution
 	 */
 	@Test
-	public void TestRandPois() {
+	public void testRandPois() {
 		Random.seed(103);
 		double lam = 0.3;
 		IntegerDataset ta = Random.poisson(lam, 100000);
@@ -119,7 +121,7 @@ public class StatsTest {
 	}
 
 	@Test
-	public void TestNaNs() {
+	public void testNaNs() {
 		AbstractDataset a = AbstractDataset.arange(1, 7, 1, AbstractDataset.FLOAT64);
 
 		assertEquals("Sum", 21, ((Number) a.sum()).doubleValue(), 1e-6);
@@ -129,5 +131,72 @@ public class StatsTest {
 		assertTrue("Product", Double.isNaN((Double) Stats.product(a)));
 		assertEquals("Sum", 20, ((Number) a.sum(true)).doubleValue(), 1e-6);
 		assertEquals("Product", 720, (Double) Stats.product(a, true), 1e-6);
+	}
+
+	@Test
+	public void testQuantileSpeed() {
+		int REPEAT = 5;
+		int LENGTH = 1024*1024*4;
+		double LOW = 0.01;
+		double HIGH = 0.99;
+		Random.seed(12371);
+//		AbstractDataset a = Random.randn(LENGTH);
+//		AbstractDataset a = Random.rand(LENGTH);
+		AbstractDataset a = Random.exponential(3.75, LENGTH);
+//		AbstractDataset a = Random.poisson(3.9, LENGTH);
+		long[] times = new long[REPEAT]; // in nanoseconds
+		double[] vs;
+
+		System.out.printf("Dataset: mean = %g (%g, %g)\n", a.mean(), a.min().doubleValue(), a.max().doubleValue());
+		vs = Stats.quantile(a, LOW, HIGH);
+		for (int i = 0; i < REPEAT; i++) {
+			times[i] = -System.nanoTime();
+			Stats.quantile(a, LOW, HIGH);
+			times[i] += System.nanoTime();
+		}
+		Arrays.sort(times);
+		System.out.printf("Low/High (%g/%g) took %.2fms\n", vs[0], vs[1], times[0]/1e6);
+
+		double s = a.getSize();
+		double lx = s*LOW;
+		double hx = s*(1-HIGH);
+
+		int[] ls;
+		ls = new int[] {256, 640};
+		for (int l : ls) {
+			vs = Stats.outlierValuesList(a, l, l);
+			for (int i = 0; i < REPEAT; i++) {
+				times[i] = -System.nanoTime();
+				Stats.outlierValuesList(a, l, l);
+				times[i] += System.nanoTime();
+			}
+			Arrays.sort(times);
+			System.out.printf("%4d: Low/High (%g/%g - %.4f/%.4f) took %.2fms\n", l, vs[0], vs[1], vs[2]/s, 1-vs[3]/s, times[0]/1e6);
+		}
+
+		ls = new int[] {640, 1024, 8192};
+		for (int l : ls) {
+			vs = Stats.outlierValuesMap(a, l, l);
+			for (int i = 0; i < REPEAT; i++) {
+				times[i] = -System.nanoTime();
+				Stats.outlierValuesMap(a, l, l);
+				times[i] += System.nanoTime();
+			}
+			Arrays.sort(times);
+			System.out.printf("%4d: Low/High (%g/%g - %.4f/%.4f) took %.2fms\n", l, vs[0], vs[1], vs[2]/s, 1-vs[3]/s, times[0]/1e6);
+		}
+
+		vs = Stats.outlierValuesMap(a, (int) lx, (int) hx);
+		for (int i = 0; i < REPEAT; i++) {
+			times[i] = -System.nanoTime();
+			Stats.outlierValuesMap(a, (int) lx, (int) hx);
+			times[i] += System.nanoTime();
+		}
+		Arrays.sort(times);
+		System.out.printf("Low/High (%g/%g - %.4f/%.4f) took %.2fms\n", vs[0], vs[1], vs[2]/s, 1-vs[3]/s, times[0]/1e6);
+
+		double[] qs = Stats.quantile(a, LOW, HIGH);
+		assertEquals("Lower quantile", qs[0], vs[0], 1e-4*qs[0]);
+		assertEquals("Upper quantile", qs[1], vs[1], 1e-4*qs[1]);
 	}
 }

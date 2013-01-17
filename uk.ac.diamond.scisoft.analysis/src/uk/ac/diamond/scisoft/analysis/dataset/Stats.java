@@ -16,6 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.apache.commons.math.complex.Complex;
 import org.apache.commons.math.stat.descriptive.moment.FourthMoment;
 import org.apache.commons.math.stat.descriptive.moment.Kurtosis;
@@ -1562,4 +1567,142 @@ public class Stats {
 		return a.residual(b);
 	}
 
+	/**
+	 * Calculate approximate outlier values. These are defined as the values in the dataset
+	 * that are approximately below and above the given thresholds - in terms of percentages
+	 * of dataset size.
+	 * <p>
+	 * It approximates by limiting the number of items (given by length) used internally by
+	 * data structures - the larger this is, the more accurate will those outlier values become.
+	 * The actual thresholds used are returned in the array.
+	 * @param a
+	 * @param lo percentage threshold for lower limit
+	 * @param hi percentage threshold for higher limit
+	 * @param length maximum number of items used internally, if negative, then unlimited
+	 * @return double array with low and high values, and low and high percentage thresholds
+	 */
+	public static double[] outlierValues(final AbstractDataset a, double lo, double hi, final int length) {
+		if (lo <= 0 || hi <= 0 || lo >= hi || hi >= 100) {
+			throw new IllegalArgumentException("Thresholds must be between (0,100) and in order");
+		}
+		final int size = a.getSize();
+		int nl = (int) ((lo*size)/100);
+		if (length > 0 && nl > length)
+			nl = length;
+		int nh = (int) (((100-hi)*size)/100);
+		if (length > 0 && nh > length)
+			nh = length;
+
+		double[] results = Math.max(nl, nh) > 640 ? outlierValuesMap(a, nl, nh) : outlierValuesList(a, nl, nh);
+
+		results[2] = results[2]*100./size;
+		results[3] = 100. - results[3]*100./size;
+		return results;
+	}
+
+	protected static double[] outlierValuesMap(final AbstractDataset a, int nl, int nh) {
+		final TreeMap<Double, Integer> lMap = new TreeMap<Double, Integer>();
+		final TreeMap<Double, Integer> hMap = new TreeMap<Double, Integer>();
+
+		int ml = 0;
+		int mh = 0;
+		IndexIterator it = a.getIterator();
+		while (it.hasNext()) {
+			Double x = a.getElementDoubleAbs(it.index);
+			Integer i;
+			if (ml == nl) {
+				Double k = lMap.lastKey();
+				if (x < k) {
+					i = lMap.get(k) - 1;
+					if (i == 0) {
+						lMap.remove(k);
+					} else {
+						lMap.put(k, i);
+					}
+					i = lMap.get(x);
+					if (i == null) {
+						lMap.put(x, 1);
+					} else {
+						lMap.put(x, i + 1);
+					}
+				}
+			} else {
+				i = lMap.get(x);
+				if (i == null) {
+					lMap.put(x, 1);
+				} else {
+					lMap.put(x, i + 1);
+				}
+				ml++;
+			}
+
+			if (mh == nh) {
+				Double k = hMap.firstKey();
+				if (x > k) {
+					i = hMap.get(k) - 1;
+					if (i == 0) {
+						hMap.remove(k);
+					} else {
+						hMap.put(k, i);
+					}
+					i = hMap.get(x);
+					if (i == null) {
+						hMap.put(x, 1);
+					} else {
+						hMap.put(x, i+1);
+					}
+				}
+			} else {
+				i = hMap.get(x);
+				if (i == null) {
+					hMap.put(x, 1);
+				} else {
+					hMap.put(x, i+1);
+				}
+				mh++;
+			}
+		}
+
+		return new double[] {lMap.lastKey(), hMap.firstKey(), ml, mh};
+	}
+
+	protected static double[] outlierValuesList(final AbstractDataset a, int nl, int nh) {
+		final List<Double> lList = new ArrayList<Double>(nl);
+		final List<Double> hList = new ArrayList<Double>(nh);
+//		final List<Double> lList = new LinkedList<Double>();
+//		final List<Double> hList = new LinkedList<Double>();
+
+		double lx = Double.POSITIVE_INFINITY;
+		double hx = Double.NEGATIVE_INFINITY;
+
+		IndexIterator it = a.getIterator();
+		while (it.hasNext()) {
+			double x = a.getElementDoubleAbs(it.index);
+			if (x < lx) {
+				if (lList.size() == nl) {
+					lList.remove(lx);
+				}
+				lList.add(x);
+				lx = Collections.max(lList);
+			} else if (x == lx) {
+				if (lList.size() < nl) {
+					lList.add(x);
+				}
+			}
+
+			if (x > hx) {
+				if (hList.size() == nh) {
+					hList.remove(hx);
+				}
+				hList.add(x);
+				hx = Collections.min(hList);
+			} else if (x == hx) {
+				if (hList.size() < nh) {
+					hList.add(x);
+				}
+			}
+		}
+
+		return new double[] {lx, hx, lList.size(), hList.size()};
+	}	
 }

@@ -367,7 +367,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	/**
-	 * Set values at absolute index in the internal array. This is an internal method with no checks so can be
+	 * Get values at absolute index in the internal array. This is an internal method with no checks so can be
 	 * dangerous. Use with care or ideally with an iterator.
 	 * 
 	 * @param index
@@ -379,6 +379,19 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		for (int i = 0; i < isize; i++)
 			result[i] = data[index + i];
 		return result;
+	}
+
+	/**
+	 * Get values at absolute index in the internal array. This is an internal method with no checks so can be
+	 * dangerous. Use with care or ideally with an iterator.
+	 *
+	 * @param index
+	 *            absolute index
+	 * @param values
+	 */
+	public void getAbs(final int index, final double[] values) { // PRIM_TYPE
+		for (int i = 0; i < isize; i++)
+			values[i] = data[index + i];
 	}
 
 	@Override
@@ -411,7 +424,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	/**
 	 * Set values at absolute index in the internal array. This is an internal method with no checks so can be
 	 * dangerous. Use with care or ideally with an iterator.
-	 * 
+	 *
 	 * @param index
 	 *            absolute index
 	 * @param val
@@ -426,7 +439,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	/**
 	 * Set element value at absolute index in the internal array. This is an internal method with no checks so can be
 	 * dangerous. Use with care or ideally with an iterator.
-	 * 
+	 *
 	 * @param index
 	 *            absolute index
 	 * @param val

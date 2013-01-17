@@ -357,6 +357,44 @@ public abstract class AbstractDataset implements IDataset {
 	public abstract AbstractDataset getView();
 
 	/**
+	 * Copy fields from original to view
+	 * @param orig
+	 * @param view
+	 * @param clone if true, then clone everything but bulk data
+	 * @param cloneMetadata if true, clone metadata
+	 */
+	protected static void copyToView(AbstractDataset orig, AbstractDataset view, boolean clone, boolean cloneMetadata) {
+		view.name = orig.name;
+		view.size = orig.size;
+		view.dataSize = orig.dataSize;
+		view.odata = orig.odata;
+
+		if (orig.errorData != null && orig.errorData instanceof AbstractDataset)
+			view.errorData = ((AbstractDataset) orig.errorData).getView();
+		else
+			view.errorData = orig.errorData;
+
+		if (clone) {
+			view.shape = orig.shape.clone();
+			if (orig.dataShape != null)
+				view.dataShape = orig.dataShape.clone();
+
+			copyStoredValues(orig, view, false);
+		} else {
+			view.shape = orig.shape;
+			view.dataShape = orig.dataShape;
+			view.storedValues = orig.storedValues;
+		}
+
+		if (cloneMetadata) {
+			if (orig.metadataStructure != null)
+				view.metadataStructure = orig.metadataStructure.clone();
+		} else {
+			view.metadataStructure = orig.metadataStructure;
+		}
+	}
+
+	/**
 	 * Generate an index dataset for current dataset
 	 * 
 	 * @return an index dataset
@@ -1370,6 +1408,9 @@ public abstract class AbstractDataset implements IDataset {
 		}
 
 		this.shape = shape.clone();
+		if (errorData != null && errorData instanceof AbstractDataset) {
+			((AbstractDataset) errorData).setShape(shape);
+		}
 
 		if (storedValues != null)
 			filterStoredValues(storedValues); // as it is dependent on shape

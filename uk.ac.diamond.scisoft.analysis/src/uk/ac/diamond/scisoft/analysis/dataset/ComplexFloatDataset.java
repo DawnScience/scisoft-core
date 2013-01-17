@@ -43,6 +43,10 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		super(ISIZE);
 	}
 
+	/**
+	 * Create a zero-filled dataset of given shape
+	 * @param shape
+	 */
 	public ComplexFloatDataset(final int... shape) {
 		super(ISIZE, shape);
 	}
@@ -124,13 +128,20 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	 */
 	public ComplexFloatDataset(final AbstractDataset dataset) {
 		super(ISIZE, dataset.shape);
-		name = new String(dataset.name);
+		copyToView(dataset, this, true, false);
 
 		IndexIterator iter = dataset.getIterator();
-		for (int i = 0; iter.hasNext(); i+=isize) {
-			data[i] = (float) dataset.getElementDoubleAbs(iter.index); // ADD_CAST
+		int disize = dataset.getElementsPerItem();
+		if (disize == 1) {
+			for (int i = 0; iter.hasNext(); i += isize) {
+				data[i] = (float) dataset.getElementDoubleAbs(iter.index); // ADD_CAST
+			}
+		} else {
+			for (int i = 0; iter.hasNext(); i += isize) {
+				data[i] = (float) dataset.getElementDoubleAbs(iter.index); // ADD_CAST
+				data[i+1] = (float) dataset.getElementDoubleAbs(iter.index+1); // ADD_CAST
+			}
 		}
-		metadataStructure = dataset.metadataStructure;
 	}
 
 	/**
@@ -205,14 +216,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	@Override
 	public ComplexFloatDataset getView() {
 		ComplexFloatDataset view = new ComplexFloatDataset();
-		view.name = new String(name);
-		view.size = size;
-		view.dataSize = dataSize;
-		view.shape = shape.clone();
-		if (dataShape != null)
-			view.dataShape = dataShape.clone();
-		view.odata = view.data = data;
-		view.metadataStructure = metadataStructure;
+		copyToView(this, view, true, true);
+		view.data = data;
 		return view;
 	}
 

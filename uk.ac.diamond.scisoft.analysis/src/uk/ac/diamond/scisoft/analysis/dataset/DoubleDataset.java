@@ -69,28 +69,25 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	/**
+	 * Create a zero-filled dataset of given shape
 	 * @param shape
 	 */
 	public DoubleDataset(final int... shape) {
 		if (shape.length == 1) {
 			size = shape[0];
-			this.shape = shape.clone();
-			if (size > 0) {
-				odata = data = createArray(size);
-			} else if (size < 0) {
+			if (size < 0) {
 				throw new IllegalArgumentException("Negative component in shape is not allowed");
 			}
 		} else {
 			size = calcSize(shape);
-			this.shape = shape.clone();
-
-			odata = data = createArray(size);
 		}
+		this.shape = shape.clone();
+
+		odata = data = createArray(size);
 	}
 
 	/**
 	 * Create a dataset using given data
-	 * 
 	 * @param data
 	 * @param shape
 	 *            (can be null to create 1D dataset)
@@ -111,7 +108,6 @@ public class DoubleDataset extends AbstractDataset {
 
 	/**
 	 * Copy a dataset
-	 * 
 	 * @param dataset
 	 */
 	public DoubleDataset(final DoubleDataset dataset) {
@@ -120,28 +116,17 @@ public class DoubleDataset extends AbstractDataset {
 
 	/**
 	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * 
 	 * @param dataset
 	 * @param wrap
 	 */
 	public DoubleDataset(final DoubleDataset dataset, final boolean wrap) {
-		size = dataset.size;
-
 		if (wrap) {
-			shape = dataset.shape;
-			dataSize = dataset.dataSize;
-			dataShape = dataset.dataShape;
-			name = dataset.name;
-			metadataStructure = dataset.metadataStructure;
-			odata = data = dataset.data;
-
+			copyToView(dataset, this, false, false);
+			data = dataset.data;
 			return;
 		}
 
-		shape = dataset.shape.clone();
-		name = new String(dataset.name);
-		if (dataset.metadataStructure != null)
-			metadataStructure = dataset.metadataStructure.clone();
+		copyToView(dataset, this, true, true);
 
 		double[] gdata = dataset.data; // PRIM_TYPE
 
@@ -163,15 +148,12 @@ public class DoubleDataset extends AbstractDataset {
 
 	/**
 	 * Cast a dataset to this class type
-	 * 
 	 * @param dataset
 	 */
 	public DoubleDataset(final AbstractDataset dataset) {
-		size = dataset.size;
-		shape = dataset.shape.clone();
-		name = new String(dataset.name);
+		copyToView(dataset, this, true, false);
+		
 		odata = data = createArray(size);
-		metadataStructure = dataset.metadataStructure;
 
 		IndexIterator iter = dataset.getIterator();
 		for (int i = 0; iter.hasNext(); i++) {
@@ -281,14 +263,8 @@ public class DoubleDataset extends AbstractDataset {
 	@Override
 	public DoubleDataset getView() {
 		DoubleDataset view = new DoubleDataset();
-		view.name = new String(name);
-		view.size = size;
-		view.dataSize = dataSize;
-		view.shape = shape.clone();
-		if (dataShape != null)
-			view.dataShape = dataShape.clone();
-		view.odata = view.data = data;
-		view.metadataStructure = metadataStructure;
+		copyToView(this, view, true, true);
+		view.data = data;
 		return view;
 	}
 

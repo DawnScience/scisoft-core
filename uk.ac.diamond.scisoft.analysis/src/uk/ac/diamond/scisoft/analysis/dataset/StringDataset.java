@@ -33,6 +33,7 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	/**
+	 * Create a null-filled dataset of given shape
 	 * @param shape
 	 */
 	public StringDataset(final int... shape) {
@@ -41,7 +42,6 @@ public class StringDataset extends StringDatasetBase {
 
 	/**
 	 * Create a dataset using given data
-	 * 
 	 * @param data
 	 * @param shape
 	 *            (can be null to create 1D dataset)
@@ -52,7 +52,6 @@ public class StringDataset extends StringDatasetBase {
 
 	/**
 	 * Copy a dataset
-	 * 
 	 * @param dataset
 	 */
 	public StringDataset(final StringDataset dataset) {
@@ -61,7 +60,6 @@ public class StringDataset extends StringDatasetBase {
 
 	/**
 	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * 
 	 * @param dataset
 	 * @param wrap
 	 */
@@ -71,7 +69,6 @@ public class StringDataset extends StringDatasetBase {
 
 	/**
 	 * Cast a dataset to this class type
-	 * 
 	 * @param dataset
 	 */
 	public StringDataset(final AbstractDataset dataset) {

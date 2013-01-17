@@ -68,27 +68,28 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 		isize = itemSize;
 	}
 
+	/**
+	 * Create a zero-filled dataset of given item size and shape
+	 * @param itemSize
+	 * @param shape
+	 */
 	public CompoundByteDataset(final int itemSize, final int[] shape) {
 		isize = itemSize;
 		if (shape.length == 1) {
 			size = shape[0];
-			this.shape = shape.clone();
-			if (size > 0) {
-				odata = data = createArray(size);
-			} else if (size < 0) {
+			if (size < 0) {
 				throw new IllegalArgumentException("Negative component in shape is not allowed");
 			}
 		} else {
 			size = calcSize(shape);
-			this.shape = shape.clone();
-
-			odata = data = createArray(size);
 		}
+		this.shape = shape.clone();
+
+		odata = data = createArray(size);
 	}
 
 	/**
 	 * Copy a dataset
-	 *
 	 * @param dataset
 	 */
 	public CompoundByteDataset(final CompoundByteDataset dataset) {
@@ -97,29 +98,18 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 
 	/**
 	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 *
 	 * @param dataset
 	 * @param wrap
 	 */
 	public CompoundByteDataset(final CompoundByteDataset dataset, final boolean wrap) {
 		isize = dataset.isize;
-		size = dataset.size;
-
 		if (wrap) {
-			shape = dataset.shape;
-			dataSize = dataset.dataSize;
-			dataShape = dataset.dataShape;
-			name = dataset.name;
-			metadataStructure = dataset.metadataStructure;
-			odata = data = dataset.data;
-
+			copyToView(dataset, this, false, false);
+			data = dataset.data;
 			return;
 		}
 
-		shape = dataset.shape.clone();
-		name = new String(dataset.name);
-		if (dataset.metadataStructure != null)
-			metadataStructure = dataset.metadataStructure.clone();
+		copyToView(dataset, this, true, true);
 
 		byte[] gdata = dataset.data; // PRIM_TYPE
 
@@ -145,13 +135,11 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 
 	/**
 	 * Create a dataset using given dataset
-	 *
 	 * @param dataset
 	 */
 	public CompoundByteDataset(final AbstractCompoundDataset dataset) {
+		copyToView(dataset, this, true, false);
 		isize = dataset.isize;
-		size = dataset.size;
-		shape = dataset.shape.clone();
 
 		odata = data = createArray(size);
 
@@ -172,7 +160,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 
 	/**
 	 * Create a dataset using given data (elements are grouped together)
-	 *
 	 * @param itemSize
 	 * @param data
 	 * @param shape
@@ -195,7 +182,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 
 	/**
 	 * Create a dataset using given datasets
-	 *
 	 * @param datasets
 	 */
 	public CompoundByteDataset(final AbstractDataset... datasets) {
@@ -229,7 +215,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	 * Cast a dataset to this compound type. If repeat is set, the first element of each item in the given dataset is
 	 * repeated across all elements of an item. Otherwise, each item comprises a truncated or zero-padded copy of
 	 * elements from the given dataset.
-	 *
 	 * @param itemSize
 	 * @param repeat
 	 *            repeat first element
@@ -355,14 +340,8 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	@Override
 	public CompoundByteDataset getView() {
 		CompoundByteDataset view = new CompoundByteDataset(isize);
-		view.name = new String(name);
-		view.size = size;
-		view.dataSize = dataSize;
-		view.shape = shape.clone();
-		if (dataShape != null)
-			view.dataShape = dataShape.clone();
-		view.odata = view.data = data;
-		view.metadataStructure = metadataStructure;
+		copyToView(this, view, true, true);
+		view.data = data;
 		return view;
 	}
 

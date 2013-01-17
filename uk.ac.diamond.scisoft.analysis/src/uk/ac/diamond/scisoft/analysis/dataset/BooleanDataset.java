@@ -38,6 +38,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 	}
 
 	/**
+	 * Create a false-filled dataset of given shape
 	 * @param shape
 	 */
 	public BooleanDataset(final int... shape) {
@@ -46,7 +47,6 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	/**
 	 * Create a dataset using given data
-	 * 
 	 * @param data
 	 * @param shape (can be null to create 1D dataset)
 	 */
@@ -56,7 +56,6 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	/**
 	 * Copy a dataset
-	 * 
 	 * @param dataset
 	 */
 	public BooleanDataset(final BooleanDataset dataset) {
@@ -65,7 +64,6 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	/**
 	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * 
 	 * @param dataset
 	 * @param wrap
 	 */
@@ -75,7 +73,6 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	/**
 	 * Cast a dataset to this class type
-	 * 
 	 * @param dataset
 	 */
 	public BooleanDataset(final AbstractDataset dataset) {

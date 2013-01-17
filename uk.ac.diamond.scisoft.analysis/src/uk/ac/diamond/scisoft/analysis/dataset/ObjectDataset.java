@@ -33,6 +33,7 @@ public class ObjectDataset extends ObjectDatasetBase {
 	}
 
 	/**
+	 * Create a null-filled dataset of given shape
 	 * @param shape
 	 */
 	public ObjectDataset(final int... shape) {
@@ -41,7 +42,6 @@ public class ObjectDataset extends ObjectDatasetBase {
 
 	/**
 	 * Create a dataset using given data
-	 * 
 	 * @param data
 	 * @param shape (can be null to create 1D dataset)
 	 */
@@ -51,7 +51,6 @@ public class ObjectDataset extends ObjectDatasetBase {
 
 	/**
 	 * Copy a dataset
-	 * 
 	 * @param dataset
 	 */
 	public ObjectDataset(final ObjectDataset dataset) {
@@ -60,7 +59,6 @@ public class ObjectDataset extends ObjectDatasetBase {
 
 	/**
 	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * 
 	 * @param dataset
 	 * @param wrap
 	 */
@@ -70,7 +68,6 @@ public class ObjectDataset extends ObjectDatasetBase {
 
 	/**
 	 * Cast a dataset to this class type
-	 * 
 	 * @param dataset
 	 */
 	public ObjectDataset(final AbstractDataset dataset) {

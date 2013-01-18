@@ -1,17 +1,10 @@
 /*
- * Copyright 2011 Diamond Light Source Ltd.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011 Diamond Light Source Ltd. Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the
+ * License.
  */
 
 package uk.ac.diamond.scisoft.analysis.io;
@@ -54,118 +47,99 @@ import uk.ac.gda.util.io.FileUtils;
 // Been told verbally that the GDA server now can resolve core and resources.
 
 /**
- * A class which gives a single point of entry to loading data files
- * into the system.
- * 
- * In order to work with the factory a loader must have:
- * 1. a no argument constructor
- * 2. a setFile(...) method with a string path argument
- * 
- * *OR*
- * 
- * A constructor with a string argument.
- * 
- * In order to work well the loader should implement:
- * 
- * 1. IMetaLoader - this interface marks it possible to extract dataset names and other meta
- *    data without reading all the file data into memory.
- *    
- * 2. IDataSetLoader to load a single data set without loading the rest of the file.
- * 
- * see LoaderFactoryExtensions which boots up the extensions from reading the extension points.
+ * A class which gives a single point of entry to loading data files into the system. In order to work with the factory
+ * a loader must have: 1. a no argument constructor 2. a setFile(...) method with a string path argument *OR* A
+ * constructor with a string argument. In order to work well the loader should implement: 1. IMetaLoader - this
+ * interface marks it possible to extract dataset names and other meta data without reading all the file data into
+ * memory. 2. IDataSetLoader to load a single data set without loading the rest of the file. see LoaderFactoryExtensions
+ * which boots up the extensions from reading the extension points.
  */
 public class LoaderFactory {
-	
+
 	/**
-	 * A caching mechanism using soft references. Soft references attempt to keep things
-	 * in memory until the system is short on memory. Hashtable used because it is synchronized
-	 * which should reduce chances of getting the wrong data for the key.
+	 * A caching mechanism using soft references. Soft references attempt to keep things in memory until the system is
+	 * short on memory. Hashtable used because it is synchronized which should reduce chances of getting the wrong data
+	 * for the key.
 	 */
 	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<Object>>(89);
-	
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
-	private static final Map<String, List<Class<? extends AbstractFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends AbstractFileLoader>>>(19);
-	private static final Map<String, Class<? extends java.io.InputStream>>     UNZIPERS = new HashMap<String, Class<? extends java.io.InputStream>>(3);
+	private static final Map<String, List<Class<? extends AbstractFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends AbstractFileLoader>>>(
+			19);
+	private static final Map<String, Class<? extends java.io.InputStream>> UNZIPERS = new HashMap<String, Class<? extends java.io.InputStream>>(
+			3);
 
 	/**
-	 * 
-	 * Loaders can be registered at run time using registerLoader(...)
-	 * 
-	 * There is no need for an extension point now and no dependency on eclipse.
-	 * Instead an OSGI service contributing the loaders is looked for.
-	 * 
-	 * To change a loader programmatically (not advised)
-	 * 
-	 * 1. LoaderFactory.getSupportedExtensions();
-	 * 2. LoaderFactory.clearLoader("h5");
-	 * 3. LoaderFactory.registerLoader("h5", MyH5ClassThatIsBetter.class);
-	 * 
+	 * Loaders can be registered at run time using registerLoader(...) There is no need for an extension point now and
+	 * no dependency on eclipse. Instead an OSGI service contributing the loaders is looked for. To change a loader
+	 * programmatically (not advised) 1. LoaderFactory.getSupportedExtensions(); 2. LoaderFactory.clearLoader("h5"); 3.
+	 * LoaderFactory.registerLoader("h5", MyH5ClassThatIsBetter.class);
 	 */
 	static {
 		try {
-			
-		    LoaderFactory.registerLoader("npy",  NumPyFileLoader.class);
-		    LoaderFactory.registerLoader("img",  ADSCImageLoader.class);
-		    LoaderFactory.registerLoader("osc",  RAxisImageLoader.class);
-		    LoaderFactory.registerLoader("cbf",  CBFLoader.class);
-		    LoaderFactory.registerLoader("img",  CrysalisLoader.class);
-			LoaderFactory.registerLoader("tif",  PixiumLoader.class);
-		    LoaderFactory.registerLoader("jpeg", JPEGLoader.class);
-		    LoaderFactory.registerLoader("jpg",  JPEGLoader.class);
-		    LoaderFactory.registerLoader("mccd", MARLoader.class);
-		    
-		    // There is some disagreement about the proper nexus/hdf5 
-		    // file extension at different facilities
-		    LoaderFactory.registerLoader("nxs",  HDF5Loader.class);
-		    LoaderFactory.registerLoader("h5",   HDF5Loader.class);
-		    LoaderFactory.registerLoader("hdf",  HDF5Loader.class);
-		    LoaderFactory.registerLoader("hdf5", HDF5Loader.class);
-		    LoaderFactory.registerLoader("hd5",  HDF5Loader.class);
-		    LoaderFactory.registerLoader("nexus",HDF5Loader.class);
-		    
-		    LoaderFactory.registerLoader("tif",  PilatusTiffLoader.class);
-		    LoaderFactory.registerLoader("png",  PNGLoader.class);
-		    LoaderFactory.registerLoader("raw",  RawBinaryLoader.class);
-		    LoaderFactory.registerLoader("srs",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("srs",  SRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  DatLoader.class);
-		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
-		    LoaderFactory.registerLoader("txt",  DatLoader.class);
-		    LoaderFactory.registerLoader("txt",  SRSLoader.class);
-		    LoaderFactory.registerLoader("txt",  RawTextLoader.class);
-		    LoaderFactory.registerLoader("mca",  DatLoader.class);
-		    LoaderFactory.registerLoader("mca",  SRSLoader.class);
-		    LoaderFactory.registerLoader("mca",  RawTextLoader.class);
-		    LoaderFactory.registerLoader("tif",  TIFFImageLoader.class);		    
-		    LoaderFactory.registerLoader("tiff", TIFFImageLoader.class);		    
-		    LoaderFactory.registerLoader("zip",  XMapLoader.class);
-		    LoaderFactory.registerLoader("edf",  PilatusEdfLoader.class);
-		    LoaderFactory.registerLoader("pgm",  PgmLoader.class);
-		    
-		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
-		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
-		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
-		    	
-		    /**
-		     * Tell the extension points to load in.
-		     */
-		    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService)Activator.getService(ILoaderFactoryExtensionService.class);
-		    if (service!=null) service.registerExtensionPoints();
-		    
+
+			LoaderFactory.registerLoader("npy", NumPyFileLoader.class);
+			LoaderFactory.registerLoader("img", ADSCImageLoader.class);
+			LoaderFactory.registerLoader("osc", RAxisImageLoader.class);
+			LoaderFactory.registerLoader("cbf", CBFLoader.class);
+			LoaderFactory.registerLoader("img", CrysalisLoader.class);
+			LoaderFactory.registerLoader("tif", PixiumLoader.class);
+			LoaderFactory.registerLoader("jpeg", JPEGLoader.class);
+			LoaderFactory.registerLoader("jpg", JPEGLoader.class);
+			LoaderFactory.registerLoader("mccd", MARLoader.class);
+
+			// There is some disagreement about the proper nexus/hdf5
+			// file extension at different facilities
+			LoaderFactory.registerLoader("nxs", HDF5Loader.class);
+			LoaderFactory.registerLoader("h5", HDF5Loader.class);
+			LoaderFactory.registerLoader("hdf", HDF5Loader.class);
+			LoaderFactory.registerLoader("hdf5", HDF5Loader.class);
+			LoaderFactory.registerLoader("hd5", HDF5Loader.class);
+			LoaderFactory.registerLoader("nexus", HDF5Loader.class);
+
+			LoaderFactory.registerLoader("tif", PilatusTiffLoader.class);
+			LoaderFactory.registerLoader("png", PNGLoader.class);
+			LoaderFactory.registerLoader("raw", RawBinaryLoader.class);
+			LoaderFactory.registerLoader("srs", ExtendedSRSLoader.class);
+			LoaderFactory.registerLoader("srs", SRSLoader.class);
+			LoaderFactory.registerLoader("dat", DatLoader.class);
+			LoaderFactory.registerLoader("dat", ExtendedSRSLoader.class);
+			LoaderFactory.registerLoader("dat", SRSLoader.class);
+			LoaderFactory.registerLoader("txt", DatLoader.class);
+			LoaderFactory.registerLoader("txt", SRSLoader.class);
+			LoaderFactory.registerLoader("txt", RawTextLoader.class);
+			LoaderFactory.registerLoader("mca", DatLoader.class);
+			LoaderFactory.registerLoader("mca", SRSLoader.class);
+			LoaderFactory.registerLoader("mca", RawTextLoader.class);
+			LoaderFactory.registerLoader("tif", TIFFImageLoader.class);
+			LoaderFactory.registerLoader("tiff", TIFFImageLoader.class);
+			LoaderFactory.registerLoader("zip", XMapLoader.class);
+			LoaderFactory.registerLoader("edf", PilatusEdfLoader.class);
+			LoaderFactory.registerLoader("pgm", PgmLoader.class);
+
+			LoaderFactory.registerUnzip("gz", GZIPInputStream.class);
+			LoaderFactory.registerUnzip("zip", ZipInputStream.class);
+			LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
+
+			// GDA Servers cannot cope with called the Activator as it requires the org.osgi.BundleActivator to be on
+			// gda servers' classpath - Therefore the code below needs to be commented out until further investigation
+			/**
+			 * Tell the extension points to load in.
+			 */
+			// final ILoaderFactoryExtensionService service =
+			// (ILoaderFactoryExtensionService)Activator.getService(ILoaderFactoryExtensionService.class);
+			// if (service!=null) service.registerExtensionPoints();
+
 		} catch (Exception ne) {
 			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
 		}
 	}
 
 	/**
-	 * This method is used to define the supported extensions that the LoaderFactory
-	 * already knows about.
-	 * 
-	 * NOTE that is can be called from Jython. It is probably not used in the GDA/SDA 
-	 * code based that much but external code like Jython can 
+	 * This method is used to define the supported extensions that the LoaderFactory already knows about. NOTE that is
+	 * can be called from Jython. It is probably not used in the GDA/SDA code based that much but external code like
+	 * Jython can
 	 * 
 	 * @return collection of extensions.
 	 */
@@ -173,19 +147,13 @@ public class LoaderFactory {
 		return LOADERS.keySet();
 	}
 
-
 	/**
-	 * Call to load any file type into memory. By default loads all data sets, therefore
-	 * could take a **long time**.
-	 * 
-	 * In addition to find out if a given file loads with a particular loader - it actually 
-	 * LOADS it. 
-	 * 
-	 * Therefore it can take a while to run depending on how quickly the loader
-	 * fails. Also if there are many loaders called in turn, much memory could be consumed and
-	 * discarded. For this reason the registration process requires a file extension and tries 
-	 * all the loaders for a given extension if the extension is registered already. 
-	 * Otherwise it tries all loaders - in no particular order.
+	 * Call to load any file type into memory. By default loads all data sets, therefore could take a **long time**. In
+	 * addition to find out if a given file loads with a particular loader - it actually LOADS it. Therefore it can take
+	 * a while to run depending on how quickly the loader fails. Also if there are many loaders called in turn, much
+	 * memory could be consumed and discarded. For this reason the registration process requires a file extension and
+	 * tries all the loaders for a given extension if the extension is registered already. Otherwise it tries all
+	 * loaders - in no particular order.
 	 * 
 	 * @param path
 	 * @return DataHolder
@@ -193,32 +161,26 @@ public class LoaderFactory {
 	 */
 	public static DataHolder getData(final String path) throws Exception {
 		return getData(path, true, new IMonitor() {
-			
+
 			@Override
 			public void worked(int amount) {
 				// Deliberately empty
 			}
-			
+
 			@Override
 			public boolean isCancelled() {
 				return false;
 			}
 		});
 	}
-	
-	
+
 	/**
-	 * Call to load any file type into memory. By default loads all data sets, therefore
-	 * could take a **long time**.
-	 * 
-	 * In addition to find out if a given file loads with a particular loader - it actually 
-	 * LOADS it. 
-	 * 
-	 * Therefore it can take a while to run depending on how quickly the loader
-	 * fails. Also if there are many loaders called in turn, much memory could be consumed and
-	 * discarded. For this reason the registration process requires a file extension and tries 
-	 * all the loaders for a given extension if the extension is registered already. 
-	 * Otherwise it tries all loaders - in no particular order.
+	 * Call to load any file type into memory. By default loads all data sets, therefore could take a **long time**. In
+	 * addition to find out if a given file loads with a particular loader - it actually LOADS it. Therefore it can take
+	 * a while to run depending on how quickly the loader fails. Also if there are many loaders called in turn, much
+	 * memory could be consumed and discarded. For this reason the registration process requires a file extension and
+	 * tries all the loaders for a given extension if the extension is registered already. Otherwise it tries all
+	 * loaders - in no particular order.
 	 * 
 	 * @param path
 	 * @param mon
@@ -230,34 +192,34 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Call to load any file type into memory. By default loads all data sets, therefore
-	 * could take a **long time**.
+	 * Call to load any file type into memory. By default loads all data sets, therefore could take a **long time**. In
+	 * addition to find out if a given file loads with a particular loader - it actually LOADS it. Therefore it can take
+	 * a while to run depending on how quickly the loader fails. Also if there are many loaders called in turn, much
+	 * memory could be consumed and discarded. For this reason the registration process requires a file extension and
+	 * tries all the loaders for a given extension if the extension is registered already. Otherwise it tries all
+	 * loaders - in no particular order.
 	 * 
-	 * In addition to find out if a given file loads with a particular loader - it actually 
-	 * LOADS it. 
-	 * 
-	 * Therefore it can take a while to run depending on how quickly the loader
-	 * fails. Also if there are many loaders called in turn, much memory could be consumed and
-	 * discarded. For this reason the registration process requires a file extension and tries 
-	 * all the loaders for a given extension if the extension is registered already. 
-	 * Otherwise it tries all loaders - in no particular order.
-	 * 
-	 * @param path to file
-	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param path
+	 *            to file
+	 * @param willLoadMetadata
+	 *            dictates whether metadata is not loaded (if possible)
 	 * @param mon
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static DataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
+	public static DataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon)
+			throws Exception {
 
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		
+		if (!(new File(path)).exists())
+			throw new FileNotFoundException(path);
+
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);
 
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
+		if (cachedObject != null && cachedObject instanceof DataHolder)
+			return (DataHolder) cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -293,20 +255,25 @@ public class LoaderFactory {
 	/**
 	 * Call to load file into memory with specific loader class
 	 * 
-	 * @param loaderClass loader class
-	 * @param path to file
-	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param loaderClass
+	 *            loader class
+	 * @param path
+	 *            to file
+	 * @param willLoadMetadata
+	 *            dictates whether metadata is not loaded (if possible)
 	 * @param mon
 	 * @return data holder (can be null)
 	 * @throws ScanFileHolderException
 	 */
-	public static DataHolder getData(Class<? extends AbstractFileLoader> loaderClass, String path, boolean willLoadMetadata, IMonitor mon) throws ScanFileHolderException {
+	public static DataHolder getData(Class<? extends AbstractFileLoader> loaderClass, String path,
+			boolean willLoadMetadata, IMonitor mon) throws ScanFileHolderException {
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);
 
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
+		if (cachedObject != null && cachedObject instanceof DataHolder)
+			return (DataHolder) cachedObject;
 
 		AbstractFileLoader loader;
 		try {
@@ -336,11 +303,11 @@ public class LoaderFactory {
 		}
 	}
 
-
 	private final static Object LOCK = new Object();
 
 	/**
 	 * May be null
+	 * 
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
@@ -358,29 +325,34 @@ public class LoaderFactory {
 
 	/**
 	 * May be null
+	 * 
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
 	private static Object getSoftReferenceWithMetadata(LoaderKey key) {
 		Object o = getReference(key);
-		if (o != null) return o;
+		if (o != null)
+			return o;
 
 		LoaderKey k = findKeyWithMetadata(key);
 		return k == null ? null : getReference(k);
 	}
-		
+
 	/**
 	 * May be null
+	 * 
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
 	private static Object getReference(LoaderKey key) {
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching"))
+			return null;
 		synchronized (LOCK) {
 			try {
-		        final Reference<Object> ref = SOFT_CACHE.get(key);
-		        if (ref == null) return null;
-		        return ref.get();
+				final Reference<Object> ref = SOFT_CACHE.get(key);
+				if (ref == null)
+					return null;
+				return ref.get();
 			} catch (Throwable ne) {
 				return null;
 			}
@@ -388,7 +360,8 @@ public class LoaderFactory {
 	}
 
 	private static LoaderKey findKeyWithMetadata(LoaderKey key) {
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching"))
+			return null;
 		synchronized (LOCK) {
 			for (LoaderKey k : SOFT_CACHE.keySet()) {
 				if (k.isSameFile(key) && k.hasMetadata()) {
@@ -401,14 +374,14 @@ public class LoaderFactory {
 	}
 
 	private static boolean recordSoftReference(LoaderKey key, Object value) {
-		
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return false;
+
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching"))
+			return false;
 		synchronized (LOCK) {
 			try {
-				Reference<Object> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
-						              ? new WeakReference<Object>(value)
-						              : new SoftReference<Object>(value);
-				return SOFT_CACHE.put(key, ref)!=null;
+				Reference<Object> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching") ? new WeakReference<Object>(
+						value) : new SoftReference<Object>(value);
+				return SOFT_CACHE.put(key, ref) != null;
 			} catch (Throwable ne) {
 				return false;
 			}
@@ -416,11 +389,9 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Call to load any file type into memory. If a loader implements IMetaLoader will
-	 * use this fast method to avoid loading the entire file into memory. If the loader
-	 * does not implement IMetaLoader it will return null. Then you should use getData(...) 
-	 * to load the entire file.
-	 * 
+	 * Call to load any file type into memory. If a loader implements IMetaLoader will use this fast method to avoid
+	 * loading the entire file into memory. If the loader does not implement IMetaLoader it will return null. Then you
+	 * should use getData(...) to load the entire file.
 	 * 
 	 * @param path
 	 * @param mon
@@ -429,20 +400,20 @@ public class LoaderFactory {
 	 */
 	public static IMetaData getMetaData(final String path, final IMonitor mon) throws Exception {
 
-		
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		if (!(new File(path)).exists())
+			throw new FileNotFoundException(path);
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(true);
-		
+
 		Object cachedObject = getSoftReferenceWithMetadata(key);
-		if (cachedObject!=null) {
+		if (cachedObject != null) {
 			if (cachedObject instanceof DataHolder)
 				return ((DataHolder) cachedObject).getMetadata();
 			if (cachedObject instanceof AbstractDataset)
 				return ((AbstractDataset) cachedObject).getMetadata();
 			if (cachedObject instanceof IMetaData)
-				return (IMetaData)cachedObject;
+				return (IMetaData) cachedObject;
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
 
@@ -456,7 +427,8 @@ public class LoaderFactory {
 		while (it.hasNext()) {
 			final Class<? extends AbstractFileLoader> clazz = it.next();
 			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
-			if (!IMetaLoader.class.isInstance(loader)) continue;
+			if (!IMetaLoader.class.isInstance(loader))
+				continue;
 
 			try {
 				// NOTE Assumes loader fails quickly and nicely
@@ -467,7 +439,7 @@ public class LoaderFactory {
 				recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {
-				//logger.trace("Cannot load nexus meta data", ne);
+				// logger.trace("Cannot load nexus meta data", ne);
 				continue;
 			}
 		}
@@ -476,8 +448,7 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Loads a single data set where the loader allows loading of only one data set.
-	 * Otherwise returns null.
+	 * Loads a single data set where the loader allows loading of only one data set. Otherwise returns null.
 	 * 
 	 * @param path
 	 * @param mon
@@ -486,13 +457,15 @@ public class LoaderFactory {
 	 */
 	public static AbstractDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		if (!(new File(path)).exists())
+			throw new FileNotFoundException(path);
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setDatasetName(name);
-		
+
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (AbstractDataset)cachedObject;
+		if (cachedObject != null)
+			return (AbstractDataset) cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -517,7 +490,8 @@ public class LoaderFactory {
 					ILazyDataset lazy = holder.getLazyDataset(name);
 					if (lazy instanceof IDataset)
 						set = DatasetUtils.convertToAbstractDataset(lazy);
-					else // this can load in very large datasets so beware!
+					else
+						// this can load in very large datasets so beware!
 						set = DatasetUtils.convertToAbstractDataset(lazy.getSlice(mon));
 				}
 				key.setMetadata(set.getMetadata() != null);
@@ -532,8 +506,7 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Loads a single data set where the loader allows loading of only one data set.
-	 * Otherwise returns null.
+	 * Loads a single data set where the loader allows loading of only one data set. Otherwise returns null.
 	 * 
 	 * @param path
 	 * @param mon
@@ -541,16 +514,18 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public static Map<String,ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon) throws Exception {
+	public static Map<String, ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon)
+			throws Exception {
 
-		
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		if (!(new File(path)).exists())
+			throw new FileNotFoundException(path);
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setDatasetNames(names);
-		
+
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (Map<String,ILazyDataset>)cachedObject;
+		if (cachedObject != null)
+			return (Map<String, ILazyDataset>) cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -567,7 +542,7 @@ public class LoaderFactory {
 				// NOTE Assumes loader fails quickly and nicely
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
-				Map<String,ILazyDataset> sets = ((IDataSetLoader) loader).loadSets(path, names, mon);
+				Map<String, ILazyDataset> sets = ((IDataSetLoader) loader).loadSets(path, names, mon);
 				recordSoftReference(key, sets);
 				return sets;
 			} catch (Throwable ne) {
@@ -579,8 +554,7 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Gets a slice right out of the file, probably only nexus supports this
-	 * for now.
+	 * Gets a slice right out of the file, probably only nexus supports this for now.
 	 * <p>
 	 * If the slice cannot be loaded, null is returned.
 	 * 
@@ -595,7 +569,8 @@ public class LoaderFactory {
 		key.setSlice(object);
 
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (AbstractDataset)cachedObject;
+		if (cachedObject != null)
+			return (AbstractDataset) cachedObject;
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(object.getPath());
 		if (it == null)
@@ -672,7 +647,8 @@ public class LoaderFactory {
 	 * @return AbstractFileLoader
 	 * @throws Exception
 	 */
-	public static AbstractFileLoader getLoader(Class<? extends AbstractFileLoader> clazz, final String path) throws Exception {
+	public static AbstractFileLoader getLoader(Class<? extends AbstractFileLoader> clazz, final String path)
+			throws Exception {
 
 		AbstractFileLoader loader;
 		try {
@@ -699,8 +675,8 @@ public class LoaderFactory {
 	 * @return loader class
 	 */
 	public static Class<? extends AbstractFileLoader> getLoaderClass(String extension) {
-		List<Class<? extends AbstractFileLoader>> loader = LOADERS.get(extension); 
-		return (loader!=null) ? loader.get(0) : null;
+		List<Class<? extends AbstractFileLoader>> loader = LOADERS.get(extension);
+		return (loader != null) ? loader.get(0) : null;
 	}
 
 	private static Iterator<Class<? extends AbstractFileLoader>> getIterator(String path) throws IllegalAccessException {
@@ -775,57 +751,56 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Throws an exception if the loader is not ready to be used with LoaderFactory.
-	 * Otherwise adds the class to the list of loaders.
+	 * Throws an exception if the loader is not ready to be used with LoaderFactory. Otherwise adds the class to the
+	 * list of loaders. NOTE that duplicates are allowed and the LoaderFactory simply tries loaders until one works. If
+	 * loaders do not fail fast on invalid files then this approach does not work. This has been tested by adding a test
+	 * for each file type using the loader factory. This coverage could be extended by adding more example files and
+	 * attempting to load them with the factory. However as long as each file type is passed through LoaderFactory and
+	 * checks are made in the test to ensure that the loader is working, there is a good chance that it will find the
+	 * right loader.
 	 * 
-	 * NOTE that duplicates are allowed and the LoaderFactory simply tries loaders until
-	 * one works. If loaders do not fail fast on invalid files then this approach does not work.
-	 * 
-	 * This has been tested by adding a test for each file type using the loader factory. This
-	 * coverage could be extended by adding more example files and attempting to load them
-	 * with the factory. However as long as each file type is passed through LoaderFactory and
-	 * checks are made in the test to ensure that the loader is working, there is a good chance
-	 * that it will find the right loader.
-	 * 
-	 * @param extension - lower case string
+	 * @param extension
+	 *            - lower case string
 	 * @param loader
 	 * @throws Exception
 	 */
-	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader) throws Exception {
+	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader)
+			throws Exception {
 
 		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
 
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
-		if (!list.contains(loader)) list.add(loader);
+		if (!list.contains(loader))
+			list.add(loader);
 	}
 
 	/**
-	 * Throws an exception if the loader is not ready to be used with LoaderFactory.
-	 * Otherwise adds the class to the list of loaders at the position specified.
+	 * Throws an exception if the loader is not ready to be used with LoaderFactory. Otherwise adds the class to the
+	 * list of loaders at the position specified. NOTE that duplicates are allowed and the LoaderFactory simply tries
+	 * loaders until one works. If loaders do not fail fast on invalid files then this approach does not work. This has
+	 * been tested by adding a test for each file type using the loader factory. This coverage could be extended by
+	 * adding more example files and attempting to load them with the factory. However as long as each file type is
+	 * passed through LoaderFactory and checks are made in the test to ensure that the loader is working, there is a
+	 * good chance that it will find the right loader.
 	 * 
-	 * NOTE that duplicates are allowed and the LoaderFactory simply tries loaders until
-	 * one works. If loaders do not fail fast on invalid files then this approach does not work.
-	 * 
-	 * This has been tested by adding a test for each file type using the loader factory. This
-	 * coverage could be extended by adding more example files and attempting to load them
-	 * with the factory. However as long as each file type is passed through LoaderFactory and
-	 * checks are made in the test to ensure that the loader is working, there is a good chance
-	 * that it will find the right loader.
-	 * 
-	 * @param extension - lower case string
+	 * @param extension
+	 *            - lower case string
 	 * @param loader
 	 * @throws Exception
 	 */
-	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader, final int position) throws Exception {
+	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader,
+			final int position) throws Exception {
 
 		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
-		if (!list.contains(loader)) list.add(position, loader);
+		if (!list.contains(loader))
+			list.add(position, loader);
 	}
 
-	private static List<Class<? extends AbstractFileLoader>> prepareRegistration(String extension, Class<? extends AbstractFileLoader> loader) throws Exception {
+	private static List<Class<? extends AbstractFileLoader>> prepareRegistration(String extension,
+			Class<? extends AbstractFileLoader> loader) throws Exception {
 		try {
 			loader.getConstructor(String.class);
 		} catch (NoSuchMethodException e) {

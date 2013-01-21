@@ -665,11 +665,11 @@ class Test(unittest.TestCase):
         self.assertRaises(IndexError, getf, -11)
 
         if isjava:
-            ds.extendible = False
+#            ds.extendible = False
             self.assertRaises(IndexError, setf, 11, 0.)
             self.assertRaises(IndexError, setf, -11, 0.)
-            ds.extendible = True
-            ds[10] = 0.
+#            ds.extendible = True
+#            ds[10] = 0.
 
     def testBoolean(self):
         print 'test boolean get and set'
@@ -706,6 +706,11 @@ class Test(unittest.TestCase):
 
         self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
 
+    def testPrint(self):
+        print 'test print'
+        a = np.arange(10)
+        print type(a)
+        print a
 
 if __name__ == "__main__":
     #import sys

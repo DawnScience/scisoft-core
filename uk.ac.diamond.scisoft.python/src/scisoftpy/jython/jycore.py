@@ -286,6 +286,10 @@ class ndarray:
     """
     Class to hold special methods and non-overloading names
     """
+
+    def __str__(self):
+        return self.toString(True)
+
     def __add__(self, o):
         return _maths.add(self, asDataset(o))
     def __radd__(self, o):
@@ -880,7 +884,6 @@ class ndarrayI(ndarray, _integerds):
         if len(shape) == 1:
             shape = asIterable(shape[0])
         return self.ndcls.reshape(self, shape)
-
 
 class ndarrayL(ndarray, _longds):
     """

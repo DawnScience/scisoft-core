@@ -1465,23 +1465,26 @@ public abstract class AbstractDataset implements IDataset {
 		return axis;
 	}
 
-	/**
-	 * types for to string method
-	 */
-	public static final int STRING_NORMAL = 0;
+	// TODO remove
 	public static final int STRING_SHAPE = 1;
-
-	private int stringPolicy = STRING_NORMAL;
 
 	private static final char OPEN_BLOCK = '[';
 	private static final char CLOSE_BLOCK = ']';
 
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	/**
+	 * @param showData
+	 * @return string representation
+	 */
+	public String toString(boolean showData) {
 		final int rank = shape == null ? 0 : shape.length;
 		final StringBuilder out = new StringBuilder();
 
-		if (stringPolicy == STRING_SHAPE) {
+		if (!showData) {
 			if (name != null && name.length() > 0) {
 				out.append("Dataset '");
 				out.append(name);
@@ -3600,12 +3603,8 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	protected abstract void setItemDirect(final int dindex, final int sindex, final Object src);
 
-	public int getStringPolicy() {
-		return stringPolicy;
-	}
-
 	public void setStringPolicy(int stringPolicy) {
-		this.stringPolicy = stringPolicy;
+		// TODO remove
 	}
 
 	/*

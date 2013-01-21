@@ -586,45 +586,6 @@ public class AbstractDatasetTest {
 			assertEquals(xf[i], tf.get(i), 1e-6);
 		}
 
-		// expanded dataset test
-		AbstractDataset dt = AbstractDataset.arange(1024, AbstractDataset.FLOAT64);
-		dt.set(0, 1024);
-
-		DoubleDataset tg = (DoubleDataset) DatasetUtils.repeat(dt, new int[] {2}, -1);
-		assertEquals(1, tg.getShape().length);
-		assertEquals(2050, tg.getShape()[0]);
-		for (int i = 0; i < 1024; i++) {
-			assertEquals(i, tg.get(2*i), 1e-6);
-			assertEquals(i, tg.get(2*i+1), 1e-6);
-		}
-
-		// expanded 2D dataset test
-		dt = AbstractDataset.arange(1024, AbstractDataset.FLOAT64);
-		dt.setShape(16, 64);
-		dt.set(0., 0, 64);
-
-		tg = (DoubleDataset) DatasetUtils.repeat(dt, new int[] {2}, 1);
-		assertEquals(2, tg.getShape().length);
-		assertEquals(16, tg.getShape()[0]);
-		assertEquals(130, tg.getShape()[1]);
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 64; j++) {
-				assertEquals(i*64+j, tg.get(i, 2*j), 1e-6);
-				assertEquals(i*64+j, tg.get(i, 2*j+1), 1e-6);
-			}
-		}
-
-		tg = (DoubleDataset) DatasetUtils.repeat(dt, new int[] {2}, 0);
-		assertEquals(2, tg.getShape().length);
-		assertEquals(32, tg.getShape()[0]);
-		assertEquals(65, tg.getShape()[1]);
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 64; j++) {
-				assertEquals(i*64+j, tg.get(2*i, j), 1e-6);
-				assertEquals(i*64+j, tg.get(2*i+1, j), 1e-6);
-			}
-		}
-
 		try {
 			tf = (DoubleDataset) DatasetUtils.repeat(ds, new int[] {0}, 3);
 		} catch (IllegalArgumentException e) {
@@ -682,33 +643,8 @@ public class AbstractDatasetTest {
 		DoubleDataset tc = new DoubleDataset(z);
 		assertEquals(true, Double.isInfinite(tc.min().doubleValue()));
 		assertEquals(true, Double.isInfinite(tc.max().doubleValue()));
-
-		ta = DoubleDataset.arange(1024);
-		ta.set(3., 1024);
-		assertEquals(false, ta.containsNans());
-		assertEquals(false, ta.containsInfs());
 	}
 	
-	/**
-	 * Test auto allocation
-	 */
-	@Test
-	public void testAutoAllocation() {
-		DoubleDataset y = new DoubleDataset(1);
-		for(int i=0; i< 1000; i++){
-			y.set(i,i);
-		}
-		IndexIterator iter = y.getIterator();
-		int i=0;
-		while(iter.hasNext()){
-			if( i< 1000){
-				assertEquals(i, y.get(iter.index), i*1e-5);
-			} 
-			i++;
-		}
-		assertEquals(i, 1000);
-	}
-
 	@Test
 	public void testView() {
 		AbstractDataset a = AbstractDataset.arange(20, AbstractDataset.FLOAT64);

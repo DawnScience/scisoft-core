@@ -43,8 +43,7 @@ public class ComparisonsTest {
 
 		DoubleDataset ta = new DoubleDataset(new int [] {20, 10});
 		ta.fill(Double.NaN);
-		DoubleDataset tb = new DoubleDataset(new int [] {20, 9});
-		tb.set(0, 0, 9);
+		DoubleDataset tb = new DoubleDataset(new int [] {20, 10});
 		tb.fill(Double.NaN);
 		
 		BooleanDataset bd = new BooleanDataset(ta.getShape());

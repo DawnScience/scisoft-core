@@ -111,22 +111,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 		copyToView(dataset, this, true, true);
 
-		long[] gdata = dataset.data; // PRIM_TYPE
-
-		if (dataset.isContiguous()) {
-			odata = data = gdata.clone();
-		} else {
-			odata = data = createArray(size);
-
-			IndexIterator diter = dataset.getIterator();
-			IndexIterator iter = getIterator();
-			while (iter.hasNext() && diter.hasNext()) {
-				for (int i = 0; i < isize; i++) {
-					data[iter.index + i] = gdata[diter.index + i];
-				}
-			}
-		}
-
+		odata = data = dataset.data.clone();
 	}
 
 	/**
@@ -135,8 +120,6 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 */
 	public CompoundLongDataset(final AbstractCompoundDataset dataset) {
 		copyToView(dataset, this, true, false);
-		dataShape = null;
-		dataSize = 0;
 		isize = dataset.isize;
 
 		odata = data = createArray(size);
@@ -497,82 +480,15 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 * @param pos
 	 */
 	public void setItem(final long[] d, final int... pos) { // PRIM_TYPE
-		try {
-			// is pos valid?
-			//   N calc new shape
-			//     is new shape valid in reserved space?
-			//       Y set new shape
-			//       N allocate new space
-			//         move data to new space
-			//   set value
-			if (!isPositionInShape(pos)) {
-				int[] nshape = shape.clone();
-
-				for (int i = 0; i < pos.length; i++)
-					if (pos[i] >= nshape[i])
-						nshape[i] = pos[i] + 1;
-
-				allocateArray(nshape);
-			}
-			if (d.length > isize) {
-				throw new IllegalArgumentException("Array is larger than compound");
-			}
-			setAbs(isize * get1DIndex(pos), d);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new ArrayIndexOutOfBoundsException("Index out of bounds - need to make dataset extendible");
+		if (!isPositionInShape(pos)) {
+			throw new ArrayIndexOutOfBoundsException("Index out of bounds");
 		}
+		if (d.length > isize) {
+			throw new IllegalArgumentException("Array is larger than number of elements in an item");
+		}
+		setAbs(isize * get1DIndex(pos), d);
 	}
 
-	private void allocateArray(final int... nshape) {
-		if (data == null) {
-			throw new IllegalStateException("Data buffer in dataset is null");
-		}
-
-		if (dataShape != null) {
-			// see if reserved space is sufficient
-			if (isShapeInDataShape(nshape)) {
-				shape = nshape;
-				size = calcSize(shape);
-				if (Arrays.equals(shape, dataShape)) {
-					dataShape = null; // no reserved space
-				}
-				return;
-			}
-		}
-
-		final IndexIterator iter = getIterator();
-
-		// not enough room so need to expand the allocated memory
-		if (dataShape == null)
-			dataShape = shape.clone();
-		expandDataShape(nshape);
-		dataSize = calcSize(dataShape);
-
-		final long[] ndata = createArray(dataSize); // PRIM_TYPE
-		final int[] oshape = shape;
-
-		// now this object has the new dimensions so specify them correctly
-		shape = nshape;
-		size = calcSize(nshape);
-
-		// make sure that all the data is set to NaN, minimum value or false
-		Arrays.fill(ndata, Long.MIN_VALUE); // CLASS_TYPE // DEFAULT_VAL
-
-		// now copy the data back to the correct positions
-		final IndexIterator niter = getSliceIterator(null, oshape, null);
-
-		while (niter.hasNext() && iter.hasNext())
-			for (int j = 0; j < isize; j++) {
-				ndata[niter.index + j] = data[iter.index + j];
-			}
-
-		odata = data = ndata;
-
-		// if fully expanded then reset the reserved space dimensions
-		if (dataSize == size) {
-			dataShape = null;
-		}
-	}
 
 	@Override
 	public void resize(int... newShape) {
@@ -590,8 +506,6 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		odata = data = ndata;
 		size = nsize;
 		shape = newShape;
-		dataShape = null;
-		dataSize = size;
 	}
 
 	@Override
@@ -665,17 +579,10 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		final IndexIterator it = getIterator(element);
 		final long[] elements = ((LongDataset) source).data; // CLASS_TYPE // PRIM_TYPE
 
-		if (source.isContiguous()) {
-			int n = 0;
-			while (it.hasNext()) {
-				data[it.index] = elements[n];
-				n++;
-			}
-		} else {
-			final IndexIterator sit = source.getIterator();
-			while (it.hasNext() && sit.hasNext()) {
-				data[it.index] = elements[sit.index];
-			}
+		int n = 0;
+		while (it.hasNext()) {
+			data[it.index] = elements[n];
+			n++;
 		}
 	}
 

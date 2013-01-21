@@ -249,10 +249,7 @@ public class RGBDataset extends CompoundShortDataset {
 		RGBDataset view = new RGBDataset();
 		view.name = new String(name);
 		view.size = size;
-		view.dataSize = dataSize;
 		view.shape = shape.clone();
-		if (dataShape != null)
-			view.dataShape = dataShape.clone();
 		view.odata = view.data = data;
 		view.metadataStructure = metadataStructure;
 

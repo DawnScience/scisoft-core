@@ -45,7 +45,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 		data = (boolean[]) odata; // PRIM_TYPE
 	}
 
-	private static boolean[] createArray(final int size) { // PRIM_TYPE
+	protected static boolean[] createArray(final int size) { // PRIM_TYPE
 		boolean[] array = null; // PRIM_TYPE
 
 		try {
@@ -127,18 +127,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 		copyToView(dataset, this, true, true);
 
-		boolean[] gdata = dataset.data; // PRIM_TYPE
-
-		if (dataset.isContiguous()) {
-			odata = data = gdata.clone();
-		} else {
-			odata = data = createArray(size);
-
-			IndexIterator iter = dataset.getIterator();
-			for (int i = 0; iter.hasNext(); i++) {
-				data[i] = gdata[iter.index];
-			}
-		}
+		odata = data = dataset.data.clone();
 	}
 
 	/**
@@ -147,8 +136,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 	 */
 	public BooleanDatasetBase(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
-		dataShape = null;
-		dataSize = 0;
 
 		odata = data = createArray(size);
 
@@ -363,24 +350,10 @@ public class BooleanDatasetBase extends AbstractDataset {
 	 * @param pos
 	 */
 	public void setItem(final boolean value, final int... pos) { // PRIM_TYPE
-		try {
-			if (!isPositionInShape(pos)) {
-				int[] nshape = shape.clone();
-
-				for (int i = 0; i < pos.length; i++)
-					if (pos[i] >= nshape[i])
-						nshape[i] = pos[i] + 1;
-
-				allocateArray(nshape);
-			}
-			setAbs(get1DIndex(pos), value);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(String.format(
-					"Dimensionalities of requested position, %d, and dataset, %d, are incompatible", pos.length,
-					shape.length));
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new ArrayIndexOutOfBoundsException("Index out of bounds - need to make dataset extendible");
+		if (!isPositionInShape(pos)) {
+			throw new ArrayIndexOutOfBoundsException("Index out of bounds");
 		}
+		setAbs(get1DIndex(pos), value);
 	}
 
 	@Override
@@ -392,54 +365,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 		setItem(toBoolean(obj), pos); // FROM_OBJECT
 	}
 
-	private void allocateArray(final int... nshape) {
-		if (data == null) {
-			throw new IllegalStateException("Data buffer in dataset is null");
-		}
-
-		if (dataShape != null) {
-			// see if reserved space is sufficient
-			if (isShapeInDataShape(nshape)) {
-				shape = nshape;
-				size = calcSize(shape);
-				if (Arrays.equals(shape, dataShape)) {
-					dataShape = null; // no reserved space
-				}
-				return;
-			}
-		}
-
-		final IndexIterator iter = getIterator();
-
-		// not enough room so need to expand the allocated memory
-		if (dataShape == null)
-			dataShape = shape.clone();
-		expandDataShape(nshape);
-		dataSize = calcSize(dataShape);
-
-		final boolean[] ndata = createArray(dataSize); // PRIM_TYPE
-		final int[] oshape = shape;
-
-		// now this object has the new dimensions so specify them correctly
-		shape = nshape;
-		size = calcSize(nshape);
-
-		// make sure that all the data is set to NaN, minimum value or false
-		Arrays.fill(ndata, Boolean.FALSE); // CLASS_TYPE // DEFAULT_VAL
-
-		// now copy the data back to the correct positions
-		final IndexIterator niter = getSliceIterator(null, oshape, null);
-
-		while (niter.hasNext() && iter.hasNext())
-			ndata[niter.index] = data[iter.index];
-
-		odata = data = ndata;
-
-		// if fully expanded then reset the reserved space dimensions
-		if (dataSize == size) {
-			dataShape = null;
-		}
-	}
 
 	@Override
 	public void resize(int... newShape) {
@@ -453,8 +378,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 		odata = data = ndata;
 		size = nsize;
 		shape = newShape;
-		dataShape = null;
-		dataSize = size;
 	}
 
 	@Override

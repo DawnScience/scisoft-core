@@ -51,13 +51,8 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
-		if (shape.length <= 1 || dataShape == null) {
-			return (withPosition) ? getSliceIterator(null, null, null) :
-			//new ContiguousIteratorWithPosition(shape, size) :
-				new ContiguousIterator(size, isize);
-		}
-		return new DiscontiguousIterator(shape, dataShape, dataSize, isize);
-//		return getSliceIterator(null, null, null); // alternative way (probably a little slower)
+		return (withPosition) ? getSliceIterator(null, null, null) :
+			new ContiguousIterator(size, isize);
 	}
 
 	/**
@@ -72,8 +67,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			abstractCompoundLogger.error("Invalid choice of element: {}/{}", element, isize);
 			throw new IllegalArgumentException("Invalid choice of element: " + element + "/" + isize);
 		}
-		final IndexIterator it = (shape.length <= 1 || dataShape == null) ? new ContiguousIterator(size, isize) :
-			new DiscontiguousIterator(shape, dataShape, dataSize, isize);
+		final IndexIterator it = new ContiguousIterator(size, isize);
 
 		it.index += element;
 		return it;
@@ -113,10 +107,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			newShape = new int[rank];
 		}
 
-		if (rank <= 1 || dataShape == null)
-			return new SliceIterator(shape, size, lstart, lstep, newShape, isize);
-
-		return new SliceIterator(dataShape, dataSize, lstart, lstep, newShape, isize);
+		return new SliceIterator(shape, size, lstart, lstep, newShape, isize);
 	}
 
 	/**

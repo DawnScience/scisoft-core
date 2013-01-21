@@ -621,55 +621,26 @@ public class DatasetUtils {
 			nout *= newShape[i];
 		}
 
-		if (a.isContiguous()) {
-			int oi = 0;
-			int ni = 0;
-			if (rlen == 1) { // do single repeat separately
-				for (int i = 0; i < nout; i++) {
-					for (int j = 0; j < shape[axis]; j++) {
-						for (int k = 0; k < repeats[0]; k++) {
-							System.arraycopy(buf, oi, nbuf, ni, csize);
-							ni += csize;
-						}
-						oi += csize;
+		int oi = 0;
+		int ni = 0;
+		if (rlen == 1) { // do single repeat separately
+			for (int i = 0; i < nout; i++) {
+				for (int j = 0; j < shape[axis]; j++) {
+					for (int k = 0; k < repeats[0]; k++) {
+						System.arraycopy(buf, oi, nbuf, ni, csize);
+						ni += csize;
 					}
-				}
-			} else {
-				for (int i = 0; i < nout; i++) {
-					for (int j = 0; j < shape[axis]; j++) {
-						for (int k = 0; k < repeats[j]; k++) {
-							System.arraycopy(buf, oi, nbuf, ni, csize);
-							ni += csize;
-						}
-						oi += csize;
-					}
+					oi += csize;
 				}
 			}
 		} else {
-			// need to extract data before copying
-			int ni = 0;
-			AbstractDataset chunk = AbstractDataset.zeros(is, new int[] {csize/is}, a.getDtype());
-			Serializable extract = chunk.getBuffer();
-			IndexIterator iter = a.getIterator();
-			if (rlen == 1) { // do single repeat separately
-				for (int i = 0; i < nout; i++) {
-					for (int j = 0; j < shape[axis]; j++) {
-						a.fillDataset(chunk, iter);
-						for (int k = 0; k < repeats[0]; k++) {
-							System.arraycopy(extract, 0, nbuf, ni, csize);
-							ni += csize;
-						}
+			for (int i = 0; i < nout; i++) {
+				for (int j = 0; j < shape[axis]; j++) {
+					for (int k = 0; k < repeats[j]; k++) {
+						System.arraycopy(buf, oi, nbuf, ni, csize);
+						ni += csize;
 					}
-				}
-			} else {
-				for (int i = 0; i < nout; i++) {
-					for (int j = 0; j < shape[axis]; j++) {
-						a.fillDataset(chunk, iter);
-						for (int k = 0; k < repeats[j]; k++) {
-							System.arraycopy(extract, 0, nbuf, ni, csize);
-							ni += csize;
-						}
-					}
+					oi += csize;
 				}
 			}
 		}
@@ -1294,10 +1265,11 @@ public class DatasetUtils {
 
 		result.shape = rank > 0 ? Arrays.copyOf(shape, rank) : (rank < 0 ? new int[] {} : new int[] {1});
 		result.size = AbstractDataset.calcSize(result.shape);
-		if (shareData && a.dataShape != null) {
-			result.dataShape = rank > 0 ? Arrays.copyOf(a.dataShape, rank) : result.shape.clone();
-			result.dataSize = AbstractDataset.calcSize(result.dataShape);
-		}
+// TODO
+//		if (shareData && a.dataShape != null) {
+//			result.dataShape = rank > 0 ? Arrays.copyOf(a.dataShape, rank) : result.shape.clone();
+//			result.dataSize = AbstractDataset.calcSize(result.dataShape);
+//		}
 		result.odata = buffer;
 		result.setName(a.getName());
 		result.setData();
@@ -1346,11 +1318,12 @@ public class DatasetUtils {
 
 		result.shape = nshape;
 		result.size = AbstractDataset.calcSize(nshape);
-		if (a.dataShape != null) {
-			result.dataShape = Arrays.copyOf(a.dataShape, rank);
-			result.dataShape[rank-1] = is;
-			result.dataSize = AbstractDataset.calcSize(result.dataShape);
-		}
+// TODO
+//		if (a.dataShape != null) {
+//			result.dataShape = Arrays.copyOf(a.dataShape, rank);
+//			result.dataShape[rank-1] = is;
+//			result.dataSize = AbstractDataset.calcSize(result.dataShape);
+//		}
 		result.odata = buffer;
 		result.setName(a.getName());
 		result.setData();

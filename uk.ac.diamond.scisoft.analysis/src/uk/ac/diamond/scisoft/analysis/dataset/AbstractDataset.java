@@ -159,19 +159,11 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	private static final int MAX_SUBBLOCKS = 6;
 
-	private static final float ARRAY_ALLOCATION_EXTENSION = 0.5f;
-
 	/**
 	 * The shape or dimensions of the dataset
 	 */
 	protected int[] shape;
 	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
-
-	/**
-	 * The shape of the entire dataset memory footprint
-	 */
-	protected int[] dataShape;
-	protected int dataSize; // true size of data
 
 	/**
 	 * The data itself, held in a 1D array, but the object will wrap it to appear as possessing as many dimensions as
@@ -192,24 +184,12 @@ public abstract class AbstractDataset implements IDataset {
 	transient protected HashMap<String, Object> storedValues = null;
 
 	/**
-	 * This dictates whether a dataset is allowed to be extended with a setting at a position outside of dataset's shape
-	 */
-	protected boolean extendible = true;
-
-	/**
-	 * @return true if dataset is extendible
-	 */
-	public boolean isExtendible() {
-		return extendible;
-	}
-
-	/**
 	 * Set extendibility of dataset
 	 * 
 	 * @param extendible
 	 */
-	public void setExtendible(boolean extendible) {
-		this.extendible = extendible;
+	public void setExtendible(@SuppressWarnings("unused") boolean extendible) {
+		// TODO remove
 	}
 
 	/**
@@ -366,7 +346,6 @@ public abstract class AbstractDataset implements IDataset {
 	protected static void copyToView(AbstractDataset orig, AbstractDataset view, boolean clone, boolean cloneMetadata) {
 		view.name = orig.name;
 		view.size = orig.size;
-		view.dataSize = orig.dataSize;
 		view.odata = orig.odata;
 
 		if (orig.errorData != null && orig.errorData instanceof AbstractDataset)
@@ -376,14 +355,10 @@ public abstract class AbstractDataset implements IDataset {
 
 		if (clone) {
 			view.shape = orig.shape.clone();
-			if (orig.dataShape != null)
-				view.dataShape = orig.dataShape.clone();
 
 			copyStoredValues(orig, view, false);
 		} else {
 			view.shape = orig.shape;
-			view.dataShape = orig.dataShape;
-			view.storedValues = orig.storedValues;
 		}
 
 		if (cloneMetadata) {
@@ -462,13 +437,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy
 	 */
 	public AbstractDataset flatten() {
-		AbstractDataset result;
-
-		if (shape.length <= 1 || dataShape == null) {
-			result = getView();
-		} else {
-			result = clone();
-		}
+		AbstractDataset result = getView();
 		result.shape = new int[] { result.size };
 		return result;
 	}
@@ -846,46 +815,13 @@ public abstract class AbstractDataset implements IDataset {
 		}
 	}
 
-	protected void expandDataShape(final int[] nshape) {
-		// expand the allocated memory by the amount specified in ARRAY_ALLOCATION_EXTENSION
-
-		// now check to see whether the additional space is required
-		final int rank = dataShape.length;
-		for (int i = 0; i < rank; i++) {
-			if (dataShape[i] > 0) {
-				double change = nshape[i] - dataShape[i];
-				if (change > 0) {
-					change /= dataShape[i];
-					if (change < 0.1) {
-						change = ARRAY_ALLOCATION_EXTENSION;
-					}
-					dataShape[i] *= 1 + change;
-				}
-			}
-		}
-	}
-
-	private static boolean isAllZeros(final int[] a) {
-		int amax = a.length;
-		for (int i = 0; i < amax; i++) {
-			if (a[i] != 0) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/**
 	 * @param withPosition
 	 *            set true if position is needed
 	 * @return an IndexIterator tailored for this dataset
 	 */
 	public IndexIterator getIterator(final boolean withPosition) {
-		if (shape.length <= 1 || dataShape == null || isAllZeros(dataShape)) {
-			return (withPosition) ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
-		}
-		return new DiscontiguousIterator(shape, dataShape, dataSize);
-		// return getSliceIterator(null, null, null, null); // alternative way (probably a little slower)
+		return (withPosition) ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
 	}
 
 	/**
@@ -943,11 +879,7 @@ public abstract class AbstractDataset implements IDataset {
 			newShape = new int[rank];
 		}
 
-		if (rank <= 1 || dataShape == null) {
-			return new SliceIterator(shape, size, lstart, lstep, newShape);
-		}
-
-		return new SliceIterator(dataShape, dataSize, lstart, lstep, newShape);
+		return new SliceIterator(shape, size, lstart, lstep, newShape);
 	}
 
 	/**
@@ -1379,13 +1311,6 @@ public abstract class AbstractDataset implements IDataset {
 		return size;
 	}
 
-	/**
-	 * @return true if data array is contiguous, i.e. it is un-expanded or does not any reserved space left
-	 */
-	public boolean isContiguous() {
-		return shape.length <= 1 || dataShape == null;
-	}
-
 	@Override
 	public int[] getShape() {
 		// make a copy of the dimensions data, and put that out
@@ -1413,10 +1338,6 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	@Override
 	public void setShape(final int... shape) {
-		if (dataShape != null) {
-			throw new UnsupportedOperationException("Cannot set a new shape to discontiguous dataset");
-		}
-
 		int size = calcSize(shape);
 		if (size != this.size) {
 			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
@@ -1463,24 +1384,8 @@ public abstract class AbstractDataset implements IDataset {
 					+ " given " + rank + " required");
 		}
 
-		// once checked return the appropriate value.
-		int index = n[0];
-		final int sz = shape[0];
-		if (index < -sz || index >= sz) {
-			throw new ArrayIndexOutOfBoundsException("Index (" + index + ") out of range [-" + sz + "," + sz
-					+ ") in dimension 0");
-		}
-		if (index < 0) {
-			index += sz;
-		}
-
-		if (rank == 1) {
-			return index;
-		}
-
-		final int[] lshape = dataShape == null ? shape : dataShape;
-
-		int i = 1;
+		int index = 0;
+		int i = 0;
 		for (; i < imax; i++) {
 			final int ni = n[i];
 			final int si = shape[i];
@@ -1488,13 +1393,13 @@ public abstract class AbstractDataset implements IDataset {
 				throw new ArrayIndexOutOfBoundsException("Index (" + ni + ") out of range [-" + si + "," + si
 						+ ") in dimension " + i);
 			}
-			index = index * lshape[i] + ni;
+			index = index * si + ni;
 			if (ni < 0) {
 				index += si;
 			}
 		}
-		for (; i < lshape.length; i++) {
-			index *= lshape[i];
+		for (; i < rank; i++) {
+			index *= shape[i];
 		}
 
 		return index;
@@ -1508,24 +1413,22 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return the corresponding [a,b,...,n] position in the dataset
 	 */
 	public int[] getNDPosition(final int n) {
-		if (n >= size && dataShape != null && n >= dataSize) {
+		if (n >= size) {
 			throw new IllegalArgumentException("Index provided " + n
-					+ "is larger then the size of the containing array " + dataSize);
+					+ "is larger then the size of the containing array");
 		}
 
 		if (shape.length == 1) {
 			return new int[] { n };
 		}
 
-		final int[] lshape = dataShape == null ? shape : dataShape;
-
-		int r = lshape.length;
+		int r = shape.length;
 		int[] output = new int[r];
 
 		int inValue = n;
 		for (r--; r > 0; r--) {
-			output[r] = inValue % lshape[r];
-			inValue /= lshape[r];
+			output[r] = inValue % shape[r];
+			inValue /= shape[r];
 		}
 		output[0] = inValue;
 
@@ -1538,9 +1441,6 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return real index
 	 */
 	protected int to1DIndex(final int n) {
-		if (shape.length > 1 && dataShape != null) {
-			return get1DIndex(getNDPosition(n));
-		}
 		if (n < 0 || n >= size) {
 			throw new IndexOutOfBoundsException("Index out of bounds: " + n + " cf " + size);
 		}
@@ -1773,7 +1673,9 @@ public abstract class AbstractDataset implements IDataset {
 
 		// check the dimensionality of the request
 		if (pmax > shape.length) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(String.format(
+					"Dimensionalities of requested position, %d, and dataset, %d, are incompatible", pos.length,
+					shape.length));
 		}
 
 		// if it's the right size or less, check to see if it's within bounds
@@ -1786,31 +1688,8 @@ public abstract class AbstractDataset implements IDataset {
 				throw new ArrayIndexOutOfBoundsException("Index (" + pos[i] + ") out of range [-" + si + "," + si
 						+ ") in dimension " + i);
 			}
-			if (pos[i] >= si) {
-				if (extendible) {
-					return false;
-				}
-				throw new ArrayIndexOutOfBoundsException("Index (" + pos[i] + ") out of range [-" + si + "," + si
-						+ ") in dimension " + i);
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check the shape given against the reserved shape to make sure it is valid
-	 * 
-	 * @param shape
-	 * @return boolean
-	 */
-	protected boolean isShapeInDataShape(final int[] shape) {
-
-		// if it's the right size or less, check to see if it's within bounds
-		for (int i = 0; i < dataShape.length; i++) {
-			if (shape[i] >= dataShape[i]) {
+			if (pos[i] >= si)
 				return false;
-			}
 		}
 
 		return true;
@@ -2493,12 +2372,6 @@ public abstract class AbstractDataset implements IDataset {
 			throw new UnsupportedOperationException("Cannot sort dataset");
 		}
 		if (axis == null) {
-			if (dataShape != null) { // make contiguous
-				AbstractDataset s = clone();
-				odata = s.odata;
-				setData();
-				dataShape = null;
-			}
 			switch (dtype) {
 			case INT8:
 				Arrays.sort((byte[]) odata);

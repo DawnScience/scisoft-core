@@ -1,6 +1,8 @@
 Image Plotting Tools
 ====================
 
+Images have a range of tools such as zooming and 
+
 The image plotting tools appear automatically when an image (two-dimensional data array) is plotted. 
 You can choose an image tool by going to the tool action menu: 
 
@@ -14,7 +16,7 @@ again.
 
 Color Mapping
 -------------
-.. image:: images/brightness_contrast.gif 
+.. image:: images/brightness_contrast.png 
 
 The colour mapping tool is used to adjust how the values of intensity are coloured. The colours are assigned
 within a maximum and minimum value for intensity. There are also minimum and maximum cut values, outside these
@@ -27,6 +29,14 @@ is given by:
 
 Pressing the 'h' key with the plot selected will result in the current max and min for the colour range
 being reset.
+
+Pixel Information
+-----------------
+.. image:: images/info.png
+
+Pixel infomation shows the pixel position and its intensity as you move the mouse over the image. In addition 
+you may click add points which report the same position. 
+
 
 Line Profile
 ------------
@@ -41,4 +51,4 @@ Box Profile
 .. image:: images/plot-tool-box-profile.png
 
 The box profile tool is the integral of vertical and horizontal intensities of a box drawn on the image.
-The box may be dragged around the image and multiple 
+The box may be dragged around the image and multiple boxes added and compared.

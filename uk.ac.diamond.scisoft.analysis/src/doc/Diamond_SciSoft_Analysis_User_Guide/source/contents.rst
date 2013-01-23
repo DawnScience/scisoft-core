@@ -10,7 +10,7 @@ Contents:
 
    scisoftug
    exploration
-   generic1dFitterUI
+   plottingtools
    pollingview
    ACKS
 

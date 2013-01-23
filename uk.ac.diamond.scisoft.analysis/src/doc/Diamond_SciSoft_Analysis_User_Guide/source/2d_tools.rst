@@ -19,27 +19,7 @@ ranges and a value is considered bad and has a special colour. For instance dead
 Imagining the plotting the intensities with a normal distribution the colour range of the palette and cut offs
 is given by:
 
-                ++----------------------**---------------
-                |                      *  *              
-                ++                    *    *             
-                |                     *    *             
-                ++                    *     *            
-                |                    *       *            
-                +*                   *       *            
-                |*                  *        *            
-                +*                  *        *           
-                |                  *          *         
-                ++                 *          *          
-                |                  *           *        
-                ++                 *           *        
-                |                 *            *        
-                ++                *            *       
-                |                *              *      
-        Min Cut           Min    *              *      Max                     Max cut
- Blue <- |   (min colour)  |    (color range, palette)  |      (max color)      | -> Red
-                |               *                 *  
-                |              *        +         *  
-----------------++------------**---------+----------**----+---------------**+---------------++
+.. image:: images/IntensityDrawing.jpg
 
 Pressing the 'h' key with the plot selected will result in the current max and min for the colour range
 being reset.

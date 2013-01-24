@@ -1587,7 +1587,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		return ef;
 	}
 
-	private static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
+	public static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
 			final int[] step, final int dtype, final boolean extend) throws Exception {
 		AbstractDataset data = null;
 
@@ -1703,7 +1703,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							all = j < 0;
 						}
 					}
-
 					if (schunk == null || all) {
 						H5.H5Sselect_hyperslab(sid, HDF5Constants.H5S_SELECT_SET, sstart, sstride, dsize, null);
 						int length = 1;
@@ -1735,7 +1734,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 						int length = 1;
 						for (int i = 0; i < rank; i++) {
 							send[i] = sstart[i] + count[i] * step[i];
-							isSplit[i] = (schunk[i] <= 1 || dsize[i] > 1);
+							isSplit[i] = (schunk[i] <= 1 || dsize[i] > 1);//this sems not to be correct
 							if (isSplit[i]) {
 								dsize[i] = 1;
 							} else {
@@ -1775,9 +1774,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 						PositionIterator it = data.getPositionIterator(axes);
 						final int[] pos = it.getPos();
 						final boolean[] hit = it.getOmit();
+						int numCalls=0;
 						while (it.hasNext()) {
 							H5.H5Sselect_hyperslab(sid, HDF5Constants.H5S_SELECT_SET, sstart, sstride, dsize, null);
-
+							numCalls++;
 							boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
 							if (isVLEN) {
 								H5.H5DreadVL(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
@@ -1806,7 +1806,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 							if (j == -1)
 								break;
 						}
-
+						
 						if (extend) {
 							switch (ldtype) {
 							case AbstractDataset.INT32:

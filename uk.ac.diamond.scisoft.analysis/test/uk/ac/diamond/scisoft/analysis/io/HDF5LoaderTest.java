@@ -329,20 +329,18 @@ public class HDF5LoaderTest {
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
 		assertTrue(timeTaken < 5000);
-
 	}
 
 	@Test
 	public void testLoadingChunkedSpeed() throws Exception {
-
 		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/3dDataChunked.nxs";
 		long timeAtStartms = System.currentTimeMillis();
 
-		HDF5Loader.loadData(n, "entry/instrument/detector/data", new int []{0,0,0}, new int[]{1,1795,2069},new int[]{1,1,1}, -1, false);
+		HDF5Loader.loadData(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
+				new int[] { 1, 1, 1 }, -1, false);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
 		assertTrue(timeTaken < 5000);
-
 	}
 	
 	

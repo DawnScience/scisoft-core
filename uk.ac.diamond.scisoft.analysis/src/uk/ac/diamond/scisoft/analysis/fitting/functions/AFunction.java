@@ -17,6 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -400,5 +402,15 @@ public abstract class AFunction implements IFunction, Serializable {
 		if (!Arrays.equals(parameters, other.parameters))
 			return false;
 		return true;
+	}
+
+	public final AFunction copy() throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		Constructor<? extends AFunction> c = getClass().getConstructor();
+
+		IParameter[] localParameters = getParameters();
+		
+		AFunction function =  c.newInstance();
+		function.fillParameters(localParameters);
+		return function;
 	}
 }

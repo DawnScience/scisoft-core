@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
@@ -107,7 +108,35 @@ public class CompositeFunction extends AFunction {
 	public AFunction getFunction(int index) {
 		return functionList.get(index);
 	}
+	
+	public AFunction[] getFunctions() {
+		return functionList.toArray(new AFunction[0]);
+	}
 
+	public void setFunction(int index, AFunction function) {
+		List<IParameter> plist = new ArrayList<IParameter>();
+		List<AFunction> flist = new ArrayList<AFunction>();
+		NavigableMap<Integer, AFunction> fmap = new TreeMap<Integer, AFunction>();
+
+		int nfuncs = functionList.size();
+		if (index > nfuncs) {
+			logger.error("Index exceed bounds");
+			throw new IndexOutOfBoundsException("Index exceed bounds");
+		}
+		for (int n = 0; n < nfuncs; n++) {
+			if (n != index) {
+				AFunction f = functionList.get(n);
+				addFunction(plist, flist, fmap, f);
+			} else {
+				addFunction(plist, flist, fmap, function);
+			}
+		}
+		parameterList = plist;
+		functionList = flist;
+		functionMap = fmap;
+
+	}
+	
 	/**
 	 * Function that evaluates the whole function at a single point
 	 * 
@@ -308,6 +337,15 @@ public class CompositeFunction extends AFunction {
 	 */
 	public IPeak getPeak(int i) {
 		return (IPeak)getFunction(i);
+	}
+
+	public CompositeFunction duplicate() throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		// TODO Auto-generated method stub
+		CompositeFunction copy = new CompositeFunction();
+		for (AFunction function : functionList) {
+			copy.addFunction(function.copy());
+		}
+		return copy;
 	}
 
 }

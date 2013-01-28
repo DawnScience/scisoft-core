@@ -154,7 +154,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
                     raise ValueError, "Given minimum must be less than maximum"
             if format is None:
                 format = _findsuffix(name, _soformats)
-            print "scaled save format", format
+#            print "scaled save format", format
             sclass = _soformats[format]
             if autoscale:
                 saver = sclass(name)
@@ -163,7 +163,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
         else:
             if format is None:
                 format = _findsuffix(name, _oformats)
-            print "save format", format, "as", name
+#            print "save format", format, "as", name
             sclass = _oformats[format]
             if sclass is None:
                 raise ValueError, "Format not supported"

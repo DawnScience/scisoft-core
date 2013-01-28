@@ -40,7 +40,12 @@ class PythonSaver(object):
 class NumPyLoader(PythonLoader):
     def load(self, warn=True):
         import numpy as np #@UnresolvedImport
-        return DataHolder(np.load(self.name), warn=warn)
+        d = np.load(self.name)
+        import os.path as _path
+        n = self.name
+        if _path.exists(n):
+            n = _path.basename(n)
+        return DataHolder([(n, d)], warn=warn)
 
 class NumPySaver(PythonSaver):
     def save(self, data):
@@ -267,7 +272,7 @@ class ImageLoader(PythonLoader):
         else:
             d = _core.asarray(im)
 
-        from os import path as _path
+        import os.path as _path
         n = self.name
         if _path.exists(n):
             n = _path.basename(n)

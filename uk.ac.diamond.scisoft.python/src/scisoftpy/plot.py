@@ -506,7 +506,7 @@ def setrois(bean, roilist):
 
         for r in roilist:
             if isinstance(r, rtype):
-                nlist.add(r)
+                nlist.append(r)
         roilist = nlist
     bean[parameters.roilist] = roilist
 

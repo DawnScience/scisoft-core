@@ -324,7 +324,7 @@ linear ROI object and any stored ROIs are held in a Python list of linear ROIs::
     # import region of interest package
     import scisoftpy.roi as droi
     list = droi.line_list()
-    list.add(roi)
+    list.append(roi)
     gb[dpl.parameters.roilist] = list
 
     # or use convenience function

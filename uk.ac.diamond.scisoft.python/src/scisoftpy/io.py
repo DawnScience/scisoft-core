@@ -69,6 +69,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
         dls (DLS dat format, not SRS - more like gnuplot)
         edf
         npy (NumPy)
+        pgm
         hdf5 -> returns a HDF5 tree
         nx   -> returns a NeXus tree
     '''

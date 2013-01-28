@@ -37,6 +37,16 @@ class PythonSaver(object):
         self.lower = lower
         self.upper = upper
 
+class NumPyLoader(PythonLoader):
+    def load(self, warn=True):
+        import numpy as np #@UnresolvedImport
+        return DataHolder(np.load(self.name), warn=warn)
+
+class NumPySaver(PythonSaver):
+    def save(self, data):
+        import numpy as np #@UnresolvedImport
+        np.save(self.name, data)
+
 class SRSLoader(PythonLoader):
     '''
     Loads an SRS dat file and returns a dataholder object
@@ -346,6 +356,7 @@ PilLoader = LibTIFFLoader
 BinaryLoader = None
 TextLoader = None
 XMapLoader  = None
+PGMLoader = ImageLoader
 
 _pngsave = ImageSaver
 _jpegsave = ImageSaver
@@ -372,16 +383,18 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "cbf": CBFLoader, "crys": CrysLoader,
                "mar": MARLoader, "mccd": MARLoader,
                "pil": PilLoader,
+               "pgm": PGMLoader,
                "srs": SRSLoader,
                "binary": BinaryLoader, "xmap": XMapLoader,
                "nx": NXLoader, "hdf5": HDF5Loader,
-               "text": TextLoader
+               "text": TextLoader,
+               "npy": NumPyLoader
                }
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, TextLoader ]
+loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PGMLoader, TextLoader ]
 
 output_formats = { "png": _pngsave, "gif": _imgsave, "jpeg": _jpegsave, "tiff": _tiffsave, "text": _rawtxtsave,
-              "binary": _rawbinsave }
+              "binary": _rawbinsave, "npy": NumPySaver }
 
 scaled_output_formats = { "png": _pngscaledsave, "jpeg": _jpegscaledsave }
 

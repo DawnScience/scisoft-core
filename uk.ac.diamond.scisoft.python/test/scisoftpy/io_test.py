@@ -131,6 +131,8 @@ class Test(unittest.TestCase):
         im = self.load("test.png")
         self.save("grey.png", im)
         im2 = self.load("grey.png", testfolder=OutTestFolder)
+        self.save("chequered.npy", d)
+        im3 = self.load("chequered.npy", testfolder=OutTestFolder)
 
     def testSavingOthers(self):
         im = self.colourload("testrgb.png")

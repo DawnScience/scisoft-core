@@ -267,7 +267,9 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingChunked() throws ScanFileHolderException {
+
 		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/sino.h5";
+		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Loader l = new HDF5Loader(n);
 
@@ -324,9 +326,24 @@ public class HDF5LoaderTest {
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 64.191261, x, x * 1e-5);
-
+		long timeTaken = System.currentTimeMillis() - timeAtStartms;
+		System.out.printf("Time taken = %d ms\n", timeTaken);
+		assertTrue(timeTaken < 5000);
 	}
 
+	@Test
+	public void testLoadingChunkedSpeed() throws Exception {
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/3dDataChunked.nxs";
+		long timeAtStartms = System.currentTimeMillis();
+
+		HDF5Loader.loadData(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
+				new int[] { 1, 1, 1 }, -1, false);
+		long timeTaken = System.currentTimeMillis() - timeAtStartms;
+		System.out.printf("Time taken = %d ms\n", timeTaken);
+		assertTrue(timeTaken < 5000);
+	}
+	
+	
 	@Test
 	public void testCanonicalization() {
 		String[] before = { "/asd/sdf/dfg/../ds/../../gfd", "/asd/asd/../as", "/asd/as/.././bad", "/asd/..", "/abal/." };

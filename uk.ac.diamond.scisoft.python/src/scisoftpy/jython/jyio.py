@@ -50,7 +50,7 @@ except:
 from uk.ac.diamond.scisoft.analysis.io import CrysalisLoader as _crysload
 from uk.ac.diamond.scisoft.analysis.io import MARLoader as _marload
 from uk.ac.diamond.scisoft.analysis.io import PilatusTiffLoader as _ptiffload
-from uk.ac.diamond.scisoft.analysis.io import SRSLoader as _srsload
+from uk.ac.diamond.scisoft.analysis.io import ExtendedSRSLoader as _srsload
 from uk.ac.diamond.scisoft.analysis.io import PilatusEdfLoader as _pilatusEdfLoader
 from uk.ac.diamond.scisoft.analysis.io import RawBinarySaver as _rawbinsave
 from uk.ac.diamond.scisoft.analysis.io import RawBinaryLoader as _rawbinload
@@ -62,6 +62,7 @@ from uk.ac.diamond.scisoft.analysis.io import DatLoader as _dlsdatload
 from uk.ac.diamond.scisoft.analysis.io import NumPyFileLoader as _numpyload
 from uk.ac.diamond.scisoft.analysis.io import NumPyFileSaver as _numpysave
 from uk.ac.diamond.scisoft.analysis.io import RAxisImageLoader as _raxisload
+from uk.ac.diamond.scisoft.analysis.io import PgmLoader as _pgmload
 
 from gda.analysis.io import ScanFileHolderException as io_exception
 
@@ -251,6 +252,11 @@ class RAxisLoader(JavaLoader, _raxisload):
         _raxisload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
+class PGMLoader(JavaLoader, _raxisload):
+    def __init__(self, *arg):
+        _pgmload.__init__(self, *arg) #@UndefinedVariable
+        self.load_metadata = True
+
 input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "jpeg": JPEGLoader,
                "tiff": TIFFLoader,
@@ -263,13 +269,14 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "npy": NumPyLoader,
                "dls": DLSLoader,
                "osc": RAxisLoader,
+               "pgm": PGMLoader,
                "nx": NXLoader,
                "hdf5": HDF5Loader,
                "edf": PilatusEdfLoader,
                "text": TextLoader
                }
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, HDF5Loader ]
+loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader ]
 
 class _Metadata(_jmetadata):
     def __init__(self, metadata):

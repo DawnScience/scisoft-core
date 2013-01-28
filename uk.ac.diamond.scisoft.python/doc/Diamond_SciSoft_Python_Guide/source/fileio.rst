@@ -23,7 +23,7 @@ where:
 
  *format* is a list of strings that specify the formats to try
 
-   * ``png``, ``gif``, ``jpeg``, ``tiff`` - standard image formats
+   * ``png``, ``gif``, ``jpeg``, ``tiff``, ``pgm`` - standard image formats
 
    * ``adsc`` - ADSC Quantum area series detector format
 
@@ -161,6 +161,8 @@ where:
    * ``text`` - raw ASCII dump
 
    * ``binary``  - raw binary dump
+
+   * ``npy`` - NumPy binary format
 
    or ``None`` (default) to guess format from file name extension
 

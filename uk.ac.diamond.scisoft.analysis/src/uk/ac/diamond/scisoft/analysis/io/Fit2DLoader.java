@@ -41,15 +41,13 @@ import uk.ac.gda.monitor.IMonitor;
  * <b>Note</b>: the header data from this loader is left as strings
  * 
  * 
- * TODO FIXME - Loader not functioning as yet.
- * 
  */
 public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
 	private Metadata metadata;
-	private static final String DATA_NAME = "ESRF Pilatus Data";
+	private static final String DATA_NAME = "Fit2D Data";
 
 	/**
 	 * @param fileName
@@ -78,7 +76,7 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 			String line = br.readLine();
 			
 			// If the first line is not a { then we fail this loader.
-			if (!line.trim().startsWith("\\")) throw new ScanFileHolderException("Fit2D File should start with \\ !"); 
+			if (!line.trim().startsWith("\\")) throw new ScanFileHolderException("Fit2D File should start with \\ !");
 			
 
 			// Read the meta data
@@ -87,28 +85,8 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 			// Now read the data
 			int height = Integer.parseInt(textMetadata.get("Dim_1"));
 			int width = Integer.parseInt(textMetadata.get("Dim_2"));
-			
-			String dataType = textMetadata.get("DataType");
-			if (dataType.equals("Float")) {
-				data = new FloatDataset(width, height);
-				Utils.readFloat(fi, (FloatDataset) data, index);
-			} else {
-				data = new IntegerDataset(width, height);
-				boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder")); 
-				if (dataType.contains("Short")) {
-					boolean signed = dataType.startsWith("Signed");
-					if (le)
-						Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
-					else
-						Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
-				} else {
-					if (le)
-						Utils.readLeInt(fi, (IntegerDataset) data, index);
-					else
-						Utils.readBeInt(fi, (IntegerDataset) data, index);
-				}
-			}
-			data.setName(DEF_IMAGE_NAME);
+			data = new FloatDataset(width, height);
+			Utils.readFloat(fi, (FloatDataset) data, index);
 				
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -160,38 +138,67 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 	private int readMetaData(final BufferedReader br, int index, final IMonitor mon) throws Exception {
 		
 		textMetadata.clear();
-		while (true) {
+		String headerEnd = "\\data_array:";
+		
+		String line = br.readLine();
+		index += line.length()+1;
+		
+		while (!line.contains(headerEnd)) {
 			
 			if (mon!=null) mon.worked(1);
 			if (mon!=null&&mon.isCancelled()) throw new ScanFileHolderException("Loader cancelled during reading!");
 			
-			String line = br.readLine();
+			addValuesToMetaData(line);
+			
+			line = br.readLine();
 			index += line.length()+1;
-			if (!line.trim().startsWith("\\")) {
-				break;
-			}
-			
-			// Image meta data starts with \$, user meta data starts with \
-			
-			String[] keyvalue = line.split(":");		
-			
-			if (keyvalue.length == 1) {
-				textMetadata.put(keyvalue[0].trim(), "");
-			} else {
-				// First 17 characters of value are information about the value
-				// The first 9 of them say the type e.g. 00000000s - string
-				// and 00000000r a real
-				String meta  = keyvalue[1].substring(0,17);
-				String value = keyvalue[1].length()>17 ? keyvalue[1].substring(17) : "";
-				value = value.trim();
-				if (meta.startsWith("00000000r")) {
-					String hex = meta.substring(9);
-					value = Long.valueOf(hex, 16).toString();
-				}
-				textMetadata.put(keyvalue[0].trim(), value);
-			}
 		}
 		
+		addValuesToMetaData(line);
+		
 		return index;
+	}
+	
+	private void addValuesToMetaData(String line) throws ScanFileHolderException {
+		String[] keyvalue = line.split(":");
+		
+		boolean notArray = keyvalue[1].substring(0,8).contains("00000000");
+		
+		if (notArray) {
+			switch (keyvalue[1].charAt(8)) {
+				case 's':
+					
+					String hex = keyvalue[1].substring(9,17);
+					int stringSize = Integer.valueOf(hex, 16);
+					
+					textMetadata.put(keyvalue[0].substring(1), keyvalue[1].substring(17,17+stringSize));
+					
+					return;
+				case 'r':
+					
+					String hexr = keyvalue[1].substring(9,17);
+					Integer intSize = Integer.valueOf(hexr, 16);
+					textMetadata.put(keyvalue[0].substring(1), intSize.toString());
+					
+					return;
+			}
+		} else {
+			if (!keyvalue[1].substring(8,10).contains("ar")) throw new ScanFileHolderException("Image data not found");
+			
+			String hexr = keyvalue[1].substring(10,18);
+			Integer first = Integer.valueOf(hexr, 16);
+			
+			hexr = keyvalue[1].substring(18,26);
+			Integer second = Integer.valueOf(hexr, 16);
+			
+			hexr = keyvalue[1].substring(26,34);
+			Integer x = Integer.valueOf(hexr, 16);
+			
+			textMetadata.put("Dim_1", x.toString());
+			
+			hexr = keyvalue[1].substring(34,42);
+			Integer y = Integer.valueOf(hexr, 16);
+			textMetadata.put("Dim_2", y.toString());
+		}
 	}
 }

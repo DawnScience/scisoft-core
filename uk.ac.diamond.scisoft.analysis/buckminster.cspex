@@ -4,14 +4,13 @@
 	xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
 	xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
 	<dependencies>
-		<dependency name="builders.dawn" componentType="buckminster"/> <!-- required for building documentation in this plugin -->
 		<dependency name="uk.ac.diamond.scisoft.analysis.test" componentType="osgi.bundle"/>
 	</dependencies>
 	<generators>
 		<!-- Place your Generators here -->
 	</generators>
 	<artifacts>
-		<public name="containsDocumentationSource"/>
+		<!-- Place your Artifacts here -->
 	</artifacts>
 	<actions>
 		<!-- Place your Actions here -->

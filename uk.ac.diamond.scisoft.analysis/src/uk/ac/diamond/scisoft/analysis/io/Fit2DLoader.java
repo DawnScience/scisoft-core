@@ -160,43 +160,45 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 	
 	private void addValuesToMetaData(String line) throws ScanFileHolderException {
-		String[] keyvalue = line.split(":");
 		
-		boolean notArray = keyvalue[1].substring(0,8).contains("00000000");
+		int index = line.indexOf(':')+1;
+		
+		String key = line.substring(1,index);
+		boolean notArray = line.substring(index,index+8).contains("00000000");
 		
 		if (notArray) {
-			switch (keyvalue[1].charAt(8)) {
+			switch (line.charAt(index + 8)) {
 				case 's':
 					
-					String hex = keyvalue[1].substring(9,17);
+					String hex = line.substring(index+9,index+17);
 					int stringSize = Integer.valueOf(hex, 16);
 					
-					textMetadata.put(keyvalue[0].substring(1), keyvalue[1].substring(17,17+stringSize));
+					textMetadata.put(key,line.substring(index+17,index+17+stringSize));
 					
 					return;
 				case 'r':
 					
-					String hexr = keyvalue[1].substring(9,17);
+					String hexr = line.substring(index+9,index+17);
 					Integer intSize = Integer.valueOf(hexr, 16);
-					textMetadata.put(keyvalue[0].substring(1), intSize.toString());
+					textMetadata.put(key, intSize.toString());
 					
 					return;
 			}
 		} else {
-			if (!keyvalue[1].substring(8,10).contains("ar")) throw new ScanFileHolderException("Image data not found");
+			if (!line.substring(index+8,index+10).contains("ar")) throw new ScanFileHolderException("Image data not found");
 			
-			String hexr = keyvalue[1].substring(10,18);
+			String hexr = line.substring(index+10,index+18);
 			Integer first = Integer.valueOf(hexr, 16);
 			
-			hexr = keyvalue[1].substring(18,26);
+			hexr = line.substring(index+18,index+26);
 			Integer second = Integer.valueOf(hexr, 16);
 			
-			hexr = keyvalue[1].substring(26,34);
+			hexr = line.substring(index+26,index+34);
 			Integer x = Integer.valueOf(hexr, 16);
 			
 			textMetadata.put("Dim_1", x.toString());
 			
-			hexr = keyvalue[1].substring(34,42);
+			hexr = line.substring(index+34,index+42);
 			Integer y = Integer.valueOf(hexr, 16);
 			textMetadata.put("Dim_2", y.toString());
 		}

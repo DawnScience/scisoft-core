@@ -140,7 +140,7 @@ class HDF5Loader(object):
     def __init__(self, name):
         self.name = name
 
-    def load(self):
+    def load(self, warn=True):
         # capture all error messages
         try:
             fh = h5py.File(self.name, 'r')

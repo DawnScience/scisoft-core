@@ -54,7 +54,7 @@ def _findsuffix(name, formats):
             return _extra_suffices[suffix]
     return None
 
-def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **kwarg):
+def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=True, **kwarg):
     '''Load a file and return a list of datasets (or a dictionary of datasets) and
     optionally a dictionary of metadata items
 
@@ -72,6 +72,9 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
         pgm
         hdf5 -> returns a HDF5 tree
         nx   -> returns a NeXus tree
+    withmetadata -- if True, load metadata as well
+    ascolour -- if True, attempt load as colour dataset
+    warn -- if True, suppress warning
     '''
     try:
         f = open(name)
@@ -119,7 +122,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, **k
                 else:
                     ldr = l(name)
                 ldr.setloadmetadata(withmetadata)
-                lfh = ldr.load()
+                lfh = ldr.load(warn=warn)
                 break
             except _ioexception, e:
                 print e

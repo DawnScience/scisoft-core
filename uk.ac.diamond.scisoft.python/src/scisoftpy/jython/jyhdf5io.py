@@ -102,7 +102,7 @@ class HDF5Loader(object):
     def __init__(self, name):
         self.ldr = _hdf5loader(name)
 
-    def load(self):
+    def load(self, warn=True):
         # capture all error messages
         from java.lang import System #@UnresolvedImport
         from java.io import PrintStream #@UnresolvedImport

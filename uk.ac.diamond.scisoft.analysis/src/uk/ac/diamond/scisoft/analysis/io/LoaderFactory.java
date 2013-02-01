@@ -145,6 +145,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("edf",  PilatusEdfLoader.class);
 		    LoaderFactory.registerLoader("pgm",  PgmLoader.class);
 		    LoaderFactory.registerLoader("f2d",  Fit2DLoader.class);
+		    LoaderFactory.registerLoader("msk",  Fit2DMaskLoader.class);
 		    
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);

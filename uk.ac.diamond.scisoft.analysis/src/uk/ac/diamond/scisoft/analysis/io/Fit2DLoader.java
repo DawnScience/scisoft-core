@@ -23,15 +23,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.gda.monitor.IMonitor;
 
 /**
@@ -187,13 +183,15 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 		} else {
 			if (!line.substring(index+8,index+10).contains("ar")) throw new ScanFileHolderException("Image data not found");
 			
-			String hexr = line.substring(index+10,index+18);
-			Integer first = Integer.valueOf(hexr, 16);
+			//There is other stuff here...
+			//Dont know what it means
+			//String hexr = line.substring(index+10,index+18);
+			//Integer first = Integer.valueOf(hexr, 16);
 			
-			hexr = line.substring(index+18,index+26);
-			Integer second = Integer.valueOf(hexr, 16);
+			//hexr = line.substring(index+18,index+26);
+			//Integer second = Integer.valueOf(hexr, 16);
 			
-			hexr = line.substring(index+26,index+34);
+			String hexr = line.substring(index+26,index+34);
 			Integer x = Integer.valueOf(hexr, 16);
 			
 			textMetadata.put("Dim_1", x.toString());

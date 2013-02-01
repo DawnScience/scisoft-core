@@ -37,11 +37,10 @@ _loaders = _io.loaders
 _oformats = _io.output_formats
 _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
-_srsload = _io.SRSLoader
 
 from dictutils import DataHolder, ListDict
 
-_extra_suffices = { "jpg" : "jpeg", "tif" : "tiff", "dat" : "srs", "h5" : "hdf5", "nxs" : "nx" }
+_extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 'h5' : ['hdf5'], 'nxs' : ['nx'] }
 
 
 def _findsuffix(name, formats):
@@ -49,7 +48,7 @@ def _findsuffix(name, formats):
     if len(bits) > 1:
         suffix = bits[-1].lower()
         if suffix in formats:
-            return suffix
+            return [suffix]
         if suffix in _extra_suffices:
             return _extra_suffices[suffix]
     return None
@@ -94,9 +93,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         
     if lformats is None:
         # parse name to find extension and match with loader
-        suf = _findsuffix(name, _iformats)
-        if suf:
-            lformats = [suf]
+        lformats = _findsuffix(name, _iformats)
 
     if lformats: # remove unsupported
         for f in lformats:
@@ -125,13 +122,15 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                 lfh = ldr.load(warn=warn)
                 break
             except _ioexception, e:
-                print e
+                if warn:
+                    print 'Warning: ', e
             except:
-                import sys
-                print >> sys.stderr, 'Unexpected exception raised: ', sys.exc_info()
+                if warn:
+                    import sys
+                    print >> sys.stderr, 'Unexpected exception raised: ', sys.exc_info()
 
     if lfh is None:
-        raise IOError, "Cannot load file"
+        raise IOError, 'Cannot load file'
 
     return lfh
 
@@ -152,11 +151,11 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
         if len(range) > 0 or autoscale:
             if not autoscale:
                 if len(range) != 2:
-                    raise ValueError, "Range has to be a pair of limits (lower, upper)"
+                    raise ValueError, 'Range has to be a pair of limits (lower, upper)'
                 if range[0] >= range[1]:
-                    raise ValueError, "Given minimum must be less than maximum"
+                    raise ValueError, 'Given minimum must be less than maximum'
             if format is None:
-                format = _findsuffix(name, _soformats)
+                format = _findsuffix(name, _soformats)[0]
 #            print "scaled save format", format
             sclass = _soformats[format]
             if autoscale:
@@ -165,20 +164,22 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
                 saver = sclass(name, range[0], range[1])
         else:
             if format is None:
-                format = _findsuffix(name, _oformats)
+                format = _findsuffix(name, _oformats)[0]
 #            print "save format", format, "as", name
             sclass = _oformats[format]
             if sclass is None:
-                raise ValueError, "Format not supported"
+                raise ValueError, 'Format not supported'
             saver = sclass(name, signed, bits)
     except KeyError:
-        raise ValueError, "Format not supported"
+        raise ValueError, 'Format not supported'
+
+
 
     if isinstance(data, ListDict):
         dh = data
     else:
         dl = []
-        if format == "binary":
+        if format == 'binary':
             for d in _asIterable(data):
                 n = getattr(d, 'name', 'data')
                 dl.append((n, d))
@@ -244,7 +245,7 @@ class srsrun(DataHolder):
             import gda.data.PathConstructor as PathConstructor
             datadir = PathConstructor.createFromDefaultProperty()
         except ImportError:
-            print "No gda configuration access so please specify data directory"
+            print 'No gda configuration access so please specify data directory'
             raise
         return datadir
 

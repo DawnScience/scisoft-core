@@ -39,6 +39,8 @@ where:
 
    * ``srs`` - Daresbury Laboratory's Synchrotron Radiation Source format
 
+   * ``dls`` - Diamond Light Source text format
+
    * ``edf`` - European Synchrotron Radiation Source data format for Pilatus images
 
    * ``binary`` - raw single dataset binary format

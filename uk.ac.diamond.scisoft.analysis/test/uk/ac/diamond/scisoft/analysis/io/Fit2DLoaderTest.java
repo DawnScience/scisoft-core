@@ -16,18 +16,18 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertEquals;
 import gda.util.TestUtils;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-// TODO FIXME Loader not functional as yet
-@Ignore("Loader not functional as yet")
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+
 public class Fit2DLoaderTest {
 	
 	static String testScratchDirectoryName = null;
-	final static String testFileFolder = "testfiles/gda/analysis/io/EdfLoaderTest/";
+	final static String testFileFolder = "testfiles/gda/analysis/io/Fit2dLoaderTest/";
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -38,12 +38,27 @@ public class Fit2DLoaderTest {
 	}
 	
 	@Test
-	public void testSimpleParse()  throws Exception {
+	public void testF2dMetaLoader()  throws Exception {
 		
-		final String path = testFileFolder+"/BAp4_background2.f2d";
-		final Fit2DLoader loader = new Fit2DLoader(path);
+		IMetaData meta = LoaderFactory.getMetaData(testFileFolder+"test1.f2d", null);
+ 		
+		assertEquals(meta.getMetaValue("Dim_1"), "2048");
+		assertEquals(meta.getMetaValue("Dim_2"), "2048");
+	}
+	
+	@Test
+	public void testF2dDataLoader()  throws Exception {
 		
-		final DataHolder h = loader.loadFile();
+		final String path = testFileFolder+"/test1.f2d";
+		DataHolder dataHolder = LoaderFactory.getData(path, null);
+ 		
+		AbstractDataset data = dataHolder.getDataset(0);
+		int[] shape = data.getShape();
+		assertEquals(2048,shape[0], 0.0);
+		assertEquals(2048,shape[1], 0.0);
+		assertEquals(0.0,data.getDouble(0,0), 0.0);
+		assertEquals(2572.0, data.getDouble(1023, 1023), 0.0);
+		assertEquals(0.0, data.getDouble(2047, 2047), 0.0);
 	}
 
 }

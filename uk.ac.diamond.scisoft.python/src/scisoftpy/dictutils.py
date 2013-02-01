@@ -51,7 +51,7 @@ def sanitise_name(text, warn=True):
     if sane[0] in digits:
         sane = '_' + sane
         if warn:
-            print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane
+            print "Warning in sanitising dict keys: First character of '%s' is a digit so prepending an underscore" % sane[1:]
     if sane in _method_names:
         sane = '_' + sane
         if warn:

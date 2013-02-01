@@ -86,7 +86,7 @@ class SRSLoader(PythonLoader):
                     if ls.startswith("&END"):
                         break
                     if self.load_metadata:
-                        srstext.append(l)
+                        srstext.append(ls)
             else:
                 raise io_exception, "No end tag found"
     
@@ -102,8 +102,8 @@ class SRSLoader(PythonLoader):
                 else:
                     break
     
-            data = self._parse_data(colstext, datatext)
-            metadata = self._parse_head(srstext)
+            data = self._parse_data(colstext, datatext, warn)
+            metadata = self._parse_head(srstext, warn)
     
             return DataHolder(data, metadata, warn)
 
@@ -111,7 +111,7 @@ class SRSLoader(PythonLoader):
             f.close()
 
     @staticmethod
-    def _parse_head(text):
+    def _parse_head(text, warn):
         '''
         Scan header lines and extract key/value pairs. A pair contains an equals sign
         '''
@@ -119,8 +119,7 @@ class SRSLoader(PythonLoader):
         othermeta = []
         other = False
         mdtext = "MetaDataAtStart"
-        for l in text:
-            ls = l.strip()
+        for ls in text:
             i = ls.find(mdtext)
             if i >= 0:
                 other = not other
@@ -144,7 +143,7 @@ class SRSLoader(PythonLoader):
                 srsmeta.append(ls)
         meta = []
         for m in srsmeta:
-            ss = SRSLoader._parse_srsline(m)
+            ss = SRSLoader._parse_srsline(m, warn)
             for s in ss:
                 meta.append(s)
         for m in othermeta:
@@ -155,7 +154,7 @@ class SRSLoader(PythonLoader):
         return meta
 
     @staticmethod
-    def _parse_srsline(line):
+    def _parse_srsline(line, warn):
         '''
         Scan a SRS header line of comma-separated key/value pairs
         '''
@@ -190,7 +189,7 @@ class SRSLoader(PythonLoader):
         return meta
 
     @staticmethod
-    def _parse_data(cols, text):
+    def _parse_data(cols, text, warn):
         '''
         Convert to all data to dictionary. Keys are column headers and values are
         1D NumPy arrays 
@@ -205,13 +204,15 @@ class SRSLoader(PythonLoader):
             r = cs_regex.split(t.strip())
             lr = len(r)
             if lr > lc:
-                print 'Long row!'
+                if warn:
+                    print 'Long row!'
                 lr = lc
             for i in range(lr):
                 data[i].append(SRSLoader._parse_value(r[i]))
 
             if lr < lc:
-                print 'Short row!'
+                if warn:
+                    print 'Short row!'
                 for i in range(lr, lc):
                     data[i].append(0)
 
@@ -245,6 +246,77 @@ class SRSLoader(PythonLoader):
                     else:
                         v = text
         return v
+
+class DLSLoader(SRSLoader):
+    '''
+    Loads a DLS dat file and returns a dataholder object
+    '''
+    def load(self, warn=True):
+        '''
+        warn        -- if True (default), print warnings about key names
+
+        Returns a DataHolder object
+        '''
+
+        f = open(self.name)
+    
+        try:
+            hdrtext = []
+            while True:
+                l = f.readline()
+                if not l:
+                    raise io_exception, "End of file reached unexpectedly"
+                ls = l.strip()
+                if ls:
+                    if not ls.startswith("#"):
+                        break
+                    if self.load_metadata:
+                        ls = ls[1:].strip()
+                        if ls:
+                            hdrtext.append(ls)
+            else:
+                raise io_exception, "No end tag found"
+
+            colstext = hdrtext.pop()[1:].strip()
+            datatext = []
+            while True:
+                l = f.readline()
+                if l:
+                    if l.startswith("#"):
+                        if self.load_metadata:
+                            l = l[1:].strip()
+                            if l:
+                                hdrtext.append(l)
+                    else:
+                        datatext.append(l)
+                else:
+                    break
+    
+            data = self._parse_data(colstext, datatext, warn)
+            metadata = self._parse_head(hdrtext, warn)
+    
+            return DataHolder(data, metadata, warn)
+
+        finally:
+            f.close()
+
+    @staticmethod
+    def _parse_head(text, warn):
+        '''
+        Scan header lines and extract key/value pairs. A pair contains a colon
+        but value can be more key/value pairs containing an equals sign, separated by semi-colons
+        '''
+        dlsmeta = []
+        othermeta = []
+        for l in text:
+            r = l.split(':')
+            if len(r) == 1:
+                othermeta.append(r)
+            else:
+                if len(r) > 2 and warn:
+                    print 'Line has more than one colon:', l
+                dlsmeta.append((r[0], l[len(r[0])+1:].strip()))
+        return dlsmeta
 
 import pycore as _core
 
@@ -390,6 +462,7 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "pil": PilLoader,
                "pgm": PGMLoader,
                "srs": SRSLoader,
+               "dls": DLSLoader,
                "binary": BinaryLoader, "xmap": XMapLoader,
                "nx": NXLoader, "hdf5": HDF5Loader,
                "text": TextLoader,

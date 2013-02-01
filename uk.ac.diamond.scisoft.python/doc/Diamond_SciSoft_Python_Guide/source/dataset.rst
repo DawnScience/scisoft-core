@@ -88,7 +88,7 @@ This is an example of dataset usage::
 
     import scisoftpy.random as drd
     # create dataset of shape 3,12 of uniform random numbers between 0 and 1
-    a = drd.rand((3,12))
+    a = drd.rand(3,12)
     # take item-wise sine
     dnp.sin(a)
     # create dataset of shape 3,4 of random integers from 0 to 11 inclusive

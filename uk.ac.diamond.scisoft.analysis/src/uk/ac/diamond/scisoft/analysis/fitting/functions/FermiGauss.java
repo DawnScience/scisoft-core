@@ -18,6 +18,9 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -29,24 +32,22 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  */
 public class FermiGauss extends AFunction implements Serializable{
 	
-	private static final int GAUSSIAN_ARRAY_SIZE = 21;
+	private static final Logger logger = LoggerFactory
+			.getLogger(FermiGauss.class);
+	
+	private static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5;
 
 	private static String cname = "Fermi * Gaussian";
 
 	private static String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
 
-	private double mu, kT, scaleM, scaleC, C, sigma, temperature, fwhm;
-
-	private double[] gaussianArray;
-
-	private Fermi fermi;
-
-	private Gaussian gauss;
+	private double mu, kT, scaleM, scaleC, C, temperature, fwhm;
 
 	private static String cdescription = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
 
 	private static double[] params = new double[]{0,0,0,0,0,0};
 
+	
 	public FermiGauss(){
 		this(params);
 	}
@@ -129,8 +130,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		if (areParametersDirty())
 			calcCachedParameters();
 		
-		
-		// only return the fermi function, not the convolution
+
 		AbstractDataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
 		return fermiDS.getDouble(0);
 	}
@@ -166,7 +166,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	
 	public AbstractDataset getFermiDS(IDataset xAxis) {
 		calcCachedParameters();
-		kT = temperature*8.6173324e-5;
+		kT = k2eV(temperature);
 		Fermi fermi = new Fermi(mu,kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
 		AbstractDataset fermiDS = fermi.makeDataset(xAxis);
@@ -177,32 +177,31 @@ public class FermiGauss extends AFunction implements Serializable{
 	}
 	
 	
-	// Derived approximate fits for the solution see FermiGaussApproximateFWHM.py
-	private static double[] p0Coefficients = { -7.6839838e-11, -2.7999866e-08, -1.4025827e-09 };
-	private static double[] p1Coefficients = {  9.6493621e-08,  5.3075971e-06,  0.00084781716 };
-	private static double[] p2Coefficients = { -2.1193838e-05,  0.00044909062, -0.017089595 };
-	
 	/**
 	 * Method to approximate a gaussisan FWHM from an appparant temperature,
 	 * @param realTemperaure the real temperature the sample is at
-	 * @param fittedTemperature the temperature the fit has given
-	 * @return the FWHM of the convoluted gaussian assuming the temperature is set to the real temperature
+	 * @return the width of the fermi edge which needs to be considered for fitting
 	 */
-	public double approximateFWHM(double realTemperaure, double fittedTemperature) {
+	public double approximateFWHM(double realTemperaure) {
+
+		if (getParameterValue(1) < realTemperaure) {
+			logger.warn("Fitted temperature was below the real temperature");
+			getParameter(1).setValue(realTemperaure);
+			getParameter(5).setValue(0.0);
+			return k2eV(realTemperaure)*8;
+		}
 		
-		// first use the real temperature to approximate the paramters for the sigma fit from fitted temperature
-		double p0 = p0Coefficients[0]*realTemperaure*realTemperaure +
-				p0Coefficients[1]*realTemperaure + p0Coefficients[2];
-		double p1 = p1Coefficients[0]*realTemperaure*realTemperaure +
-				p1Coefficients[1]*realTemperaure + p1Coefficients[2];
-		double p2 = p2Coefficients[0]*realTemperaure*realTemperaure +
-				p2Coefficients[1]*realTemperaure + p2Coefficients[2];
+		double fitEnergy = k2eV(getParameterValue(1));
+		double realEnergy = k2eV(realTemperaure);
+		double fwhm = fitEnergy*fitEnergy - realEnergy*realEnergy;
+		fwhm = Math.sqrt(fwhm);
+		getParameter(1).setValue(realTemperaure);
+		getParameter(5).setValue(fwhm); 
 		
-		// now use the fitted coefficeints to get the sigma value
-		double fwhm = p0*fittedTemperature*fittedTemperature +
-				p1*fittedTemperature + p2;
-		
-		return fwhm;
+		return fitEnergy*6;
 	}
 	
+	private double k2eV(double temperature) {
+		return temperature*K2EV_CONVERSION_FACTOR;
+	}	
 }

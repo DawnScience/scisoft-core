@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
         d = save_args(arg)
         a = load_args(d)
         shutil.rmtree(d)
-        print self.equals(arg, a), a
+        self.assertTrue(self.equals(arg, a), '%s != %s' % (arg, a))
 
     def equals(self, a, b):
         if type(a) != type(b):
@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
 
     def testSubprocess(self):
         import subprocess as sub
-        pyexe, pypath = pyenv()
+        pyexe, pypath, pyldpath = pyenv()
         import os
         env = dict(os.environ)
         env["PYTHONPATH"] = ":".join(pypath)
@@ -83,6 +83,8 @@ class Test(unittest.TestCase):
     def testDLSmodule(self):
         print dnp.external.get_dls_module()
 
+    def testPythonInstallation(self):
+        print dnp.external.get_python()
 
     def testExternal(self):
         from external_functions import fun, funadd, fundec
@@ -109,6 +111,9 @@ class Test(unittest.TestCase):
         print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
         efun = dnp.external.create_function("fundec", "external_functions", dls_module=True)
         print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
+
+        efunexception = dnp.external.create_function("funexception", "external_functions", dls_module=True)
+        self.assertRaises(ValueError, efunexception)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

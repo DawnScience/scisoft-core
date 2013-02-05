@@ -160,37 +160,50 @@ def wrapper(func):
 
     return run_func
 
-def pyenv(exe=None, path=None):
+def pyenv(exe=None, path=None, ldpath=None):
     '''Get python environment
     exe -- python executable
     path -- list of paths
+    ldpath -- list of dynamic library paths
     return tuple containing python executable string, python path as list 
     '''
 
 #    print 'ScisoftPy package is in', pkg
-    if exe is None:
-        if os.name == 'java':
-            pyexe = 'python'
-        else:
-            pyexe = sys.executable
-    else:
-        pyexe = exe
+    if os.name == 'java':
+        pyexe, pypath, pyldpath = _cached_pyenv
 
-    if path is None:
-        if os.name == 'java':
-            pypath = []
-            # add in support to get info from pydev
-        else:
-            pypath = [ p for p in sys.path if not p.endswith('jar') ]
+        if exe:
+            pyexe = exe
+    
+        if path:
+#            pypath = [ p for p in sys.path if not p.endswith('jar') ]
+            pypath = list(path)
+    
+        if ldpath:
+            pyldpath = list(ldpath)
+
     else:
-        pypath = list(path)
+        if exe is None:
+            pyexe = sys.executable
+        else:
+            pyexe = exe
+    
+        if path is None:
+            pypath = [ p for p in sys.path if not p.endswith('jar') ]
+        else:
+            pypath = list(path)
+    
+        if ldpath:
+            pyldpath = ldpath
+        else:
+            pyldpath = None
 
     # add current package
     h, _t = _path.split(__file__)
     pkg, _t = _path.split(h)
     pypath.insert(0, pkg)
 
-    return pyexe, pypath
+    return pyexe, pypath, pyldpath
 
 def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     env = dict(_env)
@@ -204,16 +217,44 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     p.stdin.write('echo "PATH:$PYTHONPATH"\n')
     p.stdin.write('echo "LDPATH:$LD_LIBRARY_PATH"\n')
     p.stdin.close()
+    exe, path, ldpath = parse_for_env(p.stdout)
+    if exe is None:
+        raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+    return exe, path, ldpath
+
+def get_python():
+    env = dict(_env)
+    env.pop('PYTHONPATH')
+    import subprocess as sub
+    p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
+    p.stdin.write('import sys\n')
+    p.stdin.write('print "EXEC|%s" % sys.executable\n')
+    p.stdin.write('print "PATH|%s" % "|".join(sys.path)\n')
+    p.stdin.write('import os\n')
+    p.stdin.write('if sys.platform == "win32":\n')
+    p.stdin.write('    lp = os.environ["PATH"].split(";")\n')
+    p.stdin.write('elif sys.platform == "darwin":\n')
+    p.stdin.write('    lp = os.environ["DYLD_LIBRARY_PATH"].split(":")\n')
+    p.stdin.write('else:\n')
+    p.stdin.write('    lp = os.environ["LD_LIBRARY_PATH"].split(":")\n')
+    p.stdin.write('print "LDPATH|%s" % "|".join(lp)\n')
+    p.stdin.close()
+    exe, path, ldpath = parse_for_env(p.stdout, sep='|')
+    if exe is None:
+        raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+    return exe, path, ldpath
+
+def parse_for_env(stream, sep=':'):
     exe = None
     path = None
     ldpath = None
     while True:
-        l =  p.stdout.readline()
+        l =  stream.readline()
         if not l:
             break
         l = l.strip()
         if l:
-            r = l.split(':')
+            r = l.split(sep)
             if r[0] == 'EXEC':
                 exe = r[1]
             elif r[0] == 'PATH':
@@ -221,9 +262,10 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
             elif r[0] == 'LDPATH':
                 ldpath = [a for a in r[1:] if a]
 
-    if exe is None:
-        raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
     return exe, path, ldpath
+
+if os.name == 'java':
+    _cached_pyenv = get_python()
 
 def find_module_path(path, module):
     modulefile = module +".py"
@@ -279,7 +321,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             exe, path, ldpath = get_dls_module(dls_module)
         else:
             exe, path, ldpath = get_dls_module()
-    exe, path = pyenv(exe, path)
+    exe, path, ldpath = pyenv(exe, path, ldpath)
 
     p = find_module_path(path, module)
     if p is None:
@@ -328,6 +370,8 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                             return ret
                         finally:
                             shutil.rmtree(d)
+                else:
+                    print l
             raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
         finally:
             shutil.rmtree(argsdir)

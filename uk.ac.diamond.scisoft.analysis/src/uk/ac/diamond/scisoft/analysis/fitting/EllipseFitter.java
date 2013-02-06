@@ -40,7 +40,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import Jama.Matrix;
 
 /**
- * Function used by an optimizer to find the closest point on an ellipse to a given point.
+ * This class represents the derivative with respect to angle of the geometric
+ * distance function from a given point to an ellipse. It is used by an optimizer
+ * to find the closest point on an ellipse to a given point.
+ * <p>
  * The ellipse is centred on the origin.
  */
 class AngleDerivativeFunction implements UnivariateRealFunction {
@@ -90,10 +93,7 @@ class AngleDerivativeFunction implements UnivariateRealFunction {
 }
 
 /**
- * This class represents the derivative with respect to angle of the geometric
- * distance function from a given point to an ellipse. 
- * 
- * Geometric parameters are
+ * Fit an ellipse whose geometric parameters are
  *  major, minor semi-axes, angle of major axis, centre coordinates
  */
 public class EllipseFitter {

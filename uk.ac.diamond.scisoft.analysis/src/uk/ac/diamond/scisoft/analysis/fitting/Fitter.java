@@ -142,7 +142,7 @@ public class Fitter {
 	 * @param polynomial
 	 * @throws Exception 
 	 */
-	public static void polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final Polynomial polynomial) throws Exception {
+	public static void polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, @SuppressWarnings("unused") final double rcond, final Polynomial polynomial) throws Exception {
 		//determine polynomial order from number of parameters in polynomial
 		int polyOrder = polynomial.getNoOfParameters()-1;
 		
@@ -185,8 +185,7 @@ public class Fitter {
 		optimizer.optimize(coords, yAxis, comp);
 
 		return comp;
-	};
-	
+	}
 	
 	public static AFunction GaussianFit(AbstractDataset data, AbstractDataset axis) {
 		

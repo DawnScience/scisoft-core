@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Class to create dataset from a list of filenames.

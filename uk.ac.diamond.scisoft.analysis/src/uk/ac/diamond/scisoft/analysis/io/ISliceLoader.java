@@ -17,7 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public interface ISliceLoader {
 

@@ -21,7 +21,7 @@ import gda.analysis.io.ScanFileHolderException;
 import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This interface defines the lazy parts of a dataset. A dataset is a N-dimensional array of items

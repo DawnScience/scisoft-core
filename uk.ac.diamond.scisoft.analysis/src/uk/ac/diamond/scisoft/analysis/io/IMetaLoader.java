@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Interface used to mark a Loader as being available to Load and return

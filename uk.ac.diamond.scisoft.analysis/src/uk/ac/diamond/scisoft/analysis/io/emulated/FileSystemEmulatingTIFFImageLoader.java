@@ -20,7 +20,7 @@ import gda.analysis.io.IFileLoader;
 import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.TIFFImageLoader;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * An implementation of {@link IFileLoader} that wraps a 'real' {@link TIFFImageLoader} with a

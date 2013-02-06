@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
 
 
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.gda.util.io.FileUtils;
 import gda.analysis.io.ScanFileHolderException;
 

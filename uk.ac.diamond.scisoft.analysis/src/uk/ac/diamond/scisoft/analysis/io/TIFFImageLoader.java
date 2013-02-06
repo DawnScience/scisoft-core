@@ -32,7 +32,7 @@ import javax.imageio.stream.ImageInputStream;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;

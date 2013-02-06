@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.IFileLoader;
 import gda.analysis.io.ScanFileHolderException;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * A class which can be extended when implementing IFileLoader

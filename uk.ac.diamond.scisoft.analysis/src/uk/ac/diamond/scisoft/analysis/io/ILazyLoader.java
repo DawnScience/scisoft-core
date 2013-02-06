@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public interface ILazyLoader extends Serializable {
 

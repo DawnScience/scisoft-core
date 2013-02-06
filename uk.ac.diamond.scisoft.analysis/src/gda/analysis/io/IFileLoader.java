@@ -17,7 +17,7 @@
 package gda.analysis.io;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This interface specifies the methods required to allow the ScanFileHolder to load in data from a file of some

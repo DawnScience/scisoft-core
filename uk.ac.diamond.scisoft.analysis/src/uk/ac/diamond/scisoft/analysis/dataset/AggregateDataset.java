@@ -24,7 +24,7 @@ import java.util.List;
 
 import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.gda.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Class to aggregate a set of lazy datasets and present them as a single lazy dataset where

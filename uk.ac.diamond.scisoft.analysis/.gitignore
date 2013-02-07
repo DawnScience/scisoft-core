@@ -10,3 +10,5 @@
 /test-scratch
 
 # Ignores that are specific to this Eclipse project
+*.pyc
+

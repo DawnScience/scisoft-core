@@ -21,7 +21,10 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import Jama.Matrix;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
@@ -48,25 +51,72 @@ public class CircleFitterTest {
 		System.err.println(x);
 		System.err.println(y);
 
+		double[] tols = new double[] {8e-2, 8, 4e-1};
+		CircleFitter fitter = checkQuickEllipse(x, y, original, tols);
+
+		fitter.geometricFit(x, y, fitter.getParameters());
+		double[] result = fitter.getParameters();
+		System.err.println(Arrays.toString(result));
+		for (int i = 0; i < original.length; i++) {
+			double err = Math.abs(original[i]*tols[i]);
+			Assert.assertEquals("Geometric fit: " + i, original[i], result[i], err);
+		}
+	}
+
+//	@Test
+	public void testMatrix() {
+		double[][] am = {{1, 2}, {3,4}, {5,6}};
+		System.err.println(am.length + "; " + am[0].length);
+		Matrix M = new Matrix(am);
+		System.err.println(M.getRowDimension() + "x" + M.getColumnDimension() + ": " + Arrays.toString(M.getRowPackedCopy()));
+		M.print(4, 0);
+		DoubleDataset c1 = DoubleDataset.arange(5);
+		DoubleDataset c2 = DoubleDataset.arange(5).iadd(10);
+		double[][] an = {c1.getData(), c2.getData()};
+		Matrix N = new Matrix(an);
+		System.err.println(an + "|" + N.getArray());
+		System.err.println(N.getRowDimension() + "x" + N.getColumnDimension() + ": " + Arrays.toString(N.getRowPackedCopy()));
+		N.print(4, 0);
+		N.getMatrix(0, 1, 2, 2).print(4, 0);
+		System.err.println(Arrays.toString(N.svd().getSingularValues()));
+	}
+
+	@Test
+	public void testQuickCircle2() {
+		double[] original = new double[] { 3.5384, 4.7684, 4.7729};
+
+		AbstractDataset x;
+		AbstractDataset y;
+		x = new DoubleDataset(new double[] {1, 2, 5, 7, 9, 3, 6, 8});
+		y = new DoubleDataset(new double[] {7, 6, 8, 7, 5, 7, 2, 4});
+		checkQuickEllipse(x, y, original, new double[] {1e-4, 1e-4, 1e-4});
+	}
+
+	@Test
+	public void testQuickExactCircle() {
+		double[] original = new double[] { 50, 150, -0.30};
+
+		DoubleDataset theta;
+		theta = (DoubleDataset) DatasetUtils.linSpace(0, Math.PI, 5, AbstractDataset.FLOAT64);
+
+		AbstractDataset[] coords = CircleFitter.generateCoordinates(theta, original);
+
+		checkQuickEllipse(coords[0], coords[1], original, new double[] {1e-4, 1e-4, 1e-4});
+	}
+
+	private CircleFitter checkQuickEllipse(AbstractDataset x, AbstractDataset y, double[] original, double[] tols) {
 		CircleFitter fitter = new CircleFitter();
 
 		fitter.algebraicFit(x, y);
 		double[] result = fitter.getParameters();
-
-		double[] tols = new double[] {8e-2, 8, -4e-1};
-		for (int i = 0; i < original.length; i++) {
-			Assert.assertEquals("Algebraic fit: " + i, original[i], result[i], original[i]*tols[i]);
-		}
 		System.err.println(Arrays.toString(original));
 		System.err.println(Arrays.toString(result));
 
-		fitter.geometricFit(x, y, result);
-		result = fitter.getParameters();
-		System.err.println(Arrays.toString(result));
 		for (int i = 0; i < original.length; i++) {
-			Assert.assertEquals("Geometric fit: " + i, original[i], result[i], original[i]*tols[i]);
+			double err = Math.abs(original[i]*tols[i]);
+			Assert.assertEquals("Algebraic fit: " + i, original[i], result[i], err);
 		}
+		return fitter;
 	}
-
 }
 

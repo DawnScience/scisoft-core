@@ -105,9 +105,10 @@ public class EllipseFitterTest {
 		fitter.algebraicFit(x, y);
 		double[] result = fitter.getParameters();
 
-		double[] tols = new double[] {8e-2, 5e-2, 1e-1, 6, -2e-1};
+		double[] tols = new double[] {8e-2, 5e-2, 1e-1, 6, 2e-1};
 		for (int i = 0; i < original.length; i++) {
-			Assert.assertEquals("Algebraic fit: " + i, original[i], result[i], original[i]*tols[i]);
+			double err = Math.abs(original[i]*tols[i]);
+			Assert.assertEquals("Algebraic fit: " + i, original[i], result[i], err);
 		}
 		System.err.println(Arrays.toString(original));
 		System.err.println(Arrays.toString(result));
@@ -116,7 +117,8 @@ public class EllipseFitterTest {
 		result = fitter.getParameters();
 		System.err.println(Arrays.toString(result));
 		for (int i = 0; i < original.length; i++) {
-			Assert.assertEquals("Geometric fit: " + i, original[i], result[i], original[i]*tols[i]);
+			double err = Math.abs(original[i]*tols[i]);
+			Assert.assertEquals("Geometric fit: " + i, original[i], result[i], err);
 		}
 	}
 

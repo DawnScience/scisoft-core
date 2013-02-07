@@ -22,7 +22,6 @@ import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 import org.slf4j.Logger;
@@ -31,10 +30,10 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 /**
  * Fit a circle whose geometric parameters are
@@ -215,6 +214,11 @@ public class CircleFitter {
 		else if (init.length < PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
+		if (x.getSize() == PARAMETERS) {
+			for (int i = 0; i < PARAMETERS; i++)
+				parameters[i] = init[i];
+			return;
+		}
 		CircleCoordinatesFunction f = new CircleCoordinatesFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
@@ -262,71 +266,84 @@ public class CircleFitter {
 	 * @return geometric parameters
 	 */
 	private static double[] quickfit(AbstractDataset x, AbstractDataset y) {
-		final AbstractDataset z = Maths.square(x).iadd(Maths.square(y));
+		double mx = (Double) x.mean();
+		double my = (Double) y.mean();
+		x = Maths.subtract(x.cast(AbstractDataset.FLOAT64), mx);
+		y = Maths.subtract(y.cast(AbstractDataset.FLOAT64), my);
+		final DoubleDataset z = (DoubleDataset) Maths.square(x).iadd(Maths.square(y));
+		final DoubleDataset o = DoubleDataset.ones(x.getShape());
 
-		Matrix S = new Matrix(4, 4);
-		S.set(0, 0, LinearAlgebra.dotProduct(z, z).getDouble());
-		S.set(0, 1, LinearAlgebra.dotProduct(z, x).getDouble());
-		S.set(0, 2, LinearAlgebra.dotProduct(z, y).getDouble());
-		S.set(0, 3, ((Number) z.sum()).doubleValue());
+		double ca, cd, ce, cf;
+		if (x.getSize() == PARAMETERS) { // exact case
+			double[][] mz = {(double[]) x.getBuffer(), (double[]) y.getBuffer(), o.getData()};
+			Matrix Z = new Matrix(mz);
+			Matrix V = new Matrix(z.getData(), 1);
+			V = V.times(Z.inverse());
+			ca = 1;
+			cd = -V.get(0, 0);
+			ce = -V.get(0, 1);
+			cf = -V.get(0, 2);
+		} else {
+			double[][] mz = { z.getData(), (double[]) x.getBuffer(), (double[]) y.getBuffer(), o.getData() };
+			Matrix Z = new Matrix(mz);
 
-		S.set(1, 0, S.get(0, 1));
-		S.set(1, 1, LinearAlgebra.dotProduct(x, x).getDouble());
-		S.set(1, 2, LinearAlgebra.dotProduct(x, y).getDouble());
-		S.set(1, 3, ((Number) x.sum()).doubleValue());
+			SingularValueDecomposition svd = Z.transpose().svd();
+			Matrix S = svd.getS();
+			// System.err.println("S:");
+			// S.print(12, 6);
+			Matrix V = svd.getV();
+			// System.err.println("V:");
+			// V.print(12, 6);
 
-		S.set(2, 0, S.get(0, 2));
-		S.set(2, 1, S.get(1, 2));
-		S.set(2, 2, LinearAlgebra.dotProduct(y, y).getDouble());
-		S.set(2, 3, ((Number) y.sum()).doubleValue());
-
-		S.set(3, 0, S.get(0, 3));
-		S.set(3, 1, S.get(1, 3));
-		S.set(3, 2, S.get(2, 3));
-		S.set(3, 3, x.getSize());
-
-		Matrix C = new Matrix(new double[] {0,0,0,-2, 0,1,0,0, 0,0,1,0, -2,0,0,0}, 4);
-		Matrix M = S.solve(C);
-//		System.err.println("M " + Arrays.toString(M.getRowPackedCopy()));
-		EigenvalueDecomposition decomp = M.eig();
-		double[] ev = decomp.getRealEigenvalues();
-//		System.err.println("Eigenvalues: " + Arrays.toString(ev));
-
-		// find minimal positive eigenvalue
-//		double emin = Double.POSITIVE_INFINITY;
-//		for (double vi : ev) {
-//			if (vi > 0 && vi < emin)
-//				emin = vi;
-//		}
-		int i = 0;
-		for (; i < 4; i++) {
-//			if (ev[i] == emin)
-//				break;
-			if (ev[i] > 0)
-				break;
+			if (S.get(3, 3) < S.get(0, 0) * 1e-12) {
+				ca = V.get(0, 3);
+				cd = V.get(1, 3);
+				ce = V.get(2, 3);
+				cf = V.get(3, 3);
+			} else {
+				Matrix W = V.times(S);
+				// System.err.println("W:");
+				// W.print(12, 6);
+				Matrix Cinv = new Matrix(new double[] { 0, 0, 0, -0.5, 0, 1, 0, 0, 0, 0, 1, 0, -0.5, 0, 0, 0 }, 4);
+				Matrix T = W.transpose().times(Cinv.times(W));
+				// System.err.println("T:");
+				// T.print(12, 6);
+				EigenvalueDecomposition decomp = T.eig();
+				double[] e = decomp.getRealEigenvalues();
+				// System.err.println("Eigenvalues: " + Arrays.toString(e));
+				// find minimal positive eigenvalue
+				double emin = Double.POSITIVE_INFINITY;
+				int j = 0;
+				for (int i = 0; i < 4; i++) {
+					double ei = e[i];
+					if (ei > 0 && ei < emin) {
+						emin = ei;
+						j = i;
+					}
+					S.set(i, i, 1. / S.get(i, i));
+				}
+				Matrix A = decomp.getV();
+				A = V.times(S).times(A.getMatrix(0, 3, j, j));
+				// A.print(12, 6);
+				ca = A.get(0, 0);
+				cd = A.get(1, 0);
+				ce = A.get(2, 0);
+				cf = A.get(3, 0);
+			}
 		}
 
-		double[][] mv = decomp.getV().getArray();
-//		System.err.println("V " + Arrays.toString(decomp.getV().getRowPackedCopy()));
-		ArrayRealVector v = new ArrayRealVector(new double[] {mv[0][i], mv[1][i], mv[2][i], mv[3][i]});
-
-		ev = v.getDataRef();
-		final double ca = ev[0];
-		final double cd = ev[1];
-		final double ce = ev[2];
-		final double cf = ev[3];
 		final double disc = cd*cd + ce*ce - 4.*ca*cf;
-//		System.err.println(String.format("Algebraic: %g, %g, %g, %g (%g)\n", ca, cd, ce, cf, disc));
+//		System.err.println(String.format("Algebraic: %g, %g, %g, %g (%g)", ca, cd, ce, cf, disc));
 		if (disc < 0) {
-			throw new IllegalArgumentException("Solution is not a circle");
+			throw new IllegalArgumentException("No solution!");
 		}
 
 		double[] qparameters = new double[PARAMETERS];
 		double f = 0.5/ca;
-		qparameters[0] = f*Math.sqrt(disc);
-		qparameters[1] = -f*cd;
-		qparameters[2] = -f*ce;
-
+		qparameters[0] = Math.abs(f)*Math.sqrt(disc);
+		qparameters[1] = -f*cd + mx;
+		qparameters[2] = -f*ce + my;
+//		System.err.println(String.format("Algebraic: %g, %g, %g", qparameters[0], qparameters[1], qparameters[2]));
 		return qparameters;
 	}
 
@@ -361,6 +378,4 @@ public class CircleFitter {
 		}
 		return coords;
 	}
-
 }
-

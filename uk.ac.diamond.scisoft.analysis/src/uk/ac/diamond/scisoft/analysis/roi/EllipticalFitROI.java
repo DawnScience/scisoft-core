@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
 
 /**
@@ -65,6 +66,14 @@ public class EllipticalFitROI extends EllipticalROI {
 
 		DoubleDataset dx = new DoubleDataset(x);
 		DoubleDataset dy = new DoubleDataset(y);
+
+		if (n < 5) {
+			CircleFitter f = new CircleFitter();
+			f.geometricFit(dx, dy, null);
+			double[] p = f.getParameters();
+			return new double[] {p[0], p[0], 0, p[1], p[2]};
+		}
+
 		EllipseFitter f = new EllipseFitter();
 		f.geometricFit(dx, dy, null);
 		return f.getParameters();

@@ -26,13 +26,19 @@ import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
 public class EllipticalFitROI extends EllipticalROI {
 
 	private PolylineROI proi;
+	private boolean circleOnly;
 
 	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
 		super(major, minor, angle, ptx, pty);
 	}
 
 	public EllipticalFitROI(PolylineROI points) {
+		this(points, false);
+	}
+
+	public EllipticalFitROI(PolylineROI points, boolean fitCircle) {
 		super(1, 0, 0);
+		circleOnly = fitCircle;
 		setPoints(points);
 	}
 
@@ -54,7 +60,7 @@ public class EllipticalFitROI extends EllipticalROI {
 	 * Fit an ellipse to given polygon
 	 * @return ellipse parameters
 	 */
-	private static double[] fitEllipse(final int n, final Iterable<PointROI> polygon) {
+	private static double[] fitEllipse(final int n, final Iterable<PointROI> polygon, final boolean fitCircle) {
 		double[] x = new double[n];
 		double[] y = new double[n];
 		int i = 0;
@@ -67,7 +73,7 @@ public class EllipticalFitROI extends EllipticalROI {
 		DoubleDataset dx = new DoubleDataset(x);
 		DoubleDataset dy = new DoubleDataset(y);
 
-		if (n < 5) {
+		if (fitCircle) {
 			CircleFitter f = new CircleFitter();
 			f.geometricFit(dx, dy, null);
 			double[] p = f.getParameters();
@@ -85,7 +91,8 @@ public class EllipticalFitROI extends EllipticalROI {
 	 */
 	public void setPoints(PolylineROI points) {
 		proi = points;
-		final double[] p = fitEllipse(points.getNumberOfPoints(), points);
+		int n = points.getNumberOfPoints();
+		final double[] p = fitEllipse(n, points, n < 5 || circleOnly);
 
 		setSemiAxis(0, p[0]);
 		setSemiAxis(1, p[1]);

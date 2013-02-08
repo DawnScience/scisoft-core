@@ -278,7 +278,11 @@ public class CircleFitter {
 			double[][] mz = {(double[]) x.getBuffer(), (double[]) y.getBuffer(), o.getData()};
 			Matrix Z = new Matrix(mz);
 			Matrix V = new Matrix(z.getData(), 1);
-			V = V.times(Z.inverse());
+			try {
+				V = V.times(Z.inverse());
+			} catch (RuntimeException e) {
+				throw new IllegalArgumentException("Given points are collinear");
+			}
 			ca = 1;
 			cd = -V.get(0, 0);
 			ce = -V.get(0, 1);

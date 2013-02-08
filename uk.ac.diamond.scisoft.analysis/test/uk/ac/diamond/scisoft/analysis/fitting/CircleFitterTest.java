@@ -94,7 +94,7 @@ public class CircleFitterTest {
 
 	@Test
 	public void testQuickExactCircle() {
-		double[] original = new double[] { 50, 150, -0.30};
+		double[] original = new double[] {50, 150, -0.30};
 
 		DoubleDataset theta;
 		theta = (DoubleDataset) DatasetUtils.linSpace(0, Math.PI, 5, AbstractDataset.FLOAT64);
@@ -102,6 +102,23 @@ public class CircleFitterTest {
 		AbstractDataset[] coords = CircleFitter.generateCoordinates(theta, original);
 
 		checkQuickEllipse(coords[0], coords[1], original, new double[] {1e-4, 1e-4, 1e-4});
+	}
+
+	@Test
+	public void testFailedCircle() {
+		double[] original = new double[] { 50, 150, -0.30};
+
+		AbstractDataset x;
+		AbstractDataset y;
+		x = new DoubleDataset(new double[] {150, 200, 250});
+		y = new DoubleDataset(new double[] {100, 150, 200});
+
+		try {
+			checkQuickEllipse(x, y, original, new double[] {1e-4, 1e-4, 1e-4});
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			System.err.println("Correctly thrown: " + e);
+		}
 	}
 
 	private CircleFitter checkQuickEllipse(AbstractDataset x, AbstractDataset y, double[] original, double[] tols) {
@@ -119,4 +136,3 @@ public class CircleFitterTest {
 		return fitter;
 	}
 }
-

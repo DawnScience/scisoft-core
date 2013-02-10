@@ -238,7 +238,12 @@ public class Parameter implements Serializable, IParameter {
 	 */
 	@Override
 	public void setValue(double value) {
-		if (value > upperLimit || value < lowerLimit) {
+		if (value > upperLimit) {
+			this.value = upperLimit;
+			return;
+		}
+		if ( value < lowerLimit) {
+			this.value = lowerLimit;
 			return;
 		}
 		if (fixed) {

@@ -135,7 +135,7 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(11.0357, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(5.3941, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
@@ -155,11 +155,11 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(4.8665, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(3.4760, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(36.2983, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(37.8493, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

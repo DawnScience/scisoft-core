@@ -34,6 +34,14 @@ public class EllipticalROI extends ROIBase {
 
 	/**
 	 * Create a circular ROI
+	 * @param croi
+	 */
+	public EllipticalROI(CircularROI croi) {
+		this(croi.getRadius(), croi.getRadius(), 0, croi.getPointX()	, croi.getPointY());
+	}
+
+	/**
+	 * Create a circular ROI
 	 * @param radius
 	 * @param ptx centre point x value
 	 * @param pty centre point y value

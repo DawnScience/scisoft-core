@@ -125,6 +125,13 @@ public class ComparisonsTest {
 	}
 
 	@Test
+	public void testWithinRange() {
+		BooleanDataset c = Comparisons.withinRange(b, -8, 2);
+		BooleanDataset d = new BooleanDataset(new boolean[] {true, true, false, false, true, false});
+		checkDatasets(c, d);
+	}
+
+	@Test
 	public void testAllTrue() {
 		Assert.assertFalse(Comparisons.allTrue(a));
 		Assert.assertTrue(Comparisons.allTrue(b));

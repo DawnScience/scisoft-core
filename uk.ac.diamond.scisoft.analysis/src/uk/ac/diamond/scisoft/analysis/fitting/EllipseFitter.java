@@ -21,7 +21,6 @@ import java.util.Arrays;
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
@@ -93,219 +92,240 @@ class AngleDerivativeFunction implements UnivariateRealFunction {
 }
 
 /**
+ * This function returns the coordinates (interleaved) for the points specified by the
+ * geometric parameters and an array of angles
+ */
+class EllipseCoordinatesFunction implements IConicSectionFitFunction {
+	private static final int PARAMETERS = EllipseFitter.PARAMETERS;
+	private AbstractDataset X;
+	private AbstractDataset Y;
+	private DoubleDataset v;
+	private double[][] j;
+	private int n; // number of points
+	private int m; // number of equations
+	private double[] ca;
+	private double[] sa;
+
+	AngleDerivativeFunction angleDerivative = new AngleDerivativeFunction();
+	BrentSolver solver = new BrentSolver(BrentSolver.DEFAULT_ABSOLUTE_ACCURACY);
+
+	public EllipseCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
+		setPoints(x, y);
+	}
+
+//	public UnivariateRealFunction getAngleDerivative() {
+//		return angleDerivative;
+//	}
+
+	@Override
+	public void setPoints(AbstractDataset x, AbstractDataset y) {
+		X = x;
+		Y = y;
+		n = X.getSize();
+		m = 2*n;
+		v = new DoubleDataset(m);
+		j = new double[m][PARAMETERS+n];
+		for (int i = 0; i < m; i++) {
+			j[i][3] = 1;
+			i++;
+			j[i][4] = 1;
+		}
+		ca = new double[n];
+		sa = new double[n];
+	}
+
+	@Override
+	public double[] getTarget() {
+		double[] target = new double[m];
+		final IndexIterator itx = X.getIterator();
+		final IndexIterator ity = Y.getIterator();
+		int i = 0;
+		while (itx.hasNext() && ity.hasNext()) {
+			target[i++] = X.getElementDoubleAbs(itx.index);
+			target[i++] = Y.getElementDoubleAbs(ity.index);
+		}
+		return target;
+	}
+
+	@Override
+	public double[] getWeight() {
+		double[] weight = new double[m];
+		Arrays.fill(weight, 1.0);
+		return weight;
+	}
+
+	@Override
+	public double[] calcAllInitValues(double[] initParameters) {
+		double[] init = new double[n+PARAMETERS];
+		for (int i = 0; i < initParameters.length; i++) {
+			init[i] = initParameters[i];
+		}
+		final double a = Math.sqrt(initParameters[0]);
+		final double b = Math.sqrt(initParameters[1]);
+		final double alpha = initParameters[2];
+		final double x = initParameters[3];
+		final double y = initParameters[4];
+		final double twopi = 2*Math.PI;
+		angleDerivative.setRadii(a, b);
+		angleDerivative.setAngle(alpha);
+
+		// work out the angle values for the closest points on ellipse
+		final IndexIterator itx = X.getIterator();
+		final IndexIterator ity = Y.getIterator();
+		int i = PARAMETERS;
+		while (itx.hasNext() && ity.hasNext()) {
+			final double Xc = X.getElementDoubleAbs(itx.index) - x;
+			final double Yc = Y.getElementDoubleAbs(ity.index) - y;
+
+			angleDerivative.setCoordinate(Xc, Yc);
+			try {
+				// find quadrant to use
+				double pa = Math.atan2(Yc, Xc);
+				if (pa < 0)
+					pa += twopi;
+				pa -= alpha;
+				final double end;
+				final double halfpi = 0.5*Math.PI;
+				pa /= halfpi;
+				end = Math.ceil(pa)*halfpi;
+				final double angle = solver.solve(BrentSolver.DEFAULT_MAXIMUM_ITERATIONS, angleDerivative, end-halfpi, end);
+				init[i++] = angle;
+			} catch (MaxIterationsExceededException e) {
+				throw new IllegalArgumentException("Problem with solver converging as iterations exceed limit");
+			} catch (FunctionEvaluationException e) {
+				// cannot happen
+			}
+		}
+		return init;
+	}
+
+	@Override
+	public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+		final double[] values = v.getData();
+		final double a = p[0]*p[0];
+		final double b = p[1]*p[1];
+		final double cosa = Math.cos(p[2]);
+		final double sina = Math.sin(p[2]);
+		final double x = p[3];
+		final double y = p[4];
+
+		for (int i = 0; i < n; i++) {
+			final double t = p[i+PARAMETERS];
+			final double cost = Math.cos(t);
+			final double sint = Math.sin(t);
+			ca[i] = cost;
+			sa[i] = sint;
+			values[2*i] = x + a*cosa*cost - b*sina*sint;
+			values[2*i+1] = y + a*sina*cost + b*cosa*sint;
+		}
+
+		return values;
+	}
+
+	@Override
+	public double[] calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+		double[] p = calcAllInitValues(parameters);
+		
+		final double[] values = v.getData();
+		final double a = p[0]*p[0];
+		final double b = p[1]*p[1];
+		final double cosa = Math.cos(p[2]);
+		final double sina = Math.sin(p[2]);
+		final double x = p[3];
+		final double y = p[4];
+
+		for (int i = 0; i < n; i++) {
+			final double t = p[i+PARAMETERS];
+			final double cost = Math.cos(t);
+			final double sint = Math.sin(t);
+			double px = x + a*cosa*cost - b*sina*sint - X.getElementDoubleAbs(i);
+			double py = y + a*sina*cost + b*cosa*sint - Y.getElementDoubleAbs(i);
+			values[i] = px*px + py*py;
+		}
+
+		return values;
+	}
+
+	private void calculateJacobian(double[] p) {
+		final double ta = 2*p[0];
+		final double aa = p[0]*p[0];
+		final double tb = 2*p[1];
+		final double bb = p[1]*p[1];
+		final double cosa = Math.cos(p[2]);
+		final double sina = Math.sin(p[2]);
+
+		for (int i = 0; i < n; i++) {
+			final double cost = ca[i];
+			final double sint = sa[i];
+			final double cc = cosa*cost;
+			final double cs = cosa*sint;
+			final double sc = sina*cost;
+			final double ss = sina*sint;
+
+			final int ti = 2*i;
+			final int tj = 2*i + 1;
+			j[ti][0] = ta*cc;
+			j[ti][1] = -tb*ss;
+			j[ti][2] = -aa*sc - bb*cs;
+			j[ti][PARAMETERS+i] = -aa*cs - bb*sc;
+
+			j[tj][0] = ta*sc;
+			j[tj][1] = tb*cs;
+			j[tj][2] = aa*cc - bb*ss;
+			j[tj][PARAMETERS+i] = -aa*ss + bb*cc;
+		}
+	}
+
+	@Override
+	public MultivariateMatrixFunction jacobian() {
+		return new MultivariateMatrixFunction() {
+			@Override
+			public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+				calculateJacobian(p);
+				return j;
+			}
+		};
+	}
+}
+
+/**
  * Fit an ellipse whose geometric parameters are
  *  major, minor semi-axes, angle of major axis, centre coordinates
  */
-public class EllipseFitter {
+public class EllipseFitter implements IConicSectionFitter {
 	/**
 	 * Setup the logging facilities
 	 */
 	private static transient final Logger logger = LoggerFactory.getLogger(EllipseFitter.class);
 
-	AngleDerivativeFunction angleDerivative = new AngleDerivativeFunction();
-	BrentSolver solver = new BrentSolver(BrentSolver.DEFAULT_ABSOLUTE_ACCURACY);
 	private double[] parameters;
 
-	private final static int PARAMETERS = 5;
+	private IConicSectionFitFunction fitFunction;
 
-
-	/**
-	 * This function returns the coordinates (interleaved) for the points specified by the
-	 * geometric parameters and an array of angles
-	 */
-	class EllipseCoordinatesFunction implements DifferentiableMultivariateVectorialFunction {
-		private AbstractDataset X;
-		private AbstractDataset Y;
-		private DoubleDataset v;
-		private double[][] j;
-		private int n; // number of points
-		private int m; // number of equations
-		private double[] ca;
-		private double[] sa;
-
-		public EllipseCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
-			setPoints(x, y);
-		}
-
-		/**
-		 * Set points used in fit
-		 * @param x
-		 * @param y
-		 */
-		public void setPoints(AbstractDataset x, AbstractDataset y) {
-			X = x;
-			Y = y;
-			n = X.getSize();
-			m = 2*n;
-			v = new DoubleDataset(m);
-			j = new double[m][PARAMETERS+n];
-			for (int i = 0; i < m; i++) {
-				j[i][3] = 1;
-				i++;
-				j[i][4] = 1;
-			}
-			ca = new double[n];
-			sa = new double[n];
-		}
-
-		/**
-		 * @return array of interleaved coordinates
-		 */
-		public double[] getTarget() {
-			double[] target = new double[m];
-			final IndexIterator itx = X.getIterator();
-			final IndexIterator ity = Y.getIterator();
-			int i = 0;
-			while (itx.hasNext() && ity.hasNext()) {
-				target[i++] = X.getElementDoubleAbs(itx.index);
-				target[i++] = Y.getElementDoubleAbs(ity.index);
-			}
-			return target;
-		}
-
-		/**
-		 * @return default weights of 1
-		 */
-		public double[] getWeight() {
-			double[] weight = new double[m];
-			Arrays.fill(weight, 1.0);
-			return weight;
-		}
-
-		/**
-		 * Calculate angles of closest points on ellipse to targets
-		 * @param initParameters geometric parameters
-		 * @return array of all initial parameters
-		 */
-		public double[] calcAllInitValues(double[] initParameters) {
-			double[] init = new double[n+PARAMETERS];
-			for (int i = 0; i < initParameters.length; i++) {
-				init[i] = initParameters[i];
-			}
-			final double a = Math.sqrt(initParameters[0]);
-			final double b = Math.sqrt(initParameters[1]);
-			final double alpha = initParameters[2];
-			final double x = initParameters[3];
-			final double y = initParameters[4];
-			final double twopi = 2*Math.PI;
-			angleDerivative.setRadii(a, b);
-			angleDerivative.setAngle(alpha);
-
-			// work out the angle values for the closest points on ellipse
-			final IndexIterator itx = X.getIterator();
-			final IndexIterator ity = Y.getIterator();
-			int i = PARAMETERS;
-			while (itx.hasNext() && ity.hasNext()) {
-				final double Xc = X.getElementDoubleAbs(itx.index) - x;
-				final double Yc = Y.getElementDoubleAbs(ity.index) - y;
-
-				angleDerivative.setCoordinate(Xc, Yc);
-				try {
-					// find quadrant to use
-					double pa = Math.atan2(Yc, Xc);
-					if (pa < 0)
-						pa += twopi;
-					pa -= alpha;
-					final double end;
-					final double halfpi = 0.5*Math.PI;
-					pa /= halfpi;
-					end = Math.ceil(pa)*halfpi;
-					final double angle = solver.solve(BrentSolver.DEFAULT_MAXIMUM_ITERATIONS, angleDerivative, end-halfpi, end);
-					init[i++] = angle;
-				} catch (MaxIterationsExceededException e) {
-					throw new IllegalArgumentException("Problem with solver converging as iterations exceed limit");
-				} catch (FunctionEvaluationException e) {
-					// cannot happen
-				}
-			}
-			return init;
-		}
-
-		@Override
-		public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
-			final double[] values = v.getData();
-			final double a = p[0]*p[0];
-			final double b = p[1]*p[1];
-			final double cosa = Math.cos(p[2]);
-			final double sina = Math.sin(p[2]);
-			final double x = p[3];
-			final double y = p[4];
-
-			for (int i = 0; i < n; i++) {
-				final double t = p[i+PARAMETERS];
-				final double cost = Math.cos(t);
-				final double sint = Math.sin(t);
-				ca[i] = cost;
-				sa[i] = sint;
-				values[2*i] = x + a*cosa*cost - b*sina*sint;
-				values[2*i+1] = y + a*sina*cost + b*cosa*sint;
-			}
-
-			return values;
-		}
-
-		private void calculateJacobian(double[] p) {
-			final double ta = 2*p[0];
-			final double aa = p[0]*p[0];
-			final double tb = 2*p[1];
-			final double bb = p[1]*p[1];
-			final double cosa = Math.cos(p[2]);
-			final double sina = Math.sin(p[2]);
-
-			for (int i = 0; i < n; i++) {
-				final double cost = ca[i];
-				final double sint = sa[i];
-				final double cc = cosa*cost;
-				final double cs = cosa*sint;
-				final double sc = sina*cost;
-				final double ss = sina*sint;
-
-				final int ti = 2*i;
-				final int tj = 2*i + 1;
-				j[ti][0] = ta*cc;
-				j[ti][1] = -tb*ss;
-				j[ti][2] = -aa*sc - bb*cs;
-				j[ti][PARAMETERS+i] = -aa*cs - bb*sc;
-
-				j[tj][0] = ta*sc;
-				j[tj][1] = tb*cs;
-				j[tj][2] = aa*cc - bb*ss;
-				j[tj][PARAMETERS+i] = -aa*ss + bb*cc;
-			}
-		}
-
-		@Override
-		public MultivariateMatrixFunction jacobian() {
-			return new MultivariateMatrixFunction() {
-				@Override
-				public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
-					calculateJacobian(p);
-					return j;
-				}
-			};
-		}
-	}
+	final static int PARAMETERS = 5;
 
 	public EllipseFitter() {
 		parameters = new double[PARAMETERS];
 	}
 
+	@Override
 	public double[] getParameters() {
 		return parameters;
 	}
 
-	public UnivariateRealFunction getAngleDerivative() {
-		return angleDerivative;
+	@Override
+	public IConicSectionFitFunction getFitFunction(AbstractDataset x, AbstractDataset y) {
+		if (fitFunction == null) {
+			if (x == null || y == null)
+				throw new IllegalArgumentException("Fitter uninitialized so coordinate datasets are needed");
+			fitFunction = new EllipseCoordinatesFunction(x, y);
+		} else if (x != null && y != null) {
+			fitFunction.setPoints(x, y);
+		}
+		return fitFunction;
 	}
 
-	/**
-	 * Fit points given by x, y datasets to an ellipse. If no initial parameters are given, then
-	 * an algebraic fit is performed then a non-linear least squares fitting routine is used to
-	 * provide the best geometric fit.
-	 * @param x
-	 * @param y
-	 * @param init parameters (can be null)
-	 */
+	@Override
 	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
 
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
@@ -317,7 +337,7 @@ public class EllipseFitter {
 		else if (init.length < PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
-		EllipseCoordinatesFunction f = new EllipseCoordinatesFunction(x, y);
+		IConicSectionFitFunction f = getFitFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {
@@ -339,11 +359,7 @@ public class EllipseFitter {
 		}
 	}
 
-	/**
-	 * Fit points given by x, y datasets to an ellipse. 
-	 * @param x
-	 * @param y
-	 */
+	@Override
 	public void algebraicFit(AbstractDataset x, AbstractDataset y) {
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
@@ -522,4 +538,3 @@ public class EllipseFitter {
 	}
 
 }
-

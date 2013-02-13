@@ -100,7 +100,7 @@ public class EllipseFitterTest {
 		System.err.println(x);
 		System.err.println(y);
 
-		EllipseFitter fitter = new EllipseFitter();
+		IConicSectionFitter fitter = new EllipseFitter();
 
 		fitter.algebraicFit(x, y);
 		double[] result = fitter.getParameters();

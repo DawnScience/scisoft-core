@@ -24,8 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
@@ -61,13 +68,14 @@ public class PowderRingsUtils {
 
 	private static final double ARC_LENGTH = 16;
 	private static final double RADIAL_FRACTION = 0.03125; // 0.125;
-	private static final int MAX_POINTS = 200;
+	private static final int MAX_POINTS = 400;
 
 	public static PolylineROI findPOIsNearCircle(AbstractDataset image, CircularROI circle) {
 		return findPOIsNearCircle(image, circle, ARC_LENGTH, RADIAL_FRACTION, MAX_POINTS);
 	}
 
-	public static PolylineROI findPOIsNearCircle(AbstractDataset image, CircularROI circle, double arcLength, double radialFraction, int maxPoints) {
+	public static PolylineROI findPOIsNearCircle(AbstractDataset image, CircularROI circle,
+			double arcLength, double radialFraction, int maxPoints) {
 		return findPOIsNearEllipse(image, new EllipticalROI(circle), arcLength, radialFraction, maxPoints);
 	}
 
@@ -75,7 +83,8 @@ public class PowderRingsUtils {
 		return findPOIsNearEllipse(image, ellipse, ARC_LENGTH, RADIAL_FRACTION, MAX_POINTS);
 	}
 
-	public static PolylineROI findPOIsNearEllipse(AbstractDataset image, EllipticalROI ellipse, double arcLength, double radialFraction, int maxPoints) {
+	public static PolylineROI findPOIsNearEllipse(AbstractDataset image, EllipticalROI ellipse,
+			double arcLength, double radialFraction, int maxPoints) {
 		if (image.getRank() != 2) {
 			throw new IllegalArgumentException("Dataset must have two dimensions");
 		}
@@ -97,17 +106,17 @@ public class PowderRingsUtils {
 
 		// find starting angle which is along shortest spoke
 		TreeMap<Double, Double> lengths = new TreeMap<Double, Double>();
-		
-		lengths.put(Math.hypot(0-yc, 0-xc), Math.atan2(0-yc, 0-xc));
-		lengths.put(Math.hypot(h-yc, 0-xc), Math.atan2(h-yc, 0-xc));
-		lengths.put(Math.hypot(h-yc, w-xc), Math.atan2(h-yc, w-xc));
-		lengths.put(Math.hypot(0-yc, w-xc), Math.atan2(0-yc, w-xc));
+
+		lengths.put(Math.hypot(0 - yc, 0 - xc), Math.atan2(0 - yc, 0 - xc));
+		lengths.put(Math.hypot(h - yc, 0 - xc), Math.atan2(h - yc, 0 - xc));
+		lengths.put(Math.hypot(h - yc, w - xc), Math.atan2(h - yc, w - xc));
+		lengths.put(Math.hypot(0 - yc, w - xc), Math.atan2(0 - yc, w - xc));
 		final double pstart = lengths.firstEntry().getValue();
 
-		final double pdelta = arcLength/an; // change in angle
-		double rdelta = radialFraction*an; // semi-width of annulus of interest
+		final double pdelta = arcLength / an; // change in angle
+		double rdelta = radialFraction * an; // semi-width of annulus of interest
 		if (rdelta < 1) {
-			logger.warn("Radial fraction was set too low: setting to {}", 1./an);
+			logger.warn("Radial fraction was set too low: setting to {}", 1. / an);
 			rdelta = 1;
 		}
 		final double rsj = aj - rdelta;
@@ -115,25 +124,27 @@ public class PowderRingsUtils {
 		final double rsn = an - rdelta;
 		final double ren = an + rdelta;
 
-		final int imax = (int) Math.ceil(Math.PI*2./pdelta);
+		final int imax = (int) Math.ceil(Math.PI * 2. / pdelta);
 //		final double[] quantiles = Stats.quantile(image, 0.0, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0);
 //		System.err.println(Arrays.toString(quantiles));
 //		final double threshold = quantiles[10]; // quantiles[6] + 0.5 * (quantiles[9] - quantiles[3]);
-		final double threshold = (Double) Stats.median(image) + 0.5 * (Double) Stats.iqr(image);
+		final double threshold = (Double) image.mean() + 0.5 * (Double) Stats.iqr(image);
 		logger.debug("Threshold: {}", threshold);
 
-		logger.debug("Major semi-axis = [{}, {}]; {}, {}", new Object[] {rsj, rej, Math.toDegrees(pstart), imax});
+		logger.debug("Major semi-axis = [{}, {}]; {}, {}", new Object[] { rsj, rej, Math.toDegrees(pstart), imax });
 		final int[] start = new int[2];
 		final int[] stop = new int[2];
 		final int[] step = new int[] { 1, 1 };
 		HashSet<PointROI> pointSet = new HashSet<PointROI>();
 		for (int i = 0; i < imax; i++) {
-			double p = pstart + i*pdelta;
+			double p = pstart + i * pdelta;
 			double cp = Math.cos(p);
 			double sp = Math.sin(p);
 			AbstractDataset sub;
-			final int[] beg = new int[] {(int) (yc + rsj * sa * cp + rsn * ca * sp), (int) (xc + rsj * ca* cp - rsn * sa * sp)};
-			final int[] end = new int[] {(int) (yc + rej * sa * cp + ren * ca * sp), (int) (xc + rej * ca* cp - ren * sa * sp)};
+			final int[] beg = new int[] { (int) (yc + rsj * sa * cp + rsn * ca * sp),
+					(int) (xc + rsj * ca * cp - rsn * sa * sp) };
+			final int[] end = new int[] { (int) (yc + rej * sa * cp + ren * ca * sp),
+					(int) (xc + rej * ca * cp - ren * sa * sp) };
 			start[0] = Math.max(0, Math.min(beg[0], end[0]));
 			stop[0] = Math.min(h, Math.max(beg[0], end[0]));
 			if (start[0] == stop[0]) {
@@ -182,6 +193,50 @@ public class PowderRingsUtils {
 		return polyline;
 	}
 
+	// TODO refine selected points by trimming outliers
+	public static EllipticalFitROI trimOutliers(PolylineROI points, boolean circleOnly) {
+		IConicSectionFitter f;
+		IConicSectionFitFunction fn;
+		int n, m;
+		EllipticalFitROI efroi = new EllipticalFitROI(points, circleOnly);
+
+		PolylineROI cpts = points;
+		do {
+			n = cpts.getNumberOfPoints();
+			f = efroi.getFitter();
+			fn = f.getFitFunction(null, null);
+
+			DoubleDataset d = new DoubleDataset(fn.calcDistanceSquared(f.getParameters()));
+			// find outliers
+			double siqr = 0.5 * (Double) Stats.iqr(d);
+			double l = (Double) d.mean() - siqr;
+			double h = (Double) d.mean() + siqr;
+			logger.debug("Range: [{}, {}]", l, h);
+
+			BooleanDataset b = Comparisons.withinRange(d, l, h);
+			BooleanIterator it = d.getBooleanIterator(b, true);
+			PolylineROI npts = new PolylineROI();
+			while (it.hasNext()) {
+				npts.insertPoint(cpts.getPoint(it.index));
+			}
+			m = npts.getNumberOfPoints();
+			if (m == n)
+				break;
+
+			logger.debug("Found some outliers");
+			{
+				it = d.getBooleanIterator(b, false);
+				while (it.hasNext()) {
+					logger.debug("    {}", cpts.getPoint(it.index));
+				}
+			}
+			cpts = npts;
+			efroi.setPoints(cpts);
+		} while (true);
+
+		return efroi;
+	}
+
 	static class PeakCompare implements Comparator<PointROI> {
 		private AbstractDataset image;
 
@@ -191,7 +246,7 @@ public class PowderRingsUtils {
 
 		@Override
 		public int compare(PointROI o1, PointROI o2) {
-			return (int) Math.signum(image.getDouble(o2.getIntPoint())-image.getDouble(o1.getIntPoint()));
+			return (int) Math.signum(image.getDouble(o2.getIntPoint()) - image.getDouble(o1.getIntPoint()));
 		}
 	}
 }

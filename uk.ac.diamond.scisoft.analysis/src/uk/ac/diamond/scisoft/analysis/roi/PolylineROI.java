@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Class for a polyline ROI (really a list of point ROIs)
  */
@@ -231,5 +234,21 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		 */
 		if (pts.contains(this)) return super.toString();
 		return pts.toString();
+	}
+
+	/**
+	 * @return two datasets with x and y coordinates 
+	 */
+	public AbstractDataset[] makeCoordinateDatasets() {
+		int n = pts.size();
+		double[] x = new double[n];
+		double[] y = new double[n];
+		for (int i = 0; i < n; i++) {
+			double[] p = pts.get(i).spt;
+			x[i] = p[0];
+			y[i] = p[1];
+		}
+
+		return new DoubleDataset[] { new DoubleDataset(x), new DoubleDataset(y) };
 	}
 }

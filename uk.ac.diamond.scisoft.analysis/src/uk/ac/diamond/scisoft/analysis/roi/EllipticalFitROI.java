@@ -16,9 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 
 /**
  * An elliptical region of interest which fits the points in a polygonal region of interest
@@ -27,6 +28,7 @@ public class EllipticalFitROI extends EllipticalROI {
 
 	private PolylineROI proi;
 	private boolean circleOnly;
+	private IConicSectionFitter fitter;
 
 	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
 		super(major, minor, angle, ptx, pty);
@@ -57,34 +59,24 @@ public class EllipticalFitROI extends EllipticalROI {
 	}
 
 	/**
-	 * Fit an ellipse to given polygon
-	 * @return ellipse parameters
+	 * Fit an ellipse to given polyline
+	 * @param polyline
+	 * @return fitter
 	 */
-	private static double[] fitEllipse(final int n, final Iterable<PointROI> polygon, final boolean fitCircle) {
-		double[] x = new double[n];
-		double[] y = new double[n];
-		int i = 0;
-		for (PointROI r : polygon) {
-			x[i] = r.getPointX();
-			y[i] = r.getPointY();
-			i++;
-		}
-
-		DoubleDataset dx = new DoubleDataset(x);
-		DoubleDataset dy = new DoubleDataset(y);
-
+	public static IConicSectionFitter fit(PolylineROI polyline, final boolean fitCircle) {
+		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
 		if (fitCircle) {
 			CircleFitter f = new CircleFitter();
-			f.geometricFit(dx, dy, null);
-			double[] p = f.getParameters();
-			return new double[] {p[0], p[0], 0, p[1], p[2]};
+			f.geometricFit(xy[0], xy[1], null);
+			return f;
 		}
 
-		EllipseFitter f = new EllipseFitter();
-		f.geometricFit(dx, dy, null);
-		return f.getParameters();
+		IConicSectionFitter f = new EllipseFitter();
+		f.geometricFit(xy[0], xy[1], null);
+		return f;
 	}
 
+	
 	/**
 	 * Set points which are then used to fit ellipse
 	 * @param points
@@ -92,7 +84,13 @@ public class EllipticalFitROI extends EllipticalROI {
 	public void setPoints(PolylineROI points) {
 		proi = points;
 		int n = points.getNumberOfPoints();
-		final double[] p = fitEllipse(n, points, n < 5 || circleOnly);
+		if (fitter == null) {
+			fitter = fit(points, n < 5 || circleOnly);
+		} else {
+			AbstractDataset[] xy = points.makeCoordinateDatasets();
+			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
+		}
+		final double[] p = fitter.getParameters();
 
 		setSemiAxis(0, p[0]);
 		setSemiAxis(1, p[1]);
@@ -100,6 +98,13 @@ public class EllipticalFitROI extends EllipticalROI {
 		setPoint(p[3], p[4]);
 	}
 
+	/**
+	 * @return fitter used
+	 */
+	public IConicSectionFitter getFitter() {
+		return fitter;
+	}
+	
 	/**
 	 * @return points in polygon for fitting
 	 */

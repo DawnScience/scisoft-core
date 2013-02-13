@@ -16,8 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 
 /**
  * A circular region of interest which fits the points in a polygonal region of interest
@@ -25,6 +26,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
 public class CircularFitROI extends CircularROI {
 
 	private PolylineROI proi;
+	private IConicSectionFitter fitter;
 
 	private CircularFitROI(double radius, double ptx, double pty) {
 		super(radius, ptx, pty);
@@ -51,23 +53,15 @@ public class CircularFitROI extends CircularROI {
 
 	/**
 	 * Fit a circle to given polygon
-	 * @return circle parameters
+	 * @param polyline
+	 * @return fitter
 	 */
-	private static double[] fitCircle(final int n, final Iterable<PointROI> polygon) {
-		double[] x = new double[n];
-		double[] y = new double[n];
-		int i = 0;
-		for (PointROI r : polygon) {
-			x[i] = r.getPointX();
-			y[i] = r.getPointY();
-			i++;
-		}
+	public static IConicSectionFitter fit(PolylineROI polyline) {
+		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
 
-		DoubleDataset dx = new DoubleDataset(x);
-		DoubleDataset dy = new DoubleDataset(y);
 		CircleFitter f = new CircleFitter();
-		f.geometricFit(dx, dy, null);
-		return f.getParameters();
+		f.geometricFit(xy[0], xy[1], null);
+		return f;
 	}
 
 	/**
@@ -76,10 +70,23 @@ public class CircularFitROI extends CircularROI {
 	 */
 	public void setPoints(PolylineROI points) {
 		proi = points;
-		final double[] p = fitCircle(points.getNumberOfPoints(), points);
+		if (fitter == null) {
+			fitter = fit(points);
+		} else {
+			AbstractDataset[] xy = points.makeCoordinateDatasets();
+			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
+		}
+		final double[] p = fitter.getParameters();
 
 		setRadius(p[0]);
 		setPoint(p[1], p[2]);
+	}
+
+	/**
+	 * @return fitter used
+	 */
+	public IConicSectionFitter getFitter() {
+		return fitter;
 	}
 
 	/**

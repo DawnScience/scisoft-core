@@ -23,6 +23,7 @@ public class BooleanIterator extends IndexIterator {
 	final private BooleanDataset b;
 	final private IndexIterator iterb;
 	final private IndexIterator iterd;
+	final private boolean v;
 	final private int[] pos; // position in dataset
 
 	/**
@@ -33,17 +34,30 @@ public class BooleanIterator extends IndexIterator {
 	 * @param selection boolean dataset
 	 */
 	public BooleanIterator(final IndexIterator iter, final BooleanDataset selection) {
+		this(iter, selection, true);
+	}
+
+	/**
+	 * Constructor for an iterator over the items of a boolean dataset that match
+	 * given value
+	 *
+	 * @param iter dataset iterator
+	 * @param selection boolean dataset
+	 * @param value
+	 */
+	public BooleanIterator(final IndexIterator iter, final BooleanDataset selection, boolean value) {
 		b = selection;
 
 		iterb = selection.getIterator();
 		iterd = iter;
 		pos = iterd.getPos();
+		v = value;
 	}
 
 	@Override
 	public boolean hasNext() {
 		while (iterb.hasNext() && iterd.hasNext()) {
-			if (b.getAbs(iterb.index)) {
+			if (b.getAbs(iterb.index) == v) {
 				index = iterd.index;
 				return true;
 			}

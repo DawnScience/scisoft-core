@@ -1132,7 +1132,19 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
 	public BooleanIterator getBooleanIterator(BooleanDataset choice) {
-		return new BooleanIterator(getIterator(), choice);
+		return getBooleanIterator(choice, true);
+	}
+
+	/**
+	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset
+	 * is given by value
+	 * 
+	 * @param choice
+	 * @param value
+	 * @return an iterator of dataset that visits items chosen by given choice dataset
+	 */
+	public BooleanIterator getBooleanIterator(BooleanDataset choice, boolean value) {
+		return new BooleanIterator(getIterator(), choice, value);
 	}
 
 	/**

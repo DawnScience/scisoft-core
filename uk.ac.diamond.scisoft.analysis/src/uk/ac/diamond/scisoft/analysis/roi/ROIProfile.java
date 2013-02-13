@@ -383,18 +383,18 @@ public class ROIProfile {
 		if (symmetry == SectorROI.FULL) {
 			MapToPolarAndIntegrate pmapfint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[0]
 					+ 2 * Math.PI, dpp, false);
-			if (mask != null && data != null)
-				if (mask.isCompatibleWith(data))
-					pmapfint.setMask(mask);
+			if (mask != null && data != null && mask.isCompatibleWith(data)) {
+				pmapfint.setMask(mask);
+			}
 			pmapfint.setClip(clip);
 			pmapfint.setAverage(aver);
 			pmapfint.setInterpolate(!fast);
 			pmapfint.setDoRadial(doRadial);
 			pmapfint.setDoAzimuthal(doAzimuthal);
 			List<AbstractDataset> dsetsf = pmapfint.value(data);
-			if (dsetsf == null)
+			if (dsetsf == null) {
 				return null;
-
+			}
 			if (aver) {
 				profiles[0] = Maths.dividez(dsetsf.get(1), dsetsf.get(3));
 				profiles[1] = Maths.dividez(dsetsf.get(0), dsetsf.get(2));
@@ -407,35 +407,33 @@ public class ROIProfile {
 
 		MapToPolarAndIntegrate pmapint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[1],
 				dpp, false);
-		if (mask != null && data != null)
-			if (mask.isCompatibleWith(data))
-				pmapint.setMask(mask);
+		if (mask != null && data != null && mask.isCompatibleWith(data)) {
+			pmapint.setMask(mask);
+		}
 		pmapint.setClip(clip);
 		pmapint.setAverage(aver);
 		pmapint.setInterpolate(!fast);
 		pmapint.setDoRadial(doRadial);
 		pmapint.setDoAzimuthal(doAzimuthal);
 		List<AbstractDataset> dsets = pmapint.value(data);
-		if (dsets == null)
+		if (dsets == null) {
 			return null;
-
-		if (aver) {
-			profiles[0] = Maths.dividez(dsets.get(1), dsets.get(3));
-			profiles[1] = Maths.dividez(dsets.get(0), dsets.get(2));
-		} else {
-			profiles[0] = dsets.get(1);
-			profiles[1] = dsets.get(0);
 		}
+		
+		AbstractDataset[] areas = new AbstractDataset[] { null, null, null, null };
+		profiles[0] = dsets.get(1);
+		profiles[1] = dsets.get(0);
+		areas[0] = dsets.get(3);
+		areas[1] = dsets.get(2);
 		
 		if (symmetry != SectorROI.NONE) {
 			double[] nang = sroi.getSymmetryAngles();
 
-			AbstractDataset[] symProfiles = new AbstractDataset[] { null, null };
 			MapToPolarAndIntegrate pmapsint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], nang[0], rad[1],
 					nang[1], dpp, false);
-			if (mask != null && data != null)
-				if (mask.isCompatibleWith(data))
-					pmapsint.setMask(mask);
+			if (mask != null && data != null && mask.isCompatibleWith(data)) {
+				pmapsint.setMask(mask);
+			}
 			pmapsint.setClip(clip);
 			pmapsint.setAverage(aver);
 			pmapsint.setInterpolate(!fast);
@@ -443,20 +441,23 @@ public class ROIProfile {
 			pmapsint.setDoAzimuthal(doAzimuthal);
 			List<AbstractDataset> dsetss = pmapsint.value(data);
 			if (dsetss != null) {
-
-				if (aver) {
-					symProfiles[0] = Maths.dividez(dsetss.get(1), dsetss.get(3));
-					symProfiles[1] = Maths.dividez(dsetss.get(0), dsetss.get(2));
-				} else {
-					symProfiles[0] = dsetss.get(1);
-					symProfiles[1] = dsetss.get(0);
-				}
 				if (sroi.isCombineSymmetry()) {
-					profiles[0] = Maths.add(profiles[0], symProfiles[0]);
-					profiles[1] = Maths.add(profiles[1], symProfiles[1]);
+					profiles[0] = Maths.add(profiles[0], dsetss.get(1));
+					profiles[1] = Maths.add(profiles[1], dsetss.get(0));
+					areas[0] = Maths.add(areas[0], dsetss.get(3));
+					areas[1] = Maths.add(areas[1], dsetss.get(2));
 				} else {
-					profiles[2] = symProfiles[0];
-					profiles[3] = symProfiles[1];
+					profiles[2] = dsetss.get(1);
+					profiles[3] = dsetss.get(0);
+					areas[2] = dsetss.get(3);
+					areas[3] = dsetss.get(2);
+				}
+			}
+		}
+		if (aver) {
+			for (int i = 0; i < profiles.length; i++) {
+				if (profiles[i] != null && areas[i] != null) {
+					profiles[i] = Maths.dividez(profiles[i], areas[i]);
 				}
 			}
 		}
@@ -510,16 +511,17 @@ public class ROIProfile {
 		if (symmetry == SectorROI.FULL) {
 			MapToPolarAndIntegrate pmapfint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[0]
 					+ 2 * Math.PI, dpp, false);
-			if (mask != null)
+			if (mask != null) {
 				pmapfint.setMask(mask);
+			}
 			pmapfint.setClip(clip);
 			pmapfint.setInterpolate(!fast);
 			pmapfint.setDoRadial(doRadial);
 			pmapfint.setDoAzimuthal(doAzimuthal);
 			List<AbstractDataset> dsetsfa = pmapfint.area(shape);
-			if (dsetsfa == null)
+			if (dsetsfa == null) {
 				return null;
-
+			}
 			profiles[0] = dsetsfa.get(1);
 			profiles[1] = dsetsfa.get(0);
 			return profiles;
@@ -527,44 +529,43 @@ public class ROIProfile {
 
 		MapToPolarAndIntegrate pmapint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[1],
 				dpp, false);
-		if (mask != null)
+		if (mask != null) {
 			pmapint.setMask(mask);
+		}
 		pmapint.setClip(clip);
 		pmapint.setInterpolate(!fast);
 		pmapint.setDoRadial(doRadial);
 		pmapint.setDoAzimuthal(doAzimuthal);
 		List<AbstractDataset> dsetsa = pmapint.area(shape);
-		if (dsetsa == null)
+		if (dsetsa == null) {
 			return null;
-
+		}
 		profiles[0] = dsetsa.get(1);
 		profiles[1] = dsetsa.get(0);
 
 		if (symmetry != SectorROI.NONE) {
 			double[] nang = sroi.getSymmetryAngles();
 
-			AbstractDataset[] symProfiles = new AbstractDataset[] { null, null };
 			MapToPolarAndIntegrate pmapsint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], nang[0], rad[1],
 					nang[1], dpp, false);
-			if (mask != null)
+			if (mask != null) {
 				pmapsint.setMask(mask);
+			}
 			pmapsint.setClip(clip);
 			pmapsint.setInterpolate(!fast);
 			pmapsint.setDoRadial(doRadial);
 			pmapsint.setDoAzimuthal(doAzimuthal);
 
 			List<AbstractDataset> dsetssa = pmapsint.area(shape);
-			if (dsetssa == null)
+			if (dsetssa == null) {
 				return null;
-
-			symProfiles[0] = dsetssa.get(1);
-			symProfiles[1] = dsetssa.get(0);
+			}
 			if (sroi.isCombineSymmetry()) {
-				profiles[0] = Maths.add(profiles[0], symProfiles[0]);
-				profiles[1] = Maths.add(profiles[1], symProfiles[1]);
+				profiles[0] = Maths.add(profiles[0], dsetssa.get(1));
+				profiles[1] = Maths.add(profiles[1], dsetssa.get(0));
 			} else {
-				profiles[2] = symProfiles[0];
-				profiles[3] = symProfiles[1];
+				profiles[2] = dsetssa.get(1);
+				profiles[3] = dsetssa.get(0);
 			}
 		}
 		return profiles;

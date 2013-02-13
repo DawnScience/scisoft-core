@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
@@ -36,165 +35,190 @@ import Jama.Matrix;
 import Jama.SingularValueDecomposition;
 
 /**
+ * This function returns the coordinates (interleaved) for the points specified by the
+ * geometric parameters and an array of angles
+ */
+class CircleCoordinatesFunction implements IConicSectionFitFunction {
+	private static final int PARAMETERS = CircleFitter.PARAMETERS;
+	private AbstractDataset X;
+	private AbstractDataset Y;
+	private DoubleDataset v;
+	private double[][] j;
+	private int n; // number of points
+	private int m; // number of equations
+	private double[] ca;
+	private double[] sa;
+
+	public CircleCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
+		setPoints(x, y);
+	}
+
+	@Override
+	public void setPoints(AbstractDataset x, AbstractDataset y) {
+		X = x;
+		Y = y;
+		n = X.getSize();
+		m = 2*n;
+		v = new DoubleDataset(m);
+		j = new double[m][PARAMETERS+n];
+		for (int i = 0; i < m; i++) {
+			j[i][1] = 1;
+			i++;
+			j[i][2] = 1;
+		}
+		ca = new double[n];
+		sa = new double[n];
+	}
+
+	@Override
+	public double[] getTarget() {
+		double[] target = new double[m];
+		final IndexIterator itx = X.getIterator();
+		final IndexIterator ity = Y.getIterator();
+		int i = 0;
+		while (itx.hasNext() && ity.hasNext()) {
+			target[i++] = X.getElementDoubleAbs(itx.index);
+			target[i++] = Y.getElementDoubleAbs(ity.index);
+		}
+		return target;
+	}
+
+	@Override
+	public double[] getWeight() {
+		double[] weight = new double[m];
+		Arrays.fill(weight, 1.0);
+		return weight;
+	}
+
+	@Override
+	public double[] calcAllInitValues(double[] initParameters) {
+		double[] init = new double[n+PARAMETERS];
+		for (int i = 0; i < initParameters.length; i++) {
+			init[i] = initParameters[i];
+		}
+		final double x = initParameters[1];
+		final double y = initParameters[2];
+
+		// work out the angle values for the closest points on circle
+		final IndexIterator itx = X.getIterator();
+		final IndexIterator ity = Y.getIterator();
+		int i = PARAMETERS;
+		while (itx.hasNext() && ity.hasNext()) {
+			final double Xc = X.getElementDoubleAbs(itx.index) - x;
+			final double Yc = Y.getElementDoubleAbs(ity.index) - y;
+
+			init[i++] = Math.atan2(Yc, Xc);
+		}
+		return init;
+	}
+
+	@Override
+	public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+		final double[] values = v.getData();
+		final double r = p[0];
+		final double x = p[1];
+		final double y = p[2];
+
+		for (int i = 0; i < n; i++) {
+			final double t = p[i+PARAMETERS];
+			final double cost = Math.cos(t);
+			final double sint = Math.sin(t);
+			ca[i] = cost;
+			sa[i] = sint;
+			final int ti = 2*i;
+			values[ti] = x + r*cost;
+			values[ti+1] = y + r*sint;
+		}
+
+		return values;
+	}
+
+	@Override
+	public double[] calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+		double[] p = calcAllInitValues(parameters);
+		
+		final double[] values = v.getData();
+		final double r = p[0];
+		final double x = p[1];
+		final double y = p[2];
+
+		for (int i = 0; i < n; i++) {
+			final double t = p[i+PARAMETERS];
+			final double cost = Math.cos(t);
+			final double sint = Math.sin(t);
+			double px = x + r*cost - X.getElementDoubleAbs(i);
+			double py = y + r*sint - Y.getElementDoubleAbs(i);
+			values[i] = px*px + py*py;
+		}
+
+		return values;
+	}
+
+	private void calculateJacobian(double[] p) {
+		final double r = p[0];
+
+		for (int i = 0; i < n; i++) {
+			final double ct = ca[i];
+			final double st = sa[i];
+
+			final int ti = 2*i;
+			final int tj = ti + 1;
+			j[ti][0] = ct;
+			j[ti][PARAMETERS+i] = - r*st;
+
+			j[tj][0] = st;
+			j[tj][PARAMETERS+i] = r*ct;
+		}
+	}
+
+	@Override
+	public MultivariateMatrixFunction jacobian() {
+		return new MultivariateMatrixFunction() {
+			@Override
+			public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+				calculateJacobian(p);
+				return j;
+			}
+		};
+	}
+}
+
+/**
  * Fit a circle whose geometric parameters are
  *  radius, centre coordinates
  */
-public class CircleFitter {
+public class CircleFitter implements IConicSectionFitter {
 	/**
 	 * Setup the logging facilities
 	 */
 	private static transient final Logger logger = LoggerFactory.getLogger(CircleFitter.class);
 
 	private double[] parameters;
-	private final static int PARAMETERS = 3;
 
-	/**
-	 * This function returns the coordinates (interleaved) for the points specified by the
-	 * geometric parameters and an array of angles
-	 */
-	class CircleCoordinatesFunction implements DifferentiableMultivariateVectorialFunction {
-		private AbstractDataset X;
-		private AbstractDataset Y;
-		private DoubleDataset v;
-		private double[][] j;
-		private int n; // number of points
-		private int m; // number of equations
-		private double[] ca;
-		private double[] sa;
+	private IConicSectionFitFunction fitFunction;
 
-		public CircleCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
-			setPoints(x, y);
-		}
-
-		/**
-		 * Set points used in fit
-		 * @param x
-		 * @param y
-		 */
-		public void setPoints(AbstractDataset x, AbstractDataset y) {
-			X = x;
-			Y = y;
-			n = X.getSize();
-			m = 2*n;
-			v = new DoubleDataset(m);
-			j = new double[m][PARAMETERS+n];
-			for (int i = 0; i < m; i++) {
-				j[i][1] = 1;
-				i++;
-				j[i][2] = 1;
-			}
-			ca = new double[n];
-			sa = new double[n];
-		}
-
-		/**
-		 * @return array of interleaved coordinates
-		 */
-		public double[] getTarget() {
-			double[] target = new double[m];
-			final IndexIterator itx = X.getIterator();
-			final IndexIterator ity = Y.getIterator();
-			int i = 0;
-			while (itx.hasNext() && ity.hasNext()) {
-				target[i++] = X.getElementDoubleAbs(itx.index);
-				target[i++] = Y.getElementDoubleAbs(ity.index);
-			}
-			return target;
-		}
-
-		/**
-		 * @return default weights of 1
-		 */
-		public double[] getWeight() {
-			double[] weight = new double[m];
-			Arrays.fill(weight, 1.0);
-			return weight;
-		}
-
-		/**
-		 * Calculate angles of closest points on ellipse to targets
-		 * @param initParameters geometric parameters
-		 * @return array of all initial parameters
-		 */
-		public double[] calcAllInitValues(double[] initParameters) {
-			double[] init = new double[n+PARAMETERS];
-			for (int i = 0; i < initParameters.length; i++) {
-				init[i] = initParameters[i];
-			}
-			final double x = initParameters[1];
-			final double y = initParameters[2];
-
-			// work out the angle values for the closest points on circle
-			final IndexIterator itx = X.getIterator();
-			final IndexIterator ity = Y.getIterator();
-			int i = PARAMETERS;
-			while (itx.hasNext() && ity.hasNext()) {
-				final double Xc = X.getElementDoubleAbs(itx.index) - x;
-				final double Yc = Y.getElementDoubleAbs(ity.index) - y;
-
-				init[i++] = Math.atan2(Yc, Xc);
-			}
-			return init;
-		}
-
-		@Override
-		public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
-			final double[] values = v.getData();
-			final double r = p[0];
-			final double x = p[1];
-			final double y = p[2];
-
-			for (int i = 0; i < n; i++) {
-				final double t = p[i+PARAMETERS];
-				final double cost = Math.cos(t);
-				final double sint = Math.sin(t);
-				ca[i] = cost;
-				sa[i] = sint;
-				final int ti = 2*i;
-				values[ti] = x + r*cost;
-				values[ti+1] = y + r*sint;
-			}
-
-			return values;
-		}
-
-		private void calculateJacobian(double[] p) {
-			final double r = p[0];
-
-			for (int i = 0; i < n; i++) {
-				final double ct = ca[i];
-				final double st = sa[i];
-
-				final int ti = 2*i;
-				final int tj = ti + 1;
-				j[ti][0] = ct;
-				j[ti][PARAMETERS+i] = - r*st;
-
-				j[tj][0] = st;
-				j[tj][PARAMETERS+i] = r*ct;
-			}
-		}
-
-		@Override
-		public MultivariateMatrixFunction jacobian() {
-			return new MultivariateMatrixFunction() {
-				@Override
-				public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
-					calculateJacobian(p);
-					return j;
-				}
-			};
-		}
-	}
+	final static int PARAMETERS = 3;
 
 	public CircleFitter() {
 		parameters = new double[PARAMETERS];
 	}
 
+	@Override
 	public double[] getParameters() {
 		return parameters;
 	}
 
+	@Override
+	public IConicSectionFitFunction getFitFunction(AbstractDataset x, AbstractDataset y) {
+		if (fitFunction == null) {
+			if (x == null || y == null)
+				throw new IllegalArgumentException("Fitter uninitialized so coordinate datasets are needed");
+			fitFunction = new CircleCoordinatesFunction(x, y);
+		} else if (x != null && y != null) {
+			fitFunction.setPoints(x, y);
+		}
+		return fitFunction;
+	}
 	/**
 	 * Fit points given by x, y datasets to a circle. If no initial parameters are given, then
 	 * an algebraic fit is performed then a non-linear least squares fitting routine is used to
@@ -203,6 +227,7 @@ public class CircleFitter {
 	 * @param y
 	 * @param init parameters (can be null)
 	 */
+	@Override
 	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
 
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
@@ -219,7 +244,7 @@ public class CircleFitter {
 				parameters[i] = init[i];
 			return;
 		}
-		CircleCoordinatesFunction f = new CircleCoordinatesFunction(x, y);
+		IConicSectionFitFunction f = getFitFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {
@@ -240,10 +265,11 @@ public class CircleFitter {
 	}
 
 	/**
-	 * Fit points given by x, y datasets to an ellipse. 
+	 * Fit points given by x, y datasets to a circle. 
 	 * @param x
 	 * @param y
 	 */
+	@Override
 	public void algebraicFit(AbstractDataset x, AbstractDataset y) {
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");

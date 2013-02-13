@@ -693,6 +693,47 @@ public class Comparisons {
 	}
 
 	/**
+	 * 
+	 * @param a
+	 * @param lo lower bound
+	 * @param hi upper bound
+	 * @return dataset where item is true if l <= a <= h
+	 */
+	public static BooleanDataset withinRange(AbstractDataset a, double lo, double hi) {
+		if (lo >= hi) {
+			throw new IllegalArgumentException("Lower bound must be less than upper bound");
+		}
+
+		BooleanDataset r = null;
+
+		r = new BooleanDataset(a.shape);
+
+		final IndexIterator ita = a.getIterator();
+
+		final int as = a.getElementsPerItem();
+
+		int i = 0;
+		if (as == 1) {
+			while (ita.hasNext()) {
+				double x = a.getElementDoubleAbs(ita.index);
+				r.setAbs(i++, x >= lo && x <= hi);
+			}
+		} else {
+			boolean br = true;
+			while (ita.hasNext()) {
+				for (int j = 0; br && j < as; j++) {
+					double x = a.getElementDoubleAbs(ita.index + j);
+					br &= x >= lo && x <= hi;
+					if (!br) // shortcut
+						break;
+				}
+				r.setAbs(i++, br);
+			}
+		}
+		return r;
+	}
+
+	/**
 	 * @param a
 	 * @return true if all elements are true
 	 */
@@ -1382,4 +1423,5 @@ public class Comparisons {
 
 		return r;
 	}
+	
 }

@@ -28,7 +28,7 @@ public class DiffractionMetadata extends ExtendedMetadata implements IDiffractio
 	private DiffractionCrystalEnvironment env, oEnv;
 
 	public DiffractionMetadata(String filename, DetectorProperties props, DiffractionCrystalEnvironment env) {
-		super(new File(filename));
+		super((filename != null) ? new File(filename) : null);
 		setDiffractionMetadata(props, env);
 	}
 

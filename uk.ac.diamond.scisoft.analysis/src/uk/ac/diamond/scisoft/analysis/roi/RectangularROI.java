@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
  * Class for rectangular region of interest
  */
 public class RectangularROI extends ROIBase implements Serializable {
-	private double[] len; // width and height
+	protected double[] len; // width and height
 	private double ang;   // angle in radians
 	private boolean clippingCompensation; // compensate for clipping
 	private double cang, sang; // cosine and sine of angle

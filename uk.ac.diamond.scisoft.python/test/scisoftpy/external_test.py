@@ -87,7 +87,7 @@ class Test(unittest.TestCase):
         print dnp.external.get_python()
 
     def testExternal(self):
-        from external_functions import fun, funadd, fundec
+        from external_functions import fun, funadd, fundec, funexception
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
         print a, self.equals(efun(), a)
@@ -112,8 +112,12 @@ class Test(unittest.TestCase):
         efun = dnp.external.create_function("fundec", "external_functions", dls_module=True)
         print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
 
+    def testException(self):
+#        from external_functions import funexception
+#        funexception()
         efunexception = dnp.external.create_function("funexception", "external_functions", dls_module=True)
         self.assertRaises(ValueError, efunexception)
+#        efunexception()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

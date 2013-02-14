@@ -151,7 +151,7 @@ def wrapper(func):
         except Exception:
             import traceback
             ex_type, ex_value, tb = sys.exc_info()
-            error = ex_type, ex_value, ''.join(traceback.format_tb(tb))
+            error = ex_type, ex_value, traceback.extract_tb(tb)[1:]
             ret = None
         else:
             error = None
@@ -207,7 +207,7 @@ def pyenv(exe=None, path=None, ldpath=None):
 
 def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     env = dict(_env)
-    env.pop('PYTHONPATH')
+    env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen(['bash', '-l'], shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
     p.stdin.write('source %s\n' % module_init)
@@ -224,7 +224,7 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
 
 def get_python():
     env = dict(_env)
-    env.pop('PYTHONPATH')
+    env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
     p.stdin.write('import sys\n')
@@ -366,7 +366,9 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                         try:
                             ret, err = load_args(d)
                             if err:
-                                raise err
+                                import traceback
+                                print >> sys.stderr, '\n'.join(traceback.format_list(err[2]))
+                                raise err[1]
                             return ret
                         finally:
                             shutil.rmtree(d)

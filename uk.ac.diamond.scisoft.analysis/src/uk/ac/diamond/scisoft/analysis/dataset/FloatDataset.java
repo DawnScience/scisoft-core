@@ -165,7 +165,7 @@ public class FloatDataset extends AbstractDataset {
 			return false;
 		}
 
-		if (getRank() == 0) // already true for scalar dataset
+		if (getRank() == 0) // already true for zero-rank dataset
 			return true;
 
 		FloatDataset other = (FloatDataset) obj;

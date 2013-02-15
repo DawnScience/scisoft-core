@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This interface defines the lazy parts of a dataset. A dataset is a N-dimensional array of items
- * where N can be zero to represent a "scalar" or single-valued dataset. A scalar dataset has zero
+ * where N can be zero to represent a zero-rank or single-valued dataset. A scalar dataset has zero
  * rank and an empty array for shape.
  */
 public interface ILazyDataset extends Serializable, IMetadataProvider {
@@ -57,7 +57,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	public int getSize();
 
 	/**
-	 * The shape (or array of lengths for each dimension) of the dataset can be empty for "scalar"
+	 * The shape (or array of lengths for each dimension) of the dataset can be empty for zero-rank
 	 * datasets
 	 * 
 	 * @return Copy of shape of dataset
@@ -73,7 +73,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	public void setShape(final int... shape);
 
 	/**
-	 * The rank (or number of dimensions/indices) of the dataset can be zero for a "scalar"
+	 * The rank (or number of dimensions/indices) of the dataset can be zero for a zero-rank
 	 * (single-valued) dataset 
 	 * @return rank
 	 */

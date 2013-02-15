@@ -19,9 +19,9 @@
 
 import os
 if os.name == 'java':
-    from jython.jycore import ndarray
+    from jython.jycore import ndarray, ndgeneric, scalarToPython
 else:
-    from python.pycore import ndarray
+    from python.pycore import ndarray, ndgeneric, scalarToPython
 
 _env = os.environ
 
@@ -65,7 +65,7 @@ def save_args(arg, dir=None): #@ReservedAssignment
 
     return d
 
-from io import save as _asave, load as _aload
+from scisoftpy.io import save as _asave, load as _aload
 
 def _pickle(p, arg, n):
     '''Create structure of all data recursively and replace objects with name.
@@ -92,6 +92,8 @@ def _pickle(p, arg, n):
         return n+1, name
     else:
         name = "p%03d.pkl" % n
+        if isinstance(arg, ndgeneric):
+            arg = scalarToPython(arg)
         try:
             f = open(_path.join(p, name), 'w')
             _psave(arg, f)
@@ -151,7 +153,7 @@ def wrapper(func):
         except Exception:
             import traceback
             ex_type, ex_value, tb = sys.exc_info()
-            error = ex_type, ex_value, ''.join(traceback.format_tb(tb))
+            error = ex_type, ex_value, traceback.extract_tb(tb)[1:]
             ret = None
         else:
             error = None
@@ -200,14 +202,38 @@ def pyenv(exe=None, path=None, ldpath=None):
 
     # add current package
     h, _t = _path.split(__file__)
-    pkg, _t = _path.split(h)
+    if '__pyclasspath__' in h:
+        _h, t = _path.split(h)
+        cp = [ p for p in _env['CLASSPATH'].split(os.pathsep) if not p.endswith('jar') ]
+        for p in cp:
+            f = _path.join(p, t)
+            if _path.exists(f):
+                pkg = f
+                break
+        else:
+            raise RuntimeError, 'Cannot find ScisoftPy in PYTHONPATH'
+    else:
+        pkg, _t = _path.split(h)
     pypath.insert(0, pkg)
 
     return pyexe, pypath, pyldpath
 
+
+_dls_modules = dict() # cache for modules
+
 def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
+    if module in _dls_modules:
+        return _dls_modules[module]
+
+    if sys.platform == 'win32':
+        raise ValueError, 'Cannot use dls_module argument on Windows'
+    elif sys.platform == 'darwin':
+        raise ValueError, 'Cannot use dls_module argument on Mac OS X'
+    elif not sys.platform.startswith('linux') and not sys.platform.startswith('java'):
+        print 'Warning dls_module argument may not work'
+
     env = dict(_env)
-    env.pop('PYTHONPATH')
+    env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen(['bash', '-l'], shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
     p.stdin.write('source %s\n' % module_init)
@@ -220,11 +246,12 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     exe, path, ldpath = parse_for_env(p.stdout)
     if exe is None:
         raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+    _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
 def get_python():
     env = dict(_env)
-    env.pop('PYTHONPATH')
+    env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
     p.stdin.write('import sys\n')
@@ -232,11 +259,12 @@ def get_python():
     p.stdin.write('print "PATH|%s" % "|".join(sys.path)\n')
     p.stdin.write('import os\n')
     p.stdin.write('if sys.platform == "win32":\n')
-    p.stdin.write('    lp = os.environ["PATH"].split(";")\n')
+    p.stdin.write('    key = "PATH"\n')
     p.stdin.write('elif sys.platform == "darwin":\n')
-    p.stdin.write('    lp = os.environ["DYLD_LIBRARY_PATH"].split(":")\n')
+    p.stdin.write('    key = "DYLD_LIBRARY_PATH"\n')
     p.stdin.write('else:\n')
-    p.stdin.write('    lp = os.environ["LD_LIBRARY_PATH"].split(":")\n')
+    p.stdin.write('    key = "LD_LIBRARY_PATH"\n')
+    p.stdin.write('lp = os.environ[key].split(os.pathsep)\n')
     p.stdin.write('print "LDPATH|%s" % "|".join(lp)\n')
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout, sep='|')
@@ -311,12 +339,6 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
 
     ldpath = None
     if dls_module:
-        if sys.platform == 'win32':
-            raise ValueError, 'Cannot use dls_module argument on Windows'
-        elif sys.platform == 'darwin':
-            raise ValueError, 'Cannot use dls_module argument on Mac OS X'
-        elif not sys.platform.startswith('linux'):
-            print 'Warning dls_module argument may not work'
         if isinstance(dls_module, str):
             exe, path, ldpath = get_dls_module(dls_module)
         else:
@@ -335,9 +357,15 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     if p is None:
         raise ValueError, 'Cannot find module in path: try specifying it in extra_path'
     env = dict(_env)
-    env['PYTHONPATH'] = ':'.join(path)
+    env['PYTHONPATH'] = os.pathsep.join(path)
     if ldpath:
-        env['LD_LIBRARY_PATH'] = ':'.join(ldpath)
+        if sys.platform == 'win32':
+            key = 'PATH'
+        elif sys.platform == 'darwin':
+            key = 'DYLD_LIBRARY_PATH'
+        else:
+            key = 'LD_LIBRARY_PATH'
+        env[key] = os.pathsep.join(ldpath)
 
     def func(*arg, **kwarg):
         import shutil
@@ -366,7 +394,9 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                         try:
                             ret, err = load_args(d)
                             if err:
-                                raise err
+                                import traceback
+                                print >> sys.stderr, '\n'.join(traceback.format_list(err[2]))
+                                raise err[1]
                             return ret
                         finally:
                             shutil.rmtree(d)

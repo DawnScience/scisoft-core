@@ -53,6 +53,11 @@ import types as _types
 
 import java.lang.ArrayIndexOutOfBoundsException as _jarrayindex_exception #@UnresolvedImport
 
+class ndgeneric(object):
+    pass # there is no array scalars at the moment
+
+generic = ndgeneric
+
 class _dtype(object):
     '''
     Dataset type has two properties:
@@ -180,6 +185,11 @@ def asIterable(items):
 def toList(listdata):
     '''Convert a list or tuple to list of datasets'''
     return [ d for d in asIterable(listdata) ]
+
+def scalarToPython(ascalar):
+    '''Convert an array scalar to a python type
+    '''
+    return ascalar # there is no array scalars at the moment
 
 def fromDS(data):
     '''Convert from a DataSet'''

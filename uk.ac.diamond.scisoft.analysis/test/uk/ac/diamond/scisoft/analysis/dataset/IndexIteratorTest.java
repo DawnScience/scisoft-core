@@ -51,7 +51,7 @@ public class IndexIteratorTest {
 
 		System.out.println("Size: " + size);
 
-		// 0D or scalar
+		// 0D
 		ta = AbstractDataset.zeros(new int[] {}, type);
 		testDataset(ta);
 

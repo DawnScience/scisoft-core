@@ -239,7 +239,7 @@ public abstract class AbstractDataset implements IDataset {
 			return false;
 		}
 		if (!getClass().equals(obj.getClass())) {
-			if (getRank() == 0) // for "scalar" datasets
+			if (getRank() == 0) // for zero-rank datasets
 				return obj.equals(getObject());
 			return false;
 		}
@@ -1878,7 +1878,7 @@ public abstract class AbstractDataset implements IDataset {
 
 		int[] newDims = new int[rank - unitDims];
 		if (unitDims == rank)
-			return newDims; // scalar dataset
+			return newDims; // zero-rank dataset
 
 		if (onlyFromEnds) {
 			rank = newDims.length;

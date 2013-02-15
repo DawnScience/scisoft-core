@@ -246,7 +246,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 			return false;
 		}
 
-		if (getRank() == 0) // already true for scalar dataset
+		if (getRank() == 0) // already true for zero-rank dataset
 			return true;
 
 		CompoundByteDataset other = (CompoundByteDataset) obj;

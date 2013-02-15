@@ -20,7 +20,7 @@
 import numpy as _np #@UnresolvedImport
 
 ndarray = _np.ndarray
-ndgeneric = _np.generic
+generic = ndgeneric = _np.generic
 bool = _np.bool #@ReservedAssignment
 int8 = _np.int8
 _uint8 = _np.uint8 # used for PIL saving
@@ -70,6 +70,20 @@ def toList(listdata):
     '''Convert a list or tuple to list of datasets'''
     return [ d for d in asIterable(listdata) ]
 
+def scalarToPython(ascalar):
+    '''Convert an array scalar to a python type
+    '''
+    if not isinstance(ascalar, _np.generic):
+        raise ValueError, 'Not an array scalar'
+    if isinstance(ascalar, _np.bool_):
+        return True if ascalar else False
+    if isinstance(ascalar, _np.integer):
+        return ascalar.__int__()
+    if isinstance(ascalar, _np.floating):
+        return ascalar.__float__()
+    if isinstance(ascalar, _np.complexfloating):
+        return ascalar.__complex__()
+    raise ValueError, 'Array scalar type not supported'
 
 asarray = _np.asarray
 

@@ -87,7 +87,7 @@ class Test(unittest.TestCase):
         print dnp.external.get_python()
 
     def testExternal(self):
-        from external_functions import fun, funadd, fundec
+        from external_functions import fun, funadd, fundec, funexception
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
         print a, self.equals(efun(), a)
@@ -112,8 +112,25 @@ class Test(unittest.TestCase):
         efun = dnp.external.create_function("fundec", "external_functions", dls_module=True)
         print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
 
+    def testException(self):
+#        from external_functions import funexception
+#        funexception()
         efunexception = dnp.external.create_function("funexception", "external_functions", dls_module=True)
         self.assertRaises(ValueError, efunexception)
+#        efunexception()
+
+    def testSciPy(self):
+        efun = dnp.external.create_function("funscipy", "external_functions", dls_module="scipy/0.10.0")
+        print '0.10.0',
+        self.assertEquals(efun(), '0.10.0')
+        print 'passed'
+
+    def testArrayScalar(self):
+        efun = dnp.external.create_function("funarrayscalar", "external_functions", dls_module=True)
+        a = 2+3j, 1., 123, True
+        print a,
+        self.assertEquals(efun(), a)
+        print 'passed'
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

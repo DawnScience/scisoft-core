@@ -203,7 +203,7 @@ public class LinearAlgebra {
 
 	/**
 	 * Calculate the dot product of two datasets. When <b>b</b> is a 1D dataset, the sum product over
-	 * the last axis of <b>a</b> and <b>b</b> is returned. Where <b>a</b> is also a 1D dataset, a "scalar" dataset
+	 * the last axis of <b>a</b> and <b>b</b> is returned. Where <b>a</b> is also a 1D dataset, a zero-rank dataset
 	 * is returned. If <b>b</b> is 2D or higher, its second-to-last axis is used
 	 * @param a
 	 * @param b

@@ -1292,7 +1292,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 			dataset.setTypeName(getTypeName(type));
 
 			if (rank == 0) {
-				// a scalar data point
+				// a single data point
 				rank = 1;
 				dims = new long[1];
 				dims[0] = 1;
@@ -1660,7 +1660,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					final int ldtype = dtype >= 0 ? dtype : getDtype(type.getDatatypeClass(), type.getDatatypeSize());
 
 					if (rank == 0) {
-						// a scalar data point
+						// a single data point
 						rank = 1;
 						dims = new long[1];
 						dims[0] = 1;
@@ -1946,7 +1946,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 					HDF5Dataset d = (HDF5Dataset) l.getDestination();
 					ILazyDataset dataset = d.getDataset();
 					lMap.put(l.getFullName(), dataset);
-					if (aMap != null && dataset instanceof AbstractDataset) { // scalar dataset
+					if (aMap != null && dataset instanceof AbstractDataset) { // zero-rank dataset
 						AbstractDataset a = (AbstractDataset) dataset;
 						aMap.put(l.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
 					}

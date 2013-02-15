@@ -119,6 +119,19 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, efunexception)
 #        efunexception()
 
+    def testSciPy(self):
+        efun = dnp.external.create_function("funscipy", "external_functions", dls_module="scipy/0.10.0")
+        print '0.10.0',
+        self.assertEquals(efun(), '0.10.0')
+        print 'passed'
+
+    def testArrayScalar(self):
+        efun = dnp.external.create_function("funarrayscalar", "external_functions", dls_module=True)
+        a = 2+3j, 1., 123, True
+        print a,
+        self.assertEquals(efun(), a)
+        print 'passed'
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

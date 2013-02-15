@@ -1036,7 +1036,7 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
-	public void testScalarDatasets() {
+	public void testZeroRankDatasets() {
 		AbstractDataset a;
 		a = DoubleDataset.ones();
 		assertEquals("Rank", 0, a.getRank());

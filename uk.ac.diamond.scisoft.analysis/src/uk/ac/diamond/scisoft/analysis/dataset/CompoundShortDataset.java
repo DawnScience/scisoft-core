@@ -246,7 +246,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 			return false;
 		}
 
-		if (getRank() == 0) // already true for scalar dataset
+		if (getRank() == 0) // already true for zero-rank dataset
 			return true;
 
 		CompoundShortDataset other = (CompoundShortDataset) obj;

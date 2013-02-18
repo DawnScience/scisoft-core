@@ -2212,7 +2212,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexGreaterThanorEqualTo(final AbstractDataset a, final double n) {
+	public static int findIndexGreaterThanOrEqualTo(final AbstractDataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) >= n)
@@ -2244,7 +2244,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexLessThanorEqualTo(final AbstractDataset a, final double n) {
+	public static int findIndexLessThanOrEqualTo(final AbstractDataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) <= n)

@@ -2191,6 +2191,22 @@ public class DatasetUtils {
 	}
 
 	/**
+	 * Find absolute index of first value in dataset that is equal to given number
+	 * @param a
+	 * @param n
+	 * @return absolute index (if greater than a.getSize() then no value found)
+	 */
+	public static int findIndexEqualTo(final AbstractDataset a, final double n) {
+		IndexIterator iter = a.getIterator();
+		while (iter.hasNext()) {
+			if (a.getElementDoubleAbs(iter.index) == n)
+				break;
+		}
+
+		return iter.index;
+	}
+
+	/**
 	 * Find absolute index of first value in dataset that is greater than given number
 	 * @param a
 	 * @param n

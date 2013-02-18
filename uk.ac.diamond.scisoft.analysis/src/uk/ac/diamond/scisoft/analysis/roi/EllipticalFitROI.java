@@ -92,10 +92,17 @@ public class EllipticalFitROI extends EllipticalROI {
 		}
 		final double[] p = fitter.getParameters();
 
-		setSemiAxis(0, p[0]);
-		setSemiAxis(1, p[1]);
-		setAngle(p[2]);
-		setPoint(p[3], p[4]);
+		if (p.length < 5) {
+			setSemiAxis(0, p[0]);
+			setSemiAxis(1, p[0]);
+			setAngle(0);
+			setPoint(p[1], p[2]);
+		} else {
+			setSemiAxis(0, p[0]);
+			setSemiAxis(1, p[1]);
+			setAngle(p[2]);
+			setPoint(p[3], p[4]);
+		}
 	}
 
 	/**

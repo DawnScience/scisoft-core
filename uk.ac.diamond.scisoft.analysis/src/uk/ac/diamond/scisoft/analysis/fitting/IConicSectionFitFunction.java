@@ -44,17 +44,10 @@ public interface IConicSectionFitFunction extends DifferentiableMultivariateVect
 	public double[] getWeight();
 
 	/**
-	 * Calculate angles of closest points on conic section to targets
-	 * @param initParameters geometric parameters
-	 * @return array of all initial parameters
-	 */
-	public double[] calcAllInitValues(double[] initParameters);
-
-	/**
 	 * Calculate distance squared to nearest point of conic section
 	 * @param parameters
 	 * @return squared distances
 	 * @throws IllegalArgumentException
 	 */
-	public double[] calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
+	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
 }

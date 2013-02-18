@@ -154,14 +154,18 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction {
 		return weight;
 	}
 
-	@Override
-	public double[] calcAllInitValues(double[] initParameters) {
+	/**
+	 * Calculate angles of closest points on ellipse to targets
+	 * @param initParameters geometric parameters
+	 * @return array of all initial parameters
+	 */
+	double[] calcAllInitValues(double[] initParameters) {
 		double[] init = new double[n+PARAMETERS];
 		for (int i = 0; i < initParameters.length; i++) {
 			init[i] = initParameters[i];
 		}
-		final double a = Math.sqrt(initParameters[0]);
-		final double b = Math.sqrt(initParameters[1]);
+		final double a = initParameters[0];
+		final double b = initParameters[1];
 		final double alpha = initParameters[2];
 		final double x = initParameters[3];
 		final double y = initParameters[4];
@@ -202,8 +206,8 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction {
 	@Override
 	public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
 		final double[] values = v.getData();
-		final double a = p[0]*p[0];
-		final double b = p[1]*p[1];
+		final double a = p[0];
+		final double b = p[1];
 		final double cosa = Math.cos(p[2]);
 		final double sina = Math.sin(p[2]);
 		final double x = p[3];
@@ -223,12 +227,13 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction {
 	}
 
 	@Override
-	public double[] calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
-		double[] p = calcAllInitValues(parameters);
-		
+	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+		final double[] p = calcAllInitValues(parameters);
+
+		final DoubleDataset v = new DoubleDataset(n);
 		final double[] values = v.getData();
-		final double a = p[0]*p[0];
-		final double b = p[1]*p[1];
+		final double a = p[0];
+		final double b = p[1];
 		final double cosa = Math.cos(p[2]);
 		final double sina = Math.sin(p[2]);
 		final double x = p[3];
@@ -243,7 +248,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction {
 			values[i] = px*px + py*py;
 		}
 
-		return values;
+		return v;
 	}
 
 	private void calculateJacobian(double[] p) {
@@ -300,7 +305,7 @@ public class EllipseFitter implements IConicSectionFitter {
 
 	private double[] parameters;
 
-	private IConicSectionFitFunction fitFunction;
+	private EllipseCoordinatesFunction fitFunction;
 
 	final static int PARAMETERS = 5;
 
@@ -337,15 +342,15 @@ public class EllipseFitter implements IConicSectionFitter {
 		else if (init.length < PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
-		IConicSectionFitFunction f = getFitFunction(x, y);
+		EllipseCoordinatesFunction f = (EllipseCoordinatesFunction) getFitFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {
 			VectorialPointValuePair result = opt.optimize(f, f.getTarget(), f.getWeight(), f.calcAllInitValues(init));
 
 			double[] point = result.getPointRef(); 
-			parameters[0] = point[0]*point[0];
-			parameters[1] = point[1]*point[1];
+			parameters[0] = point[0];
+			parameters[1] = point[1];
 			for (int i = 2; i < PARAMETERS; i++)
 				parameters[i] = point[i];
 

@@ -105,7 +105,7 @@ public class EllipseFitterTest {
 		fitter.algebraicFit(x, y);
 		double[] result = fitter.getParameters();
 
-		double[] tols = new double[] {8e-2, 5e-2, 1e-1, 6, 2e-1};
+		double[] tols = new double[] {8e-2, 5e-2, 1e-1, 7, 2e-1};
 		for (int i = 0; i < original.length; i++) {
 			double err = Math.abs(original[i]*tols[i]);
 			Assert.assertEquals("Algebraic fit: " + i, original[i], result[i], err);

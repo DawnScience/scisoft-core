@@ -90,8 +90,12 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction {
 		return weight;
 	}
 
-	@Override
-	public double[] calcAllInitValues(double[] initParameters) {
+	/**
+	 * Calculate angles of closest points on circle to targets
+	 * @param initParameters geometric parameters
+	 * @return array of all initial parameters
+	 */
+	double[] calcAllInitValues(double[] initParameters) {
 		double[] init = new double[n+PARAMETERS];
 		for (int i = 0; i < initParameters.length; i++) {
 			init[i] = initParameters[i];
@@ -134,9 +138,10 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction {
 	}
 
 	@Override
-	public double[] calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
-		double[] p = calcAllInitValues(parameters);
-		
+	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+		final double[] p = calcAllInitValues(parameters);
+
+		final DoubleDataset v = new DoubleDataset(n);
 		final double[] values = v.getData();
 		final double r = p[0];
 		final double x = p[1];
@@ -151,7 +156,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction {
 			values[i] = px*px + py*py;
 		}
 
-		return values;
+		return v;
 	}
 
 	private void calculateJacobian(double[] p) {
@@ -195,7 +200,7 @@ public class CircleFitter implements IConicSectionFitter {
 
 	private double[] parameters;
 
-	private IConicSectionFitFunction fitFunction;
+	private CircleCoordinatesFunction fitFunction;
 
 	final static int PARAMETERS = 3;
 
@@ -244,7 +249,7 @@ public class CircleFitter implements IConicSectionFitter {
 				parameters[i] = init[i];
 			return;
 		}
-		IConicSectionFitFunction f = getFitFunction(x, y);
+		CircleCoordinatesFunction f = (CircleCoordinatesFunction) getFitFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {

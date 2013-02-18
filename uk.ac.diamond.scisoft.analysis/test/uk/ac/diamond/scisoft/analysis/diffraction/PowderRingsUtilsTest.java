@@ -64,9 +64,12 @@ public class PowderRingsUtilsTest {
 		}
 
 		CircularROI roi = new CircularROI(631, 1528.6, 1533.9);
-		PolylineROI points = PowderRingsUtils.findPOIsNearCircle(image, roi);
+		PolylineROI points = PowderRingsUtils.findPOIsNearCircle(image, null, roi);
 		System.err.println(points);
 		System.err.println(new CircularFitROI(points));
 		System.err.println(new EllipticalFitROI(points));
+
+		System.err.println(PowderRingsUtils.fitAndTrimOutliers(points, true));
+		System.err.println(PowderRingsUtils.fitAndTrimOutliers(points, false));
 	}
 }

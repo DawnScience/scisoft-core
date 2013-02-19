@@ -18,8 +18,11 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.util.Map;
 
-public interface IFunctionProvider {
+public interface IFunctionService {
 
 	public Map<String, AFunction> getFunctions(); 
 	
+	public void setFunctions(Map<String, AFunction> functions);
+
 }
+

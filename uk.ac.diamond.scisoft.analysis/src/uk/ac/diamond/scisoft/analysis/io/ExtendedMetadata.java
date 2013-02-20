@@ -105,9 +105,9 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	@Override
 	public IMetaData clone() {
 		ExtendedMetadata c = (ExtendedMetadata) super.clone();
-		if (filesize < 0) 
+		if (filesize < 0 && path != null) {
 			c.setFile(new File(path));
-
+		}
 		c.date = date;
 		return c;
 	}	

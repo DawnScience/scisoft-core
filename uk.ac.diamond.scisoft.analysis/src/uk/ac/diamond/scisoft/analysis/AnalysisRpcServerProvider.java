@@ -33,6 +33,9 @@ public class AnalysisRpcServerProvider extends ServerProvider {
 	private int port = 0;
 	private AnalysisRpcServer server = null;
 
+	public boolean isServerRunning(){
+		return server != null;
+	}
 	/**
 	 * Get Instance of provider
 	 * 
@@ -119,11 +122,15 @@ public class AnalysisRpcServerProvider extends ServerProvider {
 	public void setPort(int analysisRpcPort) throws IllegalStateException, IllegalArgumentException {
 		if (analysisRpcPort < 0)
 			throw new IllegalArgumentException("Port number must be >= 0");
-		if (server != null)
-			throw new IllegalStateException("Analysis Rpc Server Provider has already used the existing port, "
-					+ "setPort must be called before any handlers are added or requests are made");
-
-		port = analysisRpcPort;
+		if (server != null ){
+			if( analysisRpcPort != 0 && port != analysisRpcPort){
+				throw new IllegalStateException("Analysis Rpc Server Provider is already running using a different port, "
+						+ "setPort must be called before any handlers are added or requests are made");
+			}
+			//do nothing A value of 0 means use any port.
+		} else {
+			port = analysisRpcPort;
+		}
 	}
 
 	/**

@@ -481,6 +481,7 @@ public class DetectorProperties implements Serializable {
 	public void setOrientation(Matrix3d orientation) {
 		this.orientation = orientation;
 		calcNormal(true);
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));
 	}
 
 	/**

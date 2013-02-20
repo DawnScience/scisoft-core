@@ -31,7 +31,6 @@ public class DiffractionMetadataUtils {
 		oldDCE.setPhiRange(newDCE.getPhiRange());
 		oldDCE.setPhiStart(newDCE.getPhiStart());
 		oldDCE.setWavelength(newDCE.getWavelength());
-
 	}
 	
 	/**
@@ -51,9 +50,8 @@ public class DiffractionMetadataUtils {
 			oldDP.setPx(newDP.getPx());
 			oldDP.setPy(newDP.getPy());
 		} else {
-			throw new IllegalArgumentException("Incompatable metadata");
+			throw new IllegalArgumentException("Incompatable detector size in metadata: All parameters replaced except number of pixels in x and y");
 		}
-		
 	}
 	
 	/**
@@ -65,5 +63,4 @@ public class DiffractionMetadataUtils {
 		copyNewOverOld(newDM.getDiffractionCrystalEnvironment(), oldDM.getDiffractionCrystalEnvironment());
 		copyNewOverOld(newDM.getDetector2DProperties(), oldDM.getDetector2DProperties());
 	}
-
 }

@@ -213,11 +213,15 @@ public class DetectorProperties implements Serializable {
 		double pixelSizeX = 0.1024;
 		double pixelSizeY = 0.1024;
 		double distance = 200.00;
+		
+		// Create identity orientation
+		Matrix3d identityMatrix = new Matrix3d();
+		identityMatrix.setIdentity();
 
 		// Create the detector origin vector based on the above
 		Vector3d dOrigin = new Vector3d((widthInPixels - widthInPixels/2d) * pixelSizeX, (heightInPixels - heightInPixels/2d) * pixelSizeY, distance);
 
-		return new DetectorProperties(dOrigin, heightInPixels, widthInPixels, pixelSizeX, pixelSizeY, null);
+		return new DetectorProperties(dOrigin, heightInPixels, widthInPixels, pixelSizeX, pixelSizeY, identityMatrix);
 	}
 
 	@Override

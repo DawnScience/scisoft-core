@@ -74,6 +74,17 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	}
 
 	@Override
+	/**
+	 * @return a copy
+	 */
+	public PerimeterBoxROI copy() {
+		PerimeterBoxROI c = new PerimeterBoxROI();
+		c.spt = spt.clone();
+		c.plot = plot;
+		return c;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("Start %s Size %s Angle %g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
 	}

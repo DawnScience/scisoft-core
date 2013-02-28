@@ -29,8 +29,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.jscience.physics.amount.Amount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Since we cannot have eclipse preferences in this plugin, but

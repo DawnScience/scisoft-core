@@ -40,7 +40,7 @@ public class Point_dt {
 	/** returns the x-coordinate of this point. */
 	public double x() {
 		return x;
-	};
+	}
 
 	/**
 	 * Sets the x coordinate.
@@ -55,7 +55,7 @@ public class Point_dt {
 	/** returns the y-coordinate of this point. */
 	public double y() {
 		return y;
-	};
+	}
 
 	/**
 	 * Sets the y coordinate.
@@ -70,15 +70,15 @@ public class Point_dt {
 	/** returns the z-coordinate of this point. */
 	public double z() {
 		return z;
-	};
+	}
 
 	/**
 	 * Sets the z coordinate.
 	 * 
-	 * @param Z
+	 * @param z
 	 *            The new z coordinate.
 	 */
-	public void setZ(double Z) {
+	public void setZ(double z) {
 		this.z = z;
 	}
 
@@ -106,6 +106,7 @@ public class Point_dt {
 	}
 
 	/** return a String in the [x,y,z] format */
+	@Override
 	public String toString() {
 		return (new String(" Pt[" + x + "," + y + "," + z + "]"));
 	}
@@ -247,6 +248,7 @@ class Compare implements Comparator {
 	}
 
 	/** compare between two points. */
+	@Override
 	public int compare(Object o1, Object o2) {
 		int ans = 0;
 		if (o1 != null && o2 != null && o1 instanceof Point_dt && o2 instanceof Point_dt) {
@@ -305,6 +307,7 @@ class Compare implements Comparator {
 		return ans;
 	}
 
+	@Override
 	public boolean equals(Object ob) {
 		return false;
 	}

@@ -56,13 +56,13 @@ public class CalibrationFactory {
 	public static CalibrationStandards getCalibrationStandards(boolean createNew) {
 		if (createNew) {
 			return createCalibrationStandards();
-		} else {
-			if (staticInstance==null) {
-				staticInstance = createCalibrationStandards();
-				staticInstance.setUnmodifiable(true);
-			}
-			return staticInstance;
 		}
+		
+		if (staticInstance==null) {
+			staticInstance = createCalibrationStandards();
+			staticInstance.setUnmodifiable(true);
+		}
+		return staticInstance;
 	}
 
 

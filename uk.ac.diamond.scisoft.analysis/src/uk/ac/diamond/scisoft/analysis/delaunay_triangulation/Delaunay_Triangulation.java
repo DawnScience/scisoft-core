@@ -241,21 +241,18 @@ public class Delaunay_Triangulation {
 		if (triangle.isHalfplane()) {
 			if (d1 <= d2) {
 				return p1;
-			} else {
-				return p2;
 			}
-		} else {
-			Point_dt p3 = triangle.p3();
+			return p2;
+		}
+		Point_dt p3 = triangle.p3();
 
-			double d3 = p3.distance(pointToDelete);
-			Point_dt p;
-			if (d1 <= d2 && d1 <= d3) {
-				return p1;
-			} else if (d2 <= d1 && d2 <= d3) {
-				return p2;
-			} else {
-				return p3;
-			}
+		double d3 = p3.distance(pointToDelete);
+		if (d1 <= d2 && d1 <= d3) {
+			return p1;
+		} else if (d2 <= d1 && d2 <= d3) {
+			return p2;
+		} else {
+			return p3;
 		}
 	}
 
@@ -326,8 +323,7 @@ public class Delaunay_Triangulation {
 		}
 		if (counter >= 2)
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	// update the neighbors of the addedTriangle and deletedTriangle
@@ -618,11 +614,11 @@ public class Delaunay_Triangulation {
 		Point_dt p2 = triangle.p2();
 		Point_dt p3 = triangle.p3();
 
-		if ((p1.pointLineTest(point, p3) == point.LEFT) && (p2.pointLineTest(point, p3) == point.RIGHT))
+		if ((p1.pointLineTest(point, p3) == Point_dt.LEFT) && (p2.pointLineTest(point, p3) == Point_dt.RIGHT))
 			return p3;
-		if ((p3.pointLineTest(point, p2) == point.LEFT) && (p1.pointLineTest(point, p2) == point.RIGHT))
+		if ((p3.pointLineTest(point, p2) == Point_dt.LEFT) && (p1.pointLineTest(point, p2) == Point_dt.RIGHT))
 			return p2;
-		if ((p2.pointLineTest(point, p1) == point.LEFT) && (p3.pointLineTest(point, p1) == point.RIGHT))
+		if ((p2.pointLineTest(point, p1) == Point_dt.LEFT) && (p3.pointLineTest(point, p1) == Point_dt.RIGHT))
 			return p1;
 		return null;
 	}
@@ -657,72 +653,66 @@ public class Delaunay_Triangulation {
 
 			return vertices;
 		}
+		// local friendly alias
+		Triangle_dt halfplane = triangle;
+		// third point of triangle adjacent to this half plane
+		// (the point not shared with the half plane)
+		Point_dt third = null;
+		// triangle adjacent to the half plane
+		Triangle_dt neighbor = null;
 
-		// handle half plane
-		// in this case, the cell is a single line
-		// which is the perpendicular bisector of the half plane line
-		else {
-			// local friendly alias
-			Triangle_dt halfplane = triangle;
-			// third point of triangle adjacent to this half plane
-			// (the point not shared with the half plane)
-			Point_dt third = null;
-			// triangle adjacent to the half plane
-			Triangle_dt neighbor = null;
-
-			// find the neighbor triangle
-			if (!halfplane.next_12().isHalfplane()) {
-				neighbor = halfplane.next_12();
-			} else if (!halfplane.next_23().isHalfplane()) {
-				neighbor = halfplane.next_23();
-			} else if (!halfplane.next_23().isHalfplane()) {
-				neighbor = halfplane.next_31();
-			}
-
-			// find third point of neighbor triangle
-			// (the one which is not shared with current half plane)
-			// this is used in determining half plane orientation
-			if (!neighbor.p1().equals(halfplane.p1()) && !neighbor.p1().equals(halfplane.p2()))
-				third = neighbor.p1();
-			if (!neighbor.p2().equals(halfplane.p1()) && !neighbor.p2().equals(halfplane.p2()))
-				third = neighbor.p2();
-			if (!neighbor.p3().equals(halfplane.p1()) && !neighbor.p3().equals(halfplane.p2()))
-				third = neighbor.p3();
-
-			// delta (slope) of half plane edge
-			double halfplane_delta = (halfplane.p1().y() - halfplane.p2().y())
-					/ (halfplane.p1().x() - halfplane.p2().x());
-
-			// delta of line perpendicular to current half plane edge
-			double perp_delta = (1.0 / halfplane_delta) * (-1.0);
-
-			// determine orientation: find if the third point of the triangle
-			// lies above or below the half plane
-			// works by finding the matching y value on the half plane line equation
-			// for the same x value as the third point
-			double y_orient = halfplane_delta * (third.x() - halfplane.p1().x()) + halfplane.p1().y();
-			boolean above = true;
-			if (y_orient > third.y())
-				above = false;
-
-			// based on orientation, determine cell line direction
-			// (towards right or left side of window)
-			double sign = 1.0;
-			if ((perp_delta < 0 && !above) || (perp_delta > 0 && above))
-				sign = -1.0;
-
-			// the cell line is a line originating from the circumcircle to infinity
-			// x = 500.0 is used as a large enough value
-			Point_dt circumcircle = neighbor.circumcircle().Center();
-			double x_cell_line = (circumcircle.x() + (500.0 * sign));
-			double y_cell_line = perp_delta * (x_cell_line - circumcircle.x()) + circumcircle.y();
-
-			Point_dt[] result = new Point_dt[2];
-			result[0] = circumcircle;
-			result[1] = new Point_dt(x_cell_line, y_cell_line);
-
-			return result;
+		// find the neighbor triangle
+		if (!halfplane.next_12().isHalfplane()) {
+			neighbor = halfplane.next_12();
+		} else if (!halfplane.next_23().isHalfplane()) {
+			neighbor = halfplane.next_23();
+		} else if (!halfplane.next_23().isHalfplane()) {
+			neighbor = halfplane.next_31();
 		}
+
+		// find third point of neighbor triangle
+		// (the one which is not shared with current half plane)
+		// this is used in determining half plane orientation
+		if (!neighbor.p1().equals(halfplane.p1()) && !neighbor.p1().equals(halfplane.p2()))
+			third = neighbor.p1();
+		if (!neighbor.p2().equals(halfplane.p1()) && !neighbor.p2().equals(halfplane.p2()))
+			third = neighbor.p2();
+		if (!neighbor.p3().equals(halfplane.p1()) && !neighbor.p3().equals(halfplane.p2()))
+			third = neighbor.p3();
+
+		// delta (slope) of half plane edge
+		double halfplane_delta = (halfplane.p1().y() - halfplane.p2().y())
+				/ (halfplane.p1().x() - halfplane.p2().x());
+
+		// delta of line perpendicular to current half plane edge
+		double perp_delta = (1.0 / halfplane_delta) * (-1.0);
+
+		// determine orientation: find if the third point of the triangle
+		// lies above or below the half plane
+		// works by finding the matching y value on the half plane line equation
+		// for the same x value as the third point
+		double y_orient = halfplane_delta * (third.x() - halfplane.p1().x()) + halfplane.p1().y();
+		boolean above = true;
+		if (y_orient > third.y())
+			above = false;
+
+		// based on orientation, determine cell line direction
+		// (towards right or left side of window)
+		double sign = 1.0;
+		if ((perp_delta < 0 && !above) || (perp_delta > 0 && above))
+			sign = -1.0;
+
+		// the cell line is a line originating from the circumcircle to infinity
+		// x = 500.0 is used as a large enough value
+		Point_dt circumcircle = neighbor.circumcircle().Center();
+		double x_cell_line = (circumcircle.x() + (500.0 * sign));
+		double y_cell_line = perp_delta * (x_cell_line - circumcircle.x()) + circumcircle.y();
+
+		Point_dt[] result = new Point_dt[2];
+		result[0] = circumcircle;
+		result[1] = new Point_dt(x_cell_line, y_cell_line);
+
+		return result;
 	}
 
 	/**
@@ -1058,10 +1048,9 @@ public class Delaunay_Triangulation {
 		for (int i = 0; i < len; i++) {
 			os.println("v " + ans[i].toFile());
 		}
-		int t = 0, i1 = -1, i2 = -1, i3 = -1;
+		int i1 = -1, i2 = -1, i3 = -1;
 		for (Iterator<Triangle_dt> dt = this.trianglesIterator(); dt.hasNext();) {
 			Triangle_dt curr = dt.next();
-			t++;
 			if (!curr.halfplane) {
 				i1 = Arrays.binarySearch(ans, curr.a, comp);
 				i2 = Arrays.binarySearch(ans, curr.b, comp);
@@ -1109,8 +1098,7 @@ public class Delaunay_Triangulation {
 	private static Point_dt[] read_file(String file) throws Exception {
 		if (file.substring(file.length() - 4).equals(".smf") | file.substring(file.length() - 4).equals(".SMF"))
 			return read_smf(file);
-		else
-			return read_tsin(file);
+		return read_tsin(file);
 	}
 
 	private static Point_dt[] read_tsin(String tsinFile) throws Exception {
@@ -1166,7 +1154,7 @@ public class Delaunay_Triangulation {
 		}
 		ans = new Point_dt[vec.size()];
 		for (int i = 0; i < vec.size(); i++)
-			ans[i] = (Point_dt) vec.elementAt(i);
+			ans[i] = vec.elementAt(i);
 		return ans;
 	}
 
@@ -1262,14 +1250,6 @@ public class Delaunay_Triangulation {
 
 	/*
 	 * Receives a point and returns all the points of the triangles that shares point as a corner (Connected vertices to
-	 * this point). By Doron Ganel & Eyal Roth
-	 */
-	private Vector<Point_dt> findConnectedVertices(Point_dt point) {
-		return findConnectedVertices(point, false);
-	}
-
-	/*
-	 * Receives a point and returns all the points of the triangles that shares point as a corner (Connected vertices to
 	 * this point). Set saveTriangles to true if you wish to save the triangles that were found. By Doron Ganel & Eyal
 	 * Roth
 	 */
@@ -1319,14 +1299,6 @@ public class Delaunay_Triangulation {
 		}
 
 		return pointsVec;
-	}
-
-	private boolean onPerimeter(Vector<Triangle_dt> triangles) {
-		for (Triangle_dt t : triangles) {
-			if (t.isHalfplane())
-				return true;
-		}
-		return false;
 	}
 
 	// Walks on a consistent side of triangles until a cycle is achieved.
@@ -1399,7 +1371,6 @@ public class Delaunay_Triangulation {
 		return null;
 	}
 
-	// TODO: Move this to triangle.
 	// checks if the triangle is not re-entrant
 	private double calcDet(Point_dt A, Point_dt B, Point_dt P) {
 		return (A.x() * (B.y() - P.y())) - (A.y() * (B.x() - P.x())) + (B.x() * P.y() - B.y() * P.x());

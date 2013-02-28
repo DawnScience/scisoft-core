@@ -192,9 +192,8 @@ public class GridIndex {
 		// triangulation for a trinagle at that location
 		if (minInvalidCell.x == 0 && minInvalidCell.y == 0)
 			return indexDelaunay.find(middleOfCell(minInvalidCell.x, minInvalidCell.y), null);
-		else
-			// Otherwise we can take an adjacent cell triangle that is still valid
-			return grid[Math.min(0, minInvalidCell.x)][Math.min(0, minInvalidCell.y)];
+		// Otherwise we can take an adjacent cell triangle that is still valid
+		return grid[Math.min(0, minInvalidCell.x)][Math.min(0, minInvalidCell.y)];
 	}
 
 	/**

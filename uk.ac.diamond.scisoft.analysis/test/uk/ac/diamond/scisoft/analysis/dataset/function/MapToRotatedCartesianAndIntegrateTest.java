@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 
 /**
  *
@@ -47,4 +48,31 @@ public class MapToRotatedCartesianAndIntegrateTest extends TestCase {
 		assertEquals(answer, ((Number) pd.sum()).doubleValue(), answer*1e-4); // within 0.01% accuracy
 	}
 
+	/**
+	 * 
+	 */
+	@Test
+	public void testMapToRotatedCartesianAndIntegrateMasked() {
+		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(100,70,50,30,45.);
+		AbstractDataset m = new BooleanDataset(d.getShape());
+		m.fill(true);
+		mp.setMask(m);
+		AbstractDataset pd = mp.value(d).get(0);
+
+		double answer = 50.*30;
+		assertEquals(answer, ((Number) pd.sum()).doubleValue(), answer*1e-4); // within 0.01% accuracy
+
+		m.fill(false);
+		mp.setMask(m);
+		pd = mp.value(d).get(0);
+
+		assertEquals(0, ((Number) pd.sum()).doubleValue(), 1e-4); // within 0.01% accuracy
+
+		m.fill(true);
+		m.setSlice(false, new int[] {0, 108}, null, null);
+		pd = mp.value(d).get(0);
+
+		answer = 0.5*50.*30;
+		assertEquals(answer, ((Number) pd.sum()).doubleValue(), answer*3e-2); // within 3% accuracy
+	}
 }

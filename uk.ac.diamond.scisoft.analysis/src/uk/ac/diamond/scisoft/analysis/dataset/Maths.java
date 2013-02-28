@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -3031,18 +3031,6 @@ public class Maths {
 	 * @return bilinear interpolation
 	 */
 	public static double getBilinear(final IDataset d, final double x0, final double x1) {
-		return getBilinear(d, null, x0, x1);
-	}
-	
-	/**
-	 * Interpolated a value from 2D dataset with mask
-	 * @param d input dataset
-	 * @param m mask dataset
-	 * @param x0 coordinate
-	 * @param x1 coordinate
-	 * @return bilinear interpolation
-	 */
-	public static double getBilinear(final IDataset d, final IDataset m, final double x0, final double x1) {
 		final int[] s = d.getShape();
 		if (s.length != 2)
 			throw new IllegalArgumentException("Only 2d datasets allowed");
@@ -3058,26 +3046,81 @@ public class Maths {
 		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1])
 			return r;
 		// use bilinear interpolation
-		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1)*(m == null ? 1. : m.getDouble(i0, i1));
+		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1);
 		if (u1 > 0) {
 			if (i1 == s[1] - 1)
 				return f1;
 			if (u0 > 0) {
 				if (i0 == s[0] - 1)
 					return f1;
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1)*(m == null ? 1. : m.getDouble(i0, i1 + 1));
-				f3 = d.getDouble(i0 + 1, i1 + 1)*(m == null ? 1. : m.getDouble(i0 + 1, i1 + 1));
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1)*(m == null ? 1. : m.getDouble(i0 + 1, i1));
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
+				f3 = d.getDouble(i0 + 1, i1 + 1);
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
 				r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
 			} else {
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1)*(m == null ? 1. : m.getDouble(i0, i1 + 1));
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
 				r = (1 - u1) * f1 + u1 * f2;
 			}
 		} else { // exactly on axis 1
 			if (u0 > 0) {
 				if (i0 == s[0] - 1)
 					return f1;
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1)*(m == null ? 1. : m.getDouble(i0 + 1, i1));
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
+				r = (1 - u0) * f1 + u0 * f4;
+			} else { // exactly on axis 0
+				r = f1;
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Interpolated a value from 2D dataset with mask
+	 * @param d input dataset
+	 * @param m mask dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	public static double getBilinear(final IDataset d, final IDataset m, final double x0, final double x1) {
+		if (m == null)
+			return getBilinear(d, x0, x1);
+
+		final int[] s = d.getShape();
+		if (s.length != 2)
+			throw new IllegalArgumentException("Only 2d datasets allowed");
+		double r = 0;
+		final double f1, f2, f3, f4;
+		final double u1, u0;
+		final int i0, i1;
+
+		i0 = (int) Math.floor(x0);
+		i1 = (int) Math.floor(x1);
+		u0 = x0 - i0;
+		u1 = x1 - i1;
+		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1])
+			return r;
+		// use bilinear interpolation
+		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1) * m.getDouble(i0, i1);
+		if (u1 > 0) {
+			if (i1 == s[1] - 1)
+				return f1;
+			if (u0 > 0) {
+				if (i0 == s[0] - 1)
+					return f1;
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+				f3 = d.getDouble(i0 + 1, i1 + 1) * m.getDouble(i0 + 1, i1 + 1);
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
+				r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
+			} else {
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+				r = (1 - u1) * f1 + u1 * f2;
+			}
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				if (i0 == s[0] - 1)
+					return f1;
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
 				r = (1 - u0) * f1 + u0 * f4;
 			} else { // exactly on axis 0
 				r = f1;

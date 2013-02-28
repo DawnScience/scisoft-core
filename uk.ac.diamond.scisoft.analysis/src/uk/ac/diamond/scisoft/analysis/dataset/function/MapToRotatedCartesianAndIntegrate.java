@@ -35,6 +35,17 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 	private double cp;
 	private double sp;
 
+	AbstractDataset mask;
+
+	/**
+	 * Set detector mask used profile calculations
+	 *  
+	 * @param mask
+	 */
+	public void setMask(AbstractDataset mask) {
+		this.mask = mask;
+	}
+
 	/**
 	 * Set up mapping of rotated 2D dataset
 	 * 
@@ -53,6 +64,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 		h = height;
 		w = width;
 		phi = Math.toRadians(angle);
+
+		// work out cosine and sine
+		cp = Math.cos(phi);
+		sp = Math.sin(phi);
 	}
 
 	/**
@@ -111,6 +126,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
+		double msk = 1;
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2)
 				return null;
@@ -118,28 +134,35 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			AbstractDataset sumx = AbstractDataset.zeros(new int[] { h }, dtype);
 			AbstractDataset sumy = AbstractDataset.zeros(new int[] { w }, dtype);
+			AbstractDataset usumx = AbstractDataset.zeros(new int[] { h }, dtype);
+			AbstractDataset usumy = AbstractDataset.zeros(new int[] { w }, dtype);
 
 			double cx, cy;
 			double csum;
+			double cusumx;
 			for (int y = 0; y < h; y++) {
 				csum = 0.0;
+				cusumx = 0.0;
 				for (int x = 0; x < w; x++) {
 					// back transformation from tilted to original coordinates
 					cx = ox + x * cp - y * sp;
 					cy = oy + x * sp + y * cp;
 
-					final double v = Maths.getBilinear(ids, cy, cx);
+					if (mask != null)
+						msk = Maths.getBilinear(mask, y, x);
+					final double v = Maths.getBilinear(ids, mask, cy, cx);
 					sumy.set(v + sumy.getDouble(x), x);
+					usumy.set(msk + usumy.getDouble(x), x);
 					csum += v;
+					cusumx += msk;
 				}
 				sumx.set(csum, y);
+				usumx.set(cusumx, y);
 			}
 
 			result.add(sumx);
 			result.add(sumy);
-			AbstractDataset usumx = AbstractDataset.zeros(new int[] { h }, dtype).fill(w);
 			result.add(usumx);
-			AbstractDataset usumy = AbstractDataset.zeros(new int[] { w }, dtype).fill(h);
 			result.add(usumy);
 		}
 		return result;

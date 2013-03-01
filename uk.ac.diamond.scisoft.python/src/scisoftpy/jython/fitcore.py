@@ -526,5 +526,5 @@ def makeellipse(p, t=None):
     if t is None:
         t = _dnp.arange(100)*_dnp.pi/50.
 
-    return _efitter.generateCoordinates(_asDS(t), p)
+    return _efitter.generateCoordinates(_asDS(t), p) #@UndefinedVariable
 

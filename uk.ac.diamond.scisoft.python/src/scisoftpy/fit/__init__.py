@@ -17,6 +17,10 @@
 '''
 fit is a fitting sub-package of the scisoft analysis package
 '''
-from fitcore import *
 
-import function
+import os
+if os.name == 'java':
+    from jython.fitcore import *
+    import jython.function as function #@UnresolvedImport
+else:
+    pass

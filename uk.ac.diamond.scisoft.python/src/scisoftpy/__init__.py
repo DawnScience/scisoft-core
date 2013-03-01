@@ -107,15 +107,16 @@ if os.name == 'java':
     from jython.jycomparisons import *
     from jython.jyscisoft import *
 
-    import fit    
-    import signal   
+    import fit
     import image
 else:
     from python.pycore import *
     from python.pymaths import *
     from python.pycomparisons import *
     from python.pyscisoft import *
-    
+
+from signal import convolve, correlate
+
 '''
 Imports should work with python+numpy only agreed with MB 11 Nov 2011
 '''

@@ -24,9 +24,12 @@ import javax.measure.quantity.Length;
 import org.jscience.physics.amount.Amount;
 
 /**
- * This class is a bean to hold h,k,l and d information. 
+ * This class is a bean to hold d-spacing and, optionally, integer Miller indices (h,k,l).
  * 
- * It does not offer calculation between the values, just holding them.
+ * It is not (currently) a class for using HKLs but rather for storing d-spacings with an optional
+ * labelling by HKLs.
+ * 
+ * It does not offer calculation between the values; it just holds them.
  * 
  * Often if d is set, h,k and l are not needed but it is up to the 
  * user of the data to decide what happens with it.
@@ -36,26 +39,21 @@ public class HKL implements Serializable {
 	private int[] hkl;
 	private String ringName;
 	private Amount<Length> d;
-	
+
 	public HKL() {
 		hkl = new int[3];
 	}
-	
+
 	public HKL(Amount<Length> d) {
 		this(-1,-1,-1,d);
 	}
 	
-	public HKL(int... hkl) {
-		this(hkl[0], hkl[1], hkl[2], null);
-	}
-	
 	@Override
 	public HKL clone() {
-		HKL ret = new HKL(getH(), getK(), getL());
-		ret.setD(d);
+		HKL ret = new HKL(getH(), getK(), getL(), d);
 		return ret;
 	}
-	
+
 	/**
 	 * Used for calibration standards
 	 * @param h
@@ -161,19 +159,19 @@ public class HKL implements Serializable {
 	}
 	
 	/**
-	 * d in nanometers
-	 * @return d in nanometers
+	 * d in nanometres
+	 * @return d in nanometres
 	 */
 	public double getDNano() {
 		if (d==null) return Double.NaN;
-		return d.doubleValue(CalibrationStandards.NANOMETER);
+		return d.doubleValue(CalibrationStandards.NANOMETRE);
 	}
 
 	/**
-	 * @param d in nanometers
+	 * @param d in nanometres
 	 */
 	public void setDNano(double d) {
-		this.d = Amount.valueOf(d, CalibrationStandards.NANOMETER);
+		this.d = Amount.valueOf(d, CalibrationStandards.NANOMETRE);
 	}
 
 }

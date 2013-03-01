@@ -87,6 +87,8 @@ def scalarToPython(ascalar):
 
 asarray = _np.asarray
 
+asfarray = _np.asfarray
+
 asanyarray = _np.asanyarray
 
 arange = _np.arange

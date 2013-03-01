@@ -239,6 +239,13 @@ class Test(unittest.TestCase):
         self.checkitems([[2., 2., -1.], [2., 2., -1.]], g[0])
         self.checkitems([[1., 2.5, 4.], [1., 1., 1.]], g[1])
 
+    def testAsfarray(self):
+        print 'Float array testing'
+        self.assertEquals(np.float64, np.asfarray([1.,]).dtype, "")
+        self.assertEquals(np.float64, np.asfarray([1.,], dtype=np.int).dtype, "")
+        self.assertEquals(np.float64, np.asfarray([1,]).dtype, "")
+        self.failUnlessRaises(TypeError, np.asfarray, [1+12j,])
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

@@ -107,7 +107,6 @@ if os.name == 'java':
     from jython.jycomparisons import *
     from jython.jyscisoft import *
 
-    import fit
     import image
 else:
     from python.pycore import *

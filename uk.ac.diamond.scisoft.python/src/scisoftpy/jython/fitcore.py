@@ -31,7 +31,7 @@ _asDS = _dnp.asDataset
 from scisoftpy.jython.jymaths import ndarraywrapped as _npwrapped
 import java.lang.Class as _jclass #@UnresolvedImport
 
-import function as _fn
+import function
 
 def _createparams(np, params, bounds):
     '''Create a Parameters list with bounds, popping off items from both input lists
@@ -312,7 +312,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
             f = f[0]
         if isinstance(f, _jclass):
             # create bound function object
-            np = _fn.nparams(f)
+            np = function.nparams(f)
             pl = _createparams(np, p0, bounds)
             fnlist.append(f(pl))
         elif not _inspect.isfunction(f):

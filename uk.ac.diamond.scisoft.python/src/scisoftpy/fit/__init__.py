@@ -14,13 +14,6 @@
 # limitations under the License.
 ###
 
-'''
-fit is a fitting sub-package of the scisoft analysis package
-'''
-
 import os
 if os.name == 'java':
-    from jython.fitcore import *
-    import jython.function as function #@UnresolvedImport
-else:
-    pass
+    from scisoftpy.jython.fitcore import *

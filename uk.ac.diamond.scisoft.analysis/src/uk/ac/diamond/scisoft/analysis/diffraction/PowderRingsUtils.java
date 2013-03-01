@@ -16,9 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,17 @@ import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
+import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesianAndIntegrate;
+import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
+import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Utilities to fit powder rings
@@ -84,6 +89,19 @@ public class PowderRingsUtils {
 		return findPOIsNearEllipse(image, mask, ellipse, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
+	/**
+	 * Find a set of points of interests near given ellipse from an image.
+	 * <p>
+	 * The ellipse is divided into sub-areas and these POIs are considered to
+	 * be the locations of maximum pixel intensities found within those sub-areas.
+	 * @param image
+	 * @param mask (can be null)
+	 * @param ellipse
+	 * @param arcLength step size along arc in pixels
+	 * @param radialDelta +/- value to define area to search
+	 * @param maxPoints maximum number of points to return ( 
+	 * @return polyline ROI
+	 */
 	public static PolylineROI findPOIsNearEllipse(AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse,
 			double arcLength, double radialDelta, int maxPoints) {
 		if (image.getRank() != 2) {
@@ -240,7 +258,15 @@ public class PowderRingsUtils {
 		return fitAndTrimOutliers(points, RADIAL_DELTA, circleOnly);
 	}
 
-	public static EllipticalFitROI fitAndTrimOutliers(PolylineROI points, double radialDelta, boolean circleOnly) {
+	/**
+	 * Fit an ellipse to given points, trim points if they fall outside given distance
+	 * and re-fit
+	 * @param points
+	 * @param trimDelta trim distance
+	 * @param circleOnly if true, then fit a circle
+	 * @return fitted ellipse
+	 */
+	public static EllipticalFitROI fitAndTrimOutliers(PolylineROI points, double trimDelta, boolean circleOnly) {
 		int m;
 //		int min = circleOnly ? 3 : 5;
 		try {
@@ -257,7 +283,7 @@ public class PowderRingsUtils {
 			// double siqr = 3 * 0.5 * (Double) Stats.iqr(d);
 			// double h = (Double) Stats.median(d) + siqr;
 
-			double h = radialDelta * radialDelta;
+			double h = trimDelta * trimDelta;
 			double ds = d.max().doubleValue();
 			logger.debug("Range: [0, {}] cf [{}, {}, {}]", new Object[] { h, d.min(), d.mean(), d.max() });
 			if (ds < h)
@@ -282,16 +308,107 @@ public class PowderRingsUtils {
 		}
 	}
 
-	static class PeakCompare implements Comparator<PointROI> {
-		private AbstractDataset image;
-
-		public PeakCompare(AbstractDataset image) {
-			this.image = image;
+	/**
+	 * Find other ellipses from given ellipse and image.
+	 * <p>
+	 * This is done by looking at the box profile along the longest spoke from the
+	 * given centre and finding peaks. Then the distance out to those peaks is used
+	 * to search for more POIs and so more ellipses
+	 * @param image
+	 * @param mask (can be null)
+	 * @param roi initial ellipse
+	 * @param arcLength
+	 * @param radialDelta
+	 * @param trimDelta
+	 * @param maxPoints
+	 * @return list of ellipses
+	 */
+	public static List<EllipticalROI> findOtherEllipses(AbstractDataset image, BooleanDataset mask, EllipticalROI roi,
+			double arcLength, double radialDelta, double trimDelta, int maxPoints) {
+		if (image.getRank() != 2) {
+			logger.error("Dataset must have two dimensions");
+			throw new IllegalArgumentException("Dataset must have two dimensions");
+		}
+		if (mask != null && !image.isCompatibleWith(mask)) {
+			logger.error("Mask must match image shape");
+			throw new IllegalArgumentException("Mask must match image shape");
 		}
 
-		@Override
-		public int compare(PointROI o1, PointROI o2) {
-			return (int) Math.signum(image.getDouble(o2.getIntPoint()) - image.getDouble(o1.getIntPoint()));
+		final int[] shape = image.getShape();
+		final int h = shape[0];
+		final int w = shape[1];
+
+		// find farthest corner
+		double[] ec = roi.getPoint();
+		double x = ec[0];
+		double y = ec[1];
+		double d;
+		double max = x*x + y*y; // TL
+
+		double[] c = new double[2];
+
+		x -= w;
+		d = x*x + y*y; // TR
+		if (d > max) {
+			max = d;
+			c[0] = w;
+			c[1] = 0;
 		}
+		y -= h;
+		d = x*x + y*y; // BR
+		if (d > max) {
+			max = d;
+			c[0] = w;
+			c[1] = h;
+		}
+		x += 2*w;
+		d = x*x + y*y;
+		if (d > max) { // BL
+			max = d;
+			c[0] = 0;
+			c[1] = h;
+		}
+
+		// set up profile ROI and find peaks
+		RectangularROI rroi = new RectangularROI();
+		rroi.setPoint(ec.clone());
+		rroi.setEndPoint(c);
+		double[] len = rroi.getLengths();
+		len[1] = radialDelta;
+		rroi.setLengths(len);
+		rroi.setPoint(rroi.getPoint(0, -0.5));
+		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(rroi);
+		mp.setMask(mask);
+		AbstractDataset profile = mp.value(image).get(1);
+		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), AbstractDataset.INT), profile, 1);
+
+		// concoct ROIs
+		double r = roi.getDistance(rroi.getAngle());
+		double aspect = roi.getSemiAxis(0)/roi.getSemiAxis(1);
+		List<EllipticalROI> rois = new ArrayList<EllipticalROI>();
+		for (IdentifiedPeak p : peaks) {
+			System.err.println(p);
+			double l = p.getPos();
+			if (Math.abs(l-r) < 1) {
+				rois.add(null); // placeholder
+			} else {
+				double a = l*roi.getSemiAxis(0)/r;
+				EllipticalROI er = new EllipticalROI(a, a/aspect, roi.getAngle(), x, y);
+				rois.add(er);
+			}
+		}
+
+		// and finally find POIs
+		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
+		for (EllipticalROI b : rois) {
+			if (b == null) {
+				ells.add(roi);
+			} else {
+				PolylineROI polyline = findPOIsNearEllipse(image, mask, b, arcLength, radialDelta, maxPoints);
+				ells.add(fitAndTrimOutliers(polyline, trimDelta, roi.isCircular()));
+			}
+		}
+		
+		return ells;
 	}
 }

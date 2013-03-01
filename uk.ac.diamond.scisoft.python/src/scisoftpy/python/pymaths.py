@@ -132,4 +132,33 @@ inner = _np.inner
 #outer = _np.outer
 tensordot = _np.tensordot
 
-gradient = _np.gradient
+def gradient(f, *arg):
+    '''Extended version of gradient that allows arrays for arg
+    '''
+    r = f.ndim
+    al = len(arg)
+    if al > 0:
+        narg = [ a if not isinstance(a, _np.ndarray) else _np.gradient(a) for a in arg ]
+        if al == 1:
+            narg = [narg[0]]*r
+        elif al != r:
+            raise SyntaxError, 'Invalid number of arguments'
+
+        for i in range(al):
+            a = narg[i]
+            if isinstance(a, _np.ndarray):
+                if a.ndim != r:
+                    ashape = [1]*r
+                    ashape[i] = a.size
+                    a.shape = ashape
+
+        result = _np.gradient(f)
+
+        if r == 1:
+            result /= narg[0]
+        else:
+            for i in range(r):
+                result[i] /= narg[i]
+        return result
+
+    return _np.gradient(f, *arg)

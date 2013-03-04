@@ -26,9 +26,9 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public class ImageStackLoader implements ILazyLoader {
 
-	List<String> imageFilenames;
-	int[] shape;
-	int dtype;
+	private List<String> imageFilenames;
+	private int[] shape;
+	private int dtype;
 	private Class<? extends AbstractFileLoader> loaderClass;
 	
 	

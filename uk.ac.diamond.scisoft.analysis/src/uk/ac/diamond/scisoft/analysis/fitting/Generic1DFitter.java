@@ -41,11 +41,11 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public class Generic1DFitter implements Serializable {
 
-	public static int defaultSmoothing = 3;
-	public static double defaultAccuracy = 0.0001;
-	public static IOptimizer defaultOptimiser = new GeneticAlg(defaultAccuracy);
-	private static double epslion = 1E-5;
-	transient protected static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
+	private static int DEFAULT_SMOOTHING = 3;
+	private static double DEFAULT_ACCURACY = 0.0001;
+	private static IOptimizer DEFAULT_OPTIMISER = new GeneticAlg(DEFAULT_ACCURACY);
+	private static double EPSILON = 1E-5;
+	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
 
 	/**
 	 * This method takes a dataset of Y values and fits the specified peaks to the data. The x values of the Y axis are
@@ -92,12 +92,12 @@ public class Generic1DFitter implements Serializable {
 	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
 		int tempSmooting = (int) (xdata.getSize() * 0.01);
 		int smoothing;
-		if (tempSmooting > defaultSmoothing) {
+		if (tempSmooting > DEFAULT_SMOOTHING) {
 			smoothing = tempSmooting;
 		} else {
-			smoothing = defaultSmoothing;
+			smoothing = DEFAULT_SMOOTHING;
 		}
-		return fitPeakFunctions(xdata, ydata, function, defaultOptimiser, smoothing, numPeaks);
+		return fitPeakFunctions(xdata, ydata, function, DEFAULT_OPTIMISER, smoothing, numPeaks);
 
 	}
 
@@ -359,38 +359,41 @@ public class Generic1DFitter implements Serializable {
 		AbstractDataset data = Maths.derivative(xdata, ydata, smooth+1);
 		int backPos, forwardPos;
 		double backTotal, forwardTotal;
-		for (int i = 0; i < data.getSize() - 1; i++) {
-			if (!(data.getElementDoubleAbs(i) >= 0 && data.getElementDoubleAbs(i + 1) < 0)) {
+		double backValue, forwardValue;
+		for (int i = 0, imax = data.getSize() - 1; i < imax; i++) {
+			backPos = i;
+			backValue = data.getElementDoubleAbs(backPos);
+			forwardPos = backPos + 1;
+			forwardValue = data.getElementDoubleAbs(forwardPos);
+			if (!(backValue >= 0 && forwardValue < 0)) {
 				continue;
 			}
 
-			backPos = i;
 			backTotal = 0;
 			// get the backwards points
 			while (backPos > 0) {
-				if (data.getElementDoubleAbs(backPos) >= 0) {
-					backTotal += data.getElementDoubleAbs(backPos);
+				if (backValue >= 0) {
+					backTotal += backValue;
 					backPos -= 1;
-
+					backValue = data.getElementDoubleAbs(backPos);
 				} else {
 					break;
 				}
 			}
 
 			// get the forward points
-			forwardPos = i + 1;
 			forwardTotal = 0;
-			while (forwardPos < data.getSize() - 1) {
-				if (data.getElementDoubleAbs(forwardPos) <= 0) {
-					forwardTotal -= data.getElementDoubleAbs(forwardPos);
+			while (forwardPos < imax) {
+				if (forwardValue <= 0) {
+					forwardTotal -= forwardValue;
 					forwardPos += 1;
-
+					forwardValue = data.getElementDoubleAbs(forwardPos);
 				} else {
 					break;
 				}
 			}
 			// this means a peak has been found
-			if (Math.min(backTotal, forwardTotal) > epslion) {
+			if (Math.min(backTotal, forwardTotal) > EPSILON) {
 				int[] start = { backPos };
 				int[] stop = { forwardPos };
 				int[] step = { 1 };

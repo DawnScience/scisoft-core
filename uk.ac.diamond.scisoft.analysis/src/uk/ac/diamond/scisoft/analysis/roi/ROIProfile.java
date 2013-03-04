@@ -58,11 +58,11 @@ public class ROIProfile {
 			if (data.isCompatibleWith(mask)) {
 				// TODO both multiply and nanalize create copies of the whole data passed in
 				if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-					// convertToAbstractDataset should not be necessart here? 
+					// convertToAbstractDataset should not be necessary here? 
 					// AbstractDataset is already here, the data is loaded - is this right?
 					data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
 				} else {
-					// Masks values to NaN, also changes Dtype to Float
+					// Masks values to NaN, also changes dtype to Float
 					data = nanalize(data, (BooleanDataset)mask);
 				}
 			}
@@ -135,7 +135,7 @@ public class ROIProfile {
 	 *            used for clipping compensation (can be null)
 	 * @param rroi
 	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
-	 *                       deals with Nans however, in this case we can set maskWithNans true and masked
+	 *                       deals with NaNs however, in this case we can set maskWithNans true and masked
 	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
@@ -183,11 +183,11 @@ public class ROIProfile {
 				if (slicedData.isCompatibleWith(slicedMask)) {
 					clip = true;
 					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessart here? 
+						// convertToAbstractDataset should not be necessary here? 
 						// AbstractDataset is already here, the data is loaded - is this right?
 						slicedData = Maths.multiply(DatasetUtils.convertToAbstractDataset(slicedData), DatasetUtils.convertToAbstractDataset(slicedMask));
 					} else {
-						// Masks values to NaN, also changes Dtype to Float
+						// Masks values to NaN, also changes dtype to Float
 						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
 					}
 				}
@@ -218,11 +218,11 @@ public class ROIProfile {
 					clip = true;
 					// TODO both multiply and nanalize create copies of the whole data passed in
 					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessart here? 
+						// convertToAbstractDataset should not be necessary here? 
 						// AbstractDataset is already here, the data is loaded - is this right?
 						data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
 					} else {
-						// Masks values to NaN, also changes Dtype to Float
+						// Masks values to NaN, also changes dtype to Float
 						data = nanalize(data, (BooleanDataset)mask);
 					}
 				}
@@ -258,7 +258,7 @@ public class ROIProfile {
 	 *            used for clipping compensation (can be null)
 	 * @param rroi
 	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
-	 *                       deals with Nans however, in this case we can set maskWithNans true and masked
+	 *                       deals with NaNs however, in this case we can set maskWithNans true and masked
 	 *                       pixels are NaN instead of 0.
 	 * @return box line profiles
 	 */
@@ -307,7 +307,7 @@ public class ROIProfile {
 		float[]      buffer    = nanalized.getData();
 		for (int i = 0; i < buffer.length; i++) {
 			buffer[i] = mask.getElementBooleanAbs(i)
-					  ? (float)data.getElementDoubleAbs(i) // NOTE: Do not round, just loose precision.
+					  ? (float)data.getElementDoubleAbs(i) // NOTE: Do not round, just lose precision.
 					  : Float.NaN;
 		}
 		return nanalized;

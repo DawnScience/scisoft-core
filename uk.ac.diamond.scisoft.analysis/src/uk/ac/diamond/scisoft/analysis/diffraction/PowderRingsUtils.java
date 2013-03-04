@@ -413,7 +413,7 @@ public class PowderRingsUtils {
 
 		for (IdentifiedPeak p : peaks) {
 			double l = p.getPos();
-			if (Math.abs(l-r) < 1) {
+			if (Math.abs(l-r) < PEAK_SMOOTHING) {
 				rois.add(null); // placeholder
 				continue;
 			}

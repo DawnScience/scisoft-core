@@ -121,6 +121,8 @@ public class Stats {
 	// process a sorted dataset
 	private static double pQuantile(final AbstractDataset s, final double q) {
 		double f = (s.size - 1) * q; // fraction of sample number
+		if (f < 0)
+			return Double.NaN;
 		int qpt = (int) Math.floor(f); // quantile point
 		f -= qpt;
 

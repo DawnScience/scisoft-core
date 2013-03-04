@@ -193,6 +193,16 @@ public class EllipticalROI extends ROIBase {
 		return getPoint(Math.toRadians(angle));
 	}
 
+	/**
+	 * Get distance from centre to point on ellipse at given angle
+	 * @param angle in radians
+	 * @return distance
+	 */
+	public double getDistance(double angle) {
+		double[] p = getPoint(angle);
+		return Math.hypot(p[0], p[1]);
+	}
+
 	@Override
 	public String toString() {
 		if (isCircular()) {

@@ -239,6 +239,25 @@ class Test(unittest.TestCase):
         self.checkitems([[2., 2., -1.], [2., 2., -1.]], g[0])
         self.checkitems([[1., 2.5, 4.], [1., 1., 1.]], g[1])
 
+        g = np.gradient(np.array([[1, 2, 6], [3, 4, 5]], dtype=np.float), 2)
+        self.checkitems([[1., 1., -0.5], [1., 1., -0.5]], g[0])
+        self.checkitems([[0.5, 1.25, 2.], [0.5, 0.5, 0.5]], g[1])
+
+        g = np.gradient(np.array([[1, 2, 6], [3, 4, 5]], dtype=np.float), 2, 1)
+        self.checkitems([[1., 1., -0.5], [1., 1., -0.5]], g[0])
+        self.checkitems([[1., 2.5, 4.], [1., 1., 1.]], g[1])
+
+        g = np.gradient(np.array([[1, 2, 6], [3, 4, 5]], dtype=np.float), 1, np.array([1.,2.,5.]))
+        self.checkitems([[2., 2., -1.], [2., 2., -1.]], g[0])
+        self.checkitems([[1., 1.25, 4./3], [1., 0.5, 1./3]], g[1])
+
+    def testAsfarray(self):
+        print 'Float array testing'
+        self.assertEquals(np.float64, np.asfarray([1.,]).dtype, "")
+        self.assertEquals(np.float64, np.asfarray([1.,], dtype=np.int).dtype, "")
+        self.assertEquals(np.float64, np.asfarray([1,]).dtype, "")
+        self.failUnlessRaises(TypeError, np.asfarray, [1+12j,])
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

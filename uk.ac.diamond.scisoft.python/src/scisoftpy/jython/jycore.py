@@ -96,6 +96,9 @@ complex128 = _dtype(_abstractds.COMPLEX128, name='complex128')
 
 rgb = _dtype(_abstractds.RGB, 3, 'rgb')
 
+# tuple of floating point types
+_floattype = (_abstractds.FLOAT32, _abstractds.FLOAT64, _abstractds.ARRAYFLOAT32, _abstractds.ARRAYFLOAT64)
+
 # dictionaries to map from Java dataset types to Jython types
 __jdtype2jytype = { _abstractds.BOOL : bool, _abstractds.INT8 : int8, _abstractds.INT16 : int16,
                     _abstractds.INT32 : int32, _abstractds.INT64 : int64,
@@ -206,7 +209,10 @@ def asDataset(data, dtype=None, force=False):
 #    if isinstance(data, _dataset):
 #        return Sciwrap(_dataset.convertToDoubleDataset())
     if isinstance(data, _abstractds):
-        return data
+        if dtype is None or data.dtype == dtype:
+            return data
+        else:
+            return array(data, dtype=dtype, copy=False)
 
     try:
         iter(data)
@@ -220,6 +226,23 @@ def asDataset(data, dtype=None, force=False):
 
 asarray = asDataset
 asanyarray = asDataset
+
+@_ndwrapped
+def asfarray(data, dtype=None):
+    data = asDataset(data)
+    if data.isComplex():
+        raise TypeError, 'can\'t convert complex to float'
+    if data.hasFloatingPointElements():
+        return data
+
+    dt = _getdtypefromjdataset(data)
+    if dtype is not None:
+        dtype = _translatenativetype(dtype)
+    if dtype is None or dtype.value not in _floattype:
+        if dt.elements == 1:
+            return data.cast(_abstractds.FLOAT64)
+        return data.cast(_abstractds.ARRAYFLOAT64)
+    return data.cast(dtype.value)
 
 def asDatasetList(dslist):
     """
@@ -255,7 +278,7 @@ def _isslice(rank, shape, key):
 import jycomparisons as _cmps
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
-import java.lang.Boolean as _jbool
+import java.lang.Boolean as _jbool #@UnresolvedImport
 _jtrue = _jbool(1)
 _jfalse = _jbool(0)
 

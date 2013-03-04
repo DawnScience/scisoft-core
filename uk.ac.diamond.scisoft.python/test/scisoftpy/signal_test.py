@@ -68,41 +68,74 @@ class Test(unittest.TestCase):
     def testCorrelate(self):
         print 'test correlate'
         da = np.array(self.da, np.float)
-        ada = sig.correlate(da, axes=[0])
+        ada = np.correlate(da, axes=[0])
         self.checkitems(None, ada)
+
+        self.checkitems([3.5], np.correlate(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
+#array([ 3.5])
+#>>> np.correlate([1, 2, 3], [0, 1, 0.5], "same")
+#array([ 2. ,  3.5,  3. ])
+#>>> np.correlate([1, 2, 3], [0, 1, 0.5], "full")
+#array([ 0.5,  2. ,  3.5,  3. ,  0. ])
 
     def testCorrelate2(self):
         print 'test correlate2'
         da = np.zeros([10], np.float)
         da[3] = 1
         db = da.copy()
-        ada = sig.correlate(da,db)
+        ada = np.correlate(da,db)
         self.checkitems(None, ada)
 
         db = np.zeros([10], np.float)
         db[5] = 1
-        ada = sig.correlate(da,db)
+        ada = np.correlate(da,db)
         self.checkitems(None, ada)
 
-        ada = sig.phasecorrelate(da,db)
-        self.checkitems(None, ada)
+        import os
+        if os.name == 'java':
+            ada = sig.phasecorrelate(da,db)
+            self.checkitems(None, ada)
 
 
     def testCorrelate2D(self):
+        import os
+        if os.name != 'java':
+            return
         print 'test correlate2'
         da = np.zeros([8,8], np.float)
         da[3,3] = 20
         db = da.copy()
-        ada = sig.correlate(da,db)
+        ada = np.correlate(da,db)
         print ada
 
         da += rnd.poisson(2, size=da.shape)
         db = np.zeros([8,8], np.float)
         db[5,6] = 20
         db += rnd.poisson(2, size=db.shape)
-        ada = sig.correlate(da,db)
+        ada = np.correlate(da,db)
         print ada
 
+    def testConvolve(self):
+        print 'test convolve'
+#        da = np.array(self.da, np.float)
+#        ada = np.convolve(da, axes=[0])
+#        self.checkitems(None, ada)
+
+        self.checkitems([ 0., 1., 2.5, 4., 1.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
+#array([ 0. ,  1. ,  2.5,  4. ,  1.5])
+#
+#Only return the middle values of the convolution.
+#Contains boundary effects, where zeros are taken
+#into account:
+#
+#>>> np.convolve([1,2,3],[0,1,0.5], 'same')
+#array([ 1. ,  2.5,  4. ])
+#
+#The two arrays are of the same length, so there
+#is only one position where they completely overlap:
+#
+#>>> np.convolve([1,2,3],[0,1,0.5], 'valid')
+#array([ 2.5])
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testCorrelate']

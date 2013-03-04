@@ -57,7 +57,7 @@ public class CalibrationFactory {
 		if (createNew) {
 			return createCalibrationStandards();
 		}
-		
+
 		if (staticInstance==null) {
 			staticInstance = createCalibrationStandards();
 			staticInstance.setUnmodifiable(true);
@@ -107,7 +107,7 @@ public class CalibrationFactory {
 	 * @return file
 	 */
 	private static File getCalibrantFile() {
-		File dir = new File(System.getProperty("user.home")+"/.dawn");
+		File dir = new File(new File(System.getProperty("user.home")), ".dawn");
 		try {
 			dir.mkdirs();
 		} catch (Throwable ne) {

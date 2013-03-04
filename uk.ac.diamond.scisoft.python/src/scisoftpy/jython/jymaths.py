@@ -440,7 +440,7 @@ def gradient(f, *varargs):
     '''Gradient of array
     
     f -- array
-    *varargs -- 0, 1, N scalars for sample distance, or datasets for sample points
+    *varargs -- 0, 1, N scalars for sample distance, or (1 or N-d) datasets for sample points
     '''
 
     if varargs is None or len(varargs) == 0:
@@ -448,12 +448,18 @@ def gradient(f, *varargs):
     else:
         # check for scalars, etc
         from jycore import ndarray as _nd, arange as _ar
+        vl = len(varargs)
+        nd = f.ndim
+        if vl == 1:
+            varargs = [varargs[0]]*nd
+            vl = nd
+        if vl != nd:
+            raise ValueError, 'Number of arguments must be 0, 1 or rank of f'
+
         xlist = []
-        for i in range(len(varargs)):
+        for i in range(vl):
             x = varargs[i]
-            if not isinstance(x, _nd):
-                x = _ar(f.shape[i])*x
-            xlist.append(x)
+            xlist.append(x if isinstance(x, _nd) else _ar(f.shape[i])*x)
         g = _maths.gradient(f, xlist)
 
     if len(g) == 1:

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 European Synchrotron Radiation Facility,
  *                    Diamond Light Source Ltd.
  *
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Holds HKL data for a calibrant
  */
-public class CalibrantSpacing implements Serializable{
+public class CalibrantSpacing implements Serializable {
 
 	private String    name;
 	private List<HKL> hkls;

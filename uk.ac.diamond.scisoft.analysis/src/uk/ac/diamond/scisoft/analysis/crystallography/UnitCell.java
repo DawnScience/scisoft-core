@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,8 +40,8 @@ public class UnitCell extends LatticeCell {
 	 */
 	public UnitCell(double[] lengths) {
 		super();
-		this.setLengths(lengths);
-		this.setAngles(new double[] { 90, 90, 90 });
+		setLengths(lengths);
+		setAngles(new double[] { 90, 90, 90 });
 
 		a = new Vector3d(lengths[0], 0, 0);
 
@@ -56,8 +56,8 @@ public class UnitCell extends LatticeCell {
 	 */
 	public UnitCell(double[] lengths, double[] angles) {
 		super();
-		this.setLengths(lengths);
-		this.setAngles(angles);
+		setLengths(lengths);
+		setAngles(angles);
 		double alpha = Math.toRadians(angles[0]);
 		double beta  = Math.toRadians(angles[1]);
 		double gamma = Math.toRadians(angles[2]);
@@ -87,12 +87,12 @@ public class UnitCell extends LatticeCell {
 		a = new Vector3d(oa[0], oa[1], oa[2]);
 		b = new Vector3d(ob[0], ob[1], ob[2]);
 		c = new Vector3d(oc[0], oc[1], oc[2]);
-		double[] temp = { a.length(), b.length(), c.length() };
-		this.setLengths(temp);
+		setLengths(new double[] { a.length(), b.length(), c.length() });
+		setAngles(new double[] { 90, 90, 90 });
 	}
 
 	/**
-	 * @param lengths
+	 * @param lengths of unit cell
 	 */
 	public void setLengths(double[] lengths) {
 		this.lengths = lengths;
@@ -106,14 +106,14 @@ public class UnitCell extends LatticeCell {
 	}
 
 	/**
-	 * @param angles
+	 * @param angles (in degrees)
 	 */
 	public void setAngles(double[] angles) {
 		this.angles = angles;
 	}
 
 	/**
-	 * @return angles of unit cell
+	 * @return angles (in degrees) of unit cell
 	 */
 	public double[] getAngles() {
 		return angles;

@@ -38,10 +38,9 @@ import org.jscience.physics.amount.Amount;
  * This class is a bean which is persisted to disk and can be deep
  * cloned by the UI when the user is creating another calibrant list.
  */
-public class CalibrationStandards implements Serializable{
-	
+public class CalibrationStandards implements Serializable {
 
-	public final static Unit<Length> NANOMETER = SI.NANO(SI.METER);
+	public final static Unit<Length> NANOMETRE = SI.NANO(SI.METRE);
 
 	private Map<String, CalibrantSpacing> cal2peaks;	
 	private String version;
@@ -53,16 +52,29 @@ public class CalibrationStandards implements Serializable{
 		this.version = null;
 		cal2peaks    = null;
 	}
-	
+
+	/**
+	 * @return list of calibrants' names
+	 */
 	public List<String> getCalibrantList() {
 		// cal2peaks must be a LinkedHashMap for this to work.
 		return new ArrayList<String>(cal2peaks.keySet());
 	}
-	
+
+	/**
+	 * Get calibrant from given name
+	 * @param calibrant
+	 * @return calibrant
+	 */
 	public CalibrantSpacing getCalibrationPeakMap(String calibrant) {
 		return cal2peaks.get(calibrant);
 	}
-	
+
+	/**
+	 * 
+	 * @param cs
+	 * @return calibrant
+	 */
 	public CalibrantSpacing addCalibrant(CalibrantSpacing cs) {
 		return cal2peaks.put(cs.getName(), cs);
 	}
@@ -89,94 +101,94 @@ public class CalibrationStandards implements Serializable{
 		LinkedHashMap<String, CalibrantSpacing> tmp = new LinkedHashMap<String, CalibrantSpacing>();
 		
 		CalibrantSpacing calibrant = new CalibrantSpacing("Collagen Wet");
-		calibrant.addHKL(new HKL(0, 0, 1, Amount.valueOf(67.0, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 2, Amount.valueOf(33.5, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 3, Amount.valueOf(22.3, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 4, Amount.valueOf(16.75, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 5, Amount.valueOf(13.4, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 6, Amount.valueOf(11.6, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 7, Amount.valueOf(9.6, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 8, Amount.valueOf(8.4, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 9, Amount.valueOf(7.4, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(6.7, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(6.1, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(5.6, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(5.15, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 15, Amount.valueOf(4.46, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 20, Amount.valueOf(3.35, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 21, Amount.valueOf(3.2, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 22, Amount.valueOf(3.05, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 30, Amount.valueOf(2.2, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 35, Amount.valueOf(1.9, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 41, Amount.valueOf(1.6, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 52, Amount.valueOf(1.3, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 71, Amount.valueOf(0.95, NANOMETER)));
+		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(67.0, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(33.5, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(22.3, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 4,  Amount.valueOf(16.75, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 5,  Amount.valueOf(13.4, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 6,  Amount.valueOf(11.6, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 7,  Amount.valueOf(9.6,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 8,  Amount.valueOf(8.4,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 9,  Amount.valueOf(7.4,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(6.7,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(6.1,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(5.6,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(5.15, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 15, Amount.valueOf(4.46, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 20, Amount.valueOf(3.35, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 21, Amount.valueOf(3.2,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 22, Amount.valueOf(3.05, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 30, Amount.valueOf(2.2,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 35, Amount.valueOf(1.9,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 41, Amount.valueOf(1.6,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 52, Amount.valueOf(1.3,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 71, Amount.valueOf(0.95, NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 		
 		
 		calibrant = new CalibrantSpacing("Collagen Dry");
-		calibrant.addHKL(new HKL(0, 0, 1,Amount.valueOf(65.3, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 2,Amount.valueOf(32.7, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 3,Amount.valueOf(21.8, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 4,Amount.valueOf(16.3, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 5,Amount.valueOf(13.1, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 6,Amount.valueOf(10.9, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 7,Amount.valueOf(9.33, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 8,Amount.valueOf(8.16, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 9,Amount.valueOf(7.26, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(6.53, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(5.94, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(5.44, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(5.02, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 14, Amount.valueOf(4.66, NANOMETER)));
+		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(65.3, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(32.7, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(21.8, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 4,  Amount.valueOf(16.3, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 5,  Amount.valueOf(13.1, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 6,  Amount.valueOf(10.9, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 7,  Amount.valueOf(9.33, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 8,  Amount.valueOf(8.16, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 9,  Amount.valueOf(7.26, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(6.53, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(5.94, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(5.44, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(5.02, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 14, Amount.valueOf(4.66, NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 
 		
 		calibrant = new CalibrantSpacing("Ag Behenate");
-		calibrant.addHKL(new HKL(0, 0, 1,Amount.valueOf(5.838     , NANOMETER))); 
-		calibrant.addHKL(new HKL(0, 0, 2,Amount.valueOf(2.919     , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 3,Amount.valueOf(1.946     , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 4,Amount.valueOf(1.4595    , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 5,Amount.valueOf(1.1676    , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 6,Amount.valueOf(0.973     , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 7,Amount.valueOf(0.834     , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 8,Amount.valueOf(0.72975   , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 9,Amount.valueOf(0.64866667, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 10,Amount.valueOf(0.5838    , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 11,Amount.valueOf(0.53072727, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 12,Amount.valueOf(0.4865    , NANOMETER)));
-		calibrant.addHKL(new HKL(0, 0, 13,Amount.valueOf(0.44907692, NANOMETER)));
+		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(5.838     , NANOMETRE))); 
+		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(2.919     , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(1.946     , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 4,  Amount.valueOf(1.4595    , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 5,  Amount.valueOf(1.1676    , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 6,  Amount.valueOf(0.973     , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 7,  Amount.valueOf(0.834     , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 8,  Amount.valueOf(0.72975   , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 9,  Amount.valueOf(0.64866667, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(0.5838    , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(0.53072727, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(0.4865    , NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(0.44907692, NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 		        
 		
 		calibrant = new CalibrantSpacing("HDPE");
-		calibrant.addHKL(new HKL(1, 1, 0,Amount.valueOf(0.4166, NANOMETER)));
-		calibrant.addHKL(new HKL(2, 0, 0,Amount.valueOf(0.378 , NANOMETER)));
-		calibrant.addHKL(new HKL(2, 1, 0,Amount.valueOf(0.3014, NANOMETER)));
-		calibrant.addHKL(new HKL(0, 2, 0,Amount.valueOf(0.249 , NANOMETER)));
+		calibrant.addHKL(new HKL(1, 1, 0, Amount.valueOf(0.4166, NANOMETRE)));
+		calibrant.addHKL(new HKL(2, 0, 0, Amount.valueOf(0.378 , NANOMETRE)));
+		calibrant.addHKL(new HKL(2, 1, 0, Amount.valueOf(0.3014, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 2, 0, Amount.valueOf(0.249 , NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 		
 		
 		calibrant = new CalibrantSpacing("Silicon");
-		calibrant.addHKL(new HKL(1, 1, 1,Amount.valueOf(0.31355, NANOMETER)));
-		calibrant.addHKL(new HKL(2, 2, 0,Amount.valueOf(0.19201, NANOMETER)));
-		calibrant.addHKL(new HKL(3, 1, 1,Amount.valueOf(0.16374, NANOMETER)));
-		calibrant.addHKL(new HKL(2, 2, 2,Amount.valueOf(0.15677, NANOMETER)));
-		calibrant.addHKL(new HKL(4, 0, 0,Amount.valueOf(0.13577, NANOMETER)));
-		calibrant.addHKL(new HKL(3, 3, 1,Amount.valueOf(0.12459, NANOMETER)));
-		calibrant.addHKL(new HKL(4, 2, 2,Amount.valueOf(0.11085, NANOMETER)));
-		calibrant.addHKL(new HKL(3, 3, 3,Amount.valueOf(0.10451, NANOMETER)));
-		calibrant.addHKL(new HKL(5, 1, 1,Amount.valueOf(0.10451, NANOMETER)));
-		calibrant.addHKL(new HKL(4, 4, 0,Amount.valueOf(0.09600, NANOMETER)));
-		calibrant.addHKL(new HKL(5, 3, 1,Amount.valueOf(0.09179, NANOMETER)));
-		calibrant.addHKL(new HKL(4, 4, 2,Amount.valueOf(0.09051, NANOMETER)));
-		calibrant.addHKL(new HKL(6, 2, 0,Amount.valueOf(0.08586, NANOMETER)));
-		calibrant.addHKL(new HKL(5, 3, 3,Amount.valueOf(0.08281, NANOMETER)));
-		calibrant.addHKL(new HKL(6, 2, 2,Amount.valueOf(0.08187, NANOMETER)));
-		calibrant.addHKL(new HKL(4, 4, 4,Amount.valueOf(0.07838, NANOMETER)));
-		calibrant.addHKL(new HKL(7, 1, 1,Amount.valueOf(0.07604, NANOMETER)));
-		calibrant.addHKL(new HKL(5, 5, 1,Amount.valueOf(0.07604, NANOMETER)));
-		calibrant.addHKL(new HKL(6, 4, 2,Amount.valueOf(0.07257, NANOMETER)));		
+		calibrant.addHKL(new HKL(1, 1, 1, Amount.valueOf(0.31355, NANOMETRE)));
+		calibrant.addHKL(new HKL(2, 2, 0, Amount.valueOf(0.19201, NANOMETRE)));
+		calibrant.addHKL(new HKL(3, 1, 1, Amount.valueOf(0.16374, NANOMETRE)));
+		calibrant.addHKL(new HKL(2, 2, 2, Amount.valueOf(0.15677, NANOMETRE)));
+		calibrant.addHKL(new HKL(4, 0, 0, Amount.valueOf(0.13577, NANOMETRE)));
+		calibrant.addHKL(new HKL(3, 3, 1, Amount.valueOf(0.12459, NANOMETRE)));
+		calibrant.addHKL(new HKL(4, 2, 2, Amount.valueOf(0.11085, NANOMETRE)));
+		calibrant.addHKL(new HKL(3, 3, 3, Amount.valueOf(0.10451, NANOMETRE)));
+		calibrant.addHKL(new HKL(5, 1, 1, Amount.valueOf(0.10451, NANOMETRE)));
+		calibrant.addHKL(new HKL(4, 4, 0, Amount.valueOf(0.09600, NANOMETRE)));
+		calibrant.addHKL(new HKL(5, 3, 1, Amount.valueOf(0.09179, NANOMETRE)));
+		calibrant.addHKL(new HKL(4, 4, 2, Amount.valueOf(0.09051, NANOMETRE)));
+		calibrant.addHKL(new HKL(6, 2, 0, Amount.valueOf(0.08586, NANOMETRE)));
+		calibrant.addHKL(new HKL(5, 3, 3, Amount.valueOf(0.08281, NANOMETRE)));
+		calibrant.addHKL(new HKL(6, 2, 2, Amount.valueOf(0.08187, NANOMETRE)));
+		calibrant.addHKL(new HKL(4, 4, 4, Amount.valueOf(0.07838, NANOMETRE)));
+		calibrant.addHKL(new HKL(7, 1, 1, Amount.valueOf(0.07604, NANOMETRE)));
+		calibrant.addHKL(new HKL(5, 5, 1, Amount.valueOf(0.07604, NANOMETRE)));
+		calibrant.addHKL(new HKL(6, 4, 2, Amount.valueOf(0.07257, NANOMETRE)));		
 		tmp.put(calibrant.getName(), calibrant);
 		
 		calibrant = new CalibrantSpacing("Cr2O3");
@@ -211,28 +223,42 @@ public class CalibrationStandards implements Serializable{
 		this.version = version;
 	}
 
+	/**
+	 * @return name of selected calibrant (can be null)
+	 */
 	public String getSelectedCalibrant() {
 		return selectedCalibrant;
 	}
 
-	
+	/**
+	 * Set name of selected calibrant
+	 * @param selectedCalibrant
+	 */
 	public void setSelectedCalibrant(String selectedCalibrant) {
 		setSelectedCalibrant(selectedCalibrant, false);
 	}
 
+	/**
+	 * Set name of selected calibrant
+	 * @param selCal
+	 * @param fireListeners
+	 */
 	public void setSelectedCalibrant(String selCal, boolean fireListeners) {
 		this.selectedCalibrant = selCal;
 		if (fireListeners) CalibrationFactory.fireCalibrantSelectionListeners(this, selectedCalibrant);
 	}
 
 	/**
-	 * The current selected calibrant.
-	 * @return fred
+	 * @return the current selected calibrant 
 	 */ 
 	public CalibrantSpacing getCalibrant() {
 		return getCalibrationPeakMap(getSelectedCalibrant());
 	}
 
+	/**
+	 * Set modifiability of standard
+	 * @param b if true then adding more calibrants will throw an exception
+	 */
 	public void setUnmodifiable(boolean b) {
 		if (b) {
 		    this.cal2peaks = Collections.unmodifiableMap(cal2peaks);

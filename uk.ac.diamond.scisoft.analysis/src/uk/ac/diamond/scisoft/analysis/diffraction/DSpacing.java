@@ -148,13 +148,25 @@ public class DSpacing {
 	 * Calculate a conic section
 	 * @param detector
 	 * @param diffExp
-	 * @param dSpacing
+	 * @param dSpacing (in Angstroms)
 	 * @return roi
 	 */
 	public static ROIBase conicFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
 			double dSpacing) {
+		return conicFromDSpacing(detector, diffExp.getWavelength(), dSpacing);
+	}
 
-		double alpha = 2 * Math.asin(diffExp.getWavelength() / (2 * dSpacing));
+	/**
+	 * Calculate a conic section
+	 * @param detector
+	 * @param wavelength (in same units as d-spacing)
+	 * @param dSpacing (in same units as wavelength)
+	 * @return roi
+	 */
+	public static ROIBase conicFromDSpacing(DetectorProperties detector, double wavelength,
+			double dSpacing) {
+
+		double alpha = 2 * Math.asin(wavelength / (2 * dSpacing));
 		logger.debug("D-spacing {} gives cone of semi-angle {} degrees", dSpacing, Math.toDegrees(alpha));
 
 		final Vector3d normal = detector.getNormal();
@@ -178,7 +190,9 @@ public class DSpacing {
 			r = intersect.length();
 		} catch (IllegalStateException e) {
 			// parabolic case TODO
+			throw new UnsupportedOperationException("Cannot handle parabolic case yet");
 		}
+
 		// TODO test for intersection behind sample (aka hyperbolic case)
 
 		double sa = Math.sin(alpha);

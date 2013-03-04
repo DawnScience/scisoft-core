@@ -53,7 +53,7 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 			String template = textMetadata.get(PILATUS_TEMPLATE);
 			if (template == null) {
 				// bodged format v1
-				loader = getImageStack(PILATUS_DIR + "/test%d.tif", PILATUS_DIR + "p%d.tif", paths, mon);
+				loader = getImageStack(PILATUS_DIR + "/test%d.tif", PILATUS_DIR + "/p%d.tif", paths, mon);
 			} else {
 				// bodged format v2
 				loader = getImageStack(template, null, paths, mon);

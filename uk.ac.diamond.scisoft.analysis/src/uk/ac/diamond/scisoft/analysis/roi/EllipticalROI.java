@@ -200,7 +200,7 @@ public class EllipticalROI extends ROIBase {
 	 */
 	public double getDistance(double angle) {
 		double[] p = getPoint(angle);
-		return Math.hypot(p[0], p[1]);
+		return Math.hypot(p[0] - spt[0], p[1] - spt[1]);
 	}
 
 	@Override

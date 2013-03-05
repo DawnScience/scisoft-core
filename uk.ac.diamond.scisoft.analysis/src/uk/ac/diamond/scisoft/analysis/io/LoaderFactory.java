@@ -489,6 +489,21 @@ public class LoaderFactory {
 	public static AbstractDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+		
+		try { // See if whole data already loaded, if is try to get from DataHolder!
+			final LoaderKey key = new LoaderKey();
+			key.setFilePath(path);
+	
+			final Object cachedObject = getSoftReference(key);
+			if (cachedObject!=null && cachedObject instanceof DataHolder) {
+				DataHolder holder = (DataHolder)cachedObject;
+				AbstractDataset set = (AbstractDataset)holder.getDataset(name);
+				if (set !=null ) return set;
+			}
+		} catch (Throwable ignored) {
+			// We were just trying it.
+		}
+		
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setDatasetName(name);

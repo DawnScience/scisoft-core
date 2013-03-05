@@ -219,6 +219,21 @@ public class AbstractCompoundDatasetTest {
 		double ddsum = ((Number) dd.sum()).doubleValue();
 		assertEquals(dsum, dcsum[0]+dcsum[1], 1e-10);
 		assertEquals(dsum, ddsum, 1e-10);
+
+		d = Random.randint(0, 255, new int[] {5,3,2});
+		dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
+		AbstractDataset dca = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(0), true);
+		AbstractDataset da = d.sum(0);
+		IndexIterator it = da.getIterator();
+		while (it.hasNext()) {
+			assertEquals(da.getElementDoubleAbs(it.index), dca.getElementDoubleAbs(it.index), 1e-15);
+		}
+		AbstractDataset dcb = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(1), true);
+		AbstractDataset db = d.sum(1);
+		it = db.getIterator();
+		while (it.hasNext()) {
+			assertEquals(db.getElementDoubleAbs(it.index), dcb.getElementDoubleAbs(it.index), 1e-15);
+		}
 	}
 
 	@Test
@@ -456,7 +471,4 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(25.0, ae.getElements(4).getDouble(99), 0.001);
 	
 	}
-
-	
-
 }

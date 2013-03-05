@@ -270,19 +270,37 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	public void loadMetaData(final IMonitor mon) throws Exception {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
+		int count = 1;
 		try {
 			parseHeaders(br, null, mon);
+			// We assume the rest of the lines not starting with # are all
+			// data lines in getting the meta data. We do not parse these lines.
+			String line=null;
+			while ((line = br.readLine()) != null) {	
+				line = line.trim();
+				if (line.startsWith("#")) break;
+				count++;
+			}
+			
 		} finally {
 			br.close();
 		}
-		createMetadata();
+		createMetadata(count);
 	}
-
+	
 	private void createMetadata() {
+		createMetadata(-1);
+	}
+	
+	private void createMetadata(int approxSize) {
 		metadata = new ExtendedMetadata(new File(fileName));
 		metadata.setMetadata(metaData);
 		for (Entry<String, List<Double>> e : vals.entrySet()) {
-			metadata.addDataInfo(e.getKey(), e.getValue().size());
+			if (approxSize>-1 &&  e.getValue().size()<1) {
+			    metadata.addDataInfo(e.getKey(), approxSize);
+			} else {
+			    metadata.addDataInfo(e.getKey(), e.getValue().size());
+			}
 		}
 	}
 

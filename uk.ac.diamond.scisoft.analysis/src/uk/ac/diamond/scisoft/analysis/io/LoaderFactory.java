@@ -493,11 +493,12 @@ public class LoaderFactory {
 		try { // See if whole data already loaded, if is try to get from DataHolder!
 			final LoaderKey key = new LoaderKey();
 			key.setFilePath(path);
-	
+			key.setMetadata(true);
+
 			final Object cachedObject = getSoftReference(key);
 			if (cachedObject!=null && cachedObject instanceof DataHolder) {
-				DataHolder holder = (DataHolder)cachedObject;
-				AbstractDataset set = (AbstractDataset)holder.getDataset(name);
+				DataHolder   holder = (DataHolder)cachedObject;
+				AbstractDataset set = holder.getDataset(name);
 				if (set !=null ) return set;
 			}
 		} catch (Throwable ignored) {

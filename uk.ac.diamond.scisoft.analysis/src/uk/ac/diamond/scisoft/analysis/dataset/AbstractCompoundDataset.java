@@ -609,17 +609,17 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			for (int k = 0; k < isize; k++) {
 				darray[k] = stats[k].getSum();
 			}
-			sum.set(darray, spos);
+			sum.set(darray, qpos);
 			for (int k = 0; k < isize; k++) {
-				darray[k] = stats[k].getSum();
+				darray[k] = stats[k].getMean();
 			}
-			mean.set(darray, spos);
+			mean.set(darray, qpos);
 			for (int k = 0; k < isize; k++) {
-				darray[k] = stats[k].getSum();
+				darray[k] = stats[k].getVariance();
 			}
-			var.set(darray, spos);
+			var.set(darray, qpos);
 		}
-		storedValues.put(storeName(ignoreNaNs, "sum-"+axis), sum);
+		setStoredValue(storeName(ignoreNaNs, "sum-" + axis), sum);
 		storedValues.put(storeName(ignoreNaNs, "mean-"+axis), mean);
 		storedValues.put(storeName(ignoreNaNs, "var-"+axis), var);
 	}

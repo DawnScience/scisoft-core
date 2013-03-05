@@ -66,8 +66,10 @@ public class Integrate2DTest extends TestCase {
 		List<AbstractDataset> dsets = int2d.value(d);
 
 		check1DArray(dsets.get(0), new double[] {3., 12.});
+		check1DArray(d.sum(1), new double[] {3., 12.});
 
 		check1DArray(dsets.get(1), new double[] {3., 5., 7.});
+		check1DArray(d.sum(0), new double[] {3., 5., 7.});
 	}
 
 
@@ -82,8 +84,10 @@ public class Integrate2DTest extends TestCase {
 		List<AbstractDataset> dsets = int2d.value(d);
 
 		check1DArray(dsets.get(0), new double[] {6., 9., 24., 27.});
+		check1DArray(d.sum(1), new double[] {6., 9., 24., 27.});
 
 		check1DArray(dsets.get(1), new double[] {6., 8., 10., 12., 14., 16.});
+		check1DArray(d.sum(0), new double[] {6., 8., 10., 12., 14., 16.});
 	}
 
 }

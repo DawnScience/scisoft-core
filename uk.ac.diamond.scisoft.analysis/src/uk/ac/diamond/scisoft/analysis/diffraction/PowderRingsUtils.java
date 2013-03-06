@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
-import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,9 +76,12 @@ public class PowderRingsUtils {
 
 	private static final double ARC_LENGTH = 8;
 	private static final double RADIAL_DELTA = 8;
+	private static final double RADIAL_MIN = 5*RADIAL_DELTA;
 	private static final int MAX_POINTS = 200;
-	private static final double MAX_FWHM = RADIAL_DELTA*2;
+
 	private static final int PEAK_SMOOTHING = 3;
+	private static final double MAX_FWHM_FACTOR = 2;
+	private static final double RING_SEPARATION = 4;
 
 	public static PolylineROI findPOIsNearCircle(AbstractDataset image, BooleanDataset mask, CircularROI circle) {
 		return findPOIsNearCircle(image, mask, circle, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
@@ -256,7 +260,6 @@ public class PowderRingsUtils {
 		return polyline;
 	}
 
-	// TODO refine selected points by trimming outliers
 	public static EllipticalFitROI fitAndTrimOutliers(PolylineROI points, boolean circleOnly) {
 		return fitAndTrimOutliers(points, RADIAL_DELTA, circleOnly);
 	}
@@ -270,8 +273,6 @@ public class PowderRingsUtils {
 	 * @return fitted ellipse
 	 */
 	public static EllipticalFitROI fitAndTrimOutliers(PolylineROI points, double trimDelta, boolean circleOnly) {
-		int m;
-//		int min = circleOnly ? 3 : 5;
 		try {
 			EllipticalFitROI efroi = new EllipticalFitROI(points, circleOnly);
 
@@ -283,9 +284,6 @@ public class PowderRingsUtils {
 			AbstractDataset d = fn.calcDistanceSquared(f.getParameters());
 
 			// find outliers
-			// double siqr = 3 * 0.5 * (Double) Stats.iqr(d);
-			// double h = (Double) Stats.median(d) + siqr;
-
 			double h = trimDelta * trimDelta;
 			double ds = d.max().doubleValue();
 			logger.debug("Range: [0, {}] cf [{}, {}, {}]", new Object[] { h, d.min(), d.mean(), d.max() });
@@ -298,7 +296,7 @@ public class PowderRingsUtils {
 			while (it.hasNext()) {
 				npts.insertPoint(cpts.getPoint(it.index));
 			}
-			m = npts.getNumberOfPoints();
+			int m = npts.getNumberOfPoints();
 			if (m < n) {
 				logger.debug("Found some outliers: {}/{}", n - m, n);
 				efroi.setPoints(npts);
@@ -314,7 +312,7 @@ public class PowderRingsUtils {
 	/**
 	 * Find other ellipses from given ellipse and image.
 	 * <p>
-	 * This is done by looking at the box profile along the longest spoke from the
+	 * This is done by looking at the box profile along spokes from the
 	 * given centre and finding peaks. Then the distance out to those peaks is used
 	 * to search for more POIs and so more ellipses
 	 * @param image
@@ -323,26 +321,27 @@ public class PowderRingsUtils {
 	 * @return list of ellipses
 	 */
 	public static List<EllipticalROI> findOtherEllipses(AbstractDataset image, BooleanDataset mask, EllipticalROI roi) {
-		return findOtherEllipses(image, mask, roi, ARC_LENGTH, RADIAL_DELTA, RADIAL_DELTA, MAX_POINTS);
+		return findOtherEllipses(image, mask, roi, RADIAL_MIN, RADIAL_DELTA, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
 	/**
 	 * Find other ellipses from given ellipse and image.
 	 * <p>
-	 * This is done by looking at the box profile along the longest spoke from the
+	 * This is done by looking at the box profile along spokes from the
 	 * given centre and finding peaks. Then the distance out to those peaks is used
 	 * to search for more POIs and so more ellipses
 	 * @param image
 	 * @param mask (can be null)
 	 * @param roi initial ellipse
-	 * @param arcLength
+	 * @param radialMin
 	 * @param radialDelta
+	 * @param arcLength
 	 * @param trimDelta
 	 * @param maxPoints
 	 * @return list of ellipses
 	 */
 	public static List<EllipticalROI> findOtherEllipses(AbstractDataset image, BooleanDataset mask, EllipticalROI roi,
-			double arcLength, double radialDelta, double trimDelta, int maxPoints) {
+			double radialMin, double radialDelta, double arcLength, double trimDelta, int maxPoints) {
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
 			throw new IllegalArgumentException("Dataset must have two dimensions");
@@ -352,99 +351,118 @@ public class PowderRingsUtils {
 			throw new IllegalArgumentException("Mask must match image shape");
 		}
 
+		// explore all corners
 		final int[] shape = image.getShape();
 		final int h = shape[0];
 		final int w = shape[1];
-
-		// find farthest corner
 		double[] ec = roi.getPoint();
-		double x = ec[0];
-		double y = ec[1];
-		double d;
-		double max = x*x + y*y; // TL
+		TreeSet<Double> majors = new TreeSet<Double>();
 
-		double[] c = new double[2];
+		findMajorAxes(majors, image, mask, roi, radialMin, radialDelta, ec, 0 - ec[0], 0 - ec[1]); // TL
+		findMajorAxes(majors, image, mask, roi, radialMin, radialDelta, ec, w - ec[0], 0 - ec[1]); // TR
+		findMajorAxes(majors, image, mask, roi, radialMin, radialDelta, ec, w - ec[0], h - ec[1]); // BR
+		findMajorAxes(majors, image, mask, roi, radialMin, radialDelta, ec, 0 - ec[0], h - ec[1]); // BL
 
-		x -= w;
-		d = x*x + y*y; // TR
-		if (d > max) {
-			max = d;
-			c[0] = w;
-			c[1] = 0;
-		}
-		y -= h;
-		d = x*x + y*y; // BR
-		if (d > max) {
-			max = d;
-			c[0] = w;
-			c[1] = h;
-		}
-		x += 2*w;
-		d = x*x + y*y;
-		if (d > max) { // BL
-			max = d;
-			c[0] = 0;
-			c[1] = h;
+		// and finally find POIs
+		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
+		double major = roi.getSemiAxis(0);
+		double aspect = roi.getSemiAxis(0)/roi.getSemiAxis(1);
+		double last = Double.NEGATIVE_INFINITY;
+		for (double a : majors) {
+			System.err.println("Current " + a + ", last " + last);
+			if (Math.abs(a - last) < RING_SEPARATION) { // omit close rings
+				last = a;
+				System.err.println("Dropped as too close");
+				continue;
+			}
+			if (Math.abs(a - major) < RING_SEPARATION) {
+				last = major;
+				System.err.println("Add original");
+				ells.add(roi);
+			} else {
+				EllipticalROI er = new EllipticalROI(a, a/aspect, roi.getAngle(), ec[0], ec[1]);
+				try {
+					PolylineROI polyline = findPOIsNearEllipse(image, mask, er, arcLength, radialDelta, maxPoints);
+					if (polyline.getNumberOfPoints() > 2) {
+						er = fitAndTrimOutliers(polyline, trimDelta, roi.isCircular());
+						if (Math.abs(er.getSemiAxis(0) - last) < RING_SEPARATION) { // omit close rings
+							last = a;
+							System.err.println("Dropped as fit is too close");
+							continue;
+						}
+						double[] c = er.getPointRef();
+						if (Math.hypot(c[0] - ec[0], c[1] - ec[1]) > radialDelta) {
+							last = a; // omit fits with far-off centres
+							System.err.println("Dropped as centre is far-off");
+							continue;
+						}
+						last = er.getSemiAxis(0);
+						ells.add(er);
+					} else {
+						logger.warn("Could not find enough points at {}", er);
+					}
+				} catch (IllegalArgumentException e) {
+					logger.debug("Problem with {}", er, e);
+					last = a;
+				}
+			}
 		}
 
-		// set up profile ROI and find peaks
+		return ells;
+	}
+
+	/**
+	 * Find major axes by looking along thick line given by relative coordinates to centre for
+	 * maximum intensity values
+	 * @param axes
+	 * @param image
+	 * @param mask
+	 * @param roi
+	 * @param radialMin
+	 * @param radialDelta
+	 * @param centre
+	 * @param dx
+	 * @param dy
+	 */
+	private static void findMajorAxes(TreeSet<Double> axes, AbstractDataset image, AbstractDataset mask, EllipticalROI roi, double radialMin, double radialDelta, double[] centre, double dx, double dy) {
 		RectangularROI rroi = new RectangularROI();
-		rroi.setPoint(ec);
-		rroi.setAngle(Math.atan2(c[1] - ec[1], c[0] - ec[0]));
-		rroi.setLengths(Math.hypot(c[0] - ec[0], c[1] - ec[1]), radialDelta);
-		rroi.setPoint(rroi.getPoint(0, -0.5));
+		rroi.setPoint(centre);
+		rroi.setAngle(Math.atan2(dy, dx));
+		rroi.setLengths(Math.hypot(dx, dy) - radialMin, radialDelta);
+		rroi.translate(0, -0.5); //rroi.getPoint(0, -0.5));
 		rroi.setClippingCompensation(true);
-		AbstractDataset profile = ROIProfile.box(image, mask, rroi)[0];
+		AbstractDataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
 		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), AbstractDataset.INT), profile, PEAK_SMOOTHING);
 
-		// concoct ROIs
-		double r = roi.getDistance(rroi.getAngle());
-		double aspect = roi.getSemiAxis(0)/roi.getSemiAxis(1);
-		List<EllipticalROI> rois = new ArrayList<EllipticalROI>();
-		SummaryStatistics stats = new SummaryStatistics();
+		DescriptiveStatistics stats = new DescriptiveStatistics();
 		for (IdentifiedPeak p : peaks) {
+			if (p.getPos() < radialMin) {
+				continue;
+			}
 			stats.addValue(p.getArea());
-			System.err.printf("Pos %f %f %f %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
+			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
 		}
 		
-		double area = stats.getMean() + stats.getStandardDeviation();
+		double area = stats.getMean() + 0.5*(stats.getPercentile(75) - stats.getPercentile(25));
 		logger.debug("Area: {}", stats);
 		logger.debug("Minimum threshold: {}", area);
 
+		double majorFactor = roi.getSemiAxis(0)/roi.getDistance(rroi.getAngle());
+		double maxFWHM = MAX_FWHM_FACTOR*radialDelta;
 		for (IdentifiedPeak p : peaks) {
 			double l = p.getPos();
-			if (Math.abs(l-r) < PEAK_SMOOTHING) {
-				rois.add(null); // placeholder
+			if (l < radialMin) {
 				continue;
 			}
-			// filter on area and fwhm
-			if (p.getFWHM() > MAX_FWHM) {
+			System.err.println(p);
+			// filter on area and FWHM
+			if (p.getFWHM() > maxFWHM) {
 				continue;
 			}
 			if (p.getArea() < area) {
 				break;
 			}
-			System.err.println(p);
-			double a = l*roi.getSemiAxis(0)/r;
-			EllipticalROI er = new EllipticalROI(a, a/aspect, roi.getAngle(), ec[0], ec[1]);
-			rois.add(er);
+			axes.add(l*majorFactor);
 		}
-
-		// and finally find POIs
-		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
-		for (EllipticalROI b : rois) {
-			if (b == null) {
-				ells.add(roi);
-			} else {
-				PolylineROI polyline = findPOIsNearEllipse(image, mask, b, arcLength, radialDelta, maxPoints);
-				if (polyline.getNumberOfPoints() > 0) {
-					ells.add(fitAndTrimOutliers(polyline, trimDelta, roi.isCircular()));
-				} else {
-					logger.warn("Could not find any points at {}", b);
-				}
-			}
-		}
-		
-		return ells;
 	}
 }

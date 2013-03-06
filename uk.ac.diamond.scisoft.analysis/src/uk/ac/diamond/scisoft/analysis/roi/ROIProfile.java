@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -231,6 +232,133 @@ public class ROIProfile {
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
 					len[1], ang, false);
 			List<AbstractDataset> dsets = rcmapint.value(data);
+			if (dsets == null)
+				return null;
+
+			profiles[0] = dsets.get(1);
+			profiles[1] = dsets.get(0);
+
+			if (clip) {
+				clippingCompensate(data, mask, profiles, rcmapint);
+			}
+		}
+
+		return profiles;
+	}
+
+
+	/**
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param rroi
+	 * @return max in box profile
+	 */
+	public static AbstractDataset[] maxInBox(AbstractDataset data, AbstractDataset mask, RectangularROI rroi) {
+		return maxInBox(data, mask, rroi, false);
+	}
+
+	/**
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param rroi
+	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
+	 *                       deals with NaNs however, in this case we can set maskWithNans true and masked
+	 *                       pixels are NaN instead of 0.
+	 * @return max in box profile
+	 */
+	public static AbstractDataset[] maxInBox(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+
+		int[] spt = rroi.getIntPoint();
+		int[] len = rroi.getIntLengths();
+		double ang = rroi.getAngle();
+		boolean clip = rroi.isClippingCompensation();
+		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+
+
+		if (len[0] == 0)
+			len[0] = 1;
+		if (len[1] == 0)
+			len[1] = 1;
+
+		if (ang == 0.0) {
+			
+			final int xtart  = Math.max(0,  spt[1]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
+			final int ystart = Math.max(0,  spt[0]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
+			
+			// We slice down data to reduce the work the masking and the integrate needs to do.
+			// TODO Does this always work? This makes large images profile better...
+			AbstractDataset slicedData = null;
+			try {
+			    slicedData = data.getSlice(new int[]{xtart,   ystart}, 
+					                       new int[]{xend,    yend},
+					                       new int[]{1,1});
+			} catch (Exception ne) {
+				// We cannot process the profiles for a region totally outside the image!
+				return null;
+			}
+			
+			final AbstractDataset slicedMask = mask!=null
+					                         ? mask.getSlice(new int[]{xtart, ystart}, 
+					                                         new int[]{xend,  yend},
+					                                         new int[]{1,1})
+					                         : null;
+			
+			
+			if (slicedMask != null && slicedData != null) {
+				if (slicedData.isCompatibleWith(slicedMask)) {
+					clip = true;
+					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
+						// convertToAbstractDataset should not be necessary here? 
+						// AbstractDataset is already here, the data is loaded - is this right?
+						slicedData = Maths.multiply(DatasetUtils.convertToAbstractDataset(slicedData), DatasetUtils.convertToAbstractDataset(slicedMask));
+					} else {
+						// Masks values to NaN, also changes dtype to Float
+						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
+					}
+				}
+			}
+
+			if (slicedData==null){
+				slicedData = data;
+			}
+
+			
+			List<AbstractDataset> dsets = new ArrayList<AbstractDataset>();
+			dsets.add(slicedData.max(1));
+			dsets.add(slicedData.max(0));
+
+			profiles[0] = maskWithNans
+					    ? processColumnNans(dsets.get(1), slicedData)
+					    : dsets.get(1);
+			
+			profiles[1] = maskWithNans
+					    ?  processRowNans(dsets.get(0), slicedData)
+					    : dsets.get(0);
+
+		} else {
+			
+			if (mask != null && data != null) {
+				if (data.isCompatibleWith(mask)) {
+					clip = true;
+					// TODO both multiply and nanalize create copies of the whole data passed in
+					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
+						// convertToAbstractDataset should not be necessary here? 
+						// AbstractDataset is already here, the data is loaded - is this right?
+						data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+					} else {
+						// Masks values to NaN, also changes dtype to Float
+						data = nanalize(data, (BooleanDataset)mask);
+					}
+				}
+			}
+
+			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
+					len[1], ang, false);
+			List<AbstractDataset> dsets = rcmapint.maxValue(data);
 			if (dsets == null)
 				return null;
 

@@ -167,4 +167,46 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 		}
 		return result;
 	}
+
+	/**
+	 * 
+	 * @param datasets
+	 * @return maximum value in 
+	 */
+	public List<AbstractDataset> maxValue(IDataset... datasets) {
+		if (datasets.length == 0)
+			return null;
+
+		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+
+		for (IDataset ids : datasets) {
+			if (ids.getRank() != 2)
+				return null;
+
+			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			AbstractDataset mx = AbstractDataset.zeros(new int[] { h }, dtype);
+			AbstractDataset my = AbstractDataset.zeros(new int[] { w }, dtype);
+
+			double cx, cy;
+			double cmax;
+			for (int y = 0; y < h; y++) {
+				cmax = Double.NEGATIVE_INFINITY;
+				for (int x = 0; x < w; x++) {
+					// back transformation from tilted to original coordinates
+					cx = ox + x * cp - y * sp;
+					cy = oy + x * sp + y * cp;
+
+					final double v = Maths.getBilinear(ids, mask, cy, cx);
+					my.set(Math.max(v, my.getDouble(x)), x);
+					if (v > cmax)
+						cmax = v;
+				}
+				mx.set(cmax, y);
+			}
+
+			result.add(mx);
+			result.add(my);
+		}
+		return result;
+	}
 }

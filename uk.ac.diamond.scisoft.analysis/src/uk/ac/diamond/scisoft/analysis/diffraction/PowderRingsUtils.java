@@ -192,7 +192,7 @@ public class PowderRingsUtils {
 				pos[0] += start[0];
 				pos[1] += start[1];
 
-				if (!mask.get(pos)) {
+				if (mask.get(pos)) {
 					AbstractDataset sorted = DatasetUtils.sort(sub.flatten(), null);
 					int l = sorted.getSize() - 1;
 					do {

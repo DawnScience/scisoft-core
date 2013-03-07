@@ -27,9 +27,11 @@ public class CircularFitROI extends CircularROI {
 
 	private PolylineROI proi;
 	private IConicSectionFitter fitter;
+	private double residual;
 
 	private CircularFitROI(double radius, double ptx, double pty) {
 		super(radius, ptx, pty);
+		residual = 0;
 	}
 
 	public CircularFitROI(PolylineROI points) {
@@ -77,9 +79,17 @@ public class CircularFitROI extends CircularROI {
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();
+		residual = fitter.getRMS();
 
 		setRadius(p[0]);
 		setPoint(p[1], p[2]);
+	}
+
+	/**
+	 * @return root mean squared of residuals
+	 */
+	public double getRMS() {
+		return residual;
 	}
 
 	/**

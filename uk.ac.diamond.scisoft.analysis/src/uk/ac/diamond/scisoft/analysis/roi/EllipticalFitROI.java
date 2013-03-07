@@ -29,9 +29,11 @@ public class EllipticalFitROI extends EllipticalROI {
 	private PolylineROI proi;
 	private boolean circleOnly;
 	private IConicSectionFitter fitter;
+	private double residual;
 
 	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
 		super(major, minor, angle, ptx, pty);
+		residual = 0;
 	}
 
 	public EllipticalFitROI(PolylineROI points) {
@@ -91,6 +93,7 @@ public class EllipticalFitROI extends EllipticalROI {
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();
+		residual = fitter.getRMS();
 
 		if (p.length < 5) {
 			setSemiAxis(0, p[0]);
@@ -103,6 +106,13 @@ public class EllipticalFitROI extends EllipticalROI {
 			setAngle(p[2]);
 			setPoint(p[3], p[4]);
 		}
+	}
+
+	/**
+	 * @return root mean squared of residuals
+	 */
+	public double getRMS() {
+		return residual;
 	}
 
 	/**

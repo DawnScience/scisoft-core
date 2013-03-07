@@ -29,6 +29,11 @@ public interface IConicSectionFitter {
 	public double[] getParameters();
 
 	/**
+	 * @return root mean square of residuals
+	 */
+	public double getRMS();
+
+	/**
 	 * Fit points given by x, y datasets to a conic section. If no initial parameters are
 	 * given, then an algebraic fit is performed then a non-linear least squares fitting routine
 	 * is used to provide the best geometric fit.

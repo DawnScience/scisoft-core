@@ -202,6 +202,8 @@ public class CircleFitter implements IConicSectionFitter {
 
 	private CircleCoordinatesFunction fitFunction;
 
+	private double residual;
+
 	final static int PARAMETERS = 3;
 
 	public CircleFitter() {
@@ -224,6 +226,12 @@ public class CircleFitter implements IConicSectionFitter {
 		}
 		return fitFunction;
 	}
+
+	@Override
+	public double getRMS() {
+		return residual;
+	}
+
 	/**
 	 * Fit points given by x, y datasets to a circle. If no initial parameters are given, then
 	 * an algebraic fit is performed then a non-linear least squares fitting routine is used to
@@ -234,7 +242,7 @@ public class CircleFitter implements IConicSectionFitter {
 	 */
 	@Override
 	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
-
+		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
 		}
@@ -259,6 +267,7 @@ public class CircleFitter implements IConicSectionFitter {
 			for (int i = 0; i < PARAMETERS; i++)
 				parameters[i] = point[i];
 
+			residual = opt.getRMS();
 			logger.info("Circle fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
 		} catch (FunctionEvaluationException e) {
 			// cannot happen
@@ -276,11 +285,14 @@ public class CircleFitter implements IConicSectionFitter {
 	 */
 	@Override
 	public void algebraicFit(AbstractDataset x, AbstractDataset y) {
+		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
 		}
 
 		double[] quick = quickfit(x, y);
+		IConicSectionFitFunction f = getFitFunction(x, y);
+		residual = Math.sqrt((Double) f.calcDistanceSquared(quick).mean());
 
 		for (int i = 0; i < PARAMETERS; i++)
 			parameters[i] = quick[i];

@@ -304,6 +304,7 @@ public class EllipseFitter implements IConicSectionFitter {
 	private static transient final Logger logger = LoggerFactory.getLogger(EllipseFitter.class);
 
 	private double[] parameters;
+	private double residual;
 
 	private EllipseCoordinatesFunction fitFunction;
 
@@ -331,8 +332,13 @@ public class EllipseFitter implements IConicSectionFitter {
 	}
 
 	@Override
-	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
+	public double getRMS() {
+		return residual;
+	}
 
+	@Override
+	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
+		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
 		}
@@ -349,12 +355,12 @@ public class EllipseFitter implements IConicSectionFitter {
 			VectorialPointValuePair result = opt.optimize(f, f.getTarget(), f.getWeight(), f.calcAllInitValues(init));
 
 			double[] point = result.getPointRef(); 
-			parameters[0] = point[0];
-			parameters[1] = point[1];
-			for (int i = 2; i < PARAMETERS; i++)
+			for (int i = 0; i < PARAMETERS; i++)
 				parameters[i] = point[i];
 
-			logger.info("Ellipse fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
+			residual = opt.getRMS();
+
+			logger.info("Ellipse fit: rms = {}, x^2 = {}", residual, opt.getChiSquare());
 		} catch (FunctionEvaluationException e) {
 			// cannot happen
 		} catch (IllegalArgumentException e) {
@@ -366,11 +372,14 @@ public class EllipseFitter implements IConicSectionFitter {
 
 	@Override
 	public void algebraicFit(AbstractDataset x, AbstractDataset y) {
+		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
 		}
 
 		double[] quick = quickfit(x, y);
+		IConicSectionFitFunction f = getFitFunction(x, y);
+		residual = Math.sqrt((Double) f.calcDistanceSquared(quick).mean());
 
 		for (int i = 0; i < PARAMETERS; i++)
 			parameters[i] = quick[i];

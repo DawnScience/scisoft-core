@@ -165,10 +165,18 @@ public class DSpacing {
 	 */
 	public static ROIBase conicFromDSpacing(DetectorProperties detector, double wavelength,
 			double dSpacing) {
-
 		double alpha = 2 * Math.asin(wavelength / (2 * dSpacing));
-		logger.debug("D-spacing {} gives cone of semi-angle {} degrees", dSpacing, Math.toDegrees(alpha));
+		logger.debug("Cone of semi-angle {} degrees", Math.toDegrees(alpha));
+		return conicFromAngle(detector, alpha);
+	}
 
+	/**
+	 * Calculate a conic section
+	 * @param detector
+	 * @param alpha semi-angle (in radians)
+	 * @return roi
+	 */
+	public static ROIBase conicFromAngle(DetectorProperties detector, double alpha) {
 		final Vector3d normal = detector.getNormal();
 
 		Vector3d major = new Vector3d();
@@ -213,9 +221,9 @@ public class DSpacing {
 		Vector3d centre = new Vector3d();
 
 		r /= detector.getVPxSize();
-		double a = r*ce*sa*ca/(ca*ca - se*se); // if alpha = 90 - eta it's the parabolic case TODO
-		double te = se/ce;
-		double b = r*sa/Math.sqrt(ca*ca - sa*sa*te*te);
+		double denom = ca*ca - se*se; // if alpha = 90 - eta it's the parabolic case TODO
+		double a = r*ce*sa*ca/denom;
+		double b = r*ce*sa/Math.sqrt(denom);
 
 		detector.pixelCoords(intersect, centre);
 

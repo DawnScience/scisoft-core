@@ -469,6 +469,13 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
+	 * @return tilt of detector (in radians)
+	 */
+	public double getTiltAngle() {
+		return Math.acos(normal.z);
+	}
+
+	/**
 	 * Get orientation of the detector as described by a passive transformation from the laboratory
 	 * frame to the detector frame
 	 * @return reference to matrix

@@ -30,4 +30,18 @@ public interface IMonitor {
 	 * @return true if user cancelled loading.
 	 */
 	public boolean isCancelled();
+	
+	public class Stub implements IMonitor {
+
+		@Override
+		public void worked(int amount) {
+			
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return false;
+		}
+		
+	}
 }

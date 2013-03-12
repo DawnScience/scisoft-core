@@ -21,15 +21,13 @@ import javax.vecmath.Vector3d;
 
 
 /**
- * Reciprocal cell that is dual to a lattice cell
+ * Reciprocal cell that is dual to a unit cell
  */
-public class ReciprocalCell extends LatticeCell {
+public class ReciprocalCell extends UnitCell {
 	/**
 	 * create a reciprocal cell from a unit cell
 	 */
-	public ReciprocalCell(LatticeCell l) {
-		super();
-
+	public ReciprocalCell(UnitCell l) {
 		a = new Vector3d(); // a*
 		a.cross(l.b, l.c);
 		double volumeInv = 1. / a.dot(l.a);
@@ -42,6 +40,8 @@ public class ReciprocalCell extends LatticeCell {
 		c = new Vector3d(); // c*
 		c.cross(l.a, l.b);
 		c.scale(volumeInv);
+
+		calculateAll();
 	}
 
 	/**

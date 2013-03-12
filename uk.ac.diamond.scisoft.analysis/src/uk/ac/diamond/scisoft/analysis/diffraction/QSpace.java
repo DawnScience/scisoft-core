@@ -46,6 +46,13 @@ public class QSpace {
 		calculateInitalWavevector();
 	}
 
+	/**
+	 * @return wavelength in Angstroms
+	 */
+	public double getWavelength() {
+		return 2.*Math.PI/kmod;
+	}
+
 	public void setDetectorProperties(DetectorProperties detprops) {
 		detProps = detprops;
 		calculateInitalWavevector();

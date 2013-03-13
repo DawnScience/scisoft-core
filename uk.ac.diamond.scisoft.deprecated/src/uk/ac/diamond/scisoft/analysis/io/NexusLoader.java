@@ -48,7 +48,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  *
  */
-public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDataSetLoader, ISliceLoader {
+public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDataSetLoader {
 	private static final Logger logger = LoggerFactory.getLogger(NexusLoader.class);
 
 	private String filename;
@@ -510,8 +510,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 	 * @return set
 	 * @throws Exception
 	 */
-	@Override
-	public AbstractDataset slice(final SliceObject object, IMonitor mon) throws Exception {
+	protected AbstractDataset slice(final SliceObject object, IMonitor mon) throws Exception {
 
 		final List<String> origNames    =  dataSetNames;
 		final String       origFileName =  filename;

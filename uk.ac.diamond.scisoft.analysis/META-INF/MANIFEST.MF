@@ -59,7 +59,8 @@ Import-Package: Jama,
  ncsa.hdf.object.h5,
  org.apache.commons.beanutils;version="1.8.0",
  org.osgi.framework;version="1.6.0",
- org.slf4j;version="[1.5.0,2.0.0)"
+ org.slf4j;version="[1.5.0,2.0.0)",
+ org.uncommons.maths.combinatorics;version="1.2.3"
 Eclipse-BuddyPolicy: registered
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.Activator

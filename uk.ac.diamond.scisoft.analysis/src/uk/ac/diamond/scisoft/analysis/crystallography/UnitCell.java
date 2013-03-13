@@ -26,6 +26,9 @@ public class UnitCell extends LatticeCell {
 	private double[] lengths;
 	private double[] angles;
 
+	protected UnitCell() {
+	}
+
 	/**
 	 * Cubic unit cell
 	 * @param length
@@ -66,14 +69,14 @@ public class UnitCell extends LatticeCell {
 
 		b = new Vector3d(lengths[1] * Math.cos(gamma), lengths[1] * Math.sin(gamma), 0);
 
-		double sinBetacosA = (Math.cos(alpha) - Math.cos(beta) * Math.cos(gamma)) / Math.sin(gamma);
+		double sinBcosA = (Math.cos(alpha) - Math.cos(beta) * Math.cos(gamma)) / Math.sin(gamma);
 
-		double sinA = sinBetacosA / Math.sin(beta);
+		double sinA = sinBcosA / Math.sin(beta);
 		sinA = 1.0 - sinA * sinA;
 		if (sinA < 0.0)
 			sinA = 0.0; // for numerical errors
 
-		c = new Vector3d(lengths[2] * Math.cos(beta), lengths[2] * sinBetacosA,
+		c = new Vector3d(lengths[2] * Math.cos(beta), lengths[2] * sinBcosA,
 				lengths[2] * Math.sin(beta) * Math.sqrt(sinA));
 	}
 
@@ -117,5 +120,43 @@ public class UnitCell extends LatticeCell {
 	 */
 	public double[] getAngles() {
 		return angles;
+	}
+
+	protected void calculateAll() {
+		if (lengths == null)
+			lengths = new double[3];
+		lengths[0] = a.length();
+		lengths[1] = b.length();
+		lengths[2] = c.length();
+
+		if (angles == null)
+			angles = new double[3];
+		angles[0] = Math.toDegrees(b.angle(c));
+		angles[1] = Math.toDegrees(c.angle(a));
+		angles[2] = Math.toDegrees(a.angle(b));
+	}
+
+	@Override
+	public void setA(Vector3d a) {
+		super.setA(a);
+		lengths[0] = a.length();
+		angles[1] = Math.toDegrees(c.angle(a));
+		angles[2] = Math.toDegrees(a.angle(b));
+	}
+
+	@Override
+	public void setB(Vector3d b) {
+		super.setB(b);
+		lengths[1] = b.length();
+		angles[0] = Math.toDegrees(b.angle(c));
+		angles[2] = Math.toDegrees(a.angle(b));
+	}
+
+	@Override
+	public void setC(Vector3d c) {
+		super.setC(c);
+		lengths[2] = c.length();
+		angles[0] = Math.toDegrees(b.angle(c));
+		angles[1] = Math.toDegrees(c.angle(a));
 	}
 }

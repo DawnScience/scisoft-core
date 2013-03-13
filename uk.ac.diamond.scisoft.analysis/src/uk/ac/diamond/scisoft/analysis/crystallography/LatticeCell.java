@@ -30,7 +30,7 @@ public class LatticeCell {
 	/**
 	 * 
 	 */
-	public LatticeCell() {
+	protected LatticeCell() {
 	}
 
 	/**

@@ -41,6 +41,7 @@ import org.jscience.physics.amount.Amount;
 public class CalibrationStandards implements Serializable {
 
 	public final static Unit<Length> NANOMETRE = SI.NANO(SI.METRE);
+	public final static Unit<Length> ANGSTROM = NonSI.ANGSTROM;
 
 	private Map<String, CalibrantSpacing> cal2peaks;	
 	private String version;
@@ -100,7 +101,7 @@ public class CalibrationStandards implements Serializable {
 	static Map<String, CalibrantSpacing> createDefaultCalibrants() {
 		LinkedHashMap<String, CalibrantSpacing> tmp = new LinkedHashMap<String, CalibrantSpacing>();
 		
-		CalibrantSpacing calibrant = new CalibrantSpacing("Collagen Wet");
+		CalibrantSpacing calibrant = new CalibrantSpacing("Collagen Wet"); // FIXME reference
 		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(67.0, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(33.5, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(22.3, NANOMETRE)));
@@ -126,7 +127,7 @@ public class CalibrationStandards implements Serializable {
 		tmp.put(calibrant.getName(), calibrant);
 		
 		
-		calibrant = new CalibrantSpacing("Collagen Dry");
+		calibrant = new CalibrantSpacing("Collagen Dry"); // FIXME reference
 		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(65.3, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(32.7, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(21.8, NANOMETRE)));
@@ -144,24 +145,24 @@ public class CalibrationStandards implements Serializable {
 		tmp.put(calibrant.getName(), calibrant);
 
 		
-		calibrant = new CalibrantSpacing("Ag Behenate");
-		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(5.838     , NANOMETRE))); 
-		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(2.919     , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(1.946     , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 4,  Amount.valueOf(1.4595    , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 5,  Amount.valueOf(1.1676    , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 6,  Amount.valueOf(0.973     , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 7,  Amount.valueOf(0.834     , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 8,  Amount.valueOf(0.72975   , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 9,  Amount.valueOf(0.64866667, NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(0.5838    , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(0.53072727, NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(0.4865    , NANOMETRE)));
-		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(0.44907692, NANOMETRE)));
+		calibrant = new CalibrantSpacing("Ag Behenate"); // Huang, Toraya, Blanton & Wu, 1993 (58.380)
+		calibrant.addHKL(new HKL(0, 0, 1,  Amount.valueOf(5.8380,  NANOMETRE))); 
+		calibrant.addHKL(new HKL(0, 0, 2,  Amount.valueOf(2.9190,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 3,  Amount.valueOf(1.9460,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 4,  Amount.valueOf(1.4595,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 5,  Amount.valueOf(1.1676,  NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 6,  Amount.valueOf(0.97300, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 7,  Amount.valueOf(0.83400, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 8,  Amount.valueOf(0.72975, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 9,  Amount.valueOf(0.64867, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 10, Amount.valueOf(0.58380, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(0.53073, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(0.48650, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(0.44908, NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 		        
 		
-		calibrant = new CalibrantSpacing("HDPE");
+		calibrant = new CalibrantSpacing("HDPE"); // FIXME reference
 		calibrant.addHKL(new HKL(1, 1, 0, Amount.valueOf(0.4166, NANOMETRE)));
 		calibrant.addHKL(new HKL(2, 0, 0, Amount.valueOf(0.378 , NANOMETRE)));
 		calibrant.addHKL(new HKL(2, 1, 0, Amount.valueOf(0.3014, NANOMETRE)));
@@ -169,42 +170,57 @@ public class CalibrationStandards implements Serializable {
 		tmp.put(calibrant.getName(), calibrant);
 		
 		
-		calibrant = new CalibrantSpacing("Silicon");
-		calibrant.addHKL(new HKL(1, 1, 1, Amount.valueOf(0.31355, NANOMETRE)));
-		calibrant.addHKL(new HKL(2, 2, 0, Amount.valueOf(0.19201, NANOMETRE)));
-		calibrant.addHKL(new HKL(3, 1, 1, Amount.valueOf(0.16374, NANOMETRE)));
-		calibrant.addHKL(new HKL(2, 2, 2, Amount.valueOf(0.15677, NANOMETRE)));
-		calibrant.addHKL(new HKL(4, 0, 0, Amount.valueOf(0.13577, NANOMETRE)));
-		calibrant.addHKL(new HKL(3, 3, 1, Amount.valueOf(0.12459, NANOMETRE)));
-		calibrant.addHKL(new HKL(4, 2, 2, Amount.valueOf(0.11085, NANOMETRE)));
-		calibrant.addHKL(new HKL(3, 3, 3, Amount.valueOf(0.10451, NANOMETRE)));
-		calibrant.addHKL(new HKL(5, 1, 1, Amount.valueOf(0.10451, NANOMETRE)));
-		calibrant.addHKL(new HKL(4, 4, 0, Amount.valueOf(0.09600, NANOMETRE)));
-		calibrant.addHKL(new HKL(5, 3, 1, Amount.valueOf(0.09179, NANOMETRE)));
-		calibrant.addHKL(new HKL(4, 4, 2, Amount.valueOf(0.09051, NANOMETRE)));
-		calibrant.addHKL(new HKL(6, 2, 0, Amount.valueOf(0.08586, NANOMETRE)));
-		calibrant.addHKL(new HKL(5, 3, 3, Amount.valueOf(0.08281, NANOMETRE)));
-		calibrant.addHKL(new HKL(6, 2, 2, Amount.valueOf(0.08187, NANOMETRE)));
-		calibrant.addHKL(new HKL(4, 4, 4, Amount.valueOf(0.07838, NANOMETRE)));
-		calibrant.addHKL(new HKL(7, 1, 1, Amount.valueOf(0.07604, NANOMETRE)));
-		calibrant.addHKL(new HKL(5, 5, 1, Amount.valueOf(0.07604, NANOMETRE)));
-		calibrant.addHKL(new HKL(6, 4, 2, Amount.valueOf(0.07257, NANOMETRE)));		
+		calibrant = new CalibrantSpacing("Silicon"); // 2010 CODATA (5.4310205, Diamond FCC)
+		calibrant.addHKL(new HKL(1, 1, 1, Amount.valueOf(3.1356011,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 2, 0, Amount.valueOf(1.9201557,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 1, 1, Amount.valueOf(1.6375143,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 0, 0, Amount.valueOf(1.3577551,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 1, Amount.valueOf(1.2459616,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 2, Amount.valueOf(1.1086024,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 3, Amount.valueOf(1.0452004,  ANGSTROM))); // 511
+		calibrant.addHKL(new HKL(4, 4, 0, Amount.valueOf(0.96007786, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 3, 1, Amount.valueOf(0.91801002, ANGSTROM)));
+		calibrant.addHKL(new HKL(6, 2, 0, Amount.valueOf(0.85871974, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 3, 3, Amount.valueOf(0.82822286, ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 4, 4, Amount.valueOf(0.78390029, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 5, 1, Amount.valueOf(0.76049498, ANGSTROM))); // 711
+		calibrant.addHKL(new HKL(6, 4, 2, Amount.valueOf(0.72575064, ANGSTROM)));
+		tmp.put(calibrant.getName(), calibrant);
+
+		calibrant = new CalibrantSpacing("Cr2O3"); // NIST SRM 674 (4.95916(12), 13.5972(6),
+		// trigonal - hexagonal scalenohedral; IUCR space group #166)
+		calibrant.addHKL(new HKL(Amount.valueOf(3.645, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.672, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.487, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.181, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.819, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.676, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.467, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(1.433, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 		
-		calibrant = new CalibrantSpacing("Cr2O3");
-		calibrant.addHKL(new HKL(Amount.valueOf(3.645, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(2.672, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(2.487, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(2.181, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(1.819, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(1.676, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(1.467, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(1.433, NonSI.ANGSTROM)));
+		calibrant = new CalibrantSpacing("CeO2"); // NIST SRM 674 (5.41129, FCC)
+		calibrant.addHKL(new HKL(1, 1, 1,  Amount.valueOf(3.12421,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 0, 0,  Amount.valueOf(2.70565,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 2, 0,  Amount.valueOf(1.91318,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 1, 1,  Amount.valueOf(1.63157,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 2, 2,  Amount.valueOf(1.56210,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 0, 0,  Amount.valueOf(1.35282,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 1,  Amount.valueOf(1.24144,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 0,  Amount.valueOf(1.21000,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 2,  Amount.valueOf(1.10457,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 3,  Amount.valueOf(1.04140,  ANGSTROM))); // 511
+		calibrant.addHKL(new HKL(4, 4, 0,  Amount.valueOf(0.956590, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 3, 1,  Amount.valueOf(0.914675, ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 4, 2,  Amount.valueOf(0.901882, ANGSTROM))); // 600
+		calibrant.addHKL(new HKL(6, 2, 0,  Amount.valueOf(0.855600, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 3, 3,  Amount.valueOf(0.825214, ANGSTROM)));
+		calibrant.addHKL(new HKL(6, 2, 2,  Amount.valueOf(0.815783, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
-		
-		calibrant = new CalibrantSpacing("Bees Wax");
-		calibrant.addHKL(new HKL(Amount.valueOf(3.6, NonSI.ANGSTROM)));
-		calibrant.addHKL(new HKL(Amount.valueOf(2.4, NonSI.ANGSTROM)));
+
+		calibrant = new CalibrantSpacing("Bees Wax"); // FIXME reference
+		calibrant.addHKL(new HKL(Amount.valueOf(3.6, ANGSTROM)));
+		calibrant.addHKL(new HKL(Amount.valueOf(2.4, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 
 		return tmp;

@@ -281,6 +281,18 @@ public class DetectorProperties implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Set geometry from another detector
+	 * @param other
+	 */
+	public void setGeometry(DetectorProperties other) {
+		origin = other.origin;
+		beamVector = other.beamVector;
+		normal = other.normal;
+		orientation = other.orientation;
+		invOrientation = other.invOrientation;
+	}
+
 	private void calcNormal(boolean fromPassive) {
 		if (fromPassive) {
 			if (invOrientation == null)
@@ -469,7 +481,7 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * @return tilt of detector (in radians)
+	 * @return tilt of detector normal from beam direction (in radians)
 	 */
 	public double getTiltAngle() {
 		return Math.acos(normal.z);

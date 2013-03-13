@@ -26,6 +26,8 @@ import org.jscience.physics.amount.Amount;
 /**
  * This class is a bean to hold d-spacing and, optionally, integer Miller indices (h,k,l).
  * 
+ * TODO refactor to DSpacing class (but keep as bean) or wrap/delegate to that
+ * 
  * It is not (currently) a class for using HKLs but rather for storing d-spacings with an optional
  * labelling by HKLs.
  * 

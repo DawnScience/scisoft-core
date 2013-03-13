@@ -166,7 +166,6 @@ public class DSpacing {
 	public static ROIBase conicFromDSpacing(DetectorProperties detector, double wavelength,
 			double dSpacing) {
 		double alpha = 2 * Math.asin(wavelength / (2 * dSpacing));
-		logger.debug("Cone of semi-angle {} degrees", Math.toDegrees(alpha));
 		return conicFromAngle(detector, alpha);
 	}
 

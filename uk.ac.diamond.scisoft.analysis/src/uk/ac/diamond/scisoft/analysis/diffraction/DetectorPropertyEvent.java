@@ -25,6 +25,7 @@ public class DetectorPropertyEvent extends EventObject {
 		HPXSIZE,
 		VPXSIZE,
 		NORMAL,
+		GEOMETRY,
 	}
 
 	private EventType type;
@@ -39,11 +40,11 @@ public class DetectorPropertyEvent extends EventObject {
 	}
 
 	public boolean hasOriginChanged() {
-		return type == EventType.ORIGIN || type == EventType.NORMAL;
+		return type == EventType.ORIGIN || type == EventType.NORMAL || type == EventType.GEOMETRY;
 	}
 
 	public boolean hasBeamCentreChanged() {
-		return type == EventType.BEAM_CENTRE;
+		return type == EventType.BEAM_CENTRE || type == EventType.GEOMETRY;
 	}
 
 	public boolean hasHPxSizeChanged() {
@@ -55,6 +56,6 @@ public class DetectorPropertyEvent extends EventObject {
 	}
 
 	public boolean hasNormalChanged() {
-		return type == EventType.NORMAL;
+		return type == EventType.NORMAL || type == EventType.GEOMETRY;
 	}
 }

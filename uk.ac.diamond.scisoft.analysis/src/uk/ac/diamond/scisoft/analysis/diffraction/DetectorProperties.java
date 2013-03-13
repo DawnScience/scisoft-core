@@ -291,6 +291,8 @@ public class DetectorProperties implements Serializable {
 		normal = other.normal;
 		orientation = other.orientation;
 		invOrientation = other.invOrientation;
+
+		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.GEOMETRY));
 	}
 
 	private void calcNormal(boolean fromPassive) {
@@ -484,7 +486,7 @@ public class DetectorProperties implements Serializable {
 	 * @return tilt of detector normal from beam direction (in radians)
 	 */
 	public double getTiltAngle() {
-		return Math.acos(normal.z);
+		return Math.acos(-normal.z);
 	}
 
 	/**

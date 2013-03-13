@@ -78,7 +78,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  * Load HDF5 files using NCSA's Java library
  */
-public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISliceLoader {
+public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
 	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
@@ -2134,8 +2134,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader, ISlic
 		}
 	}
 	
-	@Override
-	public AbstractDataset slice(SliceObject object, IMonitor mon) throws Exception {
+	protected AbstractDataset slice(SliceObject object, IMonitor mon) throws Exception {
 		final int[] start = object.getSliceStart();
 		final int[] stop = object.getSliceStop();
 		final int[] step = object.getSliceStep();

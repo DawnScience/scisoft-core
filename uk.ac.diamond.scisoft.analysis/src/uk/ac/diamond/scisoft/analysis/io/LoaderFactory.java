@@ -597,54 +597,6 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Gets a slice right out of the file, probably only nexus supports this
-	 * for now.
-	 * <p>
-	 * If the slice cannot be loaded, null is returned.
-	 * 
-	 * @param object
-	 * @param mon
-	 * @return AbstractDataset - slice
-	 */
-	public static AbstractDataset getSlice(final SliceObject object, final IMonitor mon) throws Exception {
-
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(object.getPath());
-		key.setSlice(object);
-
-		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (AbstractDataset)cachedObject;
-
-		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(object.getPath());
-		if (it == null)
-			return null;
-
-		// Currently this method simply cycles through all loaders.
-		// When it finds one which does not give an exception on loading, it
-		// returns the data from this loader.
-		while (it.hasNext()) {
-			final Class<? extends AbstractFileLoader> clazz = it.next();
-			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, object.getPath());
-			if (!ISliceLoader.class.isInstance(loader))
-				continue;
-
-			try {
-				// NOTE Assumes loader fails quickly and nicely
-				// if given the wrong file. If a loader does not
-				// do this, it should not be registered with LoaderFactory
-				final AbstractDataset set = ((ISliceLoader) loader).slice(object, mon);
-				key.setMetadata(set.getMetadata() != null);
-				recordSoftReference(key, set);
-				return set;
-			} catch (Exception ne) {
-				throw ne;
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Returns true if a given file is an IMetaData and able to load metadata without the data
 	 * 
 	 * @param path

@@ -31,7 +31,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * <p>
  * <b>Note</b>: the metadata from this loader is left as strings
  */
-public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
+public class ExtendedSRSLoader extends SRSLoader {
 
 	private static final String PILATUS_DIR = "pilatus100k"; // sub-directory for 100k images
 	private static final String PATH_DATASET = "path"; // path dataset name
@@ -145,8 +145,7 @@ public class ExtendedSRSLoader extends SRSLoader implements ISliceLoader {
 	/**
 	 * Slices the stack of images
 	 */
-	@Override
-	public AbstractDataset slice(SliceObject bean, IMonitor mon) throws Exception {
+	protected AbstractDataset slice(SliceObject bean, IMonitor mon) throws Exception {
 
 		/**
 		 * Not ideal have to parse SRS file once for each slice. The LoaderFactory caches slices which helps a little.

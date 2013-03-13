@@ -17,13 +17,15 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.util.Arrays;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
@@ -39,6 +41,12 @@ public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 		sliceObject.setSliceStart(new int[] { 0, 0, 1 });
 		sliceObject.setSliceStop(new int[] { 61, 171, 2 });
 	}
+	
+	@Test
+	public void testNoThread() throws Exception{
+		doTestOfDataSet(1);
+	}
+
 
 	@Override
 	@Test
@@ -62,11 +70,12 @@ public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
 		Assert.assertTrue(new File(filename).canRead());
 
-		final SliceObject currentSlice = sliceObject.clone();
-		currentSlice.setSliceStart(new int[] { 0, 0, threadIndex + 10 });
-		currentSlice.setSliceStop(new int[] { 61, 171, threadIndex + 11 });
-
-		final AbstractDataset slice = LoaderFactory.getSlice(currentSlice, null);
-		Assert.assertTrue(slice.getSize() == (61 * 171));
+		final DataHolder   dh = LoaderFactory.getData(sliceObject.getPath(), false, null);
+		final ILazyDataset ld = dh.getLazyDataset(sliceObject.getName());
+		IDataset  slice = ld.getSlice(new int[] { 0, 0, threadIndex + 10 }, 
+				                      new int[] { 61, 171, threadIndex + 11 }, 
+				                      new int[]{1,1,1});
+		ILazyDataset squeeze = slice.squeeze();
+		Assert.assertTrue(squeeze.getSize() == (61 * 171));
 	}
 }

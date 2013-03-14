@@ -28,6 +28,7 @@ import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -86,8 +87,7 @@ public class PowderRingsUtils {
 	 */
 
 	private static final double ARC_LENGTH = 8;
-	private static final double RADIAL_DELTA = 8;
-	private static final double RADIAL_MIN = 5*RADIAL_DELTA;
+	private static final double RADIAL_DELTA = 10;
 	private static final int MAX_POINTS = 200;
 
 	private static final int PEAK_SMOOTHING = 3;
@@ -185,6 +185,8 @@ public class PowderRingsUtils {
 				}
 			} else if (start[0] > stop[0] || start[0] >= h) {
 				continue;
+			} else {
+				stop[0] = Math.min(Math.max(stop[0], start[0] + (int) radialDelta), h);
 			}
 			start[1] = Math.max(0, Math.min(beg[1], end[1]));
 			stop[1] = Math.min(w, Math.max(beg[1], end[1]));
@@ -196,6 +198,8 @@ public class PowderRingsUtils {
 				}
 			} else if (start[1] > stop[1] || start[1] >= w) {
 				continue;
+			} else {
+				stop[1] = Math.min(Math.max(stop[1], start[1] + (int) radialDelta), w);
 			}
 			sub = image.getSlice(start, stop, step);
 
@@ -249,8 +253,20 @@ public class PowderRingsUtils {
 			threshold = Stats.quantile(pixels, 1 - maxPoints/(double) n);
 			logger.debug("Threshold: {} setting for highest {}", threshold, maxPoints);
 		} else {
-			threshold = (Double) pixels.mean() - 2 * (Double) Stats.iqr(pixels);
+			double iqr = (Double) Stats.iqr(pixels);
+			threshold = (Double) pixels.mean() - 2*iqr;
+			double min = pixels.min().doubleValue();
+			while (threshold < min) {
+				threshold += iqr;
+			}
 			logger.debug("Threshold: {} setting by mean - 2IQR", threshold);
+		}
+
+		double f = 0.999; // for peaky images
+		double gThreshold = f*((Double) image.mean()) + (1-f)*image.max().doubleValue();
+		if (threshold < gThreshold) {
+			threshold = gThreshold;
+			logger.debug("Threshold: too low, now {} setting by image mean", threshold);
 		}
 
 		PolylineROI polyline = new PolylineROI();
@@ -333,15 +349,15 @@ public class PowderRingsUtils {
 	 * Find other ellipses from given ellipse and image.
 	 * <p>
 	 * This is done by looking at the box profile along spokes from the
-	 * given centre and finding peaks. Then the distance out to those peaks is used
-	 * to search for more POIs and so more ellipses
+	 * given centre (from a minimum distance of the minor semi-axis) and finding peaks.
+	 * Then the distance out to those peaks is used to search for more POIs and so more ellipses
 	 * @param image
 	 * @param mask (can be null)
 	 * @param roi initial ellipse
 	 * @return list of ellipses
 	 */
 	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI roi) {
-		return findOtherEllipses(mon, image, mask, roi, RADIAL_MIN, RADIAL_DELTA, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
+		return findOtherEllipses(mon, image, mask, roi, roi.getSemiAxis(1), RADIAL_DELTA, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
 	/**
@@ -383,6 +399,11 @@ public class PowderRingsUtils {
 		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, w - ec[0], 0 - ec[1]); // TR
 		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, w - ec[0], h - ec[1]); // BR
 		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, 0 - ec[0], h - ec[1]); // BL
+
+		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, 0, h - ec[1]); // T
+		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, w - ec[0], 0); // R
+		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, 0, 0 - ec[1]); // B
+		findMajorAxes(mon, majors, image, mask, roi, radialMin, radialDelta, ec, 0 - ec[0], 0); // L
 
 		// and finally find POIs
 		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
@@ -442,18 +463,18 @@ public class PowderRingsUtils {
 	 * @param image
 	 * @param mask
 	 * @param roi
-	 * @param radialMin
-	 * @param radialDelta
+	 * @param offset minimum position of peaks
+	 * @param width of line
 	 * @param centre
 	 * @param dx
 	 * @param dy
 	 */
-	private static void findMajorAxes(IMonitor mon, TreeSet<Double> axes, AbstractDataset image, AbstractDataset mask, EllipticalROI roi, double radialMin, double radialDelta, double[] centre, double dx, double dy) {
+	private static void findMajorAxes(IMonitor mon, TreeSet<Double> axes, AbstractDataset image, AbstractDataset mask, EllipticalROI roi, double offset, double width, double[] centre, double dx, double dy) {
 		RectangularROI rroi = new RectangularROI();
 		rroi.setPoint(centre);
 		rroi.setAngle(Math.atan2(dy, dx));
-		rroi.setLengths(Math.hypot(dx, dy) - radialMin, radialDelta);
-		rroi.translate(0, -0.5); //rroi.getPoint(0, -0.5));
+		rroi.setLengths(Math.hypot(dx, dy), width);
+		rroi.translate(0, -0.5);
 		rroi.setClippingCompensation(true);
 		AbstractDataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
 		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), AbstractDataset.INT), profile, PEAK_SMOOTHING);
@@ -462,22 +483,22 @@ public class PowderRingsUtils {
 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		for (IdentifiedPeak p : peaks) {
-			if (p.getPos() < radialMin) {
+			if (p.getPos() < offset) {
 				continue;
 			}
 			stats.addValue(p.getArea());
 			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
 		}
 		
-		double area = stats.getMean() + 0.5*(stats.getPercentile(75) - stats.getPercentile(25));
+		double area = stats.getMean() + 1.5*(stats.getPercentile(75) - stats.getPercentile(25));
 		logger.debug("Area: {}", stats);
 		logger.debug("Minimum threshold: {}", area);
 
 		double majorFactor = roi.getSemiAxis(0)/roi.getDistance(rroi.getAngle());
-		double maxFWHM = MAX_FWHM_FACTOR*radialDelta;
+		double maxFWHM = MAX_FWHM_FACTOR*width;
 		for (IdentifiedPeak p : peaks) {
 			double l = p.getPos();
-			if (l < radialMin) {
+			if (l < offset) {
 				continue;
 			}
 			System.err.println(p);
@@ -495,7 +516,7 @@ public class PowderRingsUtils {
 
 	}
 
-	static QSpaceFitFunction createQFitFunction(List<EllipticalROI> ellipses, double pix, int n) {
+	static QSpaceFitDiffFunction createQFitFunction(List<EllipticalROI> ellipses, double pix, int n) {
 		double[] known1 = new double[n];
 		double[] known2 = new double[n];
 
@@ -517,7 +538,7 @@ public class PowderRingsUtils {
 			known1[i] = a*rs; // in mm
 			known2[i] = rs;
 		}
-		return new QSpaceFitFunction(known1, known2, bestAngle);
+		return new QSpaceFitDiffFunction(known1, known2, bestAngle);
 	}
 
 	/**
@@ -528,7 +549,7 @@ public class PowderRingsUtils {
 	 * @param spacings a list of possible spacings
 	 * @return q-space
 	 */
-	public static QSpace fitToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<HKL> spacings) {
+	public static QSpace fitEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<HKL> spacings) {
 		double[] init = new double[] {env.getWavelength()*1e-7, detector.getDetectorDistance(), Math.sin(detector.getTiltAngle())};
 		logger.debug("Init: {}", init);
 		int n = ellipses.size();
@@ -553,7 +574,6 @@ public class PowderRingsUtils {
 			}
 		}
 		
-
 		if (n > spacings.size()) {
 			logger.warn("The number of d-spacings ({}) should be greater than or equal to {}: using inner rings", spacings.size(), n);
 			n = spacings.size();
@@ -564,7 +584,7 @@ public class PowderRingsUtils {
 				logger.debug("    {}", e);
 		}
 
-		QSpaceFitFunction f = createQFitFunction(ellipses, detector.getVPxSize(), n);
+		QSpaceFitDiffFunction f = createQFitFunction(ellipses, detector.getVPxSize(), n);
 		if (mon != null)
 			mon.worked(1);
 
@@ -633,15 +653,14 @@ public class PowderRingsUtils {
 	/**
 	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm), sine of tilt angle
 	 */
-	static class QSpaceFitFunction implements DifferentiableMultivariateVectorialFunction {
+	static class QSpaceFitFunction implements MultivariateVectorialFunction {
 
 		private double[] target;
-		private double[] spacing; // in mm
-		private double[] value;
+		protected double[] spacing; // in mm
+		protected double[] value;
 
-		private int n;
-		private int twoN;
-		private double[][] jac;
+		protected int n;
+		protected int twoN;
 		private double[] weight;
 		private double angle;
 
@@ -662,7 +681,6 @@ public class PowderRingsUtils {
 			}
 			spacing = new double[n];
 			value = new double[twoN];
-			jac = new double[twoN][3];
 		}
 
 		public double getAngle() {
@@ -739,6 +757,18 @@ public class PowderRingsUtils {
 				s += value[i];
 			}
 			return s/twoN;
+		}
+
+	}
+
+	static class QSpaceFitDiffFunction extends QSpaceFitFunction implements DifferentiableMultivariateVectorialFunction {
+
+		private double[][] jac;
+
+
+		public QSpaceFitDiffFunction(double[] known1, double[] known2, double bestAngle) {
+			super(known1, known2, bestAngle);
+			jac = new double[twoN][3];
 		}
 
 		@Override

@@ -160,7 +160,7 @@ public class PowderRingsUtilsTest {
 			ells.add(new EllipticalROI(r+Math.random()*3, 0, 0));
 		}
 
-		QSpace q = PowderRingsUtils.fitToQSpace(null, det, env, ells, spacings);
+		QSpace q = PowderRingsUtils.fitEllipsesToQSpace(null, det, env, ells, spacings);
 		DetectorProperties nDet = q.getDetectorProperties();
 
 		Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 3);

@@ -26,14 +26,14 @@ import java.util.Map;
  * Class for sector region of interest
  */
 public class SectorROI extends ROIBase implements Serializable {
-	private double rad[]; // radii
-	private double ang[]; // angles in radians
-	private boolean clippingCompensation; // compensate for clipping
-	private boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
+	protected double rad[]; // radii
+	protected double ang[]; // angles in radians
+	protected boolean clippingCompensation; // compensate for clipping
+	protected boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
 	private boolean averageArea = true;
-	private double dpp; // Sampling rate used for profile calculations in dots per pixel
+	protected double dpp; // Sampling rate used for profile calculations in dots per pixel
 
-	private int symmetry; // symmetry
+	protected int symmetry; // symmetry
 
 	/**
 	 * No operation
@@ -340,7 +340,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 *  0 <= ang0 <= 2*pi, 0 <= ang1 <= 4*pi
 	 *  0 <= ang1 - ang0 <= 2*pi
 	 */
-	private void checkAngles() {
+	protected void checkAngles() {
 
 		// sort out relative values
 		while (ang[0] >= ang[1]) {

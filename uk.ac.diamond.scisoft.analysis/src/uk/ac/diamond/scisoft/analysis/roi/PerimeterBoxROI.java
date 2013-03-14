@@ -1,5 +1,5 @@
-/*
- * Copyright 2011 Diamond Light Source Ltd.
+/*-
+ * Copyright 2013 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	 * @param angle
 	 */
 	public PerimeterBoxROI(double width, double angle) {
-		super(0, 0, width, width, angle);
+		super(width, angle);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	 * @param angle
 	 */
 	public PerimeterBoxROI(double width, double height, double angle) {
-		super(0, 0, width, height, angle);
+		super(width, height, angle);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	 * @param angle
 	 */
 	public PerimeterBoxROI(double ptx, double pty, double width, double height, double angle) {
-		super(ptx, pty, width, height, angle, false);
+		super(ptx, pty, width, height, angle);
 	}
 
 	/**

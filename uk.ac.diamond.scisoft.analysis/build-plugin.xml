@@ -23,7 +23,7 @@
            Invoke the tests
          ==================================================================== -->
 
-    <target name="junit-tests" depends="toolCheck, set-ncsa-hdf-context-SDA-else-GDA, set-test-base">
+    <target name="junit-tests" depends="toolCheck, set-test-base-DAWN">
         <condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
             <os family="windows" />
         </condition>
@@ -39,10 +39,11 @@
                 <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
+                <pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/bin" />
+                <pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/jars/*" />
                 <pathelement path="${workspace.loc}/tp/plugins/com.springsource.slf4j.api_1.5.6.jar" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
                 <pathelement path="${workspace.loc}/tp/plugins/com.springsource.slf4j.org.apache.commons.logging_1.5.6.jar" />  <!--ensure that matching imp appears first in classpath -->
                 <pathelement location="${workspace.loc}/tp/plugins/*" />
-                <path refid="ncsa.hdf.classpath" />
                 <path refid="libs.jars.path" />
             </classpath>
             <batchtest todir="@{report.dir}">

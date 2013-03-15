@@ -252,7 +252,7 @@ class RAxisLoader(JavaLoader, _raxisload):
         _raxisload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
-class PGMLoader(JavaLoader, _raxisload):
+class PGMLoader(JavaLoader, _pgmload):
     def __init__(self, *arg):
         _pgmload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True

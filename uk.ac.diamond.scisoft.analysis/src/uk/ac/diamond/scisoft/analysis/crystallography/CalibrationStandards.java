@@ -185,6 +185,12 @@ public class CalibrationStandards implements Serializable {
 		calibrant.addHKL(new HKL(4, 4, 4, Amount.valueOf(0.78390029, ANGSTROM)));
 		calibrant.addHKL(new HKL(5, 5, 1, Amount.valueOf(0.76049498, ANGSTROM))); // 711
 		calibrant.addHKL(new HKL(6, 4, 2, Amount.valueOf(0.72575064, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 5, 3, Amount.valueOf(0.70705864, ANGSTROM))); // 731
+		calibrant.addHKL(new HKL(7, 3, 3, Amount.valueOf(0.66350476, ANGSTROM)));
+		calibrant.addHKL(new HKL(8, 0, 0, Amount.valueOf(0.67887756, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 5, 5, Amount.valueOf(0.62712023, ANGSTROM))); // 751
+		calibrant.addHKL(new HKL(8, 4, 0, Amount.valueOf(0.60720655, ANGSTROM)));
+//		calibrant.addHKL(new HKL(, Amount.valueOf(, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 
 		calibrant = new CalibrantSpacing("Cr2O3"); // NIST SRM 674 (4.95916(12), 13.5972(6),
@@ -216,6 +222,17 @@ public class CalibrationStandards implements Serializable {
 		calibrant.addHKL(new HKL(6, 2, 0,  Amount.valueOf(0.855600, ANGSTROM)));
 		calibrant.addHKL(new HKL(5, 3, 3,  Amount.valueOf(0.825214, ANGSTROM)));
 		calibrant.addHKL(new HKL(6, 2, 2,  Amount.valueOf(0.815783, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 5, 1,  Amount.valueOf(0.757732, ANGSTROM))); // 711
+		calibrant.addHKL(new HKL(6, 4, 0,  Amount.valueOf(0.750411, ANGSTROM)));
+		calibrant.addHKL(new HKL(6, 4, 2,  Amount.valueOf(0.723114, ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 5, 3,  Amount.valueOf(0.704490, ANGSTROM))); // 731
+		calibrant.addHKL(new HKL(8, 0, 0,  Amount.valueOf(0.676411, ANGSTROM)));
+		calibrant.addHKL(new HKL(7, 3, 3,  Amount.valueOf(0.661094, ANGSTROM)));
+		calibrant.addHKL(new HKL(6, 4, 4,  Amount.valueOf(0.656215, ANGSTROM))); // 820
+		calibrant.addHKL(new HKL(6, 6, 0,  Amount.valueOf(0.637727, ANGSTROM))); // 822
+		calibrant.addHKL(new HKL(7, 5, 1,  Amount.valueOf(0.624842, ANGSTROM)));
+		calibrant.addHKL(new HKL(6, 6, 2,  Amount.valueOf(0.620718, ANGSTROM)));
+//		calibrant.addHKL(new HKL(,  Amount.valueOf(, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 
 		calibrant = new CalibrantSpacing("Bees Wax"); // FIXME reference

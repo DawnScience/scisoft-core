@@ -22,8 +22,21 @@ import java.io.Serializable;
  * Base class for general region of interest
  */
 public class ROIBase implements Serializable {
+	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
+	
+	/**
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * @param point The start (or centre) point to set

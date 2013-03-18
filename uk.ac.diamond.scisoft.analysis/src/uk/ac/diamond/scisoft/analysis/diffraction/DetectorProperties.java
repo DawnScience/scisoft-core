@@ -205,7 +205,7 @@ public class DetectorProperties implements Serializable {
 	 * 
 	 * @param shape image shape
 	 */
-	public static DetectorProperties getDefaultDetectorProperties(int[] shape) {
+	public static DetectorProperties getDefaultDetectorProperties(int... shape) {
 		int heightInPixels = shape[0];
 		int widthInPixels = shape[1];
 		

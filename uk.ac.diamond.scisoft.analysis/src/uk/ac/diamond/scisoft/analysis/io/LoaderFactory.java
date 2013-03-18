@@ -83,7 +83,15 @@ public class LoaderFactory {
 	 */
 	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<Object>>(89);
 	
-	
+	/**
+	 * This method may be called to ensure that the soft reference cache of data is
+	 * empty. It is required from the unit tests which attempt to measure memory
+	 * leaks, which otherwise would measure the "leak" of the soft reference cache.
+	 */
+	public static void clear() {
+		SOFT_CACHE.clear();
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
 	private static final Map<String, List<Class<? extends AbstractFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends AbstractFileLoader>>>(19);
@@ -833,4 +841,6 @@ public class LoaderFactory {
 	protected static Class<? extends java.io.InputStream> getZipStream(final String extension) {
 		return UNZIPERS.get(extension);
 	}
+
+
 }

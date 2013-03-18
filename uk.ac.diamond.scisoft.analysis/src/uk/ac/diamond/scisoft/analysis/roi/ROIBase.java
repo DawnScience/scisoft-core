@@ -22,10 +22,10 @@ import java.io.Serializable;
  * Base class for general region of interest
  */
 public class ROIBase implements Serializable {
+	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
-	private String name;
-
+	
 	/**
 	 * 
 	 * @return the name

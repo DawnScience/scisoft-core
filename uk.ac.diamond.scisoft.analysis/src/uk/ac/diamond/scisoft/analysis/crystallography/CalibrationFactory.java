@@ -122,8 +122,6 @@ public class CalibrationFactory {
 		return new File(dir, "CalibrationStandards.xml");
 	}
 
-	private static final String CURRENT_VERSION = "1.0.2";
-
 	private static CalibrationStandards createCalibrationStandards() {
 		final File file = getCalibrantFile();
 		CalibrationStandards cs = null;
@@ -134,9 +132,9 @@ public class CalibrationFactory {
 				cs = null;
 			}
 		}
-		if (cs==null || cs.isEmpty() || isOldVersion(CURRENT_VERSION, cs.getVersion())) {
+		if (cs==null || cs.isEmpty() || isOldVersion(CalibrationStandards.CURRENT_VERSION, cs.getVersion())) {
 			cs = new CalibrationStandards();
-			cs.setVersion(CURRENT_VERSION); // Versions are so that we can wipe out configurations with new Dawn versions if we have to
+			cs.setVersion(CalibrationStandards.CURRENT_VERSION); // Versions are so that we can wipe out configurations with new Dawn versions if we have to
 			                        // TODO consider new file for this instead.
 			cs.setCal2peaks(CalibrationStandards.createDefaultCalibrants());
 			cs.setSelectedCalibrant("Silicon", false);

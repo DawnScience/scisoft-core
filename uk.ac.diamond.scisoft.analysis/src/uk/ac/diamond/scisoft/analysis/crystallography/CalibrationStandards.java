@@ -92,7 +92,10 @@ public class CalibrationStandards implements Serializable {
 	public void save() throws Exception {
 		CalibrationFactory.saveCalibrationStandards(this);
 	}
-	
+
+	// **Update** this when default calibrants have changed 
+	static final String CURRENT_VERSION = "1.0.3";
+
 	/**
 	 * Default list of calibrants TODO add whatever Alun needs.
 	 * 
@@ -186,10 +189,10 @@ public class CalibrationStandards implements Serializable {
 		calibrant.addHKL(new HKL(5, 5, 1, Amount.valueOf(0.76049498, ANGSTROM))); // 711
 		calibrant.addHKL(new HKL(6, 4, 2, Amount.valueOf(0.72575064, ANGSTROM)));
 		calibrant.addHKL(new HKL(5, 5, 3, Amount.valueOf(0.70705864, ANGSTROM))); // 731
-		calibrant.addHKL(new HKL(7, 3, 3, Amount.valueOf(0.66350476, ANGSTROM)));
 		calibrant.addHKL(new HKL(8, 0, 0, Amount.valueOf(0.67887756, ANGSTROM)));
-		calibrant.addHKL(new HKL(5, 5, 5, Amount.valueOf(0.62712023, ANGSTROM))); // 751
-		calibrant.addHKL(new HKL(8, 4, 0, Amount.valueOf(0.60720655, ANGSTROM)));
+		calibrant.addHKL(new HKL(7, 3, 3, Amount.valueOf(0.66350476, ANGSTROM)));
+//		calibrant.addHKL(new HKL(5, 5, 5, Amount.valueOf(0.62712023, ANGSTROM))); // 751
+//		calibrant.addHKL(new HKL(8, 4, 0, Amount.valueOf(0.60720655, ANGSTROM)));
 //		calibrant.addHKL(new HKL(, Amount.valueOf(, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 
@@ -226,12 +229,12 @@ public class CalibrationStandards implements Serializable {
 		calibrant.addHKL(new HKL(6, 4, 0,  Amount.valueOf(0.750411, ANGSTROM)));
 		calibrant.addHKL(new HKL(6, 4, 2,  Amount.valueOf(0.723114, ANGSTROM)));
 		calibrant.addHKL(new HKL(5, 5, 3,  Amount.valueOf(0.704490, ANGSTROM))); // 731
-		calibrant.addHKL(new HKL(8, 0, 0,  Amount.valueOf(0.676411, ANGSTROM)));
-		calibrant.addHKL(new HKL(7, 3, 3,  Amount.valueOf(0.661094, ANGSTROM)));
-		calibrant.addHKL(new HKL(6, 4, 4,  Amount.valueOf(0.656215, ANGSTROM))); // 820
-		calibrant.addHKL(new HKL(6, 6, 0,  Amount.valueOf(0.637727, ANGSTROM))); // 822
-		calibrant.addHKL(new HKL(7, 5, 1,  Amount.valueOf(0.624842, ANGSTROM)));
-		calibrant.addHKL(new HKL(6, 6, 2,  Amount.valueOf(0.620718, ANGSTROM)));
+//		calibrant.addHKL(new HKL(8, 0, 0,  Amount.valueOf(0.676411, ANGSTROM)));
+//		calibrant.addHKL(new HKL(7, 3, 3,  Amount.valueOf(0.661094, ANGSTROM)));
+//		calibrant.addHKL(new HKL(6, 4, 4,  Amount.valueOf(0.656215, ANGSTROM))); // 820
+//		calibrant.addHKL(new HKL(6, 6, 0,  Amount.valueOf(0.637727, ANGSTROM))); // 822
+//		calibrant.addHKL(new HKL(7, 5, 1,  Amount.valueOf(0.624842, ANGSTROM)));
+//		calibrant.addHKL(new HKL(6, 6, 2,  Amount.valueOf(0.620718, ANGSTROM)));
 //		calibrant.addHKL(new HKL(,  Amount.valueOf(, ANGSTROM)));
 		tmp.put(calibrant.getName(), calibrant);
 
@@ -241,8 +244,8 @@ public class CalibrationStandards implements Serializable {
 		tmp.put(calibrant.getName(), calibrant);
 
 		return tmp;
-
 	}
+
 	public Map<String, CalibrantSpacing> getCal2peaks() {
 		return cal2peaks;
 	}

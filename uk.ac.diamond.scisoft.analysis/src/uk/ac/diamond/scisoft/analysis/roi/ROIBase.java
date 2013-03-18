@@ -24,6 +24,19 @@ import java.io.Serializable;
 public class ROIBase implements Serializable {
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
+	private String name;
+
+	/**
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * @param point The start (or centre) point to set

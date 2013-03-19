@@ -235,18 +235,18 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (!monitorIncrement(mon)) {
 					try {
 						H5.H5Fclose(fid);
-					} catch (Exception ex) {
+					} catch (HDF5Exception ex) {
 					}
 					return;
 				}
 
 				tFile = createTreeBF(mon, fid, keepBitWidth);
-			} catch (Exception le) {
+			} catch (Throwable le) {
 				syncException = new ScanFileHolderException("Problem loading file: " + fileName, le);
 			} finally {
 				try {
 					H5.H5Fclose(fid);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 				}
 				releaseAccess(fileName);
 			}
@@ -313,18 +313,18 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (!monitorIncrement(mon)) {
 					try {
 						H5.H5Fclose(fid);
-					} catch (Exception ex) {
+					} catch (HDF5Exception ex) {
 					}
 					return null;
 				}
 
 				tFile = createTree(fid, keepBitWidth);
-			} catch (Exception le) {
+			} catch (Throwable le) {
 				throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 			} finally {
 				try {
 					H5.H5Fclose(fid);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 				}
 				releaseAccess(fileName);
 			}
@@ -765,7 +765,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					hasNAPIMount = true;
 				}
 			}
-		} catch (Exception e) {
+		} catch (HDF5Exception e) {
 			logger.warn("Problem with attributes on {}: {}", name, e.getMessage());
 		}
 		return hasNAPIMount;
@@ -797,12 +797,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			f.setHostname(host);
 
 			nn = createNode(fid, f, pool, null, node, keepBitWidth);
-		} catch (Exception le) {
+		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {
 			try {
 				H5.H5Fclose(fid);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 			}
 			releaseAccess(cPath);
 		}
@@ -1270,7 +1270,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			} finally {
 				try {
 					H5.H5Pclose(pid);
-				} catch (Exception ex) {
+				} catch (HDF5Exception ex) {
 				}
 			}
 
@@ -1840,7 +1840,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					if (pid >= 0) {
 						try {
 							H5.H5Pclose(pid);
-						} catch (Exception ex) {
+						} catch (HDF5Exception ex) {
 						}
 					}
 				}
@@ -1862,12 +1862,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 
-		} catch (Exception le) {
+		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
 			try {
 				H5.H5Fclose(fid);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 			}
 			releaseAccess(cPath);
 		}
@@ -1980,7 +1980,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			if (!monitorIncrement(mon)) {
 				try {
 					H5.H5Fclose(fid);
-				} catch (Exception ex) {
+				} catch (HDF5Exception ex) {
 				}
 				return null;
 			}
@@ -1991,12 +1991,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 			visitGroup(fid, f, HDF5File.ROOT, Arrays.asList(names), 0, depth, list);
 
-		} catch (Exception le) {
+		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
 			try {
 				H5.H5Fclose(fid);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 			}
 			releaseAccess(fileName);
 		}
@@ -2134,7 +2134,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 	
-	protected AbstractDataset slice(SliceObject object, IMonitor mon) throws Exception {
+	protected AbstractDataset slice(SliceObject object, @SuppressWarnings("unused") IMonitor mon) throws Exception {
 		final int[] start = object.getSliceStart();
 		final int[] stop = object.getSliceStop();
 		final int[] step = object.getSliceStep();

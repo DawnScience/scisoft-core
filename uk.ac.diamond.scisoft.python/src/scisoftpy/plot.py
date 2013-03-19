@@ -525,6 +525,45 @@ def delrois(bean, roi=None):
             bean[parameters.roilist] = None
     return bean
 
+def getroinames(bean, roi=None):
+    '''Get list of regions of interest names from bean
+
+    Arguments:
+    bean -- GUI bean
+    roi  -- class of ROI to retrieve. If None, then get anyway
+    '''
+    if bean is None:
+        return None
+    rs = getrois(bean, roi)
+    if rs is None:
+        return None
+    names = []
+    for index in range(len(rs)):
+        myroi = rs[index]
+        names.append(myroi.name)
+    return names
+
+def getroibyname(bean, name, roi=None):
+    '''Get a region of interest from bean by its name
+
+    Arguments:
+    bean -- GUI bean
+    name -- name of Region Of Interest
+    roi  -- class of ROI to retrieve. If None, then get anyway
+    '''
+    if bean is None:
+        return None
+    rs = getrois(bean, roi)
+    if rs is None:
+        return None
+    myroi = None
+    for index in range(len(rs)):
+        myroi = rs[index]
+        if myroi.name == name:
+            return myroi
+    print("ROI with the name "+name+" not found")
+    return None
+
 def getline(bean):
     '''Get linear region of interest'''
     return getroi(bean, roi=roi.line)

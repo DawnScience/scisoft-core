@@ -317,6 +317,6 @@ public class LinearROI extends ROIBase implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Start %s Length %g Angle %g", Arrays.toString(spt), len, getAngleDegrees());
+		return String.format("Name %s Start %s Length %g Angle %g", name, Arrays.toString(spt), len, getAngleDegrees());
 	}
 }

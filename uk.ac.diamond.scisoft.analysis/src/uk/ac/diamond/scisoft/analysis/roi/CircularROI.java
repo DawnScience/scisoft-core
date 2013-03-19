@@ -108,6 +108,6 @@ public class CircularROI extends ROIBase {
 
 	@Override
 	public String toString() {
-		return String.format("Centre %s Radius %g", Arrays.toString(spt), rad);
+		return String.format("Name %s Centre %s Radius %g", name, Arrays.toString(spt), rad);
 	}
 }

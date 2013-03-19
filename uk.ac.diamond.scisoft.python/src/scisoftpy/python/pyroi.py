@@ -18,6 +18,7 @@ import math as _math
 
 
 class roibase(object):
+    _NAME = "name"
     _SPT = "spt"
     _PLOT = "plot"
 

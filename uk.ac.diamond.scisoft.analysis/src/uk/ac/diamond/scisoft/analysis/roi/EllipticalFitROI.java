@@ -28,7 +28,7 @@ public class EllipticalFitROI extends EllipticalROI {
 
 	private PolylineROI proi;
 	private boolean circleOnly;
-	private IConicSectionFitter fitter;
+	private transient IConicSectionFitter fitter; // The fitter is not serializable, the EllipticalFitROI is.
 	private double residual;
 
 	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {

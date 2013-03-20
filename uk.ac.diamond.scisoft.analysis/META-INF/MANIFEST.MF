@@ -51,6 +51,7 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar,
  jars/it.tidalwave.imageio.raw-1.6.1.jar
 Import-Package: Jama,
+ com.sun.media.jai.codec,
  javax.media.jai,
  ncsa.hdf.hdf5lib,
  ncsa.hdf.hdf5lib.exceptions,

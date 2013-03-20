@@ -92,6 +92,13 @@ public interface IDataset extends ILazyDataset {
 	public void set(final Object obj, final int... pos);
 
 	/**
+	 * Change shape and size of dataset in-place
+	 * 
+	 * @param newShape
+	 */
+	public void resize(int... newShape);
+
+	/**
 	 * NOTE this does not return the minimum value if there are NaNs in the 
 	 * dataset.
 	 * 

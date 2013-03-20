@@ -1886,13 +1886,6 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Change shape and size of dataset in-place
-	 * 
-	 * @param newShape
-	 */
-	abstract public void resize(int... newShape);
-
-	/**
 	 * Create a dataset from object (automatically detect dataset type)
 	 * 
 	 * @param obj

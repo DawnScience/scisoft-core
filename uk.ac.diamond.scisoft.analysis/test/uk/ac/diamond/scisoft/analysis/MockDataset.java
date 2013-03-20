@@ -189,4 +189,9 @@ public class MockDataset implements IDataset {
 	public MockDataset clone() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
+
+	@Override
+	public void resize(int... newShape) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
 }

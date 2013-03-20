@@ -446,7 +446,7 @@ public class ROIProfile {
 		
 		
         MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
-			for(int j = 0; j<data.getShape()[0]; j++) {
+			for (int j = 0, jmax = data.getShape()[0]; j < jmax; j++) {
 				if (!Float.isNaN(data.getFloat(j, i))) continue MAIN_LOOP; 
 			}
 			cols.set(Float.NaN, i);
@@ -458,7 +458,7 @@ public class ROIProfile {
 		
 		
         MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
-			for(int j = 0; j<data.getShape()[1]; j++) {
+			for (int j = 0, jmax = data.getShape()[1]; j < jmax; j++) {
 				if (!Float.isNaN(data.getFloat(i, j))) continue MAIN_LOOP; 
 			}
 			rows.set(Float.NaN, i);

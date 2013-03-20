@@ -77,7 +77,7 @@ public class CalibrationUtils {
 	public static AbstractDataset refinePeakPositions(AbstractDataset data, AbstractDataset originalAxis,
 			AbstractDataset originalAxisApproximatePeakPositions, APeak peakFunction) {
 		
-		int numPeaks = originalAxisApproximatePeakPositions.getShape()[0];
+		int numPeaks = originalAxisApproximatePeakPositions.getSize();
 		
 		List<APeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakFunction, numPeaks );
 		
@@ -98,7 +98,7 @@ public class CalibrationUtils {
 		AbstractDataset peakPositions = getPeakList(peakList);
 		AbstractDataset resultPositions = new DoubleDataset(originalAxisApproximatePeakPositions.getShape());
 		
-		for (int i = 0; i < originalAxisApproximatePeakPositions.getShape()[0]; i++) {
+		for (int i = 0; i < originalAxisApproximatePeakPositions.getSize(); i++) {
 			AbstractDataset compare = Maths.subtract(peakPositions, originalAxisApproximatePeakPositions.getDouble(i));
 			compare = Maths.abs(compare);
 			resultPositions.set(peakPositions.getDouble(compare.minPos()),i);
@@ -113,8 +113,9 @@ public class CalibrationUtils {
 	 * @return the dataset of peak positions.
 	 */
 	public static AbstractDataset getPeakList(List<APeak> peakList) {
-		AbstractDataset peakPositons = new DoubleDataset(peakList.size());
-		for (int i = 0; i < peakList.size(); i++) {
+		int n = peakList.size();
+		AbstractDataset peakPositons = new DoubleDataset(n);
+		for (int i = 0; i < n; i++) {
 			peakPositons.set(peakList.get(i).getPosition(), i);
 		}
 		return peakPositons;

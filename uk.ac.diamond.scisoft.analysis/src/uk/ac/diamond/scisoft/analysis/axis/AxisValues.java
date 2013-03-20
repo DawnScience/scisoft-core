@@ -103,10 +103,23 @@ public class AxisValues implements Iterable<Double>, Serializable {
 	 * @param newValue
 	 */
 	public void addValue(double newValue) {
+		addValues(newValue);
+	}
+
+	/**
+	 * Add new entries into the collection
+	 * 
+	 * @param newValues
+	 */
+	public void addValues(double... newValues) {
 		if (values == null) {
-			values = new DoubleDataset(new double[] { newValue });
+			values = new DoubleDataset(newValues);
 		} else {
-			values.set(newValue, values.getShape()[0]); // assumes dataset is 1D
+			int n = values.getSize();
+			values.resize(n + newValues.length);
+			for (double v : newValues) {
+				values.set(v, n++);
+			}
 		}
 		isDirty = true;
 	}
@@ -148,8 +161,9 @@ public class AxisValues implements Iterable<Double>, Serializable {
 	}
 
 	public void setTopEntry(double value) {
-		boolean overwriteMax = (values.get(values.getShape()[0] - 1) == maxValue);
-		values.set(value, values.getShape()[0] - 1);
+		int n = values.getSize() - 1;
+		boolean overwriteMax = values.get(n) == maxValue;
+		values.set(value, n);
 		if (overwriteMax)
 			maxValue = value;
 	}
@@ -162,10 +176,11 @@ public class AxisValues implements Iterable<Double>, Serializable {
 	 * @return the value at the position number
 	 */
 	public double getValue(int nr) {
-		if (values.getSize() > 0) {
-			if (nr < values.getShape()[0])
+		int n = values.getSize();
+		if (n > 0) {
+			if (nr < n)
 				return values.get(nr);
-			return values.get(nr - 1);
+			return values.get(n - 1);
 		}
 		return Double.NaN;
 	}

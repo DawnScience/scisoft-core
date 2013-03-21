@@ -364,7 +364,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	public Object sum() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get(n + "0");
@@ -376,7 +376,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	public Object mean() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		final SummaryStatistics rstats = (SummaryStatistics) storedValues.get(n + "0");

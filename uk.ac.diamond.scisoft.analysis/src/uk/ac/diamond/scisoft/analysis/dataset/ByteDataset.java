@@ -570,18 +570,21 @@ public class ByteDataset extends AbstractDataset {
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public int[] maxPos(boolean ignoreNaNs) {
+	public int[] maxPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			calculateMaxMin(ignoreNaNs);
+			if (ignoreInvalids)
+				calculateMaxMin(true, true);
+			else
+				calculateMaxMin(false, false);
 		}
-		String n = storeName(ignoreNaNs, STORE_MAX_POS);
+		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
 		List<Integer> max = null;
 		if (o == null) {
 			// TODO this test is necessary because Jython thinks max(boolean) is max(int)!
-			if (ignoreNaNs)
-				max = findPositions(max(ignoreNaNs).byteValue()); // PRIM_TYPE
+			if (ignoreInvalids)
+				max = findPositions(max(ignoreInvalids).byteValue()); // PRIM_TYPE
 			else
 				max = findPositions(max().byteValue()); // PRIM_TYPE
 			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
@@ -598,16 +601,19 @@ public class ByteDataset extends AbstractDataset {
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public int[] minPos(boolean ignoreNaNs) {
+	public int[] minPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			calculateMaxMin(ignoreNaNs);
+			if (ignoreInvalids)
+				calculateMaxMin(true, true);
+			else
+				calculateMaxMin(false, false);
 		}
-		String n = storeName(ignoreNaNs, STORE_MIN_POS);
+		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			if (ignoreNaNs)
-				min = findPositions(min(ignoreNaNs).byteValue()); // PRIM_TYPE
+			if (ignoreInvalids)
+				min = findPositions(min(ignoreInvalids).byteValue()); // PRIM_TYPE
 			else
 				min = findPositions(min().byteValue()); // PRIM_TYPE
 			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE

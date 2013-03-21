@@ -184,15 +184,6 @@ public abstract class AbstractDataset implements IDataset {
 	transient protected HashMap<String, Object> storedValues = null;
 
 	/**
-	 * Set extendibility of dataset
-	 * 
-	 * @param extendible
-	 */
-	public void setExtendible(@SuppressWarnings("unused") boolean extendible) {
-		// TODO remove
-	}
-
-	/**
 	 * Constructor required for serialisation.
 	 */
 	public AbstractDataset() {
@@ -1464,9 +1455,6 @@ public abstract class AbstractDataset implements IDataset {
 		}
 		return axis;
 	}
-
-	// TODO remove
-	public static final int STRING_SHAPE = 1;
 
 	private static final char OPEN_BLOCK = '[';
 	private static final char CLOSE_BLOCK = ']';
@@ -3595,10 +3583,6 @@ public abstract class AbstractDataset implements IDataset {
 	 *            is the source data buffer
 	 */
 	protected abstract void setItemDirect(final int dindex, final int sindex, final Object src);
-
-	public void setStringPolicy(int stringPolicy) {
-		// TODO remove
-	}
 
 	/*
 	 * Note that all error values are stored internally already squared to 

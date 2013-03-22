@@ -252,12 +252,12 @@ public class CircleFitter implements IConicSectionFitter {
 		else if (init.length < PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
+		CircleCoordinatesFunction f = (CircleCoordinatesFunction) getFitFunction(x, y);
 		if (x.getSize() == PARAMETERS) {
 			for (int i = 0; i < PARAMETERS; i++)
 				parameters[i] = init[i];
 			return;
 		}
-		CircleCoordinatesFunction f = (CircleCoordinatesFunction) getFitFunction(x, y);
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {

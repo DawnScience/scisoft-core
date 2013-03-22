@@ -161,5 +161,7 @@ except Exception, e:
     print >> sys.stderr, "Could not import plotting routines"
     print >> sys.stderr, e
 
-
-
+try:
+    import fit
+except Exception, e:
+    print >> sys.stderr, "Could not import fit"

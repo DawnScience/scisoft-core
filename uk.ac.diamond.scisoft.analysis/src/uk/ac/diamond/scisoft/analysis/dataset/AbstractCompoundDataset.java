@@ -532,7 +532,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			boolean okay = true;
 			for (int i = 0; i < isize; i++) {
 				final double val = getElementDoubleAbs(iter.index + i);
-				if (Double.isNaN(val) && ignoreNaNs) {
+				if (ignoreNaNs && Double.isNaN(val)) {
+					okay = false;
+					break;
+				}
+				if (ignoreInfs && Double.isInfinite(val)) {
 					okay = false;
 					break;
 				}
@@ -630,6 +634,54 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Number min() {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number max(boolean ignoreInvalids) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number min(boolean ignoreInvalids) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number max(boolean ignoreNaNs, boolean ignoreInfs) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number min(boolean ignoreNaNs, boolean ignoreInfs) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number positiveMax(boolean ignoreInvalids) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number positiveMin(boolean ignoreInvalids) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number positiveMax(boolean ignoreNaNs, boolean ignoreInfs) {
+		abstractCompoundLogger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public Number positiveMin(boolean ignoreNaNs, boolean ignoreInfs) {
 		abstractCompoundLogger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}

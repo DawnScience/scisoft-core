@@ -90,6 +90,10 @@ public class AbstractDatasetTest {
 		assertTrue("Max", Double.isNaN(a.max(false, true).doubleValue()));
 		assertTrue("Max", !Double.isNaN(a.max(true, false).doubleValue()));
 		assertEquals("Max", 11, a.max(true).doubleValue(), 1e-6);
+		assertTrue("+Max", Double.isNaN(a.positiveMax(false).doubleValue()));
+		assertTrue("+Max", Double.isNaN(a.positiveMax(false, true).doubleValue()));
+		assertTrue("+Max", !Double.isNaN(a.positiveMax(true, false).doubleValue()));
+		assertEquals("+Max", 11, a.positiveMax(true).doubleValue(), 1e-6);
 		assertTrue("Min", Double.isNaN(a.min().doubleValue()));
 		assertTrue("Min", !Double.isNaN(a.min(true).doubleValue()));
 		assertTrue("Min", Double.isNaN(a.min(false, true).doubleValue()));
@@ -99,6 +103,15 @@ public class AbstractDatasetTest {
 		assertTrue("Min", !Double.isInfinite(a.min(false, true).doubleValue()));
 		assertTrue("Min", Double.isInfinite(a.min(true, false).doubleValue()));
 		assertEquals("Min", 0, a.min(true).doubleValue(), 1e-6);
+		assertTrue("+Min", !Double.isNaN(a.positiveMin(true).doubleValue()));
+		assertTrue("+Min", Double.isNaN(a.positiveMin(false).doubleValue()));
+		assertTrue("+Min", Double.isNaN(a.positiveMin(false, true).doubleValue()));
+		assertTrue("+Min", !Double.isNaN(a.positiveMin(true, false).doubleValue()));
+		assertTrue("+Min", !Double.isInfinite(a.positiveMin(true).doubleValue()));
+		assertTrue("+Min", !Double.isInfinite(a.positiveMin(false).doubleValue()));
+		assertTrue("+Min", !Double.isInfinite(a.positiveMin(true, false).doubleValue()));
+		assertTrue("+Min", !Double.isInfinite(a.positiveMin(false, true).doubleValue()));
+		assertEquals("+Min", 1, a.positiveMin(true).doubleValue(), 1e-6);
 
 		// test other code path
 		AbstractDataset b = AbstractDataset.arange(12, AbstractDataset.FLOAT64);

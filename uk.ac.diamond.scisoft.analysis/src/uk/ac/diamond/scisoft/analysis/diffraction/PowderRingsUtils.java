@@ -107,6 +107,10 @@ public class PowderRingsUtils {
 		return findPOIsNearEllipse(mon, image, mask, ellipse, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
+	
+	// global lower threshold for pixel values is determined by linear interpolation of given fraction between image mean and max
+	private static final double MEAN_TO_MAX_FRACTION = 0.999;
+
 	/**
 	 * Find a set of points of interests near given ellipse from an image.
 	 * <p>
@@ -262,8 +266,7 @@ public class PowderRingsUtils {
 			logger.debug("Threshold: {} setting by mean - 2IQR", threshold);
 		}
 
-		double f = 0.995; // for peaky images
-		double gThreshold = f*((Double) image.mean()) + (1-f)*image.max().doubleValue();
+		double gThreshold = MEAN_TO_MAX_FRACTION*((Double) image.mean()) + (1-MEAN_TO_MAX_FRACTION)*image.max().doubleValue();
 		logger.debug("Threshold: global (mean-based) is {}", gThreshold);
 		if (threshold < gThreshold) {
 			threshold = gThreshold;
@@ -413,6 +416,10 @@ public class PowderRingsUtils {
 		double last = Double.NEGATIVE_INFINITY;
 		for (double a : majors) {
 			System.err.println("Current " + a + ", last " + last);
+			if (a < last) {
+				System.err.println("Dropped as less than last");
+				continue;
+			}
 			if (Math.abs(a - last) < RING_SEPARATION) { // omit close rings
 				last = a;
 				System.err.println("Dropped as too close");
@@ -439,7 +446,7 @@ public class PowderRingsUtils {
 							System.err.println("Dropped as centre is far-off");
 							continue;
 						}
-						last = er.getSemiAxis(0);
+						last = Math.max(a, er.getSemiAxis(0));
 						ells.add(er);
 					} else {
 						logger.warn("Could not find enough points at {}", er);
@@ -570,13 +577,13 @@ public class PowderRingsUtils {
 		FitDiffFunction f;
 		if (allCircles) {
 			logger.debug("All rings are circular");
-			f = createQFitFunction3(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), n);
+			f = createQFitFunction3(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), n, true);
 		} else
 //			f = createQFitFixedTFunction2(ellipses, detector.getVPxSize(), detector.getTiltAngle(), n);
-//		f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, false, false);
+//		f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, false);
 //		} else
 		{
-			f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, true, false);
+			f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, true);
 		}
 
 		logger.debug("Init: {}", f.getInit());
@@ -656,7 +663,7 @@ public class PowderRingsUtils {
 		return new QSpace(nDetector, nEnv);
 	}
 
-	static FitDiffFunction createQFitFunction(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, double tilt, int n, boolean fixedWavelength, boolean fixedTilt) {
+	static FitDiffFunction createQFitFunction(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, double tilt, int n, boolean fixedWavelength) {
 		double[] known1 = new double[n];
 		double[] known2 = new double[n];
 
@@ -684,9 +691,6 @@ public class PowderRingsUtils {
 		if (fixedWavelength) {
 			f = new QSpaceFitDiffFixedWFunction(known1, known2, wavelength, rollAngle);
 			f.setInit(new double[] {distance, st*st});
-		} else if (fixedTilt) {
-			f = new QSpaceFitDiffFixedTFunction(known1, known2, tilt, rollAngle);
-			f.setInit(new double[] {wavelength, distance});
 		} else {
 			f = new QSpaceFitDiffFunction(known1, known2, rollAngle);
 			f.setInit(new double[] {wavelength, distance, st*st});
@@ -694,7 +698,7 @@ public class PowderRingsUtils {
 		return f;
 	}
 
-	static FitDiffFunction createQFitFunction2(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, double tilt, int n, boolean fixedWavelength, boolean fixedTilt) {
+	static FitDiffFunction createQFitFunction2(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, double tilt, int n, boolean fixedWavelength) {
 		double[] known1 = new double[n];
 		double[] known2 = new double[n];
 
@@ -718,9 +722,6 @@ public class PowderRingsUtils {
 		if (fixedWavelength) {
 			f = new QSpaceFitDiffFixedWFunction2(known1, known2, wavelength, rollAngle);
 			f.setInit(new double[] {distance, st*st});
-		} else if (fixedTilt) {
-			f = new QSpaceFitDiffFixedTFunction2(known1, known2, tilt, rollAngle);
-			f.setInit(new double[] {wavelength, distance});
 		} else {
 			f = new QSpaceFitDiffFunction2(known1, known2, rollAngle);
 			f.setInit(new double[] {wavelength, distance, st*st});
@@ -728,7 +729,7 @@ public class PowderRingsUtils {
 		return f;
 	}
 
-	static FitDiffFunction createQFitFunction3(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, int n) {
+	static FitDiffFunction createQFitFunction3(List<EllipticalROI> ellipses, double pix, double wavelength, double distance, int n, boolean fixedWavelength) {
 		double[] known1 = new double[n];
 
 		for (int i = 0; i < n; i++) {
@@ -737,8 +738,13 @@ public class PowderRingsUtils {
 		}
 
 		FitDiffFunction f;
-		f = new QSpaceFitDiffFunction3(known1);
-		f.setInit(new double[] {wavelength, distance});
+		if (fixedWavelength) {
+			f = new QSpaceFitDiffFixedWFunction3(known1, wavelength);
+			f.setInit(new double[] {distance});
+		} else {
+			f = new QSpaceFitDiffFunction3(known1);
+			f.setInit(new double[] {wavelength, distance});
+		}
 		return f;
 	}
 
@@ -1094,109 +1100,6 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm)
-	 */
-	static class QSpaceFitFixedTFunction extends QSpaceFitFunction {
-
-		protected double setas;
-
-		public QSpaceFitFixedTFunction(double[] known1, double[] known2, double tiltAngle, double rollAngle) {
-			super(known1, known2, rollAngle);
-			setas = Math.sin(tiltAngle);
-			setas *= setas;
-		}
-
-		@Override
-		public double getWavelength() {
-			return parameters[0]*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[1];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			return Math.toDegrees(Math.asin(Math.sqrt(setas)));
-		}
-
-		@Override
-		void calcValues(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double ti = Math.sqrt(0.5 + x)*si/x;
-				value[j++] = ti*dist;
-				value[j++] = 1 - setas*(1+ti*ti);
-			}
-		}
-
-		@Override
-		void calcResidualValues(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double ti = Math.sqrt(0.5 + x)*si/x;
-				double t = ti*dist - target[j];
-				value[j] = t*t*weight[j];
-				j++;
-				t = 1 - setas*(1+ti*ti) - target[j];
-				value[j] = t*t*weight[j];
-				j++;
-			}
-		}
-	}
-
-	static class QSpaceFitDiffFixedTFunction extends QSpaceFitFixedTFunction implements FitDiffFunction {
-		private double[][] jac;
-
-		public QSpaceFitDiffFixedTFunction(double[] known1, double[] known2, double tiltAngle, double rollAngle) {
-			super(known1, known2, tiltAngle, rollAngle);
-			jac = new double[nV][3];
-		}
-
-		@Override
-		public MultivariateMatrixFunction jacobian() {
-			return new MultivariateMatrixFunction() {
-				@Override
-				public double[][] value(double[] point) throws FunctionEvaluationException, IllegalArgumentException {
-					calcJacobian(point);
-					return jac;
-				}
-			};
-		}
-
-		private void calcJacobian(double[] arg) {
-			double wlen = arg[0];
-			double hdist = 0.5 * arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double otdi = 0.5 / spacing[i];
-				double si = wlen * otdi;
-				double x = 0.5 - si * si;
-				double ti = Math.sqrt(0.5 + x) * si / x;
-
-				double fx = otdi / x;
-				jac[j][0] = fx * hdist * ti / (si * (0.5 + x));
-				jac[j][1] = ti;
-				j++;
-
-				double gx = 1 / (x * x);
-				jac[j][0] = -fx * setas * si * gx;
-				jac[j][1] = 0;
-				j++;
-			}
-		}
-	}
-
-	/**
 	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
 	 */
 	static class QSpaceFitFunction2 extends FitFunctionBase {
@@ -1430,107 +1333,6 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm)
-	 */
-	static class QSpaceFitFixedTFunction2 extends QSpaceFitDiffFunction2 {
-		protected double setas;
-
-		public QSpaceFitFixedTFunction2(double[] known1, double[] known2, double tiltAngle, double rollAngle) {
-			super(known1, known2, rollAngle);
-			setas = Math.sin(tiltAngle);
-			setas *= setas;
-		}
-
-		@Override
-		public double getTiltAngle() {
-			return Math.toDegrees(Math.asin(Math.sqrt(setas)));
-		}
-
-		@Override
-		void calcValues(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double den = 1.0/(ca*ca - setas);
-				value[j++] = saD*ca*den;
-				value[j++] = saD*Math.sqrt(den);
-			}
-		}
-
-		@Override
-		void calcResidualValues(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double den = 1.0/(ca*ca - setas);
-				double t = saD*ca*den - target[j];
-				value[j] = t*t*weight[j];
-				j++;
-				t = saD*Math.sqrt(den) - target[j];
-				value[j] = t*t*weight[j];
-				j++;
-			}
-		}
-	}
-
-	static class QSpaceFitDiffFixedTFunction2 extends QSpaceFitFixedTFunction2 implements FitDiffFunction {
-		private double[][] jac;
-
-		public QSpaceFitDiffFixedTFunction2(double[] known1, double[] known2, double tiltAngle, double bestAngle) {
-			super(known1, known2, tiltAngle, bestAngle);
-			jac = new double[nV][3];
-		}
-
-		@Override
-		public MultivariateMatrixFunction jacobian() {
-			return new MultivariateMatrixFunction() {
-				@Override
-				public double[][] value(double[] point) throws FunctionEvaluationException, IllegalArgumentException {
-					calcJacobian(point);
-					return jac;
-				}
-			};
-		}
-
-		private void calcJacobian(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-
-			for (int i = 0, j = 0; i < nT; i++) {
-				double otdi = 0.5 / spacing[i];
-				double si = wlen * otdi;
-				double x = 0.5 - si*si;
-				double ca = 2.0*x;
-				double cas = ca*ca;
-				double sa = 2.0*si*Math.sqrt(0.5 + x);
-				double den = 1.0/(cas - setas);
-
-				double fx = otdi*si*4.0*dist/sa;
-				jac[j][0] = fx*(cas*(1 - 2*setas) + setas)*den*den;
-				double t = sa*ca*den;
-				jac[j][1] = t;
-				j++;
-
-				t = Math.sqrt(den);
-				jac[j][0] = fx*ca*(1 - setas)*den*t;
-				t *= sa;
-				jac[j][1] = t;
-				j++;
-			}
-		}
-	}
-
-	/**
 	 * Zero-angle
 	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm)
 	 */
@@ -1629,6 +1431,89 @@ public class PowderRingsUtils {
 				jac[i][0] = fx/(ca*ca);
 				double t = sa/ca;
 				jac[i][1] = t;
+			}
+		}
+	}
+
+	/**
+	 * LS function uses parameters: perpendicular distance (mm)
+	 */
+	static class QSpaceFitFixedWFunction3 extends QSpaceFitFunction3 {
+		protected double lambda;
+
+		public QSpaceFitFixedWFunction3(double[] known1, double wavelength) {
+			super(known1);
+			lambda = wavelength;
+		}
+
+		@Override
+		public double getWavelength() {
+			return lambda*1e7;
+		}
+
+		@Override
+		public double getDistance() {
+			return parameters[0];
+		}
+
+		@Override
+		void calcValues(double[] arg) {
+			double dist = arg[0];
+
+			for (int i = 0; i < nT; i++) {
+				double si = 0.5*lambda/spacing[i];
+				double x = 0.5 - si*si;
+				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
+				double ca = 2.0*x;
+				value[i] = saD/ca;
+			}
+		}
+
+		@Override
+		void calcResidualValues(double[] arg) {
+			double dist = arg[0];
+
+			for (int i = 0; i < nT; i++) {
+				double si = 0.5*lambda/spacing[i];
+				double x = 0.5 - si*si;
+				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
+				double ca = 2.0*x;
+				double t = saD/ca - target[i];
+				value[i] = t*t*weight[i];
+			}
+		}
+	}
+
+	static class QSpaceFitDiffFixedWFunction3 extends QSpaceFitFixedWFunction3 implements FitDiffFunction {
+		private double[][] jac;
+
+		public QSpaceFitDiffFixedWFunction3(double[] known1, double wavelength) {
+			super(known1, wavelength);
+			jac = new double[nT][1];
+		}
+
+		@Override
+		public void setSpacings(List<Double> spacings) {
+			super.setSpacings(spacings);
+			calcJacobian();
+		}
+
+		@Override
+		public MultivariateMatrixFunction jacobian() {
+			return new MultivariateMatrixFunction() {
+				@Override
+				public double[][] value(double[] point) throws FunctionEvaluationException, IllegalArgumentException {
+					return jac;
+				}
+			};
+		}
+
+		private void calcJacobian() {
+			for (int i = 0; i < nT; i++) {
+				double si = 0.5*lambda/spacing[i];
+				double x = 0.5 - si*si;
+
+				jac[i][0] = si*Math.sqrt(0.5 + x)/x;
 			}
 		}
 	}

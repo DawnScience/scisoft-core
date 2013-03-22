@@ -551,7 +551,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
-	protected void calculateSummaryStats(final boolean ignoreNaNs, final int axis) {
+	protected void calculateSummaryStats(final boolean ignoreNaNs, final boolean ignoreInfs, final int axis) {
 		int rank = getRank();
 
 		int[] oshape = getShape();
@@ -588,9 +588,15 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				getDoubleArray(darray, spos);
 				boolean skip = false;
 				for (int k = 0; k < isize; k++) {
-					if (Double.isNaN(darray[k]) && ignoreNaNs)
+					double v = darray[k];
+					if (ignoreNaNs && Double.isNaN(v)) {
 						skip = true;
-					
+						break;
+					}
+					if (ignoreInfs && Double.isInfinite(v)) {
+						skip = true;
+						break;
+					}
 				}
 				if (!skip)
 					for (int k = 0; k < isize; k++) {
@@ -611,9 +617,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			}
 			var.set(darray, qpos);
 		}
-		setStoredValue(storeName(ignoreNaNs, "sum-" + axis), sum);
-		storedValues.put(storeName(ignoreNaNs, "mean-"+axis), mean);
-		storedValues.put(storeName(ignoreNaNs, "var-"+axis), var);
+		setStoredValue(storeName(ignoreNaNs, ignoreInfs, "sum-" + axis), sum);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "mean-"+axis), mean);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "var-"+axis), var);
 	}
 
 	@Override

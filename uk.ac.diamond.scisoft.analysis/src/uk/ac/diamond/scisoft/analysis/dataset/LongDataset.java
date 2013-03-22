@@ -572,21 +572,15 @@ public class LongDataset extends AbstractDataset {
 	@Override
 	public int[] maxPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
 		List<Integer> max = null;
 		if (o == null) {
 			// TODO this test is necessary because Jython thinks max(boolean) is max(int)!
-			if (ignoreInvalids)
-				max = findPositions(max(ignoreInvalids).longValue()); // PRIM_TYPE
-			else
-				max = findPositions(max().longValue()); // PRIM_TYPE
+			max = findPositions(max(ignoreInvalids).longValue()); // PRIM_TYPE
 			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
@@ -603,19 +597,13 @@ public class LongDataset extends AbstractDataset {
 	@Override
 	public int[] minPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MIN_POS);
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			if (ignoreInvalids)
-				min = findPositions(min(ignoreInvalids).longValue()); // PRIM_TYPE
-			else
-				min = findPositions(min().longValue()); // PRIM_TYPE
+			min = findPositions(min(ignoreInvalids).longValue()); // PRIM_TYPE
 			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);

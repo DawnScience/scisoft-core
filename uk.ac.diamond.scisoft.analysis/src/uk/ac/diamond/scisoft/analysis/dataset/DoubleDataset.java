@@ -579,21 +579,15 @@ public class DoubleDataset extends AbstractDataset {
 	@Override
 	public int[] maxPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
 		List<Integer> max = null;
 		if (o == null) {
 			// TODO this test is necessary because Jython thinks max(boolean) is max(int)!
-			if (ignoreInvalids) // BOOLEAN_OMIT
-				max = findPositions(max(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			else // BOOLEAN_OMIT
-				max = findPositions(max().doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			max = findPositions(max(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
 			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
@@ -610,19 +604,13 @@ public class DoubleDataset extends AbstractDataset {
 	@Override
 	public int[] minPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MIN_POS);
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			if (ignoreInvalids) // BOOLEAN_OMIT
-				min = findPositions(min(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			else // BOOLEAN_OMIT
-				min = findPositions(min().doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			min = findPositions(min(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
 			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);

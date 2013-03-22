@@ -546,12 +546,9 @@ public class ObjectDatasetBase extends AbstractDataset {
 	@Override
 	public int[] maxPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
 		List<Integer> max = null;
@@ -573,12 +570,9 @@ public class ObjectDatasetBase extends AbstractDataset {
 	@Override
 	public int[] minPos(boolean ignoreInvalids) {
 		if (storedValues == null) {
-			if (ignoreInvalids)
-				calculateMaxMin(true, true);
-			else
-				calculateMaxMin(false, false);
+			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
-		String n = ignoreInvalids ? storeName(true, true, STORE_MAX_POS) : storeName(false, false, STORE_MAX_POS);
+		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MIN_POS);
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {

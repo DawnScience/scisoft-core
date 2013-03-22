@@ -107,4 +107,8 @@ public class AxisOperation implements Serializable {
 			return false;
 		return true;
 	}
+
+	public boolean isYAxis() {
+		return side == LEFT || side == RIGHT;
+	}
 }

@@ -1700,39 +1700,34 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void createAxis(String plotName, final String title, final boolean isYAxis, final int side) throws Exception{
+	public void createAxis(String plotName, final String title, final int side) throws Exception {
 		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.CREATE,title, isYAxis, side));
-		
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.CREATE, title, side));
+
 		sendBeansToServer(plotName, null, guiBean);
 	}
-	
+
 	@Override
-	public void removeAxis(String plotName, final String axisTitle) throws Exception{
-		
+	public void removeAxis(String plotName, final String axisTitle) throws Exception {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.DELETE, axisTitle));
-		
+
 		sendBeansToServer(plotName, null, guiBean);
-		
 	}
-	
+
 	@Override
 	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
-		
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.ACTIVEX, xAxisTitle));
-		
+
 		sendBeansToServer(plotName, null, guiBean);
 	}
-		
+
 	@Override
-	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception{
-		
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.ACTIVEY, yAxisTitle));
-		
+
 		sendBeansToServer(plotName, null, guiBean);
 	}
-		
 }

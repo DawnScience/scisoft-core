@@ -42,18 +42,16 @@ public class AxisOperation implements Serializable {
 
 	private String  operationType;
 	private String  title;
-	private boolean isYAxis;
 	private int     side;
 	
 	public AxisOperation(String operationType, String title) {
-		this(operationType, title, false, -1);
+		this(operationType, title, -1);
 	}
 	
-	public AxisOperation(String operationType, String title, boolean isYAxis, int side) {
+	public AxisOperation(String operationType, String title, int side) {
 		super();
 		this.operationType = operationType;
 		this.title = title;
-		this.isYAxis = isYAxis;
 		this.side = side;
 	}
 	
@@ -69,12 +67,6 @@ public class AxisOperation implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public boolean isYAxis() {
-		return isYAxis;
-	}
-	public void setYAxis(boolean isYAxis) {
-		this.isYAxis = isYAxis;
-	}
 	public int getSide() {
 		return side;
 	}
@@ -86,7 +78,6 @@ public class AxisOperation implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (isYAxis ? 1231 : 1237);
 		result = prime * result + ((operationType == null) ? 0 : operationType.hashCode());
 		result = prime * result + side;
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -102,8 +93,6 @@ public class AxisOperation implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		AxisOperation other = (AxisOperation) obj;
-		if (isYAxis != other.isYAxis)
-			return false;
 		if (operationType == null) {
 			if (other.operationType != null)
 				return false;

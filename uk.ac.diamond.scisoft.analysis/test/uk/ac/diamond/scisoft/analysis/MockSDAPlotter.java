@@ -459,7 +459,7 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void createAxis(String plotName, String title, boolean isYAxis, int side) throws Exception {
+	public void createAxis(String plotName, String title, int side) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 
@@ -469,12 +469,12 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 
 	@Override
-	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 }

@@ -41,30 +41,22 @@ public interface ISDAPlotter {
 	 * Specify that the images are displayed in chronological order
 	 */
 	public final int IMAGEORDERCHRONOLOGICAL = 2;
-	
+
 	/**
 	 * Creates a new axis
 	 * @param title
-	 * @param isYAxis
 	 * @param side one of AxisOperation.TOP, AxisOperation.BOTTOM, AxisOperation.LEFT, AxisOperation.RIGHT
 	 * @throws Exception if the title is used for an axis already
 	 */
-	public void createAxis(String plotName, final String title, final boolean isYAxis, final int side) throws Exception;
-	
+	public void createAxis(String plotName, final String title, final int side) throws Exception;
+
 	/**
 	 * Remove axis by title.
 	 * @param axisTitle
 	 * @throws Exception if the axisTitle is not a real axis
 	 */
 	public void removeAxis(String plotName, final String axisTitle) throws Exception;
-		
-	/**
-	 * Set the active axis which subsequent plots will plot to.
-	 * @param yAxisTitle
-	 * @throws Exception if the axis title is not an existing axis
-	 */
-	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception;
-		
+
 	/**
 	 * Set the active axis which subsequent plots will plot to.
 	 * @param xAxisTitle
@@ -72,6 +64,12 @@ public interface ISDAPlotter {
 	 */
 	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception;
 
+	/**
+	 * Set the active axis which subsequent plots will plot to.
+	 * @param yAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception;
 
 	/**
 	 * @param plotName

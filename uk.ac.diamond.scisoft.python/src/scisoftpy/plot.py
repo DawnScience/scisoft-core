@@ -48,6 +48,11 @@ _plot_scanforimages = _plot.plot_scanforimages
 _plot_viewnexustree = _plot.plot_viewnexustree
 _plot_volume = _plot.plot_volume
 
+_plot_createaxis = _plot.plot_createaxis
+_plot_removeaxis = _plot.plot_removeaxis
+_plot_setactivexaxis = _plot.plot_setactivexaxis
+_plot_setactiveyaxis = _plot.plot_setactiveyaxis
+
 _plot_clear = _plot.plot_clear
 
 __orders = _plot.plot_orders
@@ -135,13 +140,22 @@ def clear(name=None):
         name = _PVNAME
     _plot_clear(name)
 
-def line(x, y=None, name=None):
+def _setup_axes(axes):
+    if axes is None:
+        pass
+    else:
+        pass
+    pass
+
+
+def line(x, y=None, axes=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any
     given x dataset in the named view
 
     Arguments:
     x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
+    axes -- tuple containing positions of axes for x and y ('bottom', 'left')
     name -- name of plot view to use (if None, use default name)
 
     For example,
@@ -183,7 +197,7 @@ def line(x, y=None, name=None):
             
         _plot_line(name, xl, yl)
 
-def updateline(x, y=None, name=None):
+def updateline(x, y=None, axes=None, name=None):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against
     any given x dataset in the named view
 

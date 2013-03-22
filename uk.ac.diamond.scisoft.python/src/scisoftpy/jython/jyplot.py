@@ -38,6 +38,11 @@ plot_updatepoints2d = _plotter.scatter2DPlotOver
 plot_points3d = _plotter.scatter3DPlot
 plot_updatepoints3d = _plotter.scatter3DPlotOver
 
+plot_createaxis = _plotter.createAxis
+plot_removeaxis = _plotter.removeAxis
+plot_setactivexaxis = _plotter.setActiveXAxis
+plot_setactiveyaxis = _plotter.setActiveYAxis
+
 plot_scanforimages = _plotter.scanForImages
 
 from jyio import h5manager as _h5mgr

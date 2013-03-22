@@ -53,6 +53,43 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * Creates a new axis
+	 * @param title
+	 * @param side one of AxisOperation.TOP, AxisOperation.BOTTOM, AxisOperation.LEFT, AxisOperation.RIGHT
+	 * @throws Exception if the title is used for an axis already
+	 */
+	public static void createAxis(String plotName, final String title, final int side) throws Exception {
+		getPlotterImpl().createAxis(plotName, title, side);
+	}
+
+	/**
+	 * Remove axis by title.
+	 * @param axisTitle
+	 * @throws Exception if the axisTitle is not a real axis
+	 */
+	public static void removeAxis(String plotName, final String axisTitle) throws Exception {
+		getPlotterImpl().removeAxis(plotName, axisTitle);
+	}
+
+	/**
+	 * Set the active axis which subsequent plots will plot to.
+	 * @param xAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public static void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		getPlotterImpl().setActiveXAxis(plotName, xAxisTitle);
+	}
+
+	/**
+	 * Set the active axis which subsequent plots will plot to.
+	 * @param yAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public static void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		getPlotterImpl().setActiveYAxis(plotName, yAxisTitle);
+	}
+
+	/**
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param yAxis

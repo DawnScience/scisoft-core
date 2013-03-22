@@ -75,6 +75,11 @@ _plot_name_remapper = {
     'plot_getdatabean': 'getDataBean',
     'plot_setdatabean': 'setDataBean',
     'plot_getguinames': 'getGuiNames',
+
+    'plot_createaxis': 'createAxis',
+    'plot_removeaxis': 'removeAxis',
+    'plot_setactivexaxis': 'setActiveXAxis',
+    'plot_setactiveyaxis': 'setActiveYAxis',
 }
 
 class imageorder:

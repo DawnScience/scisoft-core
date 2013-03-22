@@ -58,7 +58,7 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
-	public void testMax() {
+	public void testMaxMin() {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
 		a.setShape(3,4);
 		assertEquals("Max", 11, a.max().doubleValue(), 1e-6);
@@ -67,9 +67,10 @@ public class AbstractDatasetTest {
 		assertEquals("Max arg", 11, a.argMax());
 		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(0));
 		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(1));
-		a.set(Double.NaN, 1,0);
-		System.out.println(a);
+		a.set(Double.NaN, 1, 0);
+		System.out.println(a.toString(true));
 		assertTrue("Max", Double.isNaN(a.max().doubleValue()));
+		assertTrue("Max", !Double.isNaN(a.max(true).doubleValue()));
 		assertTrue("Max 0", equalsWithNaNs(AbstractDataset.array(new double[] {Double.NaN,9,10,11}), a.max(0)));
 		assertTrue("Max 1", equalsWithNaNs(AbstractDataset.array(new double[] {3,Double.NaN,11}), a.max(1)));
 		assertEquals("Max arg", 4, a.argMax());
@@ -81,6 +82,23 @@ public class AbstractDatasetTest {
 		assertEquals("Max arg", 11, a.argMax(true));
 		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(true, 0));
 		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(true, 1));
+
+		a.set(Double.NEGATIVE_INFINITY, 1, 1);
+		System.out.println(a.toString(true));
+		assertTrue("Max", Double.isNaN(a.max().doubleValue()));
+		assertTrue("Max", !Double.isNaN(a.max(true).doubleValue()));
+		assertTrue("Max", Double.isNaN(a.max(false, true).doubleValue()));
+		assertTrue("Max", !Double.isNaN(a.max(true, false).doubleValue()));
+		assertEquals("Max", 11, a.max(true).doubleValue(), 1e-6);
+		assertTrue("Min", Double.isNaN(a.min().doubleValue()));
+		assertTrue("Min", !Double.isNaN(a.min(true).doubleValue()));
+		assertTrue("Min", Double.isNaN(a.min(false, true).doubleValue()));
+		assertTrue("Min", !Double.isNaN(a.min(true, false).doubleValue()));
+		assertTrue("Min", !Double.isInfinite(a.min().doubleValue()));
+		assertTrue("Min", !Double.isInfinite(a.min(true).doubleValue()));
+		assertTrue("Min", !Double.isInfinite(a.min(false, true).doubleValue()));
+		assertTrue("Min", Double.isInfinite(a.min(true, false).doubleValue()));
+		assertEquals("Min", 0, a.min(true).doubleValue(), 1e-6);
 
 		// test other code path
 		AbstractDataset b = AbstractDataset.arange(12, AbstractDataset.FLOAT64);

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
@@ -102,10 +103,10 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 			if (n instanceof HDF5SymLink)
 				n = ((HDF5SymLink) n).getNode();
 			if (link.isDestinationADataset() && !(n instanceof HDF5Dataset)) {
-				throw new IllegalArgumentException("Cannot add a group as there is a non-group of same name");
+				throw new IllegalArgumentException("Cannot add a group as there is a non-group of same name: " + name);
 			}
 			if (link.isDestinationAGroup() && !(n instanceof HDF5Group)) {
-				throw new IllegalArgumentException("Cannot add a group as there is a non-dataset of same name");
+				throw new IllegalArgumentException("Cannot add a group as there is a non-dataset of same name: " + name);
 			}
 		}
 		HDF5Node n = link.getDestination();
@@ -132,7 +133,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 			if (n instanceof HDF5SymLink)
 				n = ((HDF5SymLink) n).getNode();
 			if (n instanceof HDF5Dataset) {
-				throw new IllegalArgumentException("Cannot add a group as there is a dataset of same name");
+				throw new IllegalArgumentException("Cannot add a group as there is a dataset of same name: " + name);
 			}
 		} else {
 			groups++;
@@ -153,7 +154,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 			if (n instanceof HDF5SymLink)
 				n = ((HDF5SymLink) n).getNode();
 			if (n instanceof HDF5Dataset) {
-				throw new IllegalArgumentException("Cannot add a group as there is a dataset of same name");
+				throw new IllegalArgumentException("Cannot add a group as there is a dataset of same name: " + name);
 			}
 		} else {
 			if (name.endsWith(SEPARATOR)) {
@@ -177,7 +178,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 				return (HDF5Group) n;
 		}
 
-		throw new IllegalArgumentException("No such group of given name");
+		throw new IllegalArgumentException("No such group of given name: " + name);
 	}
 
 	/**
@@ -186,13 +187,13 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	 */
 	public void removeGroup(final String name) {
 		if (!nodes.containsKey(name))
-			throw new IllegalArgumentException("No name exists in this group");
+			throw new IllegalArgumentException("No name exists in this group: " + name);
 
 		HDF5Node n = nodes.get(name).getDestination();
 		if (n instanceof HDF5SymLink)
 			n = ((HDF5SymLink) n).getNode();
 		if (n instanceof HDF5Dataset)
-			throw new IllegalArgumentException("Group of given name does not exist in this group");
+			throw new IllegalArgumentException("Group of given name does not exist in this group: " + name);
 
 		nodes.remove(name);
 		groups--;
@@ -242,7 +243,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 			if (n instanceof HDF5SymLink)
 				n = ((HDF5SymLink) n).getNode();
 			if (n instanceof HDF5Group) {
-				throw new IllegalArgumentException("Cannot add a dataset as there is a group of same name");
+				throw new IllegalArgumentException("Cannot add a dataset as there is a group of same name: " + name);
 			}
 		} else {
 			datasets++;
@@ -264,7 +265,7 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 				return (HDF5Dataset) n;
 		}
 
-		throw new IllegalArgumentException("No such dataset of given name");
+		throw new IllegalArgumentException("No such dataset of given name: " + name);
 	}
 
 	/**
@@ -273,13 +274,13 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 	 */
 	public void removeDataset(final String name) {
 		if (!nodes.containsKey(name))
-			throw new IllegalArgumentException("No name exists in this group");
+			throw new IllegalArgumentException("No name exists in this group: " + name);
 
 		HDF5Node n = nodes.get(name).getDestination();
 		if (n instanceof HDF5SymLink)
 			n = ((HDF5SymLink) n).getNode();
 		if (n instanceof HDF5Group)
-			throw new IllegalArgumentException("Dataset of given name does not exist in this group");
+			throw new IllegalArgumentException("Dataset of given name does not exist in this group: " + name);
 
 		nodes.remove(name);
 		datasets--;
@@ -319,6 +320,20 @@ public class HDF5Group extends HDF5Node implements Iterable<HDF5NodeLink> {
 		} else if (node instanceof HDF5Group) {
 			addGroup(file, path, name, (HDF5Group) node);
 		}
+	}
+
+	/**
+	 * Find name of node linked to this group
+	 * @param node
+	 * @return name (or null, if node is not in group)
+	 */
+	public String findLinkedNodeName(HDF5Node node) {
+		for (Entry<String, HDF5NodeLink> e : nodes.entrySet()) {
+			if (e.getValue().getDestination() == node) {
+				return e.getKey();
+			}
+		}
+		return null;
 	}
 
 	@Override

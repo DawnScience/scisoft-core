@@ -519,8 +519,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 		return (Integer) value;
 	}
+
 	@Override
-	protected void calculateSummaryStats(boolean ignoreNaNs, String name) {
+	protected void calculateSummaryStats(boolean ignoreNaNs, final boolean ignoreInfs, String name) {
 		IndexIterator iter = getIterator();
 		SummaryStatistics[] stats = new SummaryStatistics[isize];
 		for (int i = 0; i < isize; i++)
@@ -648,7 +649,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public double[] maxItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double[] results = new double[isize];
@@ -665,7 +666,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public double[] minItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double[] results = new double[isize];
@@ -679,7 +680,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public Object sum() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double[] results = new double[isize];
@@ -728,7 +729,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public Object mean() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double[] results = new double[isize];
@@ -742,7 +743,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public Number variance() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double result = 0;
@@ -755,7 +756,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	public Number rootMeanSquare() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
-			calculateSummaryStats(false, n);
+			calculateSummaryStats(false, false, n);
 		}
 
 		double result = 0;

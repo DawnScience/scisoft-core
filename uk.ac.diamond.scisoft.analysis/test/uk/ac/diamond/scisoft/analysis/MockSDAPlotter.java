@@ -457,4 +457,24 @@ public class MockSDAPlotter implements ISDAPlotter {
 	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
 		throw newShouldNotBeCalled();
 	}
+
+	@Override
+	public void createAxis(String plotName, String title, boolean isYAxis, int side) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void removeAxis(String plotName, String axisTitle) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		throw newShouldNotBeCalled();
+	}
 }

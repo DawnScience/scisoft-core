@@ -443,4 +443,27 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 		return (String[]) request("getguinames");
 	}
 
+	@Override
+	public void createAxis(String plotName, String title, boolean isYAxis, int side) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+	}
+
+	@Override
+	public void removeAxis(String plotName, String axisTitle) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		
+	}
+
+	@Override
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		
+	}
+
+	@Override
+	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		
+	}
+
 }

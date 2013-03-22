@@ -25,8 +25,7 @@ import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
 
 public interface ISDAPlotter {
 
-	public final String LISTOFSUFFIX[] = { "png", "jpg", "tif{1,2}", "mar", "cbf", "dat", "img", "raw", "mccd", "cif",
-			"imgcif" };
+	public final String LISTOFSUFFIX[] = { "png", "jpg", "tif{1,2}", "mar", "cbf", "dat", "img", "raw", "mccd", "cif", "imgcif" };
 
 	/**
 	 * Specify that the images are displayed in no particular order
@@ -42,6 +41,37 @@ public interface ISDAPlotter {
 	 * Specify that the images are displayed in chronological order
 	 */
 	public final int IMAGEORDERCHRONOLOGICAL = 2;
+	
+	/**
+	 * Creates a new axis
+	 * @param title
+	 * @param isYAxis
+	 * @param side one of AxisOperation.TOP, AxisOperation.BOTTOM, AxisOperation.LEFT, AxisOperation.RIGHT
+	 * @throws Exception if the title is used for an axis already
+	 */
+	public void createAxis(String plotName, final String title, final boolean isYAxis, final int side) throws Exception;
+	
+	/**
+	 * Remove axis by title.
+	 * @param axisTitle
+	 * @throws Exception if the axisTitle is not a real axis
+	 */
+	public void removeAxis(String plotName, final String axisTitle) throws Exception;
+		
+	/**
+	 * Set the active axis which subsequent plots will plot to.
+	 * @param yAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception;
+		
+	/**
+	 * Set the active axis which subsequent plots will plot to.
+	 * @param xAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception;
+
 
 	/**
 	 * @param plotName

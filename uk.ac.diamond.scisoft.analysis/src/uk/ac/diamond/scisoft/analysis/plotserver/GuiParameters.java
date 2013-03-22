@@ -237,4 +237,10 @@ public final class GuiParameters implements Serializable {
  	 */ 
  	public static final GuiParameters ONEDFILE = new GuiParameters("OneDFile", OneDDataFilePlotDefinition.class); 
 
+ 	
+ 	/**
+ 	 * Parameters for controlling axes
+ 	 */
+ 	public static final GuiParameters AXIS_OPERATION = new GuiParameters("Axis Operation", AxisOperation.class); 
+ 	
 }

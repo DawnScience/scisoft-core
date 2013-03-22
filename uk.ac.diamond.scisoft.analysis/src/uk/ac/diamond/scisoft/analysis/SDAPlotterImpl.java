@@ -41,6 +41,7 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinarySaver;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
+import uk.ac.diamond.scisoft.analysis.plotserver.AxisOperation;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBeanException;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
@@ -1697,4 +1698,41 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	public String[] getGuiNames() throws Exception {
 		return getPlotService().getGuiNames();
 	}
+
+	@Override
+	public void createAxis(String plotName, final String title, final boolean isYAxis, final int side) throws Exception{
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.CREATE,title, isYAxis, side));
+		
+		sendBeansToServer(plotName, null, guiBean);
+	}
+	
+	@Override
+	public void removeAxis(String plotName, final String axisTitle) throws Exception{
+		
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.DELETE, axisTitle));
+		
+		sendBeansToServer(plotName, null, guiBean);
+		
+	}
+	
+	@Override
+	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.ACTIVEX, xAxisTitle));
+		
+		sendBeansToServer(plotName, null, guiBean);
+	}
+		
+	@Override
+	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception{
+		
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.ACTIVEY, yAxisTitle));
+		
+		sendBeansToServer(plotName, null, guiBean);
+	}
+		
 }

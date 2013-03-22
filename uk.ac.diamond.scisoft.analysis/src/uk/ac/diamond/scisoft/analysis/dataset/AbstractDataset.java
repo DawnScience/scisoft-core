@@ -2675,6 +2675,8 @@ public abstract class AbstractDataset implements IDataset {
 	protected static final String STORE_SHAPELESS_HASH = "shapelessHash";
 	protected static final String STORE_MAX = "max";
 	protected static final String STORE_MIN = "min";
+	protected static final String STORE_POS_MAX = "+max";
+	protected static final String STORE_POS_MIN = "+min";
 	protected static final String STORE_MAX_POS = "maxPos";
 	protected static final String STORE_MIN_POS = "minPos";
 	protected final static String STORE_STATS = "stats";
@@ -2749,12 +2751,14 @@ public abstract class AbstractDataset implements IDataset {
 	/**
 	 * Calculate minimum and maximum for a dataset
 	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore Infs
+	 * @param ignoreInfs if true, ignore infinities
 	 */
 	protected void calculateMaxMin(final boolean ignoreNaNs, final boolean ignoreInfs) {
 		IndexIterator iter = getIterator();
 		double amax = Double.NEGATIVE_INFINITY;
 		double amin = Double.POSITIVE_INFINITY;
+		double pmax = Double.MIN_VALUE;
+		double pmin = Double.POSITIVE_INFINITY;
 		double hash = 0;
 		boolean hasNaNs = false;
 
@@ -2779,18 +2783,28 @@ public abstract class AbstractDataset implements IDataset {
 			if (val < amin) {
 				amin = val;
 			}
+			if (val > 0) {
+				if (val < pmin) {
+					pmin = val;
+				}
+				if (val > pmax) {
+					pmax = val;
+				}
+			}
 		}
 
 		int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
 		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_SHAPELESS_HASH), ihash);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(amax));
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(amin));
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_POS_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(pmax));
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_POS_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(pmin));
 	}
 
 	/**
 	 * Calculate summary statistics for a dataset
 	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore Infs
+	 * @param ignoreInfs if true, ignore infinities
 	 * @param name
 	 */
 	protected void calculateSummaryStats(final boolean ignoreNaNs, final boolean ignoreInfs, final String name) {
@@ -2800,6 +2814,8 @@ public abstract class AbstractDataset implements IDataset {
 		if (storedValues == null || !storedValues.containsKey(STORE_HASH)) {
 			boolean hasNaNs = false;
 			double hash = 0;
+			double pmax = Double.MIN_VALUE;
+			double pmin = Double.POSITIVE_INFINITY;
 
 			while (iter.hasNext()) {
 				final double val = getElementDoubleAbs(iter.index);
@@ -2815,6 +2831,14 @@ public abstract class AbstractDataset implements IDataset {
 				} else {
 					hash = (hash * 19 + val) % Integer.MAX_VALUE;
 				}
+				if (val > 0) {
+					if (val < pmin) {
+						pmin = val;
+					}
+					if (val > pmax) {
+						pmax = val;
+					}
+				}
 				stats.addValue(val);
 			}
 
@@ -2822,12 +2846,14 @@ public abstract class AbstractDataset implements IDataset {
 			setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_SHAPELESS_HASH), ihash);
 			storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMax()));
 			storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(stats.getMin()));
+			storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_POS_MAX), hasNaNs ? Double.NaN : fromDoubleToNumber(pmax));
+			storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_POS_MIN), hasNaNs ? Double.NaN : fromDoubleToNumber(pmin));
 			storedValues.put(name, stats);
 		} else {
 			while (iter.hasNext()) {
 				final double val = getElementDoubleAbs(iter.index);
 				if (ignoreNaNs && Double.isNaN(val)) {
-						continue;
+					continue;
 				}
 				if (ignoreInfs && Double.isInfinite(val)) {
 					continue;
@@ -2843,9 +2869,10 @@ public abstract class AbstractDataset implements IDataset {
 	/**
 	 * Calculate summary statistics for a dataset along an axis
 	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param ignoreInfs if true, ignore infinities
 	 * @param axis
 	 */
-	protected void calculateSummaryStats(final boolean ignoreNaNs, final int axis) {
+	protected void calculateSummaryStats(final boolean ignoreNaNs, final boolean ignoreInfs, final int axis) {
 		int rank = getRank();
 
 		int[] oshape = getShape();
@@ -2896,6 +2923,8 @@ public abstract class AbstractDataset implements IDataset {
 					if (Double.isNaN(val)) {
 						hasNaNs = true;
 						continue;
+					} else if (ignoreInfs && Double.isInfinite(val)) {
+						continue;
 					}
 
 					if (val > amax) {
@@ -2922,6 +2951,8 @@ public abstract class AbstractDataset implements IDataset {
 						amax = Double.NaN;
 						amin = Double.NaN;
 						hasNaNs = true;
+					} else if (ignoreInfs && Double.isInfinite(val)) {
+						continue;
 					} else {
 						if (val > amax) {
 							amax = val;
@@ -2994,7 +3025,6 @@ public abstract class AbstractDataset implements IDataset {
 			mean.setAbs(qiter.index, stats.getMean());
 			var.setAbs(qiter.index, stats.getVariance());
 		}
-		boolean ignoreInfs = false; // TODO
 		setStoredValue(storeName(ignoreNaNs, ignoreInfs, "count-" + axis), count);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MAX + "-" + axis), max);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN + "-" + axis), min);
@@ -3127,7 +3157,7 @@ public abstract class AbstractDataset implements IDataset {
 		Object obj = getStoredValue(stat);
 
 		if (obj == null) {
-			calculateSummaryStats(ignoreNaNs, axis);
+			calculateSummaryStats(ignoreNaNs, ignoreInfs, axis);
 			obj = getStoredValue(stat);
 		}
 
@@ -3147,7 +3177,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return maximum
 	 */
 	public Number max(boolean ignoreInvalids) {
-		return (Number) (ignoreInvalids ? getMaxMin(true, true, STORE_MAX) : getMaxMin(false, false, STORE_MAX));
+		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MAX);
 	}
 
 	/**
@@ -3157,6 +3187,23 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	public Number max(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MAX);
+	}
+
+	/**
+	 * @param ignoreInvalids if true, ignore NaNs and infinities
+	 * @return minimum positive value (or infinity if there are no positive values)
+	 */
+	public Number positiveMax(boolean ignoreInvalids) {
+		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MAX);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param ignoreInfs if true, ignore infinities
+	 * @return maximum positive value (or Double.MIN_VALUE=2^-1024 if there are no positive values)
+	 */
+	public Number positiveMax(boolean ignoreNaNs, boolean ignoreInfs) {
+		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MAX);
 	}
 
 	/**
@@ -3190,7 +3237,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return minimum
 	 */
 	public Number min(boolean ignoreInvalids) {
-		return (Number) (ignoreInvalids ? getMaxMin(true, true, STORE_MIN) : getMaxMin(false, false, STORE_MIN));
+		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MIN);
 	}
 
 	/**
@@ -3200,6 +3247,23 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	public Number min(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MIN);
+	}
+
+	/**
+	 * @param ignoreInvalids if true, ignore NaNs and infinities
+	 * @return minimum positive value (or infinity if there are no positive values)
+	 */
+	public Number positiveMin(boolean ignoreInvalids) {
+		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MIN);
+	}
+
+	/**
+	 * @param ignoreNaNs if true, ignore NaNs
+	 * @param ignoreInfs if true, ignore infinities
+	 * @return minimum positive value (or infinity if there are no positive values)
+	 */
+	public Number positiveMin(boolean ignoreNaNs, boolean ignoreInfs) {
+		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MIN);
 	}
 
 	/**

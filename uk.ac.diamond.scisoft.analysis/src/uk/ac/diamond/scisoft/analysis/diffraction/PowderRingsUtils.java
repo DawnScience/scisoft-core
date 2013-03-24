@@ -578,11 +578,7 @@ public class PowderRingsUtils {
 		if (allCircles) {
 			logger.debug("All rings are circular");
 			f = createQFitFunction3(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), n, true);
-		} else
-//			f = createQFitFixedTFunction2(ellipses, detector.getVPxSize(), detector.getTiltAngle(), n);
-//		f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, false);
-//		} else
-		{
+		} else {
 			f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, true);
 		}
 

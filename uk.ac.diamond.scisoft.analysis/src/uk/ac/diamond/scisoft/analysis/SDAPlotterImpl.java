@@ -225,11 +225,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void addPlot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		lplot(plotName, title, validateXAxis(xAxis, yAxis), null, new IDataset[] { yAxis }, xAxisName, yAxisName, GuiParameters.PLOTOP_ADD);
-	}
-
-	@Override
 	public void addPlot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
 		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, xAxisName, yAxisName, GuiParameters.PLOTOP_ADD);
 	}
@@ -245,7 +240,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @throws Exception
 	 */
 	private void lplot(final String plotName, final String title, IDataset[] xAxes, final IDataset xAxis2, IDataset[] yAxes, final boolean updateMode) throws Exception {
-		if(updateMode)
+		if (updateMode)
 			lplot(plotName, title, xAxes, xAxis2, yAxes, null, null, GuiParameters.PLOTOP_UPDATE);
 		else
 			lplot(plotName, title, xAxes, xAxis2, yAxes, null, null, GuiParameters.PLOTOP_NONE);
@@ -317,8 +312,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			xAxis2.setName("");
 			dataBean.addAxis(AxisMapBean.XAXIS2, xAxis2);
 		}
-		//if (updateMode)
-			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
+
+		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
 
 		if (title != null)
 			dataBean.putGuiParameter(GuiParameters.TITLE, title);

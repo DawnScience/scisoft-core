@@ -131,12 +131,6 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void addPlot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName,
-			String yAxisName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
 	public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
 			String yAxisName) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to title argument");

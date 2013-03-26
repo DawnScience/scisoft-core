@@ -111,6 +111,20 @@ public final class GuiParameters implements Serializable {
 		return ordinal;
 	}
 
+	/**
+	 * Update value of Plot Operation GuiParameter
+	 */
+	public static final String PLOTOP_UPDATE = "UPDATE";
+
+	/**
+	 * ADD value of Plot Operation GuiParameter
+	 */
+	public static final String PLOTOP_ADD = "ADD";
+
+	/**
+	 * NONE value of Plot Operation GuiParameter
+	 */
+	public static final String PLOTOP_NONE = "NONE";
 
 	/**
 	 * Specifies the plotting mode can be any of the values in GuiPlotMode
@@ -138,7 +152,7 @@ public final class GuiParameters implements Serializable {
 	public static final GuiParameters PLOTID = new GuiParameters("PlotID", UUID.class);
 
 	/**
-	 * Specifies the plot operation at the moment can only be UPDATE or nothing
+	 * Specifies the plot operation at the moment can only be UPDATE, ADD or NONE
 	 */
 	public static final GuiParameters PLOTOPERATION = new GuiParameters("PlotOp", String.class);
 

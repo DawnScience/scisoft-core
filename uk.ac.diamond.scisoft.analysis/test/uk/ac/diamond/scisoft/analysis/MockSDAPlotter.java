@@ -114,6 +114,18 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
+	public void addPlot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName,
+			String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+			String yAxisName) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
 	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
 		throw newShouldNotBeCalled();
 

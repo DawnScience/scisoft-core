@@ -272,6 +272,40 @@ public interface ISDAPlotter {
 	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxis
+	 *            The datasets to use as the Y values
+	 * @param xAxisName
+	 *            The name of xAxis, null if none
+	 * @param yAxisName
+	 *            The name of dataset, null if none
+	 * @throws Exception
+	 */
+	public void addPlot(String plotName, final String title, IDataset xAxis, IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxes
+	 *            The dataset to use as the X values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
+	 * @param xAxisName
+	 *            The name of xAxis, null if none
+	 * @param yAxisName
+	 *            The name of dataset, null if none
+	 * @throws Exception
+	 */
+	public void addPlot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
+
+	/**
 	 * Update existing plot with new data, keeping zoom level
 	 * 
 	 * @param plotName

@@ -277,6 +277,42 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param xAxis
+	 *            The dataset to use as the X values
+	 * @param yAxis
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void addPlot(String plotName, final String title, IDataset xAxis, IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().addPlot(plotName, title, xAxis, yAxis, xAxisName, yAxisName);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xAxes
+	 *            The dataset to use as the X values
+	 * @param yAxes
+	 *            The dataset to use as the Y values
+	 * @param xAxisName
+	 *            The name of x-Axis, null if none
+	 * @param yAxisName
+	 *            The name of the dataset, null if none
+	 * @throws Exception
+	 */
+	public static void addPlot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().addPlot(plotName, title, xAxes, yAxes, xAxisName, yAxisName);
+	}
+
+	/**
 	 * Update existing plot with new data
 	 * 
 	 * @param plotName

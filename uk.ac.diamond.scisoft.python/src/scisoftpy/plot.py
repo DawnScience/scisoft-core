@@ -15,7 +15,7 @@
 ###
 
 '''
-Wrapper of plotting functionality in GDA
+Wrapper of plotting functionality in DAWN
 '''
 
 import os
@@ -34,6 +34,7 @@ else:
     import python.pybeans as _beans #@Reimport
 
 _plot_line = _plot.plot_line
+_plot_addline = _plot.plot_addline
 _plot_updateline = _plot.plot_updateline
 _plot_image = _plot.plot_image
 _plot_images = _plot.plot_images
@@ -140,6 +141,8 @@ def clear(name=None):
         name = _PVNAME
     _plot_clear(name)
 
+_DEF_XAXIS = 'X-Axis'
+_DEF_YAXIS = 'Y-Axis'
 def _setup_axes(axes):
     if axes is None:
         pass
@@ -147,8 +150,35 @@ def _setup_axes(axes):
         pass
     pass
 
+def _parselinearg(x, y=None, title=None, name=None):
+    if not name:
+        name = _PVNAME
 
-def line(x, y=None, axes=None, name=None):
+    if y is None:
+        yl = _toList(x)
+        xl = None
+    else:
+        yl = _toList(y)
+        if x is None:
+            xl = None
+        else:
+            xl = _toList(x)
+            if len(xl) == 1:
+                xLength = xl[0].shape[0]
+                for i in yl:
+                    if xLength != i.shape[0]:
+                        raise AttributeError("length of y does not match the length of x" )
+            elif len(xl) != len(yl):
+                raise ValueError("number of x datasets should be equal to number of y datasets")
+            else:
+                for i,j in zip(xl,yl):
+                    if i.shape[0] != j.shape[0]:
+                        raise AttributeError("length of y does not match the length of x" )
+
+    return name, title, xl, yl
+
+
+def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any
     given x dataset in the named view
 
@@ -156,6 +186,7 @@ def line(x, y=None, axes=None, name=None):
     x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
     axes -- tuple containing positions of axes for x and y ('bottom', 'left')
+    title -- title of plot
     name -- name of plot view to use (if None, use default name)
 
     For example,
@@ -166,76 +197,34 @@ def line(x, y=None, axes=None, name=None):
     >>> dnp.plot.line(2*a, [a,a+12.3]) # plots two lines against 2*a
     >>> dnp.plot.line([2*a, 3.5*b], [a,b]) # plots two lines against defined x values
     '''
-    if not name:
-        name = _PVNAME
+    n, t, xl, yl = _parselinearg(x, y, title, name)
+    _plot_line(n, t, xl, yl, None, None)
 
-    if y is None:
-        yl = _toList(x)
-        if len(yl) == 1:
-            try:
-                _plot_line(name, yl[0])
-            except _exception, e:
-                print 'Got an exception', e
-            except:
-                pass
-        else:
-            _plot_line(name, None, yl)
-    else:
-        xl = _toList(x)
-        yl = _toList(y)
-        if len(xl) == 1:
-            xLength = xl[0].shape[0]
-            for i in yl:
-                if xLength != i.shape[0]:
-                    raise AttributeError("length of y does not match the length of x" ) 
-        elif len(xl) != len(yl):
-            raise ValueError("number of x datasets should be equal to number of y datasets")
-        else:
-            for i,j in zip(xl,yl):
-                if i.shape[0] != j.shape[0]:
-                    raise AttributeError("length of y does not match the length of x" ) 
-            
-        _plot_line(name, xl, yl)
+def addline(x, y=None, title=None, name=None):
+    '''Add line(s) to existing plot, optionally against
+    any given x dataset in the named view
 
-def updateline(x, y=None, axes=None, name=None):
+    Arguments:
+    x -- optional dataset or list of datasets for x values
+    y -- dataset or list of datasets
+    title -- title of plot
+    name -- name of plot view to use (if None, use default name)
+    '''
+    n, t, xl, yl = _parselinearg(x, y, title, name)
+    _plot_addline(n, t, xl, yl, None, None)
+
+def updateline(x, y=None, title=None, name=None):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against
     any given x dataset in the named view
 
     Arguments:
     x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
+    title -- title of plot
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
-    if y is None:
-        yl = _toList(x)
-        if len(yl) == 1:
-            try:
-                _plot_updateline(name, yl[0])
-            except _exception, e:
-                print 'Got an exception', e
-            except:
-                pass
-        else:
-            _plot_updateline(name, None, yl)
-    else:
-        xl = _toList(x)
-        yl = _toList(y)
-        if len(xl) == 1:
-            xLength = xl[0].shape[0]
-            for i in yl:
-                if xLength != i.shape[0]:
-                    raise AttributeError("length of y does not match the length of x" ) 
-        elif len(xl) != len(yl):
-            raise ValueError("number of x datasets should be equal to number of y datasets")
-        else:
-            for i,j in zip(xl,yl):
-                if i.shape[0] != j.shape[0]:
-                    raise AttributeError("length of y does not match the length of x" ) 
-            
-        _plot_updateline(name, xl, yl)
+    n, t, xl, yl = _parselinearg(x, y, title, name)
+    _plot_updateline(n, t, xl, yl, None, None)
 
 plot = line
 updateplot = updateline
@@ -252,10 +241,12 @@ def image(im, x=None, y=None, name=None):
     if not name:
         name = _PVNAME
 
-    if x is None or y is None:
-        _plot_image(name, im)
-    else:
-        _plot_image(name, x, y, im)
+    if x is None:
+        y = None
+    if y is None:
+        x = None
+
+    _plot_image(name, x, y, im)
 
 def images(im, x=None, y=None, name=None):
     '''Plot 2D datasets as an image in the named view with optional x and y axes
@@ -269,10 +260,12 @@ def images(im, x=None, y=None, name=None):
     if not name:
         name = _PVNAME
 
-    if x is None or y is None:
-        _plot_images(name, _toList(im))
-    else:
-        _plot_images(name, x, y, _toList(im))
+    if x is None:
+        y = None
+    if y is None:
+        x = None
+
+    _plot_images(name, x, y, _toList(im))
 
 def surface(s, x=None, y=None, name=None):
     '''Plot the 2D dataset as a surface in the named view with optional x and y axes
@@ -286,10 +279,12 @@ def surface(s, x=None, y=None, name=None):
     if not name:
         name = _PVNAME
 
-    if x is None or y is None:
-        _plot_surface(name, s)
-    else:
-        _plot_surface(name, x, y, s)
+    if x is None:
+        y = None
+    if y is None:
+        x = None
+
+    _plot_surface(name, x, y, s)
 
 def stack(x, y=None, z=None, name=None):
     '''Plot all of the given 1D y datasets against corresponding x as a 3D stack
@@ -312,10 +307,7 @@ def stack(x, y=None, z=None, name=None):
                 l = d.size
         x = [ _core.arange(l) ]
 
-    if z is None:
-        _plot_stack(name, _toList(x), _toList(y))
-    else:
-        _plot_stack(name, _toList(x), _toList(y), z)
+    _plot_stack(name, _toList(x), _toList(y), z)
 
 def updatestack(x, y=None, z=None, name=None):
     '''Update existing 3D line stack by changing displayed y dataset (or list of datasets),
@@ -394,8 +386,8 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     
     returns number of images loaded
     '''
-    return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor)
-
+    maxint = ((1<<30) - 1) + (1<<30) # maximum value for signed 32-bit integer
+    return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor, maxint, 1)
 
 
 def getbean(name=None):

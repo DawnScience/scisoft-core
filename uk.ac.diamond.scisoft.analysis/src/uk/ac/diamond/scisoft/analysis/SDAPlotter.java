@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
@@ -97,7 +98,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, yAxis);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(null, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
 	/**
@@ -112,7 +113,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, yAxis, xAxisName, yAxisName);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(null, yAxis), new IDataset[] { yAxis }, xAxisName, yAxisName);
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, title, yAxis);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxis(null, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, title, yAxis, xAxisName, yAxisName);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxis(null, yAxis), new IDataset[] { yAxis }, xAxisName, yAxisName);
 	}
 
 	/**
@@ -155,23 +156,23 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, xAxis, yAxis);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param xAxis2
-	 *            The dataset to use as the X values for the second X axis
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public static void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, xAxis, xAxis2, yAxis);
-	}
+//	/**
+//	 * @param plotName
+//	 *            The name of the view to plot to
+//	 * @param xAxis
+//	 *            The dataset to use as the X values
+//	 * @param xAxis2
+//	 *            The dataset to use as the X values for the second X axis
+//	 * @param yAxis
+//	 *            The dataset to use as the Y values
+//	 * @throws Exception
+//	 */
+//	public static void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
+//		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxis), xAxis2, new IDataset[] { yAxis }, null, null);
+//	}
 
 	/**
 	 * @param plotName
@@ -185,7 +186,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, title, xAxis, yAxis);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxis(xAxis, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
 	/**
@@ -194,11 +195,11 @@ public class SDAPlotter {
 	 * @param xAxis
 	 *            The dataset to use as the X values (can be null)
 	 * @param yAxes
-	 *            The dataset to use as the Y values
+	 *            The datasets to use as the Y values
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes) throws Exception {
-		getPlotterImpl().plot(plotName, xAxis, yAxes);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -215,7 +216,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, xAxis, yAxes, xAxisName, yAxisName);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxes), yAxes, xAxisName, yAxisName);
 	}
 
 	/**
@@ -223,12 +224,12 @@ public class SDAPlotter {
 	 *            The name of the view to plot to
 	 * @param xAxis
 	 *            The dataset to use as the X values
-	 * @param yAxis
-	 *            The dataset to use as the Y values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
 	 * @throws Exception
 	 */
-	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxis) throws Exception {
-		getPlotterImpl().plot(plotName, title, xAxis, yAxis);
+	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception {
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxis(xAxis, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -236,16 +237,16 @@ public class SDAPlotter {
 	 *            The name of the view to plot to
 	 * @param xAxis
 	 *            The dataset to use as the X values
-	 * @param yAxis
-	 *            The dataset to use as the Y values
+	 * @param yAxes
+	 *            The datasets to use as the Y values
 	 * @param xAxisName
 	 *            The name of x-Axis, null if none
 	 * @param yAxisName
 	 *            The name of the dataset, null if none
 	 * @throws Exception
 	 */
-	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, title, xAxis, yAxis, xAxisName, yAxisName);
+	public static void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxis(xAxis, yAxes), yAxes, xAxisName, yAxisName);
 	}
 
 	/**
@@ -258,7 +259,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().plot(plotName, xAxes, yAxes);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXAxes(xAxes, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -273,7 +274,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().plot(plotName, title, xAxes, yAxes);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXAxes(xAxes, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -306,7 +307,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void updatePlot(String plotName, final IDataset yAxis) throws Exception {
-		getPlotterImpl().updatePlot(plotName, yAxis);
+		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxis(null, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
 	/**
@@ -318,21 +319,21 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void updatePlot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		getPlotterImpl().updatePlot(plotName, xAxis, yAxis);
+		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxis), new IDataset[] { yAxis }, null, null);
 	}
 
-	/**
-	 * Update existing plot with new data
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param xAxis2
-	 * @param yAxis
-	 * @throws Exception
-	 */
-	public static void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
-		getPlotterImpl().updatePlot(plotName, xAxis, xAxis2, yAxis);
-	}
+//	/**
+//	 * Update existing plot with new data
+//	 * 
+//	 * @param plotName
+//	 * @param xAxis
+//	 * @param xAxis2
+//	 * @param yAxis
+//	 * @throws Exception
+//	 */
+//	public static void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
+//		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxis), new IDataset[] { yAxis }, null, null);
+//	}
 
 	/**
 	 * Update existing plot with new data
@@ -343,7 +344,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void updatePlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().updatePlot(plotName, xAxis, yAxes);
+		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxis(xAxis, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -355,7 +356,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().updatePlot(plotName, xAxes, yAxes);
+		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxes(xAxes, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -367,7 +368,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().updatePlot(plotName, title, xAxes, yAxes);
+		getPlotterImpl().updatePlot(plotName, title, SDAPlotterImpl.validateXAxes(xAxes, yAxes), yAxes, null, null);
 	}
 
 	/**
@@ -389,7 +390,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void imagePlot(String plotName, IDataset image) throws Exception {
-		getPlotterImpl().imagePlot(plotName, image);
+		getPlotterImpl().imagePlot(plotName, null, null, image);
 	}
 
 	/**
@@ -416,7 +417,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void imagesPlot(String plotName, IDataset[] images) throws Exception {
-		getPlotterImpl().imagesPlot(plotName, images);
+		getPlotterImpl().imagesPlot(plotName, null, null, images);
 	}
 
 	/**
@@ -445,7 +446,15 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		getPlotterImpl().scatter2DPlot(plotName, xCoords, yCoords, size);
+		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
+			String msg = String.format("X axis dataset is wrong format or null");
+			throw new Exception(msg);
+		}
+
+		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		sizes.fill(size);
+
+		getPlotterImpl().scatter2DPlot(plotName, xCoords, yCoords, sizes);
 	}
 
 	/**
@@ -458,20 +467,13 @@ public class SDAPlotter {
 	 */
 	public static void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes)
 			throws Exception {
-		getPlotterImpl().scatter2DPlot(plotName, coordPairs, sizes);
-	}
+		IntegerDataset[] pSizes = new IntegerDataset[sizes.length];
+		for (int i = 0; i < sizes.length; i++) {
+			pSizes[i] = new IntegerDataset(coordPairs[i].getShape()[0]);
+			pSizes[i].fill(sizes[i]);
+		}
 
-	/**
-	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param coordPairs
-	 * @param sizes
-	 * @throws Exception
-	 */
-	public static void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes)
-			throws Exception {
-		getPlotterImpl().scatter2DPlot(plotName, coordPairs, sizes);
+		getPlotterImpl().scatter2DPlot(plotName, coordPairs, pSizes);
 	}
 
 	/**
@@ -488,6 +490,19 @@ public class SDAPlotter {
 		getPlotterImpl().scatter2DPlot(plotName, xCoords, yCoords, sizes);
 	}
 
+	/**
+	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
+	 * 
+	 * @param plotName
+	 * @param coordPairs
+	 * @param sizes
+	 * @throws Exception
+	 */
+	public static void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes)
+			throws Exception {
+		getPlotterImpl().scatter2DPlot(plotName, coordPairs, sizes);
+	}
+
 	public static void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes)
 			throws Exception {
 		getPlotterImpl().scatter2DPlotOver(plotName, xCoords, yCoords, sizes);
@@ -495,7 +510,14 @@ public class SDAPlotter {
 
 	public static void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size)
 			throws Exception {
-		getPlotterImpl().scatter2DPlotOver(plotName, xCoords, yCoords, size);
+		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
+			String msg = String.format("X axis dataset is wrong format or null");
+			throw new Exception(msg);
+		}
+
+		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		sizes.fill(size);
+		getPlotterImpl().scatter2DPlotOver(plotName, xCoords, yCoords, sizes);
 	}
 
 	/**
@@ -510,7 +532,14 @@ public class SDAPlotter {
 	 */
 	public static void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
 			throws Exception {
-		getPlotterImpl().scatter3DPlot(plotName, xCoords, yCoords, zCoords, size);
+		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
+			String msg = String.format("X axis dataset is wrong format or null");
+			throw new Exception(msg);
+		}
+
+		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		sizes.fill(size);
+		getPlotterImpl().scatter3DPlot(plotName, xCoords, yCoords, zCoords, sizes);
 	}
 
 	/**
@@ -529,7 +558,14 @@ public class SDAPlotter {
 
 	public static void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
 			throws Exception {
-		getPlotterImpl().scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, size);
+		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
+			String msg = String.format("X axis dataset is wrong format or null");
+			throw new Exception(msg);
+		}
+
+		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		sizes.fill(size);
+		getPlotterImpl().scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, sizes);
 	}
 
 	public static void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords,
@@ -545,7 +581,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void surfacePlot(String plotName, IDataset data) throws Exception {
-		getPlotterImpl().surfacePlot(plotName, data);
+		getPlotterImpl().surfacePlot(plotName, null, null, data);
 	}
 
 	/**
@@ -558,7 +594,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void surfacePlot(String plotName, IDataset xAxis, IDataset data) throws Exception {
-		getPlotterImpl().surfacePlot(plotName, xAxis, data);
+		getPlotterImpl().surfacePlot(plotName, xAxis, null, data);
 	}
 
 	/**
@@ -585,7 +621,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().stackPlot(plotName, xAxis, yAxes);
+		getPlotterImpl().stackPlot(plotName, new IDataset[] {xAxis}, yAxes, null);
 	}
 
 	/**
@@ -598,7 +634,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		getPlotterImpl().stackPlot(plotName, xAxis, yAxes, zAxis);
+		getPlotterImpl().stackPlot(plotName, new IDataset[] {xAxis}, yAxes, zAxis);
 	}
 
 	/**
@@ -610,7 +646,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		getPlotterImpl().stackPlot(plotName, xAxes, yAxes);
+		getPlotterImpl().stackPlot(plotName, xAxes, yAxes, null);
 	}
 
 	/**
@@ -649,7 +685,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static int scanForImages(String viewName, String pathname) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname);
+		return getPlotterImpl().scanForImages(viewName, pathname, ISDAPlotter.IMAGEORDERNONE, null, ISDAPlotter.LISTOFSUFFIX, -1, true, Integer.MAX_VALUE, 1);
 	}
 
 	/**
@@ -668,7 +704,7 @@ public class SDAPlotter {
 	 */
 
 	public static int scanForImages(String viewName, String pathname, int maxFiles, int nthFile) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname, maxFiles, nthFile);
+		return getPlotterImpl().scanForImages(viewName, pathname, ISDAPlotter.IMAGEORDERNONE, null, ISDAPlotter.LISTOFSUFFIX, -1, true, maxFiles, nthFile);
 	}
 
 	/**
@@ -681,7 +717,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static int scanForImages(String viewName, String pathname, int order) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname, order);
+		return getPlotterImpl().scanForImages(viewName, pathname, order, null, ISDAPlotter.LISTOFSUFFIX, -1, true, Integer.MAX_VALUE, 1);
 	}
 
 	/**
@@ -701,7 +737,7 @@ public class SDAPlotter {
 	 */
 	public static int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
 			boolean rowMajor) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname, order, suffices, gridColumns, rowMajor);
+		return getPlotterImpl().scanForImages(viewName, pathname, order, null, suffices, gridColumns, rowMajor, Integer.MAX_VALUE, 1);
 	}
 
 	/**
@@ -722,7 +758,7 @@ public class SDAPlotter {
 	 */
 	public static int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
 			int gridColumns, boolean rowMajor) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname, order, regex, suffices, gridColumns, rowMajor);
+		return getPlotterImpl().scanForImages(viewName, pathname, order, regex, suffices, gridColumns, rowMajor, Integer.MAX_VALUE, 1);
 	}
 
 	/**
@@ -741,7 +777,7 @@ public class SDAPlotter {
 	 */
 	public static int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
 			boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
-		return getPlotterImpl().scanForImages(viewName, pathname, order, suffices, gridColumns, rowMajor, maxFiles, jumpBetween);
+		return getPlotterImpl().scanForImages(viewName, pathname, order, null, suffices, gridColumns, rowMajor, maxFiles, jumpBetween);
 	}
 
 	/**
@@ -843,7 +879,10 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void setupNewImageGrid(String viewName, int images) throws Exception {
-		getPlotterImpl().setupNewImageGrid(viewName, images);
+		int gridRows = (int) Math.ceil(Math.sqrt(images));
+		if (gridRows == 0)
+			gridRows = 1;
+		getPlotterImpl().setupNewImageGrid(viewName, gridRows, gridRows);
 	}
 
 	/**
@@ -854,7 +893,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plotImageToGrid(String viewName, IDataset[] datasets) throws Exception {
-		getPlotterImpl().plotImageToGrid(viewName, datasets);
+		getPlotterImpl().plotImageToGrid(viewName, datasets, false);
 	}
 
 	/**
@@ -895,7 +934,7 @@ public class SDAPlotter {
 	 */
 
 	public static void plotImageToGrid(String viewName, String filename) throws Exception {
-		getPlotterImpl().plotImageToGrid(viewName, filename);
+		getPlotterImpl().plotImageToGrid(viewName, filename, -1, -1);
 	}
 
 	/**
@@ -906,7 +945,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plotImageToGrid(String viewName, IDataset dataset) throws Exception {
-		getPlotterImpl().plotImageToGrid(viewName, dataset);
+		getPlotterImpl().plotImageToGrid(viewName, dataset, -1, -1, false);
 	}
 
 	/**
@@ -919,7 +958,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plotImageToGrid(String viewName, IDataset dataset, boolean store) throws Exception {
-		getPlotterImpl().plotImageToGrid(viewName, dataset, store);
+		getPlotterImpl().plotImageToGrid(viewName, dataset, -1, -1, store);
 	}
 
 	/**
@@ -932,7 +971,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY) throws Exception {
-		getPlotterImpl().plotImageToGrid(viewName, dataset, gridX, gridY);
+		getPlotterImpl().plotImageToGrid(viewName, dataset, gridX, gridY, false);
 	}
 
 	/**

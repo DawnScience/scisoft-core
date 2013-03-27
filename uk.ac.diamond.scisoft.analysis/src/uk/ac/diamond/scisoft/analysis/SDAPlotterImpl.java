@@ -35,7 +35,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -91,7 +90,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		return data.getRank() == dim;
 	}
 
-	private IDataset[] validateXAxis(final IDataset xAxis, final IDataset... yAxes) {
+	static IDataset[] validateXAxis(final IDataset xAxis, final IDataset... yAxes) {
 		if (xAxis == null) {
 			if (yAxes == null || yAxes.length == 0) {
 				logger.error("No datasets specified");
@@ -111,7 +110,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		return new IDataset[] { xAxis };
 	}
 
-	private IDataset[] validateXAxes(final IDataset[] xAxes, final IDataset... yAxes) {
+	static IDataset[] validateXAxes(final IDataset[] xAxes, final IDataset... yAxes) {
 		if (xAxes == null) {
 			return validateXAxis(null, yAxes);
 		}
@@ -120,108 +119,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, final IDataset yAxis) throws Exception {
-		plot(plotName, (String) null, yAxis);
-	}
-
-	@Override
-	public void plot(String plotName, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		plot(plotName, (String) null, yAxis, xAxisName, yAxisName);
-	}
-
-	@Override
-	public void plot(String plotName, final String title, final IDataset yAxis) throws Exception {
-		plot(plotName, title, null, yAxis);
-	}
-
-	@Override
-	public void plot(String plotName, final String title, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		plot(plotName, title, null, yAxis, xAxisName, yAxisName);
-	}
-
-	@Override
-	public void plot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		plot(plotName, (String) null, xAxis, yAxis);
-	}
-
-	@Override
-	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		lplot(plotName, title, validateXAxis(xAxis, yAxis), null, new IDataset[] { yAxis }, false);
-	}
-
-	@Override
-	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception {
-		lplot(plotName, title, validateXAxis(xAxis, yAxis), null, new IDataset[] { yAxis }, xAxisName, yAxisName, GuiParameters.PLOTOP_NONE);
-	}
-
-	@Override
-	public void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
-		lplot(plotName, null, validateXAxis(xAxis, yAxis), xAxis2, new IDataset[] { yAxis }, false);
-	}
-
-	@Override
-	public void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes) throws Exception {
-		plot(plotName, (String) null, xAxis, yAxes);
-	}
-
-	@Override
-	public void plot(String plotName, final IDataset xAxis, final IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
-		plot(plotName, (String) null, xAxis, yAxes, xAxisName, yAxisName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception {
-		plot(plotName, title, validateXAxis(xAxis, yAxes), yAxes);
-	}
-
-	@Override
-	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
-		plot(plotName, title, validateXAxis(xAxis, yAxes), yAxes, xAxisName, yAxisName);
-	}
-
-	@Override
-	public void plot(String plotName, IDataset[] xAxes, final IDataset[] yAxes) throws Exception {
-		plot(plotName, null, xAxes, yAxes);
-	}
-
-	@Override
-	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, false);
-	}
-
-	@Override
 	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
 		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, xAxisName, yAxisName, GuiParameters.PLOTOP_NONE);
-	}
-
-	@Override
-	public void updatePlot(String plotName, final IDataset yAxis) throws Exception {
-		updatePlot(plotName, null, yAxis);
-	}
-
-	@Override
-	public void updatePlot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception {
-		updatePlot(plotName, xAxis, null, yAxis);
-	}
-
-	@Override
-	public void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception {
-		lplot(plotName, null, validateXAxis(xAxis, yAxis), xAxis2, new IDataset[] { yAxis }, true);
-	}
-
-	@Override
-	public void updatePlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception {
-		updatePlot(plotName, validateXAxis(xAxis, yAxes), yAxes);
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		updatePlot(plotName, null, validateXAxes(xAxes, yAxes), yAxes);
-	}
-
-	@Override
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, true);
 	}
 
 	@Override
@@ -229,21 +128,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, xAxisName, yAxisName, GuiParameters.PLOTOP_ADD);
 	}
 
-	/**
-	 * Plot line(s) in named view
-	 * @param plotName
-	 * @param title (can be null)
-	 * @param xAxes
-	 * @param xAxis2
-	 * @param yAxes
-	 * @param updateMode if true, keep zoom settings
-	 * @throws Exception
-	 */
-	private void lplot(final String plotName, final String title, IDataset[] xAxes, final IDataset xAxis2, IDataset[] yAxes, final boolean updateMode) throws Exception {
-		if (updateMode)
-			lplot(plotName, title, xAxes, xAxis2, yAxes, null, null, GuiParameters.PLOTOP_UPDATE);
-		else
-			lplot(plotName, title, xAxes, xAxis2, yAxes, null, null, GuiParameters.PLOTOP_NONE);
+	@Override
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception {
+		lplot(plotName, title, validateXAxes(xAxes, yAxes), null, yAxes, xAxisName, yAxisName, GuiParameters.PLOTOP_UPDATE);
 	}
 
 	/**
@@ -345,23 +232,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		try {
 			IDataset dataSet = dh.getDataset(0);
 			dataSet.setName(imageFileName);
-			imagePlot(plotName, dataSet);
+			imagePlot(plotName, null, null, dataSet);
 		} catch (Exception e) {
 			logger.error("Cannot plot non-image file from  " + imageFileName, e);
 			throw e;
 		}
-	}
-
-	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
-	 * @param image
-	 * @throws Exception
-	 */
-	@Override
-	public void imagePlot(String plotName, IDataset image) throws Exception {
-		imagePlot(plotName, null, null, image);
 	}
 
 	/**
@@ -418,18 +293,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * Allows the plotting of images to the defined view
 	 * 
 	 * @param plotName
-	 * @param images
-	 * @throws Exception
-	 */
-	@Override
-	public void imagesPlot(String plotName, IDataset[] images) throws Exception {
-		imagesPlot(plotName, null, null, images);
-	}
-
-	/**
-	 * Allows the plotting of images to the defined view
-	 * 
-	 * @param plotName
 	 * @param xAxis
 	 *            can be null
 	 * @param yAxis
@@ -477,49 +340,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		sendBeansToServer(plotName, dataBean, null);
-	}
-
-	/**
-	 * Allows plotting of points of given size on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param size
-	 * @throws Exception
-	 */
-	@Override
-	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		if (xCoords != null && !isDataND(xCoords, 1) || xCoords == null) {
-			String msg = String.format("X axis dataset is wrong format or null");
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
-		sizes.fill(size);
-
-		scatter2DPlot(plotName, xCoords, yCoords, sizes);
-	}
-
-	/**
-	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param coordPairs
-	 * @param sizes
-	 * @throws Exception
-	 */
-	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes)
-			throws Exception {
-		IntegerDataset[] pSizes = new IntegerDataset[sizes.length];
-		for (int i = 0; i < sizes.length; i++) {
-			pSizes[i] = new IntegerDataset(coordPairs[i].getShape()[0]);
-			pSizes[i].fill(sizes[i]);
-		}
-
-		scatter2DPlot(plotName, coordPairs, pSizes);
 	}
 
 	/**
@@ -656,46 +476,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	@Override
-	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size)
-			throws Exception {
-		if (xCoords != null && !isDataND(xCoords, 1) || xCoords == null) {
-			String msg = String.format("X coords dataset has incorrect rank or is null");
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
-		sizes.fill(size);
-
-		scatter2DPlotOver(plotName, xCoords, yCoords, sizes);
-	}
-
-	/**
-	 * Allows plotting of points of given size on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param zCoords
-	 * @param size
-	 * @throws Exception
-	 */
-	@Override
-	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception {
-		if (xCoords != null && !isDataND(xCoords, 1) || xCoords == null) {
-			String msg = String.format("X axis dataset is wrong format or null");
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
-		sizes.fill(size);
-
-		scatter3DPlot(plotName, xCoords, yCoords, zCoords, sizes);
-	}
-
 	/**
 	 * Allows plotting of points of given sizes on a 3D volume
 	 * 
@@ -755,21 +535,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception {
-		if (xCoords != null && !isDataND(xCoords, 1) || xCoords == null) {
-			String msg = String.format("X axis dataset is wrong format or null");
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
-		sizes.fill(size);
-
-		scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, sizes);
-	}
-
-	@Override
 	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords,
 			IDataset sizes) throws Exception {
 		if (xCoords != null && !isDataND(xCoords, 1)) {
@@ -818,32 +583,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		sendBeansToServer(plotName, dataBean, null);
-	}
-
-	/**
-	 * Allows the plotting of a 2D dataset as a surface to the defined view
-	 * 
-	 * @param plotName
-	 * @param data
-	 * @throws Exception
-	 */
-	@Override
-	public void surfacePlot(String plotName, IDataset data) throws Exception {
-		surfacePlot(plotName, null, null, data);
-	}
-
-	/**
-	 * Allows the plotting of a 2D dataset as a surface to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 *            can be null
-	 * @param data
-	 * @throws Exception
-	 */
-	@Override
-	public void surfacePlot(String plotName, IDataset xAxis, IDataset data) throws Exception {
-		surfacePlot(plotName, xAxis, null, data);
 	}
 
 	/**
@@ -900,21 +639,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		sendBeansToServer(plotName, dataBean, null);
-	}
-
-	@Override
-	public void stackPlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception {
-		stackPlot(plotName, xAxis, yAxes, null);
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, final IDataset zAxis) throws Exception {
-		stackPlot(plotName, validateXAxis(xAxis, yAxes), yAxes, zAxis);
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		stackPlot(plotName, xAxes, yAxes, null);
 	}
 
 	@Override
@@ -999,125 +723,14 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @return number of files found
-	 * @throws Exception
-	 */
-	@Override
-	public int scanForImages(String viewName, String pathname) throws Exception {
-		return scanForImages(viewName, pathname, IMAGEORDERNONE, LISTOFSUFFIX, -1, true);
-	}
-
-	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 *            name of the path/directory which images should be loaded from
-	 * @param maxFiles
-	 *            maximum number of files that should be loaded
-	 * @param nthFile
-	 *            only load every nth file
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int maxFiles, int nthFile) throws Exception {
-		return scanForImages(viewName, pathname, IMAGEORDERNONE, LISTOFSUFFIX, -1, true, maxFiles, nthFile);
-	}
-
-	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats in specified order
-	 * 
-	 * @param viewName
-	 * @param pathname
-	 * @param order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	@Override
-	public int scanForImages(String viewName, String pathname, int order) throws Exception {
-		return scanForImages(viewName, pathname, order, LISTOFSUFFIX, -1, true);
-	}
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @param order
-	 * @param suffices
-	 * @param gridColumns
-	 *            use -1 to indicate automatic configuration to square array
-	 * @param rowMajor
-	 *            if true, display images in row-major order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor) throws Exception {
-		return scanForImages(viewName, pathname, order, suffices, gridColumns, rowMajor, Integer.MAX_VALUE, 1);
-	}
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @param order
-	 * @param regex
-	 * @param suffices
-	 * @param gridColumns
-	 *            use -1 to indicate automatic configuration to square array
-	 * @param rowMajor
-	 *            if true, display images in row-major order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-			int gridColumns, boolean rowMajor) throws Exception {
-		return scanForImages(viewName, pathname, order, regex, suffices, gridColumns, rowMajor, Integer.MAX_VALUE, 1);
-	}
-
-	/**
 	 * Scan a directory and populate an image explorer view with images of given suffices
 	 * 
 	 * @param viewName
 	 * @param pathname
 	 * @param order
+	 * @param nameregex can be null
 	 * @param suffices
-	 * @param gridColumns
-	 * @param rowMajor
-	 * @param maxFiles
-	 * @param jumpBetween
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
-		return scanForImages(viewName, pathname, order, null, suffices, gridColumns, rowMajor, maxFiles, jumpBetween);
-	}
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 * @param pathname
-	 * @param order
-	 * @param nameregex
-	 * @param suffices
-	 * @param gridColumns
+	 * @param gridColumns use -1 for automatically format
 	 * @param rowMajor
 	 * @param maxFiles
 	 * @param jumpBetween
@@ -1382,35 +995,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Set up a new image grid for an image explorer view with the specified # images
-	 * 
-	 * @param viewName
-	 * @param images
-	 *            number of images
-	 * @throws Exception
-	 */
-	@Override
-	public void setupNewImageGrid(String viewName, int images) throws Exception {
-		int gridRows = (int) Math.ceil(Math.sqrt(images));
-		if (gridRows == 0)
-			gridRows = 1;
-		int gridCols = gridRows;
-		setupNewImageGrid(viewName, gridRows, gridCols);
-	}
-
-	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param datasets
-	 * @throws Exception
-	 */
-	@Override
-	public void plotImageToGrid(String viewName, IDataset[] datasets) throws Exception {
-		plotImageToGrid(viewName, datasets, false);
-	}
-
-	/**
 	 * Plot images to the grid of an image explorer view
 	 * 
 	 * @param viewName
@@ -1447,9 +1031,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param viewName
 	 * @param filename
 	 * @param gridX
-	 *            X position in the grid
+	 *            X position in the grid, use -1 to automatically place
 	 * @param gridY
-	 *            Y position in the grid
+	 *            Y position in the grid, use -1 to automatically place
 	 * @throws Exception
 	 */
 
@@ -1460,68 +1044,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
 
 		guiBean.put(GuiParameters.FILENAME, filename);
-		guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
-		guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
-		setGuiBean(viewName, guiBean);
-	}
-
-	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param filename
-	 * @throws Exception
-	 */
-
-	@Override
-	public void plotImageToGrid(String viewName, String filename) throws Exception {
-		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-
-		guiBean.put(GuiParameters.FILENAME, filename);
-		setGuiBean(viewName, guiBean);
-	}
-
-	/**
-	 * Plot an image to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @throws Exception
-	 */
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset) throws Exception {
-		plotImageToGrid(viewName, dataset, false);
-	}
-
-	/**
-	 * Plot an image to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @param store
-	 *            if true, create a copy of image as a temporary file
-	 * @throws Exception
-	 */
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, boolean store) throws Exception {
-		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
-
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-
-		if (store) {
-			DataHolder tHolder = new DataHolder();
-
-			try {
-				String filename = saveTempFile(tHolder, dataset);
-				guiBean.put(GuiParameters.FILENAME, filename);
-			} catch (ScanFileHolderException e) {
-				throw new Exception("Failed to save to temporary file");
-			}
-		} else {
-			guiBean.put(GuiParameters.FILENAME, dataset.getName());
+		if (gridX >= 0 && gridY >= 0) {
+			guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
+			guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
 		}
 		setGuiBean(viewName, guiBean);
 	}
@@ -1531,22 +1056,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * 
 	 * @param viewName
 	 * @param dataset
-	 * @param gridX
-	 * @param gridY
-	 * @throws Exception
-	 */
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY) throws Exception {
-		plotImageToGrid(viewName, dataset, gridX, gridY, false);
-	}
-
-	/**
-	 * Plot an image to the grid of an image explorer view in specified position
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @param gridX
-	 * @param gridY
+	 * @param gridX use -1 to automatically place
+	 * @param gridY use -1 to automatically place
 	 * @param store
 	 *            if true, create a copy of image as a temporary file
 	 * @throws Exception
@@ -1559,8 +1070,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
 
-		guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
-		guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
+		if (gridX >= 0 && gridY >= 0) {
+			guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
+			guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
+		}
 		if (store) {
 			DataHolder tHolder = new DataHolder();
 

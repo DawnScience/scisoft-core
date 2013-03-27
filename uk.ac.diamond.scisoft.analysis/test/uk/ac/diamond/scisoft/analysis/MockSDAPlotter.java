@@ -34,80 +34,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset[] xAxis, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plot(String plotName, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName)
-			throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
 	public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName, String yAxisName)
 			throws Exception {
 		throw newShouldNotBeCalled();
@@ -120,55 +46,13 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+			String yAxisName) throws Exception {
 		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
 	}
 
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void imagePlot(String plotName, IDataset image) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void imagesPlot(String plotName, IDataset[] images) throws Exception {
 		throw newShouldNotBeCalled();
 
 	}
@@ -181,18 +65,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 
 	@Override
 	public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes) throws Exception {
 		throw newShouldNotBeCalled();
 
 	}
@@ -214,29 +86,8 @@ public class MockSDAPlotter implements ISDAPlotter {
 		throw newShouldNotBeCalled();
 
 	}
-
-	@Override
-	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
 	@Override
 	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
-			throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
 			throws Exception {
 		throw newShouldNotBeCalled();
 
@@ -250,37 +101,7 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void surfacePlot(String plotName, IDataset data) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void surfacePlot(String plotName, IDataset xAxis, IDataset data) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
 	public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
 		throw newShouldNotBeCalled();
 
 	}
@@ -295,39 +116,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
 		throw newShouldNotBeCalled();
 
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int maxFiles, int nthFile) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-			int gridColumns, boolean rowMajor) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
-		throw newShouldNotBeCalled();
 	}
 
 	@Override
@@ -368,18 +156,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void setupNewImageGrid(String viewName, int images) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset[] datasets) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
 	public void plotImageToGrid(String viewName, IDataset[] datasets, boolean store) throws Exception {
 		throw newShouldNotBeCalled();
 
@@ -387,30 +163,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 
 	@Override
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, String filename) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, boolean store) throws Exception {
-		throw newShouldNotBeCalled();
-
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY) throws Exception {
 		throw newShouldNotBeCalled();
 
 	}

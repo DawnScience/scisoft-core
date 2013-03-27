@@ -27,6 +27,7 @@ except:
 
 plot_clear = _plotter.clearPlot
 plot_line = _plotter.plot
+plot_addline = _plotter.addPlot
 plot_updateline = _plotter.updatePlot
 plot_stack = _plotter.stackPlot
 plot_updatestack = _plotter.updateStackPlot

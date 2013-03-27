@@ -42,6 +42,8 @@ public class AnalysisRpcBasicRemoteTest {
 			// Create a new client to connect to the server (note that the ports match)
 			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
 
+			Thread.sleep(500); // add delay to ensure client is receiving
+
 			// Set up arguments to pass
 			AbstractDataset cosInput = AbstractDataset.arange(100, AbstractDataset.INT32);
 			// make the remote call

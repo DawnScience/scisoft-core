@@ -74,189 +74,6 @@ public interface ISDAPlotter {
 	/**
 	 * @param plotName
 	 *            The name of the view to plot to
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @param xAxisName
-	 *            The name of x-Axis, null if none
-	 * @param yAxisName
-	 *            The name of the dataset, null if none
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
-
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, final IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @param xAxisName
-	 *            The name of x-Axis, null if none
-	 * @param yAxisName
-	 *            The name of the dataset, null if none
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param xAxis2
-	 *            The dataset to use as the X values on the second X axis
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @param xAxisName
-	 *            The name of x-Axis, null if none
-	 * @param yAxisName
-	 *            The name of the dataset, null if none
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, final IDataset xAxis, final IDataset yAxis, final String xAxisName, final String yAxisName) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X values (can be null)
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxis
-	 *            The dataset to use as the X values (can be null)
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @param xAxisName
-	 *            The name of x-Axis, null if none
-	 * @param yAxisName
-	 *            The name of the dataset, null if none
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxis
-	 *            The dataset to use as the X values
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @param xAxisName
-	 *            The name of x-Axis, null if none
-	 * @param yAxisName
-	 *            The name of the dataset, null if none
-	 * @throws Exception
-	 */
-	public void plot(String plotName, String title, final IDataset xAxis, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param xAxes
-	 *            The dataset to use as the X values
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param title
-	 *            The title of the plot
-	 * @param xAxes
-	 *            The dataset to use as the X values
-	 * @param yAxes
-	 *            The datasets to use as the Y values
-	 * @throws Exception
-	 */
-	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * @param plotName
-	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
 	 * @param xAxes
@@ -289,57 +106,6 @@ public interface ISDAPlotter {
 	 */
 	public void addPlot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
-	/**
-	 * Update existing plot with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 *            The name of the view to plot to
-	 * @param yAxis
-	 *            The dataset to use as the Y values
-	 * @throws Exception
-	 */
-	public void updatePlot(String plotName, final IDataset yAxis) throws Exception;
-
-	/**
-	 * Update existing plot with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxis
-	 * @throws Exception
-	 */
-	public void updatePlot(String plotName, final IDataset xAxis, final IDataset yAxis) throws Exception;
-
-	/**
-	 * Update existing plot with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param xAxis2
-	 * @param yAxis
-	 * @throws Exception
-	 */
-	public void updatePlot(String plotName, final IDataset xAxis, final IDataset xAxis2, final IDataset yAxis) throws Exception;
-
-	/**
-	 * Update existing plot with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @throws Exception
-	 */
-	public void updatePlot(String plotName, final IDataset xAxis, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * Update existing plot with new data, keeping zoom level
-	 * 
-	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @throws Exception
-	 */
-	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
@@ -348,9 +114,11 @@ public interface ISDAPlotter {
 	 * @param title
 	 * @param xAxes
 	 * @param yAxes
+	 * @param xAxisName
+	 * @param yAxisName
 	 * @throws Exception
 	 */
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view
@@ -360,24 +128,6 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void imagePlot(String plotName, String imageFileName) throws Exception;
-
-	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
-	 * @param image
-	 * @throws Exception
-	 */
-	public void imagePlot(String plotName, IDataset image) throws Exception;
-
-	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
-	 * @param images
-	 * @throws Exception
-	 */
-	public void imagesPlot(String plotName, IDataset[] images) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view
@@ -408,27 +158,6 @@ public interface ISDAPlotter {
 	public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception;
 
 	/**
-	 * Allows plotting of points of given size on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param size
-	 * @throws Exception
-	 */
-	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception;
-
-	/**
-	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param coordPairs
-	 * @param sizes
-	 * @throws Exception
-	 */
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes) throws Exception;
-
-	/**
 	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
 	 * 
 	 * @param plotName
@@ -451,21 +180,6 @@ public interface ISDAPlotter {
 
 	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes) throws Exception;
 
-	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception;
-
-	/**
-	 * Allows plotting of points of given size on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param zCoords
-	 * @param size
-	 * @throws Exception
-	 */
-	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception;
-
 	/**
 	 * Allows plotting of points of given sizes on a 3D volume
 	 * 
@@ -478,31 +192,8 @@ public interface ISDAPlotter {
 	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
 			throws Exception;
 
-	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception;
-
 	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
 			throws Exception;
-
-	/**
-	 * Allows the plotting of a 2D dataset as a surface to the defined view
-	 * 
-	 * @param plotName
-	 * @param data
-	 * @throws Exception
-	 */
-	public void surfacePlot(String plotName, IDataset data) throws Exception;
-
-	/**
-	 * Allows the plotting of a 2D dataset as a surface to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 *            can be null
-	 * @param data
-	 * @throws Exception
-	 */
-	public void surfacePlot(String plotName, IDataset xAxis, IDataset data) throws Exception;
 
 	/**
 	 * Allows the plotting of a 2D dataset as a surface to the defined view
@@ -516,37 +207,6 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception;
-
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @throws Exception
-	 */
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception;
-
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxis
-	 * @param yAxes
-	 * @param zAxis
-	 * @throws Exception
-	 */
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, IDataset zAxis) throws Exception;
-
-	/**
-	 * Plot a stack in 3D of single 1D plots to the defined view
-	 * 
-	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @throws Exception
-	 */
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception;
 
 	/**
 	 * Plot a stack in 3D of single 1D plots to the defined view
@@ -569,99 +229,6 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @return number of files found
-	 * @throws Exception
-	 */
-	public int scanForImages(String viewName, String pathname) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 *            name of the path/directory which images should be loaded from
-	 * @param maxFiles
-	 *            maximum number of files that should be loaded
-	 * @param nthFile
-	 *            only load every nth file
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-
-	public int scanForImages(String viewName, String pathname, int maxFiles, int nthFile) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with any supported image formats in specified order
-	 * 
-	 * @param viewName
-	 * @param pathname
-	 * @param order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	public int scanForImages(String viewName, String pathname, int order) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @param order
-	 * @param suffices
-	 * @param gridColumns
-	 *            use -1 to indicate automatic configuration to square array
-	 * @param rowMajor
-	 *            if true, display images in row-major order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 *            of image explorer
-	 * @param pathname
-	 * @param order
-	 * @param regex
-	 * @param suffices
-	 * @param gridColumns
-	 *            use -1 to indicate automatic configuration to square array
-	 * @param rowMajor
-	 *            if true, display images in row-major order
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-			int gridColumns, boolean rowMajor) throws Exception;
-
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 * @param pathname
-	 * @param order
-	 * @param suffices
-	 * @param gridColumns
-	 * @param rowMajor
-	 * @param maxFiles
-	 * @param jumpBetween
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor, int maxFiles, int jumpBetween) throws Exception;
 
 	/**
 	 * Scan a directory and populate an image explorer view with images of given suffices
@@ -742,25 +309,6 @@ public interface ISDAPlotter {
 	public void setupNewImageGrid(String viewName, int gridRows, int gridColumns) throws Exception;
 
 	/**
-	 * Set up a new image grid for an image explorer view with the specified # images
-	 * 
-	 * @param viewName
-	 * @param images
-	 *            number of images
-	 * @throws Exception
-	 */
-	public void setupNewImageGrid(String viewName, int images) throws Exception;
-
-	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param datasets
-	 * @throws Exception
-	 */
-	public void plotImageToGrid(String viewName, IDataset[] datasets) throws Exception;
-
-	/**
 	 * Plot images to the grid of an image explorer view
 	 * 
 	 * @param viewName
@@ -782,57 +330,15 @@ public interface ISDAPlotter {
 	 *            Y position in the grid
 	 * @throws Exception
 	 */
-
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception;
 
 	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param filename
-	 * @throws Exception
-	 */
-
-	public void plotImageToGrid(String viewName, String filename) throws Exception;
-
-	/**
-	 * Plot an image to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @throws Exception
-	 */
-	public void plotImageToGrid(String viewName, IDataset dataset) throws Exception;
-
-	/**
-	 * Plot an image to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @param store
-	 *            if true, create a copy of image as a temporary file
-	 * @throws Exception
-	 */
-	public void plotImageToGrid(String viewName, IDataset dataset, boolean store) throws Exception;
-
-	/**
 	 * Plot an image to the grid of an image explorer view in specified position
 	 * 
 	 * @param viewName
 	 * @param dataset
-	 * @param gridX
-	 * @param gridY
-	 * @throws Exception
-	 */
-	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY) throws Exception;
-
-	/**
-	 * Plot an image to the grid of an image explorer view in specified position
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @param gridX
-	 * @param gridY
+	 * @param gridX use -1 to automatically place
+	 * @param gridY use -1 to automatically place
 	 * @param store
 	 *            if true, create a copy of image as a temporary file
 	 * @throws Exception

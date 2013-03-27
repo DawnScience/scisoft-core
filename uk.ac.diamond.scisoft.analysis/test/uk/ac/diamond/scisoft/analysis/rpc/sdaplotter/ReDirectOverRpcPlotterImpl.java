@@ -54,131 +54,26 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 	
 	@Override
-	public void plot(String plotName, IDataset yAxis) throws Exception {
-		request("line", yAxis, null, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset yAxis) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception {
-		request("line", xAxis, yAxis, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
-		request("line", xAxis, xAxis2, yAxis, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxis) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		request("line", xAxis, yAxes, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		request("line", xAxes, yAxes, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset[] xAxis, IDataset[] yAxes) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		request("line", yAxis, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset yAxis, String xAxisName, String yAxisName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
-	public void plot(String plotName, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName) throws Exception {
-		request("line", xAxis, yAxes, plotName);
-	}
-
-	@Override
-	public void plot(String plotName, String title, IDataset xAxis, IDataset[] yAxes, String xAxisName, String yAxisName)
-			throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
-	}
-
-	@Override
 	public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName, String yAxisName)
 			throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
+		request("line", xAxes, yAxes, title, plotName);
 	}
 
 	@Override
 	public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
 			String yAxisName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
+		request("addline", xAxes, yAxes, title, plotName);
 	}
 
 	@Override
-	public void updatePlot(String plotName, IDataset yAxis) throws Exception {
-		request("updateline", yAxis, null, plotName);
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset yAxis) throws Exception {
-		request("updateline", xAxis, yAxis, plotName);
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
-		request("updateline", xAxis, xAxis2, yAxis, plotName);
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		request("updateline", xAxis, yAxes, plotName);
-	}
-
-	@Override
-	public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		request("updateline", xAxes, yAxes, plotName);
-	}
-
-	@Override
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to title argument");
+	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+			String yAxisName) throws Exception {
+		request("updateline", xAxes, yAxes, title, plotName);
 	}
 
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to imageFileName argument");
-	}
-
-	@Override
-	public void imagePlot(String plotName, IDataset image) throws Exception {
-		request("image", image, null, null, plotName);
-	}
-
-	@Override
-	public void imagesPlot(String plotName, IDataset[] images) throws Exception {
-		request("images", images, null, null, plotName);
 	}
 
 	@Override
@@ -189,16 +84,6 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	@Override
 	public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception {
 		request("images", images, xAxis, yAxis, plotName);
-	}
-
-	@Override
-	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		request("points", xCoords, yCoords, null, size, plotName);
-	}
-
-	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to AbstractCompoundDataset argument");
 	}
 
 	@Override
@@ -217,26 +102,9 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-		request("addpoints", xCoords, yCoords, null, size, plotName);
-	}
-
-	@Override
-	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception {
-		request("points", xCoords, yCoords, zCoords, size, plotName);
-	}
-
-	@Override
 	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
 			throws Exception {
 		request("points", xCoords, yCoords, zCoords, sizes, plotName);
-	}
-
-	@Override
-	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-			throws Exception {
-		request("addpoints", xCoords, yCoords, zCoords, size, plotName);
 	}
 
 	@Override
@@ -246,33 +114,8 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void surfacePlot(String plotName, IDataset data) throws Exception {
-		request("surface", data, null, null, plotName);
-	}
-
-	@Override
-	public void surfacePlot(String plotName, IDataset xAxis, IDataset data) throws Exception {
-		request("surface", data, xAxis, null, plotName);
-	}
-
-	@Override
 	public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception {
 		request("surface", data, xAxis, yAxis, plotName);
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes) throws Exception {
-		request("stack", xAxis, yAxes, null, plotName);
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset xAxis, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		request("stack", xAxis, yAxes, zAxis, plotName);
-	}
-
-	@Override
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
-		request("stack", xAxes, yAxes, null, plotName);
 	}
 
 	@Override
@@ -283,16 +126,6 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	@Override
 	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
 		request("updatestack", xAxes, yAxes, zAxis, plotName);
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname) throws Exception {
-		return (Integer) request("scanforimages", pathname, "none", null, null, -1, true, viewName);
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int maxFiles, int nthFile) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to maxFiles, nthFile argument");
 	}
 
 	private String getOrderStr(int order) throws AssertionFailedError {
@@ -309,32 +142,9 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public int scanForImages(String viewName, String pathname, int order) throws Exception {
-		return (Integer) request("scanforimages", pathname, getOrderStr(order), null, null, -1, true, viewName);
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor) throws Exception {
-		return (Integer) request("scanforimages", pathname, getOrderStr(order), null, suffices, -1, rowMajor, viewName);
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-			int gridColumns, boolean rowMajor) throws Exception {
-		return (Integer) request("scanforimages", pathname, getOrderStr(order), regex, suffices, -1, rowMajor, viewName);
-	}
-
-	@Override
-	public int scanForImages(String viewName, String pathname, int order, String[] suffices, int gridColumns,
-			boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to maxFiles, jumpBetween argument");
-	}
-
-	@Override
 	public int scanForImages(String viewName, String pathname, int order, String nameregex, String[] suffices,
 			int gridColumns, boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to maxFiles, jumpBetween argument");
+		return (Integer) request("scanforimages", pathname, getOrderStr(order), nameregex, suffices, gridColumns, rowMajor, viewName);
 	}
 
 	@Override
@@ -364,42 +174,12 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void setupNewImageGrid(String viewName, int images) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset[] datasets) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
 	public void plotImageToGrid(String viewName, IDataset[] datasets, boolean store) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, String filename) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, boolean store) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
-	}
-
-	@Override
-	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
 	}
 

@@ -22,7 +22,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
-import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -36,16 +35,10 @@ import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
  * flattening tests, in this test only the type of the argument matters.
  */
 public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstract {
-	// Parameters for each test
-	private int size;
 	private IDataset sizes;
-	private IDataset data, xAxis, xAxis2, yAxis, zAxis, image, xCoords, yCoords, zCoords;
+	private IDataset data, xAxis, yAxis, zAxis, image, xCoords, yCoords, zCoords;
 	private IDataset[] xAxes, yAxes, images;
-	private String plotName, viewName;
-	private String pathname, regex;
-	private int scanForImagesFakedResult, order, gridColumns;
-	private boolean rowMajor;
-	private String[] suffices;
+	private String plotName;
 	private GuiBean bean;
 	private DataBean dataBean;
 	private String[] guiNames;
@@ -58,20 +51,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// create some data sets and other objects to use, this test does not use
 		// the contents of the data set, except they are flattened
 		// and unflattened. The type of the object is more important
-		xCoords = yCoords = zCoords = xAxis = xAxis2 = yAxis = zAxis = AbstractDataset.arange(100, AbstractDataset.INT);
+		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = AbstractDataset.arange(100, AbstractDataset.INT);
 		data = image = AbstractDataset.arange(100, AbstractDataset.INT).reshape(10, 10);
 		xAxes = yAxes = new IDataset[] { xAxis, AbstractDataset.arange(100, AbstractDataset.FLOAT) };
 		images = new IDataset[] { image, AbstractDataset.arange(100, AbstractDataset.FLOAT) };
-		viewName = plotName = "Plot 1";
-		size = 100;
+		plotName = "Plot 1";
 		sizes = AbstractDataset.arange(100, AbstractDataset.INT);
-		pathname = "/tmp/dir";
-		regex = "a.*b";
-		scanForImagesFakedResult = 21;
-		order = SDAPlotter.IMAGEORDERNONE;
-		suffices = SDAPlotter.LISTOFSUFFIX;
-		gridColumns = 2;
-		rowMajor = true;
 		bean = new GuiBean();
 		dataBean = new DataBean();
 		guiNames = new String[] { "Plot 1", "Plot 2" };
@@ -82,11 +67,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void plot(String plotName, IDataset yAxis) throws Exception {
+			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.plot(plotName, yAxis);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -95,11 +81,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.plot(plotName, xAxis, yAxis);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -108,11 +95,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void plot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
+			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.plot(plotName, xAxis, xAxis2, yAxis);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -121,11 +109,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.plot(plotName, xAxis, yAxes);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -134,11 +123,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void plot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.plot(plotName, xAxes, yAxes);
+		redirectPlotter.plot(plotName, null, xAxes, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -147,11 +137,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void updatePlot(String plotName, IDataset yAxis) throws Exception {
+			public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.updatePlot(plotName, yAxis);
+		redirectPlotter.updatePlot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -160,24 +151,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.updatePlot(plotName, xAxis, yAxis);
-		Assert.assertTrue(passed[0]);
-	}
-
-	@Ignore("Python does not process the second axis currently, 17/12/2012")
-	public void testUpdatePlotStringIDatasetIDatasetIDataset() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void updatePlot(String plotName, IDataset xAxis, IDataset xAxis2, IDataset yAxis) throws Exception {
-				passed[0] = true;
-			}
-		});
-		redirectPlotter.updatePlot(plotName, xAxis, xAxis2, yAxis);
+		redirectPlotter.updatePlot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -186,11 +165,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.updatePlot(plotName, xAxis, yAxes);
+		redirectPlotter.updatePlot(plotName, null, new IDataset[] {xAxis}, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -199,11 +179,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void updatePlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+					String yAxisName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.updatePlot(plotName, xAxes, yAxes);
+		redirectPlotter.updatePlot(plotName, null, xAxes, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -212,11 +193,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void imagePlot(String plotName, IDataset image) throws Exception {
+			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.imagePlot(plotName, image);
+		redirectPlotter.imagePlot(plotName, null, null, image);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -225,11 +206,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void imagesPlot(String plotName, IDataset[] images) throws Exception {
+			public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.imagesPlot(plotName, images);
+		redirectPlotter.imagesPlot(plotName, null, null, images);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -256,19 +237,6 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 			}
 		});
 		redirectPlotter.imagesPlot(plotName, xAxis, yAxis, images);
-		Assert.assertTrue(passed[0]);
-	}
-
-	@Test
-	public void testScatter2DPlotStringIDatasetIDatasetInt() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, int size) throws Exception {
-				passed[0] = true;
-			}
-		});
-		redirectPlotter.scatter2DPlot(plotName, xCoords, yCoords, size);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -301,34 +269,6 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	}
 
 	@Test
-	public void testScatter2DPlotOverStringIDatasetIDatasetInt() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size)
-					throws Exception {
-				passed[0] = true;
-			}
-		});
-		redirectPlotter.scatter2DPlotOver(plotName, xCoords, yCoords, size);
-		Assert.assertTrue(passed[0]);
-	}
-
-	@Test
-	public void testScatter3DPlotStringIDatasetIDatasetIDatasetInt() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
-					throws Exception {
-				passed[0] = true;
-			}
-		});
-		redirectPlotter.scatter3DPlot(plotName, xCoords, yCoords, zCoords, size);
-		Assert.assertTrue(passed[0]);
-	}
-
-	@Test
 	public void testScatter3DPlotStringIDatasetIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
@@ -339,20 +279,6 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 			}
 		});
 		redirectPlotter.scatter3DPlot(plotName, xCoords, yCoords, zCoords, sizes);
-		Assert.assertTrue(passed[0]);
-	}
-
-	@Test
-	public void testScatter3DPlotOverStringIDatasetIDatasetIDatasetInt() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords,
-					int size) throws Exception {
-				passed[0] = true;
-			}
-		});
-		redirectPlotter.scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, size);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -375,11 +301,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void surfacePlot(String plotName, IDataset data) throws Exception {
+			public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.surfacePlot(plotName, data);
+		redirectPlotter.surfacePlot(plotName, null, null, data);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -388,12 +314,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void surfacePlot(String plotName, IDataset data) throws Exception {
+			public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception {
 				passed[0] = true;
 			}
 		});
 		// XXX: xAxis is discarded in this call by plot.py#surface
-		redirectPlotter.surfacePlot(plotName, xAxis, data);
+		redirectPlotter.surfacePlot(plotName, xAxis, null, data);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -415,11 +341,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.stackPlot(plotName, xAxis, yAxes);
+		redirectPlotter.stackPlot(plotName, new IDataset[] {xAxis}, yAxes, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -432,7 +358,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.stackPlot(plotName, xAxis, yAxes, zAxis);
+		redirectPlotter.stackPlot(plotName, new IDataset[] {xAxis}, yAxes, zAxis);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -441,11 +367,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes) throws Exception {
+			public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.stackPlot(plotName, xAxes, yAxes);
+		redirectPlotter.stackPlot(plotName, xAxes, yAxes, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -473,71 +399,6 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		});
 		redirectPlotter.updateStackPlot(plotName, xAxes, yAxes, zAxis);
 		Assert.assertTrue(passed[0]);
-	}
-
-	@Test
-	public void testScanForImagesStringString() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-					int gridColumns, boolean rowMajor) throws Exception {
-				passed[0] = true;
-				return scanForImagesFakedResult;
-			}
-		});
-		int scanForImages = redirectPlotter.scanForImages(viewName, pathname);
-		Assert.assertTrue(passed[0]);
-		Assert.assertEquals(scanForImagesFakedResult, scanForImages);
-	}
-
-	@Test
-	public void testScanForImagesStringStringInt() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-					int gridColumns, boolean rowMajor) throws Exception {
-				passed[0] = true;
-				return scanForImagesFakedResult;
-			}
-		});
-		int scanForImages = redirectPlotter.scanForImages(viewName, pathname, order);
-		Assert.assertTrue(passed[0]);
-		Assert.assertEquals(scanForImagesFakedResult, scanForImages);
-	}
-
-	@Test
-	public void testScanForImagesStringStringIntStringArrayIntBoolean() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-					int gridColumns, boolean rowMajor) throws Exception {
-				passed[0] = true;
-				return scanForImagesFakedResult;
-			}
-		});
-		int scanForImages = redirectPlotter.scanForImages(viewName, pathname, order, suffices, gridColumns, rowMajor);
-		Assert.assertTrue(passed[0]);
-		Assert.assertEquals(scanForImagesFakedResult, scanForImages);
-	}
-
-	@Test
-	public void testScanForImagesStringStringIntStringStringArrayIntBoolean() throws Exception {
-		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public int scanForImages(String viewName, String pathname, int order, String regex, String[] suffices,
-					int gridColumns, boolean rowMajor) throws Exception {
-				passed[0] = true;
-				return scanForImagesFakedResult;
-			}
-		});
-		int scanForImages = redirectPlotter.scanForImages(viewName, pathname, order, regex, suffices, gridColumns,
-				rowMajor);
-		Assert.assertTrue(passed[0]);
-		Assert.assertEquals(scanForImagesFakedResult, scanForImages);
 	}
 
 	@Test

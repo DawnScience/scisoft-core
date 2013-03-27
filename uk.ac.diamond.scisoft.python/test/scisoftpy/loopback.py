@@ -27,6 +27,7 @@ import thread
 
 server = dnp.rpc.rpcserver(8912)
 server.add_handler("addpoints",    lambda *args: dnp.plot.addpoints(*args))
+server.add_handler("addline",      lambda *args: dnp.plot.addline(*args))
 server.add_handler("getbean",      lambda *args: dnp.plot.getbean(*args))
 server.add_handler("getdatabean",  lambda *args: dnp.plot.getdatabean(*args))
 server.add_handler("getfiles",     lambda *args: dnp.plot.getfiles(*args))
@@ -51,4 +52,4 @@ server.add_handler("volume",       lambda *args: dnp.plot.volume(*args))
 ## Not part of SDAPlotter, used to control dnp in other ways
 server.add_handler("setremoteport_rpc", lambda port: dnp.plot.setremoteport(rpcport=port))
 
-server.serve_forever();
+server.serve_forever()

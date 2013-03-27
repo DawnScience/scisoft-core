@@ -38,7 +38,7 @@ abstract public class SDAPlotterTestAbstract {
 	public void testLinePlot() throws Exception {
 		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
 
-		sdaPlotterImplUnderTest.plot("MyTest Line", ds);
+		sdaPlotterImplUnderTest.plot("MyTest Line", null, null, new IDataset[] {ds}, null, null);
 	
 		Assert.assertEquals("MyTest Line", testPlotServer.getLastPlotname());
 		Assert.assertEquals(GuiPlotMode.ONED, testPlotServer.getLastDataBean().getGuiPlotMode());
@@ -50,7 +50,7 @@ abstract public class SDAPlotterTestAbstract {
 		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
 		ds.setShape(10, 10);
 
-		sdaPlotterImplUnderTest.imagePlot("MyTest Image", ds);
+		sdaPlotterImplUnderTest.imagePlot("MyTest Image", null, null, ds);
 	
 		Assert.assertEquals("MyTest Image", testPlotServer.getLastPlotname());
 		Assert.assertEquals(GuiPlotMode.TWOD, testPlotServer.getLastDataBean().getGuiPlotMode());
@@ -62,7 +62,7 @@ abstract public class SDAPlotterTestAbstract {
 		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
 		ds.setShape(10, 10);
 
-		sdaPlotterImplUnderTest.imagesPlot("MyTest Images", new IDataset[] {ds, ds});
+		sdaPlotterImplUnderTest.imagesPlot("MyTest Images", null, null, new IDataset[] {ds, ds});
 	
 		Assert.assertEquals("MyTest Images", testPlotServer.getLastPlotname());
 		Assert.assertEquals(GuiPlotMode.MULTI2D, testPlotServer.getLastDataBean().getGuiPlotMode());

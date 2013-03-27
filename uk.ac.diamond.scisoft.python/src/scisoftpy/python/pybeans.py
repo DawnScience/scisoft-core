@@ -71,6 +71,7 @@ class _parameters(object):
         self.calibrationpeaks = self._parametershelper(self, "calibrationpeaks", "CalibrationPeaks")
         self.calibrationfunctionncd = self._parametershelper(self, "calibrationfunctionncd", "CalibrationFunction")
         self.onedfile = self._parametershelper(self, "onedfile", "OneDFile")
+        self.axisop = self._parametershelper(self, "axisop", "AxisOp")
         
     def get(self, parametername):
         '''Return the GUIParameter with the given name, or return None for no matching'''

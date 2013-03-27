@@ -254,6 +254,5 @@ public final class GuiParameters implements Serializable {
  	/**
  	 * Parameters for controlling axes
  	 */
- 	public static final GuiParameters AXIS_OPERATION = new GuiParameters("Axis Operation", AxisOperation.class); 
- 	
+ 	public static final GuiParameters AXIS_OPERATION = new GuiParameters("AxisOp", AxisOperation.class); 
 }

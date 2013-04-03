@@ -35,6 +35,7 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	private double phiStart;
 	private double phiRange;
 	private double exposureTime;
+	private double oscGap;
 	// TODO move controller away from model?
 	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
 
@@ -42,10 +43,7 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	 * @param wavelength in Angstroms
 	 */
 	public DiffractionCrystalEnvironment(double wavelength){
-		this.wavelength = wavelength;
-		this.phiStart = Double.NaN;
-		this.phiRange = Double.NaN;
-		this.exposureTime = Double.NaN;
+		this(wavelength, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 	}
 
 	/**
@@ -56,10 +54,15 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	 * @param exposureTime in seconds
 	 */
 	public DiffractionCrystalEnvironment(double wavelength, double phiStart, double phiRange, double exposureTime) {
+		this(wavelength, phiStart, phiRange, exposureTime, Double.NaN);
+	}
+
+	public DiffractionCrystalEnvironment(double wavelength, double oscStart, double oscRange, double exposureTime, double oscGap) {
 		this.wavelength = wavelength;
-		this.phiStart = phiStart;
-		this.phiRange = phiRange;
+		this.phiStart = oscStart;
+		this.phiRange = oscRange;
 		this.exposureTime = exposureTime;
+		this.oscGap = oscGap;
 	}
 
 	/**
@@ -83,8 +86,9 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		double startOmega = 0.0;
 		double rangeOmega = 1.0;
 		double exposureTime = 1.0;
+		double oscGap = 0;
 		
-		return new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, exposureTime);
+		return new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, exposureTime, oscGap);
 	}
 	
 	@Override
@@ -104,6 +108,8 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		temp = Double.doubleToLongBits(phiStart);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(wavelength);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(oscGap);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -130,6 +136,8 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		if (!equalOrBothNaNs(phiStart, other.phiStart))
 			return false;
 		if (!equalOrBothNaNs(wavelength, other.wavelength))
+			return false;
+		if (!equalOrBothNaNs(oscGap, other.oscGap))
 			return false;
 		return true;
 	}
@@ -206,6 +214,21 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		this.exposureTime = exposureTime;
 	}
 	
+	/**
+	 * @return the oscillation gap value of diffraction image in degrees
+	 */
+	public double getOscGap() {
+		return oscGap;
+	}
+
+	/**
+	 * Set the oscillation gap value of diffraction image in degrees
+	 * @param oscGap
+	 */
+	public void setOscGap(double oscGap) {
+		this.oscGap = oscGap;
+	}
+
 	public void addDiffractionCrystalEnvironmentListener(IDiffractionCrystalEnvironmentListener l) {
 		if (diffCrystEnvListeners==null) 
 			diffCrystEnvListeners = new HashSet<IDiffractionCrystalEnvironmentListener>(5);

@@ -287,6 +287,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 							"Exposure_time", "s"));
 
 			diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+			diffMetadata.addDataInfo(DEF_IMAGE_NAME, getInteger("numPixels_x"), getInteger("numPixels_y"));
 			diffMetadata.setMetadata(metadata);
 		} catch (ScanFileHolderException e) {
 			diffMetadata = new Metadata(metadata);

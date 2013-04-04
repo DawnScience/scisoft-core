@@ -52,5 +52,25 @@ public class IntegerDatasetTest {
 		assertEquals(3.6055512754639891, a.stdDeviation().doubleValue(), 1e-6);
 		assertEquals(13., a.variance().doubleValue(), 1e-6);
 	}
+	
+	@Test
+	public void testPosition() {
+		double[] da = { 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+		DoubleDataset a = new DoubleDataset(da);
+		
+		assertEquals(6,a.maxPos()[0]);
+		assertEquals(0,a.minPos()[0]);
+		
+		AbstractDataset b = AbstractDataset.zeros(new int[]{100,200}, AbstractDataset.INT32 );
+		
+		b.set(100, new int[]{50,100});
+		b.set(-100, new int[]{51,101});
+		
+		assertEquals(50,b.maxPos()[0]);
+		assertEquals(100,b.maxPos()[1]);
+		assertEquals(51,b.minPos()[0]);
+		assertEquals(101,b.minPos()[1]);
+		
+	}
 
 }

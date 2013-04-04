@@ -1584,7 +1584,7 @@ public class Stats {
 	 * @return double array with low and high values, and low and high percentage thresholds
 	 */
 	public static double[] outlierValues(final AbstractDataset a, double lo, double hi, final int length) {
-		if (lo <= 0 || hi <= 0 || lo >= hi || hi >= 100) {
+		if (lo <= 0 || hi <= 0 || lo >= hi || hi >= 100  || Double.isNaN(lo)|| Double.isNaN(hi)) {
 			throw new IllegalArgumentException("Thresholds must be between (0,100) and in order");
 		}
 		final int size = a.getSize();

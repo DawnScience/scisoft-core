@@ -143,4 +143,43 @@ public class DoubleDatasetTest {
 			assertEquals(2.*i, r.getElementDoubleAbs(it.index), 1e-5*i);
 		}
 	}
+	
+	@Test
+	public void testPosition() {
+		double[] da = { 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+		DoubleDataset a = new DoubleDataset(da);
+		
+		assertEquals(6,a.maxPos()[0]);
+		assertEquals(0,a.minPos()[0]);
+		
+		AbstractDataset b = AbstractDataset.zeros(new int[]{100,200}, AbstractDataset.FLOAT64 );
+		
+		b.set(100.00, new int[]{50,100});
+		b.set(-100.00, new int[]{51,101});
+		
+		assertEquals(50,b.maxPos()[0]);
+		assertEquals(100,b.maxPos()[1]);
+		assertEquals(51,b.minPos()[0]);
+		assertEquals(101,b.minPos()[1]);
+		
+		b.set(Double.NaN, new int[]{52,53});
+		
+		assertEquals(52,b.maxPos()[0]);
+		assertEquals(53,b.maxPos()[1]);
+		
+		assertEquals(50,b.maxPos(true)[0]);
+		assertEquals(100,b.maxPos(true)[1]);
+		
+		AbstractDataset c = AbstractDataset.zeros(new int[]{100,200}, AbstractDataset.FLOAT64 );
+		c.set(100.00, new int[]{99,50});
+		c.set(99.99, new int[]{50,50});
+		assertEquals(99,c.maxPos()[0]);
+		assertEquals(50,c.maxPos()[1]);
+		
+		c.set(101, new int[]{0,0});
+		assertEquals(0,c.maxPos()[0]);
+		assertEquals(0,c.maxPos()[1]);
+		
+	}
+	
 }

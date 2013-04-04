@@ -81,10 +81,6 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
-	/**
-	 * TODO FIXME Should likely use Hashtable as it is synchronized. The current
-	 * implementation of path to ReentrantLock is not thread safe.
-	 */
 	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
 
 	private static ReentrantLock globalLock = new ReentrantLock();

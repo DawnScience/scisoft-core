@@ -63,5 +63,6 @@ Import-Package: Jama,
  org.slf4j;version="[1.5.0,2.0.0)",
  org.uncommons.maths.combinatorics;version="1.2.3"
 Eclipse-BuddyPolicy: registered
-Bundle-ActivationPolicy: lazy
+Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
+ plugin to be loaded to contribute the service.
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.Activator

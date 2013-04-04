@@ -32,10 +32,12 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
@@ -45,6 +47,7 @@ public class Generic1DFitter implements Serializable {
 	private static double DEFAULT_ACCURACY = 0.0001;
 	private static IOptimizer DEFAULT_OPTIMISER = new GeneticAlg(DEFAULT_ACCURACY);
 	private static double EPSILON = 1E-5;
+	private static int BASELINE_ORDER = 0;
 	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
 
 	/**
@@ -252,7 +255,7 @@ public class Generic1DFitter implements Serializable {
 		}
 
 		List<CompositeFunction> fittedPeaks = fitFunction(peaks, function, xdata, ydata, optimiser, numPeaks, threshold,
-				autoStopping, heightMeasure, monitor);
+				autoStopping, heightMeasure, monitor, BASELINE_ORDER);
 
 		return fittedPeaks;
 	}
@@ -264,7 +267,7 @@ public class Generic1DFitter implements Serializable {
 
 	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, APeak function, AbstractDataset xData,
 			AbstractDataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IAnalysisMonitor monitor) {
+			boolean heightMeasure, IAnalysisMonitor monitor, int baselineOrder) {
 
 		ArrayList<CompositeFunction> peaks = new ArrayList<CompositeFunction>();
 		if (numPeaks == 0) {
@@ -288,17 +291,31 @@ public class Generic1DFitter implements Serializable {
 			int[] step = { 1 };
 			AbstractDataset y = ydata.getSlice(start, stop, step);
 			AbstractDataset x = xData.getSlice(start, stop, step);
-
-			double lowOffset = y.min().doubleValue();
-			double highOffset = (Double) y.mean();
-			Offset offset = new Offset(lowOffset, highOffset);
-
+			
+			AFunction baseline = null;
 			try {
+				
+				switch (baselineOrder) {
+				case 1:
+					double initm = (y.getDouble(0) - y.getDouble(y.getShape()[0]-1))/(x.getDouble(0) - x.getDouble(x.getShape()[0]-1));
+					double initc = y.getDouble(0)  - initm*x.getDouble(0);
+					double stepx = x.getDouble(1) - x.getDouble(0);
+					if (stepx < 0) stepx = stepx*-1;
+					double maxC = (y.max().doubleValue() - y.min().doubleValue())/ (stepx);
+					baseline = new StraightLine(-maxC, maxC, initc - y.max().doubleValue(), initc + y.max().doubleValue());
+					break;
+
+				default:
+					double lowOffset = y.min().doubleValue();
+					double highOffset = (Double) y.mean();
+					baseline = new Offset(lowOffset, highOffset);
+				}
+
 				Constructor<? extends APeak> ctor = function.getClass().getConstructor(IdentifiedPeak.class);
 				APeak localPeak = ctor.newInstance(iniPeak);
 				CompositeFunction comp = new CompositeFunction();
 				comp.addFunction(localPeak);
-				comp.addFunction(offset);
+				comp.addFunction(baseline);
 				optimiser.optimize(new AbstractDataset[] { x }, y, comp);
 
 				peaks.add(comp);

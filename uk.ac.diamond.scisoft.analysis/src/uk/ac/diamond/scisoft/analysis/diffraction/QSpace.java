@@ -26,14 +26,20 @@ import javax.vecmath.Vector3d;
  * lambda is wavelength (in Angstroms) and 2*theta is the scattering angle
  */
 public class QSpace {
+	private final static double QScaleDefault=2.*Math.PI;
 	private DetectorProperties detProps;
 	private double kmod; // wave number
 	private Vector3d ki; // initial wave vector
+	private double qScale;
 
-
-	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp) {
+	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp,double scale) {
 		detProps = detprops;
 		setDiffractionCrystalEnvironment(diffexp);
+		qScale=scale;
+	}
+	
+	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp) {
+		this(detprops, diffexp, QScaleDefault);
 	}
 
 	private void calculateInitalWavevector() {
@@ -42,7 +48,7 @@ public class QSpace {
 	}
 
 	public void setDiffractionCrystalEnvironment(DiffractionCrystalEnvironment diffexp) {
-		kmod = 2.*Math.PI/diffexp.getWavelength();
+		kmod = qScale/diffexp.getWavelength();
 		calculateInitalWavevector();
 	}
 
@@ -50,7 +56,7 @@ public class QSpace {
 	 * @return wavelength in Angstroms
 	 */
 	public double getWavelength() {
-		return 2.*Math.PI/kmod;
+		return qScale/kmod;
 	}
 
 	public void setDetectorProperties(DetectorProperties detprops) {

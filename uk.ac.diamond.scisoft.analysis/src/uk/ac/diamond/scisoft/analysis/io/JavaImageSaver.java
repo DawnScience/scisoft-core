@@ -99,7 +99,7 @@ public class JavaImageSaver implements IFileSaver {
 					name = name + format.format(i + 1);
 				}
 
-				int l = name.lastIndexOf(".");
+				int l = new File(name).getName().lastIndexOf(".");
 				if (l < 0) {
 					name = name + "." + fileType;
 				}

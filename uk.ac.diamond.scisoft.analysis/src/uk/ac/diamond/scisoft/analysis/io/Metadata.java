@@ -63,7 +63,7 @@ public class Metadata implements IMetaData {
 	 * Set metadata map
 	 * @param metadata
 	 */
-	void setMetadata(Map<String, ? extends Serializable> metadata) {
+	public void setMetadata(Map<String, ? extends Serializable> metadata) {
 		this.metadata = metadata;
 	}
 
@@ -71,7 +71,7 @@ public class Metadata implements IMetaData {
 	 * Internal use only
 	 * @return metadata map
 	 */
-	Map<String, ? extends Serializable> getInternalMetadata() {
+	protected Map<String, ? extends Serializable> getInternalMetadata() {
 		return metadata;
 	}
 
@@ -79,7 +79,7 @@ public class Metadata implements IMetaData {
 	 * Set user objects
 	 * @param objects
 	 */
-	void setUserObjects(Collection<Serializable> objects) {
+	public void setUserObjects(Collection<Serializable> objects) {
 		userObjects = objects;
 	}
 

@@ -553,8 +553,8 @@ public class StringDatasetBase extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			// TODO this test is necessary because Jython thinks max(boolean) is max(int)!
-			// max = findPositions(max().intValue() != 0); // BOOLEAN_USE
+			// TODO this is necessary because Jython thinks max(boolean) is max(int)!
+			// max = findPositions(((Number) getMaxMin(false, false, STORE_MAX)).intValue() != 0); // BOOLEAN_USE
 			max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -576,7 +576,8 @@ public class StringDatasetBase extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			// min = findPositions(min().intValue() != 0); // BOOLEAN_USE
+			// TODO this is necessary because Jython thinks min(boolean) is min(int)!
+			// min = findPositions(((Number) getMaxMin(false, false, STORE_MIN)).intValue() != 0); // BOOLEAN_USE
 			min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {

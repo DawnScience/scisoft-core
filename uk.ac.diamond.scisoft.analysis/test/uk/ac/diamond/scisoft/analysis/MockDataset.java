@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
+import java.io.Serializable;
+
 import gda.analysis.io.ScanFileHolderException;
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -192,6 +194,26 @@ public class MockDataset implements IDataset {
 
 	@Override
 	public void resize(int... newShape) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public Object mean() {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public void checkCompatibility(ILazyDataset g) throws IllegalArgumentException {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public int getDtype() {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public Serializable getBuffer() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 }

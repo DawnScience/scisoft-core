@@ -3041,7 +3041,7 @@ public abstract class AbstractDataset implements IDataset {
 		return (Integer) value;
 	}
 
-	private Object getMaxMin(boolean ignoreNaNs, boolean ignoreInfs, String key) {
+	protected Object getMaxMin(boolean ignoreNaNs, boolean ignoreInfs, String key) {
 		if (!hasFloatingPointElements()) {
 			ignoreNaNs = false;
 			ignoreInfs = false;

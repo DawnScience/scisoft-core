@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
@@ -118,7 +116,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @throws ScanFileHolderException 
 	 */
 	public IDataset getSlice(final IMonitor monitor, final int[] start, final int[] stop,
-			final int[] step) throws ScanFileHolderException;
+			final int[] step) throws Exception;
 
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
@@ -134,9 +132,9 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @param monitor
 	 * @param slice an array of slice objects (the array can be null or contain nulls)
 	 * @return The dataset of the sliced data
-	 * @throws ScanFileHolderException 
+	 * @throws Exception 
 	 */
-	public IDataset getSlice(final IMonitor monitor, final Slice... slice) throws ScanFileHolderException;
+	public IDataset getSlice(final IMonitor monitor, final Slice... slice) throws Exception;
 
 	/**
 	 * Set metadata on the dataset

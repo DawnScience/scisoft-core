@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 
+
 /**
  * Interface which acts to provide metadata from an object
  */

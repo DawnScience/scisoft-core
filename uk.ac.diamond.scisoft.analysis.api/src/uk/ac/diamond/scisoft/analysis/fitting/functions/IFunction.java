@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
@@ -169,7 +168,7 @@ public interface IFunction {
 	 *            The values at which to evaluate the function
 	 * @return The dataset of the whole function
 	 */
-	public DoubleDataset makeDataset(IDataset... values);
+	public IDataset makeDataset(IDataset... values);
 
 	/**
 	 * Method to evaluate the sum of the deviations of the dataset from the function

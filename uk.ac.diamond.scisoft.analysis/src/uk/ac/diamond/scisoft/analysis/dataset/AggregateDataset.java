@@ -215,7 +215,7 @@ public class AggregateDataset implements ILazyDataset {
 	public IDataset getSlice(int[] start, int[] stop, int[] step) {
 		try {
 			return getSlice(null, start, stop, step);
-		} catch (ScanFileHolderException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -228,7 +228,7 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws Exception {
 		if (start == null) {
 			start = new int[shape.length];
 		}
@@ -284,7 +284,7 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, Slice... slice) throws Exception {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];

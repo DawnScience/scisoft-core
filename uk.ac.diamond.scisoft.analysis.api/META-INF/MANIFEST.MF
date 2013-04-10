@@ -1,0 +1,16 @@
+Dependency-Note: This plugin defines the API which the main analysis plugin
+ is provided with. It should be as vanilla as possible.
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Analysis API Bundle
+Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.api
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Diamond Light Source
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: uk.ac.diamond.scisoft.analysis.dataset,
+ uk.ac.diamond.scisoft.analysis.diffraction,
+ uk.ac.diamond.scisoft.analysis.fitting.functions,
+ uk.ac.diamond.scisoft.analysis.io,
+ uk.ac.diamond.scisoft.analysis.monitor,
+ uk.ac.diamond.scisoft.analysis.roi
+Import-Package: javax.vecmath

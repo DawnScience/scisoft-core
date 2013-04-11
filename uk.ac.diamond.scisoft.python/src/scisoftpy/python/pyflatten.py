@@ -28,6 +28,7 @@ from tempfile import mkstemp
 import os
 import copy
 import uuid
+import traceback
 
 TYPE = "__type__"
 CONTENT = "content"
@@ -187,6 +188,19 @@ class passThroughHelper(object):
 
     def canunflatten(self, obj):
         return self.canflatten(obj)
+
+class unicodeHelper(object):
+    def flatten(self, obj):
+        return str(obj)
+    
+    def unflatten(self, obj):
+        raise NotImplementedError()
+
+    def canflatten(self, obj):
+        return isinstance(obj, unicode)
+
+    def canunflatten(self, obj):
+        return False
 
 class ndArrayHelper(flatteningHelper):
     TYPE_NAME = "uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset"
@@ -442,7 +456,11 @@ class exceptionHelper(flatteningHelper):
     def flatten(self, thisException):
         rval = dict()
         rval[TYPE] = self.TYPE_NAME
-        rval[CONTENT] = str(thisException)
+        formatExc = traceback.format_exc()
+        if formatExc is None or formatExc.startswith("None"):
+            rval[CONTENT] = str(thisException)
+        else:
+            rval[CONTENT] = "\n\n"+ formatExc
         return rval
     
     def unflatten(self, obj):
@@ -458,7 +476,7 @@ helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPoi
            guiParametersHelper(), plotModeHelper(), axisMapBeanHelper(),
            datasetWithAxisInformationHelper(), dataBeanHelper(),
            dictHelper(), passThroughHelper(), listAndTupleHelper(),
-           uuidHelper(), exceptionHelper()]
+           uuidHelper(), exceptionHelper(), unicodeHelper()]
 
 def addhelper(helper):
     helpers.insert(0, helper)

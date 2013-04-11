@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.analysis.io.ScanFileHolderException;
+
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class ImageTest {
 
 	@Test
 	// TODO not really a test as such, but checks to make sure there are no execution errors
-	public void testregrid() throws ScanFileHolderException {
+	public void testregrid() {
 		
 		AbstractDataset ds = Random.rand(new int[] {100,100});
 		AbstractDataset pow = DoubleDataset.arange(100);
@@ -39,8 +39,8 @@ public class ImageTest {
 		AbstractDataset lin = DoubleDataset.arange(-100,900,5);
 		
 		// now apply the Transform
-		
 		AbstractDataset result = Image.regrid(ds, x, y, lin, lin);
+		
 	}
 	
 	@Test

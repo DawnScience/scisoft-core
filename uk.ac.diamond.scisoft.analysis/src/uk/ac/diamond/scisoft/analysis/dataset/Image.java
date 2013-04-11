@@ -225,7 +225,15 @@ public class Image {
 			AbstractDataset gridX, 
 			AbstractDataset gridY) {
 		
-		return regrid_kabsch(data, x, y, gridX, gridY);
+		//return regrid_kabsch(data, x, y, gridX, gridY);
+		
+		try {
+			return InterpolatorUtils.regrid(data, x, y, gridX, gridY);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error("TODO put description of error here", e);
+		}
+		return null;
 	}
 	
 	public static AbstractDataset medianFilter(AbstractDataset input, int[] kernel) {

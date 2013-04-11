@@ -45,7 +45,6 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
 public abstract class AbstractDataset implements IDataset {
-	
 
 	/**
 	 * Boolean
@@ -3529,6 +3528,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * See {@link #mean(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
+	@Override
 	public Object mean() {
 // TODO this is necessary because Jython coerces boolean to int!
 		return getStatistics(false).getMean();

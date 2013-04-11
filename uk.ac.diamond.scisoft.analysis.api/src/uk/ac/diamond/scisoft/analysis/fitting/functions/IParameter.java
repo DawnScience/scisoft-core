@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+/**
+ * Parameter interface used for manipulation of fitting parameters
+ */
 public interface IParameter {
 
 	/**

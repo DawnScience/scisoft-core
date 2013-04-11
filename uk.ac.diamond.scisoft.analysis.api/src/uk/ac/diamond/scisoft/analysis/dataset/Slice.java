@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-
 /**
  * Class to represent a slice through a single dimension of a multi-dimensional dataset. A slice
  * comprises a starting position, a stopping position (not included) and a stepping size.
@@ -294,7 +293,6 @@ public class Slice {
 			if (length > rank)
 				break;
 
-			@SuppressWarnings("null")
 			Slice s = slice[i];
 			if (s == null) {
 				start[i] = 0;

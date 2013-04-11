@@ -16,14 +16,19 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+/**
+ * Region of interest interface
+ */
 public interface IROI {
 
 	/**
-	 * 
 	 * @return the name
 	 */
 	public String getName();
 
+	/**
+	 * @param name
+	 */
 	public void setName(String name);
 
 	/**
@@ -94,9 +99,4 @@ public interface IROI {
 	 * @return true if plot is enabled
 	 */
 	public boolean isPlot();
-
-	public boolean equals(Object obj);
-
-	public int hashCode();
-
 }

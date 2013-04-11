@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.List;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -35,7 +35,7 @@ public interface IDataSetLoader {
 	 * @param mon
 	 * @return the set loaded
 	 */
-	public AbstractDataset loadSet(String path, String name, IMonitor mon) throws Exception;
+	public IDataset loadSet(String path, String name, IMonitor mon) throws Exception;
 	
 	
 	/**

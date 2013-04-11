@@ -17,11 +17,11 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
-
+import  uk.ac.diamond.scisoft.analysis.roi.IROI;
 /**
  * Base class for general region of interest
  */
-public class ROIBase implements Serializable {
+public class ROIBase implements Serializable, IROI {
 	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;

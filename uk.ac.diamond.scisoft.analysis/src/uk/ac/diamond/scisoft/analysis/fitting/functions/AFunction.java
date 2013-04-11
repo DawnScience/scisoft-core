@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
-
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 /**
  * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
  * specified as true, then the first parameter must be that peak's position

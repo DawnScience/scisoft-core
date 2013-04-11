@@ -18,8 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.Serializable;
 
-import gda.analysis.io.ScanFileHolderException;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public interface ILazyLoader extends Serializable {
@@ -39,5 +38,5 @@ public interface ILazyLoader extends Serializable {
 	 * @return a slice of a dataset
 	 * @throws ScanFileHolderException
 	 */
-	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException;
+	public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception;
 }

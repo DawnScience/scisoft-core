@@ -194,4 +194,10 @@ public class MockDataset implements IDataset {
 	public void resize(int... newShape) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
+
+	@Override
+	public Object mean() {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
 }

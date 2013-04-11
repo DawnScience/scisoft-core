@@ -20,9 +20,9 @@ import java.util.Map;
 
 public interface IFunctionService {
 
-	public Map<String, AFunction> getFunctions(); 
+	public Map<String, IFunction> getFunctions(); 
 	
-	public void setFunctions(Map<String, AFunction> functions);
+	public void setFunctions(Map<String, IFunction> functions);
 
 }
 

@@ -212,7 +212,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(Slice... slice) {
+	public IDataset getSlice(Slice... slice) {
 		final int rank = shape.length;
 		if (slice == null || slice.length == 0) {
 			return getSlice((int[]) null, null, null);
@@ -225,10 +225,10 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(int[] start, int[] stop, int[] step) {
+	public IDataset getSlice(int[] start, int[] stop, int[] step) {
 		try {
 			return getSlice(null, start, stop, step);
-		} catch (ScanFileHolderException e) {
+		} catch (Exception e) {
 			// do nothing
 		}
 
@@ -236,7 +236,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -246,7 +246,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 		if (!loader.isFileReadable())
 			return null; // TODO add interaction to use plot server to load dataset
 
@@ -308,11 +308,11 @@ public class LazyDataset implements ILazyDataset {
 			nstep = step;
 		}
 
-		AbstractDataset a;
+		IDataset a;
 		try {
 			a = loader.getDataset(monitor, oShape, nstart, nstop, nstep);
 			a.setShape(nshape);
-		} catch (ScanFileHolderException e) {
+		} catch (Exception e) {
 			// return a fake dataset to show that this has not worked, should not be used in general though.
 			logger.debug("Problem getting {}: {}", String.format("slice %s %s %s", Arrays.toString(start), Arrays.toString(stop),
 							Arrays.toString(step)), e);

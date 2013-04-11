@@ -537,7 +537,7 @@ public class LoaderFactory {
 				// do this, it should not be registered with LoaderFactory
 				final AbstractDataset set;
 				if (loader instanceof IDataSetLoader) {
-					set = ((IDataSetLoader) loader).loadSet(path, name, mon);
+					set = (AbstractDataset)((IDataSetLoader) loader).loadSet(path, name, mon);
 				} else {
 					DataHolder holder = loader.loadFile(mon);
 					ILazyDataset lazy = holder.getLazyDataset(name);

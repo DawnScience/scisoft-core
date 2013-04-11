@@ -16,10 +16,14 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.io.Serializable;
+
 /**
  * This interface defines the implementation-independent and generic parts of a dataset
  */
 public interface IDataset extends ILazyDataset {
+	
+
 	/**
 	 * @return Number of elements per item
 	 */
@@ -99,6 +103,12 @@ public interface IDataset extends ILazyDataset {
 	public void resize(int... newShape);
 
 	/**
+	 * 
+	 * @return mean of all items in dataset as a double, array of doubles or a complex number
+	 */
+	public Object mean();
+
+	/**
 	 * NOTE this does not return the minimum value if there are NaNs in the 
 	 * dataset.
 	 * 
@@ -132,4 +142,5 @@ public interface IDataset extends ILazyDataset {
 	 */
 	@Override
 	public IDataset clone();
+	
 }

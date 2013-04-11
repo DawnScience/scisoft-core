@@ -45,15 +45,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
 public abstract class AbstractDataset implements IDataset {
-	/**
-	 * Update this when there are any serious changes to API
-	 */
-	protected static final long serialVersionUID = -6891075135217265625L;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	transient protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
+	
 
 	/**
 	 * Boolean
@@ -114,7 +106,7 @@ public abstract class AbstractDataset implements IDataset {
 	 */
 	public static final int OBJECT = 10;
 
-	private static final int ARRAYMUL = 100;
+	public static final int ARRAYMUL = 100;
 
 	/**
 	 * Array of signed 8-bit integers
@@ -144,6 +136,16 @@ public abstract class AbstractDataset implements IDataset {
 	 * Array of 64-bit floating points
 	 */
 	public static final int ARRAYFLOAT64 = ARRAYMUL * FLOAT64;
+
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	protected static final long serialVersionUID = -6891075135217265625L;
+
+	/**
+	 * Setup the logging facilities
+	 */
+	transient protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
 
 	private static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
@@ -3131,7 +3133,7 @@ public abstract class AbstractDataset implements IDataset {
 		return (Integer) value;
 	}
 
-	private Object getMaxMin(boolean ignoreNaNs, boolean ignoreInfs, String key) {
+	protected Object getMaxMin(boolean ignoreNaNs, boolean ignoreInfs, String key) {
 		if (!hasFloatingPointElements()) {
 			ignoreNaNs = false;
 			ignoreInfs = false;

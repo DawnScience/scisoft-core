@@ -473,6 +473,9 @@ public class ROIProfile {
 		return profiles;
 	}
 
+	private static final int HORIZONTAL = 1 << 8;
+	private static final int VERTICAL = 1 << 9;
+
 	/**
 	 * type of boxline profile
 	 */
@@ -490,7 +493,7 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box line profiles
 	 */
-	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, BoxLineType type) {
+	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, int type) {
 
 		double[] startpt = rroi.getPoint();
 		double[] endpt = rroi.getEndPoint();
@@ -501,10 +504,10 @@ public class ROIProfile {
 		double[] leftbottompt = { new Double(startpt[0]), new Double(endpt[1]) };
 		LinearROI line1 = null, line2 = null;
 		
-		if(type == BoxLineType.VERTICAL_TYPE){
+		if(type == VERTICAL){
 			line1 = new LinearROI(startpt, leftbottompt);
 			line2 = new LinearROI(righttoppt, endpt);
-		} else if(type == BoxLineType.HORIZONTAL_TYPE){
+		} else if(type == HORIZONTAL){
 			line1 = new LinearROI(startpt, righttoppt);
 			line2 = new LinearROI(leftbottompt, endpt);
 		}

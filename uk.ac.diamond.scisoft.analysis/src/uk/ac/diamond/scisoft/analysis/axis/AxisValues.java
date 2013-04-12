@@ -223,25 +223,20 @@ public class AxisValues implements Iterable<Double>, Serializable {
 		if (value > maxValue || value < minValue)
 			return -1;
 
-		IndexIterator it = values.getIterator();
-		int counter = 0;
-		while (it.hasNext()) {
-			double entry = values.getAbs(it.index);
-			if (entry >= value)
-				return counter;
-			counter++;
-		}
-		return -1;
+		int counter = isAscending() ? DatasetUtils.findIndexGreaterThanOrEqualTo(values, value) : DatasetUtils.findIndexLessThan(values, value);
+		if (counter >= values.getSize())
+			return -1;
+		return counter;
 	}
 
 	/**
 	 * Find the nearest element number in the values list to the request value if the value is larger or smaller than
-	 * the largest / smallest entry in the list it will return -1. It will always return the nearest upper boundary
+	 * the largest / smallest entry in the list it will return -1. It will always return the nearest lower boundary
 	 * entry
 	 * 
 	 * @param value
 	 *            search value
-	 * @return -1 if none could be found otherwise the upper boundary element number
+	 * @return -1 if none could be found otherwise the lower boundary element number
 	 */
 	public int nearestLowEntry(double value) {
 		if (isDirty)
@@ -249,17 +244,21 @@ public class AxisValues implements Iterable<Double>, Serializable {
 		if (value > maxValue || value < minValue)
 			return -1;
 
-		IndexIterator it = values.getIterator();
-		int counter = 0;
-		while (it.hasNext()) {
-			double entry = values.getAbs(it.index);
-			if (entry == value)
-				return counter;
-			else if (entry > value)
-				return counter - 1;
-			counter++;
+		if (isAscending()) {
+			int counter = DatasetUtils.findIndexGreaterThanOrEqualTo(values, value);
+			if (counter >= values.getSize()) {
+				return -1;
+			}
+			if (values.getAbs(counter) > value) {
+				counter--;
+			}
+			return counter;
 		}
-		return -1;
+		int counter = DatasetUtils.findIndexLessThan(values, value);
+		if (counter >= values.getSize()) {
+			return -1;
+		}
+		return counter - 1;
 	}
 
 	/**

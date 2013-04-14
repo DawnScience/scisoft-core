@@ -36,7 +36,7 @@ public interface ILazyLoader extends Serializable {
 	 * @param stop
 	 * @param step
 	 * @return a slice of a dataset
-	 * @throws ScanFileHolderException
+	 * @throws Exception
 	 */
 	public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception;
 }

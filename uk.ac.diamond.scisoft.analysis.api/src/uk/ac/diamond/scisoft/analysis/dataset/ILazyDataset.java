@@ -113,7 +113,7 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @param step
 	 *            specifies the steps in the slice (can be null for unit steps)
 	 * @return The dataset of the sliced data
-	 * @throws ScanFileHolderException 
+	 * @throws Exception 
 	 */
 	public IDataset getSlice(final IMonitor monitor, final int[] start, final int[] stop,
 			final int[] step) throws Exception;

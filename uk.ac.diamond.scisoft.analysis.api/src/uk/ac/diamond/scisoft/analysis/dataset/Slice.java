@@ -293,6 +293,7 @@ public class Slice {
 			if (length > rank)
 				break;
 
+			@SuppressWarnings("null")
 			Slice s = slice[i];
 			if (s == null) {
 				start[i] = 0;

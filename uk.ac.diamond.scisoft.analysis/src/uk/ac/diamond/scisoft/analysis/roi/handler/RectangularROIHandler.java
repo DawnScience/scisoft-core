@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
@@ -243,7 +243,7 @@ public class RectangularROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public ROIBase interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(int[] spt, int[] ept) {
 		final RectangularROI rroi = (RectangularROI) roi;
 		RectangularROI croi = null; // return null if not a valid event
 

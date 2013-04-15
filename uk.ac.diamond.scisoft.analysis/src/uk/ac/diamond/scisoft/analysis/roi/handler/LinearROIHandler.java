@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 
 /**
  * Wrapper class for a LinearROI that adds handles
@@ -129,7 +129,7 @@ public class LinearROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public ROIBase interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(int[] spt, int[] ept) {
 			final LinearROI lroi = (LinearROI) roi;
 			LinearROI croi = null; // return null if not a valid event
 

@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {
@@ -30,7 +30,7 @@ abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {
 	public static final String SPT = "spt";
 	public static final String PLOT = "plot";
 
-	public Map<String, Object> flatten(ROIBase roi, String typeName, IRootFlattener rootFlattener) {
+	public Map<String, Object> flatten(IROI roi, String typeName, IRootFlattener rootFlattener) {
 		Map<String, Object> outMap = createMap(typeName);
 		outMap.put(SPT, rootFlattener.flatten(roi.getPointRef()));
 		outMap.put(PLOT, rootFlattener.flatten(roi.isPlot()));

@@ -16,17 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.vecmath.Vector3d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * Utility class to hold methods that calculate or use d-spacings
@@ -151,7 +151,7 @@ public class DSpacing {
 	 * @param dSpacing (in Angstroms)
 	 * @return roi
 	 */
-	public static ROIBase conicFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
+	public static IROI conicFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
 			double dSpacing) {
 		return conicFromDSpacing(detector, diffExp.getWavelength(), dSpacing);
 	}
@@ -163,7 +163,7 @@ public class DSpacing {
 	 * @param dSpacing (in same units as wavelength)
 	 * @return roi
 	 */
-	public static ROIBase conicFromDSpacing(DetectorProperties detector, double wavelength,
+	public static IROI conicFromDSpacing(DetectorProperties detector, double wavelength,
 			double dSpacing) {
 		double alpha = 2 * Math.asin(wavelength / (2 * dSpacing));
 		return conicFromAngle(detector, alpha);
@@ -175,7 +175,7 @@ public class DSpacing {
 	 * @param alpha semi-angle (in radians)
 	 * @return roi
 	 */
-	public static ROIBase conicFromAngle(DetectorProperties detector, double alpha) {
+	public static IROI conicFromAngle(DetectorProperties detector, double alpha) {
 		final Vector3d normal = detector.getNormal();
 
 		Vector3d major = new Vector3d();

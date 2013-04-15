@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * Used to transmit functions over rmi, including abstract data sets.
@@ -52,12 +52,12 @@ public class FunctionSquirts implements Serializable {
 	 * This thing may consist of multiple items of data.
 	 */
 	public static final class Squirt  implements Serializable {
-		private ROIBase           bounds;
+		private IROI           bounds;
 		private AFunction         function;
 		private String            name;
 		private AbstractDataset   x,y;
 		private AbstractDataset[] peakFunctions;
-		private List<ROIBase>     regions;
+		private List<IROI>     regions;
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -114,10 +114,10 @@ public class FunctionSquirts implements Serializable {
 				return false;
 			return true;
 		}
-		public ROIBase getBounds() {
+		public IROI getBounds() {
 			return bounds;
 		}
-		public void setBounds(ROIBase bounds) {
+		public void setBounds(IROI bounds) {
 			this.bounds = bounds;
 		}
 		public AFunction getFunction() {
@@ -150,10 +150,10 @@ public class FunctionSquirts implements Serializable {
 		public void setPeakFunctions(AbstractDataset[] peakFunctions) {
 			this.peakFunctions = peakFunctions;
 		}
-		public List<ROIBase> getRegions() {
+		public List<IROI> getRegions() {
 			return regions;
 		}
-		public void setRegions(List<ROIBase> regions) {
+		public void setRegions(List<IROI> regions) {
 			this.regions = regions;
 		}
         

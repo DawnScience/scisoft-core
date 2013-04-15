@@ -26,10 +26,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
-import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * Class that will test calculating
@@ -90,7 +88,7 @@ public class DSpacingTest {
 		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(0.5);
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
 
-		ROIBase roi = DSpacing.conicFromDSpacing(det, env, 1);
+		IROI roi = DSpacing.conicFromDSpacing(det, env, 1);
 		EllipticalROI eroi = (EllipticalROI) roi;
 		Assert.assertTrue("Circle", eroi.isCircular());
 		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);

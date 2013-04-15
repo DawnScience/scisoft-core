@@ -16,10 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
+
 /**
  * Region of interest interface
  */
-public interface IROI {
+public interface IROI extends Serializable {
 
 	/**
 	 * @return the name
@@ -99,4 +101,9 @@ public interface IROI {
 	 * @return true if plot is enabled
 	 */
 	public boolean isPlot();
+
+	/**
+	 * @return a copy of ROI
+	 */
+	public IROI copy();
 }

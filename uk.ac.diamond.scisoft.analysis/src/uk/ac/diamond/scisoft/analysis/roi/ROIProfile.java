@@ -320,7 +320,7 @@ public class ROIProfile {
 
 		} else {
 			
-			if (mask != null && data != null) {
+			if (mask != null) {
 				if (data.isCompatibleWith(mask)) {
 					clip = true;
 					// TODO both multiply and nanalize create copies of the whole data passed in

@@ -542,7 +542,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 
 			double distance = ((Double) getMetadataValue("xtalToDetector")).doubleValue();
 			// NXGeometery:NXtranslation
-			double[] detectorOrigin = { (imageWidth - beamX) * pixelSizeX, (imageLength - beamY) * pixelSizeY, distance };
+			double[] detectorOrigin = { imageWidth * pixelSizeX - beamX, imageLength * pixelSizeY - beamY, distance };
 
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
 			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "metre");
@@ -575,7 +575,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			GDAMetadata.put("NXdetector:NXgeometery:NXorientation", directionCosine);
 
 			// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
-			double[] detectorShape = { (imageWidth - beamX) * pixelSizeX, (imageLength - beamY) * pixelSizeY, 0, 0, 0, 0 };
+			double[] detectorShape = { imageWidth * pixelSizeX, imageLength * pixelSizeY, 0, 0, 0, 0 };
 			GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
 			GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXshape", "milli*metre");
 

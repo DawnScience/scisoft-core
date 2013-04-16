@@ -14,6 +14,7 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactoryExtensionService.class);
 	
 	
+	@Override
 	public void registerExtensionPoints() {
 		try {
 		    final IConfigurationElement[] ele = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.io.loader");

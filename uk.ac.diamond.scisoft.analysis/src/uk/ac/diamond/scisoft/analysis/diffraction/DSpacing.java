@@ -33,6 +33,7 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
  */
 public class DSpacing {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(DSpacing.class);
 
 	/**

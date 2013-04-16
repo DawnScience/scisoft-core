@@ -166,6 +166,7 @@ public class Triangle_dt {
 
 		// Udi Schneider: Added a condition check for isHalfPlane. If the current
 		// neighbor is a half plane, we also want to move to the next neighbor
+		if(neighbor == null) return null;
 		if (neighbor.equals(prevTriangle) || neighbor.isHalfplane()) {
 			if (a.equals(p)) {
 				neighbor = abnext;
@@ -201,6 +202,7 @@ public class Triangle_dt {
 		return circum.Radius() > circum.Center().distance2(p);
 	}
 
+	@Override
 	public String toString() {
 		String res = ""; // +_id+") ";
 		res += a.toString() + b.toString();
@@ -219,7 +221,7 @@ public class Triangle_dt {
 	 */
 	public boolean contains(Point_dt p) {
 		boolean ans = false;
-		if (this.halfplane | p == null)
+		if (p == null || this.halfplane)
 			return false;
 
 		if (isCorner(p)) {
@@ -247,7 +249,7 @@ public class Triangle_dt {
 	 */
 	public boolean contains_BoundaryIsOutside(Point_dt p) {
 		boolean ans = false;
-		if (this.halfplane | p == null)
+		if (p == null | this.halfplane)
 			return false;
 
 		if (isCorner(p)) {

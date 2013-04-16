@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
-import java.util.Arrays;
 
 import junit.framework.Assert;
 

@@ -99,6 +99,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			if (Utils.leInt(hbd[poss], hbd[poss + 1],hbd[poss + 2], hbd[poss + 3]) == 1234) {
 				littleEndian = true;
 			} else {
+				is.close();
 				throw new ScanFileHolderException("Unknown endian");
 			}
 			metadataTable.put("headerByteOrderLE", littleEndian);
@@ -511,6 +512,8 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			// comments - can be used as desired
 			poss += 512;
 
+			//close inputstream
+			is.close();
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Problem loading MAR metadata", e);
 		}

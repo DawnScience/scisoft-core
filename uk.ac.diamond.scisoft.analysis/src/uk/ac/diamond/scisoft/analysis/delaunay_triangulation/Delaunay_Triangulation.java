@@ -673,6 +673,7 @@ public class Delaunay_Triangulation {
 		// find third point of neighbor triangle
 		// (the one which is not shared with current half plane)
 		// this is used in determining half plane orientation
+		if(neighbor == null) return null;
 		if (!neighbor.p1().equals(halfplane.p1()) && !neighbor.p1().equals(halfplane.p2()))
 			third = neighbor.p1();
 		if (!neighbor.p2().equals(halfplane.p1()) && !neighbor.p2().equals(halfplane.p2()))
@@ -691,6 +692,7 @@ public class Delaunay_Triangulation {
 		// lies above or below the half plane
 		// works by finding the matching y value on the half plane line equation
 		// for the same x value as the third point
+		if(third == null) return null;
 		double y_orient = halfplane_delta * (third.x() - halfplane.p1().x()) + halfplane.p1().y();
 		boolean above = true;
 		if (y_orient > third.y())
@@ -1041,6 +1043,7 @@ public class Delaunay_Triangulation {
 		Arrays.sort(ans, comp);
 
 		FileWriter fw = new FileWriter(smfFile);
+		@SuppressWarnings("resource")
 		PrintWriter os = new PrintWriter(fw);
 		// prints the tsin file header:
 		os.println("begin");
@@ -1121,6 +1124,7 @@ public class Delaunay_Triangulation {
 			double d3 = new Double(st.nextToken()).doubleValue();
 			ans[i] = new Point_dt((int) d1, (int) d2, d3);
 		}
+		is.close();
 		return ans;
 	}
 
@@ -1155,6 +1159,7 @@ public class Delaunay_Triangulation {
 		ans = new Point_dt[vec.size()];
 		for (int i = 0; i < vec.size(); i++)
 			ans[i] = vec.elementAt(i);
+		is.close();
 		return ans;
 	}
 
@@ -1238,7 +1243,7 @@ public class Delaunay_Triangulation {
 	}
 
 	/** assumes v is an halfplane! - returns another (none halfplane) triangle */
-	private static Triangle_dt findnext2(Point_dt p, Triangle_dt v) {
+	private static Triangle_dt findnext2(@SuppressWarnings("unused") Point_dt p, Triangle_dt v) {
 		if (v.abnext != null && !v.abnext.halfplane)
 			return v.abnext;
 		if (v.bcnext != null && !v.bcnext.halfplane)

@@ -88,7 +88,7 @@ public class MetaDataAdapter implements IMetaData {
 		} else {
 		    ret = new MetaDataAdapter(adapterDataNames, adapterUserObjects);
 		}
-		if (ret!=null) ret.setFilePath(getFilePath());
+		ret.setFilePath(getFilePath());
 		return ret;
 	}
 	

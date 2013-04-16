@@ -321,8 +321,8 @@ abstract public class FlatteningTestAbstract {
 		DoubleDataset fltDataset = (DoubleDataset) AbstractDataset.arange(10, AbstractDataset.FLOAT);
 		flattenAndUnflatten(new IDataset[] { intDataset, fltDataset });
 		flattenAndUnflatten(new IntegerDataset[] { intDataset, intDataset });
-		// ROIBase[]
-		flattenAndUnflatten(new ROIBase[] { new RectangularROI(), new SectorROI() });
+		// IROI[]
+		flattenAndUnflatten(new IROI[] { new RectangularROI(), new SectorROI() });
 		flattenAndUnflatten(new RectangularROI[] { new RectangularROI(), new RectangularROI() });
 	}
 

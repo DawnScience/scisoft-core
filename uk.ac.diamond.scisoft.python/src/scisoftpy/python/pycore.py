@@ -55,11 +55,11 @@ def asIterable(items):
     Ensure entity is an iterable by making it a tuple if not
     """
     t = type(items)
-    if t is _types.ListType or t is _types.TupleType: # or t is _arraytype:
+    if t is _types.ListType or t is _types.TupleType:
         pass
-#    elif isinstance(items, _jlist) or isinstance(items, _jmap):
-#        pass
-    else: # isinstance(items, _abstractds) or isinstance(items, _dataset):
+    elif t is _types.DictType:
+        items = [ i for i in items.items() ]
+    else:
         items = (items,)
     return items
 

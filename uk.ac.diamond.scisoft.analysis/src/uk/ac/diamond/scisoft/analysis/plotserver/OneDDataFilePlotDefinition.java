@@ -17,11 +17,14 @@
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class OneDDataFilePlotDefinition implements Serializable{
 	public String url; 
 	public String x_axis; 
 	public String[] y_axes;
+	
+	public Map<String, String> yAxesMap;	
 
 	public OneDDataFilePlotDefinition(String url, String xAxis, String[] yAxes) {
 		super();
@@ -29,5 +32,19 @@ public class OneDDataFilePlotDefinition implements Serializable{
 		x_axis = xAxis;
 		y_axes = yAxes;
 	}
+	
+	
+	public Map<String, String> getyAxesMap() {
+		return yAxesMap;
+	}
+
+	/**
+	 * Key - name of y_axis being plotted. To match a value in y_axes
+	 * Entry - name of the y axis to use if the default axis is not to be used
+	 */
+	public void setyAxesMap(Map<String, String> yAxesMap) {
+		this.yAxesMap = yAxesMap;
+	}
+	
 	
 }

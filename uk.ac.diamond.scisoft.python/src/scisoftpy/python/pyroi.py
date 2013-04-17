@@ -124,6 +124,9 @@ class roi_list(list):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def add(self, item): # cover Java list usage
+        self.append(item)
+
 class point_list(roi_list):
     def __init__(self):
         super(point_list, self).__init__()
@@ -147,7 +150,6 @@ class circle_list(roi_list):
 class ellipse_list(roi_list):
     def __init__(self):
         super(ellipse_list, self).__init__()
-
 
 def profile(*args):
     #TODO

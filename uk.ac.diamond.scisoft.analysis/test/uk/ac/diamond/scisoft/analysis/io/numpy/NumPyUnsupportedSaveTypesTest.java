@@ -58,6 +58,6 @@ public class NumPyUnsupportedSaveTypesTest {
 	@Test(expected = ScanFileHolderException.class)
 	public void testUnsupportedDataTypes() throws ScanFileHolderException, IOException {
 		// We use 3 as the itemSize so that RGB data sets can be created
-		NumPyTest.saveNumPyFile(AbstractDataset.zeros(3, new int[] { 1, 2, 3 }, dtype), NumPyTest.getTempFile());
+		NumPyTest.saveNumPyFile(AbstractDataset.zeros(3, new int[] { 1, 2, 3 }, dtype), NumPyTest.getTempFile(), false);
 	}
 }

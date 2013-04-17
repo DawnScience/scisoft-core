@@ -40,7 +40,7 @@ public class NumPySpecialsTest {
 			shape[i] = 1;
 		}
 		AbstractDataset ds = AbstractDataset.ones(shape, AbstractDataset.FLOAT64);
-		NumPyTest.saveNumPyFile(ds, NumPyTest.getTempFile());
+		NumPyTest.saveNumPyFile(ds, NumPyTest.getTempFile(), false);
 	}
 
 	@Test(expected = ScanFileHolderException.class)

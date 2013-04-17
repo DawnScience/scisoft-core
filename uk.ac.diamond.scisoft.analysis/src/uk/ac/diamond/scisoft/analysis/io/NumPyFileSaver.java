@@ -38,14 +38,26 @@ import uk.ac.diamond.scisoft.analysis.io.NumPyFile.DataTypeInfo;
 public class NumPyFileSaver implements IFileSaver {
 
 	private String filename = "";
+	protected boolean unsigned = false;
 
 	/**
-	 * Takes the dataset from a scan file holder and save it as our own Diamond Scisoft format
+	 * Takes the dataset from a scan file holder and save it in npy format
 	 * 
 	 * @param filename
 	 */
 	public NumPyFileSaver(String filename) {
 		this.filename = filename;
+	}
+
+	/**
+	 * Takes the dataset from a scan file holder and save it in npy format
+	 * 
+	 * @param filename
+	 * @param unsigned
+	 */
+	public NumPyFileSaver(String filename, boolean unsigned) {
+		this.filename = filename;
+		this.unsigned = unsigned;
 	}
 
 	@Override
@@ -81,7 +93,14 @@ public class NumPyFileSaver implements IFileSaver {
 			}
 			AbstractDataset sdata = DatasetUtils.convertToAbstractDataset(dataset);
 			int dtype = sdata.getDtype();
-			DataTypeInfo dataTypeInfo = NumPyFile.numPyTypeMap.get(dtype);
+			DataTypeInfo dataTypeInfo;
+			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(dtype) : NumPyFile.numPyTypeMap.get(dtype);
+			if (unsigned) {
+				dataTypeInfo = NumPyFile.unsignedNumPyTypeMap.get(dtype);
+			}
+			if (dataTypeInfo == null) { // ignore unsigned flag if not found
+				dataTypeInfo = NumPyFile.numPyTypeMap.get(dtype);
+			}
 			if (dataTypeInfo == null) {
 				throw new ScanFileHolderException("Unsupported data types for NumPy File Saver");
 			}
@@ -90,6 +109,11 @@ public class NumPyFileSaver implements IFileSaver {
 			if (is > 255) {
 				throw new ScanFileHolderException("Number of elements in each item exceeds allowed maximum of 255");
 			}
+			if (unsigned) {
+				dtype = dataTypeInfo.dType;
+				sdata = DatasetUtils.cast(sdata, dtype);
+			}
+
 			byte isize = (byte) is;
 
 			int[] shape = sdata.getShape();

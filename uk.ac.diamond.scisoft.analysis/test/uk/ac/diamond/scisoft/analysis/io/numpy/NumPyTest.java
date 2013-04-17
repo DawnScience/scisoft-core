@@ -63,30 +63,33 @@ public class NumPyTest {
 	 *            to save to
 	 * @throws ScanFileHolderException
 	 */
-	protected static void saveNumPyFile(AbstractDataset ds, File loc) throws ScanFileHolderException {
+	protected static void saveNumPyFile(AbstractDataset ds, File loc, boolean unsigned) throws ScanFileHolderException {
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
-		new NumPyFileSaver(loc.toString()).saveFile(dh);
+		new NumPyFileSaver(loc.toString(), unsigned).saveFile(dh);
 	}
 
 	static int[][] shapesToTest = { { 1 }, { 100 }, { 1000000 }, { 10, 10 }, { 5, 6, 7, 8 } };
 	static Object[][] types = new Object[][] { { "'|b1'", AbstractDataset.BOOL }, { "'|i1'", AbstractDataset.INT8 },
-			{ "'<i2'", AbstractDataset.INT16 }, { "'<i4'", AbstractDataset.INT32 }, { "'<i8'", AbstractDataset.INT64 },
-			{ "'<f4'", AbstractDataset.FLOAT32 }, { "'<f8'", AbstractDataset.FLOAT64 },
-			{ "'<c8'", AbstractDataset.COMPLEX64 }, { "'<c16'", AbstractDataset.COMPLEX128 }, };
+		{ "'<i2'", AbstractDataset.INT16 }, { "'<i4'", AbstractDataset.INT32 }, { "'<i8'", AbstractDataset.INT64 },
+		{ "'|u1'", AbstractDataset.INT8, true }, { "'<u2'", AbstractDataset.INT16, true }, { "'<u4'", AbstractDataset.INT32, true },
+		{ "'<f4'", AbstractDataset.FLOAT32 }, { "'<f8'", AbstractDataset.FLOAT64 },
+		{ "'<c8'", AbstractDataset.COMPLEX64 }, { "'<c16'", AbstractDataset.COMPLEX128 },};
 
 	@Parameters
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
 		int index = 0;
 		for (int i = 0; i < types.length; i++) {
+			Object[] type = types[i];
+			boolean unsigned = type.length > 2;
 			for (int j = 0; j < shapesToTest.length; j++) {
-				params.add(new Object[] { index++, types[i][0], types[i][1], shapesToTest[j], false });
-				switch ((Integer) types[i][1]) {
+				params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], false, unsigned });
+				switch ((Integer) type[1]) {
 				case AbstractDataset.FLOAT32:
 				case AbstractDataset.FLOAT64:
 					// Add some Inf values
-					params.add(new Object[] { index++, types[i][0], types[i][1], shapesToTest[j], true });
+					params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], true, unsigned });
 				}
 			}
 		}
@@ -100,13 +103,15 @@ public class NumPyTest {
 	private String shapeStr;
 	private int len;
 	private boolean addInf;
+	private boolean unsigned;
 
-	public NumPyTest(int index, String numpyDataType, int abstractDatasetDataType, int[] shape, boolean addInf) {
+	public NumPyTest(int index, String numpyDataType, int abstractDatasetDataType, int[] shape, boolean addInf, boolean unsigned) {
 		this.index = index;
 		this.numpyDataType = numpyDataType;
 		this.abstractDatasetDataType = abstractDatasetDataType;
 		this.shape = shape;
 		this.addInf = addInf;
+		this.unsigned = unsigned;
 		this.len = 1;
 		for (int i = 0; i < shape.length; i++) {
 			this.len *= shape[i];
@@ -173,6 +178,8 @@ public class NumPyTest {
 		PythonHelper.runPythonScript(script, true);
 		AbstractDataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		AbstractDataset ds = createDataset();
+		if (unsigned)
+			ds = AbstractDataset.array(ds, unsigned);
 		Assert.assertEquals(ds, loadedFile);
 	}
 
@@ -182,7 +189,7 @@ public class NumPyTest {
 	public void testSave() throws Exception {
 		AbstractDataset ds = createDataset();
 		File loc = getTempFile();
-		saveNumPyFile(ds, loc);
+		saveNumPyFile(ds, loc, unsigned);
 
 		String script = createNumPyArray(" act=numpy.load(r'" + loc.toString() + "');" + PYTHON_NUMPY_PRINT_MATCHES);
 		String pythonStdout = PythonHelper.runPythonScript(script, false);
@@ -194,9 +201,12 @@ public class NumPyTest {
 	public void testSaveAndLoad() throws Exception {
 		AbstractDataset exp = createDataset();
 		File loc = getTempFile();
-		saveNumPyFile(exp, loc);
+		saveNumPyFile(exp, loc, unsigned);
 
 		AbstractDataset act = NumPyFileLoader.loadFileHelper(loc.toString());
+
+		if (unsigned)
+			exp = AbstractDataset.array(exp, unsigned);
 		Assert.assertEquals(exp, act);
 	}
 

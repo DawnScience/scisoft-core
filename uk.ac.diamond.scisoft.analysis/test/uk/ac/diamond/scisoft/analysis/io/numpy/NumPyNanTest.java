@@ -74,7 +74,7 @@ public class NumPyNanTest {
 	public void testSave() throws Exception {
 		AbstractDataset ds = AbstractDataset.array(new double[] {Double.NaN, Double.NaN}, dtype);
 		File loc = NumPyTest.getTempFile();
-		NumPyTest.saveNumPyFile(ds, loc);
+		NumPyTest.saveNumPyFile(ds, loc, false);
 		StringBuilder script = new StringBuilder();
 		script.append("import numpy; ");
 		script.append("exp=numpy.array([float('NaN')]*2, dtype=" + numpyDataType + "); ");

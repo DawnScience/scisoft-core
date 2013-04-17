@@ -41,8 +41,9 @@ public class NumPyUnsupportedLoadTypesTest {
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
 		params.add(new Object[] { "'>i4'" }); // wrong endian
-		params.add(new Object[] { "'<f12'" }); // long float
-		params.add(new Object[] { "'<c24'" }); // long complex
+// these two do not work with a 64-bit python
+//		params.add(new Object[] { "'<f12'" }); // long float
+//		params.add(new Object[] { "'<c24'" }); // long complex
 		params.add(new Object[] { "'|O4'" }); // objects
 		// This list isn't meant to be exhaustive
 		return params;

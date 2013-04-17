@@ -669,16 +669,28 @@ public class DatasetUtils {
 				c = new BooleanDataset(a);
 				break;
 			case AbstractDataset.INT8:
-				c = new ByteDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundByteDataset(a);
+				else
+					c = new ByteDataset(a);
 				break;
 			case AbstractDataset.INT16:
-				c = new ShortDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundShortDataset(a);
+				else
+					c = new ShortDataset(a);
 				break;
 			case AbstractDataset.INT32:
-				c = new IntegerDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundIntegerDataset(a);
+				else
+					c = new IntegerDataset(a);
 				break;
 			case AbstractDataset.INT64:
-				c = new LongDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundLongDataset(a);
+				else
+					c = new LongDataset(a);
 				break;
 			case AbstractDataset.ARRAYINT8:
 				if (a instanceof AbstractCompoundDataset)

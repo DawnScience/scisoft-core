@@ -16,10 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import static org.junit.Assert.*;
-
-import gda.analysis.io.ScanFileHolderException;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -59,6 +55,7 @@ public class InterpolatorUtilsTest {
 		
 		// now apply the Transform
 		
+		@SuppressWarnings("unused")
 		AbstractDataset result = InterpolatorUtils.regrid(ds, x, y, lin, lin);
 		
 		

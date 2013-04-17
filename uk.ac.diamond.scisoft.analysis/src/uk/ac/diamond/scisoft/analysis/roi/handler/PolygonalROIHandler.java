@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolygonalROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 
 /**
  * Wrapper class for polygon that adds handles for each point
@@ -47,7 +47,7 @@ public class PolygonalROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public void setROI(ROIBase roi) {
+	public void setROI(IROI roi) {
 		PolygonalROI proi = (PolygonalROI) roi;
 
 		int n = proi.getSides();
@@ -84,7 +84,7 @@ public class PolygonalROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public ROIBase interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(int[] spt, int[] ept) {
 		// TODO Auto-generated method stub
 		return null;
 	}

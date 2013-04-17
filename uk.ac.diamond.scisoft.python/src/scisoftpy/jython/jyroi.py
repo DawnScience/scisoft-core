@@ -18,6 +18,8 @@ import uk.ac.diamond.scisoft.analysis.roi as _roi
 from jymaths import ndarraywrapped as _npwrapped
 from jycore import asDataset as _asDs
 
+_iroi = _roi.IROI
+
 roibase = _roi.ROIBase
 
 point = _roi.PointROI

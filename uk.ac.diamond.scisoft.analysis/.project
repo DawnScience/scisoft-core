@@ -6,8 +6,8 @@
 		<project>ncsa.hdf</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
+		<project>uk.ac.diamond.scisoft.analysis.api</project>
 		<project>uk.ac.gda.common</project>
-		<project>uk.ac.gda.libs</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

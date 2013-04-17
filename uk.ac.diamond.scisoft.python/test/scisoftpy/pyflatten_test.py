@@ -399,6 +399,9 @@ class Test(unittest.TestCase):
             # AssertionError: UUID('93dfd804-85ba-4074-afce-d621f7f2aac6') != UUID('5928f264-e431-432e-ab68-873a0a031ff2')
             self._flattenAndUnflatten(uuid.uuid4())
     
+    def testUnicode(self):
+        self._flattenAndUnflatten(unicode("test"), "test", str)
+    
     def testTypedNone(self):
         self._flattenAndUnflatten(dnp.rpc.typednone("java.lang.Double"))
         self._flattenAndUnflatten(dnp.rpc.typednone("uk.ac.diamond.scisoft.analysis.roi.RectangularROIList"))

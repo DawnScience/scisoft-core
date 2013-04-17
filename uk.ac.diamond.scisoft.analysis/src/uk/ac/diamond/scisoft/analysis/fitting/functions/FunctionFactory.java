@@ -138,7 +138,7 @@ public final class FunctionFactory {
 		Class<? extends AFunction> clazz = FUNCTIONS.get(name);
 		
 		final Constructor<? extends AFunction> c = clazz.getConstructor(IParameter[].class);
-		return c.newInstance(args);
+		return c.newInstance((Object[])args);
 	}
 
 	/**

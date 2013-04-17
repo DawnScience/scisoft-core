@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
 
 /**
  * Wrapper class for a LinearROI that adds handles
@@ -129,39 +129,39 @@ public class LinearROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public ROIBase interpretMouseDragging(int[] spt, int[] ept) {
-			final LinearROI lroi = (LinearROI) roi;
-			LinearROI croi = null; // return null if not a valid event
+	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+		final LinearROI lroi = (LinearROI) roi;
+		LinearROI croi = null; // return null if not a valid event
 
-			switch (status) {
-			case RMOVE:
-				croi = lroi.copy();
-				croi.addPoint(ept);
-				croi.subPoint(spt);
-				break;
-			case NONE:
-				croi = lroi.copy();
-				croi.setEndPoint(ept);
-				break;
-			case REORIENT:
-				croi = reorient(ept);
-				break;
-			case RESIZE:
-				croi = resize(ept);
-				break;
-			case ROTATE:
-				croi = lroi.copy();
-				double ang = croi.getAngleRelativeToMidPoint(ept);
-				double[] mpt = croi.getMidPoint();
-				croi.setAngle(ang);
-				croi.setMidPoint(mpt);
-				break;
-			case CMOVE:
-				break;
-			case CRMOVE:
-				break;
-			}
+		switch (status) {
+		case RMOVE:
+			croi = lroi.copy();
+			croi.addPoint(ept);
+			croi.subPoint(spt);
+			break;
+		case NONE:
+			croi = lroi.copy();
+			croi.setEndPoint(ept);
+			break;
+		case REORIENT:
+			croi = reorient(ept);
+			break;
+		case RESIZE:
+			croi = resize(ept);
+			break;
+		case ROTATE:
+			croi = lroi.copy();
+			double ang = croi.getAngleRelativeToMidPoint(ept);
+			double[] mpt = croi.getMidPoint();
+			croi.setAngle(ang);
+			croi.setMidPoint(mpt);
+			break;
+		case CMOVE:
+			break;
+		case CRMOVE:
+			break;
+		}
 
-			return croi;
+		return croi;
 	}
 }

@@ -24,7 +24,6 @@ import java.util.Date;
  * information which has been implemented in IMetaData.
  * <p>
  * It is intended that implementations of this interface will be through an adapter
- * (see {@link ExtendedMetadataAdapter})
  */
 public interface IExtendedMetadata extends IMetaData {
 

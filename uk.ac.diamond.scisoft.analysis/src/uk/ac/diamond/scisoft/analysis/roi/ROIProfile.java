@@ -258,6 +258,7 @@ public class ROIProfile {
 	 * @return box profile
 	 */
 	public static AbstractDataset[] boxMean(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+		if(data == null) return null;
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
 		double ang = rroi.getAngle();
@@ -319,7 +320,7 @@ public class ROIProfile {
 
 		} else {
 			
-			if (mask != null && data != null) {
+			if (mask != null) {
 				if (data.isCompatibleWith(mask)) {
 					clip = true;
 					// TODO both multiply and nanalize create copies of the whole data passed in
@@ -503,9 +504,12 @@ public class ROIProfile {
 			line1 = new LinearROI(startpt, righttoppt);
 			line2 = new LinearROI(leftbottompt, endpt);
 		}
-		
-		profiles[0] = ROIProfile.line(data, mask, line1, 1d, maskWithNans)[0];
-		profiles[1] = ROIProfile.line(data, mask, line2, 1d, maskWithNans)[0];
+		AbstractDataset[] lineProfiles = ROIProfile.line(data, mask, line1, 1d, maskWithNans);
+		profiles[0] = lineProfiles != null ? lineProfiles[0] : null;
+		if(profiles[0] == null) return null;
+		lineProfiles = ROIProfile.line(data, mask, line2, 1d, maskWithNans);
+		profiles[1] = lineProfiles != null ? lineProfiles[0] : null;
+		if(profiles[1] == null) return null;
 		return profiles;
 	}
 

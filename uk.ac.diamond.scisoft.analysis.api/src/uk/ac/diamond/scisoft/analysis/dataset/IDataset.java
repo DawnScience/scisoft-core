@@ -16,13 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import java.io.Serializable;
-
 /**
  * This interface defines the implementation-independent and generic parts of a dataset
  */
 public interface IDataset extends ILazyDataset {
-	
 
 	/**
 	 * @return Number of elements per item
@@ -97,13 +94,11 @@ public interface IDataset extends ILazyDataset {
 
 	/**
 	 * Change shape and size of dataset in-place
-	 * 
 	 * @param newShape
 	 */
 	public void resize(int... newShape);
 
 	/**
-	 * 
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	public Object mean();
@@ -113,7 +108,7 @@ public interface IDataset extends ILazyDataset {
 	 * dataset.
 	 * 
 	 * @return Minimum value
-	 * @throws UnsupportedOperationException if comparisons not valid
+	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */
 	public Number min();
 
@@ -122,7 +117,7 @@ public interface IDataset extends ILazyDataset {
 	 * dataset.
 	 * 
 	 * @return Maximum value
-	 * @throws UnsupportedOperationException if comparisons not valid
+	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */
 	public Number max();
 

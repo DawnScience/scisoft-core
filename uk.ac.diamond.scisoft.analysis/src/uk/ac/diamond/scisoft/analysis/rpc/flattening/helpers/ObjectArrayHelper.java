@@ -20,7 +20,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IFlattener;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
@@ -58,8 +58,8 @@ public class ObjectArrayHelper implements IFlattener<Object[]> {
 			} else if (superClazz == null) {
 				if (unflattened[i] instanceof IDataset) {
 					superClazz = IDataset.class;
-				} else if (unflattened[i] instanceof ROIBase) {
-					superClazz = ROIBase.class;
+				} else if (unflattened[i] instanceof IROI) {
+					superClazz = IROI.class;
 				} else {
 					canSpecializeUnflattenSuperClazz = false;
 				}

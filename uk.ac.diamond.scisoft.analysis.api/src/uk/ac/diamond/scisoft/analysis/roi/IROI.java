@@ -16,14 +16,21 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public interface IROI {
+import java.io.Serializable;
+
+/**
+ * Region of interest interface
+ */
+public interface IROI extends Serializable {
 
 	/**
-	 * 
 	 * @return the name
 	 */
 	public String getName();
 
+	/**
+	 * @param name
+	 */
 	public void setName(String name);
 
 	/**
@@ -95,8 +102,8 @@ public interface IROI {
 	 */
 	public boolean isPlot();
 
-	public boolean equals(Object obj);
-
-	public int hashCode();
-
+	/**
+	 * @return a copy of ROI
+	 */
+	public IROI copy();
 }

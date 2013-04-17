@@ -20,7 +20,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
 /**
- * IFunction interface
+ * Function interface used for fitting
  */
 public interface IFunction {
 
@@ -175,8 +175,8 @@ public interface IFunction {
 	 * when that function is evaluated at the given values and parameters. The allValues flag
 	 * dictates whether to use all the values or just a sampled subset
 	 * 
-	 * @param data A dataset containing the values for the data to be evauluated
-	 * @param allValues Boolean specifying wheter to use sampling or not, curtrently not implemented so use true
+	 * @param data A dataset containing the values for the data to be evaluated
+	 * @param allValues Boolean specifying whether to use sampling or not, currently not implemented so use true
 	 * @param values a dataset containing the coordinates of the data points
 	 * @return residual
 	 */

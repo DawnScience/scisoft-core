@@ -22,7 +22,7 @@ public class ROIUtils {
 	 * @param roib
 	 * @return new list to hold ROIs of same type
 	 */
-	public static ROIList<?> createNewROIList(ROIBase roib) {
+	public static ROIList<?> createNewROIList(IROI roib) {
 		if (roib instanceof PointROI)
 			return new PointROIList();
 		else if (roib instanceof PolylineROI)

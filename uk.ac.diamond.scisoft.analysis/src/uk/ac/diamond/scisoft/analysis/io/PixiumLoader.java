@@ -109,6 +109,7 @@ public class PixiumLoader extends TIFFImageLoader {
 		GDAMetadata.put("NXSample:exposure_time", 0.0);
 		GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
 		
+		br.close();
 		return GDAMetadata;
 	}
 	

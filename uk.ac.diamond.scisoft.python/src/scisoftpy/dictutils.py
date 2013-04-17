@@ -97,30 +97,34 @@ from _external.ordereddict import OrderedDict as _odict
 
 class ListDict(object):
     '''
-    Combined list/ordered dictionary class. Keys to the dictionary are exposed as attributes.
+    Combined list/ordered dictionary class. Keys to the dictionary can be exposed as attributes.
     This supports all dictionary methods, pop, append, extend, index, remove and del
     '''
-    def __init__(self, data=None, warn=True, lock=False):
+    def __init__(self, data=None, warn=True, lock=False, interactive=True):
         '''
         A dictionary or list of tuples of key/value pairs. If lock=True,
-        keys cannot be reassigned without first deleting the item
+        keys cannot be reassigned without first deleting the item. If interactive=True,
+        then expose keys as attributes.
         '''
         super(ListDict, self).__setattr__('__lock__', lock)
         super(ListDict, self).__setattr__('__warn__', warn)
+        super(ListDict, self).__setattr__('__inter__', interactive)
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
-        data = make_safe(data, warn)
+        if interactive:
+            data = make_safe(data, warn)
         super(ListDict, self).__setattr__('__odict__', _odict(data))
-        if data:
+        if interactive and data:
             self.__dict__.update(data)
 
     def _replacedata(self, data):
         self.__odict__.clear()
         if isinstance(data, dict):
             data = [ i for i in data.items() ]
-        data = make_safe(data, self.__warn__)
+        if self.__inter__:
+            data = make_safe(data, self.__warn__)
         self.__odict__.update(data)
-        if data:
+        if self.__inter__ and data:
             self.__dict__.update(data)
 
     def __getitem__(self, key):
@@ -142,18 +146,22 @@ class ListDict(object):
         '''
         Key can be a number (integer) in which case set value at index of key list
         '''
-        from types import StringType, IntType
-        if type(key) is IntType:
+        from types import StringType, UnicodeType, IntType
+        kt = type(key)
+        if kt is IntType:
             if key > len(self.__odict__):
                 raise IndexError, 'Key was too large'
             key = self.__odict__.keys()[key]
+            kt = type(key)
 
-        if type(key) is StringType:
-            key = sanitise_name(key, self.__warn__)
+        if kt is StringType or kt is UnicodeType:
+            if self.__inter__:
+                key = sanitise_name(key, self.__warn__)
             if self.__lock__ and key in self.__odict__:
                 raise KeyError, 'Dictionary is locked, delete item to reassign to key'
             self.__odict__.__setitem__(key, value)
-            self.__setattr__(key, value)
+            if self.__inter__:
+                self.__setattr__(key, value)
         else:
             raise KeyError, 'Key was not a string or integer'
 
@@ -169,7 +177,8 @@ class ListDict(object):
 
         if type(key) is StringType:
             self.__odict__.__delitem__(key)
-            self.__dict__.__delitem__(key)
+            if self.__inter__:
+                self.__dict__.__delitem__(key)
         else:
             raise KeyError, 'Key was not a string or integer'
 
@@ -181,11 +190,12 @@ class ListDict(object):
         if self.__lock__ and key in self.__odict__:
             raise KeyError, 'Dictionary is locked, delete item to reassign to key'
 
-        self.__dict__[key] = value
-        if key in ['_OrderedDict__end', '_OrderedDict__map'] or key.startswith('__'):
-            return # ignore internal attributes used by ordereddict implementation
+        if self.__inter__:
+            self.__dict__[key] = value
+            if key in ['_OrderedDict__end', '_OrderedDict__map'] or key.startswith('__'):
+                return # ignore internal attributes used by ordereddict implementation
 
-        self.__odict__.__setitem__(key, value)
+            self.__odict__.__setitem__(key, value)
 
     def __delattr__(self, key):
         self.__delitem__(key)
@@ -266,6 +276,8 @@ class ListDict(object):
             else:
                 item = item[0]
         if hasattr(item, 'name'):
+            if item.name is None:
+                raise KeyError, "Item's 'name' attribute is None"
             self[item.name] = item
             return
         raise ValueError, "Item is not a sequence or has no 'name' attribute"
@@ -329,15 +341,21 @@ def _test_make_safe():
         if a[0] != b[0] and a[1] != b[1]:
             print("Actual %s, %d does not match expected %s, %d" % (a, b))
 
-def _test_setting_listdict():
+def _test_setting_listdict(inter=True):
 #    d = ListDict({'a': 1, 'c':-2})
-    d = ListDict([('a', 1), ('c',-2)])
-    print d.a
+    d = ListDict([('a', 1), ('c',-2)], interactive=inter)
+    if inter:
+        print d.a
+    else:
+        print d['a']
     print len(d)
     d['d'] = 0.7
-    d.b = 0.5
-#    d['b'] = 0.5
-    print d.b
+    if inter:
+        d.b = 0.5
+        print d.b
+    else:
+        d['b'] = 0.5
+        print d['b']
     print len(d)
     print d.keys()
     print d
@@ -349,7 +367,10 @@ def _test_setting_listdict():
     del d['d']
     print d.pop()
     print d
-    del d.c
+    if inter:
+        del d.c
+    else:
+        del d['c']
     print d
     print d.keys()
     d.append({'e': 2.3})
@@ -365,8 +386,14 @@ def _test_setting_listdict():
     try:
         g = testObj()
         d.append(g)
-    except:
-        print 'Exception raised successfully'
+    except Exception, e:
+        print 'Exception raised successfully ' + str(e)
+
+    try:
+        g.name = None
+        d.append(g)
+    except Exception, e:
+        print 'Exception raised successfully ' + str(e)
 
     g.name = 'blah'
     d.append(g)
@@ -380,25 +407,37 @@ def _test_setting_listdict():
     d.extend({'h': -2})
     d.extend([('i',-2.5)])
     print d
+    d['d e'] = 7.5
+    print d
+    if inter:
+        print d.d_e
+    else:
+        print d['d e']
+    print d[6]
 
-    ld = ListDict([('a', 1), ('c',-2)], lock=True)
+    ld = ListDict([('a', 1), ('c',-2)], lock=True, interactive=inter)
     try:
         ld['c'] = 3
     except Exception, e:
         print 'Exception raised successfully ' + str(e)
 
-    try:
-        ld.c = 3
-    except Exception, e:
-        print 'Exception raised successfully ' + str(e)
+    if inter:
+        try:
+            ld.c = 3
+        except Exception, e:
+            print 'Exception raised successfully ' + str(e)
 
     try:
         ld[0] = 3
     except Exception, e:
         print 'Exception raised successfully ' + str(e)
 
-    del ld.c
-    ld.c = 3
+    if inter:
+        del ld.c
+        ld.c = 3
+    else:
+        del ld['c']
+        ld['c'] = 3
     print ld
     ld.__c = 3
     print ld
@@ -406,8 +445,17 @@ def _test_setting_listdict():
 #    from pprint import pprint
 #    pprint(dir(ld)); print
     ld._replacedata([('a', -1), ('c',-2.5)])
-    print ld
+
+def _test_subclass():
+    class new_list(ListDict):
+        def __init__(self, data=None, warn=True, lock=False):
+            super(new_list, self).__init__(data=data, warn=warn, lock=lock, interactive=True)
+
+    rl = new_list()
+    rl['a'] = 1.23
+    print rl
 
 if __name__ == "__main__":
-    _test_setting_listdict()
-
+#    _test_setting_listdict()
+#    _test_setting_listdict(inter=False)
+    _test_subclass()

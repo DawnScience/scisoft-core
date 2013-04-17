@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.roi.handler;
 
 import java.util.ArrayList;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * Abstract class for region of interest handles
@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
  * Its super class holds the primitive IDs for handle areas
  */
 abstract public class ROIHandler extends ArrayList<Integer> {
-	protected ROIBase roi;
+	protected IROI roi;
 	protected int handle;
 	protected HandleStatus status;
 
@@ -44,13 +44,13 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	 */
 	abstract public double[] getAnchorPoint(int handle, int size);
 
-	abstract public ROIBase getROI();
+	abstract public IROI getROI();
 
 
 	/**
 	 * @param roi The roi to set.
 	 */
-	public void setROI(ROIBase roi) {
+	public void setROI(IROI roi) {
 		this.roi = roi;
 	}
 
@@ -78,5 +78,5 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	 * @param ept
 	 * @return roi
 	 */
-	abstract public ROIBase interpretMouseDragging(int[] spt, int[] ept);
+	abstract public IROI interpretMouseDragging(int[] spt, int[] ept);
 }

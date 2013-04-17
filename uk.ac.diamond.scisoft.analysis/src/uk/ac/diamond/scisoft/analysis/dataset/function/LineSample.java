@@ -78,7 +78,7 @@ public class LineSample implements DatasetToDatasetFunction {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		for (IDataset ids : datasets) {
-			if (ids.getRank() != 2)
+			if (ids == null || ids.getRank() != 2)
 				return null;
 
 			int nr = ((int) Math.floor(rad / step)) + 1;

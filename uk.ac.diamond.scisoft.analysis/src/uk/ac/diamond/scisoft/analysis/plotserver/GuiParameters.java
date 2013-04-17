@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import uk.ac.diamond.scisoft.analysis.roi.GridPreferences;
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIList;
 
 /**
@@ -139,7 +139,7 @@ public final class GuiParameters implements Serializable {
 	/**
 	 * Specifies the ROI data
 	 */
-	public static final GuiParameters ROIDATA = new GuiParameters("ROI", ROIBase.class);
+	public static final GuiParameters ROIDATA = new GuiParameters("ROI", IROI.class);
 
 	/**
 	 * Specifies the ROI data list

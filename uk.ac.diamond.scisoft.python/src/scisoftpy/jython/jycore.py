@@ -179,7 +179,9 @@ def asIterable(items):
     t = type(items)
     if t is _types.ListType or t is _types.TupleType or t is _arraytype:
         pass
-    elif isinstance(items, _jlist) or isinstance(items, _jmap):
+    elif t is _types.DictType or t is _jmap:
+        items = [ i for i in items.items() ]
+    elif isinstance(items, _jlist):
         pass
     else: # isinstance(items, _abstractds) or isinstance(items, _dataset):
         items = (items,)

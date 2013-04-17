@@ -23,6 +23,6 @@ import java.util.List;
 /**
  * Wrapper for a list of general ROIs
  */
-public interface ROIList<T extends ROIBase> extends Serializable, List<T> {
+public interface ROIList<T extends IROI> extends Serializable, List<T> {
 
 }

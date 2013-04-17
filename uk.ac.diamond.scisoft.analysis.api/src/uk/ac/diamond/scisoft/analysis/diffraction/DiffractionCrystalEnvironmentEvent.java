@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.util.EventObject;
 
 public class DiffractionCrystalEnvironmentEvent extends EventObject {
+	private static final long serialVersionUID = -6642603662682717892L;
+
 	static enum EventType {
 		WAVELENGTH,
 	}

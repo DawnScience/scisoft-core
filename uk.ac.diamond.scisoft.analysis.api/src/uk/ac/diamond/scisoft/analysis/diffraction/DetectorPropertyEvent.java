@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.util.EventObject;
 
 public class DetectorPropertyEvent extends EventObject {
+	private static final long serialVersionUID = -4124035392214967002L;
+
 	static enum EventType {
 		ORIGIN,
 		BEAM_CENTRE,

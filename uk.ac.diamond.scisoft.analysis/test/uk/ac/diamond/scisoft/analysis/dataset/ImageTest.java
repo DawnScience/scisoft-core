@@ -39,6 +39,7 @@ public class ImageTest {
 		AbstractDataset lin = DoubleDataset.arange(-100,900,5);
 		
 		// now apply the Transform
+		@SuppressWarnings("unused")
 		AbstractDataset result = Image.regrid(ds, x, y, lin, lin);
 		
 	}

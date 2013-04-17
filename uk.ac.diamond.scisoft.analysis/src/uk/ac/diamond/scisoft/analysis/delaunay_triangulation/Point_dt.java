@@ -231,15 +231,18 @@ public class Point_dt {
 		return new Point_dt((u * (b.y - y) - v * (a.y - b.y)) / den, (v * (a.x - b.x) - u * (b.x - x)) / den);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Comparator<Point_dt> getComparator(int flag) {
 		return new Compare(flag);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Comparator<Point_dt> getComparator() {
 		return new Compare(0);
 	}
 }
 
+@SuppressWarnings("rawtypes")
 class Compare implements Comparator {
 	private int _flag;
 
@@ -310,5 +313,11 @@ class Compare implements Comparator {
 	@Override
 	public boolean equals(Object ob) {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
 	}
 }

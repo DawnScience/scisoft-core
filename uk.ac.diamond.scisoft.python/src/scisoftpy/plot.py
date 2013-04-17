@@ -471,8 +471,14 @@ def delroi(bean, roi=None):
             bean[parameters.roi] = None
     return bean
 
+from scisoftpy.dictutils import ListDict
+
+class roi_list(ListDict):
+    def __init__(self, data=None):
+        super(roi_list, self).__init__(data=data, warn=False, lock=False, interactive=False)
+
 def getrois(bean, roi=None):
-    '''Get list of regions of interest from bean
+    '''Get list/dict of regions of interest from bean
 
     Arguments:
     bean -- GUI bean
@@ -488,11 +494,13 @@ def getrois(bean, roi=None):
     except:
         rs = [rs]
     if roi is None:
-        return [r for r in rs]
-    return [r for r in rs if isinstance(r, roi)]
+        rl = [(r.name, r) for r in rs]
+    else:
+        rl = [(r.name, r) for r in rs if isinstance(r, roi)]
+    return roi_list(rl)
 
 def setrois(bean, roilist):
-    '''Set list of regions of interest in bean'''
+    '''Set list/dict of regions of interest in bean'''
     if not bean:
         raise ValueError, "No bean given"
 
@@ -510,14 +518,20 @@ def setrois(bean, roilist):
         else:
             raise TypeError, "Type of first item not support"
 
-        for r in roilist:
-            if isinstance(r, rtype):
-                nlist.append(r)
+        if isinstance(roilist, roi_list):
+            for k in roilist:
+                r = roilist[k]
+                if isinstance(r, rtype):
+                    nlist.add(r)
+        else:
+            for r in roilist:
+                if isinstance(r, rtype):
+                    nlist.add(r)
         roilist = nlist
     bean[parameters.roilist] = roilist
 
 def delrois(bean, roi=None):
-    '''Delete list of regions of interest from bean
+    '''Delete list/dict of regions of interest from bean
 
     Arguments:
     bean -- GUI bean
@@ -530,45 +544,6 @@ def delrois(bean, roi=None):
         if roi is None or isinstance(rl, roi) or isinstance(rl[0], roi):
             bean[parameters.roilist] = None
     return bean
-
-def getroinames(bean, roi=None):
-    '''Get list of regions of interest names from bean
-
-    Arguments:
-    bean -- GUI bean
-    roi  -- class of ROI to retrieve. If None, then get anyway
-    '''
-    if bean is None:
-        return None
-    rs = getrois(bean, roi)
-    if rs is None:
-        return None
-    names = []
-    for index in range(len(rs)):
-        myroi = rs[index]
-        names.append(myroi.name)
-    return names
-
-def getroibyname(bean, name, roi=None):
-    '''Get a region of interest from bean by its name
-
-    Arguments:
-    bean -- GUI bean
-    name -- name of Region Of Interest
-    roi  -- class of ROI to retrieve. If None, then get anyway
-    '''
-    if bean is None:
-        return None
-    rs = getrois(bean, roi)
-    if rs is None:
-        return None
-    myroi = None
-    for index in range(len(rs)):
-        myroi = rs[index]
-        if myroi.name == name:
-            return myroi
-    print("ROI with the name "+name+" not found")
-    return None
 
 def getline(bean):
     '''Get linear region of interest'''

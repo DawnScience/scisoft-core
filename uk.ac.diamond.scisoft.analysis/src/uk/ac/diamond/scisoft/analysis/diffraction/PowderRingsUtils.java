@@ -107,10 +107,6 @@ public class PowderRingsUtils {
 		return findPOIsNearEllipse(mon, image, mask, ellipse, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
-	
-	// global lower threshold for pixel values is determined by linear interpolation of given fraction between image mean and max
-	private static final double MEAN_TO_MAX_FRACTION = 0.999;
-
 	/**
 	 * Find a set of points of interests near given ellipse from an image.
 	 * <p>
@@ -207,11 +203,20 @@ public class PowderRingsUtils {
 			}
 			sub = image.getSlice(start, stop, step);
 
-			int[] pos = sub.maxPos();
-			if (mask != null) {
-				pos[0] += start[0];
-				pos[1] += start[1];
+			// TODO ensure slice has peaky data
+			double iqr = (Double) Stats.iqr(sub);
+			double low = (Double) sub.mean() + 0.5*iqr;
+			if (sub.max().doubleValue() < low) {
+				logger.info("Discard sub at {} ({}): {}; {}; {} [{}] => {} cf {}", new Object[] {Arrays.toString(start), sub.getShape(), 
+						sub.min(), sub.mean(), sub.max(), low, 0.5*iqr, sub.stdDeviation()});
+				continue;
+			}
 
+			int[] pos = sub.maxPos();
+			pos[0] += start[0];
+			pos[1] += start[1];
+
+			if (mask != null) {
 				if (mask.get(pos)) {
 					AbstractDataset sorted = DatasetUtils.sort(sub.flatten(), null);
 					int l = sorted.getSize() - 1;
@@ -229,7 +234,7 @@ public class PowderRingsUtils {
 				}
 			} else {
 //			System.err.printf("Slice: %s, %s has max at %s\n", Arrays.toString(start), Arrays.toString(stop), Arrays.toString(pos));
-				pointSet.add(new PointROI(pos[1]+start[1], pos[0]+start[0]));
+				pointSet.add(new PointROI(pos[1], pos[0]));
 			}
 
 			if (mon != null)
@@ -264,13 +269,6 @@ public class PowderRingsUtils {
 				threshold += iqr;
 			}
 			logger.debug("Threshold: {} setting by mean - 2IQR", threshold);
-		}
-
-		double gThreshold = MEAN_TO_MAX_FRACTION*((Double) image.mean()) + (1-MEAN_TO_MAX_FRACTION)*image.max().doubleValue();
-		logger.debug("Threshold: global (mean-based) is {}", gThreshold);
-		if (threshold < gThreshold) {
-			threshold = gThreshold;
-			logger.debug("Threshold: too low, now {} setting by image mean", threshold);
 		}
 
 		PolylineROI polyline = new PolylineROI();

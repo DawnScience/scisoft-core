@@ -19,9 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
- * Interface used to mark a Loader as being available to Load and return
- * meta data without loading the entire file into memory.
- * 
+ * Interface used to mark a loader as being available to load and return
+ * metadata without loading the entire file into memory.
  */
 public interface IMetaLoader {
 

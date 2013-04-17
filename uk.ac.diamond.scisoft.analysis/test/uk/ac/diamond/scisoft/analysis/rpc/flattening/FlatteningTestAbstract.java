@@ -53,6 +53,7 @@ import uk.ac.diamond.scisoft.analysis.roi.CircularROIList;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList;
 import uk.ac.diamond.scisoft.analysis.roi.GridPreferences;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROIList;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
@@ -91,7 +92,7 @@ abstract public class FlatteningTestAbstract {
 	protected void assertFlattenEquals(Object expected, Object actual) {
 		if (expected == null) {
 			Assert.assertNull(actual);
-		} else if (expected instanceof ROIBase || expected instanceof AxisMapBean) {
+		} else if (expected instanceof IROI|| expected instanceof AxisMapBean) {
 			Assert.assertTrue(EqualsBuilder.reflectionEquals(expected, actual));
 		} else if (expected instanceof DataBean) {
 			DataBean expDataBean = (DataBean) expected;
@@ -296,7 +297,7 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(new Object[] { "one", "two" }, new String[] { "one", "two" }); // Object[] --> String[]
 		flattenAndUnflatten(new Object[] { new RectangularROI(), new RectangularROI() }, new RectangularROI[] {
 				new RectangularROI(), new RectangularROI() }); // Object[] --> RectangularROI[]
-		flattenAndUnflatten(new Object[] { new RectangularROI(), new LinearROI() }, new ROIBase[] {
+		flattenAndUnflatten(new Object[] { new RectangularROI(), new LinearROI() }, new IROI[] {
 				new RectangularROI(), new LinearROI() }); // ROIBase[] --> ROIBase[]
 		flattenAndUnflatten(new Object[] { new Integer(0), new RectangularROI(), new LinearROI() }, new Object[] {
 				new Integer(0), new RectangularROI(), new LinearROI() }); // Object[] --> Object[]
@@ -320,8 +321,8 @@ abstract public class FlatteningTestAbstract {
 		DoubleDataset fltDataset = (DoubleDataset) AbstractDataset.arange(10, AbstractDataset.FLOAT);
 		flattenAndUnflatten(new IDataset[] { intDataset, fltDataset });
 		flattenAndUnflatten(new IntegerDataset[] { intDataset, intDataset });
-		// ROIBase[]
-		flattenAndUnflatten(new ROIBase[] { new RectangularROI(), new SectorROI() });
+		// IROI[]
+		flattenAndUnflatten(new IROI[] { new RectangularROI(), new SectorROI() });
 		flattenAndUnflatten(new RectangularROI[] { new RectangularROI(), new RectangularROI() });
 	}
 

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.apache.commons.lang.ArrayUtils;
+
 public class InterpolatorUtils {
 
 	public static AbstractDataset regrid(AbstractDataset data, AbstractDataset x, AbstractDataset y,

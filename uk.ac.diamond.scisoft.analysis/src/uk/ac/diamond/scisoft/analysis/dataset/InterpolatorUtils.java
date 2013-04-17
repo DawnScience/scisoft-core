@@ -31,7 +31,13 @@ public class InterpolatorUtils {
 		
 		IndexIterator itx = gridX.getIterator();
 		
+		// need a list of lists to store points
+		ArrayList<ArrayList<InterpolatedPoint>> pointList = new ArrayList<ArrayList<InterpolatedPoint>>();
+		
 		while(itx.hasNext()){
+			// Add a list to contain all the points which we find
+			pointList.add(new ArrayList<InterpolatedPoint>());
+			
 			int xindex = itx.index;
 			double xPos = gridX.getDouble(xindex);
 			
@@ -46,7 +52,8 @@ public class InterpolatorUtils {
 		}
 		return result;
 	}
-
+	
+	
 	public static AbstractDataset selectDatasetRegion(AbstractDataset dataset, int x, int y, int xSize, int ySize) {
 		int startX = x - xSize;
 		int startY = y - ySize;
@@ -321,4 +328,165 @@ public class InterpolatorUtils {
 		}
 	}
 
+	
+	
+	
+	
+	
+	private static AbstractDataset getTrimmedAxis(AbstractDataset axis, int axisIndex, InterpolatedPoint p1, InterpolatedPoint p2) {
+		double startPoint = p1.getRealPoint().getDouble(axisIndex);
+		double endPoint = p2.getRealPoint().getDouble(axisIndex);
+		
+		// swap if needed
+		if (startPoint > endPoint) {
+			startPoint = p2.getRealPoint().getDouble(axisIndex);
+			endPoint = p1.getRealPoint().getDouble(axisIndex);
+		}
+
+		int start = getTrimmedAxisStart(axis, startPoint);
+		int end = getTrimmedAxisEnd(axis, start, endPoint);
+		
+		return axis.getSlice(new int[] {start}, new int[] {end}, null);
+	}
+
+	private static int getTrimmedAxisStart(AbstractDataset axis, double startPoint) {
+		for (int i = 0; i < axis.getShape()[0]; i++) {
+			if (axis.getDouble(i) > startPoint) return i;
+		}
+		// if we get to here then the start point is higher than the whole system
+		return -1;
+	}
+	
+	private static int getTrimmedAxisEnd(AbstractDataset axis, int startPos, double endPoint) {
+		for (int i = startPos; i < axis.getShape()[0]; i++) {
+			if (axis.getDouble(i) > endPoint) return i-1;
+		}
+		// if we get to here then the end point is higher than the whole system
+		return axis.getShape()[0];
+	}
+	
+	public static AbstractDataset remap1D(AbstractDataset dataset, AbstractDataset axis, AbstractDataset outputAxis) {
+		DoubleDataset data = new DoubleDataset(outputAxis.getShape());
+		for(int i = 0; i < outputAxis.getShape()[0]; i++) {
+			double point = outputAxis.getDouble(i);
+			double position = getRealPositionAsIndex(axis, point);
+			if (position >= 0.0) {
+				data.set(Maths.getLinear(dataset, position), i);
+			} else {
+				data.set(Double.NaN,i);
+			}
+		}
+		
+		return data;
+	}
+
+
+	private static double getRealPositionAsIndex(AbstractDataset dataset, double point) {
+		for (int j = 0; j < dataset.getShape()[0]-1; j++) {
+			double end = dataset.getDouble(j+1);
+			double start = dataset.getDouble(j);
+			if ((end > point) && (start <= point)) {
+				// we have a bounding point
+				double proportion = ((point-start)/(end-start));
+				return j + proportion;
+			}
+		}
+		return -1.0;
+	}
+	
+	public static AbstractDataset remapOneAxis(AbstractDataset dataset, int axisIndex, AbstractDataset corrections, AbstractDataset originalAxisForCorrection, AbstractDataset outputAxis) {
+		int[] stop = dataset.getShape();
+		int[] start = new int[stop.length];
+		int[] step = new int[stop.length];
+		int[] resultSize = new int[stop.length];
+		for (int i = 0 ; i < start.length; i++) {
+			start[i] = 0;
+			step[i] = 1;
+			resultSize[i] = stop[i];
+		}
+		
+		resultSize[axisIndex] = outputAxis.getShape()[0];
+		DoubleDataset result = new DoubleDataset(resultSize);
+		
+		step[axisIndex] = dataset.getShape()[axisIndex];
+		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
+		
+		while (iter.hasNext()){
+			int[] pos = iter.getPos();
+			int[] posEnd = new int[pos.length];
+			for (int i = 0 ; i < posEnd.length; i++) {
+				posEnd[i] = pos[i]+1;
+			}
+			posEnd[axisIndex] = stop[axisIndex];
+			// get the dataset
+			AbstractDataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
+			int[] correctionPos = new int[pos.length-1];
+			int index = 0;
+			for(int j = 0; j < pos.length; j++) {
+				if (j != axisIndex) {
+					correctionPos[index] = pos[j];
+					index++;
+				}
+			}
+			AbstractDataset axis = Maths.add(originalAxisForCorrection,corrections.getDouble(correctionPos));
+			AbstractDataset remapped = remap1D(slice,axis,outputAxis);
+			
+			int[] ref = ArrayUtils.clone(pos);
+			
+			for (int k = 0; k < result.shape[axisIndex]; k++) {
+				ref[axisIndex] = k;
+				result.set(remapped.getDouble(k), ref);
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	public static AbstractDataset remapAxis(AbstractDataset dataset, int axisIndex, AbstractDataset originalAxisForCorrection, AbstractDataset outputAxis) {
+		if (!dataset.isCompatibleWith(originalAxisForCorrection)) {
+			throw new IllegalArgumentException("Datasets must be of the same shape");
+		}
+		
+		int[] stop = dataset.getShape();
+		int[] start = new int[stop.length];
+		int[] step = new int[stop.length];
+		int[] resultSize = new int[stop.length];
+		for (int i = 0 ; i < start.length; i++) {
+			start[i] = 0;
+			step[i] = 1;
+			resultSize[i] = stop[i];
+		}
+		
+		resultSize[axisIndex] = outputAxis.getShape()[0];
+		DoubleDataset result = new DoubleDataset(resultSize);
+		
+		step[axisIndex] = dataset.getShape()[axisIndex];
+		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
+		
+		while (iter.hasNext()){
+			int[] pos = iter.getPos();
+			int[] posEnd = new int[pos.length];
+			for (int i = 0 ; i < posEnd.length; i++) {
+				posEnd[i] = pos[i]+1;
+			}
+			posEnd[axisIndex] = stop[axisIndex];
+			
+			// get the dataset
+			AbstractDataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
+			AbstractDataset axis = originalAxisForCorrection.getSlice(pos, posEnd, null).squeeze();
+			
+			AbstractDataset remapped = remap1D(slice,axis,outputAxis);
+			
+			int[] ref = ArrayUtils.clone(pos);
+			
+			for (int k = 0; k < result.shape[axisIndex]; k++) {
+				ref[axisIndex] = k;
+				result.set(remapped.getDouble(k), ref);
+			}
+		}
+		
+		return result;
+	}
+	
 }

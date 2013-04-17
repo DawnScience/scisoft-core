@@ -40,7 +40,7 @@ else:
 
  
 
-_roibase = _roi.roibase
+_iroi = _roi._iroi
 point = _roi.point
 line = _roi.line
 rectangle = rect = _roi.rectangle
@@ -58,7 +58,7 @@ ellipse_list = _roi.ellipse_list
 def isroi(r):
     '''True if r is a ROI
     '''
-    return issubclass(type(r), _roibase)
+    return issubclass(type(r), _iroi)
 
 profile = _roi.profile
 

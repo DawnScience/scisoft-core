@@ -16,8 +16,10 @@
 
 import math as _math
 
+class _iroi(object):
+    pass
 
-class roibase(object):
+class roibase(_iroi):
     _NAME = "name"
     _SPT = "spt"
     _PLOT = "plot"

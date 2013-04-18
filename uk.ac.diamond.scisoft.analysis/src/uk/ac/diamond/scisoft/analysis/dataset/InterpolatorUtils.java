@@ -24,7 +24,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 public class InterpolatorUtils {
 
-	public static AbstractDataset regrid(AbstractDataset data, AbstractDataset x, AbstractDataset y,
+	public static AbstractDataset regridOld(AbstractDataset data, AbstractDataset x, AbstractDataset y,
 			AbstractDataset gridX, AbstractDataset gridY) throws Exception {
 		
 		DoubleDataset result = new DoubleDataset(gridX.shape[0], gridY.shape[0]);
@@ -52,6 +52,8 @@ public class InterpolatorUtils {
 		}
 		return result;
 	}
+	
+	
 	
 	
 	public static AbstractDataset selectDatasetRegion(AbstractDataset dataset, int x, int y, int xSize, int ySize) {
@@ -380,15 +382,24 @@ public class InterpolatorUtils {
 		return data;
 	}
 
-
+	// TODO need to make this work with reverse number lists
 	private static double getRealPositionAsIndex(AbstractDataset dataset, double point) {
 		for (int j = 0; j < dataset.getShape()[0]-1; j++) {
 			double end = dataset.getDouble(j+1);
 			double start = dataset.getDouble(j);
-			if ((end > point) && (start <= point)) {
-				// we have a bounding point
-				double proportion = ((point-start)/(end-start));
-				return j + proportion;
+			//TODO could make this check once outside the loop with a minor assumption.
+			if ( start < end) {
+				if ((end > point) && (start <= point)) {
+					// we have a bounding point
+					double proportion = ((point-start)/(end-start));
+					return j + proportion;
+				}
+			} else {
+				if ((end < point) && (start >= point)) {
+					// we have a bounding point
+					double proportion = ((point-start)/(end-start));
+					return j + proportion;
+				}
 			}
 		}
 		return -1.0;
@@ -487,6 +498,18 @@ public class InterpolatorUtils {
 		}
 		
 		return result;
+	}
+	
+	public static AbstractDataset regrid(AbstractDataset data, AbstractDataset x, AbstractDataset y,
+			AbstractDataset gridX, AbstractDataset gridY) throws Exception {
+		
+		// apply X then Y regridding
+		AbstractDataset result = remapAxis(data,1,x,gridX);
+		result = remapAxis(result,0,y,gridY);
+		
+		return result;
+		
+
 	}
 	
 }

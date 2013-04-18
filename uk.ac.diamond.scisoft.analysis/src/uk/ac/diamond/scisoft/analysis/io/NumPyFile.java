@@ -49,19 +49,29 @@ public class NumPyFile {
 			return this;
 		}
 
+		DataTypeInfo setUnsigned(boolean isUnsigned) {
+			unsigned = isUnsigned;
+			return this;
+		}
+
 		String numPyType;
 		int dType;
 		int iSize;
+		boolean unsigned;
 	}
 
 	/*package*/ static Map<String, DataTypeInfo> dataTypeMap = new HashMap<String, DataTypeInfo>();
 	/*package*/ static Map<Integer, DataTypeInfo> numPyTypeMap = new HashMap<Integer, DataTypeInfo>();
+	/*package*/ static Map<Integer, DataTypeInfo> unsignedNumPyTypeMap = new HashMap<Integer, DataTypeInfo>();
 	static {
 		Set<DataTypeInfo> infos = new HashSet<DataTypeInfo>();
 		infos.add(DataTypeInfo.create().setNumPyType("|b1").setDType(AbstractDataset.BOOL).setISize(1));
-		infos.add(DataTypeInfo.create().setNumPyType("|i1").setNumPyType("|i1").setDType(AbstractDataset.INT8).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("|i1").setDType(AbstractDataset.INT8).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("|u1").setDType(AbstractDataset.INT8).setISize(1).setUnsigned(true));
 		infos.add(DataTypeInfo.create().setNumPyType("<i2").setDType(AbstractDataset.INT16).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("<u2").setDType(AbstractDataset.INT16).setISize(1).setUnsigned(true));
 		infos.add(DataTypeInfo.create().setNumPyType("<i4").setDType(AbstractDataset.INT32).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("<u4").setDType(AbstractDataset.INT32).setISize(1).setUnsigned(true));
 		infos.add(DataTypeInfo.create().setNumPyType("<i8").setDType(AbstractDataset.INT64).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f4").setDType(AbstractDataset.FLOAT32).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f8").setDType(AbstractDataset.FLOAT64).setISize(1));
@@ -70,7 +80,10 @@ public class NumPyFile {
 		
 		for (DataTypeInfo dataTypeInfo : infos) {
 			dataTypeMap.put(dataTypeInfo.numPyType, dataTypeInfo);
-			numPyTypeMap.put(dataTypeInfo.dType, dataTypeInfo);
+			if (dataTypeInfo.unsigned)
+				unsignedNumPyTypeMap.put(dataTypeInfo.dType, dataTypeInfo);
+			else
+				numPyTypeMap.put(dataTypeInfo.dType, dataTypeInfo);
 		}
 	}
 

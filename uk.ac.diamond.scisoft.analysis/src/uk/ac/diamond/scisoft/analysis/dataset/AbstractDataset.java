@@ -1882,6 +1882,11 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj) {
+		if (obj instanceof AbstractDataset)
+			return (AbstractDataset) obj;
+		if (obj instanceof ILazyDataset)
+			return DatasetUtils.convertToAbstractDataset((ILazyDataset) obj);
+
 		final int dtype = getDTypeFromObject(obj);
 		return array(obj, dtype);
 	}
@@ -1938,6 +1943,12 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj, final int dtype) {
+		if (obj instanceof AbstractDataset)
+			return DatasetUtils.cast((AbstractDataset) obj, dtype);
+
+		if (obj instanceof ILazyDataset)
+			return DatasetUtils.cast(DatasetUtils.convertToAbstractDataset((ILazyDataset) obj), dtype);
+
 		switch (dtype) {
 		case BOOL:
 			return BooleanDataset.createFromObject(obj);

@@ -194,7 +194,7 @@ public class RawBinarySaver implements IFileSaver {
 	}
 
 	/**
-	 * Saves the Data set to the ByteBuffer provided in a raw format, ie no headers
+	 * Saves the dataset to the ByteBuffer provided in a raw format, ie no headers
 	 * @param sdata Dataset to save
 	 * @param dtype Dataset datatype for save purpose
 	 * @param isize Each entry item size
@@ -331,5 +331,4 @@ public class RawBinarySaver implements IFileSaver {
 		}
 		return dbBuffer;
 	}
-
 }

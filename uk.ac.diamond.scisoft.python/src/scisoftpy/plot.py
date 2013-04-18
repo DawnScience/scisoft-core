@@ -445,6 +445,8 @@ def getroi(bean, roi=None):
     '''
     if bean is None:
         return None
+    if not parameters.roi in bean:
+        return None
     r = bean[parameters.roi]
     if roi is None:
         return r
@@ -485,6 +487,8 @@ def getrois(bean, roi=None):
     roi  -- class of ROI to retrieve. If None, then get anyway
     '''
     if bean is None:
+        return None
+    if not parameters.roilist in bean:
         return None
     rs = bean[parameters.roilist]
     if rs is None:

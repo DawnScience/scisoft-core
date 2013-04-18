@@ -26,7 +26,7 @@ class roibase(_iroi):
 
     def __init__(self, spt=[0.0,0.0], plot=False, **kwargs):
         super(roibase, self).__init__()
-        self.spt = spt
+        self.spt = [float(p) for p in spt]
         self.plot = plot
 
     # rois are not hashable because they are mutable
@@ -53,8 +53,8 @@ class line(roibase):
 
     def __init__(self, len=0.0, ang=0.0, crossHair=False, **kwargs): #@ReservedAssignment
         super(line, self).__init__(**kwargs)
-        self.len = len
-        self.ang = ang
+        self.len = float(len)
+        self.ang = float(ang)
         self.crossHair = crossHair
 
 class rectangle(roibase):
@@ -64,8 +64,8 @@ class rectangle(roibase):
     
     def __init__(self, len=[0.0,0.0], ang=0.0, clippingCompensation=False, **kwargs): #@ReservedAssignment
         super(rectangle, self).__init__(**kwargs)
-        self.len = len
-        self.ang = ang
+        self.len = [float(l) for l in len]
+        self.ang = float(ang)
         self.clippingCompensation = clippingCompensation
     
     def getAngleDegrees(self):
@@ -90,8 +90,8 @@ class sector(roibase):
 
     def __init__(self, ang=[0.0, 0.0], rad=[0.0, 0.0], clippingCompensation=False, symmetry=NONE, combineSymmetry=False, averageArea=False, **kwargs):
         super(sector, self).__init__(**kwargs)
-        self.ang = ang
-        self.rad = rad
+        self.ang = [float(a) for a in ang]
+        self.rad = [float(r) for r in rad]
         self.clippingCompensation = clippingCompensation
         self.symmetry = symmetry
         self.combineSymmetry = combineSymmetry
@@ -102,7 +102,7 @@ class circle(roibase):
     
     def __init__(self, rad=1.0, **kwargs): #@ReservedAssignment
         super(circle, self).__init__(**kwargs)
-        self.rad = rad
+        self.rad = float(rad)
 
 class ellipse(roibase):
     _SAXIS = "saxis"
@@ -110,8 +110,8 @@ class ellipse(roibase):
     
     def __init__(self, saxis=[0.0,0.0], ang=0.0, **kwargs): #@ReservedAssignment
         super(ellipse, self).__init__(**kwargs)
-        self.saxis = saxis
-        self.ang = ang
+        self.saxis = [float(l) for l in saxis]
+        self.ang = float(ang)
     
     def getAngleDegrees(self):
         return _math.degrees(self.ang)

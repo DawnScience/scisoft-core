@@ -175,12 +175,16 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		}
 		int dtype = dataTypeInfo.dType;
 		int isize = dataTypeInfo.iSize;
+		boolean unsigned = dataTypeInfo.unsigned;
 		int tSize = isize;
 		for (int j = 0; j < rank; j++) {
 			tSize *= shape[j];
 		}
 
 		AbstractDataset data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+		if (unsigned)
+			data = AbstractDataset.array(data, unsigned);
+
 		return data;
 	}
 

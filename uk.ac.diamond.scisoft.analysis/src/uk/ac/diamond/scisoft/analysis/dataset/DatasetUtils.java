@@ -669,16 +669,28 @@ public class DatasetUtils {
 				c = new BooleanDataset(a);
 				break;
 			case AbstractDataset.INT8:
-				c = new ByteDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundByteDataset(a);
+				else
+					c = new ByteDataset(a);
 				break;
 			case AbstractDataset.INT16:
-				c = new ShortDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundShortDataset(a);
+				else
+					c = new ShortDataset(a);
 				break;
 			case AbstractDataset.INT32:
-				c = new IntegerDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundIntegerDataset(a);
+				else
+					c = new IntegerDataset(a);
 				break;
 			case AbstractDataset.INT64:
-				c = new LongDataset(a);
+				if (a instanceof AbstractCompoundDataset)
+					c = new CompoundLongDataset(a);
+				else
+					c = new LongDataset(a);
 				break;
 			case AbstractDataset.ARRAYINT8:
 				if (a instanceof AbstractCompoundDataset)
@@ -885,7 +897,7 @@ public class DatasetUtils {
 	 */
 	public static void unwrapUnsigned(AbstractDataset a, final int bitWidth) {
 		final int dtype = a.getDtype();
-		final long lv = 1 << bitWidth;
+		final double dv = 1L << bitWidth;
 		final int isize = a.getElementsPerItem();
 		IndexIterator it = a.getIterator();
 
@@ -896,7 +908,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.INT16:
 			ShortDataset sds = (ShortDataset) a;
-			final short soffset = (short) lv;
+			final short soffset = (short) dv;
 			while (it.hasNext()) {
 				final short x = sds.getAbs(it.index);
 				if (x < 0)
@@ -905,7 +917,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.INT32:
 			IntegerDataset ids = (IntegerDataset) a;
-			final int ioffset = (int) lv;
+			final int ioffset = (int) dv;
 			while (it.hasNext()) {
 				final int x = ids.getAbs(it.index);
 				if (x < 0)
@@ -914,15 +926,16 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.INT64:
 			LongDataset lds = (LongDataset) a;
+			final long loffset = (long) dv;
 			while (it.hasNext()) {
 				final long x = lds.getAbs(it.index);
 				if (x < 0)
-					lds.setAbs(it.index, x + lv);
+					lds.setAbs(it.index, x + loffset);
 			}
 			break;
 		case AbstractDataset.FLOAT32:
 			FloatDataset fds = (FloatDataset) a;
-			final float foffset = lv;
+			final float foffset = (float) dv;
 			while (it.hasNext()) {
 				final float x = fds.getAbs(it.index);
 				if (x < 0)
@@ -931,7 +944,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.FLOAT64:
 			DoubleDataset dds = (DoubleDataset) a;
-			final double doffset = lv;
+			final double doffset = dv;
 			while (it.hasNext()) {
 				final double x = dds.getAbs(it.index);
 				if (x < 0)
@@ -942,7 +955,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.ARRAYINT16:
 			CompoundShortDataset csds = (CompoundShortDataset) a;
-			final short csoffset = (short) lv;
+			final short csoffset = (short) dv;
 			final short[] csa = new short[isize];
 			while (it.hasNext()) {
 				csds.getAbs(it.index, csa);
@@ -960,7 +973,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.ARRAYINT32:
 			CompoundIntegerDataset cids = (CompoundIntegerDataset) a;
-			final int cioffset = (int) lv;
+			final int cioffset = (int) dv;
 			final int[] cia = new int[isize];
 			while (it.hasNext()) {
 				cids.getAbs(it.index, cia);
@@ -978,6 +991,7 @@ public class DatasetUtils {
 			break;
 		case AbstractDataset.ARRAYINT64:
 			CompoundLongDataset clds = (CompoundLongDataset) a;
+			final long cloffset = (long) dv;
 			final long[] cla = new long[isize];
 			while (it.hasNext()) {
 				clds.getAbs(it.index, cla);
@@ -985,7 +999,7 @@ public class DatasetUtils {
 				for (int i = 0; i < isize; i++) {
 					long x = cla[i];
 					if (x < 0) {
-						cla[i] = x + lv;
+						cla[i] = x + cloffset;
 						dirty = true;
 					}
 				}

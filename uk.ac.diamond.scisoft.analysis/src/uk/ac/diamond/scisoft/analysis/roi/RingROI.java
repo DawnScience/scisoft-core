@@ -94,10 +94,11 @@ public class RingROI extends SectorROI implements Serializable {
 	 */
 	@Override
 	public RingROI copy() {
-		RingROI lroi = new RingROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);
-		lroi.setCombineSymmetry(combineSymmetry);
-		lroi.setPlot(plot);
-		return lroi;
+		RingROI c = new RingROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);
+		c.setCombineSymmetry(combineSymmetry);
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	@Override

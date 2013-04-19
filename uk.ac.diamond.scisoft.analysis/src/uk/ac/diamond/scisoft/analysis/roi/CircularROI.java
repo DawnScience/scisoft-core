@@ -56,6 +56,14 @@ public class CircularROI extends ROIBase {
 		rad /= subFactor;
 	}
 
+	@Override
+	public CircularROI copy() {
+		CircularROI c = new CircularROI(rad, spt[0], spt[1]);
+		c.name = name;
+		c.plot = plot;
+		return c;
+	}
+
 	/**
 	 * @return radius
 	 */

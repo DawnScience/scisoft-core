@@ -132,6 +132,7 @@ public class ROIBase implements IROI {
 	@Override
 	public ROIBase copy() {
 		ROIBase c = new ROIBase();
+		c.name = name;
 		c.spt = spt.clone();
 		c.plot = plot;
 		return c;

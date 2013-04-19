@@ -54,10 +54,11 @@ public class EllipticalFitROI extends EllipticalROI {
 
 	@Override
 	public EllipticalFitROI copy() {
-		EllipticalFitROI croi = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
-		croi.proi = proi.copy();
-		croi.setPlot(plot);
-		return croi;
+		EllipticalFitROI c = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
+		c.proi = proi.copy();
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	/**

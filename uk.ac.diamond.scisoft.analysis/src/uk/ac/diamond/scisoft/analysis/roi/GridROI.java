@@ -81,10 +81,11 @@ public class GridROI extends RectangularROI implements Serializable {
 
 	@Override
 	public GridROI copy() {
-		GridROI croi = new GridROI(getPointX(), getPointY(), getLength(0), getLength(1), getAngle(), xSpacing,
+		GridROI c = new GridROI(getPointX(), getPointY(), getLength(0), getLength(1), getAngle(), xSpacing,
 				ySpacing, gridLinesOn, midPointOn, gridPref);
-		croi.setPlot(plot);
-		return croi;
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	/**

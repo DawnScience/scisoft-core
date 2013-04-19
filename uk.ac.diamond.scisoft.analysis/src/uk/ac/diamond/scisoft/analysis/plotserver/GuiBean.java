@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
  * for filling and emptying the data
  */
 public class GuiBean extends HashMap<GuiParameters, Serializable> implements Serializable {
-	transient private static final Logger logger = LoggerFactory.getLogger(GuiBean.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(GuiBean.class);
+
 	/**
 	 * @return a shallow copy of gui bean
 	 */
@@ -85,5 +85,4 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 			this.put(pair.getKey(), pair.getValue());
 		}
 	}
-
 }

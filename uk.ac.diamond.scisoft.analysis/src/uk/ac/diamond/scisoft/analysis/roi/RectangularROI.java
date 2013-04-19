@@ -233,9 +233,10 @@ public class RectangularROI extends ROIBase implements Serializable {
 	 */
 	@Override
 	public RectangularROI copy() {
-		RectangularROI croi = new RectangularROI(spt[0], spt[1], len[0], len[1], ang, clippingCompensation);
-		croi.setPlot(plot);
-		return croi;
+		RectangularROI c = new RectangularROI(spt[0], spt[1], len[0], len[1], ang, clippingCompensation);
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	/**

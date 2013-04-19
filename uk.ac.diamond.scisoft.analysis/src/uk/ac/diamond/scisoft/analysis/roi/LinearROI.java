@@ -249,6 +249,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	@Override
 	public LinearROI copy() {
 		LinearROI roi = new LinearROI();
+		roi.setName(name);
 		roi.setPoint(spt.clone());
 		roi.setPlot(plot);
 		roi.setAngle(ang);

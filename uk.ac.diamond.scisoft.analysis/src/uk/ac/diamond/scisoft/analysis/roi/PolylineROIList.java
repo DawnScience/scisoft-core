@@ -24,4 +24,15 @@ import java.util.ArrayList;
  */
 public class PolylineROIList extends ArrayList<PolylineROI> implements ROIList<PolylineROI> {
 
+	/**
+	 * Add roi to list (if it is of correct class)
+	 * @param roi
+	 * @return true if added
+	 */
+	@Override
+	public boolean add(IROI roi) {
+		if (roi instanceof PolylineROI)
+			return super.add((PolylineROI) roi);
+		return false;
+	}
 }

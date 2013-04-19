@@ -24,4 +24,15 @@ import java.util.ArrayList;
  */
 public class RectangularROIList extends ArrayList<RectangularROI> implements ROIList<RectangularROI> {
 
+	/**
+	 * Add roi to list (if it is of correct class)
+	 * @param roi
+	 * @return true if added
+	 */
+	@Override
+	public boolean add(IROI roi) {
+		if (roi instanceof RectangularROI)
+			return super.add((RectangularROI) roi);
+		return false;
+	}
 }

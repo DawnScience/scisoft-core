@@ -219,11 +219,12 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 
 	@Override
 	public PolylineROI copy() {
-		PolylineROI croi = new PolylineROI(spt.clone());
+		PolylineROI c = new PolylineROI(spt.clone());
 		for (int i = 1, imax = pts.size(); i < imax; i++)
-			croi.insertPoint(pts.get(i).spt.clone());
-		croi.setPlot(plot);
-		return croi;
+			c.insertPoint(pts.get(i).spt.clone());
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	@Override

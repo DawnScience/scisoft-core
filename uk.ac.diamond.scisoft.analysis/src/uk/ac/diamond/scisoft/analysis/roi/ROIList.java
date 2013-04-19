@@ -25,4 +25,6 @@ import java.util.List;
  */
 public interface ROIList<T extends IROI> extends Serializable, List<T> {
 
+	@Override
+	public boolean add(IROI roi);
 }

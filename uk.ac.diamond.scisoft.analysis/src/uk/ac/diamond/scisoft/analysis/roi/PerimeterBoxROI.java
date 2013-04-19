@@ -73,13 +73,14 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 		super(ptx, pty, width, height, angle, clip);
 	}
 
-	@Override
 	/**
 	 * @return a copy
 	 */
+	@Override
 	public PerimeterBoxROI copy() {
 		PerimeterBoxROI c = new PerimeterBoxROI();
 		c.spt = spt.clone();
+		c.name = name;
 		c.plot = plot;
 		return c;
 	}

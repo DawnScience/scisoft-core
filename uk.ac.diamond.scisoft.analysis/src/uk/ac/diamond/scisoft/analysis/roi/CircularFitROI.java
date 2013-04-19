@@ -47,10 +47,11 @@ public class CircularFitROI extends CircularROI {
 
 	@Override
 	public CircularFitROI copy() {
-		CircularFitROI croi = new CircularFitROI(getRadius(), getPointX(), getPointY());
-		croi.proi = proi.copy();
-		croi.setPlot(plot);
-		return croi;
+		CircularFitROI c = new CircularFitROI(getRadius(), getPointX(), getPointY());
+		c.name = name;
+		c.proi = proi.copy();
+		c.plot = plot;
+		return c;
 	}
 
 	/**

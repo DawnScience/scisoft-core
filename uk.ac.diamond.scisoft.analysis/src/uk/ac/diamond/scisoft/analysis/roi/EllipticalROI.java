@@ -74,9 +74,10 @@ public class EllipticalROI extends ROIBase {
 
 	@Override
 	public EllipticalROI copy() {
-		EllipticalROI croi = new EllipticalROI(saxis[0], saxis[1], ang, spt[0], spt[1]);
-		croi.setPlot(plot);
-		return croi;
+		EllipticalROI c = new EllipticalROI(saxis[0], saxis[1], ang, spt[0], spt[1]);
+		c.name = name;
+		c.plot = plot;
+		return c;
 	}
 
 	/**

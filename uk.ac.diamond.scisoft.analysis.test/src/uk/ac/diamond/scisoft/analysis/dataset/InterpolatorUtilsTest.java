@@ -16,49 +16,32 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 public class InterpolatorUtilsTest {
 
 	@Test
-	public void testGetInterpolatedResultFromNinePoints() throws Exception {
-		AbstractDataset x = Random.rand(new int[] {3,3});
-		AbstractDataset y = Random.rand(new int[] {3,3});
+	public void test() {
 		
-		List<AbstractDataset> res = DatasetUtils.meshGrid(DoubleDataset.arange(3),DoubleDataset.arange(3));
+		AbstractDataset im = AbstractDataset.arange(0.0,10000.0,1.0, AbstractDataset.FLOAT32);
+		im = im.reshape(100,100);
+		AbstractDataset off = Maths.sin(AbstractDataset.arange(0.0, 10.0, 0.1,AbstractDataset.FLOAT32));
+		AbstractDataset axis = AbstractDataset.arange(-5.0, 5.0, 0.1, AbstractDataset.FLOAT32);
 		
-		x.imultiply(0.4).iadd(res.get(0));
-		y.imultiply(0.4).iadd(res.get(1));
+		AbstractDataset newaxis = AbstractDataset.arange(-10.0, 10.0, 0.1, AbstractDataset.FLOAT32);
 		
-		AbstractDataset vals = Random.rand(new int[] {3,3});
+		AbstractDataset output = InterpolatorUtils.remapOneAxis(im, 0, off, axis, newaxis);
 		
-		double test = InterpolatorUtils.GetInterpolatedResultFromNinePoints(vals, x, y, 1.5, 1.5);
-		
-		System.out.println(test);
-	}
-	
-	@Test
-	public void testRegrid() throws Exception {
-		
-		AbstractDataset ds = Random.rand(new int[] {100,100});
-		AbstractDataset pow = DoubleDataset.arange(100);
-		pow.ipower(2);
-		
-		AbstractDataset tile = pow.reshape(pow.getShape()[0],1);
-		AbstractDataset x = DatasetUtils.tile(tile, 100);
-		
-		AbstractDataset y = DatasetUtils.transpose(x);
-		
-		AbstractDataset lin = DoubleDataset.arange(10,100,5);
-		
-		// now apply the Transform
-		
-		@SuppressWarnings("unused")
-		AbstractDataset result = InterpolatorUtils.regrid(ds, x, y, lin, lin);
-		
-		
+		// check that some values are correct
+		assertEquals("Cooridinate Incorrect", 989.761, output.getDouble(62,29), 0.1);
+		assertEquals("Cooridinate Incorrect", 8387.267, output.getDouble(127,56), 0.1);
+		assertEquals("Cooridinate Incorrect", Double.NaN, output.getDouble(179,33), 0.1);
+		assertEquals("Cooridinate Incorrect", 9203.331, output.getDouble(144,2), 0.1);
+		assertEquals("Cooridinate Incorrect", 346.186, output.getDouble(53,63), 0.1);
+		assertEquals("Cooridinate Incorrect", 768.761, output.getDouble(54,97), 0.1);
+		assertEquals("Cooridinate Incorrect", 7069.225, output.getDouble(120,94), 0.1);
 	}
 	
 

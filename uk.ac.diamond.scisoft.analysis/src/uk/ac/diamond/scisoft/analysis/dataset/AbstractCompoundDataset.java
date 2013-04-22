@@ -706,7 +706,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 */
 	public double[] maxItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return new double[0];
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -723,7 +725,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 */
 	public double[] minItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return new double[0];
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -737,7 +741,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	@Override
 	public Object sum() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return new double[0];
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -786,7 +792,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	@Override
 	public Object mean() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return new double[0];
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -800,7 +808,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	@Override
 	public Number variance() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return Double.NaN;
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -813,7 +823,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	@Override
 	public Number rootMeanSquare() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (isize < 1)
+			return Double.NaN;
+		if (getStoredValue(n+0) == null) {
 			calculateSummaryStats(false, false, n);
 		}
 

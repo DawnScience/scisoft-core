@@ -141,16 +141,16 @@ def clear(name=None):
         name = _PVNAME
     _plot_clear(name)
 
-_DEF_XAXIS = 'X-Axis'
-_DEF_YAXIS = 'Y-Axis'
-def _setup_axes(axes):
-    if axes is None:
-        pass
-    else:
-        pass
-    pass
+'''
+Store a global list of x and y axes names
+'''
+_AXES_NAMES = { 'x':['X-Axis'], 'y':['Y-Axis'] }
+
+import types as _types
 
 def _parselinearg(x, y=None, title=None, name=None):
+    '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
+    '''
     if not name:
         name = _PVNAME
 
@@ -164,19 +164,117 @@ def _parselinearg(x, y=None, title=None, name=None):
         else:
             xl = _toList(x)
             if len(xl) == 1:
-                xLength = xl[0].shape[0]
+                x = xl[0]
+                if type(x) is _types.TupleType: # has axis name
+                    x = x[1]
+                xLength = x.shape[0]
                 for i in yl:
+                    if type(i) is _types.TupleType: # has axis name
+                        i = i[1]
                     if xLength != i.shape[0]:
                         raise AttributeError("length of y does not match the length of x" )
             elif len(xl) != len(yl):
                 raise ValueError("number of x datasets should be equal to number of y datasets")
             else:
                 for i,j in zip(xl,yl):
+                    if type(i) is _types.DictType: # has axis name
+                        i = i.values()[0]
+                    if type(j) is _types.DictType: # has axis name
+                        j = j.values()[0]
                     if i.shape[0] != j.shape[0]:
                         raise AttributeError("length of y does not match the length of x" )
 
     return name, title, xl, yl
 
+_AXES_DICT = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom':_plot.axis_bottom},
+              'y':{'default':_plot.axis_left, 'left':_plot.axis_left, 'right':_plot.axis_right} }
+
+def _setup_axes(al, mode, name):
+    for a in al:
+        if type(a) is _types.DictType: # has axis name
+            a = a.items()[0]
+        if type(a) is _types.TupleType: # has axis name
+            _setup_axis(a, mode, name)
+
+def _setup_axis(a, mode, name):
+    '''
+    a is tuple of axis name (or axis name and side) and array
+    '''
+    n = a[0]
+    if type(n) is _types.TupleType: # has side info
+        s = _AXES_DICT[mode][n[1]]
+        n = n[0]
+    else:
+        s = _AXES_DICT[mode]['default']
+    if n not in _AXES_NAMES[mode]:
+        _plot_createaxis(name, n, s)
+        _AXES_NAMES[mode].append(n)
+
+def _clear_axis(mode, name):
+    al = _AXES_NAMES[mode]
+    for n in al[1:]:
+        _plot_removeaxis(name, n)
+        al.remove(n)
+
+def _process_line(x, y=None, title=None, name=None, mode=None):
+    name, t, xl, yl = _parselinearg(x, y, title, name)
+
+    from time import sleep
+    NAP = 0.05 # need to sleep to synchronize state
+
+    first = mode is None # plot first then add rest
+    if first:
+        _clear_axis('x', name)
+        sleep(NAP)
+        _clear_axis('y', name)
+        sleep(NAP)
+
+    if xl is not None:
+        _setup_axes(xl, 'x', name)
+        sleep(NAP)
+    _setup_axes(yl, 'y', name)
+    sleep(NAP)
+
+    for i in range(len(yl)):
+        n = _AXES_NAMES['x'][0]
+        if xl is None:
+            x = None
+        else:
+            if len(xl) == 1:
+                x = xl[0]
+            else:
+                x = xl[i]
+                if type(x) is _types.DictType: # has axis name
+                    x = x.items()[0]
+            if type(x) is _types.TupleType: # has axis name
+                n = x[0]
+                if type(n) is _types.TupleType: # has side info
+                    n = n[0]
+                x = x[1]
+        _plot_setactivexaxis(name, n)
+        sleep(NAP)
+
+        n = _AXES_NAMES['y'][0]
+        y = yl[i]
+        if type(y) is _types.DictType: # has axis name
+            y = y.items()[0]
+        if type(y) is _types.TupleType: # has axis name
+            n = y[0]
+            if type(n) is _types.TupleType: # has side info
+                n = n[0]
+            y = y[1]
+        _plot_setactiveyaxis(name, n)
+        sleep(NAP)
+
+        if first:
+            first = False
+            _plot_line(name, t, [x], [y], None, None)
+        else:
+            _plot_addline(name, t, [x], [y], None, None)
+        sleep(NAP)
+
+#    _clear_axis('x', name)
+#    _clear_axis('y', name)
 
 def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any
@@ -185,7 +283,6 @@ def line(x, y=None, title=None, name=None):
     Arguments:
     x -- optional dataset or list of datasets for x values
     y -- dataset or list of datasets
-    axes -- tuple containing positions of axes for x and y ('bottom', 'left')
     title -- title of plot
     name -- name of plot view to use (if None, use default name)
 
@@ -196,9 +293,22 @@ def line(x, y=None, title=None, name=None):
     >>> dnp.plot.line([a,a+12.3]) # plots two lines against array index
     >>> dnp.plot.line(2*a, [a,a+12.3]) # plots two lines against 2*a
     >>> dnp.plot.line([2*a, 3.5*b], [a,b]) # plots two lines against defined x values
+
+    To plot with alternative axes, x and y can be single-item dictionaries or lists of
+    dictionaries. Each dictionary pairs an axis as a key with the value being a dataset.
+    The axis key can be a string which is used as an axis name or a tuple of name and
+    position. The position is a string with recognised values: "bottom" (default) and
+    "top", "left" (default) and "right" for horizontal and vertical axes, respectively.
+
+    For example,
+    >>> rads = dnp.linspace(0, dnp.pi, 21)
+    >>> degs = dnp.linspace(0, 180, 31)
+    >>> ysin = dnp.sin(rads)
+    >>> ycos = dnp.cos(dnp.radians(degs))
+    >>> dnp.plot.line([rads, {"degrees":degs}], [ysin, {("cos","right"):ycos}])
+
     '''
-    n, t, xl, yl = _parselinearg(x, y, title, name)
-    _plot_line(n, t, xl, yl, None, None)
+    _process_line(x, y, title, name, None)
 
 def addline(x, y=None, title=None, name=None):
     '''Add line(s) to existing plot, optionally against
@@ -210,8 +320,7 @@ def addline(x, y=None, title=None, name=None):
     title -- title of plot
     name -- name of plot view to use (if None, use default name)
     '''
-    n, t, xl, yl = _parselinearg(x, y, title, name)
-    _plot_addline(n, t, xl, yl, None, None)
+    _process_line(x, y, title, name, 'add')
 
 def updateline(x, y=None, title=None, name=None):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against

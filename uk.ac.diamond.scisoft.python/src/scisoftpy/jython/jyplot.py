@@ -44,6 +44,12 @@ plot_removeaxis = _plotter.removeAxis
 plot_setactivexaxis = _plotter.setActiveXAxis
 plot_setactiveyaxis = _plotter.setActiveYAxis
 
+from uk.ac.diamond.scisoft.analysis.plotserver import AxisOperation as _axisop
+axis_top = _axisop.TOP
+axis_bottom = _axisop.BOTTOM
+axis_left = _axisop.LEFT
+axis_right = _axisop.RIGHT
+
 plot_scanforimages = _plotter.scanForImages
 
 from jyio import h5manager as _h5mgr

@@ -146,5 +146,9 @@ class plotter(object):
     plot_orders = { "none": imageorder.IMAGEORDERNONE, "alpha": imageorder.IMAGEORDERALPHANUMERICAL, "chrono": imageorder.IMAGEORDERCHRONOLOGICAL}
     plot_window_manager = window_manager()
 
+    axis_top = 1 << 7
+    axis_bottom = 1 << 10
+    axis_left = 1 << 14
+    axis_right = 1 << 17
 
 

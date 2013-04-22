@@ -247,7 +247,7 @@ can be obtained using the plotting package::
     # grab a GUI bean
     gb = dpl.getbean()
 
-By default, this function returns information as a "bean" from Plot 1 - use
+By default, this function returns information as a ``bean'' from Plot 1 - use
 the keyword argument ``name`` to obtain information from other named plot
 views. Again, the default view name can be changed with ``dpl.setdefname``.
 The GUI bean is a dictionary object with a set of possible keys listed in the
@@ -262,7 +262,6 @@ keys for the dictionary are listed as strings in the GUI parameters class::
 
     dir(dpl.parameters)
 
-but direct use of these is discouraged - consider using the helper functions.
 
 ROI objects
 -----------

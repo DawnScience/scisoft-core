@@ -290,6 +290,23 @@ public class CalibrationStandards implements Serializable {
 	public CalibrantSpacing getCalibrant() {
 		return getCalibrationPeakMap(getSelectedCalibrant());
 	}
+	
+	/**
+	 * Default get default calibrant spacing for named calibrant
+	 * If not a default calibrant null returned.
+	 * @param name
+	 * @return calibrant
+	 */
+	public CalibrantSpacing getDefaultSpacing(String name) {
+		
+		Map<String, CalibrantSpacing> cal = createDefaultCalibrants();
+		
+		if (cal.containsKey(name)) {
+			return cal.get(name);
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Set modifiability of standard

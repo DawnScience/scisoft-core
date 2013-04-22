@@ -40,12 +40,24 @@ plotting package:
 
     import scisoftpy as dnp
     
-    dnp.plot.line([x,] y)
+    dnp.plot.line([x,] y, title=None)
 
    plots the given ``y`` value dataset or list of datasets against a ``x`` dataset or list of
-   datasets (if given). If a single ``x`` dataset is given, then it used for all ``y`` datasets and
-   if a list of ``x`` datasets is given then it used in a pairwise fashion with the corresponding
-   ``y`` datasets
+   datasets (if given). If a single ``x`` dataset is given, then it used for all ``y`` datasets
+   and if a list of ``x`` datasets is given then it used in a pairwise fashion with the
+   corresponding ``y`` datasets.
+
+   As well as passing datasets, a plot title can be set using the title keyword. Furthermore,
+   alternative axes can be specified per dataset using a single-item dictionary where the key is
+   a name or a tuple of name and position. For ``x`` datasets, valid position strings are "top"
+   and "bottom" (default); for ``y`` datasets, they are "left" (default) and "right". For
+   example, to plot sine and cosine::
+
+    rads = dnp.linspace(0, dnp.pi, 21)
+    degs = dnp.linspace(0, 180, 31)
+    ysin = dnp.sin(rads)
+    ycos = dnp.cos(dnp.radians(degs))
+    dnp.plot.line([rads, {"degrees":degs}], [ysin, {("cos","right"):ycos}])
 
  * multiple 1D scalar line plots as 3D series::
 
@@ -91,8 +103,9 @@ the optional keyword argument, ``name``. For example::
     dnp.plot.line(y, name="Plot 2")
 
 
-In points plots, more points can be added with::
+In line and points plots, more lines or points can be added with::
 
+    dnp.plot.addline([x,] y)
     dnp.plot.addpoints(x, y, z=None, size=0)
 
 Both 2D image plots, 2D surface plots and 3D points plots will open
@@ -234,10 +247,10 @@ can be obtained using the plotting package::
     # grab a GUI bean
     gb = dpl.getbean()
 
-By default, this function returns information from Plot 1 - use the keyword
-argument ``name`` to obtain information from other named plot views. Again,
-the default view name can be changed with ``dpl.setdefname``. The GUI
-bean is a dictionary object with a set of possible keys listed in the
+By default, this function returns information as a "bean" from Plot 1 - use
+the keyword argument ``name`` to obtain information from other named plot
+views. Again, the default view name can be changed with ``dpl.setdefname``.
+The GUI bean is a dictionary object with a set of possible keys listed in the
 GUI parameters class. :obj:`None` is returned if there is no dictionary
 present. You can add in new entries or overwrite existing ones. Modified GUI
 beans can be pushed back to a plot view::
@@ -249,6 +262,7 @@ keys for the dictionary are listed as strings in the GUI parameters class::
 
     dir(dpl.parameters)
 
+but direct use of these is discouraged - consider using the helper functions.
 
 ROI objects
 -----------
@@ -275,24 +289,17 @@ These are
 As mentioned in the previous section, the current ROI and any ROIs stored in
 the table are sent via a GUI bean back to the plot view.
 
-The current ROI is held in the GUI bean under the key ``parameters.roi``
-and the table of ROIs under the key ``parameters.roilist``. The values
+The current ROI and the table of ROIs are held in the GUI bean. The values
 held under those keys depend on which side panel is active.
 
-When the line profile tool is being used, the ``parameters.roi`` item is a
-linear ROI object and any stored ROIs are held in a Python list of linear ROIs::
+When the line profile tool is being used, the item in the bean is a linear ROI
+object and any stored ROIs are held in a Python list/dictionary of linear ROIs::
 
-    cr = gb[dpl.parameters.roi]
-
-    # or use convenience function
     cr = dpl.getroi(gb)
 
     # print current ROI's starting point, length and angle (in radians)
     print cr.point, cr.length, cr.angle
 
-    lr = gb[dpl.parameters.roilist]
-
-    # or use convenience function
     lr = dpl.getrois(gb)
 
     # get first item
@@ -301,9 +308,6 @@ linear ROI object and any stored ROIs are held in a Python list of linear ROIs::
     print ra.length, ra.angleDegrees
 
     # copy ROI from list
-    roi = gb[dpl.parameters.roilist][0].copy()
-
-    # or use convenience function
     roi = dpl.getrois(gb)[0].copy()
 
     # modify ROI
@@ -325,9 +329,6 @@ linear ROI object and any stored ROIs are held in a Python list of linear ROIs::
     import scisoftpy.roi as droi
     list = droi.line_list()
     list.append(roi)
-    gb[dpl.parameters.roilist] = list
-
-    # or use convenience function
     dpl.setrois(gb, list)
 
     # push bean back

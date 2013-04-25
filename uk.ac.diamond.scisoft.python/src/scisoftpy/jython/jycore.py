@@ -139,7 +139,7 @@ def _translatenativetype(dtype):
     raise ValueError, "Dataset type is not recognised"
 
 # default types
-int_ = int32
+int_ = int32 # TODO should be 64 for 64-bit OS
 float_ = float64
 complex_ = complex128
 
@@ -291,6 +291,11 @@ class ndarray:
 
     def __str__(self):
         return self.toString(True)
+    def __repr__(self):
+        dt = _getdtypefromjdataset(self)
+        if dt is int_ or dt is float_ or dt is complex_:
+            return 'array(' + self.toString(True) + ')'
+        return 'array(' + self.toString(True) + ', dtype=%s)' % (dt,)
 
     def __add__(self, o):
         return _maths.add(self, asDataset(o))

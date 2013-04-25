@@ -144,8 +144,7 @@ public class PositionIterator extends IndexIterator {
 			once = false;
 			return true;
 		}
-		int j = endrank;
-		for (; j >= 0; j--) {
+		for (int j = endrank; j >= 0; j--) {
 			if (omit[j]) {
 				continue;
 			}

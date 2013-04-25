@@ -179,7 +179,5 @@ public class DoubleDatasetTest {
 		c.set(101, new int[]{0,0});
 		assertEquals(0,c.maxPos()[0]);
 		assertEquals(0,c.maxPos()[1]);
-		
 	}
-	
 }

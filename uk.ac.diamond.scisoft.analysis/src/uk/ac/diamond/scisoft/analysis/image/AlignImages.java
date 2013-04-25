@@ -30,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 public class AlignImages {
-	transient private static final Logger logger = LoggerFactory.getLogger(AlignImages.class);
+	private static final Logger logger = LoggerFactory.getLogger(AlignImages.class);
 
 	/**
 	 * Align images
@@ -97,5 +97,4 @@ public class AlignImages {
 
 		return align(images, shifted, roi, fromStart, preShift);
 	}
-
 }

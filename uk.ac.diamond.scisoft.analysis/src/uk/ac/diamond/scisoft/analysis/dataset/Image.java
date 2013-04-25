@@ -35,7 +35,7 @@ public class Image {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient protected static final Logger logger = LoggerFactory.getLogger(Image.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Image.class);
 
 	/**
 	 * Find translation shift between two 2D datasets

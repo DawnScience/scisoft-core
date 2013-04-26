@@ -145,6 +145,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				if (span <= 0) {
 					h[0] = ds.getSize();
 					result.add(histo);
+					result.add(bins);
 					continue;
 				}
 
@@ -183,6 +184,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				if (lo >= hi) {
 					h[0] = ds.getSize();
 					result.add(histo);
+					result.add(bins);
 					continue;
 				}
 

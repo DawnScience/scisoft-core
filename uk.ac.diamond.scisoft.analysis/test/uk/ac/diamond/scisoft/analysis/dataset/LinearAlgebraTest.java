@@ -102,6 +102,26 @@ public class LinearAlgebraTest {
 		d = Maths.multiply(aa, aa);
 		n = (Number) d.sum();
 		Assert.assertTrue("Fourth moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
+	}
 
+
+	@Test
+	public void testOuter() {
+		AbstractDataset a;
+		AbstractDataset b;
+
+		a = DoubleDataset.arange(2);
+		b = DoubleDataset.arange(3);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {0, 0, 0, 0, 1, 2}, 2, 3), LinearAlgebra.outerProduct(a, b),
+				1e-12, 1e-12);
+		
+		a = Random.randn(123.5, 23.4, 10);
+		b = Random.randn(-31.2, 12.4, 7);
+		AbstractDataset c = LinearAlgebra.outerProduct(a, b);
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 7; j++) {
+				Assert.assertEquals("", a.getDouble(i)*b.getDouble(j), c.getDouble(i, j), 1e-12);
+			}
+		}
 	}
 }

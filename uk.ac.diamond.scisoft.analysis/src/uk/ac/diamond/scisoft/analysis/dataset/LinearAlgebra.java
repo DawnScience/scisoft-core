@@ -214,4 +214,41 @@ public class LinearAlgebra {
 			return tensorDotProduct(a, b, -1, 0);
 		return tensorDotProduct(a, b, -1, -2);
 	}
+
+	/**
+	 * Calculate the outer product of two datasets.
+	 * @param a
+	 * @param b
+	 * @return outer product
+	 */
+	public static AbstractDataset outerProduct(AbstractDataset a, AbstractDataset b) {
+		int[] as = a.getShape();
+		int[] bs = b.getShape();
+		int rank = as.length + bs.length;
+		int[] shape = new int[rank];
+		for (int i = 0; i < as.length; i++) {
+			shape[i] = as[i];
+		}
+		for (int i = 0; i < bs.length; i++) {
+			shape[as.length + i] = bs[i];
+		}
+		int isa = a.getElementsPerItem();
+		int isb = b.getElementsPerItem();
+		if (isa != 1 || isb != 1) {
+			throw new UnsupportedOperationException("Compound datasets not supported");
+		}
+		AbstractDataset o = AbstractDataset.zeros(shape, AbstractDataset.getBestDType(a.getDtype(), b.getDtype()));
+
+		IndexIterator ita = a.getIterator();
+		IndexIterator itb = b.getIterator();
+		int j = 0;
+		while (ita.hasNext()) {
+			double va = ((Number) a.getObjectAbs(ita.index)).doubleValue();
+			while (itb.hasNext()) {
+				o.setObjectAbs(j++, va * ((Number) b.getObjectAbs(itb.index)).doubleValue());
+			}
+			itb.reset();
+		}
+		return o;
+	}
 }

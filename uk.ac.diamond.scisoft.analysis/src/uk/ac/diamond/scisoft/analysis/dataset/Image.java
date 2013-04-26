@@ -62,7 +62,11 @@ public class Image {
 //		logger.info("f {} {}", f.shape, f.getElementDoubleAbs(0));
 //		logger.info("g {} {}", g.shape, g.getElementDoubleAbs(0));
 
-		List<AbstractDataset> corrs = Signal.phaseCorrelate(f, g, null, true);
+		// apply window to images
+		int[] s = f.getShape();
+		AbstractDataset w = LinearAlgebra.outerProduct(Signal.hannWindow(s[0]), Signal.hannWindow(s[1]));
+		
+		List<AbstractDataset> corrs = Signal.phaseCorrelate(Maths.multiply(w, f), Maths.multiply(w, g), null, true);
 		AbstractDataset pcorr = corrs.get(0);
 		int[] maxpos = pcorr.maxPos(); // peak pos
 		int[] xshape = pcorr.shape;

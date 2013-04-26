@@ -600,7 +600,7 @@ def getrois(bean, roi=None):
     if not parameters.roilist in bean:
         return None
     rs = bean[parameters.roilist]
-    if rs is None:
+    if rs is None or len(rs) == 0:
         return None
     try:
         iter(rs)

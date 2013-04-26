@@ -309,6 +309,9 @@ object and any stored ROIs are held in a Python list/dictionary of linear ROIs::
     # copy ROI from list
     roi = dpl.getrois(gb)[0].copy()
 
+    # assign name
+    roi.name = 'New line'
+
     # modify ROI
     roi.setPoint(100,50)
 
@@ -332,6 +335,8 @@ object and any stored ROIs are held in a Python list/dictionary of linear ROIs::
 
     # push bean back
     dpl.setbean(gb)
+
+Note, ROIs must be assigned names before they are appended to a ROI list.
 
 The ROIs obtained from the client can be used with image datasets to calculate
 profile datasets in the console::

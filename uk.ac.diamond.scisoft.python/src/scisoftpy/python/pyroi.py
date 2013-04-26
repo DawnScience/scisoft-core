@@ -42,6 +42,14 @@ class roibase(_iroi):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self.__dict__.__repr__())
 
+    def setPoint(self, *point):
+        self.spt = [float(p) for p in point]
+
+    def getPoint(self):
+        return self.spt
+
+    point = property(getPoint, setPoint)
+
 class point(roibase):
     def __init__(self, **kwargs):
         super(point, self).__init__(**kwargs)

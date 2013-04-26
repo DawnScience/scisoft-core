@@ -49,6 +49,39 @@ public class Signal {
 	}
 
 	/**
+	 * @param c
+	 * @param a
+	 * @param b
+	 * @return slice of c that has shape a but is offset by middle of shape b
+	 */
+	private static AbstractDataset getSame(AbstractDataset c, int[] a, int[] b) {
+		int[] start = b.clone();
+		int[] stop = a.clone();
+		for (int i = 0; i < start.length; i++) {
+			start[i] = start[i] / 2;
+			stop[i] += start[i];
+		}
+		return c.getSlice(start, stop, null);
+	}
+
+	/**
+	 * @param c
+	 * @param a
+	 * @param b
+	 * @return slice of c that is the overlapping portion of shapes a and b
+	 */
+	private static AbstractDataset getValid(AbstractDataset c, int[] a, int[] b) {
+		int[] start = new int[a.length];
+		int[] stop = new int[a.length];
+		for (int i = 0; i < start.length; i++) {
+			int l = Math.max(a[i], b[i]) - Math.min(a[i], b[i]) + 1;
+			start[i] = (c.shape[i] - l)/2;
+			stop[i] = start[i] + l;
+		}
+		return c.getSlice(start, stop, null);
+	}
+
+	/**
 	 * Perform a linear convolution of two input datasets 
 	 * @param f
 	 * @param g
@@ -59,10 +92,10 @@ public class Signal {
 		// compute using circular (DFT) algorithm
 		// to get a linear version, need to pad out axes to f-axes + g-axes - 1 before DFTs
 		
-		if(f.shape.length != g.shape.length) {
+		if (f.shape.length != g.shape.length) {
 			f.checkCompatibility(g);
 		}
-		
+
 		AbstractDataset c = null, d = null;
 		int[] s = paddedShape(f.shape, g.shape, axes);
 		c = FFT.fftn(f, s, axes);
@@ -76,21 +109,35 @@ public class Signal {
 	}
 
 	/**
+	 * Perform a linear convolution of two input datasets 
+	 * @param f
+	 * @param g
+	 * @param axes
+	 * @return central portion of linear convolution with same shape as f
+	 */
+	public static AbstractDataset convolveToSameShape(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+		return getSame(convolve(f, g, axes), f.shape, g.shape);
+	}
+
+	/**
+	 * Perform a linear convolution of two input datasets 
+	 * @param f
+	 * @param g
+	 * @param axes
+	 * @return overlapping portion of linear convolution
+	 */
+	public static AbstractDataset convolveForOverlap(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+		return getValid(convolve(f, g, axes), f.shape, g.shape);
+	}
+
+	/**
 	 * Perform a linear auto-correlation on a dataset
 	 * @param f
 	 * @param axes
 	 * @return linear auto-correlation
 	 */
 	public static AbstractDataset correlate(final AbstractDataset f, final int[] axes) {
-		AbstractDataset c = null;
-		int[] s = paddedShape(f.shape, f.shape, axes);
-		c = FFT.fftn(f, s, axes);
-		c = Maths.multiply(c, Maths.conjugate(c));
-
-		AbstractDataset corr = FFT.ifftn(c, s, axes);
-		if (f.isComplex())
-			return corr;
-		return corr.real();
+		return correlate(f, f, axes);
 	}
 
 	/**

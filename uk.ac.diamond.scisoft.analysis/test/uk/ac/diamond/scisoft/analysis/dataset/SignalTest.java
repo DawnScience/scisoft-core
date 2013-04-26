@@ -81,7 +81,25 @@ public class SignalTest {
 		assertEquals("Element (10,10) is not correct",  3, result.getDouble(10,10), 0.1); 
 		assertEquals("Element (11,11) is not correct",  0, result.getDouble(11,11), 0.1); 
 	}
-	
+
+	@Test
+	public void testConvolutionFilter() {
+		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset kernel = DoubleDataset.ones(27);
+		AbstractDataset result = Signal.convolveToSameShape(ds, kernel, null);
+		assertEquals(120, result.getDouble(2), 0.001);
+		
+		ds = ds.reshape(new int[] {10,100});
+		kernel = kernel.reshape(3,9);
+		result = Signal.convolveToSameShape(ds, kernel, null);
+		assertEquals(ds.getDouble(5,5)*27, result.getDouble(5,5), 0.001);
+		
+		ds = ds.reshape(new int[] {10,10,10});
+		kernel = kernel.reshape(3,3,3);
+		result = Signal.convolveToSameShape(ds, kernel, null);
+		assertEquals(ds.getDouble(5,5,5)*27, result.getDouble(5,5,5), 0.001);
+	}
+
 	/**
 	 * Comes from the Ticket SCI#1275
 	 */

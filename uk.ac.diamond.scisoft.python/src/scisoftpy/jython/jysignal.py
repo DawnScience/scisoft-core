@@ -24,8 +24,11 @@ from jymaths import ndarraywrapped as _npwrapped
 from jycore import asfarray as _asf
 
 @_npwrapped
-def correlate(f, g=None, axes=None):
+def correlate(f, g=None, mode='valid', old_behavior=False, axes=None):
     '''Perform a cross (or auto if g is None) correlation along given axes'''
+    if old_behavior:
+        raise NotImplementedError, 'Not implemented'
+
     if g is None:
         return _signal.correlate(_asf(f), axes)
     return _signal.correlate(_asf(f), _asf(g), axes)
@@ -40,8 +43,12 @@ def phasecorrelate(f, g, axes=None, includeinv=False):
         return ans[0]
 
 @_npwrapped
-def convolve(f, g, axes=None):
+def convolve(f, g, mode='full', axes=None):
     '''Perform a convolution along given axes'''
-    return _signal.convolve(_asf(f), _asf(g), axes)
-
-
+    if mode == 'same':
+        return _signal.convolveToSameShape(_asf(f), _asf(g), axes)
+    elif mode == 'valid':
+        return _signal.convolveForOverlap(_asf(f), _asf(g), axes)
+    elif mode == 'full':
+        return _signal.convolve(_asf(f), _asf(g), axes)
+    raise ValueError, 'mode keyword has unrecognised value'

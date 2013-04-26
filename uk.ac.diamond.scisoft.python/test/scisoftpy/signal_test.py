@@ -39,14 +39,14 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def checkitems(self, la, ds):
+    def checkitems(self, la, ds, places=7):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
                 if la == None:
                     print i, ds[i]
                 else:
                     if max(la[i], ds[i]) > 1e-10:
-                        self.assertEquals(la[i], ds[i])
+                        self.assertAlmostEqual(la[i], ds[i], places=places)
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
                         print i,j, ds[i,j]
                     else:
                         if max(la[i][j], ds[i, j]) > 1e-10:
-                            self.assertEquals(la[i][j], ds[i, j])
+                            self.assertAlmostEqual(la[i][j], ds[i, j], places=places)
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -63,7 +63,7 @@ class Test(unittest.TestCase):
                             print i,j,k, ds[i,j,k]
                         else:
                             if max(la[i][j][k], ds[i, j, k]) > 1e-10:
-                                self.assertEquals(la[i][j][k], ds[i, j, k])
+                                self.assertAlmostEqual(la[i][j][k], ds[i, j, k], places=places)
 
     def testCorrelate(self):
         print 'test correlate'
@@ -121,21 +121,10 @@ class Test(unittest.TestCase):
 #        ada = np.convolve(da, axes=[0])
 #        self.checkitems(None, ada)
 
-        self.checkitems([ 0., 1., 2.5, 4., 1.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
-#array([ 0. ,  1. ,  2.5,  4. ,  1.5])
-#
-#Only return the middle values of the convolution.
-#Contains boundary effects, where zeros are taken
-#into account:
-#
-#>>> np.convolve([1,2,3],[0,1,0.5], 'same')
-#array([ 1. ,  2.5,  4. ])
-#
-#The two arrays are of the same length, so there
-#is only one position where they completely overlap:
-#
-#>>> np.convolve([1,2,3],[0,1,0.5], 'valid')
-#array([ 2.5])
+        self.checkitems([0., 1., 2.5, 4., 1.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
+        self.checkitems([1., 2.5, 4.], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5]), 'same'))
+        self.checkitems([2.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5]), 'valid'))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testCorrelate']

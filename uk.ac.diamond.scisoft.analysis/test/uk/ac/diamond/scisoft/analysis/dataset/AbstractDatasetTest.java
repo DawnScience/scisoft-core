@@ -1099,6 +1099,9 @@ public class AbstractDatasetTest {
 
 		TestUtils.assertDatasetEquals(r, Maths.add(a, 10-2).iremainder(10), 1e-6, 1e-6);
 
+		r = DatasetUtils.roll(a, -2, null);
+		TestUtils.assertDatasetEquals(r, Maths.add(a, 10+2).iremainder(10), 1e-6, 1e-6);
+
 		a.setShape(2,5);
 		r = DatasetUtils.roll(a, 1, null);
 		TestUtils.assertDatasetEquals(r, Maths.add(a, 10-1).iremainder(10).reshape(2,5), 1e-6, 1e-6);

@@ -2270,7 +2270,9 @@ public class DatasetUtils {
 		if (axis == null) {
 			IndexIterator it = a.getIterator();
 			int s = r.getSize();
-			int i = shift;
+			int i = shift % s;
+			if (i < 0)
+				i += s;
 			while (it.hasNext()) {
 				r.setObjectAbs(i, a.getObjectAbs(it.index));
 				i += is;
@@ -2287,7 +2289,9 @@ public class DatasetUtils {
 			boolean[] hit = pi.getOmit();
 			while (pi.hasNext()) {
 				a.copyItemsFromAxes(pos, hit, u);
-				int i = shift;
+				int i = shift % s;
+				if (i < 0)
+					i += s;
 				for (int j = 0; j < s; j++) {
 					v.setObjectAbs(i, u.getObjectAbs(j*is));
 					i += is;

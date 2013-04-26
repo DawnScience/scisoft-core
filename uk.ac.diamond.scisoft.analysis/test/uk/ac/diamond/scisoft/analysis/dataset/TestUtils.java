@@ -23,12 +23,12 @@ import org.junit.Assert;
 public class TestUtils {
 	/**
 	 * Assert equality of datasets where each element is true if abs(a - b) <= absTol + relTol*abs(b)
-	 * @param calc
 	 * @param expected
+	 * @param calc
 	 * @param relTolerance
 	 * @param absTolerance
 	 */
-	public static void assertDatasetEquals(AbstractDataset calc, AbstractDataset expected, double relTolerance, double absTolerance) {
+	public static void assertDatasetEquals(AbstractDataset expected, AbstractDataset calc, double relTolerance, double absTolerance) {
 		Assert.assertEquals("Rank", expected.getRank(), calc.getRank());
 		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
 		Assert.assertEquals("Itemsize", expected.getElementsPerItem(), calc.getElementsPerItem());

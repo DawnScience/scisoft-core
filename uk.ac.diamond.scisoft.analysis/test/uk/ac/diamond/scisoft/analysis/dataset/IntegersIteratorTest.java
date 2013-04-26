@@ -130,6 +130,6 @@ public class IntegersIteratorTest {
 	}
 
 	private void checkDatasets(DoubleDataset calc, DoubleDataset expected) {
-		TestUtils.assertDatasetEquals(calc, expected, 0.1, 1e-5);
+		TestUtils.assertDatasetEquals(expected, calc, 0.1, 1e-5);
 	}
 }

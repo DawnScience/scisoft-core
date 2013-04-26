@@ -238,7 +238,7 @@ def _process_line(x, y=None, title=None, name=None, mode=None):
     for i in range(len(yl)):
         n = _AXES_NAMES['x'][0]
         if xl is None:
-            x = None
+            lx = None
         else:
             if len(xl) == 1:
                 x = xl[0]
@@ -251,6 +251,7 @@ def _process_line(x, y=None, title=None, name=None, mode=None):
                 if type(n) is _types.TupleType: # has side info
                     n = n[0]
                 x = x[1]
+            lx = [x]
         _plot_setactivexaxis(name, n)
         sleep(NAP)
 
@@ -268,9 +269,9 @@ def _process_line(x, y=None, title=None, name=None, mode=None):
 
         if first:
             first = False
-            _plot_line(name, t, [x], [y], None, None)
+            _plot_line(name, t, lx, [y], None, None)
         else:
-            _plot_addline(name, t, [x], [y], None, None)
+            _plot_addline(name, t, lx, [y], None, None)
         sleep(NAP)
 
 #    _clear_axis('x', name)

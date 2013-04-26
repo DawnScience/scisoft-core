@@ -773,20 +773,68 @@ public class FFTTest {
 
 	@Test
 	public void testShift() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		AbstractDataset a;
 		AbstractDataset t;
 
+		a = AbstractDataset.arange(6, AbstractDataset.FLOAT64);
 		t = FFT.fftshift(a, null);
-		System.out.println(t);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {3, 4, 5, 0, 1, 2}), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
 		t = FFT.ifftshift(t, null);
-		System.out.println(t);
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
 
-		a.setShape(new int[] {3,4});
+		a.setShape(new int[] {3,2});
 		System.out.println(a);
 
 		t = FFT.fftshift(a, null);
-		System.out.println(t);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {5, 4, 1, 0, 3, 2}).reshape(3,2), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
 		t = FFT.ifftshift(t, null);
-		System.out.println(t);
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
+
+		t = FFT.fftshift(a, new int[] {0});
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {4, 5, 0, 1, 2, 3}).reshape(3,2), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
+		t = FFT.ifftshift(t, new int[] {0});
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
+
+		t = FFT.fftshift(a, new int[] {1});
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {1, 0, 3, 2, 5, 4}).reshape(3,2), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
+		t = FFT.ifftshift(t, new int[] {1});
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
+
+		t = FFT.fftshift(a, new int[] {1, 0});
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {5, 4, 1, 0, 3, 2}).reshape(3,2), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
+		t = FFT.ifftshift(t, new int[] {1, 0});
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
+
+		a = AbstractDataset.arange(7, AbstractDataset.FLOAT64);
+		t = FFT.fftshift(a, null);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {4, 5, 6, 0, 1, 2, 3}), t, 1e-12, 1e-12);
+		System.out.println(t.toString(true));
+		t = FFT.ifftshift(t, null);
+		System.out.println(t.toString(true));
+		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
+	}
+
+	@Test
+	public void testFreq() {
+		AbstractDataset s, f;
+
+		f = FFT.sampleFrequencies(6, 2.5);
+		s = new DoubleDataset(new double[] { 0, 0.06666667, 0.13333333, -0.2, -0.13333333, -0.06666667 });
+		TestUtils.assertDatasetEquals(s, f, 1e-7, 1e-12);
+
+		f = FFT.sampleFrequencies(7, 2.5);
+		s = new DoubleDataset(new double[] { 0, 0.05714286, 0.11428571, 0.17142857, -0.17142857, -0.11428571,
+				-0.05714286 });
+		TestUtils.assertDatasetEquals(s, f, 1e-7, 1e-12);
 	}
 }

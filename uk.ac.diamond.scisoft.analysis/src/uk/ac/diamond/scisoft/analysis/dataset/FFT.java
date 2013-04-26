@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_2D;
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_3D;
 import edu.emory.mathcs.jtransforms.fft.FloatFFT_1D;
 import edu.emory.mathcs.jtransforms.fft.FloatFFT_2D;
 import edu.emory.mathcs.jtransforms.fft.FloatFFT_3D;
-
-import java.util.Arrays;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 // TODO fast path for defaults?
@@ -41,7 +41,7 @@ public class FFT {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient protected static final Logger logger = LoggerFactory.getLogger(FFT.class);
+	protected static final Logger logger = LoggerFactory.getLogger(FFT.class);
 
 	/**
 	 * forward 1D fast Fourier transform
@@ -699,4 +699,14 @@ public class FFT {
 		return result;
 	}
 
+	/**
+	 * Discrete FFT sample frequencies
+	 * @param n number of samples
+	 * @param d sample spacing
+	 * @return frequencies
+	 */
+	public static AbstractDataset sampleFrequencies(int n, double d) {
+		int hn = n/2;
+		return DatasetUtils.roll(DoubleDataset.arange(n).isubtract(hn).imultiply(1/(d*n)), n - hn, null);
+	}
 }

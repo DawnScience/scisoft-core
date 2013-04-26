@@ -78,3 +78,11 @@ def ifftshift(a, axes=None):
 
     '''
     return _fft.ifftshift(a, axes)
+
+@_npwrapped
+def fftfreq(n, d=1.0):
+    '''Sample frequencies for DFT
+    n -- number of samples
+    d -- sample spacing
+    '''
+    return _fft.sampleFrequencies(n, d)

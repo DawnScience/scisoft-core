@@ -167,6 +167,8 @@ meshgrid = _np.meshgrid
 
 indices = _np.indices
 
+roll = _np.roll
+
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items
 #    '''

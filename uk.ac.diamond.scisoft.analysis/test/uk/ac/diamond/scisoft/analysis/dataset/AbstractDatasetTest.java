@@ -1090,4 +1090,23 @@ public class AbstractDatasetTest {
 		for (int i = 0; i < 5; i++)
 			assertEquals("", udata[i], a.getLong(i));
 	}
+
+	@Test
+	public void testRoll() {
+		AbstractDataset a = AbstractDataset.arange(10, AbstractDataset.INT32);
+
+		AbstractDataset r = DatasetUtils.roll(a, 2, null);
+
+		TestUtils.assertDatasetEquals(Maths.add(a, 10-2).iremainder(10), r, 1e-6, 1e-6);
+
+		a.setShape(2,5);
+		r = DatasetUtils.roll(a, 1, null);
+		TestUtils.assertDatasetEquals(Maths.add(a, 10-1).iremainder(10).reshape(2,5), r, 1e-6, 1e-6);
+
+		r = DatasetUtils.roll(a, 1, 0);
+		TestUtils.assertDatasetEquals(Maths.add(a, 5).iremainder(10).reshape(2,5), r, 1e-6, 1e-6);
+
+		r = DatasetUtils.roll(a, 1, 1);
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[] {4, 0, 1, 2, 3, 9, 5, 6, 7, 8}, 2,5), r, 1e-6, 1e-6);
+	}
 }

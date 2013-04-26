@@ -258,6 +258,20 @@ class Test(unittest.TestCase):
         self.assertEquals(np.float64, np.asfarray([1,]).dtype, "")
         self.failUnlessRaises(TypeError, np.asfarray, [1+12j,])
 
+    def testRoll(self):
+        print 'Roll testing'
+        x = np.arange(10)
+        r = np.roll(x, 2)
+        self.checkitems([8, 9, 0, 1, 2, 3, 4, 5, 6, 7], r)
+        x.shape = (2,5)
+        r = np.roll(x, 1)
+        self.checkitems([[9, 0, 1, 2, 3], [4, 5, 6, 7, 8]], r)
+        r = np.roll(x, 1, 0)
+        self.checkitems([[5, 6, 7, 8, 9], [0, 1, 2, 3, 4]], r)
+        r = np.roll(x, 1, 1)
+        self.checkitems([[4, 0, 1, 2, 3], [9, 5, 6, 7, 8]], r)
+
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

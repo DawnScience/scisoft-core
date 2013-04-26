@@ -2256,4 +2256,48 @@ public class DatasetUtils {
 
 		return iter.index;
 	}
+
+	/**
+	 * Roll items over given axis by given amount
+	 * @param a
+	 * @param shift
+	 * @param axis if null, then roll flattened dataset
+	 * @return rolled dataset
+	 */
+	public static AbstractDataset roll(final AbstractDataset a, final int shift, final Integer axis) {
+		AbstractDataset r = AbstractDataset.zeros(a);
+		int is = a.getElementsPerItem();
+		if (axis == null) {
+			IndexIterator it = a.getIterator();
+			int s = r.getSize();
+			int i = shift;
+			while (it.hasNext()) {
+				r.setObjectAbs(i, a.getObjectAbs(it.index));
+				i += is;
+				if (i >= s) {
+					i %= s;
+				}
+			}
+		} else {
+			PositionIterator pi = a.getPositionIterator(axis);
+			int s = a.shape[axis];
+			AbstractDataset u = AbstractDataset.zeros(is, new int[] {s}, a.getDtype());
+			AbstractDataset v = AbstractDataset.zeros(u);
+			int[] pos = pi.getPos();
+			boolean[] hit = pi.getOmit();
+			while (pi.hasNext()) {
+				a.copyItemsFromAxes(pos, hit, u);
+				int i = shift;
+				for (int j = 0; j < s; j++) {
+					v.setObjectAbs(i, u.getObjectAbs(j*is));
+					i += is;
+					if (i >= s) {
+						i %= s;
+					}
+				}
+				r.setItemsOnAxes(pos, hit, v.getBuffer());
+			}
+		}
+		return r;
+	}
 }

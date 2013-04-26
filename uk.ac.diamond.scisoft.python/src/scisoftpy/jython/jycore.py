@@ -2198,6 +2198,10 @@ def indices(dimensions, dtype=int32):
     return ind
 
 @_ndwrapped
+def roll(a, shift, axis=None):
+    return _dsutils.roll(a, shift, axis)
+
+@_ndwrapped
 def compoundarray(a, view=True):
     '''Create a compound array from an nd array by grouping last axis items into compound items
     '''

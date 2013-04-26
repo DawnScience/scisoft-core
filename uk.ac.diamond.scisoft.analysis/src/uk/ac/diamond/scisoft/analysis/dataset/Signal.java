@@ -200,4 +200,39 @@ public class Signal {
 		return results;
 	}
 
+	/**
+	 * A Hann window
+	 * @param n
+	 * @return window
+	 */
+	public static AbstractDataset hannWindow(int n) {
+		double a = 0.5;
+		return hammingWindow(n, a, 1-a);
+	}
+
+	/**
+	 * A Hamming window
+	 * @param n
+	 * @return window
+	 */
+	public static AbstractDataset hammingWindow(int n) {
+		double a = 0.54;
+		return hammingWindow(n, a, 1-a);
+	}
+
+	/**
+	 * A generalized Hamming window
+	 * @param n
+	 * @param a
+	 * @param b
+	 * @return window
+	 */
+	public static AbstractDataset hammingWindow(int n, double a, double b) {
+		DoubleDataset w = new DoubleDataset(n);
+		double f = 2*Math.PI/(n-1);
+		for (int i = 0; i < n; i++) {
+			w.setAbs(i, a - b*Math.cos(i*f));
+		}
+		return w;
+	}
 }

@@ -168,7 +168,17 @@ public class SignalTest {
 			e.printStackTrace();
 			fail("convolving 2 differnt shaped arrays should raise an IllegalArgumentException");
 		}
-		
 	}
-	
+
+	@Test
+	public void testWindows() {
+		AbstractDataset w;
+		w = Signal.hammingWindow(10);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] { 0.080000, 0.187620, 0.460122, 0.770000,
+				0.972259, 0.972259, 0.770000, 0.460122, 0.187620, 0.080000 }), w, 1e-5, 1e-6);
+
+		w = Signal.hammingWindow(11);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] { 0.08, 0.16785218, 0.39785218, 0.68214782,
+				0.91214782, 1., 0.91214782, 0.68214782, 0.39785218, 0.16785218, 0.08 }), w, 1e-5, 1e-6);
+	}
 }

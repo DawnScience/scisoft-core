@@ -2304,4 +2304,43 @@ public class DatasetUtils {
 		}
 		return r;
 	}
+
+	/**
+	 * Roll the specified axis backwards until it lies in given position
+	 * @param a
+	 * @param axis The rolled axis (index in shape array). Other axes are left unchanged in relative positions 
+	 * @param start The position with it right of the destination of the rolled axis
+	 * @return dataset with rolled axis
+	 */
+	public static AbstractDataset rollAxis(final AbstractDataset a, int axis, int start) {
+		int r = a.getRank();
+		if (axis < 0)
+			axis += r;
+		if (axis < 0 || axis >= r) {
+			throw new IllegalArgumentException("Axis is out of range: it should be >= 0 and < " + r);
+		}
+		if (start < 0)
+			start += r;
+		if (start < 0 || start > r) {
+			throw new IllegalArgumentException("Start is out of range: it should be >= 0 and <= " + r);
+		}
+		if (axis < start)
+			start--;
+
+		if (axis == start)
+			return a;
+
+		ArrayList<Integer> axes = new ArrayList<Integer>();
+		for (int i = 0; i < r; i++) {
+			if (i != axis) {
+				axes.add(i);
+			}
+		}
+		axes.add(start, axis);
+		int[] aa = new int[r];
+		for (int i = 0; i < r; i++) {
+			aa[i] = axes.get(i);
+		}
+		return a.transpose(aa);
+	}
 }

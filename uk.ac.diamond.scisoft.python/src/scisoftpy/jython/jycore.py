@@ -2138,6 +2138,15 @@ def repeat(a, repeats, axis=-1):
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
 
+def reshape(a, newshape):
+    return asDataset(a).reshape(newshape)
+
+def ravel(a):
+    return asDataset(a).ravel()
+
+def flatten(a):
+    return asDataset(a).ravel().copy()
+
 def squeeze(a):
     a.squeeze()
     return a
@@ -2200,6 +2209,10 @@ def indices(dimensions, dtype=int32):
 @_ndwrapped
 def roll(a, shift, axis=None):
     return _dsutils.roll(a, shift, axis)
+
+@_ndwrapped
+def rollaxis(a, axis, start=0):
+    return _dsutils.rollAxis(a, axis, start)
 
 @_ndwrapped
 def compoundarray(a, view=True):

@@ -149,6 +149,8 @@ repeat = _np.repeat
 
 cast = _np.cast
 
+reshape = _np.reshape
+
 squeeze = _np.squeeze
 
 transpose = _np.transpose
@@ -168,6 +170,12 @@ meshgrid = _np.meshgrid
 indices = _np.indices
 
 roll = _np.roll
+
+ravel = _np.ravel
+
+flatten = _np.flatten
+
+rollaxis = _np.rollaxis
 
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items

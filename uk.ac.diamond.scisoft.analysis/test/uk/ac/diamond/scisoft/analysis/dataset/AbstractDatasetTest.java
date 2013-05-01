@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 
 import org.apache.commons.math.complex.Complex;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class AbstractDatasetTest {
@@ -1111,5 +1112,13 @@ public class AbstractDatasetTest {
 
 		r = DatasetUtils.roll(a, 1, 1);
 		TestUtils.assertDatasetEquals(r, new IntegerDataset(new int[] {4, 0, 1, 2, 3, 9, 5, 6, 7, 8}, 2,5), 1e-6, 1e-6);
+	}
+
+	@Test
+	public void testRollAxis() {
+		AbstractDataset a = AbstractDataset.ones(new int[] {3, 4, 5, 6}, AbstractDataset.INT8);
+		Assert.assertArrayEquals(new int[] {3, 6, 4, 5}, DatasetUtils.rollAxis(a, 3, 1).getShape());
+		Assert.assertArrayEquals(new int[] {5, 3, 4, 6}, DatasetUtils.rollAxis(a, 2, 0).getShape());
+		Assert.assertArrayEquals(new int[] {3, 5, 6, 4}, DatasetUtils.rollAxis(a, 1, 4).getShape());
 	}
 }

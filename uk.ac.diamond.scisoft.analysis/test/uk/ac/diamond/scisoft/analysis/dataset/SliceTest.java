@@ -103,6 +103,12 @@ public class SliceTest {
 		assertEquals(12, sl.getNumSteps());
 		sl = new Slice(null, null, -2).setLength(12);
 		assertEquals(6, sl.getNumSteps());
+		sl = new Slice(6, null, -2).setLength(12);
+		assertEquals(4, sl.getNumSteps());
+		sl = new Slice(6, 1, -2).setLength(12);
+		assertEquals(3, sl.getNumSteps());
+		sl = new Slice(6, 0, -2).setLength(12);
+		assertEquals(3, sl.getNumSteps());
 
 		try {
 			sl = new Slice();
@@ -137,7 +143,7 @@ public class SliceTest {
 		assertEquals(11, sl.getNumSteps());
 		try {
 			sl = new Slice(11, null, -1);
-			assertEquals(10, sl.getNumSteps());
+			sl.getNumSteps();
 			fail("No exception thrown");
 		} catch (IllegalStateException ise) {
 			// passed
@@ -302,7 +308,7 @@ public class SliceTest {
 		assertEquals(11, sl.getEnd());
 		try {
 			sl = new Slice(12, 1);
-			assertEquals(1, sl.getEnd());
+			sl.getEnd();
 			fail("No exception thrown");
 		} catch (IllegalStateException ise) {
 			// passed
@@ -324,7 +330,7 @@ public class SliceTest {
 		assertEquals(10, sl.getEnd());
 		try {
 			sl = new Slice(null, 12, -2);
-			assertEquals(10, sl.getEnd());
+			sl.getEnd();
 			fail("No exception thrown");
 		} catch (IllegalStateException ise) {
 			// passed
@@ -333,7 +339,7 @@ public class SliceTest {
 		}
 		try {
 			sl = new Slice(null, null, -2);
-			assertEquals(10, sl.getEnd());
+			sl.getEnd();
 			fail("No exception thrown");
 		} catch (IllegalStateException ise) {
 			// passed
@@ -385,5 +391,115 @@ public class SliceTest {
 		assertEquals(5, (int) sl.getStart());
 
 		assertTrue(sl.setPosition(11));
+	}
+
+	@Test
+	public void testPos() {
+		Slice sl;
+
+		sl = new Slice(0, 10, 1);
+		assertEquals(0, sl.getPosition(0));
+		assertEquals(5, sl.getPosition(5));
+		try {
+			sl.getPosition(-1);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+		try {
+			sl.getPosition(10);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(5, 2, -1);
+		assertEquals(5, sl.getPosition(0));
+		assertEquals(3, sl.getPosition(2));
+		try {
+			sl.getPosition(3);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(null, null, 1).setLength(12);
+		assertEquals(0, sl.getPosition(0));
+		assertEquals(3, sl.getPosition(3));
+		try {
+			sl.getPosition(12);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(null, null, -1).setLength(12);
+		assertEquals(11, sl.getPosition(0));
+		assertEquals(8, sl.getPosition(3));
+		try {
+			sl.getPosition(12);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(null, null, -2).setLength(12);
+		assertEquals(11, sl.getPosition(0));
+		assertEquals(5, sl.getPosition(3));
+		assertEquals(1, sl.getPosition(5));
+		try {
+			sl.getPosition(6);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(6, null, -2).setLength(12);
+		assertEquals(6, sl.getPosition(0));
+		assertEquals(0, sl.getPosition(3));
+		try {
+			sl.getPosition(4);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(6, 1, -2).setLength(12);
+		assertEquals(6, sl.getPosition(0));
+		assertEquals(2, sl.getPosition(2));
+		try {
+			sl.getPosition(3);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
+
+		sl = new Slice(6, 0, -2).setLength(12);
+		assertEquals(6, sl.getPosition(0));
+		assertEquals(2, sl.getPosition(2));
+		try {
+			sl.getPosition(3);
+			fail("No exception thrown");
+		} catch (IllegalArgumentException iae) {
+			// passed
+		} catch (Exception e) {
+			fail("Wrong exception type passed, this should give an IllegalArgumentException");
+		}
 	}
 }

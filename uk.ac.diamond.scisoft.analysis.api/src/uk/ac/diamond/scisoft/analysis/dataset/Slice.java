@@ -190,6 +190,36 @@ public class Slice {
 	}
 
 	/**
+	 * Get position of n-th step in slice
+	 * @param n
+	 * @return position
+	 */
+	public int getPosition(int n) {
+		if (n < 0)
+			throw new IllegalArgumentException("Given n-th step should be non-negative");
+		if (n >= getNumSteps())
+			throw new IllegalArgumentException("N-th step exceeds extent of slice");
+		int beg;
+		if (start == null) {
+			if (step < 0) {
+				if (length < 0) {
+					if (stop == null) {
+						throw new IllegalStateException("Length or stop should be set");
+					}
+					beg = stop - 1;
+				} else {
+					beg = length - 1;
+				}
+			} else {
+				beg = 0;
+			}
+		} else {
+			beg = start;
+		}
+		return beg + step*n;
+	}
+
+	/**
 	 * Set step size of slice
 	 * @param step
 	 */
@@ -266,14 +296,8 @@ public class Slice {
 		int n = getNumSteps() - 1;
 		if (n < 0)
 			throw new IllegalStateException("End is not defined");
-		if (length < 0) {
-			if (start == null) {
-				return step*n;
-			}
-			return start + step*n;
-		}
-		int beg = start == null ? (step > 0 ? 0: length-1) : start;
-		return beg + step*n;
+
+		return getPosition(n);
 	}
 
 	/**

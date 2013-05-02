@@ -42,31 +42,52 @@ public class IntegersIteratorTest {
 		int[] shape;
 
 		shape = new int[] {10, 20, 30};
-		iter = new IntegersIterator(new IntegerDataset[] {s, t, u}, shape);
+		iter = new IntegersIterator(shape, s, t, u);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4}, iter.getShape());
 		
-		iter = new IntegersIterator(new IntegerDataset[] {null, t, u}, shape);
+		iter = new IntegersIterator(shape, null, t, u);
 		Assert.assertArrayEquals("Shape", new int[] {10, 2, 3, 4}, iter.getShape());
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, null, u}, shape);
+		iter = new IntegersIterator(shape, s, null, u);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 20}, iter.getShape());
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, t, null}, shape);
+		iter = new IntegersIterator(shape, s, t, null);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 30}, iter.getShape());
 
+		iter = new IntegersIterator(shape, new Slice(1,7,2), t, u);
+		Assert.assertArrayEquals("Shape", new int[] {3, 2, 3, 4}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, new Slice(1,7,2), u);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, t, new Slice(1,7,2));
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3}, iter.getShape());
+
 		shape = new int[] {10, 20, 30, 40, 50};
-		iter = new IntegersIterator(new IntegerDataset[] {s, t, u}, shape);
+		iter = new IntegersIterator(shape, s, t, u);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
-		
-		iter = new IntegersIterator(new IntegerDataset[] {null, t, u}, shape);
+
+		iter = new IntegersIterator(shape, null, t, u);
 		Assert.assertArrayEquals("Shape", new int[] {10, 2, 3, 4, 40, 50}, iter.getShape());
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, null, u}, shape);
+		iter = new IntegersIterator(shape, s, null, u);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 20, 40, 50}, iter.getShape());
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, t, null}, shape);
+		iter = new IntegersIterator(shape, s, t, null);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 30, 40, 50}, iter.getShape());
-}
+
+		iter = new IntegersIterator(shape, new Slice(1,7,2), t, u);
+		Assert.assertArrayEquals("Shape", new int[] {3, 2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, new Slice(1,7,2), u);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, t, new Slice(1,7,2));
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, t, new Slice(1,7,2));
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3, 40, 50}, iter.getShape());
+	}
 
 	@Test
 	public void testEqualTo() {
@@ -76,60 +97,145 @@ public class IntegersIteratorTest {
 
 		List<Double> inds = new ArrayList<Double>();
 
-		IntegersIterator iter = new IntegersIterator(new IntegerDataset[] {s, t}, c.shape);
+		IntegersIterator iter = new IntegersIterator(c.shape, s, t);
 		int[] pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {0, -9, 1}));
+		checkDatasets(new DoubleDataset(new double[] {0, -9, 1}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, null}, c.shape);
+		iter = new IntegersIterator(c.shape, s, null);
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3}));
+		checkDatasets(new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 
-		iter = new IntegersIterator(new IntegerDataset[] {null, t}, c.shape);
+		iter = new IntegersIterator(c.shape, null, t);
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {0, 3, 1, 5, -9, -7}));
+		checkDatasets(new DoubleDataset(new double[] {0, 3, 1, 5, -9, -7}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 
+		iter = new IntegersIterator(c.shape, s, new Slice());
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, new Slice(), t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 3, 1, 5, -9, -7}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, s, new Slice(1));
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 5, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, new Slice(1), t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 3, 1}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
 
 		s = new IntegerDataset(new int[] {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0}, 2, 3, 2);
 		t = new IntegerDataset(new int[] {2, 1, 1, 0, 1, 2, 1, 0, 0, 0, 1, 0}, 2, 3, 2);
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, t}, c.shape);
+		iter = new IntegersIterator(c.shape, s, t);
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {3, -7, 1, 0, -7, 3, -7, 5, 5, 0, 1, 0}));
+		checkDatasets(new DoubleDataset(new double[] {3, -7, 1, 0, -7, 3, -7, 5, 5, 0, 1, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 
-		iter = new IntegersIterator(new IntegerDataset[] {s, null}, c.shape);
+		iter = new IntegersIterator(c.shape, s, null);
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3, 0, 1, 3, 5, -7, -9, 0, 1, 3, 5, -7, -9, 5, -7, -9, 5, -7, -9, 0, 1, 3, 0, 1, 3, 0, 1, 3}));
+		checkDatasets(new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3, 0, 1, 3, 5,
+				-7, -9, 0, 1, 3, 5, -7, -9, 5, -7, -9, 5, -7, -9, 0, 1, 3, 0, 1, 3, 0, 1, 3}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 
-		iter = new IntegersIterator(new IntegerDataset[] {null, t}, c.shape);
+		iter = new IntegersIterator(c.shape, null, t);
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets((DoubleDataset) AbstractDataset.createFromList(inds),
-				new DoubleDataset(new double[] {3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0, -9, -7, -7, 5, -7, -9, -7, 5, 5, 5, -7, 5}));
+		checkDatasets(new DoubleDataset(new double[] {3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0, -9,
+				-7, -7, 5, -7, -9, -7, 5, 5, 5, -7, 5}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, s, new Slice());
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 1, 3, 5, -7, -9, 0, 1, 3, 0, 1, 3, 5,
+				-7, -9, 0, 1, 3, 5, -7, -9, 5, -7, -9, 5, -7, -9, 0, 1, 3, 0, 1, 3, 0, 1, 3}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, new Slice(), t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0, -9,
+				-7, -7, 5, -7, -9, -7, 5, 5, 5, -7, 5}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, s, new Slice(1));
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 5, 0, 0, 5, 0, 5, 5, 5, 0, 0, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, new Slice(1), t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, s, new Slice(1, null, -1));
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {1, 0, -7, 5, 1, 0, 1, 0, -7, 5, 1, 0, -7,
+				5, -7, 5, -7, 5, 1, 0, 1, 0, 1, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.shape, new Slice(1, null, -1), t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] { -9, -7, -7, 5, -7, -9, -7, 5, 5, 5, -7,
+				5, 3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0}),
+				(DoubleDataset) AbstractDataset.createFromList(inds));
 		inds.clear();
 	}
 
-	private void checkDatasets(DoubleDataset calc, DoubleDataset expected) {
+	private void checkDatasets(DoubleDataset expected, DoubleDataset calc) {
 		TestUtils.assertDatasetEquals(expected, calc, 0.1, 1e-5);
 	}
 }

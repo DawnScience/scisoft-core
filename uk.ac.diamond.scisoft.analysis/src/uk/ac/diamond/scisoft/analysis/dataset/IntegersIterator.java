@@ -41,38 +41,46 @@ public class IntegersIterator extends IndexIterator {
 	 * position in output shape
 	 */
 	final private int[] opos;
-	final private IntegerDataset[] indexes;
+	final private List<Object> indexes;
 
 	/**
-	 * Constructor for an iterator over the items of an array of integer datasets
-	 * 
-	 * @param index an array of integer dataset (None entries are full slices)
+	 * Constructor for an iterator over the items of an array of objects
 	 * @param shape of entire data array
+	 * @param index an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 */
 	@SuppressWarnings("null")
-	public IntegersIterator(final IntegerDataset[] index, final int[] shape) {
+	public IntegersIterator(final int[] shape, final Object... index) {
 		ishape = shape.clone();
 		irank = shape.length;
 		if (irank < index.length) {
 			throw new IllegalArgumentException("Number of index datasets is greater than rank of dataset");
 		}
-		List<IntegerDataset> idx = new ArrayList<IntegerDataset>();
-		for (IntegerDataset ind : index)
-			idx.add(ind);
-		if (idx.size() < irank) { // pad out index list
-			for (int i = idx.size(); i < irank; i++)
-				idx.add(null);
+		indexes = new ArrayList<Object>();
+		for (Object i : index) {
+			if (i instanceof BooleanDataset) { // turn boolean datasets into integer ones
+				for (IntegerDataset id : Comparisons.nonZero((AbstractDataset) i)) {
+					indexes.add(id);
+				}
+			} else if (i == null || i instanceof Slice || i instanceof IntegerDataset) {
+				indexes.add(i);
+			} else {
+				throw new IllegalArgumentException("Unsupported object for indexing");
+			}
 		}
-		indexes = idx.toArray(new IntegerDataset[irank]);
+		if (indexes.size() < irank) { // pad out index list
+			for (int i = indexes.size(); i < irank; i++)
+				indexes.add(null);
+		}
 
 		int ilength = -1;
 		int[] cshape = null;
-		int first = -1; // index of first null after non-null index
+		int first = -1; // index of first null or slice after non-null index
 		boolean intact = true;
 		srank = 0;
 		for (int i = 0; i < irank; i++) { // see if shapes are consistent and subspace is intact
-			IntegerDataset ind = indexes[i];
-			if (ind != null) {
+			Object obj = indexes.get(i);
+			if (obj instanceof IntegerDataset) {
+				IntegerDataset ind = (IntegerDataset) obj;
 				if (first > 0) {
 					intact = false;
 				}
@@ -103,14 +111,20 @@ public class IntegersIterator extends IndexIterator {
 		if (intact) { // get new output shape list
 			boolean used = false;
 			for (int i = 0; i < irank; i++) {
-				IntegerDataset ind = indexes[i];
-				if (ind != null) {
+				Object obj = indexes.get(i);
+				if (obj instanceof IntegerDataset) {
+					IntegerDataset ind = (IntegerDataset) obj;
 					if (!used) {
 						used = true;
 						for (int j : ind.shape) {
 							oShape.add(j);
 						}
 					}
+				} else if (obj instanceof Slice) {
+					Slice s = (Slice) obj;
+					int l = ishape[i];
+					s.setLength(l);
+					oShape.add(s.getNumSteps());
 				} else {
 					oShape.add(ishape[i]);
 				}
@@ -121,9 +135,14 @@ public class IntegersIterator extends IndexIterator {
 				oShape.add(j);
 			}
 			for (int i = 0; i < irank; i++) {
-				IntegerDataset ind = indexes[i];
-				if (ind == null) {
+				Object obj = indexes.get(i);
+				if (obj == null) {
 					oShape.add(ishape[i]);
+				} else if (obj instanceof Slice) {
+					Slice s = (Slice) obj;
+					int l = ishape[i];
+					s.setLength(l);
+					oShape.add(s.getNumSteps());
 				}
 			}
 		}
@@ -134,12 +153,12 @@ public class IntegersIterator extends IndexIterator {
 		}
 
 		for (int i = 0; i < irank; i++) { // check input indexes for out of bounds
-			IntegerDataset ind = indexes[i];
-			if (ind == null)
-				continue;
-			
-			if (ind.min().intValue() < 0 || ind.max().intValue() >= shape[i]) {
-				throw new IllegalArgumentException("A value in index datasets is outside permitted range");
+			Object obj = indexes.get(i);
+			if (obj instanceof IntegerDataset) {
+				IntegerDataset ind = (IntegerDataset) obj;
+				if (ind.min().intValue() < 0 || ind.max().intValue() >= shape[i]) {
+					throw new IllegalArgumentException("A value in index datasets is outside permitted range");
+				}
 			}
 		}
 
@@ -160,19 +179,36 @@ public class IntegersIterator extends IndexIterator {
 		if (it.hasNext()) {
 			int i = 0;
 			for (; i < offset; i++) {
-				ipos[i] = opos[i];
+				Object obj = indexes.get(i);
+				if (obj == null) {
+					ipos[i] = opos[i];
+				} else if (obj instanceof Slice) {
+					Slice s = (Slice) obj;
+					ipos[i] = s.getPosition(opos[i]); // overwrite position
+				} else {
+					throw new IllegalStateException("Bad state: index dataset before offset");
+				}
 			}
 			int[] spos = srank > 0 ? Arrays.copyOfRange(opos, i, i+srank) : opos;
-			for (int j = 0; j < irank; j++) { // check input indexes for out of bounds
-				IntegerDataset ind = indexes[j];
-				if (ind != null) {
+			for (int j = 0; j < irank; j++) {
+				Object obj = indexes.get(j);
+				if (obj instanceof IntegerDataset) {
+					IntegerDataset ind = (IntegerDataset) obj;
 					ipos[i++] = ind.get(spos);
 				}
 			}
 			if (srank > 0) {
-				int j = orank - irank;
+				int o = orank - irank;
 				for (; i < irank; i++) {
-					ipos[i] = opos[i+j];
+					Object obj = indexes.get(i);
+					if (obj == null) {
+						ipos[i] = opos[i+o];
+					} else if (obj instanceof Slice) {
+						Slice s = (Slice) obj;
+						ipos[i] = s.getPosition(opos[i+o]); // overwrite position
+					} else {
+						throw new IllegalStateException("Bad state: index dataset after subspace");
+					}
 				}
 			}
 			System.err.println(Arrays.toString(opos) + ", " + Arrays.toString(spos) + ", " + Arrays.toString(ipos));

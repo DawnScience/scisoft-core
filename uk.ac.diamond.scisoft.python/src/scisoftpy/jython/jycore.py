@@ -2144,9 +2144,6 @@ def reshape(a, newshape):
 def ravel(a):
     return asDataset(a).ravel()
 
-def flatten(a):
-    return asDataset(a).ravel().copy()
-
 def squeeze(a):
     a.squeeze()
     return a

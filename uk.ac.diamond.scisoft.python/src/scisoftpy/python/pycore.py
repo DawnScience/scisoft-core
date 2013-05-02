@@ -173,8 +173,6 @@ roll = _np.roll
 
 ravel = _np.ravel
 
-flatten = _np.flatten
-
 rollaxis = _np.rollaxis
 
 #compoundarray(a, view=True):

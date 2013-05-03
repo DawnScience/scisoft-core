@@ -271,6 +271,43 @@ class Test(unittest.TestCase):
         r = np.roll(x, 1, 1)
         self.checkitems([[4, 0, 1, 2, 3], [9, 5, 6, 7, 8]], r)
 
+    def testItem(self):
+        print 'Item testing'
+        a = np.array(10)
+        self.assertEquals(10, a.item())
+        self.assertRaises(ValueError, a.item, 0)
+        self.assertRaises(ValueError, a.item, 1)
+        self.assertRaises(ValueError, a.item, 1, 1)
+        a = np.array([10.])
+        self.assertEquals(10, a.item())
+        self.assertEquals(10, a.item(0))
+        self.assertRaises(ValueError, a.item, 1)
+        self.assertRaises(ValueError, a.item, 1, 1)
+
+        a = np.arange(10.)
+        self.assertEquals(4, a.item(4))
+        self.assertRaises(ValueError, a.item, 11)
+        self.assertRaises(ValueError, a.item, 1, 1)
+        a.shape = (2,5)
+        self.assertEquals(4, a.item(4))
+        self.assertEquals(4, a.item(0,4))
+        self.assertRaises(ValueError, a.item, 11)
+        self.assertRaises(ValueError, a.item, 2, 1)
+
+    def testZeroRank(self):
+        print 'Zero rank arrays testing'
+        zi = np.array(1)
+        self.assertEquals(0, len(zi.shape))
+        self.assertEquals(1, zi[()])
+        self.assertEquals(1, zi[...])
+        zi[()] = -3
+        self.assertEquals(-3, zi[()])
+        zf = np.array(1.)
+        self.assertEquals(0, len(zf.shape))
+        self.assertEquals(1., zf[()])
+        self.assertEquals(1., zf[...])
+        zf[()] = -3
+        self.assertEquals(-3, zf[()])
 
 if __name__ == "__main__":
     #import sys

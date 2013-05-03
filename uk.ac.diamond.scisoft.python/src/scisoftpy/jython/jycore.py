@@ -52,6 +52,7 @@ import jymaths as _maths
 import types as _types
 
 import java.lang.ArrayIndexOutOfBoundsException as _jarrayindex_exception #@UnresolvedImport
+import java.lang.IllegalArgumentException as _jillegalargument_exception #@UnresolvedImport
 
 class ndgeneric(object):
     pass # there is no array scalars at the moment
@@ -263,14 +264,16 @@ def asDatasetDict(dsdict):
 
 def _isslice(rank, shape, key):
 #    print rank, shape, key
-    key = asIterable(key)
-    if rank < len(shape):
-        raise IndexError, "Rank and shape do not correspond"
+    if rank > 0:
+        key = asIterable(key)
 
-    if len(key) < rank:
-        return True
-    elif len(key) > rank:
-        raise IndexError, "Too many indices"
+        if len(key) < rank:
+            return True
+        elif len(key) > rank:
+            raise IndexError, "Too many indices"
+    else:
+        if key is Ellipsis:
+            return True
 
     for k in key:
         if isinstance(k, slice) or k is Ellipsis:
@@ -383,7 +386,8 @@ class ndarray:
     def _toslice(self, key):
         '''Transform key to proper slice if necessary
         '''
-        if self.rank == 1:
+        r = self.rank
+        if r == 1:
             if isinstance(key, list) and len(key) == 1:
                 key = key[0]
             if isinstance(key, slice) or key is Ellipsis:
@@ -394,7 +398,7 @@ class ndarray:
                 return False, key
             return False, (key,)
 
-        if _isslice(self.rank, self.shape, key):
+        if _isslice(r, self.shape, key):
             return True, key
         return False, key
 
@@ -587,11 +591,32 @@ class ndarray:
     def append(self, other, axis=None):
         return append(self, other, axis)
 
-    def item(self):
-        '''Return first item of dataset. Dataset must be of size 1'''
-        if self.size != 1:
-            raise ValueError, "can only work for size-1 datasets"
-        return self.getObject([])
+    def item(self, index=None, *args):
+        '''Return an item of dataset.'''
+        if self.size == 1:
+            if index is None:
+                if self.rank > 1:
+                    raise ValueError, "incorrect number of indices"
+            elif index:
+                raise ValueError, "index out of bounds"
+            elif self.rank == 0:
+                raise ValueError, "incorrect number of indices"
+            if args:
+                if (len(args) + 1) > self.rank:
+                    raise ValueError, "incorrect number of indices"
+                for a in args:
+                    if a:
+                        raise ValueError, "index out of bounds"
+            return self.getObject([])
+
+        if index is None:
+            raise ValueError, "Need an integer or a tuple of integers"
+        try:
+            if args:
+                return self.getObject(index, *args)
+            return self.getObjectAbs(index)
+        except (_jarrayindex_exception, _jillegalargument_exception):
+            raise ValueError
 
 class ndarrayA(ndarray, _booleands):
     """

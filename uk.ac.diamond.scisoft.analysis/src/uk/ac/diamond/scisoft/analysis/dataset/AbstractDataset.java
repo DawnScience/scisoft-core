@@ -1398,7 +1398,7 @@ public abstract class AbstractDataset implements IDataset {
 		if (imax == 0) {
 			if (rank == 0)
 				return 0;
-			if (rank == 1 && shape[0] == 0) {
+			if (rank == 1 && shape[0] <= 1) {
 				return 0;
 			}
 			throw new IllegalArgumentException("One or more index parameters must be supplied");

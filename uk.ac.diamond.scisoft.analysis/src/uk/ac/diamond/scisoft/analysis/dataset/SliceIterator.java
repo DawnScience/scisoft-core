@@ -126,7 +126,6 @@ public class SliceIterator extends IndexIterator {
 			stop = new int[0];
 			pos = new int[0];
 			gap = null;
-
 		} else {
 			istep = this.step[endrank] * isize;
 			imax = length * isize;
@@ -160,8 +159,10 @@ public class SliceIterator extends IndexIterator {
 	 */
 	public void setStart(int... nstart) {
 		final int rank = shape.length;
-		if (rank == 0)
+		if (rank == 0) {
+			index = -istep;
 			return;
+		}
 
 		if (nstart == null) {
 			for (int i = 0; i < rank; i++) {

@@ -50,7 +50,7 @@ Mark up source class with following comment markers:
 
 class transmutate(object):
     def __init__(self, scriptfile, srcclass, source, dstclass, destination, disreal=True,
-    disbool=False, disobj=False):
+                 disbool=False, disobj=False):
         '''
         scriptfile
         srcclass
@@ -129,6 +129,12 @@ class transmutate(object):
 
         self.processors[srcclass] = self.jclass
 
+
+    # Java identifier
+    # starts with _, $ and unicode letter and comprises Unicode letters and digits
+    import re
+    separator = re.compile(r'[\s(]')
+
     def data(self, line):
         '''
         dataset type
@@ -171,11 +177,23 @@ class transmutate(object):
     def getelementcast(self, line):
         l = line.replace(self.sgetel, self.dgetel)
         if not self.isobj and self.dprim in self.dconv:
-            l = self.addcast(l)
+            l = self.addcastmethod(l, self.dgetel)
         return l
 
-    def addcast(self, line):
-        return line.replace(' = ', ' = ' + self.dcast)
+    def addcast(self, line, text=' = '):
+        return line.replace(text, text + self.dcast)
+
+#    t.rfind(separator.split(t)[-1]
+    
+    def addcastmethod(self, line, method):
+        # find first part of identifier
+        bits = line.split(method)
+        prefix = bits[0][:-1] # miss out dot
+        l = transmutate.separator.split(prefix)
+        pind = prefix.rfind(l[-1])
+        if pind < 0:
+            raise ValueError, 'Cannot find an identifier'
+        return ''.join(prefix[:pind]) + self.dcast + ''.join(prefix[pind:]) + '.' + method + ''.join(bits[1:])
 
     def fromobj(self, line):
 #        if self.isobj or self.dconv is None:

@@ -66,7 +66,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         fname = sys.argv[1]
     else:
-        fname = "CompoundDoubleDataset.java"
+        fname = "../CompoundDoubleDataset.java"
 
     dclass_file = open(fname, 'r')
 

@@ -447,7 +447,17 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @param darray double array must be allocated and have sufficient length
 	 * @param pos
 	 */
-	abstract public void getDoubleArray(final double[] darray, final int... pos);
+	public void getDoubleArray(final double[] darray, final int... pos) {
+		int n = isize * get1DIndex(pos);
+		getDoubleArrayAbs(n, darray);
+	}
+
+	/**
+	 * Get an item as a double array
+	 * @param index
+	 * @param darray double array must be allocated and have sufficient length
+	 */
+	abstract public void getDoubleArrayAbs(final int index, final double[] darray);
 
 	/**
 	 * Get chosen elements from each item as a dataset

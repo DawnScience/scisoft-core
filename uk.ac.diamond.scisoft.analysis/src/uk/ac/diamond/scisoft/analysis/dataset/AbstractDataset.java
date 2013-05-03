@@ -1126,6 +1126,26 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
+	 * This is modelled after the NumPy get item with an array of indexing objects
+	 * @param index
+	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
+	 * @return The new selected dataset by index
+	 */
+	public AbstractDataset getByIndexes(final Object... index) {
+		final IntegersIterator iter = new IntegersIterator(shape, index);
+		final int is = getElementsPerItem();
+		final AbstractDataset r = zeros(is, iter.getShape(), getDtype());
+
+		final int[] pos = iter.getPos();
+		int i = 0;
+		while (iter.hasNext()) {
+			r.setObjectAbs(i, getObject(pos));
+			i += is;
+		}
+		return r;
+	}
+
+	/**
 	 * This is modelled after the NumPy set item with an index dataset
 	 * @param obj
 	 *            specifies the object used to set the selected items
@@ -1134,7 +1154,18 @@ public abstract class AbstractDataset implements IDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	abstract public AbstractDataset setByIndex(final Object obj, IntegerDataset index);
+	abstract public AbstractDataset setByIndex(final Object obj, final IntegerDataset index);
+
+	/**
+	 * This is modelled after the NumPy set item with an array of indexing objects
+	 * @param obj
+	 *            specifies the object used to set the selected items
+	 * @param index
+	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
+	 * 
+	 * @return The dataset with modified content
+	 */
+	abstract public AbstractDataset setByIndexes(final Object obj, final Object... index);
 
 	/**
 	 * @param dtype

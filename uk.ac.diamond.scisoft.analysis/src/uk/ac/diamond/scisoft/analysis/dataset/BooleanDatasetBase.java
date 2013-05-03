@@ -430,12 +430,12 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public BooleanDatasetBase setByIndex(final Object obj, IntegerDataset index) {
+	public BooleanDatasetBase setByIndex(final Object obj, final IntegerDataset index) {
 		if (obj instanceof AbstractDataset) {
 			final AbstractDataset ds = (AbstractDataset) obj;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
-						"Number of true items in index dataset does not match number of items in dataset");
+						"Number of items in index dataset does not match number of items in dataset");
 			}
 
 			final IndexIterator oiter = ds.getIterator();
@@ -450,6 +450,33 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 			while (iter.hasNext()) {
 				data[iter.index] = dv;
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public BooleanDatasetBase setByIndexes(final Object obj, final Object... index) {
+		final IntegersIterator iter = new IntegersIterator(shape, index);
+		final int[] pos = iter.getPos();
+
+		if (obj instanceof AbstractDataset) {
+			final AbstractDataset ds = (AbstractDataset) obj;
+			if (calcSize(iter.getShape()) != ds.getSize()) {
+				throw new IllegalArgumentException(
+						"Number of items in index datasets does not match number of items in dataset");
+			}
+
+			final IndexIterator oiter = ds.getIterator();
+
+			while (iter.hasNext() && oiter.hasNext()) {
+				setItem(ds.getElementBooleanAbs(oiter.index), pos); // GET_ELEMENT_WITH_CAST
+			}
+		} else {
+			final boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
+
+			while (iter.hasNext()) {
+				setItem(dv, pos);
 			}
 		}
 		return this;

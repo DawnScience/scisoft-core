@@ -430,12 +430,12 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public StringDatasetBase setByIndex(final Object obj, IntegerDataset index) {
+	public StringDatasetBase setByIndex(final Object obj, final IntegerDataset index) {
 		if (obj instanceof AbstractDataset) {
 			final AbstractDataset ds = (AbstractDataset) obj;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
-						"Number of true items in index dataset does not match number of items in dataset");
+						"Number of items in index dataset does not match number of items in dataset");
 			}
 
 			final IndexIterator oiter = ds.getIterator();
@@ -450,6 +450,33 @@ public class StringDatasetBase extends AbstractDataset {
 
 			while (iter.hasNext()) {
 				data[iter.index] = dv;
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public StringDatasetBase setByIndexes(final Object obj, final Object... index) {
+		final IntegersIterator iter = new IntegersIterator(shape, index);
+		final int[] pos = iter.getPos();
+
+		if (obj instanceof AbstractDataset) {
+			final AbstractDataset ds = (AbstractDataset) obj;
+			if (calcSize(iter.getShape()) != ds.getSize()) {
+				throw new IllegalArgumentException(
+						"Number of items in index datasets does not match number of items in dataset");
+			}
+
+			final IndexIterator oiter = ds.getIterator();
+
+			while (iter.hasNext() && oiter.hasNext()) {
+				setItem(ds.getStringAbs(oiter.index), pos); // GET_ELEMENT_WITH_CAST
+			}
+		} else {
+			final String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
+
+			while (iter.hasNext()) {
+				setItem(dv, pos);
 			}
 		}
 		return this;

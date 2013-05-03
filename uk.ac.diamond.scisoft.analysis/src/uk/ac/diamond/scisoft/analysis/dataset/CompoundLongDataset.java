@@ -419,10 +419,9 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public void getDoubleArray(final double[] darray, final int... pos) {
-		int n = isize * get1DIndex(pos);
+	public void getDoubleArrayAbs(final int index, final double[] darray) {
 		for (int i = 0; i < isize; i++)
-			darray[i] = data[n + i];
+			darray[i] = data[index + i];
 	}
 
 	@Override
@@ -489,6 +488,10 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		setAbs(isize * get1DIndex(pos), d);
 	}
 
+	private void setDoubleArrayAbs(final int index, final double[] d) {
+		for (int i = 0; i < isize; i++)
+			data[index + i] = (long) d[i]; // ADD_CAST
+	}
 
 	@Override
 	public void resize(int... newShape) {
@@ -641,6 +644,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 				throw new IllegalArgumentException("Object for setting is not a dataset or number");
 			}
 		}
+		setDirty();
 		return this;
 	}
 
@@ -650,7 +654,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 			AbstractDataset ds = (AbstractDataset) o;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
-						"Number of true items in selection does not match number of items in dataset");
+						"Number of items in selection does not match number of items in dataset");
 			}
 
 			IndexIterator oiter = ds.getIterator();
@@ -661,6 +665,11 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 					throw new IllegalArgumentException("Input dataset is not compatible with slice");
 				}
 
+				double[] temp = new double[isize];
+				while (iter.hasNext() && oiter.hasNext()) {
+					((AbstractCompoundDataset) ds).getDoubleArrayAbs(oiter.index, temp);
+					setDoubleArrayAbs(iter.index, temp);
+				}
 				while (iter.hasNext() && oiter.hasNext()) {
 					for (int i = 0; i < isize; i++)
 						data[iter.index + i] = ds.getElementLongAbs(oiter.index + i); // GET_ELEMENT_WITH_CAST
@@ -679,13 +688,61 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 				final IntegerIterator iter = new IntegerIterator(index, size, isize);
 
 				while (iter.hasNext()) {
-					for (int i = 0; i < isize; i++)
-						data[iter.index + i] = vr[i];
+					setAbs(iter.index, vr);
 				}
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("Object for setting is not a dataset or number");
 			}
 		}
+		setDirty();
+		return this;
+	}
+
+	@Override
+	public CompoundLongDataset setByIndexes(final Object o, final Object... index) {
+		final IntegersIterator iter = new IntegersIterator(shape, index);
+		final int[] pos = iter.getPos();
+
+		if (o instanceof AbstractDataset) {
+			AbstractDataset ds = (AbstractDataset) o;
+			if (calcSize(iter.getShape()) != ds.getSize()) {
+				throw new IllegalArgumentException(
+						"Number of items in selection does not match number of items in dataset");
+			}
+
+			IndexIterator oiter = ds.getIterator();
+
+			if (ds instanceof AbstractCompoundDataset) {
+				if (isize != ds.getElementsPerItem()) {
+					throw new IllegalArgumentException("Input dataset is not compatible with slice");
+				}
+
+				double[] temp = new double[isize];
+				while (iter.hasNext() && oiter.hasNext()) {
+					((AbstractCompoundDataset) ds).getDoubleArray(temp, pos);
+					setDoubleArrayAbs(isize * get1DIndex(pos), temp);
+				}
+			} else {
+				while (iter.hasNext() && oiter.hasNext()) {
+					int n = isize * get1DIndex(pos);
+					data[n] = ds.getElementLongAbs(oiter.index); // GET_ELEMENT_WITH_CAST
+					for (int i = 1; i < isize; i++)
+						data[n + i] = 0;
+				}
+			}
+		} else {
+			try {
+				final long[] vr = toLongArray(o, isize); // PRIM_TYPE // CLASS_TYPE
+
+				while (iter.hasNext()) {
+					int n = isize * get1DIndex(pos);
+					setAbs(n, vr);
+				}
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Object for setting is not a dataset or number");
+			}
+		}
+		setDirty();
 		return this;
 	}
 

@@ -31,6 +31,13 @@ public interface IMonitor {
 	 */
 	public boolean isCancelled();
 	
+	/**
+	 * Starts a subtask.
+	 * 
+	 * @param taskName
+	 */
+	public void subTask(String taskName);
+	
 	public class Stub implements IMonitor {
 
 		@Override
@@ -41,6 +48,11 @@ public interface IMonitor {
 		@Override
 		public boolean isCancelled() {
 			return false;
+		}
+
+		@Override
+		public void subTask(String taskName) {
+			// nothing
 		}
 		
 	}

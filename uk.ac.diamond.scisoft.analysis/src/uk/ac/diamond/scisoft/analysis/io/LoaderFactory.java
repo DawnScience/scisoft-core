@@ -202,7 +202,7 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	public static DataHolder getData(final String path) throws Exception {
-		return getData(path, true, new IMonitor() {
+		return getData(path, true, new IMonitor.Stub() {
 			
 			@Override
 			public void worked(int amount) {

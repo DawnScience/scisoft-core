@@ -35,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 public class RawTextSaver implements IFileSaver {
 
 	private String fileName = "";
+	protected char delimiter = '\t';
 
 	/**
 	 * Takes the dataset from a data holder and output them as a height x width array called 'filename'.txt.
@@ -86,11 +87,13 @@ public class RawTextSaver implements IFileSaver {
 
 				fw = new FileWriter(f);
 				bw = new BufferedWriter(fw);
-
+				
+				writeHeader(bw);
+				
 				for (int rows = 0; rows < height; rows++) {
 					for (int columns = 0; columns < width - 1; columns++) {
 						bw.write(data.getString(rows, columns));
-						bw.write('\t');
+						bw.write(delimiter);
 					}
 					bw.write(data.getString(rows, width - 1));
 					bw.newLine();
@@ -110,5 +113,10 @@ public class RawTextSaver implements IFileSaver {
 					}
 			}
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	protected void writeHeader(BufferedWriter writer) throws IOException {
+		//Does nothing
 	}
 }

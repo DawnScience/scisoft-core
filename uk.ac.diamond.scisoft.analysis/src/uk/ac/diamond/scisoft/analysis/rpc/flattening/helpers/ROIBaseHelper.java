@@ -34,6 +34,7 @@ public class ROIBaseHelper extends ROIHelper<ROIBase> {
 	@Override
 	public ROIBase unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		ROIBase roiBase = new ROIBase();
+		roiBase.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiBase.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roiBase.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		return roiBase;

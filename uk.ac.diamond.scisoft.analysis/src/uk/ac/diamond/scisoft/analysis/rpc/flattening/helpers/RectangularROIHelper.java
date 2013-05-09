@@ -43,6 +43,7 @@ public class RectangularROIHelper extends ROIHelper<RectangularROI> {
 	@Override
 	public RectangularROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		RectangularROI roiOut = new RectangularROI();
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		roiOut.setLengths((double[]) rootFlattener.unflatten(inMap.get(LEN)));

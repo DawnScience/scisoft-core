@@ -51,6 +51,7 @@ public class SectorROIHelper extends ROIHelper<SectorROI> {
 	@Override
 	public SectorROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		SectorROI roiOut = new SectorROI();
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		roiOut.setAngles((double[]) rootFlattener.unflatten(inMap.get(ANG)));

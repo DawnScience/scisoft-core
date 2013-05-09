@@ -148,7 +148,7 @@ _AXES_NAMES = { 'x':['X-Axis'], 'y':['Y-Axis'] }
 
 import types as _types
 
-def _parselinearg(x, y=None, title=None, name=None):
+def _parselinearg(x, y, title, name):
     '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
     '''
     if not name:
@@ -216,7 +216,7 @@ def _clear_axis(mode, name):
         _plot_removeaxis(name, n)
         al.remove(n)
 
-def _process_line(x, y=None, title=None, name=None, mode=None):
+def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)
 
     from time import sleep

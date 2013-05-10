@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
 /**
@@ -48,6 +49,11 @@ public class SliceObject {
      */
     private Map<Integer,String> nexusAxes;
     
+    /**
+     * Name, expression name to a lazy dataset which can be used for an axis.
+     */
+	private Map<String, IDataset> expressionAxes;
+
     public SliceObject() {
     	this.nexusAxes = new HashMap<Integer, String>(3);
     }
@@ -257,5 +263,15 @@ public class SliceObject {
 	public String getNexusAxis(int inexusDim) {
 		return nexusAxes.get(inexusDim);
 	}
-    
+
+	public void putExpressionAxis(String name, IDataset set) {
+		if (expressionAxes == null) expressionAxes = new HashMap<String, IDataset>(7);
+		expressionAxes.put(name, set);
+	}
+	
+	public IDataset getExpressionAxis(String name) {
+		if (expressionAxes == null) return null;
+		return expressionAxes.get(name);
+	}
+  
 }

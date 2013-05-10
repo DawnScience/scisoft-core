@@ -439,7 +439,7 @@ public class InterpolatorUtils {
 					index++;
 				}
 			}
-			AbstractDataset axis = Maths.add(originalAxisForCorrection,corrections.getDouble(correctionPos));
+			AbstractDataset axis = Maths.subtract(originalAxisForCorrection,corrections.getDouble(correctionPos));
 			AbstractDataset remapped = remap1D(slice,axis,outputAxis);
 			
 			int[] ref = ArrayUtils.clone(pos);

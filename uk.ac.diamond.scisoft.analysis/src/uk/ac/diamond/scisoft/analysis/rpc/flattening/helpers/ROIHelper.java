@@ -27,11 +27,13 @@ abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {
 		super(type);
 	}
 
+	public static final String NAME = "name";
 	public static final String SPT = "spt";
 	public static final String PLOT = "plot";
 
 	public Map<String, Object> flatten(IROI roi, String typeName, IRootFlattener rootFlattener) {
 		Map<String, Object> outMap = createMap(typeName);
+		outMap.put(NAME, rootFlattener.flatten(roi.getName()));
 		outMap.put(SPT, rootFlattener.flatten(roi.getPointRef()));
 		outMap.put(PLOT, rootFlattener.flatten(roi.isPlot()));
 		return outMap;

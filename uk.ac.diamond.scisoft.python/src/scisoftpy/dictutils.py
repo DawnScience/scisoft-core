@@ -201,6 +201,14 @@ class ListDict(object):
         self.__delitem__(key)
 
     def __str__(self):
+        s = "{"
+        for k in self.__odict__: #_odict.__iter__(self):
+            s += k + ": " + str(self[k]) + ", "
+        if len(s) > 0:
+            s = s[:-2]
+        return s + '}'
+
+    def __repr__(self):
         s = ""
         for k in self.__odict__: #_odict.__iter__(self):
             s += "('" + k + "', " + str(self[k]) + "), "
@@ -456,6 +464,6 @@ def _test_subclass():
     print rl
 
 if __name__ == "__main__":
-#    _test_setting_listdict()
+    _test_setting_listdict()
 #    _test_setting_listdict(inter=False)
-    _test_subclass()
+#    _test_subclass()

@@ -41,6 +41,7 @@ public class EllipticalROIHelper extends ROIHelper<EllipticalROI> {
 	@Override
 	public EllipticalROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		EllipticalROI roiOut = new EllipticalROI();
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		roiOut.setSemiAxes((double[]) rootFlattener.unflatten(inMap.get(SAXIS)));

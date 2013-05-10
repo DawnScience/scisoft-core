@@ -24,9 +24,10 @@ class roibase(_iroi):
     _SPT = "spt"
     _PLOT = "plot"
 
-    def __init__(self, spt=[0.0,0.0], plot=False, **kwargs):
+    def __init__(self, name='', spt=[0.0,0.0], plot=False, **kwargs):
         super(roibase, self).__init__()
-        self.spt = [float(p) for p in spt]
+        self.name = name
+        self.spt = [float(p) for p in spt] if spt else None
         self.plot = plot
 
     # rois are not hashable because they are mutable

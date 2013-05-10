@@ -34,6 +34,7 @@ public class PointROIHelper extends ROIHelper<PointROI> {
 	@Override
 	public PointROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		PointROI roi = new PointROI();
+		roi.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roi.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roi.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		return roi;

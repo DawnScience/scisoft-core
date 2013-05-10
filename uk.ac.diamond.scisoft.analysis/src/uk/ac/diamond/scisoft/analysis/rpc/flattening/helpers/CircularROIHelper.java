@@ -39,6 +39,7 @@ public class CircularROIHelper extends ROIHelper<CircularROI> {
 	@Override
 	public CircularROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
 		CircularROI roiOut = new CircularROI();
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
 		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
 		roiOut.setRadius((Double) rootFlattener.unflatten(inMap.get(RAD)));

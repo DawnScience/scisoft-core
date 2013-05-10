@@ -49,6 +49,7 @@ public class LinearROIHelper extends ROIHelper<LinearROI> {
 		Double ang = (Double) rootFlattener.unflatten(inMap.get(ANG));
 		Boolean crossHair = (Boolean) rootFlattener.unflatten(inMap.get(CROSS_HAIR));
 		LinearROI roiOut = new LinearROI(len, ang);
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
 		roiOut.setPoint(spt);
 		roiOut.setPlot(isPlot);
 		roiOut.setCrossHair(crossHair);

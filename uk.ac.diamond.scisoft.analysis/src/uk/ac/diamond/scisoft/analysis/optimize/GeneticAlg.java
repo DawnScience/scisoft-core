@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import org.apache.commons.math.random.JDKRandomGenerator;
+import org.apache.commons.math.random.MersenneTwister;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.random.RandomGenerator;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class GeneticAlg implements IOptimizer {
 	
 	transient protected static final Logger GAlogger = LoggerFactory.getLogger(GeneticAlg.class);
 	
-	private final static RandomGenerator generator = new JDKRandomGenerator();
+	private final static RandomGenerator generator = new MersenneTwister();
 	private final static RandomDataImpl prng = new RandomDataImpl(generator);
 
 	private static final int MaxNumberOfStaticBestValue = 50;

@@ -205,16 +205,16 @@ public class Fitter {
 	
 	public static NDGaussianFitResult NDGaussianSimpleFit(AbstractDataset data, AbstractDataset... axis) {
 		
-		if (data.getShape().length != axis.length) {
+		if (data.getRank() != axis.length) {
 			//TODO make this better
 			throw new IllegalArgumentException("Incorrect number of Axis");
 		}
 		int dims = axis.length;
 		
-		// fist resolve the problem into n 1D problems
+		// first resolve the problem into n 1D problems
 		AFunction[] results = new AFunction[dims];
 		for (int i = 0; i < dims; i++) {
-			AbstractDataset flattened = data.clone();
+			AbstractDataset flattened = data;
 			for (int j = 0; j < dims-1; j++) {
 				if (j < i) {
 					flattened = flattened.sum(0);

@@ -191,6 +191,9 @@ public class SliceObject {
     	ret.sliceStop  = sliceStop;
     	ret.sliceStep  = sliceStep;
     	ret.nexusAxes.putAll(nexusAxes);
+    	if (expressionAxes!=null) { // Point to old map.
+    		ret.expressionAxes = expressionAxes;
+    	}
 		return ret;
     }
     

@@ -15,6 +15,7 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -35,7 +36,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
-@Ignore("Test not finished and is failing. 9 Nov 11")
+
 public class Generic1DFitterNelderMeadTest {
 
 	static final int dataRange = 550;
@@ -51,7 +52,7 @@ public class Generic1DFitterNelderMeadTest {
 	static final int smoothing = 5;
 	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
 
-	
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testPearsonVIIFitting() {
 		int i = defaultPeakPos.length;
@@ -100,6 +101,7 @@ public class Generic1DFitterNelderMeadTest {
 		}
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testLorentzianFitting() {
 		int i = defaultPeakPos.length;

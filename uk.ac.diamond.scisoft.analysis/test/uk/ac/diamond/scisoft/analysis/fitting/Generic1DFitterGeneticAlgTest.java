@@ -15,6 +15,7 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -34,7 +35,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
-@Ignore("Test not finished and is failing. 9 Nov 11")
+
 public class Generic1DFitterGeneticAlgTest {
 	static final int dataRange = 550;
 	static int[] defaultPeakPos = new int[] { 100, 200, 300, 400, 500, 150, 250, 350, 450 };
@@ -49,6 +50,8 @@ public class Generic1DFitterGeneticAlgTest {
 	static final int smoothing = 5;
 	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
 
+	static final long seed = 12357L;
+
 	@Test
 	public void testPearsonVIIFitting() {
 		int i = defaultPeakPos.length;
@@ -58,7 +61,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generatePearsonVII(i);
 		try {
-			FittingTestGeneticAlg(peakPos, testingPeaks, new PearsonVII(10,10,10,10,10));
+			fittingTestGeneticAlg(peakPos, testingPeaks, new PearsonVII(10,10,10,10,10));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -74,7 +77,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generateGaussianPeaks(i);
 		try {
-			FittingTestGeneticAlg(peakPos, testingPeaks, new Gaussian(10,10,10));
+			fittingTestGeneticAlg(peakPos, testingPeaks, new Gaussian(10,10,10));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -90,13 +93,14 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generatePseudoVoigt(i);
 		try {
-			FittingTestGeneticAlg(peakPos, testingPeaks, new PseudoVoigt(1, 1, 1, 1));
+			fittingTestGeneticAlg(peakPos, testingPeaks, new PseudoVoigt(1, 1, 1, 1));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
 		}
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testLorentzianFitting() {
 		int i = defaultPeakPos.length;
@@ -106,7 +110,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generateLorentzianPeaks(i);
 		try {
-			FittingTestGeneticAlg(peakPos, testingPeaks, new Lorentzian(10));
+			fittingTestGeneticAlg(peakPos, testingPeaks, new Lorentzian(10));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -171,9 +175,9 @@ public class Generic1DFitterGeneticAlgTest {
 		return comp.makeDataset(DoubleDataset.arange(dataRange));
 	}
 
-	private void FittingTestGeneticAlg(int[] peakPos, DoubleDataset data, APeak peakFunction) {
+	private void fittingTestGeneticAlg(int[] peakPos, DoubleDataset data, APeak peakFunction) {
 
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new GeneticAlg(0.0001),
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new GeneticAlg(0.0001, seed),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
 		
 		double[] fittedPeakPos = new double[fittedPeakList.size()];

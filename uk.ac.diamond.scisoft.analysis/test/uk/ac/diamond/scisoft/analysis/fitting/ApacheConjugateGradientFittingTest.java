@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
-@Ignore("Test not finished and is failing. 9 Nov 11")
+
 public class ApacheConjugateGradientFittingTest {
 
 	static DoubleDataset gaussian; 
@@ -101,6 +101,7 @@ public class ApacheConjugateGradientFittingTest {
 		Assert.assertEquals(1, fittedPseudoVoigt.size(), 0);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testPeakPosGaussian() {
 		Assert.assertEquals(pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
@@ -111,6 +112,7 @@ public class ApacheConjugateGradientFittingTest {
 		Assert.assertEquals(pos, fittedLorenzian.get(0).getPeak(0).getPosition(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testPeakPosPearsonVII() {
 		Assert.assertEquals(pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
@@ -121,41 +123,49 @@ public class ApacheConjugateGradientFittingTest {
 		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMGaussian() {
 		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMLorenzian() {
 		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPearsonVII() {
 		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPseudoVoigt() {
 		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaGaussian() {
 		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaLorenzian() {
 		Assert.assertEquals(area, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPearsonVII() {
 		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPseudoVoigt() {
 		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);

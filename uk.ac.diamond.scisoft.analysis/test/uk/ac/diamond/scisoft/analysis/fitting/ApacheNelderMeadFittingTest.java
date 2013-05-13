@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
-@Ignore("Test not finished and is failing. 9 Nov 11")
+
 public class ApacheNelderMeadFittingTest {
 
 	static DoubleDataset gaussian;
@@ -123,41 +123,49 @@ public class ApacheNelderMeadFittingTest {
 		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMGaussian() {
 		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMLorenzian() {
 		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPearsonVII() {
 		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPseudoVoigt() {
 		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaGaussian() {
 		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaLorenzian() {
 		Assert.assertEquals(area, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPearsonVII() {
 		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
+	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPseudoVoigt() {
 		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);

@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -26,6 +27,10 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 
 public class FitterTest {
+	@BeforeClass
+	public static void setSeed() {
+		Fitter.seed = 12475L;
+	}
 	
 	@Test
 	public void testGaussianFit() {

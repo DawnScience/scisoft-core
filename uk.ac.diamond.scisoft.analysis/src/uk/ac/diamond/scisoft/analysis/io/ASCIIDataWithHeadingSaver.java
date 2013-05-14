@@ -56,6 +56,7 @@ public class ASCIIDataWithHeadingSaver extends RawTextSaver {
 		}
 		
 		if (headings != null) {
+			writer.write('#');
 			for (String heading: headings) {
 				writer.write(heading);
 				writer.write(delimiter);

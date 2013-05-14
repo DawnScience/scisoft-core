@@ -506,8 +506,7 @@ public class LoaderFactory {
 			final Object cachedObject = getSoftReference(key);
 			if (cachedObject!=null && cachedObject instanceof DataHolder) {
 				DataHolder   holder = (DataHolder)cachedObject;
-				AbstractDataset set = holder.getDataset(name);
-				if (set !=null ) return set;
+				return holder.getDataset(name);
 			}
 		} catch (Throwable ignored) {
 			// We were just trying it.
@@ -518,7 +517,10 @@ public class LoaderFactory {
 		key.setDatasetName(name);
 		
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (AbstractDataset)cachedObject;
+		if (cachedObject!=null && cachedObject instanceof AbstractDataset) return (AbstractDataset)cachedObject;
+		if (cachedObject!=null && cachedObject instanceof DataHolder) {
+			return ((DataHolder)cachedObject).getDataset(name); 
+		}
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
 		if (it == null)
@@ -541,6 +543,13 @@ public class LoaderFactory {
 				} else {
 					DataHolder holder = loader.loadFile(mon);
 					ILazyDataset lazy = holder.getLazyDataset(name);
+					
+					// We know it is null, record holder that to save reading the
+					// file a lot.
+					if (lazy == null) {
+						recordSoftReference(key, holder);
+						return null;
+					}
 					if (lazy instanceof IDataset)
 						set = DatasetUtils.convertToAbstractDataset(lazy);
 					else // this can load in very large datasets so beware!

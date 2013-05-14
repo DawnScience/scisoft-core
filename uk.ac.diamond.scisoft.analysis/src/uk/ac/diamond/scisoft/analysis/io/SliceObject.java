@@ -59,12 +59,14 @@ public class SliceObject {
     }
     
 	public void clear() {
-		path=null;
-		name=null;
-		slicedShape=null;// The final shape expected
-	    sliceStart=null; 
-	    sliceStop=null; 
-	    sliceStep=null;
+		path          =null;
+		name          =null;
+		slicedShape   =null;// The final shape expected
+	    sliceStart    =null; 
+	    sliceStop     =null; 
+	    sliceStep     =null;
+	    nexusAxes     =null; // Do not clear
+	    expressionAxes=null; // Do not clear
 	}
     
 	public String getPath() {
@@ -170,7 +172,6 @@ public class SliceObject {
 	public void setSliceStep(int[] sliceStep) {
 		this.sliceStep = sliceStep;
 	}
-	
 	
 	@Override
 	public String toString() {

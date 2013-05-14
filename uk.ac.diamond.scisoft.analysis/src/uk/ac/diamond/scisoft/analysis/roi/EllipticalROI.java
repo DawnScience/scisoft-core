@@ -24,6 +24,8 @@ import java.util.Arrays;
 public class EllipticalROI extends ROIBase {
 	private double[] saxis; // semi-axes
 	private double ang; // angles in radians
+	private double cang;
+	private double sang;
 
 	/**
 	 * No argument constructor need for serialization
@@ -146,6 +148,8 @@ public class EllipticalROI extends ROIBase {
 		while (ang > TWOPI) {
 			ang -= TWOPI;
 		}
+		cang = Math.cos(ang);
+		sang = Math.sin(ang);
 	}
 
 	/**
@@ -176,13 +180,11 @@ public class EllipticalROI extends ROIBase {
 	 * @return point 
 	 */
 	public double[] getPoint(double angle) {
-		double ca = Math.cos(ang);
-		double sa = Math.sin(ang);
 		double cb = Math.cos(angle);
 		double sb = Math.sin(angle);
 
-		return new double[] { spt[0] + saxis[0]*ca*cb - saxis[1]*sa*sb, 
-				spt[1] + saxis[0]*sa*cb + saxis[1]*ca*sb};
+		return new double[] { spt[0] + saxis[0]*cang*cb - saxis[1]*sang*sb, 
+				spt[1] + saxis[0]*sang*cb + saxis[1]*cang*sb};
 	}
 
 	/**
@@ -202,6 +204,20 @@ public class EllipticalROI extends ROIBase {
 	public double getDistance(double angle) {
 		double[] p = getPoint(angle);
 		return Math.hypot(p[0] - spt[0], p[1] - spt[1]);
+	}
+
+	/**
+	 * Determine if point is on or inside ellipse
+	 * @param point
+	 * @return true if ellipse contains point
+	 */
+	public boolean containsPoint(double... point) {
+		double dx = point[0] - spt[0];
+		double dy = point[1] - spt[1];
+		double a = Math.atan2(cang*dy - sang*dx, cang*dx + sang*dy);
+		double l = getDistance(a);
+		
+		return Math.hypot(dx, dy) <= l;
 	}
 
 	@Override

@@ -219,15 +219,20 @@ public class DSpacing {
 			intersect.add(major);
 		}
 		Vector3d centre = new Vector3d();
-
-		r /= detector.getVPxSize();
-		double denom = ca*ca - se*se; // if alpha = 90 - eta it's the parabolic case TODO
-		double a = r*ce*sa*ca/denom;
-		double b = r*ce*sa/Math.sqrt(denom);
-
 		detector.pixelCoords(intersect, centre);
 
-		EllipticalROI eroi = new EllipticalROI(a, b, angle, centre.x, centre.y);
+		r /= detector.getVPxSize();
+		EllipticalROI eroi;
+		if (se != 0) {
+			double denom = ca*ca - se*se; // if alpha = 90 - eta it's the parabolic case TODO
+			double a = r*ce*sa*ca/denom;
+			double b = r*ce*sa/Math.sqrt(denom);
+			eroi = new EllipticalROI(a, b, angle, centre.x, centre.y);
+		} else {
+			double a = r*sa/ca;
+			eroi = new EllipticalROI(a, centre.x, centre.y);
+		}
+
 		return eroi;
 	}
 }

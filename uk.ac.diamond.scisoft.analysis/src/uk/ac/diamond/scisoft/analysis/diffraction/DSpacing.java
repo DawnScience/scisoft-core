@@ -231,6 +231,7 @@ public class DSpacing {
 		} else {
 			double a = r*sa/ca;
 			eroi = new EllipticalROI(a, centre.x, centre.y);
+			eroi.setAngle(angle);
 		}
 
 		return eroi;

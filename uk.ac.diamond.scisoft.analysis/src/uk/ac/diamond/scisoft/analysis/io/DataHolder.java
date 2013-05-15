@@ -37,7 +37,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
  * This is designed to take in any dataset obeying the IDataset interface but output an
  * object that is a subclass of AbstractDataset - the dataset will be converted if necessary.
  */
-public class DataHolder implements IMetadataProvider {
+public class DataHolder implements IMetadataProvider, IDataHolder {
 	protected static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**

@@ -90,7 +90,7 @@ public class PowderRingsUtils {
 	private static final double RADIAL_DELTA = 10;
 	private static final int MAX_POINTS = 200;
 
-	private static final int PEAK_SMOOTHING = 3;
+	private static final int PEAK_SMOOTHING = 15;
 	private static final double MAX_FWHM_FACTOR = 2;
 	private static final double RING_SEPARATION = 4;
 
@@ -132,6 +132,13 @@ public class PowderRingsUtils {
 			throw new IllegalArgumentException("Mask must match image shape");
 		}
 
+		final int[] shape = image.getShape();
+		final int h = shape[0];
+		final int w = shape[1];
+		if (ellipse.containsPoint(-1,-1) && ellipse.containsPoint(-1,h+1) && ellipse.containsPoint(w+1,h+1) && ellipse.containsPoint(w+1,-1)) {
+			throw new IllegalArgumentException("Ellipse does not intersect image!");
+		}
+		
 		final double aj = ellipse.getSemiAxis(0);
 		final double an = ellipse.getSemiAxis(1);
 		if (an < arcLength) {
@@ -144,9 +151,6 @@ public class PowderRingsUtils {
 		final double ang = ellipse.getAngle();
 		final double ca = Math.cos(ang);
 		final double sa = Math.sin(ang);
-		final int[] shape = image.getShape();
-		final int h = shape[0];
-		final int w = shape[1];
 
 		final double pdelta = arcLength / aj; // change in angle
 		double rdelta = radialDelta; // semi-width of annulus of interest
@@ -251,7 +255,7 @@ public class PowderRingsUtils {
 		}
 
 		DoubleDataset pixels = new DoubleDataset(values);
-		System.err.println(pixels);
+//		System.err.println(pixels.toString(true));
 
 		// threshold with population stats from maxima
 		logger.debug("Stats: {} {} {} {}", new Object[] {pixels.min(), pixels.mean(), pixels.max(),
@@ -359,7 +363,7 @@ public class PowderRingsUtils {
 	 * @return list of ellipses
 	 */
 	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI roi) {
-		return findOtherEllipses(mon, image, mask, roi, roi.getSemiAxis(1), RADIAL_DELTA, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
+		return findOtherEllipses(mon, image, mask, roi, roi.getSemiAxis(1), RADIAL_DELTA, ARC_LENGTH, 0.3*RADIAL_DELTA, MAX_POINTS);
 	}
 
 	/**
@@ -487,13 +491,14 @@ public class PowderRingsUtils {
 		if (mon != null)
 			mon.worked(profile.getSize());
 
+		System.err.printf("\n");
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		for (IdentifiedPeak p : peaks) {
 			if (p.getPos() < offset) {
 				continue;
 			}
 			stats.addValue(p.getArea());
-//			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
+			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
 		}
 		
 		double area = stats.getMean() + 1.5*(stats.getPercentile(75) - stats.getPercentile(25));

@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math.ConvergenceException;
@@ -45,7 +46,8 @@ import Jama.Matrix;
  * <p>
  * The ellipse is centred on the origin.
  */
-class AngleDerivativeFunction implements UnivariateRealFunction {
+//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
+class AngleDerivativeFunction implements UnivariateRealFunction, Serializable {
 	double ra, rb; // major and minor semi-axes
 	double alpha;  // orientation angle of major axis
 	double A, B, C;
@@ -95,7 +97,8 @@ class AngleDerivativeFunction implements UnivariateRealFunction {
  * This function returns the coordinates (interleaved) for the points specified by the
  * geometric parameters and an array of angles
  */
-class EllipseCoordinatesFunction implements IConicSectionFitFunction {
+//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
+class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializable {
 	private static final int PARAMETERS = EllipseFitter.PARAMETERS;
 	private AbstractDataset X;
 	private AbstractDataset Y;
@@ -297,7 +300,8 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction {
  * Fit an ellipse whose geometric parameters are
  *  major, minor semi-axes, angle of major axis, centre coordinates
  */
-public class EllipseFitter implements IConicSectionFitter {
+//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
+public class EllipseFitter implements IConicSectionFitter, Serializable {
 	/**
 	 * Setup the logging facilities
 	 */

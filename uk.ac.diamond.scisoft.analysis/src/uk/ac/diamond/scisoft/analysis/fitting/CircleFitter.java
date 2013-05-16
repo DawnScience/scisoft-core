@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math.ConvergenceException;
@@ -38,7 +39,8 @@ import Jama.SingularValueDecomposition;
  * This function returns the coordinates (interleaved) for the points specified by the
  * geometric parameters and an array of angles
  */
-class CircleCoordinatesFunction implements IConicSectionFitFunction {
+// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
+class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializable {
 	private static final int PARAMETERS = CircleFitter.PARAMETERS;
 	private AbstractDataset X;
 	private AbstractDataset Y;
@@ -192,7 +194,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction {
  * Fit a circle whose geometric parameters are
  *  radius, centre coordinates
  */
-public class CircleFitter implements IConicSectionFitter {
+public class CircleFitter implements IConicSectionFitter, Serializable {
 	/**
 	 * Setup the logging facilities
 	 */

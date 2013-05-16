@@ -87,7 +87,32 @@ public class DetectorProperties implements Serializable {
 			final double pixelWidthInMM, Matrix3d orientation) {
 		this(origin, new Vector3d(0, 0, 1), heightInPixels, widthInPixels, pixelHeightInMM, pixelWidthInMM, orientation);
 	}
-
+	
+	/**
+	 * This assumes beam is along z-axis, detector is square on the beam
+	 * 
+	 * This method does not require creating plugins to import vecmath
+	 * 
+	 * @param distance
+	 *            In mm. Length of the norm vector pointing from detector surface to sample
+	 * @param xorigin
+	 *            horizontal displacement in mm of the detector (0,0) from where above norm vector sits on detector surface
+	 * @param yorigin
+	 *            vertical displacement in mm of the detector (0,0) from where above norm vector sits on detector surface
+	 * @param heightInPixels
+	 *            Detector height in pixels
+	 * @param widthInPixels
+	 *            Detector width in pixels
+	 * @param pixelHeightInMM
+	 *            pixel height in mm
+	 * @param pixelWidthInMM
+	 *            pixel width in mm
+	 */
+	public DetectorProperties(double distance, double xorigin, double yorigin, final int heightInPixels, final int widthInPixels, final double pixelHeightInMM,
+			final double pixelWidthInMM) {
+		this(new Vector3d(xorigin, yorigin, distance), new Vector3d(0, 0, 1), heightInPixels, widthInPixels, pixelHeightInMM, pixelWidthInMM, null);
+	}
+	
 	/**
 	 * This assumes beam is along z-axis
 	 * 
@@ -179,11 +204,14 @@ public class DetectorProperties implements Serializable {
 	 * @param detprop
 	 *            the DetectorProperties to copy
 	 */
-	private DetectorProperties(DetectorProperties detprop) {
+	protected DetectorProperties(DetectorProperties detprop) {
 		this();
-		origin = new Vector3d(detprop.origin);
-		beamVector = new Vector3d(detprop.beamVector);
-		beamVector.normalize();
+		if (detprop.origin != null)
+			origin = new Vector3d(detprop.origin);
+		if (detprop.beamVector != null) {
+			beamVector = new Vector3d(detprop.beamVector);
+			beamVector.normalize();
+		}
 		px = detprop.getPx();
 		py = detprop.getPy();
 		vPxSize = detprop.getVPxSize();

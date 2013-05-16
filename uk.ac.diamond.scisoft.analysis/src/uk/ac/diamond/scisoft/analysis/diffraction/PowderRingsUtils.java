@@ -52,6 +52,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
@@ -655,7 +656,97 @@ public class PowderRingsUtils {
 		f.setSpacings(fSpacings);
 		logger.debug("Residual values for {}: {}", f.getRMS(f.getParameters()), f.getValues());
 
-		DetectorProperties nDetector = new DetectorProperties(detector);
+		DetectorProperties nDetector = detector.clone();
+		nDetector.setDetectorDistance(f.getDistance());
+		nDetector.setNormalAnglesInDegrees(tilt, 0, f.getRollAngle());
+		DiffractionCrystalEnvironment nEnv = new DiffractionCrystalEnvironment(f.getWavelength());
+		return new QSpace(nDetector, nEnv);
+	}
+
+	/**
+	 * @param mon
+	 * @param detector
+	 * @param env
+	 * @param rois
+	 * @param spacings
+	 *            a list of spacings
+	 * @return q-space
+	 */
+	public static QSpace fitAllEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<IROI> rois, List<HKL> spacings) {
+		int n = rois.size();
+		if (n != spacings.size()) { // always allow a choice to be made
+			throw new IllegalArgumentException("Number of ellipses should be equal to spacings");
+		}
+		boolean allCircles = true;
+		List<EllipticalROI> ellipses = new ArrayList<EllipticalROI>();
+		List<Double> s = new ArrayList<Double>();
+		for (int i = 0; i < n; i++) {
+			IROI r = rois.get(i);
+			if (r instanceof CircularROI) {
+				r = new EllipticalROI((CircularROI) r);
+			} else if (!(r instanceof EllipticalROI))
+				continue;
+			EllipticalROI e = (EllipticalROI) r;
+			ellipses.add(e);
+			HKL d = spacings.get(i);
+			s.add(d.getD().doubleValue(SI.MILLIMETRE));
+			logger.debug("    {}", e);
+			if (allCircles && !e.isCircular()) {
+				allCircles = false;
+			}
+		}
+		n = ellipses.size();
+
+		FitDiffFunction f;
+		if (allCircles) {
+			logger.debug("All rings are circular");
+			f = createQFitFunction3(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), n, true);
+		} else {
+			f = createQFitFunction2(ellipses, detector.getVPxSize(), env.getWavelength()*1e-7, detector.getDetectorDistance(), detector.getTiltAngle(), n, true);
+		}
+		f.setSpacings(s);
+
+		logger.debug("Init: {}", f.getInit());
+
+		if (mon != null) {
+			mon.worked(1);
+		}
+
+		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
+		
+		double res = Double.NaN;
+
+		try {
+			VectorialPointValuePair result = opt.optimize(f, f.getTarget(), f.getWeight(), f.getInit());
+			f.setParameters(result.getPoint());
+			res = opt.getRMS();
+			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
+		} catch (FunctionEvaluationException e) {
+			logger.error("Function evaluation problem", e);
+			// cannot happen
+		} catch (IllegalArgumentException e) {
+			logger.error("Start point has wrong dimension", e);
+			// should not happen!
+		} catch (ConvergenceException e) {
+			throw new IllegalArgumentException("Could not fit as optimizer did not converge");
+//				logger.error("Convergence problem: max iterations ({}) exceeded", opt.getMaxIterations());
+		}
+		if (mon != null) {
+			mon.worked(10);
+			if (mon.isCancelled())
+				return null;
+		}
+
+		if (f.getParameters() == null) {
+			logger.warn("Problem with fitting - as could not find a single fit!");
+		}
+
+		double tilt = f.getTiltAngle();
+		logger.debug("Parameters: w {}, D {}, e {} (min {})", new Object[] { f.getWavelength(), f.getDistance(), tilt, res });
+		logger.debug("Spacings used: {}", s);
+		logger.debug("Residual values for {}: {}", f.getRMS(f.getParameters()), f.getValues());
+
+		DetectorProperties nDetector = detector.clone();
 		nDetector.setDetectorDistance(f.getDistance());
 		nDetector.setNormalAnglesInDegrees(tilt, 0, f.getRollAngle());
 		DiffractionCrystalEnvironment nEnv = new DiffractionCrystalEnvironment(f.getWavelength());

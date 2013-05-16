@@ -179,7 +179,7 @@ public class DetectorProperties implements Serializable {
 	 * @param detprop
 	 *            the DetectorProperties to copy
 	 */
-	protected DetectorProperties(DetectorProperties detprop) {
+	private DetectorProperties(DetectorProperties detprop) {
 		this();
 		origin = new Vector3d(detprop.origin);
 		beamVector = new Vector3d(detprop.beamVector);

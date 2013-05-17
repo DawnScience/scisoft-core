@@ -163,4 +163,9 @@ public class QSpace {
 	public double scatteringAngle(final Vector3d q) {
 		return 2.*Math.asin(0.5*q.length()/kmod);
 	}
+
+	@Override
+	public String toString() {
+		return detProps + "; " + getWavelength();
+	}
 }

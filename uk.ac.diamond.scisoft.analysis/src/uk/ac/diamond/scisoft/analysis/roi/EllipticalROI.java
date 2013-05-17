@@ -220,6 +220,46 @@ public class EllipticalROI extends ROIBase {
 		return Math.hypot(dx, dy) <= l;
 	}
 
+	/**
+	 * Determine if ellipse is within an axis-aligned rectangle
+	 * @param rect
+	 * @return true if ellipse lies wholly within rectangle
+	 */
+	public boolean isContainedBy(RectangularROI rect) {
+		double as = saxis[0]*saxis[0];
+		double bs = saxis[1]*saxis[1];
+		double dx = Math.sqrt(as*cang*cang + bs*sang*sang);
+		double dy = Math.sqrt(as*sang*sang + bs*cang*cang);
+		double ang = Math.abs(rect.getAngle());
+		double[] a = rect.getPointRef();
+		double[] b = rect.getEndPoint();
+		if (ang == 0 || ang == Math.PI) {
+			// do nothing
+		} else if (ang == 0.5*Math.PI || ang == 1.5*Math.PI) {
+			double t = dx;
+			dx = dy;
+			dy = t;
+		} else {
+			throw new UnsupportedOperationException("Non-axis-aligned rectangles are not implemented yet");
+		}
+
+		double x = a[0] - spt[0];
+		if (x > -dx)
+			return false;
+		x = b[0] - spt[0];
+		if (x < dx)
+			return false;
+
+		double y = a[1] - spt[1];
+		if (y > -dy)
+			return false;
+		y = b[1] - spt[1];
+		if (y < dy)
+			return false;
+
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		if (isCircular()) {

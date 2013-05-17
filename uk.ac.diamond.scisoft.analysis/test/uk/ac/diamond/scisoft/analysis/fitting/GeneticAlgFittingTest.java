@@ -51,16 +51,17 @@ public class GeneticAlgFittingTest {
 	private static List<CompositeFunction> fittedPearsonVII;
 	private static List<CompositeFunction> fittedPseudoVoigt;
 	
+	static final long seed = 12357L;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new GeneticAlg(accuracy),
-				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new GeneticAlg(
-				accuracy), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
-				accuracy), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new GeneticAlg(
-				accuracy), smoothing, numPeaks);
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1),
+				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1),
+				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1),
+				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1),
+				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
 	}
 
 	@BeforeClass

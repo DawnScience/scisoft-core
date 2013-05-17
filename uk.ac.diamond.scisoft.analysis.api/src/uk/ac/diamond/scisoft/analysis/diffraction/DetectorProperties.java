@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.vecmath.Matrix3d;
@@ -204,7 +205,7 @@ public class DetectorProperties implements Serializable {
 	 * @param detprop
 	 *            the DetectorProperties to copy
 	 */
-	protected DetectorProperties(DetectorProperties detprop) {
+	private DetectorProperties(DetectorProperties detprop) {
 		this();
 		if (detprop.origin != null)
 			origin = new Vector3d(detprop.origin);
@@ -1027,6 +1028,8 @@ public class DetectorProperties implements Serializable {
 
 	@Override
 	public String toString() {
-		return "DP: o = " + origin + ", n = " + normal;
+		double[] bc = getBeamCentreCoords();
+		String text = Double.isNaN(bc[0]) ? "o = " + origin: "bc = " + Arrays.toString(bc);
+		return "DP: " + text + ", n = " + normal + ", d = " + getDetectorDistance() + ", th = " + Math.toDegrees(getTiltAngle()) + ", phi = " + getNormalAnglesInDegrees()[2];
 	}
 }

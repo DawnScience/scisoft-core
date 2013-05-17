@@ -252,4 +252,8 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "CE: " + wavelength;
+	}
 }

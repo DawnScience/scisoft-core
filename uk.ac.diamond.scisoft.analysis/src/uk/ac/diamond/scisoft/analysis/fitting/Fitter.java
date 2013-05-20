@@ -103,7 +103,7 @@ public class Fitter {
 	 */
 	public static void geneticFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) {
 	
-		GeneticAlg ga = seed == null ? new GeneticAlg(quality) : new GeneticAlg(quality, seed); 
+		GeneticAlg ga = new GeneticAlg(quality, seed); 
 
 		ga.optimize(coords, yAxis, function);
 	}

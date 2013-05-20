@@ -26,19 +26,23 @@ import javax.vecmath.Vector3d;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventType;
 
 /**
- * This class will contain the information describing the properties of an area detector that are relevant to diffraction
- * calculations. The Diamond reference frame is defined so its origin is at the intersection of the beam and the sample.
- * [This is a volume but I guess it's the centre of this volume.]
+ * This class will contain the information describing the properties of an area detector
+ * that are relevant to diffraction calculations. The Diamond reference frame is defined
+ * so its origin is at the intersection of the beam and the sample. [This is a volume but
+ * I guess it's the centre of this volume.]
  * <p>
- * The laboratory reference frame is oriented so that the z-axis is along the beam direction (or as close to that as
- * possible so it forms a orthogonal basis with its other two axis), its y-axis is anti-parallel to local direction of
- * gravity, and its x-axis is horizontal. The area detector has a frame that describes its orientation relative to the
- * laboratory reference frame. In an idealised case, the detector frame coincides with the laboratory but has its origin
- * situated at the top-left corner of the top-leftmost pixel of the corrected image that recorded by the detector. The
- * image is presented as if seen from the beam source's perspective and image coordinates start off with (0,0) in the
- * top-left corner of the image and end at (width-1,height-1) in the bottom-right corner pixel. Thus the image rows and
- * columns are anti-parallel to the area detector frame's x and y axes and its z-axis is anti-parallel to the area
- * detector's outward (to the sample) normal.
+ * The laboratory reference frame is oriented so that the z-axis is along the beam
+ * direction (or as close to that as possible so it forms a orthogonal basis with its
+ * other two axis), its y-axis is anti-parallel to local direction of gravity, and its
+ * x-axis is horizontal. The area detector has a frame that describes its orientation
+ * relative to the laboratory reference frame. In an idealised case, the detector frame
+ * coincides with the laboratory but has its origin situated at the top-left corner of
+ * the top-leftmost pixel of the corrected image that recorded by the detector. The
+ * image is presented as if seen from the beam source's perspective and image coordinates
+ * start off with (0,0) in the top-left corner of the image and end at (width-1,height-1)
+ * in the bottom-right corner pixel. Thus the image rows and columns are anti-parallel to
+ * the area detector frame's x and y axes; the area detector's outward (to the sample)
+ * normal is anti-parallel to its z-axis.
  */
 public class DetectorProperties implements Serializable {
 	/**

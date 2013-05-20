@@ -114,6 +114,18 @@ public class DSpacingTest {
 		Assert.assertEquals("Angle", 180, eroi.getAngleDegrees(), 1e-7);
 //		Assert.assertEquals("Radius", det.getBeamCentreDistance()*Math.tan(2*Math.asin(0.25))/det.getVPxSize(), eroi.getSemiAxis(0), 1e-7);
 
+		det.setNormalAnglesInDegrees(30, 0, 180);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 0, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(30, 0, -180);
+		roi = DSpacing.conicFromDSpacing(det, env, 1);
+		eroi = (EllipticalROI) roi;
+		Assert.assertFalse("Ellipse", eroi.isCircular());
+		Assert.assertEquals("Angle", 0, eroi.getAngleDegrees(), 1e-7);
+
 		det.setNormalAnglesInDegrees(-30, 0, 0);
 		roi = DSpacing.conicFromDSpacing(det, env, 1);
 		eroi = (EllipticalROI) roi;

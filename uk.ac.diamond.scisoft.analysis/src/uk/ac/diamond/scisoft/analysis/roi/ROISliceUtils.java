@@ -1,5 +1,5 @@
 /*-
- * Copyright 2013 Diamond Light Source Ltd.
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,10 +72,9 @@ public class ROISliceUtils {
 		double[] roiLength = roi.getLengths();
 
 		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
-		int length = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
-
-		Slice xSlice = new Slice(start, length, 1);
-		//Slice xSlice = new Slice(start, start+1, 1);
+		int end = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
+		
+		Slice xSlice = new Slice(start, end+1, 1);
 		
 		slices[dim] = xSlice;
 		
@@ -88,13 +87,14 @@ public class ROISliceUtils {
 		AbstractDataset result = AbstractDataset.zeros(datasetStart, AbstractDataset.FLOAT32);
 		AbstractDataset datasetEnd = AbstractDataset.zeros(datasetStart);
 		
-		for (int i = 1; i < (length-start); i++) {
+		for (int i = 1; i < (end-start+1); i++) {
 			slices[dim].setStart(i);
 			slices[dim].setStop(i+1);
-			datasetEnd = dataBlock.getSlice(slices);
+			datasetEnd = DatasetUtils.cast(dataBlock.getSlice(slices),AbstractDataset.FLOAT32);
 			datasetStart.iadd(datasetEnd);
-			datasetStart.idivide(2);
-			datasetStart.imultiply(axis.getDouble(start+i)-axis.getDouble(start+i-1));
+			datasetStart.idivide(2.0);
+			double val = axis.getDouble(start+i)-axis.getDouble(start+i-1);
+			datasetStart.imultiply(val);
 			result.iadd(datasetStart);
 			datasetStart = datasetEnd;
 		}
@@ -106,21 +106,18 @@ public class ROISliceUtils {
 		Slice[] slices = new Slice[lz.getRank()];
 		double[] roiStart = roi.getPoint();
 		double[] roiLength = roi.getLengths();
-		//TODO needs to be checked and tested
 		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
-		int length = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
-
+		int end = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
 		Slice xSlice = new Slice(start, start+1, 1);
 
 		slices[dim] = xSlice;
 		
 		AbstractDataset dataStart = DatasetUtils.cast((AbstractDataset)lz.getSlice(slices),AbstractDataset.FLOAT32);
-		
-		slices[dim].setStart(length);
-		slices[dim].setStop(length+1);
-		dataStart.iadd(lz.getSlice(slices));
-		dataStart.idivide(2);
-		dataStart.imultiply(roiLength[0]);
+		slices[dim].setStart(end);
+		slices[dim].setStop(end+1);
+		dataStart.iadd(DatasetUtils.cast((AbstractDataset)lz.getSlice(slices),AbstractDataset.FLOAT32));
+		dataStart.idivide(2.0);
+		dataStart.imultiply(axis.getDouble(end)-axis.getDouble(start));
 		
 		return dataStart.squeeze();
 	}

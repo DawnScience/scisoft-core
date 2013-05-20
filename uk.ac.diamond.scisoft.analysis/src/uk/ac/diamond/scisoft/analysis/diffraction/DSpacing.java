@@ -207,12 +207,6 @@ public class DSpacing {
 		double ca = Math.cos(alpha);
 
 		Vector3d row = detector.getPixelRow();
-//		row.normalize();
-//		minor.cross(row, major); // reuse vector
-//		double angle = row.angle(major);
-//		if (minor.dot(normal) < 0) {
-//			angle = angle == 0 ? Math.PI : -angle;
-//		}
 		Vector3d col = detector.getPixelColumn();
 		double angle = -Math.atan2(major.dot(col), major.dot(row));
 		if (se != 0) {

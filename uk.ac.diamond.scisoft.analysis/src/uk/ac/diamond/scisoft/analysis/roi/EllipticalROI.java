@@ -139,13 +139,13 @@ public class EllipticalROI extends ROIBase {
 	private final static double TWOPI = 2.0 * Math.PI;
 	/**
 	 * Make sure angle lie in permitted ranges:
-	 *  0 <= ang <= 2*pi
+	 *  0 <= ang < 2*pi
 	 */
 	private void checkAngle() {
 		while (ang < 0) {
 			ang += TWOPI;
 		}
-		while (ang > TWOPI) {
+		while (ang >= TWOPI) {
 			ang -= TWOPI;
 		}
 		cang = Math.cos(ang);

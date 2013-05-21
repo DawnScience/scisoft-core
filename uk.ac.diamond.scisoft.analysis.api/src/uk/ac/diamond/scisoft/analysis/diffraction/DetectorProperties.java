@@ -151,8 +151,7 @@ public class DetectorProperties implements Serializable {
 		euler.mul(rotZ);
 		
 		this.origin = origin;
-		this.beamVector = new Vector3d(0, 0, 1);
-		this.beamVector.normalize();
+		beamVector = new Vector3d(0, 0, 1);
 		px = widthInPixels;
 		py = heightInPixels;
 		vPxSize = pixelHeightInMM;
@@ -216,6 +215,8 @@ public class DetectorProperties implements Serializable {
 		if (detprop.beamVector != null) {
 			beamVector = new Vector3d(detprop.beamVector);
 			beamVector.normalize();
+		} else {
+			beamVector = new Vector3d(0, 0, 1);
 		}
 		px = detprop.getPx();
 		py = detprop.getPy();
@@ -333,19 +334,28 @@ public class DetectorProperties implements Serializable {
 			if (invOrientation == null)
 				invOrientation = new Matrix3d();
 
+			if (orientation == null) {
+				orientation = new Matrix3d();
+				orientation.setIdentity();
+			}
+
 			invOrientation.transpose(orientation); // assume it's orthogonal
 			// invOrientation.invert(orientation);
 		} else {
 			if (orientation == null)
 				orientation = new Matrix3d();
 
-			orientation.transpose(invOrientation); // assume it's orthogonal
+			if (invOrientation != null)
+				orientation.transpose(invOrientation); // assume it's orthogonal
+			else
+				orientation.setIdentity();
 		}
-		
+
 		// calculate the vector from the origin of the detector that is perpendicular to the plane of the detector.
 		normal.set(0, 0, -1);
 
-		invOrientation.transform(normal); // use active transformation
+		if (invOrientation != null)
+			invOrientation.transform(normal); // use active transformation
 	}
 
 	/**
@@ -355,7 +365,8 @@ public class DetectorProperties implements Serializable {
 	public Vector3d getPixelRow() {
 		Vector3d horVec = new Vector3d(-hPxSize, 0, 0);
 
-		invOrientation.transform(horVec);
+		if (invOrientation != null)
+			invOrientation.transform(horVec);
 		return horVec;
 	}
 
@@ -366,7 +377,8 @@ public class DetectorProperties implements Serializable {
 	public Vector3d getPixelColumn() {
 		Vector3d vertVec = new Vector3d(0, -vPxSize, 0);
 
-		invOrientation.transform(vertVec);
+		if (invOrientation != null)
+			invOrientation.transform(vertVec);
 		return vertVec;
 	}
 
@@ -637,7 +649,8 @@ public class DetectorProperties implements Serializable {
 		Vector3d c = getBeamCentrePosition();
 		Vector3d d = new Vector3d();
 		d.sub(origin, c);
-		orientation.transform(d);  // relative beam centre in image frame
+		if (orientation != null)
+			orientation.transform(d);  // relative beam centre in image frame
 
 		invOrientation = inverseMatrixFromEulerAngles(yaw, pitch, roll, invOrientation);
 		calcNormal(false);
@@ -704,7 +717,8 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void pixelPosition(final double x, final double y, Vector3d p) {
 		p.set(-hPxSize * x, -vPxSize * y, 0);
-		invOrientation.transform(p);
+		if (invOrientation != null)
+			invOrientation.transform(p);
 		p.add(origin);
 	}
 
@@ -727,7 +741,8 @@ public class DetectorProperties implements Serializable {
 	 */
 	public void pixelCoords(final Vector3d p, Vector3d t) {
 		t.sub(p, origin);
-		orientation.transform(t);
+		if (orientation != null)
+			orientation.transform(t);
 		t.x /= -hPxSize;
 		t.y /= -vPxSize;
 	}

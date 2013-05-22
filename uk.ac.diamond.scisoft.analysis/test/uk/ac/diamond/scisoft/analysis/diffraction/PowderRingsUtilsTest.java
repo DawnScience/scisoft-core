@@ -27,8 +27,6 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.MultivariateMatrixFunction;
 import org.jscience.physics.amount.Amount;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +39,7 @@ import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitDiffFunction;
+import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
@@ -49,6 +47,7 @@ import uk.ac.diamond.scisoft.analysis.roi.CircularFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
 
 public class PowderRingsUtilsTest {
@@ -120,7 +119,8 @@ public class PowderRingsUtilsTest {
 			ells.add(new EllipticalROI(r, 0, 0));
 		}
 
-		FitDiffFunction f = PowderRingsUtils.createQFitFunction2(ells, pixel, 1., 1., 1., ells.size(), false);
+		DetectorProperties det = new DetectorProperties(new Vector3d(0, 0, 1), 10, 10, pixel, pixel, 1, 0, 0);
+		FitFunction f = PowderRingsUtils.createQFitFunction2(ells, det, 1., false);
 		f.setSpacings(list);
 		double[] init = new double[3];
 		DoubleDataset rms = new DoubleDataset(N_W, N_D, N_T);
@@ -131,7 +131,7 @@ public class PowderRingsUtilsTest {
 				init[1] = distance + (j - N_D*0.5)*0.01; // 0.01mm
 				for (int k = 0; k < N_T; k++) {
 					init[2] = Math.sin((k/128.)/N_T); // 1/128 radians
-					double x = f.getRMS(init);
+					double x = f.value(init);
 					rms.setAbs(l++, x);
 				}
 			}
@@ -160,6 +160,7 @@ public class PowderRingsUtilsTest {
 			System.err.println("Angle " + i);
 			det.setNormalAnglesInDegrees(i, 0, 0);
 			List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
+			List<IROI> rois = new ArrayList<IROI>();
 			for (HKL d : spacings) {
 				EllipticalROI e = (EllipticalROI) DSpacing.conicFromDSpacing(det, WAVELENGTH,
 						d.getD().doubleValue(NonSI.ANGSTROM));
@@ -172,10 +173,18 @@ public class PowderRingsUtilsTest {
 					e.setSemiAxis(1, e.getSemiAxis(0) + rnd.nextDouble() * 3);
 				}
 				ells.add(e);
+				rois.add(e);
 			}
 
 			QSpace q = PowderRingsUtils.fitEllipsesToQSpace(null, det, env, ells, spacings);
 			DetectorProperties nDet = q.getDetectorProperties();
+
+			Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5*(i+1));
+			Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 6e-2*(i+1));
+			Assert.assertEquals("Wavelength", WAVELENGTH, q.getWavelength(), 2e-2);
+
+			q = PowderRingsUtils.fitAllEllipsesToQSpace(null, det, env, rois, spacings);
+			nDet = q.getDetectorProperties();
 
 			Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5*(i+1));
 			Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 6e-2*(i+1));
@@ -198,37 +207,29 @@ public class PowderRingsUtilsTest {
 			ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det, wavelength, dspacing));
 		}
 
-		FitDiffFunction f;
+		FitFunction f;
 		double[] init;
 
-		// test functions and their jacobians
-		f = PowderRingsUtils.createQFitFunction(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), det.getTiltAngle(), ells.size(), false);
+		// test functions
+		f = PowderRingsUtils.createQFitFunction(ells, det, wavelength, false);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-		f = PowderRingsUtils.createQFitFunction(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), det.getTiltAngle(), ells.size(), true);
+		f = PowderRingsUtils.createQFitFunction(ells, det, wavelength, true);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-		f = PowderRingsUtils.createQFitFunction2(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), det.getTiltAngle(), ells.size(), false);
+		f = PowderRingsUtils.createQFitFunction2(ells, det, wavelength, false);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-		f = PowderRingsUtils.createQFitFunction2(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), det.getTiltAngle(), ells.size(), true);
+		f = PowderRingsUtils.createQFitFunction2(ells, det, wavelength, true);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
 		det.setNormalAnglesInDegrees(0, 0, 0);
 		ells.clear();
@@ -239,53 +240,34 @@ public class PowderRingsUtilsTest {
 			ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det, wavelength, dspacing));
 		}
 
-		f = PowderRingsUtils.createQFitFunction3(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), ells.size(), false);
+		f = PowderRingsUtils.createQFitFunction3(ells, det, wavelength, false);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-		f = PowderRingsUtils.createQFitFunction3(ells, det.getHPxSize(), wavelength, det.getDetectorDistance(), ells.size(), true);
+		f = PowderRingsUtils.createQFitFunction3(ells, det, wavelength, true);
 		init = f.getInit();
 		f.setSpacings(list);
-		Assert.assertEquals("", 0, f.getRMS(init), 1e-2);
-		for (int i = 0; i < init.length; i++)
-			checkDerivative(f, list.size(), i);
-	}
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-	static final double TOL = 1./1024;
-	static private boolean isEqual(double act, double exp, double atol, double rtol) {
-		double t = exp == 0 ? atol : Math.max(Math.abs(exp) * rtol, atol);
-		return Math.abs(act - exp) < t;
-	}
+		f = PowderRingsUtils.createQFitFunction4(ells, det, wavelength, false);
+		init = f.getInit();
+		f.setSpacings(list);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-	private void checkDerivative(FitDiffFunction f, int n, int d) {
-		MultivariateMatrixFunction j = f.jacobian();
-		double[] point = f.getInit().clone();
+		f = PowderRingsUtils.createQFitFunction4(ells, det, wavelength, true);
+		init = f.getInit();
+		f.setSpacings(list);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
-		try {
-			double[][] jac = j.value(point);
-			double op = point[d];
-			double dp = TOL * Math.abs(op);
-			if (dp == 0)
-				dp = TOL;
-			for (int i = 0; i < n; i++) {
-				point[d] = op;
-				double of = f.value(point)[i];
-				double df = Double.NEGATIVE_INFINITY;
-				double ld;
-				do {
-					ld = df;
-					point[d] = op + dp;
-					df = (f.value(point)[i] - of) / dp;
-					dp *= 0.5;
-				} while (!isEqual(df, ld, 1e-6, 1e-4));
-				Assert.assertTrue(jac[i][d] + " cf " + df, isEqual(jac[i][d], df, 1e-6, 1e-4));
-			}
-		} catch (FunctionEvaluationException e) {
-		} catch (IllegalArgumentException e) {
-		}
+		f = PowderRingsUtils.createQFitFunction5(ells, det, wavelength, false);
+		init = f.getInit();
+		f.setSpacings(list);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 
+		f = PowderRingsUtils.createQFitFunction5(ells, det, wavelength, true);
+		init = f.getInit();
+		f.setSpacings(list);
+		Assert.assertEquals("", 0, f.value(init), 1e-2);
 	}
 }

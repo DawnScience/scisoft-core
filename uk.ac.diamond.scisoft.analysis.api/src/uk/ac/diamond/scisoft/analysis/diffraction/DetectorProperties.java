@@ -641,6 +641,17 @@ public class DetectorProperties implements Serializable {
 	 * <p>
 	 * Note, this re-orients the detector about the beam centre and therefore alters the detector origin.
 	 * 
+	 * @param angles yaw, pitch, roll
+	 */
+	public void setNormalAnglesInDegrees(double[] angles) {
+		setNormalAnglesInDegrees(angles[0], angles[1], angles[2]);
+	}
+
+	/**
+	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees.
+	 * <p>
+	 * Note, this re-orients the detector about the beam centre and therefore alters the detector origin.
+	 * 
 	 * @param yaw rotate about vertical axis (positive is to the right, east or clockwise looking down)
 	 * @param pitch rotate about horizontal axis (positive is upwards)
 	 * @param roll rotate about normal (positive is clockwise looking along normal)

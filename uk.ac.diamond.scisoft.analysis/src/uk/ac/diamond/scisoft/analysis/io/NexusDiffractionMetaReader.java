@@ -9,7 +9,6 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import ncsa.hdf.object.Dataset;
-import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5ScalarDS;

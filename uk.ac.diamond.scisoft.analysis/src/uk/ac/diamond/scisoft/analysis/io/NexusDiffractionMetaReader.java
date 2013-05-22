@@ -8,22 +8,48 @@ import java.util.Map;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import ncsa.hdf.object.Dataset;
+import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.dawb.hdf5.HierarchicalDataFactory;
+import org.dawb.hdf5.HierarchicalDataUtils;
 import org.dawb.hdf5.IHierarchicalDataFile;
 import org.dawb.hdf5.nexus.IFindInNexus;
 import org.dawb.hdf5.nexus.NexusFindDatasetByName;
 import org.dawb.hdf5.nexus.NexusFindGroupByAttributeText;
 import org.dawb.hdf5.nexus.NexusUtils;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.LongDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class NexusDiffractionMetaReader {
+	
+	public static final String NX_MONOCHROMATOR = "NXmonochromator";
+	public static final String NX_INSTRUMENT = "NXinstrument";
+	public static final String NX_DETECTOR = "NXDetector";
+	public static final String DATA_NAME = "data";
+	public static final String DISTANCE_NAME = "distance";
+	public static final String CAMERA_LENGTH = "camera length";
+	public static final String ENERGY_NAME = "energy";
+	public static final String WAVELENGTH = "wavelength";
+	public static final String UNITS = "units";
+	public static final String BEAM_CENTER_X = "beam_center_x";
+	public static final String BEAM_CENTER_Y = "beam_center_y";
+	public static final String BEAM_CENTER = "beam centre";
+	public static final String COUNT_TIME = "count_time";
+	public static final String EXPOSURE_NAME = "exposure";
 	
 	public enum DiffractionMetaValue {
 		PIXEL_SIZE,PIXEL_NUMBER,BEAM_CENTRE,DISTANCE,DETECTOR_ORIENTATION,ENERGY,PHI,EXPOSURE,BEAM_VECTOR
@@ -91,18 +117,31 @@ public class NexusDiffractionMetaReader {
 //			if (rootGroup.getMemberList().size() > 1)
 //				logger.warn("More than one root node in file, metadata may be incorrect");
 
-			Group nxInstrument = getNXGroup(rootGroup, "NXinstrument");
+			List<Group> nxInstruments = getNXGroups(rootGroup, "NXinstrument");
 
 			Group nxDetector = null;
-
+			Group nxInstrument = null;
+			if (nxInstruments != null) {
+				for (Group inst : nxInstruments) {
+					nxInstrument =  inst;
+					nxDetector = findBestNXDetector(inst, imageSize);
+					if (nxDetector != null) {
+						break;
+					}
+				}
+			}
+			
 			if (nxInstrument != null) {
 				Group nxMono = getNXGroup(nxInstrument, "NXmonochromator");
 				if (nxMono != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(nxMono,diffcrys));
-				nxDetector = findBestNXDetector(nxInstrument, imageSize);
-				//if there is an instrument but no detector is may be a result node so look in here
-				if (nxDetector == null) nxDetector = nxInstrument;
 			}
-
+			
+			//For NCD results files
+			if (nxDetector == null) {
+				nxDetector= findNXDetectorByName(rootGroup, "SectorIntegration");
+			}
+			
+			
 			//if no detectors with pixel in search the entire nxInstrument group
 			if (nxDetector == null) {
 				nxDetector = getNXGroup(rootGroup, "NXdetector");
@@ -166,7 +205,7 @@ public class NexusDiffractionMetaReader {
 		//Find nxDetectors in instrument
 		// TODO should probably change to find data then locate correct
 		// detector from image size
-		List<Group> nxDetectors = findNXDetectors(nxInstrument, "pixel");
+		List<Group> nxDetectors = findNXDetectors(nxInstrument, "data");
 
 		if (nxDetectors.size() == 1 || imageSize == null) {
 			//only one nxdetector or we dont know the image size
@@ -175,7 +214,13 @@ public class NexusDiffractionMetaReader {
 		}
 		for (Group detector : nxDetectors) {
 			H5ScalarDS dataset = getDataset(detector, "data");
-			long[] dataShape = dataset.getDims();
+			long[] dataShape;
+			try {
+				dataShape = HierarchicalDataUtils.getDims(dataset);
+			} catch (Exception e) {
+				continue;
+			}
+			if (dataShape == null) continue;
 			boolean matchesX = false;
 			boolean matchesY = false;
 			for (long val : dataShape) {
@@ -192,12 +237,29 @@ public class NexusDiffractionMetaReader {
 		return null;
 	}
 	
-	private Group getNXGroup (Group rootGroup, String nxAttribute) {
+	private Group getNXGroup(Group rootGroup, String nxAttribute) {
 		//Find NXinstrument (hopefully there is only one!)
 		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(nxAttribute,NexusUtils.NXCLASS);
 		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(finder, rootGroup, true);
 		if (hOb.isEmpty() || !(hOb.get(0) instanceof Group)) return null;
 		return (Group)hOb.get(0);
+	}
+	
+	private List<Group> getNXGroups(Group rootGroup, String nxAttribute) {
+		//Find NXinstrument (hopefully there is only one!)
+		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(nxAttribute,NexusUtils.NXCLASS);
+		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(finder, rootGroup, false);
+		if (hOb.isEmpty()) return null;
+		
+		List<Group> groupList = new ArrayList<Group>();
+		
+		for (HObject ob : hOb) {
+			if (ob instanceof Group) groupList.add((Group)ob);
+		}
+		
+		if (groupList.isEmpty()) return null;
+		
+		return groupList;
 	}
 	
 	
@@ -217,46 +279,55 @@ public class NexusDiffractionMetaReader {
 		H5ScalarDS dataset = getDataset(nexusGroup, "energy");
 		if (dataset == null) getDataset(nexusGroup, "wavelength");
 		if (dataset == null) return false;
-		double[] energyValues = getDoubleData(dataset);
-		if (energyValues == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("keV")) {
-			diffcrys.setWavelengthFromEnergykeV(energyValues[0]);
-			return true;
-			}
-		if (units.contains("Angstrom")) {
-			diffcrys.setWavelength(energyValues[0]);
-			return true;
-			}
-		return false;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units.equals("keV")) {
+				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
+				return true;
+				}
+			if (units.contains("Angstrom")) {
+				diffcrys.setWavelength(ds.getDouble(0));
+				return true;
+				}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 		
 	private boolean updatePhiStart(Group nexusGroup, DiffractionCrystalEnvironment diffcry) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "phi_start");
 		if (dataset == null) return false;
-		double[] value = getDoubleData(dataset);
-		if (value == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("degrees")) {
-			diffcry.setPhiStart(value[0]);
-			return true;
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("degrees")) {
+				diffcry.setPhiStart(ds.getDouble(0));
+				return true;
 			}
+		} catch (Exception e) {
+			return false;
+		}
 		return false;
 	}
 	
 	private boolean updatePhiRange(Group nexusGroup, DiffractionCrystalEnvironment diffcry) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "phi_range");
 		if (dataset == null) return false;
-		double[] value = getDoubleData(dataset);
-		if (value == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("degrees")) {
-			diffcry.setPhiRange(value[0]);
-			return true;
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("degrees")) {
+				diffcry.setPhiRange(ds.getDouble(0));
+				return true;
 			}
+		} catch (Exception e) {
+			return false;
+		}
 		return false;
 	}
 	
@@ -264,28 +335,74 @@ public class NexusDiffractionMetaReader {
 		H5ScalarDS dataset = getDataset(nexusGroup, "count_time");
 		if (dataset == null) dataset = getDataset(nexusGroup, "exposure");
 		if (dataset == null) return false;
-		double[] values = getFloatOrDoubleArray(dataset);
-		if (values == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("s")) {
-			diffcrys.setExposureTime(values[0]);
-			return true;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("s")) {
+				diffcrys.setExposureTime(ds.getDouble(0));
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
 		}
+		
 		return false;
 	}
 	
 	private boolean updateBeamCentre(Group nexusGroup, DetectorProperties detprop) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "beam centre");
 		if (dataset == null) dataset = getDataset(nexusGroup, "beam_centre");
+		if (dataset == null) return updateBeamCentreFromXY(nexusGroup, detprop);
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null || units.equals("pixels")) {
+				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0),ds.getDouble(1)});
+				return true;
+			} else if (units.equals("mm")) {
+				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0)*detprop.getVPxSize(),
+						ds.getDouble(1)*detprop.getHPxSize()});
+				return true;
+			} else if (units.equals("m")) {
+				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0)*detprop.getVPxSize()*1000,
+						ds.getDouble(1)*detprop.getHPxSize()*1000});
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+	}
+	
+	private boolean updateBeamCentreFromXY(Group nexusGroup, DetectorProperties detprop){
+		H5ScalarDS dataset = getDataset(nexusGroup, BEAM_CENTER_X);
 		if (dataset == null) return false;
-		double[] values = getDoubleData(dataset);
-		if (values == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("pixels")) {
-			detprop.setBeamCentreCoords(values);
-			return true;
+		
+		double xCoord = Double.NaN;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null || units.equals("pixels")) {
+				xCoord = ds.getDouble(0);
+			}
+			
+			dataset = getDataset(nexusGroup, BEAM_CENTER_Y);
+			if (dataset == null) return false;
+			
+			ds = getSet(dataset);
+			units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null || units.equals("pixels")) {
+				if (xCoord != Double.NaN) {
+					detprop.setBeamCentreCoords(new double[] {xCoord,ds.getDouble(0)});
+					return true;
+				}
+				
+			}
+		} catch (Exception e) {
+			return false;
 		}
 		return false;
 	}
@@ -294,13 +411,19 @@ public class NexusDiffractionMetaReader {
 		H5ScalarDS dataset = getDataset(nexusGroup, "camera length");
 		if (dataset == null) dataset = getDataset(nexusGroup, "distance");
 		if (dataset == null) return false;
-		double[] values = getDoubleData(dataset);
-		if (values == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("mm")) {
-			detprop.setBeamCentreDistance(values[0]);
-			return true;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units.equals("mm")) {
+				detprop.setBeamCentreDistance(ds.getDouble(0));
+				return true;
+			} else if (units.equals("m")) {
+				detprop.setBeamCentreDistance(1000*ds.getDouble(0));
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
 		}
 		return false;
 	}
@@ -314,54 +437,74 @@ public class NexusDiffractionMetaReader {
 		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(nxDetector, detprop));
-
 	}
 	
 	private boolean updateDetectorOrientation(Group nexusGroup, DetectorProperties detprop) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "detector_orientation");
 		if (dataset == null) return false;
-		double[] orArray = getDoubleData(dataset);
-		if (orArray == null) return false;
-		if (orArray.length != 9) return false;
-		detprop.setOrientation(new Matrix3d(orArray));
-		return true;
-		// TODO if file only contains pitch/roll/yaw find these then
-		// detprop.setNormalAnglesInDegrees(yaw, pitch, roll);
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			if (ds.getSize() != 9) return false;
+			if (ds instanceof DoubleDataset) {
+				detprop.setOrientation(new Matrix3d(((DoubleDataset)ds).getData()));
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
 	}
 	
 	private boolean updateBeamVector(Group nexusGroup, DetectorProperties detprop) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "beam_vector");
 		if (dataset == null) return false;
-		double[] vecArray = getDoubleData(dataset);
-		if (vecArray == null) return false;
-		if (vecArray.length != 3) return false;
-		detprop.setBeamVector(new Vector3d(vecArray));
-		return true;
+
+		try {
+			AbstractDataset ds = getSet(dataset);
+			if (ds.getSize() != 3) return false;
+			if (ds instanceof DoubleDataset) {
+				detprop.setBeamVector(new Vector3d(((DoubleDataset)ds).getData()));
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		return false;
 	}
 	
 	private boolean updatePixelNumber(Group nexusGroup, DetectorProperties detprop) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "x_pixel_number");
-		if (dataset == null) dataset = getDataset(nexusGroup, "distance");
 		if (dataset == null) return false;
-		int[] valuex = getIntData(dataset);
-		if (valuex == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		if (units.equals("pixels")) {
-			detprop.setPx(valuex[0]);
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("pixels")) {
+				detprop.setPx(ds.getInt(0));
+			}
+		} catch (Exception e) {
+			return false;
 		}
 		
+		
 		dataset = getDataset(nexusGroup, "y_pixel_number");
-		if (dataset == null) dataset = getDataset(nexusGroup, "distance");
 		if (dataset == null) return false;
-		int[] valuey = getIntData(dataset);
-		if (valuey == null) return false;
-		String unitsy = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (unitsy == null) return false;
-		if (unitsy.equals("pixels")) {
-			detprop.setPy(valuey[0]);
-			return true;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("pixels")) {
+				detprop.setPy(ds.getInt(0));
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
 		}
+		
 		return false;
 	}
 	
@@ -369,26 +512,34 @@ public class NexusDiffractionMetaReader {
 	private boolean updatePixelSize(Group nexusGroup, DetectorProperties detprop) {
 		H5ScalarDS dataset = getDataset(nexusGroup, "x_pixel_size");
 		if (dataset == null) return false;
-		double[] xPx = getDoubleData(dataset);
-		if (xPx == null) return false;
-		String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		if (units == null) return false;
-		
-		if (units.equals("mm")) {detprop.setVPxSize(xPx[0]);}
-		else if (units.equals("m")) {detprop.setVPxSize(xPx[0]*1000);}
-		
+
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("mm")) {detprop.setVPxSize(ds.getDouble(0));}
+			else if (units.equals("m")) {detprop.setVPxSize(ds.getDouble(0)*1000);}
+		} catch (Exception e) {
+			return false;
+		}
+
 		dataset = getDataset(nexusGroup, "y_pixel_size");
-		if (dataset == null) return false;
-		String unitsy = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-		double[] yPx = getDoubleData(dataset);
-		if (yPx == null) return false;
-		if (unitsy == null) return false;
-		if (unitsy.equals("mm")) {
-			detprop.setHPxSize(xPx[0]);
-			return true;
-		} else if (unitsy.equals("m")) {
-			detprop.setHPxSize(xPx[0]*1000);
-			return true;
+
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			if (units == null) return false;
+			if (units.equals("mm")) {
+				detprop.setHPxSize(ds.getDouble(0));
+				return true;
+			}
+			else if (units.equals("m")) {
+				detprop.setHPxSize(ds.getDouble(0)*1000);
+				return true;
+			}
+
+		} catch (Exception e) {
+			return false;
 		}
 		return false;
 		
@@ -404,56 +555,6 @@ public class NexusDiffractionMetaReader {
 		return h5data;
 	}
 	
-	private double[] getFloatOrDoubleArray(H5ScalarDS dataset) {
-		//should be single value or vector
-		if (dataset.getRank() > 2) { return null;}
-		try {
-			return (double[]) dataset.getData();
-		} catch (ClassCastException e) {
-			try {
-				float[] fData = (float[]) dataset.getData();
-				double[] dData = new double[fData.length];
-				
-				for (int i = 0 ; i<fData.length; i++) {
-					dData[i] = fData[i];
-				}
-				return dData;
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private int[] getIntData(H5ScalarDS dataset) {
-		//should be single value or vector
-		if (dataset.getRank() > 2) { return null;}
-		try {
-			return (int[]) dataset.getData();
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private double[] getDoubleData(H5ScalarDS dataset) {
-		//should be single value or vector
-		if (dataset.getRank() > 2) { return null;}
-		try {
-			return (double[]) dataset.getData();
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 	
 	private List<Group> findNXDetectors(Group nxInstrument, String childNameContains) {
 		final String groupText = "NXdetector";
@@ -490,6 +591,29 @@ public class NexusDiffractionMetaReader {
 		return detectorGroups;
 	}
 	
+	private Group findNXDetectorByName(Group nxInstrument, final String name) {
+		final String groupText = "NXdetector";
+		IFindInNexus findWithName = new IFindInNexus() {
+
+			@Override
+			public boolean inNexus(HObject nexusObject) {
+				if(nexusObject instanceof Group) {
+					if (NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS).toLowerCase().equals(groupText.toLowerCase())) {
+						if  (nexusObject.getName().toLowerCase().contains((name.toLowerCase()))) return true;
+					}
+				}
+				return false;
+			}
+		};
+		
+		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(findWithName, nxInstrument, true);
+
+		if (hOb == null || hOb.isEmpty()) return null;
+
+
+		return (Group)hOb.get(0);
+	}
+	
 	private DetectorProperties getInitialDetectorProperties() {
 		//Try to return harmless but not physical values
 		Matrix3d identityMatrix = new Matrix3d();
@@ -502,5 +626,54 @@ public class NexusDiffractionMetaReader {
 		//Try to return harmless but not physical values
 		return new DiffractionCrystalEnvironment(1, 0, 0, 1);
 	}
+	
+	private AbstractDataset getSet(final Dataset set) throws Exception {
 
+		final Object  val = set.read();
+		
+		long[] dataShape = HierarchicalDataUtils.getDims(set);
+		
+		final int[] intShape  = getInt(dataShape);
+         
+		AbstractDataset ret = null;
+        if (val instanceof byte[]) {
+        	ret = new ByteDataset((byte[])val, intShape);
+        } else if (val instanceof short[]) {
+        	ret = new ShortDataset((short[])val, intShape);
+        } else if (val instanceof int[]) {
+        	ret = new IntegerDataset((int[])val, intShape);
+        } else if (val instanceof long[]) {
+        	ret = new LongDataset((long[])val, intShape);
+        } else if (val instanceof float[]) {
+        	ret = new FloatDataset((float[])val, intShape);
+        } else if (val instanceof double[]) {
+        	ret = new DoubleDataset((double[])val, intShape);
+        } else {
+        	throw new Exception("Cannot deal with data type "+set.getDatatype().getDatatypeDescription());
+        }
+        
+		if (set.getDatatype().isUnsigned()) {
+			switch (ret.getDtype()) {
+			case AbstractDataset.INT32:
+				ret = new LongDataset(ret);
+				DatasetUtils.unwrapUnsigned(ret, 32);
+				break;
+			case AbstractDataset.INT16:
+				ret = new IntegerDataset(ret);
+				DatasetUtils.unwrapUnsigned(ret, 16);
+				break;
+			case AbstractDataset.INT8:
+				ret = new ShortDataset(ret);
+				DatasetUtils.unwrapUnsigned(ret, 8);
+				break;
+			}
+		}
+        return ret;
+	}
+	
+	private int[] getInt(long[] longShape) {
+		final int[] intShape  = new int[longShape.length];
+		for (int i = 0; i < intShape.length; i++) intShape[i] = (int)longShape[i];
+		return intShape;
+	}
 }

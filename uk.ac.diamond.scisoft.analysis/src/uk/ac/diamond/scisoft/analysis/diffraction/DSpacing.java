@@ -166,7 +166,11 @@ public class DSpacing {
 	 */
 	public static IROI conicFromDSpacing(DetectorProperties detector, double wavelength,
 			double dSpacing) {
-		double alpha = 2 * Math.asin(wavelength / (2 * dSpacing));
+		double s = 0.5 * wavelength / dSpacing;
+		if (s > 1) {
+			throw new IllegalArgumentException("Wavelength cannot be greater than 2 * dSpacing");
+		}
+		double alpha = 2 * Math.asin(s);
 		return conicFromAngle(detector, alpha);
 	}
 
@@ -220,7 +224,10 @@ public class DSpacing {
 		r /= detector.getVPxSize();
 		EllipticalROI eroi;
 		if (se != 0) {
-			double denom = ca*ca - se*se; // if alpha = 90 - eta it's the parabolic case TODO
+			double denom = ca*ca - se*se;
+			if (denom <= 0) { // if alpha >= 90 - eta
+				return null; // then parabolic or hyperbolic cases TODO
+			}
 			double a = r*ce*sa*ca/denom;
 			double b = r*ce*sa/Math.sqrt(denom);
 			eroi = new EllipticalROI(a, b, angle, centre.x, centre.y);

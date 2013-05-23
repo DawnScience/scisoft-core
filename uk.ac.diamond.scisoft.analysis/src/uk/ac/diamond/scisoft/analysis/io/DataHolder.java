@@ -168,6 +168,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param index
 	 * @return Generic dataset with given index in holder
 	 */
+	@Override
 	public AbstractDataset getDataset(int index) {
 		return DatasetUtils.convertToAbstractDataset(data.get(index));
 	}
@@ -177,6 +178,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param name
 	 * @return Generic dataset with given name (first one if name not unique)
 	 */
+	@Override
 	public AbstractDataset getDataset(String name) {
 		if (names.contains(name))
 			return DatasetUtils.convertToAbstractDataset(data.get(names.indexOf(name)));
@@ -188,6 +190,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param index
 	 * @return Generic dataset with given index in holder
 	 */
+	@Override
 	public ILazyDataset getLazyDataset(int index) {
 		return data.get(index);
 	}
@@ -197,6 +200,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param name
 	 * @return Generic dataset with given name (first one if name not unique)
 	 */
+	@Override
 	public ILazyDataset getLazyDataset(String name) {
 		if (names.contains(name))
 			return data.get(names.indexOf(name));
@@ -208,6 +212,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @return true if data holder contains name 
 	 * @see java.util.List#contains(Object)
 	 */
+	@Override
 	public boolean contains(String name) {
 		return names.contains(name);
 	}
@@ -224,6 +229,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	/**
 	 * @return Array of dataset names
 	 */
+	@Override
 	public String[] getNames() {
 		return names.toArray(new String[names.size()]);
 	}
@@ -232,6 +238,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param index
 	 * @return Dataset name at given index
 	 */
+	@Override
 	public String getName(final int index) {
 		if (index >= 0 && index < names.size())
 			return names.get(index);
@@ -241,6 +248,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	/**
 	 * @return Number of datasets
 	 */
+	@Override
 	public int size() {
 		return data.size();
 	}
@@ -248,6 +256,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	/**
 	 * @return Number of unique dataset names
 	 */
+	@Override
 	public int namesSize() {
 		return names.size();
 	}

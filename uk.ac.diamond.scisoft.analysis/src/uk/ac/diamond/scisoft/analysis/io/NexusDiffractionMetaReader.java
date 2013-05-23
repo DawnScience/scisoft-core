@@ -49,6 +49,9 @@ public class NexusDiffractionMetaReader {
 	public static final String BEAM_CENTER = "beam centre";
 	public static final String COUNT_TIME = "count_time";
 	public static final String EXPOSURE_NAME = "exposure";
+	public static final String MM = "mm";
+	public static final String M = "m";
+	
 	
 	public enum DiffractionMetaValue {
 		PIXEL_SIZE,PIXEL_NUMBER,BEAM_CENTRE,DISTANCE,DETECTOR_ORIENTATION,ENERGY,PHI,EXPOSURE,BEAM_VECTOR
@@ -116,7 +119,7 @@ public class NexusDiffractionMetaReader {
 //			if (rootGroup.getMemberList().size() > 1)
 //				logger.warn("More than one root node in file, metadata may be incorrect");
 
-			List<Group> nxInstruments = getNXGroups(rootGroup, "NXinstrument");
+			List<Group> nxInstruments = getNXGroups(rootGroup, NX_INSTRUMENT);
 
 			Group nxDetector = null;
 			Group nxInstrument = null;
@@ -131,7 +134,7 @@ public class NexusDiffractionMetaReader {
 			}
 			
 			if (nxInstrument != null) {
-				Group nxMono = getNXGroup(nxInstrument, "NXmonochromator");
+				Group nxMono = getNXGroup(nxInstrument, NX_MONOCHROMATOR);
 				if (nxMono != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(nxMono,diffcrys));
 			}
 			
@@ -143,7 +146,7 @@ public class NexusDiffractionMetaReader {
 			
 			//if no detectors with pixel in search the entire nxInstrument group
 			if (nxDetector == null) {
-				nxDetector = getNXGroup(rootGroup, "NXdetector");
+				nxDetector = getNXGroup(rootGroup, NX_DETECTOR);
 			}
 			
 			if (nxDetector != null) {
@@ -204,7 +207,7 @@ public class NexusDiffractionMetaReader {
 		//Find nxDetectors in instrument
 		// TODO should probably change to find data then locate correct
 		// detector from image size
-		List<Group> nxDetectors = findNXDetectors(nxInstrument, "data");
+		List<Group> nxDetectors = findNXDetectors(nxInstrument, DATA_NAME);
 
 		if (nxDetectors.size() == 1 || imageSize == null) {
 			//only one nxdetector or we dont know the image size
@@ -212,7 +215,7 @@ public class NexusDiffractionMetaReader {
 			return nxDetectors.get(0);
 		}
 		for (Group detector : nxDetectors) {
-			H5ScalarDS dataset = getDataset(detector, "data");
+			H5ScalarDS dataset = getDataset(detector, DATA_NAME);
 			long[] dataShape;
 			try {
 				dataShape = HierarchicalDataUtils.getDims(dataset);
@@ -275,13 +278,13 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	private boolean updateEnergy(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "energy");
-		if (dataset == null) getDataset(nexusGroup, "wavelength");
+		H5ScalarDS dataset = getDataset(nexusGroup, ENERGY_NAME);
+		if (dataset == null) getDataset(nexusGroup, WAVELENGTH);
 		if (dataset == null) return false;
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units.equals("keV")) {
 				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
 				return true;
@@ -301,7 +304,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
 				diffcry.setPhiStart(ds.getDouble(0));
@@ -318,7 +321,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
 				diffcry.setPhiRange(ds.getDouble(0));
@@ -331,13 +334,13 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	private boolean updateExposureTime(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "count_time");
-		if (dataset == null) dataset = getDataset(nexusGroup, "exposure");
+		H5ScalarDS dataset = getDataset(nexusGroup, COUNT_TIME);
+		if (dataset == null) dataset = getDataset(nexusGroup, EXPOSURE_NAME);
 		if (dataset == null) return false;
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("s")) {
 				diffcrys.setExposureTime(ds.getDouble(0));
@@ -351,20 +354,20 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	private boolean updateBeamCentre(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "beam centre");
+		H5ScalarDS dataset = getDataset(nexusGroup, BEAM_CENTER);
 		if (dataset == null) dataset = getDataset(nexusGroup, "beam_centre");
 		if (dataset == null) return updateBeamCentreFromXY(nexusGroup, detprop);
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0),ds.getDouble(1)});
 				return true;
-			} else if (units.equals("mm")) {
+			} else if (units.equals(MM)) {
 				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0)*detprop.getVPxSize(),
 						ds.getDouble(1)*detprop.getHPxSize()});
 				return true;
-			} else if (units.equals("m")) {
+			} else if (units.equals(M)) {
 				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0)*detprop.getVPxSize()*1000,
 						ds.getDouble(1)*detprop.getHPxSize()*1000});
 				return true;
@@ -383,7 +386,7 @@ public class NexusDiffractionMetaReader {
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset,UNITS);
 			if (units == null || units.equals("pixels")) {
 				xCoord = ds.getDouble(0);
 			}
@@ -392,7 +395,7 @@ public class NexusDiffractionMetaReader {
 			if (dataset == null) return false;
 			
 			ds = getSet(dataset);
-			units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				if (xCoord != Double.NaN) {
 					detprop.setBeamCentreCoords(new double[] {xCoord,ds.getDouble(0)});
@@ -407,17 +410,17 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	private boolean updateDetectorDistance(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "camera length");
-		if (dataset == null) dataset = getDataset(nexusGroup, "distance");
+		H5ScalarDS dataset = getDataset(nexusGroup, CAMERA_LENGTH);
+		if (dataset == null) dataset = getDataset(nexusGroup, DISTANCE_NAME);
 		if (dataset == null) return false;
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
-			if (units.equals("mm")) {
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			if (units.equals(MM)) {
 				detprop.setBeamCentreDistance(ds.getDouble(0));
 				return true;
-			} else if (units.equals("m")) {
+			} else if (units.equals(M)) {
 				detprop.setBeamCentreDistance(1000*ds.getDouble(0));
 				return true;
 			}
@@ -479,7 +482,7 @@ public class NexusDiffractionMetaReader {
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
 				detprop.setPx(ds.getInt(0));
@@ -494,7 +497,7 @@ public class NexusDiffractionMetaReader {
 		
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
 				detprop.setPy(ds.getInt(0));
@@ -514,10 +517,10 @@ public class NexusDiffractionMetaReader {
 
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
-			if (units.equals("mm")) {detprop.setVPxSize(ds.getDouble(0));}
-			else if (units.equals("m")) {detprop.setVPxSize(ds.getDouble(0)*1000);}
+			if (units.equals(MM)) {detprop.setVPxSize(ds.getDouble(0));}
+			else if (units.equals(M)) {detprop.setVPxSize(ds.getDouble(0)*1000);}
 		} catch (Exception e) {
 			return false;
 		}
@@ -526,13 +529,13 @@ public class NexusDiffractionMetaReader {
 
 		try {
 			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, "units");
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null) return false;
-			if (units.equals("mm")) {
+			if (units.equals(MM)) {
 				detprop.setHPxSize(ds.getDouble(0));
 				return true;
 			}
-			else if (units.equals("m")) {
+			else if (units.equals(M)) {
 				detprop.setHPxSize(ds.getDouble(0)*1000);
 				return true;
 			}
@@ -556,7 +559,7 @@ public class NexusDiffractionMetaReader {
 	
 	
 	private List<Group> findNXDetectors(Group nxInstrument, String childNameContains) {
-		final String groupText = "NXdetector";
+		final String groupText = NX_DETECTOR;
 		final String childText = childNameContains;
 		
 		IFindInNexus findWithChild = new IFindInNexus() {
@@ -591,7 +594,7 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	private Group findNXDetectorByName(Group nxInstrument, final String name) {
-		final String groupText = "NXdetector";
+		final String groupText = NX_DETECTOR;
 		IFindInNexus findWithName = new IFindInNexus() {
 
 			@Override

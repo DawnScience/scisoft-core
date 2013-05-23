@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,8 +53,6 @@ import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
@@ -477,7 +473,7 @@ public class PowderRingsUtils {
 		return ells;
 	}
 
-	static Integer fileNumber = null;
+//	static Integer fileNumber = null;
 
 	/**
 	 * Find major axes by looking along thick line given by relative coordinates to centre for
@@ -501,23 +497,7 @@ public class PowderRingsUtils {
 		rroi.translate(0, -0.5);
 		rroi.setClippingCompensation(true);
 		AbstractDataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
-		{
-			if (fileNumber == null) {
-				fileNumber = 0;
-			} else {
-				fileNumber++;
-			}
-			DataHolder dh = new DataHolder();
-			dh.addDataset("spoke", profile);
 
-			String file = "/tmp/spoke" + fileNumber + ".npy";
-			try {
-				new NumPyFileSaver(file).saveFile(dh);
-			} catch (ScanFileHolderException e) {
-				System.err.println("Problem saving file: " + file);
-			}
-
-		}
 		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), AbstractDataset.INT), profile, PEAK_SMOOTHING);
 		if (mon != null)
 			mon.worked(profile.getSize());

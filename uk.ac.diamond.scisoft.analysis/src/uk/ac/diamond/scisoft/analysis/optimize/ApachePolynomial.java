@@ -16,10 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.optimization.fitting.PolynomialFitter;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
@@ -46,7 +45,7 @@ public class ApachePolynomial {
 	 * @param windowSize The size of window used in the smoothing
 	 * @param polyOrder The order of the polynomial fitted to the window
 	 * @return result The smoothed data set
-	 * @throws OptimizationException 
+	 * @throws Exception 
 	 */
 	public static AbstractDataset getPolynomialSmoothed(final AbstractDataset x, final AbstractDataset y,int windowSize, int polyOrder) throws Exception{
 		//Could probably do with more sanity check on relative size of window vs polynomial but doesnt seem to trip up

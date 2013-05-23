@@ -639,7 +639,8 @@ public class DetectorProperties implements Serializable {
 	/**
 	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees.
 	 * <p>
-	 * Note, this re-orients the detector about the beam centre and therefore alters the detector origin.
+	 * Note, if the beam centre exists then this re-orients the detector about the beam centre and
+	 * therefore alters the detector origin.
 	 * 
 	 * @param angles yaw, pitch, roll
 	 */
@@ -650,26 +651,34 @@ public class DetectorProperties implements Serializable {
 	/**
 	 * Set detector normal (from face out to sample) using a set of yaw, pitch and roll angles in degrees.
 	 * <p>
-	 * Note, this re-orients the detector about the beam centre and therefore alters the detector origin.
+	 * Note, if the beam centre exists then this re-orients the detector about the beam centre and
+	 * therefore alters the detector origin.
 	 * 
 	 * @param yaw rotate about vertical axis (positive is to the right, east or clockwise looking down)
 	 * @param pitch rotate about horizontal axis (positive is upwards)
 	 * @param roll rotate about normal (positive is clockwise looking along normal)
 	 */
 	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
-		Vector3d c = getBeamCentrePosition();
-		Vector3d d = new Vector3d();
-		d.sub(origin, c);
-		if (orientation != null)
-			orientation.transform(d);  // relative beam centre in image frame
+		Vector3d c = null;
+		Vector3d d = null;
+		try {
+			c = getBeamCentrePosition();
+			d = new Vector3d();
+			d.sub(origin, c);
+			if (orientation != null)
+				orientation.transform(d);  // relative beam centre in image frame
+		} catch (IllegalStateException e) {
+		}
 
 		invOrientation = inverseMatrixFromEulerAngles(yaw, pitch, roll, invOrientation);
 		calcNormal(false);
 
-		// set origin back from beam centre
-		invOrientation.transform(d);
-		c.add(d);
-		origin = c;
+		if (d != null && c != null) {
+			// set origin back from beam centre
+			invOrientation.transform(d);
+			c.add(d);
+			origin = c;
+		}
 
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));
 	}

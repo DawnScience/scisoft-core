@@ -77,6 +77,8 @@ public class PowderRingsUtilsTest {
 		for (double c : CONE_ANGLES) {
 			spacings.add(new HKL(Amount.valueOf(0.5 * WAVELENGTH / Math.sin(0.5 * Math.toRadians(c)), NonSI.ANGSTROM)));
 		}
+
+		PowderRingsUtils.seed = 1237L; // set seed for evolution strategy fitting
 //		mSpace = new MillerSpace(siliconCell, null);
 	}
 

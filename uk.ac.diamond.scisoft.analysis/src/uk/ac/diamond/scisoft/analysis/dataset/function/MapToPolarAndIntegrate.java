@@ -19,12 +19,18 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
+
 import org.apache.commons.math.util.MathUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 /**
  * Map and integrate a 2D dataset from Cartesian to Polar coordinates and return that remapped dataset
@@ -43,7 +49,15 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	private boolean doAzimuthal = true;  // Default: calculate azimuthal profile
 	private boolean aver = true;         // Default: calculate averaged intensity profiles
 	
-	AbstractDataset mask;
+	private XAxis axisType;
+	private AbstractDataset mask;
+	
+	private QSpace qSpace;
+
+	public void setQSpace(QSpace qSpace, XAxis axisType) {
+		this.qSpace = (qSpace == null) ? null : qSpace;
+		this.axisType = (qSpace == null || axisType == null) ? XAxis.PIXEL : axisType;
+	}
 
 	/**
 	 * Set detector mask used sector profile calculations
@@ -64,7 +78,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	}
 	
 	/**
-	 * Select between simple integration algorithm and the one using bilinear intrpolation
+	 * Select between simple integration algorithm and the one using bilinear interpolation
 	 * 
 	 * @param interpolate
 	 * 			if true use bilinear interpolation algorithm
@@ -166,8 +180,14 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 */
 	@Override
 	public List<AbstractDataset> value(IDataset... datasets) {
-		if (interpolate)
+		if (qSpace != null) {
+			if (axisType != null && axisType != XAxis.PIXEL) {
+				return simple_qvalue(datasets);
+			}
+		}
+		if (interpolate) {
 			return interpolate_value(datasets);
+		}
 		return simple_value(datasets);
 		
 	}
@@ -180,8 +200,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @return 2 1D datasets for area integral over radius and over azimuth (for given input and a uniform input)
 	 */
 	public List<AbstractDataset> area(int[] shape) {
-		if (interpolate)
+		if (interpolate) {
 			return interpolate_area(shape, AbstractDataset.FLOAT32);
+		}
 		return simple_area(shape);
 		
 	}
@@ -200,9 +221,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		for (IDataset ids : datasets) {
-			if (ids.getRank() != 2)
+			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
-
+			}
 			double dr = 1.0/dpp;
 			
 			//Find maximal radius on the detector
@@ -311,7 +332,57 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		}
 		return result;
 	}
+				
+	private double pixelToValue(double x, double y) {
+		
+    	switch (axisType) {
+    	case RESOLUTION:
+       		Vector3d vect= qSpace.qFromPixelPosition(x, y);
+       		return (2*Math.PI)/vect.length();
+    	case ANGLE:
+       		vect= qSpace.qFromPixelPosition(x, y);
+       		return Math.toDegrees(qSpace.scatteringAngle(vect));
+    	case Q:
+        	vect= qSpace.qFromPixelPosition(x, y);
+        	return vect.length();
+    	default:
+       		Vector2d vect2 = new Vector2d(new double[] {x - cx, y -cy});
+    		return vect2.length();
+
+    	}
+    	
+	}
 	
+	/**
+	 * Calculate axes values in a sector area to find minimum and maximum for creating profile axes
+	 * 
+	 * @param nr	Number of sampling points in radial direction
+	 * @param np	Number of sampling points in azimuthal direction
+	 * @param dr	Step size in radial direction
+	 * @param dphi	Step size in azimuthal direction
+	 * @return axes Axes datasets
+	 */	
+	private AbstractDataset[] setupSelectedAxes(int nr, int np, double dr, double dphi) {
+		
+		double vmin = Double.MAX_VALUE;
+		double vmax = -Double.MAX_VALUE;
+		
+		for (int r = 0; r < nr; r++) {
+			for (int p = 0; p < np; p++) {
+				double rad = srad + r * dr;
+				double phi = sphi + p * dphi;
+				double x = cx + rad * Math.cos(phi);
+				double y = cy + rad * Math.sin(phi);
+				double val = pixelToValue(x, y);
+				if (val < vmin) vmin = val;
+				if (val > vmax) vmax = val;
+			}
+		}
+		
+		AbstractDataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, AbstractDataset.FLOAT32);
+		AbstractDataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, AbstractDataset.FLOAT32);
+		return new AbstractDataset[] {rAxis, angAxis};
+	}
 	
 	/**
 	 * This method calculates normalisation area coefficients for mapping and integration of a Cartesian grid sampled data (pixels) to polar grid.
@@ -418,15 +489,15 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
 	public List<AbstractDataset> simple_value(IDataset... datasets) {
-		if (datasets.length == 0)
+		if (datasets.length == 0) {
 			return null;
-
+		}
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		for (IDataset ids : datasets) {
-			if (ids.getRank() != 2)
+			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
-		
+			}
 			int npts = (int) (erad - srad + 1);
 			int apts = (int) (erad*(ephi - sphi) + 1);
 			double dphi = (ephi - sphi) / apts;
@@ -499,6 +570,126 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			result.add(new FloatDataset(intensity, new int[] {npts})) ;
 			result.add(new FloatDataset(afrequency, new int[] {apts})) ;
 			result.add(new FloatDataset(frequency, new int[] {npts})) ;
+		}
+		return result;
+	}
+	
+	public List<AbstractDataset> simple_qvalue(IDataset... datasets) {
+		if (datasets.length == 0 || qSpace == null) {
+			return null;
+		}
+		
+		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+
+		for (IDataset ids : datasets) {
+			if (ids.getRank() != 2) {
+				throw new IllegalArgumentException("operating on 2d arrays only");
+			}
+			double dr = 1.0/dpp;
+			int npts =  (int) ((erad - srad + 1) * dpp);
+			int apts = (int) (erad * (ephi - sphi) * dpp + 1);
+			double dphi = (ephi - sphi) / apts;
+			
+			// Final intensity is 1D data
+			float[] intensity = new float[npts];
+			float[] azimuth = new float[apts];
+			
+			// For each final pixel, frequency will store the number of points participating to the sector integration at point i 
+			float[] frequency = new float[npts];
+			float[] afrequency = new float[apts];
+			
+			// Calculate bounding rectangle around the sector
+			int nxstart = (int) Math.max(0, cx - erad);
+			int nx = (int) Math.min(ids.getShape()[1], cx + erad);
+			int nystart = (int) Math.max(0, cy - erad);
+			int ny = (int) Math.min(ids.getShape()[0], cy + erad);
+			
+			AbstractDataset[] rAxis = setupSelectedAxes(npts, apts, dr, dphi);
+			
+			AbstractDataset radAxis = rAxis[0];
+			AbstractDataset azAxis = rAxis[1];
+			switch (axisType) {
+			case RESOLUTION:
+	    		radAxis.setName("d-spacing (\u00c5)");
+				break;
+
+			case ANGLE:
+	    		radAxis.setName("2\u03b8 (\u00b0)");
+				break;
+
+			case Q:
+	    		radAxis.setName("q (1/\u00c5)");
+				break;
+
+			default:
+	    		radAxis.setName("Radius (pixel)");
+				break;
+			}
+			azAxis.setName("Angle (\u00b0)");
+			
+			for (int j = nystart; j < ny; j++) {
+				for (int i = nxstart; i < nx; i++) {
+
+					double Theta = Math.atan2((j - cy) , (i - cx));
+					Theta = MathUtils.normalizeAngle(Theta, sphi + Math.PI);
+
+					if ((Theta >= sphi) && (Theta <= ephi )) {			
+						double xR = i - cx;
+						double yR = j - cy;
+
+						double R = Math.sqrt(xR * xR + yR * yR);
+
+						if ((R >= srad) && (R < erad)) {
+							R = pixelToValue(i, j);
+							int k = DatasetUtils.findIndexGreaterThan(radAxis, R) - 1;
+							if (k < 0 || (k + 1) >= radAxis.getSize()) {
+								continue;
+							}
+							if (mask != null && !mask.getBoolean(new int[] {j,i})) {
+								continue;
+							}
+							
+							double val = ids.getDouble(new int[] {j,i});
+							
+							// Each point participating to the sector integration is weighted depending on
+							// how far/close it is from the following point i+1
+							double r1 = radAxis.getDouble(k);
+							double r2 = radAxis.getDouble(k + 1);
+							double fFac = (r2 - R) / (r2 - r1);
+							
+							if (doRadial) {
+								// Evaluates the intensity and the frequency
+								intensity[k] += fFac * val;
+								if(aver)
+									frequency[k] += fFac;
+								if (k < (npts - 1)) {
+									intensity[k + 1] += (1 - fFac) * val;
+									if(aver)
+										frequency[k + 1] += (1 - fFac);
+								}
+							}
+							if (doAzimuthal) {
+								double dk = 1. / R;
+								int ak1 = Math.max(0, (int) ((Theta - dk / 2.0 - sphi) / dphi));
+								int ak2 = Math.min(apts - 1, (int) ((Theta + dk / 2.0 - sphi) / dphi));
+								for (int n = ak1; n <= ak2; n++) {
+									fFac = ak2 - ak1 + 1.0;
+									azimuth[n] += val / fFac;
+									if(aver)
+										afrequency[n] += 1.0 / fFac;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			result.add(new FloatDataset(azimuth, new int[] {apts})) ;
+			result.add(new FloatDataset(intensity, new int[] {npts})) ;
+			result.add(new FloatDataset(afrequency, new int[] {apts})) ;
+			result.add(new FloatDataset(frequency, new int[] {npts})) ;
+			result.add(azAxis) ;
+			result.add(radAxis) ;
 		}
 		return result;
 	}

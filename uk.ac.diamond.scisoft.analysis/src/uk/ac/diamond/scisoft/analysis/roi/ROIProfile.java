@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
@@ -30,11 +31,17 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
 import uk.ac.diamond.scisoft.analysis.dataset.function.LineSample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToPolarAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesianAndIntegrate;
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
 /**
  * Utility methods for calculating region of interest profiles.
  */
 public class ROIProfile {
+	
+	public enum XAxis {
+		PIXEL, RESOLUTION, ANGLE, Q,
+	}
+	
 	/**
 	 * @param data
 	 * @param lroi
@@ -573,7 +580,7 @@ public class ROIProfile {
 	 * @return box profile
 	 */
 	public static AbstractDataset[] sector(AbstractDataset data, SectorROI sroi) {
-		return sector(data, null, sroi);
+		return sector(data, null, sroi, null);
 	}
 
 	/**
@@ -582,7 +589,16 @@ public class ROIProfile {
 	 * @return box profile
 	 */
 	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi) {
-		return sector(data, mask, sroi, true, true, false);
+		return sector(data, mask, sroi, true, true, false, null, null);
+	}
+
+	/**
+	 * @param data
+	 * @param sroi
+	 * @return box profile
+	 */
+	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, QSpace qSpace) {
+		return sector(data, mask, sroi, true, true, false, qSpace, null);
 	}
 
 	/**
@@ -593,6 +609,16 @@ public class ROIProfile {
 	 * @return sector profile
 	 */
 	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
+		return sector(data, mask, sroi, doRadial, doAzimuthal, fast, null, null);
+	}
+	/**
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param sroi
+	 * @return sector profile
+	 */
+	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast, QSpace qSpace, XAxis axisType) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();
@@ -601,7 +627,7 @@ public class ROIProfile {
 		boolean aver = sroi.isAverageArea();
 		double dpp = sroi.getDpp();
 
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null, null, null };
+		AbstractDataset[] profiles = new AbstractDataset[8];
 
 		if (Math.abs(rad[0] - rad[1]) < 1 || Math.abs(ang[0] - ang[1]) < 1e-2) {
 			return null;
@@ -618,6 +644,7 @@ public class ROIProfile {
 			pmapfint.setInterpolate(!fast);
 			pmapfint.setDoRadial(doRadial);
 			pmapfint.setDoAzimuthal(doAzimuthal);
+			pmapfint.setQSpace(qSpace, axisType);
 			List<AbstractDataset> dsetsf = pmapfint.value(data);
 			if (dsetsf == null) {
 				return null;
@@ -628,6 +655,10 @@ public class ROIProfile {
 			} else {
 				profiles[0] = dsetsf.get(1);
 				profiles[1] = dsetsf.get(0);
+			}
+			if (dsetsf.size() > 4) {
+				profiles[4] = dsetsf.get(5);
+				profiles[5] = dsetsf.get(4);
 			}
 			return profiles;
 		}
@@ -642,6 +673,7 @@ public class ROIProfile {
 		pmapint.setInterpolate(!fast);
 		pmapint.setDoRadial(doRadial);
 		pmapint.setDoAzimuthal(doAzimuthal);
+		pmapint.setQSpace(qSpace, axisType);
 		List<AbstractDataset> dsets = pmapint.value(data);
 		if (dsets == null) {
 			return null;
@@ -650,6 +682,10 @@ public class ROIProfile {
 		AbstractDataset[] areas = new AbstractDataset[] { null, null, null, null };
 		profiles[0] = dsets.get(1);
 		profiles[1] = dsets.get(0);
+		if (dsets.size() >= 6) {
+			profiles[4] = dsets.get(5);
+			profiles[5] = dsets.get(4);
+		}
 		areas[0] = dsets.get(3);
 		areas[1] = dsets.get(2);
 		
@@ -666,6 +702,7 @@ public class ROIProfile {
 			pmapsint.setInterpolate(!fast);
 			pmapsint.setDoRadial(doRadial);
 			pmapsint.setDoAzimuthal(doAzimuthal);
+			pmapsint.setQSpace(qSpace, axisType);
 			List<AbstractDataset> dsetss = pmapsint.value(data);
 			if (dsetss != null) {
 				if (sroi.isCombineSymmetry()) {
@@ -678,11 +715,15 @@ public class ROIProfile {
 					profiles[3] = dsetss.get(0);
 					areas[2] = dsetss.get(3);
 					areas[3] = dsetss.get(2);
+					if (dsetss.size() >= 6) {
+						profiles[6] = dsetss.get(5);
+						profiles[7] = dsetss.get(4);
+					}
 				}
 			}
 		}
 		if (aver) {
-			for (int i = 0; i < profiles.length; i++) {
+			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
 					profiles[i] = Maths.dividez(profiles[i], areas[i]);
 				}

@@ -549,9 +549,10 @@ public class PowderRingsUtils {
 	 * @param ellipses
 	 * @param spacings
 	 *            a list of possible spacings
+	 * @param fixedWavelength 
 	 * @return q-space
 	 */
-	public static QSpace fitEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<HKL> spacings) {
+	public static QSpace fitEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<HKL> spacings, boolean fixedWavelength) {
 
 		int n = ellipses.size();
 
@@ -593,12 +594,11 @@ public class PowderRingsUtils {
 		}
 
 		FitFunction f;
-		boolean fixed = true;
 		if (allCircles) {
 			logger.debug("All rings are circular");
-			f = createQFitFunction5(ellipses, detector, env.getWavelength()*1e-7, fixed);
+			f = createQFitFunction5(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
 		} else {
-			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixed);
+			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
 		}
 
 		logger.debug("Init: {}", f.getInit());
@@ -678,9 +678,10 @@ public class PowderRingsUtils {
 	 * @param rois
 	 * @param spacings
 	 *            a list of spacings
+	 * @param fixedWavelength 
 	 * @return q-space
 	 */
-	public static QSpace fitAllEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<IROI> rois, List<HKL> spacings) {
+	public static QSpace fitAllEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<IROI> rois, List<HKL> spacings, boolean fixedWavelength) {
 		int n = rois.size();
 		if (n != spacings.size()) { // always allow a choice to be made
 			throw new IllegalArgumentException("Number of ellipses should be equal to spacings");
@@ -706,12 +707,11 @@ public class PowderRingsUtils {
 		n = ellipses.size();
 
 		FitFunction f;
-		boolean fixed = false;
 		if (allCircles) {
 			logger.debug("All rings are circular");
-			f = createQFitFunction5(ellipses, detector, env.getWavelength()*1e-7, fixed);
+			f = createQFitFunction5(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
 		} else {
-			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixed);
+			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
 		}
 
 		logger.debug("Init: {}", f.getInit());
@@ -782,7 +782,10 @@ public class PowderRingsUtils {
 		return res;
 	}
 
-	static FitFunction createQFitFunction(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
+	/**
+	 * Create function which uses 2/3 parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
+	 */
+	static FitFunction createQFitFunction1(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
 		double[] known1 = new double[n];
 		double[] known2 = new double[n];
@@ -819,6 +822,9 @@ public class PowderRingsUtils {
 		return f;
 	}
 
+	/**
+	 * Create function which uses 2/3 parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
+	 */
 	static FitFunction createQFitFunction2(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
 		double[] known1 = new double[n];
@@ -852,6 +858,9 @@ public class PowderRingsUtils {
 		return f;
 	}
 
+	/**
+	 * Create function which uses 1/2 parameters: wavelength (mm), perpendicular distance (mm)
+	 */
 	static FitFunction createQFitFunction3(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
 		double[] known1 = new double[n];
@@ -873,6 +882,9 @@ public class PowderRingsUtils {
 		return f;
 	}
 
+	/**
+	 * Create function which uses 6/7 parameters: wavelength (mm), detector origin (mm), orientation angles (degrees)
+	 */
 	static FitFunction createQFitFunction4(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
 		double[][] known = new double[n][6];
@@ -904,6 +916,9 @@ public class PowderRingsUtils {
 		return f;
 	}
 
+	/**
+	 * Create function which uses 3/4 parameters: wavelength (mm), detector origin (mm)
+	 */
 	static FitFunction createQFitFunction5(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
 		double[][] known = new double[n][6];
@@ -970,6 +985,8 @@ public class PowderRingsUtils {
 		 * @param spacings (in mm)
 		 */
 		public void setSpacings(List<Double> spacings);
+
+		public void setSigma(double[] sigma);
 	}
 
 	static abstract class FitFunctionBase implements FitFunction {
@@ -1016,6 +1033,11 @@ public class PowderRingsUtils {
 		@Override
 		public double[] getSigma() {
 			return sigma;
+		}
+
+		@Override
+		public void setSigma(double[] sigma) {
+			this.sigma = sigma;
 		}
 
 		@Override

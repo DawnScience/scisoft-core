@@ -246,6 +246,107 @@ public class ROIProfile {
 		return profiles;
 	}
 
+	/**
+	 * Returns the mean of the dataset given a RectangularROI
+	 * @param data
+	 * @param mask
+	 *            used for clipping compensation (can be null)
+	 * @param rroi
+	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
+	 *                       deals with NaNs however, in this case we can set maskWithNans true and masked
+	 *                       pixels are NaN instead of 0.
+	 * @return box profile
+	 */
+	public static AbstractDataset[] boxMean(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+		if(data == null) return null;
+		int[] spt = rroi.getIntPoint();
+		int[] len = rroi.getIntLengths();
+		double ang = rroi.getAngle();
+		boolean clip = rroi.isClippingCompensation();
+		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+
+		if (len[0] == 0)
+			len[0] = 1;
+		if (len[1] == 0)
+			len[1] = 1;
+
+		if (ang == 0.0) {
+			
+			final int xtart  = Math.max(0,  spt[1]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
+			final int ystart = Math.max(0,  spt[0]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
+			
+			// We slice down data to reduce the work the masking and the integrate needs to do.
+			// TODO Does this always work? This makes large images profile better...
+			AbstractDataset slicedData = null;
+			try {
+				slicedData = data.getSlice(new int[]{xtart,   ystart}, 
+					                       new int[]{xend,    yend},
+					                       new int[]{1,1});
+			} catch (Exception ne) {
+				// We cannot process the profiles for a region totally outside the image!
+				return null;
+			}
+			
+			final AbstractDataset slicedMask = mask!=null
+					                         ? mask.getSlice(new int[]{xtart, ystart}, 
+					                                         new int[]{xend,  yend},
+					                                         new int[]{1,1})
+					                         : null;
+			
+			if (slicedMask != null && slicedData != null) {
+				if (slicedData.isCompatibleWith(slicedMask)) {
+					clip = true;
+					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
+					} else {
+						// Masks values to NaN, also changes dtype to Float
+						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
+					}
+				}
+			}
+			if (slicedData==null){
+				slicedData = data;
+			}
+
+			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
+
+			List<AbstractDataset> dsets = int2d.value(slicedData);
+			if (dsets == null) return null;
+
+			profiles[0] = slicedData.mean(0);
+			
+			profiles[1] = slicedData.mean(1);
+
+		} else {
+			
+			if (mask != null) {
+				if (data.isCompatibleWith(mask)) {
+					clip = true;
+					// TODO both multiply and nanalize create copies of the whole data passed in
+					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
+					} else {
+						// Masks values to NaN, also changes dtype to Float
+						data = nanalize(data, (BooleanDataset)mask);
+					}
+				}
+			}
+
+			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
+					len[1], ang, false);
+			List<AbstractDataset> dsets = rcmapint.value(data);
+			if (dsets == null)
+				return null;
+
+			profiles[0] = dsets.get(1).mean(0);
+			profiles[1] = dsets.get(0).mean(1);
+
+			if (clip) {
+				clippingCompensate(data, mask, profiles, rcmapint);
+			}
+		}
+		return profiles;
+	}
 
 	/**
 	 * @param data
@@ -373,6 +474,9 @@ public class ROIProfile {
 		return profiles;
 	}
 
+	private static final int HORIZONTAL = 1 << 8;
+	private static final int VERTICAL = 1 << 9;
+
 	/**
 	 * type of boxline profile
 	 */
@@ -390,7 +494,7 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box line profiles
 	 */
-	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, BoxLineType type) {
+	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, int type) {
 
 		double[] startpt = rroi.getPoint();
 		double[] endpt = rroi.getEndPoint();
@@ -401,16 +505,19 @@ public class ROIProfile {
 		double[] leftbottompt = { new Double(startpt[0]), new Double(endpt[1]) };
 		LinearROI line1 = null, line2 = null;
 		
-		if(type == BoxLineType.VERTICAL_TYPE){
+		if(type == VERTICAL){
 			line1 = new LinearROI(startpt, leftbottompt);
 			line2 = new LinearROI(righttoppt, endpt);
-		} else if(type == BoxLineType.HORIZONTAL_TYPE){
+		} else if(type == HORIZONTAL){
 			line1 = new LinearROI(startpt, righttoppt);
 			line2 = new LinearROI(leftbottompt, endpt);
 		}
-		
-		profiles[0] = ROIProfile.line(data, mask, line1, 1d, maskWithNans)[0];
-		profiles[1] = ROIProfile.line(data, mask, line2, 1d, maskWithNans)[0];
+		AbstractDataset[] lineProfiles = ROIProfile.line(data, mask, line1, 1d, maskWithNans);
+		profiles[0] = lineProfiles != null ? lineProfiles[0] : null;
+		if(profiles[0] == null) return null;
+		lineProfiles = ROIProfile.line(data, mask, line2, 1d, maskWithNans);
+		profiles[1] = lineProfiles != null ? lineProfiles[0] : null;
+		if(profiles[1] == null) return null;
 		return profiles;
 	}
 

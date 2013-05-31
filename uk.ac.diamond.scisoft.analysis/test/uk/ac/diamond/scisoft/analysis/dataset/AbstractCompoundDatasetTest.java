@@ -270,6 +270,11 @@ public class AbstractCompoundDatasetTest {
 			for (int j = 0; j < is; j++, i++)
 				assertEquals(i, b.getElementDoubleAbs(it.index + j), 1e-15*i);
 		}
+		b.hashCode();
+		double[] mb = (double[]) b.mean();
+		double[] rb = new double[] {1.5, 2.5, 3.5};
+		for (int j = 0; j < is; j++)
+			assertEquals(rb[j], mb[j], 1e-15);
 
 		double[][] dc = { {0, 1, 2, 3}, {4, 5, 6} };
 		CompoundDoubleDataset c = CompoundDoubleDataset.createFromObject(dc);
@@ -306,7 +311,21 @@ public class AbstractCompoundDatasetTest {
 		}
 	}
 	
-	
+	@Test
+	public void testRGB() {
+		AbstractDataset r = Random.randint(0, 255, new int[] {128, 128});
+		AbstractDataset g = Random.randint(0, 255, r.getShape());
+		AbstractDataset b = Random.randint(0, 255, r.getShape());
+		RGBDataset c = new RGBDataset(r, g, b);
+		System.out.println("" + c.hashCode());
+		double[] mc = (double[]) c.mean();
+		double[] rc = new double[] {((Number) r.mean()).doubleValue(),
+				((Number) g.mean()).doubleValue(), ((Number) b.mean()).doubleValue()};
+		
+		for (int j = 0; j < 3; j++)
+			assertEquals(rc[j], mc[j], 1e-15);
+	}
+
 	@Test
 	public void test1DErrors() {
 	

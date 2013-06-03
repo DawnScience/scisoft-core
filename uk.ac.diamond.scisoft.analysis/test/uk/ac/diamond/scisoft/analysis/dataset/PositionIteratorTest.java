@@ -44,6 +44,20 @@ public class PositionIteratorTest {
 		testIterationND(size, type);
 	}
 
+	@Test
+	public void testOffsetIteration() {
+		int size = 3 * 3 * 1024 * 1024;
+		int type = AbstractDataset.FLOAT64;
+		
+		AbstractDataset ta = AbstractDataset.arange(0, size, 1, type).reshape(3, 3, 1024, 1024);
+		
+		int[] start = new int[] {1,1,0,0};
+		int[] stop = new int[] {3,3,1024,1024};
+		int[] step = new int[] {1,1,1,1};
+		int[] axes = new int[] {2,3};
+		testDatasetAxes(ta, axes, start, stop, step);
+	}
+
 	private void testIterationND(int size, int type) {
 		AbstractDataset ta;
 

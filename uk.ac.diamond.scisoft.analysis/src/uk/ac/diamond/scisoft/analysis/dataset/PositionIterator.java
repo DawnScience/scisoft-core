@@ -188,12 +188,12 @@ public class PositionIterator extends IndexIterator {
 			
 			for (int i = endrank - 1; i >= 0; i--) {
 				if (!omit[i]) {
-					pos[i] = -step[i];
+					pos[i] -= step[i];
 					break;
 				}
 			}
 		} else {
-			pos[endrank] = -1;
+			pos[endrank] -= step[endrank];
 		}
 	}
 }

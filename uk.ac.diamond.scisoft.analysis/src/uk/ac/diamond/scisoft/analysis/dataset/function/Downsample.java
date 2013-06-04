@@ -82,6 +82,8 @@ public class Downsample implements DatasetToDatasetFunction {
 			final AbstractDataset binned;
 			if (dataset instanceof RGBDataset) {
 				binned = new RGBDataset(shape);
+				// set the mode to point whenever RGB datasets are involved for the moment.
+				mode = DownsampleMode.POINT;
 			} else {
 				binned = AbstractDataset.zeros(dataset.getElementsPerItem(), shape, dataset.getDtype());
 			}

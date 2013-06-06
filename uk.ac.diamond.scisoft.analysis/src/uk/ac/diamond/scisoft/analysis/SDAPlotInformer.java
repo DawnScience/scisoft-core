@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.plotserver.GuiParameters;
 public class SDAPlotInformer {
 
 	private static final String IMAGE_EXPLORER_DIRECTORY = ".";
-	private static final String IMAGE_EXPLORER_VIEW = "ImageExplorer View";
+	private static final String IMAGE_EXPLORER_VIEW = "Image Explorer";
 	private static final String IMAGE_EXPLORER_HOST = "localhost";
 
 	/**

@@ -408,7 +408,7 @@ public class ShortDataset extends AbstractDataset {
 
 	@Override
 	public ShortDataset getSlice(final SliceIterator siter) {
-		ShortDataset result = new ShortDataset(siter.getSliceShape());
+		ShortDataset result = new ShortDataset(siter.getShape());
 		short[] rdata = result.data; // PRIM_TYPE
 
 		for (int i = 0; siter.hasNext(); i++)
@@ -509,16 +509,16 @@ public class ShortDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ShortDataset setSlice(final Object obj, final SliceIterator siter) {
+	public ShortDataset setSlice(final Object obj, final IndexIterator siter) {
 
 		if (obj instanceof IDataset) {
 			final IDataset ds = (IDataset) obj;
 			final int[] oshape = ds.getShape();
 
-			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
+			if (!areShapesCompatible(siter.getShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(oshape),
-						Arrays.toString(siter.getSliceShape())));
+						Arrays.toString(siter.getShape())));
 			}
 
 			if (ds instanceof AbstractDataset) {
@@ -553,7 +553,7 @@ public class ShortDataset extends AbstractDataset {
 		short[] ddata = (short[]) dest.odata; // PRIM_TYPE
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
-		int[] sshape = squeezeShape(siter.getSliceShape(), false);
+		int[] sshape = squeezeShape(siter.getShape(), false);
 
 		IndexIterator diter = dest.getSliceIterator(null, sshape, null);
 
@@ -571,7 +571,7 @@ public class ShortDataset extends AbstractDataset {
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
 
-		if (sdata.length < calcSize(siter.getSliceShape())) {
+		if (sdata.length < calcSize(siter.getShape())) {
 			throw new IllegalArgumentException("destination array is not large enough");
 		}
 

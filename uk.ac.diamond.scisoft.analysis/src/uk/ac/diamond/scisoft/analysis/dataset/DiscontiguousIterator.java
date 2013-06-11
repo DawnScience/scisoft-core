@@ -101,4 +101,9 @@ public class DiscontiguousIterator extends IndexIterator {
 		pos[endrank] = -1;
 		index = -istep;
 	}
+
+	@Override
+	public int[] getShape() {
+		return shape;
+	}
 }

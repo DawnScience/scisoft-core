@@ -105,7 +105,7 @@ public class IndexIteratorTest {
 	}
 
 	private AbstractDataset oldSlice(AbstractDataset t, SliceIterator siter) {
-		int[] shape = siter.getSliceShape();
+		int[] shape = siter.getShape();
 		int rank = shape.length;
 		int[] lstart = siter.getStart();
 		int[] lstep = siter.getStep();

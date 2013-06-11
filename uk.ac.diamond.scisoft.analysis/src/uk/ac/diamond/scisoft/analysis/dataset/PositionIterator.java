@@ -34,6 +34,7 @@ import java.util.Arrays;
  *
  */
 public class PositionIterator extends IndexIterator {
+	final private int[] shape;
 	private int[] start;
 	private int[] stop;
 	private int[] step;
@@ -72,6 +73,7 @@ public class PositionIterator extends IndexIterator {
 	 * @param axes missing axes
 	 */
 	public PositionIterator(int[] shape, int[] axes) {
+		this.shape = shape;
 		int rank = shape.length;
 		endrank = rank - 1;
 
@@ -195,5 +197,10 @@ public class PositionIterator extends IndexIterator {
 		} else {
 			pos[endrank] -= step[endrank];
 		}
+	}
+
+	@Override
+	public int[] getShape() {
+		return shape;
 	}
 }

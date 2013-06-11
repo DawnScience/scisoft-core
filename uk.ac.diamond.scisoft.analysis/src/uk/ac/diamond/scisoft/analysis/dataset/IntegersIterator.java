@@ -167,9 +167,7 @@ public class IntegersIterator extends IndexIterator {
 		opos = it.getPos();
 	}
 
-	/**
-	 * @return shape of output
-	 */
+	@Override
 	public int[] getShape() {
 		return oshape;
 	}

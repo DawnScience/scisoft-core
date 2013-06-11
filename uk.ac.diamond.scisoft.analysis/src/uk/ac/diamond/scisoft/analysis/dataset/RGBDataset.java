@@ -230,9 +230,9 @@ public class RGBDataset extends CompoundShortDataset {
 
 	@Override
 	public RGBDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		SliceIterator siter = (SliceIterator) getSliceIterator(start, stop, step);
+		IndexIterator siter = getSliceIterator(start, stop, step);
 
-		RGBDataset result = new RGBDataset(siter.getSliceShape());
+		RGBDataset result = new RGBDataset(siter.getShape());
 		short[] rdata = result.data; // PRIM_TYPE
 		IndexIterator riter = result.getIterator();
 

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -144,7 +144,7 @@ public abstract class AbstractDataset implements IDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
+	protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
 
 	private static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
@@ -164,7 +164,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * The shape or dimensions of the dataset
 	 */
 	protected int[] shape;
-	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
+	protected int size; // number of items
 
 	/**
 	 * The data itself, held in a 1D array, but the object will wrap it to appear as possessing as many dimensions as
@@ -1036,7 +1036,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @return The dataset with the sliced set to object
 	 */
 	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
-		return setSlice(obj, (SliceIterator) getSliceIterator(start, stop, step));
+		return setSlice(obj, getSliceIterator(start, stop, step));
 	}
 
 	/**
@@ -1047,7 +1047,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
-	abstract public AbstractDataset setSlice(final Object obj, final SliceIterator iterator);
+	abstract public AbstractDataset setSlice(final Object obj, final IndexIterator iterator);
 
 	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset is true

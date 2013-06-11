@@ -99,4 +99,9 @@ public class ContiguousIteratorWithPosition extends IndexIterator {
 		}
 		index = -istep;
 	}
+
+	@Override
+	public int[] getShape() {
+		return shape;
+	}
 }

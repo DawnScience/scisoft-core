@@ -50,4 +50,11 @@ public abstract class IndexIterator {
 	 * Reset iterator
 	 */
 	abstract public void reset();
+
+	/**
+	 * @return shape of iterator (can be null, if not known or applicable)
+	 */
+	public int[] getShape() {
+		return null;
+	}
 }

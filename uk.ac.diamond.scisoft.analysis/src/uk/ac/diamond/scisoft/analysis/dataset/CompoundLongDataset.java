@@ -526,7 +526,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundLongDataset getSlice(final SliceIterator siter) {
-		CompoundLongDataset result = new CompoundLongDataset(isize, siter.getSliceShape());
+		CompoundLongDataset result = new CompoundLongDataset(isize, siter.getShape());
 		long[] rdata = result.data; // PRIM_TYPE
 		IndexIterator riter = result.getIterator();
 
@@ -747,15 +747,15 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundLongDataset setSlice(final Object o, final SliceIterator siter) {
+	public CompoundLongDataset setSlice(final Object o, final IndexIterator siter) {
 		if (o instanceof IDataset) {
 			final IDataset ds = (IDataset) o;
 			final int[] oshape = ds.getShape();
 
-			if (!areShapesCompatible(siter.getSliceShape(), oshape)) {
+			if (!areShapesCompatible(siter.getShape(), oshape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(oshape),
-						Arrays.toString(siter.getSliceShape())));
+						Arrays.toString(siter.getShape())));
 			}
 
 			if (ds instanceof AbstractDataset) {
@@ -823,7 +823,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		}
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
-		int[] sshape = squeezeShape(siter.getSliceShape(), false);
+		int[] sshape = squeezeShape(siter.getShape(), false);
 
 		IndexIterator diter = dest.getSliceIterator(null, sshape, null);
 
@@ -843,7 +843,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
 
-		if (sdata.length < calcSize(siter.getSliceShape())) {
+		if (sdata.length < calcSize(siter.getShape())) {
 			throw new IllegalArgumentException("source array is not large enough");
 		}
 

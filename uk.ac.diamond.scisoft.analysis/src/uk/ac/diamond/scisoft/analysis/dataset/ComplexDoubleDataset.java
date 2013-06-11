@@ -400,7 +400,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset getSlice(final SliceIterator siter) {
-		ComplexDoubleDataset result = new ComplexDoubleDataset(siter.getSliceShape());
+		ComplexDoubleDataset result = new ComplexDoubleDataset(siter.getShape());
 		double[] rdata = result.data; // PRIM_TYPE
 		IndexIterator riter = result.getIterator();
 
@@ -413,14 +413,14 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public ComplexDoubleDataset setSlice(final Object o, final SliceIterator siter) {
+	public ComplexDoubleDataset setSlice(final Object o, final IndexIterator siter) {
 		if (o instanceof ComplexFloatDataset) {
 			ComplexFloatDataset zds = (ComplexFloatDataset) o;
 
-			if (!AbstractDataset.areShapesCompatible(siter.getSliceShape(), zds.shape)) {
+			if (!AbstractDataset.areShapesCompatible(siter.getShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(zds.shape),
-						Arrays.toString(siter.getSliceShape())));
+						Arrays.toString(siter.getShape())));
 			}
 
 			IndexIterator oiter = zds.getIterator();
@@ -433,10 +433,10 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		} else if (o instanceof ComplexDoubleDataset) { // IGNORE_CLASS
 			ComplexDoubleDataset zds = (ComplexDoubleDataset) o; // IGNORE_CLASS
 
-			if (!AbstractDataset.areShapesCompatible(siter.getSliceShape(), zds.shape)) {
+			if (!AbstractDataset.areShapesCompatible(siter.getShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(zds.shape),
-						Arrays.toString(siter.getSliceShape())));
+						Arrays.toString(siter.getShape())));
 			}
 
 			IndexIterator oiter = zds.getIterator();

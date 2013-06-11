@@ -245,11 +245,8 @@ public class SliceIterator extends IndexIterator {
 		return gap;
 	}
 
+	@Override
 	public int[] getShape() {
-		return shape;
-	}
-
-	public int[] getSliceShape() {
 		return sshape;
 	}
 }

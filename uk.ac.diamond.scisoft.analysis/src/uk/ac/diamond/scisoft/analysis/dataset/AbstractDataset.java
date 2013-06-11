@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -2488,12 +2486,12 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) throws Exception {
 		return getSlice(slice);
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws Exception {
 		return getSlice(start, stop, step);
 	}
 

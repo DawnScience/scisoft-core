@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -198,6 +198,45 @@ public class Signal {
 		}
 
 		return results;
+	}
+
+	/**
+	 * A rectangular (boxcar or Dirichlet) window
+	 * @param n
+	 * @return window
+	 */
+	public static AbstractDataset rectangularWindow(int n) {
+		return AbstractDataset.ones(new int[] {n}, AbstractDataset.FLOAT64);
+	}
+
+	/**
+	 * A triangular window
+	 * @param n
+	 * @return window
+	 */
+	public static AbstractDataset triangularWindow(int n) {
+		DoubleDataset w = new DoubleDataset(n);
+		double f = 2./(n+1);
+		double o = f*(n-1)*0.5;
+		for (int i = 0; i < n; i++) {
+			w.setAbs(i, 1 - f*Math.abs(i-o));
+		}
+		return w;
+	}
+
+	/**
+	 * A Bartlett window
+	 * @param n
+	 * @return window
+	 */
+	public static AbstractDataset bartlettWindow(int n) {
+		DoubleDataset w = new DoubleDataset(n);
+		double f = 2./(n-1);
+		double o = f*(n-1)*0.5;
+		for (int i = 0; i < n; i++) {
+			w.setAbs(i, 1 - f*Math.abs(i-o));
+		}
+		return w;
 	}
 
 	/**

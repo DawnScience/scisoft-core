@@ -74,7 +74,7 @@ public class LazyDatasetTest {
 			
 			@Override
 			public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws ScanFileHolderException {
+					throws Exception {
 				return d.getSlice(mon, start, stop, step);
 			}
 		});

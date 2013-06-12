@@ -109,7 +109,7 @@ public class DatasetUtils {
 		for (int i = 0, v= 0; i < ilen; i++, v++) {
 			if (v >= vlen) v -= vlen;
 
-			a.setObjectAbs(a.to1DIndex(indices[i]), values[v]);
+			a.setObjectAbs(indices[i], values[v]);
 		}
 		return a;
 	}
@@ -137,7 +137,7 @@ public class DatasetUtils {
 			ashape[0] = ilen;
 			result = AbstractDataset.zeros(is, ashape, at);
 			for (int i = 0; i < ilen; i++) {
-				result.setItemDirect(i, a.to1DIndex(indices[i]), a);
+				result.setItemDirect(i, indices[i], a);
 			}
 		} else {
 			axis = a.checkAxis(axis);

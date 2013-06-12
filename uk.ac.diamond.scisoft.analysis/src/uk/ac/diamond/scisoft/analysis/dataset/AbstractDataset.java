@@ -1442,18 +1442,6 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Translate from an index value to an actual index (if dataset is discontiguous)
-	 * 
-	 * @return real index
-	 */
-	protected int to1DIndex(final int n) {
-		if (n < 0 || n >= size) {
-			throw new IndexOutOfBoundsException("Index out of bounds: " + n + " cf " + size);
-		}
-		return n;
-	}
-
-	/**
 	 * Check that axis is in range [-rank,rank)
 	 * 
 	 * @param axis

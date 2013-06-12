@@ -407,21 +407,6 @@ public abstract class AbstractDataset implements IDataset {
 	}
 
 	/**
-	 * Append copy of dataset with another dataset along n-th axis
-	 * 
-	 * @param other
-	 * @param axis
-	 *            number of axis (negative number counts from last)
-	 * @return appended dataset
-	 * @deprecated Use {@link DatasetUtils#append(IDataset, IDataset, int)}
-	 */
-	@Deprecated
-	public AbstractDataset append(AbstractDataset other, int axis) {
-		abstractLogger.warn("Use DatasetUtils.append");
-		return DatasetUtils.append(this, other, axis);
-	}
-
-	/**
 	 * Flatten shape
 	 * 
 	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy

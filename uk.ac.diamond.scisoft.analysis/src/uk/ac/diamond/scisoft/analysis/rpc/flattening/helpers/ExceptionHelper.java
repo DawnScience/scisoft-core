@@ -28,7 +28,12 @@ public class ExceptionHelper extends MapFlatteningHelper<Exception> {
 
 	@Override
 	public Exception unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		return new Exception((String) thisMap.get(CONTENT));
+		String all = (String) thisMap.get(CONTENT);
+		int i = all.lastIndexOf(": ");
+		String msg = all.substring(i+2).trim();
+		all = all.substring(0, i);
+		i = all.lastIndexOf('\n');
+		return i < 0 ? new Exception(msg) : new Exception(msg, new Exception(all.substring(0, i)));
 	}
 
 	@Override

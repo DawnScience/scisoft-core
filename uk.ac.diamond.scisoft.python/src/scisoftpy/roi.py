@@ -30,6 +30,7 @@ Classes available:
     sector_list (sectlist) is a list of sector ROIs
     circle_list is a list of circular ROIs
     ellipse_list is a list of elliptical ROIs
+    roi_dict is a list/dictionary of ROIs
 '''
 
 import os
@@ -41,6 +42,8 @@ else:
  
 
 _iroi = _roi._iroi
+_roibase = _roi.roibase
+
 point = _roi.point
 line = _roi.line
 rectangle = rect = _roi.rectangle
@@ -54,6 +57,11 @@ rectangle_list = rectlist = _roi.rectangle_list
 sector_list = sectlist = _roi.sector_list
 circle_list = _roi.circle_list
 ellipse_list = _roi.ellipse_list
+
+from scisoftpy.dictutils import ListDict
+
+class roi_dict(ListDict):
+    pass
 
 def isroi(r):
     '''True if r is a ROI

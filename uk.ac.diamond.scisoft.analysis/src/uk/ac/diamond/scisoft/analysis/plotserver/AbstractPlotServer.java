@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,7 +48,14 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public void setData(String guiName, DataBean data) throws Exception {
-		dataStore.put(guiName, data);
+		
+		Serializable value = data.getGuiParameters().get(GuiParameters.PLOTOPERATION);
+		//if its a duplicate key and an PLOTOP_ADD we need to add the datasets to the old bean
+		if (value != null && value == GuiParameters.PLOTOP_ADD && dataStore.containsKey(guiName)) {
+			for (DataSetWithAxisInformation set : data.data) dataStore.get(guiName).data.add(set);
+		} else {
+			dataStore.put(guiName, data);
+		}	
 	}
 
 	@Override

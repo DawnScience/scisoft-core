@@ -38,30 +38,39 @@ import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
  */
 public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstract {
 
+	class MyMockPlotter extends MockSDAPlotter {
+		private boolean[] flag;
+		public MyMockPlotter(final boolean[] status) {
+			flag = status;
+		}
+
+		@Override
+		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+				String yAxisName) throws Exception {
+			flag[0] = true;
+		}
+
+		@Override
+		public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		}
+
+		@Override
+		public void setActiveYAxis(String plotName, String xAxisTitle) throws Exception {
+		}
+	}
+
 	@Test
 	public void testChangePort() throws Exception {
 		final boolean[] receivedAtDefaultHandler = new boolean[1];
 		final boolean[] receivedAtAlternatePortHandler = new boolean[1];
 		
 		// Set a handler that we can detect we arrived at ok on the default port
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				receivedAtDefaultHandler[0] = true;
-			}
-		});
-		
+		registerHandler(new MyMockPlotter(receivedAtDefaultHandler));	
+
 		// Set an alternate handler on a different port
 		AnalysisRpcServer altServer = new AnalysisRpcServer(9876); 
 		altServer.start();
-		IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class, new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				receivedAtAlternatePortHandler[0] = true;
-			}
-		});
+		IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class, new MyMockPlotter(receivedAtAlternatePortHandler));
 		altServer.addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
 	
 		

@@ -45,7 +45,32 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 
 	private Boolean[] passed = new Boolean[1];
 
-	
+	class MyMockPlotter extends MockSDAPlotter {
+		private Boolean[] flag;
+		public MyMockPlotter(final Boolean[] status) {
+			flag = status;
+		}
+
+		@Override
+		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+				String yAxisName) throws Exception {
+			flag[0] = true;
+		}
+
+		@Override
+		public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
+				String yAxisName) throws Exception {
+			flag[0] = true;
+		}
+
+		@Override
+		public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		}
+
+		@Override
+		public void setActiveYAxis(String plotName, String xAxisTitle) throws Exception {
+		}
+	}
 
 	public AllPyPlotMethodsTest() {
 		// create some data sets and other objects to use, this test does not use
@@ -65,13 +90,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	@Test
 	public void testPlotStringIDataset() throws Exception {
 		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				passed[0] = true;
-			}
-		});
+		registerHandler(new MyMockPlotter(passed));
 		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
@@ -79,13 +98,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	@Test
 	public void testPlotStringIDatasetIDataset() throws Exception {
 		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				passed[0] = true;
-			}
-		});
+		registerHandler(new MyMockPlotter(passed));
 		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
@@ -93,13 +106,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	@Ignore("Python does not process the second axis currently, 17/12/2012")
 	public void testPlotStringIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				passed[0] = true;
-			}
-		});
+		registerHandler(new MyMockPlotter(passed));
 		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
 		Assert.assertTrue(passed[0]);
 	}
@@ -107,13 +114,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	@Test
 	public void testPlotStringIDatasetIDatasetArray() throws Exception {
 		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				passed[0] = true;
-			}
-		});
+		registerHandler(new MyMockPlotter(passed));
 		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}
@@ -121,13 +122,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	@Test
 	public void testPlotStringIDatasetArrayIDatasetArray() throws Exception {
 		passed[0] = false;
-		registerHandler(new MockSDAPlotter() {
-			@Override
-			public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-					String yAxisName) throws Exception {
-				passed[0] = true;
-			}
-		});
+		registerHandler(new MyMockPlotter(passed));
 		redirectPlotter.plot(plotName, null, xAxes, yAxes, null, null);
 		Assert.assertTrue(passed[0]);
 	}

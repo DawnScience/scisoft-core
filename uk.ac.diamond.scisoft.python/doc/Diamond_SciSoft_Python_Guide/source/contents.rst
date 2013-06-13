@@ -14,6 +14,7 @@ Contents:
    plotting
    fitting
    nexusviewer
+   external
 
 Indices and tables
 ==================

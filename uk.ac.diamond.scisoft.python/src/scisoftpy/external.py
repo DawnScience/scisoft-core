@@ -326,7 +326,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     >>> ext_foo = create_function(foo, dls_module=True)
     
     The dls_module argument allows a python configuration from DLS's module system
-    to be used to set the external python process. 
+    to be used to set up the external python process. 
     '''
 
     if not isinstance(function, str):

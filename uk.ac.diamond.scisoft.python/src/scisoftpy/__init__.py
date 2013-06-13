@@ -144,7 +144,6 @@ except Exception, e:
 
 try:
     import flatten
-
 except Exception, e:
     print >> sys.stderr, "Could not import flatten API"
     print >> sys.stderr, e
@@ -165,3 +164,8 @@ try:
     import fit
 except Exception, e:
     print >> sys.stderr, "Could not import fit"
+
+try:
+    import external
+except Exception, e:
+    print >> sys.stderr, "Could not import external functions"

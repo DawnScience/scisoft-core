@@ -42,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * <p/>
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
-public abstract class AbstractDataset implements IDataset {
+public abstract class AbstractDataset implements IErrorDataset {
 
 	/**
 	 * Boolean
@@ -3740,6 +3740,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * Set error for all points in the dataset
 	 * @param error can be a Number, a Complex, an array, a List or a dataset
 	 */
+	@Override
 	public void setError(Serializable error) {
 		final int is = getElementsPerItem();
 		double[] e = null;
@@ -3799,6 +3800,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * values are the same
 	 * @return the dataset which contains the error information (can be null)
 	 */
+	@Override
 	public AbstractDataset getError() {
 		if (errorData == null) {
 			return null;
@@ -3818,6 +3820,7 @@ public abstract class AbstractDataset implements IDataset {
 	 * @param pos of the point to be referenced 
 	 * @return the value of the error at this point
 	 */
+	@Override
 	public double getError(int... pos) {
 		if (errorData == null) {
 			return 0;

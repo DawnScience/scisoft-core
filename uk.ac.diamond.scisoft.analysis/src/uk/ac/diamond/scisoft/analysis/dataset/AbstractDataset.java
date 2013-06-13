@@ -3769,6 +3769,17 @@ public abstract class AbstractDataset implements IErrorDataset {
 	}
 
 	/**
+	 * In the case where errorData is defined this is faster than
+	 * calling getError() to determine if there is error data. For instance
+	 * in plotting it is required to know for every point if there is an error.
+	 * 
+	 * @return if there is an error.
+	 */
+	@Override
+	public boolean isError() {
+		return errorData!=null;
+	}
+	/**
 	 * Get the error array from the dataset, or creates an error array if all 
 	 * values are the same
 	 * @return the dataset which contains the error information (can be null)

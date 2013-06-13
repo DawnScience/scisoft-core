@@ -30,8 +30,16 @@ import java.io.Serializable;
 public interface IErrorDataset extends IDataset {
 
 	/**
+	 * If error information is set, returns true.
+	 * Faster to call than getError() which constructs a
+	 * new dataset.
 	 * 
-	 * @return the error dataset
+	 * @return if there is error data.
+	 */
+	public boolean isError();
+	/**
+	 * 
+	 * @return the error dataset, constucting one if necessary
 	 */
 	public IDataset getError();
 	

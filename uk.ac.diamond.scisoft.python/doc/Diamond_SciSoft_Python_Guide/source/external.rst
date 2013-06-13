@@ -26,6 +26,6 @@ If blah is in your current python path then::
     ext_foo = create_function(foo, dls_module=True)
 
 The external function called can be passed any native Python objects and also
-NumPy's and ScisoftPy's ``ndarray``s. The result returned is also converted
+NumPy's and ScisoftPy's ``ndarray``\ s. The result returned is also converted
 back. Exceptions raised in the external function are also handled and re-raised
 in the calling process.

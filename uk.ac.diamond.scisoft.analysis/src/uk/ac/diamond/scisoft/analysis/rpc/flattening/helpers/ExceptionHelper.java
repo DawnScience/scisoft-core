@@ -30,6 +30,9 @@ public class ExceptionHelper extends MapFlatteningHelper<Exception> {
 	public Exception unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
 		String all = (String) thisMap.get(CONTENT);
 		int i = all.lastIndexOf(": ");
+		if (i < 0) {
+			return new Exception(all);
+		}
 		String msg = all.substring(i+2).trim();
 		all = all.substring(0, i);
 		i = all.lastIndexOf('\n');

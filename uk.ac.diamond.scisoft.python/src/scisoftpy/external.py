@@ -208,7 +208,7 @@ def pyenv(exe=None, path=None, ldpath=None):
         for p in cp:
             f = _path.join(p, t)
             if _path.exists(f):
-                pkg = f
+                pkg = p
                 break
         else:
             raise RuntimeError, 'Cannot find ScisoftPy in PYTHONPATH'

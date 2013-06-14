@@ -181,11 +181,17 @@ public class SignalTest {
 
 		c = Signal.convolve(d, k, null);
 		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
+		c = Signal.convolve(k, d, null);
+		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
 
 		c = Signal.convolveToSameShape(d, k, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 22)), c, 1e-7, 1e-9);
+		c = Signal.convolveToSameShape(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 22)), c, 1e-7, 1e-9);
 
 		c = Signal.convolveForOverlap(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
+		c = Signal.convolveForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
 
 		d = AbstractDataset.arange(19, AbstractDataset.FLOAT64);
@@ -194,12 +200,68 @@ public class SignalTest {
 
 		c = Signal.convolve(d, k, null);
 		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
+		c = Signal.convolve(k, d, null);
+		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
 
 		c = Signal.convolveToSameShape(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 21)), c, 1e-7, 1e-9);
+		c = Signal.convolveToSameShape(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 21)), c, 1e-7, 1e-9);
 
 		c = Signal.convolveForOverlap(d, k, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 19)), c, 1e-7, 1e-9);
+		c = Signal.convolveForOverlap(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 19)), c, 1e-7, 1e-9);
+	}
+
+	@Test
+	public void testCorrelateAll() {
+		AbstractDataset d = AbstractDataset.arange(20, AbstractDataset.FLOAT64);
+		AbstractDataset k = AbstractDataset.ones(new int[] {5}, AbstractDataset.FLOAT64);
+		AbstractDataset c;
+
+		AbstractDataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20, 25,
+				30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 70, 54, 37, 19});
+
+		c = Signal.correlate(d, k, null);
+		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
+
+		c = Signal.correlateToSameShape(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 22)), c, 1e-7, 1e-9);
+
+		c = Signal.correlateForOverlap(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
+
+		c = Signal.correlate(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(null, null, new int[] {-1}), c, 1e-7, 1e-9);
+
+		c = Signal.correlateToSameShape(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(21, 1, -1)), c, 1e-7, 1e-9);
+
+		c = Signal.correlateForOverlap(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(19, 3, -1)), c, 1e-7, 1e-9);
+		
+		d = AbstractDataset.arange(19, AbstractDataset.FLOAT64);
+		e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
+				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
+
+		c = Signal.correlate(d, k, null);
+		TestUtils.assertDatasetEquals(e, c, 1e-7, 1e-9);
+
+		c = Signal.correlateToSameShape(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(2, 21)), c, 1e-7, 1e-9);
+
+		c = Signal.correlateForOverlap(d, k, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 19)), c, 1e-7, 1e-9);
+
+		c = Signal.correlate(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(null, null, new int[] {-1}), c, 1e-7, 1e-9);
+
+		c = Signal.correlateToSameShape(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(20, 1, -1)), c, 1e-7, 1e-9);
+
+		c = Signal.correlateForOverlap(k, d, null);
+		TestUtils.assertDatasetEquals(e.getSlice(new Slice(18, 3, -1)), c, 1e-7, 1e-9);
 	}
 
 	@Test

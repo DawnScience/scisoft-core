@@ -55,11 +55,12 @@ public class Signal {
 	 * @return slice of c that has shape a but is offset by middle of shape b
 	 */
 	private static AbstractDataset getSame(AbstractDataset c, int[] a, int[] b) {
-		int[] start = b.clone();
-		int[] stop = a.clone();
+		int rank = a.length;
+		int[] start = new int[rank];
+		int[] stop = new int[rank];
 		for (int i = 0; i < start.length; i++) {
-			start[i] = start[i] / 2;
-			stop[i] += start[i];
+			start[i] = Math.min(a[i], b[i]) /2;
+			stop[i] = Math.max(a[i], b[i]) + start[i];
 		}
 		return c.getSlice(start, stop, null);
 	}
@@ -71,8 +72,9 @@ public class Signal {
 	 * @return slice of c that is the overlapping portion of shapes a and b
 	 */
 	private static AbstractDataset getValid(AbstractDataset c, int[] a, int[] b) {
-		int[] start = new int[a.length];
-		int[] stop = new int[a.length];
+		int rank = a.length;
+		int[] start = new int[rank];
+		int[] stop = new int[rank];
 		for (int i = 0; i < start.length; i++) {
 			int l = Math.max(a[i], b[i]) - Math.min(a[i], b[i]) + 1;
 			start[i] = (c.shape[i] - l)/2;
@@ -145,19 +147,74 @@ public class Signal {
 	 * @param f
 	 * @param g
 	 * @param axes
-	 * @return linear cross-correlation
+	 * @return linear cross-correlation (centre-shifted)
 	 */
-	public static AbstractDataset correlate(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+	public static AbstractDataset correlate(final AbstractDataset f, final AbstractDataset g, int[] axes) {
+		if (f.shape.length != g.shape.length) {
+			f.checkCompatibility(g);
+		}
+
 		AbstractDataset c = null, d = null;
 		int[] s = paddedShape(f.shape, g.shape, axes);
+		
 		c = FFT.fftn(f, s, axes);
 		d = FFT.fftn(g, s, axes);
 		c = Maths.multiply(c, Maths.conjugate(d));
 
 		AbstractDataset corr = FFT.ifftn(c, s, axes);
-		if (f.isComplex() || g.isComplex())
-			return corr;
-		return corr.real();
+		if (!f.isComplex() && !g.isComplex())
+			corr = corr.real();
+
+		int rank = s.length;
+		int alen;
+		if (axes == null) {
+			alen = rank;
+			axes = new int[alen];
+			for (int i = 0; i < alen; i++)
+				axes[i] = i;
+		} else {
+			alen = axes.length;
+			for (int i = 0; i < alen; i++) {
+				int a = axes[i];
+				if (a < 0)
+					a += rank;
+				if (a < 0 || a >= rank)
+					throw new IndexOutOfBoundsException("Axis " + a + " given is out of range [0, " + rank + ")");
+
+				axes[i] = a;
+			}
+		}
+		for (int a : axes) {
+			int l = Math.min(f.shape[a], g.shape[a]);
+			if (l == f.shape[a]) {
+				l = -l + 1;
+			}
+			corr = DatasetUtils.roll(corr, l-1, a);
+		}
+		
+		return corr;
+	}
+
+	/**
+	 * Perform a linear cross-correlation on two input datasets
+	 * @param f
+	 * @param g
+	 * @param axes
+	 * @return central portion of linear cross-correlation with same shape as f
+	 */
+	public static AbstractDataset correlateToSameShape(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+		return getSame(correlate(f, g, axes), f.shape, g.shape);
+	}
+
+	/**
+	 * Perform a linear cross-correlation on two input datasets
+	 * @param f
+	 * @param g
+	 * @param axes
+	 * @return overlapping portion of linear cross-correlation
+	 */
+	public static AbstractDataset correlateForOverlap(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+		return getValid(correlate(f, g, axes), f.shape, g.shape);
 	}
 
 	/**

@@ -321,6 +321,14 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 									if( add ){
 										if (target.endsWith( "instrument/" + nxDataName + "/" + name)){
 											name = nxDataName + "." + name;
+										} else if (datasetNames != null){
+											for(String dsname : datasetNames) {
+												String suffix = "instrument/" + dsname.replace('.', '/');
+												if (target.endsWith(suffix)) { 
+													name = dsname;
+													break;
+												}
+											}
 										}
 									}
 								} else {

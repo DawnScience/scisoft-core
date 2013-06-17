@@ -53,6 +53,15 @@ class Test(unittest.TestCase):
                     for k in range(ds.shape[2]):
                         self.assertEquals(convert(la[i][j][k]), ds[i, j, k])
 
+    def testStrAndRepr(self):
+        print 'String and repr testing'
+        a = np.arange(6, dtype=np.int32)
+        print str(a), repr(a)
+        a = np.arange(6, dtype=np.float)
+        print str(a), repr(a)
+        a = np.array([4,3.])
+        print str(a), repr(a)
+
     def testMethods(self):
         print np.arange(6, dtype=np.int32)
         print np.arange(6, dtype=np.float)
@@ -308,6 +317,14 @@ class Test(unittest.TestCase):
         self.assertEquals(1., zf[...])
         zf[()] = -3
         self.assertEquals(-3, zf[()])
+
+    def testGradient(self):
+        print 'Gradient testing'
+        z = np.arange(200.)
+        dz = np.gradient(z)
+        self.assertEquals(1, len(dz.shape))
+        self.assertEquals(200, dz.size)
+        self.assertEquals(1, dz[0])
 
 if __name__ == "__main__":
     #import sys

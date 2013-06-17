@@ -375,7 +375,7 @@ class ndarray(object):
         return self.__dataset.toString(True)
 
     def __repr__(self):
-        dt = _getdtypefromjdataset(self)
+        dt = _getdtypefromjdataset(self.__dataset)
         if dt is int_ or dt is float_ or dt is complex_:
             return 'array(' + self.__dataset.toString(True) + ')'
         return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)

@@ -894,7 +894,9 @@ public class AbstractDatasetTest {
 		assertEquals(5.0, a.getError(0), 0.001);
 		assertEquals(5.0, a.getError(50), 0.001);
 		assertEquals(5.0, a.getError(99), 0.001);
-		
+
+		assertTrue(a.hasErrors());
+
 		// now for pulling out the full error array
 		AbstractDataset error = a.getError();
 		
@@ -942,7 +944,9 @@ public class AbstractDatasetTest {
 		assertEquals(5.0, a.getError(0,0), 0.001);
 		assertEquals(5.0, a.getError(50,50), 0.001);
 		assertEquals(5.0, a.getError(99,99), 0.001);
-		
+
+		assertTrue(a.hasErrors());
+
 		// now for pulling out the full error array
 		AbstractDataset error = a.getError();
 		

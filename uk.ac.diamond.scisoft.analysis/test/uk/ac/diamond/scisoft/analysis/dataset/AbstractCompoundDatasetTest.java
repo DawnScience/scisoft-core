@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -337,6 +338,7 @@ public class AbstractCompoundDatasetTest {
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		
 		a.setError(5);
+		assertTrue(a.hasErrors());
 		
 		assertEquals(5.0, a.getErrorArray(0)[0], 0.001);
 		assertEquals(5.0, a.getErrorArray(0)[2], 0.001);
@@ -488,6 +490,5 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(9.0, ae.getElements(2).getDouble(99), 0.001);
 		assertEquals(16.0, ae.getElements(3).getDouble(99), 0.001);
 		assertEquals(25.0, ae.getElements(4).getDouble(99), 0.001);
-	
 	}
 }

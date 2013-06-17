@@ -34,22 +34,23 @@ public interface IErrorDataset extends IDataset {
 	 * Faster to call than getError() which constructs a
 	 * new dataset.
 	 * 
-	 * @return if there is error data.
+	 * @return true if there is error data.
 	 */
-	public boolean isError();
+	public boolean hasErrors();
+
 	/**
 	 * 
-	 * @return the error dataset, constucting one if necessary
+	 * @return the error dataset, constructing one if necessary
 	 */
 	public IDataset getError();
-	
+
 	/**
 	 * Get the error for a given position.
 	 * @param pos
 	 * @return error value (symmetric)
 	 */
 	public double getError(int... pos);
-	
+
 	/**
 	 * Set the error, may be a single double or a whole dataset.
 	 * @param error

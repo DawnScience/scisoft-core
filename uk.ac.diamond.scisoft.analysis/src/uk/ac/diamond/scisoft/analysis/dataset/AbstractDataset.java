@@ -3777,7 +3777,12 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 */
 	@Override
 	public boolean isError() {
-		return errorData!=null;
+		if (errorData!=null) {
+			if (errorData instanceof Number) {
+				return ((Number)errorData).intValue()!=0;
+			}
+		}
+		return false;
 	}
 	/**
 	 * Get the error array from the dataset, or creates an error array if all 

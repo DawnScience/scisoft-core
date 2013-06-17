@@ -28,7 +28,7 @@ _asIterable = _dnp.asIterable
 _toList = _dnp.toList
 _asDS = _dnp.asDataset
 
-from scisoftpy.jython.jymaths import ndarraywrapped as _npwrapped
+from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj
 import java.lang.Class as _jclass #@UnresolvedImport
 
 import function
@@ -82,6 +82,7 @@ class fitfunc(_absfn):
         self.args = args
         self.name = name
 
+    @_wrap
     def val(self, coords):
         '''Evaluate function at single set of coordinates
         '''
@@ -94,7 +95,6 @@ class fitfunc(_absfn):
         except ValueError:
             raise ValueError, 'Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues
 
-    @_npwrapped
     def makeDataset(self, *coords):
         '''Evaluate function across given coordinates
         '''
@@ -131,6 +131,7 @@ class cfitfunc(_compfn):
     def __init__(self):
         _compfn.__init__(self) #@UndefinedVariable
 
+    @_wrap
     def val(self, coords):
         '''Evaluate function at single set of coordinates
         '''
@@ -139,7 +140,6 @@ class cfitfunc(_compfn):
             v += self.getFunction(n).val(coords)
         return v
 
-    @_npwrapped
     def makeDataset(self, coords):
         '''Evaluate function across given coordinates
         '''
@@ -346,29 +346,31 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
 
     import time
     start = -time.time()
-    
+    jcoords = [ __cvt_jobj(c, copy=False, force=True) for c in coords ]
+    jdata = data._jdataset()
+
     # use the appropriate fitter for the task
     if optimizer == 'local' :
-        _fitter.simplexFit(ptol, coords, data, cfunc)
+        _fitter.simplexFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'global' :
         if len(bounds) == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
-        _fitter.geneticFit(ptol, coords, data, cfunc)
+        _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'simplex' :
-        _fitter.simplexFit(ptol, coords, data, cfunc)
+        _fitter.simplexFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'gradient' :
-        _fitter.GDFit(ptol, coords, data, cfunc)
+        _fitter.GDFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'apache_nm' :
-        _fitter.ApacheNelderMeadFit(coords, data, cfunc)
+        _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
     elif optimizer == 'apache_md' :
-        _fitter.ApacheMultiDirectionFit(coords, data, cfunc)
+        _fitter.ApacheMultiDirectionFit(jcoords, jdata, cfunc)
     elif optimizer == 'apache_cg' :
-        _fitter.ApacheConjugateGradientFit(coords, data, cfunc)
+        _fitter.ApacheConjugateGradientFit(jcoords, jdata, cfunc)
     elif optimizer == 'genetic' :
         if len(bounds) == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
-        _fitter.geneticFit(ptol, coords, data, cfunc)
-        
+        _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
+
     start += time.time()
     print "Fit took %fs" % start
 
@@ -455,6 +457,7 @@ class poly1d(object):
         raise NotImplementedError # implement Bairstow's method
     r = property(_getroots)
 
+@_wrapin
 def polyfit(x, y, deg, rcond=None, full=False):
     '''Linear least squares polynomial fit
 
@@ -479,14 +482,14 @@ def polyfit(x, y, deg, rcond=None, full=False):
     else:
         return fr.parameters
 
-@_npwrapped
+@_wrapout
 def polyval(p, x):
     '''Evaluate polynomial at given points
     If p is of length N, this function returns the value:
     p[0]*(x**N-1) + p[1]*(x**N-2) + ... + p[N-2]*x + p[N-1]
     '''
-    poly = _poly(_asDS(p, _dnp.float64).data)
-    d = _asDS(x, _dnp.float, force=True)
+    poly = _poly(_asDS(p, _dnp.float64)._jdataset())
+    d = _asDS(x, _dnp.float, force=True)._jdataset()
     return poly.makeDataset([d])
 
 # need a cspline fit function
@@ -515,7 +518,7 @@ def ellipsefit(x, y, geo=True, init=None):
     return f.parameters
 
 
-@_npwrapped
+@_wrap
 def makeellipse(p, t=None):
     '''Generate two datasets containing coordinates for points on an ellipse
 

@@ -100,7 +100,7 @@ try:
         os.remove(vdatafile)
 
 except Exception, e:
-    print >> sys.stderr, "Could not io for volumne renderer, this part of plotting will not work"
+    print >> sys.stderr, "Could not import io for volume renderer, this part of plotting will not work"
     print >> sys.stderr, e
 
 import roi

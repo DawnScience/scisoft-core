@@ -37,6 +37,7 @@ cfloat32 = lambda e : _np.dtype([('', _np.float32)]*e)
 cfloat64 = lambda e : _np.dtype([('', _np.float64)]*e)
 complex64 = _np.complex64
 complex128 = _np.complex128
+rgb = _np.dtype([('r', int16), ('g', int16), ('b', int16)])
 
 _pyint = int
 _pyfloat = float
@@ -99,7 +100,21 @@ ones = _np.ones
 
 ones_like = _np.ones_like
 
-zeros = _np.zeros
+def zeros(shape, dtype=float, order='C', elements=None):
+    '''Create a dataset filled with 0'''
+    shape = asIterable(shape)
+    if type(dtype) is _types.FunctionType:
+        if elements is not None:
+            dtype = dtype(elements)
+        else:
+            raise ValueError, 'Given data-type is a function and needs elements defining'
+    elif elements is not None:
+        raise SyntaxWarning, 'Defined elements ignored as data-type is not a function'
+
+    if dtype is rgb:
+        return ndarrayRGB(shape, dtype=dtype, order=order)
+
+    return _np.zeros(shape, dtype=dtype, order=order)
 
 zeros_like = _np.zeros_like
 
@@ -230,58 +245,56 @@ class ndarrayCL(ndarray):
         if obj is None: return
         self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
 
-class ndarrayCF(ndarray):
-    """
-    Wrap compound float dataset
-    """
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cfloat32(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
-
-class ndarrayCD(ndarray):
-    """
-    Wrap compound double dataset
-    """
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cfloat64(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+#class ndarray(_np.ndarray):
+#    def __new__(cls, shape, dtype=int16, buffer=None, offset=0, strides=None, order=None):
+#        obj = _np.ndarray.__new__(cls, shape, dtype, buffer, offset, strides, order)
+#        return obj
+#    def __array_finalize__(self, obj):
+#        if self.shape[-1] == 1:
+#            self.shape = self.shape[:-1]
+#        if obj is None: return
 
 class ndarrayRGB(ndarray):
     """
     Wrap RGB dataset
     """
-    _rgbdtype = _np.dtype([('r', int16), ('g', int16), ('b', int16)])
 
-    def __new__(cls, shape, dtype=int16, buffer=None, offset=0, strides=None, order=None):
-        shape = list(shape)
-        shape.append(3)
-        obj = _np.ndarray.__new__(cls, shape, dtype, buffer, offset, strides, order)
-        obj.elementsPerItem = 3
+    def __new__(cls, shape, dtype=rgb, buffer=None, offset=0, strides=None, order=None):
+        obj = super(ndarrayRGB, cls).__new__(cls, shape, dtype, buffer, offset, strides, order)
+        obj._oldshape = shape
         return obj
 
     def __array_finalize__(self, obj):
-        if self.dtype != ndarrayRGB._rgbdtype and self.shape[-1] == 3:
-            self.dtype = ndarrayRGB._rgbdtype
-        if self.shape[-1] == 1:
-            self.shape = self.shape[:-1]
         if obj is None: return
-        
-        if self.dtype == ndarrayRGB._rgbdtype:
-            self.elementsPerItem = getattr(obj, 'elementsPerItem', 3)
-        else:
-            self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+        self._oldshape = getattr(obj, '_oldshape', None)
+        if self._oldshape is None:
+            self._oldshape = obj.shape[:-1]
+
+#        if self.dtype != rgb and self.shape[-1] == 3:
+#            self.dtype = rgb
 #        if self.shape[-1] == 1:
 #            self.shape = self.shape[:-1]
+#        if self.dtype != rgb and self.shape[-1] == 3:
+#            self.shape = self.shape[:-1]
+
+
+#        if self.dtype == ndarrayRGB._rgbdtype:
+#            self.elementsPerItem = getattr(obj, 'elementsPerItem', 3)
+#        else:
+#            self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+#        if self.shape[-1] == 1:
+#            self.shape = self.shape[:-1]
+
+#    def __get_shape(self):
+#        return self._oldshape
+#    def __set_shape(self, *shape):
+#        if len(shape) == 1:
+#            shape = asIterable(shape[0])
+#
+#        shape.append(3)
+#        super(ndarrayRGB, self).shape = shape
+#        self._oldshape = shape
+#    shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
 
     def get_red(self, dtype=None):
         if dtype is None:
@@ -323,22 +336,6 @@ class ndarrayRGB(ndarray):
     green = property(get_green)
     blue = property(get_blue)
     grey = property(get_grey)
-
-# dictionary to map from dtype to nd array class
-__cdtype2pythoncls = { int8:ndarrayCB, int16:ndarrayCS, int32:ndarrayCI, int64:ndarrayCL,
-                     float32:ndarrayCF, float64:ndarrayCD,
-                     cint8:ndarrayCB, cint16:ndarrayCS, cint32:ndarrayCI, cint64:ndarrayCL,
-                     cfloat32:ndarrayCF, cfloat64:ndarrayCD#,
-                     #complex64:ndarrayC, complex128:ndarrayZ
-                      }
-
-def zeros(shape, dtype=float64, elements=1):
-    '''Create a dataset filled with 0'''
-    if elements != 1:
-        d = __cdtype2pythoncls[dtype](elements, asIterable(shape))
-        d.fill((0,)*elements)
-        return d
-    return _np.zeros(asIterable(shape), dtype=dtype)
 
 empty = zeros
 

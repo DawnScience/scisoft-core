@@ -35,8 +35,7 @@ from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
 from ..nexus.hdf5 import HDF5dataset as _dataset
 
-from jycore import asarray, _isslice, _getdtypefromjdataset, Sciwrap
-from jymaths import ndarraywrapped as _npwrapped
+from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap
 
 class SDS(_dataset):
     def __init__(self, dataset, attrs, parent):
@@ -83,7 +82,7 @@ class SDS(_dataset):
             return True, key
         return False, key
 
-    @_npwrapped
+    @_wrapout
     def __getitem__(self, key):
         data = self._getdata()
         if isinstance(data, _ldataset):

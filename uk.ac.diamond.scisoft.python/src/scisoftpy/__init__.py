@@ -19,21 +19,7 @@ scisoftpy is a NumPy-like wrapper around the Diamond Scisoft Analysis plugin
 ----------------------------------------------------------------------------
 
 Classes available:
-    ndarrayA - boolean dataset
-    ndarrayB - byte dataset
-    ndarrayS - short dataset
-    ndarrayI - int dataset
-    ndarrayL - long dataset
-    ndarrayF - float dataset
-    ndarrayD - double dataset
-    ndarrayCB - compound byte dataset
-    ndarrayCS - compound short dataset
-    ndarrayCI - compound int dataset
-    ndarrayCL - compound long dataset
-    ndarrayCF - compound float dataset
-    ndarrayCD - compound double dataset
-    ndarrayC - complex float dataset
-    ndarrayZ - complex double dataset
+    ndarray - dataset
     ndarrayRGB - colour RGB dataset
 
 dtypes available:
@@ -157,7 +143,7 @@ except Exception, e:
 try:
     import fft
 except Exception, e:
-    print >> sys.stderr, "Could not import plotting routines"
+    print >> sys.stderr, "Could not import fft routines"
     print >> sys.stderr, e
 
 try:

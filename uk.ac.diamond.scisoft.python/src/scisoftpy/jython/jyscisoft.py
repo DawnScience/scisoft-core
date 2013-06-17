@@ -23,10 +23,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
 import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
 
-from jymaths import ndarraywrapped as _ndwrapped
+from jycore import _wrap
+from jycore import _wrapin
 from jycore import toList as _toList
 
-@_ndwrapped
+@_wrap
 def phase(a, keepzeros=False):
     '''Calculate phase of input by dividing by amplitude
     
@@ -34,17 +35,17 @@ def phase(a, keepzeros=False):
     '''
     return _maths.phaseAsComplexNumber(a, keepzeros)
 
-@_ndwrapped
+@_wrap
 def dividez(a, b):
     '''Divide one array-like object by another with items that are zero divisors set to zero'''
     return _maths.dividez(a, b)
 
-@_ndwrapped
+@_wrap
 def cbrt(a):
     '''Cube root of input'''
     return _maths.cbrt(a)
 
-@_ndwrapped
+@_wrap
 def skewness(a, axis=None):
     '''Skewness of input'''
     if axis is None:
@@ -52,7 +53,7 @@ def skewness(a, axis=None):
     else:
         return _stats.skewness(a, axis)
 
-@_ndwrapped
+@_wrap
 def kurtosis(a, axis=None):
     '''Kurtosis of input'''
     if axis is None:
@@ -60,7 +61,7 @@ def kurtosis(a, axis=None):
     else:
         return _stats.kurtosis(a, axis)
 
-@_ndwrapped
+@_wrap
 def iqr(a, axis=None):
     '''Interquartile range of input'''
     if axis is None:
@@ -68,7 +69,7 @@ def iqr(a, axis=None):
     else:
         return _stats.iqr(a, axis)
 
-@_ndwrapped
+@_wrap
 def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
@@ -85,12 +86,12 @@ def quantile(a, q, axis=None):
             return _stats.quantile(a, axis, q)[0]
         return _stats.quantile(a, axis, q)
 
-
+@_wrapin
 def residual(a, b):
     '''Residual (sum of squared difference) of two inputs'''
     return _stats.residual(a, b)
 
-@_ndwrapped
+@_wrap
 def normalise(a, allelements=True):
     '''Normalise array so all elements lie between 0 and 1
     Keyword argument:
@@ -100,6 +101,7 @@ def normalise(a, allelements=True):
         return _dsutils.norm(a, allelements)
     return _dsutils.norm(a)
 
+@_wrapin
 def crossings(y, value, x=None):
     '''Finds the crossing points where a (poly-)line defined by a 1D y array has the given
     values and return the (linearly) interpolated index or x value if an x array is given 
@@ -108,6 +110,7 @@ def crossings(y, value, x=None):
         return _dsutils.crossings(y, value)
     return _dsutils.crossings(x, y, value)
 
+@_wrap
 def centroid(weights, coords=None):
     '''Calculate the centroid of an array with its (half) indexes or
     coordinates (list of 1D arrays), if given, and returns it as a list

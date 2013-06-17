@@ -21,9 +21,9 @@ Random number generator package
 import uk.ac.diamond.scisoft.analysis.dataset.Random as _random
 
 from jycore import asIterable as _asiter
-from jymaths import ndarraywrapped as _npwrapped
+from jycore import _wrapout
 
-@_npwrapped
+@_wrapout
 def rand(*shape):
     '''Return dataset of given shape (or a single number) with samples taken
     from a uniform distribution between 0 and 1
@@ -32,7 +32,7 @@ def rand(*shape):
         return _random.rand([1]).getObject([0])
     return _random.rand(shape)
 
-@_npwrapped
+@_wrapout
 def randn(*shape):
     '''Return dataset of given shape (or a single number) with samples taken
     from a normal distribution of zero mean and unit variance
@@ -50,7 +50,7 @@ def randint(low, high=None, size=None):
         low = 0
     return random_integers(low, high-1, size)
 
-@_npwrapped
+@_wrapout
 def random_integers(low, high=None, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from a discrete distribution of integers in the range [low, high]
@@ -62,7 +62,7 @@ def random_integers(low, high=None, size=None):
         return _random.random_integers(low, high, [1]).getObject([0])
     return _random.random_integers(low, high, _asiter(size))
 
-@_npwrapped
+@_wrapout
 def exponential(scale=1.0, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from an exponential distribution of parameter scale
@@ -71,7 +71,7 @@ def exponential(scale=1.0, size=None):
         return _random.exponential(scale, [1]).getObject([0])
     return _random.exponential(scale, _asiter(size))
 
-@_npwrapped
+@_wrapout
 def poisson(lam=1.0, size=None):
     '''Return dataset of given shape (or a single number) with samples taken
     from a Poisson distribution of parameter lam

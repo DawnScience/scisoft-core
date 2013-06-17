@@ -15,8 +15,8 @@
 ###
 
 import uk.ac.diamond.scisoft.analysis.roi as _roi
-from jymaths import ndarraywrapped as _npwrapped
 from jycore import asDataset as _asDs
+from jycore import _wrap
 
 _iroi = _roi.IROI
 
@@ -38,7 +38,7 @@ ellipse_list = _roi.EllipticalROIList
 
 ROIProfile = _roi.ROIProfile
 
-@_npwrapped
+@_wrap
 def profile(data, roi, step=None, mask=None):
     '''Calculate a profile with given roi (a step value is required for a linear ROI)
     mask is used when clipping compensation is set true (for rectangular and sector ROI)

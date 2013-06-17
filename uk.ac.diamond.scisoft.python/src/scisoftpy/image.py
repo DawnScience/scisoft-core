@@ -20,13 +20,14 @@ Image processing package
 
 import uk.ac.diamond.scisoft.analysis.dataset.Image as _image
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian as _mapshift
-from jython.jymaths import ndarraywrapped as _npwrapped
+from jython.jycore import _wrap
 
+@_wrap
 def findshift(a, b, rect=None):
     '''Find translation vector from b to a using rectangular ROI rect'''
     return _image.findTranslation2D(a, b, rect)
 
-@_npwrapped
+@_wrap
 def shiftimage(image, shift):
     '''Translate an image by specified shift'''
     sfn = _mapshift(shift[0], shift[1])
@@ -35,7 +36,7 @@ def shiftimage(image, shift):
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator as _bicubic
 
-@_npwrapped
+@_wrap
 def bicubic(image, newshape):
     '''Make a new image which has the new shape by taking the bicubic interpolation of the input image'''
     bicube = _bicubic(newshape)

@@ -360,10 +360,12 @@ class ImageSaver(PythonSaver):
         if isinstance(d, _RGB):
             s = list(d.shape)
             s.append(3)
+#            c = _core.ndarray(s, buffer=d.data, dtype=_core._uint8)
             c = _core.zeros(s, dtype=_core._uint8)
-            c[...,0] = d['r']
-            c[...,1] = d['g']
-            c[...,2] = d['b']
+#            print d.red
+            c[...,0] = d.get_red(dtype=_core._uint8)
+            c[...,1] = d.get_green(dtype=_core._uint8)
+            c[...,2] = d.get_blue(dtype=_core._uint8)
             d = c
         im = _im.fromarray(d)
         im.save(self.name)
@@ -401,8 +403,7 @@ class TIFFfileLoader(PythonLoader):
             d = p.asarray()
             if p.is_rgb:
                 # convert to an rgb dataset
-                from pycore import ndarrayRGB
-                d = _core.asarray(d, dtype=_core.int16).view(ndarrayRGB)
+                d = _core.asarray(d, dtype=_core.int16).view(_RGB)
 
                 if not self.ascolour:
                     d = d.get_grey()

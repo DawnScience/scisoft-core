@@ -25,32 +25,71 @@ except:
     print >> sys.stderr, "Could not import Plot Window Manager"
     _manager = None
 
+from jycore import _wrapin
+
 plot_clear = _plotter.clearPlot
-plot_line = _plotter.plot
-plot_addline = _plotter.addPlot
-plot_updateline = _plotter.updatePlot
-plot_stack = _plotter.stackPlot
-plot_updatestack = _plotter.updateStackPlot
-plot_image = _plotter.imagePlot
-plot_images = _plotter.imagesPlot
-plot_surface = _plotter.surfacePlot
-plot_points2d = _plotter.scatter2DPlot
-plot_updatepoints2d = _plotter.scatter2DPlotOver
-plot_points3d = _plotter.scatter3DPlot
-plot_updatepoints3d = _plotter.scatter3DPlotOver
+
+@_wrapin
+def plot_line(*arg, **kwarg):
+    _plotter.plot(*arg, **kwarg)
+
+@_wrapin
+def plot_addline(*arg, **kwarg):
+    _plotter.addPlot(*arg, **kwarg)
+
+@_wrapin
+def plot_updateline(*arg, **kwarg):
+    _plotter.updatePlot(*arg, **kwarg)
+
+@_wrapin
+def plot_stack(*arg, **kwarg):
+    _plotter.stackPlot(*arg, **kwarg)
+
+@_wrapin
+def plot_updatestack(*arg, **kwarg):
+    _plotter.updateStackPlot(*arg, **kwarg)
+
+@_wrapin
+def plot_image(*arg, **kwarg):
+    _plotter.imagePlot(*arg, **kwarg)
+
+@_wrapin
+def plot_images(*arg, **kwarg):
+    _plotter.imagesPlot(*arg, **kwarg)
+
+@_wrapin
+def plot_surface(*arg, **kwarg):
+    _plotter.surfacePlot(*arg, **kwarg)
+
+@_wrapin
+def plot_points2d(*arg, **kwarg):
+    _plotter.scatter2DPlot(*arg, **kwarg)
+
+@_wrapin
+def plot_updatepoints2d(*arg, **kwarg):
+    _plotter.scatter2DPlotOver(*arg, **kwarg)
+
+@_wrapin
+def plot_points3d(*arg, **kwarg):
+    _plotter.scatter3DPlot(*arg, **kwarg)
+@_wrapin
+def plot_updatepoints3d(*arg, **kwarg):
+    _plotter.scatter3DPlotOver(*arg, **kwarg)
 
 plot_createaxis = _plotter.createAxis
 plot_removeaxis = _plotter.removeAxis
 plot_setactivexaxis = _plotter.setActiveXAxis
 plot_setactiveyaxis = _plotter.setActiveYAxis
 
+@_wrapin
+def plot_scanforimages(*arg, **kwarg):
+    _plotter.scanForImages(*arg, **kwarg)
+
 from uk.ac.diamond.scisoft.analysis.plotserver import AxisOperation as _axisop
 axis_top = _axisop.TOP
 axis_bottom = _axisop.BOTTOM
 axis_left = _axisop.LEFT
 axis_right = _axisop.RIGHT
-
-plot_scanforimages = _plotter.scanForImages
 
 from jyio import h5manager as _h5mgr
 

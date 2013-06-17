@@ -20,35 +20,45 @@ Signal processing package
 
 import uk.ac.diamond.scisoft.analysis.dataset.Signal as _signal
 
-from jymaths import ndarraywrapped as _npwrapped
+from jycore import _wrap
 from jycore import asfarray as _asf
 
-@_npwrapped
+@_wrap
 def correlate(f, g=None, mode='valid', old_behavior=False, axes=None):
     '''Perform a cross (or auto if g is None) correlation along given axes'''
     if old_behavior:
         raise NotImplementedError, 'Not implemented'
 
+    f = _asf(f)._jdataset()
     if g is None:
-        return _signal.correlate(_asf(f), axes)
-    return _signal.correlate(_asf(f), _asf(g), axes)
+        g = f
+    else:
+        g = _asf(g)._jdataset()
 
-@_npwrapped
+    if mode == 'same':
+        return _signal.correlateToSameShape(f, g, axes)
+    elif mode == 'valid':
+        return _signal.correlateForOverlap(f, g, axes)
+    elif mode == 'full':
+        return _signal.correlate(f, g, axes)
+    raise ValueError, 'mode keyword has unrecognised value'
+
+@_wrap
 def phasecorrelate(f, g, axes=None, includeinv=False):
     '''Perform a phase cross correlation along given axes (can include inverse of cross-power spectrum)'''
-    ans = _signal.phaseCorrelate(_asf(f), _asf(g), axes, includeinv)
+    ans = _signal.phaseCorrelate(_asf(f)._jdataset(), _asf(g)._jdataset(), axes, includeinv)
     if includeinv:
         return ans[0], ans[1]
     else:
         return ans[0]
 
-@_npwrapped
+@_wrap
 def convolve(f, g, mode='full', axes=None):
     '''Perform a convolution along given axes'''
     if mode == 'same':
-        return _signal.convolveToSameShape(_asf(f), _asf(g), axes)
+        return _signal.convolveToSameShape(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
     elif mode == 'valid':
-        return _signal.convolveForOverlap(_asf(f), _asf(g), axes)
+        return _signal.convolveForOverlap(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
     elif mode == 'full':
-        return _signal.convolve(_asf(f), _asf(g), axes)
+        return _signal.convolve(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
     raise ValueError, 'mode keyword has unrecognised value'

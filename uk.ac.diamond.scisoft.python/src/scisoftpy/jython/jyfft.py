@@ -19,9 +19,9 @@
 '''
 
 import uk.ac.diamond.scisoft.analysis.dataset.FFT as _fft
-from jymaths import ndarraywrapped as _npwrapped
+from jycore import _wrap
 
-@_npwrapped
+@_wrap
 def fft(a, n=None, axis=-1):
     '''Perform 1D FFT along given axis'''
     axis = a.checkAxis(axis)
@@ -29,7 +29,7 @@ def fft(a, n=None, axis=-1):
         n = a.shape[axis]
     return _fft.fft(a, n, axis)
 
-@_npwrapped
+@_wrap
 def ifft(a, n=None, axis=-1):
     '''Perform inverse 1D FFT along given axis'''
     axis = a.checkAxis(axis)
@@ -37,27 +37,27 @@ def ifft(a, n=None, axis=-1):
         n = a.shape[axis]
     return _fft.ifft(a, n, axis)
 
-@_npwrapped
+@_wrap
 def fft2(a, s=None, axes=(-2,-1)):
     '''Perform 2D FFT of shape s along given axes'''
     return _fft.fft2(a, s, axes)
 
-@_npwrapped
+@_wrap
 def ifft2(a, s=None, axes=(-2,-1)):
     '''Perform inverse 2D FFT of shape s along given axes'''
     return _fft.ifft2(a, s, axes)
 
-@_npwrapped
+@_wrap
 def fftn(a, s=None, axes=None):
     '''Perform nD FFT of shape s along given axes'''
     return _fft.fftn(a, s, axes)
 
-@_npwrapped
+@_wrap
 def ifftn(a, s=None, axes=None):
     '''Perform inverse nD FFT of shape s along given axes'''
     return _fft.ifftn(a, s, axes)
 
-@_npwrapped
+@_wrap
 def fftshift(a, axes=None):
     '''Swap half-spaces
     
@@ -68,7 +68,7 @@ def fftshift(a, axes=None):
     '''
     return _fft.fftshift(a, axes)
 
-@_npwrapped
+@_wrap
 def ifftshift(a, axes=None):
     '''Swaps back half-spaces
     
@@ -79,7 +79,7 @@ def ifftshift(a, axes=None):
     '''
     return _fft.ifftshift(a, axes)
 
-@_npwrapped
+@_wrap
 def fftfreq(n, d=1.0):
     '''Sample frequencies for DFT
     n -- number of samples

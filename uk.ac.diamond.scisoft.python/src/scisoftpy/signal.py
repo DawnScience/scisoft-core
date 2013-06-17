@@ -23,4 +23,3 @@ if os.name == 'java':
     from jython.jysignal import * #@UnusedWildImport
 else:
     from python.pysignal import * #@UnusedWildImport
-

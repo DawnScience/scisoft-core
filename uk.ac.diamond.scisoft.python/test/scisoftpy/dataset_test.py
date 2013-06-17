@@ -79,13 +79,13 @@ class Test(unittest.TestCase):
         print "test ones"
         dds = np.ones(3, np.float)
         if isjava:
-            self.assertEquals(1, dds.elementsPerItem)
+            self.assertEquals(1, dds.dtype.elements)
         self.assertEquals(1, dds.ndim)
         self.assertEquals(3, dds.shape[0])
         self.assertEquals(1, dds[0])
         dds = np.ones((2,3), np.float)
         if isjava:
-            self.assertEquals(1, dds.elementsPerItem)
+            self.assertEquals(1, dds.dtype.elements)
         self.assertEquals(2, dds.ndim)
         self.assertEquals(2, dds.shape[0])
         self.assertEquals(3, dds.shape[1])
@@ -93,15 +93,15 @@ class Test(unittest.TestCase):
 
     def testCompound(self): # make new datasets with ones
         print "test compound"
-        dds = np.ndarrayCB(3, (3,4))
-        self.assertEquals(3, dds.itemsize, msg="itemsize incorrect")
-        dds = np.ndarrayRGB((3,5))
+#        dds = np.ndarrayCB(3, (3,4))
+#        self.assertEquals(3, dds.itemsize, msg="itemsize incorrect")
+        dds = np.zeros((3,5), np.rgb)
         print type(dds), dds.dtype, dds.shape
         self.assertEquals(6, dds.itemsize, msg="itemsize incorrect")
-        dds = dds.get_red()
+        dds = dds.red
         print type(dds), dds.dtype, dds.shape
         self.assertEquals(2, dds.itemsize, msg="itemsize incorrect")
-        dds = np.zeros((3,4), np.cint32, 2)
+        dds = np.zeros((3,4), np.cint32, elements=2)
         print type(dds), dds.dtype, dds.shape
         self.assertEquals(8, dds.itemsize, msg="itemsize incorrect")
         dds = np.zeros((3,4), np.cint32(2))
@@ -115,7 +115,7 @@ class Test(unittest.TestCase):
         self.assertEquals(dds, self.dz)
         self.assertEquals(dds.item(), self.dz)
         if isjava:
-            self.assertEquals(1, dds.elementsPerItem)
+            self.assertEquals(1, dds.dtype.elements)
         self.assertEquals(8, dds.itemsize)
         dds = np.array(self.da, np.float)
         self.checkitems(self.da, dds)
@@ -133,9 +133,8 @@ class Test(unittest.TestCase):
         zds = np.array([self.zz, self.zz], np.complex)
         self.assertEquals(self.zz, zds[0])
         self.assertRaises(ValueError, zds.item)
-
         if isjava:
-            self.assertEquals(2, zds.elementsPerItem)
+            self.assertEquals(1, zds.dtype.elements)
         self.assertEquals(16, zds.itemsize)
         zds = np.array(self.za, np.complex)
         self.checkitems(self.za, zds)
@@ -514,32 +513,35 @@ class Test(unittest.TestCase):
             import jarray
             print "test copy items"
             da = np.array(self.db, np.float)
-            ta = np.zeros(da.getShape())
-            da.copyItemsFromAxes(None, None, ta)
-            print ta.getBuffer()
+            jda = da._jdataset()
+            ta = np.zeros(da.shape)
+            jda.copyItemsFromAxes(None, None, ta._jdataset())
+            print ta.data
             ta = np.array(self.m)
-            da.setItemsOnAxes(None, None, ta.getBuffer())
-            print da.getBuffer()
+            jda.setItemsOnAxes(None, None, ta.data)
+            print da.data
     
             print '2'
             da = np.array(self.db, np.float)
+            jda = da._jdataset()
             ta = np.zeros((2,))
             axes = [ True, False ]
-            da.copyItemsFromAxes(None, axes, ta)
-            print ta.getBuffer()
+            jda.copyItemsFromAxes(None, axes, ta._jdataset())
+            print ta.data
             ta = jarray.array([ -2, -3.4 ], 'd')
-            da.setItemsOnAxes(None, axes, ta)
-            print da.getBuffer()
+            jda.setItemsOnAxes(None, axes, ta)
+            print da.data
     
             print '3'
             da = np.array(self.db, np.float)
+            jda = da._jdataset()
             ta = np.zeros((2,))
             axes = [ False, True ]
-            da.copyItemsFromAxes(None, axes, ta)
-            print ta.getBuffer()
+            jda.copyItemsFromAxes(None, axes, ta._jdataset())
+            print ta.data
             ta = jarray.array([ -2.5, -3.4 ], 'd')
-            da.setItemsOnAxes(None, axes, ta)
-            print da.getBuffer()
+            jda.setItemsOnAxes(None, axes, ta)
+            print da.data
 
     def testDatasetSlice(self):
         print 'test slicing with start and stop'
@@ -692,13 +694,17 @@ class Test(unittest.TestCase):
 
     def testInteger(self):
         print 'test integer get and set'
-        tm = np.array(self.mm)
+        tm = np.array(self.mm).flatten()
 
+#        self.mm = [ [[0., 2.], [6., 12.]], [[20., 30.], [42., 56.]] ]
         d = tm[np.array([2, 4, 7])]
         self.checkitems([ 6., 20., 56. ], d)
+#        d = tm[np.array([2, 4, 7])]
+#        self.checkitems([ 6., 20., 56. ], d)
 
         tm[np.array([3, 4, 5, 6, 7])] = -2.3
-        self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
+#        self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
+        self.checkitems([ 0., 2., 6., -2.3, -2.3, -2.3, -2.3, -2.3 ], tm)
 
     def testSelect(self):
         print 'test select'

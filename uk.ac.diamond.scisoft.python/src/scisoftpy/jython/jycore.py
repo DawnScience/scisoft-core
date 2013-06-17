@@ -22,20 +22,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _abstractds
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset as _booleands
-import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset as _byteds
-import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset as _shortds
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset as _integerds
-import uk.ac.diamond.scisoft.analysis.dataset.LongDataset as _longds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundByteDataset as _compoundbyteds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundShortDataset as _compoundshortds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundIntegerDataset as _compoundintegerds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundLongDataset as _compoundlongds
-import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset as _floatds
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset as _doubleds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundFloatDataset as _compoundfloatds
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundDoubleDataset as _compounddoubleds
 import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset as _rgbds
-import uk.ac.diamond.scisoft.analysis.dataset.ComplexFloatDataset as _complexfloatds
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset as _complexdoubleds
 
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
@@ -46,8 +34,6 @@ from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 import org.apache.commons.math.complex.Complex as _jcomplex #@UnresolvedImport
 
 import Jama.Matrix as _matrix #@UnresolvedImport
-
-import jymaths as _maths
 
 import types as _types
 
@@ -161,17 +147,68 @@ def Sciwrap(a):
     """
     if a is None:
         raise ValueError, "No value given"
+    if isinstance(a, _jcomplex): # convert to complex
+        return complex(a.getReal(), a.getImaginary())
     if isinstance(a, ndarray):
         return a
     if isinstance(a, _rgbds):
-        return ndarrayRGB(a, True)
-    if isinstance(a, _abscompoundds):
-        return __cdtype2jythoncls[a.getDtype()](a, True)
+        return ndarrayRGB(buffer=a)
     if isinstance(a, _abstractds):
-        return __dtype2jythoncls[a.getDtype()](a, True)
+        return ndarray(buffer=a)
     return a
 
-_ndwrapped = _maths.ndarraywrapped
+def _jinput(arg): # strip for java input
+    if type(arg) is _types.ListType:
+        return [ _arg_strip(a) for a in arg ]
+    elif type(arg) is _types.TupleType:
+        return tuple([ _arg_strip(a) for a in arg ])
+    elif isinstance(arg, _jlist):
+        return [ _arg_strip(a) for a in arg ]
+    elif type(arg) is _arraytype:
+        return [ _arg_strip(a) for a in arg if a is not None]
+    return _arg_strip(arg)
+
+def _arg_strip(a):
+    if isinstance(a, ndarray):
+        return a._jdataset()
+    elif isinstance(a, _abstractds):
+        return a
+    return a
+
+from decorator import decorator as _decorator
+
+def _joutput(result): # wrap java output
+    if type(result) is _types.ListType:
+        return [ Sciwrap(r) for r in result ]
+    elif type(result) is _types.TupleType:
+        return tuple([ Sciwrap(r) for r in result ])
+    elif isinstance(result, _jlist):
+        return [ Sciwrap(r) for r in result ]
+    elif type(result) is _arraytype:
+        return [ Sciwrap(r) for r in result if r is not None ]
+    return Sciwrap(result)
+
+@_decorator
+def _wrap(func, *args, **kwargs): # strip input and wrap output
+    nargs = [ _jinput(a) for a in args ]
+    nkwargs = dict()
+    for k,v in kwargs.iteritems():
+        nkwargs[k] = _arg_strip(v)
+
+    return _joutput(func(*nargs, **nkwargs))
+
+@_decorator
+def _wrapin(func, *args, **kwargs): # strip input
+    nargs = [ _jinput(a) for a in args ]
+    nkwargs = dict()
+    for k,v in kwargs.iteritems():
+        nkwargs[k] = _arg_strip(v)
+
+    return func(*nargs, **nkwargs)
+
+@_decorator
+def _wrapout(func, *args, **kwargs): # wrap output only
+    return _joutput(func(*args, **kwargs))
 
 def asIterable(items):
     """
@@ -198,9 +235,7 @@ def scalarToPython(ascalar):
     return ascalar # there is no array scalars at the moment
 
 def fromDS(data):
-    '''Convert from a DataSet'''
-#    if isinstance(data, _dataset):
-#        return Sciwrap(_dataset.convertToDoubleDataset())
+    '''Convert from a Dataset'''
     if isinstance(data, _abstractds):
         return Sciwrap(data)
     return data
@@ -211,6 +246,9 @@ def asDataset(data, dtype=None, force=False):
     """
 #    if isinstance(data, _dataset):
 #        return Sciwrap(_dataset.convertToDoubleDataset())
+    if isinstance(data, ndarray):
+        return data
+
     if isinstance(data, _abstractds):
         if dtype is None or data.dtype == dtype:
             return data
@@ -225,37 +263,39 @@ def asDataset(data, dtype=None, force=False):
                 return _jcomplex(data.real, data.imag)
             return data
 
-    return array(data, dtype)
+    return ndarray(buffer=data, dtype=dtype, copy=False)
 
-asarray = asDataset
-asanyarray = asDataset
+def asarray(data, dtype=None):
+    return asDataset(data, dtype=dtype, force=True)
 
-@_ndwrapped
+asanyarray = asarray
+
+@_wrap
 def asfarray(data, dtype=None):
-    data = asDataset(data)
-    if data.isComplex():
+    jdata = __cvt_jobj(data, copy=False, force=True)
+    if jdata.isComplex():
         raise TypeError, 'can\'t convert complex to float'
-    if data.hasFloatingPointElements():
-        return data
+    if jdata.hasFloatingPointElements():
+        return jdata
 
-    dt = _getdtypefromjdataset(data)
+    dt = _getdtypefromjdataset(jdata)
     if dtype is not None:
         dtype = _translatenativetype(dtype)
     if dtype is None or dtype.value not in _floattype:
         if dt.elements == 1:
-            return data.cast(_abstractds.FLOAT64)
-        return data.cast(_abstractds.ARRAYFLOAT64)
-    return data.cast(dtype.value)
+            return jdata.cast(_abstractds.FLOAT64)
+        return jdata.cast(_abstractds.ARRAYFLOAT64)
+    return jdata.cast(dtype.value)
 
 def asDatasetList(dslist):
     """
-    Used to coerce a list of DataSets to a list of datasets
+    Used to coerce a list of Datasets to a list of datasets
     """
     return [ fromDS(d) for d in asIterable(dslist) ]
 
 def asDatasetDict(dsdict):
     """
-    Used to coerce a dictionary of DataSets to a dictionary of datasets
+    Used to coerce a dictionary of Datasets to a dictionary of datasets
     """
     rdict = {}
     for k in dsdict:
@@ -280,68 +320,129 @@ def _isslice(rank, shape, key):
             return True
     return False
 
-import jycomparisons as _cmps
+def __cvt_jobj(obj, dtype=None, copy=True, force=False):
+    '''Convert object to java object'''
+    if isinstance(obj, ndarray):
+        obj = obj._jdataset()
+
+    if isinstance(obj, _abstractds):
+        if copy:
+            if dtype is None or _translatenativetype(dtype).value == obj.dtype:
+                return obj.clone()
+            else:
+                return obj.cast(_translatenativetype(dtype).value)
+        else:
+            if dtype is None:
+                return obj
+            return obj.cast(_translatenativetype(dtype).value)
+
+    if not isinstance(obj, list):
+        if isinstance(obj, _matrix): # cope with JAMA matrices
+            if dtype is None:
+                dtype = float64
+            obj = obj.getArray()
+
+    obj = _cvt2j(obj)
+    try:
+        iter(obj)
+    except:
+        if not force:
+            if isinstance(obj, complex):
+                return _jcomplex(obj.real, obj.imag)
+            return obj
+
+    if dtype is None:
+        dtype = _getdtypefromobj(obj)
+    else:
+        dtype = _translatenativetype(dtype)
+
+    return _abstractds.array(obj, dtype.value)
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
 _jtrue = _jbool(1)
 _jfalse = _jbool(0)
 
-class ndarray:
+import jymaths as _maths
+import jycomparisons as _cmps
+
+class ndarray(object):
     """
     Class to hold special methods and non-overloading names
     """
 
     def __str__(self):
-        return self.toString(True)
+        return self.__dataset.toString(True)
+
     def __repr__(self):
         dt = _getdtypefromjdataset(self)
         if dt is int_ or dt is float_ or dt is complex_:
-            return 'array(' + self.toString(True) + ')'
-        return 'array(' + self.toString(True) + ', dtype=%s)' % (dt,)
+            return 'array(' + self.__dataset.toString(True) + ')'
+        return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)
+        return self.__dataset.toString(True)
+
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
+        # check what buffer is and convert if necessary
+        if buffer is not None:
+            self.__dataset = __cvt_jobj(buffer, dtype=dtype, copy=copy, force=True)
+            if shape is not None:
+                self.__dataset.setShape(asIterable(shape))
+        else:
+            dtype = _translatenativetype(dtype)
+            self.__dataset = _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
+
+    def _jdataset(self): # private access to Java dataset class
+        return self.__dataset
 
     def __add__(self, o):
         return _maths.add(self, asDataset(o))
     def __radd__(self, o):
         return _maths.add(self, asDataset(o))
     def __iadd__(self, o):
-        return self.iadd(asDataset(o, self.dtype))
+        self.__dataset.iadd(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __sub__(self, o):
         return _maths.subtract(self, asDataset(o))
     def __rsub__(self, o):
         return _maths.subtract(asDataset(o), self)
     def __isub__(self, o):
-        return self.isubtract(asDataset(o, self.dtype))
+        self.__dataset.isubtract(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __mul__(self, o):
         return _maths.multiply(self, asDataset(o))
     def __rmul__(self, o):
         return _maths.multiply(self, asDataset(o))
     def __imul__(self, o):
-        return self.imultiply(asDataset(o, self.dtype))
+        self.__dataset.imultiply(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __div__(self, o):
         return _maths.divide(self, asDataset(o))
     def __rdiv__(self, o):
         return _maths.divide(asDataset(o), self)
     def __idiv__(self, o):
-        return self.idivide(asDataset(o, self.dtype))
+        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __truediv__(self, o):
         return _maths.divide(self, asDataset(o))
     def __itruediv__(self, o):
-        return self.idivide(asDataset(o, self.dtype))
+        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __floordiv__(self, o):
         return _maths.floor_divide(self, asDataset(o))
     def __ifloordiv__(self, o):
-        return self.ifloordivide(asDataset(o, self.dtype))
+        self.__dataset.ifloordivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __mod__(self, o):
         return _maths.remainder(self, asDataset(o))
     def __imod__(self, o):
-        return self.iremainder(asDataset(o, self.dtype))
+        self.__dataset.iremainder(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __neg__(self):
         return _maths.negative(self)
@@ -350,12 +451,13 @@ class ndarray:
     def __pow__(self, o):
         return _maths.power(self, asDataset(o))
     def __ipow__(self, o):
-        return self.ipower(asDataset(o, self.dtype))
+        self.__dataset.ipower(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
 
     def __eq__(self, o):
-        e = _cmps.equal(self, asDataset(o))
+        e = _cmps.equal(self.__dataset, asDataset(o, force=True)._jdataset())
         if self.size == 1:
-            return e.getBoolean([])
+            return e._jdataset().getBoolean([])
         return e
 
     def __ne__(self, o):
@@ -379,15 +481,15 @@ class ndarray:
             return self.shape[0]
         return 0
 
-    @_ndwrapped
+    @_wrapout
     def __copy__(self):
-        return self.clone()
+        return self.__dataset.clone()
 
     def _toslice(self, key):
         '''Transform key to proper slice if necessary
         '''
-        r = self.rank
-        if r == 1:
+        rank = self.ndim
+        if rank == 1:
             if isinstance(key, list) and len(key) == 1:
                 key = key[0]
             if isinstance(key, slice) or key is Ellipsis:
@@ -398,39 +500,46 @@ class ndarray:
                 return False, key
             return False, (key,)
 
-        if _isslice(r, self.shape, key):
+        if _isslice(rank, self.shape, key):
             return True, key
         return False, key
 
-    @_ndwrapped
+    @_wrapout
     def __getitem__(self, key):
-        if isinstance(key, _booleands):
-            return self.getByBoolean(key)
-        if isinstance(key, _integerds):
-            return self.getByIndex(key)
-
+        if isinstance(key, ndarray):
+            key = key._jdataset()
+            if isinstance(key, _booleands):
+                return self.__dataset.getByBoolean(key)
+            if isinstance(key, _integerds):
+                return self.__dataset.getByIndex(key)
+# FIXME add integers indexing
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                return _getslice(self, key)
-            return self.getObject(key)
+                return _getslice(self.__dataset, key)
+            return self.__dataset.getObject(key)
         except _jarrayindex_exception:
             raise IndexError
 
     def __setitem__(self, key, value):
         value = fromDS(value)
-        if isinstance(key, _booleands):
-            return self.setByBoolean(value, key)
-        if isinstance(key, _integerds):
-            return self.setByIndex(value, key)
+        if isinstance(value, ndarray):
+            value = value._jdataset()
+
+        if isinstance(key, ndarray):
+            key = key._jdataset()
+            if isinstance(key, _booleands):
+                return self.__dataset.setByBoolean(value, key)
+            if isinstance(key, _integerds): #FIXME
+                return self.__dataset.setByIndex(value, key)
 
         isslice, key = self._toslice(key)
         try:
             if isslice:
-                _setslice(self, value, key)
+                _setslice(self.__dataset, value, key)
                 return self
             value = _cvt2j(value)
-            return self.set(value, key)
+            return self.__dataset.set(value, key)
         except _jarrayindex_exception:
             raise IndexError
 
@@ -439,1412 +548,317 @@ class ndarray:
             iterator = d.getIterator()
             while iterator.hasNext():
                 yield d.getObjectAbs(iterator.index)
-        return ndgen(self)
+        return ndgen(self.__dataset)
 
     def conj(self):
         return _maths.conj(self)
 
-    @_ndwrapped
+    @_wrapout
     def ravel(self):
-        return self.flatten()
+        return self.__dataset.flatten()
 
-    @_ndwrapped
+    @_wrapout
     def sum(self, axis=None, dtype=None): #@ReservedAssignment
         if dtype is None:
-            dtval = self.getDtype()
+            dtval = self.__dataset.getDtype()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:
-            return self.typedSum(dtval)
+            return self.__dataset.typedSum(dtval)
         else:
-            return self.typedSum(dtval, axis)
+            return self.__dataset.typedSum(dtval, axis)
 
-    @_ndwrapped
+    @_wrapout
     def prod(self, axis=None, dtype=None):
         if dtype is None:
-            dtval = self.getDtype()
+            dtval = self.__dataset.getDtype()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:
-            return self.typedProduct(dtval)
+            return self.__dataset.typedProduct(dtval)
         else:
-            return self.typedProduct(dtval, axis)
+            return self.__dataset.typedProduct(dtval, axis)
 
-    @_ndwrapped
+    @_wrapout
     def var(self, axis=None, ddof=0):
         if ddof == 1:
             if axis is None:
-                return self.variance()
+                return self.__dataset.variance()
             else:
-                return self.variance(axis)
+                return self.__dataset.variance(axis)
         else:
             if axis is None:
-                v = self.variance()
-                n = self.getStoredValue("stats").getN()
+                v = self.__dataset.variance()
+                n = self.__dataset.count()
             else:
-                v = Sciwrap(self.variance(axis))
-                n = Sciwrap(self.getStoredValue("count-%d" % axis))
+                v = Sciwrap(self.__dataset.variance(axis))
+                n = Sciwrap(self.__dataset.count(axis))
             f = (n - 1.)/(n - ddof)
             return v * f
 
-    @_ndwrapped
+    @_wrapout
     def std(self, axis=None, ddof=0):
         if ddof == 1:
             if axis is None:
-                return self.stdDeviation()
+                return self.__dataset.stdDeviation()
             else:
-                return self.stdDeviation(axis)
+                return self.__dataset.stdDeviation(axis)
         else:
             if axis is None:
-                s = self.stdDeviation()
-                n = self.getStoredValue("stats").getN()
+                s = self.__dataset.stdDeviation()
+                n = self.__dataset.count()
             else:
-                s = Sciwrap(self.stdDeviation(axis))
-                n = Sciwrap(self.getStoredValue("count-%d" % axis))
+                s = Sciwrap(self.__dataset.stdDeviation(axis))
+                n = Sciwrap(self.__dataset.count(axis))
             import math as _mm
             f = _mm.sqrt((n - 1.)/(n - ddof))
             return s * f
 
-    @_ndwrapped
+    @_wrapout
     def rms(self, axis=None):
         if axis is None:
-            return self.rootMeanSquare()
+            return self.__dataset.rootMeanSquare()
         else:
-            return self.rootMeanSquare(axis)
+            return self.__dataset.rootMeanSquare(axis)
 
-    @_ndwrapped
+    @_wrapout
     def ptp(self, axis=None):
         if axis is None:
-            return self.peakToPeak()
+            return self.__dataset.peakToPeak()
         else:
-            return self.peakToPeak(axis)
+            return self.__dataset.peakToPeak(axis)
 
     def clip(self, a_min, a_max):
         return _maths.clip(self, a_min, a_max)
 
-    @_ndwrapped
+    @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
-                return self.argMax(_jtrue)
-            return self.argMax()
+                return self.__dataset.argMax(_jtrue)
+            return self.__dataset.argMax()
         else:
             if ignore_nans:
-                return self.argMax(_jtrue, axis)
-            return self.argMax(axis)
+                return self.__dataset.argMax(_jtrue, axis)
+            return self.__dataset.argMax(axis)
 
-    @_ndwrapped
+    @_wrapout
     def argmin(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
-                return self.argMin(_jtrue)
-            return self.argMin()
+                return self.__dataset.argMin(_jtrue)
+            return self.__dataset.argMin()
         else:
             if ignore_nans:
-                return self.argMin(_jtrue, axis)
-            return self.argMin(axis)
+                return self.__dataset.argMin(_jtrue, axis)
+            return self.__dataset.argMin(axis)
+
+    def maxpos(self, ignore_nans=False):
+        '''Return position of first maxima'''
+        if ignore_nans:
+            return self.__dataset.maxPos(True)
+        return self.__dataset.maxPos()
+
+    def minpos(self, ignore_nans=False):
+        '''Return position of first minima'''
+        if ignore_nans:
+            return self.__dataset.minPos(True)
+        return self.__dataset.minPos()
 
     # properties
     @property
-    @_ndwrapped
+    @_wrapout
     def transpose(self):
-        return self.transpose()
+        return self.__dataset.transpose()
 
     @property
-    @_ndwrapped
+    @_wrapout
     def view(self, cls=None):
         '''Return a view of dataset'''
         if cls is None or cls == self.__class__:
-            return self.getView()
+            return self.__dataset.getView()
         else:
             return cast(self, cls.dtype)
 
     @property
-    @_ndwrapped
+    @_wrapout
     def indices(self):
         '''Return an index dataset'''
-        return self.getIndices()
+        return self.__dataset.getIndices()
 
     def __get_shape(self):
-        return tuple(self.getShape())
+        return tuple(self.__dataset.getShape())
 
     def __set_shape(self, *shape):
         if len(shape) == 1:
             shape = asIterable(shape[0])
-        self.setShape(shape)
+        self.__dataset.setShape(shape)
 
     shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
 
     @property
     def dtype(self):
-        return _getdtypefromjdataset(self)
+        return _getdtypefromjdataset(self.__dataset)
+
+    @property
+    def itemsize(self):
+        '''Return number of bytes per item'''
+        return self.__dataset.getItemsize()
 
     @property
     def ndim(self):
         '''Return number of dimensions'''
-        return self.getRank()
+        return self.__dataset.getRank()
 
     @property
+    def size(self):
+        '''Return number of items'''
+        return self.__dataset.getSize()
+
+    @property
+    @_wrapout
     def real(self):
-        return self
+        return self.__dataset.real()
+
+    @property
+    def data(self):
+        return self.__dataset.getBuffer()
 
     def append(self, other, axis=None):
         return append(self, other, axis)
 
     def item(self, index=None, *args):
-        '''Return an item of dataset.'''
+        '''Return first item of dataset'''
         if self.size == 1:
+            rank = self.ndim
             if index is None:
-                if self.rank > 1:
+                if rank > 1:
                     raise ValueError, "incorrect number of indices"
             elif index:
                 raise ValueError, "index out of bounds"
-            elif self.rank == 0:
+            elif rank == 0:
                 raise ValueError, "incorrect number of indices"
             if args:
-                if (len(args) + 1) > self.rank:
+                if (len(args) + 1) > rank:
                     raise ValueError, "incorrect number of indices"
                 for a in args:
                     if a:
                         raise ValueError, "index out of bounds"
-            return self.getObject([])
+            r = self.__dataset.getObject([])
+        else:
+            if index is None:
+                raise ValueError, "Need an integer or a tuple of integers"
+            try:
+                if args:
+                    r = self.__dataset.getObject(index, *args)
+                else:
+                    r = self.__dataset.getObjectAbs(index)
+            except (_jarrayindex_exception, _jillegalargument_exception):
+                raise ValueError
 
-        if index is None:
-            raise ValueError, "Need an integer or a tuple of integers"
-        try:
-            if args:
-                return self.getObject(index, *args)
-            return self.getObjectAbs(index)
-        except (_jarrayindex_exception, _jillegalargument_exception):
-            raise ValueError
-
-class ndarrayA(ndarray, _booleands):
-    """
-    Wrap boolean dataset
-    """
-    def __init__(self, *arg):
-        _booleands.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _booleands
+        if isinstance(r, _jcomplex):
+            return complex(r.getReal(), r.getImaginary())
+        return r
 
     def copy(self): # override to keep superclass's methods
-        return ndarrayA(self)
+        return ndarray(buffer=self.__dataset, copy=True)
 
     # non-specific code that needs ndcls
     # this code cannot put in ndarray superclass as there is a problem when
     # wrapping methods with same name in superclass
-    @_ndwrapped
+    @_wrapout
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
-            return self.ndcls.max(self, ignore_nans)
+            if ignore_nans:
+                return self.__dataset.max(ignore_nans)
+            return self.__dataset.max()
         else:
-            return self.ndcls.max(self, ignore_nans, axis)
+            return self.__dataset.max(ignore_nans, axis)
 
-    @_ndwrapped
+    @_wrapout
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
         if axis is None:
-            return self.ndcls.min(self, ignore_nans)
+            if ignore_nans:
+                return self.__dataset.min(ignore_nans)
+            return self.__dataset.min()
         else:
-            return self.ndcls.min(self, ignore_nans, axis)
+            return self.__dataset.min(ignore_nans, axis)
 
-    @_ndwrapped
+    @_wrapout
     def mean(self, axis=None):
         if axis is None:
-            return self.ndcls.mean(self)
+            return self.__dataset.mean()
         else:
-            return self.ndcls.mean(self, axis)
+            return self.__dataset.mean(axis)
 
     def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
+        self.__dataset.sort(axis)
 
     def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
+        self.__dataset.put(asIterable(indices), asIterable(values))
 
-    @_ndwrapped
+    @_wrapout
     def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
+        return self.__dataset.take(asIterable(indices), axis)
 
-    @_ndwrapped
-    def all(self, axis=None):
+    @_wrapout
+    def all(self, axis=None): #@ReservedAssignment
         if axis is None:
-            return self.ndcls.all(self)
+            return self.__dataset.all()
         else:
-            return self.ndcls.all(self, axis)
+            return self.__dataset.all(axis)
 
-    @_ndwrapped
-    def any(self, axis=None):
+    @_wrapout
+    def any(self, axis=None): #@ReservedAssignment
         if axis is None:
-            return self.ndcls.any(self)
+            return self.__dataset.any()
         else:
-            return self.ndcls.any(self, axis)
+            return self.__dataset.any(axis)
 
-    @_ndwrapped
+    @_wrapout
     def reshape(self, *shape):
         '''Return a dataset with same data but new shape'''
         if len(shape) == 1:
             shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
+        return self.__dataset.reshape(shape)
 
+    @_wrapout
+    def flatten(self):
+        '''Return a 1D dataset with same data'''
+        return self.__dataset.flatten()
 
-class ndarrayB(ndarray, _byteds):
-    """
-    Wrap byte dataset
-    """
-    def __init__(self, *arg):
-        _byteds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _byteds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayB(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-
-class ndarrayS(ndarray, _shortds):
-    """
-    Wrap short dataset
-    """
-    def __init__(self, *arg):
-        _shortds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _shortds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayS(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-
-class ndarrayI(ndarray, _integerds):
-    """
-    Wrap integer dataset
-    """
-    def __init__(self, *arg):
-        _integerds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _integerds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayI(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayL(ndarray, _longds):
-    """
-    Wrap long dataset
-    """
-    def __init__(self, *arg):
-        _longds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _longds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayL(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-
-class ndarrayF(ndarray, _floatds):
-    """
-    Wrap float dataset
-    """
-    def __init__(self, *arg):
-        _floatds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _floatds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayF(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-
-class ndarrayD(ndarray, _doubleds):
-    """
-    Wrap double dataset
-    """
-    def __init__(self, *arg):
-        _doubleds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _doubleds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayD(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-
-class ndarrayC(ndarray, _complexfloatds):
-    """
-    Wrap complex float dataset
-    """
-    def __init__(self, *arg):
-        _complexfloatds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _complexfloatds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayC(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-    @property
-    @_ndwrapped
-    def real(self):
-        return self.ndcls.real(self)
-
-    @property
-    @_ndwrapped
-    def imag(self):
-        return self.ndcls.imag(self)
-
-    def __getitem__(self, key):
-        z = ndarray.__getitem__(self, key)
-        if isinstance(z, _jcomplex):
-            return complex(z.getReal(), z.getImaginary())
-        return z
-
-    def item(self):
-        z = ndarray.item(self)
-        return complex(z.getReal(), z.getImaginary())
-
-class ndarrayZ(ndarray, _complexdoubleds):
-    """
-    Wrap complex double dataset
-    """
-    def __init__(self, *arg):
-        _complexdoubleds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _complexdoubleds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayZ(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-    @property
-    @_ndwrapped
-    def real(self):
-        return self.ndcls.real(self)
-
-    @property
-    @_ndwrapped
-    def imag(self):
-        return self.ndcls.imag(self)
-
-    def __getitem__(self, key):
-        z = ndarray.__getitem__(self, key)
-        if isinstance(z, _jcomplex):
-            return complex(z.getReal(), z.getImaginary())
-        return z
-
-    def item(self):
-        z = ndarray.item(self)
-        return complex(z.getReal(), z.getImaginary())
-
-class ndarrayCB(ndarray, _compoundbyteds):
-    """
-    Wrap compound byte dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compoundbyteds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compoundbyteds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCB(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayCS(ndarray, _compoundshortds):
-    """
-    Wrap compound short dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compoundshortds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compoundshortds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCS(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayCI(ndarray, _compoundintegerds):
-    """
-    Wrap compound integer dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compoundintegerds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compoundintegerds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCI(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayCL(ndarray, _compoundlongds):
-    """
-    Wrap compound long dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compoundlongds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compoundlongds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCL(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayCF(ndarray, _compoundfloatds):
-    """
-    Wrap compound float dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compoundfloatds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compoundfloatds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCF(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayCD(ndarray, _compounddoubleds):
-    """
-    Wrap compound double dataset
-    """
-    def __init__(self, *args):
-        """
-        Two constructors:
-        (elements, shape) or (ndarray)
-        elements - number of elements in an item
-        shape    - shape of dataset
-        """
-        _compounddoubleds.__init__(self, *args) #@UndefinedVariable
-        self.ndcls = _compounddoubleds
-
-    def copy(self): # override to keep superclass's methods
-        return ndarrayCD(self)
-
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-class ndarrayRGB(ndarray, _rgbds):
+class ndarrayRGB(ndarray):
     """
     Wrap RGB dataset
     """
-    def __init__(self, *arg):
-        _rgbds.__init__(self, *arg) #@UndefinedVariable
-        self.ndcls = _rgbds
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
+        super(ndarrayRGB, self).__init__(shape=shape, dtype=dtype, buffer=buffer, copy=copy)
 
-    def copy(self): # override to keep superclass's methods
-        return ndarrayRGB(self)
-
-    @_ndwrapped
+    @_wrapout
     def get_red(self, dtype=None):
         if dtype is None:
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.createRedDataset(dtype.value)
+        return self._jdataset().createRedDataset(dtype.value)
 
-    @_ndwrapped
+    @_wrapout
     def get_green(self, dtype=None):
         if dtype is None:
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.createGreenDataset(dtype.value)
+        return self._jdataset().createGreenDataset(dtype.value)
 
-    @_ndwrapped
+    @_wrapout
     def get_blue(self, dtype=None):
         if dtype is None:
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.createBlueDataset(dtype.value)
+        return self._jdataset().createBlueDataset(dtype.value)
 
-    @_ndwrapped
+    @_wrapout
     def get_grey(self, cweights=None, dtype=None):
         '''Get grey image
         
@@ -1860,93 +874,20 @@ class ndarrayRGB(ndarray, _rgbds):
             if len(cweights) != 3:
                 raise ValueError, 'three colour channel weights needed'
             csum = float(sum(cweights))
-            return self.createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
-        return self.createGreyDataset(dtype.value)
+            return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
+        return self._jdataset().createGreyDataset(dtype.value)
 
     red = property(get_red)
     green = property(get_green)
     blue = property(get_blue)
     grey = property(get_grey)
 
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
-    @_ndwrapped
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.max(self, ignore_nans)
-        else:
-            return self.ndcls.max(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        ignore_nans = _jtrue if ignore_nans else _jfalse
-        if axis is None:
-            return self.ndcls.min(self, ignore_nans)
-        else:
-            return self.ndcls.min(self, ignore_nans, axis)
-
-    @_ndwrapped
-    def mean(self, axis=None):
-        if axis is None:
-            return self.ndcls.mean(self)
-        else:
-            return self.ndcls.mean(self, axis)
-
-    def sort(self, axis=-1):
-        return self.ndcls.sort(self, axis)
-
-    @_ndwrapped
-    def transpose(self, axes=None):
-        if axes is None:
-            axes = ()
-        return self.ndcls.transpose(self, asIterable(axes))
-
-    def put(self, indices, values):
-        return self.ndcls.put(self, asIterable(indices), asIterable(values))
-
-    @_ndwrapped
-    def take(self, indices, axis=None):
-        return self.ndcls.take(self, asIterable(indices), axis)
-
-    @_ndwrapped
-    def all(self, axis=None):
-        if axis is None:
-            return self.ndcls.all(self)
-        else:
-            return self.ndcls.all(self, axis)
-
-    @_ndwrapped
-    def any(self, axis=None):
-        if axis is None:
-            return self.ndcls.any(self)
-        else:
-            return self.ndcls.any(self, axis)
-
-    @_ndwrapped
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.ndcls.reshape(self, shape)
-
-# dictionaries to map from dtype.value to nd array class
-__dtype2jythoncls = { _abstractds.BOOL:ndarrayA, _abstractds.INT8:ndarrayB, _abstractds.INT16:ndarrayS,
-                     _abstractds.INT32:ndarrayI, _abstractds.INT64:ndarrayL,
-                     _abstractds.FLOAT32:ndarrayF, _abstractds.FLOAT64:ndarrayD,
-                     _abstractds.COMPLEX64:ndarrayC, _abstractds.COMPLEX128:ndarrayZ }
-
-__cdtype2jythoncls = { _abstractds.ARRAYINT8:ndarrayCB, _abstractds.ARRAYINT16:ndarrayCS,
-                      _abstractds.ARRAYINT32:ndarrayCI, _abstractds.ARRAYINT64:ndarrayCL,
-                      _abstractds.ARRAYFLOAT32:ndarrayCF, _abstractds.ARRAYFLOAT64:ndarrayCD,
-                      _abstractds.COMPLEX64:ndarrayC, _abstractds.COMPLEX128:ndarrayZ }
 
 # map atomic dataset type to compound type
 __dtype2cdtype = { int8:cint8, int16:cint16, int32:cint32, int64:cint64,
                   float32:cfloat32, float64:cfloat64 }
 
-@_ndwrapped
+@_wrapout
 def arange(start, stop=None, step=1, dtype=None):
     '''Create a 1D dataset of given type where values range from specified start up to
     but not including stop in given steps
@@ -1976,65 +917,39 @@ def arange(start, stop=None, step=1, dtype=None):
 
     return _abstractds.arange(start, stop, step, dtype.value)
 
-@_ndwrapped
 def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
-    if isinstance(obj, _abstractds):
-        if copy:
-            if dtype is None or dtype == obj.dtype:
-                return obj.clone()
-            else:
-                return obj.cast(_translatenativetype(dtype).value)
-        else:
-            if dtype is None:
-                dtype = obj.dtype
-            return obj.cast(_translatenativetype(dtype).value)
+    return ndarray(shape=None, dtype=dtype, buffer=obj, copy=copy)
 
-    if not isinstance(obj, list):
-        if isinstance(obj, _matrix): # cope with JAMA matrices
-            if dtype is None:
-                dtype = float64
-            obj = obj.getArray()
-
-    obj = _cvt2j(obj)
-    if dtype is None:
-        dtype = _getdtypefromobj(obj)
-    else:
-        dtype = _translatenativetype(dtype)
-
-    return _abstractds.array(obj, dtype.value)
-
-@_ndwrapped
+@_wrapout
 def ones(shape, dtype=float64):
     '''Create a dataset filled with 1'''
     dtype = _translatenativetype(dtype)
     return _abstractds.ones(dtype.elements, asIterable(shape), dtype.value)
 
-def zeros(shape, dtype=float64, elements=1):
+@_wrapout
+def zeros(shape, dtype=float64, elements=None):
     '''Create a dataset filled with 0'''
-    shape = asIterable(shape)
-    if dtype is rgb:
-        return ndarrayRGB(shape)
-
     dtype = _translatenativetype(dtype)
-    if elements != 1:
-        if dtype in __dtype2cdtype:
-            dtype = __dtype2cdtype[dtype](elements)
-        else:
+    if elements is not None:
+        if type(dtype) is _types.FunctionType:
             dtype = dtype(elements)
-    if dtype.elements != 1:
-        return __cdtype2jythoncls[dtype.value](dtype.elements, shape)
-    return __dtype2jythoncls[dtype.value](shape)
+        else:
+            dtype.elements = elements
+    elif type(dtype) is _types.FunctionType:
+        raise ValueError, 'Given data-type is a function and needs elements defining'
+
+    return _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
 
 empty = zeros
 
-@_ndwrapped
+@_wrap
 def zeros_like(a):
     return _abstractds.zeros(a)
 
 empty_like = zeros_like
 
-@_ndwrapped
+@_wrap
 def ones_like(a):
     return _abstractds.zeros(a).fill(1)
 
@@ -2077,7 +992,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
     else:
         return result
 
-@_ndwrapped
+@_wrap
 def logspace(start, stop, num=50, endpoint=True, base=10.0):
     '''Create a 1D dataset of values equally spaced on a logarithmic scale'''
     if complex(start).imag == 0 and complex(stop).imag == 0:
@@ -2086,7 +1001,7 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0):
         result = linspace(start, stop, num, endpoint)
         return _maths.power(base, result)
 
-@_ndwrapped
+@_wrap
 def eye(N, M=None, k=0, dtype=float64):
     if M is None:
         M = N
@@ -2097,44 +1012,44 @@ def eye(N, M=None, k=0, dtype=float64):
 def identity(n, dtype=float64):
     return eye(n,n,0,dtype)
 
-@_ndwrapped
+@_wrap
 def diag(v, k=0):
-    x = asDataset(v)
+    x = asDataset(v)._jdataset()
     return _dsutils.diag(x, k)
 
-@_ndwrapped
+@_wrap
 def diagflat(v, k=0):
-    x = asDataset(v).flatten()
+    x = asDataset(v).flatten()._jdataset()
     return _dsutils.diag(x, k)
 
 def take(a, indices, axis=None):
     return a.take(indices, axis)
 
-@_ndwrapped
+@_wrap
 def put(a, indices, values):
     return a.put(indices, values)
 
-@_ndwrapped
+@_wrap
 def concatenate(a, axis=0):
     return _dsutils.concatenate(toList(a), axis)
 
-@_ndwrapped
+@_wrap
 def vstack(tup):
     return _dsutils.concatenate(toList(tup), 0)
 
-@_ndwrapped
+@_wrap
 def hstack(tup):
     return _dsutils.concatenate(toList(tup), 1)
 
-@_ndwrapped
+@_wrap
 def dstack(tup):
     return _dsutils.concatenate(toList(tup), 2)
 
-@_ndwrapped
+@_wrap
 def split(ary, indices_or_sections, axis=0):
     return _dsutils.split(ary, indices_or_sections, axis, True)
 
-@_ndwrapped
+@_wrap
 def array_split(ary, indices_or_sections, axis=0):
     return _dsutils.split(ary, indices_or_sections, axis, False)
 
@@ -2147,19 +1062,19 @@ def hsplit(ary, indices_or_sections):
 def dsplit(ary, indices_or_sections):
     return split(ary, indices_or_sections, 2)
 
-@_ndwrapped
+@_wrap
 def sort(a, axis=-1):
     return _dsutils.sort(a, axis)
 
-@_ndwrapped
+@_wrap
 def tile(a, reps):
     return _dsutils.tile(a, asIterable(reps))
 
-@_ndwrapped
+@_wrap
 def repeat(a, repeats, axis=-1):
     return _dsutils.repeat(a, asIterable(repeats), axis)
 
-@_ndwrapped
+@_wrap
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
 
@@ -2173,13 +1088,13 @@ def squeeze(a):
     a.squeeze()
     return a
 
-@_ndwrapped
+@_wrap
 def transpose(a, axes=None):
     if axes is None:
         axes = ()
     return _dsutils.transpose(a, asIterable(axes))
 
-@_ndwrapped
+@_wrap
 def swapaxes(a, axis1, axis2):
     return _dsutils.swapAxes(a, axis1, axis2)
 
@@ -2207,11 +1122,11 @@ def nanargmax(a, axis=None):
 def nanargmin(a, axis=None):
     return a.argmin(axis, True)
 
-@_ndwrapped
+@_wrap
 def maximum(a, b):
     return _dsutils.maximum(a, b)
 
-@_ndwrapped
+@_wrap
 def minimum(a, b):
     return _dsutils.minimum(a, b)
 
@@ -2220,7 +1135,7 @@ def meshgrid(*a):
     coords = _dsutils.meshGrid(axes)
     return tuple([ Sciwrap(x) for x in reversed(coords) ])
 
-@_ndwrapped
+@_wrap
 def indices(dimensions, dtype=int32):
     ind = _dsutils.indices(asIterable(dimensions))
     dtype = _translatenativetype(dtype)
@@ -2228,21 +1143,21 @@ def indices(dimensions, dtype=int32):
         ind = _dsutils.cast(ind, dtype.value)
     return ind
 
-@_ndwrapped
+@_wrap
 def roll(a, shift, axis=None):
     return _dsutils.roll(a, shift, axis)
 
-@_ndwrapped
+@_wrap
 def rollaxis(a, axis, start=0):
     return _dsutils.rollAxis(a, axis, start)
 
-@_ndwrapped
+@_wrap
 def compoundarray(a, view=True):
     '''Create a compound array from an nd array by grouping last axis items into compound items
     '''
     return _dsutils.createCompoundDatasetFromLastAxis(a, view)
 
-@_ndwrapped
+@_wrap
 def append(arr, values, axis=None):
     '''Append values to end of array
     Keyword argument:
@@ -2252,3 +1167,11 @@ def append(arr, values, axis=None):
     if axis is None:
         return _dsutils.append(arr.flatten(), v.flatten(), 0)
     return _dsutils.append(arr, v, axis)
+
+@_wrap
+def nan_to_num(a):
+    '''Create a copy with infinities replaced by max/min values and NaNs replaced by 0s
+    '''
+    c = a.copy()
+    _dsutils.removeNansAndInfinities(c)
+    return c

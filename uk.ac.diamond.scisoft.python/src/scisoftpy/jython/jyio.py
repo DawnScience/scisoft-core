@@ -69,7 +69,7 @@ from gda.analysis.io import ScanFileHolderException as io_exception
 from uk.ac.diamond.scisoft.analysis.io import DataHolder as _jdataholder
 from uk.ac.diamond.scisoft.analysis.io import MetaDataAdapter as _jmetadata
 
-from jycore import asDatasetList#, asDatasetDict, toList
+from jycore import asDatasetList, _jinput#, asDatasetDict, toList
 
 from scisoftpy.dictutils import DataHolder
 
@@ -297,11 +297,13 @@ class JavaSaver(object):
         jdh = _jdataholder()
         for k,v in dataholder.items():
             if k != 'metadata':
+                v = _jinput(v)
                 jdh.addDataset(k, v)
 
         if 'metadata' in dataholder:
             md = dict()
             for k, v in dataholder.metadata.items():
+                v = _jinput(v)
                 md[k] = v
             jdh.setMetadata(_Metadata(md))
         return jdh

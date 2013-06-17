@@ -18,6 +18,7 @@
 Maths package
 '''
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _ads
 import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
 import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
 
@@ -27,8 +28,6 @@ from jarray import array as _array
 
 _arraytype = type(_array([0], 'f')) # this is used for testing if returned object is a Java array
 
-
-from decorator import decorator as _decorator
 
 from math import pi as _ppi
 from math import e as _e
@@ -43,50 +42,34 @@ nan = _jnan
 
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
-def _wrap(func, *arg, **kwargs):
-    from jycore import Sciwrap as _sciwrap
-    import java.util.List as List #@UnresolvedImport
-    result = func(*arg, **kwargs)
-    if type(result) is _types.ListType:
-        return [ _sciwrap(r) for r in result ]
-    elif type(result) is _types.TupleType:
-        return tuple([ _sciwrap(r) for r in result ])
-    elif isinstance(result, List):
-        return [ _sciwrap(r) for r in result ]
-    elif type(result) is _arraytype:
-        return [ _sciwrap(r) for r in result if r is not None ]
-    return _sciwrap(result)
+from jycore import _wrap
 
-def ndarraywrapped(func):
-    return _decorator(_wrap, func)
-
-
-@ndarraywrapped
+@_wrap
 def add(a, b):
     '''Add two array-like objects together'''
     return _maths.add(a, b)
 
-@ndarraywrapped
+@_wrap
 def subtract(a, b):
     '''Subtract one array-like object from another'''
     return _maths.subtract(a, b)
 
-@ndarraywrapped
+@_wrap
 def multiply(a, b):
     '''Multiply two array-like objects together'''
     return _maths.multiply(a, b)
 
-@ndarraywrapped
+@_wrap
 def divide(a, b):
     '''Divide one array-like object by another'''
     return _maths.divide(a, b)
 
-@ndarraywrapped
+@_wrap
 def floor_divide(a, b):
     '''Calculate largest integers smaller or equal to division'''
     return _maths.floorDivide(a, b)
 
-@ndarraywrapped
+@_wrap
 def remainder(a, b):
     '''Return remainder of division of inputs'''
     return _maths.remainder(a, b)
@@ -117,12 +100,12 @@ fmod = remainder
 #
 mod = remainder
 
-@ndarraywrapped
+@_wrap
 def reciprocal(a):
     '''Calculate reciprocal of input'''
     return _maths.reciprocal(a)
 
-@ndarraywrapped
+@_wrap
 def abs(a): #@ReservedAssignment
     '''Absolute value of input'''
     return _maths.abs(a)
@@ -131,154 +114,154 @@ absolute = abs
 
 fabs = abs # supports complex types too
 
-@ndarraywrapped
+@_wrap
 def angle(a):
     '''Angle of complex argument'''
     return _maths.angle(a)
 
-@ndarraywrapped
+@_wrap
 def conjugate(a):
     '''Complex conjugate of input'''
     return _maths.conjugate(a)
 
 conj = conjugate
 
-@ndarraywrapped
+@_wrap
 def sin(a):
     '''Sine of input'''
     return _maths.sin(a)
 
-@ndarraywrapped
+@_wrap
 def cos(a):
     '''Cosine of input'''
     return _maths.cos(a)
 
-@ndarraywrapped
+@_wrap
 def tan(a):
     '''Tangent of input'''
     return _maths.tan(a)
 
-@ndarraywrapped
+@_wrap
 def arcsin(a):
     '''Inverse sine of input'''
     return _maths.arcsin(a)
 
-@ndarraywrapped
+@_wrap
 def arccos(a):
     '''Inverse cosine of input'''
     return _maths.arccos(a)
 
-@ndarraywrapped
+@_wrap
 def arctan(a):
     '''Inverse tangent of input'''
     return _maths.arctan(a)
 
-@ndarraywrapped
+@_wrap
 def arctan2(a, b):
     '''Inverse tangent of a/b with correct choice of quadrant'''
     return _maths.arctan2(a, b)
 
-@ndarraywrapped
+@_wrap
 def hypot(a, b):
     '''Hypotenuse of triangle of given sides'''
     return _maths.hypot(a, b)
 
-@ndarraywrapped
+@_wrap
 def sinh(a):
     '''Hyperbolic sine of input'''
     return _maths.sinh(a)
 
-@ndarraywrapped
+@_wrap
 def cosh(a):
     '''Hyperbolic cosine of input'''
     return _maths.cosh(a)
 
-@ndarraywrapped
+@_wrap
 def tanh(a):
     '''Hyperbolic tangent of input'''
     return _maths.tanh(a)
 
-@ndarraywrapped
+@_wrap
 def arcsinh(a):
     '''Inverse hyperbolic sine of input'''
     return _maths.arcsinh(a)
 
-@ndarraywrapped
+@_wrap
 def arccosh(a):
     '''Inverse hyperbolic cosine of input'''
     return _maths.arccosh(a)
 
-@ndarraywrapped
+@_wrap
 def arctanh(a):
     '''Inverse hyperbolic tangent of input'''
     return _maths.arctanh(a)
 
-@ndarraywrapped
+@_wrap
 def log(a):
     '''Natural logarithm of input'''
     return _maths.log(a)
 
-@ndarraywrapped
+@_wrap
 def log2(a):
     '''Logarithm of input to base 2'''
     return _maths.log2(a)
 
-@ndarraywrapped
+@_wrap
 def log10(a):
     '''Logarithm of input to base 10'''
     return _maths.log10(a)
 
-@ndarraywrapped
+@_wrap
 def log1p(x):
     '''Natural logarithm of (x+1)'''
     return _maths.log1p(x)
 
-@ndarraywrapped
+@_wrap
 def exp(a):
     '''Exponential of input'''
     return _maths.exp(a)
 
-@ndarraywrapped
+@_wrap
 def expm1(x):
     '''Exponential of (x-1)'''
     return _maths.expm1(x)
 
-@ndarraywrapped
+@_wrap
 def sqrt(a):
     '''Square root of input'''
     return _maths.sqrt(a)
 
-@ndarraywrapped
+@_wrap
 def square(a):
     '''Square of input'''
     return _maths.square(a)
 
-@ndarraywrapped
+@_wrap
 def power(a, p):
     '''Input raised to given power'''
     return _maths.power(a, p)
 
-@ndarraywrapped
+@_wrap
 def floor(a):
     '''Largest integer smaller or equal to input'''
     return _maths.floor(a)
 
-@ndarraywrapped
+@_wrap
 def ceil(a):
     '''Smallest integer greater or equal to input'''
     return _maths.ceil(a)
 
-@ndarraywrapped
+@_wrap
 def rint(a):
     '''Round elements of input to nearest integers'''
     return _maths.rint(a)
 
-@ndarraywrapped
+@_wrap
 def rad2deg(a):
     '''Convert from radian to degree'''
     return _maths.toDegrees(a)
 
-@ndarraywrapped
+@_wrap
 def deg2rad(a):
     '''Convert from degree to radian'''
     return _maths.toRadians(a)
@@ -286,17 +269,17 @@ def deg2rad(a):
 degrees = rad2deg
 radians = deg2rad
 
-@ndarraywrapped
+@_wrap
 def sign(a):
     '''Sign of input, indicated by -1 for negative, +1 for positive and 0 for zero'''
     return _maths.signum(a)
 
-@ndarraywrapped
+@_wrap
 def negative(a):
     '''Negate input'''
     return _maths.negative(a)
 
-@ndarraywrapped
+@_wrap
 def clip(a, a_min, a_max):
     '''Clip input to given bounds (replace NaNs with midpoint of bounds)'''
     return _maths.clip(a, a_min, a_max)
@@ -334,7 +317,7 @@ def amin(a, axis=None):
     '''Minimum of input'''
     return a.min(axis)
 
-@ndarraywrapped
+@_wrap
 def median(a, axis=None):
     '''Median of input'''
     if axis is None:
@@ -342,7 +325,7 @@ def median(a, axis=None):
     else:
         return _stats.median(a, axis)
 
-@ndarraywrapped
+@_wrap
 def cumprod(a, axis=None):
     '''Cumulative product of input'''
     if axis is None:
@@ -350,7 +333,7 @@ def cumprod(a, axis=None):
     else:
         return _stats.cumulativeProduct(a, axis)
 
-@ndarraywrapped
+@_wrap
 def cumsum(a, axis=None):
     '''Cumulative sum of input'''
     if axis is None:
@@ -358,14 +341,14 @@ def cumsum(a, axis=None):
     else:
         return _stats.cumulativeSum(a, axis)
 
-@ndarraywrapped
+@_wrap
 def diff(a, order=1, axis=-1):
     '''Difference of input'''
     return _maths.difference(a, order, axis)
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 
-@ndarraywrapped
+@_wrap
 def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@ReservedAssignment
     '''Histogram of input'''
     if normed or weights or new:
@@ -384,23 +367,22 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@R
 
 import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
 
-@ndarraywrapped
+@_wrap
 def dot(a, b):
     '''Dot product of two arrays'''
     return _linalg.dotProduct(a, b)
 
-@ndarraywrapped
+@_wrap
 def vdot(a, b):
     '''Dot product of two vectors with first vector conjugated if complex'''
     return _linalg.dotProduct(conjugate(a.flatten()), b.flatten())
 
-@ndarraywrapped
+@_wrap
 def inner(a, b):
     '''Inner product of two arrays (sum product over last dimensions)'''
     return _linalg.tensorDotProduct(a, b, -1, -1)
 
-
-@ndarraywrapped
+@_wrap
 def tensordot(a, b, axes=2):
     '''Tensor dot product of two arrays
     '''
@@ -435,7 +417,7 @@ def tensordot(a, b, axes=2):
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
-@ndarraywrapped
+@_wrap
 def gradient(f, *varargs):
     '''Gradient of array
     
@@ -447,9 +429,9 @@ def gradient(f, *varargs):
         g = _maths.gradient(f)
     else:
         # check for scalars, etc
-        from jycore import ndarray as _nd, arange as _ar
+        from jycore import arange as _ar
         vl = len(varargs)
-        nd = f.ndim
+        nd = f.getRank()
         if vl == 1:
             varargs = [varargs[0]]*nd
             vl = nd
@@ -459,7 +441,7 @@ def gradient(f, *varargs):
         xlist = []
         for i in range(vl):
             x = varargs[i]
-            xlist.append(x if isinstance(x, _nd) else _ar(f.shape[i])*x)
+            xlist.append(x if isinstance(x, _ads) else (_ar(f.shape[i])*x)._jdataset())
         g = _maths.gradient(f, xlist)
 
     if len(g) == 1:

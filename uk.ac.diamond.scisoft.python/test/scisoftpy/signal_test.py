@@ -71,12 +71,14 @@ class Test(unittest.TestCase):
         ada = np.correlate(da, axes=[0])
         self.checkitems(None, ada)
 
-        self.checkitems([3.5], np.correlate(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
-#array([ 3.5])
-#>>> np.correlate([1, 2, 3], [0, 1, 0.5], "same")
-#array([ 2. ,  3.5,  3. ])
-#>>> np.correlate([1, 2, 3], [0, 1, 0.5], "full")
-#array([ 0.5,  2. ,  3.5,  3. ,  0. ])
+        a = np.array([1, 2, 3])
+        b = np.array([0, 1, 0.5])
+        self.checkitems([3.5], np.correlate(a, b))
+        self.checkitems([2., 3.5, 3.], np.correlate(a, b, "same"))
+        self.checkitems([0.5, 2., 3.5, 3., 0.], np.correlate(a, b, "full"))
+        self.checkitems([3.5], np.correlate(b, a))
+        self.checkitems([2., 3.5, 3.][::-1], np.correlate(b, a, "same"))
+        self.checkitems([0.5, 2., 3.5, 3., 0.][::-1], np.correlate(b, a, "full"))
 
     def testCorrelate2(self):
         print 'test correlate2'
@@ -120,10 +122,15 @@ class Test(unittest.TestCase):
 #        da = np.array(self.da, np.float)
 #        ada = np.convolve(da, axes=[0])
 #        self.checkitems(None, ada)
+        a = np.array([1, 2, 3])
+        b = np.array([0, 1, 0.5])
 
-        self.checkitems([0., 1., 2.5, 4., 1.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5])))
-        self.checkitems([1., 2.5, 4.], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5]), 'same'))
-        self.checkitems([2.5], np.convolve(np.array([1, 2, 3]), np.array([0, 1, 0.5]), 'valid'))
+        self.checkitems([0., 1., 2.5, 4., 1.5], np.convolve(a, b))
+        self.checkitems([1., 2.5, 4.], np.convolve(a, b, 'same'))
+        self.checkitems([2.5], np.convolve(a, b, 'valid'))
+        self.checkitems([0., 1., 2.5, 4., 1.5], np.convolve(b, a))
+        self.checkitems([1., 2.5, 4.], np.convolve(b, a, 'same'))
+        self.checkitems([2.5], np.convolve(b, a, 'valid'))
 
 if __name__ == "__main__":
     #import sys

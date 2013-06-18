@@ -546,8 +546,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				start += rstep;
 			}
 			hash = (int) dhash;
-			data.setStoredValue("max", amax);
-			data.setStoredValue("min", amin);
+			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
 			ddata = null;
 		} else {
 			IntBuffer idata;
@@ -596,8 +596,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				start += rstep;
 			}
 
-			data.setStoredValue("max", amax);
-			data.setStoredValue("min", amin);
+			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
 			idata = null;
 		}
 
@@ -612,7 +612,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 
 		return data;
 	}

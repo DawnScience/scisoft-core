@@ -338,24 +338,25 @@ public abstract class AbstractDataset implements IErrorDataset {
 		view.size = orig.size;
 		view.odata = orig.odata;
 
-		if (orig.errorData != null && orig.errorData instanceof AbstractDataset)
-			view.errorData = ((AbstractDataset) orig.errorData).getView();
+		Serializable error = orig.errorData;
+		if (error != null && error instanceof ADataset)
+			view.errorData = ((ADataset) error).getView();
 		else
-			view.errorData = orig.errorData;
+			view.errorData = error;
 
 		if (clone) {
 			view.shape = orig.shape.clone();
-
 			copyStoredValues(orig, view, false);
 		} else {
 			view.shape = orig.shape;
 		}
 
+		IMetaData metadata = orig.metadataStructure;
 		if (cloneMetadata) {
-			if (orig.metadataStructure != null)
-				view.metadataStructure = orig.metadataStructure.clone();
+			if (metadata != null)
+				view.metadataStructure = metadata.clone();
 		} else {
-			view.metadataStructure = orig.metadataStructure;
+			view.metadataStructure = metadata;
 		}
 		if (orig.getDtype() != view.getDtype() && view.storedValues != null) {
 			view.storedValues.remove(STORE_SHAPELESS_HASH);
@@ -1871,7 +1872,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            new shape
 	 */
 	public AbstractDataset reshape(final int... shape) {
-		AbstractDataset a = this.getView();
+		AbstractDataset a = getView();
 		a.setShape(shape);
 		return a;
 	}
@@ -2517,7 +2518,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 		int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
+		int[] nshape = squeezeShape(oshape, false);
 		BooleanDataset all = new BooleanDataset(nshape);
 
 		IndexIterator qiter = all.getIterator(true);
@@ -2571,7 +2572,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 		int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
+		int[] nshape = squeezeShape(oshape, false);
 		BooleanDataset all = new BooleanDataset(nshape);
 
 		IndexIterator qiter = all.getIterator(true);
@@ -2685,15 +2686,20 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 */
 	abstract public double residual(final Object o, boolean ignoreNaNs);
 
-	protected static final String STORE_HASH = "hash";
+	public static final String STORE_HASH = "hash";
 	protected static final String STORE_SHAPELESS_HASH = "shapelessHash";
-	protected static final String STORE_MAX = "max";
-	protected static final String STORE_MIN = "min";
-	protected static final String STORE_POS_MAX = "+max";
-	protected static final String STORE_POS_MIN = "+min";
+	public static final String STORE_MAX = "max";
+	public static final String STORE_MIN = "min";
 	protected static final String STORE_MAX_POS = "maxPos";
 	protected static final String STORE_MIN_POS = "minPos";
-	protected final static String STORE_STATS = "stats";
+	protected static final String STORE_STATS = "stats";
+	protected static final String STORE_SUM = "sum";
+	protected static final String STORE_MEAN = "mean";
+	protected static final String STORE_VAR = "var";
+	private static final String STORE_POS_MAX = "+max";
+	private static final String STORE_POS_MIN = "+min";
+	private static final String STORE_COUNT = "count";
+	private static final String STORE_INDEX = "Index";
 
 
 	/**
@@ -3039,14 +3045,14 @@ public abstract class AbstractDataset implements IErrorDataset {
 			mean.setAbs(qiter.index, stats.getMean());
 			var.setAbs(qiter.index, stats.getVariance());
 		}
-		setStoredValue(storeName(ignoreNaNs, ignoreInfs, "count-" + axis), count);
+		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_COUNT + "-" + axis), count);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MAX + "-" + axis), max);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN + "-" + axis), min);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "sum-" + axis), sum);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "mean-" + axis), mean);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "var-" + axis), var);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "maxIndex-" + axis), maxIndex);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "minIndex-" + axis), minIndex);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_SUM + "-" + axis), sum);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MEAN + "-" + axis), mean);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_VAR + "-" + axis), var);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MAX + STORE_INDEX + "-" + axis), maxIndex);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN + STORE_INDEX + "-" + axis), minIndex);
 	}
 
 	private Number fromDoubleToNumber(double x) {
@@ -3336,8 +3342,9 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
+	@Override
 	public IntegerDataset argMax(boolean ignoreNaNs, int axis) {
-		return (IntegerDataset) getStatistics(ignoreNaNs, axis, "maxIndex-" + axis);
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + STORE_INDEX + "-" + axis);
 	}
 
 	/**
@@ -3379,7 +3386,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return index dataset
 	 */
 	public IntegerDataset argMin(boolean ignoreNaNs, int axis) {
-		return (IntegerDataset) getStatistics(ignoreNaNs, axis, "minIndex-" + axis);
+		return (IntegerDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + STORE_INDEX + "-" + axis);
 	}
 
 	/**
@@ -3443,7 +3450,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return number of items along axis in dataset
 	 */
 	public AbstractDataset count(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "count-" + axis);
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_COUNT + "-" + axis);
 	}
 
 	/**
@@ -3477,7 +3484,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sum along axis in dataset
 	 */
 	public AbstractDataset sum(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "sum-" + axis);
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_SUM + "-" + axis);
 	}
 
 	/**
@@ -3570,8 +3577,9 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return mean along axis in dataset
 	 */
+	@Override
 	public AbstractDataset mean(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, "mean-" + axis);
+		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MEAN + "-" + axis);
 	}
 
 	/**
@@ -3623,8 +3631,9 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sample variance along axis in dataset
 	 * @see #variance(boolean)
 	 */
+	@Override
 	public AbstractDataset variance(int axis) {
-		return (AbstractDataset) getStatistics(false, axis, "var-" + axis);
+		return (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 	}
 
 	/**
@@ -3653,7 +3662,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return standard deviation along axis in dataset
 	 */
 	public AbstractDataset stdDeviation(int axis) {
-		final AbstractDataset v = (AbstractDataset) getStatistics(false, axis, "var-" + axis);
+		final AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		return Maths.sqrt(v);
 	}
 
@@ -3671,8 +3680,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return root mean square along axis in dataset
 	 */
 	public AbstractDataset rootMeanSquare(int axis) {
-		AbstractDataset v = (AbstractDataset) getStatistics(false, axis, "var-" + axis);
-		AbstractDataset m = (AbstractDataset) getStatistics(false, axis, "mean-" + axis);
+		AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
+		AbstractDataset m = (AbstractDataset) getStatistics(false, axis, STORE_MEAN + "-" + axis);
 		AbstractDataset result = Maths.power(m, 2);
 		return Maths.sqrt(result.iadd(v));
 	}
@@ -3797,9 +3806,11 @@ public abstract class AbstractDataset implements IErrorDataset {
 			return null;
 		}
 
-		if (errorData instanceof ILazyDataset) {
-			AbstractDataset err = DatasetUtils.convertToAbstractDataset((ILazyDataset) errorData);
-			return Maths.sqrt(err);
+		if (errorData instanceof AbstractDataset) {
+			return Maths.sqrt((AbstractDataset) errorData);
+		} else if (errorData instanceof ILazyDataset) {
+			errorData = DatasetUtils.convertToAbstractDataset((ILazyDataset) errorData);
+			return Maths.sqrt((AbstractDataset) errorData);
 		}
 
 		DoubleDataset errors = new DoubleDataset(shape);

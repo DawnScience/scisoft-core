@@ -631,9 +631,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			}
 			var.set(darray, qpos);
 		}
-		setStoredValue(storeName(ignoreNaNs, ignoreInfs, "sum-" + axis), sum);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "mean-"+axis), mean);
-		storedValues.put(storeName(ignoreNaNs, ignoreInfs, "var-"+axis), var);
+		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_SUM + "-" + axis), sum);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MEAN + "-" +axis), mean);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_VAR + "-" +axis), var);
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
@@ -236,9 +237,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", amax);
-		data.setStoredValue("min", amin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
 	/**
@@ -276,9 +277,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", amax);
-		data.setStoredValue("min", amin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
 	/**
@@ -332,9 +333,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", amax);
-		data.setStoredValue("min", amin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
 	/**
@@ -387,9 +388,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", amax);
-		data.setStoredValue("min", amin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
 	/**
@@ -427,9 +428,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", amax);
-		data.setStoredValue("min", amin);
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
 
@@ -474,9 +475,9 @@ public class Utils {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("max", fmax);
-		data.setStoredValue("min", fmin);
-		data.setStoredValue("hash", (int)hash);
+		data.setStoredValue(AbstractDataset.STORE_MAX, fmax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, fmin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, (int)hash);
 	}
 
 	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");

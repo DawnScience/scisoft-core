@@ -165,9 +165,9 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			for (int i = 0; i < rank; i++) {
 				hash = hash*17 + shape[i];
 			}
-			data.setStoredValue("max", amax);
-			data.setStoredValue("min", amin);
-			data.setStoredValue("hash", hash);
+			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+			data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 
 			data.setName(DEF_IMAGE_NAME);
 			output.addDataset("ADSC Image", data);

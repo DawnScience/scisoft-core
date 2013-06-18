@@ -214,8 +214,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minA = false;
 			}
 			data = b;
-			data.setStoredValue("max", maxA);
-			data.setStoredValue("min", minA);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxA);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minA);
 			break;
 		case AbstractDataset.INT8:
 			ByteDataset i8 = new ByteDataset(shape);
@@ -236,8 +236,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minB = v;
 			}
 			data = i8;
-			data.setStoredValue("max", maxB);
-			data.setStoredValue("min", minB);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxB);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minB);
 			break;
 		case AbstractDataset.INT16:
 			ShortDataset i16 = new ShortDataset(shape);
@@ -259,8 +259,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minS = v;
 			}
 			data = i16;
-			data.setStoredValue("max", maxS);
-			data.setStoredValue("min", minS);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxS);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minS);
 			break;
 		case AbstractDataset.INT32:
 			IntegerDataset i32 = new IntegerDataset(shape);
@@ -282,8 +282,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minI = v;
 			}
 			data = i32;
-			data.setStoredValue("max", maxI);
-			data.setStoredValue("min", minI);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxI);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minI);
 			break;
 		case AbstractDataset.INT64:
 			LongDataset i64 = new LongDataset(shape);
@@ -305,8 +305,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minL = v;
 			}
 			data = i64;
-			data.setStoredValue("max", maxL);
-			data.setStoredValue("min", minL);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxL);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minL);
 			break;
 		case AbstractDataset.ARRAYINT8:
 			CompoundByteDataset ci8 = new CompoundByteDataset(isize, shape);
@@ -397,8 +397,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minF = v;
 			}
 			data = f32;
-			data.setStoredValue("max", maxF);
-			data.setStoredValue("min", minF);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxF);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minF);
 			hash = (int) dhash;
 			break;
 		case AbstractDataset.ARRAYFLOAT32:
@@ -474,8 +474,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minD = v;
 			}
 			data = f64;
-			data.setStoredValue("max", maxD);
-			data.setStoredValue("min", minD);
+			data.setStoredValue(AbstractDataset.STORE_MAX, maxD);
+			data.setStoredValue(AbstractDataset.STORE_MIN, minD);
 			hash = (int) dhash;
 			break;
 		case AbstractDataset.ARRAYFLOAT64:
@@ -527,7 +527,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
 		}
-		data.setStoredValue("hash", hash);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 		return data;
 	}
 }

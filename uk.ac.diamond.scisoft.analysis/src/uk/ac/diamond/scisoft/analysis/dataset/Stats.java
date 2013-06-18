@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,13 @@ import org.apache.commons.math.stat.descriptive.moment.Skewness;
  * Statistics class
  */
 public class Stats {
+
+	private static final String STORE_KURTOSIS = "kurtosis";
+	private static final String STORE_SKEWNESS = "skewness";
+	private static final String STORE_MEDIAN = "median";
+	private static final String STORE_QUARTILE1 = "quartile1";
+	private static final String STORE_QUARTILE3 = "quartile3";
+
 	// calculates statistics and returns sorted dataset (0th element if compound)
 	private static AbstractDataset calcQuartileStats(final AbstractDataset a) {
 		AbstractDataset s = null;
@@ -39,24 +46,24 @@ public class Stats {
 		if (is == 1) {
 			s = DatasetUtils.sort(a, null);
 		
-			a.setStoredValue("median", Double.valueOf(pQuantile(s, 0.5)));
-			a.setStoredValue("quartile1", Double.valueOf(pQuantile(s, 0.25)));
-			a.setStoredValue("quartile3", Double.valueOf(pQuantile(s, 0.75)));
+			a.setStoredValue(STORE_MEDIAN, Double.valueOf(pQuantile(s, 0.5)));
+			a.setStoredValue(STORE_QUARTILE1, Double.valueOf(pQuantile(s, 0.25)));
+			a.setStoredValue(STORE_QUARTILE3, Double.valueOf(pQuantile(s, 0.75)));
 		} else {
 			AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
-			a.setStoredValue("median", new double[is]);
-			a.setStoredValue("quartile1", new double[is]);
-			a.setStoredValue("quartile3", new double[is]);
+			a.setStoredValue(STORE_MEDIAN, new double[is]);
+			a.setStoredValue(STORE_QUARTILE1, new double[is]);
+			a.setStoredValue(STORE_QUARTILE3, new double[is]);
 			for (int j = 0; j < is; j++) {
 				((AbstractCompoundDataset) a).copyElements(w, j);
 				w.sort(null);
 
 				double[] store;
-				store = (double[]) a.getStoredValue("median");
+				store = (double[]) a.getStoredValue(STORE_MEDIAN);
 				store[j] = pQuantile(w, 0.5);
-				store = (double[]) a.getStoredValue("quartile1");
+				store = (double[]) a.getStoredValue(STORE_QUARTILE1);
 				store[j] = pQuantile(w, 0.25);
-				store = (double[]) a.getStoredValue("quartile3");
+				store = (double[]) a.getStoredValue(STORE_QUARTILE3);
 				store[j] = pQuantile(w, 0.75);
 				if (j == 0)
 					s = w.clone();
@@ -83,9 +90,9 @@ public class Stats {
 			if (is == 1) {
 				AbstractDataset s = DatasetUtils.sort(a, axis);
 
-				a.setStoredValue("median-" + axis, pQuantile(s, axis, 0.5));
-				a.setStoredValue("quartile1-" + axis, pQuantile(s, axis, 0.25));
-				a.setStoredValue("quartile3-" + axis, pQuantile(s, axis, 0.75));
+				a.setStoredValue(STORE_MEDIAN + "-" + axis, pQuantile(s, axis, 0.5));
+				a.setStoredValue(STORE_QUARTILE1 + "-" + axis, pQuantile(s, axis, 0.25));
+				a.setStoredValue(STORE_QUARTILE3 + "-" + axis, pQuantile(s, axis, 0.75));
 			} else {
 				AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
 				for (int j = 0; j < is; j++) {
@@ -96,19 +103,19 @@ public class Stats {
 					final AbstractDataset c = pQuantile(w, axis, 0.5);
 					if (j == 0) {
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("median-" + axis, s);
+						a.setStoredValue(STORE_MEDIAN + "-" + axis, s);
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("quartile1-" + axis, s);
+						a.setStoredValue(STORE_QUARTILE1 + "-" + axis, s);
 						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
-						a.setStoredValue("quartile3-" + axis, s);
+						a.setStoredValue(STORE_QUARTILE3 + "-" + axis, s);
 					}
-					s = (CompoundDoubleDataset) a.getStoredValue("median-" + axis);
+					s = (CompoundDoubleDataset) a.getStoredValue(STORE_MEDIAN + "-" + axis);
 					s.setElements(c, j);
 
-					s = (CompoundDoubleDataset) a.getStoredValue("quartile1-" + axis);
+					s = (CompoundDoubleDataset) a.getStoredValue(STORE_QUARTILE1 + "-" + axis);
 					s.setElements(pQuantile(w, axis, 0.25), j);
 
-					s = (CompoundDoubleDataset) a.getStoredValue("quartile3-" + axis);
+					s = (CompoundDoubleDataset) a.getStoredValue(STORE_QUARTILE3 + "-" + axis);
 					s.setElements(pQuantile(w, axis, 0.75), j);
 				}
 			}
@@ -275,7 +282,7 @@ public class Stats {
 	 * @return median
 	 */
 	public static AbstractDataset median(final AbstractDataset a, final int axis) {
-		return getQStatistics(a, axis, "median-" + axis);
+		return getQStatistics(a, axis, STORE_MEDIAN + "-" + axis);
 	}
 
 	/**
@@ -283,7 +290,7 @@ public class Stats {
 	 * @return median
 	 */
 	public static Object median(final AbstractDataset a) {
-		return getQStatistics(a, "median");
+		return getQStatistics(a, STORE_MEDIAN);
 	}
 
 	/**
@@ -294,12 +301,12 @@ public class Stats {
 	public static Object iqr(final AbstractDataset a) {
 		final int is = a.getElementsPerItem();
 		if (is == 1) {
-			double q3 = ((Double) getQStatistics(a, "quartile3"));
-			return Double.valueOf(q3 - ((Double) a.getStoredValue("quartile1")).doubleValue());
+			double q3 = ((Double) getQStatistics(a, STORE_QUARTILE3));
+			return Double.valueOf(q3 - ((Double) a.getStoredValue(STORE_QUARTILE1)).doubleValue());
 		}
 
-		double[] q1 = (double[]) getQStatistics(a, "quartile1");
-		double[] q3 = (double[]) getQStatistics(a, "quartile3");
+		double[] q1 = (double[]) getQStatistics(a, STORE_QUARTILE1);
+		double[] q3 = (double[]) getQStatistics(a, STORE_QUARTILE3);
 		for (int j = 0; j < is; j++) {
 			q3[j] -= q1[j];
 		}
@@ -313,9 +320,9 @@ public class Stats {
 	 * @return range
 	 */
 	public static AbstractDataset iqr(final AbstractDataset a, final int axis) {
-		AbstractDataset q3 = getQStatistics(a, axis, "quartile3-" + axis);
+		AbstractDataset q3 = getQStatistics(a, axis, STORE_QUARTILE3 + "-" + axis);
 
-		return Maths.subtract(q3, a.getStoredValue("quartile1-" + axis));
+		return Maths.subtract(q3, a.getStoredValue(STORE_QUARTILE1 + "-" + axis));
 	}
 
 	static private Object getFourthMoment(final AbstractDataset a, final boolean ignoreNaNs) {
@@ -527,8 +534,8 @@ public class Stats {
 			}
 		}
 
-		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, "skewness-" + axis), sk);
-		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, "kurtosis-" + axis), ku);
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis), sk);
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis), ku);
 	}
 
 	static private DoubleDataset getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, int axis, String stat) {
@@ -560,7 +567,7 @@ public class Stats {
 	 * @return skewness
 	 */
 	public static AbstractDataset skewness(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, "skewness-" + axis));
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + axis));
 	}
 
 	/**
@@ -580,7 +587,7 @@ public class Stats {
 	 * @return kurtosis
 	 */
 	public static AbstractDataset kurtosis(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, "kurtosis-" + axis));
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + axis));
 	}
 
 	/**

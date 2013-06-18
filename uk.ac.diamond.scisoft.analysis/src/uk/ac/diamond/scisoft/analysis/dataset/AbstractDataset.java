@@ -3831,7 +3831,6 @@ public abstract class AbstractDataset implements IErrorDataset {
 		return new double[] {getError(pos)};
 	}
 
-	@Override
 	public Serializable getErrorBuffer() {
 		return errorData;
 	}

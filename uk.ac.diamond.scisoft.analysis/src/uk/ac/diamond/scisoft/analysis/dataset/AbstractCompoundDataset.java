@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -921,10 +921,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	/**
-	 * Gets the error values for a single point in the dataset
+	 * Get the error values for a single point in the dataset
 	 * @param pos of the point to be referenced 
 	 * @return the values of the error at this point
 	 */
+	@Override
 	public double[] getErrorArray(int... pos) {
 		double[] e = getSquaredErrorArray(pos);
 		if (e != null) {

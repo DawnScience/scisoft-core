@@ -52,6 +52,13 @@ public interface IErrorDataset extends IDataset {
 	public double getError(int... pos);
 
 	/**
+	 * Get the error values for a single point in the dataset
+	 * @param pos of the point to be referenced 
+	 * @return the values of the error at this point (can be null when no error defined)
+	 */
+	public double[] getErrorArray(int... pos);
+
+	/**
 	 * Set the error, may be a single double or a whole dataset.
 	 * @param error
 	 */

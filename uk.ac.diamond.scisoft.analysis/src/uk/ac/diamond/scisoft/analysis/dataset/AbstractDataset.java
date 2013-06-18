@@ -3797,8 +3797,9 @@ public abstract class AbstractDataset implements IErrorDataset {
 			return null;
 		}
 
-		if (errorData instanceof DoubleDataset) {
-			return Maths.sqrt((DoubleDataset) errorData);
+		if (errorData instanceof ILazyDataset) {
+			AbstractDataset err = DatasetUtils.convertToAbstractDataset((ILazyDataset) errorData);
+			return Maths.sqrt(err);
 		}
 
 		DoubleDataset errors = new DoubleDataset(shape);
@@ -3816,10 +3817,23 @@ public abstract class AbstractDataset implements IErrorDataset {
 		if (errorData == null) {
 			return 0;
 		}
-		if (errorData instanceof DoubleDataset) {
+		if (errorData instanceof IDataset) {
 			return Math.sqrt(((IDataset) errorData).getDouble(pos));
 		}
 		return Math.sqrt(toReal(errorData));
+	}
+
+	@Override
+	public double[] getErrorArray(int... pos) {
+		if (errorData == null) {
+			return null;
+		}
+		return new double[] {getError(pos)};
+	}
+
+	@Override
+	public Serializable getErrorBuffer() {
+		return errorData;
 	}
 
 	protected IMetaData metadataStructure = null;

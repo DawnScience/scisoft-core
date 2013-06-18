@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -167,8 +167,8 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset iadd(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -194,8 +194,8 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset isubtract(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -226,8 +226,8 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset imultiply(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -255,8 +255,8 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	@Override
 	public BooleanDataset idivide(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -297,8 +297,8 @@ public class BooleanDataset extends BooleanDatasetBase {
 	@Override
 	public double residual(final Object b) {
 		double sum = 0;
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();

@@ -42,97 +42,111 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * <p/>
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
-public abstract class AbstractDataset implements IErrorDataset {
+public abstract class AbstractDataset implements ADataset {
 
 	/**
 	 * Boolean
 	 */
-	public static final int BOOL = 0;
+	public static final int BOOL = ADataset.BOOL;
+
 	/**
 	 * Signed 8-bit integer
 	 */
-	public static final int INT8 = 1;
+	public static final int INT8 = ADataset.INT8;
+
 	/**
 	 * Signed 16-bit integer
 	 */
-	public static final int INT16 = 2;
+	public static final int INT16 = ADataset.INT16;
+
 	/**
 	 * Signed 32-bit integer
 	 */
-	public static final int INT32 = 3;
+	public static final int INT32 = ADataset.INT32;
 	/**
 	 * Integer (same as signed 32-bit integer)
 	 */
-	public static final int INT = INT32;
+	public static final int INT = ADataset.INT;
+
 	/**
 	 * Signed 64-bit integer
 	 */
-	public static final int INT64 = 4;
+	public static final int INT64 = ADataset.INT64;
+
 	/**
 	 * 32-bit floating point
 	 */
-	public static final int FLOAT32 = 5;
+	public static final int FLOAT32 = ADataset.FLOAT32;
+
 	/**
 	 * 64-bit floating point
 	 */
-	public static final int FLOAT64 = 6;
+	public static final int FLOAT64 = ADataset.FLOAT64;
+
 	/**
 	 * Floating point (same as 64-bit floating point)
 	 */
-	public static final int FLOAT = FLOAT64;
+	public static final int FLOAT = ADataset.FLOAT;
+
 	/**
 	 * 64-bit complex floating point (real and imaginary parts are 32-bit floats)
 	 */
-	public static final int COMPLEX64 = 7;
+	public static final int COMPLEX64 = ADataset.COMPLEX64;
+
 	/**
 	 * 128-bit complex floating point (real and imaginary parts are 64-bit floats)
 	 */
-	public static final int COMPLEX128 = 8;
+	public static final int COMPLEX128 = ADataset.COMPLEX128;
+
 	/**
 	 * Complex floating point (same as 64-bit floating point)
 	 */
-	public static final int COMPLEX = COMPLEX128;
+	public static final int COMPLEX = ADataset.COMPLEX;
 
 	/**
 	 * String
 	 */
-	public static final int STRING = 9;
+	public static final int STRING = ADataset.STRING;
 
 	/**
 	 * Object
 	 */
-	public static final int OBJECT = 10;
-
-	public static final int ARRAYMUL = 100;
+	public static final int OBJECT = ADataset.OBJECT;
 
 	/**
 	 * Array of signed 8-bit integers
 	 */
-	public static final int ARRAYINT8 = ARRAYMUL * INT8;
+	public static final int ARRAYINT8 = ADataset.ARRAYINT8;
+
 	/**
 	 * Array of signed 16-bit integers
 	 */
-	public static final int ARRAYINT16 = ARRAYMUL * INT16;
+	public static final int ARRAYINT16 = ADataset.ARRAYINT16;
+
 	/**
 	 * Array of three signed 16-bit integers for RGB values
 	 */
-	public static final int RGB = ARRAYINT16 + 3;
+	public static final int RGB = ADataset.RGB;
+
 	/**
 	 * Array of signed 32-bit integers
 	 */
-	public static final int ARRAYINT32 = ARRAYMUL * INT32;
+	public static final int ARRAYINT32 = ADataset.ARRAYINT32;
+
 	/**
 	 * Array of signed 64-bit integers
 	 */
-	public static final int ARRAYINT64 = ARRAYMUL * INT64;
+	public static final int ARRAYINT64 = ADataset.ARRAYINT64;
+
 	/**
 	 * Array of 32-bit floating points
 	 */
-	public static final int ARRAYFLOAT32 = ARRAYMUL * FLOAT32;
+	public static final int ARRAYFLOAT32 = ADataset.ARRAYFLOAT32;
+
 	/**
 	 * Array of 64-bit floating points
 	 */
-	public static final int ARRAYFLOAT64 = ARRAYMUL * FLOAT64;
+	public static final int ARRAYFLOAT64 = ADataset.ARRAYFLOAT64;
 
 	/**
 	 * Update this when there are any serious changes to API
@@ -193,6 +207,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return a copy of dataset
 	 */
+	@Override
 	public synchronized AbstractDataset synchronizedCopy() {
 		return clone();
 	}
@@ -297,6 +312,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            dataset type
 	 * @return a converted dataset
 	 */
+	@Override
 	public AbstractDataset cast(final int dtype) {
 		if (getDtype() == dtype) {
 			return this;
@@ -314,6 +330,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            item size
 	 * @return a converted dataset
 	 */
+	@Override
 	public AbstractDataset cast(final boolean repeat, final int dtype, final int isize) {
 		if (getDtype() == dtype && getElementsPerItem() == isize) {
 			return this;
@@ -324,6 +341,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return whole view of dataset (i.e. data buffer is shared)
 	 */
+	@Override
 	public abstract AbstractDataset getView();
 
 	/**
@@ -369,6 +387,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return an index dataset
 	 */
+	@Override
 	public IntegerDataset getIndices() {
 		final IntegerDataset ret = DatasetUtils.indices(shape);
 		if (getName() != null) {
@@ -392,6 +411,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            if zero length then axes order reversed
 	 * @return remapped copy of data
 	 */
+	@Override
 	public AbstractDataset transpose(int... axes) {
 		return DatasetUtils.transpose(this, axes);
 	}
@@ -403,6 +423,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis2
 	 * @return swapped dataset
 	 */
+	@Override
 	public AbstractDataset swapaxes(int axis1, int axis2) {
 		return DatasetUtils.swapAxes(this, axis1, axis2);
 	}
@@ -412,6 +433,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy
 	 */
+	@Override
 	public AbstractDataset flatten() {
 		AbstractDataset result = getView();
 		result.shape = new int[] { result.size };
@@ -643,8 +665,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return dataset type
 	 */
 	public static int getDType(ILazyDataset d) {
-		if (d instanceof AbstractDataset)
-			return ((AbstractDataset) d).getDtype();
+		if (d instanceof ADataset)
+			return ((ADataset) d).getDtype();
 		return getDTypeFromClass(d.elementClass());
 	}
 
@@ -707,6 +729,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param depth
 	 * @param pos position
 	 */
+	@Override
 	public void fillData(Object obj, final int depth, final int[] pos) {
 		if (obj == null) {
 			int dtype = getDtype();
@@ -796,6 +819,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            set true if position is needed
 	 * @return an IndexIterator tailored for this dataset
 	 */
+	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
 		return (withPosition) ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
 	}
@@ -803,6 +827,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return an IndexIterator tailored for this dataset
 	 */
+	@Override
 	public IndexIterator getIterator() {
 		return getIterator(false);
 	}
@@ -811,6 +836,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axes
 	 * @return a PositionIterator that misses out axes
 	 */
+	@Override
 	public PositionIterator getPositionIterator(final int... axes) {
 		return new PositionIterator(shape, axes);
 	}
@@ -824,6 +850,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            specifies the steps in the slice
 	 * @return an slice iterator that operates like an IndexIterator
 	 */
+	@Override
 	public IndexIterator getSliceIterator(final int[] start, final int[] stop, final int[] step) {
 		int rank = shape.length;
 
@@ -866,7 +893,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            to include
 	 * @return slice iterator
 	 */
-	protected SliceIterator getSliceIteratorFromAxes(final int[] pos, boolean[] axes) {
+	@Override
+	public SliceIterator getSliceIteratorFromAxes(final int[] pos, boolean[] axes) {
 		int rank = shape.length;
 		int[] start;
 		int[] stop = new int[rank];
@@ -896,27 +924,6 @@ public abstract class AbstractDataset implements IErrorDataset {
 		}
 		return (SliceIterator) getSliceIterator(start, stop, step);
 	}
-
-	/**
-	 * Copy content from axes in given position to array
-	 * 
-	 * @param pos
-	 *            - null means position at origin
-	 * @param axes
-	 *            - true means copy
-	 * @param dest
-	 */
-	abstract public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final AbstractDataset dest);
-
-	/**
-	 * Set content on axes in given position to values in array
-	 * 
-	 * @param pos
-	 * @param axes
-	 *            - true means copy
-	 * @param src
-	 */
-	abstract public void setItemsOnAxes(final int[] pos, final boolean[] axes, final Object src);
 
 	/**
 	 * Check slice and alter parameters if necessary
@@ -1019,6 +1026,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
+	@Override
 	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
 		return setSlice(obj, getSliceIterator(start, stop, step));
 	}
@@ -1031,6 +1039,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
+	@Override
 	abstract public AbstractDataset setSlice(final Object obj, final IndexIterator iterator);
 
 	/**
@@ -1039,7 +1048,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param choice
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public BooleanIterator getBooleanIterator(BooleanDataset choice) {
+	@Override
+	public BooleanIterator getBooleanIterator(ADataset choice) {
 		return getBooleanIterator(choice, true);
 	}
 
@@ -1051,7 +1061,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param value
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public BooleanIterator getBooleanIterator(BooleanDataset choice, boolean value) {
+	@Override
+	public BooleanIterator getBooleanIterator(ADataset choice, boolean value) {
 		return new BooleanIterator(getIterator(), choice, value);
 	}
 
@@ -1062,7 +1073,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            a boolean dataset of same shape to use for selecting items
 	 * @return The new selected dataset
 	 */
-	public AbstractDataset getByBoolean(BooleanDataset selection) {
+	@Override
+	public AbstractDataset getByBoolean(ADataset selection) {
 		checkCompatibility(selection);
 
 		final int length = ((Number) selection.sum()).intValue();
@@ -1087,7 +1099,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	abstract public AbstractDataset setByBoolean(final Object obj, BooleanDataset selection);
+	@Override
+	abstract public AbstractDataset setByBoolean(final Object obj, ADataset selection);
 
 	/**
 	 * This is modelled after the NumPy get item with an index dataset
@@ -1096,6 +1109,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            an integer dataset
 	 * @return The new selected dataset by indices
 	 */
+	@Override
 	public AbstractDataset getByIndex(IntegerDataset index) {
 		final int is = getElementsPerItem();
 		final AbstractDataset r = zeros(is, index.getShape(), getDtype());
@@ -1115,6 +1129,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 * @return The new selected dataset by index
 	 */
+	@Override
 	public AbstractDataset getByIndexes(final Object... index) {
 		final IntegersIterator iter = new IntegersIterator(shape, index);
 		final int is = getElementsPerItem();
@@ -1138,7 +1153,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	abstract public AbstractDataset setByIndex(final Object obj, final IntegerDataset index);
+	@Override
+	abstract public AbstractDataset setByIndex(final Object obj, final ADataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
@@ -1149,6 +1165,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
+	@Override
 	abstract public AbstractDataset setByIndexes(final Object obj, final Object... index);
 
 	/**
@@ -1186,11 +1203,6 @@ public abstract class AbstractDataset implements IErrorDataset {
 		return Object.class;
 	}
 
-	/**
-	 * @return type of data item
-	 */
-	abstract public int getDtype();
-
 	@Override
 	public Class<?> elementClass() {
 		return elementClass(getDtype());
@@ -1199,6 +1211,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return true if dataset has elements which are floating point values
 	 */
+	@Override
 	public boolean hasFloatingPointElements() {
 		Class<?> cls = elementClass();
 		return cls == Float.class || cls == Double.class;
@@ -1336,6 +1349,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return number of bytes used (does not include reserved space)
 	 */
+	@Override
 	public int getNbytes() {
 		return getSize() * getItemsize();
 	}
@@ -1352,8 +1366,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 		}
 
 		this.shape = shape.clone();
-		if (errorData != null && errorData instanceof AbstractDataset) {
-			((AbstractDataset) errorData).setShape(shape);
+		if (errorData != null && errorData instanceof ADataset) {
+			((ADataset) errorData).setShape(shape);
 		}
 
 		if (storedValues != null)
@@ -1419,6 +1433,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            The index in the array
 	 * @return the corresponding [a,b,...,n] position in the dataset
 	 */
+	@Override
 	public int[] getNDPosition(final int n) {
 		if (n >= size) {
 			throw new IllegalArgumentException("Index provided " + n
@@ -1448,6 +1463,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return sanitized axis in range [0, rank)
 	 */
+	@Override
 	public int checkAxis(int axis) {
 		int rank = shape.length;
 		if (axis < 0) {
@@ -1472,6 +1488,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param showData
 	 * @return string representation
 	 */
+	@Override
 	public String toString(boolean showData) {
 		final int rank = shape == null ? 0 : shape.length;
 		final StringBuilder out = new StringBuilder();
@@ -1653,6 +1670,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * This function allows anything that dirties the dataset to set stored values to null so that the other functions
 	 * can work correctly.
 	 */
+	@Override
 	public void setDirty() {
 		storedValues = null;
 	}
@@ -1830,6 +1848,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            The dataset to be compared
 	 * @return true if shapes are compatible
 	 */
+	@Override
 	public boolean isCompatibleWith(final ILazyDataset g) {
 		return areShapesCompatible(shape, g.getShape());
 	}
@@ -1843,6 +1862,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @throws IllegalArgumentException
 	 *             This will be thrown if there is a problem with the compatibility
 	 */
+	@Override
 	public void checkCompatibility(final ILazyDataset g) throws IllegalArgumentException {
 		checkCompatibility(this, g);
 	}
@@ -1871,6 +1891,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param shape
 	 *            new shape
 	 */
+	@Override
 	public AbstractDataset reshape(final int... shape) {
 		AbstractDataset a = getView();
 		a.setShape(shape);
@@ -2105,7 +2126,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with zeros
 	 */
-	public static AbstractDataset zeros(final AbstractDataset dataset) {
+	public static AbstractDataset zeros(final ADataset dataset) {
 		return zeros(dataset, dataset.getDtype());
 	}
 
@@ -2116,8 +2137,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset zeros(final AbstractDataset dataset, final int dtype) {
-		final int[] shape = dataset.shape;
+	public static AbstractDataset zeros(final ADataset dataset, final int dtype) {
+		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 
 		return zeros(isize, shape, dtype);
@@ -2127,7 +2148,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with ones
 	 */
-	public static AbstractDataset ones(final AbstractDataset dataset) {
+	public static AbstractDataset ones(final ADataset dataset) {
 		return ones(dataset, dataset.getDtype());
 	}
 
@@ -2138,8 +2159,8 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset ones(final AbstractDataset dataset, final int dtype) {
-		final int[] shape = dataset.shape;
+	public static AbstractDataset ones(final ADataset dataset, final int dtype) {
+		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 
 		return ones(isize, shape, dtype);
@@ -2285,6 +2306,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return true if dataset is complex
 	 */
+	@Override
 	public boolean isComplex() {
 		int type = getDtype();
 		return type == COMPLEX64 || type == COMPLEX128;
@@ -2293,70 +2315,10 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return real part of dataset as new dataset
 	 */
+	@Override
 	public AbstractDataset real() {
 		return this;
 	}
-
-	/**
-	 * Fill dataset with number represented by given object
-	 * 
-	 * @param obj
-	 * @return filled dataset
-	 */
-	abstract public AbstractDataset fill(final Object obj);
-
-	/**
-	 * Get an element from given absolute index as a boolean - note this index does not take in account the item size so
-	 * be careful when using with multi-element items
-	 * 
-	 * @param index
-	 * @return element as boolean
-	 */
-	abstract public boolean getElementBooleanAbs(final int index);
-
-	/**
-	 * Get an element from given absolute index as a double - note this index does not take in account the item size so
-	 * be careful when using with multi-element items
-	 * 
-	 * @param index
-	 * @return element as double
-	 */
-	abstract public double getElementDoubleAbs(final int index);
-
-	/**
-	 * Get an element from given absolute index as a long - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
-	 * 
-	 * @param index
-	 * @return element as long
-	 */
-	abstract public long getElementLongAbs(final int index);
-
-	/**
-	 * Get an item from given absolute index as an object - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
-	 * 
-	 * @param index
-	 * @return item
-	 */
-	abstract public Object getObjectAbs(final int index);
-
-	/**
-	 * Get an item from given absolute index as a string - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
-	 * 
-	 * @param index
-	 * @return item
-	 */
-	abstract public String getStringAbs(final int index);
-
-	/**
-	 * Set an item at absolute index from an object - note this index does not take into account the item size so be
-	 * careful when using with multi-element items
-	 * @param index
-	 * @param obj
-	 */
-	abstract public void setObjectAbs(final int index, final Object obj);
 
 	/**
 	 * In-place sort of dataset
@@ -2365,6 +2327,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 *            to sort along
 	 * @return sorted dataset
 	 */
+	@Override
 	public AbstractDataset sort(Integer axis) {
 		int dtype = getDtype();
 		if (dtype == BOOL || dtype == COMPLEX64 || dtype == COMPLEX128 || getElementsPerItem() != 1) {
@@ -2433,12 +2396,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
 	}
 
-	/**
-	 * Get a slice of the dataset. The returned dataset is a copied selection of items
-	 * 
-	 * @param iterator Slice iterator
-	 * @return The dataset of the sliced data
-	 */
+	@Override
 	abstract public AbstractDataset getSlice(final SliceIterator iterator);
 
 	@Override
@@ -2474,6 +2432,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param object
 	 * @param slice
 	 */
+	@Override
 	public void setSlice(Object object, Slice... slice) {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
@@ -2486,17 +2445,9 @@ public abstract class AbstractDataset implements IErrorDataset {
 	}
 
 	/**
-	 * Populate a dataset with part of current dataset
-	 * 
-	 * @param result
-	 * @param iter
-	 *            over current dataset
-	 */
-	abstract public void fillDataset(AbstractDataset result, IndexIterator iter);
-
-	/**
 	 * Test if all items are true
 	 */
+	@Override
 	public boolean all() {
 		final IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
@@ -2511,6 +2462,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return dataset where items are true if all items along axis are true
 	 */
+	@Override
 	public BooleanDataset all(final int axis) {
 		int rank = getRank();
 
@@ -2551,6 +2503,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * Test if any items are true
 	 */
+	@Override
 	public boolean any() {
 		final IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
@@ -2565,6 +2518,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return dataset where items are true if any items along axis are true
 	 */
+	@Override
 	public BooleanDataset any(final int axis) {
 		int rank = getRank();
 
@@ -2608,6 +2562,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return sum dataset
 	 */
+	@Override
 	abstract public AbstractDataset iadd(final Object o);
 
 	/**
@@ -2616,6 +2571,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return difference dataset
 	 */
+	@Override
 	abstract public AbstractDataset isubtract(final Object o);
 
 	/**
@@ -2624,6 +2580,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return product dataset
 	 */
+	@Override
 	abstract public AbstractDataset imultiply(final Object o);
 
 	/**
@@ -2632,6 +2589,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return dividend dataset
 	 */
+	@Override
 	abstract public AbstractDataset idivide(final Object o);
 
 	/**
@@ -2640,6 +2598,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return dividend dataset
 	 */
+	@Override
 	public AbstractDataset ifloorDivide(final Object o) {
 		return idivide(o).ifloor();
 	}
@@ -2649,6 +2608,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return remaindered dataset
 	 */
+	@Override
 	abstract public AbstractDataset iremainder(final Object o);
 
 	/**
@@ -2656,6 +2616,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return floored dataset
 	 */
+	@Override
 	abstract public AbstractDataset ifloor();
 
 	/**
@@ -2664,6 +2625,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return raised dataset
 	 */
+	@Override
 	abstract public AbstractDataset ipower(final Object o);
 
 	/**
@@ -2673,6 +2635,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param o
 	 * @return sum of the squares of the differences
 	 */
+	@Override
 	public double residual(final Object o) {
 		return residual(o, false);
 	}
@@ -2684,6 +2647,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return sum of the squares of the differences
 	 */
+	@Override
 	abstract public double residual(final Object o, boolean ignoreNaNs);
 
 	public static final String STORE_HASH = "hash";
@@ -2708,7 +2672,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param key
 	 * @return value
 	 */
-	protected Object getStoredValue(String key) {
+	public Object getStoredValue(String key) {
 		if (storedValues == null) {
 			return null;
 		}
@@ -3118,18 +3082,6 @@ public abstract class AbstractDataset implements IErrorDataset {
 		return minPos(false);
 	}
 
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and Infs
-	 * @return position of maximum value
-	 */
-	abstract public int[] maxPos(boolean ignoreInvalids);
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and Infs
-	 * @return position of minimum value
-	 */
-	abstract public int[] minPos(boolean ignoreInvalids);
-
 	private int getHash() {
 		Object value = getStoredValue(STORE_HASH);
 		if (value == null) {
@@ -3196,6 +3148,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return maximum
 	 */
+	@Override
 	public Number max(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MAX);
 	}
@@ -3205,6 +3158,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInfs if true, ignore infinities
 	 * @return minimum
 	 */
+	@Override
 	public Number max(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MAX);
 	}
@@ -3213,6 +3167,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return minimum positive value (or infinity if there are no positive values)
 	 */
+	@Override
 	public Number positiveMax(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MAX);
 	}
@@ -3222,6 +3177,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInfs if true, ignore infinities
 	 * @return maximum positive value (or Double.MIN_VALUE=2^-1024 if there are no positive values)
 	 */
+	@Override
 	public Number positiveMax(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MAX);
 	}
@@ -3231,6 +3187,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
+	@Override
 	public AbstractDataset max(int axis) {
 		return max(false, axis);
 	}
@@ -3240,6 +3197,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
+	@Override
 	public AbstractDataset max(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
 	}
@@ -3256,6 +3214,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return minimum
 	 */
+	@Override
 	public Number min(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MIN);
 	}
@@ -3265,6 +3224,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInfs if true, ignore infinities
 	 * @return minimum
 	 */
+	@Override
 	public Number min(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MIN);
 	}
@@ -3273,6 +3233,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return minimum positive value (or infinity if there are no positive values)
 	 */
+	@Override
 	public Number positiveMin(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MIN);
 	}
@@ -3282,6 +3243,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInfs if true, ignore infinities
 	 * @return minimum positive value (or infinity if there are no positive values)
 	 */
+	@Override
 	public Number positiveMin(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MIN);
 	}
@@ -3291,6 +3253,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
+	@Override
 	public AbstractDataset min(int axis) {
 		return min(false, axis);
 	}
@@ -3300,6 +3263,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
+	@Override
 	public AbstractDataset min(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + "-" + axis);
 	}
@@ -3310,6 +3274,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return absolute index
 	 */
+	@Override
 	public int argMax() {
 		return argMax(false);
 	}
@@ -3320,6 +3285,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
+	@Override
 	public int argMax(boolean ignoreInvalids) {
 		return get1DIndex(maxPos(ignoreInvalids));
 	}
@@ -3331,6 +3297,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
+	@Override
 	public IntegerDataset argMax(int axis) {
 		return argMax(false, axis);
 	}
@@ -3353,6 +3320,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * 
 	 * @return absolute index
 	 */
+	@Override
 	public int argMin() {
 		return argMin(false);
 	}
@@ -3363,6 +3331,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
+	@Override
 	public int argMin(boolean ignoreInvalids) {
 		return get1DIndex(minPos(ignoreInvalids));
 	}
@@ -3374,6 +3343,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
+	@Override
 	public IntegerDataset argMin(int axis) {
 		return argMin(false, axis);
 	}
@@ -3385,28 +3355,15 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
+	@Override
 	public IntegerDataset argMin(boolean ignoreNaNs, int axis) {
 		return (IntegerDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + STORE_INDEX + "-" + axis);
 	}
 
 	/**
-	 * @return true if dataset contains any infinities
-	 */
-	abstract public boolean containsInfs();
-
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
-	abstract public boolean containsNans();
-
-	/**
-	 * @return true if dataset contains any NaNs or infinities
-	 */
-	abstract public boolean containsInvalidNumbers();
-
-	/**
 	 * @return peak-to-peak value, the difference of maximum and minimum of dataset
 	 */
+	@Override
 	public Number peakToPeak() {
 		return fromDoubleToNumber(max().doubleValue() - min().doubleValue());
 	}
@@ -3415,6 +3372,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return peak-to-peak dataset, the difference of maxima and minima of dataset along axis
 	 */
+	@Override
 	public AbstractDataset peakToPeak(int axis) {
 		return Maths.subtract(max(axis), min(axis));
 	}
@@ -3423,6 +3381,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * See {@link #count(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @return number of items in dataset
 	 */
+	@Override
 	public long count() {
 		return count(false);
 	}
@@ -3431,6 +3390,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
 	 * @return number of items in dataset
 	 */
+	@Override
 	public long count(boolean ignoreNaNs) {
 		return getStatistics(ignoreNaNs).getN();
 	}
@@ -3440,6 +3400,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return number of items along axis in dataset
 	 */
+	@Override
 	public AbstractDataset count(int axis) {
 		return count(false, axis);
 	}
@@ -3449,6 +3410,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return number of items along axis in dataset
 	 */
+	@Override
 	public AbstractDataset count(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_COUNT + "-" + axis);
 	}
@@ -3457,6 +3419,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * See {@link #sum(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
 	 */
+	@Override
 	public Object sum() {
 		return sum(false);
 	}
@@ -3465,6 +3428,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
 	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
 	 */
+	@Override
 	public Object sum(boolean ignoreNaNs) {
 		return getStatistics(ignoreNaNs).getSum();
 	}
@@ -3474,6 +3438,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
+	@Override
 	public AbstractDataset sum(int axis) {
 		return sum(false, axis);
 	}
@@ -3483,6 +3448,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
+	@Override
 	public AbstractDataset sum(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_SUM + "-" + axis);
 	}
@@ -3491,6 +3457,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sum over all items in dataset as appropriate to dataset type
 	 * (integers for boolean, byte, short and integer; longs for long; floats for float; doubles for double)
 	 */
+	@Override
 	public Object typedSum() {
 		return typedSum(getDtype());
 	}
@@ -3499,6 +3466,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dtype
 	 * @return sum over all items in dataset as appropriate to given dataset type
 	 */
+	@Override
 	public Object typedSum(int dtype) {
 		return fromDoubleToBiggestNumber(getStatistics(false).getSum(), dtype);
 	}
@@ -3508,6 +3476,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
+	@Override
 	public AbstractDataset typedSum(int dtype, int axis) {
 		return DatasetUtils.cast(sum(axis), dtype);
 	}
@@ -3515,6 +3484,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return product over all items in dataset
 	 */
+	@Override
 	public Object product() {
 		return Stats.product(this);
 	}
@@ -3523,6 +3493,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return product along axis in dataset
 	 */
+	@Override
 	public AbstractDataset product(int axis) {
 		return Stats.product(this, axis);
 	}
@@ -3531,6 +3502,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param dtype
 	 * @return product over all items in dataset
 	 */
+	@Override
 	public Object typedProduct(int dtype) {
 		return Stats.typedProduct(this, dtype);
 	}
@@ -3540,6 +3512,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return product along axis in dataset
 	 */
+	@Override
 	public AbstractDataset typedProduct(int dtype, int axis) {
 		return Stats.typedProduct(this, dtype, axis);
 	}
@@ -3559,6 +3532,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
+	@Override
 	public Object mean(boolean ignoreNaNs) {
 		return getStatistics(ignoreNaNs).getMean();
 	}
@@ -3568,6 +3542,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return mean along axis in dataset
 	 */
+	@Override
 	public AbstractDataset mean(int axis) {
 		return mean(false, axis);
 	}
@@ -3586,6 +3561,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sample variance of whole dataset
 	 * @see #variance(boolean)
 	 */
+	@Override
 	public Number variance() {
 		return variance(false);
 	}
@@ -3613,6 +3589,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param isDatasetWholePopulation
 	 * @return sample variance
 	 */
+	@Override
 	public Number variance(boolean isDatasetWholePopulation) {
 		SummaryStatistics stats = getStatistics(false);
 
@@ -3642,6 +3619,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sample standard deviation of all items in dataset
 	 * @see #variance()
 	 */
+	@Override
 	public Number stdDeviation() {
 		return Math.sqrt(variance().doubleValue());
 	}
@@ -3653,6 +3631,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @return sample standard deviation of all items in dataset
 	 * @see #variance(boolean)
 	 */
+	@Override
 	public Number stdDeviation(boolean isDatasetWholePopulation) {
 		return Math.sqrt(variance(isDatasetWholePopulation).doubleValue());
 	}
@@ -3661,6 +3640,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return standard deviation along axis in dataset
 	 */
+	@Override
 	public AbstractDataset stdDeviation(int axis) {
 		final AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		return Maths.sqrt(v);
@@ -3669,6 +3649,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @return root mean square
 	 */
+	@Override
 	public Number rootMeanSquare() {
 		final SummaryStatistics stats = getStatistics(false);
 		final double mean = stats.getMean();
@@ -3679,6 +3660,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	 * @param axis
 	 * @return root mean square along axis in dataset
 	 */
+	@Override
 	public AbstractDataset rootMeanSquare(int axis) {
 		AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		AbstractDataset m = (AbstractDataset) getStatistics(false, axis, STORE_MEAN + "-" + axis);
@@ -3689,6 +3671,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @see DatasetUtils#put(AbstractDataset, int[], Object[])
 	 */
+	@Override
 	public AbstractDataset put(final int[] indices, Object[] values) {
 		return DatasetUtils.put(this, indices, values);
 	}
@@ -3696,6 +3679,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 	/**
 	 * @see DatasetUtils#take(AbstractDataset, int[], Integer)
 	 */
+	@Override
 	public AbstractDataset take(final int[] indices, final Integer axis) {
 		return DatasetUtils.take(this, indices, axis);
 	}
@@ -3842,6 +3826,7 @@ public abstract class AbstractDataset implements IErrorDataset {
 		return new double[] {getError(pos)};
 	}
 
+	@Override
 	public Serializable getErrorBuffer() {
 		return errorData;
 	}

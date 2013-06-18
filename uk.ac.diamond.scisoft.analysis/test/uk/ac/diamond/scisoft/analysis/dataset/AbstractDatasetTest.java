@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -882,7 +882,7 @@ public class AbstractDatasetTest {
 		while (is.hasNext() && it.hasNext()) {
 			assertEquals(s.getElementLongAbs(is.index), t.getElementLongAbs(it.index));
 		}
-}
+	}
 
 	@Test
 	public void test1DErrors() {

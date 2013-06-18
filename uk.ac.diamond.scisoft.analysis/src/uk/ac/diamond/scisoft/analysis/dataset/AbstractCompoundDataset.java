@@ -471,14 +471,14 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @param source
 	 * @param element
 	 */
-	abstract public void setElements(AbstractDataset source, int element);
+	abstract public void setElements(ADataset source, int element);
 
 	/**
 	 * Copy chosen elements from each item to another dataset
 	 * @param destination
 	 * @param element
 	 */
-	abstract public void copyElements(AbstractDataset destination, int element);
+	abstract public void copyElements(ADataset destination, int element);
 
 	/**
 	 * Gets a view of compound dataset as a non-compound dataset

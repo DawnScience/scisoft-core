@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -109,8 +109,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	 * @param real
 	 * @param imag
 	 */
-	public ComplexFloatDataset(final AbstractDataset real, final AbstractDataset imag) {
-		super(ISIZE, real.shape);
+	public ComplexFloatDataset(final ADataset real, final ADataset imag) {
+		super(ISIZE, real.getShapeRef());
 		real.checkCompatibility(imag);
 
 		IndexIterator riter = real.getIterator();
@@ -127,7 +127,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	 * @param dataset
 	 */
 	public ComplexFloatDataset(final AbstractDataset dataset) {
-		super(ISIZE, dataset.shape);
+		super(ISIZE, dataset.getShapeRef());
 		copyToView(dataset, this, true, false);
 
 		IndexIterator iter = dataset.getIterator();
@@ -413,7 +413,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		if (o instanceof ComplexFloatDataset) {
 			ComplexFloatDataset zds = (ComplexFloatDataset) o;
 
-			if (!AbstractDataset.areShapesCompatible(siter.getShape(), zds.shape)) {
+			if (!areShapesCompatible(siter.getShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(zds.shape),
 						Arrays.toString(siter.getShape())));
@@ -429,7 +429,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		} else if (o instanceof ComplexDoubleDataset) { // IGNORE_CLASS
 			ComplexDoubleDataset zds = (ComplexDoubleDataset) o; // IGNORE_CLASS
 
-			if (!AbstractDataset.areShapesCompatible(siter.getShape(), zds.shape)) {
+			if (!areShapesCompatible(siter.getShape(), zds.shape)) {
 				throw new IllegalArgumentException(String.format(
 						"Input dataset is not compatible with slice: %s cf %s", Arrays.toString(zds.shape),
 						Arrays.toString(siter.getShape())));
@@ -463,8 +463,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset iadd(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -505,8 +505,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset isubtract(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -547,8 +547,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset imultiply(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -598,8 +598,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset idivide(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -693,8 +693,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset ipower(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -735,8 +735,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	@Override
 	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();

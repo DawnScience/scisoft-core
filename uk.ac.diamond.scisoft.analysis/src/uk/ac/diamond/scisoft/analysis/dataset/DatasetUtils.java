@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1169,6 +1169,13 @@ public class DatasetUtils {
 			return adata.getView();
 		}
 
+		int dtype;
+		if (lazydata instanceof ADataset) {
+			dtype = ((ADataset) lazydata).getDtype();
+		} else {
+			dtype = AbstractDataset.getDType(lazydata);
+		}
+
 		IDataset data;
 		if (lazydata instanceof IDataset) {
 			data = (IDataset)lazydata;
@@ -1181,8 +1188,7 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Datasets with " + isize + " elements per item not supported");
 		}
 
-		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), AbstractDataset.getDType(data));
-		int dtype = result.getDtype();
+		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), dtype);
 		result.setName(data.getName());
 
 		final IndexIterator it = result.getIterator(true);
@@ -1230,6 +1236,9 @@ public class DatasetUtils {
 			break;
 		}
 
+		if (lazydata instanceof ADataset) {
+			result.setError(((ADataset) lazydata).getErrorBuffer());
+		}
 		return result;
 	}
 

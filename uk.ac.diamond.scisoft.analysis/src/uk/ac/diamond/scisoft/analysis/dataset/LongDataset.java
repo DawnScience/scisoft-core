@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -419,7 +419,7 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public void fillDataset(AbstractDataset result, IndexIterator iter) {
+	public void fillDataset(ADataset result, IndexIterator iter) {
 		IndexIterator riter = result.getIterator();
 
 		long[] rdata = ((LongDataset) result).data; // PRIM_TYPE
@@ -429,9 +429,9 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public LongDataset setByBoolean(final Object obj, BooleanDataset selection) {
-		if (obj instanceof AbstractDataset) {
-			final AbstractDataset ds = (AbstractDataset) obj;
+	public LongDataset setByBoolean(final Object obj, ADataset selection) {
+		if (obj instanceof ADataset) {
+			final ADataset ds = (ADataset) obj;
 			final int length = ((Number) selection.sum()).intValue();
 			if (length != ds.getSize()) {
 				throw new IllegalArgumentException(
@@ -456,9 +456,9 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public LongDataset setByIndex(final Object obj, final IntegerDataset index) {
-		if (obj instanceof AbstractDataset) {
-			final AbstractDataset ds = (AbstractDataset) obj;
+	public LongDataset setByIndex(final Object obj, final ADataset index) {
+		if (obj instanceof ADataset) {
+			final ADataset ds = (ADataset) obj;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in index dataset does not match number of items in dataset");
@@ -486,8 +486,8 @@ public class LongDataset extends AbstractDataset {
 		final IntegersIterator iter = new IntegersIterator(shape, index);
 		final int[] pos = iter.getPos();
 
-		if (obj instanceof AbstractDataset) {
-			final AbstractDataset ds = (AbstractDataset) obj;
+		if (obj instanceof ADataset) {
+			final ADataset ds = (ADataset) obj;
 			if (calcSize(iter.getShape()) != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in index datasets does not match number of items in dataset");
@@ -521,8 +521,8 @@ public class LongDataset extends AbstractDataset {
 						Arrays.toString(siter.getShape())));
 			}
 
-			if (ds instanceof AbstractDataset) {
-				final AbstractDataset ads = (AbstractDataset) ds;
+			if (ds instanceof ADataset) {
+				final ADataset ads = (ADataset) ds;
 				final IndexIterator oiter = ads.getIterator();
 
 				while (siter.hasNext() && oiter.hasNext())
@@ -549,8 +549,8 @@ public class LongDataset extends AbstractDataset {
 	}
 
 	@Override
-	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final AbstractDataset dest) {
-		long[] ddata = (long[]) dest.odata; // PRIM_TYPE
+	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final ADataset dest) {
+		long[] ddata = (long[]) dest.getBuffer(); // PRIM_TYPE
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
 		int[] sshape = squeezeShape(siter.getShape(), false);
@@ -661,8 +661,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset iadd(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -685,8 +685,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset isubtract(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -709,8 +709,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset imultiply(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -733,8 +733,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset idivide(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -770,8 +770,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset iremainder(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -802,8 +802,8 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset ipower(final Object b) {
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -851,8 +851,8 @@ public class LongDataset extends AbstractDataset {
 	@Override
 	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof ADataset) {
+			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();

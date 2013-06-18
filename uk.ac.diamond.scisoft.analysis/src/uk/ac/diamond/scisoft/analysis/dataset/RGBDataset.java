@@ -164,8 +164,8 @@ public class RGBDataset extends CompoundShortDataset {
 	 * @param green
 	 * @param blue
 	 */
-	public RGBDataset(final AbstractDataset red, final AbstractDataset green, final AbstractDataset blue) {
-		super(ISIZE, red.shape);
+	public RGBDataset(final ADataset red, final ADataset green, final ADataset blue) {
+		super(ISIZE, red.getShapeRef());
 		red.checkCompatibility(green);
 		red.checkCompatibility(blue);
 
@@ -190,8 +190,8 @@ public class RGBDataset extends CompoundShortDataset {
 	 * Create a dataset using given grey data
 	 * @param grey
 	 */
-	public RGBDataset(final AbstractDataset grey) {
-		super(ISIZE, grey.shape);
+	public RGBDataset(final ADataset grey) {
+		super(ISIZE, grey.getShapeRef());
 
 		IndexIterator giter = grey.getIterator();
 

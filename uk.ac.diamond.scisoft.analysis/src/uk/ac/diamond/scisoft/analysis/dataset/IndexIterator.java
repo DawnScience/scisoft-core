@@ -42,7 +42,7 @@ public abstract class IndexIterator {
 	abstract public boolean hasNext();
 
 	/**
-	 * @return position indices (nb this is reference not a copy so avoid changing)
+	 * @return position indices (nb this is reference not a copy so avoid changing and can be null)
 	 */
 	abstract public int[] getPos();
 

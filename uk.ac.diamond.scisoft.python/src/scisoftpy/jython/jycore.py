@@ -18,6 +18,7 @@
 Core package contains wrappers for Java dataset classes
 '''
 
+import uk.ac.diamond.scisoft.analysis.dataset.ADataset as _ads
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _abstractds
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
 
@@ -65,37 +66,37 @@ class _dtype(object):
             s += "(%d)" % self.elements
         return s
 
-bool = _dtype(_abstractds.BOOL, name='bool') #@ReservedAssignment
-int8 = _dtype(_abstractds.INT8, name='int8')
-int16 = _dtype(_abstractds.INT16, name='int16')
-int32 = _dtype(_abstractds.INT32, name='int32')
-int64 = _dtype(_abstractds.INT64, name='int64')
-cint8 = lambda e : _dtype(_abstractds.ARRAYINT8, e, 'cint8')
-cint16 = lambda e : _dtype(_abstractds.ARRAYINT16, e, 'cint16')
-cint32 = lambda e : _dtype(_abstractds.ARRAYINT32, e, 'cint32')
-cint64 = lambda e : _dtype(_abstractds.ARRAYINT64, e, 'cint64')
-float32 = _dtype(_abstractds.FLOAT32, name='float32')
-float64 = _dtype(_abstractds.FLOAT64, name='float64')
-cfloat32 = lambda e : _dtype(_abstractds.ARRAYFLOAT32, e, 'cfloat32')
-cfloat64 = lambda e : _dtype(_abstractds.ARRAYFLOAT64, e, 'cfloat64')
-complex64 = _dtype(_abstractds.COMPLEX64, name='complex64')
-complex128 = _dtype(_abstractds.COMPLEX128, name='complex128')
+bool = _dtype(_ads.BOOL, name='bool') #@ReservedAssignment
+int8 = _dtype(_ads.INT8, name='int8')
+int16 = _dtype(_ads.INT16, name='int16')
+int32 = _dtype(_ads.INT32, name='int32')
+int64 = _dtype(_ads.INT64, name='int64')
+cint8 = lambda e : _dtype(_ads.ARRAYINT8, e, 'cint8')
+cint16 = lambda e : _dtype(_ads.ARRAYINT16, e, 'cint16')
+cint32 = lambda e : _dtype(_ads.ARRAYINT32, e, 'cint32')
+cint64 = lambda e : _dtype(_ads.ARRAYINT64, e, 'cint64')
+float32 = _dtype(_ads.FLOAT32, name='float32')
+float64 = _dtype(_ads.FLOAT64, name='float64')
+cfloat32 = lambda e : _dtype(_ads.ARRAYFLOAT32, e, 'cfloat32')
+cfloat64 = lambda e : _dtype(_ads.ARRAYFLOAT64, e, 'cfloat64')
+complex64 = _dtype(_ads.COMPLEX64, name='complex64')
+complex128 = _dtype(_ads.COMPLEX128, name='complex128')
 
-rgb = _dtype(_abstractds.RGB, 3, 'rgb')
+rgb = _dtype(_ads.RGB, 3, 'rgb')
 
 # tuple of floating point types
-_floattype = (_abstractds.FLOAT32, _abstractds.FLOAT64, _abstractds.ARRAYFLOAT32, _abstractds.ARRAYFLOAT64)
+_floattype = (_ads.FLOAT32, _ads.FLOAT64, _ads.ARRAYFLOAT32, _ads.ARRAYFLOAT64)
 
 # dictionaries to map from Java dataset types to Jython types
-__jdtype2jytype = { _abstractds.BOOL : bool, _abstractds.INT8 : int8, _abstractds.INT16 : int16,
-                    _abstractds.INT32 : int32, _abstractds.INT64 : int64,
-                    _abstractds.FLOAT32 : float32, _abstractds.FLOAT64 : float64,
-                    _abstractds.COMPLEX64 : complex64, _abstractds.COMPLEX128 : complex128,
-                    _abstractds.RGB : rgb }
+__jdtype2jytype = { _ads.BOOL : bool, _ads.INT8 : int8, _ads.INT16 : int16,
+                    _ads.INT32 : int32, _ads.INT64 : int64,
+                    _ads.FLOAT32 : float32, _ads.FLOAT64 : float64,
+                    _ads.COMPLEX64 : complex64, _ads.COMPLEX128 : complex128,
+                    _ads.RGB : rgb }
 
-__jcdtype2jytype = { _abstractds.ARRAYINT8 : cint8, _abstractds.ARRAYINT16 : cint16,
-                    _abstractds.ARRAYINT32 : cint32, _abstractds.ARRAYINT64 : cint64,
-                    _abstractds.ARRAYFLOAT32 : cfloat32, _abstractds.ARRAYFLOAT64 : cfloat64 }
+__jcdtype2jytype = { _ads.ARRAYINT8 : cint8, _ads.ARRAYINT16 : cint16,
+                    _ads.ARRAYINT32 : cint32, _ads.ARRAYINT64 : cint64,
+                    _ads.ARRAYFLOAT32 : cfloat32, _ads.ARRAYFLOAT64 : cfloat64 }
 
 # get dtype from object
 def _getdtypefromobj(jobj):
@@ -283,8 +284,8 @@ def asfarray(data, dtype=None):
         dtype = _translatenativetype(dtype)
     if dtype is None or dtype.value not in _floattype:
         if dt.elements == 1:
-            return jdata.cast(_abstractds.FLOAT64)
-        return jdata.cast(_abstractds.ARRAYFLOAT64)
+            return jdata.cast(_ads.FLOAT64)
+        return jdata.cast(_ads.ARRAYFLOAT64)
     return jdata.cast(dtype.value)
 
 def asDatasetList(dslist):

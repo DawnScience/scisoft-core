@@ -1374,9 +1374,15 @@ public abstract class AbstractDataset implements ADataset {
 			filterStoredValues(storedValues); // as it is dependent on shape
 	}
 
+	@Override
+	public int[] getShapeRef() {
+		return shape;
+	}
+
 	/**
 	 * @return the buffer that backs the dataset
 	 */
+	@Override
 	public Serializable getBuffer() {
 		return odata;
 	}

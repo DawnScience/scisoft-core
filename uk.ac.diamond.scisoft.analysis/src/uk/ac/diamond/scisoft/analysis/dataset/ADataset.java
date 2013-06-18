@@ -488,12 +488,6 @@ public interface ADataset extends IErrorDataset {
 	public ADataset setByIndexes(Object obj, Object... index);
 
 	/**
-	 * @param slice
-	 * @return a view of a slice
-	 */
-	public ADataset getSliceView(Slice... slice);
-
-	/**
 	 * Fill dataset with number represented by given object
 	 * 
 	 * @param obj

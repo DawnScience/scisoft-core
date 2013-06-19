@@ -238,7 +238,7 @@ public class Slice {
 	 * @param end
 	 * @param del
 	 */
-	protected static void appendSliceToString(final StringBuilder s, final int len, final int beg, final int end, final int del) {
+	public static void appendSliceToString(final StringBuilder s, final int len, final int beg, final int end, final int del) {
 		int o = s.length();
 		if (del > 0) {
 			if (beg != 0)

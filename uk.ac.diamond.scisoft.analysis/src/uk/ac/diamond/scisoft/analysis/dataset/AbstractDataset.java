@@ -2448,12 +2448,12 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) throws Exception {
+	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) {
 		return getSlice(slice);
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws Exception {
+	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) {
 		return getSlice(start, stop, step);
 	}
 

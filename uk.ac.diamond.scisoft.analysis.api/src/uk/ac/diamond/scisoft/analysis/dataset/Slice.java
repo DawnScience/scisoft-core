@@ -230,33 +230,52 @@ public class Slice {
 		this.step = step;
 	}
 
+	/**
+	 * Append string representation of slice
+	 * @param s
+	 * @param len
+	 * @param beg
+	 * @param end
+	 * @param del
+	 */
+	protected static void appendSliceToString(final StringBuilder s, final int len, final int beg, final int end, final int del) {
+		int o = s.length();
+		if (del > 0) {
+			if (beg != 0)
+				s.append(beg);
+		} else {
+			if (beg != len-1)
+				s.append(beg);
+		}
+
+		int n = getNumSteps(beg, end, del);
+		if (n == 1) {
+			if (s.length() == o) {
+				s.append(beg);
+			}
+			return;
+		}
+
+		s.append(':');
+
+		if (del > 0) {
+			if (end != len)
+				s.append(end);
+		} else {
+			if (end != -1)
+				s.append(end);
+		}
+
+		if (del != 1) {
+			s.append(':');
+			s.append(del);
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		if (start != null) {
-			if (start != 0)
-				s.append(start);
-
-			if (stop != null && start == (stop - 1)) {
-				if (s.length() == 0)
-					s.append(start);
-				return s.toString();
-			}
-		} else {
-			if (stop != null && stop == 1)
-				return "0";
-		}
-		s.append(':');
-		if (stop != null) {
-			if (length < 0 || length != stop) {
-				s.append(stop);
-			}
-		}
-
-		if (step != 1) {
-			s.append(':');
-			s.append(step);
-		}
+		appendSliceToString(s, length, start != null ? start : (step > 0 ? 0 : length - 1), stop != null ? stop : (step > 0 ? length : -1), step);
 		return s.toString();
 	}
 
@@ -285,6 +304,10 @@ public class Slice {
 	 * @return number of steps between limits
 	 */
 	public int getNumSteps(int beg, int end) {
+		return getNumSteps(beg, end, step);
+	}
+
+	private static int getNumSteps(int beg, int end, int step) {
 		int del = step > 0 ? 1 : -1;
 		return (end - beg - del) / step + 1;
 	}

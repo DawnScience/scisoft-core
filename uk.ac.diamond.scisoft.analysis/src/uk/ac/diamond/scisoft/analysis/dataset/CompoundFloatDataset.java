@@ -535,7 +535,7 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 				rdata[riter.index + i] = data[siter.index + i];
 		}
 
-		result.setName(name + ".slice");
+		result.setName(name + BLOCK_OPEN + createSliceString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
 		return result;
 	}
 

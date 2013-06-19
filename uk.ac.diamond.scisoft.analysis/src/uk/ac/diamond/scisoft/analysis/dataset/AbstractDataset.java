@@ -1482,8 +1482,32 @@ public abstract class AbstractDataset implements ADataset {
 		return axis;
 	}
 
-	private static final char OPEN_BLOCK = '[';
-	private static final char CLOSE_BLOCK = ']';
+	/**
+	 * Create a string representing the slice taken from given shape
+	 * @param shape
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return string representation
+	 */
+	protected static String createSliceString(final int[] shape, final int[] start, final int[] stop, final int[] step) {
+		final int rank = shape.length;
+		StringBuilder s = new StringBuilder();
+		for (int i = 0; i < rank; i++) {
+			int l = shape[i];
+			int d = step == null ? 1 : step[i];
+			int b = start == null ? (d > 0 ? 0 : l - 1) : start[i];
+			int e = stop == null ? (d > 0 ? l : -1) : stop[i];
+
+			Slice.appendSliceToString(s, l, b, e, d);
+			s.append(',');
+		}
+
+		return s.substring(0, s.length()-1);
+	}
+
+	protected static final char BLOCK_OPEN = '[';
+	protected static final char BLOCK_CLOSE = ']';
 
 	@Override
 	public String toString() {
@@ -1508,14 +1532,14 @@ public abstract class AbstractDataset implements ADataset {
 				out.append("Dataset shape is ");
 			}
 
-			out.append(OPEN_BLOCK);
+			out.append(BLOCK_OPEN);
 			if (rank > 0 && shape[0] > 0) {
 				out.append(shape[0]);
 			}
 			for (int i = 1; i < rank; i++) {
 				out.append(", " + shape[i]);
 			}
-			out.append(CLOSE_BLOCK);
+			out.append(BLOCK_CLOSE);
 			return out.toString();
 		}
 
@@ -1553,7 +1577,7 @@ public abstract class AbstractDataset implements ADataset {
 			pos = start;
 		}
 		pos[end] = 0;
-		line.append(OPEN_BLOCK);
+		line.append(BLOCK_OPEN);
 		line.append(getString(pos));
 
 		final int length = shape[end];
@@ -1580,7 +1604,7 @@ public abstract class AbstractDataset implements ADataset {
 				line.append(getString(pos));
 			}
 		}
-		line.append(CLOSE_BLOCK);
+		line.append(BLOCK_CLOSE);
 
 		// trim string down to limit
 		excess = line.length() - MAX_STRING_LENGTH - ELLIPSES.length() - 1;
@@ -1602,13 +1626,13 @@ public abstract class AbstractDataset implements ADataset {
 	private void printBlocks(final StringBuilder out, final StringBuilder lead, final int level, final int[] pos) {
 		if (out.length() > 0) {
 			char last = out.charAt(out.length() - 1);
-			if (last != OPEN_BLOCK) {
+			if (last != BLOCK_OPEN) {
 				out.append(lead);
 			}
 		}
 		final int end = getRank() - 1;
 		if (level != end) {
-			out.append(OPEN_BLOCK);
+			out.append(BLOCK_OPEN);
 			int length = shape[level];
 
 			// first sub-block
@@ -1617,7 +1641,7 @@ public abstract class AbstractDataset implements ADataset {
 			newlead.append(SPACING);
 			printBlocks(out, newlead, level + 1, pos);
 			if (length < 2) { // escape
-				out.append(CLOSE_BLOCK);
+				out.append(BLOCK_CLOSE);
 				return;
 			}
 
@@ -1666,7 +1690,7 @@ public abstract class AbstractDataset implements ADataset {
 			// last sub-block
 			pos[level] = length - 1;
 			printBlocks(out, newlead, level + 1, pos);
-			out.append(CLOSE_BLOCK);
+			out.append(BLOCK_CLOSE);
 		} else {
 			out.append(makeLine(end, pos));
 		}

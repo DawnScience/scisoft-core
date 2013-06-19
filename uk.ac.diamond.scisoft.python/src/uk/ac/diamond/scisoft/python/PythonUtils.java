@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ import org.python.core.PyString;
 import org.python.core.PyTuple;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -205,7 +206,7 @@ public class PythonUtils {
 		int orank = shape.length;
 
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
-		IDataset dataSlice = a.getSlice(slice.slice);
+		IDataset dataSlice = DatasetUtils.convertToAbstractDataset(a).getSliceView(slice.slice);
 
 		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
 		int rank = 0;

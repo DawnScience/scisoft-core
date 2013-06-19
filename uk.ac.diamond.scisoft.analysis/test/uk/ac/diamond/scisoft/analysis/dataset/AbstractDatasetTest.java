@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.apache.commons.math3.complex.Complex;
@@ -800,7 +801,7 @@ public class AbstractDatasetTest {
 
 		System.out.println(b.reshape(4,1,3));
 	}
-	
+
 	@Test
 	public void testSlicing() {
 		AbstractDataset a = AbstractDataset.arange(1000, AbstractDataset.INT32);
@@ -940,6 +941,60 @@ public class AbstractDatasetTest {
 		while (is.hasNext() && it.hasNext()) {
 			assertEquals(s.getElementLongAbs(is.index), t.getElementLongAbs(it.index));
 		}
+	}
+
+	@Test
+	public void testSlicingViews() {
+		AbstractDataset a, b, c;
+		a = AbstractDataset.arange(32, AbstractDataset.FLOAT64).reshape(4, 8);
+		checkSliceView(a, new int[] {0, 1}, new int[] {3, 5}, new int[] {1, 2});
+		checkSliceView(a, new int[] {1, -1}, new int[] {-1, 3}, new int[] {1, -2});
+
+		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64).reshape(6, 10);
+		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2}); // 6x4
+		c = b.getSliceView(new int[] {0, 1}, new int[] {1, 4}, null);
+		c.setShape(3);
+		checkSliceView(b, new int[] {1, 0}, new int[] {5, 3}, new int[] {2, 1});
+		checkSliceView(b, new int[] {1, -1}, new int[] {5, 2}, new int[] {2, -1});
+		c = a.getSlice(new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2});
+		b.setShape(2,3,4);
+		c.setShape(2,3,4);
+		assertEquals(c, b);
+		b.setShape(6,4);
+		b.setShape(6,2,2);
+		c.setShape(6,2,2);
+		assertEquals(c, b);
+		b.setShape(6,4);
+		try {
+			b.setShape(2,12);
+			fail("Should have raised an exception");
+		} catch (IllegalArgumentException iae) {
+			// expected
+		} catch (Exception e) {
+			fail("Unexpected exception: " + e);
+		}
+
+		b = checkSliceView(a, new int[] {1, -1}, new int[] {-1, 2}, new int[] {1, -2}); // 4x4
+		checkSliceView(b, new int[] {1, 0}, new int[] {4, 3}, new int[] {2, 1});
+		checkSliceView(b, new int[] {1, -1}, new int[] {4, 2}, new int[] {2, -1});
+
+		b = checkSliceView(a, new int[] {0, 1}, new int[] {1, 8}, new int[] {1, 2}); // 1x4
+		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 2}, new int[] {1, 2}); // 6x1
+	}
+
+	private AbstractDataset checkSliceView(AbstractDataset a, int[] start, int[] stop, int[] step) {
+		AbstractDataset s = a.getSliceView(start, stop, step).squeeze();
+		AbstractDataset t = a.getSlice(start, stop, step).squeeze();
+		assertArrayEquals(t.getShape(), s.getShape());
+		assertEquals(t.toString(true), t, s);
+		IndexIterator iter = s.getIterator(true);
+		int[] pos = iter.getPos();
+		while (iter.hasNext()) {
+			assertEquals(iter.index, s.get1DIndex(pos));
+			int[] p = s.getNDPosition(iter.index);
+			assertArrayEquals(Arrays.toString(pos) + " : " + Arrays.toString(p), pos, p);
+		}
+		return s;
 	}
 
 	@Test

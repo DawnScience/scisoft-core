@@ -8,7 +8,7 @@ Generic dataset
 ---------------
 Capabilities
  * Indexing
- * Slicing
+ * Slicing (now returns views)
  * Boolean dataset selection
  * Flat index integer dataset selection
  * Arithmetic operations
@@ -16,8 +16,6 @@ Capabilities
  * Mathematical and statistical functions
 
 Key differences
- * Slicing returns a copy (not a view)
- * No strides
  * No broadcasting except from single items
  * Incomplete implementation all NumPy's methods
 

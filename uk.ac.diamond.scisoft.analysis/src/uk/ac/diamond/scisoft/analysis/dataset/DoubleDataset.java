@@ -112,8 +112,14 @@ public class DoubleDataset extends AbstractDataset {
 	 */
 	public DoubleDataset(final DoubleDataset dataset) {
 		copyToView(dataset, this, true, true);
-
-		odata = data = dataset.data.clone();
+		if (dataset.stride == null || dataset.size == dataset.base.size) {
+			odata = data = dataset.data.clone();
+		} else {
+			IndexIterator iter = dataset.getIterator();
+			for (int i = 0; iter.hasNext(); i++) {
+				data[i] = dataset.data[iter.index];
+			}
+		}
 	}
 
 	/**
@@ -229,6 +235,13 @@ public class DoubleDataset extends AbstractDataset {
 	 */
 	public double[] getData() { // PRIM_TYPE
 		return data;
+	}
+
+	@Override
+	protected int getBufferLength() {
+		if (data == null)
+			return 0;
+		return data.length;
 	}
 
 	@Override
@@ -394,6 +407,9 @@ public class DoubleDataset extends AbstractDataset {
 		odata = data = ndata;
 		size = nsize;
 		shape = newShape;
+		stride = null;
+		offset = 0;
+		base = null;
 	}
 
 	@Override

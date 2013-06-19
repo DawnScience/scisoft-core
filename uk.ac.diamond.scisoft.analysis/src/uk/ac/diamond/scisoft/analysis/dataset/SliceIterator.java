@@ -23,17 +23,20 @@ import java.util.Arrays;
  * Class to run over a slice of a dataset
  */
 public class SliceIterator extends IndexIterator {
-	final int[] shape;
-	final int isize;
-	final int endrank; // last shape index
-	final int[] gap; // gaps in dataset
-	final int imax; // maximum index in array
-	final int[] start;
-	final int[] stop;
-	final int[] step;
-	final int[] sshape; // slice shape
-	final int[] pos; // position in dataset
-	final int istep; // step in last index
+	int[] shape;
+	int isize;
+	int endrank; // last shape index
+	int[] gap; // gaps in dataset
+	int imax; // maximum index in array
+	int[] start;
+	int[] stop;
+	int[] step;
+	int[] sshape; // slice shape
+	int[] pos; // position in dataset
+	int istep; // step in last index
+
+	SliceIterator() {
+	}
 
 	/**
 	 * Constructor for an iterator over the elements of a sliced dataset
@@ -138,7 +141,7 @@ public class SliceIterator extends IndexIterator {
 		setStart(start);
 	}
 
-	private void calcGap() {
+	void calcGap() {
 		int chunk = isize;
 		for (int i = endrank; i >= 0; i--) {
 			stop[i] = start[i] + sshape[i] * step[i];
@@ -155,28 +158,28 @@ public class SliceIterator extends IndexIterator {
 
 	/**
 	 * Set start (prefix with zeros if necessary)
-	 * @param nstart if null, then treat as origin
+	 * @param newStart if null, then treat as origin
 	 */
-	public void setStart(int... nstart) {
+	public void setStart(int... newStart) {
 		final int rank = shape.length;
 		if (rank == 0) {
 			index = -istep;
 			return;
 		}
 
-		if (nstart == null) {
+		if (newStart == null) {
 			for (int i = 0; i < rank; i++) {
 				start[i] = 0;
 			}
-		} else if (nstart.length > rank) {
+		} else if (newStart.length > rank) {
 			throw new IllegalArgumentException("Length of start array greater than rank");
 		} else {
-			int extra = rank - nstart.length;
+			int extra = rank - newStart.length;
 			for (int i = 0; i < extra; i++) {
 				start[i] = 0;
 			}
-			for (int i = 0; i < nstart.length; i++) {
-				start[i+extra] = nstart[i];
+			for (int i = 0; i < newStart.length; i++) {
+				start[i+extra] = newStart[i];
 			}
 		}
 
@@ -224,7 +227,7 @@ public class SliceIterator extends IndexIterator {
 		return index < imax;
 	}
 
-	public int[] getStart() {
+	int[] getStart() {
 		return start;
 	}
 
@@ -233,16 +236,8 @@ public class SliceIterator extends IndexIterator {
 		return pos;
 	}
 
-	public int[] getStop() {
-		return stop;
-	}
-
-	public int[] getStep() {
+	int[] getStep() {
 		return step;
-	}
-
-	public int[] getGap() {
-		return gap;
 	}
 
 	@Override

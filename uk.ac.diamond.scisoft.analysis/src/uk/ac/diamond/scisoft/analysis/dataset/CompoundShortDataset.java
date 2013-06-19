@@ -96,8 +96,16 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 		isize = dataset.isize;
 
 		copyToView(dataset, this, true, true);
-
-		odata = data = dataset.data.clone();
+		if (dataset.stride == null || dataset.size == dataset.base.size) {
+			odata = data = dataset.data.clone();
+		} else {
+			IndexIterator iter = dataset.getIterator();
+			for (int j = 0; iter.hasNext();) {
+				for (int i = 0; i < isize; i++) {
+					data[j++] = dataset.data[iter.index + i];
+				}
+			}
+		}
 	}
 
 	/**
@@ -304,6 +312,13 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	protected int getBufferLength() {
+		if (data == null)
+			return 0;
+		return data.length;
+	}
+
+	@Override
 	public CompoundShortDataset getView() {
 		CompoundShortDataset view = new CompoundShortDataset(isize);
 		copyToView(this, view, true, true);
@@ -500,6 +515,9 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 		odata = data = ndata;
 		size = nsize;
 		shape = newShape;
+		stride = null;
+		offset = 0;
+		base = null;
 	}
 
 	@Override

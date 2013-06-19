@@ -51,7 +51,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
-		return (withPosition) ? getSliceIterator(null, null, null) :
+		if (stride != null)
+			return new StrideIterator(isize, shape, stride, offset);
+		return withPosition ? getSliceIterator(null, null, null) :
 			new ContiguousIterator(size, isize);
 	}
 
@@ -67,7 +69,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			abstractCompoundLogger.error("Invalid choice of element: {}/{}", element, isize);
 			throw new IllegalArgumentException("Invalid choice of element: " + element + "/" + isize);
 		}
-		final IndexIterator it = new ContiguousIterator(size, isize);
+		final IndexIterator it = stride != null ?  new StrideIterator(isize, shape, stride, offset) : new ContiguousIterator(size, isize);
 
 		it.index += element;
 		return it;
@@ -75,6 +77,9 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public IndexIterator getSliceIterator(final int[] start, final int[] stop, final int[] step) {
+		if (stride != null)
+			return new StrideIterator(isize, shape, stride, offset, start, stop, step);
+
 		int rank = shape.length;
 
 		int[] lstart, lstop, lstep;

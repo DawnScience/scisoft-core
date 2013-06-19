@@ -375,6 +375,24 @@ class Test(unittest.TestCase):
         self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., np.newaxis, -1].shape)
         self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., -1, np.newaxis].shape)
 
+    def testSlicedViews(self):
+        print 'Sliced view testing'
+        a = np.arange(9).reshape(3,3)
+        a[1][1] = -3
+        self.assertEquals(-3, a[1, 1])
+        self.assertEquals(-3, a[1][1])
+        b = a[::2, 1:]
+        b[...] = 0
+        self.assertEquals(0, a[0, 1])
+
+        a = np.arange(28).reshape(4,7)[1:4,::2]
+        try:
+            a.shape = 12
+            self.fail("This should fail")
+        except:
+            pass
+        a.shape = 3,2,2
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

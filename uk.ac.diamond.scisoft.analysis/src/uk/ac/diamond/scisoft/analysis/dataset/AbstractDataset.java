@@ -179,6 +179,10 @@ public abstract class AbstractDataset implements ADataset {
 	protected int[] shape;
 	protected int size; // number of items
 
+	transient protected AbstractDataset base; // is null when not a view
+	protected int[] stride; // can be null for row-major, contiguous datasets
+	protected int offset;
+
 	/**
 	 * The data itself, held in a 1D array, but the object will wrap it to appear as possessing as many dimensions as
 	 * wanted
@@ -356,6 +360,8 @@ public abstract class AbstractDataset implements ADataset {
 		view.name = orig.name;
 		view.size = orig.size;
 		view.odata = orig.odata;
+		view.offset = orig.offset;
+		view.base = orig.base;
 
 		Serializable error = orig.errorData;
 		if (error != null && error instanceof ADataset)
@@ -366,14 +372,15 @@ public abstract class AbstractDataset implements ADataset {
 		if (clone) {
 			view.shape = orig.shape.clone();
 			copyStoredValues(orig, view, false);
+			view.stride = orig.stride == null ? null : orig.stride.clone();
 		} else {
 			view.shape = orig.shape;
+			view.stride = orig.stride;
 		}
 
 		IMetaData metadata = orig.metadataStructure;
 		if (cloneMetadata) {
-			if (metadata != null)
-				view.metadataStructure = metadata.clone();
+			view.metadataStructure = metadata == null ? null : metadata.clone();
 		} else {
 			view.metadataStructure = metadata;
 		}
@@ -437,7 +444,7 @@ public abstract class AbstractDataset implements ADataset {
 	@Override
 	public AbstractDataset flatten() {
 		AbstractDataset result = getView();
-		result.shape = new int[] { result.size };
+		result.setShape(result.size);
 		return result;
 	}
 
@@ -836,7 +843,9 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
-		return (withPosition) ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
+		if (stride != null)
+			return new StrideIterator(shape, stride, offset);
+		return withPosition ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
 	}
 
 	/**
@@ -867,6 +876,9 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public IndexIterator getSliceIterator(final int[] start, final int[] stop, final int[] step) {
+		if (stride != null)
+			return new StrideIterator(getElementsPerItem(), shape, stride, offset, start, stop, step);
+
 		int rank = shape.length;
 
 		int[] lstart, lstop, lstep;
@@ -1395,19 +1407,100 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Check for -1 placeholder in shape and replace if necessary
+	 * @param shape
+	 * @param size
+	 */
+	private void checkShape(int[] shape, int size) {
+		int rank = shape.length;
+		int found = -1;
+		int nsize = 1;
+		for (int i = 0; i < rank; i++) {
+			int d = shape[i];
+			if (d == -1) {
+				if (found == -1) {
+					found = i;
+				} else {
+					abstractLogger.error("Can only have one -1 placeholder in shape");
+					throw new IllegalArgumentException("Can only have one -1 placeholder in shape");
+				}
+			} else {
+				nsize *= d;
+			}
+		}
+		if (found >= 0) {
+			shape[found] = size/nsize;
+		} else if (nsize != size) {
+			abstractLogger.error("New shape is not same size as old shape");
+			throw new IllegalArgumentException("New shape is not same size as old shape");
+		}
+	}
+
+	/**
 	 * @param shape
 	 */
 	@Override
 	public void setShape(final int... shape) {
-		int size = calcSize(shape);
-		if (size != this.size) {
-			throw new IllegalArgumentException("New shape (" + Arrays.toString(shape)
-					+ ") is not compatible with old shape (" + Arrays.toString(this.shape) + ")");
-		}
+		int[] nshape = shape.clone();
+		checkShape(nshape, this.size);
+		if (Arrays.equals(this.shape, nshape))
+			return;
 
-		this.shape = shape.clone();
+		if (stride != null) { // the only compatible shapes are ones where new dimensions are factors of old dimensions
+			int[] oshape = this.shape;
+			int orank = oshape.length;
+			int nrank = nshape.length;
+			int[] nstride = new int[nrank];
+			boolean ones = true;
+			for (int i = 0, j = 0; ones && (i < orank || j < nrank);) {
+				if (i < orank && j < nrank && oshape[i] == nshape[j]) {
+					nstride[j++] = stride[i++];
+				} else if (j < nrank && nshape[j] == 1) {
+					nstride[j++] = 0;
+				} else if (i < orank && oshape[i] == 1) {
+					i++;
+				} else {
+					ones = false;
+				}
+			}
+			if (!ones) { // not just ones differ in shapes
+				int[] ostride = stride;
+				int ob = 0;
+				int oe = 1;
+				int nb = 0;
+				int ne = 1;
+				while (ob < orank && nb < nrank) {
+					int os = oshape[ob];
+					int ns = nshape[nb];
+					while (os != ns) { // find group of shape dimensions that form common size
+						if (ns < os) {
+							ns *= nshape[ne++];
+						} else {
+							os *= oshape[oe++];
+						}
+					}
+					for (int o = ob+1; o < oe; o++) {
+						if (ostride[o-1] != oshape[o] * ostride[o]) {
+							abstractLogger.error("Shape is incompatible with this non-contiguous view");
+							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+						}
+					}
+
+					nstride[ne - 1] = ostride[oe - 1];
+					for (int n = ne - 1; n > nb; n--) {
+						nstride[n - 1] = nshape[n] * nstride[n];
+					}
+					ob = oe++;
+					nb = ne++;
+				}
+			}
+	
+			stride = nstride;
+		}
+		this.shape = nshape;
+
 		if (errorData != null && errorData instanceof ADataset) {
-			((ADataset) errorData).setShape(shape);
+			((ADataset) errorData).setShape(nshape);
 		}
 
 		if (storedValues != null)
@@ -1428,6 +1521,111 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Create a stride array from a dataset and some slice information
+	 * @param a dataset
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @param stride output stride
+	 * @param offset output offset
+	 * @return new shape
+	 */
+	public static int[] createStrides(AbstractDataset a, final int[] start, final int[] stop, final int[] step, final int[] stride, final int[] offset) {
+		return createStrides(a.getElementsPerItem(), a.shape, a.stride, a.offset, start, stop, step, stride, offset);
+	}
+
+	/**
+	 * Create a stride array from dataset and slice information
+	 * @param isize
+	 * @param shape
+	 * @param oStride original stride
+	 * @param oOffset original offset (only used if there is an original stride)
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @param stride output stride
+	 * @param offset output offset
+	 * @return new shape
+	 */
+	public static int[] createStrides(final int isize, final int[] shape, final int[] oStride, final int oOffset, final int[] start, final int[] stop, final int[] step, final int[] stride, final int[] offset) {
+		int[] lstart, lstop, lstep;
+		final int rank = shape.length;
+
+		if (step == null) {
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+
+		int[] newShape;
+		if (rank > 1 || (rank > 0 && shape[0] > 0)) {
+			newShape = checkSlice(shape, start, stop, lstart, lstop, lstep);
+		} else {
+			newShape = new int[rank];
+		}
+
+		if (oStride == null) {
+			int s = isize;
+			for (int j = rank - 1; j >= 0; j--) {
+				stride[j] = s * lstep[j];
+				offset[0] += s * lstart[j];
+				s *= shape[j];
+			}
+		} else {
+			offset[0] = oOffset;
+			for (int j = 0; j < rank; j++) {
+				int s = oStride[j];
+				stride[j] = lstep[j] * s;
+				offset[0] += lstart[j] * s;
+			}
+		}
+
+		return newShape;
+	}
+
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return a view of a slice
+	 */
+	@Override
+	public AbstractDataset getSliceView(final int[] start, final int[] stop, final int[] step) {
+		final int rank = shape.length;
+	
+		int[] sStride = new int[rank];
+		int[] sOffset = new int[1];
+		int[] sShape = createStrides(this, start, stop, step, sStride, sOffset);
+	
+		AbstractDataset s = getView();
+		s.shape = sShape;
+		s.size = calcSize(sShape);
+		s.stride = sStride;
+		s.offset = sOffset[0];
+		s.base = base == null ? this : base;
+	
+		if (Arrays.equals(shape, s.shape)) {
+			s.setName(name);
+		} else {
+			s.setName(name + BLOCK_OPEN + createSliceString(shape, start, stop, step) + BLOCK_CLOSE);
+		}
+		return s;
+	}
+
+	/**
 	 * @param slice
 	 * @return a view of a slice
 	 */
@@ -1440,17 +1638,6 @@ public abstract class AbstractDataset implements ADataset {
 
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 		return getSliceView(start, stop, step);
-	}
-
-	/**
-	 * @param start
-	 * @param stop
-	 * @param step
-	 * @return a view of a slice
-	 */
-	@Override
-	public AbstractDataset getSliceView(final int[] start, final int[] stop, final int[] step) {
-		return null; // TODO
 	}
 
 	/**
@@ -1477,6 +1664,12 @@ public abstract class AbstractDataset implements ADataset {
 					+ " given " + rank + " required");
 		}
 
+		return stride == null ? get1DIndexFromShape(n) : get1DIndexFromStrides(n);
+	}
+
+	private int get1DIndexFromShape(final int... n) {
+		final int imax = n.length;
+		final int rank = shape.length;
 		int index = 0;
 		int i = 0;
 		for (; i < imax; i++) {
@@ -1498,6 +1691,18 @@ public abstract class AbstractDataset implements ADataset {
 		return index;
 	}
 
+	private int get1DIndexFromStrides(final int... n) {
+		final int rank = shape.length;
+		if (rank != n.length) {
+			throw new IllegalArgumentException();
+		}
+		int index = offset;
+		for (int j = 0; j < rank; j++) {
+			index += stride[j] * n[j];
+		}
+		return index;
+	}
+
 	/**
 	 * The n-D position in the dataset of the given index in the data array
 	 * 
@@ -1507,24 +1712,68 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public int[] getNDPosition(final int n) {
-		if (n >= size) {
+		if (isIndexInRange(n)) {
 			throw new IllegalArgumentException("Index provided " + n
 					+ "is larger then the size of the containing array");
 		}
 
-		if (shape.length == 1) {
+		return stride == null ? getNDPositionFromShape(n) : getNDPositionFromStrides(n);
+	}
+
+	private boolean isIndexInRange(final int n) {
+		if (stride == null) {
+			return n >= size;
+		}
+		return n >= getBufferLength();
+	}
+
+	/**
+	 * @return entire buffer length
+	 */
+	abstract protected int getBufferLength();
+
+	private int[] getNDPositionFromShape(int n) {
+		int rank = shape.length;
+		if (rank == 1) {
 			return new int[] { n };
 		}
 
-		int r = shape.length;
-		int[] output = new int[r];
-
-		int inValue = n;
-		for (r--; r > 0; r--) {
-			output[r] = inValue % shape[r];
-			inValue /= shape[r];
+		int[] output = new int[rank];
+		for (rank--; rank > 0; rank--) {
+			output[rank] = n % shape[rank];
+			n /= shape[rank];
 		}
-		output[0] = inValue;
+		output[0] = n;
+
+		return output;
+	}
+
+	private int[] getNDPositionFromStrides(int n) {
+		n -= offset;
+		int rank = shape.length;
+		if (rank == 1) {
+			return new int[] { n / stride[0] };
+		}
+
+		int[] output = new int[rank];
+		int i = 0;
+		while (i != n) { // TODO find more efficient way than this exhaustive search
+			int j = rank - 1;
+			for (; j >= 0; j--) {
+				output[j]++;
+				i += stride[j];
+				if (output[j] >= shape[j]) {
+					output[j] = 0;
+					i -= shape[j] * stride[j];
+				} else {
+					break;
+				}
+			}
+			if (j == -1) {
+				abstractLogger.error("Index was not found in this strided dataset");
+				throw new IllegalArgumentException("Index was not found in this strided dataset");
+			}
+		}
 
 		return output;
 	}
@@ -1822,7 +2071,35 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public AbstractDataset squeeze(boolean onlyFromEnds) {
-		shape = squeezeShape(shape, onlyFromEnds);
+		int[] tshape = squeezeShape(shape, onlyFromEnds);
+		if (stride == null) {
+			shape = tshape;
+		} else {
+			int rank = shape.length;
+			int trank = tshape.length;
+			if (trank < rank) {
+				int[] tstride = new int[tshape.length];
+				if (onlyFromEnds) {
+					for (int i = 0; i < rank; i++) {
+						if (shape[i] != 1) {
+							for (int k = 0; k < trank; k++) {
+								tstride[k] = stride[i++];
+							}
+							break;
+						}
+					}
+				} else {
+					int t = 0;
+					for (int i = 0; i < rank; i++) {
+						if (shape[i] != 1) {
+							tstride[t++] = stride[i];
+						}
+					}
+				}
+				shape = tshape;
+				stride = tstride;
+			}
+		}
 		if (errorData!=null && errorData instanceof IDataset) {
 			((IDataset)errorData).squeeze(onlyFromEnds);
 		}
@@ -1834,7 +2111,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * 
 	 * @param oshape
 	 * @param onlyFromEnds
-	 * @return newly squeezed shape
+	 * @return newly squeezed shape (or original if unsqueezed)
 	 */
 	public static int[] squeezeShape(final int[] oshape, boolean onlyFromEnds) {
 		int unitDims = 0;
@@ -1987,8 +2264,8 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Returns dataset with new shape but old data <b>Warning</b> only works for un-expanded datasets! Copy the dataset
-	 * first
+	 * Returns new dataset with new shape but old data if possible,
+	 * otherwise a copy is made
 	 * 
 	 * @param shape
 	 *            new shape
@@ -1996,7 +2273,12 @@ public abstract class AbstractDataset implements ADataset {
 	@Override
 	public AbstractDataset reshape(final int... shape) {
 		AbstractDataset a = getView();
-		a.setShape(shape);
+		try {
+			a.setShape(shape);
+		} catch (IllegalArgumentException e) {
+			a = a.clone();
+			a.setShape(shape);
+		}
 		return a;
 	}
 

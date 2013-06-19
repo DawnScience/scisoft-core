@@ -885,6 +885,64 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testSliceStrings() {
+		String s;
+		s = AbstractDataset.createSliceString(new int[] {3}, null, null, null);
+		assertEquals(":", s);
+
+		s = AbstractDataset.createSliceString(new int[] {3}, null, null, new int[] {1});
+		assertEquals(":", s);
+
+		s = AbstractDataset.createSliceString(new int[] {3}, null, new int[] {2}, new int[] {1});
+		assertEquals(":2", s);
+
+		s = AbstractDataset.createSliceString(new int[] {4}, new int[] {1}, new int[] {3}, new int[] {1});
+		assertEquals("1:3", s);
+
+		s = AbstractDataset.createSliceString(new int[] {4}, new int[] {1}, new int[] {2}, new int[] {1});
+		assertEquals("1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {4}, new int[] {1}, new int[] {3}, new int[] {2});
+		assertEquals("1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, null, null, new int[] {2});
+		assertEquals("::2", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {1}, new int[] {4}, new int[] {2});
+		assertEquals("1:4:2", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {1}, new int[] {5}, new int[] {2});
+		assertEquals("1::2", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {1}, new int[] {3}, new int[] {2});
+		assertEquals("1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {3}, null, null, new int[] {-1});
+		assertEquals("::-1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {3}, new int[] {1}, new int[] {-1});
+		assertEquals("3:1:-1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {4}, new int[] {1}, new int[] {-1});
+		assertEquals(":1:-1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {3}, new int[] {0}, new int[] {-1});
+		assertEquals("3:0:-1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {3}, new int[] {-1}, new int[] {-1});
+		assertEquals("3::-1", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {3}, new int[] {2}, new int[] {-1});
+		assertEquals("3", s);
+
+		s = AbstractDataset.createSliceString(new int[] {5}, new int[] {3}, new int[] {1}, new int[] {-2});
+		assertEquals("3", s);
+
+		s = AbstractDataset.createSliceString(new int[] {3, 2}, null, null, null);
+		assertEquals(":,:", s);
+	}
+
+	@Test
 	public void test1DErrors() {
 		
 		// test 1D errors for single value

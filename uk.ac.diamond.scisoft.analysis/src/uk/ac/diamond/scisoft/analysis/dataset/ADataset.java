@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.io.Serializable;
 
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+
 /**
  * Interface for our implementation of dataset that adds a lot of extra functionality
  */
@@ -559,6 +561,15 @@ public interface ADataset extends IErrorDataset {
 
 	@Override
 	public ADataset getSlice(int[] start, int[] stop, int[] step);
+
+	@Override
+	public ADataset getSlice(IMonitor mon, int[] start, int[] stop, int[] step);
+
+	@Override
+	public ADataset getSlice(Slice... slice);
+
+	@Override
+	public ADataset getSlice(IMonitor mon, Slice... slice);
 
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items

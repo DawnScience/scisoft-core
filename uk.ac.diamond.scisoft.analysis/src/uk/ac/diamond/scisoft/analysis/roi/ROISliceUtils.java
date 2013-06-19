@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -125,6 +122,21 @@ public class ROISliceUtils {
 		
 		return dataStart.squeeze();
 	}
+	
+	public static int[] getImageAxis(int traceDim) {
+		int[] allDims = new int[]{2,1,0};
+		int[] dims = new int[2];
+		
+		int i =0;
+		for(int j : allDims) {
+			if (j != traceDim) {
+				dims[i] = j;
+				i++;
+			}
+		}
+		
+		return dims;
+	}
 
 	public static int findPositionOfClosestValueInAxis(IDataset dataset, Double val) {
 		return Maths.abs(Maths.subtract(dataset, val)).argMin();
@@ -149,7 +161,7 @@ public class ROISliceUtils {
 		int[] start = roi.getIntPoint();
 		int[] end = roi.getIntEndPoint();
 		
-		LineSample ls = new LineSample(start[0], start[1], end[0], end[1], 1);
+		LineSample ls = new LineSample(start[1], start[0], end[1], end[0], 1);
 		
 		int len = (int)Math.floor(roi.getLength());
 		
@@ -187,5 +199,23 @@ public class ROISliceUtils {
 		}
 		
 		return DatasetUtils.concatenate(ds, 0);
+	}
+	
+public static IDataset getAxisDataset(ILazyDataset lz, RectangularROI roi, int dim) {
+		
+		int[] start = roi.getIntPoint();
+		
+		
+		Slice[] slices = new Slice[lz.getRank()];
+
+		Slice traceSlice = new Slice();
+		
+		traceSlice.setStart(start[1]);
+		traceSlice.setStop(start[1]+1);
+
+		slices[dim] = traceSlice;
+		
+		return lz.getSlice(slices).squeeze().getSlice();
+
 	}
 }

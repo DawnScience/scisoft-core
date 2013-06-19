@@ -16,12 +16,16 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.dataset.function.LineSample;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
@@ -125,6 +129,63 @@ public class ROISliceUtils {
 	public static int findPositionOfClosestValueInAxis(IDataset dataset, Double val) {
 		return Maths.abs(Maths.subtract(dataset, val)).argMin();
 	}
+	
+	
+	public static IDataset getAxisDatasetTrapzSumBaselined(IDataset axis, ILazyDataset data, RectangularROI roi, int dim, boolean baseline) {
+		
+		final AbstractDataset output = ((AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(axis ,data, roi, dim));
+		
+		if (baseline) {
+			final IDataset datasetBasline = ROISliceUtils.getTrapiziumArea(axis ,data, roi, dim);
+			output.isubtract(datasetBasline);
+		}
+		
+		return output;
+	}
+	
 
+	public static IDataset getDataset(ILazyDataset lz, LinearROI roi, int[] dims) {
+		
+		int[] start = roi.getIntPoint();
+		int[] end = roi.getIntEndPoint();
+		
+		LineSample ls = new LineSample(start[0], start[1], end[0], end[1], 1);
+		
+		int len = (int)Math.floor(roi.getLength());
+		
+		//List<int[]> points = new ArrayList<int[]>(len);
+		
+		IDataset[] ds = new IDataset[len];
+		
+		Slice[] slices = new Slice[lz.getRank()];
 
+		Slice xSlice = new Slice();
+		Slice ySlice = new Slice();
+
+		slices[dims[0]] = xSlice;
+		slices[dims[1]] = ySlice;
+		
+
+		int[] points;
+
+		
+		int[] shape = new int[]{1,1};
+		
+		for (int i = 0; i < len; i++) {
+			points = ls.getPoint(i+1);
+			
+			slices[dims[0]].setStart(points[0]);
+			slices[dims[0]].setStop(points[0]+1);
+			slices[dims[1]].setStart(points[1]);
+			slices[dims[1]].setStop(points[1]+1);
+			
+			ds[i] = lz.getSlice(slices).squeeze().getSlice();
+			
+			shape = ds[i].getShape();
+			
+			ds[i].setShape(new int[]{1,shape[0]});
+		}
+		
+		return DatasetUtils.concatenate(ds, 0);
+	}
 }

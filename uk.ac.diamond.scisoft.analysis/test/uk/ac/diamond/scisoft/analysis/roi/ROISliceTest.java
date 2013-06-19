@@ -92,5 +92,28 @@ public class ROISliceTest {
 		Assert.assertEquals(10.0, out0.getDouble(0),0);
 		
 	}
+	
+	@Test
+	public void testLineROI() {
+		AbstractDataset input = AbstractDataset.ones(new int[] {20,30,40}, AbstractDataset.FLOAT32);
+		
+		LinearROI roi = new LinearROI(new double[]{2.0,2.0}, new double[]{15.0,20.0});
+		
+		AbstractDataset output = (AbstractDataset)ROISliceUtils.getDataset(input, roi, new int[]{0,1});
+		int[] shape = output.getShape();
+		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(40,shape[1],0);
+		
+		output = (AbstractDataset)ROISliceUtils.getDataset(input, roi, new int[]{0,2});
+		shape = output.getShape();
+		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(30,shape[1],0);
+		
+		output = (AbstractDataset)ROISliceUtils.getDataset(input, roi, new int[]{1,2});
+		shape = output.getShape();
+		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(20,shape[1],0);
+	}
+	
 
 }

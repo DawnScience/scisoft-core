@@ -36,6 +36,9 @@ public class ROISliceUtils {
 
 		int[] roiStart = roi.getIntPoint();
 		int[] roiLength = roi.getIntLengths();
+		
+		if (roiLength[0] < 1) roiLength[0] = 1;
+		if (roiLength[1] < 1) roiLength[1] = 1;
 
 		Slice xSlice = new Slice(roiStart[0], roiStart[0] + roiLength[0], 1);
 		Slice ySlice = new Slice(roiStart[1], roiStart[1] + roiLength[1], 1);

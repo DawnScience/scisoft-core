@@ -322,6 +322,25 @@ public class LazyDataset implements ILazyDataset {
 		return a;
 	}
 
+	@Override
+	public ILazyDataset getSliceView(Slice... slice) {
+		final int rank = shape.length;
+		if (slice == null || slice.length == 0) {
+			return getSlice((int[]) null, null, null);
+		}
+		final int[] start = new int[rank];
+		final int[] stop = new int[rank];
+		final int[] step = new int[rank];
+		Slice.convertFromSlice(slice, shape, start, stop, step);
+		return getSliceView(start, stop, step);
+	}
+
+	@Override
+	public ILazyDataset getSliceView(int[] start, int[] stop, int[] step) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private IMetaData metadata = null;
 	
 	@Override

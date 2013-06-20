@@ -579,6 +579,12 @@ public interface ADataset extends IErrorDataset {
 	 */
 	public ADataset getSlice(SliceIterator iterator);
 
+	@Override
+	public ADataset getSliceView(int[] start, int[] stop, int[] step);
+
+	@Override
+	public ADataset getSliceView(Slice... slice);
+
 	/**
 	 * 
 	 * @param object

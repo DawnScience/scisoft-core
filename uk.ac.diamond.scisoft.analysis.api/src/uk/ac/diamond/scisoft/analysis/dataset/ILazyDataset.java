@@ -137,6 +137,27 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	public IDataset getSlice(final IMonitor monitor, final Slice... slice) throws Exception;
 
 	/**
+	 * Get a slice of the dataset. The returned lazy dataset is a view on a selection of items
+	 * 
+	 * @param start
+	 *            specifies the starting indexes (can be null for origin)
+	 * @param stop
+	 *            specifies the stopping indexes (can be null for end)
+	 * @param step
+	 *            specifies the steps in the slice (can be null for unit steps)
+	 * @return The sliced view of a lazy dataset 
+	 */
+	public ILazyDataset getSliceView(final int[] start, final int[] stop, final int[] step);
+
+	/**
+	 * Get a slice of the dataset. The returned lazy dataset is a view on a selection of items
+	 * 
+	 * @param slice an array of slice objects (the array can be null or contain nulls)
+	 * @return The sliced view of a lazy dataset 
+	 */
+	public ILazyDataset getSliceView(final Slice... slice);
+
+	/**
 	 * Set metadata on the dataset
 	 * 
 	 * @param metadata

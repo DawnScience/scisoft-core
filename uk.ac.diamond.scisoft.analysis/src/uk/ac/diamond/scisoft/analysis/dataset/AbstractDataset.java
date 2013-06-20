@@ -1388,6 +1388,32 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * @param slice
+	 * @return a view of a slice
+	 */
+	@Override
+	public AbstractDataset getSliceView(Slice... slice) {
+		final int rank = shape.length;
+		final int[] start = new int[rank];
+		final int[] stop = new int[rank];
+		final int[] step = new int[rank];
+
+		Slice.convertFromSlice(slice, shape, start, stop, step);
+		return getSliceView(start, stop, step);
+	}
+
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return a view of a slice
+	 */
+	@Override
+	public AbstractDataset getSliceView(final int[] start, final int[] stop, final int[] step) {
+		return null; // TODO
+	}
+
+	/**
 	 * Function that uses the knowledge of the dataset to calculate the index in the data array that corresponds to the
 	 * n-dimensional position given by the int array. The input values <b>must</b> be inside the arrays, this should be
 	 * ok as this function is mainly in code which will be run inside the get and set functions

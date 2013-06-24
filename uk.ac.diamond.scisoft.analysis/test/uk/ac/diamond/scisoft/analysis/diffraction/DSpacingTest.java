@@ -192,5 +192,13 @@ public class DSpacingTest {
 		eroi = (EllipticalROI) roi;
 		Assert.assertFalse("Ellipse", eroi.isCircular());
 		Assert.assertEquals("Angle", 360-30, eroi.getAngleDegrees(), 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 0);
+		try {
+			roi = DSpacing.conicFromAngle(det, Math.PI*0.5);
+			Assert.fail("This should have thrown an exception");
+		} catch (UnsupportedOperationException e) {
+			// do nothing
+		}
 	}
 }

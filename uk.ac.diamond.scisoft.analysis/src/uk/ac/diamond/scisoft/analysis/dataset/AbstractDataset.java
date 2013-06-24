@@ -3579,9 +3579,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public Object mean() {
-// TODO this is necessary because Jython coerces boolean to int!
-		return getStatistics(false).getMean();
-//		return mean(false);
+		return mean(false);
 	}
 
 	/**

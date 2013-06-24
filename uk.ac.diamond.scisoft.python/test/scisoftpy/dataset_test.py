@@ -709,7 +709,6 @@ class Test(unittest.TestCase):
     def testSelect(self):
         print 'test select'
         tm = np.select([np.array([[[False, True], [True, False]], [[True, True], [False, False]]])], [np.array(self.mm)], -2.3)
-
         self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
 
     def testPrint(self):
@@ -717,6 +716,30 @@ class Test(unittest.TestCase):
         a = np.arange(10)
         print type(a)
         print a
+
+    def testMean(self):
+        print 'test mean'
+        a = np.arange(10).reshape(2,5)
+        self.assertEqual(4.5, a.mean())
+        self.checkitems([2.5, 3.5, 4.5, 5.5, 6.5], a.mean(0))
+        self.checkitems([2., 7.], a.mean(1))
+
+    def testMaxMin(self):
+        print 'test max/min'
+        a = np.arange(10, dtype=np.float).reshape(2,5)
+        self.assertEqual(0., a.min())
+        self.checkitems([0., 1., 2., 3., 4.], a.min(0))
+        self.checkitems([0., 5.], a.min(1))
+        self.assertEqual(0, a.argmin())
+        self.checkitems([0, 0, 0, 0, 0], a.argmin(0))
+        self.checkitems([0, 0], a.argmin(1))
+
+        self.assertEqual(9., a.max())
+        self.checkitems([5., 6., 7., 8., 9.], a.max(0))
+        self.checkitems([4., 9.], a.max(1))
+        self.assertEqual(9, a.argmax())
+        self.checkitems([1, 1, 1, 1, 1], a.argmax(0))
+        self.checkitems([4, 4], a.argmax(1))
 
 if __name__ == "__main__":
     #import sys

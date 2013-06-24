@@ -633,89 +633,25 @@ public class ObjectDatasetBase extends AbstractDataset {
 
 	@Override
 	public ObjectDatasetBase iadd(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public ObjectDatasetBase isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public ObjectDatasetBase imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public ObjectDatasetBase idivide(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
 			// if (v == 0) { // INT_ZEROTEST
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
 			// } // INT_ZEROTEST
-		}
-		setDirty();
 		return this;
 	}
 
@@ -753,8 +689,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 	@Override
 	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-
-
 
 		return sum;
 	}

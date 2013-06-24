@@ -687,17 +687,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] += bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] += v;
 			}
@@ -711,17 +711,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] -= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] -= v;
 			}
@@ -735,17 +735,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] *= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] *= v;
 			}
@@ -759,10 +759,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] /= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
 			}
@@ -772,7 +772,7 @@ public class FloatDataset extends AbstractDataset {
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] /= v;
 			}
@@ -875,10 +875,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			double comp = 0;
 			if (ignoreNaNs) { // REAL_ONLY
 				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY

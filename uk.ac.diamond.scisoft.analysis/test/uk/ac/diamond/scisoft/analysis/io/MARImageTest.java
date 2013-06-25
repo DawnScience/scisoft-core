@@ -18,14 +18,13 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gda.util.TestUtils;
-
 import junit.framework.Assert;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 /**

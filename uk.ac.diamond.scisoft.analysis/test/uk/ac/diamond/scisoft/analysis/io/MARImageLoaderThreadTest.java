@@ -16,15 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.analysis.io.ScanFileHolderException;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 	

@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.util.TestUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,6 +26,7 @@ import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 /**

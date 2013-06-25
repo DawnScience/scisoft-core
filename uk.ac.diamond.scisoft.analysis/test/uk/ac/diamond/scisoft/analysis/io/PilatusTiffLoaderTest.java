@@ -17,11 +17,12 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 /**
  *

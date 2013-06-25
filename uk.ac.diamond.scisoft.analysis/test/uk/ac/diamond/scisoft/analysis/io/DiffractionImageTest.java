@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.util.TestUtils;
-
 import javax.vecmath.Vector3d;
 
 import junit.framework.Assert;
@@ -26,10 +24,10 @@ import org.apache.commons.lang.SerializationUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class DiffractionImageTest {
 	static String testfile1 = null;

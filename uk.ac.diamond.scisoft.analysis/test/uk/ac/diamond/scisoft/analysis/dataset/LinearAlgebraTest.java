@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
+
 public class LinearAlgebraTest {
 
 	private static boolean close(Number a, double b) {

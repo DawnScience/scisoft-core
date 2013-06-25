@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +29,7 @@ import ncsa.hdf.object.h5.H5File;
 
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;

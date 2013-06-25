@@ -27,6 +27,8 @@ import org.apache.commons.math.complex.Complex;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
+
 public class AbstractDatasetTest {
 
 	@Test

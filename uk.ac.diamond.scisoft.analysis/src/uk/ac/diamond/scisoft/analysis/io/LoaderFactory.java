@@ -49,7 +49,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.gda.util.io.FileUtils;
+import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 // TODO Not sure if org.eclipse.core could break GDA server.
 // Been told verbally that the GDA server now can resolve core and resources.
 

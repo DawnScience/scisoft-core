@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.assertEquals;
-import gda.util.TestUtils;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
@@ -27,6 +26,7 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.PNGSaver;

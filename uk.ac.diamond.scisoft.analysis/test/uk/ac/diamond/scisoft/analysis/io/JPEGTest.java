@@ -18,13 +18,13 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertTrue;
 import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 
 import java.io.FileNotFoundException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;

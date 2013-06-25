@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.analysis.io.ScanFileHolderException;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
 
-
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.gda.util.io.FileUtils;
-import gda.analysis.io.ScanFileHolderException;
+import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
 public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader {
 

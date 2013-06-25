@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;

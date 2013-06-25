@@ -16,16 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import gda.analysis.io.ScanFileHolderException;
 
 import java.io.File;
-
-import gda.analysis.io.ScanFileHolderException;
-import gda.util.TestUtils;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 

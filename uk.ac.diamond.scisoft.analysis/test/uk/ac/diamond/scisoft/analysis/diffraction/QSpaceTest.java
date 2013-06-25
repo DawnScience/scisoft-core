@@ -23,10 +23,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
-import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.gda.util.number.DoubleUtils;
+import uk.ac.diamond.scisoft.analysis.DoubleUtils;
 
 public class QSpaceTest {
 	static double wavelength = 1.4;

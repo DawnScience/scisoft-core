@@ -16,13 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.util.TestUtils;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
 public class RAxisImageLoaderTest {

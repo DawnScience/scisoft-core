@@ -23,6 +23,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
+
 public class IntegersIteratorTest {
 	AbstractDataset a, b;
 

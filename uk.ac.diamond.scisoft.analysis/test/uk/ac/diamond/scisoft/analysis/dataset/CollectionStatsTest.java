@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.DoubleUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.gda.util.number.DoubleUtils;
 
 
 /**

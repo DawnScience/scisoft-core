@@ -67,7 +67,6 @@ public class DatasetUtils {
 				throw new IllegalArgumentException("Incompatible dimensions");
 			}
 		}
-		// TODO could try fitting into reserved space...
 		final int[] newdims = new int[rank];
 		for (int i = 0; i < rank; i++) {
 			newdims[i] = shape[i];
@@ -1288,11 +1287,6 @@ public class DatasetUtils {
 
 		result.shape = rank > 0 ? Arrays.copyOf(shape, rank) : (rank < 0 ? new int[] {} : new int[] {1});
 		result.size = AbstractDataset.calcSize(result.shape);
-// TODO
-//		if (shareData && a.dataShape != null) {
-//			result.dataShape = rank > 0 ? Arrays.copyOf(a.dataShape, rank) : result.shape.clone();
-//			result.dataSize = AbstractDataset.calcSize(result.dataShape);
-//		}
 		result.odata = buffer;
 		result.setName(a.getName());
 		result.setData();
@@ -1341,12 +1335,6 @@ public class DatasetUtils {
 
 		result.shape = nshape;
 		result.size = AbstractDataset.calcSize(nshape);
-// TODO
-//		if (a.dataShape != null) {
-//			result.dataShape = Arrays.copyOf(a.dataShape, rank);
-//			result.dataShape[rank-1] = is;
-//			result.dataSize = AbstractDataset.calcSize(result.dataShape);
-//		}
 		result.odata = buffer;
 		result.setName(a.getName());
 		result.setData();

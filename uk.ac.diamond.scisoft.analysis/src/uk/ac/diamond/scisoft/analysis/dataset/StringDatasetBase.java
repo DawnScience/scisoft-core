@@ -163,6 +163,11 @@ public class StringDatasetBase extends AbstractDataset {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 	/**
 	 * Create a dataset from an object which could be a PySequence, a Java array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -580,8 +585,7 @@ public class StringDatasetBase extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks max(boolean) is max(int)!
-			// max = findPositions(((Number) getMaxMin(false, false, STORE_MAX)).intValue() != 0); // BOOLEAN_USE
+			// max = findPositions(max(false).intValue() != 0); // BOOLEAN_USE
 			max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -603,8 +607,7 @@ public class StringDatasetBase extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks min(boolean) is min(int)!
-			// min = findPositions(((Number) getMaxMin(false, false, STORE_MIN)).intValue() != 0); // BOOLEAN_USE
+			// min = findPositions(min(false).intValue() != 0); // BOOLEAN_USE
 			min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -633,89 +636,25 @@ public class StringDatasetBase extends AbstractDataset {
 
 	@Override
 	public StringDatasetBase iadd(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public StringDatasetBase isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public StringDatasetBase imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
-		}
-		setDirty();
 		return this;
 	}
 
 	@Override
 	public StringDatasetBase idivide(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-			}
-		} else {
 			// if (v == 0) { // INT_ZEROTEST
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-			}
 			// } // INT_ZEROTEST
-		}
-		setDirty();
 		return this;
 	}
 
@@ -753,8 +692,6 @@ public class StringDatasetBase extends AbstractDataset {
 	@Override
 	public double residual(final Object b, boolean ignoreNaNs) {
 		double sum = 0;
-
-
 
 		return sum;
 	}

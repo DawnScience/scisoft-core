@@ -164,6 +164,11 @@ public class ByteDataset extends AbstractDataset {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 	/**
 	 * Create a dataset from an object which could be a PySequence, a Java array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -606,9 +611,8 @@ public class ByteDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks max(boolean) is max(int)!
-			max = findPositions(((Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MAX)).byteValue()); // PRIM_TYPE
-			// max = findPositions(((Number) getMaxMin(false, false, STORE_MAX)).intValue() != 0); // BOOLEAN_USE
+			max = findPositions(max(ignoreInvalids).byteValue()); // PRIM_TYPE
+			// max = findPositions(max(false).intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -630,9 +634,8 @@ public class ByteDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks min(boolean) is min(int)!
-			min = findPositions(((Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MIN)).byteValue()); // PRIM_TYPE
-			// min = findPositions(((Number) getMaxMin(false, false, STORE_MIN)).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min(ignoreInvalids).byteValue()); // PRIM_TYPE
+			// min = findPositions(min(false).intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -664,17 +667,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] += bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] += v;
 			}
@@ -688,17 +691,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] -= bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] -= v;
 			}
@@ -712,17 +715,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] *= bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] *= v;
 			}
@@ -736,10 +739,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext() && it2.hasNext()) {
 				try {
 					data[it1.index] /= bds.getElementLongAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
@@ -753,7 +756,7 @@ public class ByteDataset extends AbstractDataset {
 				fill(0); // INT_ZEROTEST
 			} else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-
+			// BOOLEAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] /= v;
 			}
@@ -854,10 +857,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-
+			// BOOLEAN_OMIT
 			double comp = 0;
 			{
 				while (it1.hasNext() && it2.hasNext()) {

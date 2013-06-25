@@ -164,6 +164,11 @@ public class DoubleDataset extends AbstractDataset {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 	/**
 	 * Create a dataset from an object which could be a PySequence, a Java array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -613,9 +618,8 @@ public class DoubleDataset extends AbstractDataset {
 
 		List<Integer> max = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks max(boolean) is max(int)!
-			max = findPositions(((Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MAX)).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// max = findPositions(((Number) getMaxMin(false, false, STORE_MAX)).intValue() != 0); // BOOLEAN_USE
+			max = findPositions(max(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// max = findPositions(max(false).intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
@@ -637,9 +641,8 @@ public class DoubleDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<Integer> min = null;
 		if (o == null) {
-			// TODO this is necessary because Jython thinks min(boolean) is min(int)!
-			min = findPositions(((Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MIN)).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
-			// min = findPositions(((Number) getMaxMin(false, false, STORE_MIN)).intValue() != 0); // BOOLEAN_USE
+			min = findPositions(min(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			// min = findPositions(min(false).intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
 		} else if (o instanceof ArrayList<?>) {
@@ -684,101 +687,101 @@ public class DoubleDataset extends AbstractDataset {
 
 	@Override
 	public DoubleDataset iadd(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
+		if (b instanceof ADataset) { // BOOLEAN_OMIT
+			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
+			checkCompatibility(bds); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] += bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			}
-		} else {
+			} // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
 			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] += v; // BOOLEAN_OMIT
-			}
-		}
-		setDirty();
+			} // BOOLEAN_OMIT
+		} // BOOLEAN_OMIT
+		setDirty(); // BOOLEAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
+		if (b instanceof ADataset) { // BOOLEAN_OMIT
+			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
+			checkCompatibility(bds); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] -= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			}
-		} else {
+			} // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
 			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] -= v; // BOOLEAN_OMIT
-			}
-		}
-		setDirty();
+			} // BOOLEAN_OMIT
+		} // BOOLEAN_OMIT
+		setDirty(); // BOOLEAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
+		if (b instanceof ADataset) { // BOOLEAN_OMIT
+			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
+			checkCompatibility(bds); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] *= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			}
-		} else {
+			} // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
 			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] *= v; // BOOLEAN_OMIT
-			}
-		}
-		setDirty();
+			} // BOOLEAN_OMIT
+		} // BOOLEAN_OMIT
+		setDirty(); // BOOLEAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset idivide(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
+		if (b instanceof ADataset) { // BOOLEAN_OMIT
+			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
+			checkCompatibility(bds); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] /= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT // INT_EXCEPTION
-			}
-		} else {
+			} // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
 			final double v = toReal(b); // BOOLEAN_OMIT
 			// if (v == 0) { // INT_ZEROTEST
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+			// BOOLEAN_OMIT
+			while (it1.hasNext()) { // BOOLEAN_OMIT
 				data[it1.index] /= v; // BOOLEAN_OMIT
-			}
+			} // BOOLEAN_OMIT
 			// } // INT_ZEROTEST
-		}
-		setDirty();
+		} // BOOLEAN_OMIT
+		setDirty(); // BOOLEAN_OMIT
 		return this;
 	}
 
@@ -875,10 +878,10 @@ public class DoubleDataset extends AbstractDataset {
 		if (b instanceof ADataset) { // BOOLEAN_OMIT
 			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
 			checkCompatibility(bds); // BOOLEAN_OMIT
-
+			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
 			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-
+			// BOOLEAN_OMIT
 			double comp = 0; // BOOLEAN_OMIT
 			if (ignoreNaNs) { // REAL_ONLY // BOOLEAN_OMIT
 				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT

@@ -210,6 +210,10 @@ public class DSpacing {
 		double sa = Math.sin(alpha);
 		double ca = Math.cos(alpha);
 
+		if (ca*ce - sa*se < 1e-15) { // TODO
+			throw new UnsupportedOperationException("Part of cone does not intersect detector plane");
+		}
+
 		Vector3d row = detector.getPixelRow();
 		Vector3d col = detector.getPixelColumn();
 		double angle = Math.atan2(major.dot(col), major.dot(row));

@@ -75,7 +75,6 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * see LoaderFactoryExtensions which boots up the extensions from reading the extension points.
  */
 public class LoaderFactory {
-	
 	/**
 	 * A caching mechanism using soft references. Soft references attempt to keep things
 	 * in memory until the system is short on memory. Hashtable used because it is synchronized
@@ -113,7 +112,6 @@ public class LoaderFactory {
 	 */
 	static {
 		try {
-			
 		    LoaderFactory.registerLoader("npy",  NumPyFileLoader.class);
 		    LoaderFactory.registerLoader("img",  ADSCImageLoader.class);
 		    LoaderFactory.registerLoader("osc",  RAxisImageLoader.class);
@@ -159,12 +157,15 @@ public class LoaderFactory {
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
 		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
 		    	
-		    /**
-		     * Tell the extension points to load in.
-		     */
-		    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService)Activator.getService(ILoaderFactoryExtensionService.class);
-		    if (service!=null) service.registerExtensionPoints();
-		    
+		    try {
+			    /**
+			     * Tell the extension points to load in.
+			     */
+			    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService) Activator.getService(ILoaderFactoryExtensionService.class);
+			    if (service!=null) service.registerExtensionPoints();
+		    } catch (Throwable t) {
+				logger.error("Problem getting extension service");
+		    }
 		} catch (Exception ne) {
 			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
 		}
@@ -378,14 +379,17 @@ public class LoaderFactory {
 		LoaderKey k = findKeyWithMetadata(key);
 		return k == null ? null : getReference(k);
 	}
-		
+
+
+	private static final String NO_CACHING = "uk.ac.diamond.scisoft.analysis.io.nocaching";
+
 	/**
 	 * May be null
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
 	private static Object getReference(LoaderKey key) {
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
+		if (Boolean.getBoolean(NO_CACHING)) return null;
 		synchronized (LOCK) {
 			try {
 		        final Reference<Object> ref = SOFT_CACHE.get(key);
@@ -398,7 +402,7 @@ public class LoaderFactory {
 	}
 
 	private static LoaderKey findKeyWithMetadata(LoaderKey key) {
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return null;
+		if (Boolean.getBoolean(NO_CACHING)) return null;
 		synchronized (LOCK) {
 			for (LoaderKey k : SOFT_CACHE.keySet()) {
 				if (k.isSameFile(key) && k.hasMetadata()) {
@@ -412,7 +416,7 @@ public class LoaderFactory {
 
 	private static boolean recordSoftReference(LoaderKey key, Object value) {
 		
-		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.nocaching")) return false;
+		if (Boolean.getBoolean(NO_CACHING)) return false;
 		synchronized (LOCK) {
 			try {
 				Reference<Object> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")

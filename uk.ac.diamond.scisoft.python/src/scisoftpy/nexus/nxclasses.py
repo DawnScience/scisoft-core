@@ -154,6 +154,7 @@ class NXdata(NXgroup):
 
     See the NXgroup documentation for more details.
     """
+    pass
 #    def __init__(self, signal=None, axes=(), *items, **opts):
 #        NXgroup.__init__(self, *items, **opts)
 #        if signal is not None:
@@ -177,10 +178,11 @@ class NXmonitor(NXdata):
     
     See the NXdata and NXgroup documentation for more details.
     """
-    def __init__(self, signal=None, axes=(), *items, **opts):
-        NXdata.__init__(self, signal=signal, axes=axes, *items, **opts)
-        if "nxname" not in opts.keys():
-            self.nxname = "monitor"
+    pass
+#    def __init__(self, signal=None, axes=(), *items, **opts):
+#        NXdata.__init__(self, signal=signal, axes=axes, *items, **opts)
+#        if "nxname" not in opts.keys():
+#            self.nxname = "monitor"
 
 class NXsample(NXgroup):
     """

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,13 +32,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SCISOFT - added static method which returns a PythonInterpreter which can run scisoft scripts
-This is for executing a script directly from the workflow tool when you do not want to
-start a separate debug/run process to start the script.
+ * This is for executing a script directly from the workflow tool when you do not want to
+ * start a separate debug/run process to start the script.
  */
 public class JythonInterpreterUtils {
 
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
 	private static final String JYTHON_BUNDLE = "uk.ac.diamond.jython";
+	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
 	static {
@@ -47,7 +48,6 @@ public class JythonInterpreterUtils {
 	
 	/**
 	 * scisoftpy is imported as dnp
-	 * scisoftpy.core as scp
 	 * 
 	 * @return a new PythonInterpreter with scisoft scripts loaded.
 	 * @throws IOException 
@@ -56,33 +56,32 @@ public class JythonInterpreterUtils {
 	public static PythonInterpreter getInterpreter() throws Exception {
 		
 		final long start = System.currentTimeMillis();
-		// FIXME switch back logging to debug
-		logger.info("Starting new Jython Interpreter.");
+		logger.debug("Starting new Jython Interpreter.");
 		PySystemState     state       = new PySystemState();
 		
 		final ClassLoader classLoader = JythonInterpreterUtils.class.getClassLoader();
 		state.setClassLoader(classLoader);
-		System.err.println("Class loader is " + classLoader);
+		logger.info("Class loader is {}", classLoader);
 		if (classLoader instanceof URLClassLoader) {
-			logger.info("URL classpath:");
+			logger.debug("URL classpath:");
 			for (URL u : ((URLClassLoader) classLoader).getURLs()) {
-				logger.info("\t{}", u.getPath());
+				logger.debug("\t{}", u.getPath());
 			}
 		}
-		File jyBundleLoc;
+		File jyBundleLoc = null;
 		try {
 			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
 			logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
 		} catch (Exception ignored) {
-			jyBundleLoc = null;
 		}
 		if (jyBundleLoc == null) {
-			if (System.getProperty("uk.ac.diamond.jython.location")==null) throw new Exception("Please set the property 'uk.ac.diamond.jython.location' for this test to work!");
-			jyBundleLoc = new File(System.getProperty("uk.ac.diamond.jython.location"));
+			if (System.getProperty(JYTHON_BUNDLE_LOC)==null)
+				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
+			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
 		}
-		logger.info("Classpath:");
-		for (String p : System.getProperty("java.class.path").split(":")) {
-			logger.info("\t{}", p);
+		logger.debug("Classpath:");
+		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
+			logger.debug("\t{}", p);
 		}
 
 		PyList path = state.path;
@@ -98,10 +97,10 @@ public class JythonInterpreterUtils {
 		try {
 			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
 			if (!pythonPlugin.exists()) {
-				logger.info("No scisoftpy found at {} - now trying to find git workspace", pythonPlugin);
+				logger.debug("No scisoftpy found at {} - now trying to find git workspace", pythonPlugin);
 				File gitws = jyBundleLoc.getParentFile().getParentFile();
 				if (gitws.exists()) {
-					logger.info("Git workspace found: {}", gitws.getAbsolutePath());
+					logger.debug("Git workspace found: {}", gitws.getAbsolutePath());
 					pythonPlugin = new File(new File(gitws, "scisoft-core.git"), SCISOFTPY);
 					if (!pythonPlugin.exists()) {
 						throw new IllegalStateException("Can't find scisoftpy at " + pythonPlugin);
@@ -110,10 +109,10 @@ public class JythonInterpreterUtils {
 					throw new IllegalStateException("No git workspace at " + gitws);
 				}
 			}
-			logger.info("Found Scisoft Python plugin at {}", pythonPlugin);
+			logger.debug("Found Scisoft Python plugin at {}", pythonPlugin);
 			File bin = new File(pythonPlugin, "bin");
 			if (bin.exists()) {
-				logger.info("Found bin directory at {}", bin);
+				logger.debug("Found bin directory at {}", bin);
 				path.append(new PyString(bin.getAbsolutePath()));
 			} else {
 				path.append(new PyString(pythonPlugin.getAbsolutePath()));
@@ -129,7 +128,7 @@ public class JythonInterpreterUtils {
 		
 		final long end = System.currentTimeMillis();
 		
-		logger.info("Created new Jython Interpreter in {}ms.", end-start);
+		logger.debug("Created new Jython Interpreter in {}ms.", end-start);
 	
 		return interpreter;
 	}

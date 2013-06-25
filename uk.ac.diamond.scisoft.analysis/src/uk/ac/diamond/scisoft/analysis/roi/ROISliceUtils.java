@@ -30,71 +30,126 @@ import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
  */
 public class ROISliceUtils {
 
-	public static IDataset getDataset(ILazyDataset lz,RectangularROI roi,int[] dims) {
+	/**
+	 * Method to find the index of matching the value closest to val in the dataset<br>
+	 * 
+	 * @param dataset
+	 * @param val
+	 * @return position
+	 */
+	public static int findPositionOfClosestValueInAxis(IDataset dataset, Double val) {
+		return Maths.abs(Maths.subtract(dataset, val)).argMin();
+	}
 
-		Slice[] slices = new Slice[lz.getRank()];
+	/**
+	 * Method to get x,y slices from a rectangular roi<br>
+	 * 
+	 * If length of roi is less than 1, slice of width 1 is returned<br>
+	 * 
+	 * @param roi
+	 * @param step
+	 * @return slices
+	 */
+	public static Slice[] getSlicesFromRectangularROI(RectangularROI roi, int step) {
+
+		Slice[] slices = new Slice[2];
 
 		int[] roiStart = roi.getIntPoint();
 		int[] roiLength = roi.getIntLengths();
-		
+
 		if (roiLength[0] < 1) roiLength[0] = 1;
 		if (roiLength[1] < 1) roiLength[1] = 1;
 
-		Slice xSlice = new Slice(roiStart[0], roiStart[0] + roiLength[0], 1);
-		Slice ySlice = new Slice(roiStart[1], roiStart[1] + roiLength[1], 1);
+		slices[0] = new Slice(roiStart[0], roiStart[0] + roiLength[0], step);
+		slices[1] = new Slice(roiStart[1], roiStart[1] + roiLength[1], step);
 
-		slices[dims[0]] = xSlice;
-		slices[dims[1]] = ySlice;
-
-		return lz.getSlice(slices);
-
-	}
-
-	public static IDataset getAxisDataset(IDataset axis, ILazyDataset lz,RectangularROI roi,int dim) {
-
-		Slice[] slices = new Slice[lz.getRank()];
-
-		double[] roiStart = roi.getPoint();
-		double[] roiLength = roi.getLengths();
-
-		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
-		int length = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
-
-		Slice xSlice = new Slice(start, length, 1);
-
-		slices[dim] = xSlice;
-
-		return lz.getSlice(slices);
-
+		return slices;
 	}
 	
-	public static IDataset getAxisDatasetTrapzSum(IDataset axis, ILazyDataset lz,RectangularROI roi,int dim) {
-		//TODO needs to be checked and tested
-		Slice[] slices = new Slice[lz.getRank()];
-
+	/**
+	 * Method to slice a dataset using an roi to define the sliced range <br>
+	 * Order must be at least 2 ints long and defines the x,y slice dimensions<br>
+	 * 
+	 * @param lz
+	 * @param slices
+	 * @param order
+	 * @param step
+	 * @return slices
+	 */
+	public static IDataset getDataset(ILazyDataset lz, RectangularROI roi, Slice[] slices, int[] order, int step) {
+		
+		Slice[] roiSlice = getSlicesFromRectangularROI(roi, step);
+		
+		Slice[] sl = checkSlices(lz.getRank(), slices);
+		
+		sl[order[0]] = roiSlice[0];
+		sl[order[1]] = roiSlice[1];
+		
+		return lz.getSlice(sl);
+		
+	}
+	
+	/**
+	 * Method to return the slice corresponding to the area selected by an x-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots.
+	 * 
+	 * @param roi
+	 * @param axis
+	 * @param step
+	 * @return slice
+	 */
+	public static Slice getSliceFromRectangularXAxis1D(RectangularROI roi, IDataset axis, int step) {
+		
 		double[] roiStart = roi.getPoint();
 		double[] roiLength = roi.getLengths();
 
 		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
 		int end = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
 		
-		Slice xSlice = new Slice(start, end+1, 1);
+		Slice xSlice = new Slice(start, end+1, step);
+
+		return xSlice;
+	}
+
+	/**
+	 * Method to get trapezium integration corresponding to the area selected by an x-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots, along the dimension dim of the lazy dataset.<br>
+	 * 
+	 * @param lz
+	 * @param axis
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @param step
+	 * 
+	 * @return dataset
+	 */
+	public static IDataset getAxisDatasetTrapzSum(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step) {
 		
-		slices[dim] = xSlice;
+
+		Slice[] sl = checkSlices(lz.getRank(), slices);
+
+		sl[dim] = getSliceFromRectangularXAxis1D(roi,axis, step);
+
+		int start = sl[dim].getStart();
+		int end = sl[dim].getEnd();
+
+		AbstractDataset dataBlock = (AbstractDataset)lz.getSlice(sl);
 		
-		AbstractDataset dataBlock = (AbstractDataset)lz.getSlice(slices);
+		sl = new Slice[lz.getRank()];
 		
-		slices[dim].setStart(0);
-		slices[dim].setStop(1);
-		
-		AbstractDataset datasetStart = DatasetUtils.cast((AbstractDataset)lz.getSlice(slices).squeeze(),AbstractDataset.FLOAT32);
+		sl[dim] = new Slice(0,1);
+
+		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl).squeeze(),AbstractDataset.FLOAT32);
 		AbstractDataset result = AbstractDataset.zeros(datasetStart, AbstractDataset.FLOAT32);
 		AbstractDataset datasetEnd = AbstractDataset.zeros(datasetStart);
-		
+
 		for (int i = 1; i < (end-start+1); i++) {
-			slices[dim].setStart(i);
-			slices[dim].setStop(i+1);
-			datasetEnd = DatasetUtils.cast(dataBlock.getSlice(slices),AbstractDataset.FLOAT32);
+			sl[dim].setStart(i);
+			sl[dim].setStop(i+1);
+			datasetEnd = DatasetUtils.cast(dataBlock.getSlice(sl),AbstractDataset.FLOAT32);
 			datasetStart.iadd(datasetEnd);
 			datasetStart.idivide(2.0);
 			double val = axis.getDouble(start+i)-axis.getDouble(start+i-1);
@@ -103,122 +158,160 @@ public class ROISliceUtils {
 			datasetStart = datasetEnd;
 		}
 		return result;
-
 	}
 	
-	public static IDataset getTrapiziumArea(IDataset axis, ILazyDataset lz, RectangularROI roi, int dim){
-		Slice[] slices = new Slice[lz.getRank()];
-		double[] roiStart = roi.getPoint();
-		double[] roiLength = roi.getLengths();
-		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
-		int end = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
-		Slice xSlice = new Slice(start, start+1, 1);
+	/**
+	 * Method to get trapezium area corresponding to the region selected by an x-axis range roi (start-end)<br>
+	 * 
+	 * Only for ROIs on 1D plots, along the dimension dim of the lazy dataset.<br>
+	 * 
+	 * @param lz
+	 * @param axis
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @param step
+	 * @return dataset
+	 */
+	public static IDataset getTrapiziumArea(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step){
+		Slice[] sl = checkSlices(lz.getRank(), slices);
 
-		slices[dim] = xSlice;
+		sl[dim] = getSliceFromRectangularXAxis1D(roi,axis, step);
+
+		int start = sl[dim].getStart();
+		int end = sl[dim].getEnd();
 		
-		AbstractDataset dataStart = DatasetUtils.cast((AbstractDataset)lz.getSlice(slices),AbstractDataset.FLOAT32);
-		slices[dim].setStart(end);
-		slices[dim].setStop(end+1);
-		dataStart.iadd(DatasetUtils.cast((AbstractDataset)lz.getSlice(slices),AbstractDataset.FLOAT32));
+		sl[dim].setStop(start+1);
+		
+		AbstractDataset dataStart = DatasetUtils.cast((AbstractDataset)lz.getSlice(sl),AbstractDataset.FLOAT32);
+		sl[dim].setStart(end);
+		sl[dim].setStop(end+1);
+		dataStart.iadd(DatasetUtils.cast((AbstractDataset)lz.getSlice(sl),AbstractDataset.FLOAT32));
 		dataStart.idivide(2.0);
 		dataStart.imultiply(axis.getDouble(end)-axis.getDouble(start));
-		
 		return dataStart.squeeze();
 	}
 	
-	public static int[] getImageAxis(int traceDim) {
-		int[] allDims = new int[]{2,1,0};
-		int[] dims = new int[2];
-		
-		int i =0;
-		for(int j : allDims) {
-			if (j != traceDim) {
-				dims[i] = j;
-				i++;
-			}
-		}
-		
-		return dims;
-	}
+	/**
+	 * Method to trapezium integration minus linear baseline corresponding to the region selected by an x-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots, along the dimension dim of the lazy dataset.<br>
+	 * 
+	 * @param lz
+	 * @param axis
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @param step
+	 * @return dataset
+	 */
+	public static IDataset getAxisDatasetTrapzSumBaselined(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step,boolean baseline) {
 
-	public static int findPositionOfClosestValueInAxis(IDataset dataset, Double val) {
-		return Maths.abs(Maths.subtract(dataset, val)).argMin();
-	}
-	
-	
-	public static IDataset getAxisDatasetTrapzSumBaselined(IDataset axis, ILazyDataset data, RectangularROI roi, int dim, boolean baseline) {
-		
-		final AbstractDataset output = ((AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(axis ,data, roi, dim));
-		
+		final AbstractDataset output = ((AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum( lz,  axis,  roi,  slices,  dim,  step));
+
 		if (baseline) {
-			final IDataset datasetBasline = ROISliceUtils.getTrapiziumArea(axis ,data, roi, dim);
+			final IDataset datasetBasline = ROISliceUtils.getTrapiziumArea( lz,  axis,  roi,  slices,  dim,  step);
 			output.isubtract(datasetBasline);
 		}
-		
+
 		return output;
 	}
 	
-
-	public static IDataset getDataset(ILazyDataset lz, LinearROI roi, int[] dims) {
+	/**
+	 * Method to return the dataset corresponding to the area selected by an y-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots.
+	 * 
+	 * @param lz
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @return dataset
+	 */
+	public static IDataset getYAxisDataset2D(ILazyDataset lz, RectangularROI roi, Slice[] slices, int dim){
 		
+		Slice[] sl = checkSlices(lz.getRank(), slices);
+		
+		int[] roiStart = roi.getIntPoint();
+		
+		Slice xSlice = new Slice(roiStart[1], roiStart[1]+1, 1);
+		
+		sl[dim] = xSlice;
+		
+		IDataset out = lz.getSlice(sl);
+		
+		return (IDataset)out.squeeze();
+
+	}
+	
+	/**
+	 * Method to slice a dataset using an roi to define the sliced range <br>
+	 * Order must be at least 2 ints long and defines the x,y slice dimensions<br>
+	 * 
+	 * @param lz
+	 * @param slices
+	 * @param order
+	 * @param step
+	 * @return slices
+	 */
+	public static IDataset getDataset(ILazyDataset lz, LinearROI roi, Slice[] slices, int[] order, int step) {
+		//TODO include step
 		int[] start = roi.getIntPoint();
 		int[] end = roi.getIntEndPoint();
-		
-		LineSample ls = new LineSample(start[1], start[0], end[1], end[0], 1);
-		
+
+		LineSample ls = new LineSample(start[0], start[1], end[0], end[1], 1);
+
 		int len = (int)Math.floor(roi.getLength());
-		
-		//List<int[]> points = new ArrayList<int[]>(len);
-		
+
 		IDataset[] ds = new IDataset[len];
-		
-		Slice[] slices = new Slice[lz.getRank()];
+
+		Slice[] sl = checkSlices(lz.getRank(), slices);
 
 		Slice xSlice = new Slice();
 		Slice ySlice = new Slice();
 
-		slices[dims[0]] = xSlice;
-		slices[dims[1]] = ySlice;
-		
+		sl[order[1]] = xSlice;
+		sl[order[0]] = ySlice;
+
 
 		int[] points;
 
-		
 		int[] shape = new int[]{1,1};
-		
+
 		for (int i = 0; i < len; i++) {
 			points = ls.getPoint(i+1);
-			
-			slices[dims[0]].setStart(points[0]);
-			slices[dims[0]].setStop(points[0]+1);
-			slices[dims[1]].setStart(points[1]);
-			slices[dims[1]].setStop(points[1]+1);
-			
-			ds[i] = lz.getSlice(slices).squeeze().getSlice();
-			
+
+			sl[order[0]].setStart(points[1]);
+			sl[order[0]].setStop(points[1]+1);
+			sl[order[1]].setStart(points[0]);
+			sl[order[1]].setStop(points[0]+1);
+
+			ds[i] = lz.getSlice(sl).squeeze().getSlice();
+
 			shape = ds[i].getShape();
-			
+
 			ds[i].setShape(new int[]{1,shape[0]});
 		}
-		
+
 		return DatasetUtils.concatenate(ds, 0);
 	}
 	
-public static IDataset getAxisDataset(ILazyDataset lz, RectangularROI roi, int dim) {
-		
-		int[] start = roi.getIntPoint();
-		
-		
-		Slice[] slices = new Slice[lz.getRank()];
+	private static Slice[] checkSlices(int rank, Slice[] slices) {
+		Slice[] sl = new Slice[rank];
 
-		Slice traceSlice = new Slice();
-		
-		traceSlice.setStart(start[1]);
-		traceSlice.setStop(start[1]+1);
-
-		slices[dim] = traceSlice;
-		
-		return lz.getSlice(slices).squeeze().getSlice();
-
+		if (slices != null && rank == slices.length) {
+			sl = slices.clone();
+		} else if ( slices != null && rank > slices.length){
+			sl = new Slice[rank];
+			for (int i = 0 ; i < slices.length ; i++) {
+				sl[i] = slices[i];
+			}
+		} else if ( slices != null && rank < slices.length){
+			sl = new Slice[rank];
+			for (int i = 0 ; i < rank ; i++) {
+				sl[i] = slices[i];
+			}
+		}
+		return sl;
 	}
 }

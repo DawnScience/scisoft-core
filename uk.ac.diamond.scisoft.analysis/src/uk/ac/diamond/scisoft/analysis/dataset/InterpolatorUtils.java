@@ -422,9 +422,9 @@ public class InterpolatorUtils {
 		step[axisIndex] = dataset.getShape()[axisIndex];
 		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
 		
+		int[] pos = iter.getPos();
+		int[] posEnd = new int[pos.length];
 		while (iter.hasNext()){
-			int[] pos = iter.getPos();
-			int[] posEnd = new int[pos.length];
 			for (int i = 0 ; i < posEnd.length; i++) {
 				posEnd[i] = pos[i]+1;
 			}
@@ -475,9 +475,9 @@ public class InterpolatorUtils {
 		step[axisIndex] = dataset.getShape()[axisIndex];
 		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
 		
+		int[] pos = iter.getPos();
+		int[] posEnd = new int[pos.length];
 		while (iter.hasNext()){
-			int[] pos = iter.getPos();
-			int[] posEnd = new int[pos.length];
 			for (int i = 0 ; i < posEnd.length; i++) {
 				posEnd[i] = pos[i]+1;
 			}

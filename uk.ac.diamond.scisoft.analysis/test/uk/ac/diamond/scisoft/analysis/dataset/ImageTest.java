@@ -36,7 +36,7 @@ public class ImageTest {
 		
 		AbstractDataset y = DatasetUtils.transpose(x);
 		
-		AbstractDataset lin = DoubleDataset.arange(-100,900,5);
+		AbstractDataset lin = DoubleDataset.arange(-100,900,10);
 		
 		// now apply the Transform
 		@SuppressWarnings("unused")

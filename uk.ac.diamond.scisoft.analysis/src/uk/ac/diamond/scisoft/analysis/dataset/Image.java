@@ -129,7 +129,7 @@ public class Image {
 		Delaunay_Triangulation dt = new Delaunay_Triangulation(pointArray);
 		
 		IndexIterator itx = gridX.getIterator();
-		DoubleDataset result = new DoubleDataset(gridX.shape[0], gridY.shape[0]);
+		DoubleDataset result = new DoubleDataset(gridX.getShapeRef()[0], gridY.getShapeRef()[0]);
 		while(itx.hasNext()){
 			int xindex = itx.index;
 			double xpos = gridX.getDouble(xindex);
@@ -158,8 +158,8 @@ public class Image {
 			AbstractDataset gridY) {
 		
 		// create the output array
-		DoubleDataset result = new DoubleDataset(gridY.shape[0]+1, gridX.shape[0]+1);
-		IntegerDataset count = new IntegerDataset(gridY.shape[0]+1, gridX.shape[0]+1);
+		DoubleDataset result = new DoubleDataset(gridY.getShapeRef()[0]+1, gridX.getShapeRef()[0]+1);
+		IntegerDataset count = new IntegerDataset(gridY.getShapeRef()[0]+1, gridX.getShapeRef()[0]+1);
 
 		IndexIterator it = data.getIterator();
 		while(it.hasNext()){
@@ -239,7 +239,8 @@ public class Image {
 	
 	public static AbstractDataset medianFilter(AbstractDataset input, int[] kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
-		if (kernel.length != input.getShape().length)
+		int[] shape = input.getShape();
+		if (kernel.length != shape.length)
 			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
 
 		AbstractDataset result = input.clone();
@@ -248,15 +249,15 @@ public class Image {
 			offset[i] = -kernel[i]/2;
 		}
 		IndexIterator iter = input.getIterator(true);
+		int[] pos = iter.getPos();
+		int[] start = new int[pos.length];
+		int[] stop = new int[pos.length];
 		while (iter.hasNext()) {
-			int[] pos = iter.getPos();
-			int[] start = pos.clone();
-			int[] stop = pos.clone();
 			for (int i = 0; i < pos.length; i++) {
 				start[i] = pos[i] + offset[i];
 				stop[i] = start[i] + kernel[i];
 				if (start[i] < 0) start[i] = 0;
-				if (stop[i] >= input.getShape()[i]) stop[i] = input.getShape()[i];
+				if (stop[i] >= shape[i]) stop[i] = shape[i];
 			}
 			AbstractDataset slice = input.getSlice(start, stop, null);
 			result.set(Stats.median(slice), pos);
@@ -267,35 +268,37 @@ public class Image {
 	
 	public static AbstractDataset convolutionFilter(AbstractDataset input, AbstractDataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
-		if (kernel.getShape().length != input.getShape().length)
+		int[] shape = input.getShape();
+		int[] kShape = kernel.getShape();
+		if (kShape.length != shape.length)
 			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
 
 		AbstractDataset result = input.clone();
-		int[] kShape = kernel.getShape();
 		int[] offset = kShape.clone();
 		for (int i = 0; i < offset.length; i++) {
 			offset[i] = -kShape[i] / 2;
 		}
 		IndexIterator iter = input.getIterator(true);
+		int[] pos = iter.getPos();
+		int[] start = new int[pos.length];
+		int[] stop = new int[pos.length];
+		int[] kStart = new int[pos.length];
+		int[] kStop = kShape.clone();
 		while (iter.hasNext()) {
-			int[] pos = iter.getPos();
-			int[] start = pos.clone();
-			int[] stop = pos.clone();
-			int[] kStart = kShape.clone();
-			int[] kStop = kShape.clone();
 			boolean kClipped = false;
 			for (int i = 0; i < pos.length; i++) {
 				start[i] = pos[i] + offset[i];
 				stop[i] = start[i] + kShape[i];
 				kStart[i] = 0;
 				if (start[i] < 0) {
-					kStart[i] = kStart[i] - start[i];
+					kStart[i] = -start[i];
 					start[i] = 0;
 					kClipped = true;
 				}
-				if (stop[i] >= input.getShape()[i]) {
-					kStop[i] = kStop[i] - (stop[i] - input.getShape()[i]);
-					stop[i] = input.getShape()[i];
+				kStop[i] = kShape[i];
+				if (stop[i] >= shape[i]) {
+					kStop[i] = kStop[i] - (stop[i] - shape[i]);
+					stop[i] = shape[i];
 					kClipped = true;
 				}
 			}

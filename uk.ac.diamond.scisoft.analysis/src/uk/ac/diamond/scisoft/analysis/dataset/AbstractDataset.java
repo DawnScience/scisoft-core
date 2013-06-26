@@ -1518,6 +1518,9 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	protected static String createSliceString(final int[] shape, final int[] start, final int[] stop, final int[] step) {
 		final int rank = shape.length;
+		if (rank == 0) {
+			return "()";
+		}
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < rank; i++) {
 			int l = shape[i];

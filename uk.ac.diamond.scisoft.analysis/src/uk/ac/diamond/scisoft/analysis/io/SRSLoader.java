@@ -105,7 +105,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	}
 
 	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
-	private static final Pattern NUMBER_REGEX = Pattern.compile("^[-\\d].+");
+	private static final Pattern NUMBER_REGEX = Pattern.compile("^[-+]?[\\d]*\\.?\\d+.*");
 
 	/**
 	 * Function that loads in the standard SRS datafile
@@ -143,13 +143,13 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				dataStr = dataStr.trim();
 				if (NUMBER_REGEX.matcher(dataStr).matches()) {
 					parseColumns(SPLIT_REGEX.split(dataStr), columns);
-					in.mark(MARK_LIMIT);
 				} else {
 					// more metadata?
 					in.reset();
 					readMetadata(in, mon);
 					in.readLine(); // throw away line
 				}
+				in.mark(MARK_LIMIT);
 			}
 
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());

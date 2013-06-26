@@ -21,12 +21,13 @@ import java.util.Arrays;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ import Jama.Matrix;
  * The ellipse is centred on the origin.
  */
 //Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
-class AngleDerivativeFunction implements UnivariateRealFunction, Serializable {
+class AngleDerivativeFunction implements UnivariateFunction, Serializable {
 	double ra, rb; // major and minor semi-axes
 	double alpha;  // orientation angle of major axis
 	double A, B, C;
@@ -85,7 +86,7 @@ class AngleDerivativeFunction implements UnivariateRealFunction, Serializable {
 	 * @return value proportional to the derivative of the distance function wrt. angle
 	 */
 	@Override
-	public double value(final double angle) throws FunctionEvaluationException {
+	public double value(final double angle) {
 		final double c = Math.cos(angle);
 		final double s = Math.sin(angle);
 
@@ -110,7 +111,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	private double[] sa;
 
 	AngleDerivativeFunction angleDerivative = new AngleDerivativeFunction();
-	BrentSolver solver = new BrentSolver(BrentSolver.DEFAULT_ABSOLUTE_ACCURACY);
+	BrentSolver solver = new BrentSolver();
 
 	public EllipseCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
 		setPoints(x, y);
@@ -195,11 +196,11 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 				final double halfpi = 0.5*Math.PI;
 				pa /= halfpi;
 				end = Math.ceil(pa)*halfpi;
-				final double angle = solver.solve(BrentSolver.DEFAULT_MAXIMUM_ITERATIONS, angleDerivative, end-halfpi, end);
+				final double angle = solver.solve(100, angleDerivative, end-halfpi, end);
 				init[i++] = angle;
-			} catch (MaxIterationsExceededException e) {
+			} catch (TooManyEvaluationsException e) {
 				throw new IllegalArgumentException("Problem with solver converging as iterations exceed limit");
-			} catch (FunctionEvaluationException e) {
+			} catch (MathIllegalArgumentException e) {
 				// cannot happen
 			}
 		}
@@ -464,7 +465,7 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 		v1.mapMultiplyToSelf(4);
 
 		ArrayRealVector v = v1.ebeMultiply(v3).subtract(v2.ebeMultiply(v2));
-		double[] varray = v.getData();
+		double[] varray = v.getDataRef();
 		int i = 0;
 		for (; i < 3; i++) {
 			if (varray[i] > 0)

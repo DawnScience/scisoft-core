@@ -32,7 +32,7 @@ from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 
-import org.apache.commons.math.complex.Complex as _jcomplex #@UnresolvedImport
+import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
 import Jama.Matrix as _matrix #@UnresolvedImport
 

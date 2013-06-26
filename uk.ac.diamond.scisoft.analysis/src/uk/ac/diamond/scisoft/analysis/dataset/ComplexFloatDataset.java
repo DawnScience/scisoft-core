@@ -21,8 +21,8 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.complex.Complex;
-import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 
 /**

@@ -30,7 +30,7 @@ public class Generic1DDatasetCreater {
 	static final double peakPos = 50.0;
 	static final double defaultFWHM = 20.0;
 	static final double defaultArea = 50.0;
-	static final double delta = 0.5;
+	static final double delta = 0.51;
 	static final double lambda = 0.1;
 	
 	static final boolean backgroundDominated = true;

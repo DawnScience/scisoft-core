@@ -16,11 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.LUDecomposition;
-import org.apache.commons.math.linear.LUDecompositionImpl;
-import org.apache.commons.math.linear.MatrixUtils;
-import org.apache.commons.math.linear.NonSquareMatrixException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +190,7 @@ public class GaussianND extends AFunction {
 //		logger.info("New cov {}", covar);
 		LUDecomposition decomp = null;
 		try {
-			decomp = new LUDecompositionImpl(covar);
+			decomp = new LUDecomposition(covar);
 		} catch (NonSquareMatrixException e) {
 			logger.error("Non-square covariance matrix");
 			throw new IllegalArgumentException("Non-square covariance matrix");

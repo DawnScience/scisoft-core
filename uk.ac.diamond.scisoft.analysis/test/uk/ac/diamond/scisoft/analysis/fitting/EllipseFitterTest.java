@@ -18,9 +18,9 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class EllipseFitterTest {
 	public void testOrthoDist() {
 
 		AngleDerivativeFunction angleDerivative = new AngleDerivativeFunction();
-		BrentSolver solver = new BrentSolver(BrentSolver.DEFAULT_ABSOLUTE_ACCURACY);
+		BrentSolver solver = new BrentSolver();
 		double a = 10.2;
 		double b = 3.1;
 		final double twopi = 2*Math.PI;
@@ -59,7 +59,7 @@ public class EllipseFitterTest {
 			final double halfpi = 0.5*Math.PI;
 			p /= halfpi;
 			end = Math.ceil(p)*halfpi;
-			final double angle = solver.solve(BrentSolver.DEFAULT_MAXIMUM_ITERATIONS, angleDerivative, end-halfpi, end);
+			final double angle = solver.solve(100, angleDerivative, end-halfpi, end);
 //			final double cos = Math.cos(angle);
 //			final double sin = Math.sin(angle);
 
@@ -70,10 +70,10 @@ public class EllipseFitterTest {
 //			System.out.println("Bracket angle = " + Math.ceil(p));
 //			System.out.println("Delta angle = " + 180.*angle/Math.PI);
 //			System.out.println(dx + ", " + dy);
-		} catch (MaxIterationsExceededException e) {
+		} catch (TooManyEvaluationsException e) {
 			// TODO
 			System.err.println(e);
-		} catch (FunctionEvaluationException e) {
+		} catch (MathIllegalArgumentException e) {
 			// TODO
 			System.err.println(e);
 		}

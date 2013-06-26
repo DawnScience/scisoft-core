@@ -17,9 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 
-import org.apache.commons.math.random.MersenneTwister;
-import org.apache.commons.math.random.RandomDataImpl;
-import org.apache.commons.math.random.RandomGenerator;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Class to hold methods to create random datasets
@@ -28,7 +28,7 @@ import org.apache.commons.math.random.RandomGenerator;
  */
 public class Random {
 	private final static RandomGenerator generator = new MersenneTwister();
-	private final static RandomDataImpl prng = new RandomDataImpl(generator);
+	private final static RandomDataGenerator prng = new RandomDataGenerator(generator);
 
 	/**
 	 * @param seed

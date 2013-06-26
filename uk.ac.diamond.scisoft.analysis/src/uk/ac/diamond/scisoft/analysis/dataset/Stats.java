@@ -21,10 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.apache.commons.math.complex.Complex;
-import org.apache.commons.math.stat.descriptive.moment.FourthMoment;
-import org.apache.commons.math.stat.descriptive.moment.Kurtosis;
-import org.apache.commons.math.stat.descriptive.moment.Skewness;
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 
 /**
@@ -325,59 +324,210 @@ public class Stats {
 		return Maths.subtract(q3, a.getStoredValue(STORE_QUARTILE1 + "-" + axis));
 	}
 
-	static private Object getFourthMoment(final AbstractDataset a, final boolean ignoreNaNs) {
-		String n = AbstractDataset.storeName(ignoreNaNs, "moment4");
-		Object obj = a.getStoredValue(n);
+	static private Object getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, String stat) {
+		Object obj = a.getStoredValue(stat);
 		if (obj == null) {
-			final int is = a.getElementsPerItem();
-			final IndexIterator iter = a.getIterator();
-
-			if (is == 1) {
-				FourthMoment moment = new FourthMoment();
-				if (ignoreNaNs) {
-					while (iter.hasNext()) {
-						final double x = a.getElementDoubleAbs(iter.index);
-						if (Double.isNaN(x))
-							continue;
-						moment.increment(x);
-					}
-				} else {
-					while (iter.hasNext()) {
-						moment.increment(a.getElementDoubleAbs(iter.index));
-					}
-				}
-				a.setStoredValue(n, moment);
-			} else {
-				FourthMoment[] moments = new FourthMoment[is];
-
-				for (int j = 0; j < is; j++) {
-					moments[j] = new FourthMoment();
-				}
-				if (ignoreNaNs) {
-					while (iter.hasNext()) {
-						boolean skip = false;
-						for (int j = 0; j < is; j++) {
-							if (Double.isNaN(a.getElementDoubleAbs(iter.index + j))) {
-								skip = true;
-								break;
-							}
-						}
-						if (!skip)
-							for (int j = 0; j < is; j++)
-								moments[j].increment(a.getElementDoubleAbs(iter.index + j));
-					}
-				} else {
-					while (iter.hasNext()) {
-						for (int j = 0; j < is; j++)
-							moments[j].increment(a.getElementDoubleAbs(iter.index + j));
-					}
-				}
-				a.setStoredValue(n, moments);
-			}
-			obj = a.getStoredValue(n);
+			calculateHigherMoments(a, ignoreNaNs);
+			obj = a.getStoredValue(stat);
 		}
-
+	
 		return obj;
+	}
+
+	static private DoubleDataset getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, int axis, String stat) {
+		axis = a.checkAxis(axis);
+	
+		DoubleDataset obj = (DoubleDataset) a.getStoredValue(stat);
+		if (obj == null) {
+			calculateHigherMoments(a, ignoreNaNs, axis);
+			obj = (DoubleDataset) a.getStoredValue(stat);
+		}
+	
+		return obj;
+	}
+
+	static private void calculateHigherMoments(final AbstractDataset a, final boolean ignoreNaNs) {
+		final int is = a.getElementsPerItem();
+		final IndexIterator iter = a.getIterator();
+
+		if (is == 1) {
+			Skewness s = new Skewness();
+			Kurtosis k = new Kurtosis();
+			if (ignoreNaNs) {
+				while (iter.hasNext()) {
+					final double x = a.getElementDoubleAbs(iter.index);
+					if (Double.isNaN(x))
+						continue;
+					s.increment(x);
+					k.increment(x);
+				}
+			} else {
+				while (iter.hasNext()) {
+					final double x = a.getElementDoubleAbs(iter.index);
+					s.increment(x);
+					k.increment(x);
+				}
+			}
+			a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS), s.getResult());
+			a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS), k.getResult());
+		} else {
+			final Skewness[] s = new Skewness[is];
+			final Kurtosis[] k = new Kurtosis[is];
+
+			for (int j = 0; j < is; j++) {
+				s[j] = new Skewness();
+				k[j] = new Kurtosis();
+			}
+			if (ignoreNaNs) {
+				while (iter.hasNext()) {
+					boolean skip = false;
+					for (int j = 0; j < is; j++) {
+						if (Double.isNaN(a.getElementDoubleAbs(iter.index + j))) {
+							skip = true;
+							break;
+						}
+					}
+					if (!skip)
+						for (int j = 0; j < is; j++) {
+							final double val = a.getElementDoubleAbs(iter.index + j);
+							s[j].increment(val);
+							k[j].increment(val);
+						}
+				}
+			} else {
+				while (iter.hasNext()) {
+					for (int j = 0; j < is; j++) {
+						final double val = a.getElementDoubleAbs(iter.index + j);
+						s[j].increment(val);
+						k[j].increment(val);
+					}
+				}
+			}
+			final double[] ts = new double[is];
+			final double[] tk = new double[is];
+			for (int j = 0; j < is; j++) {
+				ts[j] = s[j].getResult();
+				tk[j] = k[j].getResult();
+			}
+			a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS), ts);
+			a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS), tk);
+		}
+	}
+
+	static private void calculateHigherMoments(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+		final int rank = a.getRank();
+		final int is = a.getElementsPerItem();
+		final int[] oshape = a.getShape();
+		final int alen = oshape[axis];
+		oshape[axis] = 1;
+	
+		final int[] nshape = AbstractDataset.squeezeShape(oshape, false);
+		final AbstractDataset sk;
+		final AbstractDataset ku;
+	
+	
+		if (is == 1) {
+			sk = new DoubleDataset(nshape);
+			ku = new DoubleDataset(nshape);
+			final IndexIterator qiter = sk.getIterator(true);
+			final int[] qpos = qiter.getPos();
+			final int[] spos = oshape;
+	
+			while (qiter.hasNext()) {
+				int i = 0;
+				for (; i < axis; i++) {
+					spos[i] = qpos[i];
+				}
+				spos[i++] = 0;
+				for (; i < rank; i++) {
+					spos[i] = qpos[i - 1];
+				}
+	
+				Skewness s = new Skewness();
+				Kurtosis k = new Kurtosis();
+				if (ignoreNaNs) {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						final double val = a.getDouble(spos);
+						if (Double.isNaN(val))
+							continue;
+	
+						s.increment(val);
+						k.increment(val);
+					}
+				} else {
+					for (int j = 0; j < alen; j++) {
+						spos[axis] = j;
+						final double val = a.getDouble(spos);
+						s.increment(val);
+						k.increment(val);
+					}
+				}
+				sk.set(s.getResult(), spos);
+				ku.set(k.getResult(), spos);
+			}
+		} else {
+			sk = new CompoundDoubleDataset(is, nshape);
+			ku = new CompoundDoubleDataset(is, nshape);
+			final IndexIterator qiter = sk.getIterator(true);
+			final int[] qpos = qiter.getPos();
+			final int[] spos = oshape;
+			final Skewness[] s = new Skewness[is];
+			final Kurtosis[] k = new Kurtosis[is];
+			final double[] ts = new double[is];
+			final double[] tk = new double[is];
+	
+			for (int j = 0; j < is; j++) {
+				s[j] = new Skewness();
+				k[j] = new Kurtosis();
+			}
+			while (qiter.hasNext()) {
+				int i = 0;
+				for (; i < axis; i++) {
+					spos[i] = qpos[i];
+				}
+				spos[i++] = 0;
+				for (; i < rank; i++) {
+					spos[i] = qpos[i-1];
+				}
+	
+				for (int j = 0; j < is; j++) {
+					s[j].clear();
+					k[j].clear();
+				}
+				int index = a.get1DIndex(spos);
+				if (ignoreNaNs) {
+					boolean skip = false;
+					for (int j = 0; j < is; j++) {
+						if (Double.isNaN(a.getElementDoubleAbs(index + j))) {
+							skip = true;
+							break;
+						}
+					}
+					if (!skip)
+						for (int j = 0; j < is; j++) {
+							final double val = a.getElementDoubleAbs(index + j);
+							s[j].increment(val);
+							k[j].increment(val);
+						}
+				} else {
+					for (int j = 0; j < is; j++) {
+						final double val = a.getElementDoubleAbs(index + j);
+						s[j].increment(val);
+						k[j].increment(val);
+					}
+				}
+				for (int j = 0; j < is; j++) {
+					ts[j] = s[j].getResult(); 
+					tk[j] = k[j].getResult(); 
+				}
+				sk.set(ts, spos);
+				ku.set(tk, spos);
+			}
+		}
+	
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis), sk);
+		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis), ku);
 	}
 
 	/**
@@ -395,18 +545,7 @@ public class Stats {
 	 * @return skewness
 	 */
 	public static Object skewness(final AbstractDataset a, final boolean ignoreNaNs) {
-		Object m = getFourthMoment(a, ignoreNaNs);
-		if (m instanceof FourthMoment) {
-			return Double.valueOf((new Skewness((FourthMoment) m)).getResult());
-		}
-
-		FourthMoment[] mos = (FourthMoment[]) m;
-		final int is = mos.length;
-		double[] skews = new double[is];
-		for (int j = 0; j < is; j++) {
-			skews[j] = (new Skewness(mos[j])).getResult();
-		}
-		return skews;
+		return getHigherStatistic(a, ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS));
 	}
 
 	/**
@@ -424,130 +563,7 @@ public class Stats {
 	 * @return kurtosis
 	 */
 	public static Object kurtosis(final AbstractDataset a, final boolean ignoreNaNs) {
-		Object m = getFourthMoment(a, ignoreNaNs);
-		if (m instanceof FourthMoment) {
-			return Double.valueOf((new Kurtosis((FourthMoment) m)).getResult());
-		}
-
-		FourthMoment[] mos = (FourthMoment[]) m;
-		final int is = mos.length;
-		double[] kurts = new double[is];
-		for (int j = 0; j < is; j++) {
-			kurts[j] = (new Kurtosis(mos[j])).getResult();
-		}
-		return kurts;
-	}
-
-	static private void calculateHigherMoments(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		final int rank = a.getRank();
-		final int is = a.getElementsPerItem();
-		final int[] oshape = a.getShape();
-		final int alen = oshape[axis];
-		oshape[axis] = 1;
-
-		final int[] nshape = AbstractDataset.squeezeShape(oshape, false);
-		final AbstractDataset sk;
-		final AbstractDataset ku;
-
-
-		if (is == 1) {
-			sk = new DoubleDataset(nshape);
-			ku = new DoubleDataset(nshape);
-			final IndexIterator qiter = sk.getIterator(true);
-			final int[] qpos = qiter.getPos();
-			final int[] spos = oshape;
-
-			while (qiter.hasNext()) {
-				int i = 0;
-				for (; i < axis; i++) {
-					spos[i] = qpos[i];
-				}
-				spos[i++] = 0;
-				for (; i < rank; i++) {
-					spos[i] = qpos[i - 1];
-				}
-
-				FourthMoment moment = new FourthMoment();
-				if (ignoreNaNs) {
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						final double val = a.getDouble(spos);
-						if (Double.isNaN(val))
-							continue;
-
-						moment.increment(val);
-					}
-				} else {
-					for (int j = 0; j < alen; j++) {
-						spos[axis] = j;
-						moment.increment(a.getDouble(spos));
-					}
-				}
-				sk.set((new Skewness(moment)).getResult(), spos);
-				ku.set((new Kurtosis(moment)).getResult(), spos);
-			}
-		} else {
-			sk = new CompoundDoubleDataset(is, nshape);
-			ku = new CompoundDoubleDataset(is, nshape);
-			final IndexIterator qiter = sk.getIterator(true);
-			final int[] qpos = qiter.getPos();
-			final int[] spos = oshape;
-			final double[] s = new double[is];
-			final double[] k = new double[is];
-
-			while (qiter.hasNext()) {
-				int i = 0;
-				for (; i < axis; i++) {
-					spos[i] = qpos[i];
-				}
-				spos[i++] = 0;
-				for (; i < rank; i++) {
-					spos[i] = qpos[i-1];
-				}
-				FourthMoment[] moments = new FourthMoment[is];
-
-				for (int j = 0; j < is; j++) {
-					moments[j] = new FourthMoment();
-				}
-				int index = a.get1DIndex(spos);
-				if (ignoreNaNs) {
-					boolean skip = false;
-					for (int j = 0; j < is; j++) {
-						if (Double.isNaN(a.getElementDoubleAbs(index + j))) {
-							skip = true;
-							break;
-						}
-					}
-					if (!skip)
-						for (int j = 0; j < is; j++)
-							moments[j].increment(a.getElementDoubleAbs(index + j));
-				} else {
-					for (int j = 0; j < is; j++)
-						moments[j].increment(a.getElementDoubleAbs(index + j));
-				}
-				for (int j = 0; j < is; j++) {
-					s[j] = (new Skewness(moments[j])).getResult(); 
-					k[j] = (new Kurtosis(moments[j])).getResult(); 
-				}
-				sk.set(s, spos);
-				ku.set(k, spos);
-			}
-		}
-
-		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis), sk);
-		a.setStoredValue(AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis), ku);
-	}
-
-	static private DoubleDataset getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, int axis, String stat) {
-		axis = a.checkAxis(axis);
-
-		DoubleDataset obj = (DoubleDataset) a.getStoredValue(stat);
-		if (obj == null) {
-			calculateHigherMoments(a, ignoreNaNs, axis);
-			obj = (DoubleDataset) a.getStoredValue(stat);
-		}
-
-		return obj;
+		return getHigherStatistic(a, ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS));
 	}
 
 	/**
@@ -567,7 +583,7 @@ public class Stats {
 	 * @return skewness
 	 */
 	public static AbstractDataset skewness(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + axis));
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis));
 	}
 
 	/**
@@ -587,7 +603,7 @@ public class Stats {
 	 * @return kurtosis
 	 */
 	public static AbstractDataset kurtosis(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + axis));
+		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis));
 	}
 
 	/**

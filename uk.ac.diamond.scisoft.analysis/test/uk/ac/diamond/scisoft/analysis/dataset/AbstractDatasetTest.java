@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 
-import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math3.complex.Complex;
 import org.junit.Assert;
 import org.junit.Test;
 

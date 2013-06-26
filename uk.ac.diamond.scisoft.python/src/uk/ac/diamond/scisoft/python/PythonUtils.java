@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.python;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math3.complex.Complex;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyComplex;

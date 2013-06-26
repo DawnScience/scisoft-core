@@ -22,7 +22,7 @@ import java.util.List;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math3.util.MathUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;

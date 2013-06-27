@@ -126,7 +126,7 @@ public class PowderRingsUtils {
 	 * @param ellipse
 	 * @param arcLength step size along arc in pixels
 	 * @param radialDelta +/- value to define area to search
-	 * @param maxPoints maximum number of points to return ( 
+	 * @param maxPoints maximum number of points to return
 	 * @return polyline ROI
 	 */
 	public static PolylineROI findPOIsNearEllipse(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse,
@@ -442,10 +442,11 @@ public class PowderRingsUtils {
 			} else {
 				EllipticalROI er = new EllipticalROI(a, a/aspect, roi.getAngle(), ec[0], ec[1]);
 				try {
-					PolylineROI polyline = findPOIsNearEllipse(mon, image, mask, er, arcLength, radialDelta, maxPoints);
+					PolylineROI polyline = findPOIsNearEllipse(mon, image, mask, er, arcLength, 0.8*radialDelta, maxPoints);
 					if (polyline.getNumberOfPoints() > 2) {
 						er = fitAndTrimOutliers(mon, polyline, trimDelta, roi.isCircular());
-						if (Math.abs(er.getSemiAxis(0) - last) < RING_SEPARATION) { // omit close rings
+						double emaj = er.getSemiAxis(0);
+						if (Math.abs(emaj - last) < RING_SEPARATION) { // omit close rings
 							last = a;
 							System.err.println("Dropped as fit is too close");
 							continue;
@@ -456,7 +457,10 @@ public class PowderRingsUtils {
 							System.err.println("Dropped as centre is far-off");
 							continue;
 						}
-						last = Math.max(a, er.getSemiAxis(0));
+						if (Math.abs(emaj - major) < RING_SEPARATION) {
+							System.err.println("Add fit that is close to original");
+						}
+						last = Math.max(a, emaj);
 						ells.add(er);
 					} else {
 						logger.warn("Could not find enough points at {}", er);
@@ -504,15 +508,20 @@ public class PowderRingsUtils {
 
 		System.err.printf("\n");
 		DescriptiveStatistics stats = new DescriptiveStatistics();
+		int[] pb = new int[1];
+		int[] pe = new int[1];
 		for (IdentifiedPeak p : peaks) {
 			if (p.getPos() < offset) {
 				continue;
 			}
+			pb[0] = (int) p.getMinXVal();
+			pe[0] = (int) p.getMaxXVal();
+			p.setArea((Double) profile.getSlice(pb, pe, null).sum());
 			stats.addValue(p.getArea());
 			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
 		}
 		
-		double area = stats.getMean() + 1.5*(stats.getPercentile(75) - stats.getPercentile(25));
+		double area = stats.getMean() + 0.4*(stats.getPercentile(75) - stats.getPercentile(25));
 		logger.debug("Area: {}", stats);
 		logger.debug("Minimum threshold: {}", area);
 
@@ -681,7 +690,7 @@ public class PowderRingsUtils {
 	 * @param fixedWavelength 
 	 * @return q-space
 	 */
-	public static QSpace fitAllEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<IROI> rois, List<HKL> spacings, boolean fixedWavelength) {
+	public static QSpace fitAllEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<? extends IROI> rois, List<HKL> spacings, boolean fixedWavelength) {
 		int n = rois.size();
 		if (n != spacings.size()) { // always allow a choice to be made
 			throw new IllegalArgumentException("Number of ellipses should be equal to spacings");
@@ -1005,10 +1014,10 @@ public class PowderRingsUtils {
 		protected static final double WAVE_MIN = 5e-9; // 0.05A (in mm)
 		protected static final double WAVE_MAX = 1e-5; // 10.0A (in mm)
 
-		protected static final double SIGMA_WAVE = 3e-8; // 0.3A (in mm)
-		protected static final double SIGMA_POSN = 3; // 3mm
-		protected static final double SIGMA_ANG  = 8; // 8 degrees
-		protected static final double SIGMA_SINE = 1e-2;
+		protected static final double SIGMA_WAVE = 2e-8; // 0.2A (in mm)
+		protected static final double SIGMA_POSN = 2; // 2mm
+		protected static final double SIGMA_ANG  = 4; // 4 degrees
+		protected static final double SIGMA_SINE = 2e-3;
 		
 		@Override
 		public double[] getWeight() {

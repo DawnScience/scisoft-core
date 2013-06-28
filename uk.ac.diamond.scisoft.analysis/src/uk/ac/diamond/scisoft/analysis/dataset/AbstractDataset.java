@@ -960,51 +960,76 @@ public abstract class AbstractDataset implements ADataset {
 
 		// sanitise input
 		for (int i = 0; i < rank; i++) {
-			if (lstep[i] == 0) {
+			final int d = lstep[i];
+			final int s = oldShape[i];
+			int b;
+			int e;
+			if (d == 0) {
 				throw new IllegalArgumentException("The step array is not allowed any zero entries: " + i
 						+ "-th entry is zero");
-			}
-			if (start != null) {
-				if (start[i] < 0) {
-					start[i] += oldShape[i];
+			} else if (d > 0) {
+				if (start != null) {
+					b = start[i];
+					if (b < 0) {
+						start[i] = b += s;
+					}
+					if (b < 0 || b >= s) {
+						throw new IllegalArgumentException("Start entry is outside bounds");
+					}
+				} else {
+					lstart[i] = b = 0;
 				}
-				if (start[i] < 0) {
-					start[i] = lstep[i] > 0 ? 0 : -1;
-				}
-				if (start[i] > oldShape[i]) {
-					start[i] = lstep[i] > 0 ? oldShape[i] : oldShape[i] - 1;
-				}
-			} else {
-				lstart[i] = lstep[i] > 0 ? 0 : oldShape[i] - 1;
-			}
 
-			if (stop != null) {
-				if (stop[i] < 0) {
-					if (lstep[i] > 0)
-						stop[i] += oldShape[i];
+				if (stop != null) {
+					e = stop[i];
+					if (e < 0) {
+						stop[i] = e += s;
+					}
+					if (e < -1 || e > s) {
+						throw new IllegalArgumentException("Stop entry is outside bounds");
+					}
+				} else {
+					lstop[i] = e = s;
 				}
-				if (stop[i] < 0) {
-					stop[i] = -1;
+				if (b == e) {
+					throw new IllegalArgumentException("Same indices in start and stop");
+				} else if (b > e) {
+					throw new IllegalArgumentException("Start=" + b + " and stop=" + e
+							+ " indices are incompatible with step=" + d);
 				}
-				if (stop[i] > oldShape[i]) {
-					stop[i] = oldShape[i];
-				}
+				newShape[i] = (e - b - 1) / d + 1;
 			} else {
-				lstop[i] = lstep[i] > 0 ? oldShape[i] : -1;
-			}
-			if (lstart[i] == lstop[i]) {
-				throw new IllegalArgumentException("Same indices in start and stop");
-			}
-			if ((lstep[i] > 0) != (lstart[i] < lstop[i])) {
-				throw new IllegalArgumentException("Start=" + lstart[i] + " and stop=" + lstop[i]
-						+ " indices are incompatible with step=" + lstep[i]);
-			}
-			if (lstep[i] > 0) {
-				newShape[i] = (lstop[i] - lstart[i] - 1) / lstep[i] + 1;
-			} else {
-				newShape[i] = (lstop[i] - lstart[i] + 1) / lstep[i] + 1;
-			}
+				if (start != null) {
+					b = start[i];
+					if (b < 0) {
+						start[i] = b += s;
+					}
+					if (b < 0 || b >= s) {
+						throw new IllegalArgumentException("Start entry is outside bounds");
+					}
+				} else {
+					lstart[i] = b = s - 1;
+				}
 
+				if (stop != null) {
+					e = stop[i];
+					if (e < d) {
+						stop[i] = e += s;
+					}
+					if (e < d || e > s) {
+						throw new IllegalArgumentException("Stop entry is outside bounds");
+					}
+				} else {
+					lstop[i] = e = -1;
+				}
+				if (b == e) {
+					throw new IllegalArgumentException("Same indices in start and stop");
+				} else if (b < e) {
+					throw new IllegalArgumentException("Start=" + lstart[i] + " and stop=" + lstop[i]
+							+ " indices are incompatible with step=" + d);
+				}
+				newShape[i] = (e - b + 1) / d + 1;
+			}
 		}
 		return newShape;
 	}

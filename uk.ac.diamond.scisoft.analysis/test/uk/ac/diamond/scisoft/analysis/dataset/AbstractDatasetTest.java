@@ -945,6 +945,225 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testCheckSlice() {
+		int[] step;
+		int[] lstart;
+		int[] lstop;
+		int[] shape;
+
+		step = new int[] {};
+		lstart = new int[] {};
+		lstop = new int[] {};
+		shape = AbstractDataset.checkSlice(new int[] {}, null, null, lstart, lstop, step);
+		assertEquals(0, shape.length);
+		Assert.assertArrayEquals(new int[] {}, shape);
+
+		try {
+			shape = AbstractDataset.checkSlice(new int[] {1}, null, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			shape = AbstractDataset.checkSlice(new int[] {1}, null, null, lstart, lstop, new int[] {1});
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			shape = AbstractDataset.checkSlice(new int[] {3}, null, null, new int[1], new int[1], new int[] {0});
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		step = new int[] {2};
+		try {
+			shape = AbstractDataset.checkSlice(new int[] {2, 3}, null, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		lstart = new int[1];
+		lstop = new int[1];
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {0}, lstart);
+		Assert.assertArrayEquals(new int[] {7}, lstop);
+
+		lstart[0] = 0;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {0}, lstart);
+		Assert.assertArrayEquals(new int[] {7}, lstop);
+
+		lstart[0] = 3;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {2}, shape);
+		Assert.assertArrayEquals(new int[] {3}, lstart);
+		Assert.assertArrayEquals(new int[] {7}, lstop);
+
+		lstart[0] = -4;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {2}, shape);
+		Assert.assertArrayEquals(new int[] {3}, lstart);
+		Assert.assertArrayEquals(new int[] {7}, lstop);
+
+		try {
+			lstart[0] = -8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstart[0] = 7;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstart[0] = 8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		lstop[0] = 7;
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {0}, lstart);
+		Assert.assertArrayEquals(new int[] {7}, lstop);
+
+		lstop[0] = -3;
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {2}, shape);
+		Assert.assertArrayEquals(new int[] {0}, lstart);
+		Assert.assertArrayEquals(new int[] {4}, lstop);
+
+		try {
+			lstop[0] = 0;
+			shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstop[0] = -8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstop[0] = 8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+
+		step = new int[] {-2};
+		try {
+			shape = AbstractDataset.checkSlice(new int[] {2, 3}, null, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {6}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		lstart[0] = 0;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {1}, shape);
+		Assert.assertArrayEquals(new int[] {0}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		lstart[0] = 3;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {2}, shape);
+		Assert.assertArrayEquals(new int[] {3}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		lstart[0] = -4;
+		shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {2}, shape);
+		Assert.assertArrayEquals(new int[] {3}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		try {
+			lstart[0] = -8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstart[0] = 7;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstart[0] = 8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, lstart, null, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		lstop[0] = -1;
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {6}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		lstop[0] = -3;
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {1}, shape);
+		Assert.assertArrayEquals(new int[] {6}, lstart);
+		Assert.assertArrayEquals(new int[] {4}, lstop);
+
+		lstop[0] = -8;
+		shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+		Assert.assertArrayEquals(new int[] {4}, shape);
+		Assert.assertArrayEquals(new int[] {6}, lstart);
+		Assert.assertArrayEquals(new int[] {-1}, lstop);
+
+		try {
+			lstop[0] = 6;
+			shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+
+		try {
+			lstop[0] = 8;
+			shape = AbstractDataset.checkSlice(new int[] {7}, null, lstop, lstart, lstop, step);
+			fail();
+		} catch (IllegalArgumentException e) {
+			System.out.println("As expected: " + e);
+		}
+	}
+	
+	@Test
 	public void test1DErrors() {
 		
 		// test 1D errors for single value

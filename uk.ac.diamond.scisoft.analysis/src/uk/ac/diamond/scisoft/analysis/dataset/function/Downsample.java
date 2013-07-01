@@ -110,6 +110,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i]) // ensure bin is within dataset
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 
@@ -130,6 +132,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i])
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 
@@ -155,6 +159,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i])
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 
@@ -173,6 +179,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i])
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 
@@ -198,6 +206,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i])
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 
@@ -216,6 +226,8 @@ public class Downsample implements DatasetToDatasetFunction {
 						for (int i = 0; i < drank; i++) {
 							spos[i] = bshape[i] * bpos[i];
 							epos[i] = spos[i] + bshape[i];
+							if (epos[i] > dshape[i])
+								epos[i] = dshape[i];
 						}
 						SliceIterator siter = (SliceIterator) dataset.getSliceIterator(spos, epos, null);
 

@@ -46,12 +46,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset squeeze() {
+	public IDataset squeeze() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public ILazyDataset squeeze(boolean onlyFromEnd) {
+	public IDataset squeeze(boolean onlyFromEnd) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 

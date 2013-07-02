@@ -36,7 +36,7 @@ public class Maths {
 	 * @return the bracketed if necessary method name
 	 */
 	private static StringBuilder bracketIfNecessary(final AbstractDataset dataset) {
-		final String name = dataset.getName();
+		final String name = dataset.getName().trim();
 		StringBuilder newName = new StringBuilder(name);
 		if (name.contains("+") || name.contains("-") || name.contains("*") ||
 				name.contains("/") || name.contains("^") || name.contains("'")) {

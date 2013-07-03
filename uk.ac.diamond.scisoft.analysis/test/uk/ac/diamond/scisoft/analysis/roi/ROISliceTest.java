@@ -115,17 +115,17 @@ public class ROISliceTest {
 
 		AbstractDataset output = (AbstractDataset)ROISliceUtils.getDataset(input, roi,slices, new int[]{order[0],order[1]},1);
 		int[] shape = output.getShape();
-		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(23,shape[0],0);
 		Assert.assertEquals(20,shape[1],0);
 		
 		output = (AbstractDataset)ROISliceUtils.getDataset(input, roi,slices, new int[]{order[1],order[0]},1);
 		shape = output.getShape();
-		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(23,shape[0],0);
 		Assert.assertEquals(20,shape[1],0);
 		
 		output = (AbstractDataset)ROISliceUtils.getDataset(input, roi,slices, new int[]{order[0],order[2]},1);
 		shape = output.getShape();
-		Assert.assertEquals(22,shape[0],0);
+		Assert.assertEquals(23,shape[0],0);
 		Assert.assertEquals(30,shape[1],0);
 	}
 	

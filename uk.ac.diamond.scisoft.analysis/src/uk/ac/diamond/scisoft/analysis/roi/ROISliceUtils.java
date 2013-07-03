@@ -240,7 +240,7 @@ public class ROISliceUtils {
 		
 		IDataset out = lz.getSlice(sl);
 		
-		return (IDataset)out.squeeze();
+		return out.squeeze();
 
 	}
 	
@@ -255,14 +255,15 @@ public class ROISliceUtils {
 	 * @return slices
 	 */
 	public static IDataset getDataset(ILazyDataset lz, LinearROI roi, Slice[] slices, int[] order, int step) {
-		//TODO include step
+
 		int[] start = roi.getIntPoint();
 		int[] end = roi.getIntEndPoint();
 
-		LineSample ls = new LineSample(start[0], start[1], end[0], end[1], 1);
+		LineSample ls = new LineSample(start[1], start[0], end[1], end[0], 1);
+		
+		int len = (int)Math.floor(roi.getLength()) +1;
 
-		int len = (int)Math.floor(roi.getLength());
-
+		
 		IDataset[] ds = new IDataset[len];
 
 		Slice[] sl = checkSlices(lz.getRank(), slices);
@@ -276,15 +277,17 @@ public class ROISliceUtils {
 
 		int[] points;
 
+		
+		
 		int[] shape = new int[]{1,1};
 
 		for (int i = 0; i < len; i++) {
-			points = ls.getPoint(i+1);
+			points = ls.getPoint(i);
 
-			sl[order[0]].setStart(points[1]);
-			sl[order[0]].setStop(points[1]+1);
-			sl[order[1]].setStart(points[0]);
-			sl[order[1]].setStop(points[0]+1);
+			sl[order[0]].setStart(points[0]);
+			sl[order[0]].setStop(points[0]+1);
+			sl[order[1]].setStart(points[1]);
+			sl[order[1]].setStop(points[1]+1);
 
 			ds[i] = lz.getSlice(sl).squeeze().getSlice();
 

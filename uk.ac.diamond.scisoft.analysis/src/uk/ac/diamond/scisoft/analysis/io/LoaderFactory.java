@@ -130,6 +130,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("hdf5", HDF5Loader.class);
 		    LoaderFactory.registerLoader("hd5",  HDF5Loader.class);
 		    LoaderFactory.registerLoader("nexus",HDF5Loader.class);
+		    LoaderFactory.registerLoader("mat",HDF5Loader.class);
 		    
 		    LoaderFactory.registerLoader("tif",  PilatusTiffLoader.class);
 		    LoaderFactory.registerLoader("png",  PNGLoader.class);

@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;

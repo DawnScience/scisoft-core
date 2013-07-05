@@ -214,7 +214,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	public List<AbstractDataset> interpolate_value(IDataset... datasets) {
+	private List<AbstractDataset> interpolate_value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
@@ -394,7 +394,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            results data type
 	 * @return 2 1D datasets for integral normalisation over radius and over azimuth (for given input and a uniform input)
 	 */
-	public List<AbstractDataset> interpolate_area(int[] shape, int dtype) {
+	private List<AbstractDataset> interpolate_area(int[] shape, int dtype) {
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
@@ -488,7 +488,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	public List<AbstractDataset> simple_value(IDataset... datasets) {
+	private List<AbstractDataset> simple_value(IDataset... datasets) {
 		if (datasets.length == 0) {
 			return null;
 		}
@@ -574,7 +574,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		return result;
 	}
 	
-	public List<AbstractDataset> simple_qvalue(IDataset... datasets) {
+	private List<AbstractDataset> simple_qvalue(IDataset... datasets) {
 		if (datasets.length == 0 || qSpace == null) {
 			return null;
 		}
@@ -702,7 +702,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            image dimensions
 	 * @return 2 1D datasets for integral normalisation over radius and over azimuth (for given input and a uniform input)
 	 */
-	public List<AbstractDataset> simple_area(int[] shape) {
+	private List<AbstractDataset> simple_area(int[] shape) {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		if (shape.length != 2)

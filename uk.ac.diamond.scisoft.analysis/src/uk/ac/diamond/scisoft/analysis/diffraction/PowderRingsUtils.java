@@ -92,6 +92,9 @@ public class PowderRingsUtils {
 	 *  - repeat for larger ellipses by scanning along longest spoke
 	 */
 
+	private static final double RIGHT_ANGLE = 0.5*Math.PI;
+	private static final double FULL_CIRCLE = 2.0*Math.PI;
+
 	private static final double ARC_LENGTH = 8;
 	private static final double RADIAL_DELTA = 10;
 	private static final int MAX_POINTS = 200;
@@ -171,7 +174,7 @@ public class PowderRingsUtils {
 		final double rsn = an - rdelta;
 		final double ren = an + rdelta;
 
-		final int imax = (int) Math.ceil(Math.PI * 2. / pdelta);
+		final int imax = (int) Math.ceil(FULL_CIRCLE / pdelta);
 
 		logger.debug("Major semi-axis = [{}, {}]; {}", new Object[] { rsj, rej, imax });
 		final int[] start = new int[2];
@@ -477,8 +480,6 @@ public class PowderRingsUtils {
 		return ells;
 	}
 
-//	static Integer fileNumber = null;
-
 	/**
 	 * Find major axes by looking along thick line given by relative coordinates to centre for
 	 * maximum intensity values
@@ -635,7 +636,7 @@ public class PowderRingsUtils {
 		for (List<Double> list : gen) { // find combination that minimizes residuals
 			// list.add(0, dmin);
 			f.setSpacings(list);
-			double res = fit(f, opt, min);
+			double res = fitCMAES(f, opt, min);
 			if (res < min) {
 				min = res;
 				fSpacings = list;
@@ -735,8 +736,8 @@ public class PowderRingsUtils {
 				false, new SimplePointChecker<PointValuePair>(REL_TOL, ABS_TOL));
 
 		f.setSpacings(s);
-		double res = fit(f, opt, Double.POSITIVE_INFINITY);
-		
+		double res = fitCMAES(f, opt, Double.POSITIVE_INFINITY);
+
 		if (mon != null) {
 			mon.worked(10);
 			if (mon.isCancelled())
@@ -768,7 +769,7 @@ public class PowderRingsUtils {
 		return new QSpace(nDetector, nEnv);
 	}
 
-	private static double fit(FitFunction f, CMAESOptimizer opt, double min) {
+	private static double fitCMAES(FitFunction f, CMAESOptimizer opt, double min) {
 		double res = Double.NaN;
 		try {
 			PointValuePair result = opt.optimize(new InitialGuess(f.getInit()),
@@ -791,137 +792,55 @@ public class PowderRingsUtils {
 		return res;
 	}
 
-	/**
-	 * Create function which uses 2/3 parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static FitFunction createQFitFunction1(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
+	private static double calcBaseRollAngle(List<EllipticalROI> ellipses) {
 		int n = ellipses.size();
-		double[] known1 = new double[n];
-		double[] known2 = new double[n];
 
-		double pix = dp.getVPxSize();
-		double rollAngle = 0;
-		double min = Double.POSITIVE_INFINITY;
+		double base = 0;
 		for (int i = 0; i < n; i++) {
-			EllipticalROI e = ellipses.get(i);
-			if (e instanceof EllipticalFitROI) {
-				double rms = ((EllipticalFitROI) e).getRMS();
-				if (rms < min) {
-					min = rms;
-					rollAngle = e.getAngle();
-				}
-			}
-			double a = e.getSemiAxis(0);
-			double rs = a/e.getSemiAxis(1);
-			a *= pix;
-			rs = 1./(rs*rs);
-			known1[i] = a*rs; // in mm
-			known2[i] = rs;
+			double a = ellipses.get(i).getAngle();
+			base += a > Math.PI ? a - FULL_CIRCLE : a; // ensure angle is in range +/- pi
 		}
-
-		double st = Math.sin(dp.getTiltAngle());
-		FitFunction f;
-		if (fixedWavelength) {
-			f = new QSpaceFitFixedWFunction(known1, known2, wavelength, rollAngle);
-			f.setInit(new double[] {dp.getDetectorDistance(), st*st});
-		} else {
-			f = new QSpaceFitFunction(known1, known2, rollAngle);
-			f.setInit(new double[] {wavelength, dp.getDetectorDistance(), st*st});
-		}
-		return f;
+		return base/n;
 	}
-
-	/**
-	 * Create function which uses 2/3 parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static FitFunction createQFitFunction2(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
-		int n = ellipses.size();
-		double[] known1 = new double[n];
-		double[] known2 = new double[n];
-
-		double pix = dp.getVPxSize();
-		double rollAngle = 0;
-		double min = Double.POSITIVE_INFINITY;
-		for (int i = 0; i < n; i++) {
-			EllipticalROI e = ellipses.get(i);
-			if (e instanceof EllipticalFitROI) {
-				double rms = ((EllipticalFitROI) e).getRMS();
-				if (rms < min) {
-					min = rms;
-					rollAngle = e.getAngle();
-				}
-			}
-			known1[i] = pix * e.getSemiAxis(0); // in mm
-			known2[i] = pix * e.getSemiAxis(1);
-		}
-
-		double st = Math.sin(dp.getTiltAngle());
-		FitFunction f;
-		if (fixedWavelength) {
-			f = new QSpaceFitFixedWFunction2(known1, known2, wavelength, rollAngle);
-			f.setInit(new double[] {dp.getDetectorDistance(), st*st});
-		} else {
-			f = new QSpaceFitFunction2(known1, known2, rollAngle);
-			f.setInit(new double[] {wavelength, dp.getDetectorDistance(), st*st});
-		}
-		return f;
-	}
-
-	/**
-	 * Create function which uses 1/2 parameters: wavelength (mm), perpendicular distance (mm)
-	 */
-	static FitFunction createQFitFunction3(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
-		int n = ellipses.size();
-		double[] known1 = new double[n];
-
-		double pix = dp.getVPxSize();
-		for (int i = 0; i < n; i++) {
-			EllipticalROI e = ellipses.get(i);
-			known1[i] = pix * e.getSemiAxis(0); // in mm
-		}
-
-		FitFunction f;
-		if (fixedWavelength) {
-			f = new QSpaceFitFixedWFunction3(known1, wavelength);
-			f.setInit(new double[] {dp.getDetectorDistance()});
-		} else {
-			f = new QSpaceFitFunction3(known1);
-			f.setInit(new double[] {wavelength, dp.getDetectorDistance()});
-		}
-		return f;
-	}
-
 	/**
 	 * Create function which uses 6/7 parameters: wavelength (mm), detector origin (mm), orientation angles (degrees)
 	 */
 	static FitFunction createQFitFunction4(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
-		double[][] known = new double[n][6];
+		double[][] known = new double[n][8];
+
+		double base = -calcBaseRollAngle(ellipses);
+		logger.debug("Mean roll angle: {}", Math.toDegrees(base));
 
 		for (int i = 0; i < n; i++) {
 			EllipticalROI e = ellipses.get(i);
 			double[] pt;
-			pt = e.getPointRef();
+			double a = base - e.getAngle();
+			pt = e.getPoint(a);
 			known[i][0] = pt[0];
 			known[i][1] = pt[1];
-			pt = e.getPoint(0);
+			pt = e.getPoint(a + RIGHT_ANGLE);
 			known[i][2] = pt[0];
 			known[i][3] = pt[1];
-			pt = e.getPoint(0.5*Math.PI);
+			pt = e.getPoint(a + Math.PI);
 			known[i][4] = pt[0];
 			known[i][5] = pt[1];
+			pt = e.getPoint(a - RIGHT_ANGLE);
+			known[i][6] = pt[0];
+			known[i][7] = pt[1];
 		}
 
 		FitFunction f;
 		Vector3d o = dp.getOrigin();
 		double[] a = dp.getNormalAnglesInDegrees();
 		if (fixedWavelength) {
-			f = new QSpaceFitFixedWFunction4(known, dp.getVPxSize(), wavelength);
+			f = new QSpaceFitFixedWFunction7(known, dp.getVPxSize(), wavelength);
 			f.setInit(new double[] {o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
 		} else {
-			f = new QSpaceFitFunction4(known, dp.getVPxSize());
+			f = new QSpaceFitFunction7(known, dp.getVPxSize());
 			f.setInit(new double[] {wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
 		}
+		f.setBaseRollAngle(base);
 		return f;
 	}
 
@@ -930,29 +849,33 @@ public class PowderRingsUtils {
 	 */
 	static FitFunction createQFitFunction5(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
-		double[][] known = new double[n][6];
+		double[][] known = new double[n][8];
 
 		for (int i = 0; i < n; i++) {
 			EllipticalROI e = ellipses.get(i);
 			double[] pt;
-			pt = e.getPointRef();
+			double a = e.getAngle();
+			pt = e.getPoint(a);
 			known[i][0] = pt[0];
 			known[i][1] = pt[1];
-			pt = e.getPoint(0);
+			pt = e.getPoint(a + RIGHT_ANGLE);
 			known[i][2] = pt[0];
 			known[i][3] = pt[1];
-			pt = e.getPoint(0.5*Math.PI);
+			pt = e.getPoint(a + Math.PI);
 			known[i][4] = pt[0];
 			known[i][5] = pt[1];
+			pt = e.getPoint(a - RIGHT_ANGLE);
+			known[i][6] = pt[0];
+			known[i][7] = pt[1];
 		}
 
 		FitFunction f;
 		Vector3d o = dp.getOrigin();
 		if (fixedWavelength) {
-			f = new QSpaceFitFixedWFunction5(known, dp.getVPxSize(), wavelength);
+			f = new QSpaceFitFixedWFunction4(known, dp.getVPxSize(), wavelength);
 			f.setInit(new double[] {o.getX(), o.getY(), o.getZ()});
 		} else {
-			f = new QSpaceFitFunction5(known, dp.getVPxSize());
+			f = new QSpaceFitFunction4(known, dp.getVPxSize());
 			f.setInit(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
 		}
 		return f;
@@ -981,6 +904,11 @@ public class PowderRingsUtils {
 		public double[] getOrigin();
 
 		/**
+		 * @return number of parameters
+		 */
+		public int getN();
+
+		/**
 		 * @return wavelength (in Angstrom)
 		 */
 		public double getWavelength();
@@ -996,6 +924,11 @@ public class PowderRingsUtils {
 		public void setSpacings(List<Double> spacings);
 
 		public void setSigma(double[] sigma);
+
+		/**
+		 * @param baseAngle (in radians)
+		 */
+		public void setBaseRollAngle(double baseAngle);
 	}
 
 	static abstract class FitFunctionBase implements FitFunction {
@@ -1007,17 +940,19 @@ public class PowderRingsUtils {
 		protected int nV;
 		protected double[] weight;
 		protected double angle;
+		protected double base;
 		protected double[] parameters;
 		protected SimpleBounds bounds;
 		protected double[] sigma;
+		protected int n;
 
 		protected static final double WAVE_MIN = 5e-9; // 0.05A (in mm)
-		protected static final double WAVE_MAX = 1e-5; // 10.0A (in mm)
+		protected static final double WAVE_MAX = 1e-6; // 10.0A (in mm)
 
-		protected static final double SIGMA_WAVE = 2e-8; // 0.2A (in mm)
-		protected static final double SIGMA_POSN = 2; // 2mm
-		protected static final double SIGMA_ANG  = 4; // 4 degrees
-		protected static final double SIGMA_SINE = 2e-3;
+		protected static final double SIGMA_WAVE = 3e-8; // 0.3A (in mm)
+		protected static final double SIGMA_POSN = 3; // 3mm
+		protected static final double SIGMA_ANG  = 8; // 8 degrees
+		protected static final double SIGMA_SINE = 1e-2;
 		
 		@Override
 		public double[] getWeight() {
@@ -1027,6 +962,11 @@ public class PowderRingsUtils {
 		@Override
 		public double[] getTarget() {
 			return target;
+		}
+
+		@Override
+		public int getN() {
+			return n;
 		}
 
 		@Override
@@ -1070,6 +1010,11 @@ public class PowderRingsUtils {
 		}
 
 		@Override
+		public void setBaseRollAngle(double baseAngle) {
+			base = baseAngle;
+		}
+
+		@Override
 		public double[] getOrigin() {
 			return null;
 		}
@@ -1088,337 +1033,17 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static class QSpaceFitFunction extends FitFunctionBase {
-
-		private static final double EXTRA_WEIGHT = 10; // for distance
-
-		public QSpaceFitFunction(double[] known1, double[] known2, double rollAngle) {
-			nT = known1.length;
-			nV = 2 * nT;
-			angle = rollAngle;
-			target = new double[nV];
-			weight = new double[nV];
-			for (int i = 0, j = 0; i < nT; i++) {
-				double k = known1[i];
-				target[j] = k;
-				weight[j++] = EXTRA_WEIGHT/(k*k); // make residual similar magnitude to known2's
-				target[j] = known2[i];
-				weight[j++] = 1;
-			}
-			spacing = new double[nT];
-			bounds = new SimpleBounds(new double[] {WAVE_MIN, 10, 0}, new double[] {WAVE_MAX, 1e5, 1});
-			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN, SIGMA_SINE};
-		}
-
-		@Override
-		public double getWavelength() {
-			return parameters[0]*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[1];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			double ses = Math.abs(parameters[2]);
-			return Math.toDegrees(Math.asin(Math.sqrt(ses)));
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-			double setas = arg[2];
-			double s = 0;
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double ti = Math.sqrt(0.5 + x)*si/x;
-				double t = ti*dist - target[j];
-				s += t*t*weight[j];
-				j++;
-				t = 1 - setas*(1+ti*ti) - target[j];
-				s += t*t*weight[j];
-				j++;
-			}
-			return s/nV;
-		}
-	}
-
-	/**
-	 * LS function uses parameters: perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static class QSpaceFitFixedWFunction extends QSpaceFitFunction {
-		protected double lambda;
-
-		public QSpaceFitFixedWFunction(double[] known1, double[] known2, double wavelength, double rollAngle) {
-			super(known1, known2, rollAngle);
-			int bl = bounds.getLower().length;
-			bounds = new SimpleBounds(Arrays.copyOfRange(bounds.getLower(), 1, bl),
-					Arrays.copyOfRange(bounds.getUpper(), 1, bl));
-			sigma = Arrays.copyOfRange(sigma, 1, sigma.length);
-			lambda = wavelength;
-		}
-
-		@Override
-		public double getWavelength() {
-			return lambda*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[0];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			double ses = Math.abs(parameters[1]);
-			return Math.toDegrees(Math.asin(Math.sqrt(ses)));
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double dist = arg[0];
-			double setas = arg[1];
-			double s = 0;
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*lambda/spacing[i];
-				double x = 0.5 - si*si;
-				double ti = Math.sqrt(0.5 + x)*si/x;
-				double t = ti*dist - target[j];
-				s += t*t*weight[j];
-				j++;
-				t = 1 - setas*(1+ti*ti) - target[j];
-				s += t*t*weight[j];
-				j++;
-			}
-			return s/nV;
-		}
-	}
-
-	/**
-	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static class QSpaceFitFunction2 extends FitFunctionBase {
-
-		public QSpaceFitFunction2(double[] known1, double[] known2, double rollAngle) {
-			nT = known1.length;
-			nV = 2 * nT;
-			angle = rollAngle;
-			target = new double[nV];
-			weight = new double[nV];
-			for (int i = 0, j = 0; i < nT; i++) {
-				target[j] = known1[i];
-				weight[j++] = 1;
-				target[j] = known2[i];
-				weight[j++] = 1;
-			}
-			spacing = new double[nT];
-			bounds = new SimpleBounds(new double[] {WAVE_MIN, 10, 0}, new double[] {WAVE_MAX, 1e5, 1});
-			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN, SIGMA_SINE};
-		}
-
-		@Override
-		public double getWavelength() {
-			return parameters[0]*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[1];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			double ses = Math.abs(parameters[2]);
-			return Math.toDegrees(Math.asin(Math.sqrt(ses)));
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-			double setas = arg[2];
-			double s = 0;
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double den = 1.0/(ca*ca - setas);
-				double t = saD*ca*den - target[j];
-				s += t*t*weight[j];
-				j++;
-				t = saD*Math.sqrt(den) - target[j];
-				s += t*t*weight[j];
-				j++;
-			}
-			return s/nV;
-		}
-	}
-
-	/**
-	 * LS function uses parameters: perpendicular distance (mm), sine-squared of tilt angle
-	 */
-	static class QSpaceFitFixedWFunction2 extends QSpaceFitFunction2 {
-		protected double lambda;
-
-		public QSpaceFitFixedWFunction2(double[] known1, double[] known2, double wavelength, double rollAngle) {
-			super(known1, known2, rollAngle);
-			int bl = bounds.getLower().length;
-			bounds = new SimpleBounds(Arrays.copyOfRange(bounds.getLower(), 1, bl),
-					Arrays.copyOfRange(bounds.getUpper(), 1, bl));
-			sigma = Arrays.copyOfRange(sigma, 1, sigma.length);
-			lambda = wavelength;
-		}
-
-		@Override
-		public double getWavelength() {
-			return lambda*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[0];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			double ses = Math.abs(parameters[1]);
-			return Math.toDegrees(Math.asin(Math.sqrt(ses)));
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double dist = arg[0];
-			double setas = arg[1];
-			double s = 0;
-			for (int i = 0, j = 0; i < nT; i++) {
-				double si = 0.5*lambda/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double den = 1.0/(ca*ca - setas);
-				double t = saD*ca*den - target[j];
-				s += t*t*weight[j];
-				j++;
-				t = saD*Math.sqrt(den) - target[j];
-				s += t*t*weight[j];
-				j++;
-			}
-			return s/nV;
-		}
-	}
-
-	/**
-	 * Zero-angle
-	 * LS function uses parameters: wavelength (mm), perpendicular distance (mm)
-	 */
-	static class QSpaceFitFunction3 extends FitFunctionBase {
-
-		public QSpaceFitFunction3(double[] known1) {
-			nT = known1.length;
-			nV = nT;
-			angle = 0;
-			target = new double[nT];
-			weight = new double[nT];
-			for (int i = 0; i < nT; i++) {
-				target[i] = known1[i];
-				weight[i] = 1;
-			}
-			spacing = new double[nT];
-			bounds = new SimpleBounds(new double[] {WAVE_MIN, 10}, new double[] {WAVE_MAX, 1e5});
-			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN};
-		}
-
-		@Override
-		public double getWavelength() {
-			return parameters[0]*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[1];
-		}
-
-		@Override
-		public double getTiltAngle() {
-			return 0;
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double wlen = arg[0];
-			double dist = arg[1];
-			double s = 0;
-			for (int i = 0; i < nT; i++) {
-				double si = 0.5*wlen/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double t = saD/ca - target[i];
-				s += t*t*weight[i];
-			}
-			return s/nV;
-		}
-	}
-
-	/**
-	 * LS function uses parameters: perpendicular distance (mm)
-	 */
-	static class QSpaceFitFixedWFunction3 extends QSpaceFitFunction3 {
-		protected double lambda;
-
-		public QSpaceFitFixedWFunction3(double[] known1, double wavelength) {
-			super(known1);
-			int bl = bounds.getLower().length;
-			bounds = new SimpleBounds(Arrays.copyOfRange(bounds.getLower(), 1, bl),
-					Arrays.copyOfRange(bounds.getUpper(), 1, bl));
-			sigma = Arrays.copyOfRange(sigma, 1, sigma.length);
-			lambda = wavelength;
-		}
-
-		@Override
-		public double getWavelength() {
-			return lambda*1e7;
-		}
-
-		@Override
-		public double getDistance() {
-			return parameters[0];
-		}
-
-		@Override
-		public double value(double[] arg) {
-			double dist = arg[0];
-			double s = 0;
-			for (int i = 0; i < nT; i++) {
-				double si = 0.5*lambda/spacing[i];
-				double x = 0.5 - si*si;
-				double saD = 2.0*dist*si*Math.sqrt(0.5 + x);
-				double ca = 2.0*x;
-				double t = saD/ca - target[i];
-				s += t*t*weight[i];
-			}
-			return s/nV;
-		}
-	}
-
-	/**
 	 * LS function uses 7 parameters: wavelength (mm), detector origin (mm), orientation angles (degrees)
 	 */
-	static class QSpaceFitFunction4 extends FitFunctionBase {
+	static class QSpaceFitFunction7 extends FitFunctionBase {
 		protected DetectorProperties dp;
 		protected double[][] target2;
 
-		public QSpaceFitFunction4(double[][] known, double pix) {
+		public QSpaceFitFunction7(double[][] known, double pix) {
+			n = 7;
 			nT = known.length;
 			target2 = known;
-			nV = 6 * nT;
+			nV = 8 * nT;
 			spacing = new double[nT];
 			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 10,
 					-90, -90, -180}, new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1e5,
@@ -1475,11 +1100,12 @@ public class PowderRingsUtils {
 		double calcValue(double wlen, double... arg) {
 			setDetector(0, arg);
 			double s = 0;
+			boolean any = false;
 			for (int i = 0; i < nT; i++) {
 				IROI r;
 				try {
 					r = DSpacing.conicFromDSpacing(dp, wlen, spacing[i]);
-				} catch (IllegalArgumentException e) {
+				} catch (Exception e) {
 					if (wlen > 2*spacing[nT-1]) { // wavelength too long
 						s = Double.POSITIVE_INFINITY;
 						break;
@@ -1487,29 +1113,40 @@ public class PowderRingsUtils {
 					continue;
 				}
 				if (r instanceof EllipticalROI) {
+					any = true;
 					EllipticalROI ell = (EllipticalROI) r;
+					double a = base - ell.getAngle();
 					double[] pt = target2[i];
 					double t;
 					double[] pv;
-					pv = ell.getPointRef();
+					pv = ell.getPoint(a);
 					t = pv[0] - pt[0];
 					s += t*t;
 					t = pv[1] - pt[1];
 					s += t*t;
-					pv = ell.getPoint(0);
+					pv = ell.getPoint(a + RIGHT_ANGLE);
 					t = pv[0] - pt[2];
 					s += t*t;
 					t = pv[1] - pt[3];
 					s += t*t;
-					pv = ell.getPoint(0.5*Math.PI);
+					pv = ell.getPoint(a + Math.PI);
 					t = pv[0] - pt[4];
 					s += t*t;
 					t = pv[1] - pt[5];
 					s += t*t;
+					pv = ell.getPoint(a - RIGHT_ANGLE);
+					t = pv[0] - pt[6];
+					s += t*t;
+					t = pv[1] - pt[7];
+					s += t*t;
 				}
 			}
 			s /= nV;
-//			System.err.println("Res = " + s + " : " + wlen + ", " + Arrays.toString(arg));
+			if (!any) {
+				s = Double.POSITIVE_INFINITY;
+			}
+//			System.err.println("Res = " + s + " : " + wlen + ", " + Arrays.toString(arg)); // FIXME
+//			System.err.println("Res = " + s + " : " + wlen);
 			return s;
 		}
 
@@ -1522,11 +1159,12 @@ public class PowderRingsUtils {
 	/**
 	 * LS function uses 6 parameters: detector origin (mm), orientation angles (degrees)
 	 */
-	static class QSpaceFitFixedWFunction4 extends QSpaceFitFunction4 {
+	static class QSpaceFitFixedWFunction7 extends QSpaceFitFunction7 {
 		protected double lambda;
 
-		public QSpaceFitFixedWFunction4(double[][] known, double pix, double wavelength) {
+		public QSpaceFitFixedWFunction7(double[][] known, double pix, double wavelength) {
 			super(known, pix);
+			n = 6;
 			int bl = bounds.getLower().length;
 			bounds = new SimpleBounds(Arrays.copyOfRange(bounds.getLower(), 1, bl),
 					Arrays.copyOfRange(bounds.getUpper(), 1, bl));
@@ -1580,9 +1218,10 @@ public class PowderRingsUtils {
 	/**
 	 * LS function uses 4 parameters: wavelength (mm), detector origin (mm)
 	 */
-	static class QSpaceFitFunction5 extends QSpaceFitFunction4 {
-		public QSpaceFitFunction5(double[][] known, double pix) {
+	static class QSpaceFitFunction4 extends QSpaceFitFunction7 {
+		public QSpaceFitFunction4(double[][] known, double pix) {
 			super(known, pix);
+			n = 4;
 			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 10},
 					new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1e5});
 			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN, SIGMA_POSN, SIGMA_POSN};
@@ -1613,11 +1252,12 @@ public class PowderRingsUtils {
 	/**
 	 * LS function uses 3 parameters: detector origin (mm)
 	 */
-	static class QSpaceFitFixedWFunction5 extends QSpaceFitFunction5 {
+	static class QSpaceFitFixedWFunction4 extends QSpaceFitFunction4 {
 		protected double lambda;
 
-		public QSpaceFitFixedWFunction5(double[][] known, double pix, double wavelength) {
+		public QSpaceFitFixedWFunction4(double[][] known, double pix, double wavelength) {
 			super(known, pix);
+			n = 3;
 			int bl = bounds.getLower().length;
 			bounds = new SimpleBounds(Arrays.copyOfRange(bounds.getLower(), 1, bl),
 					Arrays.copyOfRange(bounds.getUpper(), 1, bl));

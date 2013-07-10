@@ -3925,10 +3925,19 @@ public abstract class AbstractDataset implements ADataset {
 		} else if (buffer instanceof Double) {
 			errorData = new Double((Double) buffer);
 		} else if (buffer instanceof double[]) {
-			errorData = ArrayUtils.clone((double[])buffer);
+			if (((double[]) buffer).length != getSize()) {
+				throw new IllegalArgumentException("Error buffer size does not match array size");
+			}
+			errorData = new DoubleDataset((double[]) buffer, getShape());
 		} else if (buffer instanceof DoubleDataset) {
-			errorData = DoubleDataset.createFromObject(buffer);
+			if (!ArrayUtils.isEquals(((DoubleDataset) buffer).getShape(), getShape())) {
+				throw new IllegalArgumentException("Error buffer shape does not match array shape");
+			}
+			errorData = new DoubleDataset((DoubleDataset) buffer);
 		} else if (buffer instanceof CompoundDoubleDataset) {
+			if (!ArrayUtils.isEquals(((CompoundDoubleDataset) buffer).getShape(), getShape())) {
+				throw new IllegalArgumentException("Error compound buffer shape does not match array shape");
+			}
 			errorData = new CompoundDoubleDataset((CompoundDoubleDataset) buffer);
 		} else {
 			throw new IllegalArgumentException("Type of error buffer could not be handled");

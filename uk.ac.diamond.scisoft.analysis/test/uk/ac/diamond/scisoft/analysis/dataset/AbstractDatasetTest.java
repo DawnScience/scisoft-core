@@ -1262,6 +1262,64 @@ public class AbstractDatasetTest {
 		assertEquals(10.0, error2.getDouble(99,99), 0.001);
 	}
 	
+	@Test
+	public void testSetErrorBuffer() {
+		
+		AbstractDataset a = AbstractDataset.zeros(new int[] {100,100}, AbstractDataset.INT32);
+		AbstractDataset err = DatasetUtils.linSpace(0, a.getSize() - 1, a.getSize(), AbstractDataset.FLOAT64);
+		err.setShape(a.getShape());
+		
+		a.setErrorBuffer(null);
+		assertFalse(a.hasErrors());
+		
+		a.setErrorBuffer(25.0);
+		
+		assertEquals(5.0, a.getError(0,0), 0.001);
+		assertEquals(5.0, a.getError(50,50), 0.001);
+		assertEquals(5.0, a.getError(99,99), 0.001);
+
+		assertTrue(a.hasErrors());
+		
+		// now for pulling out the full error array and check compatibility
+		AbstractDataset error = a.getError();
+		try {
+			AbstractDataset.checkCompatibility(a, error);
+		} catch (Exception e) {
+			fail("Error shape is not the same as input datasets");
+		}
+				
+		a.setErrorBuffer(err);
+
+		assertEquals(0.0, a.getError(0,0), 0.001);
+		assertEquals(Math.sqrt(50.0 + 100*50.0), a.getError(50,50), 0.001);
+		assertEquals(Math.sqrt(99.0 + 100*99.0), a.getError(99,99), 0.001);
+
+		assertTrue(a.hasErrors());
+		
+		// now for pulling out the full error array and check compatibility
+		error = a.getError();
+		try {
+			AbstractDataset.checkCompatibility(a, error);
+		} catch (Exception e) {
+			fail("Error shape is not the same as input datasets");
+		}
+		
+		a.setErrorBuffer(err.getBuffer());
+
+		assertEquals(0.0, a.getError(0,0), 0.001);
+		assertEquals(Math.sqrt(35.0 + 100*25.0), a.getError(25,35), 0.001);
+		assertEquals(Math.sqrt(99.0 + 100*99.0), a.getError(99,99), 0.001);
+
+		assertTrue(a.hasErrors());
+		
+		// now for pulling out the full error array and check compatibility
+		error = a.getError();
+		try {
+			AbstractDataset.checkCompatibility(a, error);
+		} catch (Exception e) {
+			fail("Error shape is not the same as input datasets");
+		}
+	}
 	
 	@Test
 	public void testInternalErrors() {

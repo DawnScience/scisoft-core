@@ -259,6 +259,12 @@ public interface ADataset extends IErrorDataset {
 	public Serializable getErrorBuffer();
 
 	/**
+	 * Set the buffer that backs the error data
+	 * @buffer the buffer which contains the error information (can be null)
+	 */
+	public void setErrorBuffer(Serializable buffer);
+
+	/**
 	 * Cast a dataset
 	 * 
 	 * @param dtype

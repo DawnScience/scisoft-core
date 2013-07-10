@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -3911,6 +3912,27 @@ public abstract class AbstractDataset implements ADataset {
 	@Override
 	public Serializable getErrorBuffer() {
 		return errorData;
+	}
+
+	/**
+	 * Set the buffer that backs the error data
+	 * @param buffer can be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset
+	 */
+	@Override
+	public void setErrorBuffer(Serializable buffer) {
+		if (buffer == null) {
+			errorData = null;
+		} else if (buffer instanceof Double) {
+			errorData = new Double((Double) buffer);
+		} else if (buffer instanceof double[]) {
+			errorData = ArrayUtils.clone((double[])buffer);
+		} else if (buffer instanceof DoubleDataset) {
+			errorData = DoubleDataset.createFromObject(buffer);
+		} else if (buffer instanceof CompoundDoubleDataset) {
+			errorData = new CompoundDoubleDataset((CompoundDoubleDataset) buffer);
+		} else {
+			throw new IllegalArgumentException("Type of error buffer could not be handled");
+		}
 	}
 
 	protected IMetaData metadataStructure = null;

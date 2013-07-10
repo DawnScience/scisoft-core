@@ -1236,7 +1236,7 @@ public class DatasetUtils {
 		}
 
 		if (lazydata instanceof ADataset) {
-			result.setError(((ADataset) lazydata).getErrorBuffer());
+			result.setErrorBuffer(((ADataset) lazydata).getErrorBuffer());
 		}
 		return result;
 	}

@@ -43,7 +43,7 @@ public class GuiPlotMode implements Serializable {
 
 	@Override
 	public final boolean equals(Object that) {
-		return ordinal == ((GuiPlotMode) that).ordinal;
+		return that instanceof GuiPlotMode ? ordinal == ((GuiPlotMode) that).ordinal : false;
     }
 
 	@Override

@@ -19,29 +19,49 @@ package uk.ac.diamond.scisoft.analysis.roi;
 public class ROIUtils {
 
 	/**
-	 * @param roib
-	 * @return new list to hold ROIs of same type
+	 * @param clazz
+	 * @return new list to hold ROIs of same class
 	 */
-	public static ROIList<?> createNewROIList(IROI roib) {
-		if (roib instanceof PointROI)
-			return new PointROIList();
-		else if (roib instanceof PolylineROI)
-			return new PolylineROIList();
-		else if (roib instanceof PolygonalROI)
+	public static ROIList<?> createNewROIList(Class<? extends IROI> clazz) {
+		if (clazz == null)
+			return null;
+
+		// be aware that order of tests is important as must be determined by class hierarchy
+		if (clazz.equals(PolygonalROI.class))
 			return new PolygonalROIList();
-		else if (roib instanceof LinearROI)
+		// to-do add free draw
+		if (clazz.equals(PolylineROI.class))
+			return new PolylineROIList();
+		else if (clazz.equals(PointROI.class))
+			return new PointROIList();
+		// to-do add line 3D
+		else if (clazz.equals(LinearROI.class))
 			return new LinearROIList();
-		else if (roib instanceof RectangularROI)
+		// to-do add grid, perimeter, x-axis box, x-axis line box, etc
+		else if (clazz.equals(RectangularROI.class))
 			return new RectangularROIList();
-		else if (roib instanceof SectorROI)
+		// to-do add ring
+		else if (clazz.equals(SectorROI.class))
 			return new SectorROIList();
-		else if (roib instanceof CircularROI)
+		// to-do add circular fit
+		else if (clazz.equals(CircularROI.class))
 			return new CircularROIList();
-		else if (roib instanceof EllipticalROI)
-			return new EllipticalROIList();
-		else if (roib instanceof EllipticalFitROI)
+		else if (clazz.equals(EllipticalFitROI.class))
 			return new EllipticalFitROIList();
+		else if (clazz.equals(EllipticalROI.class))
+			return new EllipticalROIList();
+		// to-do add surface plot
 
 		return null;
+	}
+
+	/**
+	 * @param roi
+	 * @return new list to hold ROIs of same type
+	 */
+	public static ROIList<?> createNewROIList(IROI roi) {
+		if (roi == null)
+			return null;
+		return createNewROIList(roi.getClass());
 	}
 }

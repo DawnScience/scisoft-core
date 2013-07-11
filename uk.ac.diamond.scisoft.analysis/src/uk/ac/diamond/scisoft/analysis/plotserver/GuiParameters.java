@@ -147,6 +147,11 @@ public final class GuiParameters implements Serializable {
 	public static final GuiParameters ROIDATALIST = new GuiParameters("ROIList", ROIList.class);
 
 	/**
+	 * Indicates that all ROIs should be removed
+	 */
+	public static final GuiParameters ROICLEARALL = new GuiParameters("ROIClearAll", Boolean.class);
+
+	/**
 	 * Specifies the UUID of the plot client that originates the bean
 	 */
 	public static final GuiParameters PLOTID = new GuiParameters("PlotID", UUID.class);

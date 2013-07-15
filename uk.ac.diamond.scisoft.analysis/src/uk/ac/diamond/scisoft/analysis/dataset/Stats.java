@@ -1600,6 +1600,8 @@ public class Stats {
 	 * It approximates by limiting the number of items (given by length) used internally by
 	 * data structures - the larger this is, the more accurate will those outlier values become.
 	 * The actual thresholds used are returned in the array.
+	 * <p>
+	 * Also, the low and high values will be made distinct if possible by adjusting the thresholds
 	 * @param a
 	 * @param lo percentage threshold for lower limit
 	 * @param hi percentage threshold for higher limit
@@ -1611,10 +1613,10 @@ public class Stats {
 			throw new IllegalArgumentException("Thresholds must be between (0,100) and in order");
 		}
 		final int size = a.getSize();
-		int nl = (int) ((lo*size)/100);
+		int nl = Math.max((int) ((lo*size)/100), 1);
 		if (length > 0 && nl > length)
 			nl = length;
-		int nh = (int) (((100-hi)*size)/100);
+		int nh = Math.max((int) (((100-hi)*size)/100), 1);
 		if (length > 0 && nh > length)
 			nh = length;
 
@@ -1688,6 +1690,23 @@ public class Stats {
 			}
 		}
 
+		// Attempt to make values distinct
+		double lx = lMap.lastKey();
+		double hx = hMap.firstKey();
+		if (lx >= hx) {
+			Double h = hMap.higherKey(lx);
+			if (h != null) {
+				hx = h;
+				mh--;
+			} else {
+				Double l = lMap.lowerKey(hx);
+				if (l != null) {
+					lx = l;
+					ml--;
+				}
+			}
+			
+		}
 		return new double[] {lMap.lastKey(), hMap.firstKey(), ml, mh};
 	}
 
@@ -1728,6 +1747,31 @@ public class Stats {
 			}
 		}
 
-		return new double[] {lx, hx, lList.size(), hList.size()};
+		nl = lList.size();
+		nh = hList.size();
+
+		// Attempt to make values distinct
+		if (lx >= hx) {
+			Collections.sort(hList);
+			for (double h : hList) {
+				if (h > hx) {
+					hx = h;
+					break;
+				}
+				nh--;
+			}
+			if (lx >= hx) {
+				Collections.sort(lList);
+				Collections.reverse(lList);
+				for (double l : lList) {
+					if (l < lx) {
+						lx = l;
+						break;
+					}
+					nl--;
+				}
+			}
+		}
+		return new double[] {lx, hx, nl, nh};
 	}	
 }

@@ -199,4 +199,15 @@ public class StatsTest {
 		assertEquals("Lower quantile", qs[0], vs[0], 1e-4*qs[0]);
 		assertEquals("Upper quantile", qs[1], vs[1], 1e-4*qs[1]);
 	}
+
+	@Test
+	public void testOutlierValues() {
+		AbstractDataset a = AbstractDataset.zeros(new int[] {20}, AbstractDataset.FLOAT64);
+
+		double[] o = Stats.outlierValues(a, 0.01, 99.9, 10);
+		assertEquals(0, o[0], 1e-4);
+		assertEquals(0, o[1], 1e-4);
+		assertEquals(0, o[2], 1e-4);
+		assertEquals(100, o[3], 1e-4);
+	}
 }

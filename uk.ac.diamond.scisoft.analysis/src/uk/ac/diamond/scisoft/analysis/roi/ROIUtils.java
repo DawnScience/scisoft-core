@@ -21,38 +21,39 @@ public class ROIUtils {
 	/**
 	 * @param clazz
 	 * @return new list to hold ROIs of same class
+	 * @throws UnsupportedOperationException when there is no list class
 	 */
 	public static ROIList<?> createNewROIList(Class<? extends IROI> clazz) {
 		if (clazz == null)
 			return null;
 
 		// be aware that order of tests is important as must be determined by class hierarchy
-		if (clazz.equals(PolygonalROI.class))
+		if (PolygonalROI.class.equals(clazz))
 			return new PolygonalROIList();
 		// to-do add free draw
-		if (clazz.equals(PolylineROI.class))
+		else if (PolylineROI.class.equals(clazz))
 			return new PolylineROIList();
-		else if (clazz.equals(PointROI.class))
+		else if (PointROI.class.equals(clazz))
 			return new PointROIList();
 		// to-do add line 3D
-		else if (clazz.equals(LinearROI.class))
+		else if (LinearROI.class.equals(clazz))
 			return new LinearROIList();
 		// to-do add grid, perimeter, x-axis box, x-axis line box, etc
-		else if (clazz.equals(RectangularROI.class))
+		else if (RectangularROI.class.equals(clazz))
 			return new RectangularROIList();
 		// to-do add ring
-		else if (clazz.equals(SectorROI.class))
+		else if (SectorROI.class.equals(clazz))
 			return new SectorROIList();
 		// to-do add circular fit
-		else if (clazz.equals(CircularROI.class))
+		else if (CircularROI.class.equals(clazz))
 			return new CircularROIList();
-		else if (clazz.equals(EllipticalFitROI.class))
+		else if (EllipticalFitROI.class.equals(clazz))
 			return new EllipticalFitROIList();
-		else if (clazz.equals(EllipticalROI.class))
+		else if (EllipticalROI.class.equals(clazz))
 			return new EllipticalROIList();
 		// to-do add surface plot
 
-		return null;
+		throw new UnsupportedOperationException("No corresponding ROI list class");
 	}
 
 	/**

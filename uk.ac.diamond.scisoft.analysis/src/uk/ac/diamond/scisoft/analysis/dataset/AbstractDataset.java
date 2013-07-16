@@ -3914,6 +3914,10 @@ public abstract class AbstractDataset implements ADataset {
 		return errorData;
 	}
 
+	@Override
+	public void clearError() {
+		errorData = null;
+	}
 	/**
 	 * Set the buffer that backs the error data
 	 * @param buffer can be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset

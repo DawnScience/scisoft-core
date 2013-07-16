@@ -63,5 +63,11 @@ public interface IErrorDataset extends IDataset {
 	 * @param error
 	 */
 	public void setError(Serializable error);
+	
+	/**
+	 * Call to clear the error on a dataset. setError(null) cannot be
+	 * relied upon.
+	 */
+	public void clearError();
 
 }

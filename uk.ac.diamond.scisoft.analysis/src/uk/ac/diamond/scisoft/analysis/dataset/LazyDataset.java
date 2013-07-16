@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -31,16 +29,20 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * Class that implements lazy dataset interface
  */
 public class LazyDataset implements ILazyDataset {
+	
+	
 	private static final long serialVersionUID = -903717887381144620L;
 	transient protected static final Logger logger = LoggerFactory.getLogger(LazyDataset.class);
 
-	protected String name;
-	protected int[] shape;
-	private int[] oShape; // original shape
-	protected int size; // number of items, this can be smaller than dataSize for discontiguous datasets
+	protected String     name;
+	protected int[]      shape;
+	private int[]        oShape; // original shape
+	protected int        size; // number of items, this can be smaller than dataSize for discontiguous datasets
 	protected ILazyLoader loader;
-	private int dtype;
-	private int rankOffset; // different between current and original rank
+	private int          dtype;
+	private int          rankOffset; // different between current and original rank
+	private IMetaData    metadata = null;
+	protected ILazyDataset lazyErrorDeligate;
 
 	/**
 	 * Create a lazy dataset
@@ -64,7 +66,9 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public LazyDataset clone() {
-		return new LazyDataset(new String(name), dtype, shape.clone(), loader);
+		LazyDataset ret = new LazyDataset(new String(name), dtype, shape.clone(), loader);
+		ret.lazyErrorDeligate = lazyErrorDeligate;
+		return ret;
 	}
 
 	@Override
@@ -138,6 +142,12 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public void setShape(int... shape) {
+		setShapeInternal(shape);
+		if (lazyErrorDeligate!=null) {
+			lazyErrorDeligate.setShape(shape);
+		}
+	}
+	private void setShapeInternal(int... shape) {
 		rankOffset = shape.length - oShape.length;
 		int[] tshape;
 		if (rankOffset > 0) {
@@ -183,7 +193,8 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public ILazyDataset squeeze(boolean onlyFromEnd) {
-		setShape(AbstractDataset.squeezeShape(shape, onlyFromEnd));
+		setShapeInternal(AbstractDataset.squeezeShape(shape, onlyFromEnd));
+		if (lazyErrorDeligate!=null) lazyErrorDeligate = lazyErrorDeligate.squeeze(onlyFromEnd);
 		return this;
 	}
 
@@ -236,7 +247,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, Slice... slice) throws Exception {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -246,7 +257,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws Exception {
 		if (!loader.isFileReadable())
 			return null; // TODO add interaction to use plot server to load dataset
 
@@ -319,6 +330,16 @@ public class LazyDataset implements ILazyDataset {
 			a = new DoubleDataset(1);
 		}
 		a.setName(name);
+		
+		if (a instanceof IErrorDataset) {
+			IErrorDataset ea = (IErrorDataset)a;
+			if (lazyErrorDeligate!=null) {
+				IDataset lazySlice = lazyErrorDeligate.getSlice(monitor, start, stop, step);
+				ea.setError(lazySlice);
+			} else {
+				ea.clearError();
+			}
+		}
 		return a;
 	}
 
@@ -332,7 +353,12 @@ public class LazyDataset implements ILazyDataset {
 		final int[] stop = new int[rank];
 		final int[] step = new int[rank];
 		Slice.convertFromSlice(slice, shape, start, stop, step);
-		return getSliceView(start, stop, step);
+		ILazyDataset sliceView = getSliceView(start, stop, step);
+		if (lazyErrorDeligate!=null) {
+			ILazyDataset errorView = lazyErrorDeligate.getSliceView(start, stop, step);
+			sliceView.setLazyErrors(errorView);
+		}
+		return sliceView;
 	}
 
 	@Override
@@ -340,8 +366,6 @@ public class LazyDataset implements ILazyDataset {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private IMetaData metadata = null;
 	
 	@Override
 	public void setMetadata(IMetaData metadata) {
@@ -351,6 +375,24 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public IMetaData getMetadata() {
 		return metadata;
+	}
+
+	@Override
+	public void setLazyErrors(ILazyDataset errors) {
+		if (errors==null) {
+			lazyErrorDeligate = null;
+			return;
+		}
+		if (errors.getRank()!=getRank()) throw new RuntimeException("Rank of errors not correct. Should be "+getRank());
+		if (!Arrays.equals(getShape(), errors.getShape())) {
+			throw new RuntimeException("Shape of errors not correct. Should be "+Arrays.toString(getShape()));
+		}
+		this.lazyErrorDeligate = errors;
+	}
+
+	@Override
+	public ILazyDataset getLazyErrors() {
+		return lazyErrorDeligate;
 	}
 
 }

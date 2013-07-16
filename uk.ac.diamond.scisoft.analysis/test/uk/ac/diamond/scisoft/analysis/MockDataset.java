@@ -210,4 +210,14 @@ public class MockDataset implements IDataset {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
+	@Override
+	public void setLazyErrors(ILazyDataset errors) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public ILazyDataset getLazyErrors() {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
 }

@@ -1809,6 +1809,9 @@ public abstract class AbstractDataset implements ADataset {
 	@Override
 	public AbstractDataset squeeze(boolean onlyFromEnds) {
 		shape = squeezeShape(shape, onlyFromEnds);
+		if (errorData!=null && errorData instanceof IDataset) {
+			((IDataset)errorData).squeeze(onlyFromEnds);
+		}
 		return this;
 	}
 
@@ -3918,6 +3921,26 @@ public abstract class AbstractDataset implements ADataset {
 	public void clearError() {
 		errorData = null;
 	}
+	
+	
+	@Override
+	public void setLazyErrors(final ILazyDataset errors) {
+		if (errors==null) {
+			clearError();
+			return;
+		}
+		if (errors instanceof IDataset) {
+			setError(errors);
+			return;
+		}
+		throw new RuntimeException("setLazyErrors is unimplemented for "+getClass().getSimpleName()+" with an ILazyDataset. Please use setErrors(IDataset) instead!");
+	}
+	
+	@Override
+	public ILazyDataset getLazyErrors() {
+		return getError();
+	}
+
 	/**
 	 * Set the buffer that backs the error data
 	 * @param buffer can be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset

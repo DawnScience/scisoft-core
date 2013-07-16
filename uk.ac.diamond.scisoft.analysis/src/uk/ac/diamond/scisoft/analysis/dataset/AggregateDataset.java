@@ -349,4 +349,15 @@ public class AggregateDataset implements ILazyDataset {
 
 		return out.toString();
 	}
+	
+	@Override
+	public void setLazyErrors(ILazyDataset errors) {
+		throw new RuntimeException("setLazyErrors is unimplemented for "+getClass().getSimpleName());
+	}
+	
+	@Override
+	public ILazyDataset getLazyErrors() {
+		return null;
+	}
+
 }

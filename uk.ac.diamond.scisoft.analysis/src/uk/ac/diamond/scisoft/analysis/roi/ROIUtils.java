@@ -28,28 +28,28 @@ public class ROIUtils {
 			return null;
 
 		// be aware that order of tests is important as must be determined by class hierarchy
-		if (PolygonalROI.class.equals(clazz))
+		if (PolygonalROI.class.isAssignableFrom(clazz))
 			return new PolygonalROIList();
 		// to-do add free draw
-		else if (PolylineROI.class.equals(clazz))
+		else if (PolylineROI.class.isAssignableFrom(clazz))
 			return new PolylineROIList();
-		else if (PointROI.class.equals(clazz))
+		else if (PointROI.class.isAssignableFrom(clazz))
 			return new PointROIList();
 		// to-do add line 3D
-		else if (LinearROI.class.equals(clazz))
+		else if (LinearROI.class.isAssignableFrom(clazz))
 			return new LinearROIList();
 		// to-do add grid, perimeter, x-axis box, x-axis line box, etc
-		else if (RectangularROI.class.equals(clazz))
+		else if (RectangularROI.class.isAssignableFrom(clazz))
 			return new RectangularROIList();
 		// to-do add ring
-		else if (SectorROI.class.equals(clazz))
+		else if (SectorROI.class.isAssignableFrom(clazz))
 			return new SectorROIList();
 		// to-do add circular fit
-		else if (CircularROI.class.equals(clazz))
+		else if (CircularROI.class.isAssignableFrom(clazz))
 			return new CircularROIList();
-		else if (EllipticalFitROI.class.equals(clazz))
+		else if (EllipticalFitROI.class.isAssignableFrom(clazz))
 			return new EllipticalFitROIList();
-		else if (EllipticalROI.class.equals(clazz))
+		else if (EllipticalROI.class.isAssignableFrom(clazz))
 			return new EllipticalROIList();
 		// to-do add surface plot
 

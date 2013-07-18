@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * Class for rectangular region of interest : perimeter type (with coloured edges)
@@ -83,10 +82,5 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 		c.name = name;
 		c.plot = plot;
 		return c;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Start %s Size %s Angle %g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
 	}
 }

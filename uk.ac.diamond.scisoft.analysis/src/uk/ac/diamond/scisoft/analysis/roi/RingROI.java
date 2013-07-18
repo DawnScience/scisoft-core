@@ -103,6 +103,6 @@ public class RingROI extends SectorROI implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Centre %s Radii %s Angles (%g, %g)", Arrays.toString(spt), Arrays.toString(rad), getAngleDegrees(0), getAngleDegrees(1));
+		return super.toString() + String.format("Centre %s Radii %s Angles (%g, %g)", Arrays.toString(spt), Arrays.toString(rad), getAngleDegrees(0), getAngleDegrees(1));
 	}
 }

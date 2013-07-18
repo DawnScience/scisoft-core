@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * Class for rectangular region of interest : YAxis type
@@ -71,10 +70,5 @@ public class YAxisBoxROI extends RectangularROI implements Serializable {
 	 */
 	public YAxisBoxROI(double ptx, double pty, double width, double height, double angle, boolean clip) {
 		super(ptx, pty, width, height, angle, clip);
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Start %s Size %s Angle %g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
 	}
 }

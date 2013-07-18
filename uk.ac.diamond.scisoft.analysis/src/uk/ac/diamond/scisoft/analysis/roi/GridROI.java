@@ -289,8 +289,7 @@ public class GridROI extends RectangularROI implements Serializable {
 
 	@Override
 	public String toString() {
-		String superString = super.toString();
-		return String.format("%s Spacing (%g, %g)", superString, xSpacing, ySpacing);
+		return super.toString() + String.format("Spacing (%g, %g)", xSpacing, ySpacing);
 	}
 
 	public GridPreferences getGridPreferences() {

@@ -263,8 +263,8 @@ public class EllipticalROI extends ROIBase {
 	@Override
 	public String toString() {
 		if (isCircular()) {
-			return String.format("Centre %s Radius %g Angle %g", Arrays.toString(spt), saxis[0], getAngleDegrees());
+			return super.toString() + String.format("Centre %s Radius %g Angle %g", Arrays.toString(spt), saxis[0], getAngleDegrees());
 		}
-		return String.format("Name %s Centre %s Semi-axes %s Angle %g", name, Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
+		return super.toString() + String.format("Centre %s Semi-axes %s Angle %g", Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
 	}
 }

@@ -31,8 +31,9 @@ public class QSpace {
 	private double kmod; // wave number
 	private Vector3d ki; // initial wave vector
 	private double qScale;
+	private double residual; // fitting mean of squared residuals
 
-	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp,double scale) {
+	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp, double scale) {
 		detProps = detprops;
 		qScale=scale;
 		setDiffractionCrystalEnvironment(diffexp);
@@ -167,5 +168,20 @@ public class QSpace {
 	@Override
 	public String toString() {
 		return detProps + "; " + getWavelength();
+	}
+
+	/**
+	 * @return mean of squared residuals
+	 */
+	public double getResidual() {
+		return residual;
+	}
+
+	/**
+	 * Set mean of squared residuals
+	 * @param residual
+	 */
+	public void setResidual(double residual) {
+		this.residual = residual;
 	}
 }

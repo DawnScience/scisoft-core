@@ -644,8 +644,9 @@ public class PowderRingsUtils {
 		f.setSpacings(fSpacings);
 		logger.debug("Residual values: {}", f.value(f.getParameters()));
 
-		DiffractionCrystalEnvironment nEnv = new DiffractionCrystalEnvironment(f.getWavelength());
-		return new QSpace(f.getDetectorProperties().get(0).clone(), nEnv);
+		QSpace q = new QSpace(f.getDetectorProperties().get(0).clone(), new DiffractionCrystalEnvironment(f.getWavelength()));
+		q.setResidual(f.value(f.getParameters()));
+		return q;
 	}
 
 	/**
@@ -725,8 +726,9 @@ public class PowderRingsUtils {
 		logger.debug("Spacings used: {}", s);
 		logger.debug("Residual values: {}", f.value(f.getParameters()));
 
-		DiffractionCrystalEnvironment nEnv = new DiffractionCrystalEnvironment(f.getWavelength());
-		return new QSpace(f.getDetectorProperties().get(0).clone(), nEnv);
+		QSpace q = new QSpace(f.getDetectorProperties().get(0).clone(), new DiffractionCrystalEnvironment(f.getWavelength()));
+		q.setResidual(f.value(f.getParameters()));
+		return q;
 	}
 
 	private static double fitCMAES(FitFunction f, CMAESOptimizer opt, double min) {
@@ -842,8 +844,9 @@ public class PowderRingsUtils {
 		DiffractionCrystalEnvironment nEnv = new DiffractionCrystalEnvironment(f.getWavelength());
 
 		for (DetectorProperties d : f.getDetectorProperties()) {
-			DetectorProperties n = d.clone();
-			qs.add(new QSpace(n, nEnv.clone()));
+			QSpace q = new QSpace(d.clone(), nEnv.clone());
+			q.setResidual(f.value(f.getParameters()));
+			qs.add(q);
 		}
 
 		return qs;

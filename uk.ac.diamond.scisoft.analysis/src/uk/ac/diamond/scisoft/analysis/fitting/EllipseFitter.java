@@ -306,7 +306,7 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 	/**
 	 * Setup the logging facilities
 	 */
-	private static transient final Logger logger = LoggerFactory.getLogger(EllipseFitter.class);
+	private static final Logger logger = LoggerFactory.getLogger(EllipseFitter.class);
 
 	private double[] parameters;
 	private double residual;
@@ -365,7 +365,7 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 
 			residual = opt.getRMS();
 
-			logger.info("Ellipse fit: rms = {}, x^2 = {}", residual, opt.getChiSquare());
+			logger.trace("Ellipse fit: rms = {}, x^2 = {}", residual, opt.getChiSquare());
 		} catch (FunctionEvaluationException e) {
 			// cannot happen
 		} catch (IllegalArgumentException e) {

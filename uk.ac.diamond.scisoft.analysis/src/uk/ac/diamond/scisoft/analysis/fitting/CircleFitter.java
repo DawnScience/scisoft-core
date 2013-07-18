@@ -198,7 +198,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	/**
 	 * Setup the logging facilities
 	 */
-	private static transient final Logger logger = LoggerFactory.getLogger(CircleFitter.class);
+	private static final Logger logger = LoggerFactory.getLogger(CircleFitter.class);
 
 	private double[] parameters;
 
@@ -270,7 +270,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 				parameters[i] = point[i];
 
 			residual = opt.getRMS();
-			logger.info("Circle fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
+			logger.trace("Circle fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
 		} catch (FunctionEvaluationException e) {
 			// cannot happen
 		} catch (IllegalArgumentException e) {

@@ -906,17 +906,16 @@ public class PowderRingsUtils {
 			pt = e.getPointRef();
 			known[i][j++] = pt[0];
 			known[i][j++] = pt[1];
-			double a = e.getAngle();
-			pt = e.getPoint(a);
+			pt = e.getPoint(0);
 			known[i][j++] = pt[0];
 			known[i][j++] = pt[1];
-			pt = e.getPoint(a + RIGHT_ANGLE);
+			pt = e.getPoint(RIGHT_ANGLE);
 			known[i][j++] = pt[0];
 			known[i][j++] = pt[1];
-			pt = e.getPoint(a + Math.PI);
+			pt = e.getPoint(Math.PI);
 			known[i][j++] = pt[0];
 			known[i][j++] = pt[1];
-//			pt = e.getPoint(a - RIGHT_ANGLE);
+//			pt = e.getPoint(RIGHT_ANGLE);
 //			known[i][j++] = pt[0];
 //			known[i][j++] = pt[1];
 		}
@@ -930,6 +929,7 @@ public class PowderRingsUtils {
 			f = new QSpaceFitFunction4(known, dp.getVPxSize());
 			f.setInit(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
 		}
+		f.setBaseRollAngle(ellipses.get(0).getAngle());
 		return f;
 	}
 
@@ -937,7 +937,6 @@ public class PowderRingsUtils {
 	 * Create function which uses 6N+1 parameters: wavelength (mm), and per image, detector origin (mm), orientation angles (degrees)
 	 */
 	static FitFunction createQFitFunctionForAllImages(List<List<EllipticalROI>> lEllipses, List<DetectorProperties> lDP, double wavelength) {
-
 		int m = lEllipses.size();
 		if (lDP.size() != m) {
 			throw new IllegalArgumentException("Number of lists of ellipses should be equal to number of detectors");
@@ -973,16 +972,18 @@ public class PowderRingsUtils {
 				pt = e.getPoint(a + Math.PI);
 				known[i][j++] = pt[0];
 				known[i][j++] = pt[1];
+//				pt = e.getPoint(a - RIGHT_ANGLE);
+//				known[i][j++] = pt[0];
+//				known[i][j++] = pt[1];
 			}
 		}
 
-		DetectorProperties dp = lDP.get(0);
-		FitFunction f = new QSpacesFitFunction(allKnowns, dp.getVPxSize());
+		FitFunction f = new QSpacesFitFunction(allKnowns, lDP.get(0).getVPxSize());
 		double[] init = new double[6*m+1];
 		int j = 0;
 		init[j++] = wavelength;
 		for (int k = 0; k < m; k++) {
-			dp = lDP.get(k);
+			DetectorProperties dp = lDP.get(k);
 			Vector3d o = dp.getOrigin();
 			init[j++] = o.getX();
 			init[j++] = o.getY();
@@ -1157,6 +1158,7 @@ public class PowderRingsUtils {
 			dp.setBeamVector(new Vector3d(0,  0, 1));
 			dp.setHPxSize(pix);
 			dp.setVPxSize(pix);
+			dp.setOrigin(new Vector3d(0, 0, 200));
 			base = new double[1];
 		}
 
@@ -1166,8 +1168,8 @@ public class PowderRingsUtils {
 		}
 
 		protected void setDetector(int off, double... arg) {
-			dp.setOrigin(new Vector3d(arg[off], arg[off+1], arg[off+2]));
 			dp.setNormalAnglesInDegrees(arg[off+3], arg[off+4], arg[off+5]);
+			dp.setOrigin(new Vector3d(arg[off], arg[off+1], arg[off+2]));
 		}
 
 		@Override
@@ -1310,6 +1312,7 @@ public class PowderRingsUtils {
 
 		@Override
 		protected void setDetector(int off, double... arg) {
+			dp.setNormalAnglesInDegrees(0, 0, Math.toDegrees(base[0])); // need to correct for roll
 			dp.setOrigin(new Vector3d(arg[off], arg[off+1], arg[off+2]));
 		}
 
@@ -1371,7 +1374,7 @@ public class PowderRingsUtils {
 	static class QSpacesFitFunction extends FitFunctionBase {
 		protected List<DetectorProperties> dps;
 		private double[][][] target2;
-		protected final static int nC = 8; // number of coordinate values per ring
+		protected final static int nC = 8; //10; // number of coordinate values per ring
 
 		public QSpacesFitFunction(double[][][] known, double pix) {
 			target2 = known;
@@ -1411,6 +1414,7 @@ public class PowderRingsUtils {
 				dp.setBeamVector(new Vector3d(0,  0, 1));
 				dp.setHPxSize(pix);
 				dp.setVPxSize(pix);
+				dp.setOrigin(new Vector3d(0,  0, 200));
 				dps.add(dp);
 			}
 			nV = nC * nR;
@@ -1426,8 +1430,10 @@ public class PowderRingsUtils {
 		protected void setDetector(int off, double... arg) {
 			int i = off;
 			for (DetectorProperties dp : dps) {
-				dp.setOrigin(new Vector3d(arg[i++], arg[i++], arg[i++]));
+				int j = i;
+				i += 3;
 				dp.setNormalAnglesInDegrees(arg[i++], arg[i++], arg[i++]);
+				dp.setOrigin(new Vector3d(arg[j++], arg[j++], arg[j++]));
 			}
 		}
 
@@ -1519,6 +1525,11 @@ public class PowderRingsUtils {
 						s += t * t;
 						t = pv[1] - pt[j++];
 						s += t * t;
+//						pv = ell.getPoint(a - RIGHT_ANGLE);
+//						t = pv[0] - pt[j++];
+//						s += t * t;
+//						t = pv[1] - pt[j++];
+//						s += t * t;
 					}
 				}
 			}

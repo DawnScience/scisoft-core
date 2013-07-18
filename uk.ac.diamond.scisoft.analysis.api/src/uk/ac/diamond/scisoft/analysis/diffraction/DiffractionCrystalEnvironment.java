@@ -168,7 +168,14 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		this.wavelength = wavelength;
 		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, EventType.WAVELENGTH));
 	}
-	
+
+	/**
+	 * Update units
+	 */
+	public void fireUnitChange() {
+		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, EventType.UNIT));
+	}
+
 	/**
 	 * @return the phi value for the start of the image in degrees
 	 */

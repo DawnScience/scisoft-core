@@ -22,7 +22,7 @@ public class DiffractionCrystalEnvironmentEvent extends EventObject {
 	private static final long serialVersionUID = -6642603662682717892L;
 
 	static enum EventType {
-		WAVELENGTH, UNIT
+		WAVELENGTH,
 	}
 
 	private EventType type;
@@ -36,7 +36,4 @@ public class DiffractionCrystalEnvironmentEvent extends EventObject {
 		return type == EventType.WAVELENGTH;
 	}
 
-	public boolean hasWavelengthUnitChanged() {
-		return type == EventType.UNIT;
-	}
 }

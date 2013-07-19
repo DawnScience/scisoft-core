@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironmentEvent.EventType;
 
@@ -31,23 +32,23 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	static final long serialVersionUID = 4306363319254548387L;
 	//  TODO add transmission
 
-	private double wavelength;
-	private double phiStart;
-	private double phiRange;
-	private double exposureTime;
-	private double oscGap;
+	private double wavelength;   // in Angstroms
+	private double phiStart;     // in degrees
+	private double phiRange;     // in degrees
+	private double exposureTime; // in seconds
+	private double oscGap;       // in degrees
+
 	// TODO move controller away from model?
-	private HashSet<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
+	private transient Set<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
 
 	/**
 	 * @param wavelength in Angstroms
 	 */
-	public DiffractionCrystalEnvironment(double wavelength){
+	public DiffractionCrystalEnvironment(double wavelength) {
 		this(wavelength, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 	}
 
 	/**
-	 * 
 	 * @param wavelength in Angstroms
 	 * @param phiStart in degrees
 	 * @param phiRange in degrees
@@ -57,10 +58,17 @@ public class DiffractionCrystalEnvironment implements Serializable {
 		this(wavelength, phiStart, phiRange, exposureTime, Double.NaN);
 	}
 
-	public DiffractionCrystalEnvironment(double wavelength, double oscStart, double oscRange, double exposureTime, double oscGap) {
+	/**
+	 * @param wavelength in Angstroms
+	 * @param phiStart in degrees
+	 * @param phiRange in degrees
+	 * @param exposureTime in seconds
+	 * @param oscGap in degrees
+	 */
+	public DiffractionCrystalEnvironment(double wavelength, double phiStart, double phiRange, double exposureTime, double oscGap) {
 		this.wavelength = wavelength;
-		this.phiStart = oscStart;
-		this.phiRange = oscRange;
+		this.phiStart = phiStart;
+		this.phiRange = phiRange;
 		this.exposureTime = exposureTime;
 		this.oscGap = oscGap;
 	}

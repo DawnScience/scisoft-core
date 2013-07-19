@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
@@ -50,17 +51,18 @@ public class DetectorProperties implements Serializable {
 	 */
 	static final long serialVersionUID = 3928760686423603813L; 
 
-	private Vector3d origin; // top left corner of detector's (0,0) pixel
-	private Vector3d beamVector; // unit vector in beam direction
-	private Vector3d normal; // unit vector perpendicular to detector surface
-	private int px; // width in pixels
-	private int py; // height in pixels
-	private double hPxSize; // horizontal pixel size (in mm)
-	private double vPxSize; // vertical pixel size (in mm)
-	private Matrix3d orientation; // passive transformation from reference frame to detector frame
+	private Vector3d origin;         // top left corner of detector's (0,0) pixel
+	private Vector3d beamVector;     // unit vector in beam direction
+	private Vector3d normal;         // unit vector perpendicular to detector surface
+	private int px;                  // width in pixels
+	private int py;                  // height in pixels
+	private double hPxSize;          // horizontal pixel size (in mm)
+	private double vPxSize;          // vertical pixel size (in mm)
+	private Matrix3d orientation;    // passive transformation from reference frame to detector frame
 	private Matrix3d invOrientation; // its inverse
 	private boolean fire = true;
-	private HashSet<IDetectorPropertyListener> detectorPropListeners; 
+
+	private transient Set<IDetectorPropertyListener> detectorPropListeners; 
 	
 	/**
 	 * Null constructor

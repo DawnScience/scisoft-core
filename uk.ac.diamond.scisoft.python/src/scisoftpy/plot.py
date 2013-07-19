@@ -165,12 +165,12 @@ def _parselinearg(x, y, title, name):
             xl = _toList(x)
             if len(xl) == 1:
                 x = xl[0]
-                if type(x) is _types.TupleType: # has axis name
-                    x = x[1]
+                if type(x) is _types.DictType: # has axis name
+                    x = x.values()[0]
                 xLength = x.shape[0]
                 for i in yl:
-                    if type(i) is _types.TupleType: # has axis name
-                        i = i[1]
+                    if type(i) is _types.DictType: # has axis name
+                        i = i.values()[0]
                     if xLength != i.shape[0]:
                         raise AttributeError("length of y does not match the length of x" )
             elif len(xl) != len(yl):
@@ -240,12 +240,9 @@ def _process_line(x, y, title, name, mode):
         if xl is None:
             lx = None
         else:
-            if len(xl) == 1:
-                x = xl[0]
-            else:
-                x = xl[i]
-                if type(x) is _types.DictType: # has axis name
-                    x = x.items()[0]
+            x = xl[0] if len(xl) == 1 else xl[i]
+            if type(x) is _types.DictType: # has axis name
+                x = x.items()[0]
             if type(x) is _types.TupleType: # has axis name
                 n = x[0]
                 if type(n) is _types.TupleType: # has side info

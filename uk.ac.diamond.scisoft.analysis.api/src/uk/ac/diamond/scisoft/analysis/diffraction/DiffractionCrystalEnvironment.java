@@ -37,6 +37,7 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	private double phiRange;     // in degrees
 	private double exposureTime; // in seconds
 	private double oscGap;       // in degrees
+	private boolean fire = true;
 
 	// TODO move controller away from model?
 	private transient Set<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
@@ -253,11 +254,21 @@ public class DiffractionCrystalEnvironment implements Serializable {
 	}
 	
 	protected void fireDiffractionCrystalEnvironmentListeners(DiffractionCrystalEnvironmentEvent evt) {
-		if (diffCrystEnvListeners==null) 
+		if (diffCrystEnvListeners==null || !fire) 
 			return;
 		for (IDiffractionCrystalEnvironmentListener l : diffCrystEnvListeners) {
 			l.diffractionCrystalEnvironmentChanged(evt);
 		}
+	}
+
+	public void restore(DiffractionCrystalEnvironment original) {
+		fire = false;
+		setExposureTime(original.getExposureTime());
+		setOscGap(original.getOscGap());
+		setPhiRange(original.getPhiRange());
+		setPhiStart(original.getPhiStart());
+		setWavelength(original.getWavelength());
+		fire = true;
 	}
 
 	@Override

@@ -159,22 +159,22 @@ def Sciwrap(a):
     return a
 
 def _jinput(arg): # strip for java input
-    if type(arg) is _types.ListType:
-        return [ _arg_strip(a) for a in arg ]
+    if type(arg) is _types.DictType:
+        d = dict()
+        for k,v in arg.items():
+            d[_jinput(k)] = _jinput(v)
+        return d
+    elif type(arg) is _types.ListType:
+        return [ _jinput(a) for a in arg ]
     elif type(arg) is _types.TupleType:
-        return tuple([ _arg_strip(a) for a in arg ])
+        return tuple([ _jinput(a) for a in arg ])
     elif isinstance(arg, _jlist):
-        return [ _arg_strip(a) for a in arg ]
+        return [ _jinput(a) for a in arg ]
     elif type(arg) is _arraytype:
-        return [ _arg_strip(a) for a in arg if a is not None]
-    return _arg_strip(arg)
-
-def _arg_strip(a):
-    if isinstance(a, ndarray):
-        return a._jdataset()
-    elif isinstance(a, _abstractds):
-        return a
-    return a
+        return [ _jinput(a) for a in arg if a is not None]
+    elif isinstance(arg, ndarray):
+        return arg._jdataset()
+    return arg
 
 from decorator import decorator as _decorator
 
@@ -194,7 +194,7 @@ def _wrap(func, *args, **kwargs): # strip input and wrap output
     nargs = [ _jinput(a) for a in args ]
     nkwargs = dict()
     for k,v in kwargs.iteritems():
-        nkwargs[k] = _arg_strip(v)
+        nkwargs[k] = _jinput(v)
 
     return _joutput(func(*nargs, **nkwargs))
 
@@ -203,7 +203,7 @@ def _wrapin(func, *args, **kwargs): # strip input
     nargs = [ _jinput(a) for a in args ]
     nkwargs = dict()
     for k,v in kwargs.iteritems():
-        nkwargs[k] = _arg_strip(v)
+        nkwargs[k] = _jinput(v)
 
     return func(*nargs, **nkwargs)
 

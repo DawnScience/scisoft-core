@@ -55,7 +55,7 @@ abstract public class AbstractPlotServer implements PlotServer {
 		
 		//if its a duplicate key and an PLOTOP_ADD we need to add the datasets to the old bean
 		if (value != null && value == GuiParameters.PLOTOP_ADD && dataStore.containsKey(guiName)) {
-			for (DataSetWithAxisInformation set : data.data) dataStore.get(guiName).data.add(set);
+			for (DataSetWithAxisInformation set : data.getData()) dataStore.get(guiName).getData().add(set);
 		} else {
 			dataStore.put(guiName, data);
 		}	

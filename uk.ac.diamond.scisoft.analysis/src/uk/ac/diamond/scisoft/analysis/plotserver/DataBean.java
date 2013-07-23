@@ -146,6 +146,38 @@ public class DataBean implements Serializable {
 	}
 
 	/**
+	 * Add data from bean whilst avoiding axis ID clashes
+	 * @param bean
+	 */
+	public void addData(DataBean bean) {
+		Map<String, AbstractDataset> nmap = bean.getAxisData();
+		List<DataSetWithAxisInformation> ndata = bean.getData();
+		for (String s : nmap.keySet()) {
+			AbstractDataset nd = nmap.get(s);
+			AbstractDataset od = axisData.get(s);
+			if (od != null && !od.equals(nd)) { // a clash so need to rename
+				String n = null;
+				for (int i = 0; ; i++) { // find unique name
+					n = AxisMapBean.XAXIS + i;
+					if (!nmap.containsKey(n) && !axisData.containsKey(n)) {
+						for (DataSetWithAxisInformation d : ndata) { // replace clashing name
+							String[] a = d.getAxisMap().getAxisID();
+							for (int j = 0; j < a.length; j++) {
+								if (s.equals(a[j])) {
+									a[j] = n;
+								}
+							}
+						}
+						break;
+					}
+				}
+				addAxis(n, nd);
+			}
+		}
+		data.addAll(ndata);
+	}
+
+	/**
 	 * gets all the nexusTrees as a collection
 	 * 
 	 * @return nexusTrees

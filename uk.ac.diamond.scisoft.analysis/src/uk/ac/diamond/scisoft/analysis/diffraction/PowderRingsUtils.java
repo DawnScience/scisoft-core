@@ -49,10 +49,12 @@ import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
+import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
@@ -763,6 +765,71 @@ public class PowderRingsUtils {
 			base += a > Math.PI ? a - FULL_CIRCLE : a; // ensure angle is in range +/- pi
 		}
 		return base/n;
+	}
+
+	/**
+	 * Fit all ellipses for a list of detectors to a single wavelength that is initially fixed
+	 * <p>
+	 * Each list of ROIs should be of equal size to the list of d-spacings and can have null
+	 * entries if there are no corresponding figures on the detector
+	 * @param mon
+	 * @param lDetectors
+	 * @param env
+	 * @param lROIs list containing lists of ROIs for each detector
+	 * @param spacings
+	 *            a list of spacings
+	 * @param postFitChange if true then linearly fit wavelength after detector fits
+	 * @return a list of q-spaces
+	 */
+	public static List<QSpace> fitAllEllipsesToAllQSpacesAtFixedWavelength(IMonitor mon, List<DetectorProperties> lDetectors, DiffractionCrystalEnvironment env, List<List<? extends IROI>> lROIs, List<HKL> spacings, boolean postFitChange) {
+		int n = lDetectors.size();
+		if (n != lROIs.size()) {
+			throw new IllegalArgumentException("Number of detectors must match number of lists of ROIs");
+		}
+
+		List<QSpace> qs = new ArrayList<QSpace>();
+		for (int i = 0; i < n; i++) {
+			DetectorProperties dp = lDetectors.get(i);
+			List<? extends IROI> rois = lROIs.get(i);
+			QSpace q = null;
+			try {
+				q = fitAllEllipsesToQSpace(mon, dp, env, rois, spacings, true);
+			} catch (IllegalArgumentException e) {
+				logger.warn("Problem in calibrating image: {}", i, e);
+			} 
+			qs.add(q);
+		}
+
+		if (!postFitChange)
+			return qs;
+
+		List<Double> odist = new ArrayList<Double>();
+		List<Double> ndist = new ArrayList<Double>();
+		for (int i = 0; i < n; i++) {
+			DetectorProperties dp = lDetectors.get(i);
+			QSpace q = qs.get(i);
+			odist.add(dp.getDetectorDistance());
+			ndist.add(q.getDetectorProperties().getDetectorDistance());
+		}
+		if (odist.size() < 3) {
+			logger.warn("Need to use three or more images");
+			return qs;
+		}
+
+		Polynomial p;
+		try {
+			p = Fitter.polyFit(new AbstractDataset[] {AbstractDataset.createFromList(odist)}, AbstractDataset.createFromList(ndist), 1e-15, 1);
+		} catch (Exception e) {
+			logger.error("Problem with fit", e);
+			return qs;
+		}
+		logger.debug("Straight line fit: {}", p);
+
+		double l = env.getWavelength() * p.getParameterValue(0);
+		for (int i = 0; i < n; i++) {
+			qs.get(i).setDiffractionCrystalEnvironment(new DiffractionCrystalEnvironment(l));
+		}
+		return qs;
 	}
 
 	/**

@@ -24,6 +24,7 @@ generic = ndgeneric = _np.generic
 bool = _np.bool #@ReservedAssignment
 int8 = _np.int8
 _uint8 = _np.uint8 # used for PIL saving
+_uint16 = _np.uint16 # used for PIL saving and fixing a PIL bug
 int16 = _np.int16
 int32 = _np.int32
 int64 = _np.int64

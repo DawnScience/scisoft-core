@@ -371,6 +371,31 @@ class ImageSaver(PythonSaver):
         im.save(self.name)
 
 
+class TIFFSaver(PythonSaver):
+    def save(self, data):
+        if _im is None:
+            raise NotImplementedError
+
+        d = data[0]
+        if isinstance(d, _RGB):
+            s = list(d.shape)
+            s.append(3)
+#            c = _core.ndarray(s, buffer=d.data, dtype=_core._uint8)
+            c = _core.zeros(s, dtype=_core._uint8)
+#            print d.red
+            c[...,0] = d.get_red(dtype=_core._uint8)
+            c[...,1] = d.get_green(dtype=_core._uint8)
+            c[...,2] = d.get_blue(dtype=_core._uint8)
+            d = c
+        try:
+            im = _im.fromarray(d)
+        except:
+            if d.dtype == _core._uint16: # trap a known PIL TIFF bug
+                im = _im.fromstring("I;16", tuple(reversed(d.shape)), d.tostring())
+            else:
+                raise
+        im.save(self.name)
+
 # capture all error messages
 import os
 orig_fd = sys.__stderr__.fileno()
@@ -418,19 +443,19 @@ class TIFFfileLoader(PythonLoader):
         return DataHolder(data, metadata, warn)
 
 if _tf is None:
-    LibTIFFLoader = ImageLoader
+    TIFFLoader = ImageLoader
 else:
-    LibTIFFLoader = TIFFfileLoader
+    TIFFLoader = TIFFfileLoader
 
 PNGLoader = ImageLoader
 JPEGLoader = ImageLoader
-TIFFLoader = LibTIFFLoader
+TIFFLoader = TIFFLoader
 
 ADSCLoader = None
 CBFLoader = None
 CrysLoader = None
-MARLoader = LibTIFFLoader
-PilLoader = LibTIFFLoader
+MARLoader = TIFFLoader
+PilLoader = TIFFLoader
 BinaryLoader = None
 TextLoader = None
 XMapLoader  = None
@@ -438,7 +463,7 @@ PGMLoader = ImageLoader
 
 _pngsave = ImageSaver
 _jpegsave = ImageSaver
-_tiffsave = ImageSaver
+_tiffsave = TIFFSaver
 _imgsave = None
 _rawtxtsave = None
 _rawbinsave = None

@@ -89,6 +89,6 @@ public class DataSetWithAxisInformation implements Serializable {
 
 	@Override
 	public String toString() {
-		return data.toString() + "axisMap = " + axisMap.toString();
+		return data.toString() + "; axisMap = " + axisMap.toString();
 	}
 }

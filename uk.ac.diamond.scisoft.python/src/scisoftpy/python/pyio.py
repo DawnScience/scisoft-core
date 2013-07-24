@@ -390,8 +390,8 @@ class TIFFSaver(PythonSaver):
         try:
             im = _im.fromarray(d)
         except:
-            if d.dtype == _core._uint16: # trap a known PIL TIFF bug
-                im = _im.fromstring("I;16", tuple(reversed(d.shape)), d.tostring())
+            if d.dtype == _core._uint16: # trap a known PIL 1.1.7 TIFF bug
+                im = _im.frombuffer("I;16", tuple(reversed(d.shape)), d.data, 'raw', "I;16", 0, 1)
             else:
                 raise
         im.save(self.name)

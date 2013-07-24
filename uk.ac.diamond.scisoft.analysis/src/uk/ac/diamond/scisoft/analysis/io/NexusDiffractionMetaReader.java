@@ -196,6 +196,11 @@ public class NexusDiffractionMetaReader {
 			   successMap.get(DiffractionMetaValue.BEAM_VECTOR);
 	}
 	
+	public boolean isDetectorRead() {
+		return successMap.get(DiffractionMetaValue.PIXEL_SIZE);
+
+	}
+	
 	/**
 	 * Were any values read from the Nexus file
 	 */

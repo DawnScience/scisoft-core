@@ -71,7 +71,7 @@ public class DataSetWithAxisInformation implements Serializable {
 	 */
 	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis) {
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
-		AxisMapBean axisMapBean = new AxisMapBean(AxisMapBean.DIRECT);
+		AxisMapBean axisMapBean = new AxisMapBean();
 		axisMapBean.setAxisID(new String[] { AxisMapBean.XAXIS });
 		axisData.setAxisMap(axisMapBean);
 		axisData.setData(yAxis);
@@ -80,7 +80,7 @@ public class DataSetWithAxisInformation implements Serializable {
 
 	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisName) {
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
-		AxisMapBean axisMapBean = new AxisMapBean(AxisMapBean.DIRECT);
+		AxisMapBean axisMapBean = new AxisMapBean();
 		axisMapBean.setAxisID(new String[] { axisName });
 		axisData.setAxisMap(axisMapBean);
 		axisData.setData(yAxis);
@@ -89,6 +89,6 @@ public class DataSetWithAxisInformation implements Serializable {
 
 	@Override
 	public String toString() {
-		return data.toString() + "; axisMap = " + axisMap.toString();
+		return data + "; axisMap = " + axisMap;
 	}
 }

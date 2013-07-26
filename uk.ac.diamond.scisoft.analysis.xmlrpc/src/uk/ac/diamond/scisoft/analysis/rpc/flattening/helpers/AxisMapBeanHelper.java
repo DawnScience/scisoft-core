@@ -24,7 +24,6 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 public class AxisMapBeanHelper extends MapFlatteningHelper<AxisMapBean> {
 
 	public static final String AXIS_ID = "axisID";
-	public static final String MAP_MODE = "mapMode";
 
 	public AxisMapBeanHelper() {
 		super(AxisMapBean.class);
@@ -32,7 +31,7 @@ public class AxisMapBeanHelper extends MapFlatteningHelper<AxisMapBean> {
 
 	@Override
 	public AxisMapBean unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		AxisMapBean outBean = new AxisMapBean((Integer) thisMap.get(MAP_MODE));
+		AxisMapBean outBean = new AxisMapBean();
 		Object[] objIds = (Object[]) thisMap.get(AXIS_ID);
 		String[] ids = new String[objIds.length];
 		System.arraycopy(objIds, 0, ids, 0, objIds.length);
@@ -45,7 +44,6 @@ public class AxisMapBeanHelper extends MapFlatteningHelper<AxisMapBean> {
 		AxisMapBean thisAxisMap = (AxisMapBean) obj;
 		Map<String, Object> outMap = createMap(getTypeCanonicalName());
 		outMap.put(AXIS_ID, rootFlattener.flatten(thisAxisMap.getAxisID()));
-		outMap.put(MAP_MODE, rootFlattener.flatten(thisAxisMap.getMapMode()));
 		return outMap;
 	}
 

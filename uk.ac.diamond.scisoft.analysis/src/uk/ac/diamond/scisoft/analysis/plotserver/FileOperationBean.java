@@ -221,7 +221,7 @@ public class FileOperationBean implements Serializable {
 			String filename = iter.next();
 			AbstractDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetaData);
 			DataSetWithAxisInformation dsAxisInf = new DataSetWithAxisInformation();
-			AxisMapBean amb = new AxisMapBean(AxisMapBean.DIRECT);
+			AxisMapBean amb = new AxisMapBean();
 			dsAxisInf.setData(ds);
 			dsAxisInf.setAxisMap(amb);
 			try {

@@ -3205,6 +3205,154 @@ public class Maths {
 	}
 
 	/**
+	 * Interpolated a variance value from 2D dataset
+	 * @param d input dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	public static double getBilinearVariance(final IDataset d, final double x0, final double x1) {
+		final int[] s = d.getShape();
+		if (s.length != 2) {
+			throw new IllegalArgumentException("Only 2d datasets allowed");
+		}
+		final double a1, a2, a3, a4;
+		final double f1, f2, f3, f4;
+		final double u1, u0;
+		final int i0, i1;
+
+		i0 = (int) Math.floor(x0);
+		i1 = (int) Math.floor(x1);
+		u0 = x0 - i0;
+		u1 = x1 - i1;
+		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1]) {
+			return 0.0;
+		}
+		// use bilinear interpolation
+		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1);
+		if (u1 > 0) {
+			if (i1 == s[1] - 1) {
+				return f1;
+			}
+			if (u0 > 0) {
+				if (i0 == s[0] - 1) {
+					return f1;
+				}
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
+				f3 = d.getDouble(i0 + 1, i1 + 1);
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
+				a1 = (1 - u1) * (1 - u0);
+				a2 = u1 * (1 - u0);
+				a3 = u1 * u0;
+				a4 = (1 - u1) * u0;
+				//r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
+			} else {
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
+				f3 = 0.0;
+				f4 = 0.0;
+				a1 = 1 - u1;
+				a2 = u1;
+				a3 = 0.0;
+				a4 = 0.0;
+				//r = (1 - u1) * f1 + u1 * f2;
+			}
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				if (i0 == s[0] - 1) {
+					return f1;
+				}
+				f2 = 0.0;
+				f3 = 0.0;
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
+				a1 = 1 - u0;
+				a2 = 0.0;
+				a3 = 0.0;
+				a4 = u0;
+				//r = (1 - u0) * f1 + u0 * f4;
+			} else { // exactly on axis 0
+				return f1;
+			}
+		}
+		return a1 * a1 * f1 + a2 * a2 * f2 + a3 * a3 * f3 + a4 * a4 * f4;
+	}
+	
+	/**
+	 * Interpolated a variance value from 2D dataset with mask
+	 * @param d input dataset
+	 * @param m mask dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	public static double getBilinearVariance(final IDataset d, final IDataset m, final double x0, final double x1) {
+		if (m == null) {
+			return getBilinearVariance(d, x0, x1);
+		}
+		final int[] s = d.getShape();
+		if (s.length != 2) {
+			throw new IllegalArgumentException("Only 2d datasets allowed");
+		}
+		final double a1, a2, a3, a4;
+		final double f1, f2, f3, f4;
+		final double u1, u0;
+		final int i0, i1;
+
+		i0 = (int) Math.floor(x0);
+		i1 = (int) Math.floor(x1);
+		u0 = x0 - i0;
+		u1 = x1 - i1;
+		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1]) {
+			return 0.0;
+		}
+		// use bilinear interpolation
+		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1) * m.getDouble(i0, i1);
+		if (u1 > 0) {
+			if (i1 == s[1] - 1) {
+				return f1;
+			}
+			if (u0 > 0) {
+				if (i0 == s[0] - 1) {
+					return f1;
+				}
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+				f3 = d.getDouble(i0 + 1, i1 + 1) * m.getDouble(i0 + 1, i1 + 1);
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
+				a1 = (1 - u1) * (1 - u0);
+				a2 = u1 * (1 - u0);
+				a3 = u1 * u0;
+				a4 = (1 - u1) * u0;
+				//r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
+			} else {
+				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+				f3 = 0.0;
+				f4 = 0.0;
+				a1 = 1 - u1;
+				a2 = u1;
+				a3 = 0.0;
+				a4 = 0.0;
+				//r = (1 - u1) * f1 + u1 * f2;
+			}
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				if (i0 == s[0] - 1) {
+					return f1;
+				}
+				f2 = 0.0;
+				f3 = 0.0;
+				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
+				a1 = 1 - u0;
+				a2 = 0.0;
+				a3 = 0.0;
+				a4 = u0;
+				//r = (1 - u0) * f1 + u0 * f4;
+			} else { // exactly on axis 0
+				return f1;
+			}
+		}
+		return a1 * a1 * f1 + a2 * a2 * f2 + a3 * a3 * f3 + a4 * a4 * f4;
+	}
+
+	/**
 	 * Create a dataset of the arguments from a complex dataset
 	 * @param a dataset
 	 * @return dataset of angles

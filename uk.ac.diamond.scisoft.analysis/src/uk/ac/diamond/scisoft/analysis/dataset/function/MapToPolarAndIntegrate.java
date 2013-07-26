@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -47,6 +49,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	private boolean interpolate = true;  // Default: use bilinear interpolation algorithm
 	private boolean doRadial = true;     // Default: calculate radial profile
 	private boolean doAzimuthal = true;  // Default: calculate azimuthal profile
+	private boolean doErrors = false;    // Default: calculate error estimates
 	private boolean aver = true;         // Default: calculate averaged intensity profiles
 	
 	private XAxis axisType;
@@ -105,6 +108,16 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 */
 	public void setDoAzimuthal(boolean doAzimuthal) {
 		this.doAzimuthal = doAzimuthal;
+	}
+
+	/**
+	 * Set flag controlling error estimate calculation
+	 * 
+	 * @param doErrors
+	 * 			if true calculate error estimates
+	 */
+	public void setDoErrors(boolean doErrors) {
+		this.doErrors = doErrors;
 	}
 
 	/**
@@ -215,9 +228,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
 	private List<AbstractDataset> interpolate_value(IDataset... datasets) {
-		if (datasets.length == 0)
+		if (datasets.length == 0) {
 			return null;
-
+		}
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		for (IDataset ids : datasets) {
@@ -225,6 +238,14 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
 			double dr = 1.0/dpp;
+			
+			IDataset errIds = null; 
+			if (doErrors && (ids instanceof AbstractDataset)) {
+				Serializable errorBuffer = ((AbstractDataset) ids).getErrorBuffer();
+				if (errorBuffer instanceof DoubleDataset) {
+					errIds = (DoubleDataset) errorBuffer;
+				}
+			}
 			
 			//Find maximal radius on the detector
 			//int[] shape = ids.getShape();
@@ -236,31 +257,33 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
 			double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
-			if (nr == 0)
-				nr = 1;
-			if (np == 0)
-				np = 1;
-
+			
+			nr = (nr == 0 ? 1 : nr);
+			np = (np == 0 ? 1 : np);
+			
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
 			AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
+			AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, AbstractDataset.FLOAT64);
+			AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, AbstractDataset.FLOAT64);
 			AbstractDataset usump = AbstractDataset.zeros(sump);
 			AbstractDataset usumr = AbstractDataset.zeros(sumr);
 			
 			double rad, phi;
 			double x, y;
-			double csum;			
+			double csum, cvarsum;			
 			
 			for (int r = 0; r < nr; r++) {
 				rad = srad + r*dr;
 				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
 				double tdphi = rdphi / rad;
 				// Check if rad == 0
-				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi))
+				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi)) {
 					tdphi = dphi;
-				if (tnp == 0)
-					tnp = 1;
+				}
+				tnp = (tnp == 0 ? 1 : tnp);
 				csum = 0.0;
+				cvarsum = 0.0;
 
 				double msk = 1.0;
 				double tusump = 0;
@@ -280,11 +303,13 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
 						if (!clip && aver) {
-							if (doRadial)
+							if (doRadial) {
 								tusump += rad*dr*tdphi;
+							}
 							if (doAzimuthal) {
-								for (int q = qmin; q < qmax; q++)
+								for (int q = qmin; q < qmax; q++) {
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+								}
 							}
 						}
 						continue;
@@ -292,39 +317,62 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
 						if (!clip && aver) {
-							if (doRadial)
+							if (doRadial) {
 								tusump += rad*dr*tdphi;
+							}
 							if (doAzimuthal) {
-								for (int q = qmin; q < qmax; q++)
+								for (int q = qmin; q < qmax; q++) {
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+								}
 							}
 						}
 						continue;
 					}
-					if (mask != null && aver)
+					if (mask != null && aver) {
 						msk = Maths.getBilinear(mask, y ,x);
-					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y, x);
+					}
+					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y,	x);
+					Double var = null;
+					if (errIds != null) {
+						var = rdphi * dr * rdphi * dr * Maths.getBilinearVariance(errIds, mask, y,	x);
+					}
 					if (doRadial) {
 						csum += v;
-						if (aver)
+						if (var != null) {
+							cvarsum += var;
+						}
+						if (aver) {
 							tusump += rad*dr*tdphi*msk;
+						}
 					}
 					if (doAzimuthal) {
 						for (int q = qmin; q < qmax; q++) {
 							sumr.set(v / prj + sumr.getDouble(q), q);
-							if (aver)
+							if (var != null) {
+								errsumr.set(var / (prj * prj) + errsumr.getDouble(q), q);
+							}
+							if (aver) {
 								usumr.set(rad * dr * dphi * msk + usumr.getDouble(q), q);
+							}
 						}
 					}
 				}
 				
 				if (doRadial) {
 					sump.set(csum, r);
-					if(aver)
+					if (errIds != null) {
+						errsump.set(cvarsum, r);
+					}
+					if(aver) {
 						usump.set(tusump, r);
+					}
 				}
 			}
 
+			if (errIds != null) {
+				sumr.setErrorBuffer(errsumr);
+				sump.setErrorBuffer(errsump);
+			}
 			result.add(sumr);
 			result.add(sump);
 			result.add(usumr);
@@ -410,11 +458,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
 			double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
-			if (nr == 0)
-				nr = 1;
-			if (np == 0)
-				np = 1;
-
+			
+			nr = (nr == 0 ? 1 : nr);
+			np = (np == 0 ? 1 : np);
+			
 			AbstractDataset usump = AbstractDataset.zeros(new int[] { nr }, dtype);
 			AbstractDataset usumr = AbstractDataset.zeros(new int[] { np }, dtype);
 			
@@ -426,10 +473,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
 				double tdphi = rdphi / rad;
 				// Check if rad == 0
-				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi))
+				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi)) {
 					tdphi = dphi;
-				if (tnp == 0)
+				}
+				if (tnp == 0) {
 					tnp = 1;
+				}
 
 				double msk = 1.0;
 				double tusump = 0;
@@ -444,36 +493,46 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (shape[1] + 1.)) {
 						if (!clip) {
-							if (doRadial)
+							if (doRadial) {
 								tusump += rad*dr*tdphi;
-							if (doAzimuthal)
-								for (int q = qmin; q < qmax; q++)
+							}
+							if (doAzimuthal) {
+								for (int q = qmin; q < qmax; q++) {
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+								}
+							}
 						}
 						continue;
 					}
 					y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (shape[0] + 1.)) {
 						if (!clip) {
-							if (doRadial)
+							if (doRadial) {
 								tusump += rad*dr*tdphi;
-							if (doAzimuthal)
-								for (int q = qmin; q < qmax; q++)
+							}
+							if (doAzimuthal) {
+								for (int q = qmin; q < qmax; q++) {
 									usumr.set(rad*dr*dphi + usumr.getDouble(q), q);
+								}
+							}
 						}
 						continue;
 					}
-					if (mask != null)
+					if (mask != null) {
 						msk = Maths.getBilinear(mask, y ,x);
-					if (doRadial)
+					}
+					if (doRadial) {
 						tusump += rad*dr*tdphi*msk;
-					
-					if (doAzimuthal)
-						for (int q = qmin; q < qmax; q++)
+					}
+					if (doAzimuthal) {
+						for (int q = qmin; q < qmax; q++) {
 							usumr.set(rad*dr*dphi*msk + usumr.getDouble(q), q);
+						}
+					}
 				}
-				if (doRadial)
+				if (doRadial) {
 					usump.set(tusump, r);
+				}
 			}
 
 			result.add(usumr);
@@ -530,9 +589,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 						if ((R >= srad) && (R < erad)) {
 							int k = (int) (R - srad);
-							if (mask != null && !mask.getBoolean(new int[] {j,i}))
+							if (mask != null && !mask.getBoolean(new int[] {j,i})) {
 									continue;
-							
+							}
 							double val = ids.getDouble(new int[] {j,i});
 							
 							// Each point participating to the sector integration is weighted depending on
@@ -542,12 +601,14 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 							if (doRadial) {
 								// Evaluates the intensity and the frequency
 								intensity[k] += fFac * val;
-								if(aver)
+								if(aver) {
 									frequency[k] += fFac;
+								}
 								if (k < (npts - 1)) {
 									intensity[k + 1] += (1 - fFac) * val;
-									if(aver)
+									if(aver) {
 										frequency[k + 1] += (1 - fFac);
+									}
 								}
 							}
 							if (doAzimuthal) {
@@ -557,8 +618,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 								for (int n = ak1; n <= ak2; n++) {
 									fFac = ak2 - ak1 + 1.0;
 									azimuth[n] += val / fFac;
-									if(aver)
+									if(aver) {
 										afrequency[n] += 1.0 / fFac;
+									}
 								}
 							}
 						}

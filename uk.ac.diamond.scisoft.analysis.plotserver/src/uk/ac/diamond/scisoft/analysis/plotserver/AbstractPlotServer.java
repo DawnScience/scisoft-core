@@ -48,17 +48,15 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public void setData(String guiName, DataBean data) throws Exception {
-		
-		Serializable value = null;
-		
-		if (data.getGuiParameters() != null) value = data.getGuiParameters().get(GuiParameters.PLOTOPERATION);
-		
-		// if it's a duplicate key and an PLOTOP_ADD we need to add the datasets to the old bean
+		GuiBean gb = data.getGuiParameters();
+		Serializable value = gb == null ? null : gb.get(GuiParameters.PLOTOPERATION);
+
+		// if it's a duplicate key and a PLOTOP_ADD we need to add the datasets to the old bean
 		if (GuiParameters.PLOTOP_ADD.equals(value) && dataStore.containsKey(guiName)) {
 			dataStore.get(guiName).addData(data);
 		} else {
 			dataStore.put(guiName, data);
-		}	
+		}
 	}
 
 	@Override

@@ -45,8 +45,8 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		}
 
 		@Override
-		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-				String yAxisName) throws Exception {
+		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] xAxisNames,
+				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
 

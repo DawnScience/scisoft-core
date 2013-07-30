@@ -52,20 +52,20 @@ public interface ISDAPlotter {
 
 	/**
 	 * Remove axis by title.
-	 * @param axisTitle
+	 * @param axisTitle if null, then remove all but default axes
 	 * @throws Exception if the axisTitle is not a real axis
 	 */
 	public void removeAxis(String plotName, final String axisTitle) throws Exception;
 
 	/**
-	 * Set the active axis which subsequent plots will plot to.
+	 * Set the active X-axis which subsequent plots will plot to.
 	 * @param xAxisTitle
 	 * @throws Exception if the axis title is not an existing axis
 	 */
 	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception;
 
 	/**
-	 * Set the active axis which subsequent plots will plot to.
+	 * Set the active Y-axis which subsequent plots will plot to.
 	 * @param yAxisTitle
 	 * @throws Exception if the axis title is not an existing axis
 	 */
@@ -76,17 +76,17 @@ public interface ISDAPlotter {
 	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
-	 * @param xAxes
+	 * @param xValues
 	 *            The dataset to use as the X values
-	 * @param yAxes
+	 * @param yValues
 	 *            The datasets to use as the Y values
-	 * @param xAxisName
-	 *            The name of xAxis, null if none
-	 * @param yAxisName
-	 *            The name of dataset, null if none
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void plot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
+	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Add plot to existing plots
@@ -94,31 +94,30 @@ public interface ISDAPlotter {
 	 *            The name of the view to plot to
 	 * @param title
 	 *            The title of the plot
-	 * @param xAxes
+	 * @param xValues
 	 *            The dataset to use as the X values
-	 * @param yAxes
+	 * @param yValues
 	 *            The datasets to use as the Y values
-	 * @param xAxisName
-	 *            The name of xAxis, null if none
-	 * @param yAxisName
-	 *            The name of dataset, null if none
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void addPlot(String plotName, final String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
-
+	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
 	 * 
 	 * @param plotName
 	 * @param title
-	 * @param xAxes
-	 * @param yAxes
+	 * @param xValues
+	 * @param yValues
 	 * @param xAxisName
 	 * @param yAxisName
 	 * @throws Exception
 	 */
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, final String xAxisName, final String yAxisName) throws Exception;
+	public void updatePlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view
@@ -212,23 +211,23 @@ public interface ISDAPlotter {
 	 * Plot a stack in 3D of single 1D plots to the defined view
 	 * 
 	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @param zAxis
+	 * @param xValues
+	 * @param yValues
+	 * @param zValues
 	 * @throws Exception
 	 */
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception;
+	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
 
 	/**
 	 * Update stack with new data, keeping zoom level
 	 * 
 	 * @param plotName
-	 * @param xAxes
-	 * @param yAxes
-	 * @param zAxis
+	 * @param xValues
+	 * @param yValues
+	 * @param zValues
 	 * @throws Exception
 	 */
-	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception;
+	public void updateStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
 
 	/**
 	 * Scan a directory and populate an image explorer view with images of given suffices
@@ -408,5 +407,4 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public String[] getGuiNames() throws Exception;
-
 }

@@ -21,34 +21,36 @@ import java.util.Arrays;
 
 /**
  * Basic bean which stores information about how axes are mapped to different
- * dimensions of a dataset
+ * dimensions of a dataset by IDs and names. The IDs refer to axis datasets
+ * held by a data bean and those datasets are used for the independent
+ * variables of a plot. The names direct the plot to use the corresponding axes.
  */
 public class AxisMapBean implements Serializable {
 	/**
-	 * Default ID for x axis
+	 * Default ID or name for x axis
 	 */
-	public static final String XAXIS = "x-axis";
+	public static final String XAXIS = "X-Axis";
 	/**
-	 * Default ID for y axis
+	 * Default ID or name for y axis
 	 */
-	public static final String YAXIS = "y-axis";
+	public static final String YAXIS = "Y-Axis";
 	/**
-	 * Default ID for z axis
+	 * Default ID or name for z axis
 	 */
-	public static final String ZAXIS = "z-axis";
+	public static final String ZAXIS = "Z-Axis";
 	/**
 	 * Default ID for secondary x axis
 	 */
-	public static final String XAXIS2 = "2nd x-axis";
+	public static final String XAXIS2 = "2nd X-Axis";
 
-	
 	private String[] axisID;
-    
+	private String[] axisNames;
+
 	public AxisMapBean() {
 	}
-	
+
 	/**
-	 * @return Returns the axisID.
+	 * @return Returns the axisIDs which refer to the axis datasets
 	 */
 	public String[] getAxisID() {
 		return axisID;
@@ -56,14 +58,29 @@ public class AxisMapBean implements Serializable {
 
 	/**
 	 * @param axisID
-	 *            The axisID strings to set that correspond to each index of a dataset 
+	 *            The axisID strings to set that of axis datasets held in a data bean
 	 */
 	public void setAxisID(String[] axisID) {
 		this.axisID = axisID;
 	}
 
+	/**
+	 * @return axis names
+	 */
+	public String[] getAxisNames() {
+		return axisNames;
+	}
+
+	/**
+	 * Set the axes for the plotter to use by names
+	 * @param axisNames
+	 */
+	public void setAxisNames(String[] axisNames) {
+		this.axisNames = axisNames;
+	}
+
 	@Override
 	public String toString() {
-		return Arrays.toString(axisID);
+		return "Dataset IDs: " + Arrays.toString(axisID) + (axisNames == null ? "" : "; Axis names: " + Arrays.toString(axisNames));
 	}
 }

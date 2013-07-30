@@ -70,18 +70,33 @@ public class DataSetWithAxisInformation implements Serializable {
 	 * @return The dataset with Axis info included
 	 */
 	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis) {
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
-		AxisMapBean axisMapBean = new AxisMapBean();
-		axisMapBean.setAxisID(new String[] { AxisMapBean.XAXIS });
-		axisData.setAxisMap(axisMapBean);
-		axisData.setData(yAxis);
-		return axisData;
+		return createAxisDataSet(yAxis, AxisMapBean.XAXIS);
 	}
 
-	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisName) {
+	/**
+	 * This method builds the axis information into the base dataset
+	 * @param yAxis
+	 * @param axisDatasetID
+	 * @return dataset with axis info
+	 */
+	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID) {
+		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, null);
+	}
+
+	/**
+	 * This method builds the axis information into the base dataset
+	 * @param yAxis
+	 * @param axisDatasetIDs
+	 * @param axisNames can be null or contain nulls
+	 * @return dataset with axis info
+	 */
+	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String[] axisDatasetIDs, String[] axisNames) {
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
 		AxisMapBean axisMapBean = new AxisMapBean();
-		axisMapBean.setAxisID(new String[] { axisName });
+		axisMapBean.setAxisID(axisDatasetIDs.clone());
+		if (axisNames != null) {
+			axisMapBean.setAxisNames(axisNames.clone());
+		}
 		axisData.setAxisMap(axisMapBean);
 		axisData.setData(yAxis);
 		return axisData;

@@ -99,11 +99,11 @@ public class DataBean implements Serializable {
 	/**
 	 * Adds the provided axis data to the bean
 	 * 
-	 * @param axisName
+	 * @param axisID
 	 * @param axisDataset
 	 */
-	public void addAxis(String axisName, IDataset axisDataset) {
-		axisData.put(axisName, DatasetUtils.convertToAbstractDataset(axisDataset));
+	public void addAxis(String axisID, IDataset axisDataset) {
+		axisData.put(axisID, DatasetUtils.convertToAbstractDataset(axisDataset));
 	}
 
 	/**
@@ -116,13 +116,13 @@ public class DataBean implements Serializable {
 	}
 
 	/**
-	 * gets the axis data of the specified name
+	 * gets the axis data of the specified ID
 	 * 
-	 * @param axisName
+	 * @param axisID
 	 * @return the axis dataset
 	 */
-	public AbstractDataset getAxis(String axisName) {
-		return axisData.get(axisName);
+	public AbstractDataset getAxis(String axisID) {
+		return axisData.get(axisID);
 	}
 
 	/**
@@ -156,18 +156,19 @@ public class DataBean implements Serializable {
 			AbstractDataset nd = nmap.get(s);
 			AbstractDataset od = axisData.get(s);
 			if (od != null && !od.equals(nd)) { // a clash so need to rename
-				String n = null;
-				for (int i = 0; ; i++) { // find unique name
-					n = AxisMapBean.XAXIS + i;
+				String n = nd.getName();
+				if (n != null && n.trim().length() > 0) {
+					od = axisData.get(n);
+					if (nd.equals(od)) {
+						replaceAxisID(ndata, s, n);
+						continue;
+					}
+					// another clash occurred so fall through
+				}
+				for (int i = 0;; i++) { // find unique name
+					n = i == 0 ? AxisMapBean.XAXIS : AxisMapBean.XAXIS + i;
 					if (!nmap.containsKey(n) && !axisData.containsKey(n)) {
-						for (DataSetWithAxisInformation d : ndata) { // replace clashing name
-							String[] a = d.getAxisMap().getAxisID();
-							for (int j = 0; j < a.length; j++) {
-								if (s.equals(a[j])) {
-									a[j] = n;
-								}
-							}
-						}
+						replaceAxisID(ndata, s, n);
 						break;
 					}
 				}
@@ -175,6 +176,17 @@ public class DataBean implements Serializable {
 			}
 		}
 		data.addAll(ndata);
+	}
+
+	private void replaceAxisID(List<DataSetWithAxisInformation> ndata, String oldID, String newID) {
+		for (DataSetWithAxisInformation d : ndata) { // replace clashing name
+			String[] ids = d.getAxisMap().getAxisID();
+			for (int j = 0; j < ids.length; j++) {
+				if (oldID.equals(ids[j])) {
+					ids[j] = newID;
+				}
+			}
+		}
 	}
 
 	/**
@@ -230,7 +242,7 @@ public class DataBean implements Serializable {
 	public GuiBean getGuiParameters() {
 		return plotParameters;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "data =" + data.toString() + "\n" + "axisData = " + axisData.toString(); 

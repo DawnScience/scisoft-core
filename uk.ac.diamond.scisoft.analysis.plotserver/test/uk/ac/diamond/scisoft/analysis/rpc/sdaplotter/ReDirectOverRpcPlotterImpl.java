@@ -52,23 +52,23 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	public void setRemotePortRpc(int port) throws Exception {
 		request("setremoteport_rpc", port);
 	}
-	
+
 	@Override
-	public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName, String yAxisName)
+	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames)
 			throws Exception {
-		request("line", xAxes, yAxes, title, plotName);
+		request("line", xValues, yValues, title, plotName);
 	}
 
 	@Override
-	public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-			String yAxisName) throws Exception {
-		request("addline", xAxes, yAxes, title, plotName);
+	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames)
+			throws Exception {
+		request("line", xValues, yValues, title, plotName);
 	}
 
 	@Override
-	public void updatePlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String xAxisName,
-			String yAxisName) throws Exception {
-		request("updateline", xAxes, yAxes, title, plotName);
+	public void updatePlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String xAxisName, String yAxisName)
+			throws Exception {
+		request("updateline", xValues, yValues, title, plotName);
 	}
 
 	@Override
@@ -77,13 +77,13 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
-		request("image", image, xAxis, yAxis, plotName);
+	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
+		request("image", image, xValues, yValues, plotName);
 	}
 
 	@Override
-	public void imagesPlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset[] images) throws Exception {
-		request("images", images, xAxis, yAxis, plotName);
+	public void imagesPlot(String plotName, IDataset xValues, IDataset yValues, IDataset[] images) throws Exception {
+		request("images", images, xValues, yValues, plotName);
 	}
 
 	@Override
@@ -114,18 +114,18 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void surfacePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset data) throws Exception {
-		request("surface", data, xAxis, yAxis, plotName);
+	public void surfacePlot(String plotName, IDataset xValues, IDataset yValues, IDataset data) throws Exception {
+		request("surface", data, xValues, yValues, plotName);
 	}
 
 	@Override
-	public void stackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		request("stack", xAxes, yAxes, zAxis, plotName);
+	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
+		request("stack", xValues, yValues, zValues, plotName);
 	}
 
 	@Override
-	public void updateStackPlot(String plotName, IDataset[] xAxes, IDataset[] yAxes, IDataset zAxis) throws Exception {
-		request("updatestack", xAxes, yAxes, zAxis, plotName);
+	public void updateStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
+		request("updatestack", xValues, yValues, zValues, plotName);
 	}
 
 	private String getOrderStr(int order) throws AssertionFailedError {

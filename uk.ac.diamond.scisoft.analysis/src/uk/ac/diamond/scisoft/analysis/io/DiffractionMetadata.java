@@ -63,9 +63,9 @@ public class DiffractionMetadata extends ExtendedMetadata implements IDiffractio
 	public IDiffractionMetadata clone() {
 		DiffractionMetadata c = (DiffractionMetadata) super.clone();
 		c.oEnv = oEnv;
-		c.env = env.clone();
+		c.env = env == null ? null : env.clone();
 		c.oProps = oProps;
-		c.props = props.clone();
+		c.props = props == null ? null : props.clone();
 		return c;
 	}
 }

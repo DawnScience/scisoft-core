@@ -227,7 +227,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.jscience"
+         id="uk.ac.diamond.org.jscience4"
          download-size="0"
          install-size="0"
          version="0.0.0"

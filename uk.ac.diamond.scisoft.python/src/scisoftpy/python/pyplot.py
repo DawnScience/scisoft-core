@@ -81,6 +81,8 @@ _plot_name_remapper = {
     'plot_removeaxis': 'removeAxis',
     'plot_setactivexaxis': 'setActiveXAxis',
     'plot_setactiveyaxis': 'setActiveYAxis',
+    'plot_renameactivexaxis': 'renameActiveXAxis',
+    'plot_renameactiveyaxis': 'renameActiveYAxis',
 }
 
 class imageorder:

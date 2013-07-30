@@ -53,6 +53,7 @@ _plot_createaxis = _plot.plot_createaxis
 _plot_removeaxis = _plot.plot_removeaxis
 _plot_setactivexaxis = _plot.plot_setactivexaxis
 _plot_setactiveyaxis = _plot.plot_setactiveyaxis
+_plot_renameactiveaxis = {'x':_plot.plot_renameactivexaxis, 'y':_plot.plot_renameactiveyaxis}
 
 _plot_clear = _plot.plot_clear
 
@@ -144,7 +145,9 @@ def clear(name=None):
 '''
 Store a global list of x and y axes names
 '''
-_AXES_NAMES = { 'x':['X-Axis'], 'y':['Y-Axis'] }
+_DEF_NAMES = {'x':'X-Axis', 'y':'Y-Axis'}
+
+_AXES_NAMES = { 'x':[_DEF_NAMES['x']], 'y':[_DEF_NAMES['y']] }
 
 import types as _types
 
@@ -186,93 +189,104 @@ def _parselinearg(x, y, title, name):
 
     return name, title, xl, yl
 
-_AXES_DICT = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom':_plot.axis_bottom},
+_AXES_SIDES = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom':_plot.axis_bottom},
               'y':{'default':_plot.axis_left, 'left':_plot.axis_left, 'right':_plot.axis_right} }
 
-def _setup_axes(al, mode, name):
+from time import sleep as _sleep
+_NAP = 0.1 # in seconds need to sleep to synchronize state
+
+def _setup_axes(al, dirn, name):
+    c = 0 # count use of default axis
     for a in al:
         if type(a) is _types.DictType: # has axis name
-            a = a.items()[0]
-        if type(a) is _types.TupleType: # has axis name
-            _setup_axis(a, mode, name)
+            n = a.keys()[0]
+            if type(n) is _types.TupleType: # has side info
+                n = n[0]
+            if n == _DEF_NAMES[dirn]:
+                c += 1
+        else:
+            c += 1
 
-def _setup_axis(a, mode, name):
+    rename = c == 0
+    an = []
+    for a in al:
+        if type(a) is _types.DictType: # has axis name
+            n = a.keys()[0]
+            rename, n = _setup_axis(rename, n, dirn, name)
+            an.append(n)
+        else:
+            an.append(_DEF_NAMES[dirn])
+    return an
+
+def _setup_axis(rename, n, dirn, name):
     '''
-    a is tuple of axis name (or axis name and side) and array
+    n is axis name (or axis name and side)
     '''
-    n = a[0]
     if type(n) is _types.TupleType: # has side info
-        s = _AXES_DICT[mode][n[1]]
+        s = _AXES_SIDES[dirn][n[1]]
         n = n[0]
     else:
-        s = _AXES_DICT[mode]['default']
-    if n not in _AXES_NAMES[mode]:
-        _plot_createaxis(name, n, s)
-        _AXES_NAMES[mode].append(n)
+        s = _AXES_SIDES[dirn]['default']
+    if n not in _AXES_NAMES[dirn]:
+        _sleep(_NAP)
+        if rename:
+            _plot_renameactiveaxis[dirn](name, n) # use default/selected axis
+            _AXES_NAMES[dirn][0] = n
+            rename = False
+        else:
+            _plot_createaxis(name, n, s)
+            _AXES_NAMES[dirn].append(n)
+    return rename, n
 
-def _clear_axis(mode, name):
-    al = _AXES_NAMES[mode]
-    for n in al[1:]:
-        _plot_removeaxis(name, n)
-        al.remove(n)
+def _clear_axis(name):
+    for d in ['x', 'y']:
+        al = _AXES_NAMES[d]
+        al[0] = _DEF_NAMES[d]
+        for n in al[1:]:
+            al.remove(n)
 
 def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)
 
-    from time import sleep
-    NAP = 0.05 # need to sleep to synchronize state
-
     first = mode is None # plot first then add rest
     if first:
-        _clear_axis('x', name)
-        sleep(NAP)
-        _clear_axis('y', name)
-        sleep(NAP)
+        _sleep(_NAP)
+        _plot_clear(name)
+        _clear_axis(name)
 
     if xl is not None:
-        _setup_axes(xl, 'x', name)
-        sleep(NAP)
-    _setup_axes(yl, 'y', name)
-    sleep(NAP)
+        _sleep(_NAP)
+        ax = _setup_axes(xl, 'x', name)
+    else:
+        ax = None
+    ay = _setup_axes(yl, 'y', name)
 
+    # generate list of axes
+    xs = []
+    ys = []
     for i in range(len(yl)):
-        n = _AXES_NAMES['x'][0]
-        if xl is None:
-            lx = None
-        else:
-            x = xl[0] if len(xl) == 1 else xl[i]
-            if type(x) is _types.DictType: # has axis name
-                x = x.items()[0]
-            if type(x) is _types.TupleType: # has axis name
-                n = x[0]
-                if type(n) is _types.TupleType: # has side info
-                    n = n[0]
-                x = x[1]
-            lx = [x]
-        _plot_setactivexaxis(name, n)
-        sleep(NAP)
+        if xl is not None:
+            xi = xl[0] if len(xl) == 1 else xl[i]
+            if type(xi) is _types.DictType: # has axis name
+                _, xi = xi.items()[0]
+            if len(xl) == 1:
+                if i == 0:
+                    xs.append(xi)
+            else:
+                xs.append(xi)
 
-        n = _AXES_NAMES['y'][0]
-        y = yl[i]
-        if type(y) is _types.DictType: # has axis name
-            y = y.items()[0]
-        if type(y) is _types.TupleType: # has axis name
-            n = y[0]
-            if type(n) is _types.TupleType: # has side info
-                n = n[0]
-            y = y[1]
-        _plot_setactiveyaxis(name, n)
-        sleep(NAP)
+        yi = yl[i]
+        if type(yi) is _types.DictType: # has axis name
+            _, yi = yi.items()[0]
+        ys.append(yi)
 
-        if first:
-            first = False
-            _plot_line(name, t, lx, [y], None, None)
-        else:
-            _plot_addline(name, t, lx, [y], None, None)
-        sleep(NAP)
+    for a in xs: # if all None then make it None
+        if a is not None:
+            break
+    else:
+        xs = None
 
-#    _clear_axis('x', name)
-#    _clear_axis('y', name)
+    _plot_line(name, t, xs, ys, ax, ay)
 
 def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any

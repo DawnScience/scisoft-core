@@ -31,6 +31,8 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIList;
  */
 public final class GuiParameters implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String param;
 
 	// Ordinal of next parameter to be created

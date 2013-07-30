@@ -224,28 +224,29 @@ def _setup_axis(rename, n, dirn, name):
         n = n[0]
     else:
         s = _AXES_SIDES[dirn]['default']
-    d = _AXES_NAMES[dirn][name]
-    if not d: # create initial list of axis name for this named plot
-        d = [_DEF_NAMES[dirn]]
-        _AXES_NAMES[dirn][name] = d
-        
-    if n not in d:
+    al = _AXES_NAMES[dirn].get(name)
+    if al is None: # create initial list of axis name for this named plot
+        al = [_DEF_NAMES[dirn]]
+        _AXES_NAMES[dirn][name] = al
+
+    if n not in al:
         _sleep(_NAP)
         if rename:
             _plot_renameactiveaxis[dirn](name, n) # use default/selected axis
-            d[0] = n
+            al[0] = n
             rename = False
         else:
             _plot_createaxis(name, n, s)
-            d.append(n)
+            al.append(n)
     return rename, n
 
 def _clear_axis(name):
     for dirn in ['x', 'y']:
-        al = _AXES_NAMES[dirn][name]
-        al[0] = _DEF_NAMES[dirn]
-        for n in al[1:]:
-            al.remove(n)
+        al = _AXES_NAMES[dirn].get(name)
+        if al:
+            al[0] = _DEF_NAMES[dirn]
+            for n in al[1:]:
+                al.remove(n)
 
 def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)

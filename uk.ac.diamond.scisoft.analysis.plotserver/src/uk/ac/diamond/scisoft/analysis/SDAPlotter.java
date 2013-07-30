@@ -91,6 +91,24 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * Rename the active X-axis
+	 * @param xAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public static void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		getPlotterImpl().renameActiveXAxis(plotName, xAxisTitle);
+	}
+
+	/**
+	 * Rename the active Y-axis
+	 * @param yAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public static void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		getPlotterImpl().renameActiveYAxis(plotName, yAxisTitle);
+	}
+
+	/**
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param yValues

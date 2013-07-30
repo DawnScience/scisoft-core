@@ -30,6 +30,8 @@ public class AxisOperation implements Serializable {
 	public final static String DELETE  = "DELETE";
 	public final static String ACTIVEX = "ACTIVEX";
 	public final static String ACTIVEY = "ACTIVEY";
+	public final static String RENAMEX = "RENAMEX";
+	public final static String RENAMEY = "RENAMEY";
 	
 	/**
 	 * Enum not used because Corba, allowed values of side

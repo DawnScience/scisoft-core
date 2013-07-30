@@ -248,4 +248,14 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
 	}
+
+	@Override
+	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+	}
+
+	@Override
+	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+	}
 }

@@ -1279,4 +1279,20 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		sendBeansToServer(plotName, null, guiBean);
 	}
+
+	@Override
+	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.RENAMEX, xAxisTitle));
+
+		sendBeansToServer(plotName, null, guiBean);
+	}
+
+	@Override
+	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.RENAMEY, yAxisTitle));
+
+		sendBeansToServer(plotName, null, guiBean);
+	}
 }

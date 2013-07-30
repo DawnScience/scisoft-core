@@ -72,6 +72,20 @@ public interface ISDAPlotter {
 	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception;
 
 	/**
+	 * Rename the active X-axis
+	 * @param xAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception;
+
+	/**
+	 * Rename the active Y-axis
+	 * @param yAxisTitle
+	 * @throws Exception if the axis title is not an existing axis
+	 */
+	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception;
+
+	/**
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param title

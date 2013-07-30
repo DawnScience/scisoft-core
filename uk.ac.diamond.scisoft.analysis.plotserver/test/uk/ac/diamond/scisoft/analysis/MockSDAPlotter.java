@@ -222,21 +222,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void removeAxis(String plotName, String axisTitle) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
 	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
 		throw newShouldNotBeCalled();
 	}

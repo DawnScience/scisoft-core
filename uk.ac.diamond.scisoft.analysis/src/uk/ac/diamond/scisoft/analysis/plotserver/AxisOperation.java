@@ -27,9 +27,6 @@ public class AxisOperation implements Serializable {
 	 * Enum not used because Corba, allowed values of operationType
 	 */
 	public final static String CREATE  = "CREATE";
-	public final static String DELETE  = "DELETE";
-	public final static String ACTIVEX = "ACTIVEX";
-	public final static String ACTIVEY = "ACTIVEY";
 	public final static String RENAMEX = "RENAMEX";
 	public final static String RENAMEY = "RENAMEY";
 	

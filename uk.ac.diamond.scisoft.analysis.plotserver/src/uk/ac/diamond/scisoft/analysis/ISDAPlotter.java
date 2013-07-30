@@ -51,27 +51,6 @@ public interface ISDAPlotter {
 	public void createAxis(String plotName, final String title, final int side) throws Exception;
 
 	/**
-	 * Remove axis by title.
-	 * @param axisTitle if null, then remove all but default axes
-	 * @throws Exception if the axisTitle is not a real axis
-	 */
-	public void removeAxis(String plotName, final String axisTitle) throws Exception;
-
-	/**
-	 * Set the active X-axis which subsequent plots will plot to.
-	 * @param xAxisTitle
-	 * @throws Exception if the axis title is not an existing axis
-	 */
-	public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception;
-
-	/**
-	 * Set the active Y-axis which subsequent plots will plot to.
-	 * @param yAxisTitle
-	 * @throws Exception if the axis title is not an existing axis
-	 */
-	public void setActiveYAxis(String plotName, String yAxisTitle) throws Exception;
-
-	/**
 	 * Rename the active X-axis
 	 * @param xAxisTitle
 	 * @throws Exception if the axis title is not an existing axis

@@ -77,9 +77,6 @@ def plot_updatepoints3d(*arg, **kwarg):
     _plotter.scatter3DPlotOver(*arg, **kwarg)
 
 plot_createaxis = _plotter.createAxis
-plot_removeaxis = _plotter.removeAxis
-plot_setactivexaxis = _plotter.setActiveXAxis
-plot_setactiveyaxis = _plotter.setActiveYAxis
 plot_renameactivexaxis = _plotter.renameActiveXAxis
 plot_renameactiveyaxis = _plotter.renameActiveYAxis
 

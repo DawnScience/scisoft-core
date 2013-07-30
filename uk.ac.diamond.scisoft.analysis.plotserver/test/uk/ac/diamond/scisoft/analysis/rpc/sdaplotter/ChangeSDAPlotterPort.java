@@ -49,14 +49,6 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
-
-		@Override
-		public void setActiveXAxis(String plotName, String xAxisTitle) throws Exception {
-		}
-
-		@Override
-		public void setActiveYAxis(String plotName, String xAxisTitle) throws Exception {
-		}
 	}
 
 	@Test

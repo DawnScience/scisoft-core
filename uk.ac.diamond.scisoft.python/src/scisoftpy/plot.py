@@ -50,9 +50,6 @@ _plot_viewnexustree = _plot.plot_viewnexustree
 _plot_volume = _plot.plot_volume
 
 _plot_createaxis = _plot.plot_createaxis
-_plot_removeaxis = _plot.plot_removeaxis
-_plot_setactivexaxis = _plot.plot_setactivexaxis
-_plot_setactiveyaxis = _plot.plot_setactiveyaxis
 _plot_renameactiveaxis = {'x':_plot.plot_renameactivexaxis, 'y':_plot.plot_renameactiveyaxis}
 
 _plot_clear = _plot.plot_clear
@@ -143,11 +140,11 @@ def clear(name=None):
     _plot_clear(name)
 
 '''
-Store a global list of x and y axes names
+Store a global list of x and y axes names in a per-horizontal/vertical dictionary per plot name
 '''
 _DEF_NAMES = {'x':'X-Axis', 'y':'Y-Axis'}
 
-_AXES_NAMES = { 'x':[_DEF_NAMES['x']], 'y':[_DEF_NAMES['y']] }
+_AXES_NAMES = { 'x':{}, 'y':{} }
 
 import types as _types
 
@@ -227,21 +224,26 @@ def _setup_axis(rename, n, dirn, name):
         n = n[0]
     else:
         s = _AXES_SIDES[dirn]['default']
-    if n not in _AXES_NAMES[dirn]:
+    d = _AXES_NAMES[dirn][name]
+    if not d: # create initial list of axis name for this named plot
+        d = [_DEF_NAMES[dirn]]
+        _AXES_NAMES[dirn][name] = d
+        
+    if n not in d:
         _sleep(_NAP)
         if rename:
             _plot_renameactiveaxis[dirn](name, n) # use default/selected axis
-            _AXES_NAMES[dirn][0] = n
+            d[0] = n
             rename = False
         else:
             _plot_createaxis(name, n, s)
-            _AXES_NAMES[dirn].append(n)
+            d.append(n)
     return rename, n
 
 def _clear_axis(name):
-    for d in ['x', 'y']:
-        al = _AXES_NAMES[d]
-        al[0] = _DEF_NAMES[d]
+    for dirn in ['x', 'y']:
+        al = _AXES_NAMES[dirn][name]
+        al[0] = _DEF_NAMES[dirn]
         for n in al[1:]:
             al.remove(n)
 

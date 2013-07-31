@@ -18,8 +18,12 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.vecmath.Point2i;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
@@ -237,7 +241,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
-			double dr = 1.0/dpp;
+			
+			final double dr = 1.0/dpp;
 			
 			IDataset errIds = null; 
 			if (doErrors && (ids instanceof AbstractDataset)) {
@@ -253,13 +258,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			//double xmax = Math.max(cx, shape[0] - cx);
 			//erad = Math.min(Math.sqrt(ymax*ymax + xmax*xmax), erad);
 			// work out azimuthal resolution as roughly equal to pixel at outer radius
-			int nr = (int) Math.ceil((erad - srad) / dr);
-			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
-			double dphi = (ephi - sphi) / np;
+			final int nr = Math.max(1, (int) Math.ceil((erad - srad) / dr));
+			final int np = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
+			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
-			
-			nr = (nr == 0 ? 1 : nr);
-			np = (np == 0 ? 1 : np);
 			
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
@@ -269,30 +271,30 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			AbstractDataset usump = AbstractDataset.zeros(sump);
 			AbstractDataset usumr = AbstractDataset.zeros(sumr);
 			
-			double rad, phi;
-			double x, y;
-			double csum, cvarsum;			
+			//TODO: This list can run out of memory for large sectors!
+			List<Map<Point2i, Double>> pvarmap = new ArrayList<Map<Point2i,Double>>(np);
+			for (int idx = 0; idx < np; idx++) {
+				pvarmap.add(new HashMap<Point2i, Double>());
+			}
+			
+			double csum;			
 			
 			for (int r = 0; r < nr; r++) {
-				rad = srad + r*dr;
-				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
-				double tdphi = rdphi / rad;
-				// Check if rad == 0
-				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi)) {
-					tdphi = dphi;
-				}
-				tnp = (tnp == 0 ? 1 : tnp);
+				final double rad = srad + r*dr;
+				final int tnp = Math.max(1, (int) Math.ceil((ephi - sphi) * rad / rdphi));
+				final double tdphi = (rad > 0 ? rdphi / rad : dphi);
+				
 				csum = 0.0;
-				cvarsum = 0.0;
+				Map<Point2i, Double> cvarmap = new HashMap<Point2i, Double>();
 
 				double msk = 1.0;
 				double tusump = 0;
 				
-				double prj = (double)(np)/tnp;
+				final double prj = (double)(np)/tnp;
 				int qmin = 0;
 				int qmax = 0;
 				for (int p = 0; p < tnp; p++) {
-					phi = sphi + p * tdphi;
+					final double phi = sphi + p * tdphi;
 					
 					//Project current value on the corresponding range in azimuthal profile
 					if (doAzimuthal) {
@@ -300,7 +302,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						qmax = (int)((p+1)*prj);
 					}
 					
-					x = cx + rad * Math.cos(phi);
+					final double x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
 						if (!clip && aver) {
 							if (doRadial) {
@@ -314,7 +316,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						}
 						continue;
 					}
-					y = cy + rad * Math.sin(phi);
+					
+					final double y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
 						if (!clip && aver) {
 							if (doRadial) {
@@ -331,25 +334,32 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					if (mask != null && aver) {
 						msk = Maths.getBilinear(mask, y ,x);
 					}
-					final double v = rdphi * dr * Maths.getBilinear(ids, mask, y,	x);
-					Double var = null;
+					final double v = rad * dr * tdphi * Maths.getBilinear(ids, mask, y,	x);
+					
+					Map<Point2i, Double> varmap = null;
 					if (errIds != null) {
-						var = rdphi * dr * rdphi * dr * Maths.getBilinearVariance(errIds, mask, y,	x);
+						varmap = getBilinearWeights(errIds, mask, y,	x);
 					}
 					if (doRadial) {
 						csum += v;
-						if (var != null) {
-							cvarsum += var;
+						if (varmap != null) {
+							for (Point2i pt : varmap.keySet()) {
+								cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * tdphi * varmap.get(pt));
+							}
 						}
 						if (aver) {
-							tusump += rad*dr*tdphi*msk;
+							tusump += rad * dr * tdphi * msk;
 						}
 					}
 					if (doAzimuthal) {
 						for (int q = qmin; q < qmax; q++) {
 							sumr.set(v / prj + sumr.getDouble(q), q);
-							if (var != null) {
-								errsumr.set(var / (prj * prj) + errsumr.getDouble(q), q);
+							if (varmap != null) {
+								Map<Point2i, Double> tmpmap = pvarmap.get(q);
+								for (Point2i pt : varmap.keySet()) {
+									double vl = rad * dr * dphi * varmap.get(pt) / prj;
+									tmpmap.put(pt, (tmpmap.containsKey(pt) ? tmpmap.get(pt) : 0.0) + vl);
+								}
 							}
 							if (aver) {
 								usumr.set(rad * dr * dphi * msk + usumr.getDouble(q), q);
@@ -361,7 +371,15 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				if (doRadial) {
 					sump.set(csum, r);
 					if (errIds != null) {
-						errsump.set(cvarsum, r);
+						double cvarres = 0.0;
+						for (Entry<Point2i, Double> tmp : cvarmap.entrySet()) {
+							int i0 = tmp.getKey().x;
+							int i1 = tmp.getKey().y;
+							double vl = tmp.getValue();
+							// No need to check here if pixel is masked as they aren't included into the map
+							cvarres += vl * vl * errIds.getDouble(i0, i1);
+						}
+						errsump.set(cvarres, r);
 					}
 					if(aver) {
 						usump.set(tusump, r);
@@ -369,6 +387,21 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 
+			if (doAzimuthal && errIds != null) {
+				for (int q = 0; q < np; q++) {
+					Map<Point2i, Double> tmpmap = pvarmap.get(q);
+					double cvarres = 0.0;
+					for (Entry<Point2i, Double> tmp : tmpmap.entrySet()) {
+						int i0 = tmp.getKey().x;
+						int i1 = tmp.getKey().y;
+						double vl = tmp.getValue();
+						// No need to check here if pixel is masked as they aren't included into the map
+						cvarres += vl * vl * errIds.getDouble(i0, i1);
+					}
+					errsumr.set(cvarres, q);
+				}
+			}
+			
 			if (errIds != null) {
 				sumr.setErrorBuffer(errsumr);
 				sump.setErrorBuffer(errsump);
@@ -380,7 +413,46 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		}
 		return result;
 	}
-				
+	
+	/**
+	 * Map of interpolation coefficients from 2D dataset with mask
+	 * @param d input dataset
+	 * @param m mask dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	private Map<Point2i, Double> getBilinearWeights(final IDataset d, final IDataset m, final double x0, final double x1) {
+		Map<Point2i, Double> res = new HashMap<Point2i, Double>();
+		
+		final int[] s = d.getShape();
+		if (s.length != 2) {
+			throw new IllegalArgumentException("Only 2d datasets allowed");
+		}
+		
+		final int i0 = (int) Math.floor(x0);
+		final int i1 = (int) Math.floor(x1);
+		
+		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1]) {
+			return res;
+		}
+		
+		for (int i : new int[] {i0, i0 + 1}) {
+			for (int j : new int[] {i1, i1 + 1}) {
+				if (i < 0 || i > (s[0] - 1) || j < 0 || j > (s[1] - 1)) {
+					continue;
+				}
+				if (m == null || m.getBoolean(i, j)) {
+					final double u0 = 1.0 - Math.abs(i - x0);
+					final double u1 = 1.0 - Math.abs(j - x1);
+					final Point2i pt = new Point2i(i, j);
+					res.put(pt, u0*u1);
+				}
+			}
+		}		
+		return res;
+	}
+		
 	private double pixelToValue(double x, double y) {
 		
     	switch (axisType) {
@@ -446,7 +518,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
-			double dr = 1.0/dpp;
+			final double dr = 1.0/dpp;
 			
 			//Find maximal radius on the detector
 			//int[] shape = ids.getShape();
@@ -454,43 +526,30 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			//double xmax = Math.max(cx, shape[0] - cx);
 			//erad = Math.min(Math.sqrt(ymax*ymax + xmax*xmax), erad);
 			// work out azimuthal resolution as roughly equal to pixel at outer radius
-			int nr = (int) Math.ceil((erad - srad) / dr);
-			int np = (int) Math.ceil((ephi - sphi) * erad / dr);
-			double dphi = (ephi - sphi) / np;
+			final int nr = Math.max(1, (int) Math.ceil((erad - srad) / dr));
+			final int np = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
+			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
-			
-			nr = (nr == 0 ? 1 : nr);
-			np = (np == 0 ? 1 : np);
 			
 			AbstractDataset usump = AbstractDataset.zeros(new int[] { nr }, dtype);
 			AbstractDataset usumr = AbstractDataset.zeros(new int[] { np }, dtype);
 			
-			double rad, phi;
-			double x, y;
-			
 			for (int r = 0; r < nr; r++) {
-				rad = srad + r*dr;
-				int tnp = (int) Math.ceil((ephi - sphi) * rad / rdphi);
-				double tdphi = rdphi / rad;
-				// Check if rad == 0
-				if (Double.isInfinite(tdphi) || Double.isNaN(tdphi)) {
-					tdphi = dphi;
-				}
-				if (tnp == 0) {
-					tnp = 1;
-				}
+				final double rad = srad + r*dr;
+				int tnp = Math.max(1, (int) Math.ceil((ephi - sphi) * rad / rdphi));
+				final double tdphi = (rad > 0 ? rdphi / rad : dphi);
 
 				double msk = 1.0;
 				double tusump = 0;
-				double prj = (double)(np)/tnp;
+				final double prj = (double)(np)/tnp;
 				for (int p = 0; p < tnp; p++) {
-					phi = sphi + p * tdphi;
+					final double phi = sphi + p * tdphi;
 					
 					//Project current value on the corresponding range in azimuthal profile
 					int qmin = (int)(p*prj);
 					int qmax = (int)((p+1)*prj);
 					
-					x = cx + rad * Math.cos(phi);
+					final double x = cx + rad * Math.cos(phi);
 					if (x < 0. || x > (shape[1] + 1.)) {
 						if (!clip) {
 							if (doRadial) {
@@ -504,7 +563,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						}
 						continue;
 					}
-					y = cy + rad * Math.sin(phi);
+					final double y = cy + rad * Math.sin(phi);
 					if (y < 0. || y > (shape[0] + 1.)) {
 						if (!clip) {
 							if (doRadial) {

@@ -37,10 +37,12 @@ public class AxisMapBeanHelper extends MapFlatteningHelper<AxisMapBean> {
 		String[] ids = new String[objIds.length];
 		System.arraycopy(objIds, 0, ids, 0, objIds.length);
 		outBean.setAxisID(ids);
-		Object[] objNames = (Object[]) thisMap.get(AXIS_NAMES);
-		String[] names = new String[objIds.length];
-		System.arraycopy(objNames, 0, names, 0, objNames.length);
-		outBean.setAxisNames(names);
+		Object[] objNames = (Object[]) rootFlattener.unflatten(thisMap.get(AXIS_NAMES));
+		if (objNames != null) {
+			String[] names = new String[objNames.length];
+			System.arraycopy(objNames, 0, names, 0, objNames.length);
+			outBean.setAxisNames(names);
+		}
 		return outBean;
 	}
 

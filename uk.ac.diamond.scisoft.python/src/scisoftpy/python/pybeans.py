@@ -47,6 +47,7 @@ class _parameters(object):
         self.title = self._parametershelper(self, "title", "Title")
         self.roi = self._parametershelper(self, "roi", "ROI")
         self.roilist = self._parametershelper(self, "roilist", "ROIList")
+        self.roiclearall = self._parametershelper(self, "roiclearall", "ROIClearAll")
         self.plotid = self._parametershelper(self, "plotid", "PlotID")
         self.plotop = self._parametershelper(self, "plotop", "PlotOp")
         self.fileop = self._parametershelper(self, "fileop", "FileOp")
@@ -72,7 +73,7 @@ class _parameters(object):
         self.calibrationfunctionncd = self._parametershelper(self, "calibrationfunctionncd", "CalibrationFunction")
         self.onedfile = self._parametershelper(self, "onedfile", "OneDFile")
         self.axisop = self._parametershelper(self, "axisop", "AxisOp")
-        
+
     def get(self, parametername):
         '''Return the GUIParameter with the given name, or return None for no matching'''
         return self._str_to_params.get(parametername)
@@ -119,24 +120,24 @@ class _plotmode(object):
 plotmode = _plotmode()
 
 class axismapbean(object):   
-    _MAP_MODE = 'mapMode'
     _AXIS_ID = 'axisID'
+    _AXIS_NAMES = 'axisNames'
     
     DIRECT = 0
     FULL = 1
 
-    XAXIS = "x-axis"
-    YAXIS = "y-axis"
-    ZAXIS = "z-axis"
-    XAXIS2 = "2nd x-axis"
+    XAXIS = "X-Axis"
+    YAXIS = "Y-Axis"
+    ZAXIS = "Z-Axis"
+    XAXIS2 = "2nd X-Axis"
 
-    def __init__(self, mapMode=DIRECT, axisID=[]):
+    def __init__(self, axisID=[], axisNames=None):
         self.axisID = axisID
-        self.mapMode = mapMode
+        self.axisNames = axisNames
 
     def __eq__(self, other):
         return (isinstance(other, axismapbean)
-            and self.axisID == other.axisID and self.mapMode == other.mapMode)
+            and self.axisID == other.axisID and self.axisNames == other.axisNames)
         
     def __ne__(self, other):
         return not self.__eq__(other)

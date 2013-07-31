@@ -86,6 +86,17 @@ public class DataSetWithAxisInformation implements Serializable {
 	/**
 	 * This method builds the axis information into the base dataset
 	 * @param yAxis
+	 * @param axisDatasetID
+	 * @param axisName
+	 * @return dataset with axis info
+	 */
+	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID, String axisName) {
+		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, new String[] {axisName});
+	}
+
+	/**
+	 * This method builds the axis information into the base dataset
+	 * @param yAxis
 	 * @param axisDatasetIDs
 	 * @param axisNames can be null or contain nulls
 	 * @return dataset with axis info

@@ -21,12 +21,14 @@ class _parameters:
     title = _guiparam.TITLE
     roi = _guiparam.ROIDATA
     roilist = _guiparam.ROIDATALIST
+    roiclearall = _guiparam.ROICLEARALL
     plotid = _guiparam.PLOTID
     plotop = _guiparam.PLOTOPERATION
     fileop = _guiparam.FILEOPERATION
     filename = _guiparam.FILENAME
     fileselect = _guiparam.FILESELECTEDLIST
     dispview = _guiparam.DISPLAYFILEONVIEW
+    axisop = _guiparam.AXIS_OPERATION
 parameters = _parameters()
 
 from uk.ac.diamond.scisoft.analysis.plotserver import GuiPlotMode as _guiplotmode

@@ -559,6 +559,18 @@ abstract public class FlatteningTestAbstract {
 		DataSetWithAxisInformation ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
 				AbstractDataset.INT));
 		flattenAndUnflatten(ds);
+
+		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
+				AbstractDataset.INT), "Hello");
+		flattenAndUnflatten(ds);
+
+		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
+				AbstractDataset.INT), "Hello", "Goodbye");
+		flattenAndUnflatten(ds);
+
+		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
+				AbstractDataset.INT), "Hello", null);
+		flattenAndUnflatten(ds);
 	}
 
 	@Test

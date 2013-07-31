@@ -123,13 +123,13 @@ class axisMapBeanHelper(flatteningHelper):
         rval = dict()
         rval[TYPE] = self.TYPE_NAME
         rval[_beans.axismapbean._AXIS_ID] = thisAxisMapBean.axisID
-        rval[_beans.axismapbean._MAP_MODE] = thisAxisMapBean.mapMode
+        rval[_beans.axismapbean._AXIS_NAMES] = thisAxisMapBean.axisNames
         return rval
     
     def unflatten(self, obj):
         unflattenedMap = dict()
         unflattenedMap[_beans.axismapbean._AXIS_ID] = unflatten(obj[_beans.axismapbean._AXIS_ID])
-        unflattenedMap[_beans.axismapbean._MAP_MODE] = unflatten(obj[_beans.axismapbean._MAP_MODE])        
+        unflattenedMap[_beans.axismapbean._AXIS_NAMES] = unflatten(obj[_beans.axismapbean._AXIS_NAMES])
         return _beans.axismapbean(**unflattenedMap)
         
 class datasetWithAxisInformationHelper(flatteningHelper):

@@ -1138,11 +1138,12 @@ public class PowderRingsUtils {
 
 		protected static final double WAVE_MIN = 5e-9; // 0.05A (in mm)
 		protected static final double WAVE_MAX = 1e-6; // 10.0A (in mm)
+		protected static final double DIST_MIN = 10;   // (in mm)
+		protected static final double DIST_MAX = 2e5;   // (in mm)
 
-		protected static final double SIGMA_WAVE = 3e-8; // 0.3A (in mm)
+		protected static final double SIGMA_WAVE = 1e-9; // 0.01A (in mm)
 		protected static final double SIGMA_POSN = 3; // 3mm
-		protected static final double SIGMA_ANG  = 8; // 8 degrees
-		protected static final double SIGMA_SINE = 1e-2;
+		protected static final double SIGMA_ANG  = 6; // 6 degrees
 
 		@Override
 		public int getN() {
@@ -1220,8 +1221,8 @@ public class PowderRingsUtils {
 			target = known;
 			nV = nC * nR;
 			spacing = new double[nR];
-			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 10,
-					-90, -90, -180}, new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1e5,
+			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, DIST_MIN,
+					-90, -90, -180}, new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, DIST_MAX,
 					90, 90, 180});
 			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_ANG, SIGMA_ANG, SIGMA_ANG};
 			dp = new DetectorProperties();
@@ -1375,8 +1376,8 @@ public class PowderRingsUtils {
 		public QSpaceFitFunction4(double[][] known, double pix) {
 			super(known, pix);
 			n = 4;
-			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 10},
-					new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1e5});
+			bounds = new SimpleBounds(new double[] {WAVE_MIN, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, DIST_MIN},
+					new double[] {WAVE_MAX, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, DIST_MAX});
 			sigma = new double[] {SIGMA_WAVE, SIGMA_POSN, SIGMA_POSN, SIGMA_POSN};
 		}
 
@@ -1468,8 +1469,8 @@ public class PowderRingsUtils {
 				lb[j] = Double.NEGATIVE_INFINITY;
 				ub[j] = Double.POSITIVE_INFINITY;
 				sigma[j++] = SIGMA_POSN;
-				lb[j] = 10;
-				ub[j] = 1e5;
+				lb[j] = DIST_MIN;
+				ub[j] = DIST_MAX;
 				sigma[j++] = SIGMA_POSN;
 				lb[j] = -90;
 				ub[j] = 90;

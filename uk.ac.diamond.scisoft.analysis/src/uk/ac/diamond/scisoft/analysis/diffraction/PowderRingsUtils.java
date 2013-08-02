@@ -1554,14 +1554,14 @@ public class PowderRingsUtils {
 			int i = 0;
 			for (int k = 0; k < m; k++) {
 				double[][] tgt = target2[k];
-				n = tgt.length;
+				int nr = tgt.length;
 				DetectorProperties dp = dps.get(k);
-				for (int l = 0; l < n; l++) {
+				for (int l = 0; l < nr; l++) {
 					IROI r;
 					try {
 						r = DSpacing.conicFromDSpacing(dp, wlen, spacing[i + l]);
 					} catch (Exception e) {
-						if (wlen > 2 * spacing[i + n - 1]) { // wavelength too long
+						if (wlen > 2 * spacing[i + nr - 1]) { // wavelength too long
 							s = Double.POSITIVE_INFINITY;
 							break;
 						}
@@ -1602,6 +1602,7 @@ public class PowderRingsUtils {
 //						s += t * t;
 					}
 				}
+				i += nr;
 			}
 			return any ? s / nV : Double.POSITIVE_INFINITY;
 		}

@@ -173,10 +173,10 @@ public class LazyDataset implements ILazyDataset {
 		}
 		assert da >= 0;
 
-		int jb = -1; // index of last non-one dimension
+		int jstop = -1; // index of last non-one dimension + 1
 		for (int i = oShape.length - 1; i >= oOffset; i--) {
 			if (oShape[i] != 1) {
-				jb = i;
+				jstop = i + 1;
 				break;
 			}
 		}
@@ -188,63 +188,17 @@ public class LazyDataset implements ILazyDataset {
 			}
 		}
 
-		if (i == shape.length) {
+		int off = i;
+		if (shape.length - off < jstop - oOffset) {
 			throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending or postpending ones to old shape");
 		}
-		nOffset = i;
 		int j = oOffset;
-		for (; i < shape.length && j <= jb; i++, j++) {
+		for (; i < shape.length && j < jstop; i++, j++) {
 			if (shape[i] != oShape[j]) {
-				break;
+				throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending or postpending ones to old shape");
 			}
 		}
-		if (j <= jb) {
-			throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending or postpending ones to old shape");
-		}
-	
-//		rankOffset = shape.length - oShape.length;
-//		int[] tshape;
-//		if (rankOffset > 0) {
-//			int n = 0;
-//			for (int i = 0; i < rankOffset; i++) {
-//				if (shape[i] != 1) {
-//					break;
-//				}
-//				n++;
-//			}
-//			if (n < rankOffset) {
-//				for (int i = shape.length - 1; i >= 0; i--) {
-//					if (shape[i] != 1) {
-//						break;
-//					}
-//					n++;
-//				}
-//			}
-//			if (n != rankOffset)
-//				throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending ones to old shape");
-//			tshape = Arrays.copyOfRange(shape, rankOffset, shape.length);
-//		} else if (rankOffset < 0) {
-//			boolean onlyOnes = true;
-//			tshape = new int[oShape.length];
-//			for (int i = 0; i < (-rankOffset); i++) {
-//				tshape[i] = 1;
-//				if (oShape[i] != 1) {
-//					onlyOnes = false;
-//					break;
-//				}
-//			}
-//			if (!onlyOnes)
-//				throw new IllegalArgumentException("New shape not allowed - can only decrease rank if old shape leads with ones");
-//			for (int i = (-rankOffset); i < tshape.length; i++) {
-//				tshape[i] = shape[i + rankOffset];
-//			}
-//		} else {
-//			tshape = shape;
-//		}
-//		if (!Arrays.equals(tshape, oShape)) {
-//			rankOffset = 0;
-//			throw new IllegalArgumentException("New shape not allowed - can only increase or decrease rank of a lazy dataset");
-//		}
+		nOffset = off;
 		this.shape = shape.clone();
 	}
 

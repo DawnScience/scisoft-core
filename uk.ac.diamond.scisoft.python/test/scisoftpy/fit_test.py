@@ -49,6 +49,27 @@ class Test(unittest.TestCase):
             if max(t, f) > 1e-10:
                 self.assertAlmostEquals(pl*t, pl*f, places=places)
 
+    def testFunction(self):
+        print dnp.fit.function.isjclass(dnp.fit.function.linear)
+        f = dnp.fit.function.linear([2.5, -4.2])
+        print dnp.fit.function.isjclass(f)
+        print dnp.fit.function.isjclass(dnp.fit.function.linear)
+        print dnp.fit.function.isjmethod(f)
+        print dnp.fit.function.isjmethod(dnp.fit.function.linear)
+        x = dnp.arange(10.)
+        print f.makeDataset(x)
+        print f.makeDataset([x])
+        pl = dnp.jython.fitcore._createparams(2, [0.4, 4.5], [])
+        ff = dnp.fit.fitfunc(myfunc, myfunc.__name__, pl)
+        print f.val(0)
+        print ff.val(0)
+        
+        d = f.makeDataset(x)
+        dd = ff.makeDataset(x)
+        
+        print f.residual(True, d, x)
+        print ff.residual(True, dd, x)
+
     def testFit(self):
         d = dnp.array([ 3.5733e+00, 2.1821e+00, 1.8313e+00, 1.9893e+00, 8.3145e-01,
             9.8761e-01, 7.1809e-01, 8.6756e-01, 2.3144e-01, 6.6659e-01, 3.8420e-01,
@@ -61,8 +82,9 @@ class Test(unittest.TestCase):
 
         fr = fit.fit([myfunc, fit.function.offset], self.x[:-1], d[:-1], [2.5, 1.2, 0.1], [(0,4), 0, (-0.2,0.7)])
         fr = fit.fit(fit.function.offset, self.x, d, 0.3, (-0.2,1.7))
-        print fr
-
+        print fr, fr.area, fr.residual
+        fd = fr.makefuncdata()
+        fp = fr.makeplotdata()
 
     def testPoly(self):
         fr = fit.polyfit(self.x, self.y, 1)

@@ -28,8 +28,7 @@ _asIterable = _dnp.asIterable
 _toList = _dnp.toList
 _asDS = _dnp.asDataset
 
-from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj
-import java.lang.Class as _jclass #@UnresolvedImport
+from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj, _jinput
 
 import function
 
@@ -88,10 +87,10 @@ class fitfunc(_absfn):
         '''
         try:
             l = [p for p in self.parameterValues]
-            l.append(_dnp.array(coords))
+            l.append([_dnp.array(c) for c in _toList(coords)])
             l.append(self.args)
             v = self.func(*l)
-            return v.getElementDoubleAbs(0)
+            return float(v.data[0])
         except ValueError:
             raise ValueError, 'Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues
 
@@ -100,7 +99,7 @@ class fitfunc(_absfn):
         '''
         try:
             l = [p for p in self.parameterValues]
-            l.append([_dnp.Sciwrap(c) for c in coords])
+            l.append([_dnp.array(c) for c in _toList(coords)])
             l.append(self.args)
             d = self.func(*l)
             d.name = self.name
@@ -178,17 +177,17 @@ class fitresult(object):
 
     def _calcdelta(self, coords):
         delta = 1.
-        if coords[0].rank > 1:
-            r = coords[0].rank
+        r = coords[0].ndim
+        if r > 1:
             for n in range(len(coords)):
                 x = coords[n]
-                if x.rank != r:
+                if x.ndim != r:
                     raise ValueError, "Given coordinates are not all of same rank"
                 delta *= x.ptp()/x.shape[n]
                 n += 1
         else:
             for x in coords:
-                if x.rank != 1:
+                if x.ndim != 1:
                     raise ValueError, "Given coordinates are not all 1D"
                 delta *= x.ptp()/x.size
         return delta
@@ -225,18 +224,18 @@ class fitresult(object):
         '''Make a list of datasets for composite fitting function and its components
         '''
         nf = self.func.noOfFunctions
+        coords = _jinput(self.coords)
         if nf > 1:
-            fdata = [self.func.makeDataset(self.coords)]
+            fdata = [_dnp.Sciwrap(self.func.makeDataset(coords))]
             fdata[0].name = "Composite function"
             for n in range(nf):
-                fdata.append(self.func.getFunction(n).makeDataset(self.coords))
+                fdata.append(_dnp.Sciwrap(self.func.getFunction(n).makeDataset(*coords)))
         elif nf == 1:
-            fdata = [self.func.getFunction(0).makeDataset(self.coords)]
+            fdata = [_dnp.Sciwrap(self.func.getFunction(0).makeDataset(coords))]
         else:
             fdata = []
 
         return fdata
-
 
     def plot(self, name=None):
         '''Plot fit as 1D
@@ -258,14 +257,14 @@ class fitresult(object):
     def _residual(self):
         '''Residual of fit
         '''
-        return self.func.residual(True, self.data, self.coords)
+        return self.func.residual(True, _jinput(self.data), _jinput(self.coords))
     residual = property(_residual)
 
     def _area(self):
         '''Area or hypervolume under fit assuming coordinates are uniformly spaced
         '''
         deltax = self._calcdelta(self.coords)
-        return self.func.makeDataset(self.coords).sum() * deltax
+        return _dnp.Sciwrap(self.func.makeDataset(_jinput(self.coords)).sum()) * deltax
     area = property(_area)
 
     def __str__(self):
@@ -310,14 +309,14 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
         if isinstance(f, tuple):
             print 'parameter count is no longer required'
             f = f[0]
-        if isinstance(f, _jclass):
+        if function.isjclass(f):
             # create bound function object
             np = function.nparams(f)
             pl = _createparams(np, p0, bounds)
             fnlist.append(f(pl))
         elif not _inspect.isfunction(f):
             # instantiated Java function
-            np = f.getNoOfParameters()
+            # np = f.getNoOfParameters()
             fnlist.append(f)
         else:
             np = len(_inspect.getargspec(f)[0]) - 1
@@ -332,6 +331,8 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     else:
         cfunc = cfitfunc()
     for f in fnlist:
+        if function.isjmethod(f): # unwrap
+            f = f._jfunc()
         cfunc.addFunction(f)
 
     coords = list(_asIterable(coords))
@@ -488,7 +489,7 @@ def polyval(p, x):
     If p is of length N, this function returns the value:
     p[0]*(x**N-1) + p[1]*(x**N-2) + ... + p[N-2]*x + p[N-1]
     '''
-    poly = _poly(_asDS(p, _dnp.float64)._jdataset())
+    poly = _poly(_asDS(p, _dnp.float64)._jdataset().data)
     d = _asDS(x, _dnp.float, force=True)._jdataset()
     return poly.makeDataset([d])
 

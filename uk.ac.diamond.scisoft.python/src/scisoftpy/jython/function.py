@@ -43,16 +43,49 @@ from uk.ac.diamond.scisoft.analysis.fitting.functions import Step as _step
 from uk.ac.diamond.scisoft.analysis.fitting.functions import StraightLine as _straightline
 
 
-cubic = _cubic
-gaussian = _gaussian
-lorentzian = _lorentzian
-offset = _offset
-constant = _offset
-pearson7 = _pearsonvii
-pvoigt = _pseudovoigt
-quadratic = _quadratic
-step = _step
-linear = _straightline
+from scisoftpy.jython.jycore import _wrap, toList
+import java.lang.Class as _jclass #@UnresolvedImport
+
+
+def _jfnclass(jclass):
+    class _JavaFunction():
+        _jclass = True
+        def __init__(self, *args):
+            self._jfn = jclass(*args)
+            self._jclass = False
+
+        def _jfunc(self): # unwrap
+            return self._jfn
+
+        def val(self, *coords):
+            return self._jfn.val(*coords)
+
+        @_wrap
+        def makeDataset(self, *coords):
+            return self._jfn.makeDataset(toList(*coords))
+        @_wrap
+        def residual(self, allvalues, data, *coords):
+            return self._jfn.residual(allvalues, data, *coords)
+
+    return _JavaFunction
+
+cubic = _jfnclass(_cubic)
+gaussian = _jfnclass(_gaussian)
+lorentzian = _jfnclass(_lorentzian)
+offset = _jfnclass(_offset)
+constant = _jfnclass(_offset)
+pearson7 = _jfnclass(_pearsonvii)
+pvoigt = _jfnclass(_pseudovoigt)
+quadratic = _jfnclass(_quadratic)
+step = _jfnclass(_step)
+linear = _jfnclass(_straightline)
+
+def isjclass(cls):
+    jattr = getattr(cls, '_jclass', False)
+    return jattr or isinstance(cls, _jclass)
+
+def isjmethod(fn):
+    return hasattr(fn, '_jfn')
 
 _nparamsdict = { cubic:4, gaussian:3, lorentzian:3, offset:1, constant:1, pearson7:4, pvoigt:5, quadratic:3, step:7, linear:2}
 

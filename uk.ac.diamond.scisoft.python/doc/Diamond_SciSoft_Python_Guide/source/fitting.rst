@@ -1,6 +1,7 @@
 Fitting
 =======
 The ``fit`` module contains a ``fit.fit`` function and some built-in fitting functions.
+At present, fitting is only available in Jython.
 
 
 Fitting functions

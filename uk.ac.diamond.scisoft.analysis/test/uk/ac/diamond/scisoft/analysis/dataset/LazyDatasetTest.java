@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,6 +38,7 @@ public class LazyDatasetTest {
 			else
 				System.out.println("Correctly failed setting shape for " + msg);
 		} catch (Exception e) {
+			msg += ": " + e.getMessage();
 			if (well)
 				Assert.fail("Unexpected exception for " + msg);
 			else
@@ -58,9 +57,18 @@ public class LazyDatasetTest {
 		setShape("check on greater rank", false, ld, 1, 2, 2, 3, 5);
 		setShape("check on greater rank", false, ld, 2, 1, 2, 3, 4);
 
+		setShape("check on greater rank", true, ld, 2, 3, 4, 1, 1, 1);
+		setShape("check on greater rank", true, ld, 1, 1, 2, 3, 4, 1, 1, 1);
+
 		setShape("check on lesser rank", true, ld, 2, 3, 4);
 		setShape("check on lesser rank", false, ld, 3, 4);
 		setShape("check on lesser rank", false, ld, 2, 3);
+
+		ld = new LazyDataset("", AbstractDataset.INT, new int[] {2, 3, 4, 1}, null);
+		setShape("check on lesser rank", true, ld, 2, 3, 4);
+
+		ld = new LazyDataset("", AbstractDataset.INT, new int[] {1, 2, 3, 4, 1}, null);
+		setShape("check on lesser rank", true, ld, 2, 3, 4);
 	}
 
 	@Test
@@ -94,15 +102,29 @@ public class LazyDatasetTest {
 		ld.setShape(1, 1, 1, 2, 3, 4);
 		nd = d.getView();
 		nd.setShape(1, 1, 1, 2, 3, 4);
-		slice = new Slice[]{null, null, null, new Slice(1), null, new Slice(1, 3)};
 		Assert.assertEquals("Full slice", nd, ld.getSlice());
+		slice = new Slice[]{null, null, null, new Slice(1), null, new Slice(1, 3)};
 		Assert.assertEquals("Part slice", nd.getSlice(slice), ld.getSlice(slice));
 
 		ld.setShape(2, 3, 4);
 		nd = d.getView();
 		nd.setShape(2, 3, 4);
-		slice = new Slice[]{new Slice(1), null, new Slice(1, 3)};
 		Assert.assertEquals("Full slice", nd, ld.getSlice());
+		slice = new Slice[]{new Slice(1), null, new Slice(1, 3)};
+		Assert.assertEquals("Part slice", nd.getSlice(slice), ld.getSlice(slice));
+
+		ld.setShape(2, 3, 4, 1, 1, 1);
+		nd = d.getView();
+		nd.setShape(2, 3, 4, 1, 1, 1);
+		Assert.assertEquals("Full slice", nd, ld.getSlice());
+		slice = new Slice[]{new Slice(1), null, new Slice(1, 3), null, null, null};
+		Assert.assertEquals("Part slice", nd.getSlice(slice), ld.getSlice(slice));
+
+		ld.setShape(1, 2, 3, 4, 1, 1, 1);
+		nd = d.getView();
+		nd.setShape(1, 2, 3, 4, 1, 1, 1);
+		Assert.assertEquals("Full slice", nd, ld.getSlice());
+		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3), null, null, null};
 		Assert.assertEquals("Part slice", nd.getSlice(slice), ld.getSlice(slice));
 	}
 }

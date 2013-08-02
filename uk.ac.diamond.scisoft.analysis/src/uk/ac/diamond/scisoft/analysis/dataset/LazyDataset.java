@@ -40,9 +40,10 @@ public class LazyDataset implements ILazyDataset {
 	protected int        size; // number of items, this can be smaller than dataSize for discontiguous datasets
 	protected ILazyLoader loader;
 	private int          dtype;
-	private int          rankOffset; // different between current and original rank
+	private int          oOffset; // original shape offset
+	private int          nOffset; // current shape offset
 	private IMetaData    metadata = null;
-	protected ILazyDataset lazyErrorDeligate;
+	protected ILazyDataset lazyErrorDelegate;
 
 	/**
 	 * Create a lazy dataset
@@ -62,12 +63,20 @@ public class LazyDataset implements ILazyDataset {
 		} catch (IllegalArgumentException e) {
 			size = Integer.MAX_VALUE; // this indicates that the entire dataset cannot be read in! 
 		}
+		oOffset = -1;
+		nOffset = -1;
+		for (int i = 0; i < oShape.length; i++) {
+			if (oShape[i] != 1) {
+				oOffset = nOffset = i;
+				break;
+			}
+		}
 	}
 
 	@Override
 	public LazyDataset clone() {
 		LazyDataset ret = new LazyDataset(new String(name), dtype, shape.clone(), loader);
-		ret.lazyErrorDeligate = lazyErrorDeligate;
+		ret.lazyErrorDelegate = lazyErrorDelegate;
 		return ret;
 	}
 
@@ -143,46 +152,99 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public void setShape(int... shape) {
 		setShapeInternal(shape);
-		if (lazyErrorDeligate!=null) {
-			lazyErrorDeligate.setShape(shape);
+		if (lazyErrorDelegate!=null) {
+			lazyErrorDelegate.setShape(shape);
 		}
 	}
+
 	private void setShapeInternal(int... shape) {
-		rankOffset = shape.length - oShape.length;
-		int[] tshape;
-		if (rankOffset > 0) {
-			boolean onlyOnes = true;
-			for (int i = 0; i < rankOffset; i++) {
-				if (shape[i] != 1) {
-					onlyOnes = false;
-					break;
-				}
-			}
-			if (!onlyOnes)
-				throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending ones to old shape");
-			tshape = Arrays.copyOfRange(shape, rankOffset, shape.length);
-		} else if (rankOffset < 0) {
-			boolean onlyOnes = true;
-			tshape = new int[oShape.length];
-			for (int i = 0; i < (-rankOffset); i++) {
-				tshape[i] = 1;
-				if (oShape[i] != 1) {
-					onlyOnes = false;
-					break;
-				}
-			}
-			if (!onlyOnes)
-				throw new IllegalArgumentException("New shape not allowed - can only decrease rank if old shape leads with ones");
-			for (int i = (-rankOffset); i < tshape.length; i++) {
-				tshape[i] = shape[i + rankOffset];
-			}
-		} else {
-			tshape = shape;
+		int nsize = AbstractDataset.calcSize(shape);
+		if (nsize != size) {
+			throw new IllegalArgumentException("Size of new shape is not equal to current size");
 		}
-		if (!Arrays.equals(tshape, oShape)) {
-			rankOffset = 0;
-			throw new IllegalArgumentException("New shape not allowed - can only increase or decrease rank of a lazy dataset");
+		if (nsize == 1) {
+			this.shape = shape.clone();
+			return;
 		}
+
+		int da = -1; // length of first non-one dimension
+		if (oOffset >= 0) {
+			da = oShape[oOffset];
+		}
+		assert da >= 0;
+
+		int jb = -1; // index of last non-one dimension
+		for (int i = oShape.length - 1; i >= oOffset; i--) {
+			if (oShape[i] != 1) {
+				jb = i;
+				break;
+			}
+		}
+
+		int i = 0;
+		for (; i < shape.length; i++) {
+			if (shape[i] == da) {
+				break;
+			}
+		}
+
+		if (i == shape.length) {
+			throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending or postpending ones to old shape");
+		}
+		nOffset = i;
+		int j = oOffset;
+		for (; i < shape.length && j <= jb; i++, j++) {
+			if (shape[i] != oShape[j]) {
+				break;
+			}
+		}
+		if (j <= jb) {
+			throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending or postpending ones to old shape");
+		}
+	
+//		rankOffset = shape.length - oShape.length;
+//		int[] tshape;
+//		if (rankOffset > 0) {
+//			int n = 0;
+//			for (int i = 0; i < rankOffset; i++) {
+//				if (shape[i] != 1) {
+//					break;
+//				}
+//				n++;
+//			}
+//			if (n < rankOffset) {
+//				for (int i = shape.length - 1; i >= 0; i--) {
+//					if (shape[i] != 1) {
+//						break;
+//					}
+//					n++;
+//				}
+//			}
+//			if (n != rankOffset)
+//				throw new IllegalArgumentException("New shape not allowed - can only increase rank by prepending ones to old shape");
+//			tshape = Arrays.copyOfRange(shape, rankOffset, shape.length);
+//		} else if (rankOffset < 0) {
+//			boolean onlyOnes = true;
+//			tshape = new int[oShape.length];
+//			for (int i = 0; i < (-rankOffset); i++) {
+//				tshape[i] = 1;
+//				if (oShape[i] != 1) {
+//					onlyOnes = false;
+//					break;
+//				}
+//			}
+//			if (!onlyOnes)
+//				throw new IllegalArgumentException("New shape not allowed - can only decrease rank if old shape leads with ones");
+//			for (int i = (-rankOffset); i < tshape.length; i++) {
+//				tshape[i] = shape[i + rankOffset];
+//			}
+//		} else {
+//			tshape = shape;
+//		}
+//		if (!Arrays.equals(tshape, oShape)) {
+//			rankOffset = 0;
+//			throw new IllegalArgumentException("New shape not allowed - can only increase or decrease rank of a lazy dataset");
+//		}
 		this.shape = shape.clone();
 	}
 
@@ -194,7 +256,7 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public ILazyDataset squeeze(boolean onlyFromEnd) {
 		setShapeInternal(AbstractDataset.squeezeShape(shape, onlyFromEnd));
-		if (lazyErrorDeligate!=null) lazyErrorDeligate = lazyErrorDeligate.squeeze(onlyFromEnd);
+		if (lazyErrorDelegate!=null) lazyErrorDelegate = lazyErrorDelegate.squeeze(onlyFromEnd);
 		return this;
 	}
 
@@ -290,28 +352,26 @@ public class LazyDataset implements ILazyDataset {
 		int[] nstep;
 
 		int r = oShape.length;
-		if (rankOffset < 0) {
+		if (r != shape.length || oOffset != nOffset) {
 			nstart = new int[r];
 			nstop = new int[r];
 			nstep = new int[r];
-			for (int i = 0; i < -rankOffset; i++) {
+			int i = 0;
+			for (; i < oOffset; i++) {
 				nstart[i] = 0;
 				nstop[i] = 1;
 				nstep[i] = 1;
 			}
-			for (int i = 0; i < shape.length; i++) {
-				nstart[i - rankOffset] = lstart[i];
-				nstop[i - rankOffset] = lstop[i];
-				nstep[i - rankOffset] = lstep[i];
+			int j = nOffset;
+			for (; i < r && j < shape.length; i++, j++) {
+				nstart[i] = lstart[j];
+				nstop[i] = lstop[j];
+				nstep[i] = lstep[j];
 			}
-		} else if (rankOffset > 0) {
-			nstart = new int[r];
-			nstop = new int[r];
-			nstep = new int[r];
-			for (int i = 0; i < r; i++) {
-				nstart[i] = lstart[i + rankOffset];
-				nstop[i] = lstop[i + rankOffset];
-				nstep[i] = lstep[i + rankOffset];
+			for (; i < r; i++) {
+				nstart[i] = 0;
+				nstop[i] = 1;
+				nstep[i] = 1;
 			}
 		} else {
 			nstart = start;
@@ -333,8 +393,8 @@ public class LazyDataset implements ILazyDataset {
 		
 		if (a instanceof IErrorDataset) {
 			IErrorDataset ea = (IErrorDataset)a;
-			if (lazyErrorDeligate!=null) {
-				IDataset lazySlice = lazyErrorDeligate.getSlice(monitor, start, stop, step);
+			if (lazyErrorDelegate!=null) {
+				IDataset lazySlice = lazyErrorDelegate.getSlice(monitor, start, stop, step);
 				ea.setError(lazySlice);
 			} else {
 				ea.clearError();
@@ -354,8 +414,8 @@ public class LazyDataset implements ILazyDataset {
 		final int[] step = new int[rank];
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 		ILazyDataset sliceView = getSliceView(start, stop, step);
-		if (lazyErrorDeligate!=null) {
-			ILazyDataset errorView = lazyErrorDeligate.getSliceView(start, stop, step);
+		if (lazyErrorDelegate!=null) {
+			ILazyDataset errorView = lazyErrorDelegate.getSliceView(start, stop, step);
 			sliceView.setLazyErrors(errorView);
 		}
 		return sliceView;
@@ -380,19 +440,19 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public void setLazyErrors(ILazyDataset errors) {
 		if (errors==null) {
-			lazyErrorDeligate = null;
+			lazyErrorDelegate = null;
 			return;
 		}
 		if (errors.getRank()!=getRank()) throw new RuntimeException("Rank of errors not correct. Should be "+getRank());
 		if (!Arrays.equals(getShape(), errors.getShape())) {
 			throw new RuntimeException("Shape of errors not correct. Should be "+Arrays.toString(getShape()));
 		}
-		this.lazyErrorDeligate = errors;
+		this.lazyErrorDelegate = errors;
 	}
 
 	@Override
 	public ILazyDataset getLazyErrors() {
-		return lazyErrorDeligate;
+		return lazyErrorDelegate;
 	}
 
 }

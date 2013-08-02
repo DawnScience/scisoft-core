@@ -761,12 +761,13 @@ class ndarray(object):
             return complex(r.getReal(), r.getImaginary())
         return r
 
-    def copy(self): # override to keep superclass's methods
+    def copy(self):
         return ndarray(buffer=self.__dataset, copy=True)
 
-    # non-specific code that needs ndcls
-    # this code cannot put in ndarray superclass as there is a problem when
-    # wrapping methods with same name in superclass
+    def fill(self, value):
+        self.__dataset.fill(_cvt2j(value))
+        return self
+
     @_wrapout
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
         if axis is None:

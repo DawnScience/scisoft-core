@@ -388,7 +388,7 @@ def tensordot(a, b, axes=2):
     '''
     if isinstance(axes, int):
         bx = range(axes)
-        ao = a.rank - axes - 1
+        ao = a.ndim - axes - 1
         ax = [ ao + i for i in bx ]
     else:
         t = type(axes)

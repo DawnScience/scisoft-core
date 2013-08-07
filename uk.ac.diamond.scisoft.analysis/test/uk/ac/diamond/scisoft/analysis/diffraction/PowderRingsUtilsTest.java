@@ -236,7 +236,7 @@ public class PowderRingsUtilsTest {
 				Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5 * (i + 1.5));
 				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 7e-2 * (i + 1));
 				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], nDet.getNormalAnglesInDegrees()[2], 25);
-				Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-5);
+				Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-9);
 				System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
 						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
 						+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());

@@ -175,6 +175,13 @@ public class EllipticalROI extends ROIBase {
 	}
 
 	/**
+	 * @return aspect ratio, i.e. ratio of major to minor axes
+	 */
+	public double getAspectRatio() {
+		return saxis[0] / saxis[1];
+	}
+
+	/**
 	 * Get point on ellipse at given angle
 	 * @param angle in radians
 	 * @return point 

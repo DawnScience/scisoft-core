@@ -424,9 +424,9 @@ public class Generic1DFitter implements Serializable {
 					crossings.add((double) forwardPos);
 				}
 
-				IdentifiedPeak newPeak = new IdentifiedPeak(xdata.getElementDoubleAbs(i), xdata
-						.getElementDoubleAbs(backPos), xdata.getElementDoubleAbs(forwardPos), Math.min(backTotal,
-								forwardTotal), slicedYData.max().doubleValue()-slicedYData.min().doubleValue(), backPos, forwardPos, crossings);
+				IdentifiedPeak newPeak = new IdentifiedPeak(xdata.getElementDoubleAbs(i), xdata.getElementDoubleAbs(backPos),
+						xdata.getElementDoubleAbs(forwardPos), Math.min(backTotal, forwardTotal),
+						slicedYData.max().doubleValue()-slicedYData.min().doubleValue(), backPos, forwardPos, crossings);
 				if (verbose) {
 					System.out.println("Back Position = " + xdata.getElementDoubleAbs(backPos) + " Peak Pos = "
 							+ xdata.getElementDoubleAbs(i) + " Forward Position = "

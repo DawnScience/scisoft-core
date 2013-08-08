@@ -63,9 +63,9 @@ public class AlignImages {
 			
 			double[] s = Image.findTranslation2D(anchor, image, roi);
 			// We add the preShift to the shift data
-			if(preShift!=null){
-				s[0]+=preShift[0];
-				s[1]+=preShift[1];
+			if (preShift != null) {
+				s[0] += preShift[0];
+				s[1] += preShift[1];
 			}
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);

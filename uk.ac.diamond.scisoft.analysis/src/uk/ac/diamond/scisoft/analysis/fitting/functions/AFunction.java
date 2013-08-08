@@ -195,7 +195,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public String toString() {
 		StringBuffer out = new StringBuffer();
 		out.append(String.format("'%s' has %d parameters:\n", name, parameters.length));
-		for (int i = 0; i < getNoOfParameters(); i++) {
+		for (int i = 0; i < parameters.length; i++) {
 			out.append(String.format("%d) %f in range [%f, %f]\n", i, parameters[i].getValue(),
 					parameters[i].getLowerLimit(), parameters[i].getUpperLimit()));
 		}

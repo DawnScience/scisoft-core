@@ -71,7 +71,7 @@ class SRSLoader(PythonLoader):
                 if not l:
                     raise io_exception, "End of file reached unexpectedly"
                 ls = l.lstrip()
-                if ls.startswith("&SRS"):
+                if ls.startswith("&SRS") or ls.startswith("&DLS"):
                     break
             else:
                 raise io_exception, "Not an SRS file"

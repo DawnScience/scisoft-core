@@ -50,4 +50,11 @@ public class AnalysisRpcServerHandlerImpl implements AnalysisRpcServerHandler {
 			return flattener.flatten(e);
 		}
 	}
+
+	@Override
+	public Object is_alive() {
+		// this method does nothing. Simply successfully running as an RPC call
+		// determines if alive
+		return true;
+	}
 }

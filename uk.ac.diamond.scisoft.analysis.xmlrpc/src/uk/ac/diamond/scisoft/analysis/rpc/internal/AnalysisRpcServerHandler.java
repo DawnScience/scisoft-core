@@ -35,4 +35,9 @@ public interface AnalysisRpcServerHandler {
 	 */
 	public Object handler(String destination, Object[] args);
 
+	/**
+	 * Runs without exception if the server is running. Can be used by the client to poll the server to see if it is up yet.
+	 */
+	public Object is_alive();
+
 }

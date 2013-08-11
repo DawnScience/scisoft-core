@@ -99,4 +99,39 @@ public class AnalysisRpcAdvancedTest {
 		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
 		analysisRpcClient.request("doesnotexist", new Object[] { "Hello" });
 	}
+
+	@Test
+	public void testIsAlive() throws AnalysisRpcException {
+		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
+		Assert.assertFalse(analysisRpcClient.isAlive());
+		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT);
+		try {
+			analysisRpcServer.start();
+			Assert.assertTrue(analysisRpcClient.isAlive());
+		} finally {
+			analysisRpcServer.shutdown();
+		}
+	}
+
+	@Test
+	public void waitIsAlive() throws AnalysisRpcException {
+		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
+		Assert.assertFalse(analysisRpcClient.isAlive());
+		try {
+			analysisRpcClient.waitUntilAlive(1000);
+			Assert.fail();
+		} catch (AnalysisRpcException e) {
+			// test passes, waitUntilAlive has raised exception saying not ready
+			// yet
+		}
+		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT);
+		try {
+			analysisRpcServer.start();
+			analysisRpcClient.waitUntilAlive(1000);
+			Assert.assertTrue(analysisRpcClient.isAlive());
+		} finally {
+			analysisRpcServer.shutdown();
+		}
+	}
+
 }

@@ -47,6 +47,7 @@ class rpcserver(object):
         self._server.register_introspection_functions()
         
         self._server.register_function(self._xmlrpchandler, 'Analysis.handler');
+        self._server.register_function(self._xmlrpc_is_alive, 'Analysis.is_alive');
         self._handlers = dict()
    
     def _xmlrpchandler(self, destination, args):
@@ -62,6 +63,9 @@ class rpcserver(object):
             flatret = _flatten.flatten(e)
         return flatret
     
+    def _xmlrpc_is_alive(self):
+        return True
+
     def add_handler(self, name, function):
         '''
         Register a new function with the Server. The function
@@ -118,6 +122,12 @@ class rpcclient(object):
         if (isinstance(unflatret, Exception)):
             raise unflatret
         return unflatret
+    def is_alive(self):
+        try:
+            self._serverProxy.Analysis.is_alive()
+            return True
+        except:
+            return False
     
     def __getattr__(self, destination):
         return _method(self.request, destination)

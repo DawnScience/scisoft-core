@@ -122,6 +122,59 @@ public class AnalysisRpcClient {
 	}
 
 	/**
+	 * Test if the server is up and running.
+	 * 
+	 * @warning The AnalysisRpc server may become unreachable between is_alive
+	 *          being called and a request being made.
+	 * 
+	 * @return True if communication is working
+	 */
+	public boolean isAlive() {
+		try {
+			client.execute("Analysis.is_alive", new Object[0]);
+			return true;
+		} catch (XmlRpcException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Poll isAlive until True, raise an exception if isAlive is not true before
+	 * the timeout.
+	 * 
+	 * @throws AnalysisRpcException
+	 */
+	public void waitUntilAlive() throws AnalysisRpcException {
+		String timeoutSystemProp = System.getProperty(
+				"uk.ac.diamond.scisoft.analysis.xmlrpc.client.timeout", "5000");
+		final long ms = Integer.parseInt(timeoutSystemProp);
+		waitUntilAlive(ms);
+	}
+
+	/**
+	 * Poll isAlive until True, raise an exception if isAlive is not true before
+	 * the timeout.
+	 * 
+	 * @param milliseconds
+	 *            timeout time
+	 * @throws AnalysisRpcException
+	 */
+	public void waitUntilAlive(long milliseconds) throws AnalysisRpcException {
+		long stop = System.currentTimeMillis() + milliseconds;
+		while (System.currentTimeMillis() < stop) {
+			if (isAlive())
+				return;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		throw new AnalysisRpcException(
+				"Timeout waiting for other end to be alive");
+	}
+
+	/**
 	 * Return port number in use
 	 * 
 	 * @return port

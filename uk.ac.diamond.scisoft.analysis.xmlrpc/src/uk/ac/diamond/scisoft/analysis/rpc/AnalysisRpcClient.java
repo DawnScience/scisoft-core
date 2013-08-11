@@ -31,14 +31,17 @@ import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcTypeFactoryImpl;
 /**
  * Client class for AnalysisRpc.
  * <p>
- * Generally it is expected that a provider of a service will write a wrapper class that delegates to
- * {@link AnalysisRpcClient} and provides a "nice" interface which is strongly typed.
+ * Generally it is expected that a provider of a service will write a wrapper
+ * class that delegates to {@link AnalysisRpcClient} and provides a "nice"
+ * interface which is strongly typed.
  * <p>
  * 
- * @see AnalysisRpcBasicTest See the Ananlysis Rpc Basic Test for an example of use
+ * @see AnalysisRpcBasicTest See the Ananlysis Rpc Basic Test for an example of
+ *      use
  */
 public class AnalysisRpcClient {
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcClient.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(AnalysisRpcClient.class);
 
 	private XmlRpcClient client;
 	private IRootFlattener flattener = FlatteningService.getFlattener();
@@ -46,7 +49,8 @@ public class AnalysisRpcClient {
 	private final int port;
 
 	/**
-	 * Create a new AnalysisRpc client that connects to a server on the given port
+	 * Create a new AnalysisRpc client that connects to a server on the given
+	 * port
 	 * 
 	 * @param port
 	 *            to connect to
@@ -61,19 +65,25 @@ public class AnalysisRpcClient {
 			client.setTypeFactory(new AnalysisRpcTypeFactoryImpl(client));
 		} catch (MalformedURLException e) {
 			// This is a programming error
-			logger.error("Failed to create AnalysisRPCClient due to MalformedURLException", e);
+			logger.error(
+					"Failed to create AnalysisRPCClient due to MalformedURLException",
+					e);
 		}
 	}
 
 	/**
-	 * Issue a RPC call by calling request. The call is sent to the server on the registered port to the handler
-	 * registered with the name passed to destination.
+	 * Issue a RPC call by calling request. The call is sent to the server on
+	 * the registered port to the handler registered with the name passed to
+	 * destination.
 	 * <p>
-	 * All arguments passed the server are "flattened" for transport, and automatically unflattened by the server before
-	 * delivery to the destination handler. The return value is similarly flattened and unflattened.
+	 * All arguments passed the server are "flattened" for transport, and
+	 * automatically unflattened by the server before delivery to the
+	 * destination handler. The return value is similarly flattened and
+	 * unflattened.
 	 * <p>
-	 * If the delegated to method throws an exception, it is re-thrown here wrapped as an {@link AnalysisRpcException}.
-	 * If the delegated to method returns an exception, it will be thrown rather than returned.
+	 * If the delegated to method throws an exception, it is re-thrown here
+	 * wrapped as an {@link AnalysisRpcException}. If the delegated to method
+	 * returns an exception, it will be thrown rather than returned.
 	 * <p>
 	 * 
 	 * @param destination
@@ -81,17 +91,24 @@ public class AnalysisRpcClient {
 	 * @param args
 	 *            arguments in the server
 	 * @return value that the delegated to method returns
-	 * @throws AnalysisRpcException under a few conditions, always as a wrapper around the original cause. The original causes can be one of:
-	 * <ul>
-	 * <li> {@link UnsupportedOperationException} if the arguments or return type failed to be flattened or unflattened.</li>
-	 * <li> {@link XmlRpcException} if the underlying transport had a failure and XML-RPC was used as the transport </li>
-	 * <li> Other type of {@link Exception} if the remote end threw an Exception </li>
-	 * </ul>
+	 * @throws AnalysisRpcException
+	 *             under a few conditions, always as a wrapper around the
+	 *             original cause. The original causes can be one of:
+	 *             <ul>
+	 *             <li> {@link UnsupportedOperationException} if the arguments
+	 *             or return type failed to be flattened or unflattened.</li>
+	 *             <li> {@link XmlRpcException} if the underlying transport had
+	 *             a failure and XML-RPC was used as the transport </li> <li>
+	 *             Other type of {@link Exception} if the remote end threw an
+	 *             Exception </li>
+	 *             </ul>
 	 */
-	public Object request(String destination, Object[] args) throws AnalysisRpcException {
+	public Object request(String destination, Object[] args)
+			throws AnalysisRpcException {
 		try {
 			Object[] flatargs = (Object[]) flattener.flatten(args);
-			Object flatret = client.execute("Analysis.handler", new Object[] { destination, flatargs });
+			Object flatret = client.execute("Analysis.handler", new Object[] {
+					destination, flatargs });
 			Object unflatret = flattener.unflatten(flatret);
 			if (unflatret instanceof Exception) {
 				throw new AnalysisRpcException((Exception) unflatret);
@@ -106,6 +123,7 @@ public class AnalysisRpcClient {
 
 	/**
 	 * Return port number in use
+	 * 
 	 * @return port
 	 */
 	public int getPort() {

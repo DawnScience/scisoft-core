@@ -41,14 +41,17 @@ public class AnalysisRpcAdvancedTest {
 
 				@Override
 				public Object run(Object[] unflattened) {
-					return ((String) unflattened[0] + (String) unflattened[1]).length();
+					return ((String) unflattened[0] + (String) unflattened[1])
+							.length();
 				}
 			});
 
 			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
-			String catResult = (String) analysisRpcClient.request("cat", new Object[] { "Hello, ", "World!" });
+			String catResult = (String) analysisRpcClient.request("cat",
+					new Object[] { "Hello, ", "World!" });
 			Assert.assertEquals("Hello, World!", catResult);
-			int lenResult = (Integer) analysisRpcClient.request("len", new Object[] { "Hello, ", "World!" });
+			int lenResult = (Integer) analysisRpcClient.request("len",
+					new Object[] { "Hello, ", "World!" });
 			Assert.assertEquals("Hello, World!".length(), lenResult);
 		} finally {
 			if (analysisRpcServer != null)
@@ -62,19 +65,21 @@ public class AnalysisRpcAdvancedTest {
 		try {
 			analysisRpcServer = new AnalysisRpcServer(++PORT);
 			analysisRpcServer.start();
-			analysisRpcServer.addHandler("flaterror", new IAnalysisRpcHandler() {
+			analysisRpcServer.addHandler("flaterror",
+					new IAnalysisRpcHandler() {
 
-				@Override
-				public Object run(Object[] unflattened) {
-					// return unflattanble type
-					return new Object();
-				}
-			});
+						@Override
+						public Object run(Object[] unflattened) {
+							// return unflattanble type
+							return new Object();
+						}
+					});
 
 			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
 			// force a flattening exception on the call side
 			try {
-				analysisRpcClient.request("flaterror", new Object[] { "Hello" });
+				analysisRpcClient
+						.request("flaterror", new Object[] { "Hello" });
 				Assert.fail("No exception raised");
 			} catch (AnalysisRpcException e) {
 				Assert.assertFalse(e.getCause() instanceof UnsupportedOperationException);
@@ -86,9 +91,11 @@ public class AnalysisRpcAdvancedTest {
 		}
 	}
 
-	// As all comms are to the localhost, we want to make sure we time out pretty quickly
+	// As all comms are to the localhost, we want to make sure we time out
+	// pretty quickly
 	@Test(expected = AnalysisRpcException.class, timeout = 2000)
-	public void testConnectionTimesOutQuicklyEnough() throws AnalysisRpcException {
+	public void testConnectionTimesOutQuicklyEnough()
+			throws AnalysisRpcException {
 		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
 		analysisRpcClient.request("doesnotexist", new Object[] { "Hello" });
 	}

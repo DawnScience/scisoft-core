@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -246,5 +249,106 @@ public class AnalysisRpcClient {
 	 */
 	public int getPort() {
 		return port;
+	}
+
+	/**
+	 * Create a proxy that implements the given interfaces. All methods that are
+	 * called on the proxy must be declared to throw
+	 * {@link AnalysisRpcException}.
+	 * 
+	 * @param loader
+	 *            class loader to use. See
+	 *            {@link Proxy#newProxyInstance(ClassLoader, Class[], InvocationHandler)}
+	 *            for details on the class loader.
+	 * @param interfaces
+	 *            Interfaces to implement for the proxy
+	 * @param debug
+	 *            have calls use invoke_debug when true
+	 * @return a new instance of an object that implements the interfaces
+	 *         supplied.
+	 */
+	public Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces,
+			boolean debug) {
+		return Proxy.newProxyInstance(loader, interfaces,
+				new ClientProxy(debug));
+	}
+
+	/**
+	 * Convenience wrapper around
+	 * {@link #newProxyInstance(ClassLoader, Class[])}
+	 * 
+	 * @param interfaces
+	 *            to implement in proxy. The class loader used is the class
+	 *            loader of the first interface in the list.
+	 * @param debug
+	 *            have calls use invoke_debug when true
+	 */
+	public Object newProxyInstance(Class<?>[] interfaces, boolean debug) {
+		return newProxyInstance(interfaces[0].getClassLoader(), interfaces,
+				debug);
+	}
+
+	/**
+	 * Convenience wrapper around {@link #newProxyInstance(Class[])}
+	 * 
+	 * @param single_interface
+	 *            Sinlge Interface to make proxy for
+	 * @param debug
+	 *            have calls use invoke_debug when true
+	 */
+	public <T> T newProxyInstance(Class<T> single_interface, boolean debug) {
+		@SuppressWarnings("unchecked")
+		T result = (T) newProxyInstance(new Class<?>[] { single_interface },
+				debug);
+		return result;
+	}
+
+	/**
+	 * Convenience wrapper around {@link #newProxyInstance(Class[])} with no
+	 * debug
+	 * 
+	 * @param single_interface
+	 *            Sinlge Interface to make proxy for
+	 */
+	public <T> T newProxyInstance(Class<T> single_interface) {
+		@SuppressWarnings("unchecked")
+		T result = (T) newProxyInstance(new Class<?>[] { single_interface },
+				false);
+		return result;
+	}
+
+	private class ClientProxy implements InvocationHandler {
+
+		private boolean debug;
+
+		public ClientProxy(boolean debug) {
+			this.debug = debug;
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			if (!hasThrowsAnalysisRpcException(method.getExceptionTypes())) {
+				throw new RuntimeException(
+						"Invoked methods on AnalysisRpcClient must be declared to throw AnalysisRpcException");
+			}
+
+			final String methodName = method.getName();
+			if (debug) {
+				return request_debug(methodName, args, false);
+			} else {
+				return request(methodName, args);
+			}
+		}
+
+		private boolean hasThrowsAnalysisRpcException(Class<?>[] exceptionTypes) {
+			for (Class<?> exceptionType : exceptionTypes) {
+				if (exceptionType.isAssignableFrom(AnalysisRpcException.class)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 }

@@ -134,4 +134,68 @@ public class AnalysisRpcAdvancedTest {
 		}
 	}
 
+	interface TestProxy_Interface {
+		public String cat(String a1, String a2) throws AnalysisRpcException;
+	}
+
+	@Test
+	public void testProxy() throws AnalysisRpcException {
+		AnalysisRpcServer analysisRpcServer = null;
+		try {
+			analysisRpcServer = new AnalysisRpcServer(++PORT);
+			analysisRpcServer.start();
+			analysisRpcServer.addHandler("cat", new IAnalysisRpcHandler() {
+
+				@Override
+				public Object run(Object[] unflattened) {
+					return (String) unflattened[0] + (String) unflattened[1];
+				}
+			});
+
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			TestProxy_Interface catObject = analysisRpcClient
+					.newProxyInstance(TestProxy_Interface.class);
+			String catResult = catObject.cat("Hello, ", "World!");
+			Assert.assertEquals("Hello, World!", catResult);
+		} finally {
+			if (analysisRpcServer != null)
+				analysisRpcServer.shutdown();
+		}
+	}
+
+	interface TestBadProxy_Interface {
+		// Missing throws AnalysisRpcException
+		public String cat(String a1, String a2);
+	}
+
+	/**
+	 * This test makes sure that methods on the interface throws
+	 * AnalysisRpcException. However, it may be desirable to change this
+	 * restriction to a new RuntimeException that does not have this
+	 * requirement. The advantage would be that any interface could be
+	 * implemented in Python (across the server divide) but that would add an
+	 * implication to the user of the interface that the call does not have to
+	 * worry about such issues.
+	 */
+	@Test
+	public void testBadProxy() {
+		// don't need a real server because this test makes sure the bad proxy
+		// fails
+		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
+		TestBadProxy_Interface catObject = analysisRpcClient
+				.newProxyInstance(TestBadProxy_Interface.class);
+		try {
+			catObject.cat("Hello, ", "World!");
+			Assert.fail("Exception not thrown as expected");
+		} catch (RuntimeException e) {
+		}
+
+		try {
+			catObject.equals(null);
+			Assert.fail("Exception not thrown as expected");
+		} catch (RuntimeException e) {
+		}
+
+	}
+
 }

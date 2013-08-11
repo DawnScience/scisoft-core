@@ -34,3 +34,33 @@ typednone=_wrapper.typednone
 abstractdatasetdescriptor=_wrapper.abstractdatasetdescriptor
 binarywrapper=_wrapper.binarywrapper
 settemplocation=_flatten.settemplocation
+
+
+if __name__ == '__main__':
+    # When run as a script, launches an RPC Server
+    import sys
+
+    serverPort = int(sys.argv[1])
+    server = rpcserver(serverPort)
+
+    def addHandlers(code, handler_names):
+        ''' Add new handlers to the running server.
+            The code is 'exec'uted with custom dictionaries, the names
+            in handler_names must be defined by code and then
+            are added to the server
+        '''
+        g = dict(globals())
+        l = dict()
+        exec(code, g, l)
+        for handler_name in handler_names:
+            server.add_handler(handler_name, l[handler_name])
+    server.add_handler('addHandlers', addHandlers)
+
+    def setPlottingPort(port):
+        if port > 0:
+            import scisoftpy.plot as plot
+            plot.setremoteport(rpcport=port)
+    server.add_handler('setPlottingPort', setPlottingPort)
+
+    # Run the server's main loop
+    server.serve_forever()

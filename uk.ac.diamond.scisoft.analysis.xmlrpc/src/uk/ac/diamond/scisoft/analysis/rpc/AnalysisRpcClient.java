@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -71,6 +73,34 @@ public class AnalysisRpcClient {
 		}
 	}
 
+	private Object request_common(String destination, Object[] args,
+			boolean debug, boolean suspend) throws AnalysisRpcException {
+		try {
+			if (args == null) {
+				// No arguments, convert null to empty array
+				args = new Object[0];
+			}
+			Object[] flatargs = (Object[]) flattener.flatten(args);
+			final Object flatret;
+			if (debug) {
+				flatret = client.execute("Analysis.handler_debug",
+						new Object[] { destination, flatargs, suspend });
+			} else {
+				flatret = client.execute("Analysis.handler", new Object[] {
+						destination, flatargs });
+			}
+			Object unflatret = flattener.unflatten(flatret);
+			if (unflatret instanceof Exception) {
+				throw new AnalysisRpcException((Exception) unflatret);
+			}
+			return unflatret;
+		} catch (XmlRpcException e) {
+			throw new AnalysisRpcException(e);
+		} catch (UnsupportedOperationException e) {
+			throw new AnalysisRpcException(e);
+		}
+	}
+
 	/**
 	 * Issue a RPC call by calling request. The call is sent to the server on
 	 * the registered port to the handler registered with the name passed to
@@ -105,20 +135,20 @@ public class AnalysisRpcClient {
 	 */
 	public Object request(String destination, Object[] args)
 			throws AnalysisRpcException {
-		try {
-			Object[] flatargs = (Object[]) flattener.flatten(args);
-			Object flatret = client.execute("Analysis.handler", new Object[] {
-					destination, flatargs });
-			Object unflatret = flattener.unflatten(flatret);
-			if (unflatret instanceof Exception) {
-				throw new AnalysisRpcException((Exception) unflatret);
-			}
-			return unflatret;
-		} catch (XmlRpcException e) {
-			throw new AnalysisRpcException(e);
-		} catch (UnsupportedOperationException e) {
-			throw new AnalysisRpcException(e);
-		}
+		return request_common(destination, args, false, false);
+	}
+
+	/**
+	 * Issue a RPC call by calling request, entering debug mode if server is
+	 * available.
+	 * 
+	 * @param suspend
+	 *            suspend on entry to handler
+	 * @see #request(String, Object[])
+	 */
+	public Object request_debug(String destination, Object[] args,
+			boolean suspend) throws AnalysisRpcException {
+		return request_common(destination, args, true, suspend);
 	}
 
 	/**
@@ -136,6 +166,41 @@ public class AnalysisRpcClient {
 		} catch (XmlRpcException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Set PyDev Debugger settrace options. See pydevd.py for further
+	 * documentation. Calling this method overrides previous settings and this
+	 * only has an effect if it is called before any calls to
+	 * {@link #request_debug(String, Object[], boolean)}
+	 * 
+	 * @param options
+	 *            Key/Value pairs of parameters to settrace to their desired
+	 *            values.
+	 * @throws AnalysisRpcException
+	 */
+	public void setPyDevSetTraceParams(Map<String, Object> options)
+			throws AnalysisRpcException {
+		try {
+			client.execute("Analysis.set_pydev_settrace_params",
+					new Object[] { options });
+		} catch (XmlRpcException e) {
+			throw new AnalysisRpcException(
+					"Failed to set_pydev_settrace_params", e);
+		}
+	}
+
+	/**
+	 * Convenience method around {@link #setPyDevSetTraceParams(Map)} for the
+	 * most common situation where only the port needs to be overridden.
+	 * 
+	 * @param port
+	 * @throws AnalysisRpcException
+	 */
+	public void setPyDevSetTracePort(int port) throws AnalysisRpcException {
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("port", port);
+		setPyDevSetTraceParams(options);
 	}
 
 	/**

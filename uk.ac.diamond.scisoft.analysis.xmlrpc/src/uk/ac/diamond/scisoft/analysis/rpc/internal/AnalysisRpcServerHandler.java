@@ -36,6 +36,14 @@ public interface AnalysisRpcServerHandler {
 	public Object handler(String destination, Object[] args);
 
 	/**
+	 * Call handler, and if supported by server, attach debugger, optionally inserting temporary
+	 * breakpoint at handler entry point.
+	 * 
+	 * @see #handler(String, Object[])
+	 */
+	public Object handler_debug(String destination, Object[] args, boolean suspend);
+	
+	/**
 	 * Runs without exception if the server is running. Can be used by the client to poll the server to see if it is up yet.
 	 */
 	public Object is_alive();

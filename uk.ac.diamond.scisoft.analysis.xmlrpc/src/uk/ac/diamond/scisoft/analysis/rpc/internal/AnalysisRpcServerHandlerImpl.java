@@ -31,13 +31,15 @@ public class AnalysisRpcServerHandlerImpl implements AnalysisRpcServerHandler {
 		this.analysisRPC = analysisRPC;
 	}
 
-	@Override
-	public Object handler(String destination, Object[] args) {
+	private Object handler_common(String destination, Object[] args,
+			boolean debug, boolean suspend) {
 		IRootFlattener flattener = analysisRPC.getFlattener();
 		try {
-			IAnalysisRpcHandler handler = analysisRPC.getDestination(destination);
+			IAnalysisRpcHandler handler = analysisRPC
+					.getDestination(destination);
 			if (handler == null) {
-				throw new AnalysisRpcException("No handler registered for " + destination);
+				throw new AnalysisRpcException("No handler registered for "
+						+ destination);
 			}
 			Object[] unflattened = new Object[args.length];
 			for (int i = 0; i < args.length; i++) {
@@ -49,6 +51,18 @@ public class AnalysisRpcServerHandlerImpl implements AnalysisRpcServerHandler {
 		} catch (Exception e) {
 			return flattener.flatten(e);
 		}
+	}
+
+	@Override
+	public Object handler(String destination, Object[] args) {
+		return handler_common(destination, args, false, false);
+	}
+
+	@Override
+	public Object handler_debug(String destination, Object[] args,
+			boolean suspend) {
+		return handler_common(destination, args, true, suspend);
+
 	}
 
 	@Override

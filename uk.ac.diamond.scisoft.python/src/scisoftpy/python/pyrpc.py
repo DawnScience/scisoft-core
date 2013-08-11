@@ -47,24 +47,61 @@ class rpcserver(object):
         self._server.register_introspection_functions()
         
         self._server.register_function(self._xmlrpchandler, 'Analysis.handler');
+        self._server.register_function(self._xmlrpchandler_debug, 'Analysis.handler_debug');
         self._server.register_function(self._xmlrpc_is_alive, 'Analysis.is_alive');
+        self._server.register_function(self._xmlrpc_set_pydev_settrace_params, 'Analysis.set_pydev_settrace_params');
         self._handlers = dict()
+
+        self.pydev_settrace_params = dict()
    
-    def _xmlrpchandler(self, destination, args):
+    def _xmlrpchandler_common(self, destination, args, debug=False, suspend=False):
         try:
             handler = self._handlers.get(destination)
             if handler is None:
                 ret = Exception("No handler registered for " + destination)
             else:
                 unflattened = map(_flatten.unflatten, args)
-                ret = handler(*unflattened)
+                if debug:
+                    # do the import here, pydevd must already be in the sys.
+                    # it is important that the import is within the outer try/except
+                    # so that import error gets propagated back up as
+                    # an AnalysisRpcException
+                    import pydevd  # @UnresolvedImport
+                    # Initialise debug, without the suspend, next settrace sets the
+                    # suspend if needed. This split makes it easier to detect cause
+                    # of failure if an exception is thrown. This line covers the
+                    # connection to the debug server, the next settrace then only
+                    # does the suspend.
+                    pydevd.settrace(suspend=False, **self.pydev_settrace_params)
+
+
+                    # These two statements must be on same line so that suspend happens
+                    # on next executable line, being the first line of the handler
+
+                    # Run the registered Analysis RPC Handler. (If you are browsing
+                    # a stack trace, this is probably as high up the stack as you
+                    # want to go).
+                    pydevd.settrace(suspend=suspend); ret = handler(*unflattened)
+                else:
+                    ret = handler(*unflattened)
             flatret = _flatten.flatten(ret)
         except Exception, e:
             flatret = _flatten.flatten(e)
         return flatret
+    def _xmlrpchandler(self, destination, args):
+        return self._xmlrpchandler_common(destination, args)
+    def _xmlrpchandler_debug(self, destination, args, suspend):
+        return self._xmlrpchandler_common(destination, args, True, suspend)
     
     def _xmlrpc_is_alive(self):
         return True
+
+    def _xmlrpc_set_pydev_settrace_params(self, params):
+        self.pydev_settrace_params = dict(params)
+        # Cannot return None (aka null in java), return value is unused
+        # This call isn't handled via flatteners which normally
+        # handles None
+        return 0
 
     def add_handler(self, name, function):
         '''
@@ -109,6 +146,17 @@ class rpcclient(object):
         self._serverProxy = ServerProxy("http://127.0.0.1:%d" % port)
         self._port = port
         
+    def _request_common(self, destination, params, debug=False, suspend=False):
+        flatargs = _flatten.flatten(params)
+        if debug:
+            flatret = self._serverProxy.Analysis.handler_debug(destination, flatargs, suspend)
+        else:
+            flatret = self._serverProxy.Analysis.handler(destination, flatargs)
+        unflatret = _flatten.unflatten(flatret)
+        if (isinstance(unflatret, Exception)):
+            raise unflatret
+        return unflatret
+
     def request(self, destination, params):
         '''
         Perform a request to the Server, directing it at the destination
@@ -116,12 +164,18 @@ class rpcclient(object):
         it the params specified.
         params must be a tuple or a list of the arguments
         '''
-        flatargs = _flatten.flatten(params)
-        flatret = self._serverProxy.Analysis.handler(destination, flatargs)
-        unflatret = _flatten.unflatten(flatret)
-        if (isinstance(unflatret, Exception)):
-            raise unflatret
-        return unflatret
+        return self._request_common(destination, params)
+    def request_debug(self, destination, params, suspend):
+        '''
+        Perform a request to the Server starting debug if server supports
+        it, directing it at the destination
+        which was registered as the handler on the server, passing
+        it the params specified.
+        params must be a tuple or a list of the arguments
+        suspend if true, suspends on entry
+        '''
+        return self._request_common(destination, params, True, suspend)
+
     def is_alive(self):
         try:
             self._serverProxy.Analysis.is_alive()

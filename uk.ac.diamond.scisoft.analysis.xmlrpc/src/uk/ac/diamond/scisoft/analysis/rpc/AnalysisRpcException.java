@@ -22,6 +22,7 @@ package uk.ac.diamond.scisoft.analysis.rpc;
  * Call {@link #getCause()} for the underlying exception
  */
 public class AnalysisRpcException extends Exception {
+	private static final long serialVersionUID = 8996421526351837418L;
 
 	public AnalysisRpcException(Throwable e) {
 		super(e);

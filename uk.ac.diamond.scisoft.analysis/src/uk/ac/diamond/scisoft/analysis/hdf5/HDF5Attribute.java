@@ -60,6 +60,11 @@ public class HDF5Attribute {
 
 	@Override
 	public String toString() {
+		// Fix to showing values in Value view - you cannot see the attribute
+		// values so there would be no point of the view otherwise!
+		if (value.getSize()==1 && value.getRank()==1) {
+			return "["+value.getString(0)+"]";
+		}
 		return value.toString();
 	}
 

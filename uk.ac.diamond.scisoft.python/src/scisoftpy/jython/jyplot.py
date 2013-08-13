@@ -136,7 +136,7 @@ class window_manager(object):
         copy.
         Returns the name of the newly opened view.
         '''
-        return _manager.getManager().openDuplicateView(None, view_name)
+        return _manager.getManager().openDuplicateView(view_name)
 
     def open_view(self, view_name=None):
         '''
@@ -144,7 +144,7 @@ class window_manager(object):
         with a new, unique name.
         Returns the name of the newly opened view.
         '''
-        return _manager.getManager().openView(None, view_name)
+        return _manager.getManager().openView(view_name)
 
     def get_open_views(self):
         '''

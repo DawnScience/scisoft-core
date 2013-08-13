@@ -174,6 +174,9 @@ class Test(unittest.TestCase):
         tds = np.array(self.u)
         self.assertEquals(tds.dtype, np.float64)
 
+        tds = np.array([np.arange(5), np.arange(5)+5])
+        self.checkitems(np.arange(10).reshape(2,5), tds)
+
     def testSlicing(self):
         a = np.array([], dtype=np.float_)
         self.assertEquals(len(a), 0)

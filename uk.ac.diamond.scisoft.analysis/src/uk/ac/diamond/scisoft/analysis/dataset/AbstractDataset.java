@@ -654,6 +654,10 @@ public abstract class AbstractDataset implements ADataset {
 					dtype = ldtype;
 				}
 			}
+		} else if (obj instanceof ADataset) {
+			return ((ADataset) obj).getDtype();
+		} else if (obj instanceof IDataset) {
+			dtype = getDTypeFromClass(((IDataset) obj).elementClass());
 		} else {
 			dtype = getDTypeFromClass(obj.getClass());
 		}
@@ -711,6 +715,11 @@ public abstract class AbstractDataset implements ADataset {
 				Object lo = Array.get(obj, i);
 				getShapeFromObj(ldims, lo, depth + 1);
 			}
+		} else if (obj instanceof IDataset) {
+			int[] s = ((IDataset) obj).getShape();
+			for (int i = 0; i < s.length; i++) {
+				updateShape(ldims, depth++, s[i]);
+			}
 		} else {
 			return; // not an array of any type
 		}
@@ -758,6 +767,11 @@ public abstract class AbstractDataset implements ADataset {
 				pos[depth]++;
 			}
 			pos[depth] = 0;
+		} else if (obj instanceof IDataset) {
+			boolean[] a = new boolean[shape.length];
+			for (int i = depth; i < a.length; i++)
+				a[i] = true;
+			setSlice(obj, getSliceIteratorFromAxes(pos, a));
 		} else {
 			set(obj, pos);
 		}

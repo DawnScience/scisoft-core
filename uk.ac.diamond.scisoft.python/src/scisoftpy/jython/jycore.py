@@ -385,7 +385,7 @@ class ndarray(object):
     def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
         # check what buffer is and convert if necessary
         if buffer is not None:
-            self.__dataset = __cvt_jobj(buffer, dtype=dtype, copy=copy, force=True)
+            self.__dataset = __cvt_jobj(_jinput(buffer), dtype=dtype, copy=copy, force=True)
             if shape is not None:
                 self.__dataset.setShape(asIterable(shape))
         else:
@@ -395,6 +395,7 @@ class ndarray(object):
     def _jdataset(self): # private access to Java dataset class
         return self.__dataset
 
+    # arithmetic operators
     def __add__(self, o):
         return _maths.add(self, asDataset(o))
     def __radd__(self, o):
@@ -455,6 +456,7 @@ class ndarray(object):
         self.__dataset.ipower(__cvt_jobj(o, dtype=self.dtype, copy=False))
         return self
 
+    # comparison operators
     def __eq__(self, o):
         e = _cmps.equal(self.__dataset, asDataset(o, force=True)._jdataset())
         if self.size == 1:

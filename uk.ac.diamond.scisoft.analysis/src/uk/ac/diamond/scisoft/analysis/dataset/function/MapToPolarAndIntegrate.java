@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 import javax.vecmath.Point2i;
 import javax.vecmath.Vector2d;
@@ -890,4 +892,278 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		result.add(new FloatDataset(frequency, new int[] { npts }));
 		return result;
 	}
+
+	
+	/**
+	 * This is a recursive method that implements mapping and integration
+	 * of a Cartesian grid sampled data (pixels) to polar grid
+	 * 
+	 * @param datasets
+	 *            input 2D dataset
+	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
+	 */
+	private List<AbstractDataset> interpolate_value_fj(IDataset... datasets) {
+		
+		if (datasets.length == 0) {
+			return null;
+		}
+
+		final double dr = 1.0/dpp;
+		final int nr = Math.max(1, (int) Math.ceil((erad - srad) / dr));
+		final int np = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
+			
+		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		
+		for (IDataset ids : datasets) {
+			if (ids.getRank() != 2) {
+				throw new IllegalArgumentException("operating on 2d arrays only");
+			}
+			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(new ProfileTask(0, nr, 0, np, ids)));
+		}
+		
+		return result;
+	}	
+	
+	
+	/**
+	 * This class defines a recursive task for calculating sector integration profile.
+	 * When total number of sampling points within a sector exceeds a threshold value,
+	 * sector region is split in half in radial and azimuthal directions, integration task
+	 * is invoked for every sector quadrant and results are merged back into the output dataset.  
+	 */
+	class ProfileTask extends RecursiveTask<List<AbstractDataset>> {
+		
+		private static final int MAX_POINTS = 50000;
+		
+		private final double sr, sp;
+		private final int sri, eri;
+		private final int spi, epi;
+		private final IDataset ids;
+		
+		private final double dr = 1.0/dpp;
+		private final int npi = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
+		private final double dphi = (ephi - sphi) / npi;
+
+		public ProfileTask(int sri, int eri, int spi, int epi, final IDataset dataset) {
+			super();
+			this.sri = sri;
+			this.eri = eri;
+			this.spi = spi;
+			this.epi = epi;
+			this.sr = srad + sri*dr;
+			this.sp = sphi + spi*dphi;
+			
+			this.ids = dataset;
+		}
+
+		@Override
+		protected List<AbstractDataset> compute() {
+			
+			final int nr = eri - sri;
+			final int np = epi - spi;
+			
+			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+			
+			if (nr * np > MAX_POINTS) {
+		        int mri = sri + (eri - sri) / 2;
+		        int mpi = spi + (epi - spi) / 2;
+		        
+		        ProfileTask srsp = new ProfileTask(sri, mri, spi, mpi, ids);
+		        ProfileTask srmp = new ProfileTask(sri, mri, mpi, epi, ids);
+		        ProfileTask mrsp = new ProfileTask(mri, eri, spi, mpi, ids);
+		        ProfileTask mrmp = new ProfileTask(mri, eri, mpi, epi, ids);
+		        
+		        srsp.fork();
+		        srmp.fork();
+		        mrsp.fork();
+		        
+		        List<AbstractDataset> mrmpResult = mrmp.compute();
+		        List<AbstractDataset> srspResult = srsp.join();
+		        for (int i = 0; i < srspResult.size(); i++) {
+		        	AbstractDataset sd = srspResult.get(i);
+		        	AbstractDataset md = mrmpResult.get(i);
+		        	AbstractDataset res = DatasetUtils.append(sd, md, 0);
+		        	if (sd.hasErrors() && md.hasErrors()) {
+		        		DoubleDataset se = (DoubleDataset) sd.getErrorBuffer();
+		        		DoubleDataset me = (DoubleDataset) md.getErrorBuffer();
+		        		res.setErrorBuffer(DatasetUtils.append(se, me, 0));
+		        	}
+		        	result.add(res);
+		        }
+		        
+		        
+		        List<AbstractDataset> srmpResult = srmp.join();
+		        List<AbstractDataset> mrspResult = mrsp.join();
+		        
+		        for (int i = 0; i < srmpResult.size(); i++) {
+		        	boolean radial = (i % 2 != 0);
+		        	AbstractDataset sd = (radial ? srmpResult.get(i) : mrspResult.get(i));
+		        	AbstractDataset md = (radial ? mrspResult.get(i) : srmpResult.get(i));
+		        	AbstractDataset res = DatasetUtils.append(sd, md, 0);
+		        	if (sd.hasErrors() && md.hasErrors()) {
+		        		DoubleDataset se = (DoubleDataset) sd.getErrorBuffer();
+		        		DoubleDataset me = (DoubleDataset) md.getErrorBuffer();
+		        		res.setErrorBuffer(DatasetUtils.append(se, me, 0));
+		        	}
+		        	AbstractDataset firstRes = result.get(i); 
+		        	firstRes.iadd(res);
+		        	if (firstRes.hasErrors()) {
+		        		DoubleDataset firstResErr = (DoubleDataset) firstRes.getErrorBuffer();
+		        		firstResErr.iadd(res.getErrorBuffer());
+		        		firstRes.setErrorBuffer(firstResErr);
+		        	}
+		        	result.set(i, firstRes);
+		        }
+		        
+			} else {
+				
+				IDataset errIds = null; 
+				if (doErrors && (ids instanceof AbstractDataset)) {
+					Serializable errorBuffer = ((AbstractDataset) ids).getErrorBuffer();
+					if (errorBuffer instanceof DoubleDataset) {
+						errIds = (DoubleDataset) errorBuffer;
+					}
+				}
+				
+				final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+				AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
+				AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
+				AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, AbstractDataset.FLOAT64);
+				AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, AbstractDataset.FLOAT64);
+				AbstractDataset usump = AbstractDataset.zeros(sump);
+				AbstractDataset usumr = AbstractDataset.zeros(sumr);
+				
+				Map<Point2i, Map<Integer, Double>> pvarmap = new HashMap<Point2i, Map<Integer,Double>>();
+				
+				double csum;			
+				
+				for (int r = 0; r < nr; r++) {
+					final double rad = sr + r*dr;
+					
+					csum = 0.0;
+					Map<Point2i, Double> cvarmap = new HashMap<Point2i, Double>();
+	
+					double msk = 1.0;
+					double tusump = 0;
+					
+					for (int p = 0; p < np; p++) {
+						final double phi = sp + p * dphi;
+						
+						final double x = cx + rad * Math.cos(phi);
+						if (x < 0. || x > (ids.getShape()[1] + 1.)) {
+							if (!clip && aver) {
+								if (doRadial) {
+									tusump += rad*dr*dphi;
+								}
+								if (doAzimuthal) {
+									usumr.set(rad*dr*dphi + usumr.getDouble(p), p);
+								}
+							}
+							continue;
+						}
+						
+						final double y = cy + rad * Math.sin(phi);
+						if (y < 0. || y > (ids.getShape()[0] + 1.)) {
+							if (!clip && aver) {
+								if (doRadial) {
+									tusump += rad*dr*dphi;
+								}
+								if (doAzimuthal) {
+									usumr.set(rad*dr*dphi + usumr.getDouble(p), p);
+								}
+							}
+							continue;
+						}
+						if (mask != null && aver) {
+							msk = Maths.getBilinear(mask, y ,x);
+						}
+						final double v = rad * dr * dphi * Maths.getBilinear(ids, mask, y,	x);
+						
+						Map<Point2i, Double> varmap = null;
+						if (errIds != null) {
+							varmap = getBilinearWeights(errIds, mask, y, x);
+						}
+						if (doRadial) {
+							csum += v;
+							if (varmap != null) {
+								for (Point2i pt : varmap.keySet()) {
+									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * dphi * varmap.get(pt));
+								}
+							}
+							if (aver) {
+								tusump += rad * dr * dphi * msk;
+							}
+						}
+						if (doAzimuthal) {
+								sumr.set(v + sumr.getDouble(p), p);
+								if (varmap != null) {
+									for (Point2i pt : varmap.keySet()) {
+										if (!pvarmap.containsKey(pt)) {
+											pvarmap.put(pt, new HashMap<Integer, Double>());
+										}
+										Map<Integer, Double> tmpmap = pvarmap.get(pt);
+										double vl = rad * dr * dphi * varmap.get(pt);
+										tmpmap.put(p, (tmpmap.containsKey(p) ? tmpmap.get(p) : 0.0) + vl);
+									}
+								}
+								if (aver) {
+									usumr.set(rad * dr * dphi * msk + usumr.getDouble(p), p);
+								}
+						}
+					}
+					
+					if (doRadial) {
+						sump.set(csum, r);
+						if (errIds != null) {
+							double cvarres = 0.0;
+							for (Entry<Point2i, Double> tmp : cvarmap.entrySet()) {
+								int i0 = tmp.getKey().x;
+								int i1 = tmp.getKey().y;
+								double vl = tmp.getValue();
+								// No need to check here if pixel is masked as they aren't included into the map
+								cvarres += vl * vl * errIds.getDouble(i0, i1);
+							}
+							errsump.set(cvarres, r);
+						}
+						if(aver) {
+							usump.set(tusump, r);
+						}
+					}
+				}
+	
+				if (doAzimuthal && errIds != null) {
+					for (Entry<Point2i, Map<Integer, Double>> tmp : pvarmap.entrySet()) {
+						Map<Integer, Double> tmpmap = tmp.getValue();
+						Point2i pt = tmp.getKey();
+						int i0 = pt.x;
+						int i1 = pt.y;
+						double err = errIds.getDouble(i0, i1);
+						for (int q : tmpmap.keySet()) {
+							double vl = tmpmap.get(q);
+							// No need to check here if pixel is masked as they aren't included into the map
+							double cvarres = errsumr.getDouble(q) + vl * vl * err;
+							errsumr.set(cvarres, q);
+						}
+					}
+				}
+				
+				if (errIds != null) {
+					sumr.setErrorBuffer(errsumr);
+					sump.setErrorBuffer(errsump);
+				}
+				result.add(sumr);
+				result.add(sump);
+				result.add(usumr);
+				result.add(usump);
+			}
+			
+			return result;
+		}
+		
+	}
+}
+
+
+final class ProfileForkJoinPool {
+    static final ForkJoinPool profileForkJoinPool = new ForkJoinPool();
 }

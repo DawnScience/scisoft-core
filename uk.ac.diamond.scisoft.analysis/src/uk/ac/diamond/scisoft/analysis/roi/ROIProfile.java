@@ -651,7 +651,7 @@ public class ROIProfile {
 			}
 			
 			if (aver) {
-				AbstractDataset[] areas = area(data.getShape(), mask, sroi, doRadial, doAzimuthal, fast);
+				AbstractDataset[] areas = area(data.getShape(), data.getDtype(), mask, sroi, doRadial, doAzimuthal, fast);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
 				if (doErrors) {
@@ -736,7 +736,7 @@ public class ROIProfile {
 			}
 		}
 		if (aver) {
-			AbstractDataset[] areas = area(data.getShape(), mask, sroi, doRadial, doAzimuthal, fast);
+			AbstractDataset[] areas = area(data.getShape(), data.getDtype(), mask, sroi, doRadial, doAzimuthal, fast);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
 					profiles[i] = Maths.dividez(profiles[i], areas[i]);
@@ -756,8 +756,8 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, SectorROI sroi) {
-		return area(shape, null, sroi);
+	public static AbstractDataset[] area(int[] shape, int dtype, SectorROI sroi) {
+		return area(shape, dtype, null, sroi);
 	}
 	
 	/**
@@ -768,8 +768,8 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, AbstractDataset mask, SectorROI sroi) {
-		return area(shape, mask, sroi, true, true, false);
+	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi) {
+		return area(shape, dtype, mask, sroi, true, true, false);
 	}
 	
 	/**
@@ -780,10 +780,10 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
+	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
 		final SectorROI areaSector = sroi.copy();
 		areaSector.setAverageArea(false);
-		final AbstractDataset areaData = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
+		final AbstractDataset areaData = AbstractDataset.ones(shape, dtype);
 		return sector(areaData, mask, areaSector, doRadial, doAzimuthal, fast);
 	}
 }

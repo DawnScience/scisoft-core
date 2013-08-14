@@ -192,6 +192,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				return simple_qvalue(datasets);
 			}
 		}
+		if (doErrors) {
+			return interpolate_value_fj(datasets);
+		}
 		if (interpolate) {
 			return interpolate_value(datasets);
 		}
@@ -219,14 +222,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			final double dr = 1.0/dpp;
 			
-			IDataset errIds = null; 
-			if (doErrors && (ids instanceof AbstractDataset)) {
-				Serializable errorBuffer = ((AbstractDataset) ids).getErrorBuffer();
-				if (errorBuffer instanceof DoubleDataset) {
-					errIds = (DoubleDataset) errorBuffer;
-				}
-			}
-			
 			//Find maximal radius on the detector
 			//int[] shape = ids.getShape();
 			//double ymax = Math.max(cy, shape[1] - cy);
@@ -241,14 +236,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
 			AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
-			AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, AbstractDataset.FLOAT64);
-			AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, AbstractDataset.FLOAT64);
-			
-			//TODO: This list can run out of memory for large sectors!
-			List<Map<Point2i, Double>> pvarmap = new ArrayList<Map<Point2i,Double>>(np);
-			for (int idx = 0; idx < np; idx++) {
-				pvarmap.add(new HashMap<Point2i, Double>());
-			}
 			
 			double csum;			
 			
@@ -258,7 +245,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				final double tdphi = (rad > 0 ? rdphi / rad : dphi);
 				
 				csum = 0.0;
-				Map<Point2i, Double> cvarmap = new HashMap<Point2i, Double>();
 
 				final double prj = (double)(np)/tnp;
 				int qmin = 0;
@@ -291,67 +277,21 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					
 					final double v = rad * dr * tdphi * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
 					
-					Map<Point2i, Double> varmap = null;
-					if (errIds != null) {
-						varmap = getBilinearWeights(errIds, mask, y,	x);
-					}
 					if (doRadial) {
 						csum += v;
-						if (varmap != null) {
-							for (Point2i pt : varmap.keySet()) {
-								cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * tdphi * varmap.get(pt));
-							}
-						}
 					}
 					if (doAzimuthal) {
 						for (int q = qmin; q < qmax; q++) {
 							sumr.set(v / prj + sumr.getDouble(q), q);
-							if (varmap != null) {
-								Map<Point2i, Double> tmpmap = pvarmap.get(q);
-								for (Point2i pt : varmap.keySet()) {
-									double vl = rad * dr * dphi * varmap.get(pt) / prj;
-									tmpmap.put(pt, (tmpmap.containsKey(pt) ? tmpmap.get(pt) : 0.0) + vl);
-								}
-							}
 						}
 					}
 				}
 				
 				if (doRadial) {
 					sump.set(csum, r);
-					if (errIds != null) {
-						double cvarres = 0.0;
-						for (Entry<Point2i, Double> tmp : cvarmap.entrySet()) {
-							int i0 = tmp.getKey().x;
-							int i1 = tmp.getKey().y;
-							double vl = tmp.getValue();
-							// No need to check here if pixel is masked as they aren't included into the map
-							cvarres += vl * vl * errIds.getDouble(i0, i1);
-						}
-						errsump.set(cvarres, r);
-					}
-				}
-			}
-
-			if (doAzimuthal && errIds != null) {
-				for (int q = 0; q < np; q++) {
-					Map<Point2i, Double> tmpmap = pvarmap.get(q);
-					double cvarres = 0.0;
-					for (Entry<Point2i, Double> tmp : tmpmap.entrySet()) {
-						int i0 = tmp.getKey().x;
-						int i1 = tmp.getKey().y;
-						double vl = tmp.getValue();
-						// No need to check here if pixel is masked as they aren't included into the map
-						cvarres += vl * vl * errIds.getDouble(i0, i1);
-					}
-					errsumr.set(cvarres, q);
 				}
 			}
 			
-			if (errIds != null) {
-				sumr.setErrorBuffer(errsumr);
-				sump.setErrorBuffer(errsump);
-			}
 			result.add(sumr);
 			result.add(sump);
 		}
@@ -884,5 +824,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 
 final class ProfileForkJoinPool {
-    static final ForkJoinPool profileForkJoinPool = new ForkJoinPool();
+	
+    private ProfileForkJoinPool() {
+	}
+
+	static final ForkJoinPool profileForkJoinPool = new ForkJoinPool();
 }

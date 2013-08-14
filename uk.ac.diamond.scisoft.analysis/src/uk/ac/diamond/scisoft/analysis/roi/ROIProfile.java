@@ -633,16 +633,13 @@ public class ROIProfile {
 			return null;
 		}
 
-		AbstractDataset[] areas = new AbstractDataset[] { null, null, null, null };
-		
 		if (symmetry == SectorROI.FULL) {
 			MapToPolarAndIntegrate pmapfint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[0]
 					+ 2 * Math.PI, dpp, false);
-			if (mask != null && data != null && mask.isCompatibleWith(data)) {
+			if (mask != null  && mask.isCompatibleWith(data)) {
 				pmapfint.setMask(mask);
 			}
 			pmapfint.setClip(clip);
-			pmapfint.setAverage(aver);
 			pmapfint.setInterpolate(!fast);
 			pmapfint.setDoRadial(doRadial);
 			pmapfint.setDoAzimuthal(doAzimuthal);
@@ -653,10 +650,8 @@ public class ROIProfile {
 				return null;
 			}
 			
-			areas[0] = dsetsf.get(3);
-			areas[1] = dsetsf.get(2);
-			
 			if (aver) {
+				AbstractDataset[] areas = area(data.getShape(), mask, sroi, doRadial, doAzimuthal, fast);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
 				if (doErrors) {
@@ -669,9 +664,9 @@ public class ROIProfile {
 				profiles[0] = dsetsf.get(1);
 				profiles[1] = dsetsf.get(0);
 			}
-			if (dsetsf.size() > 4) {
-				profiles[4] = dsetsf.get(5);
-				profiles[5] = dsetsf.get(4);
+			if (dsetsf.size() > 2) {
+				profiles[4] = dsetsf.get(3);
+				profiles[5] = dsetsf.get(2);
 			}
 			return profiles;
 		}
@@ -682,7 +677,6 @@ public class ROIProfile {
 			pmapint.setMask(mask);
 		}
 		pmapint.setClip(clip);
-		pmapint.setAverage(aver);
 		pmapint.setInterpolate(!fast);
 		pmapint.setDoRadial(doRadial);
 		pmapint.setDoAzimuthal(doAzimuthal);
@@ -703,8 +697,6 @@ public class ROIProfile {
 			profiles[4] = dsets.get(5);
 			profiles[5] = dsets.get(4);
 		}
-		areas[0] = dsets.get(3);
-		areas[1] = dsets.get(2);
 		
 		if (symmetry != SectorROI.NONE) {
 			double[] nang = sroi.getSymmetryAngles();
@@ -715,7 +707,6 @@ public class ROIProfile {
 				pmapsint.setMask(mask);
 			}
 			pmapsint.setClip(clip);
-			pmapsint.setAverage(aver);
 			pmapsint.setInterpolate(!fast);
 			pmapsint.setDoRadial(doRadial);
 			pmapsint.setDoAzimuthal(doAzimuthal);
@@ -730,8 +721,6 @@ public class ROIProfile {
 						errors[0] = Maths.add(errors[0], dsetss.get(1).getErrorBuffer());
 						errors[1] = Maths.add(errors[1], dsetss.get(0).getErrorBuffer());
 					}
-					areas[0] = Maths.add(areas[0], dsetss.get(3));
-					areas[1] = Maths.add(areas[1], dsetss.get(2));
 				} else {
 					profiles[2] = dsetss.get(1);
 					profiles[3] = dsetss.get(0);
@@ -739,8 +728,6 @@ public class ROIProfile {
 						errors[2] = (AbstractDataset) profiles[2].getErrorBuffer();
 						errors[3] = (AbstractDataset) profiles[3].getErrorBuffer();
 					}
-					areas[2] = dsetss.get(3);
-					areas[3] = dsetss.get(2);
 					if (dsetss.size() >= 6) {
 						profiles[6] = dsetss.get(5);
 						profiles[7] = dsetss.get(4);
@@ -749,6 +736,7 @@ public class ROIProfile {
 			}
 		}
 		if (aver) {
+			AbstractDataset[] areas = area(data.getShape(), mask, sroi, doRadial, doAzimuthal, fast);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
 					profiles[i] = Maths.dividez(profiles[i], areas[i]);
@@ -793,79 +781,9 @@ public class ROIProfile {
 	 * @return sector profile
 	 */
 	public static AbstractDataset[] area(int[] shape, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
-		final double[] spt = sroi.getPointRef();
-		final double[] rad = sroi.getRadii();
-		final double[] ang = sroi.getAngles();
-		int symmetry = sroi.getSymmetry();
-		boolean clip = sroi.isClippingCompensation();
-		double dpp = sroi.getDpp();
-
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null, null, null };
-
-		if (Math.abs(rad[0] - rad[1]) < 1 || Math.abs(ang[0] - ang[1]) < 1e-2) {
-			return null;
-		}
-
-		if (symmetry == SectorROI.FULL) {
-			MapToPolarAndIntegrate pmapfint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[0]
-					+ 2 * Math.PI, dpp, false);
-			if (mask != null) {
-				pmapfint.setMask(mask);
-			}
-			pmapfint.setClip(clip);
-			pmapfint.setInterpolate(!fast);
-			pmapfint.setDoRadial(doRadial);
-			pmapfint.setDoAzimuthal(doAzimuthal);
-			List<AbstractDataset> dsetsfa = pmapfint.area(shape);
-			if (dsetsfa == null) {
-				return null;
-			}
-			profiles[0] = dsetsfa.get(1);
-			profiles[1] = dsetsfa.get(0);
-			return profiles;
-		}
-
-		MapToPolarAndIntegrate pmapint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[1],
-				dpp, false);
-		if (mask != null) {
-			pmapint.setMask(mask);
-		}
-		pmapint.setClip(clip);
-		pmapint.setInterpolate(!fast);
-		pmapint.setDoRadial(doRadial);
-		pmapint.setDoAzimuthal(doAzimuthal);
-		List<AbstractDataset> dsetsa = pmapint.area(shape);
-		if (dsetsa == null) {
-			return null;
-		}
-		profiles[0] = dsetsa.get(1);
-		profiles[1] = dsetsa.get(0);
-
-		if (symmetry != SectorROI.NONE) {
-			double[] nang = sroi.getSymmetryAngles();
-
-			MapToPolarAndIntegrate pmapsint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], nang[0], rad[1],
-					nang[1], dpp, false);
-			if (mask != null) {
-				pmapsint.setMask(mask);
-			}
-			pmapsint.setClip(clip);
-			pmapsint.setInterpolate(!fast);
-			pmapsint.setDoRadial(doRadial);
-			pmapsint.setDoAzimuthal(doAzimuthal);
-
-			List<AbstractDataset> dsetssa = pmapsint.area(shape);
-			if (dsetssa == null) {
-				return null;
-			}
-			if (sroi.isCombineSymmetry()) {
-				profiles[0] = Maths.add(profiles[0], dsetssa.get(1));
-				profiles[1] = Maths.add(profiles[1], dsetssa.get(0));
-			} else {
-				profiles[2] = dsetssa.get(1);
-				profiles[3] = dsetssa.get(0);
-			}
-		}
-		return profiles;
+		final SectorROI areaSector = sroi.copy();
+		areaSector.setAverageArea(false);
+		final AbstractDataset areaData = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
+		return sector(areaData, mask, areaSector, doRadial, doAzimuthal, fast);
 	}
 }

@@ -29,17 +29,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
  */
 public class MapToPolarAndIntegrateTest extends TestCase {
 	int[] shape = new int[] {500,500}; 
-	AbstractDataset d = AbstractDataset.zeros(shape, AbstractDataset.FLOAT32);
+	AbstractDataset d = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
+	AbstractDataset a = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
 	
 	double racc = 1e-3; // set relative accuracy within 0.1%
 	double dpp = 10.;
-
-	/**
-	 */
-	@Override
-	public void setUp() {
-		d.fill(1.);
-	}
 
 	/**
 	 * 
@@ -56,14 +50,11 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
-		mp.setClip(true);
 		List<AbstractDataset> dsets = mp.value(d);
         
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
 		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc);
-		assertEquals(answer, ((Number) dsets.get(2).sum()).doubleValue(), answer*racc);
-		assertEquals(answer, ((Number) dsets.get(3).sum()).doubleValue(), answer*racc);
 	}
 
 	/**
@@ -89,9 +80,10 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		mp.setMask(null);
 		mp.setClip(false);
 		List<AbstractDataset> dsets = mp.value(d);
+		List<AbstractDataset> asets = mp.value(a);
 		for (int i = 0; i < dsets.get(1).getShape()[0]; i++) {
 			double answer = rmin + i/dpp; 
-			double val = dsets.get(1).getDouble(new int[] {i}) / dsets.get(3).getDouble(new int[] {i});
+			double val = dsets.get(1).getDouble(new int[] {i}) / asets.get(1).getDouble(new int[] {i});
 			assertEquals(answer, val, answer*racc);
 		}
 	}
@@ -118,10 +110,11 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		mp.setMask(null);
 		mp.setClip(true);
 		List<AbstractDataset> dsets = mp.value(d);
+		List<AbstractDataset> asets = mp.value(a);
 		double dphi = Math.toDegrees(1./(rmax*dpp));
 		for (int i = 0; i < dsets.get(0).getShape()[0]; i++) {
 			double answer = sphi + dphi*i; 
-			double val = dsets.get(0).getDouble(new int[] {i}) / dsets.get(2).getDouble(new int[] {i});
+			double val = dsets.get(0).getDouble(new int[] {i}) / asets.get(0).getDouble(new int[] {i});
 			assertEquals(answer, val, answer*racc);
 		}
 		
@@ -136,7 +129,6 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
-		mp.setClip(true);
 		List<AbstractDataset> dsets = mp.value(d);
 
 		double answer = 140.*140./2. - Math.PI*(50.*50.)/8. - 100.;
@@ -153,14 +145,11 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
-		mp.setClip(true);
 		List<AbstractDataset> dsets = mp.value(d);
 
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
 		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc);
-		assertEquals(answer, ((Number) dsets.get(2).sum()).doubleValue(), answer*racc);
-		assertEquals(answer, ((Number) dsets.get(3).sum()).doubleValue(), answer*racc);
 	}
 
 }

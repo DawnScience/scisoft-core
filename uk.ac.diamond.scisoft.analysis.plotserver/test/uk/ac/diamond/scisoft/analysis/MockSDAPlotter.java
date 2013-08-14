@@ -146,7 +146,11 @@ public class MockSDAPlotter implements ISDAPlotter {
 	@Override
 	public void clearPlot(String viewName) throws Exception {
 		throw newShouldNotBeCalled();
+	}
 
+	@Override
+	public void resetAxes(String viewName) throws Exception {
+		throw newShouldNotBeCalled();
 	}
 
 	@Override

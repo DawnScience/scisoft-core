@@ -165,6 +165,11 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void clearPlot(String viewName) throws Exception {
+		request("clear", viewName);
+	}
+
+	@Override
+	public void resetAxes(String viewName) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
 	}
 

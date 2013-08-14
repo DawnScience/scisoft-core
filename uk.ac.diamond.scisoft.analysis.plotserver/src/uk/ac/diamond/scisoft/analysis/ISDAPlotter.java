@@ -282,11 +282,20 @@ public interface ISDAPlotter {
 	public void volumePlot(String viewName, String dsrvolume) throws Exception;
 
 	/**
-	 * Clear/empty a current plot view
+	 * Clear/empty a named plot view
 	 * 
+	 * @param viewName
 	 * @throws Exception
 	 */
 	public void clearPlot(String viewName) throws Exception;
+
+	/**
+	 * Reset axes in a named plot view
+	 * 
+	 * @param viewName
+	 * @throws Exception
+	 */
+	public void resetAxes(String viewName) throws Exception;
 
 	/**
 	 * Set up a new image grid for an image explorer view with the specified # rows and columns

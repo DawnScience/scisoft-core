@@ -122,4 +122,9 @@ public class GuiPlotMode implements Serializable {
 	 * specify empty / clear plotting mode
 	 */	
 	public final static GuiPlotMode EMPTY = new GuiPlotMode("EMPTY");
+
+	/**
+	 * specify reset axes mode
+	 */	
+	public final static GuiPlotMode RESETAXES = new GuiPlotMode("RESETAXES");
 }

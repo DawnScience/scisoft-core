@@ -882,12 +882,23 @@ public class SDAPlotter {
 	}
 
 	/**
-	 * Clear/empty a current plot view
+	 * Clear/empty a named plot view
 	 * 
+	 * @param viewName
 	 * @throws Exception
 	 */
 	public static void clearPlot(String viewName) throws Exception {
 		getPlotterImpl().clearPlot(viewName);
+	}
+
+	/**
+	 * Reset axes in named plot view
+	 * 
+	 * @param viewName
+	 * @throws Exception
+	 */
+	public static void resetAxes(String viewName) throws Exception {
+		getPlotterImpl().resetAxes(viewName);
 	}
 
 	/**

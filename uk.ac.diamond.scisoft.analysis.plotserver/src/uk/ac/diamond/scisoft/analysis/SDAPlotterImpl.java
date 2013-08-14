@@ -991,8 +991,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	/**
-	 * Clear/empty a current plot view
+	 * Clear/empty a named plot view
 	 * 
+	 * @param viewName
 	 * @throws Exception
 	 */
 	@Override
@@ -1001,6 +1002,16 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		if (plotServer != null) {
 			GuiBean guiBean = new GuiBean();
 			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.EMPTY);
+			plotServer.updateGui(viewName, guiBean);
+		}
+	}
+
+	@Override
+	public void resetAxes(String viewName) throws Exception {
+		PlotService plotServer = getPlotService();
+		if (plotServer != null) {
+			GuiBean guiBean = new GuiBean();
+			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.RESETAXES);
 			plotServer.updateGui(viewName, guiBean);
 		}
 	}

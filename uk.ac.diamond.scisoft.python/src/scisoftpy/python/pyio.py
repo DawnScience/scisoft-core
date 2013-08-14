@@ -197,7 +197,10 @@ class SRSLoader(PythonLoader):
         import re
         cs_regex = re.compile('\s+')
 
-        cols = cs_regex.split(cols)
+        if cols.count('\t') > 0: # columns separated by tabs
+            cols = cols.split('\t')
+        else:
+            cols = cs_regex.split(cols)
         lc = len(cols)
         data = [[] for dummy in cols]
         for t in text:

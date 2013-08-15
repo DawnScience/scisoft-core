@@ -225,7 +225,7 @@ class ndArrayHelper(flatteningHelper):
             (osfd, filename) = mkstemp(suffix='.npy', prefix='scisofttmp-', dir=_TEMP_LOCATION)
             os.close(osfd)
             try:
-                _np.save(filename, obj)
+                _np.save(filename, _np.asarray(obj, order='C')) # convert to C order as Java loader cannot cope otherwise
             except:
                 # If we failed to write the file, remove it
                 # mkstemp returned a new file that did not exist, so 

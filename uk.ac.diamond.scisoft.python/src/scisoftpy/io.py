@@ -194,83 +194,110 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
 
 import os as _os
 _path = _os.path
+_join = _path.join
+
+def find_run_file(run, data_dir, visit=None, year=None, ending=".dat"):
+    '''Find run file in given data directory
+
+    Looks for file in data_dir/year/visit/
+    Arguments:
+    run      - run number
+    data_dir - beamline data directory, such as '/dls/i01/data'
+    visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
+    year     - calendar year (defaults to visit directory and any year in range 2000-99)
+    ending   - suffix or list of suffices (defaults to '.dat')
+
+    Returns file with shortest name (if there is a tie, then the one matching
+     the first ending is chosen)
+    '''
+    from glob import glob, iglob
+
+    run = str(run)
+    if data_dir is None:
+        raise ValueError, 'Beamline data directory must be defined'
+
+    if type(ending) is str:
+        ending = (ending,)
+    es = [ '*' + e for e in ending ]
+
+
+    if year is None:
+        years = (None, '20[0-9][0-9]')
+    else:
+        years = (str(year),)
+
+    if visit is None:
+        visits = (None, '*')
+    else:
+        visits = (visit,)
+
+    files = []
+
+    for y in years:
+        if y is None:
+            ds = (data_dir,)
+        else:
+            ds = glob(_join(data_dir, y))
+        for d in ds:
+            for v in visits:
+                if v is None:
+                    vs = (d,)
+                else:
+                    vs = glob(_join(d, v))
+                for lv in vs:
+                    for e in es:
+                        files.extend(iglob(_join(lv, run + e)))
+                    if len(files) > 0:
+                        break
+                if len(files) > 0:
+                    break
+
+    if len(files) == 0:
+        raise IOError, 'Run files not found'
+    if len(files) == 1:
+        return files[0]
+
+    ls = [len(f) for f in files]
+    lc = min(ls)
+    if ls.count(lc) > 1: # if there is more than one of same length
+        for l, f in zip(ls, files):
+            if l == lc:
+                if f.endswith(ending[0]): # prefer first ending
+                    return f
+    return files[ls.index(lc)]
 
 #from scisoftpy import ndarraywrapped as _npwrapped
 
-class srsrun(DataHolder):
+class Run(DataHolder):
     '''Represent a run from an SRS file'''
-    def __init__(self, run, datadir=None, ending=".dat"):
+    def __init__(self, run, data_dir, visit=None, year=None, ending=".dat"):
         '''Specify a run number (or file name) and data directory
 
+        Looks for file in data_dir/year/visit-*/
         Arguments:
-        run -- integer (negative values mean relative to last run number) or filename
-        datadir -- data directory
-        ending -- file name ending, defaults to ".dat"
+        run - run number
+        data_dir - beamline data directory, such as '/dls/i01/data'
+        visit - visit ID, such as cm1234 (default to '*')
+        year - calendar year (default to any year in range 2000-99)
+        ending - suffix or list of suffices (default to '.dat')
         '''
-#        try:
-#            self.run = int(run)
-#            if run <= 0:
-#                try:
-#                    import gda.data.NumTracker as NumTracker #@UnresolvedImport
-#                    self.run += NumTracker().getCurrentFileNumber()
-#                except ImportError:
-#                    print "No gda configuration access so cannot support negative numbers"
-#                    raise
-#
-#            if datadir is None:
-#                datadir = self._getgdadir()
-#            self.srsfile = _path.join(datadir, self.run + ending)
-#            if not _os.access(self.srsfile, _os.R_OK):
-#                self.srsfile = self._findsrs(datadir, ending)
-#        except ValueError:
-#            if isinstance(run, str):
-#                if run.startswith('/'):
-#                    datadir = ""
-#                else:
-#                    if datadir is None:
-#                        datadir = self._getgdadir()
-#                self.srsfile = _path.join(datadir, run)
-#            else:
-#                print "run must be a number or a file path"
-        self.run = int(run)
-        self.srsfile = self._findsrs(datadir, ending)
+        run = int(run)
+        srsfile = find_run_file(run, data_dir, visit, year, ending)
 
-        print 'file is', self.srsfile
-        self.basedir = _path.dirname(self.srsfile)
-        dh = load(self.srsfile, formats=['srs'])
-        DataHolder.__init__(self, dh.items(), dh.metadata.items())
-
-    def _getgdadir(self):
-        try:
-            import gda.data.PathConstructor as PathConstructor
-            datadir = PathConstructor.createFromDefaultProperty()
-        except ImportError:
-            print 'No gda configuration access so please specify data directory'
-            raise
-        return datadir
-
-    def _findsrs(self, datadir, ending=".dat"):
-        '''Find an SRS file by looking down two layers from given data directory'''
-        fname = "%d%s" % (self.run, ending)
-        print 'looking for', fname
-        dirs = _os.listdir(datadir)
-        dirs = [ _path.join(datadir, d) for d in dirs if _path.isdir(_path.join(datadir, d)) ]
-        dirs.sort()
-        print dirs
-        for d in dirs:
-            ldirs = _os.listdir(d)
-            ldirs = [ l for l in ldirs if _path.isdir(_path.join(d, l)) ]
-            ldirs.sort(reverse=True)
-            print ' ', d, ldirs
-            for l in ldirs:
-                f = _path.join(d, l, fname)
-                if _os.access(f, _os.R_OK):
-                    return f
-        return None
+        dh = load(srsfile, format='srs')
+        itms = []
+        mds = []
+        for i in dh.items():
+            if i[0] == 'metadata':
+                mds = i[1].items()
+            else:
+                itms.append(i)
+        DataHolder.__init__(self, itms, mds)
+        self.__run = run
+        self.__file = srsfile
 
     def __str__(self):
         return "\t".join(self.keys())
-
 
 if __name__ == '__main__':
     from dictutils import sanitise_name

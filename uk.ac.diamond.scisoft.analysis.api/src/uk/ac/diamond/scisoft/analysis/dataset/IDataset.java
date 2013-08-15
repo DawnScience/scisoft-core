@@ -146,8 +146,8 @@ public interface IDataset extends ILazyDataset {
 	public int[] maxPos();
 
 	/**
-	 * Clone dataset without making new copy of data
-	 * @return a (shallow) copy of dataset
+	 * Clone dataset, making new copy of data
+	 * @return a (deep) copy of dataset
 	 */
 	@Override
 	public IDataset clone();

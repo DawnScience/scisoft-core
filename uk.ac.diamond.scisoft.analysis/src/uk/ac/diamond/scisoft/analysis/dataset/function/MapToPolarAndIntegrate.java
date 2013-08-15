@@ -619,7 +619,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 */
 	class ProfileTask extends RecursiveTask<List<AbstractDataset>> {
 		
-		private static final int MAX_POINTS = 50000;
+		private final int MAX_POINTS;
 		
 		private final double sr, sp;
 		private final int sri, eri;
@@ -632,6 +632,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 		public ProfileTask(int sri, int eri, int spi, int epi, final IDataset dataset) {
 			super();
+			
+			// We need to scale each job size with number of running threads
+			// as total available memory is fixed.
+			MAX_POINTS = 500000 / ProfileForkJoinPool.profileForkJoinPool.getParallelism();
+			
 			this.sri = sri;
 			this.eri = eri;
 			this.spi = spi;
@@ -747,19 +752,24 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 							isOutside = true;
 						}
 						
-						final double v = rad * dr * dphi * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
-						
 						Map<Point2i, Double> varmap = null;
+						double v = 0.0;
 						if (errIds != null) {
 							varmap = getBilinearWeights(errIds, mask, y, x);
+						} else {
+							v = rad * dr * dphi * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
 						}
 						if (doRadial) {
-							csum += v;
 							if (varmap != null) {
 								for (Point2i pt : varmap.keySet()) {
-									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * dphi * varmap.get(pt));
+									int i0 = pt.x;
+									int i1 = pt.y;
+									double weight = varmap.get(pt);
+									v += weight * ids.getDouble(i0, i1);
+									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * dphi * weight);
 								}
 							}
+							csum += v;
 						}
 						if (doAzimuthal) {
 								sumr.set(v + sumr.getDouble(p), p);

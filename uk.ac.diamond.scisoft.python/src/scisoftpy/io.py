@@ -273,13 +273,13 @@ class Run(DataHolder):
     def __init__(self, run, data_dir, visit=None, year=None, ending=".dat"):
         '''Specify a run number (or file name) and data directory
 
-        Looks for file in data_dir/year/visit-*/
+        Looks for file in data_dir/year/visit/
         Arguments:
-        run - run number
+        run      - run number
         data_dir - beamline data directory, such as '/dls/i01/data'
-        visit - visit ID, such as cm1234 (default to '*')
-        year - calendar year (default to any year in range 2000-99)
-        ending - suffix or list of suffices (default to '.dat')
+        visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
+        year     - calendar year (defaults to visit directory and any year in range 2000-99)
+        ending   - suffix or list of suffices (defaults to '.dat')
         '''
         run = int(run)
         srsfile = find_run_file(run, data_dir, visit, year, ending)

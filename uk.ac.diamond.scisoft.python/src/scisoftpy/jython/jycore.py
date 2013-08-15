@@ -548,9 +548,18 @@ class ndarray(object):
 
     def __iter__(self):
         def ndgen(d):
-            iterator = d.getIterator()
-            while iterator.hasNext():
-                yield d.getObjectAbs(iterator.index)
+            r = d.getRank()
+            if r <= 1:
+                iterator = d.getIterator()
+                while iterator.hasNext():
+                    yield d.getObjectAbs(iterator.index)
+            else:
+                axes = range(1, r)
+                iterator = d.getPositionIterator(axes)
+                pos = iterator.getPos()
+                hit = iterator.getOmit()
+                while iterator.hasNext():
+                    yield _joutput(d.getSlice(d.getSliceIteratorFromAxes(pos, hit)))
         return ndgen(self.__dataset)
 
     def conj(self):

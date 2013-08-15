@@ -326,6 +326,16 @@ class Test(unittest.TestCase):
         self.assertEquals(200, dz.size)
         self.assertEquals(1, dz[0])
 
+    def testUnpack(self):
+        print 'Unpacking testing'
+        print tuple(np.arange(6))
+        print tuple(np.arange(6).reshape(2,3))
+        print tuple(np.arange(6).reshape(3,2))
+
+    def testIndices(self):
+        print 'Indices testing'
+        x, y = np.indices((516, 516))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

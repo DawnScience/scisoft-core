@@ -102,8 +102,8 @@ class SRSLoader(PythonLoader):
                 else:
                     break
     
-            data = self._parse_data(colstext, datatext, warn)
-            metadata = self._parse_head(srstext, warn)
+            data = SRSLoader._parse_data(colstext, datatext, warn)
+            metadata = SRSLoader._parse_head(srstext, warn)
     
             return DataHolder(data, metadata, warn)
 
@@ -185,7 +185,11 @@ class SRSLoader(PythonLoader):
                     ki = nc+1
                 else:
                     raise io_exception, "No equal sign on line: " + line[ki:]
-
+        else:
+            s = line.split('=',1)
+            if len(s) == 1:
+                raise io_exception, "Metadata did not contain equal sign: " + line
+            meta.append((s[0], SRSLoader._parse_value(s[1])))
         return meta
 
     @staticmethod

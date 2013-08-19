@@ -169,6 +169,8 @@ cast = _np.cast
 
 reshape = _np.reshape
 
+resize = _np.resize
+
 squeeze = _np.squeeze
 
 transpose = _np.transpose

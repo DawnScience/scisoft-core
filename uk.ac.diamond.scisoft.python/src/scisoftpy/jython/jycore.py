@@ -1107,6 +1107,10 @@ def squeeze(a):
     return a
 
 @_wrap
+def resize(a, new_shape):
+    return _dsutils.resize(a, new_shape)
+
+@_wrap
 def transpose(a, axes=None):
     if axes is None:
         axes = ()

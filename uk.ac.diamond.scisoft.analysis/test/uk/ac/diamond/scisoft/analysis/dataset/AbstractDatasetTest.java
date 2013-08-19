@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -642,6 +643,61 @@ public class AbstractDatasetTest {
 			// this is correct.
 		} catch (Exception e) {
 			fail("wrong exception type passed from incorrect arguments being passed to the constructor");
+		}
+	}
+
+	/**
+	 * Tests for resize method
+	 */
+	@Test
+	public void testResize() {
+		int size = 6;
+		AbstractDataset ds = AbstractDataset.arange(size, AbstractDataset.FLOAT64);
+		DoubleDataset tf;
+		IndexIterator it;
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 3);
+		assertArrayEquals(new int[] {3}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
+		}
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 8);
+		assertArrayEquals(new int[] {8}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
+		}
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 3, 4);
+		assertArrayEquals(new int[] {3, 4}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
+		}
+
+		ds.setShape(2,3);
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 3);
+		assertArrayEquals(new int[] {3}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
+		}
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 8);
+		assertArrayEquals(new int[] {8}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
+		}
+
+		tf = (DoubleDataset) DatasetUtils.resize(ds, 3, 4);
+		assertArrayEquals(new int[] {3, 4}, tf.getShape());
+		it = tf.getIterator();
+		while (it.hasNext()) {
+			assertEquals(it.index % size, tf.getElementDoubleAbs(it.index), 1e-6);
 		}
 	}
 
@@ -1362,6 +1418,11 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", new Complex(1.0, -0.5), a.getObject());
+
+		a = AbstractDataset.array(1.f);
+		assertEquals("Rank", 0, a.getRank());
+		assertEquals("Shape", 0, a.getShape().length);
+		assertEquals("Value", 1.f, a.getObject());
 	}
 
 	@Test

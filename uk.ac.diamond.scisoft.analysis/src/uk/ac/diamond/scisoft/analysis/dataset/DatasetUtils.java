@@ -648,6 +648,23 @@ public class DatasetUtils {
 	}
 
 	/**
+	 * Resize a dataset 
+	 * @param a
+	 * @param shape
+	 * @return new dataset with new shape and items that are truncated or repeated, as necessary
+	 */
+	public static AbstractDataset resize(final AbstractDataset a, final int... shape) {
+		int size = a.getSize();
+		AbstractDataset rdata = AbstractDataset.zeros(a.getElementsPerItem(), shape, a.getDtype());
+		IndexIterator it = rdata.getIterator();
+		while (it.hasNext()) {
+			rdata.setObjectAbs(it.index, a.getObjectAbs(it.index % size));
+		}
+
+		return rdata;
+	}
+
+	/**
 	 * Cast a dataset
 	 * 
 	 * @param a

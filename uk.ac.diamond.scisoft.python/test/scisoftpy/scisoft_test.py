@@ -119,11 +119,21 @@ class Test(unittest.TestCase):
         print 'Resize testing'
         a = np.arange(10.)
         a.resize(12, refcheck=False)
+        self.checkitems([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0], a)
         print a
+        a = np.arange(10.)
         a.resize((2,6), refcheck=False)
+        self.checkitems([[0, 1, 2, 3, 4, 5], [6, 7, 8, 9, 0, 0]], a)
         print a
+        a = np.arange(10.)
         a.resize(2,6, refcheck=False)
+        self.checkitems([[0, 1, 2, 3, 4, 5], [6, 7, 8, 9, 0, 0]], a)
         print a
+        a = np.arange(6.)
+        self.checkitems([0, 1, 2, 3, 4], np.resize(a, 5))
+        self.checkitems([0, 1, 2, 3, 4, 5, 0, 1, 2], np.resize(a, 9))
+        self.checkitems([[0, 1, 2], [3, 4, 5]], np.resize(a, (2,3)))
+        self.checkitems([[0, 1, 2], [3, 4, 5], [0, 1, 2]], np.resize(a, (3,3)))
 
     def testCompounds(self):
         a = np.arange(24).reshape(3,4,2)

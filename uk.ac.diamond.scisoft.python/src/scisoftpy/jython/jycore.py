@@ -46,6 +46,8 @@ class ndgeneric(object):
 
 generic = ndgeneric
 
+newaxis = None
+
 class _dtype(object):
     '''
     Dataset type has two properties:
@@ -310,14 +312,14 @@ def _isslice(rank, shape, key):
 
         if len(key) < rank:
             return True
-        elif len(key) > rank:
+        elif len(key) > rank and newaxis not in key:
             raise IndexError, "Too many indices"
     else:
         if key is Ellipsis:
             return True
 
     for k in key:
-        if isinstance(k, slice) or k is Ellipsis:
+        if isinstance(k, slice) or k is Ellipsis or k is newaxis:
             return True
     return False
 

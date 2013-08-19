@@ -110,6 +110,7 @@ class Test(unittest.TestCase):
             print "Failed with an IAE as expected"
 
     def testReshape(self):
+        print 'Reshape testing'
         a = np.arange(10.)
         a.reshape(2,5)
         a.reshape((2,5))
@@ -308,13 +309,13 @@ class Test(unittest.TestCase):
         zi = np.array(1)
         self.assertEquals(0, len(zi.shape))
         self.assertEquals(1, zi[()])
-        self.assertEquals(1, zi[...])
+        self.assertEquals(np.array(1), zi[...])
         zi[()] = -3
         self.assertEquals(-3, zi[()])
         zf = np.array(1.)
         self.assertEquals(0, len(zf.shape))
         self.assertEquals(1., zf[()])
-        self.assertEquals(1., zf[...])
+        self.assertEquals(np.array(1.), zf[...])
         zf[()] = -3
         self.assertEquals(-3, zf[()])
 
@@ -335,6 +336,24 @@ class Test(unittest.TestCase):
     def testIndices(self):
         print 'Indices testing'
         x, y = np.indices((516, 516))
+
+    def testSlicing(self):
+        print 'Slicing testing'
+        a = np.arange(60).reshape(2, 5, 3, 2)
+        self.assertEquals((5, 3, 2), a[-1].shape)
+        self.assertEquals((5, 3, 2), a[-1, :, :].shape)
+        self.assertEquals((5, 3, 2), a[-1, :, :, :].shape)
+        self.assertEquals((5, 2, 2), a[-1, :, 1:, :].shape)
+        self.assertEquals((5, 3, 2), a[-1, ...].shape)
+        self.assertEquals((2, 5, 3), a[..., -1].shape)
+        self.assertEquals((5, 3),    a[1, ..., -1].shape)
+        self.assertEquals((1, 5, 3, 2), a[-1, np.newaxis].shape)
+        self.assertEquals((2, 1, 5, 3, 2), a[:, np.newaxis].shape)
+        self.assertEquals((2, 1, 3, 2), a[:, np.newaxis, -1].shape)
+        self.assertEquals((2, 5, 3, 1), a[..., -1, np.newaxis].shape)
+        self.assertEquals((2, 1, 5, 3), a[:, np.newaxis, ..., -1].shape)
+        self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., np.newaxis, -1].shape)
+        self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., -1, np.newaxis].shape)
 
 if __name__ == "__main__":
     #import sys

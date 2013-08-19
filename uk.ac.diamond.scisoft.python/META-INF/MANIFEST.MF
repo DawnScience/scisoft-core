@@ -4,15 +4,15 @@ Bundle-Name: ScisoftPy
 Bundle-SymbolicName: uk.ac.diamond.scisoft.python
 Bundle-Version: 1.3.0
 Bundle-Activator: uk.ac.diamond.scisoft.python.Activator
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: org.junit4;bundle-version="4.8.1",
+ org.eclipse.ui,
  org.eclipse.core.runtime,
  uk.ac.gda.common;bundle-version="1.0.0",
  org.apache.commons.math;bundle-version="[2.2.0,3.0.0)",
  org.apache.commons.math3;bundle-version="3.2.0",
- uk.ac.diamond.scisoft.analysis;bundle-version="[1.3.0,2.0.0)",
- uk.ac.diamond.scisoft.analysis.rcp;bundle-version="[1.3.0,2.0.0)",
  uk.ac.diamond.jython;bundle-version="[2.5.3,3.0.0)",
  uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis;bundle-version="[1.3.0,2.0.0)",
  uk.ac.diamond.scisoft.analysis.plotserver;bundle-version="1.0.0",
  uk.ac.diamond.scisoft.analysis.xmlrpc;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

@@ -100,42 +100,59 @@ public class PythonUtils {
 		return ((PyObject) obj).__tojava__(Object.class);
 	}
 
+	static class SliceData {
+		Slice[] slice;  // slices
+		boolean[] sdim; // flag which dimensions are sliced
+		int[] axes;  // new axes
+	}
+
 	/**
 	 * Convert an array of python slice objects to a slice array
 	 * 
 	 * @param indexes
 	 * @param shape
-	 * @param isDimSliced
 	 * @return slice array
 	 */
-	private static Slice[] convertPySlicesToSlice(final PyObject indexes, final int[] shape, final boolean[] isDimSliced) {
+	private static SliceData convertPySlicesToSlice(final PyObject indexes, final int[] shape) {
 		PyObject indices[] = (indexes instanceof PyTuple) ? ((PyTuple) indexes).getArray() : new PyObject[] { indexes };
 
-		int slen;
 		int orank = shape.length;
+		SliceData slice = new SliceData();
 
-		// first check the dimensionality
-		if (indices.length > orank) {
-			slen = orank;
-		} else {
-			slen = indices.length;
+		int na = 0; // count new axes
+		int nc = 0; // count collapsed dimensions
+		int ns = 0; // count slices or ellipses
+		for (int j = 0; j < indices.length; j++) {
+			PyObject index = indices[j];
+			if (index instanceof PyNone)
+				na++;
+			else if (index instanceof PyInteger)
+				nc++;
+			else if (index instanceof PySlice)
+				ns++;
+			else if (index instanceof PyEllipsis)
+				ns++;
 		}
+
+		int spare = orank - nc - ns; // number of spare dimensions
+		slice.slice = new Slice[orank];
+		slice.axes = new int[na];
+		slice.sdim = new boolean[orank]; // flag which dimensions are sliced
 
 		boolean hasEllipse = false;
 		int i = 0;
-
-		Slice[] slice = new Slice[orank];
-
-		for (int j = 0; j < slen; j++) {
+		int a = 0; // new axes
+		int c = 0; // collapsed dimensions
+		for (int j = 0; i < orank && j < indices.length; j++) {
 			PyObject index = indices[j];
 			if (index instanceof PyEllipsis) {
-				isDimSliced[i] = true;
-				slice[i++] = null;
+				slice.sdim[i] = true;
+				slice.slice[i++] = null;
 				if (!hasEllipse) { // pad out with full slices on first ellipse
 					hasEllipse = true;
-					for (int k = slen; k < orank; k++) {
-						isDimSliced[i] = true;
-						slice[i++] = null;
+					for (int k = 0; k < spare; k++) {
+						slice.sdim[i] = true;
+						slice.slice[i++] = null;
 					}
 				}
 			} else if (index instanceof PyInteger) {
@@ -146,21 +163,29 @@ public class PythonUtils {
 				if (n < 0) {
 					n += shape[i];
 				}
-				isDimSliced[i] = false; // nb specifying indexes whilst using slices will reduce rank
-				slice[i++] = new Slice(n, n + 1);
+				slice.sdim[i] = false; // nb specifying indexes whilst using slices will reduce rank
+				slice.slice[i++] = new Slice(n, n + 1);
+				c++;
 			} else if (index instanceof PySlice) {
 				PySlice pyslice = (PySlice) index;
-				isDimSliced[i] = true;
-				slice[i++] = new Slice(pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
+				slice.sdim[i] = true;
+				slice.slice[i++] = new Slice(pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
 						pyslice.stop instanceof PyNone ? null : ((PyInteger) pyslice.stop).getValue(),
 						pyslice.step instanceof PyNone ? null : ((PyInteger) pyslice.step).getValue());
+			} else if (index instanceof PyNone) { // newaxis
+				slice.axes[a++] = (hasEllipse ? j + spare : j) - c;
 			} else {
 				throw new IllegalArgumentException("Unexpected item in indexing");
 			}
 		}
 
+		assert nc == c;
 		while (i < orank) {
-			isDimSliced[i++] = true;
+			slice.sdim[i++] = true;
+		}
+		while (a < na) {
+			slice.axes[a] = i - c + a;
+			a++;
 		}
 
 		return slice;
@@ -178,14 +203,14 @@ public class PythonUtils {
 	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) {
 		int[] shape = a.getShape();
 		int orank = shape.length;
-		boolean[] sdim = new boolean[orank]; // flag which dimensions are sliced
 
-		IDataset dataSlice = a.getSlice(convertPySlicesToSlice(indexes, shape, sdim));
+		SliceData slice = convertPySlicesToSlice(indexes, shape);
+		IDataset dataSlice = a.getSlice(slice.slice);
 
 		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
 		int rank = 0;
 		for (int i = 0; i < orank; i++) {
-			if (sdim[i])
+			if (slice.sdim[i])
 				rank++;
 		}
 
@@ -194,13 +219,29 @@ public class PythonUtils {
 			int[] newShape = new int[rank];
 			int j = 0;
 			for (int i = 0; i < orank; i++) {
-				if (sdim[i]) {
+				if (slice.sdim[i]) {
 					newShape[j++] = oldShape[i];
 				}
 			}
 			dataSlice.setShape(newShape);
 		}
 
+		int n = slice.axes.length;
+		if (n > 0) {
+			int[] oldShape = dataSlice.getShape();
+			int[] newShape = new int[rank + n];
+			int j = 0;
+			int k = 0;
+			for (int i = 0; i < newShape.length; i++) {
+				if (k < n && i == slice.axes[k]) {
+					k++;
+					newShape[i] = 1;
+				} else {
+					newShape[i] = oldShape[j++];
+				}
+			}
+			dataSlice.setShape(newShape);
+		}
 		return dataSlice;
 	}
 
@@ -222,7 +263,7 @@ public class PythonUtils {
 		}
 
 		int[] shape = a.getShape();
-		boolean[] sdim = new boolean[shape.length];
-		a.setSlice(object, convertPySlicesToSlice(indexes, shape, sdim));
+		SliceData slice = convertPySlicesToSlice(indexes, shape);
+		a.setSlice(object, slice.slice);
 	}
 }

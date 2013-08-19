@@ -19,6 +19,8 @@
 
 import numpy as _np #@UnresolvedImport
 
+newaxis = _np.newaxis
+
 ndarray = _np.ndarray
 generic = ndgeneric = _np.generic
 bool = _np.bool #@ReservedAssignment

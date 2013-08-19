@@ -783,7 +783,6 @@ public class ROIProfile {
 	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
 		final SectorROI areaSector = sroi.copy();
 		areaSector.setAverageArea(false);
-		final AbstractDataset areaData = AbstractDataset.ones(shape, dtype);
-		return sector(areaData, mask, areaSector, doRadial, doAzimuthal, fast);
+		return sector(mask != null ? mask : AbstractDataset.ones(shape, dtype), null, areaSector, doRadial, doAzimuthal, fast);
 	}
 }

@@ -192,11 +192,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				return simple_qvalue(datasets);
 			}
 		}
-		if (doErrors) {
+		if (doErrors || interpolate) {
 			return interpolate_value_fj(datasets);
-		}
-		if (interpolate) {
-			return interpolate_value(datasets);
 		}
 		return simple_value(datasets);
 		
@@ -300,16 +297,15 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	
 	/**
 	 * Map of interpolation coefficients from 2D dataset with mask
-	 * @param d input dataset
+	 * @param s dataset size
 	 * @param m mask dataset
 	 * @param x0 coordinate
 	 * @param x1 coordinate
 	 * @return bilinear interpolation
 	 */
-	private Map<Point2i, Double> getBilinearWeights(final IDataset d, final IDataset m, final double x0, final double x1) {
+	private Map<Point2i, Double> getBilinearWeights(final int[] s, final IDataset m, final double x0, final double x1) {
 		Map<Point2i, Double> res = new HashMap<Point2i, Double>();
 		
-		final int[] s = d.getShape();
 		if (s.length != 2) {
 			throw new IllegalArgumentException("Only 2d datasets allowed");
 		}
@@ -619,6 +615,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 */
 	class ProfileTask extends RecursiveTask<List<AbstractDataset>> {
 		
+		private static final int MIN_POINTS = 50;
 		private final int MAX_POINTS;
 		
 		private final double sr, sp;
@@ -655,7 +652,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 			
-			if (nr * np > MAX_POINTS) {
+			if ((nr * np > MAX_POINTS) && (nr > MIN_POINTS || np > MIN_POINTS)) {
 		        int mri = sri + (eri - sri) / 2;
 		        int mpi = spi + (epi - spi) / 2;
 		        
@@ -755,18 +752,19 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						Map<Point2i, Double> varmap = null;
 						double v = 0.0;
 						if (errIds != null) {
-							varmap = getBilinearWeights(errIds, mask, y, x);
+							varmap = getBilinearWeights(ids.getShape(), mask, y, x);
 						} else {
 							v = rad * dr * dphi * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
 						}
 						if (doRadial) {
 							if (varmap != null) {
+								double du = rad * dr * dphi * (mask != null ? Maths.getBilinear(mask, y, x) : 1.0);
 								for (Point2i pt : varmap.keySet()) {
 									int i0 = pt.x;
 									int i1 = pt.y;
-									double weight = varmap.get(pt);
+									double weight = du * varmap.get(pt);
 									v += weight * ids.getDouble(i0, i1);
-									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + rad * dr * dphi * weight);
+									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + weight);
 								}
 							}
 							csum += v;

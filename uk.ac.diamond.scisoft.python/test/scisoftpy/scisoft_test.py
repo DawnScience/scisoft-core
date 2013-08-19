@@ -115,6 +115,16 @@ class Test(unittest.TestCase):
         a.reshape(2,5)
         a.reshape((2,5))
 
+    def testResize(self):
+        print 'Resize testing'
+        a = np.arange(10.)
+        a.resize(12, refcheck=False)
+        print a
+        a.resize((2,6), refcheck=False)
+        print a
+        a.resize(2,6, refcheck=False)
+        print a
+
     def testCompounds(self):
         a = np.arange(24).reshape(3,4,2)
         oa = np.compoundarray(a)

@@ -16,7 +16,7 @@ Capabilities
  * Mathematical and statistical functions
 
 Key differences
- * Expandable with reserved space - makes arrays non-contiguous
+ * Slicing returns a copy (not a view)
  * No strides
  * No broadcasting except from single items
  * Incomplete implementation all NumPy's methods

@@ -738,9 +738,6 @@ class ndarray(object):
     def data(self):
         return self.__dataset.getBuffer()
 
-    def append(self, other, axis=None):
-        return append(self, other, axis)
-
     def item(self, index=None, *args):
         '''Return first item of dataset'''
         if self.size == 1:
@@ -836,6 +833,12 @@ class ndarray(object):
         if len(shape) == 1:
             shape = asIterable(shape[0])
         return self.__dataset.reshape(shape)
+
+    def resize(self, *shape, **kwarg):
+        '''Change shape and size of dataset in-place'''
+        if len(shape) == 1:
+            shape = asIterable(shape[0])
+        self.__dataset.resize(shape)
 
     @_wrapout
     def flatten(self):

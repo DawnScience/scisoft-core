@@ -187,10 +187,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 */
 	@Override
 	public List<AbstractDataset> value(IDataset... datasets) {
-		if (qSpace != null) {
-			if (axisType != null && axisType != XAxis.PIXEL) {
-				return simple_qvalue(datasets);
-			}
+		if (qSpace != null && axisType != null && axisType != XAxis.PIXEL) {
+			return simple_qvalue(datasets);
 		}
 		if (doErrors || interpolate) {
 			return interpolate_value_fj(datasets);

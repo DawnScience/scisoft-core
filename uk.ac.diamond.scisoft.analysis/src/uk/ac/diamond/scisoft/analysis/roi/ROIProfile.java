@@ -651,7 +651,10 @@ public class ROIProfile {
 			}
 			
 			if (aver) {
-				AbstractDataset[] areas = area(data.getShape(), data.getDtype(), mask, sroi, doRadial, doAzimuthal, fast);
+				final SectorROI areaSector = sroi.copy();
+				areaSector.setAverageArea(false);
+				AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
+						areaSector, doRadial, doAzimuthal, fast, qSpace, axisType, false);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
 				if (doErrors) {
@@ -664,9 +667,9 @@ public class ROIProfile {
 				profiles[0] = dsetsf.get(1);
 				profiles[1] = dsetsf.get(0);
 			}
-			if (dsetsf.size() > 2) {
-				profiles[4] = dsetsf.get(3);
-				profiles[5] = dsetsf.get(2);
+			if (dsetsf.size() >= 6) {
+				profiles[4] = dsetsf.get(5);
+				profiles[5] = dsetsf.get(4);
 			}
 			return profiles;
 		}
@@ -736,7 +739,10 @@ public class ROIProfile {
 			}
 		}
 		if (aver) {
-			AbstractDataset[] areas = area(data.getShape(), data.getDtype(), mask, sroi, doRadial, doAzimuthal, fast);
+			final SectorROI areaSector = sroi.copy();
+			areaSector.setAverageArea(false);
+			AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
+					areaSector, doRadial, doAzimuthal, fast, qSpace, axisType, false);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
 					profiles[i] = Maths.dividez(profiles[i], areas[i]);
@@ -751,6 +757,8 @@ public class ROIProfile {
 	}
 	
 	/**
+	 * Calculate area values of the selected sector region in pixels.
+	 * 
 	 * @param shape
 	 *            image dimensions
 	 * @param sroi
@@ -761,6 +769,8 @@ public class ROIProfile {
 	}
 	
 	/**
+	 * Calculate area values of the selected sector region in pixels.
+	 * 
 	 * @param shape
 	 *            image dimensions
 	 * @param mask
@@ -773,6 +783,8 @@ public class ROIProfile {
 	}
 	
 	/**
+	 * Calculate area values of the selected sector region in pixels.
+	 * 
 	 * @param shape
 	 *            image dimensions
 	 * @param mask
@@ -781,6 +793,7 @@ public class ROIProfile {
 	 * @return sector profile
 	 */
 	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
+		//TODO: This method only works on pixel axis. It can't be use for normalising data on non-pixel axes (e.g q-space, d-spacing).   
 		final SectorROI areaSector = sroi.copy();
 		areaSector.setAverageArea(false);
 		return sector(mask != null ? mask : AbstractDataset.ones(shape, dtype), null, areaSector, doRadial, doAzimuthal, fast);

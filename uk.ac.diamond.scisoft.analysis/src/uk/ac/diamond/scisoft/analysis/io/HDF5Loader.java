@@ -83,10 +83,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
 
-	private static ReentrantLock globalLock = new ReentrantLock();
+	private static ReentrantLock accessLock = new ReentrantLock();
 
 	private static void acquireAccess(final String file) {
-		globalLock.lock();
+		accessLock.lock();
 		ReentrantLock l;
 		try {
 			l = openFiles.get(file);
@@ -99,7 +99,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				logger.trace(String.format(" Lock exists for %s (%b)", file, l.isLocked()));
 			}
 		} finally {
-			globalLock.unlock();
+			accessLock.unlock();
 		}
 
 		if (l.tryLock()) {
@@ -112,7 +112,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private static void releaseAccess(final String file) {
-		globalLock.lock();
+		accessLock.lock();
 		try {
 			ReentrantLock l = openFiles.get(file);
 			if (l != null) {
@@ -128,7 +128,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				l = null;
 			}
 		} finally {
-			globalLock.unlock();
+			accessLock.unlock();
 		}
 	}
 

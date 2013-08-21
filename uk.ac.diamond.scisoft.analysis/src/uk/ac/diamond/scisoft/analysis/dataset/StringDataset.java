@@ -55,16 +55,7 @@ public class StringDataset extends StringDatasetBase {
 	 * @param dataset
 	 */
 	public StringDataset(final StringDataset dataset) {
-		this(dataset, false);
-	}
-
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public StringDataset(final StringDataset dataset, final boolean wrap) {
-		super(dataset, wrap);
+		super(dataset);
 	}
 
 	/**
@@ -77,7 +68,10 @@ public class StringDataset extends StringDatasetBase {
 
 	@Override
 	public StringDataset getView() {
-		return new StringDataset(this, true);
+		StringDataset view = new StringDataset();
+		copyToView(this, view, true, true);
+		view.data = data;
+		return view;
 	}
 
 	/**

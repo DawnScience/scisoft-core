@@ -69,15 +69,6 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public ComplexFloatDataset(final ComplexFloatDataset dataset, final boolean wrap) {
-		super(dataset, wrap);
-	}
-
-	/**
 	 * Create a dataset using given data (real and imaginary parts are given separately)
 	 * @param realData
 	 * @param imagData

@@ -59,16 +59,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 * @param dataset
 	 */
 	public BooleanDataset(final BooleanDataset dataset) {
-		this(dataset, false);
-	}
-
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public BooleanDataset(final BooleanDataset dataset, final boolean wrap) {
-		super(dataset, wrap);
+		super(dataset);
 	}
 
 	/**
@@ -81,7 +72,10 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	@Override
 	public BooleanDataset getView() {
-		return new BooleanDataset(this, true);
+		BooleanDataset view = new BooleanDataset();
+		copyToView(this, view, true, true);
+		view.data = data;
+		return view;
 	}
 
 	/**

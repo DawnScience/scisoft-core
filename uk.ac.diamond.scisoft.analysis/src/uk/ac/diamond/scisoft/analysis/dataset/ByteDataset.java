@@ -111,21 +111,6 @@ public class ByteDataset extends AbstractDataset {
 	 * @param dataset
 	 */
 	public ByteDataset(final ByteDataset dataset) {
-		this(dataset, false);
-	}
-
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public ByteDataset(final ByteDataset dataset, final boolean wrap) {
-		if (wrap) {
-			copyToView(dataset, this, false, false);
-			data = dataset.data;
-			return;
-		}
-
 		copyToView(dataset, this, true, true);
 
 		odata = data = dataset.data.clone();
@@ -139,7 +124,6 @@ public class ByteDataset extends AbstractDataset {
 		copyToView(dataset, this, true, false);
 
 		odata = data = createArray(size);
-
 		IndexIterator iter = dataset.getIterator();
 		for (int i = 0; iter.hasNext(); i++) {
 			data[i] = (byte) dataset.getElementLongAbs(iter.index); // GET_ELEMENT_WITH_CAST
@@ -156,9 +140,10 @@ public class ByteDataset extends AbstractDataset {
 			return true;
 
 		ByteDataset other = (ByteDataset) obj;
-		IndexIterator it = getIterator();
-		while (it.hasNext()) {
-			if (data[it.index] != other.data[it.index]) // OBJECT_UNEQUAL
+		IndexIterator iter = getIterator();
+		IndexIterator oiter = other.getIterator();
+		while (iter.hasNext() && oiter.hasNext()) {
+			if (data[iter.index] != other.data[oiter.index]) // OBJECT_UNEQUAL
 				return false;
 		}
 		return true;

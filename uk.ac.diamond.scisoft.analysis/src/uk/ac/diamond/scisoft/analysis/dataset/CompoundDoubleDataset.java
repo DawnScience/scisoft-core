@@ -93,21 +93,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	 * @param dataset
 	 */
 	public CompoundDoubleDataset(final CompoundDoubleDataset dataset) {
-		this(dataset, false);
-	}
-
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public CompoundDoubleDataset(final CompoundDoubleDataset dataset, final boolean wrap) {
 		isize = dataset.isize;
-		if (wrap) {
-			copyToView(dataset, this, false, false);
-			data = dataset.data;
-			return;
-		}
 
 		copyToView(dataset, this, true, true);
 
@@ -125,7 +111,6 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		odata = data = createArray(size);
 
 		IndexIterator iter = dataset.getIterator();
-
 		for (int j = 0; iter.hasNext();) {
 			for (int i = 0; i < isize; i++) {
 				data[j++] = dataset.getElementDoubleAbs(iter.index + i); // GET_ELEMENT_WITH_CAST
@@ -233,10 +218,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			return true;
 
 		CompoundDoubleDataset other = (CompoundDoubleDataset) obj;
-		IndexIterator it = getIterator();
-		while (it.hasNext()) {
+		IndexIterator iter = getIterator();
+		IndexIterator oiter = other.getIterator();
+		while (iter.hasNext() && oiter.hasNext()) {
 			for (int j = 0; j < isize; j++) {
-				if (data[it.index+j] != other.data[it.index+j])
+				if (data[iter.index+j] != other.data[oiter.index+j])
 					return false;
 			}
 		}

@@ -54,16 +54,7 @@ public class ObjectDataset extends ObjectDatasetBase {
 	 * @param dataset
 	 */
 	public ObjectDataset(final ObjectDataset dataset) {
-		this(dataset, false);
-	}
-
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public ObjectDataset(final ObjectDataset dataset, final boolean wrap) {
-		super(dataset, wrap);
+		super(dataset);
 	}
 
 	/**
@@ -76,7 +67,10 @@ public class ObjectDataset extends ObjectDatasetBase {
 
 	@Override
 	public ObjectDataset getView() {
-		return new ObjectDataset(this, true);
+		ObjectDataset view = new ObjectDataset();
+		copyToView(this, view, true, true);
+		view.data = data;
+		return view;
 	}
 
 	/**

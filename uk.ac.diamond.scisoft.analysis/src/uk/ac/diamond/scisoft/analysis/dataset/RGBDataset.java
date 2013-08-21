@@ -54,15 +54,6 @@ public class RGBDataset extends CompoundShortDataset {
 		super(dataset);
 	}
 
-	/**
-	 * Copy a dataset or just wrap in a new reference (for Jython sub-classing)
-	 * @param dataset
-	 * @param wrap
-	 */
-	public RGBDataset(final RGBDataset dataset, final boolean wrap) {
-		super(dataset, wrap);
-	}
-
 	@Override
 	public RGBDataset clone() {
 		return new RGBDataset(this);

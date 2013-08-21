@@ -75,20 +75,21 @@ public class DatasetUtils {
 		final int ot = AbstractDataset.getDType(b);
 		final int dt = AbstractDataset.getDType(a);
 		AbstractDataset ds = AbstractDataset.zeros(a.getElementsPerItem(), newdims, dt > ot ? dt : ot);
-		for (int l = 0, lmax = ds.getSize(); l < lmax; l++) {
-			int[] n = ds.getNDPosition(l);
+		IndexIterator iter = ds.getIterator(true);
+		int[] pos = iter.getPos();
+		while (iter.hasNext()) {
 			boolean isold = true;
 			for (int m = 0; m < newdims.length; m++) {
-				if (n[m] >= shape[m]) { // check which array is loop passing through
+				if (pos[m] >= shape[m]) { // check which array is loop passing through
 					isold = false;
-					n[m] -= shape[m];
+					pos[m] -= shape[m];
 					break;
 				}
 			}
 			if (isold) {
-				ds.setObjectAbs(l, a.getObject(n));
+				ds.setObjectAbs(iter.index, a.getObject(pos));
 			} else {
-				ds.setObjectAbs(l, b.getObject(n));
+				ds.setObjectAbs(iter.index, b.getObject(pos));
 			}
 		}
 

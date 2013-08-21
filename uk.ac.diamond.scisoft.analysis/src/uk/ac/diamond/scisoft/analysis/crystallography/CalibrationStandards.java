@@ -94,7 +94,7 @@ public class CalibrationStandards implements Serializable {
 	}
 
 	// **Update** this when default calibrants have changed 
-	static final String CURRENT_VERSION = "1.0.4";
+	static final String CURRENT_VERSION = "1.0.5";
 
 	/**
 	 * Default list of calibrants TODO add whatever Alun needs.
@@ -241,6 +241,35 @@ public class CalibrationStandards implements Serializable {
 		calibrant = new CalibrantSpacing("Bees Wax"); // FIXME reference
 		calibrant.addHKL(new HKL(Amount.valueOf(3.6, ANGSTROM)));
 		calibrant.addHKL(new HKL(Amount.valueOf(2.4, ANGSTROM)));
+		tmp.put(calibrant.getName(), calibrant);
+		
+		calibrant = new CalibrantSpacing("LaB6"); // NIST SRM 660a (4.1569162, Cubic)
+		calibrant.addHKL(new HKL(1, 0, 0,  Amount.valueOf(4.156916,  ANGSTROM)));
+		calibrant.addHKL(new HKL(1, 1, 0,  Amount.valueOf(2.939383,  ANGSTROM)));
+		calibrant.addHKL(new HKL(1, 1, 1,  Amount.valueOf(2.399996,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 0, 0,  Amount.valueOf(2.078458,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 1, 0,  Amount.valueOf(1.859029,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 1, 1,  Amount.valueOf(1.697053,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 2, 0,  Amount.valueOf(1.469691,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 0, 0,  Amount.valueOf(1.385638,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 1, 0,  Amount.valueOf(1.314532,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 1, 1,  Amount.valueOf(1.253357,  ANGSTROM)));
+		calibrant.addHKL(new HKL(2, 2, 2,  Amount.valueOf(1.199998,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 2, 0,  Amount.valueOf(1.152921,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 2, 1,  Amount.valueOf(1.110982,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 0, 0,  Amount.valueOf(1.039229,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 1, 0,  Amount.valueOf(1.008200,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 0,  Amount.valueOf(0.979794,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 1,  Amount.valueOf(0.953661,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 0,  Amount.valueOf(0.929514,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 1,  Amount.valueOf(0.907113,  ANGSTROM)));
+		calibrant.addHKL(new HKL(3, 3, 2,  Amount.valueOf(0.886257,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 2,  Amount.valueOf(0.848526,  ANGSTROM)));
+		calibrant.addHKL(new HKL(4, 2, 2,  Amount.valueOf(0.848526,  ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 0, 0,  Amount.valueOf(0.831383,  ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 0, 0,  Amount.valueOf(0.815238,  ANGSTROM)));
+		calibrant.addHKL(new HKL(5, 1, 1,  Amount.valueOf(0.799998,  ANGSTROM)));
+		
 		tmp.put(calibrant.getName(), calibrant);
 
 		return tmp;

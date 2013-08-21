@@ -79,17 +79,19 @@ public class DatasetUtils {
 		int[] pos = iter.getPos();
 		while (iter.hasNext()) {
 			boolean isold = true;
+			int[] lpos = pos;
 			for (int m = 0; m < newdims.length; m++) {
 				if (pos[m] >= shape[m]) { // check which array is loop passing through
 					isold = false;
-					pos[m] -= shape[m];
+					lpos = pos.clone();
+					lpos[m] -= shape[m];
 					break;
 				}
 			}
 			if (isold) {
-				ds.setObjectAbs(iter.index, a.getObject(pos));
+				ds.setObjectAbs(iter.index, a.getObject(lpos));
 			} else {
-				ds.setObjectAbs(iter.index, b.getObject(pos));
+				ds.setObjectAbs(iter.index, b.getObject(lpos));
 			}
 		}
 

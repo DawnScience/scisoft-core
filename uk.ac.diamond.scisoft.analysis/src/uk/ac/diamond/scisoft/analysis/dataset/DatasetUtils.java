@@ -47,10 +47,10 @@ public class DatasetUtils {
 	 * @return appended dataset
 	 */
 	public static AbstractDataset append(IDataset a, IDataset b, int axis) {
-		final int[] shape = a.getShape();
-		final int rank = shape.length;
-		final int[] othdims = b.getShape();
-		if (rank != othdims.length) {
+		final int[] ashape = a.getShape();
+		final int rank = ashape.length;
+		final int[] bshape = b.getShape();
+		if (rank != bshape.length) {
 			throw new IllegalArgumentException("Incompatible number of dimensions");
 		}
 		if (axis >= rank) {
@@ -63,35 +63,28 @@ public class DatasetUtils {
 		}
 
 		for (int i = 0; i < rank; i++) {
-			if (i != axis && shape[i] != othdims[i]) {
+			if (i != axis && ashape[i] != bshape[i]) {
 				throw new IllegalArgumentException("Incompatible dimensions");
 			}
 		}
-		final int[] newdims = new int[rank];
+		final int[] nshape = new int[rank];
 		for (int i = 0; i < rank; i++) {
-			newdims[i] = shape[i];
+			nshape[i] = ashape[i];
 		}
-		newdims[axis] += othdims[axis];
+		nshape[axis] += bshape[axis];
 		final int ot = AbstractDataset.getDType(b);
 		final int dt = AbstractDataset.getDType(a);
-		AbstractDataset ds = AbstractDataset.zeros(a.getElementsPerItem(), newdims, dt > ot ? dt : ot);
+		AbstractDataset ds = AbstractDataset.zeros(a.getElementsPerItem(), nshape, dt > ot ? dt : ot);
 		IndexIterator iter = ds.getIterator(true);
 		int[] pos = iter.getPos();
 		while (iter.hasNext()) {
-			boolean isold = true;
-			int[] lpos = pos;
-			for (int m = 0; m < newdims.length; m++) {
-				if (pos[m] >= shape[m]) { // check which array is loop passing through
-					isold = false;
-					lpos = pos.clone();
-					lpos[m] -= shape[m];
-					break;
-				}
-			}
-			if (isold) {
-				ds.setObjectAbs(iter.index, a.getObject(lpos));
+			int d = ashape[axis];
+			if (pos[axis] < d) {
+				ds.setObjectAbs(iter.index, a.getObject(pos));
 			} else {
-				ds.setObjectAbs(iter.index, b.getObject(lpos));
+				pos[axis] -= d;
+				ds.setObjectAbs(iter.index, b.getObject(pos));
+				pos[axis] += d;
 			}
 		}
 

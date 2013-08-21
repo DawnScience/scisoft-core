@@ -1578,4 +1578,37 @@ public class AbstractDatasetTest {
 		Assert.assertArrayEquals(new int[] {5, 3, 4, 6}, DatasetUtils.rollAxis(a, 2, 0).getShape());
 		Assert.assertArrayEquals(new int[] {3, 5, 6, 4}, DatasetUtils.rollAxis(a, 1, 4).getShape());
 	}
+
+	@Test
+	public void testAppend() {
+		double[] x = { 0., 1., 2., 3., 4., 5. };
+		AbstractDataset d1 = DoubleDataset.arange(3.);
+		AbstractDataset d2 = DoubleDataset.arange(3., 6., 1.);
+		AbstractDataset d3 = DatasetUtils.append(d1, d2, 0);
+
+		for (int i = 0; i < x.length; i++) {
+			assertEquals("Append 1", x[i], d3.getDouble(i), 1e-8);
+		}
+
+		d1.setShape(1, 3);
+		d2.setShape(1, 3);
+		d3 = DatasetUtils.append(d1, d2, 0);
+		AbstractDataset d4 = new DoubleDataset(x);
+
+		d4.setShape(2, 3);
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 3; j++) {
+				assertEquals("Append 2", d4.getDouble(i, j), d3.getDouble(i, j), 1e-8);
+			}
+		}
+
+		d3 = DatasetUtils.append(d1, d2, 1);
+		d4 = new DoubleDataset(x);
+		d4.setShape(1, 6);
+		for (int i = 0; i < 1; i++) {
+			for (int j = 0; j < 6; j++) {
+				assertEquals("Append 3", d4.getDouble(i, j), d3.getDouble(i, j), 1e-8);
+			}
+		}
+	}
 }

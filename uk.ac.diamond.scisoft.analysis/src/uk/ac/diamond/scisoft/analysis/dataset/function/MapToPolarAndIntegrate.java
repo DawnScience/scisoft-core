@@ -372,8 +372,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				double x = cx + rad * Math.cos(phi);
 				double y = cy + rad * Math.sin(phi);
 				double val = pixelToValue(x, y);
-				if (val < vmin) vmin = val;
-				if (val > vmax) vmax = val;
+				if (val < vmin) { vmin = val;}
+				if (val > vmax) { vmax = val;}
 			}
 		}
 		
@@ -479,10 +479,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			int apts = (int) (erad * (ephi - sphi) * dpp + 1);
 			double dphi = (ephi - sphi) / apts;
 			
-			// Final intensity is 1D data
-			float[] intensity = new float[npts];
-			float[] azimuth = new float[apts];
-			
 			// Calculate bounding rectangle around the sector
 			int nxstart = (int) Math.max(0, cx - erad);
 			int nx = (int) Math.min(ids.getShape()[1], cx + erad);
@@ -511,60 +507,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				break;
 			}
 			azAxis.setName("Angle (\u00b0)");
-			
-			for (int j = nystart; j < ny; j++) {
-				for (int i = nxstart; i < nx; i++) {
-
-					double Theta = Math.atan2((j - cy) , (i - cx));
-					Theta = MathUtils.normalizeAngle(Theta, sphi + Math.PI);
-
-					if ((Theta >= sphi) && (Theta <= ephi )) {			
-						double xR = i - cx;
-						double yR = j - cy;
-
-						double R = Math.sqrt(xR * xR + yR * yR);
-
-						if ((R >= srad) && (R < erad)) {
-							R = pixelToValue(i, j);
-							int k = DatasetUtils.findIndexGreaterThan(radAxis, R) - 1;
-							if (k < 0 || (k + 1) >= radAxis.getSize()) {
-								continue;
-							}
-							if (mask != null && !mask.getBoolean(new int[] {j,i})) {
-								continue;
-							}
-							
-							double val = ids.getDouble(new int[] {j,i});
-							
-							// Each point participating to the sector integration is weighted depending on
-							// how far/close it is from the following point i+1
-							double r1 = radAxis.getDouble(k);
-							double r2 = radAxis.getDouble(k + 1);
-							double fFac = (r2 - R) / (r2 - r1);
-							
-							if (doRadial) {
-								// Evaluates the intensity and the frequency
-								intensity[k] += fFac * val;
-								if (k < (npts - 1)) {
-									intensity[k + 1] += (1 - fFac) * val;
-								}
-							}
-							if (doAzimuthal) {
-								double dk = 1. / R;
-								int ak1 = Math.max(0, (int) ((Theta - dk / 2.0 - sphi) / dphi));
-								int ak2 = Math.min(apts - 1, (int) ((Theta + dk / 2.0 - sphi) / dphi));
-								for (int n = ak1; n <= ak2; n++) {
-									fFac = ak2 - ak1 + 1.0;
-									azimuth[n] += val / fFac;
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			result.add(new FloatDataset(azimuth, new int[] {apts})) ;
-			result.add(new FloatDataset(intensity, new int[] {npts})) ;
+			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ids);
+			profileTask.setAxes(rAxis);
+			System.out.println("New job");
+			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(profileTask));
+			System.out.println();
 			result.add(new FloatDataset()) ;
 			result.add(new FloatDataset()) ;
 			result.add(azAxis) ;
@@ -572,8 +519,158 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		}
 		return result;
 	}
-
 	
+	
+	class QSpaceProfileTask extends RecursiveTask<List<AbstractDataset>> {
+
+		private static final int MAX_POINTS = 100000;
+		private static final int MIN_POINTS = 50;
+		
+		private final int nxstart, nx;
+		private final int nystart, ny;
+		private final IDataset ids;
+		
+		private AbstractDataset[] rAxes;
+		
+		public QSpaceProfileTask(int nxstart, int nx, int nystart, int ny, final IDataset dataset) {
+			super();
+			
+			// We need to scale each job size with number of running threads
+			// as total available memory is fixed.
+			
+			this.nxstart = nxstart;
+			this.nx = nx;
+			this.nystart = nystart;
+			this.ny = ny;			
+			this.ids = dataset;
+		}
+
+		void setAxes(final AbstractDataset[] rAxes) {
+			this.rAxes = rAxes;
+		}
+		
+		@Override
+		protected List<AbstractDataset> compute() {
+			
+			final int dx = nx - nxstart;
+			final int dy = ny - nystart;
+			
+			System.out.println("nx : " + String.valueOf(nxstart) +"," + String.valueOf(nx));
+			System.out.println("ny : " + String.valueOf(nystart) +"," + String.valueOf(ny));
+			
+			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+			
+			if ((dx * dy) > MAX_POINTS && dx > MIN_POINTS && dy > MIN_POINTS) {
+		        int mx = nxstart + (nx - nxstart) / 2;
+		        int my = nystart + (ny - nystart) / 2;
+		        
+		        QSpaceProfileTask sxsy = new QSpaceProfileTask(nxstart, mx, nystart, my, ids);
+		        QSpaceProfileTask sxmy = new QSpaceProfileTask(nxstart, mx, my, ny, ids);
+		        QSpaceProfileTask mxsy = new QSpaceProfileTask(mx, nx, nystart, my, ids);
+		        QSpaceProfileTask mxmy = new QSpaceProfileTask(mx, nx, my, ny, ids);
+		        sxsy.setAxes(rAxes);
+		        sxmy.setAxes(rAxes);
+		        mxsy.setAxes(rAxes);
+		        mxmy.setAxes(rAxes);
+		        
+		        sxsy.fork();
+		        sxmy.fork();
+		        mxsy.fork();
+		        
+		        List<AbstractDataset> mxmyResult = mxmy.compute();
+		        List<AbstractDataset> sxsyResult = sxsy.join();
+		        for (int i = 0; i < sxsyResult.size(); i++) {
+		        	AbstractDataset res = sxsyResult.get(i);
+		        	res.iadd(mxmyResult.get(i));
+		        	result.add(res);
+		        }
+		        
+		        
+		        List<AbstractDataset> sxmyResult = sxmy.join();
+		        List<AbstractDataset> mxsyResult = mxsy.join();
+		        
+		        for (int i = 0; i < sxmyResult.size(); i++) {
+		        	boolean radial = (i % 2 != 0);
+		        	AbstractDataset res = (radial ? sxmyResult.get(i) : mxsyResult.get(i));
+		        	res.iadd(radial ? mxsyResult.get(i) : sxmyResult.get(i));
+		        	
+		        	AbstractDataset firstRes = result.get(i); 
+		        	firstRes.iadd(res);
+		        	result.set(i, firstRes);
+		        }
+		        
+			} else {
+				
+				int npts =  (int) ((erad - srad + 1) * dpp);
+				int apts = (int) (erad * (ephi - sphi) * dpp + 1);
+				double dphi = (ephi - sphi) / apts;
+				
+				// Final intensity is 1D data
+				float[] intensity = new float[npts];
+				float[] azimuth = new float[apts];
+				
+				AbstractDataset radAxis = rAxes[0];
+				
+				for (int j = nystart; j < ny; j++) {
+					for (int i = nxstart; i < nx; i++) {
+	
+						double Theta = Math.atan2((j - cy) , (i - cx));
+						Theta = MathUtils.normalizeAngle(Theta, sphi + Math.PI);
+	
+						if ((Theta >= sphi) && (Theta <= ephi )) {			
+							double xR = i - cx;
+							double yR = j - cy;
+	
+							double R = Math.sqrt(xR * xR + yR * yR);
+	
+							if ((R >= srad) && (R < erad)) {
+								R = pixelToValue(i, j);
+								int k = DatasetUtils.findIndexGreaterThan(radAxis, R) - 1;
+								if (k < 0 || (k + 1) >= radAxis.getSize()) {
+									continue;
+								}
+								if (mask != null && !mask.getBoolean(new int[] {j,i})) {
+									continue;
+								}
+								
+								double val = ids.getDouble(new int[] {j,i});
+								
+								// Each point participating to the sector integration is weighted depending on
+								// how far/close it is from the following point i+1
+								double r1 = radAxis.getDouble(k);
+								double r2 = radAxis.getDouble(k + 1);
+								double fFac = (r2 - R) / (r2 - r1);
+								
+								if (doRadial) {
+									// Evaluates the intensity and the frequency
+									intensity[k] += fFac * val;
+									if (k < (npts - 1)) {
+										intensity[k + 1] += (1 - fFac) * val;
+									}
+								}
+								if (doAzimuthal) {
+									double dk = 1. / R;
+									int ak1 = Math.max(0, (int) ((Theta - dk / 2.0 - sphi) / dphi));
+									int ak2 = Math.min(apts - 1, (int) ((Theta + dk / 2.0 - sphi) / dphi));
+									for (int n = ak1; n <= ak2; n++) {
+										fFac = ak2 - ak1 + 1.0;
+										azimuth[n] += val / fFac;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				result.add(new FloatDataset(azimuth, new int[] {apts})) ;
+				result.add(new FloatDataset(intensity, new int[] {npts})) ;
+			}
+			
+		return result;
+		}
+	}
+	
+			
 	/**
 	 * This is a recursive method that implements mapping and integration
 	 * of a Cartesian grid sampled data (pixels) to polar grid
@@ -650,7 +747,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 			
-			if ((nr * np > MAX_POINTS) && (nr > MIN_POINTS || np > MIN_POINTS)) {
+			if ((nr * np > MAX_POINTS) && nr > MIN_POINTS && np > MIN_POINTS) {
 		        int mri = sri + (eri - sri) / 2;
 		        int mpi = spi + (epi - spi) / 2;
 		        

@@ -316,7 +316,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis2
 	 * @return swapped dataset
 	 */
-	public ADataset swapaxes(int axis1, int axis2);
+	public ADataset swapAxes(int axis1, int axis2);
 
 	/**
 	 * Flatten shape

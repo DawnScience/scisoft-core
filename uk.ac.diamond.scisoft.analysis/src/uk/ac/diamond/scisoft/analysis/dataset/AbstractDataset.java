@@ -432,7 +432,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return swapped dataset
 	 */
 	@Override
-	public AbstractDataset swapaxes(int axis1, int axis2) {
+	public AbstractDataset swapAxes(int axis1, int axis2) {
 		return DatasetUtils.swapAxes(this, axis1, axis2);
 	}
 

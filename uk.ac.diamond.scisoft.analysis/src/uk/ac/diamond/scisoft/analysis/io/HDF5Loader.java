@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.concurrent.locks.ReentrantLock;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
@@ -51,6 +50,7 @@ import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5Link;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
+import org.dawb.hdf5.HierarchicalDataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,58 +79,8 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * Load HDF5 files using NCSA's Java library
  */
 public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
+	
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
-
-	private static Map<String, ReentrantLock> openFiles = new HashMap<String, ReentrantLock>();
-
-	private static ReentrantLock globalLock = new ReentrantLock();
-
-	private static void acquireAccess(final String file) {
-		globalLock.lock();
-		ReentrantLock l;
-		try {
-			l = openFiles.get(file);
-			logger.trace(String.format("Get lock for %s (thd %x)", file, Thread.currentThread().getId()));
-			if (l == null) {
-				l = new ReentrantLock();
-				logger.trace(" Lock created for {}", file);
-				openFiles.put(file, l);
-			} else {
-				logger.trace(String.format(" Lock exists for %s (%b)", file, l.isLocked()));
-			}
-		} finally {
-			globalLock.unlock();
-		}
-
-		if (l.tryLock()) {
-			logger.trace(String.format(" Lock free for %s (or held by current thd %x)", file, Thread.currentThread().getId()));
-		} else {
-			logger.trace("  Wait for held lock for {}", file);
-			l.lock();
-			logger.trace(String.format("  Hold lock for %s (thd %x)", file, Thread.currentThread().getId()));
-		}
-	}
-
-	private static void releaseAccess(final String file) {
-		globalLock.lock();
-		try {
-			ReentrantLock l = openFiles.get(file);
-			if (l != null) {
-				if (l.isHeldByCurrentThread()) {
-					l.unlock();
-					logger.trace(String.format("Release lock for %s (thd %x, %d)", file, Thread.currentThread().getId(), l.getHoldCount()));
-				} else {
-					logger.trace("Somehow the lock for {} was released (thd {})!", file, Thread.currentThread().getId());
-				}
-				if (!l.hasQueuedThreads()) {
-					openFiles.remove(file);
-				}
-				l = null;
-			}
-		} finally {
-			globalLock.unlock();
-		}
-	}
 
 	private String fileName;
 	private boolean keepBitWidth = false;
@@ -227,9 +177,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		
 		@Override
 		public void run() {
-			acquireAccess(fileName);
 			int fid = -1;
 			try {
+				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 				if (!monitorIncrement(mon)) {
@@ -248,7 +198,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					H5.H5Fclose(fid);
 				} catch (Throwable e) {
 				}
-				releaseAccess(fileName);
+				HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
 			}
 		}
 	}
@@ -305,9 +255,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 			waitForSyncLimit();
 		} else {
-			acquireAccess(fileName);
 			int fid = -1;
 			try {
+				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 				if (!monitorIncrement(mon)) {
@@ -326,7 +276,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					H5.H5Fclose(fid);
 				} catch (Throwable e) {
 				}
-				releaseAccess(fileName);
+				HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
 			}
 		}
 		return tFile;
@@ -787,9 +737,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
 
-		acquireAccess(cPath);
 		int fid = -1;
 		try {
+			HierarchicalDataFactory.acquireLowLevelReadingAccess(cPath);
 			fid = H5.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 			final long oid = path.hashCode(); // include file name in ID
@@ -804,7 +754,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				H5.H5Fclose(fid);
 			} catch (Throwable e) {
 			}
-			releaseAccess(cPath);
+			HierarchicalDataFactory.releaseLowLevelReadingAccess(cPath);
 		}
 		
 		return nn;
@@ -1602,9 +1552,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			logger.error("Could not get canonical path", e);
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
-		acquireAccess(cPath);
 		int fid = -1;
 		try {
+			HierarchicalDataFactory.acquireLowLevelReadingAccess(cPath);
 			fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 			try {
@@ -1869,7 +1819,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				H5.H5Fclose(fid);
 			} catch (Throwable e) {
 			}
-			releaseAccess(cPath);
+			HierarchicalDataFactory.releaseLowLevelReadingAccess(cPath);
 		}
 
 		return data;
@@ -1972,9 +1922,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			logger.error("Could not get canonical path", e);
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
-		acquireAccess(fileName);
 		int fid = -1;
 		try {
+			HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 			fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 			if (!monitorIncrement(mon)) {
@@ -1998,7 +1948,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				H5.H5Fclose(fid);
 			} catch (Throwable e) {
 			}
-			releaseAccess(fileName);
+			HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
 		}
 		return list;
 	}

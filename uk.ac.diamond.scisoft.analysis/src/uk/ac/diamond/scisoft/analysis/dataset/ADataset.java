@@ -305,6 +305,12 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @param axes
 	 *            if zero length then axes order reversed
+	 * @return remapped view of data
+	 */
+	public ADataset getTransposedView(int... axes);
+
+	/**
+	 * See {@link #getTransposedView}
 	 * @return remapped copy of data
 	 */
 	public ADataset transpose(int... axes);
@@ -314,7 +320,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @param axis1
 	 * @param axis2
-	 * @return swapped dataset
+	 * @return swapped view of dataset
 	 */
 	public ADataset swapAxes(int axis1, int axis2);
 

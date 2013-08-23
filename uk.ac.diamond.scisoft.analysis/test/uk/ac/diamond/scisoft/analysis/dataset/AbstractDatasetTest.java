@@ -479,6 +479,11 @@ public class AbstractDatasetTest {
 				assertEquals(xa[i][j], ta.getDouble(j, i), 1e-6);
 			}
 		}
+		ds.set(-2, 1, 2);
+		assertEquals(-2., ds.getDouble(1, 2), 1e-6);
+		assertEquals(5., ta.getDouble(2, 1), 1e-6);
+		ta = ds.getTransposedView(); // test view has changed
+		assertEquals(-2., ta.getDouble(2, 1), 1e-6);
 
 		// 3D
 		ds = AbstractDataset.arange(24, AbstractDataset.FLOAT64);

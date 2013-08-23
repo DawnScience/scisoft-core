@@ -405,6 +405,50 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Check permutation axes
+	 * @param shape
+	 * @param axes
+	 * @return cleaned up axes
+	 */
+	public static int[] checkPermutatedAxes(int[] shape, int... axes) {
+		int rank = shape.length;
+
+		if (axes == null || axes.length == 0) {
+			axes = new int[rank];
+			for (int i = 0; i < rank; i++) {
+				axes[i] = rank-1-i;
+			}
+		}
+
+		int i;
+
+		if (axes.length != rank) {
+			abstractLogger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
+			throw new IllegalArgumentException("axis permutation does not match shape of dataset");
+		}
+
+		// check all permutation values are within bounds
+		for (int d : axes) {
+			if (d < 0 || d >= rank) {
+				abstractLogger.error("axis permutation contains element {} outside rank of dataset", d);
+				throw new IllegalArgumentException("axis permutation contains element outside rank of dataset");
+			}
+		}
+
+		// check for a valid permutation (is this an unnecessary restriction?)
+		int[] perm = axes.clone();
+		Arrays.sort(perm);
+		for (i = 0; i < rank; i++) {
+			if (perm[i] != i) {
+				abstractLogger.error("axis permutation is not valid: it does not contain complete set of axes");
+				throw new IllegalArgumentException("axis permutation does not contain complete set of axes");	
+			}
+		}
+
+		return axes;
+	}
+
+	/**
 	 * Permute copy of dataset's axes so that given order is old order:
 	 * 
 	 * <pre>
@@ -417,11 +461,40 @@ public abstract class AbstractDataset implements ADataset {
 	 * 
 	 * @param axes
 	 *            if zero length then axes order reversed
+	 * @return remapped view of data
+	 */
+	@Override
+	public AbstractDataset getTransposedView(int... axes) {
+		AbstractDataset t = getView();
+		if (getRank() == 1)
+			return t;
+
+		axes = checkPermutatedAxes(shape, axes);
+		int rank = shape.length;
+		int[] tstride = new int[rank];
+		int[] toffset = new int[1];
+		int[] nshape = createStrides(this, null, null, null, tstride, toffset);
+		int[] nstride = new int[rank];
+		for (int i = 0; i < rank; i++) {
+			final int ax = axes[i];
+			nstride[i] = tstride[ax];
+			nshape[i] = shape[ax];
+		}
+		t.shape = nshape;
+		t.stride = nstride;
+		t.offset = toffset[0];
+		t.base = base == null ? this : base;
+		copyStoredValues(this, t, true);
+		return t;
+	}
+
+	/**
+	 * See {@link #getTransposedView}
 	 * @return remapped copy of data
 	 */
 	@Override
 	public AbstractDataset transpose(int... axes) {
-		return DatasetUtils.transpose(this, axes);
+		return getTransposedView(axes).clone();
 	}
 
 	/**
@@ -429,11 +502,33 @@ public abstract class AbstractDataset implements ADataset {
 	 * 
 	 * @param axis1
 	 * @param axis2
-	 * @return swapped dataset
+	 * @return swapped view of dataset
 	 */
 	@Override
 	public AbstractDataset swapAxes(int axis1, int axis2) {
-		return DatasetUtils.swapAxes(this, axis1, axis2);
+		int rank = shape.length;
+		if (axis1 < 0)
+			axis1 += rank;
+		if (axis2 < 0)
+			axis2 += rank;
+
+		if (axis1 < 0 || axis2 < 0 || axis1 >= rank || axis2 >= rank) {
+			abstractLogger.error("Axis value invalid - out of range");
+			throw new IllegalArgumentException("Axis value invalid - out of range");
+		}
+
+		if (rank == 1 || axis1 == axis2) {
+			return this;
+		}
+
+		int[] axes = new int[rank];
+		for (int i = 0; i < rank; i++) {
+			axes[i] = i;
+		}		
+
+		axes[axis1] = axis2;
+		axes[axis2] = axis1;
+		return getTransposedView(axes);
 	}
 
 	/**

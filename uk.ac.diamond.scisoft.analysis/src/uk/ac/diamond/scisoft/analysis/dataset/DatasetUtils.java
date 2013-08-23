@@ -270,89 +270,7 @@ public class DatasetUtils {
 	 * @return remapped copy of data
 	 */
 	public static AbstractDataset transpose(final IDataset a, int... axes) {
-		int[] shape = a.getShape();
-		int rank = shape.length;
-		if (rank == 1) {
-			return convertToAbstractDataset(a);
-		}
-
-		if (axes == null || axes.length == 0) {
-			axes = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				axes[i] = rank-1-i;
-			}
-		}
-
-		int i;
-
-		if (axes.length != rank) {
-			utilsLogger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
-			throw new IllegalArgumentException("axis permutation does not match shape of dataset");
-		}
-
-		// check all permutation values are within bounds
-		for (int d : axes) {
-			if (d < 0 || d >= rank) {
-				utilsLogger.error("axis permutation contains element {} outside rank of dataset", d);
-				throw new IllegalArgumentException("axis permutation contains element outside rank of dataset");
-			}
-		}
-
-		// check for a valid permutation (is this an unnecessary restriction?)
-		int[] perm = axes.clone();
-		Arrays.sort(perm);
-		for (i = 0; i < rank; i++) {
-			if (perm[i] != i) {
-				utilsLogger.error("axis permutation is not valid: it does not contain complete set of axes");
-				throw new IllegalArgumentException("axis permutation does not contain complete set of axes");	
-			}
-		}
-
-		// check for an identity permutation
-		for (i = 0; i < rank; i++) {
-			if (axes[i] != i)
-				break;
-		}
-		if (i == rank) {
-			return convertToAbstractDataset(a.clone());
-		}
-
-		int[] nshape = new int[rank];
-		for (i = 0; i < rank; i++) {
-			nshape[i] = shape[axes[i]];
-		}
-
-		final AbstractDataset ta = AbstractDataset.zeros(a.getElementsPerItem(), nshape, AbstractDataset.getDType(a));
-
-		// generate each start point and put a slice in
-		int[] npos = new int[rank];
-		int[] opos = new int[rank];
-		for (i = 0; i < rank; i++) {
-			npos[i] = 0;
-			opos[i] = 0;
-		}
-		while (true) {
-			ta.set(a.getObject(opos), npos);
-
-			// now move on one position
-			int j = rank-1;
-			for (; j >= 0; j--) {
-				npos[j]++;
-				final int ax = axes[j];
-				opos[ax]++;
-				if (npos[j] >= nshape[j]) {
-					npos[j] = 0;
-					opos[ax] = 0;
-				} else {
-					break;
-				}
-			}
-			if (j == -1)
-				break;
-		}
-
-		AbstractDataset.copyStoredValues(a, ta, true);
-		return ta;
+		return convertToAbstractDataset(a).transpose(axes);
 	}
 
 	/**
@@ -363,30 +281,7 @@ public class DatasetUtils {
 	 * @return swapped dataset
 	 */
 	public static AbstractDataset swapAxes(final IDataset a, int axis1, int axis2) {
-		int[] shape = a.getShape();
-		int rank = shape.length;
-		if (axis1 < 0)
-			axis1 += rank;
-		if (axis2 < 0)
-			axis2 += rank;
-
-		if (axis1 < 0 || axis2 < 0 || axis1 >= rank || axis2 >= rank) {
-			utilsLogger.error("Axis value invalid - out of range");
-			throw new IllegalArgumentException("Axis value invalid - out of range");
-		}
-
-		if (rank == 1 || axis1 == axis2) {
-			return convertToAbstractDataset(a);
-		}
-
-		int[] axes = new int[rank];
-		for (int i = 0; i < rank; i++) {
-			axes[i] = i;
-		}		
-
-		axes[axis1] = axis2;
-		axes[axis2] = axis1;
-		return transpose(a, axes);
+		return convertToAbstractDataset(a).swapAxes(axis1, axis2);
 	}
 
 	/**

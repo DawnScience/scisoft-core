@@ -141,6 +141,10 @@ take = _np.take
 
 put = _np.put
 
+select = _np.select
+
+choose = _np.choose
+
 concatenate = _np.concatenate
 
 vstack = _np.vstack

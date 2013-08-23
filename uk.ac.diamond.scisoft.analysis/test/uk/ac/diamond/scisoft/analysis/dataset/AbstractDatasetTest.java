@@ -1611,4 +1611,107 @@ public class AbstractDatasetTest {
 			}
 		}
 	}
+
+	public static void checkDatasets(IntegerDataset calc, IntegerDataset expected) {
+		IndexIterator at = calc.getIterator(true);
+		IndexIterator bt = expected.getIterator();
+		final int is = calc.getElementsPerItem();
+	
+		while (at.hasNext() && bt.hasNext()) {
+			for (int j = 0; j < is; j++) {
+				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j));
+			}
+		}
+	}
+
+	public static void checkDatasets(BooleanDataset calc, BooleanDataset expected) {
+		IndexIterator at = calc.getIterator(true);
+		IndexIterator bt = expected.getIterator();
+		final int is = calc.getElementsPerItem();
+	
+		while (at.hasNext() && bt.hasNext()) {
+			for (int j = 0; j < is; j++) {
+				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j));
+			}
+		}
+	}
+
+	public static void checkDatasets(DoubleDataset calc, DoubleDataset expected) {
+		IndexIterator at = calc.getIterator(true);
+		IndexIterator bt = expected.getIterator();
+		final int is = calc.getElementsPerItem();
+	
+		while (at.hasNext() && bt.hasNext()) {
+			for (int j = 0; j < is; j++) {
+				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j), 1e-5);
+			}
+		}
+	}
+
+	@Test
+	public void testSelect() {
+		DoubleDataset a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });
+		DoubleDataset b = new DoubleDataset(new double[] { 0.01, 1.2, 2.9, 5, -7.1, -9 });
+
+		AbstractDataset c = a.clone().reshape(2, 3);
+		BooleanDataset d = new BooleanDataset(new boolean[] {false, true, false, false, true, false}, 2, 3);
+
+		DoubleDataset e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d}, new Object[] {c}, -2);
+		checkDatasets(e, new DoubleDataset(new double[] {-2, 1, -2, -2, -7, -2}, 2, 3));
+
+		AbstractDataset f = b.clone().reshape(2, 3);
+		BooleanDataset g = new BooleanDataset(new boolean[] {false, true, true, false, false, false}, 2, 3);
+
+		e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d, g}, new AbstractDataset[] {c, f}, -2.5);
+
+		checkDatasets(e, new DoubleDataset(new double[] {-2.5, 1, 2.9, -2.5, -7, -2.5}, 2, 3));
+	}
+
+	@Test
+	public void testChoose() {
+		DoubleDataset a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });
+		DoubleDataset b = new DoubleDataset(new double[] { 0.01, 1.2, 2.9, 5, -7.1, -9 });
+
+		AbstractDataset c = a.clone().reshape(2, 3);
+		IntegerDataset d = new IntegerDataset(new int[] {0, 0, 1, 1, 0, 1}, 2, 3);
+
+		DoubleDataset e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, true, false);
+		checkDatasets(e, new DoubleDataset(new double[] {0, 1, -2, -2, -7, -2}, 2, 3));
+
+		d = new IntegerDataset(new int[] {-2, 0, 3, 1, 0, 2}, 2, 3);
+		try {
+			e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, true, false);
+			fail("Should have thrown an array index OOB exception");
+		} catch (ArrayIndexOutOfBoundsException oob) {
+			// expected
+		}
+		e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, false, false);
+		checkDatasets(e, new DoubleDataset(new double[] {0, 1, -2, -2, -7, -9}, 2, 3));
+
+		e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, false, true);
+		checkDatasets(e, new DoubleDataset(new double[] {0, 1, -2, -2, -7, -2}, 2, 3));
+
+		AbstractDataset f = b.clone().reshape(2, 3);
+		IntegerDataset g = new IntegerDataset(new int[] {1, 0, 1, 1, 2, 2}, 2, 3);
+
+		e = (DoubleDataset) DatasetUtils.choose(g, new Object[] {c, f, -2}, true, false);
+		checkDatasets(e, new DoubleDataset(new double[] {0.01, 1, 2.9, 5, -2, -2}, 2, 3));
+
+		g = new IntegerDataset(new int[] {-1, 3, 1, 1, 2, 2}, 2, 3);
+		try {
+			e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, f, -2}, true, false);
+			fail("Should have thrown an array index OOB exception");
+		} catch (ArrayIndexOutOfBoundsException oob) {
+			// expected
+		}
+
+		e = (DoubleDataset) DatasetUtils.choose(g, new Object[] {c, f, -2}, false, false);
+		checkDatasets(e, new DoubleDataset(new double[] {-2, 1, 2.9, 5, -2, -2}, 2, 3));
+
+		e = (DoubleDataset) DatasetUtils.choose(g, new Object[] {c, f, -2}, false, true);
+		checkDatasets(e, new DoubleDataset(new double[] {0, -2, 2.9, 5, -2, -2}, 2, 3));
+	}
 }

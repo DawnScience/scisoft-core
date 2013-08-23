@@ -28,7 +28,7 @@ Implemented NumPy methods (1.3)
    hstack, dstack, array_split, split, vsplit, hsplit, dsplit, roll, reshape, resize, ravel, rollaxis
  * Array modification: fill, append
  * Array comparisons and logic operations: all, any, greater, greater_equal, less, less_equal, equal,
-   not_equal, logical_not, logical_and, logical_or, logical_xor, allclose, nonzero, select, where
+   not_equal, logical_not, logical_and, logical_or, logical_xor, allclose, nonzero, select, where, choose
  * Maths: add, subtract, multiply, divide, negative, power, absolute, exp,
    log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
    floor_divide, reminder, phase, signum, diff, gradient

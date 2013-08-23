@@ -2351,6 +2351,150 @@ public class DatasetUtils {
 		for (int i = 0; i < r; i++) {
 			aa[i] = axes.get(i);
 		}
-		return a.transpose(aa);
+		return a.getTransposedView(aa);
+	}
+
+	/**
+	 * Select content from choices where condition is true, otherwise use default
+	 * @param conditions array of boolean datasets
+	 * @param choices array of datasets or objects
+	 * @param def default value (can be a dataset)
+	 * @return dataset
+	 */
+	public static AbstractDataset select(BooleanDataset[] conditions, Object[] choices, Object def) {
+		final int n = conditions.length;
+		if (choices.length != n) {
+			throw new IllegalArgumentException("Choices list is not same length as conditions list");
+		}
+		int dt = -1;
+		int ds = -1;
+		for (Object a : choices) {
+			final int s, t;
+			if (a instanceof AbstractDataset) {
+				t = ((AbstractDataset) a).getDtype();
+				s = ((AbstractDataset) a).getElementsPerItem();
+			} else {
+				t = AbstractDataset.getDTypeFromObject(a);
+				s = 1;
+			}
+			if (t > dt)
+				dt = t;
+			if (s > ds)
+				ds = s;
+		}
+		if (dt < 0 || ds < 1) {
+			throw new IllegalArgumentException("Dataset types of choices are invalid");
+		}
+
+		AbstractDataset r = AbstractDataset.zeros(ds, conditions[0].shape, dt);
+		for (AbstractDataset a : conditions) {
+			r.checkCompatibility(a);
+		}
+		for (Object a : choices) {
+			if (a instanceof AbstractDataset)
+				r.checkCompatibility((AbstractDataset) a);
+		}
+	
+		PositionIterator iter = new PositionIterator(r.shape);
+		final int[] pos = iter.getPos();
+		int i = 0;
+		if (def instanceof AbstractDataset) {
+			AbstractDataset d = (AbstractDataset) def;
+			r.checkCompatibility(d);
+			while (iter.hasNext()) {
+				int j = 0;
+				for (; j < n; j++) {
+					if (conditions[j].get(pos)) {
+						Object x = choices[j] instanceof AbstractDataset ? ((AbstractDataset) choices[j]).getObject(pos) : choices[j];
+						r.setObjectAbs(i++, x);
+						break;
+					}
+				}
+				if (j == n) {
+					r.setObjectAbs(i++, d.getObject(pos));
+				}
+			}
+		} else {
+			while (iter.hasNext()) {
+				int j = 0;
+				for (; j < n; j++) {
+					if (conditions[j].get(pos)) {
+						Object x = choices[j] instanceof AbstractDataset ? ((AbstractDataset) choices[j]).getObject(pos) : choices[j];
+						r.setObjectAbs(i++, x);
+						break;
+					}
+				}
+				if (j == n) {
+					r.setObjectAbs(i++, def);
+				}
+			}
+		}
+		return r;
+	}
+
+	/**
+	 * Choose content from choices where condition is true, otherwise use default
+	 * @param index integer dataset (ideally, items should be in [0, n) range, if there are n choices)
+	 * @param choices array of datasets or objects
+	 * @param throwAIOOBE if true, throw array index out of bound exception
+	 * @param clip true to clip else wrap indices out of bounds; only used when throwAOOBE is false
+	 * @return dataset
+	 */
+	public static AbstractDataset choose(IntegerDataset index, Object[] choices, boolean throwAIOOBE, boolean clip) {
+		final int n = choices.length;
+		int dt = -1;
+		int ds = -1;
+		int mr = -1;
+		for (Object a : choices) {
+			final int r, s, t;
+			if (a instanceof AbstractDataset) {
+				r = ((AbstractDataset) a).getRank();
+				t = ((AbstractDataset) a).getDtype();
+				s = ((AbstractDataset) a).getElementsPerItem();
+			} else {
+				r = 0;
+				t = AbstractDataset.getDTypeFromObject(a);
+				s = 1;
+			}
+			if (t > dt)
+				dt = t;
+			if (s > ds)
+				ds = s;
+			if (r > mr)
+				mr = r;
+		}
+		if (dt < 0 || ds < 1) {
+			throw new IllegalArgumentException("Dataset types of choices are invalid");
+		}
+		
+		AbstractDataset r = AbstractDataset.zeros(ds, index.getShapeRef(), dt);
+		IndexIterator iter = index.getIterator(true);
+		final int[] pos = iter.getPos();
+		int i = 0;
+		while (iter.hasNext()) {
+			int j = index.getAbs(iter.index);
+			if (j < 0) {
+				if (throwAIOOBE)
+					throw new ArrayIndexOutOfBoundsException(j);
+				if (clip) {
+					j = 0;
+				} else {
+					j %= n;
+					j += n; // as remainder still negative
+				}
+			}
+			if (j >= n) {
+				if (throwAIOOBE)
+					throw new ArrayIndexOutOfBoundsException(j);
+				if (clip) {
+					j = n - 1;
+				} else {
+					j %= n;
+				}
+			}
+			Object c = choices[j];
+			r.setObjectAbs(i++, c instanceof IDataset ? ((IDataset) c).getObject(pos) : c);
+		}
+		return r;
 	}
 }

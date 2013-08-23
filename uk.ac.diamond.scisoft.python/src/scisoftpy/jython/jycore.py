@@ -377,21 +377,11 @@ _jfalse = _jbool(0)
 import jymaths as _maths
 import jycomparisons as _cmps
 
+
 class ndarray(object):
     """
     Class to hold special methods and non-overloading names
     """
-
-    def __str__(self):
-        return self.__dataset.toString(True)
-
-    def __repr__(self):
-        dt = _getdtypefromjdataset(self.__dataset)
-        if dt is int_ or dt is float_ or dt is complex_:
-            return 'array(' + self.__dataset.toString(True) + ')'
-        return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)
-        return self.__dataset.toString(True)
-
     def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
         # check what buffer is and convert if necessary
         if buffer is not None:
@@ -405,77 +395,361 @@ class ndarray(object):
     def _jdataset(self): # private access to Java dataset class
         return self.__dataset
 
-    # arithmetic operators
-    def __add__(self, o):
-        return _maths.add(self, asDataset(o))
-    def __radd__(self, o):
-        return _maths.add(self, asDataset(o))
-    def __iadd__(self, o):
-        self.__dataset.iadd(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    def __iter__(self):
+        def ndgen(d):
+            r = d.getRank()
+            if r <= 1:
+                iterator = d.getIterator()
+                while iterator.hasNext():
+                    yield d.getObjectAbs(iterator.index)
+            else:
+                axes = range(1, r)
+                iterator = d.getPositionIterator(axes)
+                pos = iterator.getPos()
+                hit = iterator.getOmit()
+                while iterator.hasNext():
+                    yield _joutput(d.getSlice(d.getSliceIteratorFromAxes(pos, hit)))
+        return ndgen(self.__dataset)
 
-    def __sub__(self, o):
-        return _maths.subtract(self, asDataset(o))
-    def __rsub__(self, o):
-        return _maths.subtract(asDataset(o), self)
-    def __isub__(self, o):
-        self.__dataset.isubtract(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    # attributes
+    # MISSING: flags
+    def __get_shape(self):
+        return tuple(self.__dataset.getShape())
 
-    def __mul__(self, o):
-        return _maths.multiply(self, asDataset(o))
-    def __rmul__(self, o):
-        return _maths.multiply(self, asDataset(o))
-    def __imul__(self, o):
-        self.__dataset.imultiply(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    def __set_shape(self, *shape):
+        if len(shape) == 1:
+            shape = asIterable(shape[0])
+        self.__dataset.setShape(shape)
 
-    def __div__(self, o):
-        return _maths.divide(self, asDataset(o))
-    def __rdiv__(self, o):
-        return _maths.divide(asDataset(o), self)
-    def __idiv__(self, o):
-        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
 
-    def __truediv__(self, o):
-        return _maths.divide(self, asDataset(o))
-    def __itruediv__(self, o):
-        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    # MISSING: strides
 
-    def __floordiv__(self, o):
-        return _maths.floor_divide(self, asDataset(o))
-    def __ifloordiv__(self, o):
-        self.__dataset.ifloordivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    @property
+    def ndim(self):
+        '''Return number of dimensions'''
+        return self.__dataset.getRank()
 
-    def __mod__(self, o):
-        return _maths.remainder(self, asDataset(o))
-    def __imod__(self, o):
-        self.__dataset.iremainder(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    @property
+    def data(self):
+        return self.__dataset.getBuffer()
 
-    def __neg__(self):
-        return _maths.negative(self)
-    def __pos__(self):
-        return self
-    def __pow__(self, o):
-        return _maths.power(self, asDataset(o))
-    def __ipow__(self, o):
-        self.__dataset.ipower(__cvt_jobj(o, dtype=self.dtype, copy=False))
-        return self
+    @property
+    def size(self):
+        '''Return number of items'''
+        return self.__dataset.getSize()
 
-    # comparison operators
-    def __eq__(self, o):
-        e = _cmps.equal(self.__dataset, asDataset(o, force=True)._jdataset())
+    @property
+    def itemsize(self):
+        '''Return number of bytes per item'''
+        return self.__dataset.getItemsize()
+
+    @property
+    def nbytes(self):
+        '''Return total bytes used by items of array'''
+        return self.__dataset.Nbytes()
+
+    @property
+    def dtype(self):
+        return _getdtypefromjdataset(self.__dataset)
+
+    # MISSING: base
+
+    @property
+    def T(self):
+        return self.transpose()
+
+    @property
+    @_wrapout
+    def real(self):
+        return self.__dataset.real()
+
+    @property
+    @_wrapout
+    def imag(self):
+        if iscomplexobj(self):
+            return self.__dataset.imag()
+        return zeros(self.shape, dtype=self.dtype)
+
+    @property
+    def flat(self):
+        def ndgen(d):
+            iterator = d.getIterator()
+            while iterator.hasNext():
+                yield d.getObjectAbs(iterator.index)
+        return ndgen(self.__dataset)
+
+    # MISSING: ctypes
+
+    # methods
+    #  conversion
+    def item(self, index=None, *args):
+        '''Return first item of dataset'''
         if self.size == 1:
-            return e._jdataset().getBoolean([])
-        return e
+            rank = self.ndim
+            if index is None:
+                if rank > 1:
+                    raise ValueError, "incorrect number of indices"
+            elif index:
+                raise ValueError, "index out of bounds"
+            elif rank == 0:
+                raise ValueError, "incorrect number of indices"
+            if args:
+                if (len(args) + 1) > rank:
+                    raise ValueError, "incorrect number of indices"
+                for a in args:
+                    if a:
+                        raise ValueError, "index out of bounds"
+            r = self.__dataset.getObject([])
+        else:
+            if index is None:
+                raise ValueError, "Need an integer or a tuple of integers"
+            try:
+                if args:
+                    r = self.__dataset.getObject(index, *args)
+                else:
+                    r = self.__dataset.getObjectAbs(index)
+            except (_jarrayindex_exception, _jillegalargument_exception):
+                raise ValueError
 
-    def __ne__(self, o):
-        return _cmps.not_equal(self, o)
+        if isinstance(r, _jcomplex):
+            return complex(r.getReal(), r.getImaginary())
+        return r
 
+    @staticmethod
+    def _tolist(a):
+        return [ (i if not isinstance(i, ndarray) else ndarray._tolist(i)) for i in a  ]
+
+    def tolist(self):
+        return ndarray._tolist(self)
+
+    # MISSING: itemset, setasflat, tostring, tofile, dump, dumps
+    # MISSING: byteswap
+
+    @_wrapout
+    def astype(self, dtype):
+        return self.__dataset.cast(_translatenativetype(dtype).value)
+
+    def copy(self):
+        return ndarray(buffer=self.__dataset, copy=True)
+
+    @_wrapout
+    def view(self, cls=None):
+        '''Return a view of dataset'''
+        if cls is None or cls == self.__class__:
+            return self.__dataset.getView()
+        else:
+            return cast(self, cls.dtype)
+
+    # MISSING: getfield, setflags
+
+    def fill(self, value):
+        self.__dataset.fill(_cvt2j(value))
+        return self
+
+    #  shape manipulation
+    @_wrapout
+    def reshape(self, *shape):
+        '''Return a dataset with same data but new shape'''
+        if len(shape) == 1:
+            shape = asIterable(shape[0])
+        return self.__dataset.reshape(shape)
+
+    def resize(self, *shape, **kwarg):
+        '''Change shape and size of dataset in-place'''
+        if len(shape) == 1:
+            shape = asIterable(shape[0])
+        self.__dataset.resize(shape)
+
+    @_wrapout
+    def transpose(self, axes=None):
+        return self.__dataset.getTransposedView(axes)
+
+    @_wrapout
+    def swapaxes(self, axis1, axis2):
+        return self.__dataset.swapAxes(axis1, axis2)
+
+    @_wrapout
+    def flatten(self):
+        '''Return a 1D dataset with copy of data'''
+        return self.__dataset.flatten().clone()
+
+    @_wrapout
+    def ravel(self):
+        return self.__dataset.flatten()
+
+    def squeeze(self, axis=None): # TODO support 1.7 axis argument
+        self.__dataset.squeeze()
+
+    #  item selection and manipulation
+    @_wrapout
+    def take(self, indices, axis=None):
+        return self.__dataset.take(asIterable(indices), axis)
+
+    def put(self, indices, values):
+        self.__dataset.put(asIterable(indices), asIterable(values))
+
+    def repeat(self, repeats, axis=None):
+        return repeat(self, repeats, axis=axis)
+
+    def choose(self, choices, mode='raise'):
+        return choose(self, choices, mode=mode)
+
+    def sort(self, axis=-1):
+        self.__dataset.sort(axis)
+
+    def nonzero(self):
+        return _cmps.nonzero(self)
+
+    # MISSING: argsort, searchsorted
+    # MISSING: compress, diagonal
+
+    #  calculation
+    @_wrapout
+    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        if axis is None:
+            if ignore_nans:
+                return self.__dataset.max(ignore_nans)
+            return self.__dataset.max()
+        else:
+            return self.__dataset.max(ignore_nans, axis)
+
+    @_wrapout
+    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+        if axis is None:
+            if ignore_nans:
+                return self.__dataset.min(ignore_nans)
+            return self.__dataset.min()
+        else:
+            return self.__dataset.min(ignore_nans, axis)
+
+    @_wrapout
+    def argmax(self, axis=None, ignore_nans=False):
+        if axis is None:
+            if ignore_nans:
+                return self.__dataset.argMax(_jtrue)
+            return self.__dataset.argMax()
+        else:
+            if ignore_nans:
+                return self.__dataset.argMax(_jtrue, axis)
+            return self.__dataset.argMax(axis)
+
+    @_wrapout
+    def argmin(self, axis=None, ignore_nans=False):
+        if axis is None:
+            if ignore_nans:
+                return self.__dataset.argMin(_jtrue)
+            return self.__dataset.argMin()
+        else:
+            if ignore_nans:
+                return self.__dataset.argMin(_jtrue, axis)
+            return self.__dataset.argMin(axis)
+
+    @_wrapout
+    def ptp(self, axis=None):
+        if axis is None:
+            return self.__dataset.peakToPeak()
+        else:
+            return self.__dataset.peakToPeak(axis)
+
+    def clip(self, a_min, a_max):
+        return _maths.clip(self, a_min, a_max)
+
+    def conj(self):
+        return _maths.conj(self)
+
+    # MISSING: round, trace
+
+    @_wrapout
+    def sum(self, axis=None, dtype=None): #@ReservedAssignment
+        if dtype is None:
+            dtval = self.__dataset.getDtype()
+        else:
+            dtval = _translatenativetype(dtype).value
+        if axis is None:
+            return self.__dataset.typedSum(dtval)
+        else:
+            return self.__dataset.typedSum(dtval, axis)
+
+    # MISSING: cumsum
+
+    @_wrapout
+    def mean(self, axis=None):
+        if axis is None:
+            return self.__dataset.mean()
+        else:
+            return self.__dataset.mean(axis)
+
+    @_wrapout
+    def var(self, axis=None, ddof=0):
+        if ddof == 1:
+            if axis is None:
+                return self.__dataset.variance()
+            else:
+                return self.__dataset.variance(axis)
+        else:
+            if axis is None:
+                v = self.__dataset.variance()
+                n = self.__dataset.count()
+            else:
+                v = Sciwrap(self.__dataset.variance(axis))
+                n = Sciwrap(self.__dataset.count(axis))
+            f = (n - 1.)/(n - ddof)
+            return v * f
+
+    @_wrapout
+    def std(self, axis=None, ddof=0):
+        if ddof == 1:
+            if axis is None:
+                return self.__dataset.stdDeviation()
+            else:
+                return self.__dataset.stdDeviation(axis)
+        else:
+            if axis is None:
+                s = self.__dataset.stdDeviation()
+                n = self.__dataset.count()
+            else:
+                s = Sciwrap(self.__dataset.stdDeviation(axis))
+                n = Sciwrap(self.__dataset.count(axis))
+            import math as _mm
+            f = _mm.sqrt((n - 1.)/(n - ddof))
+            return s * f
+
+    @_wrapout
+    def rms(self, axis=None):
+        if axis is None:
+            return self.__dataset.rootMeanSquare()
+        else:
+            return self.__dataset.rootMeanSquare(axis)
+
+    @_wrapout
+    def prod(self, axis=None, dtype=None):
+        if dtype is None:
+            dtval = self.__dataset.getDtype()
+        else:
+            dtval = _translatenativetype(dtype).value
+        if axis is None:
+            return self.__dataset.typedProduct(dtval)
+        else:
+            return self.__dataset.typedProduct(dtval, axis)
+
+    # MISSING: cumprod
+
+    @_wrapout
+    def all(self, axis=None): #@ReservedAssignment
+        if axis is None:
+            return self.__dataset.all()
+        else:
+            return self.__dataset.all(axis)
+
+    @_wrapout
+    def any(self, axis=None): #@ReservedAssignment
+        if axis is None:
+            return self.__dataset.any()
+        else:
+            return self.__dataset.any(axis)
+
+    #  comparison operators
     def __lt__(self, o):
         return _cmps.less(self, o)
 
@@ -488,15 +762,103 @@ class ndarray(object):
     def __ge__(self, o):
         return _cmps.greater_equal(self, o)
 
+    def __eq__(self, o):
+        e = _cmps.equal(self.__dataset, asDataset(o, force=True)._jdataset())
+        if self.size == 1:
+            return e._jdataset().getBoolean([])
+        return e
 
+    def __ne__(self, o):
+        return _cmps.not_equal(self, o)
+
+    def __nonzero__(self):
+        if self.size > 1:
+            raise ValueError, "The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
+        return self.item() != 0
+
+
+    #  unary operators
+    def __neg__(self):
+        return _maths.negative(self)
+    def __pos__(self):
+        return self
+    def __abs__(self):
+        return _maths.abs(self)
+
+    # MISSING: __invert__
+
+    #  arithmetic operators
+    def __add__(self, o):
+        return _maths.add(self, asDataset(o))
+    def __sub__(self, o):
+        return _maths.subtract(self, asDataset(o))
+    def __mul__(self, o):
+        return _maths.multiply(self, asDataset(o))
+    def __div__(self, o):
+        return _maths.divide(self, asDataset(o))
+    def __truediv__(self, o):
+        return _maths.divide(self, asDataset(o))
+    def __floordiv__(self, o):
+        return _maths.floor_divide(self, asDataset(o))
+    def __mod__(self, o):
+        return _maths.remainder(self, asDataset(o))
+    def __pow__(self, o, z=None):
+        return _maths.power(self, asDataset(o))
+    # MISSING: __divmod__, __lshift__, __rshift__, __and__, __or__, __xor__
+    def __radd__(self, o):
+        return _maths.add(self, asDataset(o))
+    def __rsub__(self, o):
+        return _maths.subtract(asDataset(o), self)
+    def __rmul__(self, o):
+        return _maths.multiply(self, asDataset(o))
+    def __rdiv__(self, o):
+        return _maths.divide(asDataset(o), self)
+
+
+    #  in-place arithmetic operators
+    def __iadd__(self, o):
+        self.__dataset.iadd(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __isub__(self, o):
+        self.__dataset.isubtract(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __imul__(self, o):
+        self.__dataset.imultiply(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __idiv__(self, o):
+        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __itruediv__(self, o):
+        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __ifloordiv__(self, o):
+        self.__dataset.ifloordivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __imod__(self, o):
+        self.__dataset.iremainder(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    def __ipow__(self, o):
+        self.__dataset.ipower(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        return self
+    # MISSING: __ilshift__, __irshift__, __iand__, __ior__, __ixor__
+
+    # Special methods
+
+    #  for standard library functions
+    @_wrapout
+    def __copy__(self, order=None):
+        return self.__dataset.clone()
+
+    # MISSING: __deepcopy__, __reduce__, __setstate__
+
+    #  basic customization
+    # MISSING: __new__, __array__, __array_wrap__
+
+    #  container customization
     def __len__(self):
         if len(self.shape) > 0:
             return self.shape[0]
-        return 0
-
-    @_wrapout
-    def __copy__(self):
-        return self.__dataset.clone()
+        raise TypeError, "len() of unsized object"
 
     def _toslice(self, key):
         '''Transform key to proper slice if necessary
@@ -556,302 +918,64 @@ class ndarray(object):
         except _jarrayindex_exception:
             raise IndexError
 
-    def __iter__(self):
-        def ndgen(d):
-            r = d.getRank()
-            if r <= 1:
-                iterator = d.getIterator()
-                while iterator.hasNext():
-                    yield d.getObjectAbs(iterator.index)
-            else:
-                axes = range(1, r)
-                iterator = d.getPositionIterator(axes)
-                pos = iterator.getPos()
-                hit = iterator.getOmit()
-                while iterator.hasNext():
-                    yield _joutput(d.getSlice(d.getSliceIteratorFromAxes(pos, hit)))
-        return ndgen(self.__dataset)
+    # NOT NEEDED: __getslice__, __setslice__
+    # MISSING: __contains__
 
-    def conj(self):
-        return _maths.conj(self)
+    #  conversion
+    def __int__(self):
+        if self.size > 1:
+            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+        return int(self.__dataset.getObject([]))
 
-    @_wrapout
-    def ravel(self):
-        return self.__dataset.flatten()
+    def __long__(self):
+        if self.size > 1:
+            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+        return long(self.__dataset.getObject([]))
 
-    @_wrapout
-    def sum(self, axis=None, dtype=None): #@ReservedAssignment
-        if dtype is None:
-            dtval = self.__dataset.getDtype()
-        else:
-            dtval = _translatenativetype(dtype).value
-        if axis is None:
-            return self.__dataset.typedSum(dtval)
-        else:
-            return self.__dataset.typedSum(dtval, axis)
+    def __float__(self):
+        if self.size > 1:
+            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+        return float(self.__dataset.getObject([]))
 
-    @_wrapout
-    def prod(self, axis=None, dtype=None):
-        if dtype is None:
-            dtval = self.__dataset.getDtype()
-        else:
-            dtval = _translatenativetype(dtype).value
-        if axis is None:
-            return self.__dataset.typedProduct(dtval)
-        else:
-            return self.__dataset.typedProduct(dtval, axis)
+    def __oct__(self):
+        if self.size > 1:
+            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+        return oct(self.__dataset.getObject([]))
 
-    @_wrapout
-    def var(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.variance()
-            else:
-                return self.__dataset.variance(axis)
-        else:
-            if axis is None:
-                v = self.__dataset.variance()
-                n = self.__dataset.count()
-            else:
-                v = Sciwrap(self.__dataset.variance(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            f = (n - 1.)/(n - ddof)
-            return v * f
+    def __hex__(self):
+        if self.size > 1:
+            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+        return hex(self.__dataset.getObject([]))
 
-    @_wrapout
-    def std(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.stdDeviation()
-            else:
-                return self.__dataset.stdDeviation(axis)
-        else:
-            if axis is None:
-                s = self.__dataset.stdDeviation()
-                n = self.__dataset.count()
-            else:
-                s = Sciwrap(self.__dataset.stdDeviation(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            import math as _mm
-            f = _mm.sqrt((n - 1.)/(n - ddof))
-            return s * f
+    #  string representations
+    def __str__(self):
+        return self.__dataset.toString(True)
 
-    @_wrapout
-    def rms(self, axis=None):
-        if axis is None:
-            return self.__dataset.rootMeanSquare()
-        else:
-            return self.__dataset.rootMeanSquare(axis)
+    def __repr__(self):
+        dt = _getdtypefromjdataset(self.__dataset)
+        if dt is int_ or dt is float_ or dt is complex_:
+            return 'array(' + self.__dataset.toString(True) + ')'
+        return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)
+        return self.__dataset.toString(True)
 
-    @_wrapout
-    def ptp(self, axis=None):
-        if axis is None:
-            return self.__dataset.peakToPeak()
-        else:
-            return self.__dataset.peakToPeak(axis)
+#    def maxpos(self, ignore_nans=False):
+#        '''Return position of first maxima'''
+#        if ignore_nans:
+#            return self.__dataset.maxPos(True)
+#        return self.__dataset.maxPos()
+#
+#    def minpos(self, ignore_nans=False):
+#        '''Return position of first minima'''
+#        if ignore_nans:
+#            return self.__dataset.minPos(True)
+#        return self.__dataset.minPos()
 
-    def clip(self, a_min, a_max):
-        return _maths.clip(self, a_min, a_max)
+#    @property
+#    @_wrapout
+#    def indices(self):
+#        '''Return an index dataset'''
+#        return self.__dataset.getIndices()
 
-    @_wrapout
-    def argmax(self, axis=None, ignore_nans=False):
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.argMax(_jtrue)
-            return self.__dataset.argMax()
-        else:
-            if ignore_nans:
-                return self.__dataset.argMax(_jtrue, axis)
-            return self.__dataset.argMax(axis)
-
-    @_wrapout
-    def argmin(self, axis=None, ignore_nans=False):
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.argMin(_jtrue)
-            return self.__dataset.argMin()
-        else:
-            if ignore_nans:
-                return self.__dataset.argMin(_jtrue, axis)
-            return self.__dataset.argMin(axis)
-
-    def maxpos(self, ignore_nans=False):
-        '''Return position of first maxima'''
-        if ignore_nans:
-            return self.__dataset.maxPos(True)
-        return self.__dataset.maxPos()
-
-    def minpos(self, ignore_nans=False):
-        '''Return position of first minima'''
-        if ignore_nans:
-            return self.__dataset.minPos(True)
-        return self.__dataset.minPos()
-
-    # properties
-    @property
-    @_wrapout
-    def transpose(self):
-        return self.__dataset.transpose()
-
-    @property
-    @_wrapout
-    def view(self, cls=None):
-        '''Return a view of dataset'''
-        if cls is None or cls == self.__class__:
-            return self.__dataset.getView()
-        else:
-            return cast(self, cls.dtype)
-
-    @property
-    @_wrapout
-    def indices(self):
-        '''Return an index dataset'''
-        return self.__dataset.getIndices()
-
-    def __get_shape(self):
-        return tuple(self.__dataset.getShape())
-
-    def __set_shape(self, *shape):
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        self.__dataset.setShape(shape)
-
-    shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
-
-    @property
-    def dtype(self):
-        return _getdtypefromjdataset(self.__dataset)
-
-    @property
-    def itemsize(self):
-        '''Return number of bytes per item'''
-        return self.__dataset.getItemsize()
-
-    @property
-    def ndim(self):
-        '''Return number of dimensions'''
-        return self.__dataset.getRank()
-
-    @property
-    def size(self):
-        '''Return number of items'''
-        return self.__dataset.getSize()
-
-    @property
-    @_wrapout
-    def real(self):
-        return self.__dataset.real()
-
-    @property
-    def data(self):
-        return self.__dataset.getBuffer()
-
-    def item(self, index=None, *args):
-        '''Return first item of dataset'''
-        if self.size == 1:
-            rank = self.ndim
-            if index is None:
-                if rank > 1:
-                    raise ValueError, "incorrect number of indices"
-            elif index:
-                raise ValueError, "index out of bounds"
-            elif rank == 0:
-                raise ValueError, "incorrect number of indices"
-            if args:
-                if (len(args) + 1) > rank:
-                    raise ValueError, "incorrect number of indices"
-                for a in args:
-                    if a:
-                        raise ValueError, "index out of bounds"
-            r = self.__dataset.getObject([])
-        else:
-            if index is None:
-                raise ValueError, "Need an integer or a tuple of integers"
-            try:
-                if args:
-                    r = self.__dataset.getObject(index, *args)
-                else:
-                    r = self.__dataset.getObjectAbs(index)
-            except (_jarrayindex_exception, _jillegalargument_exception):
-                raise ValueError
-
-        if isinstance(r, _jcomplex):
-            return complex(r.getReal(), r.getImaginary())
-        return r
-
-    def copy(self):
-        return ndarray(buffer=self.__dataset, copy=True)
-
-    def fill(self, value):
-        self.__dataset.fill(_cvt2j(value))
-        return self
-
-    @_wrapout
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.max(ignore_nans)
-            return self.__dataset.max()
-        else:
-            return self.__dataset.max(ignore_nans, axis)
-
-    @_wrapout
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.min(ignore_nans)
-            return self.__dataset.min()
-        else:
-            return self.__dataset.min(ignore_nans, axis)
-
-    @_wrapout
-    def mean(self, axis=None):
-        if axis is None:
-            return self.__dataset.mean()
-        else:
-            return self.__dataset.mean(axis)
-
-    def sort(self, axis=-1):
-        self.__dataset.sort(axis)
-
-    def put(self, indices, values):
-        self.__dataset.put(asIterable(indices), asIterable(values))
-
-    @_wrapout
-    def take(self, indices, axis=None):
-        return self.__dataset.take(asIterable(indices), axis)
-
-    @_wrapout
-    def all(self, axis=None): #@ReservedAssignment
-        if axis is None:
-            return self.__dataset.all()
-        else:
-            return self.__dataset.all(axis)
-
-    @_wrapout
-    def any(self, axis=None): #@ReservedAssignment
-        if axis is None:
-            return self.__dataset.any()
-        else:
-            return self.__dataset.any(axis)
-
-    @_wrapout
-    def reshape(self, *shape):
-        '''Return a dataset with same data but new shape'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        return self.__dataset.reshape(shape)
-
-    def resize(self, *shape, **kwarg):
-        '''Change shape and size of dataset in-place'''
-        if len(shape) == 1:
-            shape = asIterable(shape[0])
-        self.__dataset.resize(shape)
-
-    @_wrapout
-    def flatten(self):
-        '''Return a 1D dataset with same data'''
-        return self.__dataset.flatten()
 
 class ndarrayRGB(ndarray):
     """

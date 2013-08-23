@@ -509,9 +509,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			azAxis.setName("Angle (\u00b0)");
 			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ids);
 			profileTask.setAxes(rAxis);
-			System.out.println("New job");
 			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(profileTask));
-			System.out.println();
 			result.add(new FloatDataset()) ;
 			result.add(new FloatDataset()) ;
 			result.add(azAxis) ;
@@ -554,9 +552,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			final int dx = nx - nxstart;
 			final int dy = ny - nystart;
-			
-			System.out.println("nx : " + String.valueOf(nxstart) +"," + String.valueOf(nx));
-			System.out.println("ny : " + String.valueOf(nystart) +"," + String.valueOf(ny));
 			
 			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 			

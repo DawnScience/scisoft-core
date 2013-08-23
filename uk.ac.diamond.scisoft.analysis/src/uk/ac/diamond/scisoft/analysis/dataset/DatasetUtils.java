@@ -1062,8 +1062,7 @@ public class DatasetUtils {
 	}
 
 	/**
-	 * Convert (if necessary) a dataset obeying the interface to our implementation. This will strip Jython methods
-	 * from subclasses of AbstractDataset
+	 * Convert (if necessary) a dataset obeying the interface to our implementation
 	 * @param lazydata can be null
 	 * @return Converted dataset or null
 	 */
@@ -1087,7 +1086,7 @@ public class DatasetUtils {
 		if (lazydata instanceof IDataset) {
 			data = (IDataset)lazydata;
 		} else {
-			throw new IllegalArgumentException("This is a lazy dataset and should not be fully loaded");
+			throw new IllegalArgumentException("This is a lazy dataset and should not be fully loaded - use getSlice");
 		}
 
 		final int isize = data.getElementsPerItem();

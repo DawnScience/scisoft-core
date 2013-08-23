@@ -443,9 +443,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public AbstractDataset flatten() {
-		AbstractDataset result = getView();
-		result.setShape(result.size);
-		return result;
+		return reshape(size);
 	}
 
 	/**
@@ -1399,7 +1397,7 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * @return number of bytes used (does not include reserved space)
+	 * @return number of bytes used
 	 */
 	@Override
 	public int getNbytes() {
@@ -2833,13 +2831,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public boolean all() {
-		final IndexIterator iter = getIterator();
-		while (iter.hasNext()) {
-			if (!getElementBooleanAbs(iter.index)) {
-				return false;
-			}
-		}
-		return true;
+		return Comparisons.allTrue(this);
 	}
 
 	/**
@@ -2848,40 +2840,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public BooleanDataset all(final int axis) {
-		int rank = getRank();
-
-		int[] oshape = getShape();
-		int alen = oshape[axis];
-		oshape[axis] = 1;
-
-		int[] nshape = squeezeShape(oshape, false);
-		BooleanDataset all = new BooleanDataset(nshape);
-
-		IndexIterator qiter = all.getIterator(true);
-		int[] qpos = qiter.getPos();
-		int[] spos = oshape;
-
-		while (qiter.hasNext()) {
-			int i = 0;
-			for (; i < axis; i++) {
-				spos[i] = qpos[i];
-			}
-			spos[i++] = 0;
-			for (; i < rank; i++) {
-				spos[i] = qpos[i - 1];
-			}
-
-			boolean result = true;
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				if (getDouble(spos) == 0) {
-					result = false;
-					break;
-				}
-			}
-			all.set(result, qpos);
-		}
-		return all;
+		return Comparisons.allTrue(this, axis);
 	}
 
 	/**
@@ -2889,13 +2848,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public boolean any() {
-		final IndexIterator iter = getIterator();
-		while (iter.hasNext()) {
-			if (getElementBooleanAbs(iter.index)) {
-				return true;
-			}
-		}
-		return false;
+		return Comparisons.anyTrue(this);
 	}
 
 	/**
@@ -2904,40 +2857,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public BooleanDataset any(final int axis) {
-		int rank = getRank();
-
-		int[] oshape = getShape();
-		int alen = oshape[axis];
-		oshape[axis] = 1;
-
-		int[] nshape = squeezeShape(oshape, false);
-		BooleanDataset all = new BooleanDataset(nshape);
-
-		IndexIterator qiter = all.getIterator(true);
-		int[] qpos = qiter.getPos();
-		int[] spos = oshape;
-
-		while (qiter.hasNext()) {
-			int i = 0;
-			for (; i < axis; i++) {
-				spos[i] = qpos[i];
-			}
-			spos[i++] = 0;
-			for (; i < rank; i++) {
-				spos[i] = qpos[i - 1];
-			}
-
-			boolean result = false;
-			for (int j = 0; j < alen; j++) {
-				spos[axis] = j;
-				if (getDouble(spos) != 0) {
-					result = true;
-					break;
-				}
-			}
-			all.set(result, qpos);
-		}
-		return all;
+		return Comparisons.anyTrue(this, axis);
 	}
 
 	/**

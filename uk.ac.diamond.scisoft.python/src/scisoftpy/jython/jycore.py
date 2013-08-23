@@ -1077,6 +1077,10 @@ def ones(shape, dtype=float64):
     dtype = _translatenativetype(dtype)
     return _abstractds.ones(dtype.elements, asIterable(shape), dtype.value)
 
+@_wrap
+def ones_like(a):
+    return _abstractds.zeros(a).fill(1)
+
 @_wrapout
 def zeros(shape, dtype=float64, elements=None):
     '''Create a dataset filled with 0'''
@@ -1091,17 +1095,13 @@ def zeros(shape, dtype=float64, elements=None):
 
     return _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
 
-empty = zeros
-
 @_wrap
 def zeros_like(a):
     return _abstractds.zeros(a)
 
-empty_like = zeros_like
+empty = zeros
 
-@_wrap
-def ones_like(a):
-    return _abstractds.zeros(a).fill(1)
+empty_like = zeros_like
 
 def linspace(start, stop, num=50, endpoint=True, retstep=False):
     '''Create a 1D dataset from start to stop in given number of steps
@@ -1246,11 +1246,26 @@ def repeat(a, repeats, axis=-1):
     return _dsutils.repeat(a, asIterable(repeats), axis)
 
 @_wrap
+def append(arr, values, axis=None):
+    '''Append values to end of array
+    Keyword argument:
+    axis -- if None, then append flattened values to flattened array 
+    '''
+    v = array(values)
+    if axis is None:
+        return _dsutils.append(arr.flatten(), v.flatten(), 0)
+    return _dsutils.append(arr, v, axis)
+
+@_wrap
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
 
 def reshape(a, newshape):
     return asDataset(a).reshape(newshape)
+
+@_wrap
+def resize(a, new_shape):
+    return _dsutils.resize(a, new_shape)
 
 def ravel(a):
     return asDataset(a).ravel()
@@ -1258,10 +1273,6 @@ def ravel(a):
 def squeeze(a):
     a.squeeze()
     return a
-
-@_wrap
-def resize(a, new_shape):
-    return _dsutils.resize(a, new_shape)
 
 @_wrap
 def transpose(a, axes=None):
@@ -1331,17 +1342,6 @@ def compoundarray(a, view=True):
     '''Create a compound array from an nd array by grouping last axis items into compound items
     '''
     return _dsutils.createCompoundDatasetFromLastAxis(a, view)
-
-@_wrap
-def append(arr, values, axis=None):
-    '''Append values to end of array
-    Keyword argument:
-    axis -- if None, then append flattened values to flattened array 
-    '''
-    v = array(values)
-    if axis is None:
-        return _dsutils.append(arr.flatten(), v.flatten(), 0)
-    return _dsutils.append(arr, v, axis)
 
 @_wrap
 def nan_to_num(a):

@@ -173,17 +173,25 @@ tile = _np.tile
 
 repeat = _np.repeat
 
+append = _np.append
+
 cast = _np.cast
 
 reshape = _np.reshape
 
 resize = _np.resize
 
+ravel = _np.ravel
+
 squeeze = _np.squeeze
 
 transpose = _np.transpose
 
 swapaxes = _np.swapaxes
+
+amax = _np.amax
+
+amin = _np.amin
 
 argmax = _np.argmax
 
@@ -198,8 +206,6 @@ meshgrid = _np.meshgrid
 indices = _np.indices
 
 roll = _np.roll
-
-ravel = _np.ravel
 
 rollaxis = _np.rollaxis
 

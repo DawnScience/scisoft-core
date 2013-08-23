@@ -146,4 +146,9 @@ def isfinite(a):
     '''Return true if a is not infinite and not a NaN, itemwise'''
     return _cmps.isFinite(a)
 
+def iscomplex(x):
+    return not_equal(_asany(x).imag, 0)
+
+def isreal(x):
+    return equal(_asany(x).imag, 0)
 

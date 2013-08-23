@@ -50,3 +50,7 @@ nonzero = _np.nonzero
 
 where = _np.where
 
+iscomplex = _np.iscomplex
+
+isreal = _np.isreal
+

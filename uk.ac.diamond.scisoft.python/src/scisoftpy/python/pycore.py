@@ -89,6 +89,10 @@ def scalarToPython(ascalar):
         return ascalar.__complex__()
     raise ValueError, 'Array scalar type not supported'
 
+iscomplexobj = _np.iscomplexobj
+
+isrealobj = _np.isrealobj
+
 asarray = _np.asarray
 
 asfarray = _np.asfarray

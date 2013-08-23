@@ -268,6 +268,14 @@ def asDataset(data, dtype=None, force=False):
 
     return ndarray(buffer=data, dtype=dtype, copy=False)
 
+def iscomplexobj(x):
+    if isinstance(x, ndarray):
+        return x.dtype == complex64 or x.dtype == complex128
+    return type(x) is _types.ComplexType
+
+def isrealobj(x):
+    return not iscomplexobj(x)
+
 def asarray(data, dtype=None):
     return asDataset(data, dtype=dtype, force=True)
 

@@ -61,6 +61,7 @@ public class StrideIterator extends SliceIterator {
 	}
 
 	private void init(final int isize, final int[] shape, final int[] strides, final int offset) {
+		this.isize = isize;
 		istep = isize;
 		this.shape = shape;
 		int rank = shape.length;
@@ -72,7 +73,16 @@ public class StrideIterator extends SliceIterator {
 			for (int j = endrank; j >= 0; j--) {
 				delta[j] = stride[j] * shape[j];
 			}
-			imax = endrank < 0 ? istep : delta[0];
+			if (endrank < 0) {
+				imax = istep;
+			} else {
+				imax = 0; // use max delta
+				for (int j = endrank; j >= 0; j--) {
+					if (delta[j] > imax) {
+						imax = delta[j];
+					}
+				}
+			}
 		} else {
 			stride = new int[rank];
 			int s = isize;
@@ -130,10 +140,8 @@ public class StrideIterator extends SliceIterator {
 	@Override
 	public void reset() {
 		pos = start.clone();
-		if (endrank >= 0)
-			pos[endrank] = -1;
-
 		if (endrank >= 0) {
+			pos[endrank] = -1;
 			index = nstart;
 			int j = endrank;
 			for (; j >= 0; j--) {

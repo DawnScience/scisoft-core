@@ -19,10 +19,10 @@ Comparisons package
 '''
 
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons as _cmps
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
 
 from jycore import _wrap
 from jycore import asanyarray as _asany
-from jycore import select as _select
 
 @_wrap
 def all(a, axis=None): #@ReservedAssignment
@@ -115,7 +115,7 @@ def nonzero(a):
 def where(condition, x=None, y=None):
     '''Return items from x or y depending on condition'''
     if x and y:
-        return _select(condition, x, y)
+        return _dsutils.select(condition, (x, y), 0)
     elif not x and not y:
         return _cmps.nonZero(condition)
     else:

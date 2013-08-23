@@ -21,7 +21,8 @@ Comparisons package
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons as _cmps
 
 from jycore import _wrap
-#from jymaths import ndarraywrapped as _wrap
+from jycore import asanyarray as _asany
+from jycore import select as _select
 
 @_wrap
 def all(a, axis=None): #@ReservedAssignment
@@ -111,19 +112,14 @@ def nonzero(a):
     return _cmps.nonZero(a)
 
 @_wrap
-def select(condlist, choicelist, default=0):
-    '''Return dataset with items drawn from choices according to conditions'''
-    return _cmps.select(condlist, choicelist, default)
-
-@_wrap
 def where(condition, x=None, y=None):
     '''Return items from x or y depending on condition'''
     if x and y:
-        return select(condition, x, y)
+        return _select(condition, x, y)
     elif not x and not y:
         return _cmps.nonZero(condition)
     else:
-        raise ValueError, 'Both x and y must be specified'
+        raise ValueError, "Both x and y must be specified"
 
 @_wrap
 def isnan(a):

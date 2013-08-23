@@ -48,7 +48,5 @@ allclose = _np.allclose
 
 nonzero = _np.nonzero
 
-select = _np.select
-
 where = _np.where
 

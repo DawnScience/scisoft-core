@@ -890,7 +890,7 @@ class ndarrayRGB(ndarray):
         if cweights:
             cweights = asIterable(cweights)
             if len(cweights) != 3:
-                raise ValueError, 'three colour channel weights needed'
+                raise ValueError, "three colour channel weights needed"
             csum = float(sum(cweights))
             return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
         return self._jdataset().createGreyDataset(dtype.value)
@@ -955,7 +955,7 @@ def zeros(shape, dtype=float64, elements=None):
         else:
             dtype.elements = elements
     elif type(dtype) is _types.FunctionType:
-        raise ValueError, 'Given data-type is a function and needs elements defining'
+        raise ValueError, "Given data-type is a function and needs elements defining"
 
     return _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
 
@@ -1046,6 +1046,27 @@ def take(a, indices, axis=None):
 @_wrap
 def put(a, indices, values):
     return a.put(indices, values)
+
+@_wrap
+def select(condlist, choicelist, default=0):
+    '''Return dataset with items drawn from choices according to conditions'''
+    return _dsutils.select(condlist, choicelist, default)
+
+@_wrap
+def choose(a, choices, mode='raise'):
+    '''Return dataset with items drawn from choices according to conditions'''
+    if mode == 'raise':
+        rf = True
+        cf = False
+    else:
+        rf = False
+        if mode == 'clip':
+            cf = True
+        elif mode == 'wrap':
+            cf = False
+        else:
+            raise ValueError, "mode is not one of raise, clip or wrap"
+    return _dsutils.choose(a, choices, rf, cf)
 
 @_wrap
 def concatenate(a, axis=0):

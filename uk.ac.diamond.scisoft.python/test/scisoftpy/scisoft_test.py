@@ -393,6 +393,12 @@ class Test(unittest.TestCase):
             pass
         a.shape = 3,2,2
 
+    def testAppend(self):
+        print 'Append testing'
+        a = np.array([])
+        x = 1
+        print np.append(a, x)
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

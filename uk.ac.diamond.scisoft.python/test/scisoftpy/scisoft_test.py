@@ -336,6 +336,13 @@ class Test(unittest.TestCase):
         print 'Indices testing'
         x, y = np.indices((516, 516))
 
+    def testAppend(self):
+        print 'Append testing'
+        a = np.array([])
+        x = 1
+        print np.append(a, x)
+
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

@@ -1176,10 +1176,11 @@ def append(arr, values, axis=None):
     Keyword argument:
     axis -- if None, then append flattened values to flattened array 
     '''
-    v = array(values)
+    if not isinstance(values, _abstractds):
+        values = __cvt_jobj(values, dtype=None, copy=False, force=True)
     if axis is None:
-        return _dsutils.append(arr.flatten(), v.flatten(), 0)
-    return _dsutils.append(arr, v, axis)
+        return _dsutils.append(arr.flatten(), values.flatten(), 0)
+    return _dsutils.append(arr, values, axis)
 
 @_wrap
 def nan_to_num(a):

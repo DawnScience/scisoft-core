@@ -187,9 +187,11 @@ indices = _np.indices
 
 roll = _np.roll
 
+rollaxis = _np.rollaxis
+
 ravel = _np.ravel
 
-rollaxis = _np.rollaxis
+append = _np.append
 
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items

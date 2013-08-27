@@ -34,7 +34,7 @@ _translator = _maketranslator()
 _method_names = ['metadata', 'clear', 'popitem', 'has_key', 'keys', 'fromkeys', 'get', 'copy', 'setdefault', 'update', 'pop',
                  'values', 'items', 'iterkeys', 'itervalues', 'iteritems', 'append', 'extend', 'index', 'remove']
 
-def sanitise_name(text, warn=True):
+def sanitise_name(text, warn=False):
     '''
     Sanitise name:
         if text is metadata then prepend with an underscore
@@ -61,7 +61,7 @@ def sanitise_name(text, warn=True):
 
     return sane
 
-def make_safe(items, warn=True):
+def make_safe(items, warn=False):
     '''
     Make a list of key/value tuples safe by sanitising keys
     and make them unique
@@ -100,7 +100,7 @@ class ListDict(object):
     Combined list/ordered dictionary class. Keys to the dictionary can be exposed as attributes.
     This supports all dictionary methods, pop, append, extend, index, remove and del
     '''
-    def __init__(self, data=None, warn=True, lock=False, interactive=True):
+    def __init__(self, data=None, warn=False, lock=False, interactive=True):
         '''
         A dictionary or list of tuples of key/value pairs. If lock=True,
         keys cannot be reassigned without first deleting the item. If interactive=True,
@@ -336,7 +336,7 @@ class DataHolder(ListDict):
         3. as a list item
     Metadata can be accessed in a similar manner though from an attribute called metadata
     '''
-    def __init__(self, data=None, metadata=None, warn=True):
+    def __init__(self, data=None, metadata=None, warn=False):
         ListDict.__init__(self, data, warn)
         self.metadata = ListDict(metadata, warn)
 

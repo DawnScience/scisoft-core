@@ -393,6 +393,8 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public void setLazyErrors(ILazyDataset errors) {
+		if (this==errors) return;
+		// TODO check that errors != this
 		if (errors==null) {
 			lazyErrorDelegate = null;
 			return;

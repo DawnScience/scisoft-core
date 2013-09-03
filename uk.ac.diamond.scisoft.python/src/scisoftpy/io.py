@@ -205,12 +205,12 @@ import os as _os
 _path = _os.path
 _join = _path.join
 
-def find_run_file(run, data_dir, visit=None, year=None, ending=".dat"):
-    '''Find run file in given data directory
+def find_scan_file(scan, data_dir, visit=None, year=None, ending=".dat"):
+    '''Find scan file in given data directory
 
     Looks for file in data_dir/year/visit/
     Arguments:
-    run      - run number
+    scan      - scan number
     data_dir - beamline data directory, such as '/dls/i01/data'
     visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
     year     - calendar year (defaults to visit directory and any year in range 2000-99)
@@ -221,7 +221,7 @@ def find_run_file(run, data_dir, visit=None, year=None, ending=".dat"):
     '''
     from glob import glob, iglob
 
-    run = str(run)
+    scan = str(scan)
     if data_dir is None:
         raise ValueError, 'Beamline data directory must be defined'
 
@@ -255,14 +255,14 @@ def find_run_file(run, data_dir, visit=None, year=None, ending=".dat"):
                     vs = glob(_join(d, v))
                 for lv in vs:
                     for e in es:
-                        files.extend(iglob(_join(lv, run + e)))
+                        files.extend(iglob(_join(lv, scan + e)))
                     if len(files) > 0:
                         break
                 if len(files) > 0:
                     break
 
     if len(files) == 0:
-        raise IOError, 'Run files not found'
+        raise IOError, 'Scan files not found'
     if len(files) == 1:
         return files[0]
 
@@ -277,21 +277,21 @@ def find_run_file(run, data_dir, visit=None, year=None, ending=".dat"):
 
 #from scisoftpy import ndarraywrapped as _npwrapped
 
-class Run(DataHolder):
-    '''Represent a run from an SRS file'''
-    def __init__(self, run, data_dir, visit=None, year=None, ending=".dat"):
-        '''Specify a run number (or file name) and data directory
+class Scan(DataHolder):
+    '''Represent a scan from an SRS file'''
+    def __init__(self, scan, data_dir, visit=None, year=None, ending=".dat"):
+        '''Specify a scan number (or file name) and data directory
 
         Looks for file in data_dir/year/visit/
         Arguments:
-        run      - run number
+        scan      - scan number
         data_dir - beamline data directory, such as '/dls/i01/data'
         visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
         year     - calendar year (defaults to visit directory and any year in range 2000-99)
         ending   - suffix or list of suffices (defaults to '.dat')
         '''
-        run = int(run)
-        srsfile = find_run_file(run, data_dir, visit, year, ending)
+        scan = int(scan)
+        srsfile = find_scan_file(scan, data_dir, visit, year, ending)
 
         dh = load(srsfile, format='srs')
         itms = []
@@ -302,7 +302,7 @@ class Run(DataHolder):
             else:
                 itms.append(i)
         DataHolder.__init__(self, itms, mds)
-        self.__run = run
+        self.__scan = scan
         self.__file = srsfile
 
     def __str__(self):

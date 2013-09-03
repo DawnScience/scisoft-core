@@ -105,6 +105,13 @@ experiment. This diffraction data can be loaded in exactly the same way::
 which returns a list (or dictionary) of diffraction images. These images can
 be plotted using the plot package.
 
+Sometimes, warnings are shown from loading files. There is a global setting to
+turn these off if they become too distracting::
+
+     dnp.io.setloadwarning(False)
+
+This setting can be overridden per load call using the *warn* keyword.
+
 Loaders for the two tree formats (``hdf5`` and ``nx``) return data structures
 that look like trees with a root node, branches to other nodes. Nodes can have
 branches, i.e. it is a group, and also contain node attributes and

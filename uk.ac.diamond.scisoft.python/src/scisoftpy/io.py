@@ -53,7 +53,16 @@ def _findsuffix(name, formats):
             return _extra_suffices[suffix]
     return None
 
-def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=True, **kwarg):
+_LDRWARN = True
+
+def setloadwarning(warn):
+    '''Assign a default for whether warnings should be shown when loading
+    Initially, this is set to True
+    '''
+    global _LDRWARN
+    _LDRWARN = warn
+
+def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=_LDRWARN, **kwarg):
     '''Load a file and return a list of datasets (or a dictionary of datasets) and
     optionally a dictionary of metadata items
 

@@ -88,8 +88,11 @@ public class Metadata implements IMetaData {
 	 * 
 	 * @param name
 	 * @param shape (can be null or zero-length)
+	 * 
+	 * (NOTE method should be public, people can define loaders outside this
+	 * package like the DESY FIO loader for instance.)
 	 */
-	void addDataInfo(String name, int... shape) {
+	public void addDataInfo(String name, int... shape) {
 		shapes.put(name, shape == null || shape.length == 0 ? null : shape);
 	}
 

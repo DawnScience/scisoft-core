@@ -129,14 +129,12 @@ def _order(order):
     except KeyError:
         raise ValueError, "Given order not one of none, alpha, chrono"    
 
-def clear(name=None):
+def clear(name=_PVNAME):
     '''Clear plot
 
     Argument:
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
     _plot_clear(name)
 
 '''
@@ -151,9 +149,6 @@ import types as _types
 def _parselinearg(x, y, title, name):
     '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
     '''
-    if not name:
-        name = _PVNAME
-
     if y is None:
         yl = _toList(x)
         xl = None
@@ -291,7 +286,7 @@ def _process_line(x, y, title, name, mode):
 
     _plot_line(name, t, xs, ys, ax, ay)
 
-def line(x, y=None, title=None, name=None):
+def line(x, y=None, title=None, name=_PVNAME):
     '''Plot y dataset (or list of datasets), optionally against any
     given x dataset in the named view
 
@@ -325,7 +320,7 @@ def line(x, y=None, title=None, name=None):
     '''
     _process_line(x, y, title, name, None)
 
-def addline(x, y=None, title=None, name=None):
+def addline(x, y=None, title=None, name=_PVNAME):
     '''Add line(s) to existing plot, optionally against
     any given x dataset in the named view
 
@@ -337,7 +332,7 @@ def addline(x, y=None, title=None, name=None):
     '''
     _process_line(x, y, title, name, 'add')
 
-def updateline(x, y=None, title=None, name=None):
+def updateline(x, y=None, title=None, name=_PVNAME):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against
     any given x dataset in the named view
 
@@ -353,7 +348,7 @@ def updateline(x, y=None, title=None, name=None):
 plot = line
 updateplot = updateline
 
-def image(im, x=None, y=None, name=None):
+def image(im, x=None, y=None, name=_PVNAME):
     '''Plot a 2D dataset as an image in the named view with optional x and y axes
 
     Arguments:
@@ -362,9 +357,6 @@ def image(im, x=None, y=None, name=None):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if x is None:
         y = None
     if y is None:
@@ -372,7 +364,7 @@ def image(im, x=None, y=None, name=None):
 
     _plot_image(name, x, y, im)
 
-def images(im, x=None, y=None, name=None):
+def images(im, x=None, y=None, name=_PVNAME):
     '''Plot 2D datasets as an image in the named view with optional x and y axes
 
     Arguments:
@@ -381,8 +373,6 @@ def images(im, x=None, y=None, name=None):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
 
     if x is None:
         y = None
@@ -391,7 +381,7 @@ def images(im, x=None, y=None, name=None):
 
     _plot_images(name, x, y, _toList(im))
 
-def surface(s, x=None, y=None, name=None):
+def surface(s, x=None, y=None, name=_PVNAME):
     '''Plot the 2D dataset as a surface in the named view with optional x and y axes
 
     Arguments:
@@ -400,9 +390,6 @@ def surface(s, x=None, y=None, name=None):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if x is None:
         y = None
     if y is None:
@@ -410,7 +397,7 @@ def surface(s, x=None, y=None, name=None):
 
     _plot_surface(name, x, y, s)
 
-def stack(x, y=None, z=None, name=None):
+def stack(x, y=None, z=None, name=_PVNAME):
     '''Plot all of the given 1D y datasets against corresponding x as a 3D stack
     with optional z coordinates in the named view
 
@@ -420,9 +407,6 @@ def stack(x, y=None, z=None, name=None):
     z -- optional dataset for z-axis
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if not y:
         y = _toList(x)
         l = 0
@@ -433,7 +417,7 @@ def stack(x, y=None, z=None, name=None):
 
     _plot_stack(name, _toList(x), _toList(y), z)
 
-def updatestack(x, y=None, z=None, name=None):
+def updatestack(x, y=None, z=None, name=_PVNAME):
     '''Update existing 3D line stack by changing displayed y dataset (or list of datasets),
     optionally against any given x dataset with optional z coordinates in the named view
 
@@ -443,9 +427,6 @@ def updatestack(x, y=None, z=None, name=None):
     z -- optional dataset for z-axis
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if not y:
         y = _toList(x)
         l = 0
@@ -456,7 +437,7 @@ def updatestack(x, y=None, z=None, name=None):
 
     _plot_updatestack(name, _toList(x), _toList(y), z)
 
-def points(x, y=None, z=None, size=0, name=None):
+def points(x, y=None, z=None, size=0, name=_PVNAME):
     '''Plot points with given coordinates. If y is missing then x must contain
     a dataset of coordinate pairs or a list of such datasets
 
@@ -467,9 +448,6 @@ def points(x, y=None, z=None, size=0, name=None):
     size -- integer size or dataset of sizes
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if z is None:
         if y is None:
             _plot_points2d(name, _toList(x), size)
@@ -478,7 +456,7 @@ def points(x, y=None, z=None, size=0, name=None):
     else:
         _plot_points3d(name, x, y, z, size)
 
-def addpoints(x, y, z=None, size=0, name=None):
+def addpoints(x, y, z=None, size=0, name=_PVNAME):
     '''Update existing plot by adding points of given coordinates
 
     Arguments:
@@ -488,9 +466,6 @@ def addpoints(x, y, z=None, size=0, name=None):
     size -- integer size or dataset of sizes
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     if z is None:
         _plot_updatepoints2d(name, x, y, size)
     else:
@@ -514,18 +489,15 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor, maxint, 1)
 
 
-def getbean(name=None):
+def getbean(name=_PVNAME):
     '''Get GUI bean (contains information from named view)
 
     Arguments:
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     return _plot_getbean(name)
 
-def setbean(bean, name=None):
+def setbean(bean, name=_PVNAME):
     '''Set GUI bean
 
     Arguments:
@@ -533,22 +505,17 @@ def setbean(bean, name=None):
     name -- name of plot view to use (if None, use default name)
     '''
     if bean is not None:
-        if not name:
-            name = _PVNAME
         _plot_setbean(name, bean)
 
-def getdatabean(name=None):
+def getdatabean(name=_PVNAME):
     '''Get Data bean (contains data from named view)
 
     Arguments:
     name -- name of plot view to use (if None, use default name)
     '''
-    if not name:
-        name = _PVNAME
-
     return _plot_getdatabean(name)
 
-def setdatabean(bean, name=None):
+def setdatabean(bean, name=_PVNAME):
     '''Set Data bean
 
     Arguments:
@@ -556,8 +523,6 @@ def setdatabean(bean, name=None):
     name -- name of plot view to use (if None, use default name)
     '''
     if bean is not None:
-        if not name:
-            name = _PVNAME
         _plot_setdatabean(name, bean)
 
 def getroi(bean, roi=None):

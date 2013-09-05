@@ -841,22 +841,23 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						
 						Map<Point2i, Double> varmap = null;
 						double v = 0.0;
+						final double du = rad * dr * dphi;
 						if (errIds != null) {
 							varmap = getBilinearWeights(ids.getShape(), mask, y, x);
 						} else {
-							v = (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
+							v = du * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
 						}
 						if (doRadial) {
 							if (varmap != null) {
 								for (Point2i pt : varmap.keySet()) {
 									int i0 = pt.x;
 									int i1 = pt.y;
-									double weight = varmap.get(pt);
+									double weight = du * varmap.get(pt);
 									v += weight * ids.getDouble(i0, i1);
 									cvarmap.put(pt, (cvarmap.containsKey(pt) ? cvarmap.get(pt) : 0.0) + weight);
 								}
 							}
-							csum += rad * dr * dphi * v;
+							csum += v;
 						}
 						if (doAzimuthal) {
 								sumr.set(v + sumr.getDouble(p), p);

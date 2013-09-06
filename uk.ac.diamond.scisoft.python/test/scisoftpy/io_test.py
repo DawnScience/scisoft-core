@@ -95,7 +95,7 @@ class Test(unittest.TestCase):
 
     def testLoadingHDF(self):
         f = IOTestFolder + "NexusLoaderTest/"
-        t = dnp.io.load(f + "FeKedge_1_15.nxs", formats=['hdf5'])
+        t = dnp.io.load(f + "FeKedge_1_15.nxs", format=['hdf5'])
         self.checkTree(t)
         t = dnp.io.load(f + "FeKedge_1_15.nxs")
         self.checkTree(t)
@@ -156,7 +156,7 @@ class Test(unittest.TestCase):
         dnp.io.save(OutTestFolder+'byte.png', b, bits=8)
 
     def testB16data(self):
-        d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', formats=['srs'])
+        d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', format=['srs'])
         print d.keys()
         print d.metadata.keys()
         print d.metadata.values()

@@ -21,9 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
@@ -172,15 +169,6 @@ public class SliceObject {
 	public void setSliceStep(int[] sliceStep) {
 		this.sliceStep = sliceStep;
 	}
-	
-	@Override
-	public String toString() {
-		try {
-			return BeanUtils.describe(this).toString();
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-	}
 
     @Override
 	public SliceObject clone() {
@@ -201,13 +189,13 @@ public class SliceObject {
     // These methods intentionally not part of the slice API as
     // not really needed by the loader.
     
-    private List<AbstractDataset> axes;
+    private List<IDataset> axes;
     private String                shapeMessage;
 
-	public List<AbstractDataset> getAxes() {
+	public List<IDataset> getAxes() {
 		return axes;
 	}
-	public void setAxes(List<AbstractDataset> axes) {
+	public void setAxes(List<IDataset> axes) {
 		this.axes = axes;
 	}
 	public String getShapeMessage() {

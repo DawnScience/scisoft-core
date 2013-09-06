@@ -52,6 +52,9 @@ class NumPySaver(PythonSaver):
         import numpy as np #@UnresolvedImport
         np.save(self.name, data)
 
+from re import compile as _compile
+_begin_number = _compile(r'^[-+]?[\d]?\.?\d')
+
 class SRSLoader(PythonLoader):
     '''
     Loads an SRS dat file and returns a dataholder object
@@ -66,39 +69,51 @@ class SRSLoader(PythonLoader):
         f = open(self.name)
     
         try:
+            header = False
             while True:
                 l = f.readline()
                 if not l:
                     raise io_exception, "End of file reached unexpectedly"
                 ls = l.lstrip()
                 if ls.startswith("&SRS") or ls.startswith("&DLS"):
+                    header = True
+                    break
+                if _begin_number.match(ls):
                     break
             else:
                 raise io_exception, "Not an SRS file"
     
             srstext = []
-            while True:
+            if header:
+                while True:
+                    l = f.readline()
+                    if not l:
+                        raise io_exception, "End of file reached unexpectedly"
+                    ls = l.strip()
+                    if ls:
+                        if ls.startswith("&END"):
+                            break
+                        if self.load_metadata:
+                            srstext.append(ls)
+                else:
+                    raise io_exception, "No end tag found"
+    
                 l = f.readline()
                 if not l:
                     raise io_exception, "End of file reached unexpectedly"
-                ls = l.strip()
-                if ls:
-                    if ls.startswith("&END"):
-                        break
-                    if self.load_metadata:
-                        srstext.append(ls)
+                colstext = l.strip()
+                datatext = []
             else:
-                raise io_exception, "No end tag found"
-    
-            l = f.readline()
-            if not l:
-                raise io_exception, "End of file reached unexpectedly"
-            colstext = l.strip()
-            datatext = []
+                colstext = None
+                datatext = [ls]
+
             while True:
                 l = f.readline()
-                if l:
-                    datatext.append(l)
+                if not l:
+                    break
+                ls = l.lstrip()
+                if _begin_number.match(ls):
+                    datatext.append(ls)
                 else:
                     break
     
@@ -284,12 +299,13 @@ class DLSLoader(SRSLoader):
                     raise io_exception, "End of file reached unexpectedly"
                 ls = l.strip()
                 if ls:
-                    if not ls.startswith("#"):
+                    if _begin_number.match(ls):
                         break
-                    if self.load_metadata:
-                        ls = ls[1:].strip()
-                        if ls:
-                            hdrtext.append(ls)
+                    if ls.startswith("#"):
+                        if self.load_metadata:
+                            ls = ls[1:].strip()
+                            if ls:
+                                hdrtext.append(ls)
             else:
                 raise io_exception, "No end tag found"
 
@@ -298,13 +314,14 @@ class DLSLoader(SRSLoader):
             while True:
                 l = f.readline()
                 if l:
-                    if l.startswith("#"):
+                    ls = l.strip()
+                    if ls.startswith("#"):
                         if self.load_metadata:
-                            l = l[1:].strip()
-                            if l:
-                                hdrtext.append(l)
-                    else:
-                        datatext.append(l)
+                            ls = ls[1:].strip()
+                            if ls:
+                                hdrtext.append(ls)
+                    elif _begin_number.match(ls):
+                        datatext.append(ls)
                 else:
                     break
     

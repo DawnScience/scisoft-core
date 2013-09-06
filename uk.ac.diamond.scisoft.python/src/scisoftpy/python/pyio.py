@@ -201,11 +201,20 @@ class SRSLoader(PythonLoader):
         import re
         cs_regex = re.compile('\s+')
 
-        if cols.count('\t') > 0: # columns separated by tabs
-            cols = cols.split('\t')
+        if cols is None:
+            # use first line
+            r = cs_regex.split(text[0].strip())
+            lc = len(r)
+            from math import log10, ceil
+            p = ceil(log10(lc))
+            fmt = 'col%%0%dd' % p
+            cols = [ fmt % (i+1,) for i in range(lc) ]
         else:
-            cols = cs_regex.split(cols)
-        lc = len(cols)
+            if cols.count('\t') > 0: # columns separated by tabs
+                cols = cols.split('\t')
+            else:
+                cols = cs_regex.split(cols)
+            lc = len(cols)
         data = [[] for dummy in cols]
         for t in text:
             r = cs_regex.split(t.strip())
@@ -284,8 +293,8 @@ class DLSLoader(SRSLoader):
             else:
                 raise io_exception, "No end tag found"
 
-            colstext = hdrtext.pop()[1:].strip()
-            datatext = []
+            colstext = hdrtext.pop()[1:].strip() if hdrtext else None
+            datatext = [ls]
             while True:
                 l = f.readline()
                 if l:

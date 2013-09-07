@@ -720,9 +720,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		public ProfileTask(int sri, int eri, int spi, int epi, final IDataset dataset) {
 			super();
 			
-			// We need to scale each job size with number of running threads
-			// as total available memory is fixed.
-			MAX_POINTS = 500000 / ProfileForkJoinPool.profileForkJoinPool.getParallelism();
+			MAX_POINTS = 50000;
 			
 			this.sri = sri;
 			this.eri = eri;

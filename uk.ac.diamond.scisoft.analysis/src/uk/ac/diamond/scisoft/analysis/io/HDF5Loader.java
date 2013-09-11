@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.TreeMap;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
@@ -1043,6 +1044,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @throws Exception
 	 */
 	public static ILazyDataset createLazyDataset(final String host, final H5ScalarDS osd, final boolean keepBitWidth) throws Exception {
+		
 		long[] dims = osd.getDims();
 		if (dims == null) {
 			osd.init();
@@ -1542,8 +1544,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return ef;
 	}
 
-	protected static AbstractDataset loadData(final String fileName, final String node, final int[] start, final int[] count,
-			final int[] step, final int dtype, final boolean extend) throws Exception {
+	protected static AbstractDataset loadData(final String  fileName, 
+			                                  final String  node, 
+			                                  final int[]   start, 
+			                                  final int[]   count,
+			                                  final int[]   step, 
+			                                  final int     dtype, 
+			                                  final boolean extend) throws Exception {
 		AbstractDataset data = null;
 
 		final String cPath;
@@ -1850,8 +1857,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		if (tree == null)
 			return dh;
 
-		Map<String, ILazyDataset> lMap = new HashMap<String, ILazyDataset>();
-		Map<String, Serializable> aMap = withMetadata ? new HashMap<String, Serializable>() : null;
+		// Change to TreeMap so that order maintained
+		Map<String, ILazyDataset> lMap = new TreeMap<String, ILazyDataset>();
+		Map<String, Serializable> aMap = withMetadata ? new TreeMap<String, Serializable>() : null;
 		addToMaps(tree.getNodeLink(), lMap, aMap);
 
 		if (withMetadata) {

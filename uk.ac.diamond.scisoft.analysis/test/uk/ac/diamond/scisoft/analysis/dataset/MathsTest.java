@@ -243,6 +243,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -302,6 +304,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -430,6 +434,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -489,6 +495,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -546,6 +554,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -675,6 +685,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -734,6 +746,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -894,6 +908,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -953,6 +969,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -1010,6 +1028,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -1117,6 +1137,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -1386,6 +1408,8 @@ public class MathsTest {
 							}
 						}
 					}
+					if (d == null)
+						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -1445,6 +1469,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -1502,6 +1528,8 @@ public class MathsTest {
 						}
 					}
 				}
+				if (d == null)
+					break;
 				start += System.nanoTime();
 				double otime = ((double) start)/d.getSize();
 
@@ -1524,6 +1552,10 @@ public class MathsTest {
 		tdata = new int[] {1,  2,  6, -4,  5};
 		AbstractDataset ta = new IntegerDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
+
+		d = Maths.difference(a.getSliceView(new int[] {3}, null, null), 1, -1);
+		ta = Maths.difference(a.getSlice(new int[] {3}, null, null), 1, -1);
+		checkDatasets(null, null, d, ta);
 	}
 
 	@Test
@@ -1536,12 +1568,20 @@ public class MathsTest {
 		tdata = new double[] {1., 1.5, 2.5, 3.5, 4.5, 5.};
 		AbstractDataset ta = new DoubleDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
+		Slice[] slices = new Slice[] {new Slice(3)};
+		d = Maths.gradient(a.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices)).get(0);
+		checkDatasets(null, null, d, ta);
 
+		
 		AbstractDataset b = AbstractDataset.arange(a.getShape()[0], a.getDtype());
 		b.imultiply(2);
 		tdata = new double[] {0.5 , 0.75, 1.25, 1.75, 2.25, 2.5};
 		ta = new DoubleDataset(tdata, null);
 		d = Maths.gradient(a, b).get(0);
+		checkDatasets(null, null, d, ta);
+		d = Maths.gradient(a.getSliceView(slices), b.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices), b.getSlice(slices)).get(0);
 		checkDatasets(null, null, d, ta);
 		
 		data = new double[] {1, 2, 6, 3, 4, 5};

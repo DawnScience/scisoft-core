@@ -260,6 +260,11 @@ class Test(unittest.TestCase):
         self.checkitems([[2., 2., -1.], [2., 2., -1.]], g[0])
         self.checkitems([[1., 1.25, 4./3], [1., 0.5, 1./3]], g[1])
 
+        # test slice views
+        x = np.array([1, 2, 4, 7, 11, 16], dtype=np.float)
+        g = np.gradient(x[2:])
+        self.checkitems([3, 3.5, 4.5, 5.], g)
+
     def testAsfarray(self):
         print 'Float array testing'
         self.assertEquals(np.float64, np.asfarray([1.,]).dtype, "")

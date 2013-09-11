@@ -124,8 +124,8 @@ public class LoaderFactory {
 		    
 		    // There is some disagreement about the proper nexus/hdf5 
 		    // file extension at different facilities
-		    LoaderFactory.registerLoader("nxs",  NexusLoader.class);
-		    LoaderFactory.registerLoader("nexus",NexusLoader.class);
+		    LoaderFactory.registerLoader("nxs",  NexusHDF5Loader.class);
+		    LoaderFactory.registerLoader("nexus",NexusHDF5Loader.class);
 		    LoaderFactory.registerLoader("h5",   HDF5Loader.class);
 		    LoaderFactory.registerLoader("hdf",  HDF5Loader.class);
 		    LoaderFactory.registerLoader("hdf5", HDF5Loader.class);

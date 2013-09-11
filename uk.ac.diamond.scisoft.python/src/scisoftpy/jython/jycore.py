@@ -20,7 +20,7 @@ Core package contains wrappers for Java dataset classes
 
 import uk.ac.diamond.scisoft.analysis.dataset.ADataset as _ads
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _abstractds
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
+# import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset as _booleands
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset as _integerds
@@ -251,10 +251,7 @@ def asDataset(data, dtype=None, force=False):
         return data
 
     if isinstance(data, _abstractds):
-        if dtype is None or data.dtype == dtype:
-            return data
-        else:
-            return array(data, dtype=dtype, copy=False)
+        return ndarray(buffer=data, dtype=dtype, copy=False)
 
     try:
         iter(data)

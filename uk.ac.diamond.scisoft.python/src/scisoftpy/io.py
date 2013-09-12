@@ -205,8 +205,8 @@ import os as _os
 _path = _os.path
 _join = _path.join
 
-def find_scan_file(scan, data_dir, visit=None, year=None, ending=".dat"):
-    '''Find scan file in given data directory
+def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
+    '''Find scan files in given data directory
 
     Looks for file in data_dir/year/visit/
     Arguments:
@@ -216,8 +216,7 @@ def find_scan_file(scan, data_dir, visit=None, year=None, ending=".dat"):
     year     - calendar year (defaults to visit directory and any year in range 2000-99)
     ending   - suffix or list of suffices (defaults to '.dat')
 
-    Returns file with shortest name (if there is a tie, then the one matching
-     the first ending is chosen)
+    Returns list of files
     '''
     from glob import glob, iglob
 
@@ -263,17 +262,7 @@ def find_scan_file(scan, data_dir, visit=None, year=None, ending=".dat"):
 
     if len(files) == 0:
         raise IOError, 'Scan files not found'
-    if len(files) == 1:
-        return files[0]
-
-    ls = [len(f) for f in files]
-    lc = min(ls)
-    if ls.count(lc) > 1: # if there is more than one of same length
-        for l, f in zip(ls, files):
-            if l == lc:
-                if f.endswith(ending[0]): # prefer first ending
-                    return f
-    return files[ls.index(lc)]
+    return files
 
 #from scisoftpy import ndarraywrapped as _npwrapped
 
@@ -291,7 +280,21 @@ class Scan(DataHolder):
         ending   - suffix or list of suffices (defaults to '.dat')
         '''
         scan = int(scan)
-        srsfile = find_scan_file(scan, data_dir, visit, year, ending)
+        files = find_scan_files(scan, data_dir, visit, year, ending)
+        if len(files) == 1:
+            srsfile = files[0]
+        else:
+            # find shortest name
+            ls = [len(f) for f in files]
+            lc = min(ls)
+            if ls.count(lc) > 1: # if there is more than one of same length
+                for l, f in zip(ls, files):
+                    if l == lc:
+                        if f.endswith(ending[0]): # prefer first ending
+                            srsfile = f
+                            break
+            else:
+                srsfile = files[ls.index(lc)]
 
         dh = load(srsfile, format='srs')
         itms = []

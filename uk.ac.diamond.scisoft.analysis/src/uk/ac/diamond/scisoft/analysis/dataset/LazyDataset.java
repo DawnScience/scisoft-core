@@ -37,7 +37,7 @@ public class LazyDataset implements ILazyDataset {
 	protected String     name;
 	protected int[]      shape;
 	private int[]        oShape; // original shape
-	protected int        size; // number of items, this can be smaller than dataSize for discontiguous datasets
+	protected long       size;   // number of items
 	protected ILazyLoader loader;
 	private int          dtype;
 	private int          oOffset; // original shape offset
@@ -59,9 +59,9 @@ public class LazyDataset implements ILazyDataset {
 		this.loader = loader;
 		this.dtype = dtype;
 		try {
-			size = AbstractDataset.calcSize(shape);
+			size = AbstractDataset.calcLongSize(shape);
 		} catch (IllegalArgumentException e) {
-			size = Integer.MAX_VALUE; // this indicates that the entire dataset cannot be read in! 
+			size = Long.MAX_VALUE; // this indicates that the entire dataset cannot be read in! 
 		}
 		oOffset = -1;
 		nOffset = -1;
@@ -136,7 +136,7 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public int getSize() {
-		return size;
+		return (int) size;
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public class LazyDataset implements ILazyDataset {
 	}
 
 	private void setShapeInternal(int... shape) {
-		int nsize = AbstractDataset.calcSize(shape);
+		long nsize = AbstractDataset.calcLongSize(shape);
 		if (nsize != size) {
 			throw new IllegalArgumentException("Size of new shape is not equal to current size");
 		}

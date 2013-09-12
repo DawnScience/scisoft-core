@@ -546,37 +546,44 @@ public abstract class AbstractDataset implements ADataset {
 	 * @param shape
 	 * @return size
 	 */
-	public static int calcSize(final int[] shape) {
-		int size = 1;
+	public static long calcLongSize(final int[] shape) {
 		double dsize = 1.0;
 
-		if (shape.length == 1) {
-			if (shape[0] == 0) {
+		if (shape == null || shape.length == 0)  // special case of zero-rank shape 
+			return 1;
+
+		for (int i = 0; i < shape.length; i++) {
+			// make sure the indexes isn't zero or negative
+			if (shape[i] == 0) {
 				return 0;
+			} else if (shape[i] < 0) {
+				throw new IllegalArgumentException(String.format(
+						"The %d-th is %d which is an illegal argument as it is negative", i, shape[i]));
 			}
 
-			size *= shape[0];
-			dsize *= shape[0];
-		} else {
-			for (int i = 0; i < shape.length; i++) {
-				// make sure the indexes isn't zero or negative
-				if (shape[i] == 0) {
-					return 0;
-				} else if (shape[i] < 0) {
-					throw new IllegalArgumentException("The " + i + "-th is " + shape[i]
-							+ " which is an illegal argument as it is negative");
-				}
-
-				size *= shape[i];
-				dsize *= shape[i];
-			}
+			dsize *= shape[i];
 		}
 
 		// check to see if the size is larger than an integer, i.e. we can't allocate it
-		if (dsize > Integer.MAX_VALUE) {
+		if (dsize > Long.MAX_VALUE) {
 			throw new IllegalArgumentException("Size of the dataset is too large to allocate");
 		}
-		return size;
+		return (long) dsize;
+	}
+
+	/**
+	 * Calculate total number of items in given shape
+	 * @param shape
+	 * @return size
+	 */
+	public static int calcSize(final int[] shape) {
+		long lsize = calcLongSize(shape);
+
+		// check to see if the size is larger than an integer, i.e. we can't allocate it
+		if (lsize > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Size of the dataset is too large to allocate");
+		}
+		return (int) lsize;
 	}
 
 	/**

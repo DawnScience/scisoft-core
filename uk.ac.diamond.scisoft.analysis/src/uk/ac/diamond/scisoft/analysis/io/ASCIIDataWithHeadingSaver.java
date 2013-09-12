@@ -48,6 +48,10 @@ public class ASCIIDataWithHeadingSaver extends RawTextSaver {
 		this.delimiter = delimiter;
 	}
 	
+	public void setCellFormat(String cellFormat) {
+		this.cellFormat = cellFormat;
+	}
+	
 	@Override
 	protected void writeHeader(BufferedWriter writer) throws IOException {
 		if (header != null) {

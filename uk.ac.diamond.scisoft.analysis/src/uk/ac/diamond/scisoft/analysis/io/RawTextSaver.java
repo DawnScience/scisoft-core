@@ -36,6 +36,8 @@ public class RawTextSaver implements IFileSaver {
 
 	private String fileName = "";
 	protected char delimiter = '\t';
+	protected String cellFormat;
+	
 
 	/**
 	 * Takes the dataset from a data holder and output them as a height x width array called 'filename'.txt.
@@ -92,7 +94,11 @@ public class RawTextSaver implements IFileSaver {
 				
 				for (int rows = 0; rows < height; rows++) {
 					for (int columns = 0; columns < width - 1; columns++) {
-						bw.write(data.getString(rows, columns));
+						if (cellFormat != null) {
+							bw.write(String.format(cellFormat, data.getObject(rows, columns)));
+						} else {
+							bw.write(data.getString(rows, columns));
+						}
 						bw.write(delimiter);
 					}
 					bw.write(data.getString(rows, width - 1));

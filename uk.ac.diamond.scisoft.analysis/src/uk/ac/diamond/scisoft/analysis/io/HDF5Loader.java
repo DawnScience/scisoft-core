@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1858,8 +1859,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			return dh;
 
 		// Change to TreeMap so that order maintained
-		Map<String, ILazyDataset> lMap = new TreeMap<String, ILazyDataset>();
-		Map<String, Serializable> aMap = withMetadata ? new TreeMap<String, Serializable>() : null;
+		Map<String, ILazyDataset> lMap = new LinkedHashMap<String, ILazyDataset>();
+		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;
 		addToMaps(tree.getNodeLink(), lMap, aMap);
 
 		if (withMetadata) {

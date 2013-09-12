@@ -1553,8 +1553,54 @@ public class MathsTest {
 		AbstractDataset ta = new IntegerDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
 
-		d = Maths.difference(a.getSliceView(new int[] {3}, null, null), 1, -1);
-		ta = Maths.difference(a.getSlice(new int[] {3}, null, null), 1, -1);
+		Slice[] slices = new Slice[] {new Slice(3)};
+		d = Maths.difference(a.getSliceView(slices), 1, -1);
+		ta = Maths.difference(a.getSlice(slices), 1, -1);
+		checkDatasets(null, null, d, ta);
+		slices = new Slice[] {new Slice(-2, null, -1)};
+		d = Maths.difference(a.getSliceView(slices), 1, -1);
+		ta = Maths.difference(a.getSlice(slices), 1, -1);
+		checkDatasets(null, null, d, ta);
+
+		a = new ComplexDoubleDataset(new double[] {0, 1, 2, 3, 4, 5});
+		d = Maths.difference(a, 1, -1);
+		ta = new ComplexDoubleDataset(new double[] {2, 2, 2, 2});
+		checkDatasets(null, null, d, ta);
+
+		d = Maths.difference(a.getSliceView(slices), 1, -1);
+		ta = Maths.difference(a.getSlice(slices), 1, -1);
+		checkDatasets(null, null, d, ta);
+
+		a = new CompoundDoubleDataset(2, new double[] {0, 1, 2, 3, 4, 5});
+		d = Maths.difference(a, 1, -1);
+		ta = new CompoundDoubleDataset(2, new double[] {2, 2, 2, 2});
+		checkDatasets(null, null, d, ta);
+		d = Maths.difference(a.getSliceView(slices), 1, -1);
+		ta = Maths.difference(a.getSlice(slices), 1, -1);
+		checkDatasets(null, null, d, ta);
+
+		a = new ByteDataset(new byte[] {0, 1, 2, 4, 7, 11});
+		d = Maths.difference(a, 2, -1);
+		ta = new ByteDataset(new byte[] {0, 1, 1, 1});
+		checkDatasets(null, null, d, ta);
+		d = Maths.difference(a.getSliceView(slices), 2, -1);
+		ta = Maths.difference(a.getSlice(slices), 2, -1);
+		checkDatasets(null, null, d, ta);
+
+		a = new CompoundShortDataset(2, new short[] {0, 1, 2, 3, 4, 5, 7, 6});
+		d = Maths.difference(a, 2, -1);
+		ta = new CompoundShortDataset(2, new short[] {0, 0, 1, -1});
+		checkDatasets(null, null, d, ta);
+		d = Maths.difference(a.getSliceView(slices), 2, -1);
+		ta = Maths.difference(a.getSlice(slices), 2, -1);
+		checkDatasets(null, null, d, ta);
+
+		a = new CompoundDoubleDataset(2, new double[] {0, 1, 2, 3, 4, 5, 7, 6});
+		d = Maths.difference(a, 2, -1);
+		ta = new CompoundDoubleDataset(2, new double[] {0, 0, 1, -1});
+		checkDatasets(null, null, d, ta);
+		d = Maths.difference(a.getSliceView(slices), 2, -1);
+		ta = Maths.difference(a.getSlice(slices), 2, -1);
 		checkDatasets(null, null, d, ta);
 	}
 
@@ -1609,6 +1655,39 @@ public class MathsTest {
 		ta.idivide(-1.5);
 		checkDatasets(null, null, l.get(1), ta);
 
+		a = new ByteDataset(new byte[] {0, 1, 2, 4, 7, 11});
+		d = Maths.gradient(a).get(0);
+		ta = new ByteDataset(new byte[] {1, 1, 1, 2, 3, 4});
+		checkDatasets(null, null, d, ta);
+
+		slices = new Slice[] {new Slice(-2, null, -1)};
+		d = Maths.gradient(a.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices)).get(0);
+		checkDatasets(null, null, d, ta);
+
+		a = new ComplexDoubleDataset(new double[] {0, 1, 2, 3, 4, 5});
+		d = Maths.gradient(a).get(0);
+		ta = new ComplexDoubleDataset(new double[] {2, 2, 2, 2, 2, 2});
+		checkDatasets(null, null, d, ta);
+		d = Maths.gradient(a.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices)).get(0);
+		checkDatasets(null, null, d, ta);
+
+		a = new CompoundShortDataset(2, new short[] {0, 1, 2, 3, 4, 5, 7, 6});
+		d = Maths.gradient(a).get(0);
+		ta = new CompoundShortDataset(2, new short[] {2, 2, 2, 2, 2, 1, 3, 1});
+		checkDatasets(null, null, d, ta);
+		d = Maths.gradient(a.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices)).get(0);
+		checkDatasets(null, null, d, ta);
+
+		a = new CompoundDoubleDataset(2, new double[] {0, 1, 2, 3, 4, 5, 7, 6});
+		d = Maths.gradient(a).get(0);
+		ta = new CompoundDoubleDataset(2, new double[] {2, 2, 2, 2, 2.5, 1.5, 3, 1});
+		checkDatasets(null, null, d, ta);
+		d = Maths.gradient(a.getSliceView(slices)).get(0);
+		ta = Maths.gradient(a.getSlice(slices)).get(0);
+		checkDatasets(null, null, d, ta);
 	}
 
 	/**

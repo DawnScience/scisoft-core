@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * it will attempt to load the errors associated with the dataset.
  *  
  */
-public class NexusLoader extends HDF5Loader {
+public class NexusHDF5Loader extends HDF5Loader {
 
 	public static final String NX_AXES = "axes";
 	public static final String NX_AXIS = "axis";

@@ -170,6 +170,15 @@ public interface ISDAPlotter {
 	 */
 	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes) throws Exception;
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 2D grid
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param sizes
+	 * @throws Exception
+	 */
 	public void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes) throws Exception;
 
 	/**
@@ -178,12 +187,23 @@ public interface ISDAPlotter {
 	 * @param plotName
 	 * @param xCoords
 	 * @param yCoords
+	 * @param zCoords
 	 * @param sizes
 	 * @throws Exception
 	 */
 	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
 			throws Exception;
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 3D volume
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param zCoords
+	 * @param sizes
+	 * @throws Exception
+	 */
 	public void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, IDataset sizes)
 			throws Exception;
 
@@ -284,18 +304,18 @@ public interface ISDAPlotter {
 	/**
 	 * Clear/empty a named plot view
 	 * 
-	 * @param viewName
+	 * @param plotName
 	 * @throws Exception
 	 */
-	public void clearPlot(String viewName) throws Exception;
+	public void clearPlot(String plotName) throws Exception;
 
 	/**
 	 * Reset axes in a named plot view
 	 * 
-	 * @param viewName
+	 * @param plotName
 	 * @throws Exception
 	 */
-	public void resetAxes(String viewName) throws Exception;
+	public void resetAxes(String plotName) throws Exception;
 
 	/**
 	 * Set up a new image grid for an image explorer view with the specified # rows and columns

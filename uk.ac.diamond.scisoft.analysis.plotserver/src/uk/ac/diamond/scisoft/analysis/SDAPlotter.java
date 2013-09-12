@@ -336,19 +336,6 @@ public class SDAPlotter {
 		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), new IDataset[] { yValues }, null, null);
 	}
 
-//	/**
-//	 * Update existing plot with new data
-//	 * 
-//	 * @param plotName
-//	 * @param xValues
-//	 * @param xAxis2
-//	 * @param yValues
-//	 * @throws Exception
-//	 */
-//	public static void updatePlot(String plotName, final IDataset xValues, final IDataset xAxis2, final IDataset yValues) throws Exception {
-//		getPlotterImpl().updatePlot(plotName, null, SDAPlotterImpl.validateXAxis(xValues, yValues), new IDataset[] { yValues }, null, null);
-//	}
-
 	/**
 	 * Update existing plot with new data
 	 * 
@@ -465,7 +452,6 @@ public class SDAPlotter {
 	 * @param images
 	 * @throws Exception
 	 */
-
 	public static void imagesPlot(String plotName, IDataset xValues, IDataset yValues, IDataset[] images) throws Exception {
 		getPlotterImpl().imagesPlot(plotName, xValues, yValues, images);
 	}
@@ -537,11 +523,29 @@ public class SDAPlotter {
 		getPlotterImpl().scatter2DPlot(plotName, coordPairs, sizes);
 	}
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 2D grid
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param sizes
+	 * @throws Exception
+	 */
 	public static void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes)
 			throws Exception {
 		getPlotterImpl().scatter2DPlotOver(plotName, xCoords, yCoords, sizes);
 	}
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 2D grid
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param size
+	 * @throws Exception
+	 */
 	public static void scatter2DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, int size)
 			throws Exception {
 		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
@@ -590,6 +594,16 @@ public class SDAPlotter {
 		getPlotterImpl().scatter3DPlot(plotName, xCoords, yCoords, zCoords, sizes);
 	}
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 3D volume
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param zCoords
+	 * @param size
+	 * @throws Exception
+	 */
 	public static void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords, int size)
 			throws Exception {
 		if (xCoords != null && xCoords.getRank() != 1 || xCoords == null) {
@@ -602,6 +616,16 @@ public class SDAPlotter {
 		getPlotterImpl().scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, sizes);
 	}
 
+	/**
+	 * Allows plotting of points of given sizes over an existing 3D volume
+	 * 
+	 * @param plotName
+	 * @param xCoords
+	 * @param yCoords
+	 * @param zCoords
+	 * @param sizes
+	 * @throws Exception
+	 */
 	public static void scatter3DPlotOver(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords,
 			IDataset sizes) throws Exception {
 		getPlotterImpl().scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, sizes);
@@ -884,21 +908,21 @@ public class SDAPlotter {
 	/**
 	 * Clear/empty a named plot view
 	 * 
-	 * @param viewName
+	 * @param plotName
 	 * @throws Exception
 	 */
-	public static void clearPlot(String viewName) throws Exception {
-		getPlotterImpl().clearPlot(viewName);
+	public static void clearPlot(String plotName) throws Exception {
+		getPlotterImpl().clearPlot(plotName);
 	}
 
 	/**
 	 * Reset axes in named plot view
 	 * 
-	 * @param viewName
+	 * @param plotName
 	 * @throws Exception
 	 */
-	public static void resetAxes(String viewName) throws Exception {
-		getPlotterImpl().resetAxes(viewName);
+	public static void resetAxes(String plotName) throws Exception {
+		getPlotterImpl().resetAxes(plotName);
 	}
 
 	/**

@@ -144,12 +144,12 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void clearPlot(String viewName) throws Exception {
+	public void clearPlot(String plotName) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 
 	@Override
-	public void resetAxes(String viewName) throws Exception {
+	public void resetAxes(String plotName) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 

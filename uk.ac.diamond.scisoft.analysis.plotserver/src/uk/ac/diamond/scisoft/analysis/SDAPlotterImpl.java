@@ -237,13 +237,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Allows the plotting of an image to the defined view
-	 * 
-	 * @param plotName
-	 * @param imageFileName
-	 * @throws Exception
-	 */
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
 
@@ -268,17 +261,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Allows the plotting of an image to the defined view with its side plot profiles
-	 * 
-	 * @param plotName
-	 * @param xValues
-	 *            can be null
-	 * @param yValues
-	 *            can be null
-	 * @param image
-	 * @throws Exception
-	 */
 	@Override
 	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
 		if (!isDataND(image, 2)) {
@@ -318,17 +300,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Allows the plotting of images to the defined view
-	 * 
-	 * @param plotName
-	 * @param xValues
-	 *            can be null
-	 * @param yValues
-	 *            can be null
-	 * @param images
-	 * @throws Exception
-	 */
 	@Override
 	public void imagesPlot(String plotName, IDataset xValues, IDataset yValues, IDataset[] images) throws Exception {
 		if (!isDataND(images[0], 2)) {
@@ -371,14 +342,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Allows plotting of multiple sets of points of given sizes on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param coordPairs
-	 * @param sizes
-	 * @throws Exception
-	 */
 	@Override
 	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes)
 			throws Exception {
@@ -419,15 +382,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, guiBean);
 	}
 
-	/**
-	 * Allows plotting of points of given sizes on a 2D grid
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param sizes
-	 * @throws Exception
-	 */
 	@Override
 	public void scatter2DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset sizes)
 			throws Exception {
@@ -505,15 +459,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Allows plotting of points of given sizes on a 3D volume
-	 * 
-	 * @param plotName
-	 * @param xCoords
-	 * @param yCoords
-	 * @param sizes
-	 * @throws Exception
-	 */
 	@Override
 	public void scatter3DPlot(String plotName, IDataset xCoords, IDataset yCoords, IDataset zCoords,
 			IDataset sizes) throws Exception {
@@ -614,17 +559,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
-	/**
-	 * Allows the plotting of a 2D dataset as a surface to the defined view
-	 * 
-	 * @param plotName
-	 * @param xValues
-	 *            can be null
-	 * @param yValues
-	 *            can be null
-	 * @param data
-	 * @throws Exception
-	 */
 	@Override
 	public void surfacePlot(String plotName, IDataset xValues, IDataset yValues, IDataset data) throws Exception {
 		if (!isDataND(data, 2)) {
@@ -751,21 +685,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, guibean);
 	}
 
-	/**
-	 * Scan a directory and populate an image explorer view with images of given suffices
-	 * 
-	 * @param viewName
-	 * @param pathname
-	 * @param order
-	 * @param nameregex can be null
-	 * @param suffices
-	 * @param gridColumns use -1 for automatically format
-	 * @param rowMajor
-	 * @param maxFiles
-	 * @param jumpBetween
-	 * @return number of files loaded
-	 * @throws Exception
-	 */
 	@Override
 	public int scanForImages(String viewName, String pathname, int order, String nameregex, String[] suffices,
 			int gridColumns, boolean rowMajor, int maxFiles, int jumpBetween) throws Exception {
@@ -890,24 +809,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		imageFiles.addAll(imap.values());
 	}
 
-	/**
-	 * Send volume data contained in given filename to remote renderer. Note the raw data needs
-	 * written in little endian byte order
-	 * @param viewName
-	 * @param rawvolume
-	 *            raw format filename
-	 * @param headerSize
-	 *            number of bytes to ignore in file
-	 * @param voxelType
-	 *            0,1,2,3 for byte, short, int and float (integer values are interpreted as unsigned values)
-	 * @param xdim
-	 *            number of voxels in x-dimension
-	 * @param ydim
-	 *            number of voxels in y-dimension
-	 * @param zdim
-	 *            number of voxels in z-dimension
-	 * @throws Exception
-	 */
 	@Override
 	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
 			int zdim) throws Exception {
@@ -925,14 +826,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Send volume data to remote renderer. Only single-element datasets of byte, short, int and float are directly
-	 * supported. Other types are internally converted; first elements of compound datasets are extracted.
-	 * 
-	 * @param viewName
-	 * @param volume
-	 * @throws Exception
-	 */
 	@Override
 	public void volumePlot(String viewName, IDataset volume) throws Exception {
 		if (!isDataND(volume, 3)) {
@@ -971,14 +864,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Send volume data contained in given filename to remote renderer
-	 * 
-	 * @param viewName
-	 * @param dsrvolume
-	 *            Diamond Scisoft raw format filename
-	 * @throws Exception
-	 */
 	@Override
 	public void volumePlot(String viewName, String dsrvolume) throws Exception {
 		PlotService plotServer = getPlotService();
@@ -990,12 +875,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Clear/empty a named plot view
-	 * 
-	 * @param viewName
-	 * @throws Exception
-	 */
 	@Override
 	public void clearPlot(String viewName) throws Exception {
 		PlotService plotServer = getPlotService();
@@ -1016,16 +895,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Set up a new image grid for an image explorer view with the specified # rows and columns
-	 * 
-	 * @param viewName
-	 * @param gridRows
-	 *            number of start rows
-	 * @param gridColumns
-	 *            number of start columns
-	 * @throws Exception
-	 */
 	@Override
 	public void setupNewImageGrid(String viewName, int gridRows, int gridColumns) throws Exception {
 		GuiBean guiBean = new GuiBean();
@@ -1034,15 +903,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		setGuiBean(viewName, guiBean);
 	}
 
-	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param datasets
-	 * @param store
-	 *            if true, create copies of images as temporary files
-	 * @throws Exception
-	 */
 	@Override
 	public void plotImageToGrid(String viewName, IDataset[] datasets, boolean store) throws Exception {
 		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
@@ -1065,18 +925,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * Plot images to the grid of an image explorer view
-	 * 
-	 * @param viewName
-	 * @param filename
-	 * @param gridX
-	 *            X position in the grid, use -1 to automatically place
-	 * @param gridY
-	 *            Y position in the grid, use -1 to automatically place
-	 * @throws Exception
-	 */
-
 	@Override
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception {
 		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
@@ -1091,17 +939,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		setGuiBean(viewName, guiBean);
 	}
 
-	/**
-	 * Plot an image to the grid of an image explorer view in specified position
-	 * 
-	 * @param viewName
-	 * @param dataset
-	 * @param gridX use -1 to automatically place
-	 * @param gridY use -1 to automatically place
-	 * @param store
-	 *            if true, create a copy of image as a temporary file
-	 * @throws Exception
-	 */
 	@Override
 	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY, boolean store)
 			throws Exception {
@@ -1146,11 +983,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 	}
 
-	/**
-	 * @param viewer
-	 * @param tree
-	 * @throws Exception
-	 */
 	@Override
 	public void viewNexusTree(String viewer, HDF5File tree) throws Exception {
 		logger.info("Tree sent to {}", viewer);
@@ -1160,11 +992,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(viewer, db, null);
 	}
 
-	/**
-	 * @param viewer
-	 * @param tree
-	 * @throws Exception
-	 */
 	@Override
 	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
 		logger.info("Tree sent to {}", viewer);
@@ -1188,7 +1015,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	private void sendBeansToServer(String plotName, DataBean dataBean, GuiBean guiBean) throws Exception {
 		PlotService plotServer = getPlotService();
 		if (plotServer != null) {
-			if(guiBean != null) {
+			if (guiBean != null) {
 				guiBean.remove(GuiParameters.PLOTID); // remove any previous ID now it is being pushed to all the clients
 
 				plotServer.updateGui(plotName, guiBean);
@@ -1226,9 +1053,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		return plotService.getData(plotName);
 	}
 
-	/**
-	 * @return GUI bean for named view of given plot mode or create a new one
-	 */
 	@Override
 	public GuiBean getGuiStateForPlotMode(String plotName, GuiPlotMode plotMode) {
 		GuiBean bean;

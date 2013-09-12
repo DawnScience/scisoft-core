@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.util.Arrays;
+
 
 /**
  * Class to run over a contiguous dataset using strides
@@ -66,7 +68,7 @@ public class StrideIterator extends SliceIterator {
 		this.shape = shape;
 		int rank = shape.length;
 		endrank = rank - 1;
-		start = new int[rank];
+		pos = new int[rank];
 		delta = new int[rank];
 		if (strides != null) {
 			stride = strides;
@@ -76,7 +78,7 @@ public class StrideIterator extends SliceIterator {
 			if (endrank < 0) {
 				imax = istep;
 			} else {
-				imax = 0; // use max delta
+				imax = Integer.MIN_VALUE; // use max delta
 				for (int j = endrank; j >= 0; j--) {
 					if (delta[j] > imax) {
 						imax = delta[j];
@@ -115,7 +117,7 @@ public class StrideIterator extends SliceIterator {
 			pos[j]++;
 			index += stride[j];
 			if (pos[j] >= shape[j]) {
-				pos[j] = start[0];
+				pos[j] = 0;
 				index -= delta[j]; // reset this dimension
 			} else {
 				break;
@@ -139,14 +141,10 @@ public class StrideIterator extends SliceIterator {
 
 	@Override
 	public void reset() {
-		pos = start.clone();
+		Arrays.fill(pos, 0);
 		if (endrank >= 0) {
 			pos[endrank] = -1;
-			index = nstart;
-			int j = endrank;
-			for (; j >= 0; j--) {
-				index += pos[j]*stride[j];
-			}
+			index = nstart - stride[endrank];
 		} else {
 			index = -istep;
 		}

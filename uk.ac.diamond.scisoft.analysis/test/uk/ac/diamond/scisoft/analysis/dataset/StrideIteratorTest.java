@@ -246,8 +246,6 @@ public class StrideIteratorTest {
 		Collections.sort(elapsed);
 		System.out.println(String.format("    old  %5.2fus", elapsed.get(0)*1e-3));
 
-		double[] sdata = (double[]) sliced.getBuffer();
-
 		ADataset nsliced = null;
 
 		elapsed.clear();
@@ -270,11 +268,31 @@ public class StrideIteratorTest {
 		Collections.sort(elapsed);
 		System.out.println(String.format("    strides %5.2fus (%.2f)", elapsed.get(0)*1e-3, elapsed.get(0)/current));
 
+		checkSliced(sliced, nsliced);
+	}
+
+	private void checkSliced(ADataset sliced, ADataset nsliced) {
 		double[] ndata = (double[]) nsliced.getBuffer();
 		IndexIterator iter = nsliced.getIterator();
+		double[] sdata = (double[]) sliced.getBuffer();
 		for (int i = 0; i < sdata.length && iter.hasNext(); i++) {
 			assertEquals(sdata[i], ndata[iter.index], 1e-5*sdata[i]);
 		}
+	}
+
+	@Test
+	public void testNegativeStrideIteration() {
+		AbstractDataset t = AbstractDataset.arange(40, AbstractDataset.FLOAT);
+
+		SliceIterator siter = (SliceIterator) t.getSliceIterator(new int[] {12}, null, new int[] {-2});
+		ADataset sliced = oldSlice(t, siter);
+		ADataset nsliced = newSlice(t, new int[] {12}, null, new int[] {-2});
+		checkSliced(sliced, nsliced);
+
+		t.setShape(8,5);
+		sliced = oldSlice(t, (SliceIterator) t.getSliceIterator(new int[] {1, 3}, null, new int[] {2, -2}));
+		nsliced = newSlice(t, new int[] {1, 3}, null, new int[] {2, -2});
+		checkSliced(sliced, nsliced);
 	}
 
 	/**
@@ -303,6 +321,8 @@ public class StrideIteratorTest {
 		testSlicedDataset(ta, 0, 0, 62, 0);
 		testSlicedDataset(ta, 23, 0, 3, 0);
 		testSlicedDataset(ta, 23, 0, 62, 0);
+
+		testSlicedDataset(ta, -3, 0, -2, 0);
 
 		// 2D
 		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 15, 15);
@@ -342,6 +362,9 @@ public class StrideIteratorTest {
 		testSlicedDataset(ta, 2, 0, -3, 1);
 		testSlicedDataset(ta, 3, 1, -3, 0);
 		testSlicedDataset(ta, 3, 1, -3, 1);
+
+		testSlicedDataset(ta, 8, 0, -3, 0);
+		testSlicedDataset(ta, 8, 1, -3, 1);
 
 		// 3D
 		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 10, 2, 5);

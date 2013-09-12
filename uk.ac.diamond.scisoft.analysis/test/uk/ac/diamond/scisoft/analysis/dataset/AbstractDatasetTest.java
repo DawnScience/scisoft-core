@@ -1462,4 +1462,58 @@ public class AbstractDatasetTest {
 		Assert.assertArrayEquals(new int[] {5, 3, 4, 6}, DatasetUtils.rollAxis(a, 2, 0).getShape());
 		Assert.assertArrayEquals(new int[] {3, 5, 6, 4}, DatasetUtils.rollAxis(a, 1, 4).getShape());
 	}
+
+	@Test
+	public void testSize() {
+		int[] zero = new int[] {0};
+		int[] one = new int[] {};
+		int[] small = new int[] {2};
+		int[] medium = new int[] {1024, 1024};
+		int[] large = new int[] {1024, 1024, 1024};
+		int[] xxxlarge = new int[] {1024, 1024, 1024, 1024};
+		int[] bad = new int[] {1024, -1, 1024};
+
+		assertEquals(0, AbstractDataset.calcLongSize(zero));
+		assertEquals(0, AbstractDataset.calcSize(zero));
+
+		assertEquals(1, AbstractDataset.calcLongSize(one));
+		assertEquals(1, AbstractDataset.calcSize(one));
+
+		assertEquals(2, AbstractDataset.calcLongSize(small));
+		assertEquals(2, AbstractDataset.calcSize(small));
+
+		assertEquals(1024*1024, AbstractDataset.calcLongSize(medium));
+		assertEquals(1024*1024, AbstractDataset.calcSize(medium));
+
+		assertEquals(1024*1024*1024, AbstractDataset.calcLongSize(large));
+		assertEquals(1024*1024*1024, AbstractDataset.calcSize(large));
+
+		assertEquals(1024*1024*1024*1024L, AbstractDataset.calcLongSize(xxxlarge));
+		try {
+			AbstractDataset.calcSize(xxxlarge);
+			fail("Should have thrown an illegal argument exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		} catch (Throwable t) {
+			fail("Should have thrown an illegal argument exception");
+		}
+
+		try {
+			AbstractDataset.calcLongSize(bad);
+			fail("Should have thrown an illegal argument exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		} catch (Throwable t) {
+			fail("Should have thrown an illegal argument exception");
+		}
+
+		try {
+			AbstractDataset.calcSize(bad);
+			fail("Should have thrown an illegal argument exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		} catch (Throwable t) {
+			fail("Should have thrown an illegal argument exception");
+		}
+	}
 }

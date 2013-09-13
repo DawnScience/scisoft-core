@@ -292,7 +292,7 @@ public class SDAPlotter {
 	}
 
 	/**
-	 * Add plot to existing plots
+	 * Add plots to existing plots
 	 * @param plotName
 	 *            The name of the view to plot to
 	 * @param title
@@ -301,6 +301,10 @@ public class SDAPlotter {
 	 *            The dataset to use as the x values
 	 * @param yValues
 	 *            The dataset to use as the y values
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
 	 * @param xAxisName
 	 *            The name of x-Axis, null if none
 	 * @param yAxisName
@@ -309,6 +313,26 @@ public class SDAPlotter {
 	 */
 	public static void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
 		getPlotterImpl().addPlot(plotName, title, xValues, yValues, new String[] {xAxisName}, new String[] {yAxisName});
+	}
+
+	/**
+	 * Add plots to existing plots
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xValues
+	 *            The dataset to use as the x values
+	 * @param yValues
+	 *            The dataset to use as the y values
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
+	 * @throws Exception
+	 */
+	public static void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		getPlotterImpl().addPlot(plotName, title, xValues, yValues, xAxisNames, yAxisNames);
 	}
 
 	/**

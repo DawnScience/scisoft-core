@@ -246,8 +246,7 @@ def _clear_axis(name):
 def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)
 
-    first = mode is None # plot first then add rest
-    if first:
+    if mode is None:
         _sleep(_NAP)
         _plot_clear(name)
         _clear_axis(name)
@@ -284,7 +283,10 @@ def _process_line(x, y, title, name, mode):
     else:
         xs = None
 
-    _plot_line(name, t, xs, ys, ax, ay)
+    if mode is None:
+        _plot_line(name, t, xs, ys, ax, ay)
+    else:
+        _plot_addline(name, t, xs, ys, ax, ay)
 
 def line(x, y=None, title=None, name=_PVNAME):
     '''Plot y dataset (or list of datasets), optionally against any

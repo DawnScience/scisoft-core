@@ -59,6 +59,10 @@ public class AbstractDatasetTest {
 		assertTrue("[2,1,4] and [2,1,1,4]", AbstractDataset.areShapesCompatible(new int[] {2,1,4}, new int[] {2,1,1,4}));
 		assertFalse("[2,4] and [2,4,3]", AbstractDataset.areShapesCompatible(new int[] {2,4}, new int[] {2,4,3}));
 		assertFalse("[2,1,4] and [2,4,3]", AbstractDataset.areShapesCompatible(new int[] {2,1,4}, new int[] {2,4,3}));
+		assertTrue(AbstractDataset.areShapesCompatible(new int[] {}, new int[] {}, 0));
+		assertTrue(AbstractDataset.areShapesCompatible(new int[] {2}, new int[] {3}, 0));
+		assertFalse(AbstractDataset.areShapesCompatible(new int[] {2,4}, new int[] {3,4}, 1));
+		assertTrue(AbstractDataset.areShapesCompatible(new int[] {2,4}, new int[] {3,4}, 0));
 //		assertTrue(AbstractDataset.areShapesCompatible(new int[] {}, new int[] {}));
 	}
 
@@ -1487,10 +1491,18 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testConcatenate() {
-		AbstractDataset a = AbstractDataset.arange(6, AbstractDataset.FLOAT64).reshape(3,2);
-		AbstractDataset b = AbstractDataset.arange(6, 8, 1, AbstractDataset.FLOAT64).reshape(1,2);
-		AbstractDataset c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
-		AbstractDataset d = AbstractDataset.arange(8, AbstractDataset.FLOAT64).reshape(4,2);
+		AbstractDataset a, b, c, d;
+		a = AbstractDataset.arange(6, AbstractDataset.FLOAT64);
+		b = AbstractDataset.arange(6, 8, 1, AbstractDataset.FLOAT64);
+		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
+		d = AbstractDataset.arange(8, AbstractDataset.FLOAT64);
+		assertEquals("Rank", 1, c.getRank());
+		assertTrue("Dataset", c.equals(d));
+
+		a = AbstractDataset.arange(6, AbstractDataset.FLOAT64).reshape(3,2);
+		b = AbstractDataset.arange(6, 8, 1, AbstractDataset.FLOAT64).reshape(1,2);
+		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
+		d = AbstractDataset.arange(8, AbstractDataset.FLOAT64).reshape(4,2);
 		assertEquals("Rank", 2, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 

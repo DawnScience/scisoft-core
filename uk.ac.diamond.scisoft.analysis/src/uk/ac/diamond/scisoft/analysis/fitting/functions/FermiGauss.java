@@ -32,7 +32,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  */
 public class FermiGauss extends AFunction implements Serializable{
 	
-	private static final Logger logger = LoggerFactory
+	private static final double TWO_SQRT_TWO_LN_TWO = 2.35482;
+
+	private static final int NUMBER_OF_PARAMETERS = 6;
+
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(FermiGauss.class);
 	
 	private static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5;
@@ -41,7 +45,7 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	private static String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
 
-	private double mu, kT, scaleM, scaleC, C, temperature, fwhm;
+	private double mu, kT, scaleM, scaleC, offset, temperature, fwhm;
 
 	private static String cdescription = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
 
@@ -56,16 +60,18 @@ public class FermiGauss extends AFunction implements Serializable{
 		super(params);
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
+		for(int i =0; i<paramNames.length;i++) {
 			setParameterName(paramNames[i], i);
+		}
 	}
 
 	public FermiGauss(IParameter[] params) {
 		super(params);
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
+		for(int i =0; i<paramNames.length;i++) {
 			setParameterName(paramNames[i], i);
+		}
 	}
 
 	/**
@@ -87,7 +93,7 @@ public class FermiGauss extends AFunction implements Serializable{
 					double minScaleM, double maxScaleM, double minScaleC, double maxScaleC,
 					double minC, double maxC, double minSigma, double maxSigma) {
 
-		super(6);
+		super(NUMBER_OF_PARAMETERS);
 
 		getParameter(0).setLimits(minMu, maxMu);
 		getParameter(0).setValue((minMu + maxMu) / 2.0);
@@ -109,8 +115,9 @@ public class FermiGauss extends AFunction implements Serializable{
 
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
+		for(int i =0; i<paramNames.length;i++) {
 			setParameterName(paramNames[i], i);
+		}
 	}
 
 	private void calcCachedParameters() {
@@ -118,7 +125,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		temperature = getParameterValue(1);
 		scaleM = getParameterValue(2);
 		scaleC = getParameterValue(3);
-		C = getParameterValue(4);
+		offset = getParameterValue(4);
 		fwhm = getParameterValue(5);
 		
 		markParametersClean();
@@ -127,9 +134,9 @@ public class FermiGauss extends AFunction implements Serializable{
 	
 	@Override
 	public double val(double... values)  {
-		if (areParametersDirty())
+		if (areParametersDirty()) {
 			calcCachedParameters();
-		
+		}
 
 		AbstractDataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
 		return fermiDS.getDouble(0);
@@ -139,27 +146,26 @@ public class FermiGauss extends AFunction implements Serializable{
 	public DoubleDataset makeDataset(IDataset... values) {
 		calcCachedParameters();
 		
-		IDataset xAxis = values[0];
+		AbstractDataset xAxis = (AbstractDataset) values[0];
 		
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
 		if (fwhm == 0.0) return new DoubleDataset(fermiDS);
 		
-		double localSigma = Math.abs(fwhm/2.35482); // convert to sigma
+		double localSigma = Math.abs(fwhm/TWO_SQRT_TWO_LN_TWO); // convert to sigma
 		
-		DoubleDataset conv = DoubleDataset.ones(xAxis.getShape());
+		Gaussian gauss = new Gaussian((double)xAxis.mean(), localSigma, 1.0);
+		DoubleDataset gaussDS = gauss.makeDataset(xAxis);
+		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
+		
+		DoubleDataset s1 = DoubleDataset.ones(fermiDS.getShape()[0]*2-1);
+		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {fermiDS.getShape()[0]/2}, new int[] {1});
+		s1.setSlice(fermiDS, new int[] {fermiDS.getShape()[0]/2}, new int[] {fermiDS.getShape()[0]*3/2}, new int[] {1});
+		s1.setSlice(fermiDS.getDouble(fermiDS.getShape()[0]-1), new int[] {fermiDS.getShape()[0]*3/2}, new int[] {fermiDS.getShape()[0]*2-1}, new int[] {1});
+		
+		DoubleDataset conv = (DoubleDataset) uk.ac.diamond.scisoft.analysis.dataset.Signal.convolveForOverlap(s1, gaussDS, null);
+
 		conv.setName("Convolution");
-		
-		for (int i = 0; i < conv.getShape()[0]; i++) {
-			Gaussian gauss = new Gaussian(xAxis.getDouble(i), localSigma, 1.0);
-			DoubleDataset gaussDS = gauss.makeDataset(xAxis);
-			gaussDS.idivide(gaussDS.sum());
-			
-			gaussDS.imultiply(fermiDS);
-			
-			conv.set(gaussDS.sum(), i);
-		}
-		
 		
 		return conv;
 	}
@@ -172,7 +178,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		AbstractDataset fermiDS = fermi.makeDataset(xAxis);
 		DoubleDataset slDS = sl.makeDataset(Maths.subtract(xAxis,mu));
 		fermiDS.imultiply(slDS);
-		fermiDS.iadd(C);
+		fermiDS.iadd(offset);
 		return fermiDS;
 	}
 	
@@ -185,7 +191,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	public double approximateFWHM(double realTemperaure) {
 
 		if (getParameterValue(1) < realTemperaure) {
-			logger.warn("Fitted temperature was below the real temperature");
+			LOGGER.warn("Fitted temperature was below the real temperature");
 			getParameter(1).setValue(realTemperaure);
 			getParameter(5).setValue(0.0);
 			return k2eV(realTemperaure)*8;
@@ -196,7 +202,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		double fwhm = fitEnergy*fitEnergy - realEnergy*realEnergy;
 		fwhm = Math.sqrt(fwhm);
 		getParameter(1).setValue(realTemperaure);
-		getParameter(5).setValue(fwhm); 
+		getParameter(5).setValue(fwhm);
 		
 		return fitEnergy*6;
 	}

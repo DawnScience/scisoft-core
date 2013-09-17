@@ -132,7 +132,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		}
 
 		DataHolder output = new DataHolder();
-		output.addDataset(fileName, data, data.getMetadata());
+		output.addDataset(DEF_IMAGE_NAME, data, data.getMetadata());
 		if (loadMetadata) {
 			data.setMetadata(getMetaData(data));
 			output.setMetadata(data.getMetadata());

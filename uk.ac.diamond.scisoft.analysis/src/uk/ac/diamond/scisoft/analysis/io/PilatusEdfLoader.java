@@ -42,7 +42,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
 	private Metadata metadata;
-	private static final String DATA_NAME = "ESRF Pilatus Data";
+	private static final String DATA_NAME = "EDF";
 
 	/**
 	 * @param fileName

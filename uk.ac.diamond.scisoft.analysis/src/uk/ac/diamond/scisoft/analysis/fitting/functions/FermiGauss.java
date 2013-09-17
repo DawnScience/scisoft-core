@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -139,7 +140,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	public DoubleDataset makeDataset(IDataset... values) {
 		calcCachedParameters();
 		
-		IDataset xAxis = values[0];
+		AbstractDataset xAxis = (AbstractDataset) values[0];
 		
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
@@ -147,19 +148,18 @@ public class FermiGauss extends AFunction implements Serializable{
 		
 		double localSigma = Math.abs(fwhm/2.35482); // convert to sigma
 		
-		DoubleDataset conv = DoubleDataset.ones(xAxis.getShape());
+		Gaussian gauss = new Gaussian((double)xAxis.mean(), localSigma, 1.0);
+		DoubleDataset gaussDS = gauss.makeDataset(xAxis);
+		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
+		
+		DoubleDataset s1 = DoubleDataset.ones(fermiDS.getShape()[0]*2-1);
+		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {fermiDS.getShape()[0]/2}, new int[] {1});
+		s1.setSlice(fermiDS, new int[] {fermiDS.getShape()[0]/2}, new int[] {fermiDS.getShape()[0]*3/2}, new int[] {1});
+		s1.setSlice(fermiDS.getDouble(fermiDS.getShape()[0]-1), new int[] {fermiDS.getShape()[0]*3/2}, new int[] {fermiDS.getShape()[0]*2-1}, new int[] {1});
+		
+		DoubleDataset conv = (DoubleDataset) uk.ac.diamond.scisoft.analysis.dataset.Signal.convolveForOverlap(s1, gaussDS, null);
+
 		conv.setName("Convolution");
-		
-		for (int i = 0; i < conv.getShape()[0]; i++) {
-			Gaussian gauss = new Gaussian(xAxis.getDouble(i), localSigma, 1.0);
-			DoubleDataset gaussDS = gauss.makeDataset(xAxis);
-			gaussDS.idivide(gaussDS.sum());
-			
-			gaussDS.imultiply(fermiDS);
-			
-			conv.set(gaussDS.sum(), i);
-		}
-		
 		
 		return conv;
 	}

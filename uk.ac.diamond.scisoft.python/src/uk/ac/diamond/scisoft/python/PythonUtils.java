@@ -206,7 +206,12 @@ public class PythonUtils {
 		int orank = shape.length;
 
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
-		IDataset dataSlice = DatasetUtils.convertToAbstractDataset(a).getSliceView(slice.slice);
+		IDataset dataSlice;
+		if (a instanceof IDataset) {
+			dataSlice = DatasetUtils.convertToAbstractDataset(a).getSliceView(slice.slice);
+		} else {
+			dataSlice = a.getSlice(slice.slice);
+		}
 
 		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
 		int rank = 0;

@@ -55,7 +55,7 @@ public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
 
 		DataHolder dataHolder = LoaderFactory.getData(testFileFolder + "diff6105.edf", null);
 
-		AbstractDataset data = dataHolder.getDataset("ESRF Pilatus Data");
+		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0), 98.0, 0.0);
 		assertEquals(data.getDouble(2047, 2047), 199.0, 0.0);
 	}

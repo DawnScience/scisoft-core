@@ -63,7 +63,7 @@ public class PilatusEdfLoaderTest {
 		
 		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
      		
-		IntegerDataset dataSet = (IntegerDataset)dataHolder.getDataset("ESRF Pilatus Data");
+		IntegerDataset dataSet = (IntegerDataset)dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		final int min = dataSet.min().intValue();
 		final int max = dataSet.max().intValue();
 		
@@ -84,7 +84,7 @@ public class PilatusEdfLoaderTest {
 		
 		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
      		
-		AbstractDataset data = dataHolder.getDataset("ESRF Pilatus Data");
+		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0),      98, 0.0);
 		assertEquals(data.getDouble(2047, 2047), 199, 0.0);
 	}
@@ -127,7 +127,7 @@ public class PilatusEdfLoaderTest {
 		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "ESPIA FRELON Image 6105");			
 		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "6105");
 		
-		AbstractDataset data = dataHolder.getDataset("ESRF Pilatus Data");
+		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0),      98.0, 0.0);
 		assertEquals(data.getDouble(2047, 2047),199.0, 0.0);
 	}
@@ -150,7 +150,7 @@ public class PilatusEdfLoaderTest {
 		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "# Pixel_size 172e-6 m x 172e-6 m");			
 		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "0");
 
-		AbstractDataset data = dataHolder.getDataset("ESRF Pilatus Data");
+		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		// Check the first 5 data points
 		assertEquals(data.getDouble(0, 0), 38.0, 0.0);
 		assertEquals(data.getDouble(0, 1), 38.0, 0.0);

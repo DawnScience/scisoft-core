@@ -61,7 +61,7 @@ public class MARImageTest {
         dh = LoaderFactory.getData(testfile4, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
         
-		assertTrue(dh.getName(0).contains("ins2-foc_MS_2_001.mccd"));
+		assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
 		
 		AbstractDataset data = dh.getDataset(0);
 		assertEquals(299, data.getDouble(1500, 1514), 1);

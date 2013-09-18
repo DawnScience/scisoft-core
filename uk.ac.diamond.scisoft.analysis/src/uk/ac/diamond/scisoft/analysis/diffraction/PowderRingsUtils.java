@@ -733,14 +733,14 @@ public class PowderRingsUtils {
 
 
 	private static final int MAX_ITER = 10000;
-	private static final int MAX_EVAL = 100000;
+	private static final int MAX_EVAL = 1000000;
 	private static final double REL_TOL = 1e-4;
 	private static final double ABS_TOL = 1e-6;
 	static boolean useSimplex = true;
 
 	private static MultivariateOptimizer createOptimizer() {
 		if (useSimplex) {
-			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e-2, ABS_TOL*1e-2));
+			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e-2, ABS_TOL*1e-6));
 		}
 		return new CMAESOptimizer(MAX_ITER, 0., true, 0, 10, seed == null ? new Well19937c() : new Well19937c(seed),
 				false, new SimplePointChecker<PointValuePair>(REL_TOL, ABS_TOL));

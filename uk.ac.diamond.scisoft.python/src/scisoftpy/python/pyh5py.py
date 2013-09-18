@@ -29,11 +29,13 @@ from .pycore import ndarray, ndgeneric, asarray, zeros, _key2slice
 from itertools import product #@UnresolvedImport
 
 class _lazydataset(object):
-    def __init__(self, dataset):
+    def __init__(self, dataset, isexternal):
         self.maxshape = dataset.maxshape
         self.shape = dataset.shape
         self.dtype = dataset.dtype
         self.file = dataset.file.filename
+        if isexternal:
+            dataset.file.close() # need to explicitly close otherwise file becomes inaccessible
         self.name = dataset.name
         self.rank = len(self.shape)
         prop = dataset.id.get_create_plist()
@@ -45,6 +47,10 @@ class _lazydataset(object):
     def __getitem__(self, key):
         try:
             fh = h5py.File(self.file, 'r')
+        except Exception, e:
+            import sys
+            print >> sys.stderr, 'Could not load |%s|\n' % self.file
+            raise io_exception, e
         finally:
             pass
 
@@ -144,6 +150,10 @@ class HDF5Loader(object):
         # capture all error messages
         try:
             fh = h5py.File(self.name, 'r')
+        except Exception, e:
+            import sys
+            print >> sys.stderr, 'Could not load |%s|\n' % self.name 
+            raise io_exception, e
         finally:
             pass
 
@@ -154,23 +164,24 @@ class HDF5Loader(object):
         pool = dict()
         t = self._copynode(pool, fh)
         fh.close()
+        pool.clear()
         return t
 
-    def _mkgroup(self, link, attrs, parent):
+    def _mkgroup(self, node, attrs, parent):
         if parent is None:
-            return _tree(link.filename, attrs)
+            return _tree(node.filename, attrs)
         return _group(attrs, parent)
 
-    def _mkdataset(self, dataset, attrs, parent):
-        d = _lazydataset(dataset)
+    def _mkdataset(self, node, attrs, link, parent):
+        d = _lazydataset(node, isinstance(link, h5py.ExternalLink))
         return _dataset(d, attrs=attrs, parent=parent)
 
-    def _copynode(self, pool, link, parent=None):
-        if link.id in pool:
-            return pool[link.id]
+    def _copynode(self, pool, node, link=None, parent=None):
+        if node.id in pool:
+            return pool[node.id]
 
         attrs = []
-        for n,v in link.attrs.items():
+        for k,v in node.attrs.items():
             if isinstance(v, ndgeneric):
                 if v.dtype.kind in 'SUa':
                     v = str(v)
@@ -182,27 +193,25 @@ class HDF5Loader(object):
             else:
                 if len(v) == 1:
                     v = v[0]
-            attrs.append((n, v))
+            attrs.append((k, v))
 
-        if isinstance(link, h5py.Group):
-            g = self._mkgroup(link, attrs, parent)
-            pool[link.id] = g
+        if isinstance(node, h5py.Group):
+            g = self._mkgroup(node, attrs, parent)
+            pool[node.id] = g
             nodes = []
-            for n,l in link.items():
+            for k in node.keys():
+                n = node.get(k)
+                l = node.get(k, getlink=True)
                 try:
-                    nodes.append((n, self._copynode(pool, l, g)))
+                    nodes.append((k, self._copynode(pool, n, l, g)))
                 except Exception, e:
-                    print n, l, e
+                    print k, n, e
             g.init_group(nodes)
             return g
-        elif isinstance(link, h5py.Dataset):
-            d = self._mkdataset(link, attrs, parent)
-            pool[link.id] = d
+        elif isinstance(node, h5py.Dataset):
+            d = self._mkdataset(node, attrs, link, parent)
+            pool[node.id] = d
             return d
-        elif isinstance(link, h5py.SoftLink):
-            pass
-        elif isinstance(link, h5py.ExternalLink):
-            pass
         else:
             pass
 
@@ -210,9 +219,9 @@ class HDF5Loader(object):
         pass
 
 class NXLoader(HDF5Loader):
-    def _mkgroup(self, link, attrs, parent):
+    def _mkgroup(self, node, attrs, parent):
         try:
-            cls = link.attrs['NX_class']
+            cls = node.attrs['NX_class']
         except KeyError:
             cls = None
         if cls is not None:
@@ -221,15 +230,15 @@ class NXLoader(HDF5Loader):
                 g = _nx.NX_CLASSES[cls](attrs, parent)
             else:
                 print 'Unknown Nexus class: %s' % cls
-                g = super(NXLoader, self)._mkgroup(link, attrs, parent)
-        elif link.name == '/':
-            g = _nx.NXroot(link.filename, attrs)
+                g = super(NXLoader, self)._mkgroup(node, attrs, parent)
+        elif node.name == '/':
+            g = _nx.NXroot(node.filename, attrs)
         else:
             g = _nx.NXgroup(attrs, parent)
 
         return g
 
-    def _mkdataset(self, dataset, attrs, parent):
-        d = _lazydataset(dataset)
+    def _mkdataset(self, dataset, attrs, link, parent):
+        d = _lazydataset(dataset, isinstance(link, h5py.ExternalLink))
         return SDS(d, attrs, parent)
 

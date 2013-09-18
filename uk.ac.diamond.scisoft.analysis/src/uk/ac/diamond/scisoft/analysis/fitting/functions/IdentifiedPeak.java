@@ -16,10 +16,16 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class IdentifiedPeak {
+public class IdentifiedPeak implements Serializable {
+	
+	
+	public IdentifiedPeak() {
+		
+	}
 
 	/**
 	 * Class describing the parameters of a peak found using the parsing method where the first derivative is used to

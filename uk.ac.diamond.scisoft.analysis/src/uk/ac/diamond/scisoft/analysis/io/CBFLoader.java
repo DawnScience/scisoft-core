@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -113,7 +114,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		chs.delete(); // this also closes the file
 
-		output.addDataset(fileName, data);
+		output.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
 			data.setMetadata(getMetaData());
 			output.setMetadata(data.getMetadata());

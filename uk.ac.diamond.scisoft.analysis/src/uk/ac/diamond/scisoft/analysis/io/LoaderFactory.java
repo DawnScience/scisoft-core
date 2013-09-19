@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -48,6 +49,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 // TODO Not sure if org.eclipse.core could break GDA server.
@@ -261,12 +263,39 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	public static DataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
+		return getData(path, willLoadMetadata, false, mon);
+	}
+
+	/**
+	 * Call to load any file type into memory. By default loads all data sets, therefore
+	 * could take a **long time**.
+	 * 
+	 * In addition to find out if a given file loads with a particular loader - it actually 
+	 * LOADS it. 
+	 * 
+	 * Therefore it can take a while to run depending on how quickly the loader
+	 * fails. Also if there are many loaders called in turn, much memory could be consumed and
+	 * discarded. For this reason the registration process requires a file extension and tries 
+	 * all the loaders for a given extension if the extension is registered already. 
+	 * Otherwise it tries all loaders - in no particular order.
+	 * 
+	 * @param path to file
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param mon
+	 * @return DataHolder
+	 * @throws Exception
+	 */
+	public static DataHolder getData(final String   path, 
+			                         final boolean  willLoadMetadata, 
+			                         final boolean  loadImageStacks, 
+			                         final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);
+		key.setLoadImageStacks(loadImageStacks);
 
 		final Object cachedObject = getSoftReference(key);
 		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
@@ -278,6 +307,7 @@ public class LoaderFactory {
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading it
 		// returns the data from this loader.
+		DataHolder holder = null;
 		while (it.hasNext()) {
 			final Class<? extends AbstractFileLoader> clazz = it.next();
 			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
@@ -286,11 +316,12 @@ public class LoaderFactory {
 				// NOTE Assumes loader fails quickly and nicely
 				// if given the wrong file. If a loader does not
 				// do this it should not be registered with LoaderFactory
-				DataHolder holder = loader.loadFile(mon);
+				holder = loader.loadFile(mon);
 				holder.setLoaderClass(clazz);
 				key.setMetadata(holder.getMetadata() != null);
 				recordSoftReference(key, holder);
-				return holder;
+				break;
+				
 			} catch (OutOfMemoryError ome) {
 				logger.error("There was not enough memory to load {}", path);
 				throw new ScanFileHolderException("Out of memory in loader factory", ome);
@@ -299,8 +330,54 @@ public class LoaderFactory {
 				continue;
 			}
 		}
+		
+		// For images, we can put another item in the data holder
+		// which represents the stack of other images in the same directory.
+		if (loadImageStacks && holder!=null) {
+		
+			if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2) {
+				final ILazyDataset stack = getImageStack(path, mon);
+				
+				if (stack!=null) holder.addDataset(stack.getName(), stack);
+			}
+
+		}
+		return holder;
+	}
+	
+	/**
+	 * This method can be used to load an image stack of other images in the same directory.
+	 * 
+	 * @param filePath - to one of the images in the stack.
+	 * @param mon
+	 * @return and image stack for 
+	 * @throws Exception
+	 */
+	public static final ILazyDataset getImageStack(final String filePath, IMonitor mon) throws Exception {
+		
+		if (filePath==null) return null;
+		final List<String> imageFilenames = new ArrayList<String>();
+		final File   file  = new File(filePath);
+		final String ext  = FileUtils.getFileExtension(file.getName());
+		final File   par = file.getParentFile();
+		if (par.isDirectory()) {
+			for (String fName : par.list()) {
+				if (fName.endsWith(ext)) {
+					final File f = new File(par,fName);
+					imageFilenames.add(f.getAbsolutePath());
+				}
+			}
+		}
+		
+		if (imageFilenames.size() > 1) {
+ 		    Collections.sort(imageFilenames, new SortNatural<String>(true));
+			ImageStackLoader loader = new ImageStackLoader(imageFilenames , mon);
+			LazyDataset lazyDataset = new LazyDataset("Image Stack", loader.getDtype(), loader.getShape(), loader);
+			return lazyDataset;
+		}
 		return null;
 	}
+
 
 	/**
 	 * Call to load file into memory with specific loader class

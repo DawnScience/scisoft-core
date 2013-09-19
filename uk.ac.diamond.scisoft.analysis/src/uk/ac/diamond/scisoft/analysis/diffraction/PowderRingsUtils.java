@@ -740,7 +740,7 @@ public class PowderRingsUtils {
 
 	private static MultivariateOptimizer createOptimizer() {
 		if (useSimplex) {
-			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e-2, ABS_TOL*1e-6));
+			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e-2, ABS_TOL*1e-4));
 		}
 		return new CMAESOptimizer(MAX_ITER, 0., true, 0, 10, seed == null ? new Well19937c() : new Well19937c(seed),
 				false, new SimplePointChecker<PointValuePair>(REL_TOL, ABS_TOL));
@@ -971,8 +971,8 @@ public class PowderRingsUtils {
 			double a = base - e.getAngle();
 			for (double off : FitFunctionBase.angles) {
 				double[] pt = e.getPoint(a + off);
-				known[i][j++] = pt[0];
-				known[i][j++] = pt[1];
+				known[i][j++] = pt[0] + 0.5; // this offset fixes the discrepancy between pixel and lab coordinates 
+				known[i][j++] = pt[1] + 0.5;
 			}
 		}
 
@@ -1004,8 +1004,8 @@ public class PowderRingsUtils {
 			int j = 0;
 			for (double off : FitFunctionBase.angles) {
 				double[] pt = e.getPoint(off);
-				known[i][j++] = pt[0];
-				known[i][j++] = pt[1];
+				known[i][j++] = pt[0] + 0.5;
+				known[i][j++] = pt[1] + 0.5;
 			}
 		}
 
@@ -1037,6 +1037,8 @@ public class PowderRingsUtils {
 
 		for (int k = 0; k < m; k++) {
 			List<EllipticalROI> ellipses = lEllipses.get(k);
+			DetectorProperties dp = lDP.get(k);
+			double dist = dp.getBeamCentreDistance()/dp.getHPxSize();
 			int n = ellipses.size();
 			double[][] known = new double[n][FitFunctionBase.nC];
 			allKnowns[k] = known;
@@ -1049,13 +1051,13 @@ public class PowderRingsUtils {
 
 			for (int i = 0; i < n; i++) {
 				EllipticalROI e = ellipses.get(i);
-				weight[i] = e.getSemiAxis(0);
+				weight[i] = e.getSemiAxis(0)/dist;
 				int j = 0;
 				double a = base - e.getAngle();
 				for (double off : FitFunctionBase.angles) {
 					double[] pt = e.getPoint(a + off);
-					known[i][j++] = pt[0];
-					known[i][j++] = pt[1];
+					known[i][j++] = pt[0] + 0.5;
+					known[i][j++] = pt[1] + 0.5;
 				}
 			}
 		}
@@ -1158,7 +1160,8 @@ public class PowderRingsUtils {
 
 		// points are selected from given offset angles to fit to on each ring
 //		protected static final double[] angles = {0, RIGHT_ANGLE, Math.PI, -RIGHT_ANGLE}; // offset angles
-		protected static final double[] angles = {0, Math.PI/3, 2*Math.PI/3, Math.PI, -2*Math.PI/3, -Math.PI/3}; // offset angles
+		protected static final double[] angles = {0, Math.PI/6, Math.PI/3, Math.PI/2, 2*Math.PI/3, 5*Math.PI/6, Math.PI, -5*Math.PI/6, -2*Math.PI/3, -Math.PI/2, -Math.PI/3, -Math.PI/6}; // offset angles
+//		protected static final double[] angles = {0, Math.PI/3, 2*Math.PI/3, Math.PI, -2*Math.PI/3, -Math.PI/3}; // offset angles
 		protected static final int nC = 2 * angles.length; // number of coordinate values per ring
 
 		@Override

@@ -31,6 +31,9 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
  */
 public class FunctionSquirts implements Serializable {
 	
+	private List<IdentifiedPeak> identifiedPeaks;
+	private IROI                 fitBounds;
+	
 	private List<Squirt> squirts;
 	private Squirt       selected;
 
@@ -165,6 +168,22 @@ public class FunctionSquirts implements Serializable {
 
 	public void setSelected(Squirt selected) {
 		this.selected = selected;
+	}
+
+	public List<IdentifiedPeak> getIdentifiedPeaks() {
+		return identifiedPeaks;
+	}
+
+	public void setIdentifiedPeaks(List<IdentifiedPeak> identifiedPeaks) {
+		this.identifiedPeaks = identifiedPeaks;
+	}
+
+	public IROI getFitBounds() {
+		return fitBounds;
+	}
+
+	public void setFitBounds(IROI fitBounds) {
+		this.fitBounds = fitBounds;
 	}
 
 }

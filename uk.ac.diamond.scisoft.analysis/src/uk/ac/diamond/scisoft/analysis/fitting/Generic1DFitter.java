@@ -475,4 +475,34 @@ public class Generic1DFitter implements Serializable {
 		return ret;
 	}
 
+	
+	/**
+	 * Slices x and y using the x as the reference.
+	 * @param x
+	 * @param y - may be null
+	 * @param startValue
+	 * @param endValue
+	 * @return x and y sliced to the startValue and endValue
+	 */
+	public static AbstractDataset[] xintersection(AbstractDataset x,
+			                                      AbstractDataset y, 
+			                                      final double startValue, 
+			                                      final double endValue) {
+		
+		List<Double> cross = DatasetUtils.crossings(x, startValue);		
+		final int    start = cross==null || cross.isEmpty() 
+				           ? 0
+				           : (int)Math.floor(cross.get(0)); // Lower value
+		
+		cross = DatasetUtils.crossings(x, endValue);		
+		final int    stop  =  cross==null || cross.isEmpty() 
+				           ? x.getSize()-1
+				           : (int)Math.ceil(cross.get(cross.size()-1)); // Upper value
+		
+		x = x.getSlice(new int[] { start }, new int[] { stop }, null);
+		if (y!=null) y = y.getSlice(new int[] { start }, new int[] { stop }, null);		
+		
+		return (y!=null) ? new AbstractDataset[]{x,y} : new AbstractDataset[]{x};
+	}
+
 }

@@ -81,5 +81,11 @@ public interface IDataHolder {
 	 * @return Number of unique dataset names
 	 */
 	public int namesSize();
+	
+	/**
+	 * The file path, if any of the data loaded.
+	 * @return path to data
+	 */ 
+	public String getFilePath();
 
 }

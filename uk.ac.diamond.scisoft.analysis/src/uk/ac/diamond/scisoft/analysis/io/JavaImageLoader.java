@@ -142,7 +142,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 		data = createDataset(input);
 		data.setName(DEF_IMAGE_NAME);
 		DataHolder output = new DataHolder();
-		output.addDataset(fileName, data);
+		output.addDataset(DEF_IMAGE_NAME, data);
 		return output;
 	}
 

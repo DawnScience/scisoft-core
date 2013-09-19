@@ -30,7 +30,6 @@ public class LoaderKey {
 	private List<String> datasetNames;
 	private SliceObject slice;
 	private boolean metadata;
-	private boolean loadImageStacks;
 
 	public LoaderKey() {
 	}
@@ -68,11 +67,10 @@ public class LoaderKey {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (int) (dateStamp ^ (dateStamp >>> 32));
 		result = prime * result + ((datasetName == null) ? 0 : datasetName.hashCode());
 		result = prime * result + ((datasetNames == null) ? 0 : datasetNames.hashCode());
-		result = prime * result + (int) (dateStamp ^ (dateStamp >>> 32));
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-		result = prime * result + (loadImageStacks ? 1231 : 1237);
 		result = prime * result + (metadata ? 1231 : 1237);
 		result = prime * result + ((slice == null) ? 0 : slice.hashCode());
 		return result;
@@ -87,6 +85,8 @@ public class LoaderKey {
 		if (getClass() != obj.getClass())
 			return false;
 		LoaderKey other = (LoaderKey) obj;
+		if (dateStamp != other.dateStamp)
+			return false;
 		if (datasetName == null) {
 			if (other.datasetName != null)
 				return false;
@@ -97,14 +97,10 @@ public class LoaderKey {
 				return false;
 		} else if (!datasetNames.equals(other.datasetNames))
 			return false;
-		if (dateStamp != other.dateStamp)
-			return false;
 		if (filePath == null) {
 			if (other.filePath != null)
 				return false;
 		} else if (!filePath.equals(other.filePath))
-			return false;
-		if (loadImageStacks != other.loadImageStacks)
 			return false;
 		if (metadata != other.metadata)
 			return false;
@@ -160,13 +156,5 @@ public class LoaderKey {
 		if (dateStamp != other.dateStamp)               return false;
 		if (!getFilePath().equals(other.getFilePath())) return false;
 		return true;
-	}
-
-	public boolean isLoadImageStacks() {
-		return loadImageStacks;
-	}
-
-	public void setLoadImageStacks(boolean loadImageStacks) {
-		this.loadImageStacks = loadImageStacks;
 	}
 }

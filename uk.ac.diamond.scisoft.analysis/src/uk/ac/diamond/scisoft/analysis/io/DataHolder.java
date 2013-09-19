@@ -59,6 +59,11 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * Loader class string
 	 */
 	private String loaderClass;
+	
+	/**
+	 * The path to the original file loaded (if any)
+	 */
+	private String filePath;
 
 	/**
 	 * This must create the three objects which will be put into the ScanFileHolder
@@ -296,6 +301,14 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 
 	public void setLoaderClass(Class<? extends AbstractFileLoader> clazz) {
 		loaderClass = clazz.getName();
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 }

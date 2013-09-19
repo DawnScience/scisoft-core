@@ -286,48 +286,53 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	public static DataHolder getData(final String   path, 
-			                         final boolean  willLoadMetadata, 
-			                         final boolean  loadImageStacks, 
-			                         final IMonitor mon) throws Exception {
+									final boolean  willLoadMetadata, 
+									final boolean  loadImageStacks, 
+									final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		
+		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
+		// Instead when loadImageStacks=true, we add the stack to the already
+		// cached data. So reducing the cache size.
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);
-		key.setLoadImageStacks(loadImageStacks);
+		// END IMPORTANT
 
 		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
-
-		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
-
-		// Currently this method simply cycles through all loaders.
-		// When it finds one which does not give an exception on loading it
-		// returns the data from this loader.
 		DataHolder holder = null;
-		while (it.hasNext()) {
-			final Class<? extends AbstractFileLoader> clazz = it.next();
-			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
-			loader.setLoadMetadata(willLoadMetadata);
-			try {
-				// NOTE Assumes loader fails quickly and nicely
-				// if given the wrong file. If a loader does not
-				// do this it should not be registered with LoaderFactory
-				holder = loader.loadFile(mon);
-				holder.setLoaderClass(clazz);
-				key.setMetadata(holder.getMetadata() != null);
-				recordSoftReference(key, holder);
-				break;
-				
-			} catch (OutOfMemoryError ome) {
-				logger.error("There was not enough memory to load {}", path);
-				throw new ScanFileHolderException("Out of memory in loader factory", ome);
-			} catch (Throwable ne) {
-				logger.trace("Loader {} error", loader, ne);
-				continue;
+		if (cachedObject!=null && cachedObject instanceof DataHolder) holder = (DataHolder)cachedObject;
+
+		if (holder==null) { // try and load it
+			final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+			if (it == null) return null;
+	
+			// Currently this method simply cycles through all loaders.
+			// When it finds one which does not give an exception on loading it
+			// returns the data from this loader.
+			while (it.hasNext()) {
+				final Class<? extends AbstractFileLoader> clazz = it.next();
+				final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
+				loader.setLoadMetadata(willLoadMetadata);
+				try {
+					// NOTE Assumes loader fails quickly and nicely
+					// if given the wrong file. If a loader does not
+					// do this it should not be registered with LoaderFactory
+					holder = loader.loadFile(mon);
+					holder.setLoaderClass(clazz);
+					holder.setFilePath(path);
+					key.setMetadata(holder.getMetadata() != null);
+					recordSoftReference(key, holder);
+					break;
+					
+				} catch (OutOfMemoryError ome) {
+					logger.error("There was not enough memory to load {}", path);
+					throw new ScanFileHolderException("Out of memory in loader factory", ome);
+				} catch (Throwable ne) {
+					logger.trace("Loader {} error", loader, ne);
+					continue;
+				}
 			}
 		}
 		
@@ -336,7 +341,7 @@ public class LoaderFactory {
 		if (loadImageStacks && holder!=null) {
 		
 			if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2) {
-				final ILazyDataset stack = getImageStack(path, mon);
+				final ILazyDataset stack = getImageStack(path, holder, mon);
 				
 				if (stack!=null) holder.addDataset(stack.getName(), stack);
 			}
@@ -353,7 +358,7 @@ public class LoaderFactory {
 	 * @return and image stack for 
 	 * @throws Exception
 	 */
-	public static final ILazyDataset getImageStack(final String filePath, IMonitor mon) throws Exception {
+	public static final ILazyDataset getImageStack(final String filePath, DataHolder dh, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
 		final List<String> imageFilenames = new ArrayList<String>();
@@ -371,7 +376,7 @@ public class LoaderFactory {
 		
 		if (imageFilenames.size() > 1) {
  		    Collections.sort(imageFilenames, new SortNatural<String>(true));
-			ImageStackLoader loader = new ImageStackLoader(imageFilenames , mon);
+			ImageStackLoader loader = new ImageStackLoader(imageFilenames, dh, mon);
 			LazyDataset lazyDataset = new LazyDataset("Image Stack", loader.getDtype(), loader.getShape(), loader);
 			return lazyDataset;
 		}
@@ -492,6 +497,12 @@ public class LoaderFactory {
 
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return true if another value has been replaced.
+	 */
 	private static boolean recordSoftReference(LoaderKey key, Object value) {
 		
 		if (Boolean.getBoolean(NO_CACHING)) return false;

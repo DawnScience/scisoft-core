@@ -78,7 +78,7 @@ public class RawTextLoader extends AbstractFileLoader {
 			final AbstractDataset ds = AbstractDataset.array(rows);
 			ds.squeeze(); // convert Nx1 to 1D dataset
 			DataHolder dh = new DataHolder();
-			dh.addDataset(fileName, ds);
+			dh.addDataset(DEF_IMAGE_NAME, ds);
 			return dh;
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("Cannot load file", fnf);

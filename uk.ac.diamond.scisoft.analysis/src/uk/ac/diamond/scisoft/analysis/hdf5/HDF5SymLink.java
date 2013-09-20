@@ -36,11 +36,19 @@ public class HDF5SymLink extends HDF5Node {
 	}
 
 	/**
+	 * Get node link referenced by symbolic link
+	 * @return node
+	 */
+	public HDF5NodeLink getNodeLink() {
+		return file.findNodeLink(path);
+	}
+
+	/**
 	 * Get node referenced by symbolic link
 	 * @return node
 	 */
 	public HDF5Node getNode() {
-		HDF5NodeLink l = file.findNodeLink(path);
+		HDF5NodeLink l = getNodeLink();
 		return l != null ? l.getDestination() : null;
 	}
 

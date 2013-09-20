@@ -1333,6 +1333,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			return true;
 		}
 
+		// check for zero-sized datasets
+		if (AbstractDataset.calcLongSize(trueShape) == 0) {
+			dataset.setEmpty();
+			return true;
+		}
+
 		final String host = file.getHostname();
 		final String filePath = file.getFilename();
 
@@ -1868,8 +1874,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {
 				String n = e.getKey();
 				ILazyDataset l = e.getValue();
-				dh.addDataset(n, l);
-				metadata.addDataInfo(n, l.getShape());
+				if (l != null) {
+					dh.addDataset(n, l);
+					metadata.addDataInfo(n, l.getShape());
+				}
 			}
 			dh.setMetadata(metadata);
 		} else {
@@ -2053,7 +2061,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 									logger.error("Could not create a lazy dataset {} from {}", oname, name);
 									continue;
 								}
-								list.add(d.getDataset());
+								if (d.getDataset() != null)
+									list.add(d.getDataset());
 							}
 						} catch (HDF5Exception ex) {
 							logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);

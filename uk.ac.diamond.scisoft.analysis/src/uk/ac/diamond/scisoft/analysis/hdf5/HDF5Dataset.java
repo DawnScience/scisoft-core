@@ -41,6 +41,7 @@ public class HDF5Dataset extends HDF5Node {
 	}
 
 	/**
+	 * This can return null for empty datasets
 	 * @return lazy dataset
 	 */
 	public ILazyDataset getDataset() {
@@ -82,6 +83,14 @@ public class HDF5Dataset extends HDF5Node {
 	}
 
 	/**
+	 * Set dataset to be empty
+	 */
+	public void setEmpty() {
+		dataset = null;
+		supported = true;
+	}
+
+	/**
 	 * Get a string if this dataset is a string or dataset
 	 * @return string or null
 	 */
@@ -110,7 +119,7 @@ public class HDF5Dataset extends HDF5Node {
 		if (string) {
 			out.append(getString());
 		} else if (supported) {
-			out.append(dataset.toString());
+			out.append(dataset == null ? "empty" : dataset.toString());
 		} else {
 			out.append("unsupported");
 		}

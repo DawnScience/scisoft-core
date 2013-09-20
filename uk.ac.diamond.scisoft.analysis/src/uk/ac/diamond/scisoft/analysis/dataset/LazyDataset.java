@@ -295,7 +295,7 @@ public class LazyDataset implements ILazyDataset {
 		}
 
 		if (stop == null) {
-			lstop = new int[rank];
+			lstop = getShape();
 		} else {
 			lstop = stop;
 		}

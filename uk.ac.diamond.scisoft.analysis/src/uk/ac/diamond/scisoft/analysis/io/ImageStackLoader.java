@@ -18,10 +18,12 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public class ImageStackLoader implements ILazyLoader {
@@ -62,9 +64,34 @@ public class ImageStackLoader implements ILazyLoader {
 	public boolean isFileReadable() {
 		return true;
 	}
+	
+
+	private AbstractDataset getFullStack() throws ScanFileHolderException {
+		
+ 		
+    	DataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
+    	AbstractDataset a    = data.getDataset(0);
+    	
+		AbstractDataset result = AbstractDataset.zeros(shape, dtype);
+     	Object          buffer = result.getBuffer();
+		
+		int image = 0;
+        for (String path : imageFilenames) {
+        	final DataHolder      d = LoaderFactory.getData(loaderClass, path, true, new IMonitor.Stub());
+        	final AbstractDataset i = d.getDataset(0);
+        	System.arraycopy(i.getBuffer(), 0, buffer, image*a.getSize(), a.getSize());
+        	++image;
+		}
+        
+        return result;
+	}
+
 
 	@Override
 	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+		
+		if (start==null && step==null) return getFullStack();// Might cause out of memory!
+		                                                     // But this allows expressions of the stack to work if the stack fit in memory.
 		
 		if (step == null) {
 			step = new int[shape.length];

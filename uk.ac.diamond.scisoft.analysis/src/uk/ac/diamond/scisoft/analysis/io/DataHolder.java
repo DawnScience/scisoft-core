@@ -73,6 +73,23 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 		names = new Vector<String>();
 		metadata = new Metadata();
 	}
+	
+	/**
+	 * 
+	 * @return shallow copy of DataHolder
+	 */
+	@Override
+	public IDataHolder clone() {
+		
+		DataHolder ret = new DataHolder();
+		ret.data.addAll(data);
+		ret.names.addAll(names);
+		ret.metadata    = metadata.clone();
+		ret.filePath    = filePath;
+		ret.loaderClass = loaderClass;
+		return ret;
+	}
+	
 
 	/**
 	 * Adds a dataset and its name into the two vectors of the Object.
@@ -82,6 +99,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param dataset
 	 *            the actual data of the dataset
 	 */
+	@Override
 	public void addDataset(String name, ILazyDataset dataset) {
 		names.add(name);
 		data.add(dataset);

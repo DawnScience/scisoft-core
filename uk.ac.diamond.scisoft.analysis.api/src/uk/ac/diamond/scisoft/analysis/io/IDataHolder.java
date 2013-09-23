@@ -19,7 +19,16 @@ package uk.ac.diamond.scisoft.analysis.io;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
-public interface IDataHolder {
+public interface IDataHolder extends Cloneable {
+	
+	/**
+	 * Does a shallow copy of the data which is useful for 
+	 * the case where additional ILazyDatasets may be registered with
+	 * the holder.
+	 * 
+	 * @return a shallow copy
+	 */
+	public IDataHolder clone();
 
 	/**
 	 * @return an object implementing IMetaData
@@ -87,5 +96,18 @@ public interface IDataHolder {
 	 * @return path to data
 	 */ 
 	public String getFilePath();
+	
+	/**
+	 * Allows a dataset to be added to the holder.
+	 * WARNING expert use only! If you add data to a holder without
+	 * cloning it, you can change the cached LoaderFactory version.
+	 * 
+	 * This can result in all users getting any extra data added to the holder.
+	 * 
+	 * @param name
+	 * @param dataset
+	 */
+	public void addDataset(String name, ILazyDataset dataset);
+
 
 }

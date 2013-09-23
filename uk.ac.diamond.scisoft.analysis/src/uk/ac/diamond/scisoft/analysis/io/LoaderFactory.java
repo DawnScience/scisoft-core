@@ -578,8 +578,10 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Loads a single data set where the loader allows loading of only one data set.
-	 * Otherwise returns null.
+	 * Loads a single data by loading the whole data holder and asking for the dataset
+	 * by name. Loaders should load things properly to ILazyDatasets and then this method
+	 * will take from the data holder the set by name. This uses caching of the data holder
+	 * if the data has been previously loaded into a DataHolder.
 	 * 
 	 * @param path
 	 * @param mon
@@ -589,7 +591,7 @@ public class LoaderFactory {
 	public static IDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
 		// Makes the cache the DataHolder
-        final IDataHolder holder = getData(path, mon);
+        final IDataHolder holder = getData(path, false, mon);
         if (holder == null) return null;
         return holder.getDataset(name);
 	}

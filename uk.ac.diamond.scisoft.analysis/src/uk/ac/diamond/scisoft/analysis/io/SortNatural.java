@@ -17,7 +17,7 @@ import java.util.Comparator;
 /**
  *
  */
-public class SortNatural<E> implements Comparator<E> {
+class SortNatural<E> implements Comparator<E> {
 	
 	private final boolean isCaseSensitive;
 	/**

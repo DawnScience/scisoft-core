@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
@@ -587,123 +586,12 @@ public class LoaderFactory {
 	 * @return IDataset
 	 * @throws Exception
 	 */
-	public static AbstractDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
+	public static IDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		
-		try { // See if whole data already loaded, if is try to get from DataHolder!
-			final LoaderKey key = new LoaderKey();
-			key.setFilePath(path);
-			key.setMetadata(true);
-
-			final Object cachedObject = getSoftReference(key);
-			if (cachedObject!=null && cachedObject instanceof DataHolder) {
-				DataHolder   holder = (DataHolder)cachedObject;
-				return holder.getDataset(name);
-			}
-		} catch (Throwable ignored) {
-			// We were just trying it.
-		}
-		
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setDatasetName(name);
-		
-		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null && cachedObject instanceof AbstractDataset) return (AbstractDataset)cachedObject;
-		if (cachedObject!=null && cachedObject instanceof DataHolder) {
-			return ((DataHolder)cachedObject).getDataset(name); 
-		}
-
-		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
-
-		// Currently this method simply cycles through all loaders.
-		// When it finds one which does not give an exception on loading it
-		// returns the data from this loader.
-		while (it.hasNext()) {
-			final Class<? extends AbstractFileLoader> clazz = it.next();
-			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
-
-			try {
-				// NOTE Assumes loader fails quickly and nicely
-				// if given the wrong file. If a loader does not
-				// do this, it should not be registered with LoaderFactory
-				final AbstractDataset set;
-				if (loader instanceof IDataSetLoader) {
-					set = (AbstractDataset)((IDataSetLoader) loader).loadSet(path, name, mon);
-				} else {
-					DataHolder holder = loader.loadFile(mon);
-					ILazyDataset lazy = holder.getLazyDataset(name);
-					
-					// We know it is null, record holder that to save reading the
-					// file a lot.
-					if (lazy == null) {
-						recordSoftReference(key, holder);
-						return null;
-					}
-					if (lazy instanceof IDataset)
-						set = DatasetUtils.convertToAbstractDataset(lazy);
-					else // this can load in very large datasets so beware!
-						set = DatasetUtils.convertToAbstractDataset(lazy.getSlice(mon));
-				}
-				key.setMetadata(set.getMetadata() != null);
-				recordSoftReference(key, set);
-				return set;
-			} catch (Throwable ne) {
-				continue;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Loads a single data set where the loader allows loading of only one data set.
-	 * Otherwise returns null.
-	 * 
-	 * @param path
-	 * @param mon
-	 * @return IDataset
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public static Map<String,ILazyDataset> getDataSets(final String path, final List<String> names, final IMonitor mon) throws Exception {
-
-		
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setDatasetNames(names);
-		
-		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null) return (Map<String,ILazyDataset>)cachedObject;
-
-		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
-
-		// Currently this method simply cycles through all loaders.
-		// When it finds one which does not give an exception on loading it
-		// returns the data from this loader.
-		while (it.hasNext()) {
-			final Class<? extends AbstractFileLoader> clazz = it.next();
-			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
-
-			try {
-				// NOTE Assumes loader fails quickly and nicely
-				// if given the wrong file. If a loader does not
-				// do this, it should not be registered with LoaderFactory
-				Map<String,ILazyDataset> sets = ((IDataSetLoader) loader).loadSets(path, names, mon);
-				recordSoftReference(key, sets);
-				return sets;
-			} catch (Throwable ne) {
-				continue;
-			}
-		}
-
-		return null;
+		// Makes the cache the DataHolder
+        final IDataHolder holder = getData(path, mon);
+        if (holder == null) return null;
+        return holder.getDataset(name);
 	}
 
 	/**
@@ -715,17 +603,6 @@ public class LoaderFactory {
 	public boolean isMetaLoader(final String path) throws Exception {
 
 		return isInstanceSupported(path, IMetaLoader.class);
-	}
-
-	/**
-	 * Returns true if a given file is an IDataSetLoader and able to load data without the metadata
-	 * 
-	 * @param path
-	 * @return true if can load individual data sets.
-	 */
-	public boolean isDataSetLoader(final String path) throws Exception {
-
-		return isInstanceSupported(path, IDataSetLoader.class);
 	}
 
 	private boolean isInstanceSupported(String path, Class<?> interfaceClass) throws Exception {

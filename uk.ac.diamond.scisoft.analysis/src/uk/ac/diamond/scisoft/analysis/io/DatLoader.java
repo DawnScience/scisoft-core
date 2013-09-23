@@ -95,7 +95,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 It is also legal to have no header section at all and just columns of white space separated numbers.
 In this case the columns will be labelled Column_1...Column_N.
  */
-public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataSetLoader{
+public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	
 	transient protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
 	
@@ -235,7 +235,6 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 		}
 	}
 
-	@Override
 	public AbstractDataset loadSet(final String path, final String name, final IMonitor mon) throws Exception {
 		
 		setFile(path);
@@ -251,7 +250,6 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader, IDataS
 	 * There are no efficiency gains in using this method, it reads everything in and garbage
 	 * collects what is not needed.
 	 */
-	@Override
 	public Map<String,ILazyDataset> loadSets(String path, List<String> names, IMonitor mon) throws Exception {
 		
 		setFile(path);

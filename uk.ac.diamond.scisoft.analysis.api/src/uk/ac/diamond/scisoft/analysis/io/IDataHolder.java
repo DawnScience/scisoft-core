@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.Map;
+
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
@@ -108,6 +110,12 @@ public interface IDataHolder extends Cloneable {
 	 * @param dataset
 	 */
 	public void addDataset(String name, ILazyDataset dataset);
+
+	/**
+	 * The current data as a map
+	 * @return map of lazy data
+	 */
+	public Map<String, ILazyDataset> toLazyMap();
 
 
 }

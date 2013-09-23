@@ -74,6 +74,21 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 		metadata = new Metadata();
 	}
 	
+
+	/**
+	 * The current data as a map
+	 * @return map of lazy data
+	 */
+	@Override
+	public Map<String, ILazyDataset> toLazyMap() {
+		final Map<String, ILazyDataset> ret= new LinkedHashMap<String, ILazyDataset>(names.size());
+		for (String name : names) {
+			ret.put(name, getLazyDataset(name));
+		}
+		return ret;
+	}
+
+	
 	/**
 	 * 
 	 * @return shallow copy of DataHolder

@@ -48,7 +48,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  *
  */
-public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDataSetLoader {
+public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	private static final Logger logger = LoggerFactory.getLogger(NexusLoader.class);
 
 	private String filename;
@@ -465,7 +465,6 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 	}
 	
 	
-	@Override
 	public AbstractDataset loadSet(String path, String name, IMonitor mon) throws Exception {
 		
 		final List<String> origNames    =  dataSetNames;
@@ -482,7 +481,6 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader, IDat
 		}
     }
 	
-	@Override
 	public Map<String,ILazyDataset> loadSets(String path, List<String> names, IMonitor mon) throws Exception {
 		
 		final List<String> origNames    =  dataSetNames;

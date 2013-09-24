@@ -57,6 +57,15 @@ abstract public class AbstractPlotServer implements PlotServer {
 		} else {
 			dataStore.put(guiName, data);
 		}
+
+		// update plot mode
+		GuiPlotMode mode = data.getGuiPlotMode();
+		GuiBean bean = guiStore.get(guiName);
+		if (bean == null) {
+			bean = new GuiBean();
+			guiStore.put(guiName, bean);
+		}
+		bean.put(GuiParameters.PLOTMODE, mode);
 	}
 
 	@Override

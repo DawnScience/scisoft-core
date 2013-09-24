@@ -92,7 +92,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 
 	
 	/**
-	 * 
+	 * Does not clone the meta data.
 	 * @return shallow copy of DataHolder
 	 */
 	@Override
@@ -101,7 +101,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		DataHolder ret = new DataHolder();
 		ret.data.addAll(data);
 		ret.names.addAll(names);
-		ret.metadata    = metadata!=null ? metadata.clone() : null;
+		ret.metadata    = metadata;
 		ret.filePath    = filePath;
 		ret.loaderClass = loaderClass;
 		return ret;

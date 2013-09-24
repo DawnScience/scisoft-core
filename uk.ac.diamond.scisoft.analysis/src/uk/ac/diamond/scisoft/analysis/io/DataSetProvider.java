@@ -17,12 +17,12 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public interface DataSetProvider {
 
-	public AbstractDataset getDataSet(String name, final IMonitor monitor);
+	public IDataset getDataSet(String name, final IMonitor monitor);
 
 	public boolean isDataSetName(String name, IMonitor monitor);
 

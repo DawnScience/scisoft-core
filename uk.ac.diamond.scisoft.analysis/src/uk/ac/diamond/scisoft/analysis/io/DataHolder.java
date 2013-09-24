@@ -101,7 +101,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		DataHolder ret = new DataHolder();
 		ret.data.addAll(data);
 		ret.names.addAll(names);
-		ret.metadata    = metadata.clone();
+		ret.metadata    = metadata!=null ? metadata.clone() : null;
 		ret.filePath    = filePath;
 		ret.loaderClass = loaderClass;
 		return ret;

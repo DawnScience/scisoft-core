@@ -596,7 +596,7 @@ def getrois(bean, roi=None):
 
 def setrois(bean, roilist):
     '''Set list/dict of regions of interest in bean'''
-    if not bean:
+    if bean is None:
         raise ValueError, "No bean given"
 
     if not isinstance(roilist, (roi.linelist, roi.rectlist, roi.sectlist)):

@@ -106,10 +106,13 @@ public interface IDataHolder extends Cloneable {
 	 * 
 	 * This can result in all users getting any extra data added to the holder.
 	 * 
+	 * The name will be replaced as duplicates are not allowed.
+	 * 
 	 * @param name
 	 * @param dataset
+	 * @return true if replaced old name, false normally.
 	 */
-	public void addDataset(String name, ILazyDataset dataset);
+	public boolean addDataset(String name, ILazyDataset dataset);
 
 	/**
 	 * The current data as a map

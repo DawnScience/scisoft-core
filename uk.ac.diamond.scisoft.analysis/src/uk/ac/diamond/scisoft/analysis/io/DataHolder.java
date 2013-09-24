@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +38,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
  * This is designed to take in any dataset obeying the IDataset interface but output an
  * object that is a subclass of AbstractDataset - the dataset will be converted if necessary.
  */
-public class DataHolder implements IMetadataProvider, IDataHolder {
+public class DataHolder implements IMetadataProvider, IDataHolder, Serializable {
+	
 	protected static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**
@@ -115,13 +117,18 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 *            the actual data of the dataset
 	 */
 	@Override
-	public void addDataset(String name, ILazyDataset dataset) {
+	public boolean addDataset(String name, ILazyDataset dataset) {
+		// Do not allow duplicates
+		boolean ret = remove(name);
 		names.add(name);
 		data.add(dataset);
+		return ret;
 	}
 
 	/**
 	 * Adds a dataset, metadata and its name. This is for Diffraction data
+	 * 
+	 * Replaces any datasets of the same name already existing 
 	 * 
 	 * @param name
 	 *            the name of the dataset which is to be added
@@ -130,10 +137,21 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 	 * @param metadata
 	 *            the metadata that is associated with the dataset
 	 */
-	public void addDataset(String name, ILazyDataset dataset, IMetaData metadata) {
+	public boolean addDataset(String name, ILazyDataset dataset, IMetaData metadata) {
+		boolean ret = remove(name);
 		names.add(name);
 		data.add(dataset);
 		this.metadata = metadata;
+		return ret;
+	}
+	
+	private boolean remove(String name) {
+		if (names.contains(name)) {
+			data.remove(names.indexOf(name));
+			names.remove(name);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -342,6 +360,57 @@ public class DataHolder implements IMetadataProvider, IDataHolder {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
+		result = prime * result + ((loaderClass == null) ? 0 : loaderClass.hashCode());
+		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
+		result = prime * result + ((names == null) ? 0 : names.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DataHolder other = (DataHolder) obj;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		if (filePath == null) {
+			if (other.filePath != null)
+				return false;
+		} else if (!filePath.equals(other.filePath))
+			return false;
+		if (loaderClass == null) {
+			if (other.loaderClass != null)
+				return false;
+		} else if (!loaderClass.equals(other.loaderClass))
+			return false;
+		if (metadata == null) {
+			if (other.metadata != null)
+				return false;
+		} else if (!metadata.equals(other.metadata))
+			return false;
+		if (names == null) {
+			if (other.names != null)
+				return false;
+		} else if (!names.equals(other.names))
+			return false;
+		return true;
 	}
 
 }

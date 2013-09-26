@@ -340,7 +340,7 @@ public class HDF5LoaderTest {
 				new int[] { 1, 1, 1 }, -1, false);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
-		assertTrue(timeTaken < 5000);
+		assertTrue(timeTaken < 10000);
 	}
 	
 	

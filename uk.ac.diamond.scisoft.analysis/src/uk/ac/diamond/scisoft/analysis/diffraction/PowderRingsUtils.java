@@ -971,8 +971,8 @@ public class PowderRingsUtils {
 			double a = base - e.getAngle();
 			for (double off : FitFunctionBase.angles) {
 				double[] pt = e.getPoint(a + off);
-				known[i][j++] = pt[0] + 0.5; // this offset fixes the discrepancy between pixel and lab coordinates 
-				known[i][j++] = pt[1] + 0.5;
+				known[i][j++] = pt[0]; 
+				known[i][j++] = pt[1];
 			}
 		}
 
@@ -1004,8 +1004,8 @@ public class PowderRingsUtils {
 			int j = 0;
 			for (double off : FitFunctionBase.angles) {
 				double[] pt = e.getPoint(off);
-				known[i][j++] = pt[0] + 0.5;
-				known[i][j++] = pt[1] + 0.5;
+				known[i][j++] = pt[0];
+				known[i][j++] = pt[1];
 			}
 		}
 
@@ -1056,8 +1056,8 @@ public class PowderRingsUtils {
 				double a = base - e.getAngle();
 				for (double off : FitFunctionBase.angles) {
 					double[] pt = e.getPoint(a + off);
-					known[i][j++] = pt[0] + 0.5;
-					known[i][j++] = pt[1] + 0.5;
+					known[i][j++] = pt[0];
+					known[i][j++] = pt[1];
 				}
 			}
 		}

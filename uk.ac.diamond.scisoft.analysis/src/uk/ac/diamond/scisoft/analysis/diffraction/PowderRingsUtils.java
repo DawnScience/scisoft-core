@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
-import javax.measure.unit.SI;
+import javax.measure.unit.NonSI;
 import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
@@ -36,6 +36,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateFunctionPenaltyAdapter;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
@@ -548,9 +549,9 @@ public class PowderRingsUtils {
 
 		int n = ellipses.size();
 
-		double dmax = spacings.get(0).getD().doubleValue(SI.MILLIMETRE);
+		double dmax = spacings.get(0).getD().doubleValue(NonSI.ANGSTROM);
 		{
-			double rmin = detector.getDetectorDistance() * Math.tan(2.0 * Math.asin(0.5 * env.getWavelength() * 1e-7 / dmax)) / detector.getVPxSize();
+			double rmin = detector.getDetectorDistance() * Math.tan(2.0 * Math.asin(0.5 * env.getWavelength() / dmax)) / detector.getVPxSize();
 			int l = 0;
 			for (EllipticalROI e : ellipses) {
 				if (e.getSemiAxis(0) > rmin)
@@ -588,9 +589,9 @@ public class PowderRingsUtils {
 		FitFunction f;
 		if (allCircles) {
 			logger.debug("All rings are circular");
-			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
+			f = createQFitFunction4(ellipses, detector, env.getWavelength(), fixedWavelength);
 		} else {
-			f = createQFitFunction7(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
+			f = createQFitFunction7(ellipses, detector, env.getWavelength(), fixedWavelength);
 		}
 
 		logger.debug("Init: {}", f.getInit());
@@ -599,7 +600,7 @@ public class PowderRingsUtils {
 		List<Double> s = new ArrayList<Double>();
 		for (int i = 0, imax = spacings.size(); i < imax; i++) {
 			HKL d = spacings.get(i);
-			s.add(d.getD().doubleValue(SI.MILLIMETRE));
+			s.add(d.getD().doubleValue(NonSI.ANGSTROM));
 		}
 		CombinationGenerator<Double> gen = new CombinationGenerator<Double>(s, n);
 		if (mon != null) {
@@ -609,7 +610,7 @@ public class PowderRingsUtils {
 
 		double min = Double.POSITIVE_INFINITY;
 
-		MultivariateOptimizer opt = createOptimizer();
+		MultivariateOptimizer opt = createOptimizer(f.getN());
 
 		// opt.setMaxEvaluations(2000);
 		List<Double> fSpacings = null;
@@ -617,7 +618,7 @@ public class PowderRingsUtils {
 		int i = 0;
 		for (List<Double> list : gen) { // find combination that minimizes residuals
 			f.setSpacings(list);
-			double res = optimize(f, opt, min, fixedWavelength);
+			double res = optimize(f, opt, min);
 			if (res < min) {
 				min = res;
 				fSpacings = list;
@@ -683,7 +684,7 @@ public class PowderRingsUtils {
 			EllipticalROI e = (EllipticalROI) r;
 			ellipses.add(e);
 			HKL d = spacings.get(i);
-			s.add(d.getD().doubleValue(SI.MILLIMETRE));
+			s.add(d.getD().doubleValue(NonSI.ANGSTROM));
 			logger.debug("    {}", e);
 			if (allCircles && !e.isCircular()) {
 				allCircles = false;
@@ -694,9 +695,9 @@ public class PowderRingsUtils {
 		FitFunction f;
 		if (allCircles) {
 			logger.debug("All rings are circular");
-			f = createQFitFunction4(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
+			f = createQFitFunction4(ellipses, detector, env.getWavelength(), fixedWavelength);
 		} else {
-			f = createQFitFunction7(ellipses, detector, env.getWavelength()*1e-7, fixedWavelength);
+			f = createQFitFunction7(ellipses, detector, env.getWavelength(), fixedWavelength);
 		}
 
 		logger.debug("Init: {}", f.getInit());
@@ -707,10 +708,10 @@ public class PowderRingsUtils {
 				return null;
 		}
 
-		MultivariateOptimizer opt = createOptimizer();
+		MultivariateOptimizer opt = createOptimizer(f.getN());
 
 		f.setSpacings(s);
-		double res = optimize(f, opt, Double.POSITIVE_INFINITY, fixedWavelength);
+		double res = optimize(f, opt, Double.POSITIVE_INFINITY);
 
 		if (mon != null) {
 			mon.worked(10);
@@ -734,45 +735,59 @@ public class PowderRingsUtils {
 
 	private static final int MAX_ITER = 10000;
 	private static final int MAX_EVAL = 1000000;
-	private static final double REL_TOL = 1e-4;
-	private static final double ABS_TOL = 1e-6;
-	static boolean useSimplex = true;
+	private static final double REL_TOL = 1e-7;
+	private static final double ABS_TOL = 1e-15;
+	enum Optimizer { Simplex, CMAES, BOBYQA}
+	static Optimizer optimizer = Optimizer.Simplex;
 
-	private static MultivariateOptimizer createOptimizer() {
-		if (useSimplex) {
-			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e-2, ABS_TOL*1e-4));
+	private static MultivariateOptimizer createOptimizer(int n) {
+		switch (optimizer) {
+		case BOBYQA:
+			return new BOBYQAOptimizer(n + 2);
+		case CMAES:
+			return new CMAESOptimizer(MAX_ITER, 0., true, 0, 10, seed == null ? new Well19937c() : new Well19937c(seed),
+					false, new SimplePointChecker<PointValuePair>(REL_TOL, ABS_TOL));
+		case Simplex:
+		default:
+			return new SimplexOptimizer(new SimplePointChecker<PointValuePair>(REL_TOL*1e3, ABS_TOL*1e3));
 		}
-		return new CMAESOptimizer(MAX_ITER, 0., true, 0, 10, seed == null ? new Well19937c() : new Well19937c(seed),
-				false, new SimplePointChecker<PointValuePair>(REL_TOL, ABS_TOL));
 	}
 
-	private static double optimize(FitFunction f, MultivariateOptimizer opt, double min, boolean fixedWavelength) {
+	private static double optimize(FitFunction f, MultivariateOptimizer opt, double min) {
 		double res = Double.NaN;
 		try {
 			PointValuePair result;
 
-			if (useSimplex) {
+			switch (optimizer) {
+			case BOBYQA:
+				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE, new ObjectiveFunction(f),
+						new MaxEval(MAX_EVAL), f.getBounds());
+				break;
+			case CMAES:
+				int p = (int) Math.ceil(4 + Math.log(f.getN())) + 1;
+				logger.trace("Population size: {}", p);
+				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE, new ObjectiveFunction(f),
+						new CMAESOptimizer.Sigma(f.getSigma()), new CMAESOptimizer.PopulationSize(p),
+						new MaxEval(MAX_EVAL), f.getBounds());
+				break;
+			case Simplex:
+			default:
 				int n = f.getN();
-				double offset = 1e10;
+				double offset = 1e12;
 				double[] scale = new double[n];
 				for (int i = 0; i < n; i++) {
 					scale[i] = offset*0.25;
 				}
-				if (!fixedWavelength)
-					scale[0] = 1e9*scale[0]; // as wavelength is very different scale
 				SimpleBounds bnds = f.getBounds();
 				MultivariateFunctionPenaltyAdapter of = new MultivariateFunctionPenaltyAdapter(f, bnds.getLower(), bnds.getUpper(), offset, scale);
 				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE,
 						new ObjectiveFunction(of), new MaxEval(MAX_EVAL),
 						new MultiDirectionalSimplex(n));
 //				new NelderMeadSimplex(n));
-			} else {
-				int p = (int) Math.ceil(4 + Math.log(f.getN())) + 1;
-				logger.trace("Population size: {}", p);
-				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE, new ObjectiveFunction(f),
-						new CMAESOptimizer.Sigma(f.getSigma()), new CMAESOptimizer.PopulationSize(p),
-						new MaxEval(MAX_EVAL), f.getBounds());
+				break;
+			
 			}
+
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
 			double ires = f.value(opt.getStartPoint());
 			logger.trace("Residual: {} from {}", result.getValue(), ires);
@@ -780,6 +795,7 @@ public class PowderRingsUtils {
 			if (res < min)
 				f.setParameters(result.getPoint());
 			logger.trace("Used {} evals and {} iters", opt.getEvaluations(), opt.getIterations());
+//			System.err.printf("Used %d evals and %d iters\n", opt.getEvaluations(), opt.getIterations());
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
 		} catch (IllegalArgumentException e) {
 			logger.error("Start point has wrong dimension", e);
@@ -907,13 +923,13 @@ public class PowderRingsUtils {
 				EllipticalROI e = (EllipticalROI) r;
 				ellipses.add(e);
 				HKL d = spacings.get(i);
-				s.add(d.getD().doubleValue(SI.MILLIMETRE));
+				s.add(d.getD().doubleValue(NonSI.ANGSTROM));
 				logger.debug("    {}", e);
 			}
 			lEllipses.add(ellipses);
 		}
 
-		FitFunction f = createQFitFunctionForAllImages(lEllipses, lDetectors, env.getWavelength()*1e-7);
+		FitFunction f = createQFitFunctionForAllImages(lEllipses, lDetectors, env.getWavelength());
 
 		logger.debug("Init: {}", f.getInit());
 
@@ -923,9 +939,9 @@ public class PowderRingsUtils {
 				return null;
 		}
 
-		MultivariateOptimizer opt = createOptimizer();
+		MultivariateOptimizer opt = createOptimizer(f.getN());
 		f.setSpacings(s);
-		double res = optimize(f, opt, Double.POSITIVE_INFINITY, false);
+		double res = optimize(f, opt, Double.POSITIVE_INFINITY);
 
 		if (mon != null) {
 			mon.worked(10);
@@ -954,7 +970,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * Create function which uses 6/7 parameters: wavelength (mm), detector origin (mm), orientation angles (degrees)
+	 * Create function which uses 6/7 parameters: wavelength (Angstrom), detector origin (mm), orientation angles (degrees)
 	 */
 	static FitFunction createQFitFunction7(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
@@ -971,7 +987,7 @@ public class PowderRingsUtils {
 			double a = base - e.getAngle();
 			for (double off : FitFunctionBase.angles) {
 				double[] pt = e.getPoint(a + off);
-				known[i][j++] = pt[0]; 
+				known[i][j++] = pt[0];
 				known[i][j++] = pt[1];
 			}
 		}
@@ -991,7 +1007,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * Create function which uses 3/4 parameters: wavelength (mm), detector origin (mm)
+	 * Create function which uses 3/4 parameters: wavelength (Angstrom), detector origin (mm)
 	 */
 	static FitFunction createQFitFunction4(List<EllipticalROI> ellipses, DetectorProperties dp, double wavelength, boolean fixedWavelength) {
 		int n = ellipses.size();
@@ -1023,7 +1039,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * Create function which uses 6N+1 parameters: wavelength (mm), and per image, detector origin (mm), orientation angles (degrees)
+	 * Create function which uses 6N+1 parameters: wavelength (Angstrom), and per image, detector origin (mm), orientation angles (degrees)
 	 */
 	static FitFunction createQFitFunctionForAllImages(List<List<EllipticalROI>> lEllipses, List<DetectorProperties> lDP, double wavelength) {
 		int m = lEllipses.size();
@@ -1034,11 +1050,14 @@ public class PowderRingsUtils {
 		double[][][] allKnowns = new double[m][][];
 		double[][] allWeights = new double[m][];
 		double[] bases = new double[m];
+		double[] init = new double[6*m+1];
 
+		int l = 0;
+		init[l++] = wavelength;
 		for (int k = 0; k < m; k++) {
 			List<EllipticalROI> ellipses = lEllipses.get(k);
 			DetectorProperties dp = lDP.get(k);
-			double dist = dp.getBeamCentreDistance()/dp.getHPxSize();
+			double dist = dp.getBeamCentreDistance();
 			int n = ellipses.size();
 			double[][] known = new double[n][FitFunctionBase.nC];
 			allKnowns[k] = known;
@@ -1060,23 +1079,17 @@ public class PowderRingsUtils {
 					known[i][j++] = pt[1];
 				}
 			}
+			Vector3d o = dp.getOrigin();
+			init[l++] = o.getX();
+			init[l++] = o.getY();
+			init[l++] = o.getZ();
+			double[] a = dp.getNormalAnglesInDegrees();
+			init[l++] = a[0];
+			init[l++] = a[1];
+			init[l++] = a[2];
 		}
 
 		FitFunction f = new QSpacesFitFunction(allKnowns, allWeights, lDP.get(0).getVPxSize());
-		double[] init = new double[6*m+1];
-		int j = 0;
-		init[j++] = wavelength;
-		for (int k = 0; k < m; k++) {
-			DetectorProperties dp = lDP.get(k);
-			Vector3d o = dp.getOrigin();
-			init[j++] = o.getX();
-			init[j++] = o.getY();
-			init[j++] = o.getZ();
-			double[] a = dp.getNormalAnglesInDegrees();
-			init[j++] = a[0];
-			init[j++] = a[1];
-			init[j++] = a[2];
-		}
 		f.setInit(init);
 		f.setBaseRollAngles(bases);
 		return f;
@@ -1113,7 +1126,7 @@ public class PowderRingsUtils {
 		public double[] getDistances();
 
 		/**
-		 * @param spacings (in mm)
+		 * @param spacings (in Angstrom)
 		 */
 		public void setSpacings(List<Double> spacings);
 
@@ -1138,7 +1151,7 @@ public class PowderRingsUtils {
 
 	static abstract class FitFunctionBase implements FitFunction {
 		private double[] initial;
-		protected double[] spacing; // in mm
+		protected double[] spacing; // in Angstroms
 
 		protected int nR; // number of rings to fit
 //		protected int nV; // number of calculated internally values
@@ -1148,20 +1161,21 @@ public class PowderRingsUtils {
 		protected SimpleBounds bounds;
 		protected double[] sigma;
 		protected int n; // number of parameters
+		protected double maxWlen; // maximum wavelength allowed, in Angstroms
 
-		protected static final double WAVE_MIN = 5e-9; // 0.05A (in mm)
-		protected static final double WAVE_MAX = 1e-6; // 10.0A (in mm)
+		protected static final double WAVE_MIN = 5e-2; // 0.05A
+		protected static final double WAVE_MAX = 10; // 10.0A
 		protected static final double DIST_MIN = 10;   // (in mm)
 		protected static final double DIST_MAX = 2e5;   // (in mm)
 
-		protected static final double SIGMA_WAVE = 2e-10; // 0.002A (in mm)
-		protected static final double SIGMA_POSN = 3; // 3mm
-		protected static final double SIGMA_ANG  = 6; // 6 degrees
+		protected static final double SIGMA_WAVE = 2e-3; // 0.002A
+		protected static final double SIGMA_POSN = 3; // (in mm)
+		protected static final double SIGMA_ANG  = 6; // (in degrees)
 
 		// points are selected from given offset angles to fit to on each ring
 //		protected static final double[] angles = {0, RIGHT_ANGLE, Math.PI, -RIGHT_ANGLE}; // offset angles
-		protected static final double[] angles = {0, Math.PI/6, Math.PI/3, Math.PI/2, 2*Math.PI/3, 5*Math.PI/6, Math.PI, -5*Math.PI/6, -2*Math.PI/3, -Math.PI/2, -Math.PI/3, -Math.PI/6}; // offset angles
-//		protected static final double[] angles = {0, Math.PI/3, 2*Math.PI/3, Math.PI, -2*Math.PI/3, -Math.PI/3}; // offset angles
+		protected static final double[] angles = {0, Math.PI/3, 2*Math.PI/3, Math.PI, -2*Math.PI/3, -Math.PI/3}; // offset angles
+//		protected static final double[] angles = {0, Math.PI/6, Math.PI/3, Math.PI/2, 2*Math.PI/3, 5*Math.PI/6, Math.PI, -5*Math.PI/6, -2*Math.PI/3, -Math.PI/2, -Math.PI/3, -Math.PI/6}; // offset angles
 		protected static final int nC = 2 * angles.length; // number of coordinate values per ring
 
 		@Override
@@ -1216,9 +1230,20 @@ public class PowderRingsUtils {
 
 		@Override
 		public void setSpacings(List<Double> spacings) {
+			double min = Double.POSITIVE_INFINITY;
 			for (int i = 0; i < nR; i++) {
 				spacing[i] = spacings.get(i);
+				if (spacing[i] < min) {
+					min = spacing[i];
+				}
 			}
+			// wavelength must be smaller than twice the smallest spacing
+			/*
+			 * l/(2d_i) = sin(2t) < 1
+			 * l < 2 d_i
+			 * => l < 2 d_min = l_max for any solution of Bragg's law
+			 */
+			maxWlen = 2 * min;
 		}
 
 		@Override
@@ -1228,7 +1253,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses 7 parameters: wavelength (mm), detector origin (mm), orientation angles (degrees)
+	 * LS function uses 7 parameters: wavelength (Angstrom), detector origin (mm), orientation angles (degrees)
 	 */
 	static class QSpaceFitFunction7 extends FitFunctionBase {
 		protected DetectorProperties dp;
@@ -1266,7 +1291,7 @@ public class PowderRingsUtils {
 
 		@Override
 		public double getWavelength() {
-			return parameters[0]*1e7;
+			return parameters[0];
 		}
 
 		protected void setDetector(int off, double... arg) {
@@ -1300,6 +1325,9 @@ public class PowderRingsUtils {
 		}
 
 		double calcValue(double wlen, double... arg) {
+			if (wlen > maxWlen) {
+				return Double.POSITIVE_INFINITY;
+			}
 			setDetector(0, arg);
 			double s = 0;
 			boolean any = false;
@@ -1327,6 +1355,7 @@ public class PowderRingsUtils {
 					s += t*weight[i];
 				}
 			}
+//			System.err.println(s + "; w=" + wlen + "; d=" + dp); // XXX
 			return any ? s : Double.POSITIVE_INFINITY;
 		}
 
@@ -1354,7 +1383,7 @@ public class PowderRingsUtils {
 
 		@Override
 		public double getWavelength() {
-			return lambda*1e7;
+			return lambda;
 		}
 
 		@Override
@@ -1384,7 +1413,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses 4 parameters: wavelength (mm), detector origin (mm)
+	 * LS function uses 4 parameters: wavelength (Angstrom), detector origin (mm)
 	 */
 	static class QSpaceFitFunction4 extends QSpaceFitFunction7 {
 		public QSpaceFitFunction4(double[][] known, double[] weight, double pix) {
@@ -1430,7 +1459,7 @@ public class PowderRingsUtils {
 
 		@Override
 		public double getWavelength() {
-			return lambda*1e7;
+			return lambda;
 		}
 
 		@Override
@@ -1454,7 +1483,7 @@ public class PowderRingsUtils {
 	}
 
 	/**
-	 * LS function uses 6I+1 parameters: wavelength (mm), per image, detector origin (mm), orientation angles (degrees)
+	 * LS function uses 6I+1 parameters: wavelength (Angstrom), per image, detector origin (mm), orientation angles (degrees)
 	 */
 	static class QSpacesFitFunction extends FitFunctionBase {
 		protected List<DetectorProperties> dps;
@@ -1532,7 +1561,7 @@ public class PowderRingsUtils {
 
 		@Override
 		public double getWavelength() {
-			return parameters[0]*1e7;
+			return parameters[0];
 		}
 
 		protected void setDetector(int off, double... arg) {
@@ -1584,6 +1613,9 @@ public class PowderRingsUtils {
 		}
 
 		double calcValue(double wlen, double... arg) {
+			if (wlen > maxWlen) {
+				return Double.POSITIVE_INFINITY;
+			}
 			setDetector(0, arg);
 			double s = 0;
 			boolean any = false;
@@ -1619,7 +1651,7 @@ public class PowderRingsUtils {
 						s += t * wgt[l];
 					}
 				}
-//				System.err.println(s + "; w=" + wlen + "; d=" + dp);
+//				System.err.println(s + "; w=" + wlen + "; d=" + dp); // XXX
 				i += nr;
 			}
 			return any ? s : Double.POSITIVE_INFINITY;

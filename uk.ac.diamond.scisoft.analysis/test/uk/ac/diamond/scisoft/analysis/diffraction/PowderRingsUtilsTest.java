@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Random;
 
 import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
 import org.jscience.physics.amount.Amount;
@@ -61,13 +60,17 @@ public class PowderRingsUtilsTest {
 	}
 
 	// NIST Silicon SRM 640C as mentioned in IUCR International Tables vC 5.2.10
-	static final double WAVELENGTH = 1.5405929; // in nm
-	static final double LATTICE_PARAMETER = 0.5431195;  // in nm
+	static final double WAVELENGTH = 1.5405929; // in Angstroms
+	static final double LATTICE_PARAMETER = 5.431195;  // in Angstroms
 //	static final double[] CONE_ANGLES = {28.411};
 //	static final double[] CONE_ANGLES = {28.411, 47.300, 56.120};
 	static final double[] CONE_ANGLES = {28.411, 47.300, 56.120, 69.126};
 //	static final double[] CONE_ANGLES = {28.411, 47.300, 56.120, 69.126, 76.372, 88.025,
 //	94.947, 106.701, 114.084, 127.534, 136.880, 158.603}; // in degrees
+	static final double[] SPACINGS = {3.13570, 1.92022, 1.63757, 1.35780}; // in Angstromss
+//	static final double[] SPACINGS = {3.13570, 1.92022, 1.63757, 1.35780,
+//	1.24600, 1.10864, 1.04523, 1.04523, 0.96011, 0.91804};
+
 	UnitCell siliconCell;
 	MillerSpace mSpace;
 	private ArrayList<HKL> spacings;
@@ -76,8 +79,8 @@ public class PowderRingsUtilsTest {
 	public void setUpSilicon() {
 		siliconCell = new UnitCell(LATTICE_PARAMETER);
 		spacings = new ArrayList<HKL>();
-		for (double c : CONE_ANGLES) {
-			spacings.add(new HKL(Amount.valueOf(0.5 * WAVELENGTH / Math.sin(0.5 * Math.toRadians(c)), NonSI.ANGSTROM)));
+		for (double d : SPACINGS) {
+			spacings.add(new HKL(Amount.valueOf(d, NonSI.ANGSTROM)));
 		}
 
 		PowderRingsUtils.seed = 1237L; // set seed for evolution strategy fitting
@@ -115,12 +118,12 @@ public class PowderRingsUtilsTest {
 		double distance = 153.0; // in mm
 		DetectorProperties det = new DetectorProperties(new Vector3d(0, 0, distance), 10, 10, pixel, pixel, 0, 0, 0);
 
-		double wavelength = WAVELENGTH * 1e-7; // in mm
+		double wavelength = WAVELENGTH; // in Angstroms
 	
 		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 		List<Double> list = new ArrayList<Double>();
 		for (HKL d : spacings) {
-			double s = d.getD().doubleValue(SI.MILLIMETRE);
+			double s = d.getD().doubleValue(NonSI.ANGSTROM);
 			IROI r = DSpacing.conicFromDSpacing(det, wavelength, s);
 			if (r instanceof EllipticalROI) {
 				ells.add((EllipticalROI) r);
@@ -196,19 +199,19 @@ public class PowderRingsUtilsTest {
 		double distance = 153.0; // in mm
 		DetectorProperties det = new DetectorProperties(new Vector3d(0, 0, distance), 3000, 3000, pixel, pixel, null);
 
-		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(WAVELENGTH*0.99);
+		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(WAVELENGTH);
 
 		Random rnd = new Random(12345);
 		for (int i = 0; i < 15; i+= 5) {
 			for (int j = 0; j <= 180; j += 30) {
 				System.err.println("Angle " + i + "; " + j);
-				det.setNormalAnglesInDegrees(i, 5, j);
+				det.setNormalAnglesInDegrees(i, 0, j);
 				List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 				List<HKL> ds = new ArrayList<HKL>();
 				for (HKL d : spacings) {
 					EllipticalROI e;
 					try {
-						e = (EllipticalROI) DSpacing.conicFromDSpacing(det, WAVELENGTH,
+						e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(),
 								d.getD().doubleValue(NonSI.ANGSTROM));
 						ds.add(d);
 					} catch (UnsupportedOperationException ex) {
@@ -230,12 +233,16 @@ public class PowderRingsUtilsTest {
 
 				QSpace q;
 				DetectorProperties nDet;
+				double roll;
 				q = PowderRingsUtils.fitAllEllipsesToQSpace(null, det, env, ells, ds, true);
 				nDet = q.getDetectorProperties();
 
 				Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5 * (i + 1.5));
 				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 7e-2 * (i + 1));
-				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], nDet.getNormalAnglesInDegrees()[2], 25);
+				roll = nDet.getNormalAnglesInDegrees()[2];
+				if (roll < -31)
+					roll += 360;
+				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, 31);
 				Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-9);
 				System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
 						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
@@ -246,7 +253,10 @@ public class PowderRingsUtilsTest {
 
 				Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5 * (i + 1));
 				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 6e-2 * (i + 1));
-				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], nDet.getNormalAnglesInDegrees()[2], 2);
+				roll = nDet.getNormalAnglesInDegrees()[2];
+				if (roll < -2)
+					roll += 360;
+				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, 2);
 				Assert.assertEquals("Wavelength", WAVELENGTH, q.getWavelength(), 3e-2);
 				System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
 						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
@@ -266,7 +276,7 @@ public class PowderRingsUtilsTest {
 			dets.add(new DetectorProperties(new Vector3d(0, 0, d), 3000, 3000, pixel, pixel, null));
 		}
 
-		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(WAVELENGTH*0.99);
+		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment(WAVELENGTH);
 
 		List<List<? extends IROI>> le = new ArrayList<List<? extends IROI>>();
 
@@ -276,12 +286,12 @@ public class PowderRingsUtilsTest {
 				System.err.println("Angle " + i + "; " + j);
 				le.clear();
 				for (DetectorProperties det : dets) {
-					det.setNormalAnglesInDegrees(i, 5, j);
+					det.setNormalAnglesInDegrees(i, 0, j);
 					List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 					for (HKL d : spacings) {
 						EllipticalROI e;
 						try {
-							e = (EllipticalROI) DSpacing.conicFromDSpacing(det, WAVELENGTH, d.getD()
+							e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(), d.getD()
 									.doubleValue(NonSI.ANGSTROM));
 						} catch (UnsupportedOperationException ex) {
 							ells.add(null);
@@ -304,6 +314,7 @@ public class PowderRingsUtilsTest {
 				}
 
 				List<QSpace> qs = PowderRingsUtils.fitAllEllipsesToAllQSpaces(null, dets, env, le, spacings);
+				double roll;
 				Assert.assertEquals("Qs", distances.length, qs.size());
 				for (int k = 0; k < distances.length; k++) {
 					QSpace q = qs.get(k);
@@ -311,8 +322,9 @@ public class PowderRingsUtilsTest {
 
 					Assert.assertEquals("Distance", distances[k], nDet.getDetectorDistance(), distances[k] * 5e-2);
 					Assert.assertEquals("Tilt", dets.get(k).getTiltAngle(), nDet.getTiltAngle(), 1e-1 * (i + 1));
+					roll = nDet.getNormalAnglesInDegrees()[2];
 					Assert.assertEquals("Roll", dets.get(k).getNormalAnglesInDegrees()[2],
-							nDet.getNormalAnglesInDegrees()[2], 1);
+							roll, i == 0 ? 60: 1);
 					Assert.assertEquals("Wavelength", WAVELENGTH, q.getWavelength(), 2e-2);
 					System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
 							+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
@@ -325,7 +337,7 @@ public class PowderRingsUtilsTest {
 
 	@Test
 	public void testFitFunction() {
-		double wavelength = WAVELENGTH * 1e-7; // in mm
+		double wavelength = WAVELENGTH; // in Angstroms
 	
 		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 		List<Double> list = new ArrayList<Double>();
@@ -341,7 +353,7 @@ public class PowderRingsUtilsTest {
 		DetectorProperties[] dets = new DetectorProperties[] {det, det2};
 
 		for (HKL d : spacings) {
-			double dspacing = d.getD().doubleValue(SI.MILLIMETRE); 
+			double dspacing = d.getD().doubleValue(NonSI.ANGSTROM); 
 			list.add(dspacing);
 			try {
 				ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det, wavelength, dspacing));
@@ -361,7 +373,7 @@ public class PowderRingsUtilsTest {
 				ells.clear();
 				list.clear();
 				for (HKL d : spacings) {
-					double dspacing = d.getD().doubleValue(SI.MILLIMETRE);
+					double dspacing = d.getD().doubleValue(NonSI.ANGSTROM);
 					try {
 						EllipticalROI e = (EllipticalROI) DSpacing.conicFromDSpacing(dt, wavelength, dspacing);
 						list.add(dspacing);
@@ -399,7 +411,7 @@ public class PowderRingsUtilsTest {
 						ells.clear();
 						list.clear();
 						for (HKL d : spacings) {
-							double dspacing = d.getD().doubleValue(SI.MILLIMETRE);
+							double dspacing = d.getD().doubleValue(NonSI.ANGSTROM);
 							try {
 								EllipticalROI e = (EllipticalROI) DSpacing.conicFromDSpacing(dt, wavelength, dspacing);
 								list.add(dspacing);

@@ -1308,11 +1308,7 @@ public class PowderRingsUtils {
 				try {
 					r = DSpacing.conicFromDSpacing(dp, wlen, spacing[i]);
 				} catch (Exception e) {
-					if (wlen > 2*spacing[nR-1]) { // wavelength too long
-						s = Double.POSITIVE_INFINITY;
-						break;
-					}
-					continue;
+					return Double.POSITIVE_INFINITY;
 				}
 				if (r instanceof EllipticalROI) {
 					any = true;
@@ -1604,11 +1600,7 @@ public class PowderRingsUtils {
 					try {
 						r = DSpacing.conicFromDSpacing(dp, wlen, spacing[i + l]);
 					} catch (Exception e) {
-						if (wlen > 2 * spacing[i + nr - 1]) { // wavelength too long
-							s = Double.POSITIVE_INFINITY;
-							break;
-						}
-						continue;
+						return Double.POSITIVE_INFINITY;
 					}
 					if (r instanceof EllipticalROI) {
 						any = true;

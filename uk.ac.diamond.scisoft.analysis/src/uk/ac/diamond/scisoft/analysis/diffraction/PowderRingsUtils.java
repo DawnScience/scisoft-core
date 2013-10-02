@@ -785,7 +785,6 @@ public class PowderRingsUtils {
 						new MultiDirectionalSimplex(n));
 //				new NelderMeadSimplex(n));
 				break;
-			
 			}
 
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
@@ -1097,7 +1096,6 @@ public class PowderRingsUtils {
 
 	interface FitFunction extends MultivariateFunction {
 		public void setParameters(double[] arg);
-
 		public double[] getParameters();
 
 		public double[] getSigma();

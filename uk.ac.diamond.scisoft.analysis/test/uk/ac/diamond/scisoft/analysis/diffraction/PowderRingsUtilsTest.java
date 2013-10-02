@@ -82,7 +82,6 @@ public class PowderRingsUtilsTest {
 		for (double d : SPACINGS) {
 			spacings.add(new HKL(Amount.valueOf(d, NonSI.ANGSTROM)));
 		}
-
 		PowderRingsUtils.seed = 1237L; // set seed for evolution strategy fitting
 //		mSpace = new MillerSpace(siliconCell, null);
 	}
@@ -145,7 +144,7 @@ public class PowderRingsUtilsTest {
 		init[5] = 0;
 		init[6] = 0;
 		for (int i = 0; i < N_W; i++) {
-			init[0] = wavelength + (i - N_W*0.5)*1e-7*0.01; // 0.01A
+			init[0] = wavelength + (i - N_W*0.5)*0.01; // 0.01A
 			for (int j = 0; j < N_D; j++) {
 				init[1] = (j - N_D*0.5)*0.01; // 0.01mm
 				for (int l = 0; l < N_D; l++) {
@@ -169,7 +168,7 @@ public class PowderRingsUtilsTest {
 		int t = 0;
 		init[1] = 0;
 		for (int i = 0; i < N_W; i++) {
-			init[0] = wavelength + (i - N_W*0.5)*1e-7*0.01; // 0.01A
+			init[0] = wavelength + (i - N_W*0.5)*0.01; // 0.01A
 			for (int k = 0; k < N_D; k++) {
 				init[2] = (k - N_D * 0.5) * 0.01; // 0.01mm
 				for (int l = 0; l < N_D; l++) {

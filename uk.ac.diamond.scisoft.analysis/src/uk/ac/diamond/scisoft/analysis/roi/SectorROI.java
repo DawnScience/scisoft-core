@@ -167,6 +167,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @param er
 	 * @param sp
 	 * @param ep
+	 * @param dpp
 	 * @param clip 
 	 */
 	public SectorROI(double ptx, double pty, double sr, double er, double sp, double ep, double dpp, boolean clip) {
@@ -180,6 +181,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @param er
 	 * @param sp
 	 * @param ep
+	 * @param dpp
 	 * @param clip 
 	 * @param sym 
 	 */

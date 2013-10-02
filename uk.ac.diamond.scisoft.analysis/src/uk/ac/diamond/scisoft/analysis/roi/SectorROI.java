@@ -126,7 +126,8 @@ public class SectorROI extends ROIBase implements Serializable {
 		this(30., 120., Math.PI*0.25, Math.PI*2./3.);
 	}
 
-	private final static double TWOPI = 2.0 * Math.PI;
+	private final static double TWO_PI = 2.0 * Math.PI;
+	private final static double HALF_PI = 0.5 * Math.PI;
 
 	/**
 	 * Create an annulus
@@ -134,7 +135,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @param er
 	 */
 	public SectorROI(double sr, double er) {
-		this(0., 0., sr, er, 0, TWOPI, 1.0, false, SectorROI.FULL);
+		this(0., 0., sr, er, 0, TWO_PI, 1.0, false, SectorROI.FULL);
 	}
 
 	/**
@@ -315,13 +316,13 @@ public class SectorROI extends ROIBase implements Serializable {
 		for (int i = 0; i < 2; i++) {
 			ang[i] += angle;
 		}
-		if (ang[0] > 2.0 * Math.PI) {
-			ang[0] -= 2.0 * Math.PI;
-			ang[1] -= 2.0 * Math.PI;
+		if (ang[0] > TWO_PI) {
+			ang[0] -= TWO_PI;
+			ang[1] -= TWO_PI;
 		}
 		if (ang[0] < 0) {
-			ang[0] += 2.0 * Math.PI;
-			ang[1] += 2.0 * Math.PI;
+			ang[0] += TWO_PI;
+			ang[1] += TWO_PI;
 		}
 	}
 
@@ -343,23 +344,25 @@ public class SectorROI extends ROIBase implements Serializable {
 	protected void checkAngles() {
 
 		// sort out relative values
-		while (ang[0] >= ang[1]) {
-			ang[1] += 2.0 * Math.PI;
+		double a = ang[0];
+		while (a >= ang[1]) {
+			ang[1] += TWO_PI;
 		}
 
-		while ( (ang[0] + 2.0 * Math.PI) < ang[1]) {
-			ang[1] -= 2.0 * Math.PI;
+		a += TWO_PI;
+		while (a < ang[1]) {
+			ang[1] -= TWO_PI;
 		}
 		
 		// place correctly in absolute terms
 		while (ang[0] < 0) {
-			ang[0] += 2.0 * Math.PI;
-			ang[1] += 2.0 * Math.PI;
+			ang[0] += TWO_PI;
+			ang[1] += TWO_PI;
 		}
 		
-		while (ang[0] > 2.0 * Math.PI) {
-			ang[0] -= 2.0 * Math.PI;
-			ang[1] -= 2.0 * Math.PI;
+		while (ang[0] > TWO_PI) {
+			ang[0] -= TWO_PI;
+			ang[1] -= TWO_PI;
 		}
 	}
 
@@ -425,29 +428,29 @@ public class SectorROI extends ROIBase implements Serializable {
 			isOK = true;
 			break;
 		case XREFLECT:
-			if (0 <= ang[0] && ang[0] < Math.PI/2 && ang[0] <= ang[1] && ang[1] <= Math.PI/2)
+			if (0 <= ang[0] && ang[0] < HALF_PI && ang[0] <= ang[1] && ang[1] <= HALF_PI)
 				isOK = true;
-			else if (Math.PI/2 <= ang[0] && ang[0] <= 3*Math.PI/2 && ang[0] <= ang[1] && ang[1] <= 3*Math.PI/2)
+			else if (HALF_PI <= ang[0] && ang[0] <= 3*HALF_PI && ang[0] <= ang[1] && ang[1] <= 3*HALF_PI)
 				isOK = true;
-			else if (3*Math.PI/2 <= ang[0] && ang[0] <= 2*Math.PI && ang[0] <= ang[1] && ang[1] <= 5*Math.PI/2)
+			else if (3*HALF_PI <= ang[0] && ang[0] <= TWO_PI && ang[0] <= ang[1] && ang[1] <= 5*HALF_PI)
 				isOK = true;
 			break;
 		case YREFLECT:
 			if (0 <= ang[0] && ang[0] < Math.PI && ang[0] <= ang[1] && ang[1] <= Math.PI)
 				isOK = true;
-			else if (Math.PI <= ang[0] && ang[0] <= 2*Math.PI && ang[0] <= ang[1] && ang[1] <= 2*Math.PI)
+			else if (Math.PI <= ang[0] && ang[0] <= TWO_PI && ang[0] <= ang[1] && ang[1] <= TWO_PI)
 				isOK = true;
 			break;
 		case CNINETY:
-			if (ang[1] <= ang[0] + Math.PI/2)
+			if (ang[1] <= ang[0] + HALF_PI)
 				isOK = true;
 			break;
 		case ACNINETY:
-			if (ang[0] >= ang[1] - Math.PI/2)
+			if (ang[0] >= ang[1] - HALF_PI)
 				isOK = true;
 			break;
 		case INVERT:
-			if (ang[1] <= ang[0] + Math.PI)
+			if (ang[1] <= ang[0] + HALF_PI)
 				isOK = true;
 			break;
 		}
@@ -458,7 +461,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @return angles from symmetry operations
 	 */
 	public double[] getSymmetryAngles() {
-		double[] nang = new double[] {0, 2*Math.PI};
+		double[] nang = new double[] {0, TWO_PI};
 
 		switch (symmetry) {
 		case SectorROI.XREFLECT:
@@ -468,18 +471,18 @@ public class SectorROI extends ROIBase implements Serializable {
 			break;
 		case SectorROI.YREFLECT:
 			// add in y reflected integral
-			nang[0] = 2*Math.PI - ang[1];
-			nang[1] = 2*Math.PI - ang[0];
+			nang[0] = TWO_PI - ang[1];
+			nang[1] = TWO_PI - ang[0];
 			break;
 		case SectorROI.CNINETY:
 			// add in +90 rotated integral
-			nang[0] = ang[0] + Math.PI/2;
-			nang[1] = ang[1] + Math.PI/2;
+			nang[0] = ang[0] + HALF_PI;
+			nang[1] = ang[1] + HALF_PI;
 			break;
 		case SectorROI.ACNINETY:
 			// add in -90 rotated integral
-			nang[0] = ang[0] - Math.PI/2;
-			nang[1] = ang[1] - Math.PI/2;
+			nang[0] = ang[0] - HALF_PI;
+			nang[1] = ang[1] - HALF_PI;
 			break;
 		case SectorROI.INVERT:
 			// add in inverted integral

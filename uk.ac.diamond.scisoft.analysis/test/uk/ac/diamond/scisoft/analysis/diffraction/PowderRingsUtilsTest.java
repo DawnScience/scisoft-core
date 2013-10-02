@@ -193,6 +193,24 @@ public class PowderRingsUtilsTest {
 		}
 	}
 
+	/**
+	 * @param rnd
+	 * @param size
+	 * @return [-size, size]
+	 */
+	private static double nextDouble(Random rnd, double size) {
+		return 2 * size * (rnd.nextDouble() - 0.5);
+	}
+
+	/**
+	 * @param rnd
+	 * @param frac
+	 * @return [1-frac, 1+frac]
+	 */
+	private static double nextFractionDiff(Random rnd, double frac) {
+		return 1 + nextDouble(rnd, frac);
+	}
+
 	@Test
 	public void calibrateDetector() {
 		double pixel = 0.25; // in mm
@@ -208,59 +226,96 @@ public class PowderRingsUtilsTest {
 				det.setNormalAnglesInDegrees(i, 0, j);
 				List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 				List<HKL> ds = new ArrayList<HKL>();
+				QSpace q;
+				DetectorProperties nDet;
+				double roll;
+
+				// perfect data but rough initial parameters
+				ds.clear();
+				ells.clear();
 				for (HKL d : spacings) {
 					EllipticalROI e;
 					try {
 						e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(),
 								d.getD().doubleValue(NonSI.ANGSTROM));
 						ds.add(d);
+						ells.add(e);
 					} catch (UnsupportedOperationException ex) {
 						continue;
 					}
-					double r = e.getSemiAxis(0) + rnd.nextDouble() * 3;
+				}
+
+				for (int r = 0; r < 1; r++) {
+					DiffractionCrystalEnvironment renv = new DiffractionCrystalEnvironment(env.getWavelength() * nextFractionDiff(rnd, 0.01));
+					DetectorProperties rdet = det.clone();
+					rdet.setDetectorDistance(rdet.getDetectorDistance() * nextFractionDiff(rnd, 0.01));
+					double[] c = rdet.getBeamCentreCoords();
+					c[0] += nextDouble(rnd, 0.5);
+					c[1] += nextDouble(rnd, 0.5);
+					rdet.setBeamCentreCoords(c);
+					double[] a = rdet.getNormalAnglesInDegrees();
+					a[0] += nextDouble(rnd, 0.5);
+					a[1] += nextDouble(rnd, 0.5);
+					a[2] += nextDouble(rnd, 0.5);
+					rdet.setNormalAnglesInDegrees(a);
+					q = PowderRingsUtils.fitAllEllipsesToQSpace(null, rdet, renv, ells, ds, true);
+					nDet = q.getDetectorProperties();
+
+					System.err.println(q.getResidual() + "; D = " + nDet.getDetectorDistance() + "; ta = "
+							+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
+							+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
+//					Assert.assertEquals("Residual", 0, q.getResidual(), 1);
+					Assert.assertEquals("Distance", det.getDetectorDistance(), nDet.getDetectorDistance(), 30);
+					Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 8e-3);
+					roll = nDet.getNormalAnglesInDegrees()[2];
+					if (roll < -(j*0.3+20))
+						roll += 360;
+					Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, j*0.3+20);
+					Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-1);
+				}
+
+				// noisy data but exact initial parameters
+				for (EllipticalROI e : ells) {
+					double r = e.getSemiAxis(0) + nextDouble(rnd, 2);
 					if (e.isCircular()) {
 						e.setSemiAxis(0, r);
 						e.setSemiAxis(1, r);
 					} else {
 						e.setSemiAxis(0, r);
-						e.setSemiAxis(1, e.getSemiAxis(1) + rnd.nextDouble() * 3);
+						e.setSemiAxis(1, e.getSemiAxis(1) + nextDouble(rnd, 2));
 					}
 					double[] pt = e.getPointRef();
-					e.setPoint(pt[0] + (rnd.nextDouble() - 0.5) * 2, pt[1] + (rnd.nextDouble() - 0.5) * 2);
-					e.setAngleDegrees(e.getAngleDegrees() + (rnd.nextDouble() - 0.5) * 1);
-					ells.add(e);
+					e.setPoint(pt[0] + nextDouble(rnd, 1), pt[1] + nextDouble(rnd, 2));
+					e.setAngleDegrees(e.getAngleDegrees() + nextDouble(rnd, 2));
 				}
 
-				QSpace q;
-				DetectorProperties nDet;
-				double roll;
 				q = PowderRingsUtils.fitAllEllipsesToQSpace(null, det, env, ells, ds, true);
 				nDet = q.getDetectorProperties();
 
-				Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5 * (i + 1.5));
+				System.err.println(q.getResidual() + "; D = " + nDet.getDetectorDistance() + "; ta = "
+						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
+						+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
+				Assert.assertEquals("Distance", det.getDetectorDistance(), nDet.getDetectorDistance(), 5 * (i + 1.5));
 				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 7e-2 * (i + 1));
 				roll = nDet.getNormalAnglesInDegrees()[2];
 				if (roll < -31)
 					roll += 360;
 				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, 31);
 				Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-9);
-				System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
-						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
-						+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
 
 				q = PowderRingsUtils.fitAllEllipsesToQSpace(null, det, env, ells, ds, false);
 				nDet = q.getDetectorProperties();
 
-				Assert.assertEquals("Distance", distance, nDet.getDetectorDistance(), 5 * (i + 1));
-				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 6e-2 * (i + 1));
-				roll = nDet.getNormalAnglesInDegrees()[2];
-				if (roll < -2)
-					roll += 360;
-				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, 2);
-				Assert.assertEquals("Wavelength", WAVELENGTH, q.getWavelength(), 3e-2);
-				System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
+				System.err.println(q.getResidual() + "; D = " + nDet.getDetectorDistance() + "; ta = "
 						+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
 						+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
+				Assert.assertEquals("Distance", det.getDetectorDistance(), nDet.getDetectorDistance(), 5 * (i + 1));
+				Assert.assertEquals("Tilt", det.getTiltAngle(), nDet.getTiltAngle(), 6e-2 * (i + 1));
+				roll = nDet.getNormalAnglesInDegrees()[2];
+				if (roll < -25)
+					roll += 360;
+				Assert.assertEquals("Roll", det.getNormalAnglesInDegrees()[2], roll, 25);
+				Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 3e-2);
 			}
 		}
 	}
@@ -285,50 +340,106 @@ public class PowderRingsUtilsTest {
 			for (int j = 0; j <= 180; j += 30) {
 				System.err.println("Angle " + i + "; " + j);
 				le.clear();
+
+				// perfect data but rough initial parameters
 				for (DetectorProperties det : dets) {
 					det.setNormalAnglesInDegrees(i, 0, j);
 					List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 					for (HKL d : spacings) {
-						EllipticalROI e;
+						EllipticalROI e = null;
 						try {
 							e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(), d.getD()
 									.doubleValue(NonSI.ANGSTROM));
 						} catch (UnsupportedOperationException ex) {
-							ells.add(null);
 							continue;
+						} finally {
+							ells.add(e);
 						}
-						double r = e.getSemiAxis(0) + rnd.nextDouble() * 3;
+					}
+					le.add(ells);
+				}
+
+				double roll;
+				List<QSpace> qs;
+				for (int r = 0; r < 1; r++) {
+//					DiffractionCrystalEnvironment renv = new DiffractionCrystalEnvironment(env.getWavelength());
+					DiffractionCrystalEnvironment renv = new DiffractionCrystalEnvironment(env.getWavelength() * nextFractionDiff(rnd, 0.01));
+					List<DetectorProperties> rDets = new ArrayList<DetectorProperties>();
+					for (DetectorProperties det : dets) {
+						DetectorProperties rdet = det.clone();
+						rdet.setDetectorDistance(rdet.getDetectorDistance() * nextFractionDiff(rnd, 0.01));
+						double[] c = rdet.getBeamCentreCoords();
+						c[0] += nextDouble(rnd, 0.5);
+						c[1] += nextDouble(rnd, 0.5);
+						rdet.setBeamCentreCoords(c);
+						double[] a = rdet.getNormalAnglesInDegrees();
+						a[0] += nextDouble(rnd, 0.5);
+						a[1] += nextDouble(rnd, 0.5);
+						a[2] += nextDouble(rnd, 0.5);
+						rdet.setNormalAnglesInDegrees(a);
+						rDets.add(rdet);
+					}
+
+					qs = PowderRingsUtils.fitAllEllipsesToAllQSpaces(null, rDets, renv, le, spacings);
+					Assert.assertEquals("Qs", distances.length, qs.size());
+					for (int k = 0; k < distances.length; k++) {
+						QSpace q = qs.get(k);
+						DetectorProperties nDet = q.getDetectorProperties();
+
+						System.err.println(q.getResidual() + "; D = " + nDet.getDetectorDistance() + "; ta = "
+								+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
+								+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
+//						Assert.assertEquals("Residual", 0, q.getResidual(), 1);
+						Assert.assertEquals("Distance", dets.get(k).getDetectorDistance(), nDet.getDetectorDistance(), 5);
+						Assert.assertEquals("Tilt", dets.get(k).getTiltAngle(), nDet.getTiltAngle(), 1.5e-2);
+						roll = nDet.getNormalAnglesInDegrees()[2];
+						if (roll < -1)
+							roll += 360;
+						Assert.assertEquals("Roll", dets.get(k).getNormalAnglesInDegrees()[2],
+								roll, j*0.3+5);
+						Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 1e-1);
+					}
+				}
+
+				// noisy data but exact initial parameters
+				for (List<? extends IROI> ls : le) {
+					@SuppressWarnings("unchecked")
+					List<EllipticalROI> ells = (List<EllipticalROI>) ls;
+					for (EllipticalROI e : ells) {
+						if (e == null)
+							continue;
+
+						double r = e.getSemiAxis(0) + nextDouble(rnd, 2);
 						if (e.isCircular()) {
 							e.setSemiAxis(0, r);
 							e.setSemiAxis(1, r);
 						} else {
 							e.setSemiAxis(0, r);
-							e.setSemiAxis(1, e.getSemiAxis(1) + rnd.nextDouble() * 3);
+							e.setSemiAxis(1, e.getSemiAxis(1) + nextDouble(rnd, 2));
 						}
 						double[] pt = e.getPointRef();
-						e.setPoint(pt[0] + (rnd.nextDouble() - 0.5) * 2, pt[1] + (rnd.nextDouble() - 0.5) * 2);
-						e.setAngleDegrees(e.getAngleDegrees() + (rnd.nextDouble() - 0.5) * 1);
-						ells.add(e);
+						e.setPoint(pt[0] + nextDouble(rnd, 1), pt[1] + nextDouble(rnd, 2));
+						e.setAngleDegrees(e.getAngleDegrees() + nextDouble(rnd, 2));
 					}
-					le.add(ells);
 				}
 
-				List<QSpace> qs = PowderRingsUtils.fitAllEllipsesToAllQSpaces(null, dets, env, le, spacings);
-				double roll;
+				qs = PowderRingsUtils.fitAllEllipsesToAllQSpaces(null, dets, env, le, spacings);
 				Assert.assertEquals("Qs", distances.length, qs.size());
 				for (int k = 0; k < distances.length; k++) {
 					QSpace q = qs.get(k);
 					DetectorProperties nDet = q.getDetectorProperties();
 
+					System.err.println(q.getResidual() + "; D = " + nDet.getDetectorDistance() + "; ta = "
+							+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
+							+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
 					Assert.assertEquals("Distance", distances[k], nDet.getDetectorDistance(), distances[k] * 5e-2);
 					Assert.assertEquals("Tilt", dets.get(k).getTiltAngle(), nDet.getTiltAngle(), 1e-1 * (i + 1));
 					roll = nDet.getNormalAnglesInDegrees()[2];
+					if (roll < -30)
+						roll += 360;
 					Assert.assertEquals("Roll", dets.get(k).getNormalAnglesInDegrees()[2],
-							roll, i == 0 ? 60: 1);
-					Assert.assertEquals("Wavelength", WAVELENGTH, q.getWavelength(), 2e-2);
-					System.err.println("D = " + nDet.getDetectorDistance() + "; ta = "
-							+ Math.toDegrees(nDet.getTiltAngle()) + "; ra = "
-							+ nDet.getNormalAnglesInDegrees()[2] + "; wl = " + q.getWavelength());
+							roll, i == 0 ? 60 : 30);
+					Assert.assertEquals("Wavelength", env.getWavelength(), q.getWavelength(), 2e-2);
 				}
 			}
 

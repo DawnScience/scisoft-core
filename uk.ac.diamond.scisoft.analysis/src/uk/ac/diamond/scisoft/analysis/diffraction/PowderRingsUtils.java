@@ -738,7 +738,7 @@ public class PowderRingsUtils {
 	private static final double REL_TOL = 1e-7;
 	private static final double ABS_TOL = 1e-15;
 	enum Optimizer { Simplex, CMAES, BOBYQA}
-	static Optimizer optimizer = Optimizer.Simplex;
+	static Optimizer optimizer = Optimizer.CMAES;
 
 	private static MultivariateOptimizer createOptimizer(int n) {
 		switch (optimizer) {

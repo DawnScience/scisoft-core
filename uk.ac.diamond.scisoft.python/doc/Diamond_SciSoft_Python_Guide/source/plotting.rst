@@ -272,18 +272,18 @@ The regions of interest defined are in the ROI package::
 These are
 
  *point*
-   A single point defined by its coordinates
+   A single point defined by its coordinates (Python attribute names: *point*)
  *line*
-   A line segment defined by its starting point, length and angle
+   A line segment defined by its starting point, length and angle (*point*, *length*, *angle*, *angledegrees*)
  *rectangle*
    A rectangle defined by its starting point, width, height and 
-   angle
+   angle (attributes: *point*, *lengths*, *angle*, *anglesdegrees*)
  *sector*
-   A sector defined by its centre point, bounds on radius and azimuthal angle
+   A sector defined by its centre point, bounds on radius and azimuthal angle (*point*, *radii*, *angles*, *anglesdegrees*)
  *circle*
-   A circle defined by its centre point and radius
+   A circle defined by its centre point and radius (*point*, *radius*)
  *ellipse*
-   An ellipse defined by its centre point, major and minor semi-axes and azimuthal angle
+   An ellipse defined by its centre point, major and minor semi-axes and azimuthal angle (attributes: *point*, *semiaxes*, *angle*, *angledegrees*)
 
 As mentioned in the previous section, the current ROI and any ROIs stored in
 the table are sent via a GUI bean back to the plot view.
@@ -313,7 +313,7 @@ object and any stored ROIs are held in a Python list/dictionary of linear ROIs::
     roi.name = 'New line'
 
     # modify ROI
-    roi.setPoint(100,50)
+    roi.point = 100,50
 
     # delete ROI from bean
     dpl.delroi(gb)

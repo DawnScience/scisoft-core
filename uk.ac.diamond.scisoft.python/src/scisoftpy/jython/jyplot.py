@@ -103,10 +103,48 @@ def plot_viewnexustree(name, tree):
 
 plot_volume = _plotter.volumePlot
 
-plot_getbean = _plotter.getGuiBean
-plot_setbean = _plotter.setGuiBean
-plot_getdatabean = _plotter.getDataBean
-plot_setdatabean = _plotter.setDataBean
+from jybeans import parameters as _jyparams
+from jybeans import guibean as _jyguibean
+
+from jyroi import _roi_wrap, _create_list
+
+def _wrap_gui_bean(jb):
+    if _jyparams.roi in jb:
+        jb[_jyparams.roi] = _roi_wrap(jb[_jyparams.roi])
+    if _jyparams.roilist in jb:
+        jb[_jyparams.roilist] = [_roi_wrap(r) for r in jb[_jyparams.roilist]]
+
+def _unwrap_gui_bean(ob, nb):
+    for k in ob:
+        v = ob[k]
+        if k == _jyparams.roi:
+            v = v._jroi()
+        elif k == _jyparams.roilist:
+            ov = v
+            v = _create_list(ov[0])
+            for r in ov:
+                v.add(r._jroi())
+        nb[k] = v
+    return nb
+
+def plot_getbean(name):
+    jb = _plotter.getGuiBean(name)
+    _wrap_gui_bean(jb)
+    return jb
+
+def plot_setbean(name, bean):
+    _plotter.setGuiBean(name, _unwrap_gui_bean(bean, _jyguibean()))
+
+def plot_getdatabean(name):
+    jdb = _plotter.getDataBean(name)
+    jgb = jdb.getGuiParameters()
+    _wrap_gui_bean(jgb)
+    return jdb
+
+def plot_setdatabean(name, bean):
+    gb = bean.getGuiParameters()
+    _plotter.setDataBean(name, _unwrap_gui_bean(gb, gb))
+
 plot_getguinames = _plotter.getGuiNames
 
 plot_orders = { "none": _plotter.IMAGEORDERNONE, "alpha": _plotter.IMAGEORDERALPHANUMERICAL, "chrono": _plotter.IMAGEORDERCHRONOLOGICAL}

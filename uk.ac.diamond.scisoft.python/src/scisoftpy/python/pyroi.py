@@ -43,13 +43,19 @@ class roibase(_iroi):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self.__dict__.__repr__())
 
-    def _getPoint(self):
+    def getPoint(self):
         return self.spt
 
-    def _setPoint(self, pt):
+    def setPoint(self, pt):
         self.spt = [float(p) for p in pt]
 
-    point = property(_getPoint, _setPoint)
+    point = property(getPoint, setPoint)
+
+    def isPlot(self):
+        return self.plot
+
+    def setPlot(self, p):
+        self.plot = bool(p)
 
 class point(roibase):
     def __init__(self, **kwargs):
@@ -68,29 +74,29 @@ class line(roibase):
             self.ang = _math.radians(angledegrees)
         self.crossHair = crossHair
 
-    def _getLength(self):
+    def getLength(self):
         return self.len
 
-    def _setLength(self, length):
+    def setLength(self, length):
         self.len = float(length)
 
-    length = property(_getLength, _setLength)
+    length = property(getLength, setLength)
 
-    def _getAngle(self):
+    def getAngle(self):
         return self.ang
 
-    def _setAngle(self, angle):
+    def setAngle(self, angle):
         self.ang = float(angle)
 
-    angle = property(_getAngle, _setAngle)
+    angle = property(getAngle, setAngle)
 
-    def _getAngleD(self):
+    def getAngleDegrees(self):
         return _math.degrees(self.ang)
 
-    def _setAngleD(self, angle):
+    def setAngleDegrees(self, angle):
         self.ang = _math.radians(angle)
 
-    angledegrees = property(_getAngleD, _setAngleD)
+    angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class rectangle(roibase):
     _LEN = "len"
@@ -103,29 +109,29 @@ class rectangle(roibase):
         self.ang = float(ang) if ang is not None else float(angle)
         self.clippingCompensation = clippingCompensation
 
-    def _getLengths(self):
+    def getLengths(self):
         return self.len
 
-    def _setLengths(self, length):
+    def setLengths(self, length):
         self.len = [float(l) for l in length]
 
-    lengths = property(_getLengths, _setLengths)
+    lengths = property(getLengths, setLengths)
 
-    def _getAngle(self):
+    def getAngle(self):
         return self.ang
 
-    def _setAngle(self, angle):
+    def setAngle(self, angle):
         self.ang = float(angle)
 
-    angle = property(_getAngle, _setAngle)
+    angle = property(getAngle, setAngle)
 
-    def _getAngleD(self):
+    def getAngleDegrees(self):
         return _math.degrees(self.ang)
 
-    def _setAngleD(self, angle):
+    def setAngleDegrees(self, angle):
         self.ang = _math.radians(angle)
 
-    angledegrees = property(_getAngleD, _setAngleD)
+    angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class sector(roibase):
     _ANG = "ang"
@@ -153,13 +159,13 @@ class sector(roibase):
         self.combineSymmetry = combineSymmetry
         self.averageArea = averageArea
 
-    def _getRadii(self):
+    def getRadii(self):
         return self.rad
  
-    def _setRadii(self, radius):
+    def setRadii(self, radius):
         self.rad = [float(r) for r in radius]
  
-    radii = property(_getRadii, _setRadii)
+    radii = property(getRadii, setRadii)
 
     def _chkAngles(self):
         if len(self.ang) != 2:
@@ -181,23 +187,23 @@ class sector(roibase):
             self.ang[0] -= tpi
             self.ang[1] -= tpi
 
-    def _getAngles(self):
+    def getAngles(self):
         return self.ang
 
-    def _setAngles(self, angle):
+    def setAngles(self, angle):
         self.ang = [float(a) for a in angle]
         self._chkAngles()
 
-    angles = property(_getAngles, _setAngles)
+    angles = property(getAngles, setAngles)
 
-    def _getAnglesD(self):
+    def getAnglesDegrees(self):
         return [_math.degrees(a) for a in self.ang]
 
-    def _setAnglesD(self, angle):
+    def setAnglesDegrees(self, angle):
         self.ang = [_math.radians(a) for a in angle]
         self._chkAngles()
 
-    anglesdegrees = property(_getAnglesD, _setAnglesD)
+    anglesdegrees = property(getAnglesDegrees, setAnglesDegrees)
 
 class circle(roibase):
     _RAD = "rad"
@@ -206,13 +212,13 @@ class circle(roibase):
         super(circle, self).__init__(**kwargs)
         self.rad = float(rad) if rad is not None else float(radius)
 
-    def _getRadius(self):
+    def getRadius(self):
         return self.rad
 
-    def _setRadius(self, radius):
+    def setRadius(self, radius):
         self.rad = float(radius)
 
-    radius = property(_getRadius, _setRadius)
+    radius = property(getRadius, setRadius)
 
 class ellipse(roibase):
     _SAXIS = "saxis"
@@ -223,29 +229,29 @@ class ellipse(roibase):
         self.saxis = [float(l) for l in saxis] if saxis is not None else [float(l) for l in semiaxes]
         self.ang = float(ang) if ang is not None else float(angle)
 
-    def _getSAxes(self):
+    def getSemiAxes(self):
         return self.saxis
 
-    def _setSAxes(self, axes):
+    def setSemiAxes(self, axes):
         self.saxis = [float(a) for a in axes]
 
-    semiaxes = property(_getSAxes, _setSAxes)
+    semiaxes = property(getSemiAxes, setSemiAxes)
 
-    def _getAngle(self):
+    def getAngle(self):
         return self.ang
 
-    def _setAngle(self, angle):
+    def setAngle(self, angle):
         self.ang = float(angle)
 
-    angle = property(_getAngle, _setAngle)
+    angle = property(getAngle, setAngle)
 
-    def _getAngleD(self):
+    def getAngleDegrees(self):
         return _math.degrees(self.ang)
 
-    def _setAngleD(self, angle):
+    def setAngleDegrees(self, angle):
         self.ang = _math.radians(angle)
 
-    angledegrees = property(_getAngleD, _setAngleD)
+    angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class roi_list(list):
     def __init__(self):

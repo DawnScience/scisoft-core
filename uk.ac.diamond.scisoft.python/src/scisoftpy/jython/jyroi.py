@@ -18,56 +18,55 @@ import uk.ac.diamond.scisoft.analysis.roi as _roi
 from jycore import asDataset as _asDs
 from jycore import _wrap
 
-        
 # base class for implementing point property
 class _iroi(object):
     def _jroi(self):
         return self._roi
 
-    def _getPoint(self):
+    def getPoint(self):
         return self._roi.getPoint()
  
-    def _setPoint(self, pt):
+    def setPoint(self, pt):
         self._roi.setPoint([float(p) for p in pt])
 
-    point = property(_getPoint, _setPoint)
+    point = property(getPoint, setPoint)
 
-    def _getName(self):
+    def getName(self):
         return self._roi.getName()
  
-    def _setName(self, n):
+    def setName(self, n):
         self._roi.setName(str(n))
 
-    name = property(_getName, _setName)
+    name = property(getName, setName)
 
-    def _isPlot(self):
+    def isPlot(self):
         return self._roi.isPlot()
  
-    def _setPlot(self, p):
+    def setPlot(self, p):
         self._roi.setPlot(bool(p))
 
-    plot = property(_isPlot, _setPlot)
+    plot = property(isPlot, setPlot)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self._roi.toString())
 
 # class to mix-in for implementing angle property
 class _angleprop(object):
-    def _getAngle(self):
+    def getAngle(self):
         return self._roi.getAngle()
   
-    def _setAngle(self, ang):
+    def setAngle(self, ang):
         self._roi.setAngle(float(ang))
 
-    angle = property(_getAngle, _setAngle)
+    angle = property(getAngle, setAngle)
 
-    def _getAngleD(self):
+    def getAngleDegrees(self):
         return self._roi.getAngleDegrees()
   
-    def _setAngleD(self, ang):
+    def setAngleDegrees(self, ang):
         self._roi.setAngleDegrees(float(ang))
 
-    angledegrees = property(_getAngleD, _setAngleD)
+    angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class roibase(_iroi):
     pass
@@ -88,13 +87,13 @@ class line(_iroi, _angleprop):
         if point is not None:
             self.point = point
 
-    def _getLength(self):
+    def getLength(self):
         return self._roi.getLength()
   
-    def _setLength(self, ang):
+    def setLength(self, ang):
         self._roi.setLength(float(ang))
 
-    length = property(_getLength, _setLength)
+    length = property(getLength, setLength)
 
 
 class rectangle(_iroi, _angleprop):
@@ -105,13 +104,13 @@ class rectangle(_iroi, _angleprop):
         if point is not None:
             self.point = point
 
-    def _getLengths(self):
+    def getLengths(self):
         return self._roi.getLengths()
   
-    def _setLengths(self, lens):
+    def setLengths(self, lens):
         self._roi.setLengths([float(l) for l in lens])
 
-    lengths = property(_getLengths, _setLengths)
+    lengths = property(getLengths, setLengths)
 
 class sector(_iroi):
     def __init__(self, jroi=None, point=None, **kwargs):
@@ -121,29 +120,29 @@ class sector(_iroi):
         if point is not None:
             self.point = point
 
-    def _getRadii(self):
+    def getRadii(self):
         return self._roi.getRadii()
   
-    def _setRadii(self, rads):
+    def setRadii(self, rads):
         self._roi.setRadii([float(r) for r in rads])
 
-    radii = property(_getRadii, _setRadii)
+    radii = property(getRadii, setRadii)
 
-    def _getAngles(self):
+    def getAngles(self):
         return self._roi.getAngles()
  
-    def _setAngles(self, angs):
+    def setAngles(self, angs):
         self._roi.setAngles([float(a) for a in angs])
 
-    angles = property(_getAngles, _setAngles)
+    angles = property(getAngles, setAngles)
 
-    def _getAnglesD(self):
+    def getAnglesDegrees(self):
         return self._roi.getAnglesDegrees()
  
-    def _setAnglesD(self, angs):
+    def setAnglesDegrees(self, angs):
         self._roi.setAnglesDegrees([float(a) for a in angs])
 
-    anglesdegrees = property(_getAnglesD, _setAnglesD)
+    anglesdegrees = property(getAnglesDegrees, setAnglesDegrees)
 
 class circle(_iroi):
     def __init__(self, jroi=None, point=None, **kwargs):
@@ -153,13 +152,13 @@ class circle(_iroi):
         if point is not None:
             self.point = point
 
-    def _getRadius(self):
+    def getRadius(self):
         return self._roi.getRadius()
   
-    def _setRadius(self, rad):
+    def setRadius(self, rad):
         self._roi.setRadius(float(rad))
 
-    radius = property(_getRadius, _setRadius)
+    radius = property(getRadius, setRadius)
 
 class ellipse(_iroi, _angleprop):
     def __init__(self, jroi=None, point=None, **kwargs):
@@ -169,13 +168,13 @@ class ellipse(_iroi, _angleprop):
         if point is not None:
             self.point = point
 
-    def _getSAxes(self):
+    def getSemiAxes(self):
         return self._roi.getSemiAxes()
   
-    def _setSAxes(self, axes):
+    def setSemiAxes(self, axes):
         self._roi.setSemiAxes([float(a) for a in axes])
 
-    semiaxes = property(_getSAxes, _setSAxes)
+    semiaxes = property(getSemiAxes, setSemiAxes)
 
 def _roi_wrap(arg):
     # ring when implemented

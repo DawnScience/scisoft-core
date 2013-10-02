@@ -116,6 +116,6 @@ public class CircularROI extends ROIBase {
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("Centre %s Radius %g", Arrays.toString(spt), rad);
+		return super.toString() + String.format("point=%s, radius=%g", Arrays.toString(spt), rad);
 	}
 }

@@ -484,6 +484,6 @@ public class RectangularROI extends ROIBase implements Serializable {
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("Start %s Size %s Angle %g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
+		return super.toString() + String.format("point=%s, lengths=%s, angle=%g", Arrays.toString(spt), Arrays.toString(len), getAngleDegrees());
 	}
 }

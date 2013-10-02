@@ -196,6 +196,6 @@ public class ROIBase implements IROI {
 
 	@Override
 	public String toString() {
-		return name == null ? "" : String.format("Name %s ", name);
+		return name == null ? "" : String.format("name=%s, ", name);
 	}
 }

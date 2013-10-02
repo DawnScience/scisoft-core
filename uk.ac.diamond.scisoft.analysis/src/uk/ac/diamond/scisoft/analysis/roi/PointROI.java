@@ -43,6 +43,6 @@ public class PointROI extends ROIBase {
 
 	@Override
 	public String toString() {
-		return super.toString() + Arrays.toString(spt);
+		return super.toString() + "point=" + Arrays.toString(spt);
 	}
 }

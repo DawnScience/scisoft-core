@@ -111,6 +111,14 @@ public class EllipticalROI extends ROIBase {
 	}
 
 	/**
+	 * Set semi-axis values
+	 * @param semiaxis
+	 */
+	public void setSemiaxes(double[] semiaxis) {
+		setSemiAxes(semiaxis);
+	}
+
+	/**
 	 * Set semi-axis value
 	 * @param index (should be 0 or 1 for major or minor axis)
 	 * @param semiaxis
@@ -270,8 +278,8 @@ public class EllipticalROI extends ROIBase {
 	@Override
 	public String toString() {
 		if (isCircular()) {
-			return super.toString() + String.format("Centre %s Radius %g Angle %g", Arrays.toString(spt), saxis[0], getAngleDegrees());
+			return super.toString() + String.format("point=%s, radius=%g, angle=%g", Arrays.toString(spt), saxis[0], getAngleDegrees());
 		}
-		return super.toString() + String.format("Centre %s Semi-axes %s Angle %g", Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
+		return super.toString() + String.format("point=%s, semiaxes=%s, angle=%g", Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
 	}
 }

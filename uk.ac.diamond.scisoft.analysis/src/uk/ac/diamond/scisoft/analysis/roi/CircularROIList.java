@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class CircularROIList extends ArrayList<CircularROI> implements ROIList<CircularROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof CircularROI)
 			return super.add((CircularROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(CircularROI roi) {
+		return super.add(roi);
 	}
 }

@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class LinearROIList extends ArrayList<LinearROI> implements ROIList<LinearROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof LinearROI)
 			return super.add((LinearROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(LinearROI roi) {
+		return super.add(roi);
 	}
 }

@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class EllipticalROIList extends ArrayList<EllipticalROI> implements ROIList<EllipticalROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof EllipticalROI)
 			return super.add((EllipticalROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(EllipticalROI roi) {
+		return super.add(roi);
 	}
 }

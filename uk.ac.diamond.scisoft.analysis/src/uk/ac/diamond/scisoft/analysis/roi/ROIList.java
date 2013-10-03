@@ -25,6 +25,18 @@ import java.util.List;
  */
 public interface ROIList<T extends IROI> extends Serializable, List<T> {
 
+	/**
+	 * Add roi to list (if it is of correct class)
+	 * @param roi
+	 * @return true if added
+	 */
 	@Override
 	public boolean add(IROI roi);
+
+	/**
+	 * Add roi to list
+	 * @param roi
+	 * @return true if added
+	 */
+	public boolean append(T roi);
 }

@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class GridROIList extends ArrayList<GridROI> implements ROIList<GridROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof GridROI)
 			return super.add((GridROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(GridROI roi) {
+		return super.add(roi);
 	}
 }

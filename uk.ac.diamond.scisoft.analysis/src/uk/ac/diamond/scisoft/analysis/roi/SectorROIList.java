@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class SectorROIList extends ArrayList<SectorROI> implements ROIList<SectorROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof SectorROI)
 			return super.add((SectorROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(SectorROI roi) {
+		return super.add(roi);
 	}
 }

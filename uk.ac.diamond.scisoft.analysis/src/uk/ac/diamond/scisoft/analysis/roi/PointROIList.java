@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class PointROIList extends ArrayList<PointROI> implements ROIList<PointROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof PointROI)
 			return super.add((PointROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(PointROI roi) {
+		return super.add(roi);
 	}
 }

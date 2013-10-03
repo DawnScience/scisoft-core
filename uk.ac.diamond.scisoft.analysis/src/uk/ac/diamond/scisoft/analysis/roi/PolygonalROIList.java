@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class PolygonalROIList extends ArrayList<PolygonalROI> implements ROIList<PolygonalROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof PolygonalROI)
 			return super.add((PolygonalROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(PolygonalROI roi) {
+		return super.add(roi);
 	}
 }

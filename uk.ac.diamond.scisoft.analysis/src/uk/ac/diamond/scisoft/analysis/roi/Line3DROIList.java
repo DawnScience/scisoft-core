@@ -24,15 +24,15 @@ import java.util.ArrayList;
  */
 public class Line3DROIList extends ArrayList<Line3DROI> implements ROIList<Line3DROI> {
 
-	/**
-	 * Add roi to list (if it is of correct class)
-	 * @param roi
-	 * @return true if added
-	 */
 	@Override
 	public boolean add(IROI roi) {
 		if (roi instanceof Line3DROI)
 			return super.add((Line3DROI) roi);
 		return false;
+	}
+
+	@Override
+	public boolean append(Line3DROI roi) {
+		return super.add(roi);
 	}
 }

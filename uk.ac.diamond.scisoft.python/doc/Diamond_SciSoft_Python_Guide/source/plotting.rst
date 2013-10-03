@@ -277,7 +277,7 @@ These are
    A line segment defined by its starting point, length and angle (*point*, *length*, *angle*, *angledegrees*)
  *rectangle*
    A rectangle defined by its starting point, width, height and 
-   angle (attributes: *point*, *lengths*, *angle*, *anglesdegrees*)
+   angle (attributes: *point*, *lengths*, *angle*, *angledegrees*)
  *sector*
    A sector defined by its centre point, bounds on radius and azimuthal angle (*point*, *radii*, *angles*, *anglesdegrees*)
  *circle*

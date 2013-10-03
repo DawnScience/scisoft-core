@@ -272,7 +272,7 @@ The regions of interest defined are in the ROI package::
 These are
 
  *point*
-   A single point defined by its coordinates (Python attribute names: *point*)
+   A single point defined by its coordinates (Python attributes: *point*)
  *line*
    A line segment defined by its starting point, length and angle (*point*, *length*, *angle*, *angledegrees*)
  *rectangle*
@@ -283,10 +283,22 @@ These are
  *circle*
    A circle defined by its centre point and radius (*point*, *radius*)
  *ellipse*
-   An ellipse defined by its centre point, major and minor semi-axes and azimuthal angle (attributes: *point*, *semiaxes*, *angle*, *angledegrees*)
+   An ellipse defined by its centre point, major and minor semi-axes and azimuthal angle (*point*, *semiaxes*, *angle*, *angledegrees*)
 
-As mentioned in the previous section, the current ROI and any ROIs stored in
-the table are sent via a GUI bean back to the plot view.
+They also possess *name* and *plot* attributes where the latter is a boolean
+and is used to determine whether to plot the profile when in the correct GUI
+view. These attributes can be used as keywords in constructing the ROIs::
+
+    import scisoftpy as dnp
+    p = dnp.roi.point() # creates a point ROI with default values
+    p.name = 'point 1'
+    p.point = 50,-50
+
+    # using keyword arguments in the constructor to create the same ROI
+    p = dnp.roi.point(name='point 1', point=[50,-50])
+
+As mentioned in the previous section, the current ROI and any ROIs stored
+in the table are sent via a GUI bean back to the plot view.
 
 The current ROI and the table of ROIs are held in the GUI bean. The values
 held under those keys depend on which side panel is active.

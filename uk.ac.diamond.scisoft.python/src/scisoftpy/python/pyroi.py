@@ -57,6 +57,10 @@ class roibase(_iroi):
     def setPlot(self, p):
         self.plot = bool(p)
 
+    def copy(self):
+        from copy import deepcopy
+        return deepcopy(self)
+
 class point(roibase):
     def __init__(self, **kwargs):
         super(point, self).__init__(**kwargs)
@@ -103,10 +107,12 @@ class rectangle(roibase):
     _ANG = "ang"
     _CLIPPING_COMPENSATION = "clippingCompensation"
     
-    def __init__(self, lengths=[0.0,0.0], len=None, angle=0.0, ang=None, clippingCompensation=False, **kwargs): #@ReservedAssignment
+    def __init__(self, lengths=[0.0,0.0], len=None, angle=0.0, ang=None, angledegrees=None, clippingCompensation=False, **kwargs): #@ReservedAssignment
         super(rectangle, self).__init__(**kwargs)
         self.len = [float(l) for l in len] if len is not None else [float(l) for l in lengths]
         self.ang = float(ang) if ang is not None else float(angle)
+        if angledegrees is not None:
+            self.ang = _math.radians(angledegrees)
         self.clippingCompensation = clippingCompensation
 
     def getLengths(self):
@@ -150,9 +156,11 @@ class sector(roibase):
     ACNINETY = 5
     INVERT = 6
 
-    def __init__(self, angles=[0.0, 0.0], ang=None, radii=[0.0, 0.0], rad=None, clippingCompensation=False, symmetry=NONE, combineSymmetry=False, averageArea=False, **kwargs):
+    def __init__(self, angles=[0.0, 0.0], ang=None, anglesdegrees=None, radii=[0.0, 0.0], rad=None, clippingCompensation=False, symmetry=NONE, combineSymmetry=False, averageArea=False, **kwargs):
         super(sector, self).__init__(**kwargs)
         self.ang = [float(a) for a in ang] if ang is not None else [float(a) for a in angles]
+        if anglesdegrees is not None:
+            self.ang = [_math.radians(a) for a in anglesdegrees]
         self.rad = [float(r) for r in rad] if rad is not None else [float(r) for r in radii]
         self.clippingCompensation = clippingCompensation
         self.symmetry = symmetry
@@ -224,10 +232,12 @@ class ellipse(roibase):
     _SAXIS = "saxis"
     _ANG = "ang"
     
-    def __init__(self, semiaxes=[0.0,0.0], saxis=None, angle=0.0, ang=None, **kwargs): #@ReservedAssignment
+    def __init__(self, semiaxes=[0.0,0.0], saxis=None, angle=0.0, ang=None, angledegrees=None, **kwargs): #@ReservedAssignment
         super(ellipse, self).__init__(**kwargs)
         self.saxis = [float(l) for l in saxis] if saxis is not None else [float(l) for l in semiaxes]
         self.ang = float(ang) if ang is not None else float(angle)
+        if angledegrees is not None:
+            self.ang = _math.radians(angledegrees)
 
     def getSemiAxes(self):
         return self.saxis

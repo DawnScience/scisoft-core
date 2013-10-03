@@ -18,6 +18,8 @@ import uk.ac.diamond.scisoft.analysis.roi as _roi
 from jycore import asDataset as _asDs
 from jycore import _wrap
 
+_jroi = _roi.IROI
+
 # base class for implementing point property
 class _iroi(object):
     def _jroi(self):
@@ -49,6 +51,12 @@ class _iroi(object):
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self._roi.toString())
+
+    def copy(self):
+        from copy import copy
+        c = copy(self)
+        c._roi = self._roi.copy()
+        return c
 
 # class to mix-in for implementing angle property
 class _angleprop(object):

@@ -38,6 +38,10 @@ class Test(unittest.TestCase):
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
 
+        r = r.copy()
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+
         r = np.plot.roi.line()
         r.point = 50, -50
         r.length = 100
@@ -50,6 +54,12 @@ class Test(unittest.TestCase):
 
         r = np.plot.roi.line(point=[50, -50], length=100, angle=math.pi*0.25)
         print r
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(100, r.length)
+        self.assertEqual(45, r.angledegrees)
+
+        r = r.copy()
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.length)
@@ -68,6 +78,13 @@ class Test(unittest.TestCase):
         
         r = np.plot.roi.rectangle(point=[50, -50], lengths=[100,23], angle=math.pi*0.25)
         print r
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(100, r.lengths[0])
+        self.assertEqual(23, r.lengths[1])
+        self.assertEqual(45, r.angledegrees)
+
+        r = r.copy()
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.lengths[0])
@@ -95,6 +112,14 @@ class Test(unittest.TestCase):
         self.assertEqual(30, r.radii[0])
         self.assertEqual(50, r.radii[1])
 
+        r = r.copy()
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(0, r.angles[0])
+        self.assertEqual(180, r.anglesdegrees[1])
+        self.assertEqual(30, r.radii[0])
+        self.assertEqual(50, r.radii[1])
+
         r = np.plot.roi.circle()
         r.point = 50, -50
         r.radius = 100
@@ -105,6 +130,11 @@ class Test(unittest.TestCase):
 
         r = np.plot.roi.circle(point=[50, -50], radius=100)
         print r
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(100, r.radius)
+
+        r = r.copy()
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.radius)
@@ -122,6 +152,13 @@ class Test(unittest.TestCase):
 
         r = np.plot.roi.ellipse(point=[50, -50], semiaxes=[100,75], angle=math.pi*0.25)
         print r
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(100, r.semiaxes[0])
+        self.assertEqual(75, r.semiaxes[1])
+        self.assertEqual(45, r.angledegrees)
+
+        r = r.copy()
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.semiaxes[0])

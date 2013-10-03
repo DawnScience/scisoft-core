@@ -144,6 +144,14 @@ public class EllipticalROI extends ROIBase {
 		checkAngle();
 	}
 
+	/**
+	 * For Jython
+	 * @param angle The angle in degrees to set
+	 */
+	public void setAngledegrees(double angle) {
+		setAngleDegrees(angle);
+	}
+
 	private final static double TWOPI = 2.0 * Math.PI;
 	/**
 	 * Make sure angle lie in permitted ranges:

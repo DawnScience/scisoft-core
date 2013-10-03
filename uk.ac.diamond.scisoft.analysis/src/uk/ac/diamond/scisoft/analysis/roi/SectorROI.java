@@ -262,7 +262,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * @return Returns the angles
+	 * @return Returns the angles in degrees
 	 */
 	public double[] getAnglesDegrees() {
 		double[] angles = new double[] { Math.toDegrees(ang[0]), Math.toDegrees(ang[1]) };
@@ -271,22 +271,30 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	/**
 	 * @param index 
-	 * @return Returns the angles
+	 * @return Returns the angles in degrees
 	 */
 	public double getAngleDegrees(int index) {
 		return Math.toDegrees(ang[index]);
 	}
 
 	/**
-	 * @param angles The angles to set
+	 * @param angles The angles in degrees to set
 	 */
 	public void setAnglesDegrees(double angles[]) {
 		setAnglesDegrees(angles[0], angles[1]);
 	}
 
 	/**
-	 * @param startAngle 
-	 * @param endAngle 
+	 * For Jython
+	 * @param angles The angles in degrees to set
+	 */
+	public void setsAngledegrees(double[] angles) {
+		setAnglesDegrees(angles);
+	}
+
+	/**
+	 * @param startAngle in degrees
+	 * @param endAngle in degrees
 	 */
 	public void setAnglesDegrees(double startAngle, double endAngle) {
 		ang[0] = Math.toRadians(startAngle);

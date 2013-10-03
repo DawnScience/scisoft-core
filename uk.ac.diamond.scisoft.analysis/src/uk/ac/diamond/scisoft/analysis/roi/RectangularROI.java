@@ -223,6 +223,14 @@ public class RectangularROI extends ROIBase implements Serializable {
 		calcTrig();
 	}
 
+	/**
+	 * For Jython
+	 * @param angle The angle in degrees to set
+	 */
+	public void setAngledegrees(double angle) {
+		setAngleDegrees(angle);
+	}
+
 	private void calcTrig() {
 		cang = Math.cos(ang);
 		sang = Math.sin(ang);

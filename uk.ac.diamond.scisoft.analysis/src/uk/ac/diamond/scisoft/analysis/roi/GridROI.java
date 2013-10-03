@@ -40,7 +40,6 @@ public class GridROI extends RectangularROI implements Serializable {
 	private GridROI(double width, double height, double angle) {
 		super(width, height, angle);
 	}
-
 	
 	/**
 	 * If using this constructor, you should set x and y spacing and GridPreferences

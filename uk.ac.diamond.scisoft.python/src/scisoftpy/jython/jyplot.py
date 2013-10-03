@@ -106,13 +106,20 @@ plot_volume = _plotter.volumePlot
 from jybeans import parameters as _jyparams
 from jybeans import guibean as _jyguibean
 
-from jyroi import _roi_wrap, _create_list, _jroi
+from jyroi import _roi_wrap, _create_list, _jroi, _roi_list
 
 def _wrap_gui_bean(jb):
     if _jyparams.roi in jb:
         jb[_jyparams.roi] = _roi_wrap(jb[_jyparams.roi])
     if _jyparams.roilist in jb:
-        jb[_jyparams.roilist] = [_roi_wrap(r) for r in jb[_jyparams.roilist]]
+        jl = jb[_jyparams.roilist]
+        if jl:
+            l = _create_list(jl[0])
+            for r in jl:
+                l.append(r)
+        else:
+            l = None
+        jb[_jyparams.roilist] = l
 
 def _unwrap_gui_bean(ob, nb):
     for k in ob:
@@ -121,16 +128,8 @@ def _unwrap_gui_bean(ob, nb):
             v = v._jroi()
         elif k == _jyparams.roilist:
             ov = v
-            for r in ov:
-                if not isinstance(r, _jroi):
-                    v = _create_list(r)
-                    break
-            for r in ov:
-                if isinstance(r, _jroi):
-                    v.add(r)
-                else:
-                    v.add(r._jroi())
-                    
+            if isinstance(ov, _roi_list):
+                v = ov._jroilist()
         nb[k] = v
     return nb
 

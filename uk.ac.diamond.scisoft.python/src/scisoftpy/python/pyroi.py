@@ -41,7 +41,7 @@ class roibase(_iroi):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, self.__dict__.__repr__())
+        return "%s(%s)" % (self.__class__.__name__, self.__dict__.__repr__())
 
     def getPoint(self):
         return self.spt
@@ -177,7 +177,7 @@ class sector(roibase):
 
     def _chkAngles(self):
         if len(self.ang) != 2:
-            raise ValueError, 'Need two angles' 
+            raise ValueError, "Need two angles" 
         a = self.ang[0]
         tpi = 2 * _math.pi
         while a >= self.ang[1]:
@@ -273,32 +273,30 @@ class roi_list(list):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def add(self, item): # cover Java list usage
-        self.append(item)
+    def append(self, item):
+        if not isinstance(item, self._pcls):
+            raise TypeError, "Item is wrong type"
+        super(roi_list, self).append(item)
+
+    add = append # cover Java list usage
 
 class point_list(roi_list):
-    def __init__(self):
-        super(point_list, self).__init__()
+    _pcls = point
 
 class line_list(roi_list):
-    def __init__(self):
-        super(line_list, self).__init__()
+    _pcls = line
 
 class rectangle_list(roi_list):
-    def __init__(self):
-        super(rectangle_list, self).__init__()
+    _pcls = rectangle
 
 class sector_list(roi_list):
-    def __init__(self):
-        super(sector_list, self).__init__()
+    _pcls = sector
 
 class circle_list(roi_list):
-    def __init__(self):
-        super(circle_list, self).__init__()
+    _pcls = circle
 
 class ellipse_list(roi_list):
-    def __init__(self):
-        super(ellipse_list, self).__init__()
+    _pcls = ellipse
 
 def profile(*args):
     #TODO

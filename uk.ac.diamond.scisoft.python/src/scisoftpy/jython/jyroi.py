@@ -204,25 +204,64 @@ def _roi_wrap(arg):
     elif isinstance(arg, _roi.CircularROI):
         return circle(arg)
 
-point_list = _roi.PointROIList
-line_list = _roi.LinearROIList
-rectangle_list = _roi.RectangularROIList
-sector_list = _roi.SectorROIList
-circle_list = _roi.CircularROIList
-ellipse_list = _roi.EllipticalROIList
+class _roi_list(list):
+    def append(self, item):
+        if isinstance(item, self._jcls):
+            item = _roi_wrap(item)
+        if not isinstance(item, self._pcls):
+            raise TypeError, "Item is wrong type for list"
+        super(_roi_list, self).append(item)
+
+    add = append
+
+    def _jroilist(self):
+        l = self._jlcls()
+        for r in self:
+            l.add(r._jroi())
+        return l
+
+class point_list(_roi_list):
+    _jcls = _roi.PointROI
+    _jlcls = _roi.PointROIList
+    _pcls = point
+
+class line_list(_roi_list):
+    _jcls = _roi.LinearROI
+    _jlcls = _roi.LinearROIList
+    _pcls = line
+
+class rectangle_list(_roi_list):
+    _jcls = _roi.RectangularROI
+    _jlcls = _roi.RectangularROIList
+    _pcls = rectangle
+
+class sector_list(_roi_list):
+    _jcls = _roi.SectorROI
+    _jlcls = _roi.SectorROIList
+    _pcls = sector
+
+class circle_list(_roi_list):
+    _jcls = _roi.CircularROI
+    _jlcls = _roi.CircularROIList
+    _pcls = circle
+
+class ellipse_list(_roi_list):
+    _jcls = _roi.EllipticalROI
+    _jlcls = _roi.EllipticalROIList
+    _pcls = ellipse
 
 def _create_list(arg):
-    if isinstance(arg, sector):
+    if isinstance(arg, _roi.SectorROI):
         return sector_list()
-    elif isinstance(arg, rectangle):
+    elif isinstance(arg, _roi.RectangularROI):
         return rectangle_list()
-    elif isinstance(arg, point):
+    elif isinstance(arg, _roi.PointROI):
         return point_list()
-    elif isinstance(arg, line):
+    elif isinstance(arg, _roi.LinearROI):
         return line_list()
-    elif isinstance(arg, ellipse):
+    elif isinstance(arg, _roi.EllipticalROI):
         return ellipse_list()
-    elif isinstance(arg, circle):
+    elif isinstance(arg, _roi.CircularROI):
         return circle_list()
 
 ROIProfile = _roi.ROIProfile
@@ -247,4 +286,4 @@ def profile(data, roi, step=None, mask=None):
             return _roi.ROIProfile.sector(data, roi)
         else:
             return _roi.ROIProfile.sector(data, mask, roi)
-    raise ValueError, "roi is not of known type"
+    raise TypeError, "roi is not of known type"

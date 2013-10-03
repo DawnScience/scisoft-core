@@ -599,29 +599,38 @@ def setrois(bean, roilist):
     if bean is None:
         raise ValueError, "No bean given"
 
-    if not isinstance(roilist, (roi.linelist, roi.rectlist, roi.sectlist)):
+    if not isinstance(roilist, (roi.point_list, roi.line_list, roi.rectangle_list, roi.sector_list, roi.ellipse_list, roi.circle_list)):
         r = roilist[0]
-        if isinstance(r, roi.line):
+        if isinstance(r, roi.point):
+            rtype = roi.point
+            nlist = roi.point_list()
+        elif isinstance(r, roi.line):
             rtype = roi.line
-            nlist = roi.linelist()
-        elif isinstance(r, roi.rect):
-            rtype = roi.rect
-            nlist = roi.rectlist()
-        elif isinstance(r, roi.sect):
-            rtype = roi.sect
-            nlist = roi.sectlist()
+            nlist = roi.line_list()
+        elif isinstance(r, roi.rectangle):
+            rtype = roi.rectangle
+            nlist = roi.rectangle_list()
+        elif isinstance(r, roi.sector):
+            rtype = roi.sector
+            nlist = roi.sector_list()
+        elif isinstance(r, roi.ellipse):
+            rtype = roi.ellipse
+            nlist = roi.ellipse_list()
+        elif isinstance(r, roi.circle):
+            rtype = roi.circle
+            nlist = roi.circle_list()
         else:
-            raise TypeError, "Type of first item not support"
+            raise TypeError, "Type of first item not supported"
 
         if isinstance(roilist, roi_list):
             for k in roilist:
                 r = roilist[k]
                 if isinstance(r, rtype):
-                    nlist.add(r)
+                    nlist.append(r)
         else:
             for r in roilist:
                 if isinstance(r, rtype):
-                    nlist.add(r)
+                    nlist.append(r)
         roilist = nlist
     bean[parameters.roilist] = roilist
 

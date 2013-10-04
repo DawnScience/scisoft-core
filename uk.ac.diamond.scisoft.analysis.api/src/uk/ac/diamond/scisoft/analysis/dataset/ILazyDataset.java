@@ -27,6 +27,13 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * an empty array for shape.
  */
 public interface ILazyDataset extends Serializable, IMetadataProvider {
+	
+	/**
+	 * Data type
+	 * @return one of the integer data types.
+	 */
+	public int getDtype();
+	
 	/**
 	 * @return Class of element
 	 */

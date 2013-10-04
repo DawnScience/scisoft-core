@@ -44,7 +44,7 @@ public class SliceObject {
     /**
      * Dataset name required for dimension where 1 is the first.
      */
-    private Map<Integer,String> nexusAxes;
+    private Map<Integer,String> axisNames;
     
     /**
      * Name, expression name to a lazy dataset which can be used for an axis.
@@ -52,7 +52,7 @@ public class SliceObject {
 	private Map<String, IDataset> expressionAxes;
 
     public SliceObject() {
-    	this.nexusAxes = new HashMap<Integer, String>(3);
+    	this.axisNames = new HashMap<Integer, String>(3);
     }
     
 	public void clear() {
@@ -62,7 +62,7 @@ public class SliceObject {
 	    sliceStart    =null; 
 	    sliceStop     =null; 
 	    sliceStep     =null;
-	    nexusAxes     =null; // Do not clear
+	    axisNames     =null; // Do not clear
 	    expressionAxes=null; // Do not clear
 	}
     
@@ -82,7 +82,7 @@ public class SliceObject {
 		result = prime * result + Arrays.hashCode(fullShape);
 		result = prime * result + (isRange ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((nexusAxes == null) ? 0 : nexusAxes.hashCode());
+		result = prime * result + ((axisNames == null) ? 0 : axisNames.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		result = prime * result + ((shapeMessage == null) ? 0 : shapeMessage.hashCode());
 		result = prime * result + Arrays.hashCode(sliceStart);
@@ -116,10 +116,10 @@ public class SliceObject {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (nexusAxes == null) {
-			if (other.nexusAxes != null)
+		if (axisNames == null) {
+			if (other.axisNames != null)
 				return false;
-		} else if (!nexusAxes.equals(other.nexusAxes))
+		} else if (!axisNames.equals(other.axisNames))
 			return false;
 		if (path == null) {
 			if (other.path != null)
@@ -179,7 +179,7 @@ public class SliceObject {
     	ret.sliceStart = sliceStart;
     	ret.sliceStop  = sliceStop;
     	ret.sliceStep  = sliceStep;
-    	ret.nexusAxes.putAll(nexusAxes);
+    	ret.axisNames.putAll(axisNames);
     	if (expressionAxes!=null) { // Point to old map.
     		ret.expressionAxes = expressionAxes;
     	}
@@ -240,20 +240,20 @@ public class SliceObject {
 		this.fullShape = fullShape;
 	}
 
-	public Map<Integer, String> getNexusAxes() {
-		return nexusAxes;
+	public Map<Integer, String> getAxisNames() {
+		return axisNames;
 	}
 
-	public void setNexusAxes(Map<Integer, String> nexusAxes) {
-		this.nexusAxes = nexusAxes;
+	public void setAxisNames(Map<Integer, String> nexusAxes) {
+		this.axisNames = nexusAxes;
 	}
     
-	public void setNexusAxis(int inexusDim, String name) {
-		nexusAxes.put(inexusDim, name);
+	public void setAxisName(int inexusDim, String name) {
+		axisNames.put(inexusDim, name);
 	}
 
-	public String getNexusAxis(int inexusDim) {
-		return nexusAxes.get(inexusDim);
+	public String getAxisName(int inexusDim) {
+		return axisNames.get(inexusDim);
 	}
 
 	public void putExpressionAxis(String name, IDataset set) {

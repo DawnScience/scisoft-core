@@ -527,15 +527,16 @@ def setdatabean(bean, name=_PVNAME):
     if bean is not None:
         _plot_setdatabean(name, bean)
 
-def getroi(bean, roi=None):
+def getroi(bean=None, roi=None, name=_PVNAME):
     '''Get region of interest from bean
 
     Arguments:
-    bean -- GUI bean
+    bean -- GUI bean (if None, retrieve from plot view of given name)
     roi  -- class of ROI to retrieve. If None, then get anyway
+    name -- name of plot view to use (if None, use default name)
     '''
     if bean is None:
-        return None
+        bean = getbean(name)
     if not parameters.roi in bean:
         return None
     r = bean[parameters.roi]
@@ -545,23 +546,44 @@ def getroi(bean, roi=None):
         return None
     return r
 
-def setroi(bean, roi):
-    '''Set region of interest in bean'''
-    if bean is not None and isinstance(bean, _guibean):
-        bean[parameters.roi] = roi
+def setroi(bean, roi=None, send=False, name=_PVNAME):
+    '''Set region of interest in bean
 
-def delroi(bean, roi=None):
+    Arguments:
+    bean -- GUI bean (if None, retrieve from and update to plot view of given name)
+    roi  -- ROI to set
+    send -- flag to update plot
+    name -- name of plot view to use (if None, use default name)
+    '''
+    if roi is None:
+        roi = bean
+        send = True
+        bean = getbean(name)
+    if isinstance(bean, _guibean):
+        bean[parameters.roi] = roi
+    if send:
+        setbean(bean, name)
+    return bean
+
+def delroi(bean=None, roi=None, send=False, name=_PVNAME):
     '''Delete region of interest from bean
 
     Arguments:
-    bean -- GUI bean
+    bean -- GUI bean (if None, retrieve from and update to plot view of given name)
     roi  -- class of ROI to remove. If None, then remove anyway
+    send -- flag to update plot
+    name -- name of plot view to use (if None, use default name)
     '''
     if bean is None:
-        return None
+        send = True
+        bean = getbean(name)
+        
     if parameters.roi in bean:
         if roi is None or isinstance(bean[parameters.roi], roi):
             bean[parameters.roi] = None
+
+    if send:
+        setbean(bean, name)
     return bean
 
 from scisoftpy.dictutils import ListDict
@@ -570,15 +592,16 @@ class roi_list(ListDict):
     def __init__(self, data=None):
         super(roi_list, self).__init__(data=data, warn=False, lock=False, interactive=False)
 
-def getrois(bean, roi=None):
+def getrois(bean=None, roi=None, name=_PVNAME):
     '''Get list/dict of regions of interest from bean
 
     Arguments:
-    bean -- GUI bean
+    bean -- GUI bean (if None, retrieve from plot view of given name)
     roi  -- class of ROI to retrieve. If None, then get anyway
+    name -- name of plot view to use (if None, use default name)
     '''
     if bean is None:
-        return None
+        bean = getbean(name)
     if not parameters.roilist in bean:
         return None
     rs = bean[parameters.roilist]
@@ -594,10 +617,18 @@ def getrois(bean, roi=None):
         rl = [(r.name, r) for r in rs if isinstance(r, roi)]
     return roi_list(rl)
 
-def setrois(bean, roilist):
-    '''Set list/dict of regions of interest in bean'''
-    if bean is None:
-        raise ValueError, "No bean given"
+def setrois(bean, roilist=None, send=False, name=_PVNAME):
+    '''Set list/dict of regions of interest in bean
+    Arguments:
+    bean    -- GUI bean (if None, retrieve from and update to plot view of given name)
+    roilist -- ROI list to set
+    send    -- flag to update plot
+    name    -- name of plot view to use (if None, use default name)
+    '''
+    if roilist is None:
+        roilist = bean
+        send = True
+        bean = getbean(name)
 
     if not isinstance(roilist, (roi.point_list, roi.line_list, roi.rectangle_list, roi.sector_list, roi.ellipse_list, roi.circle_list)):
         r = roilist[0]
@@ -633,45 +664,54 @@ def setrois(bean, roilist):
                     nlist.append(r)
         roilist = nlist
     bean[parameters.roilist] = roilist
+    if send:
+        setbean(bean, name)
+    return bean
 
-def delrois(bean, roi=None):
+def delrois(bean=None, roi=None, send=False, name=_PVNAME):
     '''Delete list/dict of regions of interest from bean
 
     Arguments:
-    bean -- GUI bean
+    bean -- GUI bean (if None, retrieve from and update to plot view of given name)
     roi  -- class of ROI or ROI list to remove. If None, then remove anyway
+    send -- flag to update plot
+    name -- name of plot view to use (if None, use default name)
     '''
     if bean is None:
-        return None
+        send = True
+        bean = getbean(name)
+
     if parameters.roilist in bean:
         rl = bean[parameters.roilist]
         if roi is None or isinstance(rl, roi) or isinstance(rl[0], roi):
             bean[parameters.roilist] = None
+    if send:
+        setbean(bean, name)
     return bean
 
-def getline(bean):
+def getline(bean=None, name=_PVNAME):
     '''Get linear region of interest'''
-    return getroi(bean, roi=roi.line)
+    return getroi(bean, roi=roi.line, name=name)
 
-def getlines(bean):
+def getlines(bean=None, name=_PVNAME):
     '''Get list of linear regions of interest'''
-    return getrois(bean, roi=roi.line)
+    return getrois(bean, roi=roi.line, name=name)
 
-def getrect(bean):
+def getrect(bean=None, name=_PVNAME):
     '''Get rectangular region of interest'''
-    return getroi(bean, roi=roi.rectangle)
+    return getroi(bean, roi=roi.rectangle, name=name)
 
-def getrects(bean):
+def getrects(bean=None, name=_PVNAME):
     '''Get list of rectangular regions of interest'''
-    return getrois(bean, roi=roi.rectangle)
+    return getrois(bean, roi=roi.rectangle, name=name)
 
-def getsect(bean):
+def getsect(bean=None, name=_PVNAME):
     '''Get sector region of interest'''
-    return getroi(bean, roi=roi.sector)
+    return getroi(bean, roi=roi.sector, name=name)
 
-def getsects(bean):
+def getsects(bean=None, name=_PVNAME):
     '''Get list of sector regions of interest'''
-    return getrois(bean, roi=roi.sector)
+    return getrois(bean, roi=roi.sector, name=name)
 
 
 def getfiles(bean):

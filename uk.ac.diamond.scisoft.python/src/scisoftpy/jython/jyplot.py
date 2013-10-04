@@ -124,8 +124,9 @@ def _wrap_gui_bean(jb):
 def _unwrap_gui_bean(ob, nb):
     for k in ob:
         v = ob[k]
-        if k == _jyparams.roi and not isinstance(v, _jroi):
-            v = v._jroi()
+        if k == _jyparams.roi:
+            if v is not None and not isinstance(v, _jroi):
+                v = v._jroi()
         elif k == _jyparams.roilist:
             ov = v
             if isinstance(ov, _roi_list):

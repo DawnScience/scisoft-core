@@ -203,6 +203,7 @@ def _roi_wrap(arg):
     # circular fit when implemented
     elif isinstance(arg, _roi.CircularROI):
         return circle(arg)
+    return arg
 
 class _roi_list(list):
     def append(self, item):

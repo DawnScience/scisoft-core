@@ -350,6 +350,26 @@ object and any stored ROIs are held in a Python list/dictionary of linear ROIs::
 
 Note, ROIs must be assigned names before they are appended to a ROI list.
 
+For convenience, the step of obtaining the GUI bean can be omitted::
+
+    # get current ROI directly from default plot view
+    r = dpl.getroi()
+
+    # get current ROIs directly from named plot view
+    rs = dpl.getrois(name="Plot 2")
+
+    # get current linear ROIs directly from named plot view
+    rs = dpl.getlines(name="Plot 2")
+
+    # set and send ROI directly to default plot view
+    dpl.setroi(r)
+
+    # set and send ROIs directly to named plot view 
+    dpl.setrois(rs, name="Plot 2")
+
+    # delete linear ROIs from named plot view
+    dpl.delrois(roi=dnp.roi.line, name="Plot 2")
+
 The ROIs obtained from the client can be used with image datasets to calculate
 profile datasets in the console::
 

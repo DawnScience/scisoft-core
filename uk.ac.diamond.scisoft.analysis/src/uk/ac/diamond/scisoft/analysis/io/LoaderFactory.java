@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.Activator;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
@@ -81,7 +80,7 @@ public class LoaderFactory {
 	 * in memory until the system is short on memory. Hashtable used because it is synchronized
 	 * which should reduce chances of getting the wrong data for the key.
 	 */
-	private static final Map<LoaderKey, Reference<Object>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<Object>>(89);
+	private static final Map<LoaderKey, Reference<IDataAnalysisObject>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<IDataAnalysisObject>>(89);
 	
 	/**
 	 * This method may be called to ensure that the soft reference cache of data is
@@ -470,11 +469,11 @@ public class LoaderFactory {
 	 * @param key
 	 * @return the object referenced or null if it got garbaged or was not cached yet
 	 */
-	private static Object getReference(LoaderKey key) {
+	private static IDataAnalysisObject getReference(LoaderKey key) {
 		if (Boolean.getBoolean(NO_CACHING)) return null;
 		synchronized (LOCK) {
 			try {
-		        final Reference<Object> ref = SOFT_CACHE.get(key);
+		        final Reference<IDataAnalysisObject> ref = SOFT_CACHE.get(key);
 		        if (ref == null) return null;
 		        return ref.get();
 			} catch (Throwable ne) {
@@ -502,14 +501,14 @@ public class LoaderFactory {
 	 * @param value
 	 * @return true if another value has been replaced.
 	 */
-	private static boolean recordSoftReference(LoaderKey key, Object value) {
+	private static boolean recordSoftReference(LoaderKey key, IDataAnalysisObject value) {
 		
 		if (Boolean.getBoolean(NO_CACHING)) return false;
 		synchronized (LOCK) {
 			try {
-				Reference<Object> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
-						              ? new WeakReference<Object>(value)
-						              : new SoftReference<Object>(value);
+				Reference<IDataAnalysisObject> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
+						                           ? new WeakReference<IDataAnalysisObject>(value)
+						                           : new SoftReference<IDataAnalysisObject>(value);
 				return SOFT_CACHE.put(key, ref)!=null;
 			} catch (Throwable ne) {
 				return false;
@@ -539,18 +538,17 @@ public class LoaderFactory {
 		
 		Object cachedObject = getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {
-			if (cachedObject instanceof DataHolder)
-				return ((DataHolder) cachedObject).getMetadata();
-			if (cachedObject instanceof AbstractDataset)
-				return ((AbstractDataset) cachedObject).getMetadata();
+			if (cachedObject instanceof DataHolder) {
+				IMetaData meta = ((DataHolder) cachedObject).getMetadata();
+			    if (meta!=null) return meta;
+			}
 			if (cachedObject instanceof IMetaData)
 				return (IMetaData)cachedObject;
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
 
 		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
-		if (it == null)
-			return null;
+		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
@@ -591,7 +589,7 @@ public class LoaderFactory {
 	public static IDataset getDataSet(final String path, final String name, final IMonitor mon) throws Exception {
 
 		// Makes the cache the DataHolder
-        final IDataHolder holder = getData(path, false, mon);
+        final IDataHolder holder = getData(path, true, mon);
         if (holder == null) return null;
         try {
             return holder.getDataset(name);

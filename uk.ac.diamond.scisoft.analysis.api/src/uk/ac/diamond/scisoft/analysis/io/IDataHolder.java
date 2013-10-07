@@ -21,7 +21,7 @@ import java.util.Map;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
-public interface IDataHolder extends Cloneable {
+public interface IDataHolder extends IDataAnalysisObject {
 	
 	/**
 	 * Does a shallow copy of the data which is useful for 
@@ -30,6 +30,7 @@ public interface IDataHolder extends Cloneable {
 	 * 
 	 * @return a shallow copy
 	 */
+	@Override
 	public IDataHolder clone();
 
 	/**

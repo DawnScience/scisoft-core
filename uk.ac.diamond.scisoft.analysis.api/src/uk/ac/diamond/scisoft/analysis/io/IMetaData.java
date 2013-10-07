@@ -28,7 +28,7 @@ import java.util.Map;
  * <p>
  * All returned collections and maps are <b>unmodifiable</b>.
  */
-public interface IMetaData extends Cloneable, Serializable {
+public interface IMetaData extends IDataAnalysisObject, Serializable {
 	/**
 	 * Update this when there are any serious changes to API
 	 */
@@ -87,5 +87,6 @@ public interface IMetaData extends Cloneable, Serializable {
 	 * Copy of metadata
 	 * @return deep copy
 	 */
+	@Override
 	public IMetaData clone();
 }

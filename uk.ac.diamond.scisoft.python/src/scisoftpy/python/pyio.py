@@ -356,9 +356,12 @@ import pycore as _core
 import sys
 
 try:
-    import Image as _im #@UnresolvedImport
+    import Image as _im #@UnresolvedImport @UnusedImport
 except:
-    print >> sys.stderr, "Could not import python image library"
+    try: # for the Pillow fork
+        from PIL import Image as _im  # @UnresolvedImport @Reimport
+    except:
+        print >> sys.stderr, "Could not import python image library"
 
 from pycore import ndarrayRGB as _RGB
 

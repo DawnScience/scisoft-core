@@ -39,7 +39,22 @@ class Test(unittest.TestCase):
             self.assertTrue(dnp.isnan(actual))
         elif isinstance(expected, Exception):
             self.assertTrue(isinstance(actual, Exception))
-            self.assertEquals(str(expected), str(actual))
+            # We are a little lenient on Exception comparisons because
+            # Exception helpers are not a perfect flatten/unflatten
+            # 1) we add the original type of the Exception to the beginning
+            #     of the Exception string
+            # 2) we add the stack trace to the end of the exception
+            actualstr = str(actual)
+            i = actualstr.find("\n\n")
+            if i >= 0:
+                actualstr = actualstr[:i]
+            expstr = str(expected)
+            i = expstr.find("\n\n")
+            if i >= 0:
+                expstr = expstr[:i]
+            if expstr != actualstr and "Exception: " + expstr != actualstr:
+                # on mismatch, display error on original string
+                self.assertEquals(str(expected), str(actual))
         elif isinstance(expected, (dnp.ndarray)):
             self.assertTrue(dnp.equaldataset(expected, actual))
         else:
@@ -364,12 +379,20 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(self._createAxisMapBean())
         
     def testException(self):
-        self._flattenAndUnflatten(Exception("Exceptional things happened"))
+        self._flattenAndUnflatten(Exception("Exceptional things happened"), expectedObj=Exception("Exception: Exceptional things happened"))
         
+    def testExceptionOtherType(self):
         # Exceptions are always unflattened as Exception type, original type information is lost
         valError = ValueError("Value Error Happened")
-        self._flattenAndUnflatten(valError, expectedType=Exception)
+        self._flattenAndUnflatten(valError, expectedObj=Exception("ValueError: Value Error Happened"), expectedType=Exception)
         
+    def testExceptionWithTB(self):
+        def function_for_tb():
+            raise Exception("raised exception")
+        try:
+            function_for_tb()
+        except Exception, e:
+            self._flattenAndUnflatten(e, expectedObj=Exception("Exception: raised exception"))
     def testGuiParameters(self):
         # test one explicitly
         self._flattenAndUnflatten(dnp.plot.parameters.plotmode)

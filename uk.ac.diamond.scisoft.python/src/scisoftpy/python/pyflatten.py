@@ -26,9 +26,12 @@ import scisoftpy.python.pywrapper as _wrapper
 import numpy as _np #@UnresolvedImport
 from tempfile import mkstemp
 import os
+import sys
 import copy
 import uuid
 import traceback
+from pprint import pprint
+from StringIO import StringIO
 
 TYPE = "__type__"
 CONTENT = "content"
@@ -446,25 +449,140 @@ class uuidHelper(flatteningHelper):
     
     def unflatten(self, obj):
         return uuid.UUID(obj[CONTENT])
+
+class stackTraceElementHelper(object):
+    TYPE_NAME = "java.lang.StackTraceElement"
+    DECLARINGCLASS = "declaringClass"
+    METHODNAME = "methodName"
+    FILENAME = "fileName"
+    LINENUMBER = "lineNumber"
     
+    def canunflatten(self, obj):
+        return isinstance(obj, dict) and obj.get(TYPE) == self.TYPE_NAME
+    
+    def canflatten(self, obj):
+        # There is no actual type in Python that is a StackTraceElement
+        # so we can't flatten it. We flatten it as a side effect of
+        # creating a flat exception (see exceptionHelper)
+        return False
+
+    def flatten(self, obj):
+        # This method can take a tuple as returned by extract_tb and
+        # convert it to a flattened form
+        (filename, line_number, function_name, unused_text, clazz) = obj
+        
+        rval = dict()
+        rval[TYPE] = self.TYPE_NAME
+
+        rval[self.DECLARINGCLASS] = flatten(clazz)
+        rval[self.METHODNAME] = flatten(function_name)
+        rval[self.FILENAME] = flatten(filename)
+        rval[self.LINENUMBER] = flatten(line_number)
+        
+        return rval
+    
+    def unflatten(self, obj):
+        clazz = unflatten(obj[self.DECLARINGCLASS])
+        function_name = unflatten(obj[self.METHODNAME])
+        filename = unflatten(obj[self.FILENAME])
+        line_number = unflatten(obj[self.LINENUMBER])
+        return (filename, line_number, function_name, clazz)
+
+
 class exceptionHelper(flatteningHelper):
     TYPE_NAME = "java.lang.Exception"
-    
+    EXECTYPESTR = "exctypestr"
+    EXECVALUESTR = "excvaluestr"
+    TRACEBACK = "traceback"
+    PYTHONTEXTS = "pythontexts"
+
     def __init__(self):
         super(exceptionHelper, self).__init__(Exception, self.TYPE_NAME)
 
     def flatten(self, thisException):
         rval = dict()
         rval[TYPE] = self.TYPE_NAME
-        formatExc = traceback.format_exc()
-        if formatExc is None or formatExc.startswith("None"):
-            rval[CONTENT] = str(thisException)
-        else:
-            rval[CONTENT] = "\n\n"+ formatExc
+        (_etype, value, tb) = sys.exc_info()
+        try:
+            rval[self.EXECTYPESTR] = flatten(str(thisException.__class__.__name__))
+            traceback.format_exception_only(thisException.__class__, thisException)
+            try:
+                rval[self.EXECVALUESTR] = flatten(str(thisException))
+            except:
+                rval[self.EXECVALUESTR] = flatten(None)
+
+            # We only add a traceback if one is available and the exception
+            # being flattened is the exception
+            def flatten_tb(tb):
+                # Set the stack order to newest on top
+                # (Java and Python have opposite order for storing 
+                # stack traces, this normalizes them) 
+                tb.reverse()
+                
+                # Ideally we would do "rval[self.TRACEBACK] = flatten(tb)" but
+                # there is no type info to do that, so instead we have to 
+                # explicitly flatten
+                steHelper = stackTraceElementHelper()
+                stes = [steHelper.flatten(f) for f in tb]
+                
+                texts = flatten([f[3] for f in tb])
+                 
+                return stes, texts
+            if tb is not None and id(value) == id(thisException):
+                extract_tb = traceback.extract_tb(tb)
+                extract_tb = zip(extract_tb, ("",) * len(extract_tb))
+                extract_tb = [s[0] + (s[1],) for s in extract_tb]
+                rval[self.TRACEBACK], rval[self.PYTHONTEXTS] = flatten_tb(extract_tb)
+            elif hasattr(thisException, "flatten_traceback"):
+                rval[self.TRACEBACK], rval[self.PYTHONTEXTS] = flatten_tb(thisException.flatten_traceback)
+        finally:
+            _etype = value = tb = None
         return rval
     
     def unflatten(self, obj):
-        return Exception(obj[CONTENT])
+        # For Python we squish the entire traceback into the message
+        # because we can't create a "fake" traceback like we do with
+        # Java using Exception.setStackTrace()
+        # But we also store the raw stack trace in flatten_traceback,
+        # however, this is not really API and just enables us to
+        # preserve the flattened form (i.e. flatten -> unflatten -> flatten ->
+        # unflatten -> etc) does not lose information. In practice this
+        # continued transforms is only done on tests and the actual message
+        # of the exception is not well preserved  
+        exctype = unflatten(obj[self.EXECTYPESTR])
+        excstr = unflatten(obj[self.EXECVALUESTR])
+        if excstr is None:
+            excstr = ""
+        else:
+            excstr = ": " + excstr
+        excheader = exctype + excstr
+        if self.TRACEBACK in obj:
+            stackTrace = unflatten(obj[self.TRACEBACK])
+            texts = None
+            if self.PYTHONTEXTS in obj:
+                texts = unflatten(obj[self.PYTHONTEXTS])
+            if texts is None or len(texts) != len(stackTrace):
+                # texts are mismatched, discard them
+                texts = [""] * len(stackTrace)
+            stackTrace = [s[0][:3] + (s[1],s[0][3]) for s in zip(stackTrace, texts)]
+
+            # Set the stack order to oldest on top
+            # (Java and Python have opposite order for storing 
+            # stack traces, this returns to Python order) 
+            stackTrace.reverse()
+            
+            excmsg = excheader
+            analheader = "\n\nTraceback (from AnalysisRPC Remote Side, most recent call last):\n"
+            if analheader not in excmsg:
+                excmsg += analheader
+                # the map removes the sometime present 5th element of "class"
+                out = traceback.format_list(map(lambda x: x[0:4], stackTrace))
+                excmsg += "".join(out)
+            e = Exception(excmsg)
+            e.flatten_traceback = stackTrace
+            return e
+        else:
+            return Exception(excheader)
     
 helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPointListHelper(),
            roiListHelper.getSectorListHelper(), roiListHelper.getRectangleListHelper(),
@@ -476,7 +594,7 @@ helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPoi
            guiParametersHelper(), plotModeHelper(), axisMapBeanHelper(),
            datasetWithAxisInformationHelper(), dataBeanHelper(),
            dictHelper(), passThroughHelper(), listAndTupleHelper(),
-           uuidHelper(), exceptionHelper(), unicodeHelper()]
+           uuidHelper(), exceptionHelper(), stackTraceElementHelper(), unicodeHelper()]
 
 def addhelper(helper):
     helpers.insert(0, helper)

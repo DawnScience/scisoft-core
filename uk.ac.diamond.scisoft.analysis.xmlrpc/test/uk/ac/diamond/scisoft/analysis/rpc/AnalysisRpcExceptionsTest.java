@@ -24,6 +24,13 @@ import org.junit.Test;
 
 public class AnalysisRpcExceptionsTest {
 
+	private static final class CatStringsHandler implements IAnalysisRpcHandler {
+		@Override
+		public Object run(Object[] unflattened) {
+			return (String)unflattened[0] + (String)unflattened[1];
+		}
+	}
+
 	private static final int PORT = 8614;
 	
 	private static final String CAT_TWO_STRINGS = "cat";
@@ -36,13 +43,7 @@ public class AnalysisRpcExceptionsTest {
 	public static void setupBeforeClass() throws AnalysisRpcException {
 		analysisRpcServer = new AnalysisRpcServer(PORT);
 		analysisRpcServer.start();
-		analysisRpcServer.addHandler(CAT_TWO_STRINGS, new IAnalysisRpcHandler() {
-			
-			@Override
-			public Object run(Object[] unflattened) {
-				return (String)unflattened[0] + (String)unflattened[1];
-			}
-		});
+		analysisRpcServer.addHandler(CAT_TWO_STRINGS, new CatStringsHandler());
 	
 		analysisRpcClient = new AnalysisRpcClient(PORT);		
 	}
@@ -67,9 +68,11 @@ public class AnalysisRpcExceptionsTest {
 		try {
 			analysisRpcClient.request(CAT_TWO_STRINGS, new Object[] {"Hello, "});
 			Assert.fail("No exception raised");
-		} catch (AnalysisRpcException e) {			
+		} catch (AnalysisRpcException e) {
+			// The exception type is lost, but we preserve it in the message string
 			Assert.assertFalse(e.getCause() instanceof ArrayIndexOutOfBoundsException);
-			Assert.assertEquals(Exception.class, e.getCause().getClass());
+			Assert.assertTrue(e.getCause() instanceof AnalysisRpcRemoteException);
+			Assert.assertTrue(e.getCause().getMessage().startsWith("java.lang.ArrayIndexOutOfBoundsException:"));
 		}
 	}
 	
@@ -91,10 +94,24 @@ public class AnalysisRpcExceptionsTest {
 			analysisRpcClient.request(CAT_TWO_STRINGS + " invalid", new Object[] {"Hello, ", "World!"});
 			Assert.fail("No exception raised");
 		} catch (AnalysisRpcException e) {			
-			Assert.assertFalse(e.getCause() instanceof AnalysisRpcException);
-			Assert.assertEquals(Exception.class, e.getCause().getClass());
-			Assert.assertEquals("No handler registered for " + CAT_TWO_STRINGS + " invalid", e.getCause().getMessage());
+			Assert.assertTrue(e.getCause() instanceof AnalysisRpcRemoteException);
+			Assert.assertEquals("uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException: No handler registered for " + CAT_TWO_STRINGS + " invalid", e.getCause().getMessage());
 		}
 	}
 	
+	@Test
+	public void testRemoteRaisesException() {
+		// have remote code raise an exception and make sure that the stack trace is preserved
+		// we don this by forcing a class cast exception (ie cat String + Integer
+		try {
+			analysisRpcClient.request(CAT_TWO_STRINGS, new Object[] {"Hello, ", 2});
+			Assert.fail("No exception raised");
+		} catch (AnalysisRpcException e) {			
+			Assert.assertTrue(e.getCause().getMessage().startsWith("java.lang.ClassCastException:"));
+			StackTraceElement[] remoteStackTrace = e.getCause().getStackTrace();
+			Assert.assertEquals(CatStringsHandler.class.getName(), remoteStackTrace[0].getClassName());
+			Assert.assertEquals("run", remoteStackTrace[0].getMethodName());
+			
+		}
+	}
 }

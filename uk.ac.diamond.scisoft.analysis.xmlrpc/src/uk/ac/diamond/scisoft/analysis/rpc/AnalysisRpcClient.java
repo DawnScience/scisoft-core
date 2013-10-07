@@ -130,10 +130,10 @@ public class AnalysisRpcClient {
 	 *             <ul>
 	 *             <li> {@link UnsupportedOperationException} if the arguments
 	 *             or return type failed to be flattened or unflattened.</li>
-	 *             <li> {@link XmlRpcException} if the underlying transport had
-	 *             a failure and XML-RPC was used as the transport </li> <li>
-	 *             Other type of {@link Exception} if the remote end threw an
-	 *             Exception </li>
+	 *             <li> {@link AnalysisRpcRemoteException} if an exception
+	 *             occurred on the remote side of the call. </li> <li>
+	 *             {@link XmlRpcException} if the underlying transport had a
+	 *             failure and XML-RPC was used as the transport </li>
 	 *             </ul>
 	 */
 	public Object request(String destination, Object[] args)

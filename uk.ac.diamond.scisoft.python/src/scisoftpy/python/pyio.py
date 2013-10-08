@@ -570,10 +570,11 @@ try:
                                 h.select_column(nv)
                                 v = self.getvalue(h)
 #                                 print "    %d %d: " % (nh, nv), v
+                                item = "%s-%d" % (colnames[nv], nh), v
                                 if isinstance(v, numpy.ndarray):
-                                    data.append(("%s-%d" % (colnames[nv], nh), v))
+                                    data.append(item)
                                 else:
-                                    metadata.append(("bit-%d-%d" % (nh, nv), v))
+                                    metadata.append(item)
             finally:
                 del(h)
             return DataHolder(data, metadata, warn)

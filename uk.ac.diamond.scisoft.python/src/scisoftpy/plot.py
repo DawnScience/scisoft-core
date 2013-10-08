@@ -510,7 +510,7 @@ def setbean(bean, name=_PVNAME):
         _plot_setbean(name, bean)
 
 def getdatabean(name=_PVNAME):
-    '''Get Data bean (contains data from named view)
+    '''Get data bean (contains data from named view)
 
     Arguments:
     name -- name of plot view to use (if None, use default name)
@@ -518,10 +518,10 @@ def getdatabean(name=_PVNAME):
     return _plot_getdatabean(name)
 
 def setdatabean(bean, name=_PVNAME):
-    '''Set Data bean
+    '''Set data bean
 
     Arguments:
-    bean -- Data bean
+    bean -- data bean
     name -- name of plot view to use (if None, use default name)
     '''
     if bean is not None:

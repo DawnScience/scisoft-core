@@ -21,3 +21,4 @@ Require-Bundle: org.apache.commons.lang;bundle-version="2.6.0",
 Import-Package: org.apache.commons.logging;version="1.1.1",
  org.junit;version="4.10.0",
  org.slf4j
+Bundle-Vendor: Diamond Light Source

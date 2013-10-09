@@ -129,12 +129,14 @@ def _order(order):
     except KeyError:
         raise ValueError, "Given order not one of none, alpha, chrono"    
 
-def clear(name=_PVNAME):
+def clear(name=None):
     '''Clear plot
 
     Argument:
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     _plot_clear(name)
 
 '''
@@ -288,7 +290,7 @@ def _process_line(x, y, title, name, mode):
     else:
         _plot_addline(name, t, xs, ys, ax, ay)
 
-def line(x, y=None, title=None, name=_PVNAME):
+def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any
     given x dataset in the named view
 
@@ -320,9 +322,11 @@ def line(x, y=None, title=None, name=_PVNAME):
     >>> dnp.plot.line([rads, {"degrees":degs}], [ysin, {("cos","right"):ycos}])
 
     '''
+    if name is None:
+        name = _PVNAME
     _process_line(x, y, title, name, None)
 
-def addline(x, y=None, title=None, name=_PVNAME):
+def addline(x, y=None, title=None, name=None):
     '''Add line(s) to existing plot, optionally against
     any given x dataset in the named view
 
@@ -332,9 +336,11 @@ def addline(x, y=None, title=None, name=_PVNAME):
     title -- title of plot
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     _process_line(x, y, title, name, 'add')
 
-def updateline(x, y=None, title=None, name=_PVNAME):
+def updateline(x, y=None, title=None, name=None):
     '''Update existing plot by changing displayed y dataset (or list of datasets), optionally against
     any given x dataset in the named view
 
@@ -344,13 +350,15 @@ def updateline(x, y=None, title=None, name=_PVNAME):
     title -- title of plot
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     n, t, xl, yl = _parselinearg(x, y, title, name)
     _plot_updateline(n, t, xl, yl, None, None)
 
 plot = line
 updateplot = updateline
 
-def image(im, x=None, y=None, name=_PVNAME):
+def image(im, x=None, y=None, name=None):
     '''Plot a 2D dataset as an image in the named view with optional x and y axes
 
     Arguments:
@@ -359,6 +367,8 @@ def image(im, x=None, y=None, name=_PVNAME):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if x is None:
         y = None
     if y is None:
@@ -366,7 +376,7 @@ def image(im, x=None, y=None, name=_PVNAME):
 
     _plot_image(name, x, y, im)
 
-def images(im, x=None, y=None, name=_PVNAME):
+def images(im, x=None, y=None, name=None):
     '''Plot 2D datasets as an image in the named view with optional x and y axes
 
     Arguments:
@@ -375,7 +385,8 @@ def images(im, x=None, y=None, name=_PVNAME):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
-
+    if name is None:
+        name = _PVNAME
     if x is None:
         y = None
     if y is None:
@@ -383,7 +394,7 @@ def images(im, x=None, y=None, name=_PVNAME):
 
     _plot_images(name, x, y, _toList(im))
 
-def surface(s, x=None, y=None, name=_PVNAME):
+def surface(s, x=None, y=None, name=None):
     '''Plot the 2D dataset as a surface in the named view with optional x and y axes
 
     Arguments:
@@ -392,6 +403,8 @@ def surface(s, x=None, y=None, name=_PVNAME):
     y -- optional dataset for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if x is None:
         y = None
     if y is None:
@@ -399,7 +412,7 @@ def surface(s, x=None, y=None, name=_PVNAME):
 
     _plot_surface(name, x, y, s)
 
-def stack(x, y=None, z=None, name=_PVNAME):
+def stack(x, y=None, z=None, name=None):
     '''Plot all of the given 1D y datasets against corresponding x as a 3D stack
     with optional z coordinates in the named view
 
@@ -409,6 +422,8 @@ def stack(x, y=None, z=None, name=_PVNAME):
     z -- optional dataset for z-axis
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if not y:
         y = _toList(x)
         l = 0
@@ -419,7 +434,7 @@ def stack(x, y=None, z=None, name=_PVNAME):
 
     _plot_stack(name, _toList(x), _toList(y), z)
 
-def updatestack(x, y=None, z=None, name=_PVNAME):
+def updatestack(x, y=None, z=None, name=None):
     '''Update existing 3D line stack by changing displayed y dataset (or list of datasets),
     optionally against any given x dataset with optional z coordinates in the named view
 
@@ -429,6 +444,8 @@ def updatestack(x, y=None, z=None, name=_PVNAME):
     z -- optional dataset for z-axis
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if not y:
         y = _toList(x)
         l = 0
@@ -439,7 +456,7 @@ def updatestack(x, y=None, z=None, name=_PVNAME):
 
     _plot_updatestack(name, _toList(x), _toList(y), z)
 
-def points(x, y=None, z=None, size=0, name=_PVNAME):
+def points(x, y=None, z=None, size=0, name=None):
     '''Plot points with given coordinates. If y is missing then x must contain
     a dataset of coordinate pairs or a list of such datasets
 
@@ -450,6 +467,8 @@ def points(x, y=None, z=None, size=0, name=_PVNAME):
     size -- integer size or dataset of sizes
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if z is None:
         if y is None:
             _plot_points2d(name, _toList(x), size)
@@ -458,7 +477,7 @@ def points(x, y=None, z=None, size=0, name=_PVNAME):
     else:
         _plot_points3d(name, x, y, z, size)
 
-def addpoints(x, y, z=None, size=0, name=_PVNAME):
+def addpoints(x, y, z=None, size=0, name=None):
     '''Update existing plot by adding points of given coordinates
 
     Arguments:
@@ -468,6 +487,8 @@ def addpoints(x, y, z=None, size=0, name=_PVNAME):
     size -- integer size or dataset of sizes
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if z is None:
         _plot_updatepoints2d(name, x, y, size)
     else:
@@ -491,43 +512,51 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor, maxint, 1)
 
 
-def getbean(name=_PVNAME):
+def getbean(name=None):
     '''Get GUI bean (contains information from named view)
 
     Arguments:
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     return _plot_getbean(name)
 
-def setbean(bean, name=_PVNAME):
+def setbean(bean, name=None):
     '''Set GUI bean
 
     Arguments:
     bean -- GUI bean
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is not None:
         _plot_setbean(name, bean)
 
-def getdatabean(name=_PVNAME):
+def getdatabean(name=None):
     '''Get data bean (contains data from named view)
 
     Arguments:
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     return _plot_getdatabean(name)
 
-def setdatabean(bean, name=_PVNAME):
+def setdatabean(bean, name=None):
     '''Set data bean
 
     Arguments:
     bean -- data bean
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is not None:
         _plot_setdatabean(name, bean)
 
-def getroi(bean=None, roi=None, name=_PVNAME):
+def getroi(bean=None, roi=None, name=None):
     '''Get region of interest from bean
 
     Arguments:
@@ -535,6 +564,8 @@ def getroi(bean=None, roi=None, name=_PVNAME):
     roi  -- class of ROI to retrieve. If None, then get anyway
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is None:
         bean = getbean(name)
     if not parameters.roi in bean:
@@ -546,7 +577,7 @@ def getroi(bean=None, roi=None, name=_PVNAME):
         return None
     return r
 
-def setroi(bean, roi=None, send=False, name=_PVNAME):
+def setroi(bean, roi=None, send=False, name=None):
     '''Set region of interest in bean
 
     Arguments:
@@ -555,6 +586,8 @@ def setroi(bean, roi=None, send=False, name=_PVNAME):
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if roi is None:
         roi = bean
         send = True
@@ -565,7 +598,7 @@ def setroi(bean, roi=None, send=False, name=_PVNAME):
         setbean(bean, name)
     return bean
 
-def delroi(bean=None, roi=None, send=False, name=_PVNAME):
+def delroi(bean=None, roi=None, send=False, name=None):
     '''Delete region of interest from bean
 
     Arguments:
@@ -574,6 +607,8 @@ def delroi(bean=None, roi=None, send=False, name=_PVNAME):
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is None:
         send = True
         bean = getbean(name)
@@ -592,7 +627,7 @@ class roi_list(ListDict):
     def __init__(self, data=None):
         super(roi_list, self).__init__(data=data, warn=False, lock=False, interactive=False)
 
-def getrois(bean=None, roi=None, name=_PVNAME):
+def getrois(bean=None, roi=None, name=None):
     '''Get list/dict of regions of interest from bean
 
     Arguments:
@@ -600,6 +635,8 @@ def getrois(bean=None, roi=None, name=_PVNAME):
     roi  -- class of ROI to retrieve. If None, then get anyway
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is None:
         bean = getbean(name)
     if not parameters.roilist in bean:
@@ -617,7 +654,7 @@ def getrois(bean=None, roi=None, name=_PVNAME):
         rl = [(r.name, r) for r in rs if isinstance(r, roi)]
     return roi_list(rl)
 
-def setrois(bean, roilist=None, send=False, name=_PVNAME):
+def setrois(bean, roilist=None, send=False, name=None):
     '''Set list/dict of regions of interest in bean
     Arguments:
     bean    -- GUI bean (if None, retrieve from and update to plot view of given name)
@@ -625,6 +662,8 @@ def setrois(bean, roilist=None, send=False, name=_PVNAME):
     send    -- flag to update plot
     name    -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if roilist is None:
         roilist = bean
         send = True
@@ -668,7 +707,7 @@ def setrois(bean, roilist=None, send=False, name=_PVNAME):
         setbean(bean, name)
     return bean
 
-def delrois(bean=None, roi=None, send=False, name=_PVNAME):
+def delrois(bean=None, roi=None, send=False, name=None):
     '''Delete list/dict of regions of interest from bean
 
     Arguments:
@@ -677,6 +716,8 @@ def delrois(bean=None, roi=None, send=False, name=_PVNAME):
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
     '''
+    if name is None:
+        name = _PVNAME
     if bean is None:
         send = True
         bean = getbean(name)
@@ -689,28 +730,40 @@ def delrois(bean=None, roi=None, send=False, name=_PVNAME):
         setbean(bean, name)
     return bean
 
-def getline(bean=None, name=_PVNAME):
+def getline(bean=None, name=None):
     '''Get linear region of interest'''
+    if name is None:
+        name = _PVNAME
     return getroi(bean, roi=roi.line, name=name)
 
-def getlines(bean=None, name=_PVNAME):
+def getlines(bean=None, name=None):
     '''Get list of linear regions of interest'''
+    if name is None:
+        name = _PVNAME
     return getrois(bean, roi=roi.line, name=name)
 
-def getrect(bean=None, name=_PVNAME):
+def getrect(bean=None, name=None):
     '''Get rectangular region of interest'''
+    if name is None:
+        name = _PVNAME
     return getroi(bean, roi=roi.rectangle, name=name)
 
-def getrects(bean=None, name=_PVNAME):
+def getrects(bean=None, name=None):
     '''Get list of rectangular regions of interest'''
+    if name is None:
+        name = _PVNAME
     return getrois(bean, roi=roi.rectangle, name=name)
 
-def getsect(bean=None, name=_PVNAME):
+def getsect(bean=None, name=None):
     '''Get sector region of interest'''
+    if name is None:
+        name = _PVNAME
     return getroi(bean, roi=roi.sector, name=name)
 
-def getsects(bean=None, name=_PVNAME):
+def getsects(bean=None, name=None):
     '''Get list of sector regions of interest'''
+    if name is None:
+        name = _PVNAME
     return getrois(bean, roi=roi.sector, name=name)
 
 

@@ -220,9 +220,4 @@ public class MockDataset implements IDataset {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
-	@Override
-	public int getDtype() {
-		throw new AssertionFailedError("Methods in MockDataset should not be called");
-	}
-
 }

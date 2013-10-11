@@ -299,6 +299,9 @@ public abstract class AbstractDataset implements ADataset {
 			case COMPLEX128:
 				c = new ComplexDoubleDataset((ComplexDoubleDataset) this);
 				break;
+			case STRING:
+				c = new StringDataset((StringDataset) this);
+			break;
 			default:
 				abstractLogger.error("Dataset of unknown type!");
 				break;
@@ -1351,6 +1354,8 @@ public abstract class AbstractDataset implements ADataset {
 			return Float.class;
 		case COMPLEX128:
 			return Double.class;
+		case STRING:
+			return String.class;
 		}
 		return Object.class;
 	}
@@ -2490,6 +2495,8 @@ public abstract class AbstractDataset implements ADataset {
 			return ComplexDoubleDataset.createFromObject(obj);
 		case STRING:
 			return StringDataset.createFromObject(obj);
+		case OBJECT:
+			return ObjectDataset.createFromObject(obj);
 		default:
 			return null;
 		}
@@ -2553,6 +2560,10 @@ public abstract class AbstractDataset implements ADataset {
 			return new ComplexFloatDataset(shape);
 		case COMPLEX128:
 			return new ComplexDoubleDataset(shape);
+		case STRING:
+			return new StringDataset(shape);
+		case OBJECT:
+			return new ObjectDataset(shape);
 		}
 		throw new IllegalArgumentException("dtype not known or unsupported");
 	}
@@ -2837,6 +2848,9 @@ public abstract class AbstractDataset implements ADataset {
 			case FLOAT64:
 				Arrays.sort((double[]) odata);
 				break;
+			case STRING:
+				Arrays.sort((String[]) odata);
+				break;
 			}
 		} else {
 			axis = checkAxis(axis);
@@ -2867,6 +2881,9 @@ public abstract class AbstractDataset implements ADataset {
 					break;
 				case FLOAT64:
 					Arrays.sort((double[]) adata);
+					break;
+				case STRING:
+					Arrays.sort((String[]) adata);
 					break;
 				}
 				setItemsOnAxes(pos, hit, ads.getBuffer());

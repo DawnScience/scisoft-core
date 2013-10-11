@@ -1012,6 +1012,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			long[] lData = (long[]) data;
 			ds = new LongDataset(lData, shape);
 			break;
+		case AbstractDataset.STRING:
+			String[] strData = (String[]) data;
+			ds = new StringDataset(strData, shape);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported dataset type");
 		}
@@ -1334,7 +1338,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		// check for zero-sized datasets
-		if (AbstractDataset.calcLongSize(trueShape) == 0) {
+		long trueSize = AbstractDataset.calcLongSize(trueShape);
+		if (trueSize == 0) {
 			dataset.setEmpty();
 			return true;
 		}
@@ -1688,13 +1693,21 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						} else {
 							H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-							if (isText) {
-								odata = Dataset.byteToString((byte[]) odata, H5.H5Tget_size(tid));
-							} else if (isREF) {
-								odata = HDFNativeData.byteToLong((byte[]) odata);
+							if (odata instanceof byte[] && ldtype != AbstractDataset.INT8) {
+								// TODO check if this is actually used
+								Object idata = null;
+								byte[] bdata = (byte[]) odata;
+								if (isText) {
+									idata = Dataset.byteToString(bdata, H5.H5Tget_size(tid));
+								} else if (isREF) {
+									idata = HDFNativeData.byteToLong(bdata);
+								}
+
+								if (idata != null) {
+									data = createDataset(idata, count, ldtype, false); // extend later, if necessary
+								}
 							}
 						}
-						data = createDataset(odata, count, ldtype, extend);
 					} else {
 						// read in many split chunks
 						final boolean[] isSplit = new boolean[rank];
@@ -1745,19 +1758,29 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						while (it.hasNext()) {
 							H5.H5Sselect_hyperslab(sid, HDF5Constants.H5S_SELECT_SET, sstart, sstride, dsize, null);
 							boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
+							Object idata;
 							if (isVLEN) {
 								H5.H5DreadVL(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
+								idata = odata;
 							} else {
 								H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-								if (isText) {
-									odata = Dataset.byteToString((byte[]) odata, H5.H5Tget_size(tid));
-								} else if (isREF) {
-									odata = HDFNativeData.byteToLong((byte[]) odata);
+								if (odata instanceof byte[] && ldtype != AbstractDataset.INT8) {
+									// TODO check if this is actually used
+									byte[] bdata = (byte[]) odata;
+									if (isText) {
+										idata = Dataset.byteToString(bdata, H5.H5Tget_size(tid));
+									} else if (isREF) {
+										idata = HDFNativeData.byteToLong(bdata);
+									} else {
+										idata = odata;
+									}
+								} else {
+									idata = odata;
 								}
 							}
 
-							data.setItemsOnAxes(pos, hit, odata);
+							data.setItemsOnAxes(pos, hit, idata);
 							int j = rank - 1;
 							for (; j >= 0; j--) {
 								if (isSplit[j]) {
@@ -1772,25 +1795,23 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							if (j == -1)
 								break;
 						}
-						
-						if (extend) {
-							switch (ldtype) {
-							case AbstractDataset.INT32:
-								data = new LongDataset(data);
-								DatasetUtils.unwrapUnsigned(data, 32);
-								break;
-							case AbstractDataset.INT16:
-								data = new IntegerDataset(data);
-								DatasetUtils.unwrapUnsigned(data, 16);
-								break;
-							case AbstractDataset.INT8:
-								data = new ShortDataset(data);
-								DatasetUtils.unwrapUnsigned(data, 8);
-								break;
-							}
+					}
+					if (extend) {
+						switch (ldtype) {
+						case AbstractDataset.INT32:
+							data = new LongDataset(data);
+							DatasetUtils.unwrapUnsigned(data, 32);
+							break;
+						case AbstractDataset.INT16:
+							data = new IntegerDataset(data);
+							DatasetUtils.unwrapUnsigned(data, 16);
+							break;
+						case AbstractDataset.INT8:
+							data = new ShortDataset(data);
+							DatasetUtils.unwrapUnsigned(data, 8);
+							break;
 						}
 					}
-
 				} catch (HDF5Exception ex) {
 					logger.error("Could not get data space information", ex);
 					return data;

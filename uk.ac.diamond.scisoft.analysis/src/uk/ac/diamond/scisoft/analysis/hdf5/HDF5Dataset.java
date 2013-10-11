@@ -55,7 +55,7 @@ public class HDF5Dataset extends HDF5Node {
 	public void setDataset(final ILazyDataset lazyDataset) {
 		dataset = lazyDataset;
 		supported = true;
-		string = (lazyDataset instanceof StringDataset);
+		string = lazyDataset instanceof StringDataset || lazyDataset.elementClass() == String.class;
 	}
 
 	/**
@@ -99,7 +99,13 @@ public class HDF5Dataset extends HDF5Node {
 			return null;
 		if (text != null)
 			return text;
-		StringDataset a = (StringDataset) dataset;
+
+		StringDataset a;
+		if (dataset instanceof StringDataset)
+			a = (StringDataset) dataset;
+		else
+			a = (StringDataset) dataset.getSlice();
+
 		StringBuilder out = new StringBuilder();
 		IndexIterator it = a.getIterator();
 		while (it.hasNext()) {

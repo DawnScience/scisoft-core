@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -149,17 +148,14 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		BufferedReader in = new BufferedReader(new StringReader(header));
 		String temp;
 		int unknownNum = 0;
-		boolean found = false;
 		try {
 			while ((temp = in.readLine()) != null) {
 				if (temp.length() == 0)
 					continue;
-				for (int j = 0; j < miniCBFheaderNames.length; j++) {
-					found = false;
-					if (temp.startsWith(miniCBFheaderNames[j], 2)) {
-						metadata.put(miniCBFheaderNames[j], temp.substring(
-								temp.indexOf(miniCBFheaderNames[j]) + miniCBFheaderNames[j].length(), temp.length())
-								.trim());
+				boolean found = false;
+				for (String name : miniCBFheaderNames) {
+					if (temp.startsWith(name, 2)) {
+						metadata.put(name, temp.substring(2 + name.length()).trim());
 						found = true;
 						break;
 					}
@@ -199,23 +195,33 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		dim1.delete(); dim2.delete(); dim3.delete(); pad.delete();
 
 		// parse metadata from miniCBF to GDA
-		createGDAMetadata();
-
+		try {
+			createGDAMetadata(xDimension, yDimension);
+		} catch (ScanFileHolderException e) {
+			logger.warn("Could not create GDA metadata", e);
+		}
+		
 		return new ImageOrientation(xDimension, yDimension);
 	}
 	
-	private void createGDAMetadata() throws ScanFileHolderException {
+	private void createGDAMetadata(int x, int y) throws ScanFileHolderException {
 		try {
-			String pixelSize = getMetadataValue("Pixel_size");
+			String pixelSize = metadata.get("Pixel_size");
 			String[] xypixVal = pixelSize.split("m x");
 			double xPxVal = Double.parseDouble(xypixVal[0])*1000;
 			double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;
 			
-			String tmp = getMetadataValue("Beam_xy");
-			String [] beamxy = tmp.split(",");
-			double beamPosX = Double.parseDouble(beamxy[0].split("\\(")[1]);
-			double beamPosY = Double.parseDouble(beamxy[1].split("\\)")[0]);
-			
+			String tmp = metadata.get("Beam_xy");
+			double beamPosX;
+			double beamPosY;
+			if (tmp != null) {
+				String[] beamxy = tmp.split(",");
+				beamPosX = Double.parseDouble(beamxy[0].split("\\(")[1]);
+				beamPosY = Double.parseDouble(beamxy[1].split("\\)")[0]);
+			} else {
+				beamPosX = x/2;
+				beamPosY = y/2;
+			}
 			
 			// NXGeometery:NXtranslation
 //			double[] detectorOrigin = { 
@@ -246,13 +252,18 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
 
 			// "NXmonochromator:wavelength"
-			double lambda;
-			if (getMetadataValue("Wavelength").contains("A"))
-				lambda = getFirstDouble("Wavelength", "A");
-			else if(getMetadataValue("Wavelength").contains("nm"))
-				lambda = getFirstDouble("Wavelength", "nm")*10;
-			else
+			double lambda = Double.NaN;
+			String value;
+			value = metadata.get("Wavelength");
+			if (value != null) {
+				if (value.contains("A"))
+					lambda = getFirstDouble("Wavelength", "A");
+				else if (value.contains("nm"))
+					lambda = getFirstDouble("Wavelength", "nm")*10;
+			}
+			if (Double.isNaN(lambda))
 				throw new ScanFileHolderException("The wavelength could not be parsed in from the mini cbf file header");
+
 			GDAMetadata.put("NXmonochromator:wavelength",lambda);
 			GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
 
@@ -362,7 +373,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "array_id"));
-		CBFError.errorChecker(cbf.cbf_find_row(chs, getMetadataValue("diffrn_data_frame.array_id")));
+
+		String value = metadata.get("diffrn_data_frame.array_id"); // TODO check for null
+		CBFError.errorChecker(cbf.cbf_find_row(chs, value));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
 		if (isMatch("axis_set_id 1", "ELEMENT_X")) { // FIXME is this always the case?
@@ -902,7 +915,11 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private int getInteger(String key) throws ScanFileHolderException {
 		try {
-			return Integer.parseInt(getMetadataValue(key));
+			String value = metadata.get(key);
+			if (value == null) {
+				throw new ScanFileHolderException("No such key: " + key);
+			}
+			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing integer value from string",e);
 		}
@@ -910,7 +927,11 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private double getDouble(String key) throws ScanFileHolderException {
 		try {
-			return Double.parseDouble(getMetadataValue(key));
+			String value = metadata.get(key);
+			if (value == null) {
+				throw new ScanFileHolderException("No such key: " + key);
+			}
+			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
 		}
@@ -918,7 +939,11 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private double getFirstDouble(String key, String split) throws ScanFileHolderException {
 		try {
-			return Double.parseDouble(getMetadataValue(key).split(split)[0]);
+			String value = metadata.get(key);
+			if (value == null) {
+				throw new ScanFileHolderException("No such key: " + key);
+			}
+			return Double.parseDouble(value.split(split)[0]);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
 		}
@@ -926,22 +951,13 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private boolean isMatch(String key, String value) throws ScanFileHolderException {
 		try {
-			return getMetadataValue(key).equalsIgnoreCase(value);
+			String mValue = metadata.get(key);
+			return value.equalsIgnoreCase(mValue);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
 		}
 	}
 
-	private String getMetadataValue(String key) throws ScanFileHolderException {
-		try {
-			String value = metadata.get(key);
-			return value;
-		} catch (Exception e) {
-			throw new ScanFileHolderException("The keyword " + key + " was not found in the CBF Header", e);
-		}
-	}
-
-	
 	private class ImageOrientation {
 
 		int xLength;

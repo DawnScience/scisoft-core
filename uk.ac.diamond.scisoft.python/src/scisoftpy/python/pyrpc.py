@@ -72,7 +72,7 @@ class rpcserver(object):
                     # of failure if an exception is thrown. This line covers the
                     # connection to the debug server, the next settrace then only
                     # does the suspend.
-                    pydevd.settrace(suspend=False, **self.pydev_settrace_params)
+                    pydevd.settrace(suspend=False, **self.pydev_settrace_params) # Needs PyDev Debug Server Running 
 
 
                     # These two statements must be on same line so that suspend happens

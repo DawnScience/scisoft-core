@@ -52,6 +52,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.RectangularROIListH
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.SectorROIHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.SectorROIListHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.SelfFlattensHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.StackTraceElementHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.UUIDHelper;
 
 /**
@@ -99,6 +100,7 @@ public class RootFlattener implements IRootFlattener {
 		flatteningHelpers.add(new PassThroughFlatteningHelper());
 		flatteningHelpers.add(new ListHelper());
 		flatteningHelpers.add(new ExceptionHelper());
+		flatteningHelpers.add(new StackTraceElementHelper());
 		flatteningHelpers.add(new MapHelper());
 		flatteningHelpers.add(new PrimitiveIntArrayHelper());
 		flatteningHelpers.add(new PrimitiveDoubleArrayHelper());

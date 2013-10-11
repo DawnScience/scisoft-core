@@ -227,12 +227,14 @@ public class PowderRingsUtils {
 					if (l < 0) {
 						logger.warn("Could not find unmasked value for slice!");
 					} else {
-						pointSet.add(new PointROI(pos[1], pos[0]));
+						//add 0.5 to make pointROI at centre of pixel
+						pointSet.add(new PointROI(pos[1]+0.5, pos[0]+0.5));
 					}
 				}
 			} else {
 //			System.err.printf("Slice: %s, %s has max at %s\n", Arrays.toString(start), Arrays.toString(stop), Arrays.toString(pos));
-				pointSet.add(new PointROI(pos[1], pos[0]));
+				//add 0.5 to make pointROI at centre of pixel
+				pointSet.add(new PointROI(pos[1]+0.5, pos[0]+0.5));
 			}
 
 			if (mon != null)

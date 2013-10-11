@@ -1,7 +1,7 @@
 This is the Diamond Light Source Ltd Scientific Software Python package.
 
-To run, make sure the python installation contains NumPy, PIL, pylibtiff, Matplotlib and
-SciPy packages.
+To run, make sure the python installation contains NumPy, PIL or Pillow, and,
+optionally, PyCBF and h5py packages.
 
 $ PYTHONPATH=$SCISOFTPATH/src:$PYTHONPATH python
 
@@ -16,8 +16,6 @@ Eclipse setup
 Pydev > Interpreter - Python
  Libraries
   python site-packages
-  numpy site-packages, matplotlib egg
-  wxPython site-packages, wx-2.8-gtk2-unicode sub-directory and wx sub-sub
-  scipy...
+  numpy site-packages, ...
  Environment
-  LD_LIBRARY_PATH to wxGTK libraries
+  LD_LIBRARY_PATH to any shared libraries

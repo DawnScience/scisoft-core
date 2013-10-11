@@ -83,7 +83,7 @@ public class AnalysisRpcAdvancedTest {
 				Assert.fail("No exception raised");
 			} catch (AnalysisRpcException e) {
 				Assert.assertFalse(e.getCause() instanceof UnsupportedOperationException);
-				Assert.assertEquals(Exception.class, e.getCause().getClass());
+				Assert.assertTrue(e.getCause() instanceof AnalysisRpcRemoteException);
 			}
 		} finally {
 			if (analysisRpcServer != null)

@@ -356,9 +356,12 @@ import pycore as _core
 import sys
 
 try:
-    import Image as _im #@UnresolvedImport
+    import Image as _im #@UnresolvedImport @UnusedImport
 except:
-    print >> sys.stderr, "Could not import python image library"
+    try: # for the Pillow fork
+        from PIL import Image as _im  # @UnresolvedImport @Reimport
+    except:
+        print >> sys.stderr, "Could not import python image library"
 
 from pycore import ndarrayRGB as _RGB
 
@@ -480,12 +483,109 @@ if _tf is None:
 else:
     TIFFLoader = TIFFfileLoader
 
+try:
+    import pycbf as _cbf  # @UnresolvedImport
+    import numpy  # @UnresolvedImport
+    class CBFLoader(PythonLoader):
+        def getvalue(self, h):
+            vtype = h.get_typeofvalue()
+            if "bnry" not in vtype:
+                return h.get_value()
+            try:
+                (_compression, _binaryid, _elsize, _elsigned, \
+                    _elunsigned, _elements, _minelement, _maxelement, \
+                    _byteorder, dimfast, dimmid, dimslow, _padding) = \
+                    h.get_integerarrayparameters_wdims()
+                isreal = False
+            except:
+                try:
+                    (_compression, _binaryid, _elsize, _elements, \
+                        _byteorder, dimfast, dimmid, dimslow, _padding) = \
+                        h.get_doublearrayparameters_wdims()
+                    isreal = True
+                except:
+                    return h.get_value()
+                    
+            if dimfast == 0:
+                dimfast = 1
+            if dimmid == 0:
+                dimmid = 1
+            if dimslow == 0:
+                dimslow = 1
+#             print "compression: ", _compression
+#             print "binaryid", _binaryid
+#             print "elsize", _elsize
+#             if not isreal:
+#                 print "elsigned", _elsigned
+#                 print "elunsigned",_elunsigned
+#                 print "minelement", _minelement
+#                 print "maxelement", _maxelement
+#             print "elements", _elements
+#             print "byteorder", _byteorder
+#             print "dimfast", dimfast
+#             print "dimmid", dimmid
+#             print "dimslow",dimslow
+#             print "padding", _padding
+            if isreal:
+                s = h.get_doublearray_as_string()
+                print type(s)
+                d = numpy.frombuffer(s, numpy.float64)
+            else:
+                s = h.get_integerarray_as_string()
+                print type(s)
+                d = numpy.frombuffer(s, numpy.uint32)
+#             print d.shape
+#             print d[0:10], d[d.shape[0]/2], d[-1]
+            d.shape = (dimfast, dimmid)
+            return d
+
+        def load(self, warn=True):
+            data = []
+            metadata = []
+            try:
+                h = _cbf.cbf_handle_struct()
+                h.read_widefile(self.name, _cbf.MSG_DIGEST)
+                h.rewind_datablock()
+                for nd in range(h.count_datablocks()):
+                    h.select_datablock(nd)
+#                     db_name = h.datablock_name()
+#                     print "DBl: %d, %s" % (nd, db_name)
+                    h.rewind_category()
+                    for nc in range(h.count_categories()):
+                        h.select_category(nc)
+#                         ct_name = h.category_name()
+#                         print "  Cat: %d, %s" % (nc, ct_name)
+                        h.rewind_column()
+                        colnames = []
+                        for nv in range(h.count_columns()):
+                            h.select_column(nv)
+                            cl_name = h.column_name()
+                            colnames.append(cl_name)
+#                             print "    Col: %d, %s" % (nv, cl_name)
+                        h.rewind_row()
+                        for nh in range(h.count_rows()):
+                            h.select_row(nh)
+                            h.rewind_column()
+                            for nv in range(h.count_columns()):
+                                h.select_column(nv)
+                                v = self.getvalue(h)
+#                                 print "    %d %d: " % (nh, nv), v
+                                item = "%s-%d" % (colnames[nv], nh), v
+                                if isinstance(v, numpy.ndarray):
+                                    data.append(item)
+                                else:
+                                    metadata.append(item)
+            finally:
+                del(h)
+            return DataHolder(data, metadata, warn)
+except:
+    CBFLoader = None
+
 PNGLoader = ImageLoader
 JPEGLoader = ImageLoader
 TIFFLoader = TIFFLoader
 
 ADSCLoader = None
-CBFLoader = None
 CrysLoader = None
 MARLoader = TIFFLoader
 PilLoader = TIFFLoader

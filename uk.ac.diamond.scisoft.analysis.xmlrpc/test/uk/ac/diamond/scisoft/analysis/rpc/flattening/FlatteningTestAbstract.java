@@ -63,6 +63,7 @@ import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROIList;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROIList;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcRemoteException;
 import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcDoubleParser;
 
 abstract public class FlatteningTestAbstract {
@@ -109,8 +110,13 @@ abstract public class FlatteningTestAbstract {
 		} else if (expected instanceof Exception) {
 			Exception expException = (Exception) expected;
 			Exception actException = (Exception) actual;
-			// Only thing preserved is the message of an exception
-			Assert.assertEquals(expException.getMessage(), actException.getMessage());
+			// The message gets supplemented with extra type information, make sure the original expected
+			// message is present in the supplemented info
+			if (!actException.getMessage().contains(expException.getMessage()))
+				Assert.fail("Expected message: " + expException.getMessage() + " actual message: " + actException.getMessage());
+			StackTraceElement[] expStackTrace = expException.getStackTrace();
+			StackTraceElement[] actStackTrace = actException.getStackTrace();
+			Assert.assertArrayEquals(expStackTrace, actStackTrace);
 		} else if (expected instanceof List) {
 			List<?> expectedlist = (List<?>) expected;
 			List<?> actuallist = (List<?>) actual;
@@ -585,11 +591,14 @@ abstract public class FlatteningTestAbstract {
 
 	@Test
 	public void testException() {
-		flattenAndUnflatten(new Exception("Exceptional things happened"));
-
-		// Exceptions are always unflattened as Exception type, original type information is lost
-		NullPointerException npe = new NullPointerException("Exceptional null happened");
-		flattenAndUnflatten(npe, npe, Exception.class);
+		// Exceptions are always unflattened as AnalysisRpcRemoteException type, 
+		// with original type information pre-pended to the message
+		Exception[] npe_in = new Exception[] {new NullPointerException("Exceptional null happened")};
+		AnalysisRpcRemoteException[] npe_out 
+			= new AnalysisRpcRemoteException[] {new AnalysisRpcRemoteException("Exceptional null happened")};
+		// Make sure the stack traces are the same
+		npe_out[0].setStackTrace(npe_in[0].getStackTrace());
+		flattenAndUnflatten(npe_in, npe_out);
 	}
 
 	@Test

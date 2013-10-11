@@ -167,7 +167,7 @@ public class AggregateDataset implements ILazyDataset {
 
 	@Override
 	public Class<?> elementClass() {
-		return AbstractDataset.elementClass(getDtype());
+		return AbstractDataset.elementClass(dtype);
 	}
 
 	@Override
@@ -217,13 +217,6 @@ public class AggregateDataset implements ILazyDataset {
 		} catch (Exception e) {
 			return null;
 		}
-	}
-
-	/**
-	 * @return type of dataset item
-	 */
-	public int getDtype() {
-		return dtype;
 	}
 
 	@Override

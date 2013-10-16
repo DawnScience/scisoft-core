@@ -419,6 +419,61 @@ public class Slice {
 	}
 
 	/**
+	 * Convert a string to a slice array
+	 * 
+	 * @param sliceString
+	 * @return a slice array
+	 */
+	public static Slice[] convertFromString(String sliceString) {
+
+		String clean = sliceString.replace("[", "");
+		clean = clean.replace("]", "");
+
+		String[] sub = clean.split(",");
+
+		Slice[] slices = new Slice[sub.length];
+
+		for (int i = 0; i < sub.length; i++) {
+			String s = sub[i];
+
+			Slice slice = new Slice(); 
+			slices[i] = slice;
+
+			int idx0 = s.indexOf(":");
+
+			int n = 0;
+			if (idx0 == -1) {
+				n = Integer.parseInt(s);
+				slice.setStart(n);
+				slice.setStop(n + 1);
+				continue;
+			} else if (idx0 != 0) {
+				n = Integer.parseInt(s.substring(0, idx0));
+			}
+			slice.setStart(n);
+
+			idx0++;
+			int idx1 = s.indexOf(":", idx0);
+			if (idx1 == -1) {
+				String t = s.substring(idx0).trim(); 
+				if (t.length() == 0)
+					continue;
+
+				slice.setStop(Integer.parseInt(t));
+				continue;
+			} else if (idx1 != idx0) {
+				slice.setStop(Integer.parseInt(s.substring(idx0, idx1)));
+			}
+
+			String t = s.substring(idx1 + 1).trim(); 
+			if (t.length() > 0)
+				slice.setStep(Integer.parseInt(t));
+		}
+
+		return slices;
+	}
+
+	/**
 	 * @param slices
 	 * @return string specifying slices
 	 */

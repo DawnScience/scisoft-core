@@ -375,6 +375,46 @@ public class SliceTest {
 		assertEquals(0, (int) sl[0].getStart());
 		assertEquals(12, (int) sl[0].getStop());
 		assertEquals(1, sl[0].getStep());
+
+		sl = Slice.convertFromString("[:,:,:,:]");
+		assertEquals(4, sl.length);
+		assertEquals(0, (int) sl[0].getStart());
+		assertEquals(0, (int) sl[1].getStart());
+		assertEquals(0, (int) sl[2].getStart());
+		assertEquals(0, (int) sl[3].getStart());
+		assertEquals(null, sl[0].getStop());
+		assertEquals(null, sl[1].getStop());
+		assertEquals(null, sl[2].getStop());
+		assertEquals(null, sl[3].getStop());
+		assertEquals(1, sl[0].getStep());
+		assertEquals(1, sl[1].getStep());
+		assertEquals(1, sl[2].getStep());
+		assertEquals(1, sl[3].getStep());
+
+		sl = Slice.convertFromString("[::]");
+		assertEquals(0, (int) sl[0].getStart());
+		assertEquals(null, sl[0].getStop());
+		assertEquals(1, sl[0].getStep());
+
+		sl = Slice.convertFromString("[1::]");
+		assertEquals(1, (int) sl[0].getStart());
+		assertEquals(null, sl[0].getStop());
+		assertEquals(1, sl[0].getStep());
+
+		sl = Slice.convertFromString("[:3:]");
+		assertEquals(0, (int) sl[0].getStart());
+		assertEquals(3, (int) sl[0].getStop());
+		assertEquals(1, sl[0].getStep());
+
+		sl = Slice.convertFromString("[::-1]");
+		assertEquals(0, (int) sl[0].getStart());
+		assertEquals(null, sl[0].getStop());
+		assertEquals(-1, sl[0].getStep());
+
+		sl = Slice.convertFromString("[10:2:-2]");
+		assertEquals(10, (int) sl[0].getStart());
+		assertEquals(2, (int) sl[0].getStop());
+		assertEquals(-2, sl[0].getStep());
 	}
 
 	@Test

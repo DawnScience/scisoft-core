@@ -134,30 +134,6 @@ public class Maths {
 		return result;
 	}
 
-	
-	/**
-	 * Adds all sets passed in together.
-	 * 
-	 * The first IDataset must cast to AbstractDataset
-	 * 
-	 * For memory efficiency sake if add(...) is called with a
-	 * set of size one, no clone is done, the original object is
-	 * returned directly. Otherwise a new data set is returned,
-	 * the sum of those passed in.
-	 * 
-	 * @param sets
-	 * @return sum of collection
-	 */
-	public static AbstractDataset add(final Collection<IDataset> sets, boolean requireClone) {
-		
-		if (sets.isEmpty()) return null;
-		if (sets.size()==1) return (AbstractDataset)sets.iterator().next();
-		
-		final Iterator<IDataset> it = sets.iterator();
-		AbstractDataset sum = requireClone ? ((AbstractDataset)it.next()).clone() : (AbstractDataset)it.next();
-		while(it.hasNext()) sum.iadd(it.next());
-        return sum;
-	}
 	/**
 	 * @param a
 	 * @param b
@@ -192,40 +168,55 @@ public class Maths {
 		return result;
 	}
 
-	
 	/**
-	 * Adds all sets passed in together.
+	 * Adds all sets passed in together
 	 * 
 	 * The first IDataset must cast to AbstractDataset
 	 * 
+	 * For memory efficiency sake if add(...) is called with a
+	 * set of size one, no clone is done, the original object is
+	 * returned directly. Otherwise a new data set is returned,
+	 * the sum of those passed in.
+	 * 
 	 * @param sets
+	 * @param requireClone
 	 * @return sum of collection
 	 */
-	public static AbstractDataset add(final Collection<IDataset> sets) {
-		
+	public static AbstractDataset add(final Collection<IDataset> sets, boolean requireClone) {
+		if (sets.isEmpty())
+			return null;
 		final Iterator<IDataset> it = sets.iterator();
-		AbstractDataset sum = ((AbstractDataset)it.next()).clone();
-		while(it.hasNext()) sum.iadd(it.next());
-        return sum;
+		if (sets.size() == 1)
+			return (AbstractDataset) it.next();
+		AbstractDataset sum = requireClone ? ((AbstractDataset) it.next()).clone() : (AbstractDataset) it.next();
+
+		while (it.hasNext())
+			sum.iadd(it.next());
+
+		return sum;
 	}
 
 	/**
-	 * Multiplies all sets passed in together.
+	 * Multiplies all sets passed in together
 	 * 
 	 * The first IDataset must cast to AbstractDataset
 	 * 
 	 * @param sets
-	 * @return sum of collection
+	 * @param requireClone
+	 * @return product of collection
 	 */
 	public static AbstractDataset multiply(final Collection<IDataset> sets, boolean requireClone) {
-		
-		if (sets.isEmpty()) return null;
-		if (sets.size()==1) return (AbstractDataset)sets.iterator().next();
-		
+		if (sets.isEmpty())
+			return null;
 		final Iterator<IDataset> it = sets.iterator();
-		AbstractDataset product = requireClone ? ((AbstractDataset)it.next()).clone() : (AbstractDataset)it.next();
-		while(it.hasNext()) product = product.imultiply(it.next());
-	    return product;
+		if (sets.size() == 1)
+			return (AbstractDataset) it.next();
+		AbstractDataset product = requireClone ? ((AbstractDataset) it.next()).clone() : (AbstractDataset) it.next();
+
+		while (it.hasNext())
+			product = product.imultiply(it.next());
+
+		return product;
 	}
 
 	/**

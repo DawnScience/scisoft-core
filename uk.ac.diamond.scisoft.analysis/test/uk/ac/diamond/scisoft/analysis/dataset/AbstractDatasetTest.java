@@ -1668,6 +1668,63 @@ public class AbstractDatasetTest {
 		}
 	}
 
+	public static void checkDatasets(AbstractDataset expected, AbstractDataset calc, double relTol, double absTol) {
+		int type = expected.getDtype();
+		Assert.assertEquals("Type", type, calc.getDtype());
+		Assert.assertEquals("Items", expected.getElementsPerItem(), calc.getElementsPerItem());
+		Assert.assertEquals("Size", expected.getSize(), calc.getSize());
+		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
+		IndexIterator at = expected.getIterator(true);
+		IndexIterator bt = calc.getIterator();
+		final int is = calc.getElementsPerItem();
+
+		if (expected.elementClass().equals(Boolean.class)) {
+			while (at.hasNext() && bt.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					boolean e = expected.getElementBooleanAbs(at.index + j);
+					boolean c = calc.getElementBooleanAbs(bt.index + j);
+					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+							": ", e, c);
+				}
+			}
+		} else if (expected.hasFloatingPointElements()) {
+			while (at.hasNext() && bt.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					double e = expected.getElementDoubleAbs(at.index + j);
+					double c = calc.getElementDoubleAbs(bt.index + j);
+					double t = Math.max(absTol, relTol*Math.max(Math.abs(e), Math.abs(c)));
+					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+							": ", e, c, t);
+				}
+			}
+		} else if (type == AbstractDataset.STRING) {
+			StringDataset es = (StringDataset) expected;
+			StringDataset cs = (StringDataset) calc;
+
+			while (at.hasNext() && bt.hasNext()) {
+				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + ": ",
+						es.getAbs(at.index), cs.getAbs(bt.index));
+			}
+		} else if (type == AbstractDataset.OBJECT) {
+			ObjectDataset eo = (ObjectDataset) expected;
+			ObjectDataset co = (ObjectDataset) calc;
+
+			while (at.hasNext() && bt.hasNext()) {
+				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + ": ",
+						eo.getAbs(at.index), co.getAbs(bt.index));
+			}
+		} else {
+			while (at.hasNext() && bt.hasNext()) {
+				for (int j = 0; j < is; j++) {
+					long e = expected.getElementLongAbs(at.index + j);
+					long c = calc.getElementLongAbs(bt.index + j);
+					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
+							": ", e, c);
+				}
+			}
+		}
+	}
+
 	@Test
 	public void testSelect() {
 		DoubleDataset a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });

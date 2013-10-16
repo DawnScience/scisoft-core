@@ -784,29 +784,19 @@ public class Stats {
 	 */
 	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, final boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
-		final int rank = a.getRank();
 		final int[] oshape = a.getShape();
 		final int is = a.getElementsPerItem();
 		final int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
-
-		AbstractDataset result = AbstractDataset.zeros(is, nshape, dtype);
+		AbstractDataset result = AbstractDataset.zeros(is, oshape, dtype);
 
 		IndexIterator qiter = result.getIterator(true);
 		int[] qpos = qiter.getPos();
-		int[] spos = oshape;
+		int[] spos;
 
 		while (qiter.hasNext()) {
-			int i = 0;
-			for (; i < axis; i++) {
-				spos[i] = qpos[i];
-			}
-			spos[i++] = 0;
-			for (; i < rank; i++) {
-				spos[i] = qpos[i-1];
-			}
+			spos = qpos.clone();
 
 			if (a.isComplex()) {
 				double rv = 1, iv = 0;
@@ -1019,6 +1009,7 @@ public class Stats {
 			}
 		}
 
+		result.setShape(AbstractDataset.squeezeShape(oshape, axis));
 		return result;
 	}
 

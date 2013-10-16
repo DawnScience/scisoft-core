@@ -2276,6 +2276,35 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Remove dimension of 1 in given shape
+	 * 
+	 * @param oshape
+	 * @param axis
+	 * @return newly squeezed shape
+	 */
+	public static int[] squeezeShape(final int[] oshape, int axis) {
+		if (oshape == null || oshape.length == 0) {
+			return new int[0];
+		}
+		int rank = oshape.length;
+		if (axis < 0) {
+			axis += rank;
+		}
+		if (axis < 0 || axis >= rank) {
+			abstractLogger.error("Axis argument is outside allowed range");
+			throw new IllegalArgumentException("Axis argument is outside allowed range");
+		}
+		int[] nshape = new int[rank-1];
+		for (int i = 0; i < axis; i++) {
+			nshape[i] = oshape[i];
+		}
+		for (int i = axis+1; i < rank; i++) {
+			nshape[i-1] = oshape[i];
+		}
+		return nshape;
+	}
+
+	/**
 	 * Check if shapes are compatible, ignoring axes of length 1
 	 * 
 	 * @param ashape

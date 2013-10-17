@@ -62,7 +62,7 @@ def setloadwarning(warn):
     global _LDRWARN
     _LDRWARN = warn
 
-def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=_LDRWARN, **kwarg):
+def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=None, **kwarg):
     '''Load a file and return a list of datasets (or a dictionary of datasets) and
     optionally a dictionary of metadata items
 
@@ -84,6 +84,8 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
     ascolour -- if True, attempt load as colour dataset
     warn -- if True, suppress warning
     '''
+    if warn is None:
+        warn = _LDRWARN
     try:
         f = open(name)
         f.close()

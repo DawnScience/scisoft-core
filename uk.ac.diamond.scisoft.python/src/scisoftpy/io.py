@@ -18,8 +18,8 @@
 I/O  package
 '''
 
-import os
-if os.name == 'java':
+import os as _os
+if _os.name == 'java':
     import jython.jycore as _core #@UnusedImport
     import jython.jyio as _io #@UnusedImport
     loadnexus = _io.loadnexus
@@ -38,7 +38,7 @@ _oformats = _io.output_formats
 _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
 
-from dictutils import DataHolder, ListDict
+from dictutils import DataHolder as _DataHolder, ListDict as _ListDict
 
 _extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 'h5' : ['hdf5'], 'nxs' : ['nx'] }
 
@@ -186,7 +186,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
 
 
 
-    if isinstance(data, ListDict):
+    if isinstance(data, _ListDict):
         dh = data
     else:
         dl = []
@@ -198,14 +198,12 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
             for d in _toList(data):
                 n = getattr(d, 'name', 'data')
                 dl.append((n, d))
-        dh = ListDict(dl)
+        dh = _ListDict(dl)
 
     saver.save(dh)
 
 
-import os as _os
-_path = _os.path
-_join = _path.join
+from os.path import join as _join
 
 def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
     '''Find scan files in given data directory
@@ -266,9 +264,8 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
         raise IOError, 'Scan files not found'
     return files
 
-#from scisoftpy import ndarraywrapped as _npwrapped
 
-class Scan(DataHolder):
+class Scan(_DataHolder):
     '''Represent a scan from an SRS file'''
     def __init__(self, scan, data_dir, visit=None, year=None, ending=".dat"):
         '''Specify a scan number (or file name) and data directory
@@ -306,7 +303,7 @@ class Scan(DataHolder):
                 mds = i[1].items()
             else:
                 itms.append(i)
-        DataHolder.__init__(self, itms, mds)
+        _DataHolder.__init__(self, itms, mds)
         self.__scan = scan
         self.__file = srsfile
 

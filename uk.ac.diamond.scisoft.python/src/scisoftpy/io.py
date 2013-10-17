@@ -245,7 +245,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
         if y is None:
             ds = (data_dir,)
         else:
-            ds = glob(_join(data_dir, y))
+            ds = glob(_join(data_dir, y)).sort(reverse=True)
         for d in ds:
             for v in visits:
                 if v is None:

@@ -50,6 +50,13 @@ public class SliceObject {
      * Name, expression name to a lazy dataset which can be used for an axis.
      */
 	private Map<String, IDataset> expressionAxes;
+	
+	/**
+	 * This is the DimsDataList object which can optionally be saved with 
+	 * the slice information. For instance if the axes have been marked with
+	 * mathematical operations.
+	 */
+	private Object dimensionalData;
 
     public SliceObject() {
     	this.axisNames = new HashMap<Integer, String>(3);
@@ -190,7 +197,7 @@ public class SliceObject {
     // not really needed by the loader.
     
     private List<IDataset> axes;
-    private String                shapeMessage;
+    private String         shapeMessage;
 
 	public List<IDataset> getAxes() {
 		return axes;
@@ -264,6 +271,14 @@ public class SliceObject {
 	public IDataset getExpressionAxis(String name) {
 		if (expressionAxes == null) return null;
 		return expressionAxes.get(name);
+	}
+
+	public Object getDimensionalData() {
+		return dimensionalData;
+	}
+
+	public void setDimensionalData(Object dimensionalData) {
+		this.dimensionalData = dimensionalData;
 	}
   
 }

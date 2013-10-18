@@ -121,4 +121,20 @@ public interface IAnalysisService {
 	 * @return transposed data set
 	 */
 	public IDataset transpose(IDataset sum);
+
+	/**
+	 * Take the mean along a given dimension.
+	 * @param slice
+	 * @param i
+	 * @return mean
+	 */
+	public IDataset mean(IDataset slice, int i);
+
+	public IDataset max(IDataset slice, int i);
+
+	public IDataset min(IDataset slice, int i);
+
+	public IDataset median(IDataset slice, int i);
+
+	public IDataset mode(IDataset slice, int i);
 }

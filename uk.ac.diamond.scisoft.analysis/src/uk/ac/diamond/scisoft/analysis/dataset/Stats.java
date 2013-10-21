@@ -28,6 +28,9 @@ import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 /**
  * Statistics class
+ * 
+ * TODO Where is mode? http://en.wikipedia.org/wiki/Mode_(statistics)
+ * 
  */
 public class Stats {
 

@@ -130,11 +130,35 @@ public interface IAnalysisService {
 	 */
 	public IDataset mean(IDataset slice, int i);
 
+	/**
+	 * 
+	 * @param slice
+	 * @param i
+	 * @return max
+	 */
 	public IDataset max(IDataset slice, int i);
 
+	/**
+	 * 
+	 * @param slice
+	 * @param i
+	 * @return min
+	 */
 	public IDataset min(IDataset slice, int i);
 
+	/**
+	 * 
+	 * @param slice
+	 * @param i
+	 * @return median
+	 */
 	public IDataset median(IDataset slice, int i);
 
+	/**
+	 * 
+	 * @param slice
+	 * @param i
+	 * @return mode
+	 */
 	public IDataset mode(IDataset slice, int i);
 }

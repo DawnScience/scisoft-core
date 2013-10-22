@@ -245,6 +245,36 @@ public class ROISliceUtils {
 	}
 	
 	/**
+	 * Method to return the dataset corresponding to the area selected by an y-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots.
+	 * 
+	 * @param lz
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @return dataset
+	 */
+	public static IDataset getYAxisDataset2DAverage(ILazyDataset lz, RectangularROI roi, Slice[] slices, int dim){
+		
+		Slice[] sl = checkSlices(lz.getRank(), slices);
+		
+		int[] roiStart = roi.getIntPoint();
+		int[] roiEnd = roi.getIntLengths();
+		
+		Slice xSlice = new Slice(roiStart[1], roiStart[1]+roiEnd[1], 1);
+		
+		sl[dim] = xSlice;
+		
+		AbstractDataset out = (AbstractDataset)lz.getSlice(sl);
+		
+		out = out.mean(dim);
+		
+		return out.squeeze();
+
+	}
+	
+	/**
 	 * Method to slice a dataset using an roi to define the sliced range <br>
 	 * Order must be at least 2 ints long and defines the x,y slice dimensions<br>
 	 * 
@@ -289,8 +319,8 @@ public class ROISliceUtils {
 			sl[order[1]].setStart(points[1]);
 			sl[order[1]].setStop(points[1]+1);
 
-			ds[i] = lz.getSlice(sl).squeeze().getSlice();
-
+			//ds[i] = lz.getSlice(sl).squeeze().getSlice();
+			ds[i] = lz.getSlice(sl).squeeze();
 			shape = ds[i].getShape();
 
 			ds[i].setShape(new int[]{1,shape[0]});

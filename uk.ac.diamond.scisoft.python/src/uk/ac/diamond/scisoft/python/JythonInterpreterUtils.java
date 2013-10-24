@@ -96,7 +96,7 @@ public class JythonInterpreterUtils {
 
 		try {
 			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
-			if (!pythonPlugin.exists()) {
+			if (pythonPlugin == null || !pythonPlugin.exists()) {
 				logger.debug("No scisoftpy found at {} - now trying to find git workspace", pythonPlugin);
 				File gitws = jyBundleLoc.getParentFile().getParentFile();
 				if (gitws.exists()) {

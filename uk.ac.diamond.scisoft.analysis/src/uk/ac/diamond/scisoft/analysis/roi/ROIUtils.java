@@ -38,7 +38,17 @@ public class ROIUtils {
 		// to-do add line 3D
 		else if (LinearROI.class.isAssignableFrom(clazz))
 			return new LinearROIList();
-		// to-do add grid, perimeter, x-axis box, x-axis line box, etc
+		else if (XAxisBoxROI.class.isAssignableFrom(clazz))
+			return new XAxisBoxROIList();
+		else if (XAxisLineBoxROI.class.isAssignableFrom(clazz))
+			return new XAxisLineBoxROIList();
+		else if (YAxisBoxROI.class.isAssignableFrom(clazz))
+			return new YAxisBoxROIList();
+		else if (YAxisLineBoxROI.class.isAssignableFrom(clazz))
+			return new YAxisLineBoxROIList();
+		else if (PerimeterBoxROI.class.isAssignableFrom(clazz))
+			return new PerimeterBoxROIList();
+		// to-do add grid
 		else if (RectangularROI.class.isAssignableFrom(clazz))
 			return new RectangularROIList();
 		// to-do add ring

@@ -234,6 +234,7 @@ plot. The initial choice of y axis scale used in all the profile plots is
 controlled by the setting found within Windows > Preferences > Scisoft Settings
 > Side Plotter.
 
+
 Plot GUI information
 --------------------
 GUI information from interactions with the plot view and side panels can be
@@ -378,4 +379,27 @@ profile datasets in the console::
     # line and the second element is along the perpendicular bisector (if the
     # crosshair option is set)
     lprof = droi.profile(image, lroi, step=0.5) 
+
+
+Managing Plot Views
+-------------------
+Existing plot views can be shown by opening the Window > Show Plot View sub-menu
+and selecting the named plot view. New plot views can be opened using the Window
+ > Show Plot View > new Plot View menu to create new plot views that are named
+to continue the sequence Plot 1, Plot 2, etc. 
+
+There is a way to control plot views from Python using the window manager::
+
+    import scisoftpy as dnp
+
+    # returns a list of open plot views
+    dnp.plot.window_manager.get_open_views()
+
+    # open a named plot view or an automatically generated unique name
+    # and returns that name
+    dnp.plot.window_manager.open_view(view_name=None)
+
+    # copies the named plot view with its data and GUI beans and returns the new name
+    dnp.plot.window_manager.open_duplicate_view(view_name)
+
 

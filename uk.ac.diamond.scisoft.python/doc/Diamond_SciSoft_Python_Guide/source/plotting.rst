@@ -383,10 +383,10 @@ profile datasets in the console::
 
 Managing Plot Views
 -------------------
-Existing plot views can be shown by opening the Window > Show Plot View sub-menu
-and selecting the named plot view. New plot views can be opened using the Window
- > Show Plot View > new Plot View menu to create new plot views that are named
-to continue the sequence Plot 1, Plot 2, etc. 
+Existing plot views can be shown by opening the :menuselection:`&Window --> Show Plo&t View` sub-menu and selecting the named plot view.
+
+New plot views can be opened using the
+:menuselection:`&Window --> Show Plo&t View --> New Plot View` menu to create new plot views that are named to continue the sequence ``Plot 1``, ``Plot 2``, etc.
 
 There is a way to control plot views from Python using the window manager::
 

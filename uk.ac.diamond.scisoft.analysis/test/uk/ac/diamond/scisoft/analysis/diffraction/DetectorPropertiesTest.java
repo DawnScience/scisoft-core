@@ -373,11 +373,36 @@ public class DetectorPropertiesTest {
 		det.setNormalAnglesInDegrees(30, 0, roll);
 		nb = det.getNormal();
 		Assert.assertEquals("Normals rolled", 0, Math.toDegrees(na.angle(nb)), 1e-7);
-//		Assert.assertEquals("Normal to row", 90, Math.toDegrees(det.getPixelRow().angle(det.getNormal())), 1e-7);
-//
-//		System.err.printf("Row-nNorm %f\n", Math.toDegrees(row.angle(det.getNormal())));
-//		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
 
+		// check sequence of normal angle changes through no-intersection cases and its effect on beam centre distance
+		det.setNormalAnglesInDegrees(70, 0, 0);
+		double dist = det.getBeamCentreDistance();
+		double[] centre = det.getBeamCentreCoords();
+		det.setNormalAnglesInDegrees(90, 0, 0);
+
+		Assert.assertTrue("No intersection", Double.isInfinite(det.getBeamCentreDistance()));
+		double[] centre2 = det.getBeamCentreCoords();
+		Assert.assertTrue("No intersection", Double.isNaN(centre2[0]));
+		Assert.assertTrue("No intersection", Double.isNaN(centre2[1]));
+
+		det.setNormalAnglesInDegrees(70, 0, 0);
+		Assert.assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
+		centre2 = det.getBeamCentreCoords();
+		Assert.assertEquals("Restored", centre[0], centre2[0], 1e-7);
+		Assert.assertEquals("Restored", centre[1], centre2[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(70, 5, 0);
+		dist = det.getBeamCentreDistance();
+		centre = det.getBeamCentreCoords();
+		det.setNormalAnglesInDegrees(70, 0, 0);
+		det.setNormalAnglesInDegrees(90, 0, 0);
+		det.setNormalAnglesInDegrees(90, 5, 0);
+//		det.setNormalAnglesInDegrees(70, 0, 0);
+		det.setNormalAnglesInDegrees(70, 5, 0);
+		centre2 = det.getBeamCentreCoords();
+		Assert.assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
+		Assert.assertEquals("Restored", centre[0], centre2[0], 1e-7);
+		Assert.assertEquals("Restored", centre[1], centre2[1], 1e-7);
 	}
 
 	private Vector3d getNormal(double... angles) {

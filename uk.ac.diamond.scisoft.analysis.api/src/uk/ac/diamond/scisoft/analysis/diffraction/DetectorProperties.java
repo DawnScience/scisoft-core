@@ -62,8 +62,11 @@ public class DetectorProperties implements Serializable {
 	private Matrix3d invOrientation; // its inverse
 	private boolean fire = true;
 
-	private transient Set<IDetectorPropertyListener> detectorPropListeners; 
-	
+	private transient Set<IDetectorPropertyListener> detectorPropListeners;
+
+	private Vector3d oldCentre;
+	private Vector3d oldShift;
+
 	/**
 	 * Null constructor
 	 */
@@ -557,7 +560,7 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * Set detector orientation using a set of (proper) Euler angles in ZXZ order
+	 * Set detector orientation using a set of (proper) Euler angles (in radians) in ZXZ order
 	 * 
 	 * @param alpha first angle about global z
 	 * @param beta second angle about local x
@@ -577,7 +580,7 @@ public class DetectorProperties implements Serializable {
 	}
 
 	/**
-	 * Set detector orientation using a set of (proper) Euler angles in ZYZ order
+	 * Set detector orientation using a set of (proper) Euler angles (in radians) in ZYZ order
 	 * 
 	 * @param alpha first angle about global z
 	 * @param beta second angle about local y
@@ -635,7 +638,33 @@ public class DetectorProperties implements Serializable {
 		transform.rotY(Math.toRadians(-yaw));
 		tb.mul(ta);
 		transform.mul(tb);
+		santise(transform);
 		return transform;
+	}
+
+	/**
+	 * Reset entries that are less than or equal to 1 unit of least precision of
+	 * the matrix's scale
+	 * @param m
+	 */
+	private static void santise(Matrix3d m) {
+		double scale = m.getScale();
+		double min = Math.ulp(scale);
+		for (int i = 0; i < 3; i++) {
+			double t;
+			t = Math.abs(m.getElement(i, 0));
+			if (t > 0 && t <= min) {
+				m.setElement(i, 0, 0);
+			}
+			t = Math.abs(m.getElement(i, 1));
+			if (t > 0 && t <= min) {
+				m.setElement(i, 1, 0);
+			}
+			t = Math.abs(m.getElement(i, 2));
+			if (t > 0 && t <= min) {
+				m.setElement(i, 2, 0);
+			}
+		}
 	}
 
 	/**
@@ -661,25 +690,37 @@ public class DetectorProperties implements Serializable {
 	 * @param roll rotate about normal (positive is clockwise looking along normal)
 	 */
 	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
-		Vector3d c = null;
-		Vector3d d = null;
+		Vector3d centre = null;
+		Vector3d shift = null;
 		try {
-			c = getBeamCentrePosition();
-			d = new Vector3d();
-			d.sub(origin, c);
+			centre = getBeamCentrePosition();
+			shift = new Vector3d();
+			shift.sub(origin, centre);
 			if (orientation != null)
-				orientation.transform(d);  // relative beam centre in image frame
+				orientation.transform(shift);  // relative beam centre in image frame
+
+			oldCentre = centre;
+			oldShift = shift;
 		} catch (IllegalStateException e) {
 		}
 
 		invOrientation = inverseMatrixFromEulerAngles(yaw, pitch, roll, invOrientation);
 		calcNormal(false);
 
-		if (d != null && c != null) {
-			// set origin back from beam centre
-			invOrientation.transform(d);
-			c.add(d);
-			origin = c;
+		if (normal.dot(beamVector) != 0) {
+			if (shift == null || centre == null) {
+				 // reset state from old
+				centre = oldCentre;
+				shift = oldShift;
+			}
+			oldCentre = null;
+			oldShift = null;
+			if (shift != null && centre != null) {
+				// set origin back from beam centre
+				invOrientation.transform(shift);
+				centre.add(shift);
+				origin = centre;
+			}
 		}
 
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));

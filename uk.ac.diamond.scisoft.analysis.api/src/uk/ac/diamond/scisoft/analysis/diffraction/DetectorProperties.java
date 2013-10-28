@@ -685,9 +685,9 @@ public class DetectorProperties implements Serializable {
 	 * Note, if the beam centre exists then this re-orients the detector about the beam centre and
 	 * therefore alters the detector origin.
 	 * 
-	 * @param yaw rotate about vertical axis (positive is to the right, east or clockwise looking down)
-	 * @param pitch rotate about horizontal axis (positive is upwards)
-	 * @param roll rotate about normal (positive is clockwise looking along normal)
+	 * @param yaw rotate about vertical axis ((-180, 180] with positive is to the right, east or clockwise looking down)
+	 * @param pitch rotate about horizontal axis ([-90, 90] with positive is upwards)
+	 * @param roll rotate about normal ((-180, 180] with positive is clockwise looking along normal)
 	 */
 	public void setNormalAnglesInDegrees(final double yaw, final double pitch, final double roll) {
 		Vector3d centre = null;
@@ -747,9 +747,9 @@ public class DetectorProperties implements Serializable {
 			yaw  = Math.atan2(invOrientation.getM02(), invOrientation.getM22());
 			roll = Math.atan2(invOrientation.getM10(), invOrientation.getM11());
 		}
-		if (yaw != 0)
+		if (yaw != 0 && yaw != Math.PI)
 			yaw = -yaw;
-		if (roll != 0)
+		if (roll != 0 && roll != Math.PI)
 			roll = -roll;
 
 		double pitch = Math.asin(sp);

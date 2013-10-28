@@ -353,6 +353,17 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
 		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
 
+		roll = 120;
+		det.setNormalAnglesInDegrees(0, 0, roll);
+		Assert.assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
+		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		if (roll > 90) {
+			roll = roll - 90;
+		} else {
+			roll = 90 - roll;
+		}
+		Assert.assertEquals("Image col angle", roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+
 		// test normal is same for any roll...
 		Vector3d na = getNormal(30, 0, 0);
 		Vector3d nb = getNormal(0, 30, 0);
@@ -403,6 +414,76 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
 		Assert.assertEquals("Restored", centre[0], centre2[0], 1e-7);
 		Assert.assertEquals("Restored", centre[1], centre2[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(90, 0, 0);
+		Assert.assertEquals("Yaw 90", 90, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(120, 0, 0);
+		Assert.assertEquals("Yaw 120", 120, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(180, 0, 0);
+		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(185, 0, 0);
+		Assert.assertEquals("Yaw -175", -175, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(-120, 0, 0);
+		Assert.assertEquals("Yaw -120", -120, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(-180, 0, 0);
+		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(-185, 0, 0);
+		Assert.assertEquals("Yaw 175", 175, det.getNormalAnglesInDegrees()[0], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 85, 0);
+		Assert.assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 90, 0);
+		Assert.assertEquals("Pitch 90", 90, det.getNormalAnglesInDegrees()[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 95, 0);
+		Assert.assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -85, 0);
+		Assert.assertEquals("Pitch -85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -90, 0);
+		Assert.assertEquals("Pitch -90", -90, det.getNormalAnglesInDegrees()[1], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, -95, 0);
+		Assert.assertEquals("Pitch 85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 90);
+		Assert.assertEquals("Roll 90", 90, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 179);
+		Assert.assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 180);
+		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, 181);
+		Assert.assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -90);
+		Assert.assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -179);
+		Assert.assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -180);
+		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -181);
+		Assert.assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
+
+		det.setNormalAnglesInDegrees(0, 0, -90);
+		Assert.assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
 	}
 
 	private Vector3d getNormal(double... angles) {

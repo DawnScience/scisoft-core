@@ -629,7 +629,7 @@ public class ROIProfile {
 		AbstractDataset[] profiles = new AbstractDataset[8];
 		AbstractDataset[] errors = new AbstractDataset[8];
 
-		if (Math.abs(rad[0] - rad[1]) < 1 || Math.abs(ang[0] - ang[1]) < 1e-2) {
+		if (Math.abs(rad[0] - rad[1]) < 1) {
 			return null;
 		}
 
@@ -672,6 +672,10 @@ public class ROIProfile {
 				profiles[5] = dsetsf.get(4);
 			}
 			return profiles;
+		}
+
+		if (Math.abs(ang[0] - ang[1]) < 1e-2) {
+			return null;
 		}
 
 		MapToPolarAndIntegrate pmapint = new MapToPolarAndIntegrate(spt[0], spt[1], rad[0], ang[0], rad[1], ang[1],

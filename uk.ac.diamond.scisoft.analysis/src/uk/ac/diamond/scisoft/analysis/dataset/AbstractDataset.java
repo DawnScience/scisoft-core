@@ -3588,32 +3588,18 @@ public abstract class AbstractDataset implements ADataset {
 		return obj;
 	}
 
-	/**
-	 * See {@link #max(boolean ignoreNaNs)} with ignoreNaNs = false
-	 */
-	@Override
-	public Number max() {
-		return max(false);
-	}
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return maximum
 	 */
 	@Override
-	public Number max(boolean ignoreInvalids) {
-		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MAX);
+	public Number max(boolean... ignoreInvalids) {
+		boolean igNan = ignoreInvalids!=null && ignoreInvalids.length>0 ? ignoreInvalids[0] : false;
+		boolean igInf = ignoreInvalids!=null && ignoreInvalids.length>1 ? ignoreInvalids[1] : igNan;
+		return (Number) getMaxMin(igNan, igInf, STORE_MAX);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return minimum
-	 */
-	@Override
-	public Number max(boolean ignoreNaNs, boolean ignoreInfs) {
-		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MAX);
-	}
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
@@ -3654,31 +3640,16 @@ public abstract class AbstractDataset implements ADataset {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
 	}
 
-	/**
-	 * See {@link #min(boolean ignoreNaNs)} with ignoreNaNs = false
-	 */
-	@Override
-	public Number min() {
-		return min(false);
-	}
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return minimum
 	 */
 	@Override
-	public Number min(boolean ignoreInvalids) {
-		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_MIN);
-	}
-
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return minimum
-	 */
-	@Override
-	public Number min(boolean ignoreNaNs, boolean ignoreInfs) {
-		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_MIN);
+	public Number min(boolean... ignoreInvalids) {
+		boolean igNan = ignoreInvalids!=null && ignoreInvalids.length>0 ? ignoreInvalids[0] : false;
+		boolean igInf = ignoreInvalids!=null && ignoreInvalids.length>1 ? ignoreInvalids[1] : igNan;
+		return (Number) getMaxMin(igNan, igInf, STORE_MIN);
 	}
 
 	/**
@@ -3970,21 +3941,13 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * See {@link #mean(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * @return mean of all items in dataset as a double, array of doubles or a complex number
-	 */
-	@Override
-	public Object mean() {
-		return mean(false);
-	}
-
-	/**
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	@Override
-	public Object mean(boolean ignoreNaNs) {
-		return getStatistics(ignoreNaNs).getMean();
+	public Object mean(boolean... ignoreNaNs) {
+		boolean ig = ignoreNaNs!=null && ignoreNaNs.length>0 ? ignoreNaNs[0] : false;
+		return getStatistics(ig).getMean();
 	}
 
 	/**

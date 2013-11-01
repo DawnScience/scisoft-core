@@ -642,46 +642,17 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
-	public Number max() {
+	public Number max(boolean... switches) {
 		abstractCompoundLogger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
-	public Number min() {
+	public Number min(boolean... switches) {
 		abstractCompoundLogger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
-	@Override
-	public Number max(boolean ignoreInvalids) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
-		throw new UnsupportedOperationException("Cannot compare compound numbers");
-	}
-
-	@Override
-	public Number min(boolean ignoreInvalids) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
-		throw new UnsupportedOperationException("Cannot compare compound numbers");
-	}
-
-	@Override
-	public Number max(boolean ignoreNaNs, boolean ignoreInfs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
-		throw new UnsupportedOperationException("Cannot compare compound numbers");
-	}
-
-	@Override
-	public Number min(boolean ignoreNaNs, boolean ignoreInfs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
-		throw new UnsupportedOperationException("Cannot compare compound numbers");
-	}
-
-	@Override
-	public Number positiveMax(boolean ignoreInvalids) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
-		throw new UnsupportedOperationException("Cannot compare compound numbers");
-	}
 
 	@Override
 	public Number positiveMin(boolean ignoreInvalids) {
@@ -805,7 +776,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
-	public Object mean() {
+	public Object mean(boolean... switches) {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (isize < 1)
 			return new double[0];

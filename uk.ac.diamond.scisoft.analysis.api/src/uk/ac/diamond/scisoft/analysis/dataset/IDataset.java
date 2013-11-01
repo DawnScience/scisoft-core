@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+
 /**
  * This interface defines the implementation-independent and generic parts of a dataset
  */
@@ -113,27 +115,30 @@ public interface IDataset extends ILazyDataset {
 	public IDataset squeeze(boolean onlyFromEnd);
 
 	/**
+	 * @param switches - Should be null, or one boolean. The first boolean is true, will ignore NaNs and ignore infinities. By it is false.
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
-	public Object mean();
+	public Object mean(boolean... switches);
 
 	/**
 	 * NOTE this does not return the minimum value if there are NaNs in the 
 	 * dataset.
 	 * 
+	 * @param switches - Should be null, one boolean, or two booleans. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately. By default, both are false.
 	 * @return Minimum value
 	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */
-	public Number min();
+	public Number min(boolean... switches);
 
 	/**
 	 * NOTE this does not return the maximum value if there are NaNs in the 
 	 * dataset.
 	 * 
+	 * @param switches - Should be null, one boolean, or two booleans. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately. By default, both are false.
 	 * @return Maximum value
 	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */
-	public Number max();
+	public Number max(boolean... switches);
 
 	/**
 	 * @return Position of minimum value
@@ -151,5 +156,11 @@ public interface IDataset extends ILazyDataset {
 	 */
 	@Override
 	public IDataset clone();
+	
+	/**
+	 * Provides a reference to the meta data which describes this data.
+	 * @return the IMetadata, may be null.
+	 */
+	public IMetaData getMetadata();
 	
 }

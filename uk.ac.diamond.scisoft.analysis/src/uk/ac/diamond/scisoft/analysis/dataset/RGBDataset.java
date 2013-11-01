@@ -386,7 +386,7 @@ public class RGBDataset extends CompoundShortDataset {
 	}
 
 	@Override
-	public Number max() {
+	public Number max(boolean... ignored) {
 		short max = Short.MIN_VALUE;
 		final IndexIterator it = getIterator();
 
@@ -401,7 +401,7 @@ public class RGBDataset extends CompoundShortDataset {
 	}
 
 	@Override
-	public Number min() {
+	public Number min(boolean... ignored) {
 		short max = Short.MAX_VALUE;
 		final IndexIterator it = getIterator();
 

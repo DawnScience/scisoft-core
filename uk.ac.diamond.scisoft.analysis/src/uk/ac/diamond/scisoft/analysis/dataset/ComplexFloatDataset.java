@@ -342,12 +342,12 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public Number max() {
+	public Number max(boolean... switches) {
 		throw new UnsupportedOperationException("Cannot compare complex numbers");
 	}
 
 	@Override
-	public Number min() {
+	public Number min(boolean... switches) {
 		throw new UnsupportedOperationException("Cannot compare complex numbers");
 	}
 
@@ -364,7 +364,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public Object mean() {
+	public Object mean(boolean... switches) {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (storedValues == null) {
 			calculateSummaryStats(false, false, n);

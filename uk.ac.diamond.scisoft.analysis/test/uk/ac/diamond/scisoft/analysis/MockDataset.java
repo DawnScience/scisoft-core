@@ -165,12 +165,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public Number min() {
+	public Number min(boolean... switches) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public Number max() {
+	public Number max(boolean... switches) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
@@ -206,7 +206,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public Object mean() {
+	public Object mean(boolean... switches) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 

@@ -729,19 +729,6 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return maximum
-	 */
-	public Number max(boolean ignoreInvalids);
-
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return minimum
-	 */
-	public Number max(boolean ignoreNaNs, boolean ignoreInfs);
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return minimum positive value (or infinity if there are no positive values)
 	 */
 	public Number positiveMax(boolean ignoreInvalids);
@@ -766,19 +753,6 @@ public interface ADataset extends IErrorDataset {
 	 * @return maxima along axis in dataset
 	 */
 	public ADataset max(boolean ignoreNaNs, int axis);
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return minimum
-	 */
-	public Number min(boolean ignoreInvalids);
-
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return minimum
-	 */
-	public Number min(boolean ignoreNaNs, boolean ignoreInfs);
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
@@ -995,19 +969,6 @@ public interface ADataset extends IErrorDataset {
 	 * @return product along axis in dataset
 	 */
 	public ADataset typedProduct(int dtype, int axis);
-
-	/**
-	 * See {@link #mean(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * @return mean of all items in dataset as a double, array of doubles or a complex number
-	 */
-	@Override
-	public Object mean();
-
-	/**
-	 * @param ignoreNaNs if true, skip NaNs
-	 * @return mean of all items in dataset as a double, array of doubles or a complex number
-	 */
-	public Object mean(boolean ignoreNaNs);
 
 	/**
 	 * See {@link #mean(boolean ignoreNaNs, int axis)} with ignoreNaNs = false

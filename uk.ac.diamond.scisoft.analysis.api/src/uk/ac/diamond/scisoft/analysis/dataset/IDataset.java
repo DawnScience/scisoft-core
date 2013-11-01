@@ -115,7 +115,7 @@ public interface IDataset extends ILazyDataset {
 	public IDataset squeeze(boolean onlyFromEnd);
 
 	/**
-	 * @param switches - Should be null, or one boolean. The first boolean is true, will ignore NaNs and ignore infinities. By it is false.
+	 * @param switches - Should be null, or one boolean. By default it is false, if the boolean is true, will ignore NaNs and ignore infinities. 
 	 * @return mean of all items in dataset as a double, array of doubles or a complex number
 	 */
 	public Object mean(boolean... switches);
@@ -124,7 +124,7 @@ public interface IDataset extends ILazyDataset {
 	 * NOTE this does not return the minimum value if there are NaNs in the 
 	 * dataset.
 	 * 
-	 * @param switches - Should be null, one boolean, or two booleans. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately. By default, both are false.
+	 * @param switches - Can be null, one boolean, or two booleans. By default, both are false. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately.
 	 * @return Minimum value
 	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */
@@ -134,7 +134,7 @@ public interface IDataset extends ILazyDataset {
 	 * NOTE this does not return the maximum value if there are NaNs in the 
 	 * dataset.
 	 * 
-	 * @param switches - Should be null, one boolean, or two booleans. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately. By default, both are false.
+	 * @param switches - Can be null, one boolean, or two booleans. By default, both are false. If the first boolean is true, will ignore NaNs and ignore infinities. Use the second boolean to ignore infinities separately.
 	 * @return Maximum value
 	 * @throws UnsupportedOperationException if comparisons are not valid
 	 */

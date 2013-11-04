@@ -21,12 +21,19 @@ import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.jscience.physics.amount.Amount;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.Version;
+
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+
+import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 
 /**
  * CalibrationFactory when we go to e4 like all xxxFactory classes this will become
@@ -92,12 +99,29 @@ public class CalibrationFactory {
 		}
 
 	}
+	
 	static CalibrationStandards readCalibrationStandards() throws Exception {
 		XMLDecoder decoder=null;
+		final ClassLoader originalLoader=Thread.currentThread().getContextClassLoader();
 		try {
+		    final CompositeClassLoader customLoader = new CompositeClassLoader();
+		    customLoader.add(AbstractDataset.class.getClassLoader());
+		    customLoader.add(Amount.class.getClassLoader());
+			
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
+				@Override
+				public Object run() {
+					Thread.currentThread().setContextClassLoader(customLoader);
+					return null;
+				}
+			});
+
 			decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
 			return (CalibrationStandards)decoder.readObject();
+			
 		} finally  {
+			Thread.currentThread().setContextClassLoader(originalLoader);
+			
 			if (decoder!=null) decoder.close();
 		}
 	}

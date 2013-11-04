@@ -736,6 +736,11 @@ class Test(unittest.TestCase):
         self.assertEqual(0, a.argmin())
         self.checkitems([0, 0, 0, 0, 0], a.argmin(0))
         self.checkitems([0, 0], a.argmin(1))
+        if isjava:
+            self.checkitems([0., 1., 2., 3., 4.], a.min(0, True))
+            self.checkitems([0., 5.], a.min(1, True))
+            self.checkitems([0, 0, 0, 0, 0], a.argmin(0, True))
+            self.checkitems([0, 0], a.argmin(1, True))
 
         self.assertEqual(9., a.max())
         self.checkitems([5., 6., 7., 8., 9.], a.max(0))
@@ -743,6 +748,11 @@ class Test(unittest.TestCase):
         self.assertEqual(9, a.argmax())
         self.checkitems([1, 1, 1, 1, 1], a.argmax(0))
         self.checkitems([4, 4], a.argmax(1))
+        if isjava:
+            self.checkitems([5., 6., 7., 8., 9.], a.max(0, True))
+            self.checkitems([4., 9.], a.max(1, True))
+            self.checkitems([1, 1, 1, 1, 1], a.argmax(0, True))
+            self.checkitems([4, 4], a.argmax(1, True))
 
 if __name__ == "__main__":
     #import sys

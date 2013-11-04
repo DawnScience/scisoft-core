@@ -369,7 +369,8 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
 _jtrue = _jbool(1)
-_jfalse = _jbool(0)
+# _jfalse = _jbool(0)
+import java.lang.Integer as _jint
 
 import jymaths as _maths
 import jycomparisons as _cmps
@@ -604,19 +605,23 @@ class ndarray(object):
     def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
         if axis is None:
             if ignore_nans:
-                return self.__dataset.max(ignore_nans)
+                return self.__dataset.max(_jtrue)
             return self.__dataset.max()
         else:
-            return self.__dataset.max(ignore_nans, axis)
+            if ignore_nans:
+                return self.__dataset.max(_jtrue, _jint(axis))
+            return self.__dataset.max(axis)
 
     @_wrapout
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
         if axis is None:
             if ignore_nans:
-                return self.__dataset.min(ignore_nans)
+                return self.__dataset.min(_jtrue)
             return self.__dataset.min()
         else:
-            return self.__dataset.min(ignore_nans, axis)
+            if ignore_nans:
+                return self.__dataset.min(_jtrue, _jint(axis))
+            return self.__dataset.min(axis)
 
     @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
@@ -626,7 +631,7 @@ class ndarray(object):
             return self.__dataset.argMax()
         else:
             if ignore_nans:
-                return self.__dataset.argMax(_jtrue, axis)
+                return self.__dataset.argMax(_jtrue, _jint(axis))
             return self.__dataset.argMax(axis)
 
     @_wrapout
@@ -637,7 +642,7 @@ class ndarray(object):
             return self.__dataset.argMin()
         else:
             if ignore_nans:
-                return self.__dataset.argMin(_jtrue, axis)
+                return self.__dataset.argMin(_jtrue, _jint(axis))
             return self.__dataset.argMin(axis)
 
     @_wrapout

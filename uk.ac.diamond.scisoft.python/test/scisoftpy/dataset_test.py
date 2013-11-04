@@ -160,7 +160,7 @@ class Test(unittest.TestCase):
         self.checkitems(self.a, ids)
 
         tds = np.array(self.a)
-        self.assertEquals(tds.dtype, np.int32)
+        self.assertEquals(tds.dtype, np.int_)
         tds = np.array(self.m)
         self.assertEquals(tds.dtype, np.float64)
         tds = np.array(self.q)
@@ -168,7 +168,7 @@ class Test(unittest.TestCase):
         tds = np.array(self.r)
         self.assertEquals(tds.dtype, np.float64)
         tds = np.array(self.s)
-        self.assertEquals(tds.dtype, np.int32)
+        self.assertEquals(tds.dtype, np.int_)
         tds = np.array(self.t)
         self.assertEquals(tds.dtype, np.float64)
         tds = np.array(self.u)
@@ -367,21 +367,32 @@ class Test(unittest.TestCase):
         zr -= (1.3 + 0.2j)
         self.checkitemssubconst2(self.zb, (1.3 + 0.2j), zr)
 
-    def checkitemsdiv(self, la, lb, ds, convert=toAny):
+    def checkitemsdiv(self, la, lb, ds, convert=toAny, iscomplex=False):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i])/convert(lb[i]+1.), ds[i])
+                x = convert(la[i])/convert(lb[i]+1.)
+                if iscomplex:
+                    x = complex(x)
+                self.assertAlmostEquals(x, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j])/convert(lb[i][j]+1.), ds[i, j])
+                    x = convert(la[i][j])/convert(lb[i][j]+1.)
+                    z = ds[i, j]
+                    if iscomplex:
+                        x = complex(x)
+                        self.assertAlmostEquals(x.real, z.real)
+                        self.assertAlmostEquals(x.imag, z.imag)
+                    else:
+                        self.assertAlmostEquals(x, z)
+
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k])/convert(lb[i][j][k]+1.), ds[i, j, k])
+                        self.assertAlmostEquals(convert(la[i][j][k])/convert(lb[i][j][k]+1.), ds[i, j, k])
 
-    def checkitemsdivconst(self, la, c, ds, convert=toAny):
+    def checkitemsdivconst(self, la, c, ds, convert=toAny, iscomplex=False):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
                 try:
@@ -394,7 +405,7 @@ class Test(unittest.TestCase):
                     n = convert(c[i]+1.)
                 except:
                     n = c
-                self.assertEquals(d/n, ds[i])
+                self.assertAlmostEquals(d/n, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -408,8 +419,15 @@ class Test(unittest.TestCase):
                         n = convert(c[i][j]+1.)
                     except:
                         n = c
-                    self.assertEquals(d/n, ds[i, j],
-                                      msg="%d, %d : %r %r" % (i,j, d/n, ds[i, j]))
+                    x = d/n
+                    z = ds[i, j]
+                    if iscomplex:
+                        x = complex(x)
+                        self.assertAlmostEquals(x.real, z.real)
+                        self.assertAlmostEquals(x.imag, z.imag)
+                    else:
+                        self.assertAlmostEquals(x, z,
+                                      msg="%d, %d : %r %r" % (i,j, x, z))
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -424,7 +442,7 @@ class Test(unittest.TestCase):
                             n = convert(c[i][j][k]+1.)
                         except:
                             n = c
-                        self.assertEquals(d/n, ds[i, j, k])
+                        self.assertAlmostEquals(d/n, ds[i, j, k])
 
     def checkitemsdivconst2(self, la, c, ds, convert=toAny):
         if ds.ndim == 1:
@@ -501,15 +519,15 @@ class Test(unittest.TestCase):
         
         za = np.array(self.zb, np.complex)
         zr = za / (za + 1)
-        self.checkitemsdiv(self.zb, self.zb, zr)
+        self.checkitemsdiv(self.zb, self.zb, zr, iscomplex=True)
         zr = za.copy()
         zr /= za + 1
-        self.checkitemsdiv(self.zb, self.zb, zr)
+        self.checkitemsdiv(self.zb, self.zb, zr, iscomplex=True)
         zr = za / (1.3 + 0.2j)
-        self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr)
+        self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr, iscomplex=True)
         zr = za.copy()
         zr /= (1.3 + 0.2j)
-        self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr)
+        self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr, iscomplex=True)
 
     def testCopyItems(self):
         if isjava:
@@ -635,7 +653,7 @@ class Test(unittest.TestCase):
         self.checkitems([12, 15, 18, 21], np.sum(ds, 0))
         self.checkitems([ 6, 22, 38], np.sum(ds, 1))
         lds = np.arange(1024*1024, dtype=np.int32)
-        self.assertEquals(np.sum(lds), -524288)
+        self.assertEquals(np.sum(lds, dtype=np.int32), -524288)
         self.assertEquals(np.sum(lds, dtype=np.int64), 549755289600)
 
         print 'test cumsum'
@@ -708,6 +726,28 @@ class Test(unittest.TestCase):
         tm[np.array([3, 4, 5, 6, 7])] = -2.3
 #        self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
         self.checkitems([ 0., 2., 6., -2.3, -2.3, -2.3, -2.3, -2.3 ], tm)
+
+#    def testIntegers(self):
+#        print 'test integers get and set'
+#        tm = np.array(self.mm)
+#
+#        d = tm[[1]]
+#        self.checkitems([[[20., 30.], [42., 56.]]], d)
+#
+#        d = tm[np.array([0, 1]), np.array([1, 1])]
+#        self.checkitems([[6.,  12.], [42.,  56.]], d)
+#
+#        d = tm[np.array([0, 1]), np.array([1, 1]), :1]
+#        self.checkitems([[6.], [42.]], d)
+#
+#        d = tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1]
+#        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
+#
+#        d = tm[[[0, 1], [1, 1]], [[1, 1], [1, 0]], :1]
+#        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
+#
+#        tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1] = -2.3
+#        self.checkitems([[[0., 2.], [-2.3, 12.]], [[-2.3, 30.], [-2.3, 56.]]], tm)
 
     def testSelect(self):
         print 'test select'

@@ -310,7 +310,7 @@ class Test(unittest.TestCase):
         print 'Item testing'
         a = np.array(10)
         self.assertEquals(10, a.item())
-        self.assertRaises(ValueError, a.item, 0)
+        self.assertEquals(10, a.item(0))
         self.assertRaises(ValueError, a.item, 1)
         self.assertRaises(ValueError, a.item, 1, 1)
         a = np.array([10.])

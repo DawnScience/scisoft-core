@@ -489,8 +489,6 @@ class ndarray(object):
                     raise ValueError, "incorrect number of indices"
             elif index:
                 raise ValueError, "index out of bounds"
-            elif rank == 0:
-                raise ValueError, "incorrect number of indices"
             if args:
                 if (len(args) + 1) > rank:
                     raise ValueError, "incorrect number of indices"

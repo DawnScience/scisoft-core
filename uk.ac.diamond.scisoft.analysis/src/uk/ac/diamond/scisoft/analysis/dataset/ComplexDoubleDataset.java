@@ -271,7 +271,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	 * @return item in given position
 	 */
 	public Complex get(final int... pos) {
-		int n = isize*get1DIndex(pos);
+		int n = get1DIndex(pos);
 		Complex z = new Complex(data[n], data[n+1]);
 		return z;
 	}
@@ -295,8 +295,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	 * @return item in given position
 	 */
 	public double getImag(final int... pos) { // PRIM_TYPE
-		int n = isize*get1DIndex(pos);
-		return data[n+1];
+		return data[get1DIndex(pos) + 1];
 	}
 
 	/**
@@ -309,8 +308,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public String getString(final int...pos) {
-		int n = isize*get1DIndex(pos);
-		return getStringAbs(n);
+		return getStringAbs(get1DIndex(pos));
 	}
 
 	@SuppressWarnings("cast")

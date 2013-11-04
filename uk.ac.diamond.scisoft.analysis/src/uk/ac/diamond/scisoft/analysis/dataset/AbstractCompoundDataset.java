@@ -50,6 +50,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
+	protected int get1DIndexFromShape(final int... n) {
+		return isize * super.get1DIndexFromShape(n);
+	}
+
+	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
 		if (stride != null)
 			return new StrideIterator(isize, shape, stride, offset);
@@ -453,8 +458,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @param pos
 	 */
 	public void getDoubleArray(final double[] darray, final int... pos) {
-		int n = isize * get1DIndex(pos);
-		getDoubleArrayAbs(n, darray);
+		getDoubleArrayAbs(get1DIndex(pos), darray);
 	}
 
 	/**

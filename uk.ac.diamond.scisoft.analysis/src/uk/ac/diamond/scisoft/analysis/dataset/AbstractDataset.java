@@ -1772,7 +1772,7 @@ public abstract class AbstractDataset implements ADataset {
 		return stride == null ? get1DIndexFromShape(n) : get1DIndexFromStrides(n);
 	}
 
-	private int get1DIndexFromShape(final int... n) {
+	protected int get1DIndexFromShape(final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
 		int index = 0;

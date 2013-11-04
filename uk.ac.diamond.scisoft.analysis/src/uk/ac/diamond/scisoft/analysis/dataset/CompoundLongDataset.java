@@ -420,8 +420,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 * @return item in given position
 	 */
 	public long[] getLongArray(final int... pos) { // CLASS_TYPE // PRIM_TYPE
-		int n = isize * get1DIndex(pos);
-		return (long[]) getObjectAbs(n); // PRIM_TYPE
+		return (long[]) getObjectAbs(get1DIndex(pos)); // PRIM_TYPE
 	}
 
 	@Override
@@ -432,14 +431,12 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 	@Override
 	public String getString(final int... pos) {
-		int n = isize * get1DIndex(pos);
-		return getStringAbs(n);
+		return getStringAbs(get1DIndex(pos));
 	}
 
 	@Override
 	protected double getFirstValue(final int... pos) {
-		int n = isize * get1DIndex(pos);
-		return data[n];
+		return data[get1DIndex(pos)];
 	}
 
 	@Override
@@ -491,7 +488,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		if (d.length > isize) {
 			throw new IllegalArgumentException("Array is larger than number of elements in an item");
 		}
-		setAbs(isize * get1DIndex(pos), d);
+		setAbs(get1DIndex(pos), d);
 	}
 
 	private void setDoubleArrayAbs(final int index, final double[] d) {
@@ -729,11 +726,11 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 				double[] temp = new double[isize];
 				while (iter.hasNext() && oiter.hasNext()) {
 					((AbstractCompoundDataset) ds).getDoubleArray(temp, pos);
-					setDoubleArrayAbs(isize * get1DIndex(pos), temp);
+					setDoubleArrayAbs(get1DIndex(pos), temp);
 				}
 			} else {
 				while (iter.hasNext() && oiter.hasNext()) {
-					int n = isize * get1DIndex(pos);
+					int n = get1DIndex(pos);
 					data[n] = ds.getElementLongAbs(oiter.index); // GET_ELEMENT_WITH_CAST
 					for (int i = 1; i < isize; i++)
 						data[n + i] = 0;
@@ -744,8 +741,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 				final long[] vr = toLongArray(o, isize); // PRIM_TYPE // CLASS_TYPE
 
 				while (iter.hasNext()) {
-					int n = isize * get1DIndex(pos);
-					setAbs(n, vr);
+					setAbs(get1DIndex(pos), vr);
 				}
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("Object for setting is not a dataset or number");

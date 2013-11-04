@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class AbstractCompoundDatasetTest {
@@ -29,6 +31,56 @@ public class AbstractCompoundDatasetTest {
 	byte[] bdata = {0, 1, 2, 3, 4, 5};
 	double[] ddata = {0., 1., 2., 3., 4., 5.};
 	float[] fdata = {0.f, 1.f, 2.f, 3.f, 4.f, 5.f};
+
+	@Test
+	public void testSlice() {
+		int size, type;
+
+		size = 1024;
+		type = AbstractDataset.FLOAT64;
+		testSliceND(size, type);
+
+		type = AbstractDataset.COMPLEX128;
+		testSliceND(size, type);
+
+	}
+
+	private void testSliceND(int size, int type) {
+		// 1D
+		AbstractDataset ta;
+		ta = AbstractDataset.arange(0, size, 1, type);
+		testSlicedDataset(ta);
+
+		// 2D
+		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, size / 16);
+		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
+		testSlicedDataset(ta);
+
+		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 32, 32);
+		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
+		testSlicedDataset(ta);
+
+		// 3D
+		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
+		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
+		testSlicedDataset(ta);
+
+		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
+		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
+		testSlicedDataset(ta);
+	}
+
+	private void testSlicedDataset(AbstractDataset ta) {
+		int[] stop = ta.getShape();
+		stop[stop.length - 1] -= 1;
+		AbstractDataset sa = ta.getSliceView(null, stop, null);
+
+		PositionIterator it = new PositionIterator(sa.getShape());
+		int[] pos = it.getPos();
+		while (it.hasNext()) {
+			assertEquals(ta.getDouble(pos), sa.getDouble(pos), 1e-10);
+		}
+	}
 
 	@Test
 	public void testToDoubleArray() {

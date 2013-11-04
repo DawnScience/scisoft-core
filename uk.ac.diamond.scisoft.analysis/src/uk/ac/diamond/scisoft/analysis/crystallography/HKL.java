@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -40,6 +41,7 @@ public class HKL implements Serializable {
 	
 	private int[] hkl;
 	private String ringName;
+	
 	private Amount<Length> d;
 
 	public HKL() {
@@ -152,10 +154,12 @@ public class HKL implements Serializable {
 		this.ringName = name;
 	}
 
+	@Transient
 	public Amount<Length> getD() {
 		return d!=null ? d.copy() : null;
 	}
 
+	@Transient
 	public void setD(Amount<Length> d) {
 		this.d = d!=null ? d.copy() : null;
 	}
@@ -164,6 +168,7 @@ public class HKL implements Serializable {
 	 * d in nanometres
 	 * @return d in nanometres
 	 */
+	@Transient
 	public double getDNano() {
 		if (d==null) return Double.NaN;
 		return d.doubleValue(CalibrationStandards.NANOMETRE);
@@ -172,6 +177,7 @@ public class HKL implements Serializable {
 	/**
 	 * @param d in nanometres
 	 */
+	@Transient
 	public void setDNano(double d) {
 		this.d = Amount.valueOf(d, CalibrationStandards.NANOMETRE);
 	}

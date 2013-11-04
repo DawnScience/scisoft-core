@@ -46,6 +46,7 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar,
  jars/it.tidalwave.imageio.raw-1.6.1.jar
 Import-Package: Jama,
+ com.thoughtworks.xstream.core.util,
  org.apache.commons.beanutils;version="1.8.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="[1.5.0,2.0.0)"

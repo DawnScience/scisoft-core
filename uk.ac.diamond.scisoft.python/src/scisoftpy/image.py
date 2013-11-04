@@ -25,7 +25,7 @@ from jython.jycore import _wrap
 @_wrap
 def findshift(a, b, rect=None):
     '''Find translation vector from b to a using rectangular ROI rect'''
-    return _image.findTranslation2D(a, b, rect)
+    return _image.findTranslation2D(a, b, rect._jroi())
 
 @_wrap
 def shiftimage(image, shift):

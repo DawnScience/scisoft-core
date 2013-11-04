@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
         db += rnd.poisson(2, db.shape)
         sx = max(dx,5)
         sy = max(dy,5)
-        r = roi.rect(cx-2*sx,cy-2*sy,4*sx,4*sy,0)
+        r = roi.rectangle(point=[cx-2*sx,cy-2*sy],lengths=[4*sx,4*sy],angle=0)
         shift = img.findshift(da, db, r)
         print shift
         self.assertAlmostEquals(-dy, shift[0], places=0)
@@ -79,7 +79,7 @@ class Test(unittest.TestCase):
         db += rnd.poisson(2, db.shape)
         sx = max(dx,10)
         sy = max(dy,10)
-        r = roi.rect(cx-2*sx,cy-2*sy,4*sx,4*sy,0)
+        r = roi.rectangle(point=[cx-2*sx,cy-2*sy],lengths=[4*sx,4*sy],angle=0)
         shift = img.findshift(da, db, r)
         print shift
         self.assertAlmostEquals(-dy, shift[0], places=0)

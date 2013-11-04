@@ -152,14 +152,23 @@ def _parselinearg(x, y, title, name):
     '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
     '''
     if y is None:
-        yl = _toList(x)
+        if isinstance(x, dict):
+            yl = [x]
+        else:
+            yl = _toList(x)
         xl = None
     else:
-        yl = _toList(y)
+        if isinstance(y, dict):
+            yl = [y]
+        else:
+            yl = _toList(y)
         if x is None:
             xl = None
         else:
-            xl = _toList(x)
+            if isinstance(x, dict):
+                xl = [x]
+            else:
+                xl = _toList(x)
             if len(xl) == 1:
                 x = xl[0]
                 if type(x) is _types.DictType: # has axis name
@@ -258,7 +267,9 @@ def _process_line(x, y, title, name, mode):
         ax = _setup_axes(xl, 'x', name)
     else:
         ax = None
+    _sleep(_NAP)
     ay = _setup_axes(yl, 'y', name)
+    _sleep(_NAP)
 
     # generate list of axes
     xs = []

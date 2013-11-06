@@ -73,6 +73,13 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	}
 
 	/**
+	 * @return handle status
+	 */
+	public HandleStatus getStatus() {
+		return status;
+	}
+
+	/**
 	 * Interpret mouse dragging
 	 * @param spt
 	 * @param ept

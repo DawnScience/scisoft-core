@@ -418,6 +418,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 				spt[0] += ps[0];
 				spt[1] += ps[1];
 			} else {
+				spt[0] += len[0];
 				len[0] = 0;
 			}
 		}
@@ -428,6 +429,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 				spt[0] += ps[0];
 				spt[1] += ps[1];
 			} else {
+				spt[1] += len[1];
 				len[1] = 0;
 			}
 		}
@@ -463,6 +465,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 				spt[0] += ps[0];
 				spt[1] += ps[1];
 			} else {
+				spt[1] += len[1];
 				len[1] = 0;
 			}
 		} else { // move end y, start x
@@ -477,6 +480,7 @@ public class RectangularROI extends ROIBase implements Serializable {
 				spt[0] += ps[0];
 				spt[1] += ps[1];
 			} else {
+				spt[0] += len[0];
 				len[0] = 0;
 			}
 		}

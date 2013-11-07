@@ -229,6 +229,12 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
+	public void testUnicodeString() {
+		// Known failure: http://jira.diamond.ac.uk/browse/DAWNSCI-663
+		flattenAndUnflatten("\u00b0");
+	}
+
+	@Test
 	public void testDouble() {
 		flattenAndUnflatten(0);
 		flattenAndUnflatten(Math.PI);

@@ -64,8 +64,8 @@ public class NumPySpecialsTest {
 		AbstractDataset ds1 = AbstractDataset.zeros(new int[] { 20 }, AbstractDataset.FLOAT64);
 		AbstractDataset ds2 = AbstractDataset.ones(new int[] { 20 }, AbstractDataset.FLOAT64);
 		final DataHolder dh = new DataHolder();
-		dh.addDataset("", ds1);
-		dh.addDataset("", ds2);
+		dh.addDataset("a", ds1);
+		dh.addDataset("b", ds2);
 
 		// Determine file names for each of the two data sets
 		File fileName = NumPyTest.getTempFile();

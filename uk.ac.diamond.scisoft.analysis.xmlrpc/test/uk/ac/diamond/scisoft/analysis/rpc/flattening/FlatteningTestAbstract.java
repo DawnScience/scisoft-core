@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Diamond Light Source Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -84,7 +84,7 @@ abstract public class FlatteningTestAbstract {
 	 * Special version of Assert.assertEquals that, for some types, uses reflection or other knowledge instead of
 	 * equals() to test for equality. The reason for this is to work around insufficient or unsuitable equals
 	 * implementations in those classes. Arrays, Lists and Maps are compared deeply.
-	 * 
+	 *
 	 * @param expected
 	 *            first object to test
 	 * @param actual
@@ -229,6 +229,12 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
+	public void testUnicodeString() {
+		// Known failure: http://jira.diamond.ac.uk/browse/DAWNSCI-663
+		flattenAndUnflatten("\u00b0");
+	}
+
+	@Test
 	public void testDouble() {
 		flattenAndUnflatten(0);
 		flattenAndUnflatten(Math.PI);
@@ -242,7 +248,7 @@ abstract public class FlatteningTestAbstract {
 	 * <p>
 	 * Note the subclasses that do not support it don't matter because they were written simply to identify these types
 	 * of issues.
-	 * 
+	 *
 	 * @See {@link AnalysisRpcDoubleParser}
 	 */
 	@Test
@@ -591,10 +597,10 @@ abstract public class FlatteningTestAbstract {
 
 	@Test
 	public void testException() {
-		// Exceptions are always unflattened as AnalysisRpcRemoteException type, 
+		// Exceptions are always unflattened as AnalysisRpcRemoteException type,
 		// with original type information pre-pended to the message
 		Exception[] npe_in = new Exception[] {new NullPointerException("Exceptional null happened")};
-		AnalysisRpcRemoteException[] npe_out 
+		AnalysisRpcRemoteException[] npe_out
 			= new AnalysisRpcRemoteException[] {new AnalysisRpcRemoteException("Exceptional null happened")};
 		// Make sure the stack traces are the same
 		npe_out[0].setStackTrace(npe_in[0].getStackTrace());
@@ -607,7 +613,7 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(GuiParameters.PLOTMODE);
 		// test all the parameters
 		// NOTE If the test fails here it is probably because of a mismatch between the Java and Python GuiParameters.
-		// see GuiParameters.java and pybeans.py 
+		// see GuiParameters.java and pybeans.py
 		for (GuiParameters param : GuiParameters.values()) {
 			flattenAndUnflatten(param);
 		}

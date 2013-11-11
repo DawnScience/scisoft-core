@@ -32,7 +32,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * @author gerring
  *
  */
-public class LoaderService extends AbstractServiceFactory implements ILoaderService {
+public class LoaderServiceImpl extends AbstractServiceFactory implements ILoaderService {
 
 	
 	@Override
@@ -79,7 +79,7 @@ public class LoaderService extends AbstractServiceFactory implements ILoaderServ
 			             IServiceLocator locator) {
 		
         if (serviceInterface==ILoaderService.class) {
-        	return new LoaderService();
+        	return new LoaderServiceImpl();
         }
 		return null;
 	}

@@ -95,7 +95,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	public IDiffractionMetadata setLockedDiffractionMetaData(IDiffractionMetadata diffMetaData) {
 		IDiffractionMetadata old = lockedDiffractionMetaData;
 		lockedDiffractionMetaData= diffMetaData;
-		if (diffMetaData==null) LoaderFactory.clear(); // The locking can change meta of original data.
+		LoaderFactory.setLockedMetaData(lockedDiffractionMetaData); // The locking can change meta of original data.
 		return old;
 	}
 

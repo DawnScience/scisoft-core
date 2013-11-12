@@ -101,9 +101,9 @@ public class ImageStackLoader implements ILazyLoader {
 
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
+		DataHolder data = null;
 		for (int i = start[0], j = 0; i < stop[0]; i += step[0], j++) {
 			// load the file
-			DataHolder data = null;
 			if (loaderClass != null) {
 				try {
 					data = LoaderFactory.getData(loaderClass, imageFilenames.get(i), true, mon);
@@ -138,6 +138,13 @@ public class ImageStackLoader implements ILazyLoader {
 			result.setSlice(slice, resultStart, resultStop, resultStep);
 		}
 		
+		IMetaData meta = LoaderFactory.getLockedMetaData();
+		if (meta!=null) {
+			 result.setMetadata(meta); // Locked overrides all
+		} else {
+		    meta = data!=null && result.getMetadata()==null ? data.getMetadata() : null;
+			if (meta!=null) result.setMetadata(meta);
+		}
 		return result;	
 		
 	}

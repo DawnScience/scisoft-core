@@ -828,5 +828,24 @@ public class LoaderFactory {
 		return UNZIPERS.get(extension);
 	}
 
+	
+	private static IMetaData lockedMetaData;
+
+	/**
+	 * DO NOT MAKE Public. Use ILoaderService instead.
+	 * @return metaData
+	 */
+	static IMetaData getLockedMetaData() {
+		return lockedMetaData;
+	}
+
+	/**
+	 * @Internal do not use. Use ILoaderService.getLockedDiffractionMetaData()
+	 */
+	public static void setLockedMetaData(IMetaData lockedMetaData) {
+		LoaderFactory.lockedMetaData = lockedMetaData;
+		if (lockedMetaData==null) clear();
+	}
+
 
 }

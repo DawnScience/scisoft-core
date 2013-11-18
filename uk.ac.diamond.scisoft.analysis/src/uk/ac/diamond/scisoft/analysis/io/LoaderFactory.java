@@ -336,14 +336,18 @@ public class LoaderFactory {
 		
 		// For images, we can put another item in the data holder
 		// which represents the stack of other images in the same directory.
-		if (loadImageStacks && holder!=null) {
-		
-			if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2) {
-				final ILazyDataset stack = getImageStack(path, holder, mon);
-				
-				if (stack!=null) holder.addDataset(stack.getName(), stack);
-			}
+		try {
+			if (loadImageStacks && holder!=null) {
 
+				if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2 && !isH5(path)) {
+					final ILazyDataset stack = getImageStack(path, holder, mon);
+
+					if (stack!=null) holder.addDataset(stack.getName(), stack);
+				}
+
+			}
+		} catch (Throwable ne) { // It is not a fatal error to fail to load an image stack.
+			logger.error("Cannot load image stack!", ne);
 		}
 		return holder;
 	}
@@ -847,5 +851,23 @@ public class LoaderFactory {
 		if (lockedMetaData==null) clear();
 	}
 
+	public final static List<String> EXT;
+	static {
+		List<String> tmp = new ArrayList<String>(7);
+		tmp.add("h5");
+		tmp.add("nxs");
+		tmp.add("hd5");
+		tmp.add("hdf5");
+		tmp.add("hdf");
+		tmp.add("nexus");
+		EXT = Collections.unmodifiableList(tmp);
+	}	
+
+	private static boolean isH5(final String filePath) {
+		if (filePath == null) { return false; }
+		final String ext = FileUtils.getFileExtension(filePath);
+		if (ext == null) { return false; }
+		return EXT.contains(ext.toLowerCase());
+	}
 
 }

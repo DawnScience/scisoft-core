@@ -37,12 +37,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.gda.libs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="uk.ac.diamond.scisoft.analysis"
          download-size="0"
          install-size="0"
@@ -289,6 +283,20 @@ limitations under the License.
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis.xmlrpc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.configuration"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.castor"
          download-size="0"
          install-size="0"
          version="0.0.0"

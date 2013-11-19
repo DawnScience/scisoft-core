@@ -272,17 +272,20 @@ def profile(data, roi, step=None, mask=None):
     '''Calculate a profile with given roi (a step value is required for a linear ROI)
     mask is used when clipping compensation is set true (for rectangular and sector ROI)
     '''
-    data = _asDs(data)
+    #data = _asDs(data)._jdataset()
     if isinstance(roi, line):
+        roi  = roi._jroi()
         if step is None:
             raise ValueError, "step value required"
         return _roi.ROIProfile.line(data, roi, step)
     if isinstance(roi, rectangle):
+        roi  = roi._jroi()
         if mask is None:
             return _roi.ROIProfile.box(data, roi)
         else:
             return _roi.ROIProfile.box(data, mask, roi)
     if isinstance(roi, sector):
+        roi  = roi._jroi()
         if mask is None:
             return _roi.ROIProfile.sector(data, roi)
         else:

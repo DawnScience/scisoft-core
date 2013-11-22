@@ -9,6 +9,12 @@
                serviceClass="uk.ac.diamond.scisoft.analysis.io.ILoaderService">
          </service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.AnalysisServiceImpl">
+         <service
+               serviceClass="uk.ac.diamond.scisoft.analysis.IAnalysisService">
+         </service>
+      </serviceFactory>
    </extension>
 
 </plugin>

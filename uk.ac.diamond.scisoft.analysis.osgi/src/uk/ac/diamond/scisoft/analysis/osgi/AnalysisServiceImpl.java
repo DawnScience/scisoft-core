@@ -15,9 +15,11 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.osgi;
+import org.eclipse.ui.services.AbstractServiceFactory;
+import org.eclipse.ui.services.IServiceLocator;
+
 import uk.ac.diamond.scisoft.analysis.IAnalysisService;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.CollectionStats;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -27,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Stats;
  * Implementation of service IAnalysisService which allows plugins not to 
  * directly depend on everything required to do file loading.
  */
-public class AnalysisServiceImpl implements IAnalysisService {
+public class AnalysisServiceImpl extends AbstractServiceFactory implements IAnalysisService {
 
 	@Override
 	public IDataset arange(double stop, int dtype) {
@@ -83,6 +85,14 @@ public class AnalysisServiceImpl implements IAnalysisService {
 	public IDataset mode(IDataset slice, int i) {
 		//FIXME
 		throw new RuntimeException("Mode not implemented!");
+	}
+
+	@Override
+	public Object create(Class serviceInterface, IServiceLocator parentLocator, IServiceLocator locator) {
+        if (serviceInterface==IAnalysisService.class) {
+        	return new AnalysisServiceImpl();
+        }
+		return null;
 	}
 
 }

@@ -404,6 +404,11 @@ class Test(unittest.TestCase):
         x = 1
         print np.append(a, x)
 
+    def testTranspose(self):
+        print 'Append transpose'
+        a = np.arange(20).reshape(4,5)
+        print a.T
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

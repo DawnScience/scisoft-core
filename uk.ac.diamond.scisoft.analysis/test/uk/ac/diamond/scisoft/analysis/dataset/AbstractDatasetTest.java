@@ -245,6 +245,9 @@ public class AbstractDatasetTest {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
 		AbstractDataset t;
 
+		t = a.take(new int[] {0, 2, 4}, null);
+		System.out.println(t);
+
 		t = a.take(new int[] {0, 2, 4}, 0);
 		System.out.println(t);
 

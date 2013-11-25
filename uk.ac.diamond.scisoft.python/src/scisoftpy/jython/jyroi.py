@@ -15,7 +15,6 @@
 ###
 
 import uk.ac.diamond.scisoft.analysis.roi as _roi
-from jycore import asDataset as _asDs
 from jycore import _wrap
 
 _jroi = _roi.IROI
@@ -272,7 +271,6 @@ def profile(data, roi, step=None, mask=None):
     '''Calculate a profile with given roi (a step value is required for a linear ROI)
     mask is used when clipping compensation is set true (for rectangular and sector ROI)
     '''
-    #data = _asDs(data)._jdataset()
     if isinstance(roi, line):
         roi  = roi._jroi()
         if step is None:

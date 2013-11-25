@@ -559,6 +559,8 @@ class ndarray(object):
 
     @_wrapout
     def transpose(self, axes=None):
+        if axes is None:
+            return self.__dataset.getTransposedView()
         return self.__dataset.getTransposedView(axes)
 
     @_wrapout

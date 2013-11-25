@@ -131,8 +131,9 @@ public class DatasetUtils {
 			ashape = new int[1];
 			ashape[0] = ilen;
 			result = AbstractDataset.zeros(is, ashape, at);
+			Serializable src = a.getBuffer();
 			for (int i = 0; i < ilen; i++) {
-				result.setItemDirect(i, indices[i], a);
+				result.setItemDirect(i, indices[i], src);
 			}
 		} else {
 			axis = a.checkAxis(axis);

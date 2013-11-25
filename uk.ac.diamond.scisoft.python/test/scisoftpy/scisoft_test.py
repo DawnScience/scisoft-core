@@ -63,6 +63,7 @@ class Test(unittest.TestCase):
         print str(a), repr(a)
 
     def testMethods(self):
+        print 'Methods testing'
         print np.arange(6, dtype=np.int32)
         print np.arange(6, dtype=np.float)
         a = np.array([4,3.])
@@ -70,11 +71,18 @@ class Test(unittest.TestCase):
         print np.sort(a, None)
         print a.sort()
         a = np.arange(6, dtype=np.float)
+        print a.take([0, 2, 4])
         print a.take([0, 2, 4], 0)
         d = np.take(a, [0, 2, 4], 0)
         print type(d), d
         d = np.diag([0, 2, 3])
         print type(d), d
+        a.shape = 2,3
+        self.checkitems([1,2], a.take([1,2]))
+        self.checkitems([[1,2], [4,5]], a.take([1,2],1))
+        self.checkitems([0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5], a.repeat(2))
+        self.checkitems([[0, 1, 2], [0, 1, 2], [3, 4, 5], [3, 4, 5]], a.repeat(2, axis=0))
+        self.checkitems([[0, 0, 1, 1, 2, 2], [3, 3, 4, 4, 5, 5]], a.repeat(2, axis=1))
 #        print a.sort()
 
     def testScisoft(self):

@@ -22,42 +22,42 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 public interface IParameter {
 
 	/**
-	 * Function that gets the name of the parameter
+	 * Get the name of the parameter
 	 * 
 	 * @return The Name of the parameter
 	 */
 	public String getName();
 
 	/**
-	 * Function that gets the value of the parameter
+	 * Get the value of the parameter
 	 * 
 	 * @return The Value of the parameter
 	 */
 	public double getValue();
 
 	/**
-	 * Function that gets the Upper limit of the Parameter
+	 * Get the Upper limit of the Parameter
 	 * 
 	 * @return The upper limit
 	 */
 	public double getUpperLimit();
 
 	/**
-	 * Function that gets the lower limit of the parameter
+	 * Get the lower limit of the parameter
 	 * 
 	 * @return The lower limit
 	 */
 	public double getLowerLimit();
 
 	/**
-	 * Function that returns whether the parameter is set as fixed or not
+	 * Check whether the parameter is set as fixed or not
 	 * 
 	 * @return Boolean for use in logical statements
 	 */
 	public boolean isFixed();
 
 	/**
-	 * Sets whether the parameter is fixed or not, the default is false
+	 * Set the parameter as fixed or not, the default is false
 	 * 
 	 * @param b
 	 *            The new boolean value for the fixed variable
@@ -65,8 +65,9 @@ public interface IParameter {
 	public void setFixed(boolean b);
 
 	/**
-	 * Sets both limits of the parameter. For when both limits are being changed at the same time and you wish to avoid
-	 * the logic testing when setting the limits separately.
+	 * Set both limits of the parameter. For when both limits are being
+	 * changed at the same time and you wish to avoid the logic testing
+	 * when setting the limits separately.
 	 * 
 	 * @param newLowerLimit
 	 * @param newUpperLimit
@@ -74,7 +75,7 @@ public interface IParameter {
 	public void setLimits(double newLowerLimit, double newUpperLimit);
 
 	/**
-	 * Function sets the lower limit of the parameter, the default is Double.MIN_VALUE;
+	 * Set the lower limit of the parameter, the default is Double.MIN_VALUE
 	 * 
 	 * @param lowerLimit
 	 *            The new double value which is the lower limit
@@ -82,7 +83,7 @@ public interface IParameter {
 	public void setLowerLimit(double lowerLimit);
 
 	/**
-	 * Function sets the upper limit of the parameter, the default is Double.MAX_VALUE;
+	 * Set the upper limit of the parameter, the default is Double.MAX_VALUE
 	 * 
 	 * @param upperLimit
 	 *            The new double value which is the upper limit
@@ -91,7 +92,7 @@ public interface IParameter {
 
 	
 	/**
-	 * Function sets the name of the parameter
+	 * Set the name of the parameter
 	 * 
 	 * @param name
 	 *            The new String name of the parameter
@@ -99,7 +100,7 @@ public interface IParameter {
 	public void setName(String name);
 
 	/**
-	 * Function sets the value of the parameter
+	 * Set the value of the parameter
 	 * 
 	 * @param value
 	 *            The new double Value of the parameter

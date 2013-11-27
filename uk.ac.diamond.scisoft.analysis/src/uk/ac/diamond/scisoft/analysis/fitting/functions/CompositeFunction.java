@@ -336,11 +336,10 @@ public class CompositeFunction extends AFunction {
 	 * @throws ClassCastException
 	 */
 	public IPeak getPeak(int i) {
-		return (IPeak)getFunction(i);
+		return (IPeak) getFunction(i);
 	}
 
 	public CompositeFunction duplicate() throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		// TODO Auto-generated method stub
 		CompositeFunction copy = new CompositeFunction();
 		for (AFunction function : functionList) {
 			copy.addFunction(function.copy());

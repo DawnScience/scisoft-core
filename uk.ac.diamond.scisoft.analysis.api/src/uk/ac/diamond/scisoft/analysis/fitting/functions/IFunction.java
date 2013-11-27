@@ -25,37 +25,37 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 public interface IFunction {
 
 	/**
-	 * Function that gets the name of the function
+	 * Get the name of the function
 	 * 
-	 * @return The name of the function
+	 * @return The function's name
 	 */
 	public String getName();
 
 	/**
-	 * Sets the name parameter
+	 * Set the name parameter
 	 * 
 	 * @param newName
-	 *            The functions new name
+	 *            The function's new name
 	 */
 	public void setName(String newName);
 
 	/**
-	 * Function that gets the description of the function
+	 * Get the description of the function
 	 * 
 	 * @return The description of the function
 	 */
 	public String getDescription();
 
 	/**
-	 * Sets the description parameter
+	 * Set the description of the function
 	 * 
 	 * @param newDescription
-	 *            The functions new description
+	 *            The function's new description
 	 */
 	public void setDescription(String newDescription);
 
 	/**
-	 * The key function of the object which returns the evaluation at particular values
+	 * The key method of the object which returns the evaluation at particular values
 	 * 
 	 * @param values
 	 *            The function arguments
@@ -64,25 +64,25 @@ public interface IFunction {
 	public double val(double... values);
 
 	/**
-	 * Gets the parameter which is at the index specified
+	 * Get the parameter which is at the index specified
 	 * 
 	 * @param index
 	 *            The position in the array to be obtained
-	 * @return A link to the parameter
+	 * @return The parameter
 	 */
 	public IParameter getParameter(int index);
 
 	/**
-	 * Function that gets the parameter name at a particular index in the function
+	 * Get the parameter name at a particular index in the function
 	 * 
 	 * @param index
 	 *            The index to retrieve
-	 * @return A pointer to the name parameter
+	 * @return The parameter's name
 	 */
 	public String getParameterName(int index);
 
 	/**
-	 * Function that sets the parameter names  of the function
+	 * Set a parameter name of the function
 	 * 
 	 * @param name
 	 *           A string array with the parameter name
@@ -92,14 +92,14 @@ public interface IFunction {
 	public void setParameterName(String name, int index);
 
 	/**
-	 * Gets all the parameters in the list
+	 * Get all the parameters in the array
 	 * 
 	 * @return A copy of all the parameters
 	 */
 	public IParameter[] getParameters();
 
 	/**
-	 * Function that gets the length of the parameter array
+	 * Get the length of the parameter array
 	 * 
 	 * @return the length as an integer
 	 */
@@ -113,7 +113,7 @@ public interface IFunction {
 	public int getNoOfFunctions();
 
 	/**
-	 * Function which gets a particular function from the composite function
+	 * Get a particular function from the composite function
 	 * 
 	 * @param index
 	 *            The index of the object to retrieve
@@ -122,7 +122,7 @@ public interface IFunction {
 	public IFunction getFunction(int index);
 
 	/**
-	 * Function that gets the parameter at a particular index in the function
+	 * Get the parameter at a particular index in the function
 	 * 
 	 * @param index
 	 *            The index to retrieve
@@ -131,14 +131,22 @@ public interface IFunction {
 	public double getParameterValue(int index);
 
 	/**
-	 * Function that gets a double array of all the parameters values
+	 * Get a double array of all the parameters values
 	 * 
 	 * @return The double array of all the parameter values
 	 */
 	public double[] getParameterValues();
 
 	/**
-	 * Function that sets all of the parameter values for the object.
+	 * Set a parameter at given index
+	 *
+	 * @param index
+	 * @param parameter
+	 */
+	public void setParameter(int index, IParameter parameter);
+
+	/**
+	 * Set all of the parameter values for the object.
 	 * 
 	 * @param params
 	 *            an array of doubles which needs to be equal in length to the number of parameters in the array.
@@ -146,16 +154,16 @@ public interface IFunction {
 	public void setParameterValues(double... params);
 
 	/**
-	 * Function which calculates the partial derivative
+	 * Method which calculates the partial derivative
 	 * 
-	 * @param Parameter
-	 * @param position
-	 * @return the derivative at the point specified with respect to the parameter specified.
+	 * @param index
+	 * @param values
+	 * @return the derivative at the point specified with respect to the parameter specified by its index.
 	 */
-	public double partialDeriv(int Parameter, double... position);
+	public double partialDeriv(int index, double... values);
 
 	/**
-	 * Function that makes a dataset from the Function
+	 * Make a dataset from the function
 	 * 
 	 * The function can be evaluated in one of two possible modes. In general, the function has
 	 * <tt>m</tt> independent variables and the output dataset has <tt>n</tt> dimensions.
@@ -175,8 +183,8 @@ public interface IFunction {
 	 * when that function is evaluated at the given values and parameters. The allValues flag
 	 * dictates whether to use all the values or just a sampled subset
 	 * 
-	 * @param data A dataset containing the values for the data to be evaluated
 	 * @param allValues Boolean specifying whether to use sampling or not, currently not implemented so use true
+	 * @param data A dataset containing the values for the data to be evaluated
 	 * @param values a dataset containing the coordinates of the data points
 	 * @return residual
 	 */

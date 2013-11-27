@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 
 /**
@@ -189,4 +190,16 @@ public interface IFunction {
 	 * @return residual
 	 */
 	public double residual(boolean allValues, IDataset data, IDataset... values);
+
+	/**
+	 * Set a monitor to check progress
+	 * @param monitor
+	 */
+	public void setMonitor(IMonitor monitor);
+
+	/**
+	 * Get monitor
+	 * @return monitor, maybe be null
+	 */
+	public IMonitor getMonitor();
 }

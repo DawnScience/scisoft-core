@@ -30,6 +30,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
@@ -58,6 +59,8 @@ public abstract class AFunction implements IFunction, Serializable {
 	protected String description = "default";
 
 	protected boolean dirty = true;
+
+	protected IMonitor monitor = null;
 
 	/**
 	 * Constructor which is given a set of parameters to begin with.
@@ -438,4 +441,13 @@ public abstract class AFunction implements IFunction, Serializable {
 		return 0;
 	}
 
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+
+	@Override
+	public void setMonitor(IMonitor monitor) {
+		this.monitor = monitor;
+	}
 }

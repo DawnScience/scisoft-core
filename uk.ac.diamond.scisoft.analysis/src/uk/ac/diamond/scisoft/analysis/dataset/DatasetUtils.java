@@ -559,11 +559,13 @@ public class DatasetUtils {
 	/**
 	 * Cast a dataset
 	 * 
-	 * @param a
+	 * @param d
 	 *            The dataset to be cast.
 	 * @param dtype dataset type
 	 */
-	public static AbstractDataset cast(final AbstractDataset a, final int dtype) {
+	public static AbstractDataset cast(final IDataset d, final int dtype) {
+		AbstractDataset a = convertToAbstractDataset(d);
+		
 		if (a.getDtype() == dtype) {
 			return a;
 		}

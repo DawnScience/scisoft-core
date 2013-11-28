@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -413,7 +412,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		return true;
 	}
 
-	public final AFunction copy() throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public AFunction copy() throws Exception {
 		Constructor<? extends AFunction> c = getClass().getConstructor();
 
 		IParameter[] localParameters = getParameters();
@@ -422,7 +421,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		function.fillParameters(localParameters);
 		return function;
 	}
-
 
 	/**
 	 * Evaluate partial derivative of a function with respect to given parameter at given values

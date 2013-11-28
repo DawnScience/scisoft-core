@@ -67,12 +67,12 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param params
 	 *            An array of parameters
 	 */
-	public AFunction(IParameter[] params) {
+	public AFunction(IParameter... params) {
 		if (params != null)
 			fillParameters(params);
 	}
 
-	protected void fillParameters(IParameter[] params) {
+	protected void fillParameters(IParameter... params) {
 		parameters = new IParameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter p = params[i];
@@ -87,12 +87,12 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param params
 	 *            An array of starting parameter values as doubles.
 	 */
-	public AFunction(double[] params) {
+	public AFunction(double... params) {
 		if (params != null)
 			fillParameters(params);
 	}
 	
-	protected void fillParameters(double[] params) {
+	protected void fillParameters(double... params) {
 		parameters = new Parameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			parameters[i] = new Parameter(params[i]);

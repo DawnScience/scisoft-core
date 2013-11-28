@@ -45,7 +45,7 @@ public class GaussianND extends AFunction {
 		name = cname;
 	}
 
-	public GaussianND(IParameter[] params) {
+	public GaussianND(IParameter... params) {
 		super(params);
 		name = cname;
 	}

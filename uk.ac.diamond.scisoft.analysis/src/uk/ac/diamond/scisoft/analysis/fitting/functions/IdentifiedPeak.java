@@ -19,21 +19,15 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import java.io.Serializable;
 import java.util.List;
 
-
+/**
+ * Class describing the parameters of a peak
+ */
 public class IdentifiedPeak implements Serializable {
 	
-	
 	public IdentifiedPeak() {
-		
 	}
 
-	/**
-	 * Class describing the parameters of a peak found using the parsing method where the first derivative is used to
-	 * identify peaks.
-	 * 
-	 */
-
-	private double pos,minXVal,maxXVal,area, height, FWHM;
+	private double pos, minXVal, maxXVal, area, height, FWHM;
 	private int indexOfDatasetAtMinPos, indexOfDatasetAtMaxPos;
 	
 	/**
@@ -60,17 +54,13 @@ public class IdentifiedPeak implements Serializable {
 		setFWHM(crossings);
 	}
 
-
-
 	public double getPos() {
 		return pos;
 	}
 
-
 	public void setPos(double pos) {
 		this.pos = pos;
 	}
-
 
 	public double getMinXVal() {
 		return minXVal;
@@ -81,51 +71,41 @@ public class IdentifiedPeak implements Serializable {
 		this.minXVal = minXVal;
 	}
 
-
 	public double getMaxXVal() {
 		return maxXVal;
 	}
-
 
 	public void setMaxXVal(double maxXVal) {
 		this.maxXVal = maxXVal;
 	}
 
-
 	public double getArea() {
 		return area;
 	}
-
 
 	public void setArea(double area) {
 		this.area = area;
 	}
 
-
 	public double getHeight() {
 		return height;
 	}
-
 
 	public void setHeight(double height) {
 		this.height = height;
 	}
 
-
 	public void setIndexOfDatasetAtMinPos(int indexOfDatasetAtMinPos) {
 		this.indexOfDatasetAtMinPos = indexOfDatasetAtMinPos;
 	}
-
 
 	public int getIndexOfDatasetAtMinPos() {
 		return indexOfDatasetAtMinPos;
 	}
 
-
 	public void setIndexOfDatasetAtMaxPos(int indexOfDatasetAtMaxPos) {
 		this.indexOfDatasetAtMaxPos = indexOfDatasetAtMaxPos;
 	}
-
 
 	public int getIndexOfDatasetAtMaxPos() {
 		return indexOfDatasetAtMaxPos;
@@ -148,15 +128,10 @@ public class IdentifiedPeak implements Serializable {
 		return FWHM;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "IdentifiedPeak [pos=" + pos + ", minXVal=" + minXVal + ", maxXVal=" + maxXVal + ", area=" + area
 				+ ", height=" + height + ", FWHM=" + FWHM + ", indexOfDatasetAtMinPos=" + indexOfDatasetAtMinPos
 				+ ", indexOfDatasetAtMaxPos=" + indexOfDatasetAtMaxPos + "]";
 	}
-	
-	
-	
 }

@@ -1,5 +1,5 @@
-/*
- * Copyright 2011 Diamond Light Source Ltd.
+/*-
+ * Copyright 2013 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,21 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.junit.Assert;
+import org.junit.Test;
 
-public abstract class APeak extends AFunction implements IPeak {
+public class GaussianTest {
 
-	public APeak(int numParms) {
-		super(numParms);
-	}
+	private static final double ABS_TOL = 1e-7;
 
-	public APeak(double... params) {
-		super(params);
-	}
+	@Test
+	public void testFunction() {
+		IFunction f = new Gaussian();
+		Assert.assertEquals(3, f.getNoOfParameters());
+		f.setParameterValues(23., 2., 1.2);
+		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
 
-	public APeak(IParameter... params) {
-		super(params);
-	}
-
-	@Override
-	public double getHeight() {
-		return val(getPosition());
+		double sigma = 1 / Math.sqrt(2. * Math.log(2.));
+		Assert.assertEquals(1.2 / Math.sqrt(2. * Math.PI) / sigma, f.val(23.), ABS_TOL);
 	}
 }

@@ -25,8 +25,7 @@ public class Cubic extends AFunction {
 	private static String cname = "Cubic";
 	private static String cdescription = "y(x) = ax^3 + bx^2 + cx + d";
 	private static String[] paramNames = new String[]{"A", "B", "C", "D"};
-	@SuppressWarnings("unused")
-	private static double[] params = new double[]{0,0,0,0};
+
 	/**
 	 * Basic constructor, not advisable to use
 	 */
@@ -46,7 +45,7 @@ public class Cubic extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Cubic(IParameter[] params) {
+	public Cubic(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;

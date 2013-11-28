@@ -418,16 +418,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 
-			out.write("&SRS\n");
-			writeMetadata(out, dh);
-			out.write("&END\n");
+			writeHeader(out, dh);
 
-			// now write out the data names
 			int imax = dh.namesSize();
-			for (int i = 0; i < imax; i++) {
-				out.write(dh.getName(i) + "\t");
-			}
-			out.write("\n");
 
 			// now write out all of the data
 			int rows = dh.getDataset(0).getSize();
@@ -453,6 +446,19 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			logger.error("Problem saving SRS file {}", fileName);
 			throw new ScanFileHolderException("SRSLoader.saveFile exception saving to " + fileName, e);
 		}
+	}
+
+	protected void writeHeader(BufferedWriter out, DataHolder dh) throws IOException {
+		out.write("&SRS\n");
+		writeMetadata(out, dh);
+		out.write("&END\n");
+
+		// now write out the data names
+		int imax = dh.namesSize();
+		for (int i = 0; i < imax; i++) {
+			out.write(dh.getName(i) + "\t");
+		}
+		out.write("\n");
 	}
 
 	/**

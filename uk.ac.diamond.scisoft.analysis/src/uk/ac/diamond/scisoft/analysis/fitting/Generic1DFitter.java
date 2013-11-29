@@ -210,11 +210,6 @@ public class Generic1DFitter implements Serializable {
 		return fittedPeaks;
 	}
 
-
-	public static List<IdentifiedPeak> findPeaks(AbstractDataset xdata, AbstractDataset ydata, int smoothing) {
-		return parseDataDerivative(xdata, ydata, smoothing);
-	}
-
 	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, Class<? extends APeak> peakClass, AbstractDataset xData,
 			AbstractDataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IMonitor monitor, int baselineOrder) {
@@ -322,6 +317,17 @@ public class Generic1DFitter implements Serializable {
 		}
 
 		return peaks;
+	}
+
+	/**
+	 * Find peaks in data
+	 * @param xdata
+	 * @param ydata
+	 * @param smoothing
+	 * @return list of identified peaks
+	 */
+	public static List<IdentifiedPeak> findPeaks(AbstractDataset xdata, AbstractDataset ydata, int smoothing) {
+		return parseDataDerivative(xdata, ydata, smoothing);
 	}
 
 	public static List<IdentifiedPeak> parseDataDerivative(AbstractDataset xdata, AbstractDataset ydata, int smooth) {

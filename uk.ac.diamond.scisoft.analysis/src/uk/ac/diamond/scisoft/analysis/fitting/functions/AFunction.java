@@ -161,16 +161,6 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public int getNoOfFunctions() {
-		return 1;
-	}
-
-	@Override
-	public IFunction getFunction(int index) {
-		return this;
-	}
-
-	@Override
 	public double getParameterValue(int index) {
 		return parameters[index].getValue();
 	}
@@ -210,33 +200,44 @@ public abstract class AFunction implements IFunction, Serializable {
 		return out.toString();
 	}
 
-	private final static double PERT = 1e-4;
+	@Override
+	public double partialDeriv(int index, double... values) {
+		return internalDerivative(getParameter(index), values);
+	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
-		final double v = parameters[parameter].getValue();
-
-		if (v != 0) {
-			parameters[parameter].setValue(v*(1-PERT));
-			dirty = true;
-			final double minval = val(position);
-			parameters[parameter].setValue(v*(1+PERT));
-			dirty = true;
-			final double maxval = val(position);
-			parameters[parameter].setValue(v);
-			dirty = true;
-			return (maxval - minval) / (2. * PERT * v);
+	public double partialDeriv(IParameter param, double... values) {
+		for (int i = 0, imax = getNoOfParameters(); i < imax; i++) {
+			IParameter p = getParameter(i);
+			if (p == param)
+				return internalDerivative(param, values);
 		}
 
-		parameters[parameter].setValue(-PERT);
+		return 0;
+	}
+
+	private final static double DELTA = 1e-4;
+
+	/**
+	 * Calculate partial derivative. This is a numerical approximation.
+	 * Override as necessary
+	 * @param param
+	 * @param values
+	 * @return partial derivative
+	 */
+	protected double internalDerivative(IParameter param, double... values) {
+		double v = param.getValue();
+		double dv = DELTA * (v != 0 ? v : 1);
+
+		param.setValue(v - dv);
 		dirty = true;
-		final double minval = val(position);
-		parameters[parameter].setValue(PERT);
+		double minval = val(values);
+		param.setValue(v + dv);
 		dirty = true;
-		final double maxval = val(position);
-		parameters[parameter].setValue(0);
+		double maxval = val(values);
+		param.setValue(v);
 		dirty = true;
-		return (maxval - minval) / (2. * PERT);
+		return (maxval - minval) / (2. * dv);
 	}
 
 	@Override
@@ -334,6 +335,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
+	public void setDirty(boolean isDirty) {
+		dirty = isDirty;
+	}
+
+	@Override
 	public double residual(boolean allValues, IDataset data, IDataset... values) {
 		double residual = 0;
 		if (allValues) {
@@ -378,6 +384,13 @@ public abstract class AFunction implements IFunction, Serializable {
 			throw new UnsupportedOperationException("Stochastic sampling has not been implemented yet");
 		}
 
+		if (monitor != null) {
+			monitor.worked(1);
+			if (monitor.isCancelled()) {
+				throw new IllegalMonitorStateException("Monitor cancelled");
+			}
+		}
+
 		return residual;
 	}
 
@@ -412,6 +425,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		return true;
 	}
 
+	@Override
 	public AFunction copy() throws Exception {
 		Constructor<? extends AFunction> c = getClass().getConstructor();
 
@@ -420,23 +434,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		AFunction function =  c.newInstance();
 		function.fillParameters(localParameters);
 		return function;
-	}
-
-	/**
-	 * Evaluate partial derivative of a function with respect to given parameter at given values
-	 * @param f
-	 * @param p
-	 * @param values
-	 * @return derivative
-	 */
-	static public double calculatePartialDerivative(IFunction f, IParameter p, double... values) {
-		for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
-			IParameter fp = f.getParameter(j);
-			if (fp == p) {
-				return f.partialDeriv(j, values); // TODO cope with multiple references to same parameter
-			}
-		}
-		return 0;
 	}
 
 	@Override

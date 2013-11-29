@@ -52,14 +52,14 @@ public class NelderMeadFittingTest {
 	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class, new NelderMead(accuracy),
-				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class, new NelderMead(
-				accuracy), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class, new NelderMead(
-				accuracy), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class, new NelderMead(
-				accuracy), smoothing, numPeaks);
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
 	}
 
 	@BeforeClass

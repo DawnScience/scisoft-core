@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.io.Serializable;
+
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -23,7 +25,9 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  * Function interface used for fitting
  */
-public interface IFunction {
+public interface IFunction extends Serializable {
+
+	public static final long serialVersionUID = -6729243965994162061L;
 
 	/**
 	 * Get the name of the function
@@ -107,22 +111,6 @@ public interface IFunction {
 	public int getNoOfParameters();
 
 	/**
-	 * Gets the number of functions in the (composite) function.
-	 * 
-	 * @return An integer which is the number of functions
-	 */
-	public int getNoOfFunctions();
-
-	/**
-	 * Get a particular function from the composite function
-	 * 
-	 * @param index
-	 *            The index of the object to retrieve
-	 * @return A link to the function itself
-	 */
-	public IFunction getFunction(int index);
-
-	/**
 	 * Get the parameter at a particular index in the function
 	 * 
 	 * @param index
@@ -164,6 +152,15 @@ public interface IFunction {
 	public double partialDeriv(int index, double... values);
 
 	/**
+	 * Method which calculates the partial derivative
+	 * 
+	 * @param param
+	 * @param values
+	 * @return the derivative at the point specified with respect to the specified parameter.
+	 */
+	public double partialDeriv(IParameter param, double... values);
+
+	/**
 	 * Make a dataset from the function
 	 * 
 	 * The function can be evaluated in one of two possible modes. In general, the function has
@@ -192,6 +189,12 @@ public interface IFunction {
 	public double residual(boolean allValues, IDataset data, IDataset... values);
 
 	/**
+	 * Set internal caching state as needing to be reset if true
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+
+	/**
 	 * Set a monitor to check progress
 	 * @param monitor
 	 */
@@ -202,4 +205,10 @@ public interface IFunction {
 	 * @return monitor, maybe be null
 	 */
 	public IMonitor getMonitor();
+
+	/**
+	 * @return clone
+	 * @throws Exception
+	 */
+	public IFunction copy() throws Exception;
 }

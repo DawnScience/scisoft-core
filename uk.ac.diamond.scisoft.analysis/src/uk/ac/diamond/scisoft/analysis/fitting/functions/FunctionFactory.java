@@ -46,10 +46,10 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unchecked")
 public final class FunctionFactory {
 
-	private static final Map<String, Class<? extends AFunction>> FUNCTIONS;
+	private static final Map<String, Class<? extends IFunction>> FUNCTIONS;
 	static {
 		
-		FUNCTIONS = new TreeMap<String, Class<? extends AFunction>>();
+		FUNCTIONS = new TreeMap<String, Class<? extends IFunction>>();
 		/**
 		 * Functions *must* have a zero argument constructor.
 		 */
@@ -78,9 +78,9 @@ public final class FunctionFactory {
 	 * Register functions with factory.
 	 * @param classes
 	 */
-	private static void registerFunctions(Class<? extends AFunction>... classes) {
+	private static void registerFunctions(Class<? extends IFunction>... classes) {
 		
-        for (Class<? extends AFunction> clazz : classes) {
+        for (Class<? extends IFunction> clazz : classes) {
     		try {
 			    registerFunction(clazz);
     		} catch (Throwable e) {
@@ -95,8 +95,8 @@ public final class FunctionFactory {
 	 * @param clazz
 	 * @throws Exception
 	 */
-	public static void registerFunction(Class<? extends AFunction> clazz) throws Exception {
-		final AFunction function = clazz.newInstance();
+	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
+		final IFunction function = clazz.newInstance();
 		final String    name     = function.getName();
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
@@ -113,8 +113,8 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static AFunction getFunction(String name) throws Exception {
-		Class<? extends AFunction> clazz = FUNCTIONS.get(name);
+	public static IFunction getFunction(String name) throws Exception {
+		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		return clazz.newInstance();
 	}
 	
@@ -122,10 +122,10 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static AFunction getFunction(String name, double... args) throws Exception {
-		Class<? extends AFunction> clazz = FUNCTIONS.get(name);
+	public static IFunction getFunction(String name, double... args) throws Exception {
+		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		
-		final Constructor<? extends AFunction> c = clazz.getConstructor(double[].class);
+		final Constructor<? extends IFunction> c = clazz.getConstructor(double[].class);
 		return c.newInstance(args);
 	}
 
@@ -134,10 +134,10 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static AFunction getFunction(String name, IParameter[] args) throws Exception {
-		Class<? extends AFunction> clazz = FUNCTIONS.get(name);
+	public static IFunction getFunction(String name, IParameter[] args) throws Exception {
+		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		
-		final Constructor<? extends AFunction> c = clazz.getConstructor(IParameter[].class);
+		final Constructor<? extends IFunction> c = clazz.getConstructor(IParameter[].class);
 		return c.newInstance((Object[])args);
 	}
 
@@ -146,7 +146,7 @@ public final class FunctionFactory {
 	 * @param functionName
 	 * @return name
 	 */
-	public static Class<? extends AFunction> getClass(String functionName) {
+	public static Class<? extends IFunction> getClass(String functionName) {
 		return FUNCTIONS.get(functionName);
 	}
 
@@ -157,8 +157,8 @@ public final class FunctionFactory {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public static String getName(Class<? extends AFunction> clazz) throws Exception {
-		AFunction function = clazz.newInstance();
+	public static String getName(Class<? extends IFunction> clazz) throws Exception {
+		IFunction function = clazz.newInstance();
 		return function.getName();
 	}
 

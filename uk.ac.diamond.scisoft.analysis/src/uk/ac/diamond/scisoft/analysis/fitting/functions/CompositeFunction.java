@@ -25,6 +25,8 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
@@ -33,20 +35,18 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * Class which contains all the information about a particular function which is made up out of several other
  * functions
  */
-public class CompositeFunction extends AFunction {
+public class CompositeFunction extends AOperator {
 
-	private List<IParameter> parameterList; // holds a list of all parameters
-	private List<AFunction> functionList; // holds a list of all functions
-	private NavigableMap<Integer, AFunction> functionMap; // holds a mapping from offsets from parameters to functions
+	private List<IFunction> functionList; // holds a list of all functions
+	private NavigableMap<Integer, IFunction> functionMap; // holds a mapping from offsets from parameters to functions
 
 	/**
 	 * This constructor is simply to start an empty composite function.
 	 */
 	public CompositeFunction() {
-		super(0);
-		parameterList = new ArrayList<IParameter>();
-		functionList = new ArrayList<AFunction>();
-		functionMap = new TreeMap<Integer, AFunction>();
+		super();
+		functionList = new ArrayList<IFunction>();
+		functionMap = new TreeMap<Integer, IFunction>();
 	}
 
 	/**
@@ -59,17 +59,29 @@ public class CompositeFunction extends AFunction {
 	 * 
 	 * @param function
 	 */
-	public void addFunction(AFunction function) {
-		addFunction(parameterList, functionList, functionMap, function);
+	@Override
+	public void addFunction(IFunction function) {
+		addFunction(params, functionList, functionMap, function);
 	}
 
-	private void addFunction(List<IParameter> plist, List<AFunction> flist, NavigableMap<Integer, AFunction> fmap, AFunction function) {
+	private void addFunction(List<IParameter> plist, List<IFunction> flist, NavigableMap<Integer, IFunction> fmap, IFunction function) {
 		int psize = plist.size();
 		flist.add(function);
-		fmap.put(psize, function);			
-		for (IParameter p : function.parameters) {
+		fmap.put(psize, function);
+		for (int i = 0, imax = function.getNoOfParameters(); i < imax; i++) {
+			IParameter p = function.getParameter(i);
 			plist.add(p);
 		}		
+	}
+
+	@Override
+	public boolean isExtendible() {
+		return true;
+	}
+
+	@Override
+	public int getRequiredFunctions() {
+		return -1;
 	}
 
 	/**
@@ -78,23 +90,24 @@ public class CompositeFunction extends AFunction {
 	 * @param index
 	 *            The position in the vector to be removed
 	 */
+	@Override
 	public void removeFunction(int index) {
 		List<IParameter> plist = new ArrayList<IParameter>();
-		List<AFunction> flist = new ArrayList<AFunction>();
-		NavigableMap<Integer, AFunction> fmap = new TreeMap<Integer, AFunction>();
+		List<IFunction> flist = new ArrayList<IFunction>();
+		NavigableMap<Integer, IFunction> fmap = new TreeMap<Integer, IFunction>();
 
 		int nfuncs = functionList.size();
-		if (index > nfuncs) {
+		if (index >= nfuncs) {
 			logger.error("Index exceed bounds");
 			throw new IndexOutOfBoundsException("Index exceed bounds");
 		}
 		for (int n = 0; n < nfuncs; n++) {
 			if (n != index) {
-				AFunction f = functionList.get(n);
+				IFunction f = functionList.get(n);
 				addFunction(plist, flist, fmap, f);
 			}
 		}
-		parameterList = plist;
+		params= plist;
 		functionList = flist;
 		functionMap = fmap;
 	}
@@ -106,17 +119,19 @@ public class CompositeFunction extends AFunction {
 
 	@Override
 	public AFunction getFunction(int index) {
-		return functionList.get(index);
+		return (AFunction) functionList.get(index);
 	}
 	
-	public AFunction[] getFunctions() {
-		return functionList.toArray(new AFunction[0]);
+	@Override
+	public IFunction[] getFunctions() {
+		return functionList.toArray(new IFunction[functionList.size()]);
 	}
 
-	public void setFunction(int index, AFunction function) {
+	@Override
+	public void setFunction(int index, IFunction function) {
 		List<IParameter> plist = new ArrayList<IParameter>();
-		List<AFunction> flist = new ArrayList<AFunction>();
-		NavigableMap<Integer, AFunction> fmap = new TreeMap<Integer, AFunction>();
+		List<IFunction> flist = new ArrayList<IFunction>();
+		NavigableMap<Integer, IFunction> fmap = new TreeMap<Integer, IFunction>();
 
 		int nfuncs = functionList.size();
 		if (index > nfuncs) {
@@ -125,16 +140,15 @@ public class CompositeFunction extends AFunction {
 		}
 		for (int n = 0; n < nfuncs; n++) {
 			if (n != index) {
-				AFunction f = functionList.get(n);
+				IFunction f = functionList.get(n);
 				addFunction(plist, flist, fmap, f);
 			} else {
 				addFunction(plist, flist, fmap, function);
 			}
 		}
-		parameterList = plist;
+		params = plist;
 		functionList = flist;
 		functionMap = fmap;
-
 	}
 	
 	/**
@@ -149,7 +163,7 @@ public class CompositeFunction extends AFunction {
 		// Check x and a size for correctness
 		double y = 0.;
 		// Just sum over the individual functions
-		for (AFunction f : functionList)
+		for (IFunction f : functionList)
 			y += f.val(position);
 
 		return y;
@@ -176,8 +190,8 @@ public class CompositeFunction extends AFunction {
 
 		// now add the data for each bit in turn
 		int j = 1;
-		for (AFunction f : functionList) {
-			outputs[j] = f.makeDataset(values);
+		for (IFunction f : functionList) {
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(values), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 
@@ -218,95 +232,13 @@ public class CompositeFunction extends AFunction {
 
 		// now add the data for each bit in turn
 		int j = 4;
-		for (AFunction f : functionList) {
-			outputs[j] = f.makeDataset(XValues);
+		for (IFunction f : functionList) {
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(XValues), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 
 		return outputs;
 
-	}
-
-	/**
-	 * Function that returns the link to a particular parameter
-	 * 
-	 * @param index
-	 *            the index of the parameter
-	 * @return a pointer to the parameter requested
-	 * @throws IndexOutOfBoundsException
-	 *             Error raised if the index is too large
-	 */
-	@Override
-	public IParameter getParameter(int index) throws IndexOutOfBoundsException {
-		try {
-			return parameterList.get(index);
-		} catch (IndexOutOfBoundsException e) {
-			logger.error("Index not in range");
-			throw new IndexOutOfBoundsException("Index not in range");
-		}
-	}
-
-	/**
-	 * Function that gets a double array of all the parameters values
-	 * 
-	 * @return The double array of all the parameter values
-	 */
-	@Override
-	public IParameter[] getParameters() {
-		IParameter[] result = new IParameter[getNoOfParameters()];
-		int n = 0;
-		for (IParameter p : parameterList) {
-			result[n++] = p;
-		}
-
-		return result;
-	}
-
-	@Override
-	public int getNoOfParameters() {
-		return parameterList.size();
-	}
-
-	@Override
-	public double getParameterValue(int index) {
-		return getParameter(index).getValue();
-	}
-
-	@Override
-	public double[] getParameterValues() {
-		double[] result = new double[getNoOfParameters()];
-		int n = 0;
-		for (IParameter p : parameterList) {
-			result[n++] = p.getValue();
-		}
-
-		return result;
-	}
-
-	@Override
-	public void setParameterValues(double... params) {
-		int nparams = Math.min(params.length, getNoOfParameters());
-		for (int n = 0; n < nparams; n++) {
-			parameterList.get(n).setValue(params[n]);
-		}
-		for (AFunction f : functionList)
-			f.dirty = true;
-		dirty = true;
-	}
-
-	@Override
-	public String toString() {
-		StringBuffer out = new StringBuffer();
-		int nf = functionList.size();
-		if (nf > 1) {
-			for (int n = 0; n < nf; n++) {
-				out.append(String.format("Function %d - ", n));
-				out.append(functionList.get(n).toString());
-			}
-		} else if (nf == 1)
-			out.append(functionList.get(0).toString());
-
-		return out.toString();
 	}
 
 	@Override
@@ -331,7 +263,7 @@ public class CompositeFunction extends AFunction {
 	@Override
 	public CompositeFunction copy() throws Exception {
 		CompositeFunction copy = new CompositeFunction();
-		for (AFunction function : functionList) {
+		for (IFunction function : functionList) {
 			copy.addFunction(function.copy());
 		}
 		return copy;

@@ -28,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 
 public class GeneticAlgFittingTest {
@@ -54,13 +55,13 @@ public class GeneticAlgFittingTest {
 	static final long seed = 12357L;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1),
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1),
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1),
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
 	}
 

@@ -28,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 
 public class ApacheConjugateGradientFittingTest {
@@ -52,11 +53,14 @@ public class ApacheConjugateGradientFittingTest {
 	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new ApacheConjugateGradient(),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class, new ApacheConjugateGradient(),
 				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
+				new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
+				new ApacheConjugateGradient(), smoothing, numPeaks);
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
+				new ApacheConjugateGradient(), smoothing, numPeaks);
 	}
 
 	@BeforeClass

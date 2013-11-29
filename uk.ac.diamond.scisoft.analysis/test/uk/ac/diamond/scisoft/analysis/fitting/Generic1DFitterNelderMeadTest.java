@@ -41,18 +41,18 @@ public class Generic1DFitterNelderMeadTest {
 
 	static final int dataRange = 550;
 	static int[] defaultPeakPos = new int[] { 100, 200, 300, 400, 500, 150, 250, 350, 450 };
-	static final int defaultFWHM = 100;
+	static final int defaultFWHM = 20;
 	static final int defaultArea = 50;
 	static final double delta = 0.5;
 	static final double lambda = 0.1;
 	static final boolean backgroundDominated = true;
 	static final boolean autoStopping = true;
-	static final double threashold = 0.10;
+	static final double threshold = 0.10;
 	static final int numPeaks = -1;
 	static final int smoothing = 5;
 	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
+//	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testPearsonVIIFitting() {
 		int i = defaultPeakPos.length;
@@ -62,7 +62,7 @@ public class Generic1DFitterNelderMeadTest {
 		}
 		DoubleDataset testingPeaks = generatePearsonVII(i);
 		try {
-			FittingTest(peakPos, testingPeaks, new PearsonVII(1,1,1,1));
+			fittingTest(peakPos, testingPeaks, PearsonVII.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using NelderMead");
@@ -78,12 +78,12 @@ public class Generic1DFitterNelderMeadTest {
 		}
 		DoubleDataset testingPeaks = generateGaussianPeaks(i);
 		try {
-			FittingTest(peakPos, testingPeaks, new Gaussian(1,1,1,1));
-		} catch (IllegalArgumentException e) {
+			fittingTest(peakPos, testingPeaks, Gaussian.class);
+		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using NelderMead");
 		}
-		}
+	}
 
 	@Test
 	public void testPseudoVoigt() {
@@ -92,9 +92,9 @@ public class Generic1DFitterNelderMeadTest {
 		for (int j = 0; j < i; j++) {
 			peakPos[j] = defaultPeakPos[j];
 		}
-		DoubleDataset testingPeaks = generatePseudoVoigt(i);	
+		DoubleDataset testingPeaks = generatePseudoVoigt(i);
 		try {
-			FittingTest(peakPos, testingPeaks,new PseudoVoigt(1, 1, 1, 1));
+			fittingTest(peakPos, testingPeaks, PseudoVoigt.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using NelderMead");
@@ -111,13 +111,13 @@ public class Generic1DFitterNelderMeadTest {
 		}
 		DoubleDataset testingPeaks = generateLorentzianPeaks(i);
 		try {
-			FittingTest(peakPos, testingPeaks,new Lorentzian(1,1,1,1));
+			fittingTest(peakPos, testingPeaks, Lorentzian.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using NelderMead");
 		}
 	}
-	
+
 	private DoubleDataset generatePseudoVoigt(int numPeaks) {
 		CompositeFunction function = new CompositeFunction();
 		if (numPeaks > defaultPeakPos.length)
@@ -164,7 +164,7 @@ public class Generic1DFitterNelderMeadTest {
 		DoubleDataset data = function.makeDataset(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
-	
+
 	private DoubleDataset generateNoisePlusBackground() {
 		return generateBackground();
 	}
@@ -182,10 +182,11 @@ public class Generic1DFitterNelderMeadTest {
 		noise = (DoubleDataset) Maths.multiply(noise, 0.01);
 		return (DoubleDataset) Maths.add(data, noise);
 	}
-	
-	private void FittingTest(int[] peakPos, DoubleDataset data, APeak peakFunction) {
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new NelderMead(0.00001),
-				smoothing, numPeaks, threashold, autoStopping, backgroundDominated);
+
+	private void fittingTest(int[] peakPos, DoubleDataset data, Class<? extends APeak> peakClass) {
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakClass, new NelderMead(0.00001),
+				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
+
 		double[] fittedPeakPos = new double[fittedPeakList.size()];
 		int i = 0;
 		for (CompositeFunction p : fittedPeakList) {
@@ -194,11 +195,7 @@ public class Generic1DFitterNelderMeadTest {
 		Arrays.sort(fittedPeakPos);
 		Arrays.sort(peakPos);
 
-//		for (int j = 0; j < fittedPeakPos.length; j++) {
-//			System.out.println("fitted peak pos "+fittedPeakPos[j]+" position of generated data "+peakPos[j]);
-//		}
-		
-		assertEquals("The number of peaks found was not the same as generated", fittedPeakPos.length, peakPos.length);
+		assertEquals("The number of peaks found was not the same as generated", peakPos.length, fittedPeakPos.length);
 
 		for (int k = 0; k < fittedPeakPos.length; k++) {
 			assertEquals(peakPos[k], fittedPeakPos[k], delta);

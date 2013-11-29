@@ -26,6 +26,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
 
@@ -51,13 +52,13 @@ public class NelderMeadFittingTest {
 	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new NelderMead(accuracy),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class, new NelderMead(accuracy),
 				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new NelderMead(
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class, new NelderMead(
 				accuracy), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new NelderMead(
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class, new NelderMead(
 				accuracy), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new NelderMead(
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class, new NelderMead(
 				accuracy), smoothing, numPeaks);
 	}
 

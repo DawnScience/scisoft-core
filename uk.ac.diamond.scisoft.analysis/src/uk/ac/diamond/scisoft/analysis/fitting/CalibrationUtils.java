@@ -39,19 +39,19 @@ public class CalibrationUtils {
 	 *            coordinates
 	 * @param newAxisExactPeakPositions
 	 *            The exact positions where the peaks should appear on the new Axis
-	 * @param peakFunction
-	 *            The function with which to fit the individual peaks
+	 * @param peakClass
+	 *            The class with which to fit the individual peaks
 	 * @param polynomialOrder
 	 *            The order of the polynomial with which to fit the mapping process from the old axis to the new
 	 * @return The new Axis with the same dimensionality as the original data
 	 * @throws Exception 
 	 */
 	public static AbstractDataset mapAxis(AbstractDataset data, AbstractDataset originalAxis,
-			AbstractDataset originalAxisApproximatePeakPositions, AbstractDataset newAxisExactPeakPositions, APeak peakFunction,
+			AbstractDataset originalAxisApproximatePeakPositions, AbstractDataset newAxisExactPeakPositions, Class<? extends APeak> peakClass,
 			int polynomialOrder) throws Exception {
 
 		AbstractDataset peakPositions = refinePeakPositions(data, originalAxis, originalAxisApproximatePeakPositions,
-				peakFunction);
+				peakClass);
 
 		// fit the data with a polynomial
 		Polynomial fitResult = Fitter.polyFit(new AbstractDataset[] {peakPositions} ,newAxisExactPeakPositions, 1e-15, polynomialOrder);
@@ -70,16 +70,16 @@ public class CalibrationUtils {
 	 * @param originalAxisApproximatePeakPositions
 	 *            The approximate positions where characteristic peaks should appear in the data in the old axis
 	 *            coordinates
-	 * @param peakFunction
-	 *            The funtion with which to fit the individual peaks
+	 * @param peakClass
+	 *            The class with which to fit the individual peaks
 	 * @return val
 	 */
 	public static AbstractDataset refinePeakPositions(AbstractDataset data, AbstractDataset originalAxis,
-			AbstractDataset originalAxisApproximatePeakPositions, APeak peakFunction) {
+			AbstractDataset originalAxisApproximatePeakPositions, Class<? extends APeak> peakClass) {
 		
 		int numPeaks = originalAxisApproximatePeakPositions.getSize();
 		
-		List<APeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakFunction, numPeaks );
+		List<APeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakClass, numPeaks );
 		
 		AbstractDataset refinedPositions = selectSpecifiedPeaks(originalAxisApproximatePeakPositions, fitResult);
 		
@@ -90,7 +90,7 @@ public class CalibrationUtils {
 	 * Given a list of APeak functions, find the ones which most closely match a set of input positions
 	 * @param originalAxisApproximatePeakPositions the positions to match peaks to
 	 * @param peakList the list of APeaks containing all the peaks to try to match
-	 * @return the closest real lpeak position matches to the original positions.
+	 * @return the closest real peak position matches to the original positions.
 	 */
 	public static AbstractDataset selectSpecifiedPeaks(AbstractDataset originalAxisApproximatePeakPositions,
 			List<APeak> peakList) {

@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
@@ -51,30 +50,6 @@ public class Generic1DFitter implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
 
 	/**
-	 * This method takes a dataset of Y values and fits the specified peaks to the data. The x values of the Y axis are
-	 * assumed to be linear with unit increment. The APeak function specified will be returned in the list of
-	 * FittedPeaks. numPeaks is the maximum number of peaks that will be fitted.
-	 * 
-	 * @param currentDataset
-	 *            - the y values of a 1D data set that is to be fitted. Assumes that the y points are evenly spaced and
-	 *            1 unit apart
-	 * @param function
-	 *            - A function that obeys the APeak interface
-	 * @param numPeaks
-	 *            - The maximum number of peaks that are fitted.
-	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
-	 *         describe the region of the data where the peak was found
-	 */
-	public static List<APeak> fitPeaks(AbstractDataset currentDataset, APeak function, int numPeaks) {
-        return getPeaks(fitPeakFunctions(currentDataset, function, numPeaks));
-	}
-	
-	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset currentDataset, APeak function, int numPeaks) {
-		DoubleDataset xData = DoubleDataset.arange(currentDataset.getSize());
-		return fitPeakFunctions(xData, currentDataset, function, numPeaks);
-	}
-
-	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted.
 	 * 
@@ -82,17 +57,14 @@ public class Generic1DFitter implements Serializable {
 	 *            - the x values that of the measurements given in ydata
 	 * @param ydata
 	 *            - the y values corresponding to the x values given
-	 * @param function
-	 *            - A function that obeys the APeak interface
+	 * @param peakClass
+	 *            - A class that obeys the APeak interface
 	 * @param numPeaks
 	 *            - The maximum number of peaks that are fitted.
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
-		return getPeaks(fitPeakFunctions(xdata, ydata, function, numPeaks));
-	}
-	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
+	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, Class<? extends APeak> peakClass, int numPeaks) {
 		int tempSmoothing = (int) (xdata.getSize() * 0.01);
 		int smoothing;
 		if (tempSmoothing > DEFAULT_SMOOTHING) {
@@ -100,7 +72,7 @@ public class Generic1DFitter implements Serializable {
 		} else {
 			smoothing = DEFAULT_SMOOTHING;
 		}
-		return fitPeakFunctions(xdata, ydata, function, DEFAULT_OPTIMISER, smoothing, numPeaks);
+		return getPeaks(fitPeakFunctions(xdata, ydata, peakClass, DEFAULT_OPTIMISER, smoothing, numPeaks));
 	}
 
 	/**
@@ -113,8 +85,8 @@ public class Generic1DFitter implements Serializable {
 	 *            - the x values of the measurements given in ydata
 	 * @param ydata
 	 *            - the y values corresponding to the x values given
-	 * @param function
-	 *            - A function that obeys the APeak interface
+	 * @param peakClass
+	 *            - A class that obeys the APeak interface
 	 * @param optimiser
 	 *            - An optimisation function that obeys the IOptimizer interface
 	 * @param smoothing
@@ -124,16 +96,11 @@ public class Generic1DFitter implements Serializable {
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
-			                           IOptimizer optimiser, int smoothing, int numPeaks) {
-		return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks));
-    }
-
-	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, Class<? extends APeak> peakClass,
 			IOptimizer optimiser, int smoothing, int numPeaks) {
-		return fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, 0.0, false, false);
+		return fitPeakFunctions(xdata, ydata, peakClass, optimiser, smoothing, numPeaks, 0.0, false, false);
 	}
-	
+
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted. The
@@ -148,7 +115,7 @@ public class Generic1DFitter implements Serializable {
 	 *            - the x values that of the measurements given in ydata
 	 * @param ydata
 	 *            - the y values corresponding to the x values given
-	 * @param function
+	 * @param peakClass
 	 *            - A function that obeys the APeak interface
 	 * @param optimiser
 	 *            - An optimisation function that obeys the IOptimizer interface
@@ -164,18 +131,12 @@ public class Generic1DFitter implements Serializable {
 	 *            - Boolean - true if height is the stopping measure and false if it is area.
 	 * @return list of FittedPeaks
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
-										IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-										boolean heightMeasure) {
-       return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure));
-    }
-
-	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, Class<? extends APeak> peakClass,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure) {
-		return fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, null);
+		return fitPeakFunctions(xdata, ydata, peakClass, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, null);
 	}
-	
+
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted. The
@@ -190,7 +151,7 @@ public class Generic1DFitter implements Serializable {
 	 *            - the x values that of the measurements given in ydata
 	 * @param ydata
 	 *            - the y values corresponding to the x values given
-	 * @param function
+	 * @param peakClass
 	 *            - A function that obeys the APeak interface
 	 * @param optimiser
 	 *            - An optimisation function that obeys the IOptimizer interface
@@ -208,16 +169,11 @@ public class Generic1DFitter implements Serializable {
 	 * 			  - IAnalysisMonitor - instance of IAnalysisMonitor class allowing jobs to be stopped
 	 * @return list of FittedPeaks or null if job is stopped
 	 */
-	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
-			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IMonitor monitor) {
-		return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, monitor));
-	}
-	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, Class<? extends APeak> peakClass,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IMonitor monitor) {
 
-		return fitPeakFunctions((List<IdentifiedPeak>)null, xdata, ydata, function, optimiser, smoothing, numPeaks,
+		return fitPeakFunctions((List<IdentifiedPeak>)null, xdata, ydata, peakClass, optimiser, smoothing, numPeaks,
 				threshold, autoStopping, heightMeasure, monitor);
 	}
 	
@@ -226,7 +182,7 @@ public class Generic1DFitter implements Serializable {
 	 * @param peaks -  may be null if new peaks are required.
 	 * @param xdata
 	 * @param ydata
-	 * @param function
+	 * @param peakClass
 	 * @param optimiser
 	 * @param smoothing
 	 * @param numPeaks
@@ -236,7 +192,7 @@ public class Generic1DFitter implements Serializable {
 	 * @param monitor
 	 * @return list of peaks
 	 */
-	public static List<CompositeFunction> fitPeakFunctions(List<IdentifiedPeak> peaks, AbstractDataset xdata, AbstractDataset ydata, APeak function,
+	public static List<CompositeFunction> fitPeakFunctions(List<IdentifiedPeak> peaks, AbstractDataset xdata, AbstractDataset ydata, Class<? extends APeak> peakClass,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IMonitor monitor) {
 
@@ -248,7 +204,7 @@ public class Generic1DFitter implements Serializable {
 			return null;
 		}
 
-		List<CompositeFunction> fittedPeaks = fitFunction(peaks, function, xdata, ydata, optimiser, numPeaks, threshold,
+		List<CompositeFunction> fittedPeaks = fitFunction(peaks, peakClass, xdata, ydata, optimiser, numPeaks, threshold,
 				autoStopping, heightMeasure, monitor, BASELINE_ORDER);
 
 		return fittedPeaks;
@@ -259,7 +215,7 @@ public class Generic1DFitter implements Serializable {
 		return parseDataDerivative(xdata, ydata, smoothing);
 	}
 
-	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, APeak function, AbstractDataset xData,
+	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, Class<? extends APeak> peakClass, AbstractDataset xData,
 			AbstractDataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
 			boolean heightMeasure, IMonitor monitor, int baselineOrder) {
 
@@ -307,7 +263,7 @@ public class Generic1DFitter implements Serializable {
 					baseline = new Offset(lowOffset, highOffset);
 				}
 
-				Constructor<? extends APeak> ctor = function.getClass().getConstructor(IdentifiedPeak.class);
+				Constructor<? extends APeak> ctor = peakClass.getConstructor(IdentifiedPeak.class);
 				APeak localPeak = ctor.newInstance(iniPeak);
 				CompositeFunction comp = new CompositeFunction();
 				comp.addFunction(localPeak);

@@ -27,7 +27,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.IAnalysisMonitor;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -38,6 +37,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
@@ -93,15 +93,14 @@ public class Generic1DFitter implements Serializable {
 		return getPeaks(fitPeakFunctions(xdata, ydata, function, numPeaks));
 	}
 	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function, int numPeaks) {
-		int tempSmooting = (int) (xdata.getSize() * 0.01);
+		int tempSmoothing = (int) (xdata.getSize() * 0.01);
 		int smoothing;
-		if (tempSmooting > DEFAULT_SMOOTHING) {
-			smoothing = tempSmooting;
+		if (tempSmoothing > DEFAULT_SMOOTHING) {
+			smoothing = tempSmoothing;
 		} else {
 			smoothing = DEFAULT_SMOOTHING;
 		}
 		return fitPeakFunctions(xdata, ydata, function, DEFAULT_OPTIMISER, smoothing, numPeaks);
-
 	}
 
 	/**
@@ -128,8 +127,9 @@ public class Generic1DFitter implements Serializable {
 	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			                           IOptimizer optimiser, int smoothing, int numPeaks) {
 		return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks));
-    }		
-    public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+    }
+
+	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks) {
 		return fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, 0.0, false, false);
 	}
@@ -166,20 +166,14 @@ public class Generic1DFitter implements Serializable {
 	 */
 	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 										IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-										boolean heightMeasure){
+										boolean heightMeasure) {
        return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure));
     }
-    public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
+
+	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure){
-		return fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, new IAnalysisMonitor() {
-			
-			@Override
-			public boolean hasBeenCancelled() {
-				return false;
-			}
-		});
-		
+			boolean heightMeasure) {
+		return fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, null);
 	}
 	
 	/**
@@ -216,12 +210,12 @@ public class Generic1DFitter implements Serializable {
 	 */
 	public static List<APeak> fitPeaks(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IAnalysisMonitor monitor) {
+			boolean heightMeasure, IMonitor monitor) {
 		return getPeaks(fitPeakFunctions(xdata, ydata, function, optimiser, smoothing, numPeaks, threshold, autoStopping, heightMeasure, monitor));
 	}
 	public static List<CompositeFunction> fitPeakFunctions(AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IAnalysisMonitor monitor) {
+			boolean heightMeasure, IMonitor monitor) {
 
 		return fitPeakFunctions((List<IdentifiedPeak>)null, xdata, ydata, function, optimiser, smoothing, numPeaks,
 				threshold, autoStopping, heightMeasure, monitor);
@@ -244,7 +238,7 @@ public class Generic1DFitter implements Serializable {
 	 */
 	public static List<CompositeFunction> fitPeakFunctions(List<IdentifiedPeak> peaks, AbstractDataset xdata, AbstractDataset ydata, APeak function,
 			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IAnalysisMonitor monitor) {
+			boolean heightMeasure, IMonitor monitor) {
 
 		if (peaks==null) {
 			peaks = parseDataDerivative(xdata, ydata, smoothing);
@@ -267,7 +261,7 @@ public class Generic1DFitter implements Serializable {
 
 	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, APeak function, AbstractDataset xData,
 			AbstractDataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IAnalysisMonitor monitor, int baselineOrder) {
+			boolean heightMeasure, IMonitor monitor, int baselineOrder) {
 
 		ArrayList<CompositeFunction> peaks = new ArrayList<CompositeFunction>();
 		if (numPeaks == 0) {
@@ -282,8 +276,11 @@ public class Generic1DFitter implements Serializable {
 			if (fittedPeaks++ >= numPeaks) {
 				break;
 			}
-			if(monitor.hasBeenCancelled()){
-				return peaks;
+			if (monitor != null) {
+				monitor.worked(1);
+				if (monitor.isCancelled()) {
+					return peaks;
+				}
 			}
 
 			int[] start = { iniPeak.getIndexOfDatasetAtMinPos() };
@@ -370,7 +367,7 @@ public class Generic1DFitter implements Serializable {
 	}
 
 	public static List<IdentifiedPeak> parseDataDerivative(AbstractDataset xdata, AbstractDataset ydata, int smooth) {
-		boolean verbose = false;
+		boolean verbose = true;
 		ArrayList<IdentifiedPeak> peaks = new ArrayList<IdentifiedPeak>();
 
 		AbstractDataset data = Maths.derivative(xdata, ydata, smooth+1);

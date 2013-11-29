@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -30,6 +29,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+
 /**
  * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
  * specified as true, then the first parameter must be that peak's position
@@ -58,17 +59,20 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	protected boolean dirty = true;
 
+	protected IMonitor monitor = null;
+
 	/**
 	 * Constructor which is given a set of parameters to begin with.
 	 * 
 	 * @param params
 	 *            An array of parameters
 	 */
-	public AFunction(IParameter[] params) {
-		fillParameters(params);
+	public AFunction(IParameter... params) {
+		if (params != null)
+			fillParameters(params);
 	}
 
-	protected void fillParameters(IParameter[] params) {
+	protected void fillParameters(IParameter... params) {
 		parameters = new IParameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter p = params[i];
@@ -83,11 +87,12 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param params
 	 *            An array of starting parameter values as doubles.
 	 */
-	public AFunction(double[] params) {
-		fillParameters(params);
+	public AFunction(double... params) {
+		if (params != null)
+			fillParameters(params);
 	}
 	
-	protected void fillParameters(double[] params) {
+	protected void fillParameters(double... params) {
 		parameters = new Parameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			parameters[i] = new Parameter(params[i]);
@@ -106,8 +111,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 	}
 	
-
-
 	@Override
 	public String getName() {
 		return name;
@@ -179,6 +182,11 @@ public abstract class AFunction implements IFunction, Serializable {
 			result[j] = getParameterValue(j);
 		}
 		return result;
+	}
+
+	@Override
+	public void setParameter(int index, IParameter parameter) {
+		parameters[index] = parameter;
 	}
 
 	@Override
@@ -404,7 +412,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		return true;
 	}
 
-	public final AFunction copy() throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public AFunction copy() throws Exception {
 		Constructor<? extends AFunction> c = getClass().getConstructor();
 
 		IParameter[] localParameters = getParameters();
@@ -412,5 +420,32 @@ public abstract class AFunction implements IFunction, Serializable {
 		AFunction function =  c.newInstance();
 		function.fillParameters(localParameters);
 		return function;
+	}
+
+	/**
+	 * Evaluate partial derivative of a function with respect to given parameter at given values
+	 * @param f
+	 * @param p
+	 * @param values
+	 * @return derivative
+	 */
+	static public double calculatePartialDerivative(IFunction f, IParameter p, double... values) {
+		for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
+			IParameter fp = f.getParameter(j);
+			if (fp == p) {
+				return f.partialDeriv(j, values); // TODO cope with multiple references to same parameter
+			}
+		}
+		return 0;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+
+	@Override
+	public void setMonitor(IMonitor monitor) {
+		this.monitor = monitor;
 	}
 }

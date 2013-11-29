@@ -22,13 +22,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  * Class which expands on the AFunction class to give the properties of a gaussian. A 1D implementation
  */
 public class Gaussian extends APeak implements IPeak {
-	private static final double FWHM_TO_SIGMA = 1./Math.sqrt(8.*Math.log(2.));
+	private static final double FWHM_TO_SIGMA = 1. / Math.sqrt(8. * Math.log(2.));
 	private static String cname = "Gaussian";
 	private static String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
 	private static String[] paramNames = new String[]{"pos", "FWHM", "area"};
 	private static double[] params = new double[]{0,0,0};
 
-	public Gaussian(){
+	public Gaussian() {
 		this(params);
 	}
 
@@ -44,8 +44,9 @@ public class Gaussian extends APeak implements IPeak {
 	 * @param params
 	 */
 	public Gaussian(double... params) {
+		super(3);
 		// make sure that there are 3 parameters, otherwise, throw a sensible error
-		if(params.length != 3) 
+		if (params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
@@ -55,8 +56,9 @@ public class Gaussian extends APeak implements IPeak {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Gaussian(IParameter[] params) {
-		if(params.length != 3) 
+	public Gaussian(IParameter... params) {
+		super(3);
+		if (params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
@@ -66,7 +68,7 @@ public class Gaussian extends APeak implements IPeak {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Gaussian(IdentifiedPeak peakParameters){
+	public Gaussian(IdentifiedPeak peakParameters) {
 		super(3); 
 		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
 		double fwham2 = peakParameters.getFWHM()*2;
@@ -123,11 +125,7 @@ public class Gaussian extends APeak implements IPeak {
 			setParameterName(paramNames[i], i);
 		
 	}
-	
-	public Gaussian createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {
-		return new Gaussian(minPosition,  maxPosition,  maxArea,  maxFWHM);
-	}
-	
+
 	double pos, sigma, norm;
 	private void calcCachedParameters() {		
 		pos = getParameterValue(0);

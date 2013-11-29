@@ -50,7 +50,7 @@ public class Box extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Box(IParameter[] params) {
+	public Box(IParameter... params) {
 		super(params);
 		
 		IParameter[] fermi1Params = {getParameter(0), getParameter(1), getParameter(4), new Parameter(0.0)};

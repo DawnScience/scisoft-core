@@ -375,6 +375,7 @@ import java.lang.Integer as _jint
 import jymaths as _maths
 import jycomparisons as _cmps
 
+_jempty = tuple()
 
 class ndarray(object):
     """
@@ -560,7 +561,7 @@ class ndarray(object):
     @_wrapout
     def transpose(self, axes=None):
         if axes is None:
-            return self.__dataset.getTransposedView()
+            axes = _jempty
         return self.__dataset.getTransposedView(axes)
 
     @_wrapout
@@ -588,6 +589,8 @@ class ndarray(object):
         self.__dataset.put(asIterable(indices), asIterable(values))
 
     def repeat(self, repeats, axis=None):
+        if axis is None:
+            axis = -1
         return repeat(self, repeats, axis=axis)
 
     def choose(self, choices, mode='raise'):

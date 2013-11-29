@@ -40,7 +40,7 @@ public class Offset extends AFunction {
 		name = cname;
 	}
 
-	public Offset(IParameter[] params) {
+	public Offset(IParameter... params) {
 		super(params);
 		name = cname;
 	}

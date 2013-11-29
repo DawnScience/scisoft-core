@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,6 +33,8 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * SRSEditor.
  */
 public class XasAsciiLoader extends SRSLoader {
+
+	private static final String COMMENT_PREFIX = "#";
 
 	public XasAsciiLoader(String fileName) {
 		setFile(fileName);
@@ -57,7 +60,7 @@ public class XasAsciiLoader extends SRSLoader {
 				}
 
 				// first block of commented out lines are the header
-				if (dataStr.startsWith("#") && readingHeader) {
+				if (dataStr.startsWith(COMMENT_PREFIX) && readingHeader) {
 					readHeaderLine(dataStr);
 					previousHeaderLine = dataStr;
 					continue;
@@ -65,7 +68,7 @@ public class XasAsciiLoader extends SRSLoader {
 				readingHeader = false;
 
 				// next block of commented out lines after any break in comments will be the footer
-				if (dataStr.startsWith("#") && !readingHeader) {
+				if (dataStr.startsWith(COMMENT_PREFIX) && !readingHeader) {
 					readingFooter = true;
 					readFooterLine(dataStr);
 					continue;
@@ -144,7 +147,13 @@ public class XasAsciiLoader extends SRSLoader {
 	}
 
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	protected void writeHeader(BufferedWriter out, DataHolder dh) throws IOException {
+		// now write out the data names
+		out.write(COMMENT_PREFIX);
+		int imax = dh.namesSize();
+		for (int i = 0; i < imax; i++) {
+			out.write(dh.getName(i) + "\t");
+		}
+		out.write("\n");
 	}
-
 }

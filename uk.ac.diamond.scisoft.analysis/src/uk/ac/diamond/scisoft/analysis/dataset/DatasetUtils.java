@@ -131,8 +131,9 @@ public class DatasetUtils {
 			ashape = new int[1];
 			ashape[0] = ilen;
 			result = AbstractDataset.zeros(is, ashape, at);
+			Serializable src = a.getBuffer();
 			for (int i = 0; i < ilen; i++) {
-				result.setItemDirect(i, indices[i], a);
+				result.setItemDirect(i, indices[i], src);
 			}
 		} else {
 			axis = a.checkAxis(axis);
@@ -558,11 +559,13 @@ public class DatasetUtils {
 	/**
 	 * Cast a dataset
 	 * 
-	 * @param a
+	 * @param d
 	 *            The dataset to be cast.
 	 * @param dtype dataset type
 	 */
-	public static AbstractDataset cast(final AbstractDataset a, final int dtype) {
+	public static AbstractDataset cast(final IDataset d, final int dtype) {
+		AbstractDataset a = convertToAbstractDataset(d);
+		
 		if (a.getDtype() == dtype) {
 			return a;
 		}

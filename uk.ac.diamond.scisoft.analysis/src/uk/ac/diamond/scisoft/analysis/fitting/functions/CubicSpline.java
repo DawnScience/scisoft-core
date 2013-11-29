@@ -38,7 +38,7 @@ public class CubicSpline extends AFunction {
 		name = cname;
 	}
 	
-	public CubicSpline(IParameter[] params) {
+	public CubicSpline(IParameter... params) {
 		super(params);
 		name = cname;
 	}

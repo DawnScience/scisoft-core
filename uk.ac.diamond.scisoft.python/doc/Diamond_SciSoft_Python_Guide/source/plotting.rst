@@ -231,8 +231,8 @@ a rectangular area to magnify. A right-hand mouse button click brings up a
 dialogue box where there are buttons for switching between linear and
 logarithmic scales on the ``y`` axis, undoing previous zooms and resetting the
 plot. The initial choice of y axis scale used in all the profile plots is
-controlled by the setting found within Windows > Preferences > Scisoft Settings
-> Side Plotter.
+controlled by the setting found within
+:menuselection:`&Window --> &Preferences --> Scisoft Settings --> Side Plotter`.
 
 
 Plot GUI information
@@ -383,10 +383,11 @@ profile datasets in the console::
 
 Managing Plot Views
 -------------------
-Existing plot views can be shown by opening the :menuselection:`&Window --> Show Plo&t View` sub-menu and selecting the named plot view.
+Existing plot views can be shown by opening the :menuselection:`&Window --> Show Plo&t View`
+sub-menu and selecting the named plot view.
 
-New plot views can be opened using the
-:menuselection:`&Window --> Show Plo&t View --> New Plot View` menu to create new plot views that are named to continue the sequence ``Plot 1``, ``Plot 2``, etc.
+New plot views can be opened using the :menuselection:`&Window --> Show Plo&t View --> New Plot View`
+menu to create new plot views that are named to continue the sequence ``Plot 1``, ``Plot 2``, etc.
 
 There is a way to control plot views from Python using the window manager::
 

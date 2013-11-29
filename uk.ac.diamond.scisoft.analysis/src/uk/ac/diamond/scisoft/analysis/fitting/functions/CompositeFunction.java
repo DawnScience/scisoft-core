@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
@@ -27,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 
 /**
@@ -201,31 +201,20 @@ public class CompositeFunction extends AFunction {
 
 		outputs[0] = new DoubleDataset(DataValues);
 
+		// now add the data
 		outputs[1] = makeDataset(XValues);
 		outputs[1].setName("Composite function");
-		// now add the data
-		for (int i = 0; i < XValues.getSize(); i++) {
-			double value = val(XValues.get(i));
-			outputs[1].set(value, i);
-		}
 
 		// now add the errors to the graph, this should provide a good view to
 		// how good the fit is quite nicely.
-		outputs[2] = new DoubleDataset(XValues);
+		outputs[2] = (DoubleDataset) Maths.subtract(outputs[1], DataValues);
 		outputs[2].setName("Error Value");
 		double offset = DataValues.min().doubleValue() - ((DataValues.max().doubleValue() - DataValues.min().doubleValue()) / 5.0);
-		for (int i = 0; i < XValues.getSize(); i++) {
-			double value = (val(XValues.get(i)) - DataValues.get(i)) + offset;
-			outputs[2].set(value, i);
-		}
+		outputs[2].isubtract(offset);
 
-		outputs[3] = new DoubleDataset(XValues);
+		outputs[3] = new DoubleDataset(XValues.getShapeRef());
 		outputs[3].setName("Error Offset");
-		// centre for the error
-		for (int i = 0; i < XValues.getSize(); i++) {
-			double value = offset;
-			outputs[3].set(value, i);
-		}
+		outputs[3].fill(offset);
 
 		// now add the data for each bit in turn
 		int j = 4;
@@ -336,16 +325,15 @@ public class CompositeFunction extends AFunction {
 	 * @throws ClassCastException
 	 */
 	public IPeak getPeak(int i) {
-		return (IPeak)getFunction(i);
+		return (IPeak) getFunction(i);
 	}
 
-	public CompositeFunction duplicate() throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		// TODO Auto-generated method stub
+	@Override
+	public CompositeFunction copy() throws Exception {
 		CompositeFunction copy = new CompositeFunction();
 		for (AFunction function : functionList) {
 			copy.addFunction(function.copy());
 		}
 		return copy;
 	}
-
 }

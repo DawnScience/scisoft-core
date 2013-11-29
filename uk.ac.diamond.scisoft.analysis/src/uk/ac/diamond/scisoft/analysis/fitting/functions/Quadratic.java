@@ -36,7 +36,7 @@ public class Quadratic extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Quadratic(IParameter[] params) {
+	public Quadratic(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;

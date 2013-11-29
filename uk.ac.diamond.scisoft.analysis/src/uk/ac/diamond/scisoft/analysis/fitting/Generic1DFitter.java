@@ -267,7 +267,7 @@ public class Generic1DFitter implements Serializable {
 		if (numPeaks == 0) {
 			numPeaks = initialPeaks.size();
 		}
-		if (numPeaks <= -1) {
+		if (numPeaks < 0) {
 			numPeaks = xData.getSize();
 		}
 		int fittedPeaks = 0;
@@ -288,20 +288,19 @@ public class Generic1DFitter implements Serializable {
 			int[] step = { 1 };
 			AbstractDataset y = ydata.getSlice(start, stop, step);
 			AbstractDataset x = xData.getSlice(start, stop, step);
-			
+
 			AFunction baseline = null;
 			try {
 				
 				switch (baselineOrder) {
 				case 1:
-					double initm = (y.getDouble(0) - y.getDouble(y.getShape()[0]-1))/(x.getDouble(0) - x.getDouble(x.getShape()[0]-1));
-					double initc = y.getDouble(0)  - initm*x.getDouble(0);
-					double stepx = x.getDouble(1) - x.getDouble(0);
-					if (stepx < 0) stepx = stepx*-1;
-					double maxC = (y.max().doubleValue() - y.min().doubleValue())/ (stepx);
-					baseline = new StraightLine(-maxC, maxC, initc - y.max().doubleValue(), initc + y.max().doubleValue());
+					double initm = (y.getDouble(0) - y.getDouble(-1))/(x.getDouble(0) - x.getDouble(-1));
+					double initc = y.getDouble(0) - initm * x.getDouble(0);
+					double stepx = Math.abs(x.getDouble(1) - x.getDouble(0));
+					double maxC = y.peakToPeak().doubleValue() / stepx;
+					double maxY = y.max().doubleValue();
+					baseline = new StraightLine(-maxC, maxC, initc - maxY, initc + maxY);
 					break;
-
 				default:
 					double lowOffset = y.min().doubleValue();
 					double highOffset = (Double) y.mean();
@@ -331,9 +330,8 @@ public class Generic1DFitter implements Serializable {
 			}
 		}
 
-		if(autoStopping) {
-			if(heightMeasure) {
-
+		if (autoStopping) {
+			if (heightMeasure) {
 				Collections.sort(peaks, new Comparator<CompositeFunction>() {
 
 					@Override
@@ -341,13 +339,14 @@ public class Generic1DFitter implements Serializable {
 						return (int) Math.signum(((APeak)o1.getFunction(0)).getHeight() - ((APeak)o2.getFunction(0)).getHeight());
 					}
 				});
-
+				APeak p = (APeak) peaks.get(0).getFunction(0);
+				double t = p.getHeight() * threshold;
 				for (int i = 1; i < peaks.size(); i++) {
-					if(((APeak)peaks.get(i).getFunction(0)).getHeight() < (((APeak)peaks.get(0).getFunction(0)).getHeight()*threshold)) return peaks.subList(0, i);
+					p = (APeak) peaks.get(i).getFunction(0);
+					if (p.getHeight() < t)
+						return peaks.subList(0, i);
 				}
-
 			} else {
-
 				Collections.sort(peaks, new Comparator<CompositeFunction>() {
 
 					@Override
@@ -356,10 +355,13 @@ public class Generic1DFitter implements Serializable {
 					}
 				});
 
+				APeak p = (APeak) peaks.get(0).getFunction(0);
+				double t = p.getArea() * threshold;
 				for (int i = 1; i < peaks.size(); i++) {
-					if(((APeak)peaks.get(i).getFunction(0)).getArea() < (((APeak)peaks.get(0).getFunction(0)).getArea()*threshold)) return peaks.subList(0, i);
+					p = (APeak) peaks.get(i).getFunction(0);
+					if (p.getArea() < t)
+						return peaks.subList(0, i);
 				}
-
 			}
 		}
 
@@ -423,7 +425,7 @@ public class Generic1DFitter implements Serializable {
 
 				IdentifiedPeak newPeak = new IdentifiedPeak(xdata.getElementDoubleAbs(i), xdata.getElementDoubleAbs(backPos),
 						xdata.getElementDoubleAbs(forwardPos), Math.min(backTotal, forwardTotal),
-						slicedYData.max().doubleValue()-slicedYData.min().doubleValue(), backPos, forwardPos, crossings);
+						slicedYData.peakToPeak().doubleValue(), backPos, forwardPos, crossings);
 				if (verbose) {
 					System.out.println("Back Position = " + xdata.getElementDoubleAbs(backPos) + " Peak Pos = "
 							+ xdata.getElementDoubleAbs(i) + " Forward Position = "
@@ -448,13 +450,7 @@ public class Generic1DFitter implements Serializable {
 
 		@Override
 		public int compare(IdentifiedPeak o1, IdentifiedPeak o2) {
-			if (o1.getArea() < o2.getArea()) {
-				return 1;
-			}
-			if (o1.getArea() > o2.getArea()) {
-				return -1;
-			}
-			return 0;
+			return (int) Math.signum(o2.getArea() - o1.getArea());
 		}
 
 	}
@@ -465,10 +461,13 @@ public class Generic1DFitter implements Serializable {
 	 * @return List<APeak>
 	 */
 	private static List<APeak> getPeaks(List<CompositeFunction> fitPeakFunctions) {
-		if (fitPeakFunctions==null) return null;
-		if (fitPeakFunctions.isEmpty()) return Collections.emptyList();
+		if (fitPeakFunctions == null)
+			return null;
+		if (fitPeakFunctions.isEmpty())
+			return Collections.emptyList();
 		final List<APeak> ret = new ArrayList<APeak>(fitPeakFunctions.size());
-		for (CompositeFunction function : fitPeakFunctions) ret.add((APeak)function.getPeak(0));
+		for (CompositeFunction function : fitPeakFunctions)
+			ret.add((APeak) function.getPeak(0));
 		return ret;
 	}
 
@@ -497,9 +496,9 @@ public class Generic1DFitter implements Serializable {
 				           : (int)Math.ceil(cross.get(cross.size()-1)); // Upper value
 		
 		x = x.getSlice(new int[] { start }, new int[] { stop }, null);
-		if (y!=null) y = y.getSlice(new int[] { start }, new int[] { stop }, null);		
+		if (y != null)
+			y = y.getSlice(new int[] { start }, new int[] { stop }, null);		
 		
-		return (y!=null) ? new AbstractDataset[]{x,y} : new AbstractDataset[]{x};
+		return (y != null) ? new AbstractDataset[] { x, y } : new AbstractDataset[] { x };
 	}
-
 }

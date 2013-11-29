@@ -44,6 +44,29 @@ public class LongDatasetTest {
 	}
 
 	@Test
+	public void testGetter() {
+		long[] da = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+		LongDataset a = new LongDataset(da);
+		int l = da.length;
+		for (int i = 0; i < l; i++) {
+			assertEquals(i, a.getLong(i));
+		}
+		
+		for (int i = 0; i < l; i++) {
+			int r = l - 1 - i;
+			assertEquals(r, a.getLong(-(i + 1)));
+		}
+
+		AbstractDataset sv = a.getSliceView(new Slice(2,7));
+		AbstractDataset sc = a.getSlice(new Slice(2,7));
+		l = sc.getSize();
+		for (int i = 0; i < l; i++) {
+			long r = sc.getLong(-(i + 1));
+			assertEquals(r, sv.getLong(-(i + 1)));
+		}
+	}
+
+	@Test
 	public void testStats() {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.INT64);
 		assertEquals(11., a.max().doubleValue(), 1e-6);

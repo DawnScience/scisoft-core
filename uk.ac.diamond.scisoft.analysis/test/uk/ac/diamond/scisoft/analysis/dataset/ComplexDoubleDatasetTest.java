@@ -59,6 +59,34 @@ public class ComplexDoubleDatasetTest {
 	}
 
 	@Test
+	public void testGetter() {
+		double[] da = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+		ComplexDoubleDataset a = new ComplexDoubleDataset(da);
+
+		int l = da.length / 2;
+		for (int i = 0; i < l; i++) {
+			assertEquals(2*i, a.getComplex(i).getReal(), 1e-5*i);
+			assertEquals(2*i + 1, a.getComplex(i).getImaginary(), 1e-5*i);
+		}
+
+		for (int i = 0; i < l; i++) {
+			int r = l - 1 - i;
+			assertEquals(2 * r, a.getComplex(-(i + 1)).getReal(), 1e-5 * i);
+			assertEquals(2 * r + 1, a.getComplex(-(i + 1)).getImaginary(), 1e-5 * i);
+		}
+
+		ComplexDoubleDataset sv = (ComplexDoubleDataset) a.getSliceView(new Slice(1, 4));
+		ComplexDoubleDataset sc = (ComplexDoubleDataset) a.getSlice(new Slice(1, 4));
+		l = sc.getSize();
+		for (int i = 0; i < l; i++) {
+			Complex r = sc.getComplex(-(i + 1));
+			Complex q = sv.getComplex(-(i + 1));
+			assertEquals(r.getReal(), q.getReal(), 1e-5 * r.getReal());
+			assertEquals(r.getImaginary(), q.getImaginary(), 1e-5 * r.getImaginary());
+		}
+	}
+
+	@Test
 	public void testTake() {
 		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.COMPLEX128);
 		AbstractDataset t;

@@ -86,22 +86,22 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testNumberOfPeaksFoundGaussian() {
-		Assert.assertEquals(1, fittedGaussian.size(), 0);
+		Assert.assertEquals(1, fittedGaussian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundLorenzian() {
-		Assert.assertEquals(1, fittedLorenzian.size(), 0);
+		Assert.assertEquals(1, fittedLorenzian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPearsonVII() {
-		Assert.assertEquals(1, fittedPearsonVII.size(), 0);
+		Assert.assertEquals(1, fittedPearsonVII.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPseudoVoigt() {
-		Assert.assertEquals(1, fittedPseudoVoigt.size(), 0);
+		Assert.assertEquals(1, fittedPseudoVoigt.size());
 	}
 
 	@Test
@@ -141,7 +141,7 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(7.1051, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(3.9473, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
@@ -161,6 +161,6 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(37.8493, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(19.3862, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

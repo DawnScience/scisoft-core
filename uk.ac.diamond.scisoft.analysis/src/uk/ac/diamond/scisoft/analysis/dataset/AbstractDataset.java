@@ -1778,16 +1778,16 @@ public abstract class AbstractDataset implements ADataset {
 		int index = 0;
 		int i = 0;
 		for (; i < imax; i++) {
-			final int ni = n[i];
 			final int si = shape[i];
-			if (ni < -si || ni >= si) {
+			int ni = n[i];
+			if (ni < 0) {
+				ni += si;
+			}
+			if (ni < 0 || ni >= si) {
 				throw new ArrayIndexOutOfBoundsException("Index (" + ni + ") out of range [-" + si + "," + si
 						+ ") in dimension " + i);
 			}
 			index = index * si + ni;
-			if (ni < 0) {
-				index += si;
-			}
 		}
 		for (; i < rank; i++) {
 			index *= shape[i];
@@ -1802,8 +1802,17 @@ public abstract class AbstractDataset implements ADataset {
 			throw new IllegalArgumentException();
 		}
 		int index = offset;
-		for (int j = 0; j < rank; j++) {
-			index += stride[j] * n[j];
+		for (int i = 0; i < rank; i++) {
+			final int si = shape[i];
+			int ni = n[i];
+			if (ni < 0) {
+				ni += si;
+			}
+			if (ni < 0 || ni >= si) {
+				throw new ArrayIndexOutOfBoundsException("Index (" + ni + ") out of range [-" + si + "," + si
+						+ ") in dimension " + i);
+			}
+			index += stride[i] * ni;
 		}
 		return index;
 	}

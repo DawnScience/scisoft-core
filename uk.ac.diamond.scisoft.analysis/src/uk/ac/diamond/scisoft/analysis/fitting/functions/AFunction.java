@@ -76,8 +76,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		parameters = new IParameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter p = params[i];
-			parameters[i] = new Parameter(p.getValue(), p.getLowerLimit(), p.getUpperLimit());
-			parameters[i].setFixed(p.isFixed());
+			parameters[i] = new Parameter(p);
 		}
 	}
 
@@ -150,7 +149,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public IParameter[] getParameters() {
 		IParameter[] params = new IParameter[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			params[i] = new Parameter(parameters[i]);
+			params[i] = parameters[i];
 		}
 		return params;
 	}

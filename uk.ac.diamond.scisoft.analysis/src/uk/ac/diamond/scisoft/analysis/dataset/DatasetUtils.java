@@ -565,7 +565,7 @@ public class DatasetUtils {
 	 */
 	public static AbstractDataset cast(final IDataset d, final int dtype) {
 		AbstractDataset a = convertToAbstractDataset(d);
-		
+
 		if (a.getDtype() == dtype) {
 			return a;
 		}

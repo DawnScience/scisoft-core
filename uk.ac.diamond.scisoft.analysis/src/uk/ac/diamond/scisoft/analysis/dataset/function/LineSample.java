@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  *
  */
 public class LineSample implements DatasetToDatasetFunction {
-	int sx, sy, ex, ey;
+	double sx, sy, ex, ey;
 	double step;
 	private double rad;
 	private double sp;
@@ -43,7 +43,7 @@ public class LineSample implements DatasetToDatasetFunction {
 	 * @param ey
 	 * @param step 
 	 */
-	public LineSample(int sx, int sy, int ex, int ey, double step) {
+	public LineSample(double sx, double sy, double ex, double ey, double step) {
 		this.sx = sx;
 		this.sy = sy;
 		this.ex = ex;

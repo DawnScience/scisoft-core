@@ -66,7 +66,7 @@ abstract public class AOperator extends AFunction implements IOperator {
 		int n = params.size();
 		IParameter[] nParameters = new IParameter[n];
 		for (int i = 0; i < n; i++) {
-			nParameters[i] = new Parameter(params.get(i));
+			nParameters[i] = params.get(i);
 		}
 		return nParameters;
 	}

@@ -99,7 +99,7 @@ public interface IFunction extends Serializable {
 	/**
 	 * Get all the parameters in the array
 	 * 
-	 * @return A copy of all the parameters
+	 * @return all parameters
 	 */
 	public IParameter[] getParameters();
 

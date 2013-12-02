@@ -52,7 +52,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	private static double[] params = new double[]{0,0,0,0,0,0};
 
 	
-	public FermiGauss(){
+	public FermiGauss() {
 		this(params);
 	}
 
@@ -65,7 +65,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		}
 	}
 
-	public FermiGauss(IParameter[] params) {
+	public FermiGauss(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;

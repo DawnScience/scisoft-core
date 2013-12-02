@@ -36,7 +36,7 @@ public class StraightLine extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public StraightLine(double[] params){
+	public StraightLine(double[] params) {
 		super(params);
 		name = cname;
 		description = cdescription;
@@ -44,7 +44,7 @@ public class StraightLine extends AFunction {
 			setParameterName(paramNames[i], i);
 	}
 
-	public StraightLine(IParameter[] params) {
+	public StraightLine(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;

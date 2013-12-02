@@ -31,9 +31,10 @@ public class PearsonVII extends APeak implements IPeak {
 	private static String cdescription = "y(x) = PearsonVII distribution";
 	private static double[] params = new double[]{0,0,0,0};
 
-	public PearsonVII(){
+	public PearsonVII() {
 		this(params);
 	}
+
 	/**
 	 * Constructor which takes the three properties required, which are
 	 * 
@@ -54,7 +55,7 @@ public class PearsonVII extends APeak implements IPeak {
 			setParameterName(paramNames[i], i);
 	}
 
-	public PearsonVII(IParameter[] params) {
+	public PearsonVII(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;
@@ -63,7 +64,7 @@ public class PearsonVII extends APeak implements IPeak {
 	}
 
 	double defaultMixing = 2;
-	public PearsonVII(IdentifiedPeak peakParameters){
+	public PearsonVII(IdentifiedPeak peakParameters) {
 		super(4); 
 		
 		//pos
@@ -162,10 +163,6 @@ public class PearsonVII extends APeak implements IPeak {
 			setParameterName(paramNames[i], i);
 	}	
 
-	public PearsonVII createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {
-		return new PearsonVII(minPosition,maxPosition,maxArea,maxFWHM);
-	}
-	
 	double mean, FWHM, mixing, area, c2_fwhm, c3;
 
 	private void calcCachedParameters() {

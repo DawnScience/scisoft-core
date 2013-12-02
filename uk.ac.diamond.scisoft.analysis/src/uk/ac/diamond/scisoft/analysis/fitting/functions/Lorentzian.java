@@ -32,9 +32,10 @@ public class Lorentzian extends APeak {
 	private static double[] params = new double[]{0,0,0};
 	private static String cdescription = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
 
-	public Lorentzian(){
+	public Lorentzian() { 
 		this(params);
 	}
+
 	/**
 	 * Constructor which takes the three properties required, which are
 	 * 
@@ -54,7 +55,7 @@ public class Lorentzian extends APeak {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Lorentzian(IParameter[] params) {
+	public Lorentzian(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;
@@ -100,7 +101,6 @@ public class Lorentzian extends APeak {
 	 *            The maximum half width at half maximum
 	 */
 	public Lorentzian(double minPeakPosition, double maxPeakPosition, double maxHeight, double maxHalfWidth) {
-
 		super(3);
 
 		getParameter(0).setValue((minPeakPosition + maxPeakPosition) / 2.0);
@@ -122,12 +122,6 @@ public class Lorentzian extends APeak {
 			setParameterName(paramNames[i], i);
 	}
 
-	public Lorentzian createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM) {
-		double maxHalfWidth = maxFWHM / 2;
-		double maxHeight = 2 * maxArea / maxHalfWidth; // triangular approximation of the max height of the peak.
-		return new Lorentzian(minPosition, maxPosition, maxHeight, maxHalfWidth);
-	}
-	
 	double hwhm, hwhm_sq, mean, one_by_pi, area;
 
 	private void calcCachedParameters() {

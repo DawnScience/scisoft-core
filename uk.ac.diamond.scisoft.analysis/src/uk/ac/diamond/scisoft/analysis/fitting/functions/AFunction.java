@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -30,6 +29,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+
 /**
  * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
  * specified as true, then the first parameter must be that peak's position
@@ -58,17 +59,20 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	protected boolean dirty = true;
 
+	protected IMonitor monitor = null;
+
 	/**
 	 * Constructor which is given a set of parameters to begin with.
 	 * 
 	 * @param params
 	 *            An array of parameters
 	 */
-	public AFunction(IParameter[] params) {
-		fillParameters(params);
+	public AFunction(IParameter... params) {
+		if (params != null)
+			fillParameters(params);
 	}
 
-	protected void fillParameters(IParameter[] params) {
+	protected void fillParameters(IParameter... params) {
 		parameters = new IParameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter p = params[i];
@@ -83,11 +87,12 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param params
 	 *            An array of starting parameter values as doubles.
 	 */
-	public AFunction(double[] params) {
-		fillParameters(params);
+	public AFunction(double... params) {
+		if (params != null)
+			fillParameters(params);
 	}
 	
-	protected void fillParameters(double[] params) {
+	protected void fillParameters(double... params) {
 		parameters = new Parameter[params.length];
 		for (int i = 0; i < params.length; i++) {
 			parameters[i] = new Parameter(params[i]);
@@ -106,8 +111,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 	}
 	
-
-
 	@Override
 	public String getName() {
 		return name;
@@ -158,16 +161,6 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public int getNoOfFunctions() {
-		return 1;
-	}
-
-	@Override
-	public IFunction getFunction(int index) {
-		return this;
-	}
-
-	@Override
 	public double getParameterValue(int index) {
 		return parameters[index].getValue();
 	}
@@ -179,6 +172,11 @@ public abstract class AFunction implements IFunction, Serializable {
 			result[j] = getParameterValue(j);
 		}
 		return result;
+	}
+
+	@Override
+	public void setParameter(int index, IParameter parameter) {
+		parameters[index] = parameter;
 	}
 
 	@Override
@@ -202,33 +200,44 @@ public abstract class AFunction implements IFunction, Serializable {
 		return out.toString();
 	}
 
-	private final static double PERT = 1e-4;
+	@Override
+	public double partialDeriv(int index, double... values) {
+		return internalDerivative(getParameter(index), values);
+	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
-		final double v = parameters[parameter].getValue();
-
-		if (v != 0) {
-			parameters[parameter].setValue(v*(1-PERT));
-			dirty = true;
-			final double minval = val(position);
-			parameters[parameter].setValue(v*(1+PERT));
-			dirty = true;
-			final double maxval = val(position);
-			parameters[parameter].setValue(v);
-			dirty = true;
-			return (maxval - minval) / (2. * PERT * v);
+	public double partialDeriv(IParameter param, double... values) {
+		for (int i = 0, imax = getNoOfParameters(); i < imax; i++) {
+			IParameter p = getParameter(i);
+			if (p == param)
+				return internalDerivative(param, values);
 		}
 
-		parameters[parameter].setValue(-PERT);
+		return 0;
+	}
+
+	private final static double DELTA = 1e-4;
+
+	/**
+	 * Calculate partial derivative. This is a numerical approximation.
+	 * Override as necessary
+	 * @param param
+	 * @param values
+	 * @return partial derivative
+	 */
+	protected double internalDerivative(IParameter param, double... values) {
+		double v = param.getValue();
+		double dv = DELTA * (v != 0 ? v : 1);
+
+		param.setValue(v - dv);
 		dirty = true;
-		final double minval = val(position);
-		parameters[parameter].setValue(PERT);
+		double minval = val(values);
+		param.setValue(v + dv);
 		dirty = true;
-		final double maxval = val(position);
-		parameters[parameter].setValue(0);
+		double maxval = val(values);
+		param.setValue(v);
 		dirty = true;
-		return (maxval - minval) / (2. * PERT);
+		return (maxval - minval) / (2. * dv);
 	}
 
 	@Override
@@ -326,6 +335,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
+	public void setDirty(boolean isDirty) {
+		dirty = isDirty;
+	}
+
+	@Override
 	public double residual(boolean allValues, IDataset data, IDataset... values) {
 		double residual = 0;
 		if (allValues) {
@@ -370,6 +384,13 @@ public abstract class AFunction implements IFunction, Serializable {
 			throw new UnsupportedOperationException("Stochastic sampling has not been implemented yet");
 		}
 
+		if (monitor != null) {
+			monitor.worked(1);
+			if (monitor.isCancelled()) {
+				throw new IllegalMonitorStateException("Monitor cancelled");
+			}
+		}
+
 		return residual;
 	}
 
@@ -404,7 +425,8 @@ public abstract class AFunction implements IFunction, Serializable {
 		return true;
 	}
 
-	public final AFunction copy() throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	@Override
+	public AFunction copy() throws Exception {
 		Constructor<? extends AFunction> c = getClass().getConstructor();
 
 		IParameter[] localParameters = getParameters();
@@ -412,5 +434,15 @@ public abstract class AFunction implements IFunction, Serializable {
 		AFunction function =  c.newInstance();
 		function.fillParameters(localParameters);
 		return function;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+
+	@Override
+	public void setMonitor(IMonitor monitor) {
+		this.monitor = monitor;
 	}
 }

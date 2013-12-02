@@ -61,7 +61,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generatePearsonVII(i);
 		try {
-			fittingTestGeneticAlg(peakPos, testingPeaks, new PearsonVII(10,10,10,10,10));
+			fittingTest(peakPos, testingPeaks, PearsonVII.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -77,7 +77,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generateGaussianPeaks(i);
 		try {
-			fittingTestGeneticAlg(peakPos, testingPeaks, new Gaussian(10,10,10));
+			fittingTest(peakPos, testingPeaks, Gaussian.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -93,7 +93,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generatePseudoVoigt(i);
 		try {
-			fittingTestGeneticAlg(peakPos, testingPeaks, new PseudoVoigt(1, 1, 1, 1));
+			fittingTest(peakPos, testingPeaks, PseudoVoigt.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -110,7 +110,7 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 		DoubleDataset testingPeaks = generateLorentzianPeaks(i);
 		try {
-			fittingTestGeneticAlg(peakPos, testingPeaks, new Lorentzian(10));
+			fittingTest(peakPos, testingPeaks, Lorentzian.class);
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using Genetic Algs");
@@ -146,8 +146,8 @@ public class Generic1DFitterGeneticAlgTest {
 		if (numPeaks > defaultPeakPos.length)
 			numPeaks = defaultPeakPos.length;
 		for (int i = 0; i < numPeaks; i++) {
-			function.addFunction(new Lorentzian(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM,
-					defaultArea));
+			function.addFunction(new Lorentzian(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultArea,
+					defaultFWHM/2));
 		}
 		DoubleDataset data = function.makeDataset(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
@@ -161,7 +161,6 @@ public class Generic1DFitterGeneticAlgTest {
 			function.addFunction(new Gaussian(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM, defaultArea));
 		}
 		DoubleDataset data = function.makeDataset(xAxis);
-
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
 
@@ -175,11 +174,10 @@ public class Generic1DFitterGeneticAlgTest {
 		return comp.makeDataset(DoubleDataset.arange(dataRange));
 	}
 
-	private void fittingTestGeneticAlg(int[] peakPos, DoubleDataset data, APeak peakFunction) {
-
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakFunction, new GeneticAlg(0.0001, seed),
+	private void fittingTest(int[] peakPos, DoubleDataset data, Class<? extends APeak> peakClass) {
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakClass, new GeneticAlg(0.0001, seed),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
-		
+
 		double[] fittedPeakPos = new double[fittedPeakList.size()];
 		int i = 0;
 		for (CompositeFunction p : fittedPeakList) {

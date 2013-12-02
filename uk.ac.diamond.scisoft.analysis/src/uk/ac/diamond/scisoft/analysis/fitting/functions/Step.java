@@ -48,7 +48,7 @@ public class Step extends AFunction {
 		name = cname;
 	}
 
-	public Step(IParameter[] params) {
+	public Step(IParameter... params) {
 		super(params);
 		name = cname;
 	}
@@ -156,5 +156,4 @@ public class Step extends AFunction {
 		// Inside outer and inner peak
 		return inner;
 	}
-
 }

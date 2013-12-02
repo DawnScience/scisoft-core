@@ -26,18 +26,21 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
  * Class that saves 1D or 2D data from DataHolder by writing the output as tab-delimited ACSII output
  */
 public class RawTextSaver implements IFileSaver {
+	protected static final Logger logger = LoggerFactory.getLogger(RawTextSaver.class);
 
 	private String fileName = "";
 	protected char delimiter = '\t';
 	protected String cellFormat;
-	
 
 	/**
 	 * Takes the dataset from a data holder and output them as a height x width array called 'filename'.txt.
@@ -53,15 +56,17 @@ public class RawTextSaver implements IFileSaver {
 	public void saveFile(DataHolder dh) throws ScanFileHolderException {
 		File f = null;
 		for (int i = 0, imax = dh.size(); i < imax; i++) {
-			AbstractDataset data = dh.getDataset(i);
-			int[] shape = data.getShape();
+			ILazyDataset ld = dh.getLazyDataset(i);
+			int[] shape = ld.getShape();
 			int rank = shape.length;
 			if (rank == 1) {
-				data = data.reshape(shape[0], 1);
-				shape = data.getShape();
+				ld.setShape(shape[0], 1);
+				shape = ld.getShape();
 			} else if (rank > 2) {
-				throw new ScanFileHolderException("Cannot saved dataset: this loader only supports 1D or 2D datasets");
+				logger.error("Cannot saved dataset '{}': this loader only supports 1D or 2D datasets", ld.getName());
+				continue;
 			}
+			IDataset data = (ld instanceof IDataset) ? (IDataset) ld : ld.getSlice();
 
 			FileWriter fw = null;
 			BufferedWriter bw = null;
@@ -105,6 +110,7 @@ public class RawTextSaver implements IFileSaver {
 					bw.newLine();
 				}
 			} catch (Exception e) {
+				logger.error("Error saving file '{}': {}", fileName, e);
 				throw new ScanFileHolderException("Error saving file '" + fileName + "'", e);
 			} finally {
 				if (bw != null)
@@ -123,6 +129,6 @@ public class RawTextSaver implements IFileSaver {
 	
 	@SuppressWarnings("unused")
 	protected void writeHeader(BufferedWriter writer) throws IOException {
-		//Does nothing
+		// Does nothing
 	}
 }

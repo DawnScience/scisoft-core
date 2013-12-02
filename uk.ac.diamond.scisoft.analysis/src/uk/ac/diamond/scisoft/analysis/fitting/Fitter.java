@@ -172,7 +172,7 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static CompositeFunction fit(IDataset xAxis, IDataset yAxis,
-			                         IOptimizer optimizer, AFunction... functions) throws Exception {
+			                         IOptimizer optimizer, IFunction... functions) throws Exception {
 
 		CompositeFunction comp = new CompositeFunction();
 		IDataset[] coords = new IDataset[] {xAxis};

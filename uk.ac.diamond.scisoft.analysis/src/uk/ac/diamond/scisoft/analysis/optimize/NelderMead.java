@@ -148,10 +148,10 @@ public class NelderMead implements IOptimizer {
 		final int numCoords = coords.length;
 		coordinates = new DoubleDataset[numCoords];
 		for (int i = 0; i < numCoords; i++) {
-			coordinates[i] = (DoubleDataset) DatasetUtils.convertToAbstractDataset(coords[i]).cast(AbstractDataset.FLOAT64);
+			coordinates[i] = (DoubleDataset) DatasetUtils.cast(coords[i], AbstractDataset.FLOAT64);
 		}
 
-		dataValues = (DoubleDataset) DatasetUtils.convertToAbstractDataset(values).cast(AbstractDataset.FLOAT64);
+		dataValues = (DoubleDataset) DatasetUtils.cast(values, AbstractDataset.FLOAT64);
 
 		this.function = function;
 

@@ -26,6 +26,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
 
@@ -51,14 +52,14 @@ public class NelderMeadFittingTest {
 	private static List<CompositeFunction> fittedPseudoVoigt;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1), new NelderMead(accuracy),
-				smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1), new NelderMead(
-				accuracy), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1), new NelderMead(
-				accuracy), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1), new NelderMead(
-				accuracy), smoothing, numPeaks);
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
+				new NelderMead(accuracy), smoothing, numPeaks);
 	}
 
 	@BeforeClass
@@ -85,22 +86,22 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testNumberOfPeaksFoundGaussian() {
-		Assert.assertEquals(1, fittedGaussian.size(), 0);
+		Assert.assertEquals(1, fittedGaussian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundLorenzian() {
-		Assert.assertEquals(1, fittedLorenzian.size(), 0);
+		Assert.assertEquals(1, fittedLorenzian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPearsonVII() {
-		Assert.assertEquals(1, fittedPearsonVII.size(), 0);
+		Assert.assertEquals(1, fittedPearsonVII.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPseudoVoigt() {
-		Assert.assertEquals(1, fittedPseudoVoigt.size(), 0);
+		Assert.assertEquals(1, fittedPseudoVoigt.size());
 	}
 
 	@Test
@@ -140,7 +141,7 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(7.1051, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(3.9473, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
@@ -160,6 +161,6 @@ public class NelderMeadFittingTest {
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(37.8493, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(19.3862, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

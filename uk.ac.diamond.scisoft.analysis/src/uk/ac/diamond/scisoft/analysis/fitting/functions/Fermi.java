@@ -46,7 +46,7 @@ public class Fermi extends AFunction implements Serializable{
 			setParameterName(paramNames[i], i);
 	}
 
-	public Fermi(IParameter[] params) {
+	public Fermi(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;

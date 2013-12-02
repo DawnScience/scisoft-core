@@ -31,6 +31,7 @@ public class Polynomial extends AFunction {
 	double[] a;
 	private String[] paramNames;
 	int nparams; // actually degree + 1
+
 	/**
 	 * Basic constructor, not advisable to use
 	 */
@@ -41,11 +42,6 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
-		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
-			setParameterName(paramNames[i], i);
-		}
 	}
 
 	/**
@@ -59,11 +55,6 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
-		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
-			setParameterName(paramNames[i], i);
-		}
 	}
 
 	/**
@@ -77,29 +68,19 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
-		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
-			setParameterName(paramNames[i], i);
-		}
 	}
 
 	/**
 	 * Make a polynomial with given parameters
 	 * @param params
 	 */
-	public Polynomial(IParameter[] params) {
+	public Polynomial(IParameter... params) {
 		super(params);
 		a = new double[params.length];
 		nparams = params.length;
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
-		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
-			setParameterName(paramNames[i], i);
-		}
 	}
 
 	/**
@@ -126,9 +107,14 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
+	}
+
+	@Override
+	protected void fillParameters(double... params) {
+		super.fillParameters(params);
 		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
+		for (int i = 0; i < paramNames.length; i++) {
+			paramNames[i] = "Parameter" + i;
 			setParameterName(paramNames[i], i);
 		}
 	}
@@ -222,11 +208,6 @@ public class Polynomial extends AFunction {
 		name = cname;
 		description = cdescription;
 		fillParameters(a);
-		paramNames = new String[nparams];
-		for(int i=0; i<paramNames.length; i++){
-			paramNames[i] = "Parameter"+i;
-			setParameterName(paramNames[i], i);
-		}
 	}
 	
 	public String getStringEquation(){
@@ -247,6 +228,4 @@ public class Polynomial extends AFunction {
 		
 		return out.toString();
 	}
-	
-	
 }

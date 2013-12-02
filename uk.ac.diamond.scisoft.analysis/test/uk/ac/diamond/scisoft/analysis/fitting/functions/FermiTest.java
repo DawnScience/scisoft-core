@@ -1,5 +1,5 @@
-/*
- * Copyright 2011 Diamond Light Source Ltd.
+/*-
+ * Copyright 2013 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis;
+package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-public interface IAnalysisMonitor {
+import org.junit.Assert;
+import org.junit.Test;
 
-	public boolean hasBeenCancelled();
+public class FermiTest {
+
+	private static final double ABS_TOL = 1e-7;
+
+	@Test
+	public void testFunction() {
+		IFunction f = new Fermi();
+		Assert.assertEquals(4, f.getNoOfParameters());
+		f.setParameterValues(23., -10., 1.2, -5.2);
+		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
+
+		Assert.assertEquals(1.2 / 2. - 5.2, f.val(23.), ABS_TOL);
+	}
 }

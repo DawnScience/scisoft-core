@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -28,6 +27,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 
 public class GeneticAlgFittingTest {
@@ -54,13 +54,13 @@ public class GeneticAlgFittingTest {
 	static final long seed = 12357L;
 
 	public static void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, new Gaussian(1, 1, 1, 1),
+		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, new Lorentzian(1, 1, 1, 1),
+		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, new PearsonVII(1, 1, 1, 1),
+		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, new PearsonVII(1, 1, 1, 1),
+		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
 	}
 
@@ -86,22 +86,22 @@ public class GeneticAlgFittingTest {
 
 	@Test
 	public void testNumberOfPeaksFoundGaussian() {
-		Assert.assertEquals(1, fittedGaussian.size(), 0);
+		Assert.assertEquals(1, fittedGaussian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundLorenzian() {
-		Assert.assertEquals(1, fittedLorenzian.size(), 0);
+		Assert.assertEquals(1, fittedLorenzian.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPearsonVII() {
-		Assert.assertEquals(1, fittedPearsonVII.size(), 0);
+		Assert.assertEquals(1, fittedPearsonVII.size());
 	}
 
 	@Test
 	public void testNumberOfPeaksFoundPseudoVoigt() {
-		Assert.assertEquals(1, fittedPseudoVoigt.size(), 0);
+		Assert.assertEquals(1, fittedPseudoVoigt.size());
 	}
 
 	@Test
@@ -124,51 +124,43 @@ public class GeneticAlgFittingTest {
 		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(2, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMLorenzian() {
-		Assert.assertEquals(fwhm, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(0.3305, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(10.0162, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(3.9792, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(25, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaLorenzian() {
-		Assert.assertEquals(area, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(1.6602, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(5.0016, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(24.8726, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

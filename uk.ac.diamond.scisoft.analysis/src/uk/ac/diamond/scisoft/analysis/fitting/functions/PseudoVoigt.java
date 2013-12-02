@@ -28,16 +28,16 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 /**
  * PseudoVoigt Class
  */
-public class PseudoVoigt extends APeak implements IPeak{
-	private static final double FWHM_TO_SIGMA = 1./Math.sqrt(8.*Math.log(2.));
+public class PseudoVoigt extends APeak implements IPeak {
+	private static final double FWHM_TO_SIGMA = 1. / Math.sqrt(8. * Math.log(2.));
 	private static String cname = "PseudoVoigt";
 	private static String[] paramNames = new String[]{"Position", "GaussianFWHM", "LorentzianFWHM", "area", "mix"};
 	private static String cdescription = "y(x) =  Pseudo Voigt";
 	private static double[] params = new double[]{0,0,0,0,0};
 
 
-	public PseudoVoigt(){
-		this(params[0],params[1],params[2],params[3],params[4]);
+	public PseudoVoigt() {
+		this(params[0], params[1], params[2], params[3], params[4]);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class PseudoVoigt extends APeak implements IPeak{
 	 * Initialise with set parameters
 	 * @param params Position, GaussianFWHM, LorentzianFWHM, Area, Mix(0-1)
 	 */
-	public PseudoVoigt(IParameter[] params) {
+	public PseudoVoigt(IParameter... params) {
 		super(params);
 		name = cname;
 		description = cdescription;
@@ -68,7 +68,7 @@ public class PseudoVoigt extends APeak implements IPeak{
 			setParameterName(paramNames[i], i);
 	}
 
-	public PseudoVoigt(IdentifiedPeak peakParameters){
+	public PseudoVoigt(IdentifiedPeak peakParameters) {
 		super(5);
 
 		// Position
@@ -103,6 +103,7 @@ public class PseudoVoigt extends APeak implements IPeak{
 		for(int i =0; i<paramNames.length;i++)
 			setParameterName(paramNames[i], i);
 	}
+
 	/**
 	 * @param minPos
 	 * @param maxPos
@@ -143,10 +144,6 @@ public class PseudoVoigt extends APeak implements IPeak{
 			setParameterName(paramNames[i], i);
 	}
 
-	public PseudoVoigt createPeakFunction(double minPosition, double maxPosition, double maxArea, double maxFWHM){
-		return new PseudoVoigt(minPosition, maxPosition, maxFWHM, maxArea);
-	}
-	
 	double pos, sigma, gamma, mixing, gsq, top, norm;
 	private void calcCachedParameters() {
 		pos = getParameter(0).getValue();

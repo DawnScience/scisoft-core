@@ -17,16 +17,16 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 
-
 /**
  * Class which expands on the AFunction class to give the properties of a gaussian. A 1D implementation
  */
 public class Gaussian extends APeak implements IPeak {
 	private static final double FWHM_TO_SIGMA = 1. / Math.sqrt(8. * Math.log(2.));
-	private static String cname = "Gaussian";
-	private static String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
-	private static String[] paramNames = new String[]{"pos", "FWHM", "area"};
-	private static double[] params = new double[]{0,0,0};
+
+	private static final String cname = "Gaussian";
+	private static final String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
+	private static final String[] paramNames = new String[]{"posn", "fwhm", "area"};
+	private static final double[] params = new double[]{0, 0, 0};
 
 	public Gaussian() {
 		this(params);
@@ -37,7 +37,7 @@ public class Gaussian extends APeak implements IPeak {
 	 * 
 	 * <pre>
 	 *     Parameter 1	- Position
-	 *     Parameter 2 	- FWHM (full width half maximum)
+	 *     Parameter 2 	- FWHM (full width at half maximum)
 	 *     Parameter 3 	- Area
 	 * </pre>
 	 * 
@@ -50,10 +50,8 @@ public class Gaussian extends APeak implements IPeak {
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Gaussian(IParameter... params) {
@@ -62,10 +60,8 @@ public class Gaussian extends APeak implements IPeak {
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(1).setLowerLimit(0.0);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters) {
@@ -85,12 +81,10 @@ public class Gaussian extends APeak implements IPeak {
 		//area better fitting is generally found if sigma expands into the peak.
 		getParameter(2).setLimits(-maxArea,maxArea);
 		getParameter(2).setValue(peakParameters.getArea());
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
-	
+
 	/**
 	 * Constructor which takes more sensible values for the parameters, which also incorporates the limits which they
 	 * can be in, reducing the overall complexity of the problem
@@ -105,7 +99,6 @@ public class Gaussian extends APeak implements IPeak {
 	 *            The maximum area of the peak
 	 */
 	public Gaussian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
-
 		super(3);
 
 		getParameter(0).setValue(minPeakPosition + ((maxPeakPosition - minPeakPosition) / 2.0));
@@ -119,11 +112,16 @@ public class Gaussian extends APeak implements IPeak {
 		// better fitting is generally found if sigma expands into the peak.
 		getParameter(2).setValue(maxArea / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
-		
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	double pos, sigma, norm;
@@ -133,12 +131,12 @@ public class Gaussian extends APeak implements IPeak {
 		double area = getParameterValue(2);
 		norm = area / Math.sqrt(2.0 * Math.PI * sigma * sigma);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

@@ -156,7 +156,7 @@ public class GaussianND extends AFunction {
 	 * @return maximum value
 	 */
 	public double getPeakValue() {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 		return norm;
 	}
@@ -200,12 +200,13 @@ public class GaussianND extends AFunction {
 //		logger.info("Inverse covariance matrix is {}", invcov);
 		norm /= Math.sqrt(Math.pow(2.*Math.PI, rank) * decomp.getDeterminant());
 //		logger.info("Normalization factor is {}", norm);
-		markParametersClean();
+
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double[] v = values.clone();

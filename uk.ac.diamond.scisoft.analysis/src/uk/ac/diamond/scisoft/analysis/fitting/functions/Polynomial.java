@@ -26,8 +26,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
  */
 public class Polynomial extends AFunction {
-	private static String cname = "Polynomial";
-	private static String cdescription = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
+	private static final String cname = "Polynomial";
+	private static final String cdescription = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	double[] a;
 	private String[] paramNames;
 	int nparams; // actually degree + 1
@@ -37,11 +37,11 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial() {
 		super(1);
-		a = new double[1];
 		nparams = 1;
-		name = cname;
-		description = cdescription;
+		a = new double[nparams];
 		fillParameters(a);
+
+		setNames();
 	}
 
 	/**
@@ -50,11 +50,11 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(final int degree) {
 		super(degree + 1);
-		a = new double[degree + 1];
 		nparams = degree + 1;
-		name = cname;
-		description = cdescription;
+		a = new double[nparams];
 		fillParameters(a);
+
+		setNames();
 	}
 
 	/**
@@ -63,11 +63,11 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(double[] params) {
 		super(params);
-		a = new double[params.length];
 		nparams = params.length;
-		name = cname;
-		description = cdescription;
+		a = new double[nparams];
 		fillParameters(a);
+
+		setNames();
 	}
 
 	/**
@@ -76,11 +76,11 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(IParameter... params) {
 		super(params);
-		a = new double[params.length];
 		nparams = params.length;
-		name = cname;
-		description = cdescription;
+		a = new double[nparams];
 		fillParameters(a);
+
+		setNames();
 	}
 
 	/**
@@ -104,9 +104,18 @@ public class Polynomial extends AFunction {
 		}
 
 		a = new double[nparams];
+		fillParameters(a);
+
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		fillParameters(a);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	@Override
@@ -115,7 +124,6 @@ public class Polynomial extends AFunction {
 		paramNames = new String[nparams];
 		for (int i = 0; i < paramNames.length; i++) {
 			paramNames[i] = "Parameter" + i;
-			setParameterName(paramNames[i], i);
 		}
 	}
 
@@ -123,12 +131,12 @@ public class Polynomial extends AFunction {
 		for (int i = 0; i < nparams; i++)
 			a[i] = getParameterValue(i);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		final double position = values[0];

@@ -27,10 +27,10 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  * x(half) is the half width at half maximum, known as gamma
  */
 public class Lorentzian extends APeak {
-	private static String cname = "Lorentzian";
-	private static String[] paramNames = new String[]{"Position", "Height", "Half width"};
-	private static double[] params = new double[]{0,0,0};
-	private static String cdescription = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
+	private static final String cname = "Lorentzian";
+	private static final String cdescription = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
+	private static String[] paramNames = new String[]{"posn", "fwhm", "area"};
+	private static final double[] params = new double[] { 0, 0, 0 };
 
 	public Lorentzian() { 
 		this(params);
@@ -41,26 +41,22 @@ public class Lorentzian extends APeak {
 	 * 
 	 * <pre>
 	 *     Parameter 1	- Position
-	 *     Parameter 2 	- Height
-	 *     Parameter 3 	- half width at half maximum
+	 *     Parameter 2 	- half width at half maximum
+	 *     Parameter 3 	- Area
 	 * </pre>
 	 * 
 	 * @param params
 	 */
 	public Lorentzian(double... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Lorentzian(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Lorentzian(IdentifiedPeak peakParameters) {
@@ -81,10 +77,7 @@ public class Lorentzian extends APeak {
 		getParameter(2).setUpperLimit(range*2);
 		getParameter(2).setValue(peakParameters.getFWHM()/4);
 
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		setNames();
 	}
 
 	/**
@@ -116,10 +109,16 @@ public class Lorentzian extends APeak {
 		// better fitting is generally found if sigma expands into the peak.
 		getParameter(2).setValue(maxHalfWidth / 10.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	double hwhm, hwhm_sq, mean, one_by_pi, area;
@@ -132,13 +131,13 @@ public class Lorentzian extends APeak {
 		hwhm = FWHM/2.0;
 		hwhm_sq = hwhm*hwhm;
 		one_by_pi = 1.0/Math.PI;
-		
-		markParametersClean();
+
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

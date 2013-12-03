@@ -136,16 +136,6 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public String getParameterName(int index) {
-		return parameters[index].getName();
-	}
-
-	@Override
-	public void setParameterName(String name, int index) {
-		parameters[index].setName(name);
-	}
-
-	@Override
 	public IParameter[] getParameters() {
 		IParameter[] params = new IParameter[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
@@ -325,12 +315,8 @@ public abstract class AFunction implements IFunction, Serializable {
 		return result;
 	}
 
-	public boolean areParametersDirty() {
+	public boolean isDirty() {
 		return dirty;
-	}
-
-	public void markParametersClean() {
-		dirty = false;
 	}
 
 	@Override

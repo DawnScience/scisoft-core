@@ -23,13 +23,14 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  */
 public class Box extends AFunction {
 
-	private static String cname = "Box";
+	private static final String cname = "Box";
+
+	private static final String cdescription = "y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
+	private static final String[] paramNames = new String[]{"mu1", "kT1", "mu2", "kT2", "scale"};
+	private static final double[] params = new double[]{0,0,0,0,0};
 
 	private double mu1, kT1, mu2, kT2, scale;
 	private Fermi fermi1, fermi2; 
-	private static String cdescription = "y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
-	private static String[] paramNames = new String[]{"mu1", "kT1", "mu2", "kT2", "scale"};
-	private static double[] params = new double[]{0,0,0,0,0};
 
 	public Box(){
 		this(params);
@@ -43,11 +44,8 @@ public class Box extends AFunction {
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);
-		
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Box(IParameter... params) {
@@ -58,14 +56,19 @@ public class Box extends AFunction {
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);
-		
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
-	
+	private void setNames() {
+		name = cname;
+		description = cdescription;
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
+	}
+
 	private void calcCachedParameters() {
 		mu1 = getParameterValue(0);
 		kT1 = getParameterValue(1);
@@ -75,14 +78,14 @@ public class Box extends AFunction {
     
 		fermi1 = new Fermi(new double[] {mu1, kT1, scale, 0.0});
 		fermi2 = new Fermi(new double[] {mu2, kT2, scale, 0.0});
-		
-		markParametersClean();
+
+		setDirty(false);
 	}
 
 	
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

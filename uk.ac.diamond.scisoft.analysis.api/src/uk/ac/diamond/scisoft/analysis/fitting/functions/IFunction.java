@@ -78,25 +78,6 @@ public interface IFunction extends Serializable {
 	public IParameter getParameter(int index);
 
 	/**
-	 * Get the parameter name at a particular index in the function
-	 * 
-	 * @param index
-	 *            The index to retrieve
-	 * @return The parameter's name
-	 */
-	public String getParameterName(int index);
-
-	/**
-	 * Set a parameter name of the function
-	 * 
-	 * @param name
-	 *           A string array with the parameter name
-	 * @param index
-	 *           The index of the parameter name
-	 */
-	public void setParameterName(String name, int index);
-
-	/**
 	 * Get all the parameters in the array
 	 * 
 	 * @return all parameters

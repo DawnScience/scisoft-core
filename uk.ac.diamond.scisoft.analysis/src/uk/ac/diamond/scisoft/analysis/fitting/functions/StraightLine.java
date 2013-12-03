@@ -30,26 +30,20 @@ public class StraightLine extends AFunction {
 	 */
 	public StraightLine() {
 		super(2);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public StraightLine(double[] params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public StraightLine(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	/**
@@ -75,10 +69,16 @@ public class StraightLine extends AFunction {
 		getParameter(1).setUpperLimit(maxC);
 		getParameter(1).setValue((minC + maxC) / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	double a, b;
@@ -86,12 +86,12 @@ public class StraightLine extends AFunction {
 		a = getParameterValue(0);
 		b = getParameterValue(1);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

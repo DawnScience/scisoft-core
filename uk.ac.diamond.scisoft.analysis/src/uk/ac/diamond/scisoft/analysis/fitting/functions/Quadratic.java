@@ -30,18 +30,14 @@ public class Quadratic extends AFunction {
 	 */
 	public Quadratic() {
 		super(3);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Quadratic(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	/**
@@ -75,10 +71,7 @@ public class Quadratic extends AFunction {
 		getParameter(2).setUpperLimit(maxC);
 		getParameter(2).setValue((minC + maxC) / 2.0);
 
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		setNames();
 	}
 	
 	/**
@@ -88,10 +81,16 @@ public class Quadratic extends AFunction {
 	public Quadratic(double[] Params) {
 		super(Params);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	double a, b, c;
@@ -100,12 +99,12 @@ public class Quadratic extends AFunction {
 		b = getParameterValue(1);
 		c = getParameterValue(2);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

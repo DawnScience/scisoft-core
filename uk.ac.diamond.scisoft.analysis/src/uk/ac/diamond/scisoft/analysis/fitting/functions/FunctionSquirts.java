@@ -159,7 +159,6 @@ public class FunctionSquirts implements Serializable {
 		public void setRegions(List<IROI> regions) {
 			this.regions = regions;
 		}
-        
 	}
 
 	public Squirt getSelected() {

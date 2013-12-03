@@ -72,11 +72,6 @@ abstract public class AOperator extends AFunction implements IOperator {
 	}
 
 	@Override
-	public String getParameterName(int index) {
-		return params.get(index).getName();
-	}
-
-	@Override
 	public double getParameterValue(int index) {
 		return params.get(index).getValue();
 	}

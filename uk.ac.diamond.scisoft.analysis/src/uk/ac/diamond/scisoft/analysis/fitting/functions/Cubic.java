@@ -22,35 +22,29 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  * y(x) = ax^3 + bx^2 + cx + d
  */
 public class Cubic extends AFunction {
-	private static String cname = "Cubic";
-	private static String cdescription = "y(x) = ax^3 + bx^2 + cx + d";
-	private static String[] paramNames = new String[]{"A", "B", "C", "D"};
+	private static final String cname = "Cubic";
+	private static final String cdescription = "y(x) = ax^3 + bx^2 + cx + d";
+	private static final String[] paramNames = new String[]{"A", "B", "C", "D"};
 
 	/**
 	 * Basic constructor, not advisable to use
 	 */
 	public Cubic() {
 		super(4);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Cubic(double[] params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Cubic(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	/**
@@ -88,10 +82,16 @@ public class Cubic extends AFunction {
 		getParameter(3).setLimits(minD,maxD);
 		getParameter(3).setValue((minD + maxD) / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	double a, b, c, d;
@@ -101,12 +101,12 @@ public class Cubic extends AFunction {
 		c = getParameterValue(2);
 		d = getParameterValue(3);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

@@ -26,10 +26,10 @@ import org.apache.commons.math3.special.Gamma;
  * Journal of Alloys and Compounds, 362(1-2), 206-217. doi:10.1016/S0925-8388(03)00585-1
  */
 public class PearsonVII extends APeak implements IPeak {
-	private static String cname = "PearsonVII";
-	private static String[] paramNames = new String[]{"Min Peak Position", "Max Peak Position", "Max FWHM", "Max Area"};
-	private static String cdescription = "y(x) = PearsonVII distribution";
-	private static double[] params = new double[]{0,0,0,0};
+	private static final String cname = "PearsonVII";
+	private static final String[] paramNames = new String[]{"Min Peak Position", "Max Peak Position", "Max FWHM", "Max Area"};
+	private static final String cdescription = "y(x) = PearsonVII distribution";
+	private static final double[] params = new double[]{0,0,0,0};
 
 	public PearsonVII() {
 		this(params);
@@ -41,26 +41,22 @@ public class PearsonVII extends APeak implements IPeak {
 	 * <pre>
 	 *    position
 	 *    FWHM
-	 *    mixing
 	 *    Area
+	 *    mixing
 	 * </pre>
 	 * 
 	 * @param params
 	 */
 	public PearsonVII(double[] params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public PearsonVII(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	double defaultMixing = 2;
@@ -89,10 +85,7 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setUpperLimit((peakParameters.getHeight()*2)*(range*2));
 		getParameter(3).setValue(peakParameters.getArea()/2);
 
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		setNames();
 	}
 
 	/**
@@ -132,10 +125,7 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setUpperLimit(maxArea);
 		getParameter(3).setValue(maxArea / 10);
 
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		setNames();
 	}
 	
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double mixing) {
@@ -157,11 +147,17 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(3).setUpperLimit(maxArea);
 		getParameter(3).setValue(maxArea / 10);
 
+		setNames();
+	}	
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
-	}	
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
+	}
 
 	double mean, FWHM, mixing, area, c2_fwhm, c3;
 
@@ -191,12 +187,12 @@ public class PearsonVII extends APeak implements IPeak {
 //	
 //		staticComponent = (a / b) / FWHM;
 		
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

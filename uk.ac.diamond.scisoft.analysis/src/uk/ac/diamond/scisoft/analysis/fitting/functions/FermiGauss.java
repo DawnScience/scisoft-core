@@ -36,42 +36,31 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	private static final int NUMBER_OF_PARAMETERS = 6;
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FermiGauss.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FermiGauss.class);
 	
 	private static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5;
 
-	private static String cname = "Fermi * Gaussian";
-
-	private static String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
-
+	private static final String cname = "Fermi * Gaussian";
+	private static final String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
+	private static final String cdescription = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
+	private static final double[] params = new double[] { 0, 0, 0, 0, 0, 0 };
+	
 	private double mu, kT, scaleM, scaleC, offset, temperature, fwhm;
 
-	private static String cdescription = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
-
-	private static double[] params = new double[]{0,0,0,0,0,0};
-
-	
 	public FermiGauss() {
 		this(params);
 	}
 
 	public FermiGauss(double... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++) {
-			setParameterName(paramNames[i], i);
-		}
+
+		setNames();
 	}
 
 	public FermiGauss(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++) {
-			setParameterName(paramNames[i], i);
-		}
+
+		setNames();
 	}
 
 	/**
@@ -113,10 +102,15 @@ public class FermiGauss extends AFunction implements Serializable{
 		getParameter(5).setLimits(minSigma, maxSigma);
 		getParameter(5).setValue((minSigma + maxSigma) / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++) {
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
 		}
 	}
 
@@ -127,14 +121,14 @@ public class FermiGauss extends AFunction implements Serializable{
 		scaleC = getParameterValue(3);
 		offset = getParameterValue(4);
 		fwhm = getParameterValue(5);
-		
-		markParametersClean();
+
+		setDirty(false);
 	}
 	
 	
 	@Override
 	public double val(double... values)  {
-		if (areParametersDirty()) {
+		if (isDirty()) {
 			calcCachedParameters();
 		}
 

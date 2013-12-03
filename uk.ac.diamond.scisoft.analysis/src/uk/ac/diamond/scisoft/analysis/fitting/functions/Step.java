@@ -133,12 +133,12 @@ public class Step extends AFunction {
 		outer = base + getParameterValue(3);
 		inner = outer + getParameterValue(4);
 
-		markParametersClean();
+		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

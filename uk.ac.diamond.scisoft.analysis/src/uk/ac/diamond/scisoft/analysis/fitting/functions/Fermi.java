@@ -24,15 +24,13 @@ import java.io.Serializable;
  */
 public class Fermi extends AFunction implements Serializable{
 	
-	private static String cname = "Fermi";
-
-	private static String[] paramNames = new String[]{"mu", "kT", "scale", "Constant"};
+	private static final String cname = "Fermi";
+	private static final String[] paramNames = new String[]{"mu", "kT", "scale", "Constant"};
+	private static final String cdescription = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
+	private static final double[] params = new double[]{0,0,0,0};
 
 	private double mu, kT, scale, C;
 
-	private static String cdescription = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
-
-	private static double[] params = new double[]{0,0,0,0};
 
 	public Fermi(){
 		this(params);
@@ -40,18 +38,14 @@ public class Fermi extends AFunction implements Serializable{
 
 	public Fermi(double... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	public Fermi(IParameter... params) {
 		super(params);
-		name = cname;
-		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+
+		setNames();
 	}
 
 	/**
@@ -91,10 +85,16 @@ public class Fermi extends AFunction implements Serializable{
 		getParameter(3).setLimits(minC, maxC);
 		getParameter(3).setValue((minC + maxC) / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = cname;
 		description = cdescription;
-		for(int i =0; i<paramNames.length;i++)
-			setParameterName(paramNames[i], i);
+		for (int i = 0; i < paramNames.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(paramNames[i]);
+		}
 	}
 
 	private void calcCachedParameters() {
@@ -102,14 +102,14 @@ public class Fermi extends AFunction implements Serializable{
 		kT = getParameterValue(1);
 		scale = getParameterValue(2);
 		C = getParameterValue(3);
-		
-		markParametersClean();
+
+		setDirty(false);
 	}
 
 
 	@Override
 	public double val(double... values) {
-		if (areParametersDirty())
+		if (isDirty())
 			calcCachedParameters();
 
 		double position = values[0];

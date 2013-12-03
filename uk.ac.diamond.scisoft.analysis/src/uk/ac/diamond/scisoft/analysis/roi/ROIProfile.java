@@ -55,8 +55,8 @@ public class ROIProfile {
 	
 	public static AbstractDataset[] line(AbstractDataset data, AbstractDataset mask, LinearROI lroi, double step, boolean maskWithNans) {
 
-		int[] spt = lroi.getIntPoint();
-		int[] ept = lroi.getIntEndPoint();
+		double[] spt = lroi.getPoint();
+		double[] ept = lroi.getEndPoint();
 		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
 
 		LineSample ls = new LineSample(spt[0], spt[1], ept[0], ept[1], step);
@@ -83,8 +83,8 @@ public class ROIProfile {
 		profiles[0] = dsets.get(0);
 
 		if (lroi.isCrossHair()) {
-			spt = lroi.getPerpendicularBisectorIntPoint(0.0);
-			ept = lroi.getPerpendicularBisectorIntPoint(1.0);
+			spt = lroi.getPerpendicularBisectorPoint(0.0);
+			ept = lroi.getPerpendicularBisectorPoint(1.0);
 
 			LineSample bls = new LineSample(spt[0], spt[1], ept[0], ept[1], step);
 

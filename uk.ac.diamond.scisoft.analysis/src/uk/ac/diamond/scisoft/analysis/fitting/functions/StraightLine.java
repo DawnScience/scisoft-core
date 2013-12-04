@@ -99,16 +99,6 @@ public class StraightLine extends AFunction {
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("M Has Value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(1),
-				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		return out.toString();
-	}
-
-	@Override
 	public double partialDeriv(int parameter, double... position) {
 		switch (parameter) {
 		case 0:

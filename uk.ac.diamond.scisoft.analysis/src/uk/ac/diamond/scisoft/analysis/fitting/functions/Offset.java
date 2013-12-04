@@ -69,14 +69,6 @@ public class Offset extends AFunction {
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("Offset Position Has Value %f within the bounds [%f,%f]", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		return out.toString();
-	}
-
-	@Override
 	public double partialDeriv(int parameter, double... position) {
 		return 1;
 	}

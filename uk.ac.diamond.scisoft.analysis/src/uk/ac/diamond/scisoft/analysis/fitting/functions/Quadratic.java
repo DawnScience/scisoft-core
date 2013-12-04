@@ -112,18 +112,6 @@ public class Quadratic extends AFunction {
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("A Has Value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("B Has Value %f within the bounds [%f,%f]\n", getParameterValue(1),
-				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		out.append(String.format("C Has Value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
-		return out.toString();
-	}
-
-	@Override
 	public double partialDeriv(int parameter, double... position) {
 		final double pos = position[0];
 		switch (parameter) {

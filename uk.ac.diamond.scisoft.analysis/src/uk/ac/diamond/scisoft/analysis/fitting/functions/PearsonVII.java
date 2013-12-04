@@ -207,18 +207,6 @@ public class PearsonVII extends APeak implements IPeak {
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("Pearson VII position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]\n",
-				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		out.append(String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
-		return out.toString();
-	}
-
-	@Override
 	public double getArea() {
 		return getParameter(3).getValue();
 	}

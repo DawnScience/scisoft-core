@@ -30,5 +30,7 @@ public class OffsetTest {
 		f.setParameterValues(23.);
 		Assert.assertArrayEquals(new double[] {23.}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23., f.val(), ABS_TOL);
+
+		Assert.assertEquals(1, f.partialDeriv(0, -1), ABS_TOL);
 	}
 }

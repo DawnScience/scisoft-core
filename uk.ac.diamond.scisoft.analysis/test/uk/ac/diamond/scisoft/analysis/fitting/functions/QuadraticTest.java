@@ -30,5 +30,9 @@ public class QuadraticTest {
 		f.setParameterValues(23., -10., 1.2);
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23. + 10. + 1.2, f.val(-1), ABS_TOL);
+
+		Assert.assertEquals(1, f.partialDeriv(0, -1), ABS_TOL);
+		Assert.assertEquals(-1, f.partialDeriv(1, -1), ABS_TOL);
+		Assert.assertEquals(1, f.partialDeriv(2, -1), ABS_TOL);
 	}
 }

@@ -19,6 +19,9 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+
 public class GaussianTest {
 
 	private static final double ABS_TOL = 1e-7;
@@ -30,7 +33,15 @@ public class GaussianTest {
 		f.setParameterValues(23., 2., 1.2);
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
 
-		double sigma = 1 / Math.sqrt(2. * Math.log(2.));
-		Assert.assertEquals(1.2 / Math.sqrt(2. * Math.PI) / sigma, f.val(23.), ABS_TOL);
+		double cArea = 2 * Math.sqrt(Math.PI / (4. * Math.log(2.)));
+		double h = 1.2 / cArea;
+		Assert.assertEquals(h, f.val(23.), ABS_TOL);
+
+		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
+		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
+
+		AbstractDataset x = DatasetUtils.linSpace(0, 46, 200, AbstractDataset.FLOAT64);
+		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
+		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 	}
 }

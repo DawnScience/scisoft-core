@@ -20,6 +20,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
@@ -29,7 +30,9 @@ public class Generic1DDatasetCreater {
 	static final int dataRange = 100;
 	static final double peakPos = 50.0;
 	static final double defaultFWHM = 20.0;
-	static final double defaultArea = 50.0;
+	static final double defaultArea = 25.0;
+	static final double maxFWHM = 40.0;
+	static final double maxArea = 50.0;
 	static final double delta = 0.51;
 	static final double lambda = 0.1;
 	
@@ -43,29 +46,26 @@ public class Generic1DDatasetCreater {
 	
 	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
 
-	
-	public static DoubleDataset createGaussianDataset(){
+	private static DoubleDataset createDataset(IFunction f) {
 		CompositeFunction comp = new CompositeFunction();
-		comp.addFunction(new Gaussian(peakPos, peakPos, defaultFWHM, defaultArea));
+		comp.addFunction(f);
+		f.setParameterValues(peakPos, defaultFWHM, defaultArea);
 		return comp.makeDataset(xAxis);
 	}
 	
-	public static DoubleDataset createPearsonVII(){
-		CompositeFunction comp = new CompositeFunction();
-		comp.addFunction(new PearsonVII(peakPos, peakPos, defaultFWHM, defaultArea));
-		return comp.makeDataset(xAxis);
+	public static DoubleDataset createGaussianDataset() {
+		return createDataset(new Gaussian(0, dataRange, maxFWHM, maxArea));
 	}
-	
-	public static DoubleDataset createLorentzianDataset(){
-		CompositeFunction comp = new CompositeFunction();
-		comp.addFunction(new Lorentzian(peakPos, peakPos, defaultFWHM, defaultArea));
-		return comp.makeDataset(xAxis);
+
+	public static DoubleDataset createLorentzianDataset() {
+		return createDataset(new Lorentzian(0, dataRange, maxFWHM, maxArea));
 	}
-	
-	public static DoubleDataset createPseudoVoigt(){
-		CompositeFunction comp = new CompositeFunction();
-		comp.addFunction(new PseudoVoigt(peakPos, peakPos, defaultFWHM, defaultArea));
-		return comp.makeDataset(xAxis);
+
+	public static DoubleDataset createPearsonVII() {
+		return createDataset(new PearsonVII(0, dataRange, maxFWHM, maxArea));
 	}
-	
+
+	public static DoubleDataset createPseudoVoigt() {
+		return createDataset(new PseudoVoigt(0, dataRange, maxFWHM, maxArea));
+	}
 }

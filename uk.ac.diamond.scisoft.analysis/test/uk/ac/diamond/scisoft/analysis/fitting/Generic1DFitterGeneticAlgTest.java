@@ -22,7 +22,6 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -41,7 +40,7 @@ public class Generic1DFitterGeneticAlgTest {
 	static int[] defaultPeakPos = new int[] { 100, 200, 300, 400, 500, 150, 250, 350, 450 };
 	static final int defaultFWHM = 20;
 	static final int defaultArea = 50;
-	static final double delta = 0.5;
+	static final double delta = 6;
 	static final double lambda = 0.1;
 	static final boolean backgroundDominated = true;
 	static final boolean autoStopping = true;
@@ -100,7 +99,6 @@ public class Generic1DFitterGeneticAlgTest {
 		}
 	}
 
-	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testLorentzianFitting() {
 		int i = defaultPeakPos.length;

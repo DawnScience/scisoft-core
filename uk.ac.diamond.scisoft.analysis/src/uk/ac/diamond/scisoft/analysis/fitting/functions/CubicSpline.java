@@ -51,8 +51,10 @@ public class CubicSpline extends AFunction {
 	 */
 	public CubicSpline(double[] xpoints, double[] ystartpoints, double deviation) {
 		super(ystartpoints);
+		name = cname;
 		for(int i = 0; i < parameters.length; i++) {
-			parameters[i].setLimits(parameters[i].getValue()-deviation, parameters[i].getValue()+deviation);
+			IParameter p = parameters[i];
+			p.setLimits(p.getValue() - deviation, p.getValue() + deviation);
 		}
 		x = xpoints;
 	}
@@ -64,14 +66,14 @@ public class CubicSpline extends AFunction {
 	 */
 	public CubicSpline(double[] xpoints, double[] ystartpoints) {
 		super(ystartpoints);
+		name = cname;
 		x = xpoints;
 	}
 
 	protected void generateSpline(double[] newx, double[] newy) throws IllegalArgumentException {
-		
 		x = newx;
 		y = newy;		
-		
+
 		int n = 0;
 		if (x.length == y.length) {
 			n = x.length-1;
@@ -117,7 +119,7 @@ public class CubicSpline extends AFunction {
 			d[i] = (z[i+1]-z[i])/(6.0*h[i]);
 		}
 		
-		
+		setDirty(false);
 	}
 	
 	protected int getRegion(double xvalue) {
@@ -139,37 +141,29 @@ public class CubicSpline extends AFunction {
 		
 		return result;
 	}
-	
-	
-	protected boolean changed() {
-		if(y == null) {
-			return true;
-		}
-		
+
+	protected void checkChanged() {
+		if (isDirty())
+			return;
+
 		//check the values to see if they have changed 
-		for(int i = 0; i < y.length; i++) {
-			if(parameters[i].getValue() != y[i]) {
-				return true;
+		for (int i = 0; i < y.length; i++) {
+			if (parameters[i].getValue() != y[i]) {
+				setDirty(true);
+				return;
 			}
 		}
-		return false;
 	}
-	
-	protected double[] getParameterDoubleList() {
-		double[] result = new double[parameters.length];
-		for(int i = 0; i < parameters.length; i++) {
-			result[i] = parameters[i].getValue();
-		}
-		return result;
-	}
-	
+
 	@Override
 	public double val(double... values) {
-		
-		if(changed()) {
+		checkChanged();
+
+		if (isDirty()) {
 			// build the spline
-			generateSpline(x, getParameterDoubleList());
+			generateSpline(x, getParameterValues());
 		}
+
 		return evaluateSpline(values[0]);		
 	}
 

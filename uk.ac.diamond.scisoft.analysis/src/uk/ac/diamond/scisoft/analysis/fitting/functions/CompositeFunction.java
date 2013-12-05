@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -35,138 +26,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * Class which contains all the information about a particular function which is made up out of several other
  * functions
  */
-public class CompositeFunction extends AOperator {
-
-	private List<IFunction> functionList; // holds a list of all functions
-	private NavigableMap<Integer, IFunction> functionMap; // holds a mapping from offsets from parameters to functions
+public class CompositeFunction extends Add {
 
 	/**
 	 * This constructor is simply to start an empty composite function.
 	 */
 	public CompositeFunction() {
 		super();
-		functionList = new ArrayList<IFunction>();
-		functionMap = new TreeMap<Integer, IFunction>();
-	}
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(CompositeFunction.class);
-
-	/**
-	 * Adds a new function of the type AFunction to the array
-	 * 
-	 * @param function
-	 */
-	@Override
-	public void addFunction(IFunction function) {
-		addFunction(params, functionList, functionMap, function);
-	}
-
-	private void addFunction(List<IParameter> plist, List<IFunction> flist, NavigableMap<Integer, IFunction> fmap, IFunction function) {
-		int psize = plist.size();
-		flist.add(function);
-		fmap.put(psize, function);
-		for (int i = 0, imax = function.getNoOfParameters(); i < imax; i++) {
-			IParameter p = function.getParameter(i);
-			plist.add(p);
-		}		
-	}
-
-	@Override
-	public boolean isExtendible() {
-		return true;
-	}
-
-	@Override
-	public int getRequiredFunctions() {
-		return -1;
-	}
-
-	/**
-	 * Removes a function from the list
-	 * 
-	 * @param index
-	 *            The position in the vector to be removed
-	 */
-	@Override
-	public void removeFunction(int index) {
-		List<IParameter> plist = new ArrayList<IParameter>();
-		List<IFunction> flist = new ArrayList<IFunction>();
-		NavigableMap<Integer, IFunction> fmap = new TreeMap<Integer, IFunction>();
-
-		int nfuncs = functionList.size();
-		if (index >= nfuncs) {
-			logger.error("Index exceed bounds");
-			throw new IndexOutOfBoundsException("Index exceed bounds");
-		}
-		for (int n = 0; n < nfuncs; n++) {
-			if (n != index) {
-				IFunction f = functionList.get(n);
-				addFunction(plist, flist, fmap, f);
-			}
-		}
-		params= plist;
-		functionList = flist;
-		functionMap = fmap;
-	}
-
-	@Override
-	public int getNoOfFunctions() {
-		return functionList.size();
-	}
-
-	@Override
-	public AFunction getFunction(int index) {
-		return (AFunction) functionList.get(index);
-	}
-	
-	@Override
-	public IFunction[] getFunctions() {
-		return functionList.toArray(new IFunction[functionList.size()]);
-	}
-
-	@Override
-	public void setFunction(int index, IFunction function) {
-		List<IParameter> plist = new ArrayList<IParameter>();
-		List<IFunction> flist = new ArrayList<IFunction>();
-		NavigableMap<Integer, IFunction> fmap = new TreeMap<Integer, IFunction>();
-
-		int nfuncs = functionList.size();
-		if (index > nfuncs) {
-			logger.error("Index exceed bounds");
-			throw new IndexOutOfBoundsException("Index exceed bounds");
-		}
-		for (int n = 0; n < nfuncs; n++) {
-			if (n != index) {
-				IFunction f = functionList.get(n);
-				addFunction(plist, flist, fmap, f);
-			} else {
-				addFunction(plist, flist, fmap, function);
-			}
-		}
-		params = plist;
-		functionList = flist;
-		functionMap = fmap;
-	}
-	
-	/**
-	 * Function that evaluates the whole function at a single point
-	 * 
-	 * @param position
-	 *            The value to evaluate the function at
-	 * @return A double containing the evaluated value.
-	 */
-	@Override
-	public double val(double... position) {
-		// Check x and a size for correctness
-		double y = 0.;
-		// Just sum over the individual functions
-		for (IFunction f : functionList)
-			y += f.val(position);
-
-		return y;
 	}
 
 	/**
@@ -190,7 +56,7 @@ public class CompositeFunction extends AOperator {
 
 		// now add the data for each bit in turn
 		int j = 1;
-		for (IFunction f : functionList) {
+		for (IFunction f : functions) {
 			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(values), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
@@ -232,22 +98,13 @@ public class CompositeFunction extends AOperator {
 
 		// now add the data for each bit in turn
 		int j = 4;
-		for (IFunction f : functionList) {
+		for (IFunction f : functions) {
 			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(XValues), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 
 		return outputs;
 
-	}
-
-	@Override
-	public double partialDeriv(int parameter, double... position) throws IndexOutOfBoundsException {
-		Integer count = functionMap.floorKey(parameter);
-		if (count == null) {
-			throw new IndexOutOfBoundsException("There are not enough parameters in the composite function");
-		}
-		return functionMap.get(count).partialDeriv(parameter - count, position);
 	}
 
 	/**
@@ -263,8 +120,8 @@ public class CompositeFunction extends AOperator {
 	@Override
 	public CompositeFunction copy() throws Exception {
 		CompositeFunction copy = new CompositeFunction();
-		for (IFunction function : functionList) {
-			copy.addFunction(function.copy());
+		for (IFunction f : functions) {
+			copy.addFunction(f.copy());
 		}
 		return copy;
 	}

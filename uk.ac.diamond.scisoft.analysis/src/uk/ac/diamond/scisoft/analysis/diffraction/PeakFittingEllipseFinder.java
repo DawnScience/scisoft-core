@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +23,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.dataset.Stats;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
-import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
@@ -87,10 +83,14 @@ public class PeakFittingEllipseFinder {
 		
 		find64PointsOnEllipse(image, polyline, inner, outer, 0);
 		
-		if (polyline.getNumberOfPoints() < 50) {
-			find64PointsOnEllipse(image, polyline, inner, outer, Math.PI/64);
-			if (polyline.getNumberOfPoints() < 50)  {
-				find64PointsOnEllipse(image, polyline, inner, outer, Math.PI/128);
+		if (polyline.getNumberOfPoints() < 100) {
+			find64PointsOnEllipse(image, polyline, inner, outer, Math.PI/256);
+			if (polyline.getNumberOfPoints() < 150)  {
+				find64PointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/256);
+				if (polyline.getNumberOfPoints() < 150) {
+					find64PointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/512);
+				}
+				
 			}
 			
 		}
@@ -108,9 +108,7 @@ public class PeakFittingEllipseFinder {
 		
 		double ang = inner.getAngle();
 		
-		CompositeFunction cf = null;
-		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/32)) {
-			logger.debug("Starting point: " + i);
+		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/64)) {
 			double[] beg = inner.getPoint(i);
 			double[] end = outer.getPoint(i);
 			
@@ -130,49 +128,46 @@ public class PeakFittingEllipseFinder {
 			sub = sub.setByBoolean(Double.NaN, badVals);
 			double min = sub.min(true).doubleValue();
 			sub = sub.setByBoolean(min, badVals);
-			sub.isubtract(min);
+			
 			AbstractDataset xAx = AbstractDataset.arange(sub.getSize(), AbstractDataset.INT32);
 			
-			List<CompositeFunction> peaks= null;
+			sub.isubtract(min);
+			
+			double s = (Double)Stats.median(sub.getSlice(new int[] {0}, new int[] {2}, new int[] {1}));
+			double en = (Double)Stats.median(sub.getSlice(new int[] {sub.getSize()-4}, new int[] {sub.getSize()-1}, new int[] {1}));
+			
+			double m = (s-en)/(0-sub.getSize()-1);
+			double c = s;
+			
+			AbstractDataset base = Maths.multiply(xAx, m);
+			base.iadd(c);
+			
+			sub.isubtract(base);
+			
+			if ((Double)sub.mean() < 0) continue;
+			Gaussian g = null;
+			
 			try {
-				if (cf == null) {
-					peaks = Generic1DFitter.fitPeakFunctions(xAx, sub, Gaussian.class, new GeneticAlg(0.0001),
-							3,1);
-					cf = peaks.get(0);
-				} else {
-					DoubleDataset xData = DoubleDataset.arange(sub.getSize());
-						int maxPos = sub.maxPos()[0];
-						double[] params = cf.getFunction(0).getParameterValues();
-						params[0] = maxPos;
-						params[1] = 1;
-						Gaussian g = new Gaussian(params);
-						cf.setFunction(0, g);
-					Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, cf);
-					
-					if (cf.getFunction(0).getParameter(1).getValue() > 10 || cf.getFunction(0).getParameter(2).getValue() < 0) {
-						peaks = Generic1DFitter.fitPeakFunctions(xAx, sub, Gaussian.class, new GeneticAlg(0.0001),
-								3,1);
-						cf = peaks.get(0);
-					} else {
-						peaks = new ArrayList<CompositeFunction>(1);
-						peaks.add(cf);
-					}
-				}
+				
+				DoubleDataset xData = DoubleDataset.arange(sub.getSize());
+				int maxPos = sub.maxPos()[0];
+				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
+				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g);
 				
 			} catch (Exception e) {
 				logger.debug(e.getMessage());
 			}
 			
-			if (peaks == null || peaks.isEmpty()) continue;
+			if (g == null) continue;
 			
-			if (peaks.get(0).getFunction(0).getParameter(1).getValue() > 10 || peaks.get(0).getFunction(0).getParameter(2).getValue() < 0) continue;
+			if (g.getParameter(1).getValue() > 10 || g.getParameter(2).getValue() < 0 ||
+					g.getParameter(0).getValue() < 0) continue;
 			
-			double r = peaks.get(0).getParameter(0).getValue();
+			double r = g.getParameter(0).getValue();
 			logger.debug("peak found at " + r);
 			double x = r*Math.cos(i+ang)+beg[0];
 			double y = r*Math.sin(i+ang)+beg[1];
 			polyline.insertPoint(new PointROI(x,y));
-			
 		}
 		
 		return polyline;

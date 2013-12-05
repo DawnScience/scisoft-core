@@ -67,7 +67,6 @@ public class Parameter implements Serializable, IParameter {
 	 *            Value that the parameter is set to
 	 */
 	public Parameter(double value) {
-		// this.name = name;
 		this.value = value;
 	}
 
@@ -82,80 +81,41 @@ public class Parameter implements Serializable, IParameter {
 	 *            Upper limit the parameter is restricted to
 	 */
 	public Parameter(double value, double lowerLimit, double upperLimit) {
-		// this.name = name;
 		this.value = value;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 	}
 
-	/**
-	 * Function that gets the name of the parameter
-	 * 
-	 * @return The Name of the parameter
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Function that gets the value of the parameter
-	 * 
-	 * @return The Value of the parameter
-	 */
 	@Override
 	public double getValue() {
 		return value;
 	}
 
-	/**
-	 * Function that gets the Upper limit of the Parameter
-	 * 
-	 * @return The upper limit
-	 */
 	@Override
 	public double getUpperLimit() {
 		return this.upperLimit;
 	}
 
-	/**
-	 * Function that gets the lower limit of the parameter
-	 * 
-	 * @return The lower limit
-	 */
 	@Override
 	public double getLowerLimit() {
 		return this.lowerLimit;
 	}
 
-	/**
-	 * Function that returns whether the parameter is set as fixed or not
-	 * 
-	 * @return Boolean for use in logical statements
-	 */
 	@Override
 	public boolean isFixed() {
 		return fixed;
 	}
 
-	/**
-	 * Sets whether the parameter is fixed or not, the default is false
-	 * 
-	 * @param b
-	 *            The new boolean value for the fixed variable
-	 */
 	@Override
 	public void setFixed(boolean b) {
 		this.fixed = b;
 	}
 
-	/**
-	 * Sets both limits of the parameter. For when both limits are being changed at the same time and you wish to avoid
-	 * the logic testing when setting the limits separately.
-	 * 
-	 * @param newLowerLimit
-	 * @param newUpperLimit
-	 */
 	@Override
 	public void setLimits(double newLowerLimit, double newUpperLimit) {
 		
@@ -178,12 +138,6 @@ public class Parameter implements Serializable, IParameter {
 		this.upperLimit = newUpperLimit;
 	}
 
-	/**
-	 * Function sets the lower limit of the parameter, the default is Double.MIN_VALUE;
-	 * 
-	 * @param lowerLimit
-	 *            The new double value which is the lower limit
-	 */
 	@Override
 	public void setLowerLimit(double lowerLimit) {
 		if (lowerLimit > upperLimit) {
@@ -198,12 +152,6 @@ public class Parameter implements Serializable, IParameter {
 		this.lowerLimit = lowerLimit;
 	}
 
-	/**
-	 * Function sets the upper limit of the parameter, the default is Double.MAX_VALUE;
-	 * 
-	 * @param upperLimit
-	 *            The new double value which is the upper limit
-	 */
 	@Override
 	public void setUpperLimit(double upperLimit) {
 		if (upperLimit < lowerLimit) {
@@ -219,23 +167,11 @@ public class Parameter implements Serializable, IParameter {
 		this.upperLimit = upperLimit;
 	}
 
-	/**
-	 * Function sets the name of the parameter
-	 * 
-	 * @param name
-	 *            The new String name of the parameter
-	 */
 	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * Function sets the value of the parameter
-	 * 
-	 * @param value
-	 *            The new double Value of the parameter
-	 */
 	@Override
 	public void setValue(double value) {
 		if (value > upperLimit) {

@@ -24,19 +24,19 @@ public interface IParameter {
 	/**
 	 * Get the name of the parameter
 	 * 
-	 * @return The Name of the parameter
+	 * @return The name of the parameter
 	 */
 	public String getName();
 
 	/**
 	 * Get the value of the parameter
 	 * 
-	 * @return The Value of the parameter
+	 * @return The value of the parameter
 	 */
 	public double getValue();
 
 	/**
-	 * Get the Upper limit of the Parameter
+	 * Get the upper limit of the Parameter
 	 * 
 	 * @return The upper limit
 	 */
@@ -52,17 +52,17 @@ public interface IParameter {
 	/**
 	 * Check whether the parameter is set as fixed or not
 	 * 
-	 * @return Boolean for use in logical statements
+	 * @return true if fixed
 	 */
 	public boolean isFixed();
 
 	/**
 	 * Set the parameter as fixed or not, the default is false
 	 * 
-	 * @param b
-	 *            The new boolean value for the fixed variable
+	 * @param fixed
+	 *            true for setting the parameter as fixed
 	 */
-	public void setFixed(boolean b);
+	public void setFixed(boolean fixed);
 
 	/**
 	 * Set both limits of the parameter. For when both limits are being
@@ -106,5 +106,4 @@ public interface IParameter {
 	 *            The new double Value of the parameter
 	 */
 	public void setValue(double value);
-
 }

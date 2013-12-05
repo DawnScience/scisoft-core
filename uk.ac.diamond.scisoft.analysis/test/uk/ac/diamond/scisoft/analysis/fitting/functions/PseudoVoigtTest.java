@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 
 public class PseudoVoigtTest {
 
@@ -47,5 +48,34 @@ public class PseudoVoigtTest {
 		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-1);
+	}
+
+	@Test
+	public void testExtremes() {
+		AbstractDataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, AbstractDataset.FLOAT64);
+
+		PseudoVoigt pv = new PseudoVoigt();
+		pv.setParameterValues(23., 2., 1.2, 2.3, 1);
+		AbstractDataset pl = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+
+		pv.setParameterValues(23., 2., 1.2, 2.3, 0);
+		AbstractDataset pg = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+
+		Lorentzian lf = new Lorentzian();
+		lf.setParameterValues(23., 2., 1.2);
+		AbstractDataset l = DatasetUtils.convertToAbstractDataset(lf.makeDataset(x));
+		checkDatasets(pl, l);
+
+		Gaussian gf = new Gaussian();
+		gf.setParameterValues(23., 2.3, 1.2);
+		AbstractDataset g = DatasetUtils.convertToAbstractDataset(gf.makeDataset(x));
+		checkDatasets(pg, g);
+	}
+
+	private void checkDatasets(AbstractDataset a, AbstractDataset b) {
+		IndexIterator it = a.getIterator();
+		while (it.hasNext()) {
+			Assert.assertEquals(a.getElementDoubleAbs(it.index), b.getElementDoubleAbs(it.index), ABS_TOL);
+		}
 	}
 }

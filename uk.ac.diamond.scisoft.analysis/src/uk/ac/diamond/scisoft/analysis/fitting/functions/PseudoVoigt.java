@@ -24,8 +24,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 
-
-
 /**
  * PseudoVoigt Class
  */
@@ -40,22 +38,23 @@ public class PseudoVoigt extends APeak implements IPeak {
 	}
 
 	/**
-	 * 
+	 * Note, now (20131204) this constructor has a different order
 	 * @param position
-	 * @param gaussianFWHM
 	 * @param lorentzianFWHM
 	 * @param area
+	 * @param gaussianFWHM
 	 * @param mix
 	 */
-	public PseudoVoigt(double position, double gaussianFWHM, double lorentzianFWHM, double area, double mix) {
-		super(position, gaussianFWHM, lorentzianFWHM, area, mix);
+	public PseudoVoigt(double position, double lorentzianFWHM, double area, double gaussianFWHM, double mix) {
+		super(position, lorentzianFWHM, area, gaussianFWHM, mix);
 
 		setNames();
 	}
 	
 	/**
+	 * Note, now (20131204) this constructor has a different order
 	 * Initialise with set parameters
-	 * @param params Position, GaussianFWHM, LorentzianFWHM, Area, Mix(0-1)
+	 * @param params Position, LorentzianFWHM, Area, GaussianFWHM, Mix(0-1)
 	 */
 	public PseudoVoigt(IParameter... params) {
 		super(params);
@@ -146,7 +145,8 @@ public class PseudoVoigt extends APeak implements IPeak {
 		}
 	}
 
-	private static final double CONST = Math.sqrt(Math.PI / Math.log(2.));
+	private static final double CONST_A = Math.sqrt(Math.log(2.));
+	private static final double CONST_B = Math.sqrt(Math.PI / Math.log(2.));
 
 	double pos, halfwg, halfwl, mixing, height;
 	private void calcCachedParameters() {
@@ -156,7 +156,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 		mixing = getParameter(MIX).getValue();
 
 		height = getParameterValue(AREA) / (halfwl * Math.PI * mixing +
-				halfwg * CONST * (1 - mixing));
+				halfwg * CONST_B * (1 - mixing));
 
 		setDirty(false);
 	}
@@ -171,7 +171,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 		double dist = delta / halfwl;
 		double ex = mixing / (dist * dist + 1);
 		// Gaussian part
-		double arg = delta / halfwg;
+		double arg = CONST_A * delta / halfwg;
 		ex += (1 - mixing) * Math.exp(- arg * arg);
 
 		return ex * height;

@@ -164,7 +164,6 @@ public class PeakFittingEllipseFinder {
 					g.getParameter(0).getValue() < 0) continue;
 			
 			double r = g.getParameter(0).getValue();
-			logger.debug("peak found at " + r);
 			double x = r*Math.cos(i+ang)+beg[0];
 			double y = r*Math.sin(i+ang)+beg[1];
 			polyline.insertPoint(new PointROI(x,y));

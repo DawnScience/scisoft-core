@@ -23,14 +23,14 @@ public interface IOperator extends IFunction {
 
 	/**
 	 * Test if operator is extendible
-	 * @returntrue, if it can be extended
+	 * @return true, if it can be extended
 	 */
 	public boolean isExtendible();
 
 	/**
 	 * Get the number of functions in the (composite) function.
 	 * 
-	 * @return An integer which is the number of functions
+	 * @return number of functions
 	 */
 	public int getNoOfFunctions();
 

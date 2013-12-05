@@ -21,8 +21,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
  * Class which expands on the AFunction class to give the properties of a gaussian. A 1D implementation
  */
 public class Gaussian extends APeak implements IPeak {
-	private static final double FWHM_TO_SIGMA = 1. / Math.sqrt(8. * Math.log(2.));
-
 	private static final String cname = "Gaussian";
 	private static final String cdescription = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
 	private static final String[] paramNames = new String[]{"posn", "fwhm", "area"};
@@ -49,7 +47,7 @@ public class Gaussian extends APeak implements IPeak {
 		if (params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
-		getParameter(1).setLowerLimit(0.0);
+		getParameter(FWHM).setLowerLimit(0.0);
 
 		setNames();
 	}
@@ -59,28 +57,30 @@ public class Gaussian extends APeak implements IPeak {
 		if (params.length != 3) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
-		getParameter(1).setLowerLimit(0.0);
+		getParameter(FWHM).setLowerLimit(0.0);
 
 		setNames();
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters) {
 		super(3); 
-		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
-		double fwham2 = peakParameters.getFWHM()*2;
+		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
+		double fwhm2 = peakParameters.getFWHM() * 2;
 		double pos = peakParameters.getPos();
-		double maxArea = (peakParameters.getHeight()*2)*(range*2);
+		double maxArea = peakParameters.getHeight() * range * 4;
+
+		IParameter p;
+		p = getParameter(POSN);
+		p.setValue(pos);
+		p.setLimits(pos - fwhm2, pos + fwhm2);
+
+		p = getParameter(FWHM);
+		p.setLimits(0, range*2);
+		p.setValue(peakParameters.getFWHM() / 2);
 		
-		
- 		getParameter(0).setValue(pos);
-		getParameter(0).setLimits(pos - fwham2, pos+fwham2);
-		
-		getParameter(1).setLimits(0,range*2);
-		getParameter(1).setValue(peakParameters.getFWHM()/2);
-		
-		//area better fitting is generally found if sigma expands into the peak.
-		getParameter(2).setLimits(-maxArea,maxArea);
-		getParameter(2).setValue(peakParameters.getArea());
+		p = getParameter(AREA);
+		p.setLimits(-maxArea, maxArea);
+		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
 
 		setNames();
 	}
@@ -101,16 +101,7 @@ public class Gaussian extends APeak implements IPeak {
 	public Gaussian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		super(3);
 
-		getParameter(0).setValue(minPeakPosition + ((maxPeakPosition - minPeakPosition) / 2.0));
-		getParameter(0).setLimits(minPeakPosition, maxPeakPosition);
-
-		getParameter(1).setLimits(0.0, maxFWHM);
-		getParameter(1).setValue(maxFWHM / 10.0);
-
-		getParameter(2).setLowerLimit(-maxArea);
-		getParameter(2).setUpperLimit(maxArea);
-		// better fitting is generally found if sigma expands into the peak.
-		getParameter(2).setValue(maxArea / 2.0);
+		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
 		setNames();
 	}
@@ -124,12 +115,14 @@ public class Gaussian extends APeak implements IPeak {
 		}
 	}
 
-	double pos, sigma, norm;
+	private static final double CONST = Math.sqrt(4. * Math.log(2.));
+
+	double pos, sigma, height;
 	private void calcCachedParameters() {		
-		pos = getParameterValue(0);
-		sigma = getParameterValue(1) * FWHM_TO_SIGMA;
-		double area = getParameterValue(2);
-		norm = area / Math.sqrt(2.0 * Math.PI * sigma * sigma);
+		pos = getParameterValue(POSN);
+		sigma = getParameterValue(FWHM) / CONST;
+		double area = getParameterValue(AREA);
+		height = area / (Math.sqrt(Math.PI) * sigma);
 
 		setDirty(false);
 	}
@@ -139,39 +132,17 @@ public class Gaussian extends APeak implements IPeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double position = values[0];
-		double arg = (position - pos) / sigma; 
+		double arg = (values[0] - pos) / sigma; 
 
-		double ex = Math.exp(-0.5 * arg * arg);
-		return norm * ex;
+		double ex = Math.exp(- arg * arg);
+		return height * ex;
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
+	public double getHeight() {
+		if (isDirty())
+			calcCachedParameters();
 
-		out.append(String.format("Gaussian position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("Gaussian FWHM     has value %f within the bounds [%f,%f]\n", getParameterValue(1),
-				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		out.append(String.format("Gaussian area    has value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
-		return out.toString();
+		return height;
 	}
-
-	@Override
-	public double getArea() {
-		return getParameter(2).getValue();
-	}
-
-	@Override
-	public double getFWHM() {
-		return getParameter(1).getValue();
-	}
-
-	@Override
-	public double getPosition() {
-		return getParameter(0).getValue();
-	}
-
 }

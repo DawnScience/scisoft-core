@@ -22,30 +22,25 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
-public class PseudoVoigtTest {
+public class PearsonVIITest {
 
 	private static final double ABS_TOL = 1e-7;
 
 	@Test
 	public void testFunction() {
-		PseudoVoigt f = new PseudoVoigt();
-		Assert.assertEquals(5, f.getNoOfParameters());
-		f.setParameterValues(23., 2., 1.2, 2.3, 0.6);
-		Assert.assertArrayEquals(new double[] {23., 2., 1.2, 2.3, 0.6}, f.getParameterValues(), ABS_TOL);
+		IFunction f = new PearsonVII();
+		Assert.assertEquals(4, f.getNoOfParameters());
+		f.setParameterValues(23., 2., 1.2, 2);
+		Assert.assertArrayEquals(new double[] {23., 2., 1.2, 2}, f.getParameterValues(), ABS_TOL);
 
-		double l = 2 * 0.6 * Math.PI / 2;
-		double g = 2.3 * (1 - 0.6) * Math.sqrt(Math.PI / Math.log(2.)) / 2;
-		double h = 1.2 / (g + l);
-
+		double h = 1.2 * Math.sqrt(Math.sqrt(2) - 1) / (Math.PI / 2);
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
 
-		double dx = ((IPeak) f).getFWHM() / 2.;
-		Assert.assertEquals(0.5 * h, f.val(23. - dx), 1e-4);
-		Assert.assertEquals(0.5 * h, f.val(23. + dx), 1e-4);
+		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
+		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		AbstractDataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, AbstractDataset.FLOAT64);
+		AbstractDataset x = DatasetUtils.linSpace(-50+23, 50+23, 200, AbstractDataset.FLOAT64);
 		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
-		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
-		Assert.assertEquals(1.2, s, 1e-1);
+		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), 1e-4);
 	}
 }

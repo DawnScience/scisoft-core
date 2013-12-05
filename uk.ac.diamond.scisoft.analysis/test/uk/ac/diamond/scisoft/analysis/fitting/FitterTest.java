@@ -25,6 +25,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
 
 public class FitterTest {
 	@BeforeClass
@@ -104,4 +106,39 @@ public class FitterTest {
 		Assert.assertEquals(area*yAxisStep, result.getArea()[1], 0.1);
 	}
 
+	@Test
+	public void testLLSquareFit() {
+		DoubleDataset x = new DoubleDataset(new double[] {102,134,156});
+		DoubleDataset y = new DoubleDataset(new double[] {102.1,134.2,156.3});
+
+		Quadratic q = new Quadratic(new double[] {0, 1, 0});
+		try {
+			Fitter.llsqFit(new AbstractDataset[] {x}, y, q);
+
+			DoubleDataset z = q.makeDataset(x);
+			Assert.assertEquals(y.getDouble(0), z.getDouble(0), 0.1);
+			Assert.assertEquals(y.getDouble(1), z.getDouble(1), 0.1);
+			Assert.assertEquals(y.getDouble(2), z.getDouble(2), 0.1);
+		} catch (Exception e) {
+			Assert.fail("");
+		}
+	}
+
+	@Test
+	public void testPolyFit() {
+		DoubleDataset x = new DoubleDataset(new double[] {102,134,156});
+		DoubleDataset y = new DoubleDataset(new double[] {102.1,134.2,156.3});
+
+		try {
+			Polynomial fit = Fitter.polyFit(new AbstractDataset[] {x}, y, 1e-6, 2);
+
+			DoubleDataset z = fit.makeDataset(x);
+
+			Assert.assertEquals(y.getDouble(0), z.getDouble(0), 0.1);
+			Assert.assertEquals(y.getDouble(1), z.getDouble(1), 0.1);
+			Assert.assertEquals(y.getDouble(2), z.getDouble(2), 0.1);
+		} catch (Exception e) {
+			Assert.fail("");
+		}
+	}
 }

@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.special.Beta;
 
 
 /**
@@ -27,9 +27,9 @@ import org.apache.commons.math3.special.Gamma;
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static final String cname = "PearsonVII";
-	private static final String[] paramNames = new String[]{"Min Peak Position", "Max Peak Position", "Max FWHM", "Max Area"};
+	private static final String[] paramNames = new String[]{"posn", "fwhm", "area", "mix"};
 	private static final String cdescription = "y(x) = PearsonVII distribution";
-	private static final double[] params = new double[]{0,0,0,0};
+	private static final double[] params = new double[] { 0, 0, 0, 0 };
 
 	public PearsonVII() {
 		this(params);
@@ -59,31 +59,34 @@ public class PearsonVII extends APeak implements IPeak {
 		setNames();
 	}
 
-	double defaultMixing = 2;
+	private static final int POWER = AREA + 1;
+	private static final double DEF_POWER = 2;
+
 	public PearsonVII(IdentifiedPeak peakParameters) {
 		super(4); 
 		
-		//pos
+		// pos
 		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
-		getParameter(0).setValue(peakParameters.getPos());
-		getParameter(0).setLowerLimit(peakParameters.getMinXVal());//-range);
-		getParameter(0).setUpperLimit(peakParameters.getMaxXVal());//+range);
+		IParameter p;
+		p = getParameter(POSN);
+		p.setValue(peakParameters.getPos());
+		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
 		
-		//fwhm
-		getParameter(1).setLowerLimit(0);
-		getParameter(1).setUpperLimit(range*2);
-		getParameter(1).setValue(peakParameters.getFWHM()/2);
+		// fwhm
+		p = getParameter(FWHM);
+		p.setLimits(0, range*2);
+		p.setValue(peakParameters.getFWHM()/2);
 		
-		//mixing		
-		getParameter(2).setValue(defaultMixing);
-		getParameter(2).setLowerLimit(1.0);
-		getParameter(2).setUpperLimit(10.0);
+		// power
+		p = getParameter(POWER);
+		p.setValue(DEF_POWER);
+		p.setLimits(1.0, 10.0);
 
-		//area
+		// area
 		// better fitting is generally found if sigma expands into the peak.
-		getParameter(3).setLowerLimit(0);
-		getParameter(3).setUpperLimit((peakParameters.getHeight()*2)*(range*2));
-		getParameter(3).setValue(peakParameters.getArea()/2);
+		p = getParameter(AREA);
+		p.setLimits(0, peakParameters.getHeight()*range*4);
+		p.setValue(peakParameters.getArea()/2);
 
 		setNames();
 	}
@@ -107,45 +110,18 @@ public class PearsonVII extends APeak implements IPeak {
 	 * limit set to Double.MAX_VALUE.
 	 */
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
-		super(4);
-
-		getParameter(0).setValue(minPeakPosition + ((maxPeakPosition - minPeakPosition) / 2.0));
-		getParameter(0).setLowerLimit(minPeakPosition);
-		getParameter(0).setUpperLimit(maxPeakPosition);
-
-		getParameter(1).setLowerLimit(0);
-		getParameter(1).setUpperLimit(maxFWHM);
-		getParameter(1).setValue(maxFWHM / 2);
-
-		getParameter(2).setValue(defaultMixing);
-		getParameter(2).setLowerLimit(1.0);
-		getParameter(2).setUpperLimit(10.0);
-
-		getParameter(3).setLowerLimit(0.0);
-		getParameter(3).setUpperLimit(maxArea);
-		getParameter(3).setValue(maxArea / 10);
-
-		setNames();
+		this(minPeakPosition, maxPeakPosition, maxFWHM, maxArea, DEF_POWER);
 	}
 	
-	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double mixing) {
+	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double power) {
 		super(4);
 
-		getParameter(0).setLowerLimit(minPeakPosition);
-		getParameter(0).setUpperLimit(maxPeakPosition);
-		getParameter(0).setValue(minPeakPosition + ((maxPeakPosition - minPeakPosition) / 2.0));
+		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
-		getParameter(1).setLowerLimit(0);
-		getParameter(1).setUpperLimit(maxFWHM);
-		getParameter(1).setValue(maxFWHM / 10);
-
-		getParameter(2).setLowerLimit(1.0);
-		getParameter(2).setUpperLimit(10.0);
-		getParameter(2).setValue(mixing);
-
-		getParameter(3).setLowerLimit(-maxArea);
-		getParameter(3).setUpperLimit(maxArea);
-		getParameter(3).setValue(maxArea / 10);
+		IParameter p;
+		p = getParameter(POWER);
+		p.setLimits(1.0, 10.0);
+		p.setValue(power);
 
 		setNames();
 	}	
@@ -159,34 +135,15 @@ public class PearsonVII extends APeak implements IPeak {
 		}
 	}
 
-	double mean, FWHM, mixing, area, c2_fwhm, c3;
+	double pos, halfwp, power, height;
 
 	private void calcCachedParameters() {
+		pos = getParameterValue(POSN);
+		power = getParameterValue(POWER);
+		halfwp = 0.5 * getParameterValue(FWHM) / Math.sqrt(Math.pow(2, 1. / power)  - 1);
+		double beta = Math.exp(Beta.logBeta(power - 0.5,  0.5));
+		height = getParameterValue(AREA) / (beta * halfwp);
 
-		mean = getParameterValue(0);
-		FWHM = getParameterValue(1);
-		mixing = getParameterValue(2);
-		area = getParameterValue(3);
-		
-		
-		double c2top = 2.0* Math.pow(Math.E, Gamma.logGamma(mixing)) * Math.sqrt(Math.pow(2.0, 1.0/mixing)-1);
-		double c2bottom =  Math.pow(Math.E, Gamma.logGamma(mixing-0.5))* Math.sqrt(Math.PI);
-		
-		double c2 = c2top/c2bottom;
-		
-		c2_fwhm = c2/FWHM;		
-		
-		c3 = 4.0* Math.sqrt(Math.pow(2.0, 1.0/mixing)-1.0);
-		
-//		
-		
-		
-//		alpha = Math.sqrt(Math.pow(2, 1 / mixing) - 1);
-//		double a = (2 * Math.pow(Math.E ,Math.pow(Math.E,Gamma.logGamma(mixing)) )* alpha;
-//		double b = Math.pow(Math.E , Gamma.logGamma(mixing - 0.5)) * Math.sqrt(Math.PI);
-//	
-//		staticComponent = (a / b) / FWHM;
-		
 		setDirty(false);
 	}
 
@@ -195,42 +152,16 @@ public class PearsonVII extends APeak implements IPeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double position = values[0];
-		
-		double a = c3*Math.pow((position - mean),2) / Math.pow(FWHM,2);
-		
-		double result = c2_fwhm * Math.pow((1.0 + a), -mixing);
-		
-		//double result = area * staticComponent
-		//		* Math.pow((1 + (4*alpha * ((position - mean) * (position - mean))) / FWHM*FWHM), -mixing);
-		return result * area;
+		double a = (values[0] - pos) / halfwp;
+
+		return height / Math.pow((1.0 + a * a), power);
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("Pearson VII position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("Pearson VII standard deviation has value %f within the bounds [%f,%f]\n",
-				getParameterValue(1), getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		out.append(String.format("Pearson VII kurtosis has value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
-		return out.toString();
-	}
+	public double getHeight() {
+		if (isDirty())
+			calcCachedParameters();
 
-	@Override
-	public double getArea() {
-		return getParameter(3).getValue();
+		return height;
 	}
-
-	@Override
-	public double getFWHM() {
-		return getParameter(1).getValue();
-	}
-
-	@Override
-	public double getPosition() {
-		return getParameter(0).getValue();
-	}
-
 }

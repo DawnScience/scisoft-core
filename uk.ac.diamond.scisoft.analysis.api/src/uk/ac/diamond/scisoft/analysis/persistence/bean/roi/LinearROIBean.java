@@ -14,23 +14,38 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.fitting.functions;
+package uk.ac.diamond.scisoft.analysis.persistence.bean.roi;
 
-import org.junit.Assert;
-import org.junit.Test;
+public class LinearROIBean extends ROIBean {
 
-public class OffsetTest {
+	private double len;    // length
+	private double ang;    // angle in radians
+	private double[] endPoint;
 
-	private static final double ABS_TOL = 1e-7;
-
-	@Test
-	public void testFunction() {
-		IFunction f = new Offset();
-		Assert.assertEquals(1, f.getNoOfParameters());
-		f.setParameterValues(23.);
-		Assert.assertArrayEquals(new double[] {23.}, f.getParameterValues(), ABS_TOL);
-		Assert.assertEquals(23., f.val(), ABS_TOL);
-
-		Assert.assertEquals(1, f.partialDeriv(0, -1), ABS_TOL);
+	public LinearROIBean() {
+		type = "LinearROI";
 	}
+
+	public double getLength() {
+		return len;
+	}
+	public void setLength(double len) {
+		this.len = len;
+	}
+	public double getAngle() {
+		return ang;
+	}
+	public void setAngle(double ang) {
+		this.ang = ang;
+	}
+
+	public double[] getEndPoint() {
+		return endPoint;
+	}
+
+	public void setEndPoint(double[] endPoint) {
+		this.endPoint = endPoint;
+	}
+
+
 }

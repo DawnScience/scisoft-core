@@ -27,7 +27,7 @@ public class IdentifiedPeak implements Serializable {
 	public IdentifiedPeak() {
 	}
 
-	private double pos, minXVal, maxXVal, area, height, FWHM;
+	private double pos, minXVal, maxXVal, area, height, fullWidth;
 	private int indexOfDatasetAtMinPos, indexOfDatasetAtMaxPos;
 	
 	/**
@@ -112,26 +112,26 @@ public class IdentifiedPeak implements Serializable {
 	}
 
 	public void setFWHM(List<Double> crossings){
-		if(crossings.size()<2)
-			FWHM=getPos()-crossings.get(0)*2;
-		else{
-		// assumes that that is only 2 crossings
-		FWHM = crossings.get(1).doubleValue()-crossings.get(0).doubleValue();}
-		
+		if (crossings.size() < 2) {
+			fullWidth = getPos() - crossings.get(0) * 2;
+		} else {
+			// assumes that that is only 2 crossings
+			fullWidth = crossings.get(1).doubleValue() - crossings.get(0).doubleValue();
+		}
 	}
 
 	public void setFWHM(double fWHM) {
-		FWHM = fWHM;
+		fullWidth = fWHM;
 	}
 
 	public double getFWHM() {
-		return FWHM;
+		return fullWidth;
 	}
 
 	@Override
 	public String toString() {
 		return "IdentifiedPeak [pos=" + pos + ", minXVal=" + minXVal + ", maxXVal=" + maxXVal + ", area=" + area
-				+ ", height=" + height + ", FWHM=" + FWHM + ", indexOfDatasetAtMinPos=" + indexOfDatasetAtMinPos
+				+ ", height=" + height + ", FWHM=" + fullWidth + ", indexOfDatasetAtMinPos=" + indexOfDatasetAtMinPos
 				+ ", indexOfDatasetAtMaxPos=" + indexOfDatasetAtMaxPos + "]";
 	}
 }

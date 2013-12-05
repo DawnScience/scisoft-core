@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.fitting.functions;
+package uk.ac.diamond.scisoft.analysis.persistence.bean.roi;
 
-import org.junit.Assert;
-import org.junit.Test;
+public class PointROIBean extends ROIBean {
 
-public class OffsetTest {
-
-	private static final double ABS_TOL = 1e-7;
-
-	@Test
-	public void testFunction() {
-		IFunction f = new Offset();
-		Assert.assertEquals(1, f.getNoOfParameters());
-		f.setParameterValues(23.);
-		Assert.assertArrayEquals(new double[] {23.}, f.getParameterValues(), ABS_TOL);
-		Assert.assertEquals(23., f.val(), ABS_TOL);
-
-		Assert.assertEquals(1, f.partialDeriv(0, -1), ABS_TOL);
+	public PointROIBean () {
+		type = "PointROI";
 	}
 }

@@ -47,16 +47,16 @@ public class GeneticAlgFittingTest {
 	static double area;
 	static double delta;
 	private static List<CompositeFunction> fittedGaussian;
-	private static List<CompositeFunction> fittedLorenzian;
+	private static List<CompositeFunction> fittedLorentzian;
 	private static List<CompositeFunction> fittedPearsonVII;
 	private static List<CompositeFunction> fittedPseudoVoigt;
-	
+
 	static final long seed = 12357L;
 
 	public static void doFitting() {
 		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
-		fittedLorenzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
+		fittedLorentzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
 		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
 				new GeneticAlg(accuracy, seed), smoothing, numPeaks);
@@ -65,7 +65,7 @@ public class GeneticAlgFittingTest {
 	}
 
 	@BeforeClass
-	public static void setupTestEnvrionment() {
+	public static void setupTestEnvironment() {
 
 		gaussian = Generic1DDatasetCreater.createGaussianDataset();
 		lorentzian = Generic1DDatasetCreater.createLorentzianDataset();
@@ -81,6 +81,7 @@ public class GeneticAlgFittingTest {
 		fwhm = Generic1DDatasetCreater.defaultFWHM;
 		area = Generic1DDatasetCreater.defaultArea;
 		delta = Generic1DDatasetCreater.delta;
+
 		doFitting();
 	}
 
@@ -90,8 +91,8 @@ public class GeneticAlgFittingTest {
 	}
 
 	@Test
-	public void testNumberOfPeaksFoundLorenzian() {
-		Assert.assertEquals(1, fittedLorenzian.size());
+	public void testNumberOfPeaksFoundLorentzian() {
+		Assert.assertEquals(1, fittedLorentzian.size());
 	}
 
 	@Test
@@ -110,8 +111,8 @@ public class GeneticAlgFittingTest {
 	}
 
 	@Test
-	public void testPeakPosLorenzian() {
-		Assert.assertEquals(pos, fittedLorenzian.get(0).getPeak(0).getPosition(), delta);
+	public void testPeakPosLorentzian() {
+		Assert.assertEquals(pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
@@ -126,41 +127,41 @@ public class GeneticAlgFittingTest {
 
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(2, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
-	public void testFWHMLorenzian() {
-		Assert.assertEquals(0.3305, fittedLorenzian.get(0).getPeak(0).getFWHM(), delta);
+	public void testFWHMLorentzian() {
+		Assert.assertEquals(fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
 	}
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(10.0162, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(3.9792, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
+		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), 5*delta);
 	}
 
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(25, fittedGaussian.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
-	public void testAreaLorenzian() {
-		Assert.assertEquals(1.6602, fittedLorenzian.get(0).getPeak(0).getArea(), delta);
+	public void testAreaLorentzian() {
+		Assert.assertEquals(area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
 	}
 
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(5.0016, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), 2*delta);
 	}
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(24.8726, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 9*delta);
 	}
 }

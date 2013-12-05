@@ -55,27 +55,29 @@ public class Lorentzian extends APeak {
 
 	public Lorentzian(IParameter... params) {
 		super(params);
-
 		setNames();
 	}
 
 	public Lorentzian(IdentifiedPeak peakParameters) {
 		super(3);
 
-		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
-		getParameter(0).setValue(peakParameters.getPos());
-		getParameter(0).setLowerLimit(peakParameters.getMinXVal());//-range);
-		getParameter(0).setUpperLimit(peakParameters.getMaxXVal());//+range);
+		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
+		double maxArea = peakParameters.getHeight() * range * 4;
 
-		// height
-		getParameter(1).setLowerLimit(0);
-		getParameter(1).setUpperLimit(peakParameters.getHeight()*2);
-		getParameter(1).setValue(peakParameters.getHeight());
+		IParameter p;
+		p = getParameter(POSN);
+		p.setValue(peakParameters.getPos());
+		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
 
-		//fwhm
-		getParameter(2).setLowerLimit(0);
-		getParameter(2).setUpperLimit(range*2);
-		getParameter(2).setValue(peakParameters.getFWHM()/4);
+		// fwhm
+		p = getParameter(FWHM);
+		p.setLimits(0, range*2);
+		p.setValue(peakParameters.getFWHM() / 2);
+
+		// area
+		p = getParameter(AREA);
+		p.setLimits(-maxArea, maxArea);
+		p.setValue(peakParameters.getArea() / 2);
 
 		setNames();
 	}
@@ -88,26 +90,15 @@ public class Lorentzian extends APeak {
 	 *            The minimum value of the peak position
 	 * @param maxPeakPosition
 	 *            The maximum value of the peak position
-	 * @param maxHeight
-	 *            The maximum height of the peak
-	 * @param maxHalfWidth
-	 *            The maximum half width at half maximum
+	 * @param maxFWHM
+	 *            Full width at half maximum
+	 * @param maxArea
+	 *            The maximum area of the peak
 	 */
-	public Lorentzian(double minPeakPosition, double maxPeakPosition, double maxHeight, double maxHalfWidth) {
+	public Lorentzian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		super(3);
 
-		getParameter(0).setValue((minPeakPosition + maxPeakPosition) / 2.0);
-		getParameter(0).setLowerLimit(minPeakPosition);
-		getParameter(0).setUpperLimit(maxPeakPosition);
-
-		getParameter(1).setLowerLimit(0.0);
-		getParameter(1).setUpperLimit(maxHeight);
-		getParameter(1).setValue(maxHeight / 2.0);
-
-		getParameter(2).setLowerLimit(0.0);
-		getParameter(2).setUpperLimit(maxHalfWidth);
-		// better fitting is generally found if sigma expands into the peak.
-		getParameter(2).setValue(maxHalfWidth / 10.0);
+		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
 		setNames();
 	}
@@ -121,16 +112,12 @@ public class Lorentzian extends APeak {
 		}
 	}
 
-	double hwhm, hwhm_sq, mean, one_by_pi, area;
+	double halfw, pos, height;
 
 	private void calcCachedParameters() {
-		mean = getParameterValue(0);
-		double FWHM = getParameterValue(1);
-		area = getParameterValue(2);
-		
-		hwhm = FWHM/2.0;
-		hwhm_sq = hwhm*hwhm;
-		one_by_pi = 1.0/Math.PI;
+		pos = getParameterValue(POSN);
+		halfw = getParameterValue(FWHM) / 2.0;
+		height = getParameterValue(AREA) / (Math.PI * halfw);
 
 		setDirty(false);
 	}
@@ -140,37 +127,15 @@ public class Lorentzian extends APeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double position = values[0];
-		double dist = position - mean;
-		double result = one_by_pi * (hwhm / ((dist*dist) + hwhm_sq));
-		return area * result;
+		double dist = (values[0] - pos) / halfw;
+		return height / ( dist * dist + 1);
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder out = new StringBuilder();
-		out.append(String.format("Lorentzian position has value %f within the bounds [%f,%f]\n", getParameterValue(0),
-				getParameter(0).getLowerLimit(), getParameter(0).getUpperLimit()));
-		out.append(String.format("Lorentzian area     has value %f within the bounds [%f,%f]\n", getParameterValue(1),
-				getParameter(1).getLowerLimit(), getParameter(1).getUpperLimit()));
-		out.append(String.format("Lorentzian gamma    has value %f within the bounds [%f,%f]", getParameterValue(2),
-				getParameter(2).getLowerLimit(), getParameter(2).getUpperLimit()));
-		return out.toString();
-	}
+	public double getHeight() {
+		if (isDirty())
+			calcCachedParameters();
 
-	@Override
-	public double getArea() {
-		return getParameter(2).getValue(); 
+		return height;
 	}
-
-	@Override
-	public double getFWHM() {
-		return getParameter(1).getValue();
-	}
-
-	@Override
-	public double getPosition() {
-		return getParameter(0).getValue();
-	}
-
 }

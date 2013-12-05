@@ -99,31 +99,32 @@ public class GaussianND extends AFunction {
 		}
 
 		int n = 0;
+		IParameter p;
 		for (int i = 0; i < rank; i++) {
-			getParameter(n).setLowerLimit(minPeakPosition[i]);
-			getParameter(n).setUpperLimit(maxPeakPosition[i]);
-			getParameter(n).setValue((minPeakPosition[i] + maxPeakPosition[i]) / 2.0);
-			n++;
+			p = getParameter(n++);
+			p.setLowerLimit(minPeakPosition[i]);
+			p.setUpperLimit(maxPeakPosition[i]);
+			p.setValue((minPeakPosition[i] + maxPeakPosition[i]) / 2.0);
 		}
 
-		getParameter(n).setLowerLimit(0);
-		getParameter(n).setUpperLimit(maxVol);
-		getParameter(n).setValue(maxVol / 2.0);
-		n++;
+		p = getParameter(n++);
+		p.setLowerLimit(0);
+		p.setUpperLimit(maxVol);
+		p.setValue(maxVol / 2.0);
 
 		double sigmasq = maxSigma * maxSigma;
 		for (int i = 0; i < rank; i++) {
-			getParameter(n).setLowerLimit(0);
-			getParameter(n).setUpperLimit(sigmasq);
-			getParameter(n).setValue(sigmasq/100.);
-			n++;
+			p = getParameter(n++);
+			p.setLowerLimit(0);
+			p.setUpperLimit(sigmasq);
+			p.setValue(sigmasq/100.);
 		}
 		for (int i = 0; i < rank; i++) {
 			for (int j = i + 1; j < rank; j++) {
-				getParameter(n).setLowerLimit(-1);
-				getParameter(n).setUpperLimit(1);
-				getParameter(n).setValue(0);
-				n++;
+				p = getParameter(n++);
+				p.setLowerLimit(-1);
+				p.setUpperLimit(1);
+				p.setValue(0);
 			}
 		}
 

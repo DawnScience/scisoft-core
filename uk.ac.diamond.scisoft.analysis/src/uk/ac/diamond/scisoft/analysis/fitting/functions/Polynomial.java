@@ -149,17 +149,6 @@ public class Polynomial extends AFunction {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder out = new StringBuilder();
-
-		for (int i = 0; i < nparams; i++) {
-			out.append(String.format("Parameter %d has value %f within the bounds [%f,%f]\n", i, getParameterValue(i), 
-					getParameter(i).getLowerLimit(), getParameter(i).getUpperLimit()));
-		}
-		return out.substring(0, out.length() - 1);
-	}
-
-	@Override
 	public double partialDeriv(int parameter, double... position) {
 		if (parameter < 0 || parameter >= nparams)
 			throw new IndexOutOfBoundsException("Parameter index is out of bounds");

@@ -40,5 +40,12 @@ public class CompositeFunctionTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, cf.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, cf.val(-1), ABS_TOL);
+
+		Assert.assertEquals(-1, cf.partialDeriv(0, -1), ABS_TOL);
+		Assert.assertEquals(1, cf.partialDeriv(1, -1), ABS_TOL);
+		Assert.assertEquals(-1, cf.partialDeriv(2, -1), ABS_TOL);
+		Assert.assertEquals(1, cf.partialDeriv(3, -1), ABS_TOL);
+		Assert.assertEquals(-1, cf.partialDeriv(4, -1), ABS_TOL);
+		Assert.assertEquals(1, cf.partialDeriv(5, -1), ABS_TOL);
 	}
 }

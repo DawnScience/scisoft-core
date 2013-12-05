@@ -73,6 +73,8 @@ public class NumPyFile {
 		infos.add(DataTypeInfo.create().setNumPyType("<i4").setDType(AbstractDataset.INT32).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<u4").setDType(AbstractDataset.INT32).setISize(1).setUnsigned(true));
 		infos.add(DataTypeInfo.create().setNumPyType("<i8").setDType(AbstractDataset.INT64).setISize(1));
+		// Unsigned 64 bits cannot be unwrapped so do not set its unsignedness
+		infos.add(DataTypeInfo.create().setNumPyType("<u8").setDType(AbstractDataset.INT64).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f4").setDType(AbstractDataset.FLOAT32).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f8").setDType(AbstractDataset.FLOAT64).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<c8").setDType(AbstractDataset.COMPLEX64).setISize(2));

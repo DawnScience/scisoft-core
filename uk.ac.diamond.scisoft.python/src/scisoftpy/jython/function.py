@@ -27,8 +27,8 @@ cubic      -- cubic function, a*x^3 + b*x^2 + c*x + d: [a,b,c,d]
 step       -- double step profile: [base, start, end, outer step, inner step, inner width fraction, inner offset fraction]  
 gaussian   -- Gaussian profile (normal profile): [position, FWHM, area]
 lorentzian -- Lorentzian profile (Cauchy or Breit-Wigner profile): [position, FWHM, area]
-pvoigt     -- pseudo-Voigt profile: [position, Gaussian FWHM, Lorentzian FWHM, area, mixing]
-pearson7   -- Pearson VII profile: [position, FWHM, mixing, area]
+pvoigt     -- pseudo-Voigt profile: [position, Lorentzian FWHM, area, Gaussian FWHM, mixing (fraction of Lorentzian)]
+pearson7   -- Pearson VII profile: [position, FWHM, area, power]
 
 '''
 

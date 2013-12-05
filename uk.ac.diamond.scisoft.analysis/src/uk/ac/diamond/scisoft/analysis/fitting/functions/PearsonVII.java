@@ -27,7 +27,7 @@ import org.apache.commons.math3.special.Beta;
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static final String cname = "PearsonVII";
-	private static final String[] paramNames = new String[]{"posn", "fwhm", "area", "mix"};
+	private static final String[] paramNames = new String[]{"posn", "fwhm", "area", "power"};
 	private static final String cdescription = "y(x) = PearsonVII distribution";
 	private static final double[] params = new double[] { 0, 0, 0, 0 };
 
@@ -41,8 +41,8 @@ public class PearsonVII extends APeak implements IPeak {
 	 * <pre>
 	 *    position
 	 *    FWHM
-	 *    Area
-	 *    mixing
+	 *    area
+	 *    power
 	 * </pre>
 	 * 
 	 * @param params
@@ -76,17 +76,17 @@ public class PearsonVII extends APeak implements IPeak {
 		p = getParameter(FWHM);
 		p.setLimits(0, range*2);
 		p.setValue(peakParameters.getFWHM()/2);
-		
-		// power
-		p = getParameter(POWER);
-		p.setValue(DEF_POWER);
-		p.setLimits(1.0, 10.0);
 
 		// area
 		// better fitting is generally found if sigma expands into the peak.
 		p = getParameter(AREA);
 		p.setLimits(0, peakParameters.getHeight()*range*4);
 		p.setValue(peakParameters.getArea()/2);
+
+		// power
+		p = getParameter(POWER);
+		p.setValue(DEF_POWER);
+		p.setLimits(1.0, 10.0);
 
 		setNames();
 	}
@@ -103,16 +103,16 @@ public class PearsonVII extends APeak implements IPeak {
 	 *            The maximum full width half maximum
 	 * @param maxArea
 	 *            The maximum area under the PDF 
-	 *            
-	 * There is also a mixing parameter for the Pearson VII distrubution. This parameter defines the mixture between 
-	 * Gaussian and Lorentzian function. Where m = 1 the function is Lorentzian and m = infinity the function is Gaussian. 
-	 * With this constructor the mixing parameter is set to 10 with the lower limit set to 1 and the Upper 
-	 * limit set to Double.MAX_VALUE.
+	 * 
+	 * There is also a power parameter for the Pearson VII distribution. This parameter defines form as
+	 * somewhere between a Gaussian and a Lorentzian function. When m = 1 the function is Lorentzian and
+	 * m = infinity the function is Gaussian. With this constructor the mixing parameter is set to 2 with
+	 * the lower limit set to 1 and the upper limit set to 10.
 	 */
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		this(minPeakPosition, maxPeakPosition, maxFWHM, maxArea, DEF_POWER);
 	}
-	
+
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double power) {
 		super(4);
 

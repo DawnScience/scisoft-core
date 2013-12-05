@@ -31,10 +31,10 @@ fitting functions defined in ``fit.function`` listed in the table below:
 | lorentzian | Lorentzian profile (Cauchy or       | position, FWHM, area              |
 |            | Breit-Wigner profile)               |                                   |
 +------------+-------------------------------------+-----------------------------------+
-| pvoigt     | pseudo-Voigt profile                | position, Gaussian FWHM,          |
-|            |                                     | Lorentzian FWHM, area, mixing     |
+| pvoigt     | pseudo-Voigt profile                | position, Lorentzian FWHM,        |
+|            |                                     | area, Gaussian FWHM, mixing       |
 +------------+-------------------------------------+-----------------------------------+
-| pearson7   | Pearson VII profile                 | position, FWHM, mixing, area      |
+| pearson7   | Pearson VII profile                 | position, FWHM, area, power       |
 +------------+-------------------------------------+-----------------------------------+
 
 Functions defined in Jython can also be used as long as they conform to a

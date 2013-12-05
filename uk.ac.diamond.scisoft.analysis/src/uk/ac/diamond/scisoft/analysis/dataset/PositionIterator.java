@@ -88,6 +88,7 @@ public class PositionIterator extends IndexIterator {
 		start = new int[rank];
 		stop = shape.clone();
 		step = new int[rank];
+		pos = new int[rank];
 		Arrays.fill(step, 1);
 		reset();
 	}
@@ -174,7 +175,9 @@ public class PositionIterator extends IndexIterator {
 
 	@Override
 	public void reset() {
-		pos = start.clone();
+		for (int i = 0; i <= endrank; i++)
+			pos[i] = start[i];
+
 		int j = 0;
 		for (; j <= endrank; j++) {
 			if (!omit[j])

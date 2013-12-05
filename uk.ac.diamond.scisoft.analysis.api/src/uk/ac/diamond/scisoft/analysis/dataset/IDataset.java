@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+
 
 /**
  * This interface defines the implementation-independent and generic parts of a dataset
@@ -156,11 +157,10 @@ public interface IDataset extends ILazyDataset {
 	 */
 	@Override
 	public IDataset clone();
-	
+
 	/**
-	 * Provides a reference to the meta data which describes this data.
-	 * @return the IMetadata, may be null.
+	 * @return the metadata, may be null
 	 */
+	@Override
 	public IMetaData getMetadata();
-	
 }

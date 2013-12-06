@@ -20,7 +20,7 @@ package uk.ac.diamond.scisoft.analysis.persistence.bean.roi;
  * A converter can be used to convert these bean to IROI<br> 
  * (See uk.ac.diamond.scisoft.analysis.persistence.bean.roi.ROIBeanConverter) 
  */
-public class ROIBean {
+public abstract class ROIBean {
 
 	protected String type;
 

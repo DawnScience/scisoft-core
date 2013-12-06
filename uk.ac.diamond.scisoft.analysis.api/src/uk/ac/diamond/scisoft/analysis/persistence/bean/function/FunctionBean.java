@@ -42,6 +42,11 @@ public class FunctionBean {
 	protected String name;
 	protected int type;
 	protected IParameter[] parameters;
+
+	public FunctionBean() {
+		
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -89,6 +94,4 @@ public class FunctionBean {
 			return false;
 		return true;
 	}
-
-
 }

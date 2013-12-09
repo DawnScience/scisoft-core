@@ -601,8 +601,8 @@ public abstract class AbstractDataset implements ADataset {
 	public static int getBestDType(final int atype, final int btype) {
 		int besttype;
 
-		int a = atype >= ARRAYINT8 ? atype / 100 : atype;
-		int b = btype >= ARRAYINT8 ? btype / 100 : btype;
+		int a = atype >= ARRAYINT8 ? atype / ARRAYMUL : atype;
+		int b = btype >= ARRAYINT8 ? btype / ARRAYMUL : btype;
 
 		besttype = a > b ? a : b;
 
@@ -610,7 +610,7 @@ public abstract class AbstractDataset implements ADataset {
 			if (besttype >= COMPLEX64) {
 				throw new IllegalArgumentException("Complex type cannot be promoted to compound type");
 			}
-			besttype *= 100;
+			besttype *= ARRAYMUL;
 		}
 
 		return besttype;

@@ -23,7 +23,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
-public class ApacheConjugateGradientFittingTest extends AbstractFittingTest {
+public class ApacheConjugateGradientFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {

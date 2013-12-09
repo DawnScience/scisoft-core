@@ -23,7 +23,7 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
 
-public class NelderMeadFittingTest extends AbstractFittingTest {
+public class NelderMeadFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {

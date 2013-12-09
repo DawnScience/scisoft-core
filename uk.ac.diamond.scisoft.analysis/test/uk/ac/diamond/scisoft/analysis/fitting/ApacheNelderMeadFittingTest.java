@@ -22,7 +22,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
-public class ApacheNelderMeadFittingTest extends AbstractFittingTest {
+public class ApacheNelderMeadFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {

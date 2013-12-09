@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 
-public class Generic1DDatasetCreater {
+public class Generic1DDatasetCreator {
 	
 	static final int dataRange = 100;
 	static final double peakPos = 50.0;

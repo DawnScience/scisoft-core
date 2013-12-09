@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
-public abstract class AbstractFittingTest {
+public abstract class AbstractFittingTestBase {
 
 	static DoubleDataset gaussian;
 	static DoubleDataset lorentzian;
@@ -69,20 +69,20 @@ public abstract class AbstractFittingTest {
 	@BeforeClass
 	public static void setupTestEnvironment() {
 
-		gaussian = Generic1DDatasetCreater.createGaussianDataset();
-		lorentzian = Generic1DDatasetCreater.createLorentzianDataset();
-		pearsonVII = Generic1DDatasetCreater.createPearsonVII();
-		pseudoVoigt = Generic1DDatasetCreater.createPseudoVoigt();
-		xAxis = Generic1DDatasetCreater.xAxis;
+		gaussian = Generic1DDatasetCreator.createGaussianDataset();
+		lorentzian = Generic1DDatasetCreator.createLorentzianDataset();
+		pearsonVII = Generic1DDatasetCreator.createPearsonVII();
+		pseudoVoigt = Generic1DDatasetCreator.createPseudoVoigt();
+		xAxis = Generic1DDatasetCreator.xAxis;
 
-		accuracy = Generic1DDatasetCreater.accuracy;
-		smoothing = Generic1DDatasetCreater.smoothing;
-		numPeaks = Generic1DDatasetCreater.numPeaks;
+		accuracy = Generic1DDatasetCreator.accuracy;
+		smoothing = Generic1DDatasetCreator.smoothing;
+		numPeaks = Generic1DDatasetCreator.numPeaks;
 
-		pos = Generic1DDatasetCreater.peakPos;
-		fwhm = Generic1DDatasetCreater.defaultFWHM;
-		area = Generic1DDatasetCreater.defaultArea;
-		delta = Generic1DDatasetCreater.delta;
+		pos = Generic1DDatasetCreator.peakPos;
+		fwhm = Generic1DDatasetCreator.defaultFWHM;
+		area = Generic1DDatasetCreator.defaultArea;
+		delta = Generic1DDatasetCreator.delta;
 	}
 
 	@Test

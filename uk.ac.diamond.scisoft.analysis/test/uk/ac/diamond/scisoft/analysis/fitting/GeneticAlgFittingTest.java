@@ -22,7 +22,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
-public class GeneticAlgFittingTest extends AbstractFittingTest {
+public class GeneticAlgFittingTest extends AbstractFittingTestBase {
 
 	static final long SEED = 12357L;
 

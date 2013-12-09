@@ -153,8 +153,8 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 * @param datasets
 	 */
 	public CompoundLongDataset(final ADataset... datasets) {
-		if (datasets.length <= 1) {
-			throw new IllegalArgumentException("Array of datasets must have length greater than one");
+		if (datasets.length < 1) {
+			throw new IllegalArgumentException("Array of datasets must have length greater than zero");
 		}
 
 		for (int i = 1; i < datasets.length; i++)

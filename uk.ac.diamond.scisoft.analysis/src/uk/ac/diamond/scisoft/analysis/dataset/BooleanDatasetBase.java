@@ -691,7 +691,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 
 		return sum;

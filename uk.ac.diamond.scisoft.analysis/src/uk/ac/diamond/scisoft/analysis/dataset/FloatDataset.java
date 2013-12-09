@@ -874,7 +874,7 @@ public class FloatDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
@@ -885,23 +885,47 @@ public class FloatDataset extends AbstractDataset {
 			// BOOLEAN_OMIT
 			double comp = 0;
 			if (ignoreNaNs) { // REAL_ONLY
-				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY
-					if (Double.isNaN(diff)) // REAL_ONLY
-						continue; // REAL_ONLY
-					final double err = diff * diff - comp; // REAL_ONLY
-					final double temp = sum + err; // REAL_ONLY
-					comp = (temp - sum) - err; // REAL_ONLY
-					sum = temp; // REAL_ONLY
+				if (w == null) { // REAL_ONLY
+					while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						final double err = diff * diff - comp; // REAL_ONLY
+						final double temp = sum + err; // REAL_ONLY
+						comp = (temp - sum) - err; // REAL_ONLY
+						sum = temp; // REAL_ONLY
+					} // REAL_ONLY
+				} else { // REAL_ONLY
+					IndexIterator it3 = w.getIterator(); // REAL_ONLY
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // REAL_ONLY
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // REAL_ONLY
+						final double temp = sum + err; // REAL_ONLY
+						comp = (temp - sum) - err; // REAL_ONLY
+						sum = temp; // REAL_ONLY
+					} // REAL_ONLY
 				} // REAL_ONLY
 			} else // REAL_ONLY
 			{
-				while (it1.hasNext() && it2.hasNext()) {
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-					final double err = diff * diff - comp;
-					final double temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+				if (w == null) {
+					while (it1.hasNext() && it2.hasNext()) {
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						final double err = diff * diff - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					IndexIterator it3 = w.getIterator();
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 			}
 		} else {
@@ -909,12 +933,23 @@ public class FloatDataset extends AbstractDataset {
 			IndexIterator it1 = getIterator();
 
 			double comp = 0;
-			while (it1.hasNext()) {
-				final double diff = data[it1.index] - v;
-				final double err = diff * diff - comp;
-				final double temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+			if (w == null) {
+				while (it1.hasNext()) {
+					final double diff = data[it1.index] - v;
+					final double err = diff * diff - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
+			} else {
+				IndexIterator it3 = w.getIterator();
+				while (it1.hasNext() && it3.hasNext()) {
+					final double diff = data[it1.index] - v;
+					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
 			}
 		}
 		return sum;

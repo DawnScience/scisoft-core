@@ -716,6 +716,17 @@ public interface ADataset extends IErrorDataset {
 	public double residual(Object o, boolean ignoreNaNs);
 
 	/**
+	 * Calculate residual of dataset with object o and weight. The weight is used to multiply
+	 * the squared differences
+	 * 
+	 * @param o
+	 * @param weight
+	 * @param ignoreNaNs if true, skip NaNs
+	 * @return sum of the squares of the differences
+	 */
+	public double residual(Object o, ADataset weight, boolean ignoreNaNs);
+
+	/**
 	 * @param ignoreInvalids if true, ignore NaNs and Infs
 	 * @return position of maximum value
 	 */

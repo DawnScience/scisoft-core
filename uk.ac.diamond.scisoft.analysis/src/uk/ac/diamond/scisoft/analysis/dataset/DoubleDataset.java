@@ -874,7 +874,7 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof ADataset) { // BOOLEAN_OMIT
 			ADataset bds = (ADataset) b; // BOOLEAN_OMIT
@@ -885,23 +885,47 @@ public class DoubleDataset extends AbstractDataset {
 			// BOOLEAN_OMIT
 			double comp = 0; // BOOLEAN_OMIT
 			if (ignoreNaNs) { // REAL_ONLY // BOOLEAN_OMIT
-				while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
-					if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
-						continue; // REAL_ONLY // BOOLEAN_OMIT
-					final double err = diff * diff - comp; // REAL_ONLY // BOOLEAN_OMIT
-					final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
-					comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
-					sum = temp; // REAL_ONLY // BOOLEAN_OMIT
+				if (w == null) { // REAL_ONLY // BOOLEAN_OMIT
+					while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
+						if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
+							continue; // REAL_ONLY // BOOLEAN_OMIT
+						final double err = diff * diff - comp; // REAL_ONLY // BOOLEAN_OMIT
+						final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
+						comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
+						sum = temp; // REAL_ONLY // BOOLEAN_OMIT
+					} // REAL_ONLY // BOOLEAN_OMIT
+				} else { // REAL_ONLY // BOOLEAN_OMIT
+					IndexIterator it3 = w.getIterator(); // REAL_ONLY // BOOLEAN_OMIT
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
+						if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
+							continue; // REAL_ONLY // BOOLEAN_OMIT
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // REAL_ONLY // BOOLEAN_OMIT
+						final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
+						comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
+						sum = temp; // REAL_ONLY // BOOLEAN_OMIT
+					} // REAL_ONLY // BOOLEAN_OMIT
 				} // REAL_ONLY // BOOLEAN_OMIT
 			} else // REAL_ONLY // BOOLEAN_OMIT
 			{ // BOOLEAN_OMIT
-				while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
-					final double err = diff * diff - comp; // BOOLEAN_OMIT
-					final double temp = sum + err; // BOOLEAN_OMIT
-					comp = (temp - sum) - err; // BOOLEAN_OMIT
-					sum = temp; // BOOLEAN_OMIT
+				if (w == null) { // BOOLEAN_OMIT
+					while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
+						final double err = diff * diff - comp; // BOOLEAN_OMIT
+						final double temp = sum + err; // BOOLEAN_OMIT
+						comp = (temp - sum) - err; // BOOLEAN_OMIT
+						sum = temp; // BOOLEAN_OMIT
+					} // BOOLEAN_OMIT
+				} else { // BOOLEAN_OMIT
+					IndexIterator it3 = w.getIterator(); // BOOLEAN_OMIT
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // BOOLEAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // BOOLEAN_OMIT
+						final double temp = sum + err; // BOOLEAN_OMIT
+						comp = (temp - sum) - err; // BOOLEAN_OMIT
+						sum = temp; // BOOLEAN_OMIT
+					} // BOOLEAN_OMIT
 				} // BOOLEAN_OMIT
 			} // BOOLEAN_OMIT
 		} else { // BOOLEAN_OMIT
@@ -909,12 +933,23 @@ public class DoubleDataset extends AbstractDataset {
 			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
 
 			double comp = 0; // BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				final double diff = data[it1.index] - v; // BOOLEAN_OMIT
-				final double err = diff * diff - comp; // BOOLEAN_OMIT
-				final double temp = sum + err; // BOOLEAN_OMIT
-				comp = (temp - sum) - err; // BOOLEAN_OMIT
-				sum = temp; // BOOLEAN_OMIT
+			if (w == null) { // BOOLEAN_OMIT
+				while (it1.hasNext()) { // BOOLEAN_OMIT
+					final double diff = data[it1.index] - v; // BOOLEAN_OMIT
+					final double err = diff * diff - comp; // BOOLEAN_OMIT
+					final double temp = sum + err; // BOOLEAN_OMIT
+					comp = (temp - sum) - err; // BOOLEAN_OMIT
+					sum = temp; // BOOLEAN_OMIT
+				} // BOOLEAN_OMIT
+			} else { // BOOLEAN_OMIT
+				IndexIterator it3 = w.getIterator(); // BOOLEAN_OMIT
+				while (it1.hasNext() && it3.hasNext()) { // BOOLEAN_OMIT
+					final double diff = data[it1.index] - v; // BOOLEAN_OMIT
+					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // BOOLEAN_OMIT
+					final double temp = sum + err; // BOOLEAN_OMIT
+					comp = (temp - sum) - err; // BOOLEAN_OMIT
+					sum = temp; // BOOLEAN_OMIT
+				} // BOOLEAN_OMIT
 			} // BOOLEAN_OMIT
 		} // BOOLEAN_OMIT
 		return sum;

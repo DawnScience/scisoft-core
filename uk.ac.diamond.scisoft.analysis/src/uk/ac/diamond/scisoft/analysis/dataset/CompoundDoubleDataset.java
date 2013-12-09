@@ -1184,7 +1184,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof ADataset) {
 			final ADataset bds = (ADataset) b;
@@ -1196,52 +1196,108 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 			if (bis == 1) {
 				double comp = 0;
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index);
-					if (ignoreNaNs) {
-						if (Double.isNaN(db))
-							continue;
-						boolean skip = false;
-						for (int i = 0; i < isize; i++) {
-							if (Double.isNaN(data[it1.index + i])) {
-								skip = true;
-								break;
+				if (w == null) {
+					while (it1.hasNext() && it2.hasNext()) {
+						final double db = bds.getElementDoubleAbs(it2.index);
+						if (ignoreNaNs) {
+							if (Double.isNaN(db))
+								continue;
+							boolean skip = false;
+							for (int i = 0; i < isize; i++) {
+								if (Double.isNaN(data[it1.index + i])) {
+									skip = true;
+									break;
+								}
+							}
+							if (skip) {
+								continue;
 							}
 						}
-						if (skip) {
-							continue;
+						for (int i = 0; i < isize; i++) {
+							final double diff = data[it1.index + i] - db;
+							final double err = diff * diff - comp;
+							final double temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
 						}
 					}
-					for (int i = 0; i < isize; i++) {
-						final double diff = data[it1.index + i] - db;
-						final double err = diff * diff - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+				} else {
+					final IndexIterator it3 = w.getIterator();
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+						final double db = bds.getElementDoubleAbs(it2.index);
+						final double dw = w.getElementDoubleAbs(it3.index);
+						if (ignoreNaNs) {
+							if (Double.isNaN(db))
+								continue;
+							boolean skip = false;
+							for (int i = 0; i < isize; i++) {
+								if (Double.isNaN(data[it1.index + i])) {
+									skip = true;
+									break;
+								}
+							}
+							if (skip) {
+								continue;
+							}
+						}
+						for (int i = 0; i < isize; i++) {
+							final double diff = (data[it1.index + i] - db);
+							final double err = diff * diff * dw - comp;
+							final double temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
 					}
 				}
 			} else if (bis == isize) {
 				double comp = 0;
-				while (it1.hasNext() && it2.hasNext()) {
-					if (ignoreNaNs) {
-						boolean skip = false;
-						for (int i = 0; i < isize; i++) {
-							if (Double.isNaN(data[it1.index + i])
-									|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
-								skip = true;
-								break;
+				if (w == null) {
+					while (it1.hasNext() && it2.hasNext()) {
+						if (ignoreNaNs) {
+							boolean skip = false;
+							for (int i = 0; i < isize; i++) {
+								if (Double.isNaN(data[it1.index + i])
+										|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
+									skip = true;
+									break;
+								}
+							}
+							if (skip) {
+								continue;
 							}
 						}
-						if (skip) {
-							continue;
+						for (int i = 0; i < isize; i++) {
+							final double diff = data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i);
+							final double err = diff * diff - comp;
+							final double temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
 						}
 					}
-					for (int i = 0; i < isize; i++) {
-						final double diff = data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i);
-						final double err = diff * diff - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+				} else {
+					final IndexIterator it3 = w.getIterator();
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+						if (ignoreNaNs) {
+							boolean skip = false;
+							for (int i = 0; i < isize; i++) {
+								if (Double.isNaN(data[it1.index + i])
+										|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
+									skip = true;
+									break;
+								}
+							}
+							if (skip) {
+								continue;
+							}
+						}
+						final double dw = w.getElementDoubleAbs(it3.index);
+						for (int i = 0; i < isize; i++) {
+							final double diff = (data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i));
+							final double err = diff * diff * dw - comp;
+							final double temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
 					}
 				}
 			} else {
@@ -1266,25 +1322,51 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			}
 
 			double comp = 0;
-			while (it1.hasNext()) {
-				if (ignoreNaNs) {
-					boolean skip = false;
-					for (int i = 0; i < isize; i++) {
-						if (Double.isNaN(data[it1.index + i])) {
-							skip = true;
-							break;
+			if (w == null) {
+				while (it1.hasNext()) {
+					if (ignoreNaNs) {
+						boolean skip = false;
+						for (int i = 0; i < isize; i++) {
+							if (Double.isNaN(data[it1.index + i])) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
+							continue;
 						}
 					}
-					if (skip) {
-						continue;
+					for (int i = 0; i < isize; i++) {
+						final double diff = data[it1.index + i] - vr[i];
+						final double err = diff * diff - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
 					}
 				}
-				for (int i = 0; i < isize; i++) {
-					final double diff = data[it1.index + i] - vr[i];
-					final double err = diff * diff - comp;
-					final double temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+			} else {
+				final IndexIterator it3 = w.getIterator();
+				while (it1.hasNext() && it3.hasNext()) {
+					if (ignoreNaNs) {
+						boolean skip = false;
+						for (int i = 0; i < isize; i++) {
+							if (Double.isNaN(data[it1.index + i])) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
+							continue;
+						}
+					}
+					final double dw = w.getElementDoubleAbs(it3.index);
+					for (int i = 0; i < isize; i++) {
+						final double diff = data[it1.index + i] - vr[i];
+						final double err = diff * diff * dw - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 			}
 		}

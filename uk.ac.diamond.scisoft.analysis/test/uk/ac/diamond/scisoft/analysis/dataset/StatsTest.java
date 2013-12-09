@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,14 +57,24 @@ public class StatsTest {
 		start += System.nanoTime();
 		System.out.printf("New residual takes %.3fms\n", start*1e-6);
 
+		DoubleDataset tw = new DoubleDataset(ta.getSize());
+		double wv = 2.5;
+		tw.fill(wv);
+		double wres = Stats.weightedResidual(ta, tb, tw);
+		assertEquals(msg, wv*res, wres, 1e-14*res);
+
 		Number ores = null;
 		start = -System.nanoTime();
 		for (int i = 0; i < 5; i++)
 			ores = (Number) Maths.square(Maths.subtract(ta, tb)).sum();
 		start += System.nanoTime();
 		System.out.printf("Old residual takes %.3fms\n", start*1e-6);
-
 		assertEquals(msg, res, ores.doubleValue(), 1e-14*res);
+
+		Number owres = (Number) Maths.multiply(Maths.square(Maths.subtract(ta, tb)), tw).sum();
+		assertEquals(msg, wv * ores.doubleValue(), owres.doubleValue(), 1e-13*owres.doubleValue());
+
+		assertEquals(msg, wres, owres.doubleValue(), 1e-14*wres);
 	}
 
 	/**

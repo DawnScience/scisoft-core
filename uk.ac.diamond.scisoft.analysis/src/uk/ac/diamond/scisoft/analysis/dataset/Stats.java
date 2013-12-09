@@ -1587,6 +1587,17 @@ public class Stats {
 	}
 
 	/**
+	 * The residual is the sum of squared differences
+	 * @param a
+	 * @param b
+	 * @param w
+	 * @return residual value
+	 */
+	public static double weightedResidual(final AbstractDataset a, final AbstractDataset b, final AbstractDataset w) {
+		return a.residual(b, w, false);
+	}
+
+	/**
 	 * Calculate approximate outlier values. These are defined as the values in the dataset
 	 * that are approximately below and above the given thresholds - in terms of percentages
 	 * of dataset size.

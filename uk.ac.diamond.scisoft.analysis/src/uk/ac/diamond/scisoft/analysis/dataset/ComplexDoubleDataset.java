@@ -727,62 +727,117 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
 			checkCompatibility(bds);
 
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
+			final IndexIterator it1 = getIterator();
+			final IndexIterator it2 = bds.getIterator();
 			double comp = 0;
 
 			switch (bds.getDtype()) {
 			case COMPLEX64: case COMPLEX128:
 				if (ignoreNaNs) {
-					while (it1.hasNext() && it2.hasNext()) {
-						double diffr, diffi, err, temp;
-						diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-						if (Double.isNaN(diffr) || Double.isNaN(diffi))
-							continue;
-
-						err = diffr*diffr - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-
-						err = diffi*diffi - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+					if (w == null) {
+						while (it1.hasNext() && it2.hasNext()) {
+							double diffr, diffi, err, temp;
+							diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+							diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+							if (Double.isNaN(diffr) || Double.isNaN(diffi))
+								continue;
+	
+							err = diffr*diffr - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+	
+							err = diffi*diffi - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
+					} else {
+						final IndexIterator it3 = w.getIterator();
+						while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+							double dw = w.getElementDoubleAbs(it3.index);
+							double diffr, diffi, err, temp;
+							diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+							diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+							if (Double.isNaN(diffr) || Double.isNaN(diffi))
+								continue;
+	
+							err = diffr*diffr*dw - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+	
+							err = diffi*diffi*dw - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
 					}
 				} else {
-					while (it1.hasNext() && it2.hasNext()) {
-						double diff, err, temp;
-						diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						err = diff*diff - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-
-						diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-						err = diff*diff - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+					if (w == null) {
+						while (it1.hasNext() && it2.hasNext()) {
+							double diff, err, temp;
+							diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+							err = diff*diff - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+	
+							diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+							err = diff*diff - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
+					} else {
+						final IndexIterator it3 = w.getIterator();
+						while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+							double dw = w.getElementDoubleAbs(it3.index);
+							double diff, err, temp;
+							diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+							err = diff*diff*dw - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+	
+							diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
+							err = diff*diff*dw - comp;
+							temp = sum + err;
+							comp = (temp - sum) - err;
+							sum = temp;
+						}
 					}
 				}
 				break;
 			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-					if (ignoreNaNs && Double.isInfinite(diff))
-						continue;
-					final double err  = diff*diff - comp;
-					final double temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+				if (w == null) {
+					while (it1.hasNext() && it2.hasNext()) {
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						if (ignoreNaNs && Double.isInfinite(diff))
+							continue;
+						final double err  = diff*diff - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					final IndexIterator it3 = w.getIterator();
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+						double dw = w.getElementDoubleAbs(it3.index);
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						if (ignoreNaNs && Double.isInfinite(diff))
+							continue;
+						final double err  = diff*diff*dw - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 				break;
 			}
@@ -795,38 +850,78 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 			IndexIterator it1 = getIterator();
 
 			double comp = 0;
-			if (ignoreNaNs) {
-				while (it1.hasNext()) {
-					double diffr, diffi, err, temp;
-					diffr = data[it1.index] - zv.getReal();
-					diffi = data[it1.index + 1] - zv.getImaginary();
-					if (Double.isNaN(diffr) || Double.isNaN(diffi))
-						continue;
-
-					err = diffr*diffr - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
-
-					err = diffi*diffi - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+			if (w == null) {
+				if (ignoreNaNs) {
+					while (it1.hasNext()) {
+						double diffr, diffi, err, temp;
+						diffr = data[it1.index] - zv.getReal();
+						diffi = data[it1.index + 1] - zv.getImaginary();
+						if (Double.isNaN(diffr) || Double.isNaN(diffi))
+							continue;
+	
+						err = diffr*diffr - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+	
+						err = diffi*diffi - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					while (it1.hasNext()) {
+						double diff, err, temp;
+						diff = data[it1.index] - zv.getReal();
+						err = diff*diff - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+	
+						diff = data[it1.index + 1] - zv.getImaginary();
+						err = diff*diff - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 			} else {
-				while (it1.hasNext()) {
-					double diff, err, temp;
-					diff = data[it1.index] - zv.getReal();
-					err = diff*diff - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
-
-					diff = data[it1.index + 1] - zv.getImaginary();
-					err = diff*diff - comp;
-					temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+				final IndexIterator it3 = w.getIterator();
+				if (ignoreNaNs) {
+					while (it1.hasNext() && it3.hasNext()) {
+						double dw = w.getElementDoubleAbs(it3.index);
+						double diffr, diffi, err, temp;
+						diffr = data[it1.index] - zv.getReal();
+						diffi = data[it1.index + 1] - zv.getImaginary();
+						if (Double.isNaN(diffr) || Double.isNaN(diffi))
+							continue;
+	
+						err = diffr*diffr*dw - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+	
+						err = diffi*diffi*dw - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					while (it1.hasNext() && it3.hasNext()) {
+						double dw = w.getElementDoubleAbs(it3.index);
+						double diff, err, temp;
+						diff = data[it1.index] - zv.getReal();
+						err = diff*diff*dw - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+	
+						diff = data[it1.index + 1] - zv.getImaginary();
+						err = diff*diff*dw - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 			}
 		}

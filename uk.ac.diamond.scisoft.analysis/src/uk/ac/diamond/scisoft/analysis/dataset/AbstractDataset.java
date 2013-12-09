@@ -3098,7 +3098,7 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	@Override
 	public double residual(final Object o) {
-		return residual(o, false);
+		return residual(o, null, false);
 	}
 
 	/**
@@ -3109,7 +3109,9 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return sum of the squares of the differences
 	 */
 	@Override
-	abstract public double residual(final Object o, boolean ignoreNaNs);
+	public double residual(final Object o, boolean ignoreNaNs) {
+		return residual(o, null, ignoreNaNs);
+	}
 
 	public static final String STORE_HASH = "hash";
 	protected static final String STORE_SHAPELESS_HASH = "shapelessHash";

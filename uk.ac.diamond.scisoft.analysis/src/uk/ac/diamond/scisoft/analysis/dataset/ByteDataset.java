@@ -853,7 +853,7 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b, boolean ignoreNaNs) {
+	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
 		double sum = 0;
 		if (b instanceof ADataset) {
 			ADataset bds = (ADataset) b;
@@ -864,12 +864,23 @@ public class ByteDataset extends AbstractDataset {
 			// BOOLEAN_OMIT
 			double comp = 0;
 			{
-				while (it1.hasNext() && it2.hasNext()) {
-					final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-					final double err = diff * diff - comp;
-					final double temp = sum + err;
-					comp = (temp - sum) - err;
-					sum = temp;
+				if (w == null) {
+					while (it1.hasNext() && it2.hasNext()) {
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						final double err = diff * diff - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				} else {
+					IndexIterator it3 = w.getIterator();
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
 				}
 			}
 		} else {
@@ -877,12 +888,23 @@ public class ByteDataset extends AbstractDataset {
 			IndexIterator it1 = getIterator();
 
 			double comp = 0;
-			while (it1.hasNext()) {
-				final double diff = data[it1.index] - v;
-				final double err = diff * diff - comp;
-				final double temp = sum + err;
-				comp = (temp - sum) - err;
-				sum = temp;
+			if (w == null) {
+				while (it1.hasNext()) {
+					final double diff = data[it1.index] - v;
+					final double err = diff * diff - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
+			} else {
+				IndexIterator it3 = w.getIterator();
+				while (it1.hasNext() && it3.hasNext()) {
+					final double diff = data[it1.index] - v;
+					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
+					final double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
 			}
 		}
 		return sum;

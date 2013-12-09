@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +98,11 @@ public class PeakFittingEllipseFinder {
 			
 		}
 		
+		if (polyline.getNumberOfPoints() < 75) {
+			logger.debug("not enough points");
+			return null;
+		}
+		
 		return polyline;
 	}
 	
@@ -108,7 +116,10 @@ public class PeakFittingEllipseFinder {
 		
 		double ang = inner.getAngle();
 		
-		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/64)) {
+		List<PointROI> roiList = new ArrayList<PointROI>();
+		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
+		
+		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/128)) {
 			double[] beg = inner.getPoint(i);
 			double[] end = outer.getPoint(i);
 			
@@ -133,8 +144,8 @@ public class PeakFittingEllipseFinder {
 			
 			sub.isubtract(min);
 			
-			double s = (Double)Stats.median(sub.getSlice(new int[] {0}, new int[] {2}, new int[] {1}));
-			double en = (Double)Stats.median(sub.getSlice(new int[] {sub.getSize()-4}, new int[] {sub.getSize()-1}, new int[] {1}));
+			double s = (Double)Stats.median(sub.getSlice(new int[] {0}, new int[] {3}, new int[] {1}));
+			double en = (Double)Stats.median(sub.getSlice(new int[] {sub.getSize()-5}, new int[] {sub.getSize()-1}, new int[] {1}));
 			
 			double m = (s-en)/(0-sub.getSize()-1);
 			double c = s;
@@ -160,13 +171,26 @@ public class PeakFittingEllipseFinder {
 			
 			if (g == null) continue;
 			
-			if (g.getParameter(1).getValue() > 10 || g.getParameter(2).getValue() < 0 ||
-					g.getParameter(0).getValue() < 0) continue;
-			
 			double r = g.getParameter(0).getValue();
 			double x = r*Math.cos(i+ang)+beg[0];
 			double y = r*Math.sin(i+ang)+beg[1];
-			polyline.insertPoint(new PointROI(x,y));
+			roiList.add(new PointROI(x,y));
+			gaussianList.add(g);
+		}
+		
+		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);
+		
+		for (int i = 0; i < gaussianList.size(); i++) {
+			heights.set(gaussianList.get(i).getHeight(), i);
+		}
+		
+		double iqr = (Double)Stats.iqr(heights);
+		double threshold = (Double) heights.mean() - 2*iqr > 0 ? (Double) heights.mean() - 2*iqr : (Double) heights.mean();
+		
+		for (int i = 0; i < gaussianList.size(); i++) {
+			if (gaussianList.get(i).getHeight() > threshold) {
+				polyline.insertPoint(roiList.get(i));
+			}
 		}
 		
 		return polyline;

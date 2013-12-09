@@ -258,7 +258,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		 * number from the name, and write the algorithm to extract 
 		 */
 		final DataHolder dh = loadFile(mon);
-		final Map<String,ILazyDataset> ret = dh.getMap();
+		final Map<String,ILazyDataset> ret = dh.toLazyMap();
 		ret.keySet().retainAll(names);
 		return ret;
 	}	

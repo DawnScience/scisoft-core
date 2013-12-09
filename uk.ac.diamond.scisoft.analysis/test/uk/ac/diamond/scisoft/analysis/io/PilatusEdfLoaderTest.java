@@ -48,9 +48,9 @@ public class PilatusEdfLoaderTest {
 	private void testShortFile(final String filePath) throws Exception {
 		
 		DataHolder dataHolder = LoaderFactory.getData(filePath, null);		 		
-	    if (dataHolder.getMap().size()!=1) throw new Exception("Should only be one data set");
+	    if (dataHolder.toLazyMap().size()!=1) throw new Exception("Should only be one data set");
 
-	    final AbstractDataset set = (AbstractDataset)dataHolder.getMap().values().iterator().next();
+	    final AbstractDataset set = (AbstractDataset)dataHolder.toLazyMap().values().iterator().next();
 	    final int[] shape = set.getShape();
 	    if (shape[0]!=2048) throw new Exception("Wrong size of dimension 0, should be 2048!");
 	    if (shape[1]!=2048) throw new Exception("Wrong size of dimension 1, should be 2048!");

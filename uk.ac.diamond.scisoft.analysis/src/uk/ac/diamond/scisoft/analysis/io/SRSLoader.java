@@ -154,7 +154,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			
-			if (result.getMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
+			if (result.toLazyMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
 
 			if (loadMetadata) {
 				createMetadata();
@@ -420,7 +420,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 			writeHeader(out, dh);
 
-			int imax = dh.namesSize();
+			int imax = dh.size();
 
 			// now write out all of the data
 			int rows = dh.getDataset(0).getSize();
@@ -454,7 +454,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		out.write("&END\n");
 
 		// now write out the data names
-		int imax = dh.namesSize();
+		int imax = dh.size();
 		for (int i = 0; i < imax; i++) {
 			out.write(dh.getName(i) + "\t");
 		}

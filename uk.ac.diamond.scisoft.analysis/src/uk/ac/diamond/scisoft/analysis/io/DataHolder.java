@@ -68,7 +68,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
-		nameDataMappings = SynchronizedListHashedMap.synchronizedListHashMap(new ListHashedMap<String, ILazyDataset>());
+		nameDataMappings = SynchronizedListHashedMap.synchronizedListHashedMap(new ListHashedMap<String, ILazyDataset>());
 		metadata = new Metadata();
 	}
 

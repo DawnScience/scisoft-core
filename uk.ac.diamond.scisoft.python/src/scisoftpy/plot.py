@@ -480,6 +480,7 @@ def points(x, y=None, z=None, size=0, name=None):
     '''
     if name is None:
         name = _PVNAME
+    size = _core.asarray(size)
     if z is None:
         if y is None:
             _plot_points2d(name, _toList(x), size)
@@ -500,6 +501,7 @@ def addpoints(x, y, z=None, size=0, name=None):
     '''
     if name is None:
         name = _PVNAME
+    size = _core.asarray(size)
     if z is None:
         _plot_updatepoints2d(name, x, y, size)
     else:

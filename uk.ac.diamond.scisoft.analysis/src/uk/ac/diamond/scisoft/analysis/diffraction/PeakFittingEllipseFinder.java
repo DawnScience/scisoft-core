@@ -119,7 +119,7 @@ public class PeakFittingEllipseFinder {
 		List<PointROI> roiList = new ArrayList<PointROI>();
 		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
 		
-		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/128)) {
+		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/64)) {
 			double[] beg = inner.getPoint(i);
 			double[] end = outer.getPoint(i);
 			
@@ -179,16 +179,28 @@ public class PeakFittingEllipseFinder {
 		}
 		
 		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);
+		AbstractDataset widths = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
 			heights.set(gaussianList.get(i).getHeight(), i);
+			widths.set(gaussianList.get(i).getFWHM(), i);
 		}
 		
-		double iqr = (Double)Stats.iqr(heights);
-		double threshold = (Double) heights.mean() - 2*iqr > 0 ? (Double) heights.mean() - 2*iqr : (Double) heights.mean();
+		double hMean = (Double)heights.mean();
+		double wMean = (Double)widths.mean();
+		
+		double hiqr = (Double)Stats.iqr(heights);
+		double wiqr = (Double)Stats.iqr(widths);
+		
+		double upperw = wMean + 2*wiqr;
+		double lowerw = wMean - 2*wiqr;
+//		double threshold = (Double) heights.mean() - iqr > 0 ? (Double) heights.mean() - iqr : (Double) heights.mean();
+		double threshold = 0;
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
-			if (gaussianList.get(i).getHeight() > threshold) {
+			double pw = gaussianList.get(i).getFWHM();
+			double ph = gaussianList.get(i).getHeight();
+			if (gaussianList.get(i).getHeight() > threshold && pw > lowerw && pw < upperw) {
 				polyline.insertPoint(roiList.get(i));
 			}
 		}

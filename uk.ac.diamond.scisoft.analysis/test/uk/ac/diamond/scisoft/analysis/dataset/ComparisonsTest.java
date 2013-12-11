@@ -75,6 +75,13 @@ public class ComparisonsTest {
 	}
 
 	@Test
+	public void testAllCloseTo() {
+		Assert.assertFalse(Comparisons.allCloseTo(a, b, 0.1, 1e-3));
+
+		Assert.assertTrue(Comparisons.allCloseTo(a, b, 0.1, 2e-1));
+	}
+
+	@Test
 	public void testGreaterThan() {
 		BooleanDataset c = Comparisons.greaterThan(a, b);
 		BooleanDataset d = new BooleanDataset(new boolean[] {false, false, true, false, true, false});

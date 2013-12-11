@@ -158,7 +158,7 @@ public class Comparisons {
 	 * @param b
 	 * @param relTolerance
 	 * @param absTolerance
-	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*abs(b)
+	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
 	public static BooleanDataset almostEqualTo(AbstractDataset a, AbstractDataset b, double relTolerance, double absTolerance) {
 		a.checkCompatibility(b);
@@ -176,10 +176,10 @@ public class Comparisons {
 			while (ita.hasNext() && itb.hasNext()) {
 				boolean br = true;
 				final double db = b.getElementDoubleAbs(itb.index);
-				final double rt = relTolerance*Math.abs(db);
+				final double adb = Math.abs(db);
 				for (int j = 0; br && j < as; j++) {
 					final double da = a.getElementDoubleAbs(ita.index + j);
-					br &= Math.abs(da - db) <= absTolerance + rt;
+					br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), adb);
 				}
 				r.setAbs(i++, br);
 			}			
@@ -187,24 +187,27 @@ public class Comparisons {
 			while (ita.hasNext() && itb.hasNext()) {
 				boolean br = true;
 				final double da = a.getElementDoubleAbs(ita.index);
+				final double ada = Math.abs(da);
 				for (int j = 0; br && j < bs; j++) {
 					final double db = b.getElementDoubleAbs(itb.index + j);
-					br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.abs(db);
+					br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(ada, Math.abs(db));
 				}
 				r.setAbs(i++, br);
 			}
 		} else {
 			if (as == 1) {
 				while (ita.hasNext() && itb.hasNext()) {
+					final double da = a.getElementDoubleAbs(ita.index);
 					final double db = b.getElementDoubleAbs(itb.index);
-					r.setAbs(i++, Math.abs(a.getElementDoubleAbs(ita.index) - db) <= absTolerance + relTolerance*Math.abs(db));
+					r.setAbs(i++, Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)));
 				}
 			} else {
 				boolean br = true;
 				while (ita.hasNext() && itb.hasNext()) {
 					for (int j = 0; br && j < bs; j++) {
+						final double da = a.getElementDoubleAbs(ita.index + j);
 						final double db = b.getElementDoubleAbs(itb.index + j);
-						br &= Math.abs(a.getElementDoubleAbs(ita.index + j) - db) <= absTolerance + relTolerance*Math.abs(db);
+						br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db));
 					}
 					r.setAbs(i++, br);
 				}
@@ -223,7 +226,7 @@ public class Comparisons {
 	 * @param b
 	 * @param relTolerance
 	 * @param absTolerance
-	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*abs(b)
+	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
 	public static BooleanDataset almostEqualTo(Object a, Object b, double relTolerance, double absTolerance) {
 		BooleanDataset r = null;
@@ -243,33 +246,37 @@ public class Comparisons {
 				int i = 0;
 				if (as == 1) {
 					final double bv = AbstractDataset.toReal(b);
-					final double rt = relTolerance*Math.abs(bv);
 					while (ita.hasNext()) {
-						r.setAbs(i++, Math.abs(ad.getElementDoubleAbs(ita.index) - bv) <= absTolerance + rt);
+						final double av = ad.getElementDoubleAbs(ita.index);
+						r.setAbs(i++, Math.abs(av - bv) <= absTolerance + relTolerance*Math.max(Math.abs(av), Math.abs(bv)));
 					}
 				} else {
 					if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
 						final double bv = AbstractDataset.toReal(b);
-						final double rt = relTolerance*Math.abs(bv);
+						final double abv = Math.abs(bv);
 						final double bi = AbstractDataset.toImag(b);
+						final double abi = Math.abs(bi);
 
 						while (ita.hasNext()) {
-							boolean br = Math.abs(ad.getElementDoubleAbs(ita.index) - bv) <= absTolerance + rt;
-							if (br)
-								br &= Math.abs(ad.getElementDoubleAbs(ita.index + 1) - bi) <= absTolerance + rt;
+							double av = ad.getElementDoubleAbs(ita.index);
+							boolean br = Math.abs(av - bv) <= absTolerance + relTolerance*Math.max(Math.abs(av), abv);
+							if (br) {
+								av = ad.getElementDoubleAbs(ita.index + 1);
+								br &= Math.abs(av - bi) <= absTolerance + relTolerance*Math.max(Math.abs(av), abi);
+							}
 							r.setAbs(i++, br);
 						}
-						
 					} else {
 						final double[] bv = AbstractCompoundDataset.toDoubleArray(b, as);
-						final double[] rt = new double[as];
+						final double[] abv = new double[as];
 						for (int j = 0; j < as; j++) {
-							rt[j] = relTolerance*Math.abs(bv[j]);
+							abv[j] = Math.abs(bv[j]);
 						}
 						while (ita.hasNext()) {
 							boolean br = true;
 							for (int j = 0; br && j < as; j++) {
-								br &= Math.abs(ad.getElementDoubleAbs(ita.index + j) - bv[j]) <= absTolerance + rt[j];
+								double av = ad.getElementDoubleAbs(ita.index + j);
+								br &= Math.abs(av - bv[j]) <= absTolerance + relTolerance*Math.max(Math.abs(av), abv[j]);
 							}
 							r.setAbs(i++, br);
 						}
@@ -731,6 +738,72 @@ public class Comparisons {
 			}
 		}
 		return r;
+	}
+
+	/**
+	 * Compare item-wise for whether a's element is almost equal to b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are equal up to a tolerance. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param relTolerance
+	 * @param absTolerance
+	 * @return true if all items satisfy abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
+	 */
+	public static boolean allCloseTo(AbstractDataset a, AbstractDataset b, double relTolerance, double absTolerance) {
+		a.checkCompatibility(b);
+	
+		final IndexIterator ita = a.getIterator();
+		final IndexIterator itb = b.getIterator();
+	
+		final int as = a.getElementsPerItem();
+		final int bs = b.getElementsPerItem();
+	
+		if (as > bs) {
+			while (ita.hasNext() && itb.hasNext()) {
+				boolean br = true;
+				final double db = b.getElementDoubleAbs(itb.index);
+				final double adb = Math.abs(db);
+				for (int j = 0; br && j < as; j++) {
+					final double da = a.getElementDoubleAbs(ita.index + j);
+					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), adb))
+						return false;
+				}
+			}			
+		} else if (as < bs) {
+			while (ita.hasNext() && itb.hasNext()) {
+				boolean br = true;
+				final double da = a.getElementDoubleAbs(ita.index);
+				final double ada = Math.abs(da);
+				for (int j = 0; br && j < bs; j++) {
+					final double db = b.getElementDoubleAbs(itb.index + j);
+					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(ada, Math.abs(db)))
+						return false;
+				}
+			}
+		} else {
+			if (as == 1) {
+				while (ita.hasNext() && itb.hasNext()) {
+					final double da = a.getElementDoubleAbs(ita.index);
+					final double db = b.getElementDoubleAbs(itb.index);
+					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)))
+						return false;
+				}
+			} else {
+				boolean br = true;
+				while (ita.hasNext() && itb.hasNext()) {
+					for (int j = 0; br && j < bs; j++) {
+						final double da = a.getElementDoubleAbs(ita.index + j);
+						final double db = b.getElementDoubleAbs(itb.index + j);
+						if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)))
+							return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

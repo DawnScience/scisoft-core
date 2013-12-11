@@ -34,7 +34,8 @@ public class GaussianTest {
 		f.setParameterValues(23., 2., 1.2);
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
 
-		double cArea = 2 * Math.sqrt(Math.PI / (4. * Math.log(2.)));
+		double tln2 = Math.log(2.) * 2;
+		double cArea = 2 * Math.sqrt(Math.PI / (2. * tln2));
 		double h = 1.2 / cArea;
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
 
@@ -49,5 +50,28 @@ public class GaussianTest {
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {0.5 * h, h, h/16.}, dx.getData(), ABS_TOL);
+
+		double c = h * tln2;
+		Assert.assertEquals(0, f.partialDeriv(f.getParameter(0), 23.), ABS_TOL);
+		Assert.assertEquals(0.5 * c * -1, f.partialDeriv(f.getParameter(0), 23. - 1), ABS_TOL);
+		Assert.assertEquals(0.5 * c * 1,  f.partialDeriv(f.getParameter(0), 23. + 1), ABS_TOL);
+
+		Assert.assertEquals(-h/2, f.partialDeriv(f.getParameter(1), 23.), ABS_TOL);
+		Assert.assertEquals(0.5 * h * (tln2 / 2 - 1./2), f.partialDeriv(f.getParameter(1), 23. - 1), ABS_TOL);
+		Assert.assertEquals(0.5 * h * (tln2 / 2 - 1./2), f.partialDeriv(f.getParameter(1), 23. + 1), ABS_TOL);
+
+		Assert.assertEquals(h / 1.2, f.partialDeriv(f.getParameter(2), 23.), ABS_TOL);
+		Assert.assertEquals(0.5 * h / 1.2, f.partialDeriv(f.getParameter(2), 23. - 1), ABS_TOL);
+		Assert.assertEquals(0.5 * h / 1.2,  f.partialDeriv(f.getParameter(2), 23. + 1), ABS_TOL);
+
+		xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 1});
+		dx = f.calculatePartialDerivativeValues(f.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-0.5*c, 0, 0.5*c}, dx.getData(), ABS_TOL);
+
+		dx = f.calculatePartialDerivativeValues(f.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {0.25*h*(tln2 - 1), -h/2, 0.25*h*(tln2 - 1)}, dx.getData(), ABS_TOL);
+
+		dx = f.calculatePartialDerivativeValues(f.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {0.5*h/1.2, h/1.2, 0.5*h/1.2}, dx.getData(), ABS_TOL);
 	}
 }

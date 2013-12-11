@@ -41,6 +41,6 @@ public class OffsetTest {
 		dx = f.calculatePartialDerivativeValues(f.getParameter(0), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 
-		Assert.assertEquals(1, f.partialDeriv(0, -1), ABS_TOL);
+		Assert.assertEquals(1, f.partialDeriv(f.getParameter(0), -1), ABS_TOL);
 	}
 }

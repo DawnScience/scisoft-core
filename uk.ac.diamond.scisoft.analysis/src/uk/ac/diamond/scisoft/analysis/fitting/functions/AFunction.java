@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -237,16 +238,44 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public double partialDeriv(IParameter param, double... values) {
-		for (int i = 0, imax = getNoOfParameters(); i < imax; i++) {
-			IParameter p = getParameter(i);
-			if (p == param)
-				return numericalDerivative(DELTA, param, values);
-		}
+		if (indexOfParameter(param) < 0)
+			return 0;
 
-		return 0;
+		return calcNumericalDerivative(A_TOLERANCE, R_TOLERANCE, param, values);
 	}
 
-	private final static double DELTA = 1e-4;
+	private final static double DELTA = 1/256.; // initial value
+	private final static double DELTA_FACTOR = 0.25;
+
+	private final static double A_TOLERANCE = 1e-9; // absolute tolerance
+	private final static double R_TOLERANCE = 1e-9; // relative tolerance
+
+	/**
+	 * @param abs
+	 * @param rel
+	 * @param param
+	 * @param values
+	 * @return partial derivative up to tolerances
+	 */
+	protected double calcNumericalDerivative(double abs, double rel, IParameter param, double... values) {
+		double delta = DELTA;
+		double previous = numericalDerivative(delta, param, values);
+		double aprevious = Math.abs(previous);
+		double current = 0;
+		double acurrent = 0;
+
+		while (delta > Double.MIN_NORMAL) {
+			delta *= DELTA_FACTOR;
+			current = numericalDerivative(delta, param, values);
+			acurrent = Math.abs(current);
+			if (Math.abs(current - previous) <= abs + rel*Math.max(acurrent, aprevious))
+				break;
+			previous = current;
+			aprevious = acurrent;
+		}
+
+		return current;
+	}
 
 	/**
 	 * Calculate partial derivative. This is a numerical approximation.
@@ -254,7 +283,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param values
 	 * @return partial derivative
 	 */
-	protected double numericalDerivative(double delta, IParameter param, double... values) {
+	private double numericalDerivative(double delta, IParameter param, double... values) {
 		double v = param.getValue();
 		double dv = delta * (v != 0 ? v : 1);
 
@@ -337,7 +366,35 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param it
 	 */
 	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		fillWithNumericalDerivativeDataset(DELTA, param, data, it);
+		calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, param, data, it);
+	}
+
+	/**
+	 * Calculate partial derivatives up to tolerances
+	 * @param abs
+	 * @param rel
+	 * @param param
+	 * @param data
+	 * @param it
+	 */
+	protected void calcNumericalDerivativeDataset(double abs, double rel, IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		DoubleDataset previous = new DoubleDataset(it.getShape());
+		double delta = DELTA;
+		fillWithNumericalDerivativeDataset(delta, param, previous, it);
+		DoubleDataset current = new DoubleDataset(it.getShape());
+
+		while (delta > Double.MIN_NORMAL) {
+			delta *= DELTA_FACTOR;
+			fillWithNumericalDerivativeDataset(delta, param, current, it);
+			it.reset();
+			if (Comparisons.allCloseTo(previous, current, rel, abs))
+				break;
+
+			DoubleDataset temp = previous;
+			previous = current;
+			current = temp;
+		}
+		data.fill(current);
 	}
 
 	/**
@@ -347,7 +404,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param data
 	 * @param it
 	 */
-	protected void fillWithNumericalDerivativeDataset(double delta, IParameter param, DoubleDataset data, CoordinatesIterator it) {
+	private void fillWithNumericalDerivativeDataset(double delta, IParameter param, DoubleDataset data, CoordinatesIterator it) {
 		double v = param.getValue();
 		double dv = delta * (v != 0 ? v : 1);
 
@@ -365,7 +422,9 @@ public abstract class AFunction implements IFunction, Serializable {
 		dirty = true;
 	}
 
-
+	/**
+	 * @return true if any parameters have changed
+	 */
 	public boolean isDirty() {
 		return dirty;
 	}

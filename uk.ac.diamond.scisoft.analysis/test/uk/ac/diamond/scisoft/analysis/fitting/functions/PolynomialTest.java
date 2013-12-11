@@ -49,6 +49,5 @@ public class PolynomialTest {
 
 		dx = f.calculatePartialDerivativeValues(f.getParameter(3), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
-
 	}
 }

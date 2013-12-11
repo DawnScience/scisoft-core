@@ -1672,20 +1672,28 @@ public class AbstractDatasetTest {
 	}
 
 	public static void checkDatasets(AbstractDataset expected, AbstractDataset calc, double relTol, double absTol) {
+		checkDatasets(expected, calc, false, relTol, absTol);
+	}
+
+	public static void checkDatasets(AbstractDataset expected, AbstractDataset calc, boolean valuesOnly, double relTol, double absTol) {
 		int type = expected.getDtype();
-		Assert.assertEquals("Type", type, calc.getDtype());
-		Assert.assertEquals("Items", expected.getElementsPerItem(), calc.getElementsPerItem());
+		if (!valuesOnly) {
+			Assert.assertEquals("Type", type, calc.getDtype());
+			Assert.assertEquals("Items", expected.getElementsPerItem(), calc.getElementsPerItem());
+		}
 		Assert.assertEquals("Size", expected.getSize(), calc.getSize());
 		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
 		IndexIterator at = expected.getIterator(true);
 		IndexIterator bt = calc.getIterator();
-		final int is = calc.getElementsPerItem();
+		final int eis = expected.getElementsPerItem();
+		final int cis = calc.getElementsPerItem();
+		final int is = Math.max(eis, cis);
 
 		if (expected.elementClass().equals(Boolean.class)) {
 			while (at.hasNext() && bt.hasNext()) {
 				for (int j = 0; j < is; j++) {
-					boolean e = expected.getElementBooleanAbs(at.index + j);
-					boolean c = calc.getElementBooleanAbs(bt.index + j);
+					boolean e = j >= eis ? false : expected.getElementBooleanAbs(at.index + j);
+					boolean c = j >= cis ? false : calc.getElementBooleanAbs(bt.index + j);
 					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
 							": ", e, c);
 				}
@@ -1693,8 +1701,8 @@ public class AbstractDatasetTest {
 		} else if (expected.hasFloatingPointElements()) {
 			while (at.hasNext() && bt.hasNext()) {
 				for (int j = 0; j < is; j++) {
-					double e = expected.getElementDoubleAbs(at.index + j);
-					double c = calc.getElementDoubleAbs(bt.index + j);
+					double e = j >= eis ? 0 : expected.getElementDoubleAbs(at.index + j);
+					double c = j >= cis ? 0 : calc.getElementDoubleAbs(bt.index + j);
 					double t = Math.max(absTol, relTol*Math.max(Math.abs(e), Math.abs(c)));
 					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
 							": ", e, c, t);
@@ -1719,8 +1727,8 @@ public class AbstractDatasetTest {
 		} else {
 			while (at.hasNext() && bt.hasNext()) {
 				for (int j = 0; j < is; j++) {
-					long e = expected.getElementLongAbs(at.index + j);
-					long c = calc.getElementLongAbs(bt.index + j);
+					long e = j >= eis ? 0 : expected.getElementLongAbs(at.index + j);
+					long c = j >= cis ? 0 : calc.getElementLongAbs(bt.index + j);
 					Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
 							": ", e, c);
 				}
@@ -1844,5 +1852,44 @@ public class AbstractDatasetTest {
 		} catch (Throwable t) {
 			fail("Should have thrown an illegal argument exception");
 		}
+	}
+
+	@Test
+	public void testFill() {
+		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+
+		AbstractDataset b = AbstractDataset.zeros(a);
+		a.fill(b);
+		checkDatasets(a, b, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(3, a.getShapeRef(), AbstractDataset.ARRAYFLOAT32);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
+
+		a = AbstractDataset.arange(12, AbstractDataset.COMPLEX128);
+
+		b = AbstractDataset.zeros(a);
+		a.fill(b);
+		checkDatasets(a, b, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
+
+		b = AbstractDataset.zeros(3, a.getShapeRef(), AbstractDataset.ARRAYFLOAT32);
+		a.fill(b);
+		checkDatasets(a, b, true, 1e-15, 1e-20);
 	}
 }

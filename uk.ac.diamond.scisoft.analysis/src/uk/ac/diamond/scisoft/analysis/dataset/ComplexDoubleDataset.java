@@ -192,6 +192,25 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	 */
 	@Override
 	public ComplexDoubleDataset fill(final Object obj) {
+		if (obj instanceof IDataset) {
+			IDataset ds = (IDataset) obj;
+			if (!isCompatibleWith(ds)) {
+				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
+			}
+			IndexIterator itd = new PositionIterator(ds.getShape());
+			int[] pos = itd.getPos();
+			IndexIterator iter = getIterator();
+			while (iter.hasNext() && itd.hasNext()) {
+				Object o = ds.getObject(pos);
+				double vr = toReal(o); // PRIM_TYPE // ADD_CAST
+				double vi = toImag(o); // PRIM_TYPE // ADD_CAST
+				data[iter.index] = vr;
+				data[iter.index+1] = vi;
+			}
+
+			return this;
+		}
 		IndexIterator iter = getIterator();
 		double vr = toReal(obj); // PRIM_TYPE // ADD_CAST
 		double vi = toImag(obj); // PRIM_TYPE // ADD_CAST

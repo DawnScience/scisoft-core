@@ -37,7 +37,7 @@ public class ShortDataset extends AbstractDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient private static final Logger logger = LoggerFactory.getLogger(ShortDataset.class);
+	private static final Logger logger = LoggerFactory.getLogger(ShortDataset.class);
 
 	protected short[] data; // subclass alias // PRIM_TYPE
 
@@ -219,6 +219,21 @@ public class ShortDataset extends AbstractDataset {
 	 */
 	@Override
 	public ShortDataset fill(final Object obj) {
+		if (obj instanceof IDataset) {
+			IDataset ds = (IDataset) obj;
+			if (!isCompatibleWith(ds)) {
+				logger.error("Tried to fill with dataset of incompatible shape");
+				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
+			}
+			IndexIterator itd = new PositionIterator(ds.getShape());
+			int[] pos = itd.getPos();
+			IndexIterator iter = getIterator();
+			while (iter.hasNext() && itd.hasNext()) {
+				data[iter.index] = ds.getShort(pos); // PRIM_TYPE
+			}
+
+			return this;
+		}
 		short dv = (short) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
 		IndexIterator iter = getIterator();

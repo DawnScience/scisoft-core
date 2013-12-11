@@ -40,7 +40,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient private static final Logger abstractCompoundLogger = LoggerFactory.getLogger(AbstractCompoundDataset.class);
+	private static final Logger abstractCompoundLogger = LoggerFactory.getLogger(AbstractCompoundDataset.class);
 
 	protected int isize; // number of elements per item
 

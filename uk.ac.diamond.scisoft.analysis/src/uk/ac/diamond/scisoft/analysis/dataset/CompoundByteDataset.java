@@ -33,7 +33,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient private static final Logger compoundLogger = LoggerFactory.getLogger(CompoundByteDataset.class);
+	protected static final Logger compoundLogger = LoggerFactory.getLogger(CompoundByteDataset.class);
 
 	protected byte[] data; // subclass alias // PRIM_TYPE
 
@@ -292,6 +292,23 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	 */
 	@Override
 	public CompoundByteDataset fill(final Object obj) {
+		if (obj instanceof IDataset) {
+			IDataset ds = (IDataset) obj;
+			if (!isCompatibleWith(ds)) {
+				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
+			}
+			IndexIterator itd = new PositionIterator(ds.getShape());
+			int[] pos = itd.getPos();
+			IndexIterator iter = getIterator();
+			while (iter.hasNext() && itd.hasNext()) {
+				byte[] vr = toByteArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
+				for (int i = 0; i < isize; i++)
+					data[iter.index + i] = vr[i]; // PRIM_TYPE
+			}
+
+			return this;
+		}
 		IndexIterator iter = getIterator();
 		byte[] vr = toByteArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 

@@ -37,7 +37,7 @@ public class FloatDataset extends AbstractDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient private static final Logger logger = LoggerFactory.getLogger(FloatDataset.class);
+	private static final Logger logger = LoggerFactory.getLogger(FloatDataset.class);
 
 	protected float[] data; // subclass alias // PRIM_TYPE
 
@@ -219,6 +219,21 @@ public class FloatDataset extends AbstractDataset {
 	 */
 	@Override
 	public FloatDataset fill(final Object obj) {
+		if (obj instanceof IDataset) {
+			IDataset ds = (IDataset) obj;
+			if (!isCompatibleWith(ds)) {
+				logger.error("Tried to fill with dataset of incompatible shape");
+				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
+			}
+			IndexIterator itd = new PositionIterator(ds.getShape());
+			int[] pos = itd.getPos();
+			IndexIterator iter = getIterator();
+			while (iter.hasNext() && itd.hasNext()) {
+				data[iter.index] = ds.getFloat(pos); // PRIM_TYPE
+			}
+
+			return this;
+		}
 		float dv = (float) toReal(obj); // PRIM_TYPE // FROM_OBJECT
 
 		IndexIterator iter = getIterator();

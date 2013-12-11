@@ -922,6 +922,10 @@ public abstract class AbstractDataset implements ADataset {
 			return ((Boolean) b).booleanValue() ? 1 : 0;
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getReal();
+		} else if (b.getClass().isArray()) {
+			if (Array.getLength(b) == 0)
+				return 0;
+			return toReal(Array.get(b, 0));
 		} else {
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
@@ -934,6 +938,10 @@ public abstract class AbstractDataset implements ADataset {
 			return 0;
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getImaginary();
+		} else if (b.getClass().isArray()) {
+			if (Array.getLength(b) < 2)
+				return 0;
+			return toReal(Array.get(b, 1));
 		} else {
 			throw new IllegalArgumentException("Argument is not a number");
 		}

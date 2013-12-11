@@ -36,7 +36,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient private static final Logger logger = LoggerFactory.getLogger(BooleanDatasetBase.class);
+	private static final Logger logger = LoggerFactory.getLogger(BooleanDatasetBase.class);
 
 	protected boolean[] data; // subclass alias // PRIM_TYPE
 
@@ -193,6 +193,21 @@ public class BooleanDatasetBase extends AbstractDataset {
 	 */
 	@Override
 	public BooleanDatasetBase fill(final Object obj) {
+		if (obj instanceof IDataset) {
+			IDataset ds = (IDataset) obj;
+			if (!isCompatibleWith(ds)) {
+				logger.error("Tried to fill with dataset of incompatible shape");
+				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
+			}
+			IndexIterator itd = new PositionIterator(ds.getShape());
+			int[] pos = itd.getPos();
+			IndexIterator iter = getIterator();
+			while (iter.hasNext() && itd.hasNext()) {
+				data[iter.index] = ds.getBoolean(pos); // PRIM_TYPE
+			}
+
+			return this;
+		}
 		boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
 
 		IndexIterator iter = getIterator();

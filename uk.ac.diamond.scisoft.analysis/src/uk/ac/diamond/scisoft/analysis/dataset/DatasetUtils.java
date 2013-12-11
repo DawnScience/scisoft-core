@@ -1205,9 +1205,11 @@ public class DatasetUtils {
 
 	/**
 	 * Create a dataset from a compound dataset by using elements of an item as last axis
+	 * <p>
+	 * In the case where the number of elements is one, the last axis is squeezed out.
 	 * @param a
 	 * @param shareData if true, then share data
-	 * @return compound dataset
+	 * @return non-compound dataset
 	 */
 	public static AbstractDataset createDatasetFromCompoundDataset(final AbstractCompoundDataset a, final boolean shareData) {
 		Serializable buffer = shareData ? a.getBuffer() : a.clone().getBuffer();
@@ -1238,10 +1240,11 @@ public class DatasetUtils {
 		}
 
 		final int[] shape = a.getShape();
-		final int rank = shape.length + 1;
-		final int[] nshape = Arrays.copyOf(shape, rank);
 		final int is = a.getElementsPerItem();
-		nshape[rank-1] = is;
+		final int rank = is == 1 ? shape.length : shape.length + 1;
+		final int[] nshape = Arrays.copyOf(shape, rank);
+		if (is != 1)
+			nshape[rank-1] = is;
 
 		result.shape = nshape;
 		result.size = AbstractDataset.calcSize(nshape);

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -129,6 +131,21 @@ public class Lorentzian extends APeak {
 
 		double dist = (values[0] - pos) / halfw;
 		return height / ( dist * dist + 1);
+	}
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double dist = (coords[0] - pos) / halfw; 
+
+			buffer[i++] = height / ( dist * dist + 1);
+		}
 	}
 
 	@Override

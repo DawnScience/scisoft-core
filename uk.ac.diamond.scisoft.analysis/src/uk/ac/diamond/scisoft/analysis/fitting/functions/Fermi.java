@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Class that wrappers the Fermi function from Fermi-Dirac distribution
  * y(x) = scale / (exp((x - mu)/kT) + 1) + C
  */
-public class Fermi extends AFunction implements Serializable{
+public class Fermi extends AFunction implements Serializable {
 	
 	private static final String cname = "Fermi";
 	private static final String[] paramNames = new String[]{"mu", "kT", "scale", "Constant"};
@@ -116,7 +118,23 @@ public class Fermi extends AFunction implements Serializable{
 		
 		double arg = (position - mu) / kT;
 		
-		return (scale/(Math.exp(arg) + 1.0) + C);
+		return scale/(Math.exp(arg) + 1.0) + C;
 	}
 
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double position = coords[0];
+			
+			double arg = (position - mu) / kT;
+			
+			buffer[i++] = scale/(Math.exp(arg) + 1.0) + C;
+		}
+	}
 }

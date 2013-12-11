@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -96,4 +98,14 @@ public class Box extends AFunction {
 		return valFermi2 - valFermi1;
 	}
 
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		fermi1.fillWithValues(data, it);
+		it.reset();
+
+		DoubleDataset temp = new DoubleDataset(it.getShape());
+		fermi1.fillWithValues(temp, it);
+		it.reset();
+		data.isubtract(temp);
+	}
 }

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -123,7 +123,7 @@ public class Generic1DFitterNelderMeadTest {
 			function.addFunction(new PseudoVoigt(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM,
 					defaultArea));
 		}
-		DoubleDataset data = function.makeDataset(xAxis);
+		DoubleDataset data = function.calculateValues(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
 
@@ -135,7 +135,7 @@ public class Generic1DFitterNelderMeadTest {
 			function.addFunction(new PearsonVII(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM,
 					defaultArea));
 		}
-		DoubleDataset data = function.makeDataset(xAxis);
+		DoubleDataset data = function.calculateValues(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
 
@@ -147,7 +147,7 @@ public class Generic1DFitterNelderMeadTest {
 			function.addFunction(new Lorentzian(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultArea,
 					defaultFWHM/2));
 		}
-		DoubleDataset data = function.makeDataset(xAxis);
+		DoubleDataset data = function.calculateValues(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
 
@@ -158,7 +158,7 @@ public class Generic1DFitterNelderMeadTest {
 		for (int i = 0; i < numPeaks; i++) {
 			function.addFunction(new Gaussian(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM, defaultArea));
 		}
-		DoubleDataset data = function.makeDataset(xAxis);
+		DoubleDataset data = function.calculateValues(xAxis);
 		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
 	}
 
@@ -169,7 +169,7 @@ public class Generic1DFitterNelderMeadTest {
 	private DoubleDataset generateBackground() {
 		CompositeFunction comp = new CompositeFunction();
 		comp.addFunction(new Gaussian(-10, 10, dataRange / 4, dataRange / 2));
-		return comp.makeDataset(DoubleDataset.arange(dataRange));
+		return comp.calculateValues(DoubleDataset.arange(dataRange));
 	}
 
 	@SuppressWarnings("unused")

@@ -16,6 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Divide two functions
  */
@@ -31,9 +35,33 @@ public class Divide extends ABinaryOperator implements IOperator {
 	public double val(double... values) {
 		
 		double y = fa == null ? 0 : fa.val(values);
-		y /= fb == null ? 0 : fb.val(values);
+		y /= fb == null ? 1 : fb.val(values);
 
 		return y;
+	}
+
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (fa != null) {
+			if (fa instanceof AFunction) {
+				((AFunction) fa).fillWithValues(data, it);
+				it.reset();
+			} else {
+				data.iadd(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
+			}
+		}
+
+		if (fb != null) {
+			DoubleDataset temp = new DoubleDataset(it.getShape());
+			if (fb instanceof AFunction) {
+				((AFunction) fb).fillWithValues(temp, it);
+				it.reset();
+				data.idivide(temp);
+			} else {
+				data.idivide(DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues())));
+			}
+		}
 	}
 
 	@Override
@@ -57,5 +85,43 @@ public class Divide extends ABinaryOperator implements IOperator {
 			}
 		}
 		return d;
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		if (fa == null) {
+			if (fb == null) {
+				data.fill(Double.NaN);
+			}
+		} else {
+			DoubleDataset value = new DoubleDataset(it.getShape());
+			if (fa instanceof AFunction) {
+				((AFunction) fa).fillWithValues(value, it);
+				it.reset();
+				if (((AFunction) fa).indexOfParameter(param) >= 0) {
+					((AFunction) fa).fillWithPartialDerivativeValues(param, data, it);
+					it.reset();
+				}
+			} else {
+				value.iadd(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
+				if (indexOfParameter(fa, param) >= 0) { 
+					data.iadd(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
+				}
+			}
+
+			if (fb == null) {
+				data.idivide(0);
+			} else {
+				AbstractDataset b = DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues()));
+				data.idivide(b);
+
+				if (indexOfParameter(fb, param) >= 0) { 
+					value.imultiply(DatasetUtils.convertToAbstractDataset(fb.calculatePartialDerivativeValues(param, it.getValues())));
+					b.imultiply(b);
+					value.idivide(b);
+					data.isubtract(value);
+				}
+			}
+		}
 	}
 }

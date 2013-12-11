@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -146,6 +146,24 @@ public class Polynomial extends AFunction {
 			v = v * position + a[i];
 		}
 		return v;
+	}
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double v = a[0];
+			double p = coords[0];
+			for (int j = 1; j < nparams; j++) {
+				v = v * p + a[j];
+			}
+			buffer[i++] = v;
+		}
 	}
 
 	@Override

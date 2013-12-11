@@ -51,13 +51,13 @@ public class CompositeFunction extends Add {
 		
 		DoubleDataset[] outputs = new DoubleDataset[noOfFunctions + 1];
 
-		outputs[0] = makeDataset(values);
+		outputs[0] = calculateValues(values);
 		outputs[0].setName("Composite function");
 
 		// now add the data for each bit in turn
 		int j = 1;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(values), AbstractDataset.FLOAT64);
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(values), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 
@@ -82,7 +82,7 @@ public class CompositeFunction extends Add {
 		outputs[0] = new DoubleDataset(DataValues);
 
 		// now add the data
-		outputs[1] = makeDataset(XValues);
+		outputs[1] = calculateValues(XValues);
 		outputs[1].setName("Composite function");
 
 		// now add the errors to the graph, this should provide a good view to
@@ -99,7 +99,7 @@ public class CompositeFunction extends Add {
 		// now add the data for each bit in turn
 		int j = 4;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.makeDataset(XValues), AbstractDataset.FLOAT64);
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(XValues), AbstractDataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 

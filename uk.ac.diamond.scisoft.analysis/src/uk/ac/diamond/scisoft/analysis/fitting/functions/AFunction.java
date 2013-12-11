@@ -27,8 +27,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -81,6 +79,39 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	/**
+	 * @param f
+	 * @param p
+	 * @return index of parameter or -1 if parameter is not in function
+	 */
+	public static int indexOfParameter(IFunction f, IParameter p) {
+		if (f == null || p == null)
+			return -1;
+
+		if (f instanceof AFunction)
+			return ((AFunction) f).indexOfParameter(p);
+
+		for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
+			if (p == f.getParameter(j)) {
+				return j;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * @param p
+	 * @return index of parameter or -1 if parameter is not in function
+	 */
+	protected int indexOfParameter(IParameter p) {
+		for (int i = 0; i < parameters.length; i++) {
+			if (p == parameters[i]) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 * Constructor which takes a list of parameter values as its starting configuration
 	 * 
 	 * @param params
@@ -90,7 +121,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		if (params != null)
 			fillParameters(params);
 	}
-	
+
 	protected void fillParameters(double... params) {
 		parameters = new Parameter[params.length];
 		for (int i = 0; i < params.length; i++) {
@@ -156,8 +187,9 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public double[] getParameterValues() {
-		double[] result = new double[parameters.length];
-		for (int j = 0; j < parameters.length; j++) {
+		int n = getNoOfParameters();
+		double[] result = new double[n];
+		for (int j = 0; j < n; j++) {
 			result[j] = getParameterValue(j);
 		}
 		return result;
@@ -165,11 +197,12 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public void setParameter(int index, IParameter parameter) {
-		for (int j = 0; j < parameters.length; j++) {
-			if (parameter == parameters[j] && j != index) {
-				throw new IllegalArgumentException("Cannot set parameter as it is already used in function");
-			}
-		}
+		int j = indexOfParameter(parameter);
+		if (j == index)
+			return;
+		if (j >= 0)
+			throw new IllegalArgumentException("Cannot set parameter as it is already used in function");
+
 		parameters[index] = parameter;
 	}
 
@@ -197,8 +230,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
+	@Deprecated
 	public double partialDeriv(int index, double... values) {
-		return internalDerivative(getParameter(index), values);
+		return partialDeriv(getParameter(index), values);
 	}
 
 	@Override
@@ -206,7 +240,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		for (int i = 0, imax = getNoOfParameters(); i < imax; i++) {
 			IParameter p = getParameter(i);
 			if (p == param)
-				return internalDerivative(param, values);
+				return numericalDerivative(DELTA, param, values);
 		}
 
 		return 0;
@@ -216,14 +250,13 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	/**
 	 * Calculate partial derivative. This is a numerical approximation.
-	 * Override as necessary
 	 * @param param
 	 * @param values
 	 * @return partial derivative
 	 */
-	protected double internalDerivative(IParameter param, double... values) {
+	protected double numericalDerivative(double delta, IParameter param, double... values) {
 		double v = param.getValue();
-		double dv = DELTA * (v != 0 ? v : 1);
+		double dv = delta * (v != 0 ? v : 1);
 
 		param.setValue(v - dv);
 		dirty = true;
@@ -238,89 +271,100 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public DoubleDataset makeDataset(IDataset... values) {
-		DoubleDataset result = makeSerialDataset(values);
+		return calculateValues(values);
+	}
+
+	/**
+	 * @param coords
+	 * @return a coordinate iterator
+	 */
+	public CoordinatesIterator getIterator(IDataset... coords) {
+		if (coords == null || coords.length == 0) {
+			logger.error("No coordinates given to evaluate function");
+			throw new IllegalArgumentException("No coordinates given to evaluate function");
+		}
+
+		CoordinatesIterator it;
+		if (coords.length == 1) {
+			it = new CoordinateDatasetIterator(coords[0]);
+		} else {
+			int[] shape = coords[0].getShape();
+			boolean same = true;
+			for (int i = 1; i < shape.length; i++) {
+				if (!Arrays.equals(shape, coords[i].getShape())) {
+					same = false;
+					break;
+				}
+			}
+			if (same && shape.length == 1) // override for 1D datasets
+				same = false;
+
+			it = same ? new DatasetsIterator(coords) : new HypergridIterator(coords);
+		}
+		return it;
+	}
+
+	@Override
+	public DoubleDataset calculateValues(IDataset... coords) {
+		CoordinatesIterator it = getIterator(coords);
+		DoubleDataset result = new DoubleDataset(it.getShape());
+		fillWithValues(result, it);
 		result.setName(name);
 		return result;
 	}
 
-	protected DoubleDataset makeSerialDataset(IDataset... values) {
-		// make the dataset
-		if (values == null || values.length == 0) {
-			logger.error("No values given to evaluate function");
-			throw new IllegalArgumentException("No values given to evaluate function");
-		}
-
-		int rank = checkAndGetRank(values);
-
-		if (rank == 1) {
-//			logger.info("Make dataset from hypergrid");
-			return makeDatasetFromHypergrid(values);
-		}
-
-		return makeDatasetFromDatasets(values);
-	}
-
-	// check for type of independent variables definition
-	private static int checkAndGetRank(IDataset... values) {
-		int varlen = values.length;
-		int rank = values[0].getRank();
-		for (int i = 1; i < varlen; i++) {
-			if (values[i].getRank() != rank) {
-				logger.error("Input value dataset ({}) does not all possess the correct rank {}", i, rank);
-				throw new IllegalArgumentException("Input value dataset (" + i + ") does not all possess the correct rank " + rank);
-			}
-		}
-
-		return rank;
-	}
-
-	protected DoubleDataset makeDatasetFromHypergrid(IDataset... values) {
-		int endrank = values.length - 1;
-		int[] shape = new int[endrank + 1];
-		for (int i = 0; i <= endrank; i++) {
-			shape[i] = values[i].getShape()[0];
-		}
-
-		DoubleDataset result = new DoubleDataset(shape);
-
-		double[] data = result.getData();
-		IndexIterator iter = result.getIterator(true);
-		int[] pos = iter.getPos();
-		double[] coords = new double[endrank + 1];
-
-		while (iter.hasNext()) {
-			// shortcut that sets all coords only when starting a row
-			if (pos[endrank] == 0) {
-				for (int i = 0; i <= endrank; i++) {
-					coords[i] = values[i].getDouble(pos[i]);
-				}
-			} else {
-				coords[endrank] = values[endrank].getDouble(pos[endrank]);
-			}
-			data[iter.index] = val(coords);
-		}
+	@Override
+	public DoubleDataset calculatePartialDerivativeValues(IParameter param, IDataset... coords) {
+		CoordinatesIterator it = getIterator(coords);
+		DoubleDataset result = new DoubleDataset(it.getShape());
+		if (indexOfParameter(param) >= 0)
+			fillWithPartialDerivativeValues(param, result, it);
+		result.setName(name);
 		return result;
 	}
 
-	protected DoubleDataset makeDatasetFromDatasets(IDataset... values) {
-		int varlen = values.length;
-		int[] shape = values[0].getShape();
+	/**
+	 * Fill dataset with values
+	 * @param data
+	 * @param it
+	 */
+	abstract public void fillWithValues(DoubleDataset data, CoordinatesIterator it);
 
-		DoubleDataset result = new DoubleDataset(shape);
-
-		double[] data = result.getData();
-		IndexIterator iter = result.getIterator(true);
-		int[] pos = iter.getPos();
-		double[] coords = new double[varlen];
-
-		while (iter.hasNext()) {
-			for (int i = 0; i < varlen; i++) {
-				coords[i] = values[i].getDouble(pos);
-			}
-			data[iter.index] = val(coords);
-		}
-		return result;
+	/**
+	 * Fill dataset with partial derivatives. Override this numerical approximation
+	 * @param param
+	 * @param data
+	 * @param it
+	 */
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		fillWithNumericalDerivativeDataset(DELTA, param, data, it);
 	}
+
+	/**
+	 * Calculate partial derivative. This is a numerical approximation.
+	 * @param delta
+	 * @param param
+	 * @param data
+	 * @param it
+	 */
+	protected void fillWithNumericalDerivativeDataset(double delta, IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		double v = param.getValue();
+		double dv = delta * (v != 0 ? v : 1);
+
+		param.setValue(v + dv);
+		dirty = true;
+		fillWithValues(data, it);
+		it.reset();
+		param.setValue(v - dv);
+		dirty = true;
+		DoubleDataset temp = new DoubleDataset(it.getShape());
+		fillWithValues(temp, it);
+		data.isubtract(temp);
+		data.imultiply(0.5/dv);
+		param.setValue(v);
+		dirty = true;
+	}
+
 
 	public boolean isDirty() {
 		return dirty;
@@ -332,41 +376,14 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public double residual(boolean allValues, IDataset data, IDataset... values) {
+	public double weightedResidual(boolean allValues, IDataset weight, IDataset data, IDataset... values) {
 		double residual = 0;
 		if (allValues) {
 			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
-			double[] dbuffer = ddata.getData();
-			IndexIterator iter = ddata.getIterator(true);
-			int rank = checkAndGetRank(values);
-			int[] pos = iter.getPos();
-			if (rank == 1) {
-				int endrank = values.length - 1;
-				double[] coords = new double[endrank + 1];
-
-				while (iter.hasNext()) {
-					// shortcut that sets all coords only when starting a row
-					if (pos[endrank] == 0) {
-						for (int i = 0; i <= endrank; i++) {
-							coords[i] = values[i].getDouble(pos[i]);
-						}
-					} else {
-						coords[endrank] = values[endrank].getDouble(pos[endrank]);
-					}
-					double dev = dbuffer[iter.index] - val(coords);
-					residual += dev*dev;
-				}
+			if (weight == null) {
+				residual = ddata.residual(calculateValues(values));
 			} else {
-				int varlen = values.length;
-				double[] coords = new double[varlen];
-
-				while (iter.hasNext()) {
-					for (int i = 0; i < varlen; i++) {
-						coords[i] = values[i].getDouble(pos);
-					}
-					double dev = dbuffer[iter.index] - val(coords);
-					residual += dev*dev;
-				}
+				residual = ddata.residual(calculateValues(values), DatasetUtils.convertToAbstractDataset(weight), false);
 			}
 		} else {
 			// stochastic sampling of coords;
@@ -384,6 +401,11 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 
 		return residual;
+	}
+
+	@Override
+	public double residual(boolean allValues, IDataset data, IDataset... values) {
+		return weightedResidual(allValues, null, data, values);
 	}
 
 	@Override

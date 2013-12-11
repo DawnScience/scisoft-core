@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.apache.commons.math3.special.Beta;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -152,9 +154,24 @@ public class PearsonVII extends APeak implements IPeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double a = (values[0] - pos) / halfwp;
+		double arg = (values[0] - pos) / halfwp;
 
-		return height / Math.pow((1.0 + a * a), power);
+		return height / Math.pow((1.0 + arg * arg), power);
+	}
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double arg = (coords[0] - pos) / halfwp; 
+
+			buffer[i++] = height / Math.pow((1.0 + arg * arg), power);
+		}
 	}
 
 	@Override

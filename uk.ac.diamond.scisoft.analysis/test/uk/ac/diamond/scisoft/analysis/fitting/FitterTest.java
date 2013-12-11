@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ public class FitterTest {
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
 		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,0.1);
-		DoubleDataset ds = gauss.makeDataset(xAxis);
+		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		AFunction result = Fitter.GaussianFit(ds, xAxis);
 		
@@ -57,7 +57,7 @@ public class FitterTest {
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
 		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,0.1);
-		DoubleDataset ds = gauss.makeDataset(xAxis);
+		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		NDGaussianFitResult result = Fitter.NDGaussianSimpleFit(ds, xAxis);
 		
@@ -79,11 +79,11 @@ public class FitterTest {
 		
 		Gaussian gauss1 = new Gaussian(pos1,fwhm1,area1);
 		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,xAxisStep);
-		DoubleDataset ds1 = gauss1.makeDataset(xAxis);
+		DoubleDataset ds1 = gauss1.calculateValues(xAxis);
 		
 		Gaussian gauss2 = new Gaussian(pos2,fwhm2,area2);
 		DoubleDataset yAxis = DoubleDataset.arange(-20.0,20.0,yAxisStep);
-		DoubleDataset ds2 = gauss2.makeDataset(yAxis);
+		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
 		DoubleDataset ds = (DoubleDataset) AbstractDataset.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , AbstractDataset.FLOAT64);
 		
@@ -115,10 +115,10 @@ public class FitterTest {
 		try {
 			Fitter.llsqFit(new AbstractDataset[] {x}, y, q);
 
-			DoubleDataset z = q.makeDataset(x);
+			DoubleDataset z = q.calculateValues(x);
 			Assert.assertEquals(y.getDouble(0), z.getDouble(0), 0.1);
 			Assert.assertEquals(y.getDouble(1), z.getDouble(1), 0.1);
-			Assert.assertEquals(y.getDouble(2), z.getDouble(2), 0.1);
+			Assert.assertEquals(y.getDouble(2), z.getDouble(2), 0.2);
 		} catch (Exception e) {
 			Assert.fail("");
 		}
@@ -132,7 +132,7 @@ public class FitterTest {
 		try {
 			Polynomial fit = Fitter.polyFit(new AbstractDataset[] {x}, y, 1e-6, 2);
 
-			DoubleDataset z = fit.makeDataset(x);
+			DoubleDataset z = fit.calculateValues(x);
 
 			Assert.assertEquals(y.getDouble(0), z.getDouble(0), 0.1);
 			Assert.assertEquals(y.getDouble(1), z.getDouble(1), 0.1);

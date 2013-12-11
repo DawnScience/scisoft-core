@@ -19,6 +19,9 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 public class CompositeFunctionTest {
 
 	private static final double ABS_TOL = 1e-7;
@@ -39,13 +42,33 @@ public class CompositeFunctionTest {
 		Assert.assertEquals(6, cf.getNoOfParameters());
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, cf.getParameterValues(), ABS_TOL);
-		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, cf.val(-1), ABS_TOL);
+		double x = -23. - 10. - 1.2 - 5.2 - 4.2 - 7.5;
+		Assert.assertEquals(x, cf.val(-1), ABS_TOL);
+		Assert.assertEquals(x, cf.calculateValues(AbstractDataset.arange(-2., 2., 1, AbstractDataset.INT16)).getDouble(1), ABS_TOL);
 
-		Assert.assertEquals(-1, cf.partialDeriv(0, -1), ABS_TOL);
-		Assert.assertEquals(1, cf.partialDeriv(1, -1), ABS_TOL);
-		Assert.assertEquals(-1, cf.partialDeriv(2, -1), ABS_TOL);
-		Assert.assertEquals(1, cf.partialDeriv(3, -1), ABS_TOL);
-		Assert.assertEquals(-1, cf.partialDeriv(4, -1), ABS_TOL);
-		Assert.assertEquals(1, cf.partialDeriv(5, -1), ABS_TOL);
+		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		DoubleDataset dx;
+
+		dx = cf.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, -5.2 - 7.5,
+				23.*8 - 10.*4 + 1.2*2 - 5.2 + 4.2*2 - 7.5}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 8}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {1, 0, 4}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(3), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(4), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = cf.calculatePartialDerivativeValues(cf.getParameter(5), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 	}
 }

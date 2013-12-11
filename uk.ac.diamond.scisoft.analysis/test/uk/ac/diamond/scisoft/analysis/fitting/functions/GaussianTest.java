@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 public class GaussianTest {
 
@@ -28,7 +29,7 @@ public class GaussianTest {
 
 	@Test
 	public void testFunction() {
-		IFunction f = new Gaussian();
+		AFunction f = new Gaussian();
 		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2);
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
@@ -41,7 +42,12 @@ public class GaussianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
 		AbstractDataset x = DatasetUtils.linSpace(0, 46, 200, AbstractDataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
+		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
+
+		DoubleDataset xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 2});
+		DoubleDataset dx;
+		dx = f.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {0.5 * h, h, h/16.}, dx.getData(), ABS_TOL);
 	}
 }

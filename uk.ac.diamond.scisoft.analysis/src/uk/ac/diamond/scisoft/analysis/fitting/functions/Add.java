@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Add several functions
  */
@@ -41,7 +44,25 @@ public class Add extends ANaryOperator implements IOperator {
 	}
 
 	@Override
-	protected double internalDerivative(IParameter param, double... values) {
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		DoubleDataset temp = new DoubleDataset(it.getShape());
+		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
+			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
+
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(temp, it);
+				it.reset();
+				data.iadd(temp);
+			} else {
+				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+			}
+		}
+	}
+
+	@Override
+	public double partialDeriv(IParameter param, double... values) {
 		double d = 0;
 
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
@@ -50,5 +71,23 @@ public class Add extends ANaryOperator implements IOperator {
 		}
 
 		return d;
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		DoubleDataset temp = new DoubleDataset(it.getShape());
+		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
+			IFunction f = getFunction(i);
+			if (indexOfParameter(f, param) < 0)
+				continue;
+
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithPartialDerivativeValues(param, temp, it);
+				it.reset();
+				data.iadd(temp);
+			} else {
+				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+			}
+		}
 	}
 }

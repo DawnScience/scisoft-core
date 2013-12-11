@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ public class Generic1DDatasetCreator {
 		CompositeFunction comp = new CompositeFunction();
 		comp.addFunction(f);
 		f.setParameterValues(peakPos, defaultFWHM, defaultArea);
-		return comp.makeDataset(xAxis);
+		return comp.calculateValues(xAxis);
 	}
 	
 	public static DoubleDataset createGaussianDataset() {

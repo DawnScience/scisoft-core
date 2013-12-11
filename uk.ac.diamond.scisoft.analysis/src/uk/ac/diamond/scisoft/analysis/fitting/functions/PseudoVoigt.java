@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -178,13 +178,34 @@ public class PseudoVoigt extends APeak implements IPeak {
 	}
 
 	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double delta = coords[0] - pos;
+			// Lorentzian part
+			double dist = delta / halfwl;
+			double ex = mixing / (dist * dist + 1);
+			// Gaussian part
+			double arg = CONST_A * delta / halfwg;
+			ex += (1 - mixing) * Math.exp(- arg * arg);
+
+			buffer[i++] = height * ex;
+		}
+	}
+
+	@Override
 	public double getFWHM() {
 		if (isDirty())
 			calcCachedParameters();
 
 		double w = 2*(halfwl + halfwg);
 		AbstractDataset x = DatasetUtils.linSpace(pos - w, pos + w, 200, AbstractDataset.FLOAT64);
-		DoubleDataset data = makeDataset(x);
+		DoubleDataset data = calculateValues(x);
 		data = (DoubleDataset) Maths.abs(data);
 		List<Double> crossings = DatasetUtils.crossings(x, data, height / 2);
 		if (crossings.size() < 2)

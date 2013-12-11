@@ -57,7 +57,7 @@ public class CalibrationUtils {
 		Polynomial fitResult = Fitter.polyFit(new AbstractDataset[] {peakPositions} ,newAxisExactPeakPositions, 1e-15, polynomialOrder);
 		
 		// convert the dataset
-		AbstractDataset newAxis = fitResult.makeDataset(originalAxis);
+		AbstractDataset newAxis = fitResult.calculateValues(originalAxis);
 		
 		return newAxis;
 	}

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
  * Basically an implementation of a simple cubic spline calculator
@@ -167,4 +169,21 @@ public class CubicSpline extends AFunction {
 		return evaluateSpline(values[0]);		
 	}
 
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		checkChanged();
+
+		if (isDirty()) {
+			// build the spline
+			generateSpline(x, getParameterValues());
+		}
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			buffer[i++] = evaluateSpline(coords[0]);
+		}
+	}
+	
 }

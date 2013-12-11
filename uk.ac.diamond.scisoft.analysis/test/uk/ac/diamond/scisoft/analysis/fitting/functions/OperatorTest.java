@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 public class OperatorTest {
 
 	private static final double ABS_TOL = 1e-7;
@@ -40,6 +42,31 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
+
+		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		DoubleDataset dx;
+
+		dx = op.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, -5.2 - 7.5,
+				23.*8 - 10.*4 + 1.2*2 - 5.2 + 4.2*2 - 7.5}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 8}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {1, 0, 4}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(3), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(4), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 	}
 
 	@Test
@@ -59,6 +86,33 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) * (- 4.2 - 7.5), op.val(-1), ABS_TOL);
+
+		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		DoubleDataset dx;
+
+		dx = op.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) * (- 4.2 - 7.5), -5.2 * - 7.5,
+				(23.*8 - 10.*4 + 1.2*2 - 5.2) * (4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-(-4.2 - 7.5), 0, 8*(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {(-4.2 - 7.5), 0, 4*(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {-(-4.2 - 7.5), 0, 2*(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(3), xd);
+		Assert.assertArrayEquals(new double[] {-4.2 - 7.5, -7.5, 4.2*2 - 7.5}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(4), xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) * -1, 0,
+				(23.*8 - 10.*4 + 1.2*2 - 5.2) * 2}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2), -5.2,
+				(23.*8 - 10.*4 + 1.2*2 - 5.2)}, dx.getData(), ABS_TOL);
 	}
 
 	@Test
@@ -78,6 +132,31 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, -4.2, 7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
+
+		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		DoubleDataset dx;
+
+		dx = op.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, -5.2 - 7.5,
+				23.*8 - 10.*4 + 1.2*2 - 5.2 + 4.2*2 - 7.5}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 8}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {1, 0, 4}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(3), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(4), xd);
+		Assert.assertArrayEquals(new double[] {1, 0, -2}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
+		Assert.assertArrayEquals(new double[] {-1, -1, -1}, dx.getData(), ABS_TOL);
 	}
 
 	@Test
@@ -97,6 +176,33 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) / (- 4.2 - 7.5), op.val(-1), ABS_TOL);
+
+		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		DoubleDataset dx;
+
+		dx = op.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) / (-4.2 - 7.5), -5.2 / - 7.5,
+				(23.*8 - 10.*4 + 1.2*2 - 5.2) / (4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {-1/(-4.2 - 7.5), 0, 8/(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {1/(-4.2 - 7.5), 0, 4/(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {-1/(-4.2 - 7.5), 0, 2/(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(3), xd);
+		Assert.assertArrayEquals(new double[] {1/(-4.2 - 7.5), 1/-7.5, 1/(4.2*2 - 7.5)}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(4), xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) / ((-4.2 - 7.5)*(-4.2 - 7.5)), 0,
+				(23.*8 - 10.*4 + 1.2*2 - 5.2) * -2 / ((4.2*2 - 7.5)*(4.2*2 - 7.5))}, dx.getData(), ABS_TOL);
+
+		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
+		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) * -1 / ((-4.2 - 7.5)*(-4.2 - 7.5)),
+				-5.2 * -1 / (7.5 * 7.5), (23.*8 - 10.*4 + 1.2*2 - 5.2) * -1 / ((4.2*2 - 7.5)*(4.2*2 - 7.5)) }, dx.getData(), ABS_TOL);
 	}
 
 	@Test

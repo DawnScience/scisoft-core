@@ -40,7 +40,7 @@ public class LorentzianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
 		AbstractDataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, AbstractDataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
+		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-2);
 	}

@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Subtract two functions
  */
@@ -38,6 +40,29 @@ public class Subtract extends ABinaryOperator implements IOperator {
 	}
 
 	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (fa != null) {
+			if (fa instanceof AFunction) {
+				((AFunction) fa).fillWithValues(data, it);
+				it.reset();
+			} else {
+				data.iadd(fa.calculateValues(it.getValues()));
+			}
+		}
+
+		if (fb != null) {
+			DoubleDataset temp = new DoubleDataset(it.getShape());
+			if (fb instanceof AFunction) {
+				((AFunction) fb).fillWithValues(temp, it);
+				it.reset();
+				data.isubtract(temp);
+			} else {
+				data.isubtract(fb.calculateValues(it.getValues()));
+			}
+		}
+	}
+
+	@Override
 	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
 		IParameter p = getParameter(index);
 		double d = fa == null ? 0 : fa.partialDeriv(p, values);
@@ -47,5 +72,27 @@ public class Subtract extends ABinaryOperator implements IOperator {
 		}
 
 		return d;
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		if (fa != null && indexOfParameter(fa, param) >= 0) {
+			if (fa instanceof AFunction) {
+				((AFunction) fa).fillWithPartialDerivativeValues(param, data, it);
+				it.reset();
+			} else {
+				data.iadd(fa.calculatePartialDerivativeValues(param, it.getValues()));
+			}
+		}
+
+		if (fb != null && indexOfParameter(fb, param) >= 0) {
+			if (fb instanceof AFunction) {
+				DoubleDataset temp = new DoubleDataset(it.getShape());
+				((AFunction) fb).fillWithPartialDerivativeValues(param, temp, it);
+				data.isubtract(temp);
+			} else {
+				data.isubtract(fb.calculatePartialDerivativeValues(param, it.getValues()));
+			}
+		}
 	}
 }

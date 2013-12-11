@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
  * A ND Gaussian function
@@ -219,8 +221,29 @@ public class GaussianND extends AFunction {
 		for (int i = 0; i < v.length; i++)
 			arg += u[i] * v[i];
 
-		double ex = Math.exp(-0.5 * arg);
-		return norm * ex;
+		return norm * Math.exp(-0.5 * arg);
+	}
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int j = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			double[] v = coords.clone();
+			for (int i = 0; i < v.length; i++)
+				v[i] -= pos[i];
+
+			double[] u = invcov.operate(v);
+			double arg = 0;
+			for (int i = 0; i < v.length; i++)
+				arg += u[i] * v[i];
+
+			buffer[j++] = norm * Math.exp(-0.5 * arg);
+		}
 	}
 
 }

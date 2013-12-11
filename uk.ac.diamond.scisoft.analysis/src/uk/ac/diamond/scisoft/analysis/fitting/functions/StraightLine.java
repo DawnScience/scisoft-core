@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -83,8 +85,8 @@ public class StraightLine extends AFunction {
 
 	double a, b;
 	private void calcCachedParameters() {
-		a = getParameterValue(0);
-		b = getParameterValue(1);
+		a = parameters[0].getValue();
+		b = parameters[1].getValue();
 
 		setDirty(false);
 	}
@@ -99,12 +101,40 @@ public class StraightLine extends AFunction {
 	}
 
 	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty())
+			calcCachedParameters();
+
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		while (it.hasNext()) {
+			buffer[i++] = a * coords[0] + b;
+		}
+	}
+
+	@Override
 	public double partialDeriv(int parameter, double... position) {
 		switch (parameter) {
 		case 0:
 			return position[0];
 		case 1:
 			return 1.0;
+		default:
+			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+		}
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		int i = indexOfParameter(param);
+		switch (i) {
+		case 0:
+			data.fill(it.getValues()[0]);
+			break;
+		case 1:
+			data.fill(1);
+			break;
 		default:
 			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
 		}

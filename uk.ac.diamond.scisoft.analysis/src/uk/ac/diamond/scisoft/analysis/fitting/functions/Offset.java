@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 
 /**
@@ -56,20 +58,31 @@ public class Offset extends AFunction {
 	public Offset(double minOffset, double maxOffset) {
 		super(1);
 
-		getParameter(0).setValue((minOffset + maxOffset) / 2.0);
-		getParameter(0).setLowerLimit(minOffset);
-		getParameter(0).setUpperLimit(maxOffset);
+		IParameter p = parameters[0];
+		p.setValue((minOffset + maxOffset) / 2.0);
+		p.setLowerLimit(minOffset);
+		p.setUpperLimit(maxOffset);
 
 		name = cname;
 	}
 
 	@Override
 	public double val(double... values) {
-		return getParameterValue(0);
+		return parameters[0].getValue();
+	}
+
+	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		data.fill(parameters[0].getValue());
 	}
 
 	@Override
 	public double partialDeriv(int parameter, double... position) {
 		return 1;
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		data.fill(1);
 	}
 }

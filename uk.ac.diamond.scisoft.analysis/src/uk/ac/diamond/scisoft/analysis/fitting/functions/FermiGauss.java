@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -137,19 +137,24 @@ public class FermiGauss extends AFunction implements Serializable{
 	}
 	
 	@Override
-	public DoubleDataset makeDataset(IDataset... values) {
-		calcCachedParameters();
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		if (isDirty()) {
+			calcCachedParameters();
+		}
 		
-		AbstractDataset xAxis = (AbstractDataset) values[0];
+		AbstractDataset xAxis = (AbstractDataset) it.getValues()[0];
 		
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
-		if (fwhm == 0.0) return new DoubleDataset(fermiDS);
+		if (fwhm == 0.0) {
+			data.iadd(fermiDS);
+			return;
+		}
 		
 		double localSigma = Math.abs(fwhm/TWO_SQRT_TWO_LN_TWO); // convert to sigma
 		
 		Gaussian gauss = new Gaussian((double)xAxis.mean(), localSigma, 1.0);
-		DoubleDataset gaussDS = gauss.makeDataset(xAxis);
+		DoubleDataset gaussDS = gauss.calculateValues(xAxis);
 		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
 		
 		DoubleDataset s1 = DoubleDataset.ones(fermiDS.getShape()[0]*2-1);
@@ -158,29 +163,25 @@ public class FermiGauss extends AFunction implements Serializable{
 		s1.setSlice(fermiDS.getDouble(fermiDS.getShape()[0]-1), new int[] {fermiDS.getShape()[0]*3/2}, new int[] {fermiDS.getShape()[0]*2-1}, new int[] {1});
 		
 		DoubleDataset conv = (DoubleDataset) uk.ac.diamond.scisoft.analysis.dataset.Signal.convolveForOverlap(s1, gaussDS, null);
-
-		conv.setName("Convolution");
-		
-		return conv;
+		data.iadd(conv);
 	}
-	
+
 	public AbstractDataset getFermiDS(IDataset xAxis) {
 		calcCachedParameters();
 		kT = k2eV(temperature);
 		Fermi fermi = new Fermi(mu,kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
-		AbstractDataset fermiDS = fermi.makeDataset(xAxis);
-		DoubleDataset slDS = sl.makeDataset(Maths.subtract(xAxis,mu));
+		AbstractDataset fermiDS = fermi.calculateValues(xAxis);
+		DoubleDataset slDS = sl.calculateValues(Maths.subtract(xAxis,mu));
 		fermiDS.imultiply(slDS);
 		fermiDS.iadd(offset);
 		return fermiDS;
 	}
 	
-	
 	/**
-	 * Method to approximate a gaussisan FWHM from an appparant temperature,
+	 * Method to approximate a Gaussisan FWHM from an apparent temperature,
 	 * @param realTemperaure the real temperature the sample is at
-	 * @return the width of the fermi edge which needs to be considered for fitting
+	 * @return the width of the Fermi edge which needs to be considered for fitting
 	 */
 	public double approximateFWHM(double realTemperaure) {
 

@@ -16,6 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+
 /**
  * Multiply several functions
  */
@@ -42,19 +46,77 @@ public class Multiply extends ANaryOperator implements IOperator {
 	}
 
 	@Override
+	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		data.fill(1);
+		DoubleDataset temp = new DoubleDataset(it.getShape());
+		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
+			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
+
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(temp, it);
+				it.reset();
+				data.imultiply(temp);
+			} else {
+				data.imultiply(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+			}
+		}
+	}
+
+	@Override
 	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
 		IParameter p = getParameter(index);
 		double d = 0;
-		double y = val(values);
+		double m = 1;
 
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
 			double r = f.partialDeriv(p, values);
+			double t = f.val(values);
+			m *= t;
 			if (r != 0) {
-				d += r*y/f.val(values);
+				d += r / t;
 			}
 		}
 
-		return d;
+		return d * m;
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		data.fill(1); // holds total product
+		DoubleDataset val = new DoubleDataset(it.getShape());
+		DoubleDataset dif = new DoubleDataset(it.getShape());
+		DoubleDataset sum = new DoubleDataset(it.getShape());
+		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
+			IFunction f = getFunction(i);
+			boolean hasParam = indexOfParameter(f, param) >= 0;
+
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(val, it);
+				it.reset();
+				data.imultiply(val);
+
+				if (hasParam) {
+					((AFunction) f).fillWithPartialDerivativeValues(param, dif, it);
+					it.reset();
+					dif.idivide(val);
+					sum.iadd(dif);
+				}
+			} else {
+				AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues()));
+				data.imultiply(v);
+
+				if (hasParam) {
+					AbstractDataset d = DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues()));
+	
+					d.idivide(v);
+					sum.iadd(d);
+				}
+			}
+		}
+
+		data.imultiply(sum);
 	}
 }

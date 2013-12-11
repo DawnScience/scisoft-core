@@ -45,7 +45,7 @@ public class PseudoVoigtTest {
 		Assert.assertEquals(0.5 * h, f.val(23. + dx), 1e-4);
 
 		AbstractDataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, AbstractDataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
+		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-1);
 	}
@@ -56,19 +56,19 @@ public class PseudoVoigtTest {
 
 		PseudoVoigt pv = new PseudoVoigt();
 		pv.setParameterValues(23., 2., 1.2, 2.3, 1);
-		AbstractDataset pl = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+		AbstractDataset pl = DatasetUtils.convertToAbstractDataset(pv.calculateValues(x));
 
 		pv.setParameterValues(23., 2., 1.2, 2.3, 0);
-		AbstractDataset pg = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+		AbstractDataset pg = DatasetUtils.convertToAbstractDataset(pv.calculateValues(x));
 
 		Lorentzian lf = new Lorentzian();
 		lf.setParameterValues(23., 2., 1.2);
-		AbstractDataset l = DatasetUtils.convertToAbstractDataset(lf.makeDataset(x));
+		AbstractDataset l = DatasetUtils.convertToAbstractDataset(lf.calculateValues(x));
 		checkDatasets(pl, l);
 
 		Gaussian gf = new Gaussian();
 		gf.setParameterValues(23., 2.3, 1.2);
-		AbstractDataset g = DatasetUtils.convertToAbstractDataset(gf.makeDataset(x));
+		AbstractDataset g = DatasetUtils.convertToAbstractDataset(gf.calculateValues(x));
 		checkDatasets(pg, g);
 	}
 

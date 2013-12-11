@@ -41,7 +41,7 @@ public class PearsonVIITest {
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
 		AbstractDataset x = DatasetUtils.linSpace(-50+23, 50+23, 200, AbstractDataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.makeDataset(x));
+		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), 1e-4);
 	}
 
@@ -52,21 +52,21 @@ public class PearsonVIITest {
 		PearsonVII pv = new PearsonVII();
 		pv.getParameter(3).setUpperLimit(Double.MAX_VALUE);
 		pv.setParameterValues(23., 2., 1.2, 1);
-		AbstractDataset pl = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+		AbstractDataset pl = DatasetUtils.convertToAbstractDataset(pv.calculateValues(x));
 
 		double power = 500000;
 		pv.setParameterValues(23., 2., 1.2, power);
-		AbstractDataset pg = DatasetUtils.convertToAbstractDataset(pv.makeDataset(x));
+		AbstractDataset pg = DatasetUtils.convertToAbstractDataset(pv.calculateValues(x));
 
 		Lorentzian lf = new Lorentzian();
 		lf.setParameterValues(23., 2., 1.2);
-		AbstractDataset l = DatasetUtils.convertToAbstractDataset(lf.makeDataset(x));
+		AbstractDataset l = DatasetUtils.convertToAbstractDataset(lf.calculateValues(x));
 		checkDatasets(pl, l, ABS_TOL);
 
 		Gaussian gf = new Gaussian();
 		double width = pv.getFWHM()*Math.sqrt(2 * Math.log(2.)/( (2*power - 3) * (Math.pow(2, 1/power) - 1)));
 		gf.setParameterValues(23., width, 1.2);
-		AbstractDataset g = DatasetUtils.convertToAbstractDataset(gf.makeDataset(x));
+		AbstractDataset g = DatasetUtils.convertToAbstractDataset(gf.calculateValues(x));
 		checkDatasets(pg, g, 1e-6);
 	}
 

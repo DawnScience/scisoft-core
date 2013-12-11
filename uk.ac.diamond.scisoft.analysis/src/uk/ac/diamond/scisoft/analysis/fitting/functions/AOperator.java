@@ -46,6 +46,11 @@ abstract public class AOperator extends AFunction implements IOperator {
 	}
 
 	@Override
+	protected int indexOfParameter(IParameter p) {
+		return params.indexOf(p);
+	}
+
+	@Override
 	public int getNoOfParameters() {
 		return params.size();
 	}
@@ -60,11 +65,9 @@ abstract public class AOperator extends AFunction implements IOperator {
 		IParameter op = params.get(index);
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
-			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
-				if (op == f.getParameter(j)) {
-					f.setParameter(j, parameter);
-				}
-			}
+			int j = f instanceof AFunction ? ((AFunction) f).indexOfParameter(op) : indexOfParameter(f, op);
+			if (j >= 0)
+				f.setParameter(j, parameter);
 		}
 		params.set(index, parameter);
 		setDirty(true);
@@ -83,15 +86,6 @@ abstract public class AOperator extends AFunction implements IOperator {
 	@Override
 	public double getParameterValue(int index) {
 		return params.get(index).getValue();
-	}
-
-	@Override
-	public double[] getParameterValues() {
-		double[] values = new double[params.size()];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = params.get(i).getValue();
-		}
-		return values;
 	}
 
 	@Override

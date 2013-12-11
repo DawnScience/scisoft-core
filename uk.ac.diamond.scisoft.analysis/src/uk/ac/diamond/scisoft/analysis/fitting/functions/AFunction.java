@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -165,6 +165,11 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public void setParameter(int index, IParameter parameter) {
+		for (int j = 0; j < parameters.length; j++) {
+			if (parameter == parameters[j] && j != index) {
+				throw new IllegalArgumentException("Cannot set parameter as it is already used in function");
+			}
+		}
 		parameters[index] = parameter;
 	}
 

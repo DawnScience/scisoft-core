@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -60,15 +60,6 @@ public interface IFunction extends Serializable {
 	public void setDescription(String newDescription);
 
 	/**
-	 * The key method of the object which returns the evaluation at particular values
-	 * 
-	 * @param values
-	 *            The function arguments
-	 * @return A double which is the result of the evaluation.
-	 */
-	public double val(double... values);
-
-	/**
 	 * Get the parameter which is at the index specified
 	 * 
 	 * @param index
@@ -112,8 +103,9 @@ public interface IFunction extends Serializable {
 	 *
 	 * @param index
 	 * @param parameter
+	 * @throws IllegalArgumentException if parameter is already used in function at a different index 
 	 */
-	public void setParameter(int index, IParameter parameter);
+	public void setParameter(int index, IParameter parameter) throws IllegalArgumentException;
 
 	/**
 	 * Set all of the parameter values for the object.
@@ -122,6 +114,15 @@ public interface IFunction extends Serializable {
 	 *            an array of doubles which needs to be equal in length to the number of parameters in the array.
 	 */
 	public void setParameterValues(double... params);
+
+	/**
+	 * Evaluate the function at particular values
+	 * 
+	 * @param values
+	 *            The function arguments
+	 * @return A double which is the result of the evaluation.
+	 */
+	public double val(double... values);
 
 	/**
 	 * Method which calculates the partial derivative

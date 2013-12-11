@@ -57,6 +57,15 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 	@Override
 	public void setParameter(int index, IParameter parameter) {
+		IParameter op = params.get(index);
+		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
+			IFunction f = getFunction(i);
+			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
+				if (op == f.getParameter(j)) {
+					f.setParameter(j, parameter);
+				}
+			}
+		}
 		params.set(index, parameter);
 		setDirty(true);
 	}

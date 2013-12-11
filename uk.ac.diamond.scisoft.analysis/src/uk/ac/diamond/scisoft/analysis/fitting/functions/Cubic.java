@@ -16,7 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 
 /**
@@ -141,6 +145,31 @@ public class Cubic extends AFunction {
 			return pos;
 		case 3:
 			return 1.0;
+		default:
+			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+		}
+	}
+
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		int i = indexOfParameter(param);
+		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
+		if (pos instanceof AbstractCompoundDataset) {
+			pos = ((AbstractCompoundDataset) pos).asNonCompoundDataset();
+		}
+		switch (i) {
+		case 0:
+			data.fill(Maths.power(pos, 3));
+			break;
+		case 1:
+			data.fill(Maths.square(pos));
+			break;
+		case 2:
+			data.fill(pos);
+			break;
+		case 3:
+			data.fill(1);
+			break;
 		default:
 			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
 		}

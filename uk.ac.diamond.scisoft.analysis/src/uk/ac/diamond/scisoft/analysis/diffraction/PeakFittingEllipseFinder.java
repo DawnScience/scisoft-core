@@ -30,6 +30,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
@@ -52,7 +53,7 @@ public class PeakFittingEllipseFinder {
 	 * @return polyline ROI
 	 */
 	public static PolylineROI findPointsOnEllipse(AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse,
-			double innerDelta, double outerDelta) {
+			double innerDelta, double outerDelta,int nPoints, IMonitor mon) {
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
 			throw new IllegalArgumentException("Dataset must have two dimensions");
@@ -84,21 +85,21 @@ public class PeakFittingEllipseFinder {
 		
 		PolylineROI polyline = new PolylineROI();
 		
-		find64PointsOnEllipse(image, polyline, inner, outer, 0);
+		findNumberOfPointsOnEllipse(image, polyline, inner, outer, 0,nPoints, mon);
 		
-		if (polyline.getNumberOfPoints() < 100) {
-			find64PointsOnEllipse(image, polyline, inner, outer, Math.PI/256);
-			if (polyline.getNumberOfPoints() < 150)  {
-				find64PointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/256);
-				if (polyline.getNumberOfPoints() < 150) {
-					find64PointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/512);
-				}
-				
+		if (mon != null && mon.isCancelled()) return null;
+		
+		if (polyline.getNumberOfPoints() < nPoints *0.9) {
+			findNumberOfPointsOnEllipse(image, polyline, inner, outer, Math.PI/(2*nPoints),nPoints, mon);
+			if (mon != null && mon.isCancelled()) return null;
+			if (polyline.getNumberOfPoints() < nPoints *0.9)  {
+				findNumberOfPointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/(2*nPoints),nPoints, mon);
+				if (mon != null && mon.isCancelled()) return null;
 			}
 			
 		}
 		
-		if (polyline.getNumberOfPoints() < 75) {
+		if (polyline.getNumberOfPoints() < nPoints/2) {
 			logger.debug("not enough points");
 			return null;
 		}
@@ -106,7 +107,8 @@ public class PeakFittingEllipseFinder {
 		return polyline;
 	}
 	
-	private static PolylineROI find64PointsOnEllipse(AbstractDataset image, PolylineROI polyline, EllipticalROI inner, EllipticalROI outer, double start) {
+	private static PolylineROI findNumberOfPointsOnEllipse(AbstractDataset image, PolylineROI polyline,
+			EllipticalROI inner, EllipticalROI outer, double start, int nPoints, IMonitor mon) {
 		
 		final int[] shape = image.getShape();
 		final int h = shape[0];
@@ -119,7 +121,7 @@ public class PeakFittingEllipseFinder {
 		List<PointROI> roiList = new ArrayList<PointROI>();
 		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
 		
-		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/64)) {
+		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/(nPoints/2))) {
 			double[] beg = inner.getPoint(i);
 			double[] end = outer.getPoint(i);
 			
@@ -176,6 +178,10 @@ public class PeakFittingEllipseFinder {
 			double y = r*Math.sin(i+ang)+beg[1];
 			roiList.add(new PointROI(x,y));
 			gaussianList.add(g);
+			
+			if (mon != null) {
+				if (mon.isCancelled()) return null;
+			}
 		}
 		
 		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);

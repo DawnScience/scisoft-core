@@ -114,9 +114,10 @@ public class Lorentzian extends APeak {
 		}
 	}
 
-	double halfw, pos, height;
+	double halfw, pos;
 
-	private void calcCachedParameters() {
+	@Override
+	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
 		halfw = getParameterValue(FWHM) / 2.0;
 		height = getParameterValue(AREA) / (Math.PI * halfw);
@@ -146,13 +147,5 @@ public class Lorentzian extends APeak {
 
 			buffer[i++] = height / ( dist * dist + 1);
 		}
-	}
-
-	@Override
-	public double getHeight() {
-		if (isDirty())
-			calcCachedParameters();
-
-		return height;
 	}
 }

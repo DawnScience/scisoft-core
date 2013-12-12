@@ -77,12 +77,14 @@ public class Offset extends AFunction {
 	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
+	public double partialDeriv(IParameter parameter, double... position) {
+		if (indexOfParameter(parameter) < 0)
+			return 0;
 		return 1;
 	}
 
 	@Override
-	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
 		data.fill(1);
 	}
 }

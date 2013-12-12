@@ -119,8 +119,10 @@ public class Gaussian extends APeak implements IPeak {
 
 	private static final double CONST = Math.sqrt(4. * Math.log(2.));
 
-	double pos, sigma, height;
-	private void calcCachedParameters() {		
+	double pos, sigma;
+
+	@Override
+	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
 		sigma = getParameterValue(FWHM) / CONST;
 		double area = getParameterValue(AREA);
@@ -152,13 +154,5 @@ public class Gaussian extends APeak implements IPeak {
 
 			buffer[i++] = height * Math.exp(- arg * arg);
 		}
-	}
-
-	@Override
-	public double getHeight() {
-		if (isDirty())
-			calcCachedParameters();
-
-		return height;
 	}
 }

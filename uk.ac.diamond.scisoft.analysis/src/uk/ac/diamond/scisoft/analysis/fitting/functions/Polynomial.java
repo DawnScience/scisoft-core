@@ -170,13 +170,16 @@ public class Polynomial extends AFunction {
 	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
-		if (parameter < 0 || parameter >= nparams)
-			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+	public double partialDeriv(IParameter parameter, double... position) {
+		if (isDuplicated(parameter))
+			return super.partialDeriv(parameter, position);
+
+		int i = indexOfParameter(parameter);
+		if (i < 0)
+			return 0;
 
 		final double pos = position[0];
-
-		final int n = nparams - 1 - parameter;
+		final int n = nparams - 1 - i;
 		switch (n) {
 		case 0:
 			return 1.0;
@@ -191,8 +194,16 @@ public class Polynomial extends AFunction {
 
 
 	@Override
-	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		int i = indexOfParameter(param);
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		if (isDuplicated(parameter)) {
+			super.fillWithPartialDerivativeValues(parameter, data, it);
+			return;
+		}
+
+		int i = indexOfParameter(parameter);
+		if (i < 0)
+			return;
+
 		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
 		if (pos instanceof AbstractCompoundDataset) {
 			pos = ((AbstractCompoundDataset) pos).asNonCompoundDataset();

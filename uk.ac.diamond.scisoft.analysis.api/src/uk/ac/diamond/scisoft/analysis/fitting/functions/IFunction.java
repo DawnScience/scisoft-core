@@ -103,9 +103,8 @@ public interface IFunction extends Serializable {
 	 *
 	 * @param index
 	 * @param parameter
-	 * @throws IllegalArgumentException if parameter is already used in function at a different index 
 	 */
-	public void setParameter(int index, IParameter parameter) throws IllegalArgumentException;
+	public void setParameter(int index, IParameter parameter);
 
 	/**
 	 * Set all of the parameter values for the object.
@@ -137,11 +136,11 @@ public interface IFunction extends Serializable {
 	/**
 	 * Method which calculates the partial derivative
 	 * 
-	 * @param param
+	 * @param parameter
 	 * @param values
 	 * @return the derivative at the point specified with respect to the specified parameter.
 	 */
-	public double partialDeriv(IParameter param, double... values);
+	public double partialDeriv(IParameter parameter, double... values);
 
 	/**
 	 * Old method. See {@link #calculateValues(IDataset...)}
@@ -177,11 +176,11 @@ public interface IFunction extends Serializable {
 	/**
 	 * Calculate partial derivative values from the function with respect to the given parameter
 	 * 
-	 * @param param
+	 * @param parameter
 	 * @param coords see {@link #calculateValues(IDataset...)}
 	 * @return the dataset of the partial derivative
 	 */
-	public IDataset calculatePartialDerivativeValues(IParameter param, IDataset... coords);
+	public IDataset calculatePartialDerivativeValues(IParameter parameter, IDataset... coords);
 
 	/**
 	 * Method to evaluate the sum of the deviations of the dataset from the function

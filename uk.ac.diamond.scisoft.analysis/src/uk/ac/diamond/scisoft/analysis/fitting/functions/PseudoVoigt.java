@@ -148,8 +148,10 @@ public class PseudoVoigt extends APeak implements IPeak {
 	private static final double CONST_A = Math.sqrt(Math.log(2.));
 	private static final double CONST_B = Math.sqrt(Math.PI / Math.log(2.));
 
-	double pos, halfwg, halfwl, mixing, height;
-	private void calcCachedParameters() {
+	double pos, halfwg, halfwl, mixing;
+
+	@Override
+	protected void calcCachedParameters() {
 		pos = getParameter(POSN).getValue();
 		halfwl = getParameterValue(FWHM) / 2.0;
 		halfwg = getParameterValue(FWHMG) / 2.0;
@@ -213,13 +215,5 @@ public class PseudoVoigt extends APeak implements IPeak {
 
 		double width = crossings.get(1).doubleValue() - crossings.get(0).doubleValue();
 		return width;
-	}
-
-	@Override
-	public double getHeight() {
-		if (isDirty())
-			calcCachedParameters();
-
-		return height;
 	}
 }

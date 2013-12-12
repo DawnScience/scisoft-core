@@ -20,11 +20,16 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 /**
  * A peak function is determined at least three parameters:
  *  position, full width at half-maximum, area
+ * <p>
+ * If height of peak can be calculated then set height in the overriding
+ * calcCachedParameters method.
  */
 public abstract class APeak extends AFunction implements IPeak {
 	protected static final int POSN = 0;
 	protected static final int FWHM = 1;
 	protected static final int AREA = 2;
+
+	protected double height;
 
 	public APeak(int numParms) {
 		super(numParms);
@@ -70,6 +75,14 @@ public abstract class APeak extends AFunction implements IPeak {
 
 	@Override
 	public double getHeight() {
-		return val(getPosition());
+		if (isDirty())
+			calcCachedParameters();
+
+		return height;
 	}
+
+	/**
+	 * Implement this to set height and any other internally-used values
+	 */
+	abstract protected void calcCachedParameters();
 }

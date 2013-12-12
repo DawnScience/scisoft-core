@@ -137,9 +137,10 @@ public class PearsonVII extends APeak implements IPeak {
 		}
 	}
 
-	double pos, halfwp, power, height;
+	double pos, halfwp, power;
 
-	private void calcCachedParameters() {
+	@Override
+	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
 		power = getParameterValue(POWER);
 		halfwp = 0.5 * getParameterValue(FWHM) / Math.sqrt(Math.pow(2, 1. / power)  - 1);
@@ -172,13 +173,5 @@ public class PearsonVII extends APeak implements IPeak {
 
 			buffer[i++] = height / Math.pow((1.0 + arg * arg), power);
 		}
-	}
-
-	@Override
-	public double getHeight() {
-		if (isDirty())
-			calcCachedParameters();
-
-		return height;
 	}
 }

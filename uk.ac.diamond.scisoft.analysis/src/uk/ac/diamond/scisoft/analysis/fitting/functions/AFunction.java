@@ -80,19 +80,19 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	/**
-	 * @param f
-	 * @param p
+	 * @param function
+	 * @param parameter
 	 * @return index of parameter or -1 if parameter is not in function
 	 */
-	public static int indexOfParameter(IFunction f, IParameter p) {
-		if (f == null || p == null)
+	public static int indexOfParameter(IFunction function, IParameter parameter) {
+		if (function == null || parameter == null)
 			return -1;
 
-		if (f instanceof AFunction)
-			return ((AFunction) f).indexOfParameter(p);
+		if (function instanceof AFunction)
+			return ((AFunction) function).indexOfParameter(parameter);
 
-		for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
-			if (p == f.getParameter(j)) {
+		for (int j = 0, jmax = function.getNoOfParameters(); j < jmax; j++) {
+			if (parameter == function.getParameter(j)) {
 				return j;
 			}
 		}
@@ -100,12 +100,12 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	/**
-	 * @param p
+	 * @param parameter
 	 * @return index of parameter or -1 if parameter is not in function
 	 */
-	protected int indexOfParameter(IParameter p) {
+	protected int indexOfParameter(IParameter parameter) {
 		for (int i = 0; i < parameters.length; i++) {
-			if (p == parameters[i]) {
+			if (parameter == parameters[i]) {
 				return i;
 			}
 		}
@@ -141,7 +141,7 @@ public abstract class AFunction implements IFunction, Serializable {
 			parameters[i] = new Parameter();
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -187,7 +187,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public double[] getParameterValues() {
+	final public double[] getParameterValues() {
 		int n = getNoOfParameters();
 		double[] result = new double[n];
 		for (int j = 0; j < n; j++) {
@@ -198,13 +198,11 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public void setParameter(int index, IParameter parameter) {
-		int j = indexOfParameter(parameter);
-		if (j == index)
+		if (indexOfParameter(parameter) == index)
 			return;
-		if (j >= 0)
-			throw new IllegalArgumentException("Cannot set parameter as it is already used in function");
 
 		parameters[index] = parameter;
+		dirty = true;
 	}
 
 	@Override
@@ -236,19 +234,41 @@ public abstract class AFunction implements IFunction, Serializable {
 		return partialDeriv(getParameter(index), values);
 	}
 
+	/**
+	 * This implementation is a numerical approximation. Overriding methods should check
+	 * for duplicated parameters before doing any calculation and either cope with this
+	 * or use this numerical approximation
+	 */
 	@Override
-	public double partialDeriv(IParameter param, double... values) {
-		if (indexOfParameter(param) < 0)
+	public double partialDeriv(IParameter parameter, double... values) {
+		if (indexOfParameter(parameter) < 0)
 			return 0;
 
-		return calcNumericalDerivative(A_TOLERANCE, R_TOLERANCE, param, values);
+		return calcNumericalDerivative(A_TOLERANCE, R_TOLERANCE, parameter, values);
+	}
+
+	/**
+	 * @param param
+	 * @return true if there is more than one occurrence of given parameter in function
+	 */
+	protected boolean isDuplicated(IParameter param) {
+		int c = 0;
+		int n = getNoOfParameters();
+		for (int i = 0; i < n; i++) {
+			if (getParameter(i) == param) {
+				c++;
+				return c > 1;
+			}
+		}
+
+		return false;
 	}
 
 	private final static double DELTA = 1/256.; // initial value
 	private final static double DELTA_FACTOR = 0.25;
 
-	private final static double A_TOLERANCE = 1e-9; // absolute tolerance
-	private final static double R_TOLERANCE = 1e-9; // relative tolerance
+	protected final static double A_TOLERANCE = 1e-9; // absolute tolerance
+	protected final static double R_TOLERANCE = 1e-9; // relative tolerance
 
 	/**
 	 * @param abs
@@ -307,7 +327,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param coords
 	 * @return a coordinate iterator
 	 */
-	public CoordinatesIterator getIterator(IDataset... coords) {
+	final public CoordinatesIterator getIterator(IDataset... coords) {
 		if (coords == null || coords.length == 0) {
 			logger.error("No coordinates given to evaluate function");
 			throw new IllegalArgumentException("No coordinates given to evaluate function");
@@ -334,7 +354,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public DoubleDataset calculateValues(IDataset... coords) {
+	final public DoubleDataset calculateValues(IDataset... coords) {
 		CoordinatesIterator it = getIterator(coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 		fillWithValues(result, it);
@@ -343,11 +363,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public DoubleDataset calculatePartialDerivativeValues(IParameter param, IDataset... coords) {
+	final public DoubleDataset calculatePartialDerivativeValues(IParameter parameter, IDataset... coords) {
 		CoordinatesIterator it = getIterator(coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
-		if (indexOfParameter(param) >= 0)
-			fillWithPartialDerivativeValues(param, result, it);
+		if (indexOfParameter(parameter) >= 0)
+			fillWithPartialDerivativeValues(parameter, result, it);
 		result.setName(name);
 		return result;
 	}
@@ -360,13 +380,17 @@ public abstract class AFunction implements IFunction, Serializable {
 	abstract public void fillWithValues(DoubleDataset data, CoordinatesIterator it);
 
 	/**
-	 * Fill dataset with partial derivatives. Override this numerical approximation
-	 * @param param
+	 * Fill dataset with partial derivatives
+	 * <p>
+	 * This implementation is a numerical approximation. Overriding methods should check
+	 * for duplicated parameters before doing any calculation and either cope with this
+	 * or use this numerical approximation
+	 * @param parameter
 	 * @param data
 	 * @param it
 	 */
-	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, param, data, it);
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, parameter, data, it);
 	}
 
 	/**

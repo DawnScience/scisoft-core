@@ -134,9 +134,13 @@ public class Cubic extends AFunction {
 	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
+	public double partialDeriv(IParameter parameter, double... position) {
+		if (isDuplicated(parameter))
+			return super.partialDeriv(parameter, position);
+
+		int i = indexOfParameter(parameter);
 		final double pos = position[0];
-		switch (parameter) {
+		switch (i) {
 		case 0:
 			return pos * pos * pos;
 		case 1:
@@ -146,13 +150,21 @@ public class Cubic extends AFunction {
 		case 3:
 			return 1.0;
 		default:
-			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+			return 0;
 		}
 	}
 
 	@Override
-	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		int i = indexOfParameter(param);
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		if (isDuplicated(parameter)) {
+			super.fillWithPartialDerivativeValues(parameter, data, it);
+			return;
+		}
+
+		int i = indexOfParameter(parameter);
+		if (i < 0)
+			return;
+
 		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
 		if (pos instanceof AbstractCompoundDataset) {
 			pos = ((AbstractCompoundDataset) pos).asNonCompoundDataset();
@@ -171,7 +183,7 @@ public class Cubic extends AFunction {
 			data.fill(1);
 			break;
 		default:
-			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+			break;
 		}
 	}
 }

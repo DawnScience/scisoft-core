@@ -117,20 +117,29 @@ public class StraightLine extends AFunction {
 	}
 
 	@Override
-	public double partialDeriv(int parameter, double... position) {
-		switch (parameter) {
+	public double partialDeriv(IParameter parameter, double... position) {
+		if (isDuplicated(parameter))
+			return super.partialDeriv(parameter, position);
+
+		int i = indexOfParameter(parameter);
+		switch (i) {
 		case 0:
 			return position[0];
 		case 1:
 			return 1.0;
 		default:
-			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+			return 0;
 		}
 	}
 
 	@Override
-	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		int i = indexOfParameter(param);
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		if (isDuplicated(parameter)) {
+			super.fillWithPartialDerivativeValues(parameter, data, it);
+			return;
+		}
+
+		int i = indexOfParameter(parameter);
 		AbstractDataset pos;
 		switch (i) {
 		case 0:
@@ -144,7 +153,7 @@ public class StraightLine extends AFunction {
 			data.fill(1);
 			break;
 		default:
-			throw new IndexOutOfBoundsException("Parameter index is out of bounds");
+			break;
 		}
 	}
 }

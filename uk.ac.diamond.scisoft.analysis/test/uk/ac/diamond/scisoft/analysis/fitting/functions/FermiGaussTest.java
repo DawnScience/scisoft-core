@@ -21,26 +21,29 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
-public class FermiTest {
+public class FermiGaussTest {
 
 	private static final double ABS_TOL = 1e-7;
 
+	private static final double F = 8.6173324e-5; // Boltzmann's constant
+
 	@Test
 	public void testFunction() {
-		AFunction f = new Fermi();
-		Assert.assertEquals(4, f.getNoOfParameters());
-		f.setParameterValues(23., 110., 1.2, -5.2);
-		Assert.assertArrayEquals(new double[] {23., 110., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
+		AFunction f = new FermiGauss();
+		Assert.assertEquals(6, f.getNoOfParameters());
+		f.setParameterValues(23., 110., 2.5, -0.5, -5.2, 0);
+		Assert.assertArrayEquals(new double[] {23., 110., 2.5, -0.5, -5.2, 0}, f.getParameterValues(), ABS_TOL);
 
-		Assert.assertEquals(1.2 / 2. - 5.2, f.val(23.), ABS_TOL);
+		Assert.assertEquals((2.5*0 - 0.5)/2. - 5.2, f.val(23.), ABS_TOL);
 
-		double w = 110 * Math.log(2);
-		Assert.assertEquals(1.2 / 3 - 5.2, f.val(23. + w), ABS_TOL);
-		Assert.assertEquals(1.2 / 1.5 - 5.2, f.val(23. - w), ABS_TOL);
+		double w = 110 * Math.log(2)*F;
+		Assert.assertEquals((2.5*w - 0.5) / 3 - 5.2, f.val(23. + w), ABS_TOL);
+		Assert.assertEquals((-2.5*w - 0.5) / 1.5 - 5.2, f.val(23. - w), ABS_TOL);
 
 		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + 2 * w});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
-		Assert.assertArrayEquals(new double[] {1.2/1.5 - 5.2, 1.2/2 - 5.2, 1.2/5 - 5.2}, dx.getData(), ABS_TOL);
+		Assert.assertArrayEquals(new double[] {(-2.5*w - 0.5)/1.5 - 5.2, (2.5*0 - 0.5)/2. - 5.2,
+				(2.5*2*w - 0.5)/5 - 5.2}, dx.getData(), ABS_TOL);
 	}
 }

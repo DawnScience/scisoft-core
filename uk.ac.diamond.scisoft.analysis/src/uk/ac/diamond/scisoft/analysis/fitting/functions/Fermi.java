@@ -33,7 +33,6 @@ public class Fermi extends AFunction implements Serializable {
 
 	private double mu, kT, scale, C;
 
-
 	public Fermi(){
 		this(PARAMS);
 	}
@@ -75,17 +74,22 @@ public class Fermi extends AFunction implements Serializable {
 
 		super(4);
 
-		getParameter(0).setLimits(minMu, maxMu);
-		getParameter(0).setValue((minMu + maxMu) / 2.0);
+		IParameter p;
+		p = getParameter(0);
+		p.setLimits(minMu, maxMu);
+		p.setValue((minMu + maxMu) / 2.0);
 
-		getParameter(1).setLimits(minkT, maxkT);
-		getParameter(1).setValue((minkT + maxkT) / 2.0);
-		
-		getParameter(2).setLimits(minScale, maxScale);
-		getParameter(2).setValue((minScale + maxScale) / 2.0);
-		
-		getParameter(3).setLimits(minC, maxC);
-		getParameter(3).setValue((minC + maxC) / 2.0);
+		p = getParameter(1);
+		p.setLimits(minkT, maxkT);
+		p.setValue((minkT + maxkT) / 2.0);
+
+		p = getParameter(2);
+		p.setLimits(minScale, maxScale);
+		p.setValue((minScale + maxScale) / 2.0);
+
+		p = getParameter(3);
+		p.setLimits(minC, maxC);
+		p.setValue((minC + maxC) / 2.0);
 
 		setNames();
 	}

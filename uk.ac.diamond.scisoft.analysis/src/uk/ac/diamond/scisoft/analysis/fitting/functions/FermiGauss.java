@@ -32,24 +32,21 @@ import uk.ac.diamond.scisoft.analysis.dataset.Signal;
  * y(x) = scale / (exp((x - mu)/kT) + 1) + C
  */
 public class FermiGauss extends AFunction implements Serializable{
-	
-	private static final double TWO_SQRT_TWO_LN_TWO = 2.35482;
-
 	private static final int NUMBER_OF_PARAMETERS = 6;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FermiGauss.class);
 	
 	private static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5;
 
-	private static final String cname = "Fermi * Gaussian";
-	private static final String[] paramNames = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
-	private static final String cdescription = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
-	private static final double[] params = new double[] { 0, 0, 0, 0, 0, 0 };
+	private static final String NAME = "Fermi * Gaussian";
+	private static final String DESC = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
+	private static final String[] PARAM_NAMES = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
+	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0, 0 };
 	
 	private double mu, kT, scaleM, scaleC, offset, temperature, fwhm;
 
 	public FermiGauss() {
-		this(params);
+		this(PARAMS);
 	}
 
 	public FermiGauss(double... params) {
@@ -76,42 +73,49 @@ public class FermiGauss extends AFunction implements Serializable{
 	 * @param maxScaleC
 	 * @param minC
 	 * @param maxC
-	 * @param minSigma
-	 * @param maxSigma
+	 * @param minFWHM
+	 * @param maxFWHM
 	 */
 	public FermiGauss(double minMu, double maxMu, double minkT, double maxkT,
 					double minScaleM, double maxScaleM, double minScaleC, double maxScaleC,
-					double minC, double maxC, double minSigma, double maxSigma) {
+					double minC, double maxC, double minFWHM, double maxFWHM) {
 
 		super(NUMBER_OF_PARAMETERS);
 
-		getParameter(0).setLimits(minMu, maxMu);
-		getParameter(0).setValue((minMu + maxMu) / 2.0);
+		IParameter p;
+		p = getParameter(0);
+		p.setLimits(minMu, maxMu);
+		p.setValue((minMu + maxMu) / 2.0);
 
-		getParameter(1).setLimits(minkT, maxkT);
-		getParameter(1).setValue((minkT + maxkT) / 2.0);
-		
-		getParameter(2).setLimits(minScaleM, maxScaleM);
-		getParameter(2).setValue((minScaleM + maxScaleM) / 2.0);
-		
-		getParameter(3).setLimits(minScaleC, maxScaleC);
-		getParameter(3).setValue((minScaleC + maxScaleC) / 2.0);
-		
-		getParameter(4).setLimits(minC, maxC);
-		getParameter(4).setValue((minC + maxC) / 2.0);
-		
-		getParameter(5).setLimits(minSigma, maxSigma);
-		getParameter(5).setValue((minSigma + maxSigma) / 2.0);
+		p = getParameter(1);
+		p.setLimits(minkT, maxkT);
+		p.setValue((minkT + maxkT) / 2.0);
+
+		p = getParameter(2);
+		p.setLimits(minScaleM, maxScaleM);
+		p.setValue((minScaleM + maxScaleM) / 2.0);
+
+		p = getParameter(3);
+		p.setLimits(minScaleC, maxScaleC);
+		p.setValue((minScaleC + maxScaleC) / 2.0);
+
+		p = getParameter(4);
+		p.setLimits(minC, maxC);
+		p.setValue((minC + maxC) / 2.0);
+
+		p = getParameter(5);
+		p.setLimits(minFWHM, maxFWHM);
+		p.setValue((minFWHM + maxFWHM) / 2.0);
 
 		setNames();
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAM_NAMES[i]);
 		}
 	}
 
@@ -122,11 +126,11 @@ public class FermiGauss extends AFunction implements Serializable{
 		scaleC = getParameterValue(3);
 		offset = getParameterValue(4);
 		fwhm = getParameterValue(5);
+		kT = k2eV(temperature);
 
 		setDirty(false);
 	}
-	
-	
+
 	@Override
 	public double val(double... values)  {
 		if (isDirty()) {
@@ -136,25 +140,23 @@ public class FermiGauss extends AFunction implements Serializable{
 		AbstractDataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
 		return fermiDS.getDouble(0);
 	}
-	
+
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
 		if (isDirty()) {
 			calcCachedParameters();
 		}
-		
+
 		AbstractDataset xAxis = (AbstractDataset) it.getValues()[0];
-		
+
 		AbstractDataset fermiDS = getFermiDS(xAxis);
-		
+
 		if (fwhm == 0.0) {
 			data.fill(fermiDS);
 			return;
 		}
-		
-		double localSigma = Math.abs(fwhm/TWO_SQRT_TWO_LN_TWO); // convert to sigma
-		
-		Gaussian gauss = new Gaussian((double)xAxis.mean(), localSigma, 1.0);
+
+		Gaussian gauss = new Gaussian((double)xAxis.mean(), fwhm, 1.0);
 		DoubleDataset gaussDS = gauss.calculateValues(xAxis);
 		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
 		int length = fermiDS.getShapeRef()[0];
@@ -162,7 +164,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {length/2}, new int[] {1});
 		s1.setSlice(fermiDS, new int[] {length/2}, new int[] {length*3/2}, new int[] {1});
 		s1.setSlice(fermiDS.getDouble(length-1), new int[] {length*3/2}, new int[] {length*2-1}, new int[] {1});
-		
+
 		data.fill(Signal.convolveForOverlap(s1, gaussDS, null));
 	}
 
@@ -171,8 +173,7 @@ public class FermiGauss extends AFunction implements Serializable{
 			calcCachedParameters();
 		}
 
-		kT = k2eV(temperature);
-		Fermi fermi = new Fermi(mu,kT, 1.0, 0.0);
+		Fermi fermi = new Fermi(mu, kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
 		AbstractDataset fermiDS = fermi.calculateValues(xAxis);
 		DoubleDataset slDS = sl.calculateValues(Maths.subtract(xAxis,mu));
@@ -180,31 +181,32 @@ public class FermiGauss extends AFunction implements Serializable{
 		fermiDS.iadd(offset);
 		return fermiDS;
 	}
-	
+
 	/**
-	 * Method to approximate a Gaussisan FWHM from an apparent temperature,
+	 * Method to approximate a Gaussian FWHM from an apparent temperature,
 	 * @param realTemperaure the real temperature the sample is at
 	 * @return the width of the Fermi edge which needs to be considered for fitting
 	 */
 	public double approximateFWHM(double realTemperaure) {
-
-		if (getParameterValue(1) < realTemperaure) {
+		IParameter temp = getParameter(1);
+		IParameter width = getParameter(5);
+		if (temp.getValue() < realTemperaure) {
 			LOGGER.warn("Fitted temperature was below the real temperature");
-			getParameter(1).setValue(realTemperaure);
-			getParameter(5).setValue(0.0);
+			temp.setValue(realTemperaure);
+			width.setValue(0.0);
 			return k2eV(realTemperaure)*8;
 		}
 		
-		double fitEnergy = k2eV(getParameterValue(1));
+		double fitEnergy = k2eV(temp.getValue());
 		double realEnergy = k2eV(realTemperaure);
 		double fwhm = fitEnergy*fitEnergy - realEnergy*realEnergy;
 		fwhm = Math.sqrt(fwhm);
-		getParameter(1).setValue(realTemperaure);
-		getParameter(5).setValue(fwhm);
-		
+		temp.setValue(realTemperaure);
+		width.setValue(fwhm);
+
 		return fitEnergy*6;
 	}
-	
+
 	private double k2eV(double temperature) {
 		return temperature*K2EV_CONVERSION_FACTOR;
 	}	

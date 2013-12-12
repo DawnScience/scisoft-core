@@ -23,11 +23,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * Add several functions
  */
 public class Add extends ANaryOperator implements IOperator {
-	private static final String cname = "Add";
+	private static final String NAME = "Add";
+	private static final String DESC = "Add several functions together";
 
 	public Add() {
 		super();
-		name = cname;
+		name = NAME;
+		description = DESC;
 	}
 
 	@Override

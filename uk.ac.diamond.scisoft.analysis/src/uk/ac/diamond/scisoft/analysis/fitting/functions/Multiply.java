@@ -24,13 +24,14 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * Multiply several functions
  */
 public class Multiply extends ANaryOperator implements IOperator {
-	private static final String cname = "Multiply";
+	private static final String NAME = "Multiply";
+	private static final String DESC = "Multiply several functions together";
 
 	public Multiply() {
 		super();
-		name = cname;
+		name = NAME;
+		description = DESC;
 	}
-
 
 	@Override
 	public double val(double... values) {

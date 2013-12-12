@@ -22,11 +22,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * Subtract two functions
  */
 public class Subtract extends ABinaryOperator implements IOperator {
-	private static final String cname = "Subtract";
+	private static final String NAME = "Subtract";
+	private static final String DESC = "Subtract one function from another";
 
 	public Subtract() {
 		super();
-		name = cname;
+		name = NAME;
+		description = DESC;
 	}
 
 
@@ -46,13 +48,13 @@ public class Subtract extends ABinaryOperator implements IOperator {
 				((AFunction) fa).fillWithValues(data, it);
 				it.reset();
 			} else {
-				data.iadd(fa.calculateValues(it.getValues()));
+				data.fill(fa.calculateValues(it.getValues()));
 			}
 		}
 
 		if (fb != null) {
-			DoubleDataset temp = new DoubleDataset(it.getShape());
 			if (fb instanceof AFunction) {
+				DoubleDataset temp = new DoubleDataset(it.getShape());
 				((AFunction) fb).fillWithValues(temp, it);
 				it.reset();
 				data.isubtract(temp);

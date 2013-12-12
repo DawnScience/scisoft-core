@@ -25,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.dataset.Signal;
 
 /**
  * Class that wrappers the Fermi function from Fermi-Dirac distribution
@@ -147,7 +148,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 		
 		if (fwhm == 0.0) {
-			data.iadd(fermiDS);
+			data.fill(fermiDS);
 			return;
 		}
 		
@@ -156,18 +157,20 @@ public class FermiGauss extends AFunction implements Serializable{
 		Gaussian gauss = new Gaussian((double)xAxis.mean(), localSigma, 1.0);
 		DoubleDataset gaussDS = gauss.calculateValues(xAxis);
 		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
+		int length = fermiDS.getShapeRef()[0];
+		DoubleDataset s1 = DoubleDataset.ones(length*2-1);
+		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {length/2}, new int[] {1});
+		s1.setSlice(fermiDS, new int[] {length/2}, new int[] {length*3/2}, new int[] {1});
+		s1.setSlice(fermiDS.getDouble(length-1), new int[] {length*3/2}, new int[] {length*2-1}, new int[] {1});
 		
-		DoubleDataset s1 = DoubleDataset.ones(fermiDS.getShape()[0]*2-1);
-		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {fermiDS.getShape()[0]/2}, new int[] {1});
-		s1.setSlice(fermiDS, new int[] {fermiDS.getShape()[0]/2}, new int[] {fermiDS.getShape()[0]*3/2}, new int[] {1});
-		s1.setSlice(fermiDS.getDouble(fermiDS.getShape()[0]-1), new int[] {fermiDS.getShape()[0]*3/2}, new int[] {fermiDS.getShape()[0]*2-1}, new int[] {1});
-		
-		DoubleDataset conv = (DoubleDataset) uk.ac.diamond.scisoft.analysis.dataset.Signal.convolveForOverlap(s1, gaussDS, null);
-		data.iadd(conv);
+		data.fill(Signal.convolveForOverlap(s1, gaussDS, null));
 	}
 
 	public AbstractDataset getFermiDS(IDataset xAxis) {
-		calcCachedParameters();
+		if (isDirty()) {
+			calcCachedParameters();
+		}
+
 		kT = k2eV(temperature);
 		Fermi fermi = new Fermi(mu,kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});

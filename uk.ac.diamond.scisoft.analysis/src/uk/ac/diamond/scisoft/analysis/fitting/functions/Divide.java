@@ -24,11 +24,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * Divide two functions
  */
 public class Divide extends ABinaryOperator implements IOperator {
-	private static final String cname = "Divide";
+	private static final String NAME = "Divide";
+	private static final String DESC = "Divide one function by another";
 
 	public Divide() {
 		super();
-		name = cname;
+		name = NAME;
+		description = DESC;
 	}
 
 	@Override
@@ -48,13 +50,13 @@ public class Divide extends ABinaryOperator implements IOperator {
 				((AFunction) fa).fillWithValues(data, it);
 				it.reset();
 			} else {
-				data.iadd(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
+				data.fill(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
 			}
 		}
 
 		if (fb != null) {
-			DoubleDataset temp = new DoubleDataset(it.getShape());
 			if (fb instanceof AFunction) {
+				DoubleDataset temp = new DoubleDataset(it.getShape());
 				((AFunction) fb).fillWithValues(temp, it);
 				it.reset();
 				data.idivide(temp);

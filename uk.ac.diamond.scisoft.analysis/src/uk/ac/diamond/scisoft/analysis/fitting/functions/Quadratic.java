@@ -27,9 +27,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * Class that wrappers the function y(x) = ax^2 + bx + c
  */
 public class Quadratic extends AFunction {
-	private static String cname = "Quadratic";
-	private static String[] paramNames = new String[]{"A", "B", "C"};
-	private static String cdescription = "y(x) = ax^2 + bx + c";
+	private static final String NAME = "Quadratic";
+	private static final String DESC = "y(x) = ax^2 + bx + c";
+	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C"};
 
 	/**
 	 * Basic constructor, not advisable to use
@@ -65,17 +65,21 @@ public class Quadratic extends AFunction {
 	public Quadratic(double minA, double maxA, double minB, double maxB, double minC, double maxC) {
 		super(3);
 
-		getParameter(0).setLowerLimit(minA);
-		getParameter(0).setUpperLimit(maxA);
-		getParameter(0).setValue((minA + maxA) / 2.0);
+		IParameter p;
+		p = getParameter(0);
+		p.setLowerLimit(minA);
+		p.setUpperLimit(maxA);
+		p.setValue((minA + maxA) / 2.0);
 
-		getParameter(1).setLowerLimit(minB);
-		getParameter(1).setUpperLimit(maxB);
-		getParameter(1).setValue((minB + maxB) / 2.0);
+		p = getParameter(1);
+		p.setLowerLimit(minB);
+		p.setUpperLimit(maxB);
+		p.setValue((minB + maxB) / 2.0);
 
-		getParameter(2).setLowerLimit(minC);
-		getParameter(2).setUpperLimit(maxC);
-		getParameter(2).setValue((minC + maxC) / 2.0);
+		p = getParameter(2);
+		p.setLowerLimit(minC);
+		p.setUpperLimit(maxC);
+		p.setValue((minC + maxC) / 2.0);
 
 		setNames();
 	}
@@ -91,11 +95,11 @@ public class Quadratic extends AFunction {
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAM_NAMES[i]);
 		}
 	}
 

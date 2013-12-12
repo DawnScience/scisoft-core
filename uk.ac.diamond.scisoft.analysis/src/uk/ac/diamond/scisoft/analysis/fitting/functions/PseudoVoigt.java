@@ -28,13 +28,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * PseudoVoigt Class
  */
 public class PseudoVoigt extends APeak implements IPeak {
-	private static final String cname = "PseudoVoigt";
-	private static final String[] paramNames = new String[]{"posn", "l_fwhm", "area", "g_fwhm", "mix"};
-	private static final String cdescription = "y(x) = Pseudo Voigt";
-	private static final double[] params = new double[]{0,0,0,0,0};
+	private static final String NAME = "PseudoVoigt";
+	private static final String DESC = "y(x) = Pseudo Voigt";
+	private static final String[] PARAM_NAMES = new String[]{"posn", "l_fwhm", "area", "g_fwhm", "mix"};
+	private static final double[] PARAMS = new double[]{0,0,0,0,0};
 
 	public PseudoVoigt() {
-		this(params[0], params[1], params[2], params[3], params[4]);
+		this(PARAMS[0], PARAMS[1], PARAMS[2], PARAMS[3], PARAMS[4]);
 	}
 
 	/**
@@ -126,11 +126,11 @@ public class PseudoVoigt extends APeak implements IPeak {
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAM_NAMES[i]);
 		}
 	}
 

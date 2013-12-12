@@ -26,16 +26,16 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  */
 public class Fermi extends AFunction implements Serializable {
 	
-	private static final String cname = "Fermi";
-	private static final String[] paramNames = new String[]{"mu", "kT", "scale", "Constant"};
-	private static final String cdescription = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
-	private static final double[] params = new double[]{0,0,0,0};
+	private static final String NAME = "Fermi";
+	private static final String DESC = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
+	private static final String[] PARAM_NAMES = new String[]{"mu", "kT", "scale", "Constant"};
+	private static final double[] PARAMS = new double[]{0,0,0,0};
 
 	private double mu, kT, scale, C;
 
 
 	public Fermi(){
-		this(params);
+		this(PARAMS);
 	}
 
 	public Fermi(double... params) {
@@ -91,11 +91,11 @@ public class Fermi extends AFunction implements Serializable {
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAM_NAMES[i]);
 		}
 	}
 

@@ -33,7 +33,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * are normalized by the diagonal elements.
  */
 public class GaussianND extends AFunction {
-	private static String cname = "GaussianND";
+	private static String NAME = "GaussianND";
 	private int rank;
 	private double[] pos = null;
 
@@ -44,12 +44,12 @@ public class GaussianND extends AFunction {
 
 	public GaussianND() {
 		super(new double[]{0,0,0});
-		name = cname;
+		name = NAME;
 	}
 
 	public GaussianND(IParameter... params) {
 		super(params);
-		name = cname;
+		name = NAME;
 	}
 
 	/**

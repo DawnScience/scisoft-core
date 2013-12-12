@@ -28,9 +28,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * y(x) = ax^3 + bx^2 + cx + d
  */
 public class Cubic extends AFunction {
-	private static final String cname = "Cubic";
-	private static final String cdescription = "y(x) = ax^3 + bx^2 + cx + d";
-	private static final String[] paramNames = new String[]{"A", "B", "C", "D"};
+	private static final String NAME = "Cubic";
+	private static final String DESC = "y(x) = ax^3 + bx^2 + cx + d";
+	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C", "D"};
 
 	/**
 	 * Basic constructor, not advisable to use
@@ -92,11 +92,11 @@ public class Cubic extends AFunction {
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAM_NAMES[i]);
 		}
 	}
 

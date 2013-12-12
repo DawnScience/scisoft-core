@@ -43,16 +43,16 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * </ol>
  */
 public class Step extends AFunction {
-	private static String cname = "Step";
+	private static String NAME = "Step";
 
 	public Step() {
 		super(new double[]{0,0,0,0,0,0,0});
-		name = cname;
+		name = NAME;
 	}
 
 	public Step(IParameter... params) {
 		super(params);
-		name = cname;
+		name = NAME;
 	}
 
 	/**
@@ -92,35 +92,43 @@ public class Step extends AFunction {
 
 		super(7);
 
-		getParameter(0).setLowerLimit(minY);
-		getParameter(0).setUpperLimit(maxY);
-		getParameter(0).setValue((minY + maxY) / 2.0);
+		IParameter p;
+		p = getParameter(0);
+		p.setLowerLimit(minY);
+		p.setUpperLimit(maxY);
+		p.setValue((minY + maxY) / 2.0);
 
-		getParameter(1).setLowerLimit(minX1);
-		getParameter(1).setUpperLimit(maxX1);
-		getParameter(1).setValue((minX1 + maxX1) / 2.0);
+		p = getParameter(1);
+		p.setLowerLimit(minX1);
+		p.setUpperLimit(maxX1);
+		p.setValue((minX1 + maxX1) / 2.0);
 
-		getParameter(2).setLowerLimit(minX2);
-		getParameter(2).setUpperLimit(maxX2);
-		getParameter(2).setValue((minX2 + maxX2) / 2.0);
+		p = getParameter(2);
+		p.setLowerLimit(minX2);
+		p.setUpperLimit(maxX2);
+		p.setValue((minX2 + maxX2) / 2.0);
 
-		getParameter(3).setLowerLimit(minH1);
-		getParameter(3).setUpperLimit(maxH1);
-		getParameter(3).setValue((minH1 + maxH1) / 2.0);
+		p = getParameter(3);
+		p.setLowerLimit(minH1);
+		p.setUpperLimit(maxH1);
+		p.setValue((minH1 + maxH1) / 2.0);
 
-		getParameter(4).setLowerLimit(minH2);
-		getParameter(4).setUpperLimit(maxH2);
-		getParameter(4).setValue((minH2 + maxH2) / 2.0);
+		p = getParameter(4);
+		p.setLowerLimit(minH2);
+		p.setUpperLimit(maxH2);
+		p.setValue((minH2 + maxH2) / 2.0);
 
-		getParameter(5).setLowerLimit(minW);
-		getParameter(5).setUpperLimit(maxW);
-		getParameter(5).setValue((minW + maxW) / 2.0);
+		p = getParameter(5);
+		p.setLowerLimit(minW);
+		p.setUpperLimit(maxW);
+		p.setValue((minW + maxW) / 2.0);
 
-		getParameter(6).setLowerLimit(minPos);
-		getParameter(6).setUpperLimit(maxPos);
-		getParameter(6).setValue((minPos + maxPos) / 2.0);
+		p = getParameter(6);
+		p.setLowerLimit(minPos);
+		p.setUpperLimit(maxPos);
+		p.setValue((minPos + maxPos) / 2.0);
 
-		name = cname;
+		name = NAME;
 	}
 
 	double base, pmin, pmax, width, start, outer, inner;

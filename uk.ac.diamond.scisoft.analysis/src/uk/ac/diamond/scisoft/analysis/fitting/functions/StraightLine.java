@@ -26,9 +26,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * This class implements the function y(x) = m*x + c
  */
 public class StraightLine extends AFunction {
-	private static String cname = "Linear";
-	private static String[] paramNames = new String[]{"M", "Constant"};
-	private static String cdescription = "y(x) = m*x + c";
+	private static final String NAME = "Linear";
+	private static final String DESC = "y(x) = m*x + c";
+	private static final String[] PARAMETER_NAMES = new String[]{"M", "Constant"};
 
 	/**
 	 * Basic constructor, not advisable to use.
@@ -66,30 +66,33 @@ public class StraightLine extends AFunction {
 	public StraightLine(double minM, double maxM, double minC, double maxC) {
 		super(2);
 
-		getParameter(0).setLowerLimit(minM);
-		getParameter(0).setUpperLimit(maxM);
-		getParameter(0).setValue((minM + maxM) / 2.0);
+		IParameter p;
+		p = getParameter(0);
+		p.setLowerLimit(minM);
+		p.setUpperLimit(maxM);
+		p.setValue((minM + maxM) / 2.0);
 
-		getParameter(1).setLowerLimit(minC);
-		getParameter(1).setUpperLimit(maxC);
-		getParameter(1).setValue((minC + maxC) / 2.0);
+		p = getParameter(1);
+		p.setLowerLimit(minC);
+		p.setUpperLimit(maxC);
+		p.setValue((minC + maxC) / 2.0);
 
 		setNames();
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
+		name = NAME;
+		description = DESC;
+		for (int i = 0; i < PARAMETER_NAMES.length; i++) {
 			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+			p.setName(PARAMETER_NAMES[i]);
 		}
 	}
 
 	double a, b;
 	private void calcCachedParameters() {
-		a = parameters[0].getValue();
-		b = parameters[1].getValue();
+		a = getParameterValue(0);
+		b = getParameterValue(1);
 
 		setDirty(false);
 	}

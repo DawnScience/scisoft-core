@@ -29,8 +29,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  * y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
  */
 public class Polynomial extends AFunction {
-	private static final String cname = "Polynomial";
-	private static final String cdescription = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
+	private static final String NAME = "Polynomial";
+	private static final String DESC = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	double[] a;
 	private String[] paramNames;
 	int nparams; // actually degree + 1
@@ -113,8 +113,8 @@ public class Polynomial extends AFunction {
 	}
 
 	private void setNames() {
-		name = cname;
-		description = cdescription;
+		name = NAME;
+		description = DESC;
 		for (int i = 0; i < paramNames.length; i++) {
 			IParameter p = getParameter(i);
 			p.setName(paramNames[i]);
@@ -261,8 +261,8 @@ public class Polynomial extends AFunction {
 		}
 		a = new double[degree + 1];
 		nparams = degree + 1;
-		name = cname;
-		description = cdescription;
+		name = NAME;
+		description = DESC;
 		fillParameters(a);
 	}
 	

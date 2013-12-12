@@ -23,14 +23,14 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  * This class basically wraps the function y(x) = c
  */
 public class Offset extends AFunction {
-	private static String cname = "Offset";
+	private static final String NAME = "Offset";
 
 	/**
 	 * Constructor which simply creates the right number of parameters, but probably isn't that much good
 	 */
 	public Offset() {
 		super(1);
-		name = cname;
+		name = NAME;
 	}
 	
 	/**
@@ -39,12 +39,12 @@ public class Offset extends AFunction {
 	 */
 	public Offset(double[] params) {
 		super(params);
-		name = cname;
+		name = NAME;
 	}
 
 	public Offset(IParameter... params) {
 		super(params);
-		name = cname;
+		name = NAME;
 	}
 
 	/**
@@ -58,22 +58,22 @@ public class Offset extends AFunction {
 	public Offset(double minOffset, double maxOffset) {
 		super(1);
 
-		IParameter p = parameters[0];
+		IParameter p = getParameter(0);
 		p.setValue((minOffset + maxOffset) / 2.0);
 		p.setLowerLimit(minOffset);
 		p.setUpperLimit(maxOffset);
 
-		name = cname;
+		name = NAME;
 	}
 
 	@Override
 	public double val(double... values) {
-		return parameters[0].getValue();
+		return getParameterValue(0);
 	}
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		data.fill(parameters[0].getValue());
+		data.fill(getParameterValue(0));
 	}
 
 	@Override

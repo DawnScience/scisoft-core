@@ -6,13 +6,13 @@ x = dnp.arange(0,0.2,0.001)
 
 def scan_temps(start,stop,step,fwhm):
 	fg.setParameterValues(0.1,start,0,1,0,fwhm)
-	test = fg.makeDataset([x])
+	test = fg.calculateValues([x])
 	temps = dnp.arange(start,stop,step)
 	result = dnp.zeros(temps.shape)
 	count = 0
 	for temp in temps:
 		fg.setParameterValues(0.1,temp,0,1,0,0.0)
-		comp = fg.makeDataset([x])
+		comp = fg.calculateValues([x])
 		result[count] = dnp.sum(dnp.square(dnp.array(test)-dnp.array(comp)))
 		count+=1
 	dnp.plot.line(temps,result)

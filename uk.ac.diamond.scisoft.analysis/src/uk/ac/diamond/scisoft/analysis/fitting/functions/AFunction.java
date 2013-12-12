@@ -334,10 +334,10 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 
 		CoordinatesIterator it;
+		int[] shape = coords[0].getShape();
 		if (coords.length == 1) {
-			it = new CoordinateDatasetIterator(coords[0]);
+			it = coords[0].getElementsPerItem() == 1 ? new DatasetsIterator(coords) : new CoordinateDatasetIterator(coords[0]);
 		} else {
-			int[] shape = coords[0].getShape();
 			boolean same = true;
 			for (int i = 1; i < shape.length; i++) {
 				if (!Arrays.equals(shape, coords[i].getShape())) {

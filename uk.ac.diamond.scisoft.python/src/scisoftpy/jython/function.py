@@ -60,9 +60,17 @@ def _jfnclass(jclass):
         def val(self, *coords):
             return self._jfn.val(*coords)
 
-        @_wrap
         def makeDataset(self, *coords):
-            return self._jfn.makeDataset(toList(*coords))
+            return self.calculateValues(toList(*coords))
+
+        @_wrap
+        def calculateValues(self, *coords):
+            return self._jfn.calculateValues(toList(*coords))
+
+        @_wrap
+        def calculatePartialDerivativeValues(self, *coords):
+            return self._jfn.calculatePartialDerivativeValues(toList(*coords))
+
         @_wrap
         def residual(self, allvalues, data, *coords):
             return self._jfn.residual(allvalues, data, *coords)

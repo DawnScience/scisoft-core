@@ -95,6 +95,9 @@ class fitfunc(_absfn):
             raise ValueError, 'Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues
 
     def makeDataset(self, *coords):
+        return self.calculateValues(coords)
+
+    def calculateValues(self, *coords):
         '''Evaluate function across given coordinates
         '''
         try:
@@ -140,11 +143,14 @@ class cfitfunc(_compfn):
         return v
 
     def makeDataset(self, coords):
+        return self.calculateValues(coords)
+
+    def calculateValues(self, coords):
         '''Evaluate function across given coordinates
         '''
         vt = None
         for n in range(self.noOfFunctions):
-            v = _dnp.Sciwrap(self.getFunction(n).makeDataset(*coords))
+            v = _dnp.Sciwrap(self.getFunction(n).calculateValues(*coords))
             if vt is None:
                 vt = v
             else:
@@ -159,7 +165,7 @@ class cfitfunc(_compfn):
         data      -- used to subtract from evaluated function
         coords    -- coordinates over which the function is evaluated
         '''
-        return _dnp.residual(self.makeDataset(coords), data)
+        return _dnp.residual(self.calculateValues(coords), data)
 
 
 class fitresult(object):
@@ -226,12 +232,12 @@ class fitresult(object):
         nf = self.func.noOfFunctions
         coords = _jinput(self.coords)
         if nf > 1:
-            fdata = [_dnp.Sciwrap(self.func.makeDataset(coords))]
+            fdata = [_dnp.Sciwrap(self.func.calculateValues(coords))]
             fdata[0].name = "Composite function"
             for n in range(nf):
-                fdata.append(_dnp.Sciwrap(self.func.getFunction(n).makeDataset(*coords)))
+                fdata.append(_dnp.Sciwrap(self.func.getFunction(n).calculateValues(*coords)))
         elif nf == 1:
-            fdata = [_dnp.Sciwrap(self.func.getFunction(0).makeDataset(coords))]
+            fdata = [_dnp.Sciwrap(self.func.getFunction(0).calculateValues(coords))]
         else:
             fdata = []
 
@@ -264,7 +270,7 @@ class fitresult(object):
         '''Area or hypervolume under fit assuming coordinates are uniformly spaced
         '''
         deltax = self._calcdelta(self.coords)
-        return _dnp.Sciwrap(self.func.makeDataset(_jinput(self.coords)).sum()) * deltax
+        return _dnp.Sciwrap(self.func.calculateValues(_jinput(self.coords)).sum()) * deltax
     area = property(_area)
 
     def __str__(self):
@@ -491,7 +497,7 @@ def polyval(p, x):
     '''
     poly = _poly(_asDS(p, _dnp.float64)._jdataset().data)
     d = _asDS(x, _dnp.float, force=True)._jdataset()
-    return poly.makeDataset([d])
+    return poly.calculateValues([d])
 
 # need a cspline fit function
 

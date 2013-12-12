@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd. Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
@@ -31,6 +31,12 @@ public class DoubleDatasetTest {
 		it = b.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(i, b.getElementDoubleAbs(it.index), 1e-5 * i);
+		}
+
+		DoubleDataset c = new DoubleDataset(a.getSliceView(new int[] {1}, null, new int[] {2}));
+		it = c.getIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			assertEquals(2*i+1, c.getElementDoubleAbs(it.index), 1e-5 * i);
 		}
 	}
 

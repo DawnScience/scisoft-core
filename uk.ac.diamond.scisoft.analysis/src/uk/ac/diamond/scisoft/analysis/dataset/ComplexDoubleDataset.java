@@ -120,6 +120,9 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	public ComplexDoubleDataset(final AbstractDataset dataset) {
 		super(ISIZE, dataset.getShapeRef());
 		copyToView(dataset, this, true, false);
+		offset = 0;
+		stride = null;
+		base = null;
 
 		IndexIterator iter = dataset.getIterator();
 		int disize = dataset.getElementsPerItem();

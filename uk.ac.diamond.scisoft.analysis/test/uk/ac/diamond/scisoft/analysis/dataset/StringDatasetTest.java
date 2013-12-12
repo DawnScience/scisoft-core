@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,11 @@ public class StringDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(String.format("%d", i), b.getStringAbs(it.index));
 		}
-	}
 
+		StringDataset c = new StringDataset(a.getSliceView(new int[] {1}, null, new int[] {2}));
+		it = c.getIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			assertEquals(String.format("%d", 2*i + 1), c.getStringAbs(it.index));
+		}
+	}
 }

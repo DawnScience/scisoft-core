@@ -114,6 +114,10 @@ public class BooleanDatasetBase extends AbstractDataset {
 		if (dataset.stride == null || dataset.size == dataset.base.size) {
 			odata = data = dataset.data.clone();
 		} else {
+			offset = 0;
+			stride = null;
+			base = null;
+			odata = data = createArray(size);
 			IndexIterator iter = dataset.getIterator();
 			for (int i = 0; iter.hasNext(); i++) {
 				data[i] = dataset.data[iter.index];
@@ -127,7 +131,9 @@ public class BooleanDatasetBase extends AbstractDataset {
 	 */
 	public BooleanDatasetBase(final AbstractDataset dataset) {
 		copyToView(dataset, this, true, false);
-
+		offset = 0;
+		stride = null;
+		base = null;
 		odata = data = createArray(size);
 		IndexIterator iter = dataset.getIterator();
 		for (int i = 0; iter.hasNext(); i++) {

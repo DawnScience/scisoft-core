@@ -99,6 +99,10 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 		if (dataset.stride == null || dataset.size == dataset.base.size) {
 			odata = data = dataset.data.clone();
 		} else {
+			offset = 0;
+			stride = null;
+			base = null;
+			odata = data = createArray(size);
 			IndexIterator iter = dataset.getIterator();
 			for (int j = 0; iter.hasNext();) {
 				for (int i = 0; i < isize; i++) {
@@ -114,8 +118,10 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 	 */
 	public CompoundIntegerDataset(final AbstractCompoundDataset dataset) {
 		copyToView(dataset, this, true, false);
+		offset = 0;
+		stride = null;
+		base = null;
 		isize = dataset.isize;
-
 		odata = data = createArray(size);
 
 		IndexIterator iter = dataset.getIterator();

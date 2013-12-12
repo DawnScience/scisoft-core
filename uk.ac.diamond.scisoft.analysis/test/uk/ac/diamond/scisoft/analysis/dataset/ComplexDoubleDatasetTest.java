@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,6 +44,12 @@ public class ComplexDoubleDatasetTest {
 		it = b.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(i*2, b.getElementDoubleAbs(it.index), 1e-5*i);
+		}
+
+		ComplexDoubleDataset c = new ComplexDoubleDataset(a.getSliceView(new int[] {1}, null, new int[] {2}));
+		it = c.getIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			assertEquals(4*i+2, c.getElementDoubleAbs(it.index), 1e-5 * i);
 		}
 
 		List<Complex> list = new ArrayList<Complex>();

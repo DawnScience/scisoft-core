@@ -45,5 +45,17 @@ public class FermiGaussTest {
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {(-2.5*w - 0.5)/1.5 - 5.2, (2.5*0 - 0.5)/2. - 5.2,
 				(2.5*2*w - 0.5)/5 - 5.2}, dx.getData(), ABS_TOL);
+
+		f.setParameterValues(23., 110., 2.5, -0.5, -5.2, 1);
+		dx = f.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {((-2.5*w - 0.5)/1.5 - 5.2)*Math.exp(-5.685e-3),
+				((2.5*0 - 0.5)/2. - 5.2)*Math.exp(-3.816e-3),
+				((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, dx.getData(), 100*ABS_TOL);
+
+		f.setParameterValues(23., 110., 2.5*2, -0.5*2, -5.2*2, 1);
+		dx = f.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {2*((-2.5*w - 0.5)/1.5 - 5.2)*Math.exp(-5.685e-3),
+				2*((2.5*0 - 0.5)/2. - 5.2)*Math.exp(-3.816e-3),
+				2*((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, dx.getData(), 200*ABS_TOL);
 	}
 }

@@ -445,7 +445,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
-		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, "UPDATE");
+		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_UPDATE);
 		axisData.setData(sizes);
 		try {
 			dataBean.addData(axisData);

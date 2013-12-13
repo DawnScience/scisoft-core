@@ -328,7 +328,7 @@ public class LoaderFactory {
 					logger.error("There was not enough memory to load {}", path);
 					throw new ScanFileHolderException("Out of memory in loader factory", ome);
 				} catch (Throwable ne) {
-					logger.trace("Loader {} error", loader, ne);
+					logger.trace("Loader {} caused {}", loader, ne);
 					continue;
 				}
 			}
@@ -427,7 +427,7 @@ public class LoaderFactory {
 			logger.error("There was not enough memory to load {}", path);
 			throw new ScanFileHolderException("Out of memory in loader factory", ome);
 		} catch (Throwable ne) {
-			logger.trace("Loader {} error", loader, ne);
+			logger.trace("Loader {} caused {}", loader, ne);
 			throw new ScanFileHolderException("Loader error", ne);
 		}
 	}
@@ -572,6 +572,7 @@ public class LoaderFactory {
 				return meta;
 			} catch (Throwable ne) {
 				//logger.trace("Cannot load nexus meta data", ne);
+				logger.trace("Loader {} caused {}", loader, ne);
 				continue;
 			}
 		}

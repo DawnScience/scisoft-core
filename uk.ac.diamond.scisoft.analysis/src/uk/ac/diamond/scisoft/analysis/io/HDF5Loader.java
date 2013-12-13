@@ -382,6 +382,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private static int LIMIT = 10240;
+//	private static int LIMIT = 20;
 
 	/**
 	 * Create a node (and all its children, recursively) from given location ID

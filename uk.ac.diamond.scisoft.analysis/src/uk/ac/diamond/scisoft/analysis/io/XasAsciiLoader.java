@@ -150,7 +150,7 @@ public class XasAsciiLoader extends SRSLoader {
 	protected void writeHeader(BufferedWriter out, DataHolder dh) throws IOException {
 		// now write out the data names
 		out.write(COMMENT_PREFIX);
-		int imax = dh.namesSize();
+		int imax = dh.size();
 		for (int i = 0; i < imax; i++) {
 			out.write(dh.getName(i) + "\t");
 		}

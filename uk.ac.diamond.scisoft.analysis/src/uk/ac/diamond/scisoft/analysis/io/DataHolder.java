@@ -18,11 +18,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
+import org.apache.commons.collections4.map.ListHashedMap;
+import org.apache.commons.collections4.map.SynchronizedListHashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,20 +37,17 @@ import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
  * <p>
  * This is designed to take in any dataset obeying the IDataset interface but output an
  * object that is a subclass of AbstractDataset - the dataset will be converted if necessary.
+ * 
+ * This implementation does not permit duplicated names.
  */
 public class DataHolder implements IMetadataProvider, IDataHolder, Serializable {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**
-	 * List containing all the data to be loaded
+	 * List containing all the name and data pairs (to be) loaded.
 	 */
-	private List<ILazyDataset> data;
-
-	/**
-	 * List containing the names of all the data
-	 */
-	private List<String> names;
+	private SynchronizedListHashedMap<String, ILazyDataset> nameDataMappings;
 
 	/**
 	 * List containing metadata
@@ -71,26 +68,19 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
-		data = new Vector<ILazyDataset>();
-		names = new Vector<String>();
+		nameDataMappings = SynchronizedListHashedMap.synchronizedListHashedMap(new ListHashedMap<String, ILazyDataset>());
 		metadata = new Metadata();
 	}
-	
 
 	/**
-	 * The current data as a map
-	 * @return map of lazy data
+	 * The current data as a map of lazy datasets.
+	 * @return map of lazy datasets with keys from their corresponding names
 	 */
 	@Override
 	public Map<String, ILazyDataset> toLazyMap() {
-		final Map<String, ILazyDataset> ret= new LinkedHashMap<String, ILazyDataset>(names.size());
-		for (String name : names) {
-			ret.put(name, getLazyDataset(name));
-		}
-		return ret;
+		return nameDataMappings.clone();
 	}
 
-	
 	/**
 	 * Does not clone the meta data.
 	 * @return shallow copy of DataHolder
@@ -99,18 +89,18 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	public IDataHolder clone() {
 		
 		DataHolder ret = new DataHolder();
-		ret.data.addAll(data);
-		ret.names.addAll(names);
+		ret.nameDataMappings.putAll(nameDataMappings);
 		ret.metadata    = metadata;
 		ret.filePath    = filePath;
 		ret.loaderClass = loaderClass;
 		return ret;
 	}
-	
 
 	/**
 	 * Adds a dataset and its name into the two vectors of the Object.
 	 * 
+	 * Replaces any datasets of the same name already existing.
+	 *  
 	 * @param name
 	 *            the name of the dataset which is to be added
 	 * @param dataset
@@ -118,17 +108,15 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public boolean addDataset(String name, ILazyDataset dataset) {
-		// Do not allow duplicates
-		boolean ret = remove(name);
-		names.add(name);
-		data.add(dataset);
+		boolean ret = nameDataMappings.containsKey(name);
+		nameDataMappings.put(name, dataset);
 		return ret;
 	}
 
 	/**
 	 * Adds a dataset, metadata and its name. This is for Diffraction data
 	 * 
-	 * Replaces any datasets of the same name already existing 
+	 * Replaces any datasets of the same name already existing.
 	 * 
 	 * @param name
 	 *            the name of the dataset which is to be added
@@ -138,22 +126,11 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 *            the metadata that is associated with the dataset
 	 */
 	public boolean addDataset(String name, ILazyDataset dataset, IMetaData metadata) {
-		boolean ret = remove(name);
-		names.add(name);
-		data.add(dataset);
+		boolean ret = addDataset(name, dataset);
 		this.metadata = metadata;
 		return ret;
 	}
 	
-	private boolean remove(String name) {
-		if (names.contains(name)) {
-			data.remove(names.indexOf(name));
-			names.remove(name);
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Add a ImetaData object
 	 * @param metadata which is an object implementing IMetaData
@@ -172,73 +149,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 
 	/**
-	 * This is not guaranteed to work as duplicate names will overwrite in the map.
-	 * @return Read-Only Map of datasets with keys from their corresponding names
-	 */
-	public Map<String, ILazyDataset> getMap() {
-		Map<String, ILazyDataset> hm = new LinkedHashMap<String, ILazyDataset>();
-		int imax = data.size();
-		for (int i = 0; i < imax; i++) {
-			hm.put(names.get(i), data.get(i));
-		}
-		return hm;
-	}
-
-	/**
 	 * @return List of datasets
 	 */
 	public List<ILazyDataset> getList() {
-		int imax = data.size();
-		List<ILazyDataset> al = new ArrayList<ILazyDataset>(imax);
-		for (int i = 0; i < imax; i++) {
-			al.add(data.get(i));
-		}
-		return data;
-	}
-
-	/**
-	 * Set a generic dataset at given index. Ensure the index is in range otherwise an exception
-	 * will occur
-	 * @param index
-	 * @param dataset
-	 */
-	public void setDataset(int index, ILazyDataset dataset) {
-		data.set(index, dataset);
-	}
-
-	/**
-	 * Set a generic dataset with given name
-	 * @param name
-	 * @param dataset
-	 */
-	public void setDataset(String name, ILazyDataset dataset) {
-		if( names.contains(name)){
-			data.set(names.indexOf(name), dataset);
-		} else {
-			addDataset(name, dataset);
-		}
-	}
-
-	/**
-	 * This does not retrieve lazy datasets.
-	 * @param index
-	 * @return Generic dataset with given index in holder
-	 */
-	@Override
-	public AbstractDataset getDataset(int index) {
-		return DatasetUtils.convertToAbstractDataset(data.get(index));
-	}
-
-	/**
-	 * This does not retrieve lazy datasets.
-	 * @param name
-	 * @return Generic dataset with given name (first one if name not unique)
-	 */
-	@Override
-	public AbstractDataset getDataset(String name) {
-		if (names.contains(name))
-			return DatasetUtils.convertToAbstractDataset(data.get(names.indexOf(name)));
-		return null;
+		return new ArrayList<ILazyDataset>(nameDataMappings.values());
 	}
 
 	/**
@@ -248,19 +162,56 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(int index) {
-		return data.get(index);
+		return nameDataMappings.getValue(index);
 	}
 
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param name
-	 * @return Generic dataset with given name (first one if name not unique)
+	 * @return Generic dataset with given name
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(String name) {
-		if (names.contains(name))
-			return data.get(names.indexOf(name));
-		return null;
+		return nameDataMappings.get(name);
+	}
+
+	/**
+	 * Set a generic dataset at given index. Ensure the index is in range otherwise an exception
+	 * will occur
+	 * @param index
+	 * @param dataset
+	 */
+	public void setDataset(int index, ILazyDataset dataset) {
+		nameDataMappings.setValue(index, dataset);
+	}
+
+	/**
+	 * Set a generic dataset with given name
+	 * @param name
+	 * @param dataset
+	 */
+	public void setDataset(String name, ILazyDataset dataset) {
+		nameDataMappings.put(name, dataset);
+	}
+
+	/**
+	 * This does not retrieve lazy datasets.
+	 * @param index
+	 * @return Generic dataset with given index in holder
+	 */
+	@Override
+	public AbstractDataset getDataset(int index) {
+		return DatasetUtils.convertToAbstractDataset(getLazyDataset(index));
+	}
+
+	/**
+	 * This does not retrieve lazy datasets.
+	 * @param name
+	 * @return Generic dataset with given name
+	 */
+	@Override
+	public AbstractDataset getDataset(String name) {
+		return DatasetUtils.convertToAbstractDataset(getLazyDataset(name));
 	}
 
 	/**
@@ -270,16 +221,16 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public boolean contains(String name) {
-		return names.contains(name);
+		return nameDataMappings.containsKey(name);
 	}
 
 	/**
 	 * @param name
-	 * @return index of first dataset with given name
+	 * @return index of dataset with given name
 	 * @see java.util.List#indexOf(Object)
 	 */
 	public int indexOf(String name) {
-		return names.indexOf(name);
+		return nameDataMappings.indexOf(name);
 	}
 
 	/**
@@ -287,7 +238,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public String[] getNames() {
-		return names.toArray(new String[names.size()]);
+		return nameDataMappings.toArray(new String[nameDataMappings.size()]);
 	}
 
 	/**
@@ -296,9 +247,11 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public String getName(final int index) {
-		if (index >= 0 && index < names.size())
-			return names.get(index);
-		return null;
+		try {
+			return nameDataMappings.get(index);
+		} catch( IndexOutOfBoundsException e ) {
+			return null;
+		}
 	}
 
 	/**
@@ -306,7 +259,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public int size() {
-		return data.size();
+		return nameDataMappings.size();
 	}
 
 	/**
@@ -314,7 +267,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public int namesSize() {
-		return names.size();
+		return size();
 	}
 
 	/**
@@ -322,8 +275,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @see java.util.List#clear()
 	 */
 	public void clear() {
-		data.clear();
-		names.clear();
+		nameDataMappings.clear();
 		metadata = null;
 	}
 
@@ -333,8 +285,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @see java.util.List#remove(int)
 	 */
 	public void remove(int index) {
-		data.remove(index);
-		names.remove(index);
+		nameDataMappings.remove(index);
 	}
 
 	/**
@@ -368,11 +319,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
 		result = prime * result + ((loaderClass == null) ? 0 : loaderClass.hashCode());
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-		result = prime * result + ((names == null) ? 0 : names.hashCode());
+		result = prime * result + ((nameDataMappings == null) ? 0 : nameDataMappings.hashCode());
 		return result;
 	}
 
@@ -386,11 +336,6 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		if (getClass() != obj.getClass())
 			return false;
 		DataHolder other = (DataHolder) obj;
-		if (data == null) {
-			if (other.data != null)
-				return false;
-		} else if (!data.equals(other.data))
-			return false;
 		if (filePath == null) {
 			if (other.filePath != null)
 				return false;
@@ -406,10 +351,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 				return false;
 		} else if (!metadata.equals(other.metadata))
 			return false;
-		if (names == null) {
-			if (other.names != null)
+		if (nameDataMappings == null) {
+			if (other.nameDataMappings != null)
 				return false;
-		} else if (!names.equals(other.names))
+		} else if (!nameDataMappings.equals(other.nameDataMappings))
 			return false;
 		return true;
 	}

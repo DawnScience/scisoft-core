@@ -107,7 +107,7 @@ public class DatLoaderTest {
         if (!names.contains("Unknown2")) throw new Exception("No Unknown2 in meta data!");
 		
         final DataHolder dh = LoaderFactory.getData(testfile1, null);
-        final Map<String,ILazyDataset> data = dh.getMap();
+        final Map<String,ILazyDataset> data = dh.toLazyMap();
         for (String name : data.keySet()) {
 			if (!data.get(name).getName().equals(name)) throw new Exception("DatLoader did not set dataset name correctly!");
 		}

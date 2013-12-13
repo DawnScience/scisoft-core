@@ -194,8 +194,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	protected void parseColumns(String[] data, List<?>[] columns) throws ScanFileHolderException {
 		int cols = data.length;
 		if (cols > columns.length) {
-			logger.warn("Number of columns ({}) on data line exceeds number of headers ({}) in {} - ignoring excess columns",
-					new Object[] {cols, columns.length, fileName});
 			cols = columns.length;
 		}
 

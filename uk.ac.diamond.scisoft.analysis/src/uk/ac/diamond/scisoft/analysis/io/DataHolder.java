@@ -72,6 +72,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		metadata = new Metadata();
 	}
 
+	
+	
 	/**
 	 * The current data as a map of lazy datasets.
 	 * @return map of lazy datasets with keys from their corresponding names

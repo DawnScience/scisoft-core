@@ -18,7 +18,8 @@ Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  uk.ac.diamond.org.jscience4;bundle-version="[4.3.1,5.0.0)",
  ncsa.hdf;bundle-version="2.8.0",
  org.dawb.hdf5;bundle-version="1.2.0",
- org.dawb.common.util;bundle-version="1.2.0"
+ org.dawb.common.util;bundle-version="1.2.0",
+ org.apache.commons.collections4;bundle-version="4.0.0"
 Export-Package: gda.analysis.io,
  uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,

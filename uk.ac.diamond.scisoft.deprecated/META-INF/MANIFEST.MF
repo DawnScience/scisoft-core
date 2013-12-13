@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Deprecated
 Bundle-SymbolicName: uk.ac.diamond.scisoft.deprecated
 Bundle-Version: 1.3.0.qualifier
-Require-Bundle: org.junit4;bundle-version="4.8.1",
+Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  uk.ac.gda.nexus;bundle-version="1.0.0",
  uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0",
  uk.ac.diamond.scisoft.analysis;bundle-version="[1.3.0,2.0.0)",

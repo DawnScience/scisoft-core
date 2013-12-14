@@ -490,7 +490,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 			this.filename     = path;
 			this.dataSetNames = names;
 			final DataHolder dh = loadFile(mon);
-			return dh.getMap();
+			return dh.toLazyMap();
 		} finally {
 			this.dataSetNames = origNames;
 			this.filename     = origFileName;

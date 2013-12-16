@@ -1552,18 +1552,24 @@ public class AbstractDatasetTest {
 	public void testCast() {
 		long[] udata = new long[] {0, 1, 127, 128, 255, 256, 32767, 32768, 65535, 65536, 2147483647L, 2147483648L, 4294967295L, 4294967296L};
 		AbstractDataset d = new LongDataset(udata);
-		AbstractDataset a;
-		a = AbstractDataset.array(DatasetUtils.cast(d, AbstractDataset.INT32), true);
+		AbstractDataset a, c;
+		c = DatasetUtils.cast(d, AbstractDataset.INT32);
+		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue()); // check stored values
+		a = AbstractDataset.array(c, true);
 		assertEquals("", 0, a.getLong(13));
 		for (int i = 0; i < 13; i++)
 			assertEquals("", udata[i], a.getLong(i));
 
-		a = AbstractDataset.array(DatasetUtils.cast(d, AbstractDataset.INT16), true);
+		c = DatasetUtils.cast(d, AbstractDataset.INT16);
+		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue());
+		a = AbstractDataset.array(c, true);
 		assertEquals("", 0, a.getLong(9));
 		for (int i = 0; i < 9; i++)
 			assertEquals("", udata[i], a.getLong(i));
 
-		a = AbstractDataset.array(DatasetUtils.cast(d, AbstractDataset.INT8), true);
+		c = DatasetUtils.cast(d, AbstractDataset.INT8);
+		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue());
+		a = AbstractDataset.array(c, true);
 		assertEquals("", 0, a.getLong(5));
 		for (int i = 0; i < 5; i++)
 			assertEquals("", udata[i], a.getLong(i));

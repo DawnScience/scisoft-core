@@ -387,7 +387,12 @@ public abstract class AbstractDataset implements ADataset {
 		} else {
 			view.metadataStructure = metadata;
 		}
-		if (orig.getDtype() != view.getDtype() && view.storedValues != null) {
+		int odtype = orig.getDtype();
+		int vdtype = view.getDtype();
+		if (getBestDType(odtype, vdtype) != vdtype) {
+			view.storedValues = null; // as copy is a demotion
+		}
+		if (odtype != vdtype && view.storedValues != null) {
 			view.storedValues.remove(STORE_SHAPELESS_HASH);
 			view.storedValues.remove(STORE_HASH);
 		}

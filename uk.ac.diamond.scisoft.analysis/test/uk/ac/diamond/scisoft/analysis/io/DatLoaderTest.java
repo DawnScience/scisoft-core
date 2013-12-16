@@ -113,6 +113,27 @@ public class DatLoaderTest {
 		}
 	}
 
+	/**
+	 * File with data but without a header line. Therefore the 
+	 * code has to work 
+	 * @throws Exception 
+	 */
+	@Test
+	public void testPlainDatFile() throws Exception {
+		
+		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/noheader.dat";
+		final IMetaData meta   = LoaderFactory.getMetaData(testfile1, null);
+        final Collection<String> names = meta.getDataNames();
+        if (!names.contains("col1")) throw new Exception("No Unknown1 in meta data!");
+        if (!names.contains("col2")) throw new Exception("No Unknown2 in meta data!");
+		
+        final DataHolder dh = LoaderFactory.getData(testfile1, null);
+        final Map<String,ILazyDataset> data = dh.toLazyMap();
+        for (String name : data.keySet()) {
+			if (!data.get(name).getName().equals(name)) throw new Exception("DatLoader did not set dataset name correctly!");
+		}
+	}
+
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder loader = new DatLoader("testfiles/gda/analysis/io/DatLoaderTest/MoFoil.dat").loadFile();

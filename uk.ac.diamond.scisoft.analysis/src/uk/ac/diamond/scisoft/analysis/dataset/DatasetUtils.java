@@ -1074,16 +1074,11 @@ public class DatasetUtils {
 			return null;
 
 		if (lazydata instanceof AbstractDataset) {
-			AbstractDataset adata = (AbstractDataset) lazydata;
-			return adata.getView();
+			return (AbstractDataset) lazydata;
 		}
 
-		int dtype;
-		if (lazydata instanceof ADataset) {
-			dtype = ((ADataset) lazydata).getDtype();
-		} else {
-			dtype = AbstractDataset.getDType(lazydata);
-		}
+		int dtype = lazydata instanceof ADataset ? ((ADataset) lazydata).getDtype() :
+			AbstractDataset.getDType(lazydata);
 
 		IDataset data;
 		if (lazydata instanceof IDataset) {

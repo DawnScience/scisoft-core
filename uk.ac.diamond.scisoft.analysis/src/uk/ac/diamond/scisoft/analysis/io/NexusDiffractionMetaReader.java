@@ -177,6 +177,16 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	/**
+	 * Check if the specified value was read from the Nexus file
+	 */
+	public boolean isMetadataEntryRead(DiffractionMetaValue entry) {
+		if (successMap.containsKey(entry)) {
+			return successMap.get(entry);
+		}
+		return false;
+	}
+	
+	/**
 	 * Have complete DetectorProperties and DiffractionCrystalEnvironment values been read
 	 */
 	public boolean isCompleteRead() {

@@ -380,7 +380,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			if (!foundHeaderLine) {
 				final String[] values = line.trim().split("\\s+");
 				this.columnIndex = -1;
-				int p = (int) Math.ceil(Math.log10(values.length));
+				int p = (int) Math.max(1, Math.ceil(Math.log10(values.length)));
 				String fmt = String.format("col%%0%dd", p); // same as python loader
 				for (int i = 0; i < values.length; i++) {
 					vals.put(String.format(fmt, i+1), new ArrayList<Double>(89));

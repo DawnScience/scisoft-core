@@ -236,4 +236,36 @@ public class OperatorTest {
 			// do nothing
 		}
 	}
+
+	@Test
+	public void testConvolve() {
+		double w = 110 * Math.log(2)*FermiGauss.K2EV_CONVERSION_FACTOR;
+
+		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + 2 * w});
+
+		AFunction f = new Fermi();
+		f.setParameterValues(23., 110*FermiGauss.K2EV_CONVERSION_FACTOR, 1, 0);
+		AFunction g = new Gaussian();
+		g.setParameterValues((double) xd.mean(), 1., 1.);
+
+		Convolve cfg = new Convolve();
+		cfg.addFunction(f);
+		cfg.addFunction(g);
+
+		AFunction fg = new FermiGauss();
+		fg.setParameterValues(23., 110., 0, 1, 0, 1);
+
+		Assert.assertEquals(6, cfg.getNoOfParameters());
+		double[] cps = cfg.getParameterValues();
+		cps[1] /= FermiGauss.K2EV_CONVERSION_FACTOR;
+		cps[3] = cps[2];
+		cps[2] = 0;
+		cps[4] = 0;
+		double[] ps = fg.getParameterValues();
+		Assert.assertArrayEquals(cps, ps, ABS_TOL);
+
+		DoubleDataset fgx = fg.calculateValues(xd);
+		DoubleDataset cfgx = cfg.calculateValues(xd);
+		Assert.assertArrayEquals(cfgx.getData(), fgx.getData(), 200*ABS_TOL);
+	}
 }

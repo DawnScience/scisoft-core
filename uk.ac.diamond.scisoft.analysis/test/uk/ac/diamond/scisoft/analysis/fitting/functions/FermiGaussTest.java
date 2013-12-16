@@ -25,8 +25,6 @@ public class FermiGaussTest {
 
 	private static final double ABS_TOL = 1e-7;
 
-	private static final double F = 8.6173324e-5; // Boltzmann's constant
-
 	@Test
 	public void testFunction() {
 		AFunction f = new FermiGauss();
@@ -36,26 +34,26 @@ public class FermiGaussTest {
 
 		Assert.assertEquals((2.5*0 - 0.5)/2. - 5.2, f.val(23.), ABS_TOL);
 
-		double w = 110 * Math.log(2)*F;
+		double w = 110 * Math.log(2)*FermiGauss.K2EV_CONVERSION_FACTOR;
 		Assert.assertEquals((2.5*w - 0.5) / 3 - 5.2, f.val(23. + w), ABS_TOL);
 		Assert.assertEquals((-2.5*w - 0.5) / 1.5 - 5.2, f.val(23. - w), ABS_TOL);
 
 		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + 2 * w});
-		DoubleDataset dx;
-		dx = f.calculateValues(xd);
+		DoubleDataset fx;
+		fx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {(-2.5*w - 0.5)/1.5 - 5.2, (2.5*0 - 0.5)/2. - 5.2,
-				(2.5*2*w - 0.5)/5 - 5.2}, dx.getData(), ABS_TOL);
+				(2.5*2*w - 0.5)/5 - 5.2}, fx.getData(), ABS_TOL);
 
 		f.setParameterValues(23., 110., 2.5, -0.5, -5.2, 1);
-		dx = f.calculateValues(xd);
+		fx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {((-2.5*w - 0.5)/1.5 - 5.2)*Math.exp(-5.685e-3),
 				((2.5*0 - 0.5)/2. - 5.2)*Math.exp(-3.816e-3),
-				((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, dx.getData(), 100*ABS_TOL);
+				((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, fx.getData(), 100*ABS_TOL);
 
 		f.setParameterValues(23., 110., 2.5*2, -0.5*2, -5.2*2, 1);
-		dx = f.calculateValues(xd);
+		fx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {2*((-2.5*w - 0.5)/1.5 - 5.2)*Math.exp(-5.685e-3),
 				2*((2.5*0 - 0.5)/2. - 5.2)*Math.exp(-3.816e-3),
-				2*((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, dx.getData(), 200*ABS_TOL);
+				2*((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, fx.getData(), 200*ABS_TOL);
 	}
 }

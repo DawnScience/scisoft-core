@@ -35,8 +35,7 @@ public class FermiGauss extends AFunction implements Serializable{
 	private static final int NUMBER_OF_PARAMETERS = 6;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FermiGauss.class);
-	
-	private static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5;
+	static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5; // Boltzmann constant in eV/K
 
 	private static final String NAME = "Fermi * Gaussian";
 	private static final String DESC = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
@@ -158,7 +157,7 @@ public class FermiGauss extends AFunction implements Serializable{
 
 		Gaussian gauss = new Gaussian((double)xAxis.mean(), fwhm, 1.0);
 		DoubleDataset gaussDS = gauss.calculateValues(xAxis);
-		gaussDS = (DoubleDataset) Maths.divide(gaussDS, gaussDS.sum());
+		gaussDS.idivide(gaussDS.sum());
 		int length = fermiDS.getShapeRef()[0];
 		DoubleDataset s1 = DoubleDataset.ones(length*2-1);
 		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {length/2}, new int[] {1});

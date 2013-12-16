@@ -90,10 +90,10 @@ public class PeakFittingEllipseFinder {
 		if (mon != null && mon.isCancelled()) return null;
 		
 		if (polyline.getNumberOfPoints() < nPoints *0.9) {
-			findNumberOfPointsOnEllipse(image, polyline, inner, outer, Math.PI/(2*nPoints),nPoints, mon);
+			findNumberOfPointsOnEllipse(image, polyline, inner, outer, Math.PI/(2*nPoints)/4,nPoints, mon);
 			if (mon != null && mon.isCancelled()) return null;
 			if (polyline.getNumberOfPoints() < nPoints *0.9)  {
-				findNumberOfPointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/(2*nPoints),nPoints, mon);
+				findNumberOfPointsOnEllipse(image, polyline, inner, outer, 3*Math.PI/(2*nPoints)/4,nPoints, mon);
 				if (mon != null && mon.isCancelled()) return null;
 			}
 			

@@ -134,11 +134,6 @@ public class StraightLine extends AFunction {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-		if (isDuplicated(parameter)) {
-			super.fillWithPartialDerivativeValues(parameter, data, it);
-			return;
-		}
-
 		int i = indexOfParameter(parameter);
 		switch (i) {
 		case 0:

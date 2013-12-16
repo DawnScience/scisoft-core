@@ -194,19 +194,9 @@ public class Polynomial extends AFunction {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-		if (isDuplicated(parameter)) {
-			super.fillWithPartialDerivativeValues(parameter, data, it);
-			return;
-		}
-
-		int i = indexOfParameter(parameter);
-		if (i < 0)
-			return;
-
 		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
 
-		final int n = nparams - 1 - i;
-
+		final int n = nparams - 1 - indexOfParameter(parameter);
 		switch (n) {
 		case 0:
 			data.fill(1);

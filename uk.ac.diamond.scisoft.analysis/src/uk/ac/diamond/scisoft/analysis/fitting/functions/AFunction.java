@@ -363,13 +363,21 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	final public DoubleDataset calculatePartialDerivativeValues(IParameter parameter, IDataset... coords) {
+	public DoubleDataset calculatePartialDerivativeValues(IParameter parameter, IDataset... coords) {
 		CoordinatesIterator it = getIterator(coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 		if (indexOfParameter(parameter) >= 0)
-			fillWithPartialDerivativeValues(parameter, result, it);
+			internalFillWithPartialDerivativeValues(parameter, result, it);
 		result.setName(name);
 		return result;
+	}
+
+	private void internalFillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		if (isDuplicated(parameter)) {
+			calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, parameter, data, it);
+		} else {
+			fillWithPartialDerivativeValues(parameter, data, it);
+		}
 	}
 
 	/**
@@ -382,9 +390,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	/**
 	 * Fill dataset with partial derivatives
 	 * <p>
-	 * This implementation is a numerical approximation. Overriding methods should check
-	 * for duplicated parameters before doing any calculation and either cope with this
-	 * or use this numerical approximation
+	 * This implementation is a numerical approximation.
+	 * <p>
+	 * Note that is called only if there are no duplicated parameters otherwise,
+	 * a numerical approximation is used. To change this behaviour, override
+	 * {@link #calculatePartialDerivativeValues(IParameter, IDataset...)}
 	 * @param parameter
 	 * @param data
 	 * @param it

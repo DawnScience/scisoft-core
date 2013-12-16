@@ -155,17 +155,9 @@ public class Cubic extends AFunction {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-		if (isDuplicated(parameter)) {
-			super.fillWithPartialDerivativeValues(parameter, data, it);
-			return;
-		}
-
-		int i = indexOfParameter(parameter);
-		if (i < 0)
-			return;
-
 		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
 
+		int i = indexOfParameter(parameter);
 		switch (i) {
 		case 0:
 			data.fill(Maths.power(pos, 3));

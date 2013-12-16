@@ -23,7 +23,7 @@ import java.util.List;
  * An abstract operator
  */
 abstract public class AOperator extends AFunction implements IOperator {
-	protected List<IParameter> params;
+	protected List<IParameter> params; // unique parameters
 
 	public AOperator() {
 		super(0);
@@ -95,6 +95,11 @@ abstract public class AOperator extends AFunction implements IOperator {
 			params.get(i).setValue(parameters[i]);
 		}
 		setDirty(true);
+	}
+
+	@Override
+	protected boolean isDuplicated(IParameter param) {
+		return false;
 	}
 
 	@Override

@@ -18,11 +18,10 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dawb.apache.commons.collections4.map.ListHashedMap;
-import org.dawb.apache.commons.collections4.map.SynchronizedListHashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * List containing all the name and data pairs (to be) loaded.
 	 */
-	private SynchronizedListHashedMap<String, ILazyDataset> nameDataMappings;
+	private LinkedHashMap<String, ILazyDataset> nameDataMappings;
 
 	/**
 	 * List containing metadata
@@ -68,7 +67,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
-		nameDataMappings = SynchronizedListHashedMap.synchronizedListHashedMap(new ListHashedMap<String, ILazyDataset>());
+		nameDataMappings =  new LinkedHashMap<String, ILazyDataset>();
 		metadata = new Metadata();
 	}
 
@@ -80,7 +79,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public Map<String, ILazyDataset> toLazyMap() {
-		return nameDataMappings.clone();
+		return new LinkedHashMap<String, ILazyDataset>(nameDataMappings);
 	}
 
 	/**
@@ -164,7 +163,9 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(int index) {
-		return nameDataMappings.getValue(index);
+		final String key = new ArrayList<String>(nameDataMappings.keySet()).get(index);
+		if (key == null ) return null;
+ 		return nameDataMappings.get(key);
 	}
 
 	/**
@@ -175,16 +176,6 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	@Override
 	public ILazyDataset getLazyDataset(String name) {
 		return nameDataMappings.get(name);
-	}
-
-	/**
-	 * Set a generic dataset at given index. Ensure the index is in range otherwise an exception
-	 * will occur
-	 * @param index
-	 * @param dataset
-	 */
-	public void setDataset(int index, ILazyDataset dataset) {
-		nameDataMappings.setValue(index, dataset);
 	}
 
 	/**
@@ -232,7 +223,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @see java.util.List#indexOf(Object)
 	 */
 	public int indexOf(String name) {
-		return nameDataMappings.indexOf(name);
+		List<String> keys = new ArrayList<String>(nameDataMappings.keySet());
+		return keys.indexOf(name);
 	}
 
 	/**
@@ -240,7 +232,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public String[] getNames() {
-		return nameDataMappings.toArray(new String[nameDataMappings.size()]);
+		return nameDataMappings.keySet().toArray(new String[nameDataMappings.size()]);
 	}
 
 	/**
@@ -250,7 +242,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	@Override
 	public String getName(final int index) {
 		try {
-			return nameDataMappings.get(index);
+			List<String> keys = new ArrayList<String>(nameDataMappings.keySet());
+			return keys.get(index);
 		} catch( IndexOutOfBoundsException e ) {
 			return null;
 		}

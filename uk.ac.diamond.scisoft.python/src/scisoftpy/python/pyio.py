@@ -220,10 +220,7 @@ class SRSLoader(PythonLoader):
             # use first line
             r = cs_regex.split(text[0].strip())
             lc = len(r)
-            from math import log10, ceil
-            p = ceil(log10(lc))
-            fmt = 'Column_%%0%dd' % p
-            cols = [ fmt % (i+1,) for i in range(lc) ]
+            cols = [ 'Column_%d' % (i+1,) for i in range(lc) ]
         else:
             if cols.count('\t') > 0: # columns separated by tabs
                 cols = cols.split('\t')

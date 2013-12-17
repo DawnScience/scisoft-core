@@ -228,4 +228,15 @@ public class ComparisonsTest {
 		AbstractDatasetTest.checkDatasets(Comparisons.isNegativeInfinite(c), new BooleanDataset(new boolean[] {false, true, false}));
 		AbstractDatasetTest.checkDatasets(Comparisons.isNaN(c), new BooleanDataset(new boolean[] {true, false, false}));
 	}
+
+	@Test
+	public void testNans() {
+		double n = Double.NaN;
+		double[] a = {-4.34, -1.34, 21.34};
+		double l = -2.;
+		double h = 15.4;
+		for (double x : a) {
+			System.err.println((x >= l && x <= h) + "\t" + (x <= h) + " = " + ((Double.isNaN(n) || x >= n) && x <= h) + "\t" +  (x >= l) + " = " + (x >= l && (Double.isNaN(n) || x <= n)) + "\t" + (x >= n && x <= n));
+		}
+	}
 }

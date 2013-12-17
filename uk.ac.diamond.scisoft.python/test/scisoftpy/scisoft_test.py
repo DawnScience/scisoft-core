@@ -413,9 +413,20 @@ class Test(unittest.TestCase):
         print np.append(a, x)
 
     def testTranspose(self):
-        print 'Append transpose'
+        print 'Transpose testing'
         a = np.arange(20).reshape(4,5)
         print a.T
+
+    def testEquals(self):
+        print 'Equality testing'
+        self.checkitems([False, True], np.array([2., 3]) == 3)
+        self.checkitems([True], np.array([2.]) == 2)
+        self.checkitems([False], np.array([3.]) == 2)
+        self.assertTrue(np.array(-2.) == -2)
+        self.assertFalse(np.array(-2.) == 2)
+        self.checkitems([False, True], np.array([2.-3.5j, 3]) == 3)
+        self.assertTrue(np.array(-2.+3.5j) == -2+3.5j)
+        self.assertFalse(np.array(-2.) == -2+3.5j)
 
 if __name__ == "__main__":
     #import sys

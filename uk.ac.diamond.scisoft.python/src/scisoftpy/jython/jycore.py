@@ -176,6 +176,9 @@ def _jinput(arg): # strip for java input
         return [ _jinput(a) for a in arg if a is not None]
     elif isinstance(arg, ndarray):
         return arg._jdataset()
+    elif isinstance(arg, complex):
+        return _jcomplex(arg.real, arg.imag)
+
     return arg
 
 from decorator import decorator as _decorator
@@ -198,6 +201,7 @@ def _wrap(func, *args, **kwargs): # strip input and wrap output
     for k,v in kwargs.iteritems():
         nkwargs[k] = _jinput(v)
 
+#    return _joutput(func(*nargs, **nkwargs)) if nkwargs else _joutput(func(*nargs))
     return _joutput(func(*nargs, **nkwargs))
 
 @_decorator
@@ -207,6 +211,7 @@ def _wrapin(func, *args, **kwargs): # strip input
     for k,v in kwargs.iteritems():
         nkwargs[k] = _jinput(v)
 
+#    return func(*nargs, **nkwargs) if nkwargs else func(*nargs) 
     return func(*nargs, **nkwargs)
 
 @_decorator
@@ -768,8 +773,8 @@ class ndarray(object):
         return _cmps.greater_equal(self, o)
 
     def __eq__(self, o):
-        e = _cmps.equal(self.__dataset, asDataset(o, force=True)._jdataset())
-        if self.size == 1:
+        e = _cmps.equal(self, o)
+        if self.ndim == 0 and self.size == 1:
             return e._jdataset().getBoolean([])
         return e
 

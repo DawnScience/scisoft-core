@@ -20,7 +20,6 @@ import gda.analysis.io.ScanFileHolderException;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;

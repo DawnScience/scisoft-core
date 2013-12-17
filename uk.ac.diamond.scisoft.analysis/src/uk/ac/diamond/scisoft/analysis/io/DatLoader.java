@@ -100,10 +100,9 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	transient protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
 	
 	transient private static final String  FLOAT = "([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)|(0\\.)";
-	transient private static final Pattern DATA  = Pattern.compile("^(("+FLOAT+")\\s+)+("+FLOAT+")$");
+	transient protected final Pattern DATA;
 
 	protected String                    fileName;
-	protected List<String>              header;
 	protected Map<String,String>        metaData;
 	protected List<String>              footer;
 	protected Map<String, List<Double>> vals;
@@ -112,19 +111,19 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	private ExtendedMetadata metadata;
 
 	public DatLoader() {
-	
+		DATA  = Pattern.compile("^(("+FLOAT+")"+getDelimiter()+")+("+FLOAT+")$");
 	}
 	
 	/**
 	 * @param fileName
 	 */
 	public DatLoader(final String fileName) {
+		this();
 		setFile(fileName);
 	}
 	
 	public void setFile(final String fileName) {
 		this.fileName = fileName;
-		this.header   = new ArrayList<String>(31);
 		this.metaData = new HashMap<String,String>(7);
 		this.footer   = new ArrayList<String>(7);
 		
@@ -180,7 +179,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 					}
 					if (vals.isEmpty()) throw new ScanFileHolderException("Cannot read header for data set names!");
 					
-					final String[] values = line.split("\\s+");
+					final String[] values = line.split(getDelimiter());
 					if (columnIndex>-1 && name!=null) {
 					    final String value = values[columnIndex];
 					    vals.get(name).add(Utils.parseDouble(value.trim()));
@@ -233,6 +232,14 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 				throw new ScanFileHolderException("Cannot close stream from file  " + fileName, e);
 			}
 		}
+	}
+
+	/**
+	 * May override to support different file formats.
+	 * @return the delimiter
+	 */
+	protected String getDelimiter() {
+		return "\\s+";
 	}
 
 	public AbstractDataset loadSet(final String path, final String name, final IMonitor mon) throws Exception {
@@ -307,8 +314,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		return metadata;
 	}
 
-	private static Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
-	private static Pattern DATE_LINE = Pattern.compile("#D (Sun|Mon|Tue|Wed|Thu|Fri|Sat) [a-zA-Z]+ \\d+ .*");
+	protected static final Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
+	protected static final Pattern DATE_LINE = Pattern.compile("#D (Sun|Mon|Tue|Wed|Thu|Fri|Sat) [a-zA-Z]+ \\d+ .*");
 	/**
 	 * This method parses the headers. It tries to throw an exception
 	 * if it is sure an SRS file is found. Also it looks in the headers
@@ -325,13 +332,14 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	 * @return last line
 	 * @throws Exception
 	 */
-	private String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
+	protected String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
 		
 		String line = in.readLine();
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metaData.clear();
-		header.clear();
 		vals.clear();
+		
+		List<String> header = new ArrayList<String>(31);
 		
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
@@ -378,19 +386,20 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 
 		if (header.size() < 1) {
 			if (!foundHeaderLine) {
-				final String[] values = line.trim().split("\\s+");
-				this.columnIndex = -1;
-				int p = (int) Math.max(1, Math.ceil(Math.log10(values.length)));
-				String fmt = String.format("col%%0%dd", p); // same as python loader
-				for (int i = 0; i < values.length; i++) {
-					vals.put(String.format(fmt, i+1), new ArrayList<Double>(89));
-				}
+				createDefaultHeaders(line);
 			}
 			return line;
 		}
 
+        createHeaders(header, line, name);		
+        		
+		return line;
+	}
+	
+	protected void createHeaders(final List<String> header, final String line, final String name) {
+		
 		final String lastHeaderLine = header.get(header.size()-1);
-		final String[] values = line.trim().split("\\s+");
+		final String[] values = line.trim().split(getDelimiter());
 		
 		if (name!=null) {
 			this.columnIndex = -1;
@@ -421,16 +430,21 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 		}
-		
-		return line;
 	}
-	
-	
 
-	private void createValues(Map<String, List<Double>> v, String header) {
+
+	protected void createDefaultHeaders(String line) {
+		final String[] values = line.trim().split(getDelimiter());
+		this.columnIndex = -1;
+		for (int i = 0; i < values.length; i++) {
+			vals.put("Column_"+(i+1), new ArrayList<Double>(89));
+		}
+	}
+
+	protected void createValues(Map<String, List<Double>> v, String header) {
 		
-		// Two or more spaces or a comma and one more more space
-		final String[] headers = header.substring(1).trim().split("\\s{2,}|\\,\\s+|\\t");
+		// Two or more spaces or a comma and zero more more space
+		final String[] headers = header.substring(1).trim().split("\\s{2,}|\\,\\s*|\\t");
 		
 		for (String name : headers) {
 			v.put(name, new ArrayList<Double>(89));

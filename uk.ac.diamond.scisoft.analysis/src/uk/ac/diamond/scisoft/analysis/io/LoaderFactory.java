@@ -140,6 +140,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("dat",  DatLoader.class);
 		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
+		    LoaderFactory.registerLoader("csv",  EpicsCSVLoader.class);
 		    LoaderFactory.registerLoader("txt",  DatLoader.class);
 		    LoaderFactory.registerLoader("txt",  SRSLoader.class);
 		    LoaderFactory.registerLoader("txt",  RawTextLoader.class);

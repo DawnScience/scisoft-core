@@ -108,20 +108,24 @@ public class Comparisons {
 
 				int i = 0;
 				if (as == 1) {
-					final double bv = AbstractDataset.toReal(b);
+					final double br = AbstractDataset.toReal(b);
+					final double bi = AbstractDataset.toImag(b);
+					if (bi != 0) {
+						return r;
+					}
 					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) == bv);
+						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) == br);
 					}
 				} else {
-					if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-						final double bv = AbstractDataset.toReal(b);
+					if (ad instanceof ComplexFloatDataset || ad instanceof ComplexDoubleDataset) {
+						final double br = AbstractDataset.toReal(b);
 						final double bi = AbstractDataset.toImag(b);
 
 						while (ita.hasNext()) {
-							boolean br = ad.getElementDoubleAbs(ita.index) == bv;
-							if (br)
-								br &= ad.getElementDoubleAbs(ita.index + 1) == bi;
-							r.setAbs(i++, br);
+							boolean bb = ad.getElementDoubleAbs(ita.index) == br;
+							if (bb)
+								bb &= ad.getElementDoubleAbs(ita.index + 1) == bi;
+							r.setAbs(i++, bb);
 						}
 						
 					} else {

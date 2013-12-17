@@ -124,8 +124,8 @@ public class DatLoaderTest {
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/noheader.dat";
 		final IMetaData meta   = LoaderFactory.getMetaData(testfile1, null);
         final Collection<String> names = meta.getDataNames();
-        if (!names.contains("col1")) throw new Exception("No Unknown1 in meta data!");
-        if (!names.contains("col2")) throw new Exception("No Unknown2 in meta data!");
+        if (!names.contains("Column_1")) throw new Exception("No Unknown1 in meta data!");
+        if (!names.contains("Column_2")) throw new Exception("No Unknown2 in meta data!");
 		
         final DataHolder dh = LoaderFactory.getData(testfile1, null);
         final Map<String,ILazyDataset> data = dh.toLazyMap();

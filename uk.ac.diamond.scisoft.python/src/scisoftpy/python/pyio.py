@@ -222,7 +222,7 @@ class SRSLoader(PythonLoader):
             lc = len(r)
             from math import log10, ceil
             p = ceil(log10(lc))
-            fmt = 'col%%0%dd' % p
+            fmt = 'Column_%%0%dd' % p
             cols = [ fmt % (i+1,) for i in range(lc) ]
         else:
             if cols.count('\t') > 0: # columns separated by tabs

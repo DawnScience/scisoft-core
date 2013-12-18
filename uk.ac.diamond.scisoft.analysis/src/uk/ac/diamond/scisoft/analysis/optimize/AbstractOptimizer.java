@@ -136,7 +136,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	private final static double DELTA = 1/256.; // initial value
 	private final static double DELTA_FACTOR = 0.25;
 
-	public int indexOfParameter(IParameter parameter) {
+	private int indexOfParameter(IParameter parameter) {
 		for (int i = 0; i < n; i++) {
 			if (parameter == params.get(i))
 				return i;
@@ -158,18 +158,14 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	private double calculateNumericalDerivative(double abs, double rel, IParameter parameter, DoubleDataset result, CoordinatesIterator it) {
 		double delta = DELTA;
 		double previous = evaluateNumericalDerivative(delta, parameter, result, it);
-		double aprevious = Math.abs(previous);
 		double current = 0;
-		double acurrent = 0;
 
 		while (delta > Double.MIN_NORMAL) {
 			delta *= DELTA_FACTOR;
 			current = evaluateNumericalDerivative(delta, parameter, result, it);
-			acurrent = Math.abs(current);
-			if (Math.abs(current - previous) <= abs + rel*Math.max(acurrent, aprevious))
+			if (Math.abs(current - previous) <= abs + rel*Math.max(Math.abs(current), Math.abs(previous)))
 				break;
 			previous = current;
-			aprevious = acurrent;
 		}
 
 		return current;

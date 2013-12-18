@@ -58,7 +58,7 @@ public class ApacheConjugateGradient implements IOptimizer {
 			@Override
 			public double value(double[] arg0) throws FunctionEvaluationException, IllegalArgumentException {
 				function.setParameterValues(arg0);
-				return function.residual(true, values, newCoords);
+				return function.residual(true, values, null, newCoords);
 
 			}
 
@@ -72,10 +72,10 @@ public class ApacheConjugateGradient implements IOptimizer {
 						double step = 0.1;
 						parameters[parameter] -= step;
 						function.setParameterValues(parameters);
-						double min = function.residual(true, values, newCoords);
+						double min = function.residual(true, values, null, newCoords);
 						parameters[parameter] += 2.0*step;
 						function.setParameterValues(parameters);
-						double max = function.residual(true, values, newCoords);
+						double max = function.residual(true, values, null, newCoords);
 						return -((max-min) / (2.0*step));
 					}
 				};

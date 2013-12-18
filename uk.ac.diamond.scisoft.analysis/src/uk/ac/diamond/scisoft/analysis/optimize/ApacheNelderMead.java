@@ -56,7 +56,7 @@ public class ApacheNelderMead implements IOptimizer {
 			@Override
 			public double value(double[] arg0) throws FunctionEvaluationException, IllegalArgumentException {
 				function.setParameterValues(arg0);
-				return function.residual(true, values, newCoords);
+				return function.residual(true, values, null, newCoords);
 			}
 		};
 			

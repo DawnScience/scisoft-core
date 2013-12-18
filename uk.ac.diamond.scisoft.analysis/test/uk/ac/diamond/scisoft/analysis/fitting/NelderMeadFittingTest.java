@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
@@ -32,41 +31,41 @@ public class NelderMeadFittingTest extends AbstractFittingTestBase {
 
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
+		checkClose("Gaussian fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMLorentzian() {
-		Assert.assertEquals(fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
+		checkClose("Lorentzian fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
 	}
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), 11*delta);
+		checkClose("Pearson7 fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), 11*delta);
 	}
 
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), 20*delta);
+		checkClose("PseudoVoigt fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), 20*delta);
 	}
 
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
+		checkClose("Gaussian area", area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Test
 	public void testAreaLorentzian() {
-		Assert.assertEquals(area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
+		checkClose("Lorentzian area", area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
 	}
 
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), 24*delta); // FIXME
+		checkClose("Pearson7 area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), 24*delta); // FIXME
 	}
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 28*delta);
+		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 28*delta);
 	}
 }

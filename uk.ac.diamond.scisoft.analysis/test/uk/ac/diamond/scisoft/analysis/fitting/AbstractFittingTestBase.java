@@ -107,21 +107,30 @@ public abstract class AbstractFittingTestBase {
 
 	@Test
 	public void testPeakPosGaussian() {
-		Assert.assertEquals(pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
+		checkClose("Gaussian pos", pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosLorentzian() {
-		Assert.assertEquals(pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
+		checkClose("Lorentzian pos", pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosPearsonVII() {
-		Assert.assertEquals(pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
+		checkClose("Pearson7 pos", pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
 	public void testPeakPosPseudoVoigt() {
-		Assert.assertEquals(pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
+		checkClose("PseudoVoigt pos", pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
+	}
+
+	boolean verbose = true;
+
+	public void checkClose(String msg, double expected, double calculated, double delta) {
+		if (verbose)
+			System.out.printf("%s: %.1f%%\n", msg, 100*(expected - calculated)/delta);
+
+		Assert.assertEquals(expected, calculated, delta);
 	}
 }

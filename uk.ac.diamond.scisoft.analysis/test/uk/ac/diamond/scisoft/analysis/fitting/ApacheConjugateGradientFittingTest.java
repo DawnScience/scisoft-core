@@ -61,47 +61,47 @@ public class ApacheConjugateGradientFittingTest extends AbstractFittingTestBase 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMGaussian() {
-		Assert.assertEquals(fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
+		checkClose("Gaussian fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMLorentzian() {
-		Assert.assertEquals(fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), delta);
+		checkClose("Lorentzian fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Test
 	public void testFWHMPearsonVII() {
-		Assert.assertEquals(fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), 20*delta);
+		checkClose("Pearson7 fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), 20*delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testFWHMPseudoVoigt() {
-		Assert.assertEquals(fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
+		checkClose("PseudoVoigt fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaGaussian() {
-		Assert.assertEquals(area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
+		checkClose("Gaussian area", area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaLorentzian() {
-		Assert.assertEquals(area, fittedLorentzian.get(0).getPeak(0).getArea(), delta);
+		checkClose("Lorentzian area", area, fittedLorentzian.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPearsonVII() {
-		Assert.assertEquals(area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
+		checkClose("Pearson7 area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), delta);
 	}
 
 	@Ignore("Test not finished and is failing. 9 Nov 11")
 	@Test
 	public void testAreaPseudoVoigt() {
-		Assert.assertEquals(area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
+		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), delta);
 	}
 }

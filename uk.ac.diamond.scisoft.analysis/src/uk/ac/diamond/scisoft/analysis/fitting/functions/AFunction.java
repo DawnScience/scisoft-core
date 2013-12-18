@@ -327,7 +327,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param coords
 	 * @return a coordinate iterator
 	 */
-	final public CoordinatesIterator getIterator(IDataset... coords) {
+	final static public CoordinatesIterator createIterator(IDataset... coords) {
 		if (coords == null || coords.length == 0) {
 			logger.error("No coordinates given to evaluate function");
 			throw new IllegalArgumentException("No coordinates given to evaluate function");
@@ -351,6 +351,10 @@ public abstract class AFunction implements IFunction, Serializable {
 			it = same ? new DatasetsIterator(coords) : new HypergridIterator(coords);
 		}
 		return it;
+	}
+
+	final public CoordinatesIterator getIterator(IDataset... coords) {
+		return createIterator(coords);
 	}
 
 	@Override

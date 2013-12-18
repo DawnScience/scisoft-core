@@ -47,7 +47,11 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 	@Override
 	protected int indexOfParameter(IParameter p) {
-		return params.indexOf(p);
+		for (int i = 0, imax = params.size(); i < imax; i++) {
+			if (p == params.get(i))
+				return i;
+		}
+		return -1;
 	}
 
 	@Override

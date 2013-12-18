@@ -469,7 +469,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public double residual(boolean allValues, IDataset weight, IDataset data, IDataset... coords) {
+	public double residual(boolean allValues, IDataset data, IDataset weight, IDataset... coords) {
 		double residual = 0;
 		if (allValues) {
 			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
@@ -494,7 +494,7 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public double residual(boolean allValues, IDataset data, IDataset... coords) {
-		return residual(allValues, null, data, coords);
+		return residual(allValues, data, null, coords);
 	}
 
 	@Override

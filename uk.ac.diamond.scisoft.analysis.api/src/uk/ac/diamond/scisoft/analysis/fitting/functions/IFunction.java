@@ -195,12 +195,12 @@ public interface IFunction extends Serializable {
 	 * are used to multiply each squared-difference value
 	 * 
 	 * @param allValues Boolean specifying whether to use sampling or not, currently not implemented so use true
-	 * @param weight A dataset containing values to use for weighting, can be null
 	 * @param data A dataset containing the values for the data to be evaluated
+	 * @param weight A dataset containing values to use for weighting, can be null
 	 * @param coords a dataset containing the coordinates of the data points
 	 * @return residual
 	 */
-	public double residual(boolean allValues, IDataset weight, IDataset data, IDataset... coords);
+	public double residual(boolean allValues, IDataset data, IDataset weight, IDataset... coords);
 
 	/**
 	 * Set internal caching state as needing to be reset if true

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 
 /**
  * GradientDescent Class
@@ -30,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
  * only slight change from normal is that this is damped 
  * so that it deals with sloppy surfaces more effectively.
  */
-public class GradientDescent implements IOptimizer {
+public class GradientDescent extends AbstractOptimizer {
 
 	/**
 	 * Setup the logging facilities
@@ -46,33 +41,17 @@ public class GradientDescent implements IOptimizer {
 	 * @param quality
 	 */
 	public GradientDescent(double quality) {
-		qualityFactor = quality;
+		setAccuracy(quality);
 	}
 
 	public void setAccuracy(double quality) {
 		qualityFactor = quality;
 	}
 
-	private IFunction function = null;
-	DoubleDataset[] coordinates;
-	DoubleDataset dataValues;
-
 	@Override
-	public void optimize(IDataset[] coords, IDataset values, final IFunction function) throws Exception {
-		final int numCoords = coords.length;
-		coordinates = new DoubleDataset[numCoords];
-		for (int i = 0; i < numCoords; i++) {
-			coordinates[i] = (DoubleDataset) DatasetUtils.convertToAbstractDataset(coords[i]).cast(AbstractDataset.FLOAT64);
-		}
-
-		dataValues = (DoubleDataset) DatasetUtils.convertToAbstractDataset(values).cast(AbstractDataset.FLOAT64);
-
-		this.function = function;
-
-		double[] bestParams = optimise(function.getParameterValues(), qualityFactor);
-
+	void internalOptimize() {
+		double[] bestParams = optimise(getParameterValues(), qualityFactor);
 		function.setParameterValues(bestParams);
-
 	}
 
 	private double diffsize = 0.001;
@@ -112,16 +91,14 @@ public class GradientDescent implements IOptimizer {
 			}
 			
 			oldd = d;
-			function.setParameterValues(solution);
-			double value = function.residual(true, dataValues, coordinates);
+			double value = calculateResidual(solution);
 
 			double[] test = solution.clone();
 			
 			for(int i = 0; i < d.length; i++) {
 				test[i] -= d[i]*stepsize*stepweight[i];
 			}
-			function.setParameterValues(test);
-			double testValue = function.residual(true, dataValues, coordinates);
+			double testValue = calculateResidual(test);
 			if(testValue < value) {
 				solution = test;
 				stepsize *= 1.1;
@@ -153,10 +130,8 @@ public class GradientDescent implements IOptimizer {
 				double[] neg = position.clone();
 				pos[i] += diffsize;
 				neg[i] -= diffsize;
-				function.setParameterValues(pos);
-				double posvalue = function.residual(true, dataValues, coordinates);
-				function.setParameterValues(neg);
-				double negvalue = function.residual(true, dataValues, coordinates);
+				double posvalue = calculateResidual(pos);
+				double negvalue = calculateResidual(neg);
 				deriv[i] = (posvalue - negvalue)*(2.0*diffsize);
 				if (deriv[i] == 0) {
 					stepSizeOk=false;
@@ -171,7 +146,7 @@ public class GradientDescent implements IOptimizer {
 		for(int i = 0; i < deriv.length; i++) {
 			deriv[i] = deriv[i] / length;
 		}
-		
+
 		return deriv;
 	}
 	

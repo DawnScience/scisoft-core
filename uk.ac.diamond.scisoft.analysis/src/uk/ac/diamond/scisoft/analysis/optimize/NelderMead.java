@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,18 +21,12 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
-
 /**
  * The implementation of the Nelder-Mead optimisation for the fitting routines.
  * 
  * It is variously known as the down-hill simplex or amoeba method
  */
-public class NelderMead implements IOptimizer {
+public class NelderMead extends AbstractOptimizer {
 
 	double accuracy = 0.1;
 
@@ -139,27 +133,11 @@ public class NelderMead implements IOptimizer {
 		this.startingSpread = startingSpread;
 	}
 
-	private IFunction function = null;
-	DoubleDataset[] coordinates;
-	DoubleDataset dataValues;
-
 	@Override
-	public void optimize(IDataset[] coords, IDataset values, final IFunction function) throws Exception {
-		final int numCoords = coords.length;
-		coordinates = new DoubleDataset[numCoords];
-		for (int i = 0; i < numCoords; i++) {
-			coordinates[i] = (DoubleDataset) DatasetUtils.cast(coords[i], AbstractDataset.FLOAT64);
-		}
-
-		dataValues = (DoubleDataset) DatasetUtils.cast(values, AbstractDataset.FLOAT64);
-
-		this.function = function;
-
-		double[] bestParams = optimise(function.getParameterValues(), accuracy);
-		function.setParameterValues(bestParams);
-
+	void internalOptimize() {
+		double[] best = optimise(getParameterValues(), accuracy);
+		setParameterValues(best);
 	}
-
 
 	/**
 	 * The main optimisation method
@@ -296,8 +274,7 @@ public class NelderMead implements IOptimizer {
 			double[] reflectedPoint = calculateReflectedPoint(cog,
 					orderedValues);
 
-			function.setParameterValues(reflectedPoint);
-			double reflectedPointFitness = function.residual(true, dataValues, coordinates);
+			double reflectedPointFitness = calculateResidual(reflectedPoint);
 
 			// if the reflected point is better than the best point
 
@@ -306,8 +283,7 @@ public class NelderMead implements IOptimizer {
 				double[] extendedPoint = calculateExtendedPoint(cog,
 						orderedValues);
 
-				function.setParameterValues(extendedPoint);
-				double extendedPointFitness = function.residual(true, dataValues, coordinates);
+				double extendedPointFitness = calculateResidual(extendedPoint);
 
 				// if the extended point is better than the reflected point
 
@@ -330,8 +306,7 @@ public class NelderMead implements IOptimizer {
 				double[] contractedPoint = calculateContractedPoint(cog,
 						orderedValues);
 
-				function.setParameterValues(contractedPoint);
-				double contractedPointFitness = function.residual(true, dataValues, coordinates);
+				double contractedPointFitness = calculateResidual(contractedPoint);
 
 				// if this is better than the worst point
 				if (contractedPointFitness < fitnesses[orderedValues[orderedValues.length - 1]]) {
@@ -366,9 +341,7 @@ public class NelderMead implements IOptimizer {
 					        + sigma * (points[orderedValues[i]][j] - points[orderedValues[0]][j]);
 				}
 
-				function.setParameterValues(points[orderedValues[i]]);
-
-				fitnesses[orderedValues[i]] = function.residual(true, dataValues, coordinates);
+				fitnesses[orderedValues[i]] = calculateResidual(points[orderedValues[i]]);
 			}
 
 		}
@@ -483,8 +456,7 @@ public class NelderMead implements IOptimizer {
 			fitnesses = new double[points.length];
 
 			for (int i = 0; i < fitnesses.length; i++) {
-				function.setParameterValues(points[i]);
-				fitnesses[i] = function.residual(true, dataValues, coordinates);
+				fitnesses[i] = calculateResidual(points[i]);
 			}
 
 			// initialise stored best values

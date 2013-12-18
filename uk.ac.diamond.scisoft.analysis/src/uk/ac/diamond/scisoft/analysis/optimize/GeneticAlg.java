@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IOperator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
@@ -30,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
 /**
  * This class uses the Differential evolution genetic algorithm as an optimizer.
  */
-public class GeneticAlg implements IOptimizer {
+public class GeneticAlg extends AbstractOptimizer {
 	
 	transient protected static final Logger GAlogger = LoggerFactory.getLogger(GeneticAlg.class);
 	
@@ -69,55 +68,53 @@ public class GeneticAlg implements IOptimizer {
 	}
 
 	@Override
-	public void optimize(final IDataset[] coords, final IDataset yAxis, final IFunction function) {
+	void internalOptimize() {
 		try {
-			optimize(coords, yAxis, function, 10000);
+			optimize(10000);
 		} catch (IterationLimitException e) {	
 			GAlogger.warn("Maximum number of itterations has been exceeded.  This solution may be suboptimal");
 		}
 	}
-	
-	
-	public void optimize(final IDataset[] coords, final IDataset yAxis, final IFunction function, int maxItterations) throws IterationLimitException {
+
+	public void optimize(int maxItterations) throws IterationLimitException {
 		IOperator operator = (function instanceof IOperator) ? (IOperator) function : null;
 		// set some factors
 		final double mutantProportion = 0.5;
 		final double mutantScaling = 0.5;
 
-		final int nparams = function.getNoOfParameters();
-		// epoch size is normally the number of dimensions multiplied by 20.
-		int epochSize = nparams * 20;
-		if (epochSize < 100)
-			epochSize = 100;
+		// top epoch is normally the number of dimensions multiplied by 20 minus 1.
+		int topEpoch = n * 20 - 1;
+		if (topEpoch < 100)
+			topEpoch = 99;
+
+
 		// for the time being these are the same size
 		final int nfuncs = operator != null ? operator.getNoOfFunctions() : 1;
 
 		// generate the first epoch, each member will be a random initial
 		// position picked from the maximum parameters
 
-		double epoch[][] = new double[epochSize][nparams + 1];
-		double nextepoch[][] = new double[epochSize][nparams + 1];
+		double epoch[][] = new double[topEpoch + 1][];
+		double[] results = new double[topEpoch + 1];
+		double nextepoch[][] = new double[topEpoch + 1][n];
 
 		// first one should be the original, just in case its a good solution
-		for (int j = 0; j < nparams; j++) {
-			epoch[0][j] = function.getParameterValue(j);
-		}
+		epoch[0] = getParameterValues();
 
 		// the others explore space in the bounded regions
-		for (int i = 1; i < epochSize; i++) {
-			for (int j = 0; j < nparams; j++) {
-				final IParameter p = function.getParameter(j);
-				epoch[i][j] = prng.nextUniform(p.getLowerLimit(), p.getUpperLimit());
+		for (int i = 1; i <= topEpoch; i++) {
+			double[] e = new double[n];
+			epoch[i] = e;
+			for (int j = 0; j < n; j++) {
+				final IParameter p = params.get(j);
+				e[j] = prng.nextUniform(p.getLowerLimit(), p.getUpperLimit());
 			}
 		}
 
 		// now the first epoch has been created and calculate the fitness
-		for (int i = 0; i < epochSize; i++) {
-			function.setParameterValues(epoch[i]);
-			epoch[i][nparams] = function.residual(true, yAxis, coords);
-			if (((Double) (epoch[i][nparams])).isNaN()) {
-				epoch[i][nparams] = Double.MAX_VALUE;
-			}
+		for (int i = 0; i <= topEpoch; i++) {
+			double r = calculateResidual(epoch[i]);
+			results[i] = Double.isNaN(r) ? Double.MAX_VALUE : r;
 		}
 
 		// now do the epochs
@@ -132,129 +129,110 @@ public class GeneticAlg implements IOptimizer {
 			double mean = 0;
 
 			// the first member of the new epoch, should be the best member of the last
-			double minvalue = epoch[0][nparams];
+			double minvalue = results[0];
 			int minposition = 0;
 
-			for (int i = 1; i < epochSize; i++) {
-				if (epoch[i][nparams] < minvalue) {
-					minvalue = epoch[i][nparams];
+			for (int i = 1; i <= topEpoch; i++) {
+				if (results[i] < minvalue) {
+					minvalue = results[i];
 					minposition = i;
 				}
 			}
 
-			for (int m = 0; m < nparams; m++) {
+			for (int m = 0; m < n; m++) {
 				nextepoch[0][m] = epoch[minposition][m];
 			}
 
-			function.setParameterValues(nextepoch[0]);
-			nextepoch[0][nparams] = function.residual(true, yAxis, coords);
-
 			// now go on and get the rest of the population
-			for (int j = 1; j < epochSize; j++) {
+			for (int j = 1; j <= topEpoch; j++) {
 
 				// get mum and dad
-				int mum = 0;
-				int dad = 0;
+				int c1 = prng.nextInt(0, topEpoch);
+				int c2 = prng.nextInt(0, topEpoch);
+				int c3 = prng.nextInt(0, topEpoch);
+				int c4 = prng.nextInt(0, topEpoch);
 
-				int c1 = prng.nextInt(0, epochSize-1);
-				int c2 = prng.nextInt(0, epochSize-1);
-				int c3 = prng.nextInt(0, epochSize-1);
-				int c4 = prng.nextInt(0, epochSize-1);
-
-				while (((Double) epoch[c1][nparams]).isNaN()) {
-					c1 = prng.nextInt(0, epochSize-1);
+				while (Double.isNaN(results[c1])) {
+					c1 = prng.nextInt(0, topEpoch);
 				}
-				while (((Double) epoch[c2][nparams]).isNaN()) {
-					c2 = prng.nextInt(0, epochSize-1);
+				while (Double.isNaN(results[c2])) {
+					c2 = prng.nextInt(0, topEpoch);
 				}
-				while (((Double) epoch[c3][nparams]).isNaN()) {
-					c3 = prng.nextInt(0, epochSize-1);
+				while (Double.isNaN(results[c3])) {
+					c3 = prng.nextInt(0, topEpoch);
 				}
-				while (((Double) epoch[c4][nparams]).isNaN()) {
-					c4 = prng.nextInt(0, epochSize-1);
+				while (Double.isNaN(results[c4])) {
+					c4 = prng.nextInt(0, topEpoch);
 				}
 
-				if (epoch[c1][nparams] < epoch[c2][nparams]) {
-					mum = c1;
-				} else {
-					mum = c2;
-				}
-
-				if (epoch[c3][nparams] < epoch[c4][nparams]) {
-					dad = c3;
-				} else {
-					dad = c4;
-				}
+				int mum = results[c1] < results[c2] ? c1 : c2;
+				int dad = results[c3] < results[c4] ? c3 : c4;
 
 				// cross-breed at a point, between 2 different functions.
-				int point = nfuncs > 1 ? prng.nextInt(0, nfuncs - 1) : prng.nextInt(0, nparams-1);
-				int parent = mum;
+				int point = nfuncs > 1 ? prng.nextInt(0, nfuncs - 1) : prng.nextInt(0, n-1);
+				double[] parentepoch = epoch[mum];
 				int count = 0;
 
+				double[] ne = nextepoch[j];
 				if (operator != null) {
 					for (int i = 0; i < nfuncs; i++) {
 						if (i >= point) {
-							parent = dad;
+							parentepoch = epoch[dad];
 						}
-		
-						final int fnparams = operator.getFunction(i).getNoOfParameters();
-						for (int l = 0; l < fnparams; l++) {
-							nextepoch[j][count] = epoch[parent][count];
-							count++;
+
+						IFunction of = operator.getFunction(i);
+						for (IParameter pf : of.getParameters()) {
+							if (params.get(count) == pf) {
+								ne[count] = parentepoch[count];
+								count++;
+							}
 						}
 					}
 				} else {
 					if (0 >= point) {
-						parent = dad;
+						parentepoch = epoch[dad];
 					}
 	
-					final int fnparams = function.getNoOfParameters();
-					for (int l = 0; l < fnparams; l++) {
-						nextepoch[j][count] = epoch[parent][count];
+					for (int l = 0; l < n; l++) {
+						ne[count] = parentepoch[count];
 						count++;
 					}
-					
 				}
 
 				// add in random mutation
 				if (generator.nextDouble() > mutantProportion) {
+					c1 = prng.nextInt(0, topEpoch);
+					c2 = prng.nextInt(0, topEpoch);
 
-					c1 = prng.nextInt(0, epochSize-1);
-					c2 = prng.nextInt(0, epochSize-1);
-
-					for (int i = 0; i < nparams; i++) {
-						nextepoch[j][i] = nextepoch[j][i]
-								+ (epoch[c1][i] - epoch[c2][i]) * mutantScaling;
+					for (int i = 0; i < n; i++) {
+						ne[i] += (epoch[c1][i] - epoch[c2][i]) * mutantScaling;
 					}
 				}
 			}
 
 			// at the end of the epoch, flush the next epoch to the epoch
-			for (int i = 0; i < epochSize; i++) {
-				for (int j = 0; j < nparams; j++) {
-					epoch[i][j] = nextepoch[i][j];
+			for (int i = 0; i <= topEpoch; i++) {
+				double[] e = epoch[i];
+				double[] ne = nextepoch[i];
+				for (int j = 0; j < n; j++) {
+					e[j] = ne[j];
 
 					// then clip it
-					final IParameter p = function.getParameter(j);
+					final IParameter p = params.get(j);
 
-					if (epoch[i][j] > p.getUpperLimit()) {
-						epoch[i][j] = 2. * p.getUpperLimit() - epoch[i][j];
+					if (e[j] > p.getUpperLimit()) {
+						e[j] = 2. * p.getUpperLimit() - e[j];
 					}
-					if (epoch[i][j] < p.getLowerLimit()) {
-						epoch[i][j] = 2. * p.getLowerLimit() - epoch[i][j];
+					if (e[j] < p.getLowerLimit()) {
+						e[j] = 2. * p.getLowerLimit() - e[j];
 					}
 				}
 
 				// finally calculate the fitness and put it in the last digit
-				function.setParameterValues(epoch[i]);
-				epoch[i][nparams] = function.residual(true, yAxis, coords);
+				results[i] = calculateResidual(e);
 
-			 
-	
-			    double delta = epoch[i][nparams] - mean;
+			    double delta = results[i] - mean;
 			    mean = mean + delta/(i+1);
-
-				
 			}
 			
 			//mean = mean;
@@ -262,21 +240,21 @@ public class GeneticAlg implements IOptimizer {
 			// at the end find the best solution, and evaluate it, to fix the
 			// values into the model
 
-			minval = epoch[0][nparams];
+			minval = results[0];
 
-			for (int i = 1; i < epochSize; i++) {
-				if (epoch[i][nparams] < minval) {
-					minval = epoch[0][nparams];
+			for (int i = 1; i <= topEpoch; i++) {
+				if (results[i] < minval) {
+					minval = results[0];
 				}
 			}
 
 			// Exit if the number of iterations has been exceeded
 			iterationCount++;
 			if (iterationCount > maxItterations) {
-				throw new IterationLimitException("Too many itterations have been proformed, best available soulution has been provided");
-			}			
+				throw new IterationLimitException("Too many iterations have been performed, best available soulution has been provided");
+			}
 			
-			// Exit if the minval has not changed in a number of itterations
+			// Exit if the minval has not changed in a number of iterations
 			if (previousMinval == minval) {
 				numberOfTimesMinvalTheSame += 1;
 				if (numberOfTimesMinvalTheSame > MaxNumberOfStaticBestValue) {
@@ -288,26 +266,24 @@ public class GeneticAlg implements IOptimizer {
 				numberOfTimesMinvalTheSame = 0;
 			}
 			
-			if(minval == 0.0) break;
+			if (minval == 0.0)
+				break;
 			minval = Math.abs(mean - minval)/minval;
-			
 		}
 
 		// at the end find the best solution, and evaluate it, to fix the values
 		// into the model
 
-		minval = epoch[0][nparams];
+		minval = results[0];
 		int minpos = 0;
 
-		for (int i = 1; i < epochSize; i++) {
-			if (epoch[i][nparams] < minval) {
-				minval = epoch[0][nparams];
+		for (int i = 1; i <= topEpoch; i++) {
+			if (results[n] < minval) {
+				minval = results[0];
 				minpos = i;
 			}
 		}
 
-		function.setParameterValues(epoch[minpos]);
-
+		setParameterValues(epoch[minpos]);
 	}
-
 }

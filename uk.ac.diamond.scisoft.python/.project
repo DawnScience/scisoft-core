@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>ncsa.hdf</project>
-		<project>org.dawb.common.util</project>
 		<project>org.dawb.hdf5</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>

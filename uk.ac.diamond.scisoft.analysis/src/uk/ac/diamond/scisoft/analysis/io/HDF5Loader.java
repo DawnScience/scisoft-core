@@ -382,7 +382,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private static int LIMIT = 10240;
-//	private static int LIMIT = 20;
 
 	/**
 	 * Create a node (and all its children, recursively) from given location ID
@@ -473,6 +472,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				return group;
 			}
 
+			if (nelems > LIMIT) {
+				logger.warn("Number of members in group {} exceed limit ({} > {}). Only reading up to limit",
+						new Object[] { name, nelems, LIMIT });
+				nelems = LIMIT;
+			}
+
 			int[] oTypes = new int[nelems];
 			int[] lTypes = new int[nelems];
 			long[] oids = new long[nelems];
@@ -482,12 +487,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get objects info in group", ex);
 				return null;
-			}
-
-			if (nelems > LIMIT) {
-				logger.warn("Number of members in group {} exceed limit ({} > {}). Only reading up to limit",
-						new Object[] { name, nelems, LIMIT });
-				nelems = LIMIT;
 			}
 
 			String oname;
@@ -2027,12 +2026,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get objects info in group", ex);
 				return;
-			}
-
-			if (nelems > LIMIT) {
-				logger.warn("Number of members in group {} exceed limit ({} > {}). Only reading up to limit",
-						new Object[] { name, nelems, LIMIT });
-				nelems = LIMIT;
 			}
 
 			String oname;

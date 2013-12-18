@@ -89,8 +89,9 @@ public class Fitter {
 	 * @param coords
 	 * @param yAxis
 	 * @param function
+	 * @throws Exception 
 	 */
-	public static void geneticFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) {
+	public static void geneticFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
 		geneticFit(quality, coords, yAxis, function);
 	}
 
@@ -100,8 +101,9 @@ public class Fitter {
 	 * @param coords
 	 * @param yAxis
 	 * @param function
+	 * @throws Exception 
 	 */
-	public static void geneticFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) {
+	public static void geneticFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
 	
 		GeneticAlg ga = new GeneticAlg(quality, seed); 
 
@@ -113,8 +115,9 @@ public class Fitter {
 	 * @param coords
 	 * @param yAxis
 	 * @param function
+	 * @throws Exception 
 	 */
-	public static void llsqFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) {
+	public static void llsqFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
 		LeastSquares lsq = new LeastSquares(0); 
 	
 		lsq.optimize(coords, yAxis, function);
@@ -198,7 +201,10 @@ public class Fitter {
 		comp.addFunction(gauss);
 		comp.addFunction(offset);
 		
-		geneticFit(new AbstractDataset[] {axis}, data, comp);
+		try {
+			geneticFit(new AbstractDataset[] {axis}, data, comp);
+		} catch (Exception e) {
+		}
 		return comp;
 	}
 	

@@ -120,7 +120,7 @@ public class FitterTest {
 			Assert.assertEquals(y.getDouble(1), z.getDouble(1), 0.1);
 			Assert.assertEquals(y.getDouble(2), z.getDouble(2), 0.2);
 		} catch (Exception e) {
-			Assert.fail("");
+			Assert.fail("" + e);
 		}
 	}
 

@@ -182,24 +182,25 @@ public interface IFunction extends Serializable {
 	 * 
 	 * @param allValues Boolean specifying whether to use sampling or not, currently not implemented so use true
 	 * @param data A dataset containing the values for the data to be evaluated
-	 * @param values a dataset containing the coordinates of the data points
+	 * @param coords a dataset containing the coordinates of the data points
 	 * @return residual
 	 */
-	public double residual(boolean allValues, IDataset data, IDataset... values);
+	@Deprecated
+	public double residual(boolean allValues, IDataset data, IDataset... coords);
 
 	/**
 	 * Method to evaluate the sum of the deviations of the dataset from the function
 	 * when that function is evaluated at the given values and parameters. The allValues flag
-	 * dictates whether to use all the values or just a sampled subset. The weight values are
-	 * used to multiply each squared-difference value
+	 * dictates whether to use all the values or just a sampled subset. The weight values, if given,
+	 * are used to multiply each squared-difference value
 	 * 
 	 * @param allValues Boolean specifying whether to use sampling or not, currently not implemented so use true
 	 * @param weight A dataset containing values to use for weighting, can be null
 	 * @param data A dataset containing the values for the data to be evaluated
-	 * @param values a dataset containing the coordinates of the data points
+	 * @param coords a dataset containing the coordinates of the data points
 	 * @return residual
 	 */
-	public double weightedResidual(boolean allValues, IDataset weight, IDataset data, IDataset... values);
+	public double residual(boolean allValues, IDataset weight, IDataset data, IDataset... coords);
 
 	/**
 	 * Set internal caching state as needing to be reset if true

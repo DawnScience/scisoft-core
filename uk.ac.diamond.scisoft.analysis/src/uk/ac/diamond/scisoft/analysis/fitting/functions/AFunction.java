@@ -469,15 +469,11 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public double weightedResidual(boolean allValues, IDataset weight, IDataset data, IDataset... values) {
+	public double residual(boolean allValues, IDataset weight, IDataset data, IDataset... coords) {
 		double residual = 0;
 		if (allValues) {
 			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
-			if (weight == null) {
-				residual = ddata.residual(calculateValues(values));
-			} else {
-				residual = ddata.residual(calculateValues(values), DatasetUtils.convertToAbstractDataset(weight), false);
-			}
+			residual = ddata.residual(calculateValues(coords), DatasetUtils.convertToAbstractDataset(weight), false);
 		} else {
 			// stochastic sampling of coords;
 //			int NUMBER_OF_SAMPLES = 100;
@@ -497,8 +493,8 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	public double residual(boolean allValues, IDataset data, IDataset... values) {
-		return weightedResidual(allValues, null, data, values);
+	public double residual(boolean allValues, IDataset data, IDataset... coords) {
+		return residual(allValues, null, data, coords);
 	}
 
 	@Override

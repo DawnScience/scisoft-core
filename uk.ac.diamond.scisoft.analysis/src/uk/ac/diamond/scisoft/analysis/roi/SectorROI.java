@@ -288,7 +288,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * For Jython
 	 * @param angles The angles in degrees to set
 	 */
-	public void setsAngledegrees(double[] angles) {
+	public void setAnglesdegrees(double[] angles) {
 		setAnglesDegrees(angles);
 	}
 

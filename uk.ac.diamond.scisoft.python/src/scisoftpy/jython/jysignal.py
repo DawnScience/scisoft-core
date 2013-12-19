@@ -27,7 +27,7 @@ from jycore import asfarray as _asf
 def correlate(f, g=None, mode='valid', old_behavior=False, axes=None):
     '''Perform a cross (or auto if g is None) correlation along given axes'''
     if old_behavior:
-        raise NotImplementedError, 'Not implemented'
+        raise NotImplementedError, "Not implemented"
 
     f = _asf(f)._jdataset()
     if g is None:
@@ -41,7 +41,7 @@ def correlate(f, g=None, mode='valid', old_behavior=False, axes=None):
         return _signal.correlateForOverlap(f, g, axes)
     elif mode == 'full':
         return _signal.correlate(f, g, axes)
-    raise ValueError, 'mode keyword has unrecognised value'
+    raise ValueError, "mode keyword has unrecognised value"
 
 @_wrap
 def phasecorrelate(f, g, axes=None, includeinv=False):
@@ -61,4 +61,4 @@ def convolve(f, g, mode='full', axes=None):
         return _signal.convolveForOverlap(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
     elif mode == 'full':
         return _signal.convolve(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
-    raise ValueError, 'mode keyword has unrecognised value'
+    raise ValueError, "mode keyword has unrecognised value"

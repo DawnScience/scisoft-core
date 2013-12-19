@@ -108,7 +108,7 @@ class fitfunc(_absfn):
             d.name = self.name
             return d
         except ValueError:
-            raise ValueError, 'Problem with function \"' + self.name + '\" with params  ' + self.parameterValues
+            raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
 
     def residual(self, allvalues, data, *coords):
         '''Find residual as sum of squared differences of function and data
@@ -125,7 +125,7 @@ class fitfunc(_absfn):
             d = self.func(*l)
             return _dnp.residual(d, data)
         except ValueError:
-            raise ValueError, 'Problem with function \"' + self.name + '\" with params  ' + self.parameterValues
+            raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
 
 class cfitfunc(_compfn):
     '''Composite function for situation where there's a mixture of jython and Java fitting functions
@@ -313,7 +313,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     mixed = False
     for f in func:
         if isinstance(f, tuple):
-            print 'parameter count is no longer required'
+            print "parameter count is no longer required"
             f = f[0]
         if function.isjclass(f):
             # create bound function object

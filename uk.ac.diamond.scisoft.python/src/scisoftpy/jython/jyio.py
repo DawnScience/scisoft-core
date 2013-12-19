@@ -296,11 +296,11 @@ class JavaSaver(object):
         '''
         jdh = _jdataholder()
         for k,v in dataholder.items():
-            if k != 'metadata':
+            if k != "metadata":
                 v = _jinput(v)
                 jdh.addDataset(k, v)
 
-        if 'metadata' in dataholder:
+        if "metadata" in dataholder:
             md = dict()
             for k, v in dataholder.metadata.items():
                 v = _jinput(v)

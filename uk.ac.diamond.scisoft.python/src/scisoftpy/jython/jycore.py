@@ -145,9 +145,9 @@ import java.util.List as _jlist #@UnresolvedImport
 import java.util.Map as _jmap #@UnresolvedImport
 
 def Sciwrap(a):
-    """
+    '''
     This wrapper function is required for any Java method that returns a dataset
-    """
+    '''
     if a is None:
         raise ValueError, "No value given"
     if isinstance(a, _jcomplex): # convert to complex
@@ -219,9 +219,9 @@ def _wrapout(func, *args, **kwargs): # wrap output only
     return _joutput(func(*args, **kwargs))
 
 def asIterable(items):
-    """
+    '''
     Ensure entity is an iterable by making it a tuple if not
-    """
+    '''
     t = type(items)
     if t is _types.ListType or t is _types.TupleType or t is _arraytype:
         pass
@@ -249,11 +249,9 @@ def fromDS(data):
     return data
 
 def asDataset(data, dtype=None, force=False):
-    """
+    '''
     Used for arithmetic ops to coerce a sequence to a dataset otherwise leave as single item
-    """
-#    if isinstance(data, _dataset):
-#        return Sciwrap(_dataset.convertToDoubleDataset())
+    '''
     if isinstance(data, ndarray):
         return data
 
@@ -287,7 +285,7 @@ asanyarray = asarray
 def asfarray(data, dtype=None):
     jdata = __cvt_jobj(data, copy=False, force=True)
     if jdata.isComplex():
-        raise TypeError, 'can\'t convert complex to float'
+        raise TypeError, "can't convert complex to float"
     if jdata.hasFloatingPointElements():
         return jdata
 
@@ -301,22 +299,21 @@ def asfarray(data, dtype=None):
     return jdata.cast(dtype.value)
 
 def asDatasetList(dslist):
-    """
+    '''
     Used to coerce a list of Datasets to a list of datasets
-    """
+    '''
     return [ fromDS(d) for d in asIterable(dslist) ]
 
 def asDatasetDict(dsdict):
-    """
+    '''
     Used to coerce a dictionary of Datasets to a dictionary of datasets
-    """
+    '''
     rdict = {}
     for k in dsdict:
         rdict[k] = fromDS(dsdict[k])
     return rdict
 
 def _isslice(rank, shape, key):
-#    print rank, shape, key
     if rank > 0:
         key = asIterable(key)
 
@@ -383,9 +380,9 @@ import jycomparisons as _cmps
 _jempty = tuple()
 
 class ndarray(object):
-    """
+    '''
     Class to hold special methods and non-overloading names
-    """
+    '''
     def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
         # check what buffer is and convert if necessary
         if buffer is not None:
@@ -968,29 +965,10 @@ class ndarray(object):
         return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)
         return self.__dataset.toString(True)
 
-#    def maxpos(self, ignore_nans=False):
-#        '''Return position of first maxima'''
-#        if ignore_nans:
-#            return self.__dataset.maxPos(True)
-#        return self.__dataset.maxPos()
-#
-#    def minpos(self, ignore_nans=False):
-#        '''Return position of first minima'''
-#        if ignore_nans:
-#            return self.__dataset.minPos(True)
-#        return self.__dataset.minPos()
-
-#    @property
-#    @_wrapout
-#    def indices(self):
-#        '''Return an index dataset'''
-#        return self.__dataset.getIndices()
-
-
 class ndarrayRGB(ndarray):
-    """
+    '''
     Wrap RGB dataset
-    """
+    '''
     def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
         super(ndarrayRGB, self).__init__(shape=shape, dtype=dtype, buffer=buffer, copy=copy)
 

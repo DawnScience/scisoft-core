@@ -90,7 +90,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         f = open(name)
         f.close()
     except:
-        raise ValueError, 'File %s does not exist' % name
+        raise ValueError, "File %s does not exist" % name
 
     lformats = None
     if formats is not None:
@@ -134,11 +134,11 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                 break
             except _ioexception, e:
                 if warn:
-                    print 'Warning: ', e
+                    print "Warning: ", e
             except:
                 if warn:
                     import sys
-                    print >> sys.stderr, 'Unexpected exception raised: ', sys.exc_info()
+                    print >> sys.stderr, "Unexpected exception raised: ", sys.exc_info()
 
     if lfh is None:
         raise IOError, 'Cannot load file'
@@ -162,9 +162,9 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
         if len(range) > 0 or autoscale:
             if not autoscale:
                 if len(range) != 2:
-                    raise ValueError, 'Range has to be a pair of limits (lower, upper)'
+                    raise ValueError, "Range has to be a pair of limits (lower, upper)"
                 if range[0] >= range[1]:
-                    raise ValueError, 'Given minimum must be less than maximum'
+                    raise ValueError, "Given minimum must be less than maximum"
             if format is None:
                 format = _findsuffix(name, _soformats)[0]
 #            print "scaled save format", format
@@ -179,10 +179,10 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
 #            print "save format", format, "as", name
             sclass = _oformats[format]
             if sclass is None:
-                raise ValueError, 'Format not supported'
+                raise ValueError, "Format not supported"
             saver = sclass(name, signed, bits)
     except KeyError:
-        raise ValueError, 'Format not supported'
+        raise ValueError, "Format not supported"
 
 
 
@@ -222,7 +222,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
 
     scan = str(scan)
     if data_dir is None:
-        raise ValueError, 'Beamline data directory must be defined'
+        raise ValueError, "Beamline data directory must be defined"
 
     if type(ending) is str:
         ending = (ending,)
@@ -261,7 +261,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
                     break
 
     if len(files) == 0:
-        raise IOError, 'Scan files not found'
+        raise IOError, "Scan files not found"
     return files
 
 
@@ -322,7 +322,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         name = sys.argv[1]
     else:
-        name = '/scratch/workspace/images/i16pilatus.dat'
+        name = "/scratch/workspace/images/i16pilatus.dat"
     dh = load(name, withmetadata=False)
     from pprint import pprint
     pprint(dh.metadata); print

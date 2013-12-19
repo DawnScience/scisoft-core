@@ -14,7 +14,8 @@
 # limitations under the License.
 ###
 
-'''FFT package
+'''
+Fast Fourier transform package
 '''
 
 import os

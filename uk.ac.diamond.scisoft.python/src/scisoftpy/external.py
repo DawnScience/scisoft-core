@@ -19,9 +19,9 @@
 
 import os
 if os.name == 'java':
-    from jython.jycore import ndarray, ndgeneric, scalarToPython
+    from jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
 else:
-    from python.pycore import ndarray, ndgeneric, scalarToPython
+    from python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
 
 _env = os.environ
 
@@ -211,7 +211,7 @@ def pyenv(exe=None, path=None, ldpath=None):
                 pkg = p
                 break
         else:
-            raise RuntimeError, 'Cannot find ScisoftPy in PYTHONPATH'
+            raise RuntimeError, "Cannot find ScisoftPy in PYTHONPATH"
     else:
         pkg, _t = _path.split(h)
     pypath.insert(0, pkg)
@@ -226,11 +226,11 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
         return _dls_modules[module]
 
     if sys.platform == 'win32':
-        raise ValueError, 'Cannot use dls_module argument on Windows'
+        raise ValueError, "Cannot use dls_module argument on Windows"
     elif sys.platform == 'darwin':
-        raise ValueError, 'Cannot use dls_module argument on Mac OS X'
+        raise ValueError, "Cannot use dls_module argument on Mac OS X"
     elif not sys.platform.startswith('linux') and not sys.platform.startswith('java'):
-        print 'Warning dls_module argument may not work'
+        print "Warning dls_module argument may not work"
 
     env = dict(_env)
     env.pop('PYTHONPATH', None)
@@ -245,7 +245,7 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout)
     if exe is None:
-        raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+        raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
@@ -269,7 +269,7 @@ def get_python():
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout, sep='|')
     if exe is None:
-        raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+        raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):
@@ -333,7 +333,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
         fn = function
         function = fn.__name__
         if fn.__module__ == '__main__':
-            raise RuntimeError, 'Cannot create function as it needs to be in a module of its own'
+            raise RuntimeError, "Cannot create function as it needs to be in a module of its own"
         if module is None:
             module = fn.__module__
 
@@ -355,7 +355,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             p = find_module_path(extra_path, module)
         path = extra_path + path
     if p is None:
-        raise ValueError, 'Cannot find module in path: try specifying it in extra_path'
+        raise ValueError, "Cannot find module in path: try specifying it in extra_path"
     env = dict(_env)
     env['PYTHONPATH'] = os.pathsep.join(path)
     if ldpath:
@@ -402,7 +402,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                             shutil.rmtree(d)
                 else:
                     print l
-            raise RuntimeError, 'Problem with running external process: %s' % p.stderr.read()
+            raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
         finally:
             shutil.rmtree(argsdir)
 

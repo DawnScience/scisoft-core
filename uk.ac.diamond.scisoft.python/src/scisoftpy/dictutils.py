@@ -140,7 +140,7 @@ class ListDict(object):
         if type(key) is StringType or type(key) is UnicodeType:
             return self.__odict__.__getitem__(key)
         else:
-            raise KeyError, 'Key was not a string or integer'
+            raise KeyError, "Key was not a string or integer"
 
     def __setitem__(self, key, value):
         '''
@@ -150,7 +150,7 @@ class ListDict(object):
         kt = type(key)
         if kt is IntType:
             if key > len(self.__odict__):
-                raise IndexError, 'Key was too large'
+                raise IndexError, "Key was too large"
             key = self.__odict__.keys()[key]
             kt = type(key)
 
@@ -158,12 +158,12 @@ class ListDict(object):
             if self.__inter__:
                 key = sanitise_name(key, self.__warn__)
             if self.__lock__ and key in self.__odict__:
-                raise KeyError, 'Dictionary is locked, delete item to reassign to key'
+                raise KeyError, "Dictionary is locked, delete item to reassign to key"
             self.__odict__.__setitem__(key, value)
             if self.__inter__:
                 self.__setattr__(key, value)
         else:
-            raise KeyError, 'Key was not a string or integer'
+            raise KeyError, "Key was not a string or integer"
 
     def __delitem__(self, key):
         '''
@@ -172,7 +172,7 @@ class ListDict(object):
         from types import StringType, IntType
         if type(key) is IntType:
             if key > len(self):
-                raise IndexError, 'Key was too large'
+                raise IndexError, "Key was too large"
             key = self.__odict__.keys()[key]
 
         if type(key) is StringType:
@@ -180,15 +180,15 @@ class ListDict(object):
             if self.__inter__:
                 self.__dict__.__delitem__(key)
         else:
-            raise KeyError, 'Key was not a string or integer'
+            raise KeyError, "Key was not a string or integer"
 
     def __setattr__(self, key, value):
         from types import StringType
         if type(key) is not StringType:
-            raise KeyError, 'Key was not a string or integer'
+            raise KeyError, "Key was not a string or integer"
 
         if self.__lock__ and key in self.__odict__:
-            raise KeyError, 'Dictionary is locked, delete item to reassign to key'
+            raise KeyError, "Dictionary is locked, delete item to reassign to key"
 
         if self.__inter__:
             self.__dict__[key] = value
@@ -427,18 +427,18 @@ def _test_setting_listdict(inter=True):
     try:
         ld['c'] = 3
     except Exception, e:
-        print 'Exception raised successfully ' + str(e)
+        print "Exception raised successfully " + str(e)
 
     if inter:
         try:
             ld.c = 3
         except Exception, e:
-            print 'Exception raised successfully ' + str(e)
+            print "Exception raised successfully " + str(e)
 
     try:
         ld[0] = 3
     except Exception, e:
-        print 'Exception raised successfully ' + str(e)
+        print "Exception raised successfully " + str(e)
 
     if inter:
         del ld.c

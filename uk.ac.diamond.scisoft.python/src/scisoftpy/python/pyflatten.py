@@ -30,8 +30,6 @@ import sys
 import copy
 import uuid
 import traceback
-from pprint import pprint
-from StringIO import StringIO
 
 TYPE = "__type__"
 CONTENT = "content"
@@ -406,8 +404,8 @@ class dataBeanHelper(flatteningHelper):
 
 class noneHelper(flatteningHelper):
     TYPE_NAME = "__None__"
-    TYPED_NONE_TYPE = "typedNoneType";
-    NULL = "null";
+    TYPED_NONE_TYPE = "typedNoneType"
+    NULL = "null"
     
     def __init__(self):
         super(noneHelper, self).__init__(None, self.TYPE_NAME)

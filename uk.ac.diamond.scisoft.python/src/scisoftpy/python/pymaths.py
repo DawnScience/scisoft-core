@@ -142,7 +142,7 @@ def gradient(f, *arg):
         if al == 1:
             narg = [narg[0]]*r
         elif al != r:
-            raise SyntaxError, 'Invalid number of arguments'
+            raise SyntaxError, "Invalid number of arguments"
 
         for i in range(al):
             a = narg[i]

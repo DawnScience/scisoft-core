@@ -146,7 +146,7 @@ class axismapbean(object):
     __hash__ = None
 
     def __repr__(self):
-        return 'axismapbean(%s)' % self.__dict__.__repr__()
+        return "axismapbean(%s)" % self.__dict__.__repr__()
 
 class datasetwithaxisinformation(object):
     _DATA = "data"
@@ -171,7 +171,7 @@ class datasetwithaxisinformation(object):
     __hash__ = None
 
     def __repr__(self):
-        return 'datasetWithAxisInformation(%s)' % self.__dict__.__repr__()
+        return "datasetWithAxisInformation(%s)" % self.__dict__.__repr__()
         
 class databean(object):
     _DATA = "data"

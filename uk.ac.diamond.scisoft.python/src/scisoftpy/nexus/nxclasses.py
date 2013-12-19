@@ -28,7 +28,7 @@ from .hdf5 import HDF5tree as _tree
 from .hdf5 import HDF5group as _group
 
 class NeXusError(Exception):
-    """NeXus Error"""
+    '''NeXus Error'''
     pass
 
 class NXgroup(_group):
@@ -42,11 +42,11 @@ class NXgroup(_group):
         self.nxname = n
 
 class NXroot(_tree):
-    """
+    '''
     NXroot node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     def __init__(self, filename, attrs={}):
         _tree.__init__(self, filename, attrs)
         self.nxname = self.__class__.__name__
@@ -57,7 +57,7 @@ class NXroot(_tree):
         self.nxname = n
 
 class NXentry(NXgroup):
-    """
+    '''
     NXentry node. This is a subclass of the NXgroup class.
 
     Each NXdata and NXmonitor object of the same name will be added
@@ -68,11 +68,11 @@ class NXentry(NXgroup):
     as the run duration, are not currently added together. 
 
     See the NXgroup documentation for more details.
-    """
+    '''
     def __add__(self, other):
-        """
+        '''
         Add two NXentry objects       
-        """
+        '''
         result = NXentry(entries=self.nxentries, attrs=self.nxattrs)
         try:
             names = [group.nxname for group in self.nxcomponent("NXdata")]
@@ -92,9 +92,9 @@ class NXentry(NXgroup):
             raise NeXusError, "Inconsistency between two NXentry groups"
 
     def __sub__(self, other):
-        """
+        '''
         Subtract two NXentry objects
-        """
+        '''
         result = NXentry(entries=self.nxentries, attrs=self.nxattrs)
         try:
             names = [group.nxname for group in self.nxcomponent("NXdata")]
@@ -114,7 +114,7 @@ class NXentry(NXgroup):
             raise NeXusError, "Inconsistency between two NXentry groups"
 
 class NXdata(NXgroup):
-    """
+    '''
     NXdata node. This is a subclass of the NXgroup class.
     
     The constructor assumes that the first argument contains the signal and
@@ -153,7 +153,7 @@ class NXdata(NXgroup):
           @signal = 1    
 
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 #    def __init__(self, signal=None, axes=(), *items, **opts):
 #        NXgroup.__init__(self, *items, **opts)
@@ -173,11 +173,11 @@ class NXdata(NXgroup):
 #                    self.__dict__[signalname].axes = axisname
 
 class NXmonitor(NXdata):
-    """
+    '''
     NXmonitor node. This is a subclass of the NXdata class.
     
     See the NXdata and NXgroup documentation for more details.
-    """
+    '''
     pass
 #    def __init__(self, signal=None, axes=(), *items, **opts):
 #        NXdata.__init__(self, signal=signal, axes=axes, *items, **opts)
@@ -185,298 +185,298 @@ class NXmonitor(NXdata):
 #            self.nxname = "monitor"
 
 class NXsample(NXgroup):
-    """
+    '''
     NXsample node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXinstrument(NXgroup):
-    """
+    '''
     NXinstrument node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXaperture(NXgroup):
-    """
+    '''
     NXaperture node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXattenuator(NXgroup):
-    """
+    '''
     NXattenuator node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXbeam_stop(NXgroup):
-    """
+    '''
     NXbeam_stop node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXbending_magnet(NXgroup):
-    """
+    '''
     NXbending_magnet node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXcollimator(NXgroup):
-    """
+    '''
     NXcollimator node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXcrystal(NXgroup):
-    """
+    '''
     NXcrystal node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXdetector(NXgroup):
-    """
+    '''
     NXdetector node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXdisk_chopper(NXgroup):
-    """
+    '''
     NXdisk_chopper node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXfermi_chopper(NXgroup):
-    """
+    '''
     NXfermi_chopper node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXfilter(NXgroup):
-    """
+    '''
     NXfilter node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXflipper(NXgroup):
-    """
+    '''
     NXflipper node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXguide(NXgroup):
-    """
+    '''
     NXguide node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXinsertion_device(NXgroup):
-    """
+    '''
     NXinsertion_device node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXmirror(NXgroup):
-    """
+    '''
     NXmirror node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXmoderator(NXgroup):
-    """
+    '''
     NXmoderator node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXmonochromator(NXgroup):
-    """
+    '''
     NXmonochromator node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXpolarizer(NXgroup):
-    """
+    '''
     NXpolarizer node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXpositioner(NXgroup):
-    """
+    '''
     NXpositioner node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXsource(NXgroup):
-    """
+    '''
     NXsource node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXvelocity_selector(NXgroup):
-    """
+    '''
     NXvelocity_selector node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXevent_data(NXgroup):
-    """
+    '''
     NXevent_data node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXuser(NXgroup):
-    """
+    '''
     NXuser node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXparameter(NXgroup):
-    """
+    '''
     NXparameter node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXprocess(NXgroup):
-    """
+    '''
     NXprocess node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXcharacterization(NXgroup):
-    """
+    '''
     NXcharacterization node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXlog(NXgroup):
-    """
+    '''
     NXlog node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 
 class NXnote(NXgroup):
-    """
+    '''
     NXnote node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXbeam(NXgroup):
-    """
+    '''
     NXbeam node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXgeometry(NXgroup):
-    """
+    '''
     NXgeometry node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXtranslation(NXgroup):
-    """
+    '''
     NXtranslation node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXshape(NXgroup):
-    """
+    '''
     NXshape node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXorientation(NXgroup):
-    """
+    '''
     NXorientation node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXenvironment(NXgroup):
-    """
+    '''
     NXenvironment node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 class NXsensor(NXgroup):
-    """
+    '''
     NXsensor node. This is a subclass of the NXgroup class.
     
     See the NXgroup documentation for more details.
-    """
+    '''
     pass
 
 #class Unknown(NXnode):
-#    """
+#    '''
 #    Unknown group type; class does not start with NX or SDS.
-#    """
+#    '''
 #    def __init__(self, nxname="unknown", nxclass="unknown"):
 #        self.nxname = nxname
 #        self.nxclass = nxclass

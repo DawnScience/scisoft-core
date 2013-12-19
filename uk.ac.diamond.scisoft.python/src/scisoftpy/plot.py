@@ -188,7 +188,7 @@ def _parselinearg(x, y, title, name):
                     if type(j) is _types.DictType: # has axis name
                         j = j.values()[0]
                     if i.shape[0] != j.shape[0]:
-                        raise AttributeError("length of y does not match the length of x" )
+                        raise AttributeError("length of y does not match the length of x")
 
     return name, title, xl, yl
 

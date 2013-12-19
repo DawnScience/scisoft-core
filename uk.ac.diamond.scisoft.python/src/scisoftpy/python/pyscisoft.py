@@ -36,7 +36,7 @@ def phase(a, keepzeros=False):
     keepzeros -- if True, pass zeros through, else return complex NaNs
     '''
     if not _np.iscomplexobj(a):
-        raise ValueError, 'array must be complex'
+        raise ValueError, "array must be complex"
     am = _np.absolute(a)
     if keepzeros:
         return _np.nan_to_number(a/am)

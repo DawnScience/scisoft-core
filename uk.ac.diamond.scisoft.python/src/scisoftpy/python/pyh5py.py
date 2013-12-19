@@ -17,7 +17,7 @@
 import h5py #@UnresolvedImport
 
 if h5py.version.version_tuple[0] < 2:
-    raise ImportError, 'Installed h5py is too old - it must be at least version 2'
+    raise ImportError, "Installed h5py is too old - it must be at least version 2"
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
@@ -49,7 +49,7 @@ class _lazydataset(object):
             fh = h5py.File(self.file, 'r')
         except Exception, e:
             import sys
-            print >> sys.stderr, 'Could not load |%s|\n' % self.file
+            print >> sys.stderr, "Could not load |%s|\n" % self.file
             raise io_exception, e
         finally:
             pass
@@ -152,7 +152,7 @@ class HDF5Loader(object):
             fh = h5py.File(self.name, 'r')
         except Exception, e:
             import sys
-            print >> sys.stderr, 'Could not load |%s|\n' % self.name 
+            print >> sys.stderr, "Could not load |%s|\n" % self.name 
             raise io_exception, e
         finally:
             pass
@@ -229,7 +229,7 @@ class NXLoader(HDF5Loader):
             if cls in _nx.NX_CLASSES:
                 g = _nx.NX_CLASSES[cls](attrs, parent)
             else:
-                print 'Unknown Nexus class: %s' % cls
+                print "Unknown Nexus class: %s" % cls
                 g = super(NXLoader, self)._mkgroup(node, attrs, parent)
         elif node.name == '/':
             g = _nx.NXroot(node.filename, attrs)

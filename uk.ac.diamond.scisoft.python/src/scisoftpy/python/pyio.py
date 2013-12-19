@@ -220,7 +220,7 @@ class SRSLoader(PythonLoader):
             # use first line
             r = cs_regex.split(text[0].strip())
             lc = len(r)
-            cols = [ 'Column_%d' % (i+1,) for i in range(lc) ]
+            cols = [ "Column_%d" % (i+1,) for i in range(lc) ]
         else:
             if cols.count('\t') > 0: # columns separated by tabs
                 cols = cols.split('\t')
@@ -233,14 +233,14 @@ class SRSLoader(PythonLoader):
             lr = len(r)
             if lr > lc:
                 if warn:
-                    print 'Long row!'
+                    print "Long row!"
                 lr = lc
             for i in range(lr):
                 data[i].append(SRSLoader._parse_value(r[i]))
 
             if lr < lc:
                 if warn:
-                    print 'Short row!'
+                    print "Short row!"
                 for i in range(lr, lc):
                     data[i].append(0)
 
@@ -344,7 +344,7 @@ class DLSLoader(SRSLoader):
                 othermeta.append(r)
             else:
                 if len(r) > 2 and warn:
-                    print 'Line has more than one colon:', l
+                    print "Line has more than one colon:", l
                 dlsmeta.append((r[0], l[len(r[0])+1:].strip()))
         return dlsmeta
 

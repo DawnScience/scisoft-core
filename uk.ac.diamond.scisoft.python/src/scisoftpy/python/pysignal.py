@@ -26,4 +26,4 @@ def convolve(a, v, mode='full', axes=None):
 
 def phasecorrelate(f, g, axes=None, includeinv=False):
     '''Perform a phase cross correlation along given axes (can include inverse of cross-power spectrum)'''
-    raise NotImplementedError, 'Not implemented yet'
+    raise NotImplementedError, "Not implemented yet"

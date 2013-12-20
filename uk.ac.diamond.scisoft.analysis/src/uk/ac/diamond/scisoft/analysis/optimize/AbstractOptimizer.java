@@ -31,8 +31,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
 public abstract class AbstractOptimizer implements IOptimizer {
 
 	protected IFunction function;
-	protected ArrayList<IParameter> params;
-	protected int n; // number of parameters
+	protected ArrayList<IParameter> params; // list of free parameters
+	protected int n; // number of free parameters
 	protected DoubleDataset[] coords;
 	protected DoubleDataset data;
 	protected DoubleDataset weight;
@@ -43,7 +43,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
-	 * initialize parameters
+	 * initialize parameters by finding unique and unfixed ones
 	 */
 	private void initializeParameters() {
 		params.clear();
@@ -128,8 +128,16 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		function.setDirty(true);
 	}
 
+	public DoubleDataset calculateValues() {
+		return (DoubleDataset) DatasetUtils.cast(function.calculateValues(coords), AbstractDataset.FLOAT64);
+	}
+
 	public double calculateResidual(double[] parameters) {
 		setParameterValues(parameters);
+		return function.residual(true, data, weight, coords);
+	}
+
+	public double calculateResidual() {
 		return function.residual(true, data, weight, coords);
 	}
 
@@ -198,9 +206,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 		return d * 0.5/dv;
 	}
-	
+
 	/**
-	 * This should use do the work  
+	 * This should use do the work and set the parameters
 	 */
 	abstract void internalOptimize() throws Exception;
 }

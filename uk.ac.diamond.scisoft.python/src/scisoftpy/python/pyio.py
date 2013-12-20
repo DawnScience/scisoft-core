@@ -50,7 +50,9 @@ class NumPyLoader(PythonLoader):
 class NumPySaver(PythonSaver):
     def save(self, data):
         import numpy as np #@UnresolvedImport
-        np.save(self.name, data)
+        if len(data.items()) > 1:
+            print 'Only saving first dataset'
+        np.save(self.name, data[0])
 
 from re import compile as _compile
 _begin_number = _compile(r'^[-+]?[\d]?\.?\d')

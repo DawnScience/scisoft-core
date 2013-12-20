@@ -46,19 +46,40 @@ public class PseudoVoigt extends APeak implements IPeak {
 	 * @param mix
 	 */
 	public PseudoVoigt(double position, double lorentzianFWHM, double area, double gaussianFWHM, double mix) {
-		super(position, lorentzianFWHM, area, gaussianFWHM, mix);
+		super(PARAMS.length);
+		fillParameters(position, lorentzianFWHM, area, gaussianFWHM, mix);
 
+		getParameter(FWHM).setLowerLimit(0.0);
+		getParameter(FWHMG).setLowerLimit(0.0);
+		getParameter(MIX).setLowerLimit(0.0);
+		getParameter(MIX).setUpperLimit(1.0);
 		setNames();
 	}
-	
+
+	public PseudoVoigt(double[] params) {
+		super(PARAMS.length);
+		fillParameters(params);
+
+		getParameter(FWHM).setLowerLimit(0.0);
+		getParameter(FWHMG).setLowerLimit(0.0);
+		getParameter(MIX).setLowerLimit(0.0);
+		getParameter(MIX).setUpperLimit(1.0);
+		setNames();
+	}
+
 	/**
 	 * Note, now (20131204) this constructor has a different order
 	 * Initialise with set parameters
 	 * @param params Position, LorentzianFWHM, Area, GaussianFWHM, Mix(0-1)
 	 */
 	public PseudoVoigt(IParameter... params) {
-		super(params);
+		super(PARAMS.length);
+		fillParameters(params);
 
+		getParameter(FWHM).setLowerLimit(0.0);
+		getParameter(FWHMG).setLowerLimit(0.0);
+		getParameter(MIX).setLowerLimit(0.0);
+		getParameter(MIX).setUpperLimit(1.0);
 		setNames();
 	}
 
@@ -66,7 +87,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 	private static final int MIX = FWHMG + 1;
 
 	public PseudoVoigt(IdentifiedPeak peakParameters) {
-		super(5);
+		super(PARAMS.length);
 
 		// Position
 		IParameter p;
@@ -107,7 +128,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 	 * @param maxArea
 	 */
 	public PseudoVoigt(double minPos, double maxPos, double maxFWHM, double maxArea) {
-		super(5);
+		super(PARAMS.length);
 
 		internalSetPeakParameters(minPos, maxPos, maxFWHM, maxArea);
 

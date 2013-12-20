@@ -49,7 +49,7 @@ public class FitterTest {
 		Assert.assertEquals(fwhm, result.getParameterValue(1), 0.1);
 		Assert.assertEquals(area, result.getParameterValue(2), 0.1);
 	}
-	
+
 	@Test
 	public void testNDGaussianFit1D() {
 		double pos = 2.0;

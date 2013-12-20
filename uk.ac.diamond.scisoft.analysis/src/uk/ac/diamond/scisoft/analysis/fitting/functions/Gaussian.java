@@ -44,9 +44,9 @@ public class Gaussian extends APeak implements IPeak {
 	 * @param params
 	 */
 	public Gaussian(double... params) {
-		super(3);
+		super(PARAMS.length);
 		// make sure that there are 3 parameters, otherwise, throw a sensible error
-		if (params.length != 3) 
+		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
@@ -55,8 +55,8 @@ public class Gaussian extends APeak implements IPeak {
 	}
 
 	public Gaussian(IParameter... params) {
-		super(3);
-		if (params.length != 3) 
+		super(PARAMS.length);
+		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
@@ -65,7 +65,7 @@ public class Gaussian extends APeak implements IPeak {
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters) {
-		super(3); 
+		super(PARAMS.length); 
 		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
 		double fwhm2 = peakParameters.getFWHM() * 2;
 		double pos = peakParameters.getPos();
@@ -101,7 +101,7 @@ public class Gaussian extends APeak implements IPeak {
 	 *            The maximum area of the peak
 	 */
 	public Gaussian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
-		super(3);
+		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 

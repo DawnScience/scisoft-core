@@ -50,18 +50,23 @@ public class Lorentzian extends APeak {
 	 * @param params
 	 */
 	public Lorentzian(double... params) {
-		super(params);
+		super(PARAMS.length);
+		fillParameters(params);
 
+		getParameter(FWHM).setLowerLimit(0.0);
 		setNames();
 	}
 
 	public Lorentzian(IParameter... params) {
-		super(params);
+		super(PARAMS.length);
+		fillParameters(params);
+
+		getParameter(FWHM).setLowerLimit(0.0);
 		setNames();
 	}
 
 	public Lorentzian(IdentifiedPeak peakParameters) {
-		super(3);
+		super(PARAMS.length);
 
 		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
 		double maxArea = peakParameters.getHeight() * range * 4;
@@ -98,7 +103,7 @@ public class Lorentzian extends APeak {
 	 *            The maximum area of the peak
 	 */
 	public Lorentzian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
-		super(3);
+		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 

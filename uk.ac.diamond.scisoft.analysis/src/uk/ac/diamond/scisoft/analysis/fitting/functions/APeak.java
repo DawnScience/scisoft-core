@@ -29,18 +29,10 @@ public abstract class APeak extends AFunction implements IPeak {
 	protected static final int FWHM = 1;
 	protected static final int AREA = 2;
 
-	protected double height;
+	protected double height; // height of peak
 
-	public APeak(int numParms) {
-		super(numParms);
-	}
-
-	public APeak(double... params) {
-		super(params);
-	}
-
-	public APeak(IParameter... params) {
-		super(params);
+	public APeak(int n) {
+		super(n);
 	}
 
 	protected void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {

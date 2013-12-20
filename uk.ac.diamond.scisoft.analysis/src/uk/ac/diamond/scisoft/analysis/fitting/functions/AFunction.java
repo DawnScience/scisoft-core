@@ -61,6 +61,29 @@ public abstract class AFunction implements IFunction, Serializable {
 	protected IMonitor monitor = null;
 
 	/**
+	 * Constructor which simply generates the parameters but uninitialised
+	 * 
+	 * @param numberOfParameters
+	 */
+	public AFunction(int numberOfParameters) {
+		parameters = new Parameter[numberOfParameters];
+		for (int i = 0; i < numberOfParameters; i++) {
+			parameters[i] = new Parameter();
+		}
+	}
+
+	/**
+	 * Constructor which takes a list of parameter values as its starting configuration
+	 * 
+	 * @param params
+	 *            An array of starting parameter values as doubles.
+	 */
+	public AFunction(double... params) {
+		if (params != null)
+			fillParameters(params);
+	}
+
+	/**
 	 * Constructor which is given a set of parameters to begin with.
 	 * 
 	 * @param params
@@ -71,9 +94,20 @@ public abstract class AFunction implements IFunction, Serializable {
 			fillParameters(params);
 	}
 
+	protected void fillParameters(double... params) {
+		if (parameters == null)
+			parameters = new IParameter[params.length];
+		int n = Math.min(params.length, parameters.length);
+		for (int i = 0; i < n; i++) {
+			parameters[i] = new Parameter(params[i]);
+		}
+	}
+
 	protected void fillParameters(IParameter... params) {
-		parameters = new IParameter[params.length];
-		for (int i = 0; i < params.length; i++) {
+		if (parameters == null)
+			parameters = new IParameter[params.length];
+		int n = Math.min(params.length, parameters.length);
+		for (int i = 0; i < n; i++) {
 			IParameter p = params[i];
 			parameters[i] = new Parameter(p);
 		}
@@ -110,36 +144,6 @@ public abstract class AFunction implements IFunction, Serializable {
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * Constructor which takes a list of parameter values as its starting configuration
-	 * 
-	 * @param params
-	 *            An array of starting parameter values as doubles.
-	 */
-	public AFunction(double... params) {
-		if (params != null)
-			fillParameters(params);
-	}
-
-	protected void fillParameters(double... params) {
-		parameters = new Parameter[params.length];
-		for (int i = 0; i < params.length; i++) {
-			parameters[i] = new Parameter(params[i]);
-		}
-	}
-
-	/**
-	 * Constructor which simply generates the parameters but uninitialised
-	 * 
-	 * @param numberOfParameters
-	 */
-	public AFunction(int numberOfParameters) {
-		parameters = new Parameter[numberOfParameters];
-		for (int i = 0; i < numberOfParameters; i++) {
-			parameters[i] = new Parameter();
-		}
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class PearsonVII extends APeak implements IPeak {
 	}
 
 	/**
-	 * Constructor which takes the three properties required, which are
+	 * Constructor which takes the four properties required, which are
 	 * 
 	 * <pre>
 	 *    position
@@ -50,14 +50,22 @@ public class PearsonVII extends APeak implements IPeak {
 	 * @param params
 	 */
 	public PearsonVII(double[] params) {
-		super(params);
+		super(PARAMS.length);
+		fillParameters(params);
 
+		getParameter(FWHM).setLowerLimit(0.0);
+		getParameter(POWER).setLowerLimit(1.0);
+		getParameter(POWER).setUpperLimit(10.0);
 		setNames();
 	}
 
 	public PearsonVII(IParameter... params) {
-		super(params);
+		super(PARAMS.length);
+		fillParameters(params);
 
+		getParameter(FWHM).setLowerLimit(0.0);
+		getParameter(POWER).setLowerLimit(1.0);
+		getParameter(POWER).setUpperLimit(10.0);
 		setNames();
 	}
 
@@ -65,7 +73,7 @@ public class PearsonVII extends APeak implements IPeak {
 	private static final double DEF_POWER = 2;
 
 	public PearsonVII(IdentifiedPeak peakParameters) {
-		super(4); 
+		super(PARAMS.length); 
 		
 		// pos
 		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
@@ -116,7 +124,7 @@ public class PearsonVII extends APeak implements IPeak {
 	}
 
 	public PearsonVII(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea, double power) {
-		super(4);
+		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
@@ -126,7 +134,7 @@ public class PearsonVII extends APeak implements IPeak {
 		p.setValue(power);
 
 		setNames();
-	}	
+	}
 
 	private void setNames() {
 		name = NAME;

@@ -298,6 +298,4 @@ class circle_list(roi_list):
 class ellipse_list(roi_list):
     _pcls = ellipse
 
-def profile(*args):
-    #TODO
-    print "Unimplemented"
+from pyprofile import profile  # @UnusedImport

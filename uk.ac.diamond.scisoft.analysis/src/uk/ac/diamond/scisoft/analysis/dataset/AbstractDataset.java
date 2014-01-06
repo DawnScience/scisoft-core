@@ -1812,7 +1812,7 @@ public abstract class AbstractDataset implements ADataset {
 	private int get1DIndexFromStrides(final int... n) {
 		final int rank = shape.length;
 		if (rank != n.length) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Number of position indexes must be equal to rank");
 		}
 		int index = offset;
 		for (int i = 0; i < rank; i++) {

@@ -414,7 +414,7 @@ public class LazyDataset implements ILazyDataset {
 
 	/**
 	 * Gets the maximum size of a slice of a dataset in a given dimension
-	 * which should normally fit in memory. Note that is might be possible
+	 * which should normally fit in memory. Note that it might be possible
 	 * to get more in memory, this is a conservative estimate and seems to
 	 * almost always work at the size returned; providing Xmx is less than
 	 * the physical memory.

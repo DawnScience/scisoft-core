@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -408,6 +409,65 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public ILazyDataset getLazyErrors() {
 		return lazyErrorDelegate;
+	}
+
+
+	/**
+	 * Gets the maximum size of a slice of a dataset in a given dimension
+	 * which should normally fit in memory. Note that is might be possible
+	 * to get more in memory, this is a conservative estimate and seems to
+	 * almost always work at the size returned; providing Xmx is less than
+	 * the physical memory.
+	 * 
+	 * To get more in memory increase -Xmx setting or use an expression
+	 * which calls a rolling function (like rmean) instead of slicing directly
+	 * to memory.
+	 * 
+	 * @param lazySet
+	 * @param dimension
+	 * @return maximum size of dimension that can be sliced.
+	 */
+	public static int getMaxSliceLength(ILazyDataset lazySet, int dimension) {
+		
+		final double size = getSize(lazySet.elementClass());
+		final double max  = Runtime.getRuntime().maxMemory();
+		
+        // Firstly if the whole dataset it likely to fit in memory, then we
+		// allow it.
+		final double space = max/lazySet.getSize();
+		
+		// If we have room for this whole dataset, then fine
+		if (space>=size) return lazySet.getShape()[dimension];
+		
+		// Otherwize estimate what we can fit in, conservatively
+		// First get size of one slice, see it that fits, if not, still return 1.
+		double sizeOneSlice = 1; // in bytes eventually
+		for (int dim = 0; dim < lazySet.getRank(); dim++) {
+			if (dim == dimension) continue;
+			sizeOneSlice*=lazySet.getShape()[dim];
+		}
+		sizeOneSlice*=size;// in bytes now
+		double avail = max/sizeOneSlice;
+		if (avail<1) return 1;
+		
+		int maxAllowed = (int)Math.floor(avail);
+        return maxAllowed;
+	}
+
+	/**
+	 * Size in bytes of 1 of given type
+	 * @param elementClass
+	 * @return size
+	 */
+	private static int getSize(Class<?> elementClass) {
+		// If Number will usually have the SIZE attribute
+		try {
+			Field size = elementClass.getField("SIZE");
+			if (size!=null) return size.getInt(null);// static
+		} catch (Throwable ne) {
+			// Ignored
+		}
+		return 64;
 	}
 
 }

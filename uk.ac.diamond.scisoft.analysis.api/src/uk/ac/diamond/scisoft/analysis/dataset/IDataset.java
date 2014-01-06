@@ -16,12 +16,6 @@ import uk.ac.diamond.scisoft.analysis.io.IMetaData;
  * This interface defines the implementation-independent and generic parts of a dataset
  */
 public interface IDataset extends ILazyDataset {
-
-	/**
-	 * @return Number of elements per item
-	 */
-	public int getElementsPerItem();
-
 	/**
 	 * @return Size of an item in dataset (in bytes)
 	 */

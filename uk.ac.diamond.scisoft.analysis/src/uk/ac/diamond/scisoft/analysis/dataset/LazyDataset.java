@@ -41,6 +41,7 @@ public class LazyDataset implements ILazyDataset {
 	protected long       size;   // number of items
 	protected ILazyLoader loader;
 	private int          dtype;
+	private int          elements; // number of elements per item
 	private int          oOffset; // original shape offset
 	private int          nOffset; // current shape offset
 	private IMetaData    metadata = null;
@@ -50,15 +51,17 @@ public class LazyDataset implements ILazyDataset {
 	 * Create a lazy dataset
 	 * @param name
 	 * @param dtype dataset type
+	 * @param elements
 	 * @param shape
 	 * @param loader
 	 */
-	public LazyDataset(String name, int dtype, int[] shape, ILazyLoader loader) {
+	public LazyDataset(String name, int dtype, int elements, int[] shape, ILazyLoader loader) {
 		this.name = name;
 		this.shape = shape;
 		oShape = shape;
 		this.loader = loader;
 		this.dtype = dtype;
+		this.elements = elements;
 		try {
 			size = AbstractDataset.calcLongSize(shape);
 		} catch (IllegalArgumentException e) {
@@ -74,6 +77,17 @@ public class LazyDataset implements ILazyDataset {
 		}
 	}
 
+	/**
+	 * Create a lazy dataset
+	 * @param name
+	 * @param dtype dataset type
+	 * @param shape
+	 * @param loader
+	 */
+	public LazyDataset(String name, int dtype, int[] shape, ILazyLoader loader) {
+		this(name, dtype, 1, shape, loader);
+	}
+
 	@Override
 	public LazyDataset clone() {
 		LazyDataset ret = new LazyDataset(new String(name), dtype, shape.clone(), loader);
@@ -84,6 +98,11 @@ public class LazyDataset implements ILazyDataset {
 	@Override
 	public Class<?> elementClass() {
 		return AbstractDataset.elementClass(dtype);
+	}
+
+	@Override
+	public int getElementsPerItem() {
+		return elements;
 	}
 
 	@Override
@@ -102,6 +121,9 @@ public class LazyDataset implements ILazyDataset {
 		if (dtype != other.dtype) {
 			return false;
 		}
+		if (elements != other.elements) {
+			return false;
+		}
 		if (!Arrays.equals(shape, other.shape)) {
 			return false;
 		}
@@ -110,7 +132,7 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public int hashCode() {
-		int hash = dtype;
+		int hash = dtype * 17 + elements;
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];

@@ -37,6 +37,7 @@ public class AggregateDataset implements ILazyDataset {
 	private int size;
 	private String name;
 	private int dtype = -1;
+	private int elements; // number of elements per item
 
 	/**
 	 * Calculate (possibly extended) shapes from given datasets
@@ -103,6 +104,7 @@ public class AggregateDataset implements ILazyDataset {
 		// set shapes of datasets
 		final int maxRank = s.length;
 		data = new ILazyDataset[datasets.length];
+		elements = datasets[0].getElementsPerItem();
 		for (int j = 0; j < datasets.length; j++) {
 			ILazyDataset d = datasets[j];
 			int[] ds = d.getShape();
@@ -111,6 +113,9 @@ public class AggregateDataset implements ILazyDataset {
 				d.setShape(shapes[j]);
 			}
 			data[j] = d;
+			if (d.getElementsPerItem() != elements) {
+				throw new IllegalArgumentException("All datasets must have the same number of elements");
+			}
 		}
 
 		// calculate new shape
@@ -168,6 +173,11 @@ public class AggregateDataset implements ILazyDataset {
 	@Override
 	public Class<?> elementClass() {
 		return AbstractDataset.elementClass(dtype);
+	}
+
+	@Override
+	public int getElementsPerItem() {
+		return elements;
 	}
 
 	@Override

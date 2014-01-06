@@ -17,7 +17,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  * This interface defines the lazy parts of a dataset. A dataset is a N-dimensional array of items
  * where N can be zero to represent a zero-rank or single-valued dataset. A zero-rank dataset has
- * an empty array for shape.
+ * an empty array for shape. An item comprises a number of elements.
  */
 public interface ILazyDataset extends Serializable, IMetadataProvider {
 		
@@ -25,6 +25,11 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @return Class of element
 	 */
 	public Class<?> elementClass();
+
+	/**
+	 * @return Number of elements per item
+	 */
+	public int getElementsPerItem();
 
 	/**
 	 * The dataset's name. This can be useful for labelling an axis, etc.

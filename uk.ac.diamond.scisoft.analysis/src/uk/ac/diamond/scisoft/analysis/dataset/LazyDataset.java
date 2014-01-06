@@ -433,7 +433,6 @@ public class LazyDataset implements ILazyDataset {
 		return lazyErrorDelegate;
 	}
 
-
 	/**
 	 * Gets the maximum size of a slice of a dataset in a given dimension
 	 * which should normally fit in memory. Note that it might be possible
@@ -451,7 +450,7 @@ public class LazyDataset implements ILazyDataset {
 	 */
 	public static int getMaxSliceLength(ILazyDataset lazySet, int dimension) {
 		
-		final double size = getSize(lazySet.elementClass());
+		final double size = getSize(lazySet.elementClass()) * lazySet.getElementsPerItem();
 		final double max  = Runtime.getRuntime().maxMemory();
 		
         // Firstly if the whole dataset it likely to fit in memory, then we
@@ -459,21 +458,23 @@ public class LazyDataset implements ILazyDataset {
 		final double space = max/lazySet.getSize();
 		
 		// If we have room for this whole dataset, then fine
-		if (space>=size) return lazySet.getShape()[dimension];
+		int[] shape = lazySet.getShape();
+		if (space >= size)
+			return shape[dimension];
 		
-		// Otherwize estimate what we can fit in, conservatively
+		// Otherwise estimate what we can fit in, conservatively
 		// First get size of one slice, see it that fits, if not, still return 1.
-		double sizeOneSlice = 1; // in bytes eventually
-		for (int dim = 0; dim < lazySet.getRank(); dim++) {
-			if (dim == dimension) continue;
-			sizeOneSlice*=lazySet.getShape()[dim];
+		double sizeOneSlice = size; // in bytes
+		for (int dim = 0; dim < shape.length; dim++) {
+			if (dim == dimension)
+				continue;
+			sizeOneSlice *= shape[dim];
 		}
-		sizeOneSlice*=size;// in bytes now
-		double avail = max/sizeOneSlice;
-		if (avail<1) return 1;
-		
-		int maxAllowed = (int)Math.floor(avail);
-        return maxAllowed;
+		double avail = max / sizeOneSlice;
+		if (avail < 1)
+			return 1;
+
+		return (int) Math.floor(avail);
 	}
 
 	/**
@@ -485,11 +486,11 @@ public class LazyDataset implements ILazyDataset {
 		// If Number will usually have the SIZE attribute
 		try {
 			Field size = elementClass.getField("SIZE");
-			if (size!=null) return size.getInt(null);// static
+			if (size!=null) return size.getInt(null) / 8; // static
 		} catch (Throwable ne) {
 			// Ignored
 		}
-		return 64;
+		return 8;
 	}
 
 }

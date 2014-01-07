@@ -451,7 +451,9 @@ public class LazyDataset implements ILazyDataset {
 	public static int getMaxSliceLength(ILazyDataset lazySet, int dimension) {
 		
 		final double size = getSize(lazySet.elementClass()) * lazySet.getElementsPerItem();
-		final double max  = Runtime.getRuntime().maxMemory();
+		
+		// Max takes into account our minimum requirement.
+		final double max  = Math.max(Runtime.getRuntime().totalMemory(), Runtime.getRuntime().maxMemory());
 		
         // Firstly if the whole dataset it likely to fit in memory, then we
 		// allow it.
@@ -474,7 +476,8 @@ public class LazyDataset implements ILazyDataset {
 		if (avail < 1)
 			return 1;
 
-		return (int) Math.floor(avail);
+		// We fudge this to leave some room
+		return (int) Math.floor(avail/4d);
 	}
 
 	/**

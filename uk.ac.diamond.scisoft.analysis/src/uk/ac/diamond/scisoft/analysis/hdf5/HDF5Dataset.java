@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
  */
 public class HDF5Dataset extends HDF5Node {
 	private boolean string = false;
-	private boolean supported = false; // compound datasets are not currently supported
+	private boolean supported = false; // inhomogeneous composite datasets are not currently supported
 
 	private ILazyDataset dataset;
 	private long[] maxShape;

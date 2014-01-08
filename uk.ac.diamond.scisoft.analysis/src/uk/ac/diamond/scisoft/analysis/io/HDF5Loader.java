@@ -635,13 +635,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 			int i = path.lastIndexOf(HDF5Node.SEPARATOR);
 			final String sname = i >= 0 ? path.substring(i + 1) : path;
-			if (createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
+			if (!createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
 					d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
-				if (pool != null)
-					pool.put(oid, d);
-				return d;
+				logger.error("Could not create a lazy dataset from {}", path);
 			}
-			logger.error("Could not create a lazy dataset from {}", path);
+			if (pool != null)
+				pool.put(oid, d);
+			return d;
 		} catch (HDF5Exception ex) {
 			logger.error(String.format("Could not open dataset %s in %s", path, f), ex);
 		} finally {
@@ -951,35 +951,64 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return a string to represent that data type
 	 */
 	public static String getTypeName(final Datatype t) {
-		final int dclass = t.getDatatypeClass();
+		return getTypeName(t, 1, false);
+	}
+
+	/**
+	 * @param t
+	 * @param isize
+	 * @param isComplex
+	 * @return a string to represent that data type
+	 */
+	public static String getTypeName(final Datatype t, int isize, boolean isComplex) {
 		final int dsize = t.getDatatypeSize();
-		switch (dclass) {
+		if (isComplex && isize == 2) {
+			switch (dsize) {
+			case 8:
+				return "COMPLEX64";
+			case 16:
+				return "COMPLEX128";
+			}
+		}
+
+		String name = null;
+		switch (t.getDatatypeClass()) {
 		case Datatype.CLASS_CHAR:
 		case Datatype.CLASS_INTEGER:
 			String header = t.isUnsigned() ? "U" : "";
 			switch (dsize) {
 			case 1:
-				return header + "INT8";
+				name = header + "INT8";
+				break;
 			case 2:
-				return header + "INT16";
+				name = header + "INT16";
+				break;
 			case 4:
-				return header + "INT32";
+				name = header + "INT32";
+				break;
 			case 8:
-				return header + "INT64";
+				name = header + "INT64";
+				break;
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
 			switch (dsize) {
 			case 4:
-				return "FLOAT32";
+				name = "FLOAT32";
+				break;
 			case 8:
-				return "FLOAT64";
+				name = "FLOAT64";
+				break;
 			}
 			break;
 		case Datatype.CLASS_STRING:
-			return "STRING";
+			name = "STRING";
 		}
-		return t.getDatatypeDescription();
+
+		if (name == null)
+			name = t.getDatatypeDescription();
+
+		return isize == 1 ? name : "Composite of " + isize + " " + name;
 	}
 
 	/**
@@ -1351,6 +1380,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_COMPOUND) {
 				tcomp = findClassesInComposite(tid);
 				if (tcomp == null) {
+					logger.error("Composite datatype not homogeneous");
 					return false;
 				}
 			}
@@ -1364,8 +1394,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			try {
 				pid = H5.H5Dget_create_plist(did);
 				int nfiles = H5.H5Pget_external_count(pid);
-				if (nfiles > 0)
+				if (nfiles > 0) {
+					logger.error("Zero external files");
 					return false;
+				}
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get external count");
 			} finally {
@@ -1393,7 +1425,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				} catch (HDF5Exception ex) {
 				}
 			}
-			dataset.setTypeName(getTypeName(type));
 
 			if (rank == 0) {
 				// a single data point
@@ -1432,7 +1463,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				try {
 					data = H5Datatype.allocateArray(tid, 1);
 				} catch (OutOfMemoryError err) {
-					throw new HDF5Exception("Out Of Memory.");
+					throw new HDF5Exception("Out Of Memory");
 				}
 
 				boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
@@ -1462,8 +1493,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		final int dtype;
 		if (tcomp == null) {
 			dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize(), false);
+			dataset.setTypeName(getTypeName(type));
 		} else {
 			dtype = getDtype(tcomp.tclass, type.getDatatypeSize()/isize, tcomp.isComplex);
+			dataset.setTypeName(getTypeName(type, isize, tcomp.isComplex));
 		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either

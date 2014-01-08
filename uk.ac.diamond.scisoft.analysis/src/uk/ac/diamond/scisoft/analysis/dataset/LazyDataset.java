@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ public class LazyDataset implements ILazyDataset {
 	protected long       size;   // number of items
 	protected ILazyLoader loader;
 	private int          dtype;
-	private int          elements; // number of elements per item
+	private int          isize; // number of elements per item
 	private int          oOffset; // original shape offset
 	private int          nOffset; // current shape offset
 	private IMetaData    metadata = null;
@@ -61,7 +61,7 @@ public class LazyDataset implements ILazyDataset {
 		oShape = shape;
 		this.loader = loader;
 		this.dtype = dtype;
-		this.elements = elements;
+		this.isize = elements;
 		try {
 			size = AbstractDataset.calcLongSize(shape);
 		} catch (IllegalArgumentException e) {
@@ -102,7 +102,7 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public int getElementsPerItem() {
-		return elements;
+		return isize;
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class LazyDataset implements ILazyDataset {
 		if (dtype != other.dtype) {
 			return false;
 		}
-		if (elements != other.elements) {
+		if (isize != other.isize) {
 			return false;
 		}
 		if (!Arrays.equals(shape, other.shape)) {
@@ -132,7 +132,7 @@ public class LazyDataset implements ILazyDataset {
 
 	@Override
 	public int hashCode() {
-		int hash = dtype * 17 + elements;
+		int hash = dtype * 17 + isize;
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];

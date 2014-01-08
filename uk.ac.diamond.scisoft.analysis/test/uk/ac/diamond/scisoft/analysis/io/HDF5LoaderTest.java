@@ -27,10 +27,12 @@ import java.util.List;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.h5.H5File;
 
+import org.apache.commons.math3.complex.Complex;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -359,13 +361,45 @@ public class HDF5LoaderTest {
 		HDF5Loader l = new HDF5Loader(n);
 		DataHolder dh = l.loadFile();
 		assertEquals("File does not have the correct number of datasets", 51, dh.getNames().length);
-		if (dh.contains("/entry1/xspress2system/data")) {
-			ILazyDataset data = dh.getLazyDataset("/entry1/xspress2system/data");
-			assertEquals("Dataset is not the right shape", 3, data.getShape().length);
-			assertEquals("Dataset dimention 0 is not of the correct shape", 489, data.getShape()[0]);
-			assertEquals("Dataset dimention 1 is not of the correct shape", 1, data.getShape()[1]);
-			assertEquals("Dataset dimention 2 is not of the correct shape", 64, data.getShape()[2]);
-		}
+		assertTrue(dh.contains("/entry1/xspress2system/data"));
+		ILazyDataset data = dh.getLazyDataset("/entry1/xspress2system/data");
+		int[] shape = data.getShape();
+		assertEquals("Dataset is not the right shape", 3, shape.length);
+		assertEquals("Dataset dimension 0 is not of the correct shape", 489, shape[0]);
+		assertEquals("Dataset dimension 1 is not of the correct shape", 1, shape[1]);
+		assertEquals("Dataset dimension 2 is not of the correct shape", 64, shape[2]);
+	}
+
+	@Test
+	public void testLoadingCompoundDatatype() throws ScanFileHolderException {
+		String n = TestFileFolder + "h5py_complex.h5";
+		HDF5Loader l = new HDF5Loader(n);
+		DataHolder dh = l.loadFile();
+		assertEquals("File does not have the correct number of datasets", 1, dh.getNames().length);
+		assertTrue(dh.contains("/complex_example"));
+		ILazyDataset data = dh.getLazyDataset("/complex_example");
+		int[] shape = data.getShape();
+		assertEquals("Dataset is not the right shape", 2, shape.length);
+		assertEquals("Dataset dimension 0 is not of the correct shape", 50, shape[0]);
+		assertEquals("Dataset dimension 1 is not of the correct shape", 50, shape[1]);
+		IDataset s = data.getSlice(null, new int[] {1, 1}, null);
+		assertTrue(s instanceof ComplexDoubleDataset);
+		ComplexDoubleDataset cs = (ComplexDoubleDataset) s;
+		Complex cx = cs.getComplexAbs(0);
+		assertEquals(2.18634188175992, cx.getReal(), 1e-15);
+		assertEquals(-0.01617389291212438, cx.getImaginary(), 1e-15);
+
+		s = data.getSlice(new int[] {1, 3}, new int[] {10, 10}, new int[] {2, 3});
+		assertTrue(s instanceof ComplexDoubleDataset);
+		cs = (ComplexDoubleDataset) s;
+		assertEquals("Dataset dimension 0 is not of the correct shape", 5, cs.getShapeRef()[0]);
+		assertEquals("Dataset dimension 1 is not of the correct shape", 3, cs.getShapeRef()[1]);
+		cx = cs.getComplex(0, 0);
+		assertEquals(0.22884877031898887, cx.getReal(), 1e-15);
+		assertEquals(0.19673784135439948, cx.getImaginary(), 1e-15);
+		cx = cs.getComplex(4, 2);
+		assertEquals(0.6922704317579508, cx.getReal(), 1e-15);
+		assertEquals(-1.8087566023531674, cx.getImaginary(), 1e-15);
 	}
 
 	@Test

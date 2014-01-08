@@ -39,6 +39,7 @@ import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.HDFNativeData;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
+import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.object.Attribute;
@@ -619,42 +620,28 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 		}
 
-		int did = -1, tid = -1, tclass = -1;
+		int did = -1, tid = -1;
 		try {
 //			Thread.sleep(200);
 
 			did = H5.H5Dopen(lid, path, HDF5Constants.H5P_DEFAULT);
 			tid = H5.H5Dget_type(did);
 
-			tclass = H5.H5Tget_class(tid);
-			if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_VLEN) {
-				// for ARRAY, the type is determined by the base type
-				int btid = H5.H5Tget_super(tid);
-				tclass = H5.H5Tget_class(btid);
-				try {
-					H5.H5Tclose(btid);
-				} catch (HDF5Exception ex) {
-				}
+			// create a new dataset
+			HDF5Dataset d = new HDF5Dataset(oid);
+			if (copyAttributes(f, path, d, did)) {
+				final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
+				return copyNAPIMountNode(f, pool, link, keepBitWidth);
 			}
-			if (tclass == HDF5Constants.H5T_COMPOUND) {
-				logger.error("Compound dataset not supported"); // TODO
-			} else {
-				// create a new scalar dataset
-				HDF5Dataset d = new HDF5Dataset(oid);
-				if (copyAttributes(f, path, d, did)) {
-					final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
-					return copyNAPIMountNode(f, pool, link, keepBitWidth);
-				}
-				int i = path.lastIndexOf(HDF5Node.SEPARATOR);
-				final String sname = i >= 0 ? path.substring(i + 1) : path;
-				if (createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
-						d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
-					if (pool != null)
-						pool.put(oid, d);
-					return d;
-				}
-				logger.error("Could not create a lazy dataset from {}", path);
+			int i = path.lastIndexOf(HDF5Node.SEPARATOR);
+			final String sname = i >= 0 ? path.substring(i + 1) : path;
+			if (createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
+					d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+				if (pool != null)
+					pool.put(oid, d);
+				return d;
 			}
+			logger.error("Could not create a lazy dataset from {}", path);
 		} catch (HDF5Exception ex) {
 			logger.error(String.format("Could not open dataset %s in %s", path, f), ex);
 		} finally {
@@ -912,6 +899,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return dataset type
 	 */
 	public static int getDtype(final int dclass, final int dsize) {
+		return getDtype(dclass, dsize, false);
+	}
+
+	/**
+	 * Translate between data type and dataset type
+	 * @param dclass data type class
+	 * @param dsize data type item size in bytes
+	 * @param isComplex
+	 * @return dataset type
+	 */
+	private static int getDtype(final int dclass, final int dsize, final boolean isComplex) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
 			return AbstractDataset.STRING;
@@ -929,6 +927,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
+			if (isComplex) {
+				switch (dsize) {
+				case 4:
+					return AbstractDataset.COMPLEX64;
+				case 8:
+					return AbstractDataset.COMPLEX128;
+				}
+			}
 			switch (dsize) {
 			case 4:
 				return AbstractDataset.FLOAT32;
@@ -1037,6 +1043,135 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 		}
 		return ds;
+	}
+
+	private static class CompositeDatatype {
+		public int tclass;
+		public int size;
+		public boolean isComplex = false;
+	}
+
+	private static CompositeDatatype findClassesInComposite(int tid) throws HDF5LibraryException {
+		List<String> names = new ArrayList<String>();
+		List<Integer> classes = new ArrayList<Integer>();
+		flattenCompositeDatatype(tid, "", names, classes);
+		CompositeDatatype comp = new CompositeDatatype();
+		comp.size = classes.size();
+		if (comp.size > 0) {
+			comp.tclass = classes.get(0);
+			for (int i = 1; i < comp.size; i++) {
+				if (comp.tclass != classes.get(i)) {
+					logger.error("Could not load inhomogeneous compound datatype");
+					return null;
+				}
+			}
+			if (comp.size == 2 && comp.tclass == HDF5Constants.H5T_FLOAT) {
+				if (names.get(0).toLowerCase().startsWith("r") && names.get(1).toLowerCase().startsWith("i")) {
+					comp.isComplex = true;
+				}
+			}
+		}
+		return comp;
+	}
+
+	/**
+	 * This flattens compound and array
+	 * @param tid
+	 * @param prefix
+	 * @param names
+	 * @param classes
+	 * @throws HDF5LibraryException
+	 */
+	private static void flattenCompositeDatatype(int tid, String prefix, List<String> names, List<Integer> classes) throws HDF5LibraryException {
+		int tclass = H5.H5Tget_class(tid);
+		if (tclass == HDF5Constants.H5T_ARRAY) {
+			int btid = -1;
+			try {
+				btid = H5.H5Tget_super(tid);
+				tclass = H5.H5Tget_class(btid);
+				// deal with array of composite
+				if (tclass == HDF5Constants.H5T_COMPOUND || tclass == HDF5Constants.H5T_ARRAY) {
+					flattenCompositeDatatype(btid, prefix, names, classes);
+					return;
+				}
+				int r = H5.H5Tget_array_ndims(tid);
+				long[] shape = new long[r];
+				H5.H5Tget_array_dims(tid, shape);
+				long size = calcLongSize(shape);
+				for (long i = 0; i < size; i++) {
+					names.add(prefix + i);
+					classes.add(tclass);
+				}
+			} catch (HDF5Exception ex) {
+			} finally {
+				H5.H5Tclose(btid);
+			}
+		} else {
+			int n = H5.H5Tget_nmembers(tid);
+			if (n <= 0)
+				return;
+	
+			int mtype = 0;
+			int mclass = 0;
+			int tmptid = 0;
+			for (int i = 0; i < n; i++) {
+				try {
+					mtype = H5.H5Tget_member_type(tid, i);
+				} catch (Exception ex) {
+					continue;
+				}
+
+				try {
+					tmptid = mtype;
+					mtype = H5.H5Tget_native_type(tmptid);
+				} catch (HDF5Exception ex) {
+					continue;
+				} finally {
+					try {
+						H5.H5Tclose(tmptid);
+					} catch (HDF5Exception ex) {
+					}
+				}
+
+				try {
+					mclass = H5.H5Tget_class(mtype);
+				} catch (HDF5Exception ex) {
+					continue;
+				}
+
+				String mname = prefix + H5.H5Tget_member_name(tid, i);
+				if (mclass == HDF5Constants.H5T_COMPOUND || mclass == HDF5Constants.H5T_ARRAY) {
+					// deal with composite
+					flattenCompositeDatatype(mtype, mname, names, classes);
+				} else if (mclass == HDF5Constants.H5T_VLEN) {
+					continue;
+				} else {
+					names.add(mname);
+					classes.add(mclass);
+				}
+			}
+		}
+	}
+
+	public static long calcLongSize(final long[] shape) {
+		double dsize = 1.0;
+		for (int i = 0; i < shape.length; i++) {
+			// make sure the indexes isn't zero or negative
+			if (shape[i] == 0) {
+				return 0;
+			} else if (shape[i] < 0) {
+				throw new IllegalArgumentException(String.format(
+						"The %d-th is %d which is an illegal argument as it is negative", i, shape[i]));
+			}
+	
+			dsize *= shape[i];
+		}
+	
+		// check to see if the size is larger than an integer, i.e. we can't allocate it
+		if (dsize > Long.MAX_VALUE) {
+			throw new IllegalArgumentException("Size of the dataset is too large to allocate");
+		}
+		return (long) dsize;
 	}
 
 	/**
@@ -1194,7 +1329,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return true if created
 	 * @throws Exception
 	 */
-	private static boolean createLazyDataset(final HDF5File file, final HDF5Dataset dataset, final String nodePath, final String name, final int did, final int tid, final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
+	private static boolean createLazyDataset(final HDF5File file, final HDF5Dataset dataset,
+			final String nodePath, final String name, final int did, final int tid,
+			final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
 		int sid = -1, pid = -1;
 		int rank;
 		boolean isText, isVLEN, isUnsigned = false;
@@ -1202,6 +1339,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		long[] dims;
 		Datatype type;
 		final int[] trueShape;
+		CompositeDatatype tcomp = null;
 
 		try {
 //			Thread.sleep(200);
@@ -1210,6 +1348,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			int tclass = H5.H5Tget_class(tid);
 			rank = H5.H5Sget_simple_extent_ndims(sid);
 
+			if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_COMPOUND) {
+				tcomp = findClassesInComposite(tid);
+				if (tcomp == null) {
+					return false;
+				}
+			}
 			isText = tclass == HDF5Constants.H5T_STRING;
 			isVLEN = tclass == HDF5Constants.H5T_VLEN || H5.H5Tis_variable_str(tid);
 			isUnsigned = H5Datatype.isUnsigned(tid);
@@ -1235,7 +1379,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			int tmptid = 0;
 			try {
 				tmptid = H5.H5Tget_native_type(tid);
-//				isNativeDatatype = H5.H5Tequal(tid, tmptid);
+				if (!H5.H5Tequal(tid, tmptid)) {
+					type = new H5Datatype(tmptid);
+				} else {
+					type = new H5Datatype(tid);
+				}
 			} catch (HDF5Exception ex) {
 				logger.error("Could not get dataset type");
 				return false;
@@ -1245,7 +1393,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				} catch (HDF5Exception ex) {
 				}
 			}
-			type = new H5Datatype(tid);
 			dataset.setTypeName(getTypeName(type));
 
 			if (rank == 0) {
@@ -1311,7 +1458,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		final boolean extendUnsigned = !keepBitWidth && isUnsigned;
-		final int dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize());
+		final int isize = tcomp == null ? 1 : tcomp.size;
+		final int dtype;
+		if (tcomp == null) {
+			dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize(), false);
+		} else {
+			dtype = getDtype(tcomp.tclass, type.getDatatypeSize()/isize, tcomp.isComplex);
+		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
 		if (dtype == AbstractDataset.STRING && useExternalFiles) {
@@ -1437,10 +1590,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							}
 						}
 
-						d = loadData(filePath, nodePath, tstart, tsize, tstep, dtype, extendUnsigned);
+						d = loadData(filePath, nodePath, tstart, tsize, tstep, dtype, isize, extendUnsigned);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(filePath, nodePath, lstart, newShape, lstep, dtype, extendUnsigned);
+						d = loadData(filePath, nodePath, lstart, newShape, lstep, dtype, isize, extendUnsigned);
 					}
 					if (d != null) {
 						d.setName(name);
@@ -1452,7 +1605,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 		};
 
-		dataset.setDataset(new LazyDataset(name, dtype, trueShape.clone(), l));
+		dataset.setDataset(new LazyDataset(name, dtype, isize, trueShape.clone(), l));
 		return true;
 	}
 
@@ -1555,13 +1708,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return ef;
 	}
 
-	protected static AbstractDataset loadData(final String  fileName, 
-			                                  final String  node, 
-			                                  final int[]   start, 
-			                                  final int[]   count,
-			                                  final int[]   step, 
-			                                  final int     dtype, 
-			                                  final boolean extend) throws Exception {
+	protected static AbstractDataset loadData(final String fileName, final String node,
+			final int[] start, final int[] count, final int[] step,
+			final int dtype, final boolean extend) throws Exception {
+		return loadData(fileName, node, start, count, step, dtype, 1, extend);
+	}
+
+	protected static AbstractDataset loadData(final String fileName, final String node,
+			final int[] start, final int[] count, final int[] step,
+			final int dtype, final int isize, final boolean extend)
+			throws Exception {
 		AbstractDataset data = null;
 
 		final String cPath;
@@ -1603,10 +1759,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					} catch (HDF5Exception ex) {
 					}
 				}
-				if (tclass == HDF5Constants.H5T_COMPOUND) {
-					logger.error("Compound dataset not supported"); // TODO
-					return data;
-				}
 				int sid = -1, pid = -1;
 				int rank;
 				boolean isText, isVLEN; //, isUnsigned = false;
@@ -1625,8 +1777,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					isText = tclass == HDF5Constants.H5T_STRING;
 					isVLEN = tclass == HDF5Constants.H5T_VLEN || H5.H5Tis_variable_str(tid);
 
-					Datatype type = new H5Datatype(tid);
-					final int ldtype = dtype >= 0 ? dtype : getDtype(type.getDatatypeClass(), type.getDatatypeSize());
+					final int ldtype;
+					if (dtype >= 0) {
+						ldtype = dtype;
+					} else {
+						// TODO check if this is actually used
+						Datatype type = new H5Datatype(tid);
+						ldtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize());
+					}
 
 					if (rank == 0) {
 						// a single data point
@@ -1684,7 +1842,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 						int msid = H5.H5Screate_simple(1, new long[] {length}, null);
 						H5.H5Sselect_all(msid);
-						data = AbstractDataset.zeros(count, ldtype);
+						data = AbstractDataset.zeros(isize, count, ldtype);
 						Object odata = data.getBuffer();
 
 						boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
@@ -2051,34 +2209,20 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						// System.err.println("D: " + oname);
 						if (names.contains(oname)) {
 							
-						int did = -1, tid = -1, tclass = -1;
+						int did = -1, tid = -1;
 						try {
 							did = H5.H5Dopen(gid, oname, HDF5Constants.H5P_DEFAULT);
 							tid = H5.H5Dget_type(did);
 
-							tclass = H5.H5Tget_class(tid);
-							if (tclass == HDF5Constants.H5T_ARRAY || tclass == HDF5Constants.H5T_VLEN) {
-								// for ARRAY, the type is determined by the base type
-								int btid = H5.H5Tget_super(tid);
-								tclass = H5.H5Tget_class(btid);
-								try {
-									H5.H5Tclose(btid);
-								} catch (HDF5Exception ex) {
-								}
+							// create a new dataset
+							HDF5Dataset d = new HDF5Dataset(oid);
+							if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
+									d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+								logger.error("Could not create a lazy dataset {} from {}", oname, name);
+								continue;
 							}
-							if (tclass == HDF5Constants.H5T_COMPOUND) {
-								logger.error("Compound dataset not supported"); // TODO
-							} else {
-								// create a new scalar dataset
-								HDF5Dataset d = new HDF5Dataset(oid);
-								if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
-										d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
-									logger.error("Could not create a lazy dataset {} from {}", oname, name);
-									continue;
-								}
-								if (d.getDataset() != null)
-									list.add(d.getDataset());
-							}
+							if (d.getDataset() != null)
+								list.add(d.getDataset());
 						} catch (HDF5Exception ex) {
 							logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
 						} finally {

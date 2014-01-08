@@ -99,6 +99,13 @@ class Test(unittest.TestCase):
         self.checkTree(t)
         t = dnp.io.load(f + "FeKedge_1_15.nxs")
         self.checkTree(t)
+        t = dnp.io.load(f + "h5py_complex.h5")
+        cs = t.complex_example
+        cx = cs[1:10:2, 3:10:3]
+        self.assertAlmostEquals(cx[0,0].real, 0.22884877031898887, places=17)
+        self.assertAlmostEquals(cx[0,0].imag, 0.19673784135439948, places=17)
+        self.assertAlmostEquals(cx[4,2].real, 0.6922704317579508, places=17)
+        self.assertAlmostEquals(cx[4,2].imag, -1.8087566023531674, places=17)
 
     def checkTree(self, t):
         print t

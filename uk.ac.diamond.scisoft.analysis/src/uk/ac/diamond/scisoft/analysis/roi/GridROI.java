@@ -258,18 +258,19 @@ public class GridROI extends RectangularROI implements Serializable {
 		int i = 0;
 		for (double x : gp[0]) {
 			for (double y : gp[1]) {
-				xyTuples[i][0] = spt[0] + (x - spt[0]) * cang - (y - spt[1]) * sang;
-				xyTuples[i][0] -= beam[0];
-				xyTuples[i][0] /= ppmm[0];
-				xyTuples[i][1] = spt[1] + (y - spt[1]) * cang + (x - spt[0]) * sang;
-				xyTuples[i][1] -= beam[1];
-				xyTuples[i][1] /= ppmm[1];
+				double[] tuple = xyTuples[i];
+				tuple[0] = spt[0] + (x - spt[0]) * cang - (y - spt[1]) * sang;
+				tuple[0] -= beam[0];
+				tuple[0] /= ppmm[0];
+				tuple[1] = spt[1] + (y - spt[1]) * cang + (x - spt[0]) * sang;
+				tuple[1] -= beam[1];
+				tuple[1] /= ppmm[1];
 				i++;
 			}
 		}
 		return xyTuples;
 	}
-	
+
 	/**
 	 * beam centre on camera image
 	 * @return x and y pixels for beam centre
@@ -288,7 +289,7 @@ public class GridROI extends RectangularROI implements Serializable {
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("Spacing (%g, %g)", xSpacing, ySpacing);
+		return super.toString() + String.format(", spacing=[%g, %g]", xSpacing, ySpacing);
 	}
 
 	public GridPreferences getGridPreferences() {

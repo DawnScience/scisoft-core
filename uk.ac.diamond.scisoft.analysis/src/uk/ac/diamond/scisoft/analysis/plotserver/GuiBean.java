@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class GuiBean extends HashMap<GuiParameters, Serializable> implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger(GuiBean.class);
 
+	private boolean warn = true;
+
 	/**
 	 * @return a shallow copy of gui bean
 	 */
@@ -58,7 +60,7 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 	public Serializable get(Object key) {
 		Serializable returnValue = super.get(key);
 		
-		if (key instanceof GuiParameters) {
+		if (warn && key instanceof GuiParameters) {
 			GuiParameters guiParam = (GuiParameters) key;
 			if (returnValue != null && !guiParam.getStorageClass().isInstance(returnValue)) {
 				logger.error("Value in GuiBean for key " + guiParam.toString() + " is not of expected type. A ClassCastException is likely");
@@ -73,7 +75,7 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 		if (key == null) {
 			throw new NullPointerException("key must not be null");
 		}
-		if (value != null && !key.getStorageClass().isInstance(value)) {
+		if (warn && value != null && !key.getStorageClass().isInstance(value)) {
 			logger.error("Value in GuiBean for key " + key.toString() + " is not of expected type. A ClassCastException is likely");
 		}
 		return super.put(key, value);
@@ -84,5 +86,13 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 		for (Map.Entry<? extends GuiParameters, ? extends Serializable> pair: m.entrySet()) {
 			this.put(pair.getKey(), pair.getValue());
 		}
+	}
+
+	public boolean isWarn() {
+		return warn;
+	}
+
+	public void setWarn(boolean warn) {
+		this.warn = warn;
 	}
 }

@@ -110,20 +110,24 @@ class fitfunc(_absfn):
         except ValueError:
             raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
 
-    def residual(self, allvalues, data, *coords):
+    def residual(self, allvalues, data, weights, *coords):
         '''Find residual as sum of squared differences of function and data
         
         Arguments:
-        allvalues -- boolean, currently ignored 
+        allvalues -- boolean, currently ignored
         data      -- used to subtract from evaluated function
+        weights   -- weighting for each squared difference, can be None
         coords    -- coordinates over which the function is evaluated
         '''
+        if len(coords) == 0: # workaround deprecated method
+            coords = (weights,)
+            weights = None
         try:
             l = [p for p in self.parameterValues]
             l.append([_dnp.Sciwrap(c) for c in coords])
             l.append(self.args)
             d = self.func(*l)
-            return _dnp.residual(d, data)
+            return _dnp.residual(d, data, weights)
         except ValueError:
             raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
 
@@ -157,15 +161,19 @@ class cfitfunc(_compfn):
                 vt += v
         return vt
 
-    def residual(self, allvalues, data, coords):
+    def residual(self, allvalues, data, weights, coords):
         '''Find residual as sum of squared differences of function and data
         
         Arguments:
         allvalues -- boolean, currently ignored 
         data      -- used to subtract from evaluated function
+        weights   -- weighting for each squared difference, can be None
         coords    -- coordinates over which the function is evaluated
         '''
-        return _dnp.residual(self.calculateValues(coords), data)
+        if len(coords) == 0: # workaround deprecated method
+            coords = (weights,)
+            weights = None
+        return _dnp.residual(self.calculateValues(coords), data, weights)
 
 
 class fitresult(object):
@@ -263,7 +271,7 @@ class fitresult(object):
     def _residual(self):
         '''Residual of fit
         '''
-        return self.func.residual(True, _jinput(self.data), _jinput(self.coords))
+        return self.func.residual(True, _jinput(self.data), None, _jinput(self.coords))
     residual = property(_residual)
 
     def _area(self):

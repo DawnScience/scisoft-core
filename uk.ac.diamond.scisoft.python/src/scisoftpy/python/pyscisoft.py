@@ -99,9 +99,12 @@ def iqr(a, axis=None):
     result = quantile(a, [0.25, 0.75], axis=axis)
     return result[1] - result[0]
 
-def residual(a, b):
-    '''Residual (sum of squared difference) of two inputs'''
-    return _np.square(a-b)
+def residual(a, b, weight=None):
+    '''Residual (sum of squared difference) of two inputs with optional weighting'''
+    r = _np.square(a-b)
+    if weight is None:
+        return r
+    return r * weight
 
 def equaldataset(lhs, rhs):
     '''Compare two ndarrays for equality, or two representations of abstract datasets via abstract descriptors'''

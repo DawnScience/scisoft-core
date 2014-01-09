@@ -87,9 +87,11 @@ def quantile(a, q, axis=None):
         return _stats.quantile(a, axis, q)
 
 @_wrapin
-def residual(a, b):
-    '''Residual (sum of squared difference) of two inputs'''
-    return _stats.residual(a, b)
+def residual(a, b, weight=None):
+    '''Residual (sum of squared difference) of two inputs with optional weighting'''
+    if weight is None:
+        return _stats.residual(a, b)
+    return _stats.weightedResidual(a, b, weight)
 
 @_wrap
 def normalise(a, allelements=True):

@@ -263,6 +263,7 @@ def _create_list(arg):
         return ellipse_list()
     elif isinstance(arg, _roi.CircularROI):
         return circle_list()
+    raise ValueError, "ROI not recognised"
 
 ROIProfile = _roi.ROIProfile
 

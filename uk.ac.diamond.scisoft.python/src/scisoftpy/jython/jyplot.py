@@ -109,6 +109,7 @@ from jybeans import guibean as _jyguibean
 from jyroi import _roi_wrap, _create_list, _jroi, _roi_list
 
 def _wrap_gui_bean(jb):
+    jb.setWarn(False)
     if _jyparams.roi in jb:
         jb[_jyparams.roi] = _roi_wrap(jb[_jyparams.roi])
     if _jyparams.roilist in jb:
@@ -116,10 +117,11 @@ def _wrap_gui_bean(jb):
         if jl:
             l = _create_list(jl[0])
             for r in jl:
-                l.append(r)
+                l.append(_roi_wrap(r))
         else:
             l = None
         jb[_jyparams.roilist] = l
+    jb.setWarn(True)
 
 def _unwrap_gui_bean(ob, nb):
     for k in ob:

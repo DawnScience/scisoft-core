@@ -138,7 +138,8 @@ def _unwrap_gui_bean(ob, nb):
 
 def plot_getbean(name):
     jb = _plotter.getGuiBean(name)
-    _wrap_gui_bean(jb)
+    if jb is not None:
+        _wrap_gui_bean(jb)
     return jb
 
 def plot_setbean(name, bean):
@@ -146,8 +147,10 @@ def plot_setbean(name, bean):
 
 def plot_getdatabean(name):
     jdb = _plotter.getDataBean(name)
-    jgb = jdb.getGuiParameters()
-    _wrap_gui_bean(jgb)
+    if jdb is not None:
+        jgb = jdb.getGuiParameters()
+        if jgb is not None:
+            _wrap_gui_bean(jgb)
     return jdb
 
 def plot_setdatabean(name, bean):

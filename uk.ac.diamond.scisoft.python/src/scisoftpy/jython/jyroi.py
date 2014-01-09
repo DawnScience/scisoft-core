@@ -251,6 +251,8 @@ class ellipse_list(_roi_list):
     _pcls = ellipse
 
 def _create_list(arg):
+    if isinstance(arg, _iroi):
+        arg = arg._jroi()
     if isinstance(arg, _roi.SectorROI):
         return sector_list()
     elif isinstance(arg, _roi.RectangularROI):

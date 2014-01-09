@@ -19,17 +19,22 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math.optimization.VectorialPointValuePair;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointVectorValuePair;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunction;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunctionJacobian;
+import org.apache.commons.math3.optim.nonlinear.vector.Target;
+import org.apache.commons.math3.optim.nonlinear.vector.Weight;
+import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +52,6 @@ import Jama.Matrix;
  * <p>
  * The ellipse is centred on the origin.
  */
-//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
 class AngleDerivativeFunction implements UnivariateFunction, Serializable {
 	double ra, rb; // major and minor semi-axes
 	double alpha;  // orientation angle of major axis
@@ -98,7 +102,6 @@ class AngleDerivativeFunction implements UnivariateFunction, Serializable {
  * This function returns the coordinates (interleaved) for the points specified by the
  * geometric parameters and an array of angles
  */
-//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
 class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializable {
 	private static final int PARAMETERS = EllipseFitter.PARAMETERS;
 	private AbstractDataset X;
@@ -139,7 +142,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	}
 
 	@Override
-	public double[] getTarget() {
+	public Target getTarget() {
 		double[] target = new double[m];
 		final IndexIterator itx = X.getIterator();
 		final IndexIterator ity = Y.getIterator();
@@ -148,14 +151,14 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 			target[i++] = X.getElementDoubleAbs(itx.index);
 			target[i++] = Y.getElementDoubleAbs(ity.index);
 		}
-		return target;
+		return new Target(target);
 	}
 
 	@Override
-	public double[] getWeight() {
+	public Weight getWeight() {
 		double[] weight = new double[m];
 		Arrays.fill(weight, 1.0);
-		return weight;
+		return new Weight(weight);
 	}
 
 	/**
@@ -163,7 +166,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	 * @param initParameters geometric parameters
 	 * @return array of all initial parameters
 	 */
-	double[] calcAllInitValues(double[] initParameters) {
+	InitialGuess calcAllInitValues(double[] initParameters) {
 		double[] init = new double[n+PARAMETERS];
 		for (int i = 0; i < initParameters.length; i++) {
 			init[i] = initParameters[i];
@@ -204,11 +207,11 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 				// cannot happen
 			}
 		}
-		return init;
+		return new InitialGuess(init);
 	}
 
 	@Override
-	public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+	public double[] value(double[] p) {
 		final double[] values = v.getData();
 		final double a = p[0];
 		final double b = p[1];
@@ -232,7 +235,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 
 	@Override
 	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
-		final double[] p = calcAllInitValues(parameters);
+		final double[] p = calcAllInitValues(parameters).getInitialGuess();
 
 		final DoubleDataset v = new DoubleDataset(n);
 		final double[] values = v.getData();
@@ -289,7 +292,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	public MultivariateMatrixFunction jacobian() {
 		return new MultivariateMatrixFunction() {
 			@Override
-			public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+			public double[][] value(double[] p) throws IllegalArgumentException {
 				calculateJacobian(p);
 				return j;
 			}
@@ -301,7 +304,6 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
  * Fit an ellipse whose geometric parameters are
  *  major, minor semi-axes, angle of major axis, centre coordinates
  */
-//Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
 public class EllipseFitter implements IConicSectionFitter, Serializable {
 	/**
 	 * Setup the logging facilities
@@ -314,6 +316,8 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 	private EllipseCoordinatesFunction fitFunction;
 
 	final static int PARAMETERS = 5;
+	private static final int MAX_EVALUATIONS = Integer.MAX_VALUE/1024;
+
 
 	public EllipseFitter() {
 		parameters = new double[PARAMETERS];
@@ -357,7 +361,8 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {
-			VectorialPointValuePair result = opt.optimize(f, f.getTarget(), f.getWeight(), f.calcAllInitValues(init));
+			PointVectorValuePair result = opt.optimize(new ModelFunction(f), new ModelFunctionJacobian(f.jacobian()),
+					f.getTarget(), f.getWeight(), f.calcAllInitValues(init), new MaxEval(MAX_EVALUATIONS));
 
 			double[] point = result.getPointRef(); 
 			for (int i = 0; i < PARAMETERS; i++)
@@ -366,11 +371,11 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 			residual = opt.getRMS();
 
 			logger.trace("Ellipse fit: rms = {}, x^2 = {}", residual, opt.getChiSquare());
-		} catch (FunctionEvaluationException e) {
+		} catch (DimensionMismatchException e) {
 			// cannot happen
 		} catch (IllegalArgumentException e) {
 			// should not happen!
-		} catch (ConvergenceException e) {
+		} catch (TooManyEvaluationsException e) {
 			throw new IllegalArgumentException("Problem with optimizer converging");
 		}
 	}
@@ -555,5 +560,4 @@ public class EllipseFitter implements IConicSectionFitter, Serializable {
 		}
 		return coords;
 	}
-
 }

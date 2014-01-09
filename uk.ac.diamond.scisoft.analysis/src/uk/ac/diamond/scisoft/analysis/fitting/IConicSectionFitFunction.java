@@ -16,7 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math3.analysis.MultivariateVectorFunction;
+import org.apache.commons.math3.optim.nonlinear.vector.Target;
+import org.apache.commons.math3.optim.nonlinear.vector.Weight;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 
@@ -24,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
  * Conic section fit function which returns the coordinates (interleaved) for the points
  * specified by the geometric parameters and an array of angles
  */
-public interface IConicSectionFitFunction extends DifferentiableMultivariateVectorialFunction {
+public interface IConicSectionFitFunction extends MultivariateVectorFunction {
 
 	/**
 	 * Set points used in fit
@@ -36,12 +39,12 @@ public interface IConicSectionFitFunction extends DifferentiableMultivariateVect
 	/**
 	 * @return array of interleaved coordinates
 	 */
-	public double[] getTarget();
+	public Target getTarget();
 
 	/**
 	 * @return default weights of 1
 	 */
-	public double[] getWeight();
+	public Weight getWeight();
 
 	/**
 	 * Calculate distance squared to nearest point of conic section
@@ -50,4 +53,9 @@ public interface IConicSectionFitFunction extends DifferentiableMultivariateVect
 	 * @throws IllegalArgumentException
 	 */
 	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
+
+	/**
+	 * @return a matrix function that calculates the Jacobian
+	 */
+	public MultivariateMatrixFunction jacobian();
 }

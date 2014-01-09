@@ -19,11 +19,17 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.math.ConvergenceException;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math.optimization.VectorialPointValuePair;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointVectorValuePair;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunction;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunctionJacobian;
+import org.apache.commons.math3.optim.nonlinear.vector.Target;
+import org.apache.commons.math3.optim.nonlinear.vector.Weight;
+import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +45,6 @@ import Jama.SingularValueDecomposition;
  * This function returns the coordinates (interleaved) for the points specified by the
  * geometric parameters and an array of angles
  */
-// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-549, add Serializable
 class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializable {
 	private static final int PARAMETERS = CircleFitter.PARAMETERS;
 	private AbstractDataset X;
@@ -73,7 +78,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 	}
 
 	@Override
-	public double[] getTarget() {
+	public Target getTarget() {
 		double[] target = new double[m];
 		final IndexIterator itx = X.getIterator();
 		final IndexIterator ity = Y.getIterator();
@@ -82,14 +87,14 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 			target[i++] = X.getElementDoubleAbs(itx.index);
 			target[i++] = Y.getElementDoubleAbs(ity.index);
 		}
-		return target;
+		return new Target(target);
 	}
 
 	@Override
-	public double[] getWeight() {
+	public Weight getWeight() {
 		double[] weight = new double[m];
 		Arrays.fill(weight, 1.0);
-		return weight;
+		return new Weight(weight);
 	}
 
 	/**
@@ -97,7 +102,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 	 * @param initParameters geometric parameters
 	 * @return array of all initial parameters
 	 */
-	double[] calcAllInitValues(double[] initParameters) {
+	InitialGuess calcAllInitValues(double[] initParameters) {
 		double[] init = new double[n+PARAMETERS];
 		for (int i = 0; i < initParameters.length; i++) {
 			init[i] = initParameters[i];
@@ -115,11 +120,11 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 
 			init[i++] = Math.atan2(Yc, Xc);
 		}
-		return init;
+		return new InitialGuess(init);
 	}
 
 	@Override
-	public double[] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+	public double[] value(double[] p) {
 		final double[] values = v.getData();
 		final double r = p[0];
 		final double x = p[1];
@@ -141,7 +146,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 
 	@Override
 	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
-		final double[] p = calcAllInitValues(parameters);
+		final double[] p = calcAllInitValues(parameters).getInitialGuess();
 
 		final DoubleDataset v = new DoubleDataset(n);
 		final double[] values = v.getData();
@@ -182,7 +187,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 	public MultivariateMatrixFunction jacobian() {
 		return new MultivariateMatrixFunction() {
 			@Override
-			public double[][] value(double[] p) throws FunctionEvaluationException, IllegalArgumentException {
+			public double[][] value(double[] p) throws IllegalArgumentException {
 				calculateJacobian(p);
 				return j;
 			}
@@ -207,6 +212,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	private double residual;
 
 	final static int PARAMETERS = 3;
+	private static final int MAX_EVALUATIONS = Integer.MAX_VALUE/1024;
 
 	public CircleFitter() {
 		parameters = new double[PARAMETERS];
@@ -263,7 +269,8 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {
-			VectorialPointValuePair result = opt.optimize(f, f.getTarget(), f.getWeight(), f.calcAllInitValues(init));
+			PointVectorValuePair result = opt.optimize(new ModelFunction(f), new ModelFunctionJacobian(f.jacobian()),
+					f.getTarget(), f.getWeight(), f.calcAllInitValues(init), new MaxEval(MAX_EVALUATIONS));
 
 			double[] point = result.getPointRef(); 
 			for (int i = 0; i < PARAMETERS; i++)
@@ -271,11 +278,11 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 
 			residual = opt.getRMS();
 			logger.trace("Circle fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
-		} catch (FunctionEvaluationException e) {
+		} catch (DimensionMismatchException e) {
 			// cannot happen
 		} catch (IllegalArgumentException e) {
 			// should not happen!
-		} catch (ConvergenceException e) {
+		} catch (TooManyEvaluationsException e) {
 			throw new IllegalArgumentException("Problem with optimizer converging");
 		}
 	}

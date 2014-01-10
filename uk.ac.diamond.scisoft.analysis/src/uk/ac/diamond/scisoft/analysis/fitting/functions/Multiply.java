@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
- * Multiply several functions
+ * Multiply several functions (missing functions are treated as unity)
  */
 public class Multiply extends ANaryOperator implements IOperator {
 	private static final String NAME = "Multiply";
@@ -48,10 +48,29 @@ public class Multiply extends ANaryOperator implements IOperator {
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		data.fill(1);
+		int imax = getNoOfFunctions();
+		if (imax < 1) {
+			data.fill(1);
+			return;
+		}
+
+		IFunction f = getFunction(0);
+		if (f != null) {
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(data, it);
+			} else {
+				data.fill(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+			}
+		} else {
+			data.fill(1);
+		}
+
+		if (imax == 1)
+			return;
+
 		DoubleDataset temp = new DoubleDataset(it.getShape());
-		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
-			IFunction f = getFunction(i);
+		for (int i = 1; i < imax; i++) {
+			f = getFunction(i);
 			if (f == null)
 				continue;
 
@@ -72,6 +91,9 @@ public class Multiply extends ANaryOperator implements IOperator {
 
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
+
 			double r = f.partialDeriv(p, values);
 			double t = f.val(values);
 			m *= t;
@@ -85,14 +107,50 @@ public class Multiply extends ANaryOperator implements IOperator {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		data.fill(1); // holds total product
-		DoubleDataset val = new DoubleDataset(it.getShape());
-		DoubleDataset dif = new DoubleDataset(it.getShape());
-		DoubleDataset sum = new DoubleDataset(it.getShape());
-		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
-			IFunction f = getFunction(i);
-			boolean hasParam = indexOfParameter(f, param) >= 0;
+		int imax = getNoOfFunctions();
+		if (imax < 1) {
+			data.fill(0);
+			return;
+		}
 
+		IFunction f = getFunction(0);
+		boolean hasParam = indexOfParameter(f, param) >= 0;
+		if (f != null && hasParam) {
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithPartialDerivativeValues(param, data, it);
+			} else {
+				data.fill(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+			}
+		} else {
+			data.fill(0);
+		}
+		if (imax == 1)
+			return;
+
+		DoubleDataset val = new DoubleDataset(it.getShape());
+		DoubleDataset sum = new DoubleDataset(it.getShape());
+		DoubleDataset dif;
+		if (f != null) {
+			dif = new DoubleDataset(data); // copy derivatives and now store values
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(data, it);
+			} else {
+				data.fill(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+			}
+			if (hasParam) {
+				dif.idivide(data);
+				sum.iadd(dif);
+			}
+		} else {
+			dif = new DoubleDataset(it.getShape());
+			data.fill(1);
+		}
+		for (int i = 1; i < imax; i++) {
+			f = getFunction(i);
+			if (f == null)
+				continue;
+
+			hasParam = indexOfParameter(f, param) >= 0;
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(val, it);
 				data.imultiply(val);

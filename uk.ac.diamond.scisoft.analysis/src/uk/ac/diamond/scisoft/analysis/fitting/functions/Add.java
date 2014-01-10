@@ -20,7 +20,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
- * Add several functions
+ * Add several functions (missing functions are treated as zero)
  */
 public class Add extends ANaryOperator implements IOperator {
 	private static final String NAME = "Add";
@@ -47,9 +47,27 @@ public class Add extends ANaryOperator implements IOperator {
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		int imax = getNoOfFunctions();
+		if (imax < 1) {
+			data.fill(0);
+			return;
+		}
+
+		IFunction f = getFunction(0);
+		if (f != null) {
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithValues(data, it);
+			} else {
+				data.fill(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+			}
+		}
+
+		if (imax == 1)
+			return;
+
 		DoubleDataset temp = new DoubleDataset(it.getShape());
-		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
-			IFunction f = getFunction(i);
+		for (int i = 1; i < imax; i++) {
+			f = getFunction(i);
 			if (f == null)
 				continue;
 
@@ -68,7 +86,8 @@ public class Add extends ANaryOperator implements IOperator {
 
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
-			d += f.partialDeriv(param, values);
+			if (f != null)
+				d += f.partialDeriv(param, values);
 		}
 
 		return d;
@@ -76,10 +95,29 @@ public class Add extends ANaryOperator implements IOperator {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
+		int imax = getNoOfFunctions();
+		if (imax < 1) {
+			data.fill(0);
+			return;
+		}
+		IFunction f = getFunction(0);
+		if (f != null && indexOfParameter(f, param) >= 0) {
+			if (f instanceof AFunction) {
+				((AFunction) f).fillWithPartialDerivativeValues(param, data, it);
+			} else {
+				data.fill(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+			}
+		} else {
+			data.fill(0);
+		}
+
+		if (imax == 1)
+			return;
+
 		DoubleDataset temp = new DoubleDataset(it.getShape());
-		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
-			IFunction f = getFunction(i);
-			if (indexOfParameter(f, param) < 0)
+		for (int i = 1; i < imax; i++) {
+			f = getFunction(i);
+			if (f == null || indexOfParameter(f, param) < 0)
 				continue;
 
 			if (f instanceof AFunction) {

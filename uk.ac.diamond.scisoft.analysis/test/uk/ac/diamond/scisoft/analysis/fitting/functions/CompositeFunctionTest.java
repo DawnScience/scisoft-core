@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Random;
 
 public class CompositeFunctionTest {
 
@@ -70,5 +71,15 @@ public class CompositeFunctionTest {
 
 		dx = cf.calculatePartialDerivativeValues(cf.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.arange(15, 30, 0.25)};
+		DoubleDataset weight = null;
+		CoordinatesIterator it = cf.getIterator(coords);
+		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset data = Random.randn(it.getShape());
+		cf.fillWithValues(current, it);
+		double rd = data.residual(current, weight, false);
+		double rf = cf.residual(true, data, weight, coords);
+		Assert.assertEquals(rd, rf, 1e-9);
 	}
 }

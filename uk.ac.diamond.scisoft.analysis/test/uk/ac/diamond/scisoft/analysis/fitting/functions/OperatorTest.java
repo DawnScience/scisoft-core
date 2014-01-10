@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Random;
 
 public class OperatorTest {
 
@@ -67,6 +68,16 @@ public class OperatorTest {
 
 		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.arange(15, 30, 0.25)};
+		DoubleDataset weight = null;
+		CoordinatesIterator it = op.getIterator(coords);
+		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset data = Random.randn(it.getShape());
+		op.fillWithValues(current, it);
+		double rd = data.residual(current, weight, false);
+		double rf = op.residual(true, data, weight, coords);
+		Assert.assertEquals(rd, rf, 1e-9);
 	}
 
 	@Test

@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
- * Divide two functions
+ * Divide two functions (missing functions are treated as unity)
  */
 public class Divide extends ABinaryOperator implements IOperator {
 	private static final String NAME = "Divide";
@@ -35,13 +35,13 @@ public class Divide extends ABinaryOperator implements IOperator {
 
 	@Override
 	public double val(double... values) {
-		
-		double y = fa == null ? 0 : fa.val(values);
-		y /= fb == null ? 1 : fb.val(values);
+		double y = fa == null ? 1 : fa.val(values);
+		if (fb != null) {
+			y /= fb.val(values);
+		}
 
 		return y;
 	}
-
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
@@ -51,6 +51,8 @@ public class Divide extends ABinaryOperator implements IOperator {
 			} else {
 				data.fill(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
 			}
+		} else {
+			data.fill(1);
 		}
 
 		if (fb != null) {
@@ -67,22 +69,21 @@ public class Divide extends ABinaryOperator implements IOperator {
 	@Override
 	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
 		IParameter p = getParameter(index);
-		double d = 0;
+		double a;
+		double d;
 
-		if (fa == null) {
-			if (fb == null) {
-				d = Double.NaN;
-			}
+		if (fa != null) {
+			a = fa.val(values);
+			d = fa.partialDeriv(p, values);
 		} else {
-			double da = fa.partialDeriv(p, values);
-			if (fb == null) {
-				d = da / 0;
-			} else {
-				double b = fb.val(values);
-				d =  da * b;
-				d -= fa.val(values) * fb.partialDeriv(p, values);
-				d /= b*b;
-			}
+			a = 1;
+			d = 0;
+		}
+
+		if (fb != null) {
+			double b = fb.val(values);
+			double db = fb.partialDeriv(p, values);
+			d = (d * b - a * db) / (b * b);
 		}
 		return d;
 	}
@@ -90,36 +91,36 @@ public class Divide extends ABinaryOperator implements IOperator {
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter param, DoubleDataset data, CoordinatesIterator it) {
 		if (fa == null) {
-			if (fb == null) {
-				data.fill(Double.NaN);
-			}
+			data.fill(0);
 		} else {
-			DoubleDataset value = new DoubleDataset(it.getShape());
 			if (fa instanceof AFunction) {
-				((AFunction) fa).fillWithValues(value, it);
 				if (((AFunction) fa).indexOfParameter(param) >= 0) {
 					((AFunction) fa).fillWithPartialDerivativeValues(param, data, it);
 				}
 			} else {
-				value.iadd(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
 				if (indexOfParameter(fa, param) >= 0) { 
-					data.iadd(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
+					data.fill(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
 				}
 			}
+		}
 
-			if (fb == null) {
-				data.idivide(0);
+		if (fb != null) {
+			AbstractDataset b = DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues()));
+			data.imultiply(b);
+			b.imultiply(b);
+			AbstractDataset a;
+			if (fa instanceof AFunction) {
+				a = new DoubleDataset(it.getShape());
+				((AFunction) fa).fillWithValues((DoubleDataset) a, it);
 			} else {
-				AbstractDataset b = DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues()));
-				data.idivide(b);
-
-				if (indexOfParameter(fb, param) >= 0) { 
-					value.imultiply(DatasetUtils.convertToAbstractDataset(fb.calculatePartialDerivativeValues(param, it.getValues())));
-					b.imultiply(b);
-					value.idivide(b);
-					data.isubtract(value);
-				}
+				a = DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues()));
 			}
+
+			if (indexOfParameter(fb, param) >= 0) { 
+				a.imultiply(DatasetUtils.convertToAbstractDataset(fb.calculatePartialDerivativeValues(param, it.getValues())));
+				data.isubtract(a);
+			}
+			data.idivide(b);
 		}
 	}
 }

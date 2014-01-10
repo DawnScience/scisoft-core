@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
- * Subtract two functions
+ * Subtract two functions (missing functions are treated as zero)
  */
 public class Subtract extends ABinaryOperator implements IOperator {
 	private static final String NAME = "Subtract";
@@ -34,9 +34,10 @@ public class Subtract extends ABinaryOperator implements IOperator {
 
 	@Override
 	public double val(double... values) {
-		
 		double y = fa == null ? 0 : fa.val(values);
-		y -= fb == null ? 0 : fb.val(values);
+		if (fb != null) {
+			y -= fb.val(values);
+		}
 
 		return y;
 	}
@@ -49,6 +50,8 @@ public class Subtract extends ABinaryOperator implements IOperator {
 			} else {
 				data.fill(fa.calculateValues(it.getValues()));
 			}
+		} else {
+			data.fill(0);
 		}
 
 		if (fb != null) {
@@ -80,8 +83,10 @@ public class Subtract extends ABinaryOperator implements IOperator {
 			if (fa instanceof AFunction) {
 				((AFunction) fa).fillWithPartialDerivativeValues(param, data, it);
 			} else {
-				data.iadd(fa.calculatePartialDerivativeValues(param, it.getValues()));
+				data.fill(fa.calculatePartialDerivativeValues(param, it.getValues()));
 			}
+		} else {
+			data.fill(0);
 		}
 
 		if (fb != null && indexOfParameter(fb, param) >= 0) {

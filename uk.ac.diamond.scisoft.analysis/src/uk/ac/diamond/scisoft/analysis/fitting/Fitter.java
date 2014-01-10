@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheMultiDirectional;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
@@ -45,30 +47,25 @@ public class Fitter {
 	}
 	
 	public static void simplexFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		
 		NelderMead nm = new NelderMead(quality);
-		
 		nm.optimize(coords, yAxis, function);	
 	}
 		
 	public static void ApacheNelderMeadFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		
-		ApacheNelderMead anm = new ApacheNelderMead();
-		
+//		IOptimizer anm = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
+		IOptimizer anm = new ApacheNelderMead();
 		anm.optimize(coords, yAxis, function);	
 	}	
 	
 	public static void ApacheMultiDirectionFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		
-		ApacheMultiDirectional amd = new ApacheMultiDirectional();
-		
+//		IOptimizer amd = new ApacheOptimizer(Optimizer.SIMPLEX_MD);
+		IOptimizer amd = new ApacheMultiDirectional();
 		amd.optimize(coords, yAxis, function);	
 	}
 		
 	public static void ApacheConjugateGradientFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		
-		ApacheConjugateGradient acg = new ApacheConjugateGradient();
-		
+//		IOptimizer acg = new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
+		IOptimizer acg = new ApacheConjugateGradient();
 		acg.optimize(coords, yAxis, function);	
 	}
 
@@ -77,9 +74,7 @@ public class Fitter {
 	}
 	
 	public static void GDFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		
-		GradientDescent gd = new GradientDescent(quality);
-		
+		IOptimizer gd = new GradientDescent(quality);
 		gd.optimize(coords, yAxis, function);	
 	}
 	
@@ -104,8 +99,7 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static void geneticFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-	
-		GeneticAlg ga = new GeneticAlg(quality, seed); 
+		IOptimizer ga = new GeneticAlg(quality, seed); 
 
 		ga.optimize(coords, yAxis, function);
 	}
@@ -118,8 +112,8 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static void llsqFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-		LeastSquares lsq = new LeastSquares(0); 
-	
+		IOptimizer lsq = new LeastSquares(0); 
+
 		lsq.optimize(coords, yAxis, function);
 	}
 
@@ -208,9 +202,7 @@ public class Fitter {
 		return comp;
 	}
 	
-	
 	public static NDGaussianFitResult NDGaussianSimpleFit(AbstractDataset data, AbstractDataset... axis) {
-		
 		if (data.getRank() != axis.length) {
 			//TODO make this better
 			throw new IllegalArgumentException("Incorrect number of Axis");

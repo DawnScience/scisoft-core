@@ -229,6 +229,7 @@ public class GaussianND extends AFunction {
 		if (isDirty())
 			calcCachedParameters();
 
+		it.reset();
 		double[] coords = it.getCoordinates();
 		int j = 0;
 		double[] buffer = data.getData();

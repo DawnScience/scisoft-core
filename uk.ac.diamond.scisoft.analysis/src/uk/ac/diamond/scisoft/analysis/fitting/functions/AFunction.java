@@ -389,19 +389,19 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	/**
-	 * Fill dataset with values
+	 * Fill dataset with values. Implementations should reset the iterator before use
 	 * @param data
 	 * @param it
 	 */
 	abstract public void fillWithValues(DoubleDataset data, CoordinatesIterator it);
 
 	/**
-	 * Fill dataset with partial derivatives
+	 * Fill dataset with partial derivatives. Implementations should reset the iterator before use
 	 * <p>
 	 * This implementation is a numerical approximation.
 	 * <p>
 	 * Note that is called only if there are no duplicated parameters otherwise,
-	 * a numerical approximation is used. To change this behaviour, override
+	 * a numerical approximation is used. To change this behaviour, also override
 	 * {@link #calculatePartialDerivativeValues(IParameter, IDataset...)}
 	 * @param parameter
 	 * @param data
@@ -428,7 +428,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		while (delta > Double.MIN_NORMAL) {
 			delta *= DELTA_FACTOR;
 			fillWithNumericalDerivativeDataset(delta, param, current, it);
-			it.reset();
 			if (Comparisons.allCloseTo(previous, current, rel, abs))
 				break;
 

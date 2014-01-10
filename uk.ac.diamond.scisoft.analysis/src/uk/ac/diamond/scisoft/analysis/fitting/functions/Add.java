@@ -55,7 +55,6 @@ public class Add extends ANaryOperator implements IOperator {
 
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(temp, it);
-				it.reset();
 				data.iadd(temp);
 			} else {
 				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
@@ -85,7 +84,6 @@ public class Add extends ANaryOperator implements IOperator {
 
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithPartialDerivativeValues(param, temp, it);
-				it.reset();
 				data.iadd(temp);
 			} else {
 				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));

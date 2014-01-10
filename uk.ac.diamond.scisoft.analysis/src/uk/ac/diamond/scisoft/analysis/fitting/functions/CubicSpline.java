@@ -176,6 +176,7 @@ public class CubicSpline extends AFunction {
 			generateSpline(x, getParameterValues());
 		}
 
+		it.reset();
 		double[] coords = it.getCoordinates();
 		int i = 0;
 		double[] buffer = data.getData();

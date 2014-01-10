@@ -188,7 +188,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		function.setDirty(true);
 		if (function instanceof AFunction) {
 			((AFunction) function).fillWithValues(current, it);
-			it.reset();
 			d = data.residual(current, weight, false);
 		} else {
 			d = function.residual(true, data, weight, coords);
@@ -198,7 +197,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		function.setDirty(true);
 		if (function instanceof AFunction) {
 			((AFunction) function).fillWithValues(current, it);
-			it.reset();
 			d -= data.residual(current, weight, false);
 		} else {
 			d -= function.residual(true, data, weight, coords);

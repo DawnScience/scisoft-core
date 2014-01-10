@@ -101,11 +101,9 @@ public class Box extends AFunction {
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
 		fermi1.fillWithValues(data, it);
-		it.reset();
 
 		DoubleDataset temp = new DoubleDataset(it.getShape());
 		fermi1.fillWithValues(temp, it);
-		it.reset();
 		data.isubtract(temp);
 	}
 }

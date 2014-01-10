@@ -155,6 +155,7 @@ public class Polynomial extends AFunction {
 		if (isDirty())
 			calcCachedParameters();
 
+		it.reset();
 		double[] coords = it.getCoordinates();
 		int i = 0;
 		double[] buffer = data.getData();

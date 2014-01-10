@@ -231,13 +231,21 @@ public class IntegerDataset extends AbstractDataset {
 				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			IndexIterator itd = new PositionIterator(ds.getShape());
-			int[] pos = itd.getPos();
-			IndexIterator iter = getIterator();
-			while (iter.hasNext() && itd.hasNext()) {
-				data[iter.index] = ds.getInt(pos); // PRIM_TYPE
+			if (ds instanceof ADataset) {
+				ADataset ads = (ADataset) ds;
+				IndexIterator itd = ads.getIterator();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					data[iter.index] = (int) ads.getElementLongAbs(itd.index); // GET_ELEMENT_WITH_CAST
+				}
+			} else {
+				IndexIterator itd = new PositionIterator(ds.getShape());
+				int[] pos = itd.getPos();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					data[iter.index] = ds.getInt(pos); // PRIM_TYPE
+				}
 			}
-
 			return this;
 		}
 		int dv = (int) toLong(obj); // PRIM_TYPE // FROM_OBJECT

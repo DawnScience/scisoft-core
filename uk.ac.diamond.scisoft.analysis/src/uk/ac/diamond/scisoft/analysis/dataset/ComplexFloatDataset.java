@@ -201,15 +201,28 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 				compoundLogger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			IndexIterator itd = new PositionIterator(ds.getShape());
-			int[] pos = itd.getPos();
-			IndexIterator iter = getIterator();
-			while (iter.hasNext() && itd.hasNext()) {
-				Object o = ds.getObject(pos);
-				float vr = (float) toReal(o); // PRIM_TYPE // ADD_CAST
-				float vi = (float) toImag(o); // PRIM_TYPE // ADD_CAST
-				data[iter.index] = vr;
-				data[iter.index+1] = vi;
+			if (ds instanceof ADataset) {
+				ADataset ads = (ADataset) ds;
+				IndexIterator itd = ads.getIterator();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					Object o = ads.getObjectAbs(itd.index);
+					float vr = (float) toReal(o); // PRIM_TYPE // ADD_CAST
+					float vi = (float) toImag(o); // PRIM_TYPE // ADD_CAST
+					data[iter.index] = vr;
+					data[iter.index+1] = vi;
+				}
+			} else {
+				IndexIterator itd = new PositionIterator(ds.getShape());
+				int[] pos = itd.getPos();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					Object o = ds.getObject(pos);
+					float vr = (float) toReal(o); // PRIM_TYPE // ADD_CAST
+					float vi = (float) toImag(o); // PRIM_TYPE // ADD_CAST
+					data[iter.index] = vr;
+					data[iter.index+1] = vi;
+				}
 			}
 
 			return this;

@@ -304,13 +304,26 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 				compoundLogger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			IndexIterator itd = new PositionIterator(ds.getShape());
-			int[] pos = itd.getPos();
-			IndexIterator iter = getIterator();
-			while (iter.hasNext() && itd.hasNext()) {
-				long[] vr = toLongArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
-				for (int i = 0; i < isize; i++)
-					data[iter.index + i] = vr[i]; // PRIM_TYPE
+			if (ds instanceof ADataset) {
+				ADataset ads = (ADataset) ds;
+				IndexIterator itd = ads.getIterator();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					long[] vr = toLongArray(ads.getObjectAbs(itd.index), isize); // PRIM_TYPE // CLASS_TYPE
+					for (int i = 0; i < isize; i++) {
+						data[iter.index + i] = vr[i]; // PRIM_TYPE
+					}
+				}
+			} else {
+				IndexIterator itd = new PositionIterator(ds.getShape());
+				int[] pos = itd.getPos();
+				IndexIterator iter = getIterator();
+				while (iter.hasNext() && itd.hasNext()) {
+					long[] vr = toLongArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
+					for (int i = 0; i < isize; i++) {
+						data[iter.index + i] = vr[i]; // PRIM_TYPE
+					}
+				}
 			}
 
 			return this;

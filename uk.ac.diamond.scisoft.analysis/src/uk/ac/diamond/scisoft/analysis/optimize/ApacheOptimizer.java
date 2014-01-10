@@ -144,8 +144,8 @@ public class ApacheOptimizer extends AbstractOptimizer {
 
 			switch (optimizer) {
 			case CONJUGATE_GRADIENT:
-				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
-				result = opt.optimize(ig, GoalType.MINIMIZE, new ObjectiveFunction(af), me,
+//				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
+				result = opt.optimize(ig, GoalType.MINIMIZE, new ObjectiveFunction(fn), me,
 						new ObjectiveFunctionGradient(createGradientFunction()));
 				break;
 			case BOBYQA:

@@ -43,7 +43,7 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 //				{Optimizer.POWELL}, // bad fit
 				{Optimizer.BOBYQA},
 //				{Optimizer.CMAES},  // bad fit
-//				{Optimizer.CONJUGATE_GRADIENT}, // cannot initialize yet
+//				{Optimizer.CONJUGATE_GRADIENT}, // does not work for Gaussian and PVII
 				};
 		return Arrays.asList(data);
 	}
@@ -96,6 +96,6 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 5*delta);
+		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 7*delta);
 	}
 }

@@ -411,6 +411,8 @@ public abstract class AFunction implements IFunction, Serializable {
 		calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, parameter, data, it);
 	}
 
+	private static final double SMALLEST_DELTA = Double.MIN_NORMAL * 1024 * 1024;
+
 	/**
 	 * Calculate partial derivatives up to tolerances
 	 * @param abs
@@ -425,7 +427,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		fillWithNumericalDerivativeDataset(delta, param, previous, it);
 		DoubleDataset current = new DoubleDataset(it.getShape());
 
-		while (delta > Double.MIN_NORMAL) {
+		while (delta > SMALLEST_DELTA) {
 			delta *= DELTA_FACTOR;
 			fillWithNumericalDerivativeDataset(delta, param, current, it);
 			if (Comparisons.allCloseTo(previous, current, rel, abs))
@@ -435,6 +437,10 @@ public abstract class AFunction implements IFunction, Serializable {
 			previous = current;
 			current = temp;
 		}
+		if (delta <= SMALLEST_DELTA) {
+			logger.warn("Numerical derivative did not converge!");
+		}
+
 		data.fill(current);
 	}
 
@@ -500,6 +506,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
+	@Deprecated
 	public double residual(boolean allValues, IDataset data, IDataset... coords) {
 		return residual(allValues, data, null, coords);
 	}

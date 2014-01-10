@@ -160,26 +160,31 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		CoordinatesIterator it = AFunction.createIterator(coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 
-		return calculateNumericalDerivative(1e-9, 1e-9, parameter, result, it);
+		return calculateNumericalDerivative(1e-15, 1e-9, parameter, result, it);
 	}
+
+	private static final double SMALLEST_DELTA = Double.MIN_NORMAL * 1024 * 1024;
 
 	private double calculateNumericalDerivative(double abs, double rel, IParameter parameter, DoubleDataset result, CoordinatesIterator it) {
 		double delta = DELTA;
 		double previous = evaluateNumericalDerivative(delta, parameter, result, it);
 		double current = 0;
 
-		while (delta > Double.MIN_NORMAL) {
+		while (delta >= SMALLEST_DELTA) {
 			delta *= DELTA_FACTOR;
 			current = evaluateNumericalDerivative(delta, parameter, result, it);
-			if (Math.abs(current - previous) <= abs + rel*Math.max(Math.abs(current), Math.abs(previous)))
+			if (Math.abs(current - previous) <= Math.max(abs, rel*Math.max(Math.abs(current), Math.abs(previous))))
 				break;
 			previous = current;
+		}
+		if (delta <= SMALLEST_DELTA) {
+			System.err.println("Did not converge!");
 		}
 
 		return current;
 	}
 
-	private double evaluateNumericalDerivative(double delta, IParameter parameter, DoubleDataset current, CoordinatesIterator it) {
+	private double evaluateNumericalDerivative(double delta, IParameter parameter, DoubleDataset result, CoordinatesIterator it) {
 		double v = parameter.getValue();
 		double dv = delta * (v != 0 ? v : 1);
 
@@ -187,8 +192,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		parameter.setValue(v + dv);
 		function.setDirty(true);
 		if (function instanceof AFunction) {
-			((AFunction) function).fillWithValues(current, it);
-			d = data.residual(current, weight, false);
+			((AFunction) function).fillWithValues(result, it);
+			d = data.residual(result, weight, false);
 		} else {
 			d = function.residual(true, data, weight, coords);
 		}
@@ -196,11 +201,14 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		parameter.setValue(v - dv);
 		function.setDirty(true);
 		if (function instanceof AFunction) {
-			((AFunction) function).fillWithValues(current, it);
-			d -= data.residual(current, weight, false);
+			((AFunction) function).fillWithValues(result, it);
+			d -= data.residual(result, weight, false);
 		} else {
 			d -= function.residual(true, data, weight, coords);
 		}
+
+		parameter.setValue(v);
+		function.setDirty(true);
 
 		return d * 0.5/dv;
 	}

@@ -772,7 +772,7 @@ public class Comparisons {
 				final double adb = Math.abs(db);
 				for (int j = 0; br && j < as; j++) {
 					final double da = a.getElementDoubleAbs(ita.index + j);
-					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), adb))
+					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), adb)))
 						return false;
 				}
 			}			
@@ -783,7 +783,7 @@ public class Comparisons {
 				final double ada = Math.abs(da);
 				for (int j = 0; br && j < bs; j++) {
 					final double db = b.getElementDoubleAbs(itb.index + j);
-					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(ada, Math.abs(db)))
+					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(ada, Math.abs(db))))
 						return false;
 				}
 			}
@@ -792,7 +792,7 @@ public class Comparisons {
 				while (ita.hasNext() && itb.hasNext()) {
 					final double da = a.getElementDoubleAbs(ita.index);
 					final double db = b.getElementDoubleAbs(itb.index);
-					if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)))
+					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), Math.abs(db))))
 						return false;
 				}
 			} else {
@@ -801,7 +801,7 @@ public class Comparisons {
 					for (int j = 0; br && j < bs; j++) {
 						final double da = a.getElementDoubleAbs(ita.index + j);
 						final double db = b.getElementDoubleAbs(itb.index + j);
-						if (Math.abs(da - db) > absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)))
+						if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), Math.abs(db))))
 							return false;
 					}
 				}

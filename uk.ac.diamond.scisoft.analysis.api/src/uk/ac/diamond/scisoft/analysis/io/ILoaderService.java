@@ -15,7 +15,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * A service with loads data using any loader it can, depending on the 
- * service implementation and returns it as an AbstractDataset
+ * service implementation and returns it as an IDataset or IDataHolder
  * 
  * The implementor or this service contributes using an eclipse extension
  * point and then later any plugin may ask for an implementation of the service.
@@ -83,5 +83,11 @@ public interface ILoaderService {
      */
 	public Collection<String> getSupportedExtensions();
 
-
+    /**
+     * Clears the cache of soft references which the loader service keeps.
+     * This can help reduce working memory if a class is created that 
+     * swamps available memory with the soft reference cache.
+     */
+	public void clearSoftReferenceCache();
+	
 }

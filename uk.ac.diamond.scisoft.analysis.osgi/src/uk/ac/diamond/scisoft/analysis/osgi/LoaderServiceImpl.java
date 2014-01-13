@@ -104,4 +104,10 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	public Collection<String> getSupportedExtensions() {
 		return LoaderFactory.getSupportedExtensions();
 	}
+
+
+	@Override
+	public void clearSoftReferenceCache() {
+		LoaderFactory.clear();
+	}
 }

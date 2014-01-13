@@ -887,15 +887,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void exportPlot(String viewName, String fileFormat, String saveFullPath) throws Exception {
-//		PlotService plotServer = getPlotService();
-//		if (plotServer != null) {
-			GuiBean guiBean = new GuiBean();
-			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.EXPORT);
-			guiBean.put(GuiParameters.FILEFORMAT, fileFormat);
-			guiBean.put(GuiParameters.SAVEPATH, saveFullPath);
-			setGuiBean(viewName, guiBean);
-//			plotServer.updateGui(viewName, guiBean);
-//		}
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.EXPORT);
+		guiBean.put(GuiParameters.FILEFORMAT, fileFormat);
+		guiBean.put(GuiParameters.SAVEPATH, saveFullPath);
+		setGuiBean(viewName, guiBean);
 	}
 
 	@Override

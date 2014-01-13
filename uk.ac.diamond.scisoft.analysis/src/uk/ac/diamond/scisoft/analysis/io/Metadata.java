@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -167,11 +168,13 @@ public class Metadata implements IMetaData {
 		}  catch (CloneNotSupportedException e) {
 			// Allowed for some objects not to be cloned.
 		} catch (Throwable e) {
-			if (e instanceof ClassNotFoundException) {
+			if (e instanceof SerializationException) {
 				// Fix to http://jira.diamond.ac.uk/browse/SCI-1644
 				// Happens when cloning meta data with GridPreferences
 			}
-			throw e;
+			else {
+				throw e;
+			}
 		}
 		return c;
 	}

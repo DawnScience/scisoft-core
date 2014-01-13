@@ -165,6 +165,13 @@ public class Metadata implements IMetaData {
 				c.shapes.put(e.getKey(), s == null ? null : s.clone());
 			}
 		} catch (CloneNotSupportedException e) {
+			// Allowed for some objects not to be cloned.
+		} catch (Throwable e) {
+			if (e instanceof ClassNotFoundException) {
+				// Fix to http://jira.diamond.ac.uk/browse/SCI-1644
+				// Happens when cloning meta data with GridPreferences
+			}
+			throw e;
 		}
 		return c;
 	}

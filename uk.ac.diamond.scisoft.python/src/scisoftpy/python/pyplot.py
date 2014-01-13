@@ -54,6 +54,7 @@ def _get_rpcclient():
         
 _plot_name_remapper = {
     'plot_clear': 'clearPlot',
+    'plot_export': 'exportPlot',
     'plot_line': 'plot',
     'plot_addline': 'addPlot',
     'plot_updateline': 'updatePlot',

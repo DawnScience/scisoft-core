@@ -172,6 +172,16 @@ public final class GuiParameters implements Serializable {
 	public static final GuiParameters FILENAME = new GuiParameters("Filename", String.class);
 
 	/**
+	 * Specifies the file format
+	 */
+	public static final GuiParameters FILEFORMAT = new GuiParameters("Fileformat", String.class);
+
+	/**
+	 * Specifies the saving path
+	 */
+	public static final GuiParameters SAVEPATH = new GuiParameters("Savepath", String.class);
+
+	/**
 	 * Specifies a list of selected filenames (as a list of strings)
 	 */
 	public static final GuiParameters FILESELECTEDLIST = new GuiParameters("FileList", List.class); // List<String>

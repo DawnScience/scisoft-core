@@ -169,6 +169,12 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
+	public void exportPlot(String plotName, String fileFormat,
+			String saveFullPath) throws Exception {
+		request("export", plotName, fileFormat, saveFullPath);
+	}
+
+	@Override
 	public void resetAxes(String plotName) throws Exception {
 		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
 	}

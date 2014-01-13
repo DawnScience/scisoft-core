@@ -94,7 +94,7 @@ public class OptimizerTest  {
 			parameters[ind] = v;
 			double pd = opt.calculateResidualDerivative(opt.getParameters().get(ind), parameters);
 			System.err.println(nd + " cf " + pd);
-			Assert.assertEquals(nd,  pd, 1e-3*Math.abs(pd));
+			Assert.assertEquals(nd,  pd, 5e-3*Math.abs(pd));
 		}
 	}
 

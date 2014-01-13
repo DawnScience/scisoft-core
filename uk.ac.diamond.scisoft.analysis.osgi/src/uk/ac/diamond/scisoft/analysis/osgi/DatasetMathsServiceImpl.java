@@ -18,18 +18,18 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
-import uk.ac.diamond.scisoft.analysis.IAnalysisService;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
 
 /**
- * Implementation of service IAnalysisService which allows plugins not to 
+ * Implementation of service IDatasetMathsService which allows plugins not to 
  * directly depend on everything required to do file loading.
  */
-public class AnalysisServiceImpl extends AbstractServiceFactory implements IAnalysisService {
+public class DatasetMathsServiceImpl extends AbstractServiceFactory implements IDatasetMathsService {
 
 	@Override
 	public IDataset arange(double stop, int dtype) {
@@ -89,8 +89,8 @@ public class AnalysisServiceImpl extends AbstractServiceFactory implements IAnal
 
 	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator, IServiceLocator locator) {
-        if (serviceInterface==IAnalysisService.class) {
-        	return new AnalysisServiceImpl();
+        if (serviceInterface==IDatasetMathsService.class) {
+        	return new DatasetMathsServiceImpl();
         }
 		return null;
 	}

@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import uk.ac.diamond.scisoft.analysis.IAnalysisService;
+import uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
 
 public class Activator implements BundleActivator {
@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 		
 		props = new Hashtable<String, String>(1);
 		props.put("description", "A service which replaces concrete classes in the scisoft.analysis plugin.");
-		context.registerService(IAnalysisService.class, new AnalysisServiceImpl(), props);
+		context.registerService(IDatasetMathsService.class, new DatasetMathsServiceImpl(), props);
 	}
 
 	@Override

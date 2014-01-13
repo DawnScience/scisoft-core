@@ -7,13 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis;
+package uk.ac.diamond.scisoft.analysis.dataset;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
  * This service gives access to parts of the scisoft.analysis plugin
  * without having to import the concrete plugin uk.ac.diamond.scisoft.analysis.
+ * 
  * So you don't end up with dependencies required by loaders when you do simple
  * dataset maniplulation for instance.
  * 
@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  * will be available - this plugin is started automatically in DAWN
  * based products.
  */
-public interface IAnalysisService {
+public interface IDatasetMathsService {
 
 	/**
 	 * Boolean

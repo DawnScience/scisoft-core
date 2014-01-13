@@ -10,9 +10,9 @@
          </service>
       </serviceFactory>
       <serviceFactory
-            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.AnalysisServiceImpl">
+            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.DatasetMathsServiceImpl">
          <service
-               serviceClass="uk.ac.diamond.scisoft.analysis.IAnalysisService">
+               serviceClass="uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService">
          </service>
       </serviceFactory>
    </extension>

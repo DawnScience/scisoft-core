@@ -73,6 +73,14 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * 2. IDataSetLoader to load a single data set without loading the rest of the file.
  * 
  * see LoaderFactoryExtensions which boots up the extensions from reading the extension points.
+ * 
+ * This class is going to be @Deprecated please use ILoaderService where possible.
+ * <code>
+ * 
+  	final ILoaderService service = (ILoaderService)ServiceManager.getService(ILoaderService.class);
+  	// ServiceManager may need to be configured using Spring on GDA server
+  	// service can now be used as if it was a 'LoaderFactory' instance.
+    
  */
 public class LoaderFactory {
 	/**

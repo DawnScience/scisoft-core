@@ -170,8 +170,9 @@ public class Metadata implements IMetaData {
 			if (e instanceof ClassNotFoundException) {
 				// Fix to http://jira.diamond.ac.uk/browse/SCI-1644
 				// Happens when cloning meta data with GridPreferences
+			} else {
+			   throw e;
 			}
-			throw e;
 		}
 		return c;
 	}

@@ -1,5 +1,5 @@
-/*
- * Copyright 2011 Diamond Light Source Ltd.
+/*-
+ * Copyright 2014 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.dataset.function;
+package uk.ac.diamond.scisoft.analysis.roi;
 
+public interface IRectangularROI extends IROI {
 
-import java.util.List;
+	double getLength(int i);
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-
-/**
- * This interface is to define functions that take datasets and returns a list of datasets
- */
-public interface DatasetToDatasetFunction {
-
-	/**
-	 * @param datasets list of datasets to be processed
-	 * @return list of datasets
-	 */
-	public List<AbstractDataset> value(IDataset... datasets);
+	double getAngle();
 
 }

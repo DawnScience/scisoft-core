@@ -19,8 +19,6 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelper;
 
 /**

@@ -147,14 +147,14 @@ def export(name=None, format=None, savepath=None):
 
     Argument:
     name -- name of plot view to use (if None, use default name)
-    format -- format of the file to export to: can be 'svg', 'png/jpg' or 'ps' (if None, svg is used by default)
-    savepath -- full path and filename of the file to export to (if none, the filename will be exported.svg)
+    format -- format of the file to export to: can be 'svg', 'png', 'jpg' or 'ps' (if None, svg is used by default)
+    savepath -- full path and filename of the file to export to (if none, the filename will be 'exported.svg')
     '''
     if name is None:
         name = _PVNAME
     if format is "svg" or format is "SVG" or format is None:
         format = _FILE_TYPES[2]
-    if format is "ps" or format is "PS":
+    if format is "ps" or format is "PS" or format is "eps" or format is "EPS":
         format = _FILE_TYPES[1]
     if format is "PNG" or format is "png" or format is "JPG" or format is "jpg":
         format = _FILE_TYPES[0]

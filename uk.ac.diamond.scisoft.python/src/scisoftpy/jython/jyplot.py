@@ -28,6 +28,7 @@ except:
 from jycore import _wrapin
 
 plot_clear = _plotter.clearPlot
+plot_export = _plotter.exportPlot
 
 @_wrapin
 def plot_line(*arg, **kwarg):

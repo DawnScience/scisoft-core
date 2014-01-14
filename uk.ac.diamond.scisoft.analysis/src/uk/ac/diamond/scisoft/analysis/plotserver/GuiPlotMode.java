@@ -127,4 +127,9 @@ public class GuiPlotMode implements Serializable {
 	 * specify reset axes mode
 	 */	
 	public final static GuiPlotMode RESETAXES = new GuiPlotMode("RESETAXES");
+
+	/**
+	 * Exports plot to svg
+	 */
+	public static final GuiPlotMode EXPORT = new GuiPlotMode("EXPORT");
 }

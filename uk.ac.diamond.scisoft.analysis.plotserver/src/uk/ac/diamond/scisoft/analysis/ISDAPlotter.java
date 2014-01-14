@@ -310,6 +310,19 @@ public interface ISDAPlotter {
 	public void clearPlot(String plotName) throws Exception;
 
 	/**
+	 * Export to SVG a named plot view
+	 * 
+	 * @param plotName
+	 *           Name of the plot
+	 * @param fileFormat
+	 *           File format to export to: can be svg, jpg or png
+	 * @param saveFullPath
+	 *           Full path of the file to export to 
+	 * @throws Exception
+	 */
+	public void exportPlot(String plotName, String fileFormat, String saveFullPath) throws Exception;
+
+	/**
 	 * Reset axes in a named plot view
 	 * 
 	 * @param plotName

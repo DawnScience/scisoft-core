@@ -149,6 +149,12 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
+	public void exportPlot(String plotName, String fileFormat,
+			String saveFullPath) throws Exception {
+		throw newShouldNotBeCalled();
+	}
+
+	@Override
 	public void resetAxes(String plotName) throws Exception {
 		throw newShouldNotBeCalled();
 	}
@@ -234,4 +240,5 @@ public class MockSDAPlotter implements ISDAPlotter {
 	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		throw newShouldNotBeCalled();
 	}
+
 }

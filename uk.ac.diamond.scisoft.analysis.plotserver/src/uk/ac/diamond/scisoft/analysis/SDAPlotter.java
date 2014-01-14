@@ -940,6 +940,18 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * Export a named plot view
+	 * 
+	 * @param plotName
+	 * @param fileFormat
+	 * @param saveFullPath
+	 * @throws Exception
+	 */
+	public static void exportPlot(String plotName, String fileFormat, String saveFullPath) throws Exception {
+		getPlotterImpl().exportPlot(plotName, fileFormat, saveFullPath);
+	}
+
+	/**
 	 * Reset axes in named plot view
 	 * 
 	 * @param plotName

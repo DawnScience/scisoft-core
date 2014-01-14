@@ -53,6 +53,7 @@ _plot_createaxis = _plot.plot_createaxis
 _plot_renameactiveaxis = {'x':_plot.plot_renameactivexaxis, 'y':_plot.plot_renameactiveyaxis}
 
 _plot_clear = _plot.plot_clear
+_plot_export = _plot.plot_export
 
 __orders = _plot.plot_orders
 
@@ -138,6 +139,29 @@ def clear(name=None):
     if name is None:
         name = _PVNAME
     _plot_clear(name)
+
+_FILE_TYPES = ["PNG/JPEG File", "Postscript File", "SVG File"]
+
+def export(name=None, format=None, savepath=None):
+    '''Export plot to svg, png, jpg, ps
+
+    Argument:
+    name -- name of plot view to use (if None, use default name)
+    format -- format of the file to export to: can be 'svg', 'png/jpg' or 'ps' (if None, svg is used by default)
+    savepath -- full path and filename of the file to export to (if none, the filename will be exported.svg)
+    '''
+    if name is None:
+        name = _PVNAME
+    if format is "svg" or format is "SVG" or format is None:
+        format = _FILE_TYPES[2]
+    if format is "ps" or format is "PS":
+        format = _FILE_TYPES[1]
+    if format is "PNG" or format is "png" or format is "JPG" or format is "jpg":
+        format = _FILE_TYPES[0]
+    if savepath is None:
+        savepath = "exported.svg"
+
+    _plot_export(name, format, savepath)
 
 '''
 Store a global list of x and y axes names in a per-horizontal/vertical dictionary per plot name

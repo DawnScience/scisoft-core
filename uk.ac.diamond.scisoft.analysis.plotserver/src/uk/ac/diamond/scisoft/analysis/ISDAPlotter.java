@@ -315,7 +315,7 @@ public interface ISDAPlotter {
 	 * @param plotName
 	 *           Name of the plot
 	 * @param fileFormat
-	 *           File format to export to: can be svg, jpg or png
+	 *           File format to export to: can be svg, jpg, png or eps
 	 * @param saveFullPath
 	 *           Full path of the file to export to 
 	 * @throws Exception

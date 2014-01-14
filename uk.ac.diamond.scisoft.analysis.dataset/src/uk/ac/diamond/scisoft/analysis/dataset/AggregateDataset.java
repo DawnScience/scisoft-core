@@ -30,6 +30,8 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * the first position value accesses the aggregation
  */
 public class AggregateDataset implements ILazyDataset {
+	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+
 	private ILazyDataset[] data = null; // array of lazy datasets
 	private int[] map = null;    // map first dimension to index of dataset
 	private int[] offset = null; // cumulative first dimension lengths used as slice offsets

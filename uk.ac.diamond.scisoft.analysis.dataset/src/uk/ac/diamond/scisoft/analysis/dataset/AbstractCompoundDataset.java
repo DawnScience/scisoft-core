@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class AbstractCompoundDataset extends AbstractDataset {
+	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+
 	/**
 	 * Setup the logging facilities
 	 */

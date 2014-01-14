@@ -105,7 +105,8 @@ public class CalibrationFactory {
 		final ClassLoader originalLoader=Thread.currentThread().getContextClassLoader();
 		try {
 		    final CompositeClassLoader customLoader = new CompositeClassLoader();
-		    customLoader.add(AbstractDataset.class.getClassLoader());
+		    customLoader.add( uk.ac.diamond.scisoft.analysis.dataset.Activator.class.getClassLoader());
+		    customLoader.add( uk.ac.diamond.scisoft.analysis.Activator.class.getClassLoader());
 		    customLoader.add(Amount.class.getClassLoader());
 			
 			AccessController.doPrivileged(new PrivilegedAction<Object>() {

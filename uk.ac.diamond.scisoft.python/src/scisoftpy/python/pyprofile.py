@@ -105,7 +105,7 @@ def _pyload_arrays(names):
     arrays = []
     for n in names:
         try:
-            arrays.append(_aload(n)[0])
+            arrays.append(_aload(n))
         finally:
             _remove(n)
     _rmdir(_path.dirname(names[0]))

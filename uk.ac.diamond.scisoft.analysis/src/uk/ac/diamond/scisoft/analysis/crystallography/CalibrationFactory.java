@@ -31,8 +31,6 @@ import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 
 /**
@@ -79,14 +77,18 @@ public class CalibrationFactory {
 	 * @throws Exception
 	 */
 	static void saveCalibrationStandards(CalibrationStandards cs) throws Exception {
-		if (cs == null) return;
-		XMLEncoder encoder=null;
+		
+		if (cs == null)                return;
+		
+		XMLEncoder  encoder       = null;
 		try {
 			final File calFile = getCalibrantFile();
 			calFile.getParentFile().mkdirs();
 			calFile.createNewFile();
 			encoder = new XMLEncoder(new FileOutputStream(getCalibrantFile()));
+			
 			encoder.writeObject(cs);
+			encoder.flush();
 			
 		} finally  {
 			if (encoder!=null) encoder.close();
@@ -102,30 +104,37 @@ public class CalibrationFactory {
 	
 	static CalibrationStandards readCalibrationStandards() throws Exception {
 		XMLDecoder decoder=null;
-		final ClassLoader originalLoader=Thread.currentThread().getContextClassLoader();
+		decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
+		final ClassLoader originalLoader=setCustomClassLoader();
 		try {
-		    final CompositeClassLoader customLoader = new CompositeClassLoader();
-		    customLoader.add( uk.ac.diamond.scisoft.analysis.dataset.Activator.class.getClassLoader());
-		    customLoader.add( uk.ac.diamond.scisoft.analysis.Activator.class.getClassLoader());
-		    customLoader.add(Amount.class.getClassLoader());
-			
-			AccessController.doPrivileged(new PrivilegedAction<Object>() {
-				@Override
-				public Object run() {
-					Thread.currentThread().setContextClassLoader(customLoader);
-					return null;
-				}
-			});
 
-			decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
 			return (CalibrationStandards)decoder.readObject();
 			
 		} finally  {
-			Thread.currentThread().setContextClassLoader(originalLoader);
-			
+			Thread.currentThread().setContextClassLoader(originalLoader);			
 			if (decoder!=null) decoder.close();
 		}
 	}
+
+	private static ClassLoader setCustomClassLoader() {
+		final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
+
+		final CompositeClassLoader customLoader = new CompositeClassLoader();
+		customLoader.add( CalibrationStandards.class.getClassLoader());
+		customLoader.add(Amount.class.getClassLoader());
+
+		AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			@Override
+			public Object run() {
+				Thread.currentThread().setContextClassLoader(customLoader);
+				return null;
+			}
+		});	
+			
+		return originalLoader;
+	}
+			
+
 
 	/**
 	 * TODO Best place to keep it? Seems to work when tested.

@@ -37,6 +37,7 @@
                 <pathelement location="${GDA-plugin.basedir}/bin" />
                 <pathelement location="${GDA-plugin.basedir}/jars/*" />
                 <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.api/bin" />
+                <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
                 <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
                 <pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.util/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />

@@ -6,13 +6,15 @@ Bundle-Version: 1.3.0.qualifier
 Bundle-Vendor: Diamond Light Source
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
-Import-Package: org.eclipse.core.runtime;version="3.4.0",
+Import-Package: com.thoughtworks.xstream.core.util,
+ org.eclipse.core.runtime;version="3.4.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.6"
 Export-Package: uk.ac.diamond.scisoft.analysis.osgi
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.osgi.Activator
 Require-Bundle: uk.ac.diamond.scisoft.analysis;bundle-version="1.3.0",
  uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0",
- org.eclipse.ui
+ org.eclipse.ui,
+ net.sf.py4j.defaultserver;bundle-version="0.8.1"
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the loaders.

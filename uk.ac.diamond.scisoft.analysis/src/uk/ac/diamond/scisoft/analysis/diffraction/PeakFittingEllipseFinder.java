@@ -122,8 +122,8 @@ public class PeakFittingEllipseFinder {
 			EllipticalROI inner, EllipticalROI outer, double start, int nPoints, IMonitor mon) {
 		
 		final int[] shape = image.getShape();
-		final int h = shape[0];
-		final int w = shape[1];
+		final int h = shape[1];
+		final int w = shape[0];
 		
 		double range = outer.getSemiAxis(0)-inner.getSemiAxis(0);
 		

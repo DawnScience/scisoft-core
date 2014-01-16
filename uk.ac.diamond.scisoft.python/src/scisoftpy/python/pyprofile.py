@@ -23,21 +23,21 @@ _GATEWAY = None
 
 def _get_gateway():
     global _GATEWAY
-    import sys
-    if _GATEWAY is None:
-        try:
-            from py4j.java_gateway import JavaGateway
-            from py4j.protocol import Py4JNetworkError
-            _GATEWAY = JavaGateway(eager_load=True) # flag to check it's okay immediately
-            return _GATEWAY
-        except ImportError, ie:
-            print >> sys.stderr, "No Py4J found - check your python installation"
-            print >> sys.stderr, ie
-        except Py4JNetworkError, ne:
-            print >> sys.stderr, "Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server"
-            print >> sys.stderr, ne
-    else:
+    if _GATEWAY is not None:
         return _GATEWAY
+
+    import sys
+    try:
+        from py4j.java_gateway import JavaGateway
+        from py4j.protocol import Py4JNetworkError
+        _GATEWAY = JavaGateway(eager_load=True) # flag to check it's okay immediately
+        return _GATEWAY
+    except ImportError, ie:
+        print >> sys.stderr, "No Py4J found - check your python installation"
+        print >> sys.stderr, ie
+    except Py4JNetworkError, ne:
+        print >> sys.stderr, "Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server"
+        print >> sys.stderr, ne
 
 def _mk_line_roi(roi):
     j = _get_gateway().jvm
@@ -66,7 +66,6 @@ def _mk_sect_roi(roi):
 from numpy import save as _asave, load as _aload  # @UnresolvedImport
 from scisoftpy import ndarray
 from pyroi import line, rectangle, sector
-# from scisoftpy.roi import line, rectangle, sector
 from os import path as _path, remove as _remove, rmdir as _rmdir
 import tempfile as _tmp
 
@@ -105,7 +104,7 @@ def _pyload_arrays(names):
     arrays = []
     for n in names:
         try:
-            arrays.append(_aload(n)[0])
+            arrays.append(_aload(n))
         finally:
             _remove(n)
     _rmdir(_path.dirname(names[0]))
@@ -134,7 +133,7 @@ def profile(data, roi, step=None, mask=None):
             raise ValueError, "step value required"
         names = _pysave_arrays([data])
         datasets = _jload_datasets(names)
-        pdatasets = profile.line(datasets[0], roi, step)
+        pdatasets = profile.line(datasets[0], roi, float(step))
         pnames = _jsave_datasets(pdatasets)
         return _pyload_arrays(pnames)
     if isinstance(roi, rectangle):

@@ -15,6 +15,11 @@
                serviceClass="uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService">
          </service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl">
+         <service
+               serviceClass="net.sf.py4j.defaultserver.ClassLoaderService"></service>
+      </serviceFactory>
    </extension>
 
 </plugin>

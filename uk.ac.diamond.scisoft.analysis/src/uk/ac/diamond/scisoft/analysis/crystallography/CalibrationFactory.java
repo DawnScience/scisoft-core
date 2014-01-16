@@ -67,7 +67,7 @@ public class CalibrationFactory {
 
 		if (staticInstance==null) {
 			staticInstance = createCalibrationStandards();
-			staticInstance.setUnmodifiable(true);
+			//staticInstance.setUnmodifiable(true);
 		}
 		return staticInstance;
 	}
@@ -117,7 +117,10 @@ public class CalibrationFactory {
 			});
 
 			decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
-			return (CalibrationStandards)decoder.readObject();
+			final CalibrationStandards cs = (CalibrationStandards)decoder.readObject();
+            cs.setModifiable(true); // New bit
+            return cs;
+
 			
 		} finally  {
 			Thread.currentThread().setContextClassLoader(originalLoader);

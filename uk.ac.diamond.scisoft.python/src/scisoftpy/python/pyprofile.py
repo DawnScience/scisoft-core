@@ -23,21 +23,21 @@ _GATEWAY = None
 
 def _get_gateway():
     global _GATEWAY
-    import sys
-    if _GATEWAY is None:
-        try:
-            from py4j.java_gateway import JavaGateway
-            from py4j.protocol import Py4JNetworkError
-            _GATEWAY = JavaGateway(eager_load=True) # flag to check it's okay immediately
-            return _GATEWAY
-        except ImportError, ie:
-            print >> sys.stderr, "No Py4J found - check your python installation"
-            print >> sys.stderr, ie
-        except Py4JNetworkError, ne:
-            print >> sys.stderr, "Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server"
-            print >> sys.stderr, ne
-    else:
+    if _GATEWAY is not None:
         return _GATEWAY
+
+    import sys
+    try:
+        from py4j.java_gateway import JavaGateway
+        from py4j.protocol import Py4JNetworkError
+        _GATEWAY = JavaGateway(eager_load=True) # flag to check it's okay immediately
+        return _GATEWAY
+    except ImportError, ie:
+        print >> sys.stderr, "No Py4J found - check your python installation"
+        print >> sys.stderr, ie
+    except Py4JNetworkError, ne:
+        print >> sys.stderr, "Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server"
+        print >> sys.stderr, ne
 
 def _mk_line_roi(roi):
     j = _get_gateway().jvm

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         point="uk.ac.diamond.scisoft.analysis.fittingfunction">
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.KichwaFunction"
+            id="uk.ac.diamond.scisoft.analysis.test.fitting.function1"
+            name="Kichwa Function">
+      </function>
+   </extension>
+
+</fragment>

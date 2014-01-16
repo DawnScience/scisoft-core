@@ -108,7 +108,7 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         Clients need to implement the &lt;code&gt;uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction&lt;/code&gt; interface. This can typically be done by extending the abstract class &lt;code&gt;uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction&lt;/code&gt;.
+         Clients need to implement the &lt;code&gt;uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction&lt;/code&gt; interface. This can typically be done by extending the abstract class &lt;code&gt;uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction&lt;/code&gt;. Clients must ensure their implementations includes a zero-argument constructor. 
       </documentation>
    </annotation>
 

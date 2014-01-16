@@ -66,7 +66,6 @@ def _mk_sect_roi(roi):
 from numpy import save as _asave, load as _aload  # @UnresolvedImport
 from scisoftpy import ndarray
 from pyroi import line, rectangle, sector
-# from scisoftpy.roi import line, rectangle, sector
 from os import path as _path, remove as _remove, rmdir as _rmdir
 import tempfile as _tmp
 
@@ -134,7 +133,7 @@ def profile(data, roi, step=None, mask=None):
             raise ValueError, "step value required"
         names = _pysave_arrays([data])
         datasets = _jload_datasets(names)
-        pdatasets = profile.line(datasets[0], roi, step)
+        pdatasets = profile.line(datasets[0], roi, float(step))
         pnames = _jsave_datasets(pdatasets)
         return _pyload_arrays(pnames)
     if isinstance(roi, rectangle):

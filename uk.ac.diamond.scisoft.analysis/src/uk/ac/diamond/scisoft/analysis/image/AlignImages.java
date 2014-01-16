@@ -64,7 +64,9 @@ public class AlignImages {
 			double[] s = Image.findTranslation2D(anchor, image, roi);
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
-			shifted.add(map.value(image).get(0));
+			AbstractDataset data = map.value(image).get(0);
+			data.setName(image.getName());
+			shifted.add(data);
 		}
 		return shift;
 	}

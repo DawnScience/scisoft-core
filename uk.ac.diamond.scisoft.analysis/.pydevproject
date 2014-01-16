@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse-pydev version="1.0"?>
-
-<pydev_project>
+<?eclipse-pydev version="1.0"?><pydev_project>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.5</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Jython2.5</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
-<path>/uk.ac.diamond.scisoft.analysis/jars/jtransforms-2.4.jar</path>
 <path>/uk.ac.diamond.scisoft.analysis/jars/it.tidalwave.imageio.raw-1.6.1.jar</path>
 <path>/uk.ac.diamond.scisoft.analysis/jars/jai_imageio.jar</path>
-<path>/uk.ac.diamond.scisoft.analysis/src/uk/ac/diamond/scisoft/analysis/dataset/template</path>
 <path>/uk.ac.diamond.scisoft.analysis/bin</path>
 </pydev_pathproperty>
 

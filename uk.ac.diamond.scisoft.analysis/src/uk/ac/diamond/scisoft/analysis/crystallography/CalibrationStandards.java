@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +41,62 @@ import org.jscience.physics.amount.Amount;
  */
 public class CalibrationStandards implements Serializable {
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cal2peaks == null) ? 0 : cal2peaks.hashCode());
+		result = prime * result + ((selectedCalibrant == null) ? 0 : selectedCalibrant.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CalibrationStandards other = (CalibrationStandards) obj;
+		if (cal2peaks == null) {
+			if (other.cal2peaks != null)
+				return false;
+		} else if (!cal2peaks.equals(other.cal2peaks))
+			return false;
+		if (selectedCalibrant == null) {
+			if (other.selectedCalibrant != null)
+				return false;
+		} else if (!selectedCalibrant.equals(other.selectedCalibrant))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
+
 	public final static Unit<Length> NANOMETRE = SI.NANO(SI.METRE);
 	public final static Unit<Length> ANGSTROM = NonSI.ANGSTROM;
 
 	private Map<String, CalibrantSpacing> cal2peaks;	
 	private String version;
 	private String selectedCalibrant;
+	
+	@Override
+	public CalibrationStandards clone() {
+		final CalibrationStandards ret = new CalibrationStandards();
+		ret.cal2peaks = new HashMap<String, CalibrantSpacing>(cal2peaks.size());
+		for (String key : cal2peaks.keySet()) {
+			ret.cal2peaks.put(key, cal2peaks.get(key).clone());
+		}
+		ret.version           = version;
+		ret.selectedCalibrant = selectedCalibrant;
+		return ret;
+	}
+
 	/**
 	 * Used for bean contract, use CalibrationStandards.getInstance() instead.
 	 */
@@ -339,13 +390,13 @@ public class CalibrationStandards implements Serializable {
 
 	/**
 	 * Set modifiability of standard
-	 * @param b if true then adding more calibrants will throw an exception
+	 * @param isModifiable if true then adding more calibrants will throw an exception
 	 */
-	public void setUnmodifiable(boolean b) {
-		if (b) {
-		    cal2peaks = Collections.unmodifiableMap(cal2peaks);
-		} else {
+	public void setModifiable(boolean isModifiable) {
+		if (isModifiable) {
 			cal2peaks = new LinkedHashMap<String, CalibrantSpacing>(cal2peaks);
+		} else {
+		    cal2peaks = Collections.unmodifiableMap(cal2peaks);
 		}
 	}
 

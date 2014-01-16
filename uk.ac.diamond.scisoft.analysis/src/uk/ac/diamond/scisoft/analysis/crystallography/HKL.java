@@ -46,6 +46,7 @@ public class HKL implements Serializable {
 
 	public HKL() {
 		hkl = new int[3];
+		setDNano(0);
 	}
 
 	public HKL(Amount<Length> d) {

@@ -390,13 +390,13 @@ public class CalibrationStandards implements Serializable {
 
 	/**
 	 * Set modifiability of standard
-	 * @param b if true then adding more calibrants will throw an exception
+	 * @param isModifiable if true then adding more calibrants will throw an exception
 	 */
-	public void setUnmodifiable(boolean b) {
-		if (b) {
-		    cal2peaks = Collections.unmodifiableMap(cal2peaks);
-		} else {
+	public void setModifiable(boolean isModifiable) {
+		if (isModifiable) {
 			cal2peaks = new LinkedHashMap<String, CalibrantSpacing>(cal2peaks);
+		} else {
+		    cal2peaks = Collections.unmodifiableMap(cal2peaks);
 		}
 	}
 

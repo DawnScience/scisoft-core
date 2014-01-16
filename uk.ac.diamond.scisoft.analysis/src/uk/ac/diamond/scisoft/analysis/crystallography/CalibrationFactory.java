@@ -65,7 +65,7 @@ public class CalibrationFactory {
 
 		if (staticInstance==null) {
 			staticInstance = createCalibrationStandards();
-			staticInstance.setUnmodifiable(true);
+			//staticInstance.setUnmodifiable(true);
 		}
 		return staticInstance;
 	}
@@ -108,7 +108,9 @@ public class CalibrationFactory {
 		final ClassLoader originalLoader=setCustomClassLoader();
 		try {
 
-			return (CalibrationStandards)decoder.readObject();
+			final CalibrationStandards cs = (CalibrationStandards)decoder.readObject();
+			cs.setModifiable(true);
+			return cs;
 			
 		} finally  {
 			Thread.currentThread().setContextClassLoader(originalLoader);			

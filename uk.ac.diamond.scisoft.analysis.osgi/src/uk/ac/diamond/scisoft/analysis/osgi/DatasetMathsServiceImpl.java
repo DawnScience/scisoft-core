@@ -38,55 +38,56 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 
 	@Override
 	public IDataset arange(double start, double stop, double step, int dtype) {
-		return AbstractDataset.arange(stop, stop, step, dtype);
+		return AbstractDataset.arange(start, stop, step, dtype);
 	}
 
 	@Override
 	public IDataset createDoubleDataset(double[] da, int... shape) {
-		return new DoubleDataset(da, da.length);
+		return new DoubleDataset(da, shape);
 	}
 
 	@Override
-	public IDataset convertToAbstractDataset(IDataset set) {
-		return DatasetUtils.convertToAbstractDataset(set);
+	public IDataset convertToAbstractDataset(IDataset data) {
+		return DatasetUtils.convertToAbstractDataset(data);
 	}
 
 	@Override
-	public IDataset sum(IDataset sum, int i) {
-		return ((AbstractDataset)sum).sum(i);
+	public IDataset sum(IDataset data, int axis) {
+		return DatasetUtils.convertToAbstractDataset(data).sum(axis);
 	}
 
 	@Override
-	public IDataset transpose(IDataset trans) {
-		return ((AbstractDataset)trans).transpose();
+	public IDataset transpose(IDataset data) {
+		return DatasetUtils.convertToAbstractDataset(data).transpose();
 	}
 
 	@Override
-	public IDataset mean(IDataset slice, int i) {
-		return ((AbstractDataset)slice).mean(i);
+	public IDataset mean(IDataset data, int axis) {
+		return DatasetUtils.convertToAbstractDataset(data).mean(axis);
 	}
 
 	@Override
-	public IDataset max(IDataset slice, int i) {
-		return ((AbstractDataset)slice).max(i);
+	public IDataset max(IDataset data, int axis) {
+		return DatasetUtils.convertToAbstractDataset(data).max(axis);
 	}
 
 	@Override
-	public IDataset min(IDataset slice, int i) {
-		return ((AbstractDataset)slice).min(i);
+	public IDataset min(IDataset data, int axis) {
+		return DatasetUtils.convertToAbstractDataset(data).min(axis);
 	}
 
 	@Override
-	public IDataset median(IDataset slice, int i) {
-		return Stats.median((AbstractDataset)slice, i);
+	public IDataset median(IDataset data, int axis) {
+		return Stats.median(DatasetUtils.convertToAbstractDataset(data), axis);
 	}
 
 	@Override
-	public IDataset mode(IDataset slice, int i) {
+	public IDataset mode(IDataset data, int axis) {
 		//FIXME
 		throw new RuntimeException("Mode not implemented!");
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator, IServiceLocator locator) {
         if (serviceInterface==IDatasetMathsService.class) {

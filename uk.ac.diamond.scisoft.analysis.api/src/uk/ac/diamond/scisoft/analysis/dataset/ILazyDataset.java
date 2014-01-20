@@ -168,20 +168,19 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @return a (shallow) copy of dataset
 	 */
 	public ILazyDataset clone();
-	
+
 	/**
-	 * Set the errors. These must be the same rank and shape as the data.
-	 * They wile be sliced along with this dataset and set as errors on the
+	 * Set the errors. These must be the same shape as the data.
+	 * They will be sliced along with this dataset and set as errors on the
 	 * resulting loaded data.
 	 * 
 	 * @param errors - may be null to remove the error set.
 	 * @throws RuntimeException if the rank or shape are incorrect.
 	 */
 	public void setLazyErrors(ILazyDataset errors);
-	
-	
+
 	/**
-	 * Get the errors, if any. These will be the same rank and shape as the data.
+	 * Get the errors, if any. These will be the same shape as the data.
 	 */
 	public ILazyDataset getLazyErrors();
 

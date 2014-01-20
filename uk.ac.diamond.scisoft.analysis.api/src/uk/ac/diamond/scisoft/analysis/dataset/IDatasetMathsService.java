@@ -15,7 +15,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
  * without having to import the concrete plugin uk.ac.diamond.scisoft.analysis.
  * 
  * So you don't end up with dependencies required by loaders when you do simple
- * dataset maniplulation for instance.
+ * dataset manipulation for instance.
  * 
  * The service is donated in the uk.ac.diamond.scisoft.analysis.osgi plugin and
  * will be available - this plugin is started automatically in DAWN
@@ -95,63 +95,63 @@ public interface IDatasetMathsService {
 
 	/**
 	 * Ensures that the dataset has been converted to an AbstractDataset (ie loaded data)
-	 * @param set
+	 * @param data
 	 * @return the set
 	 */
-	public IDataset convertToAbstractDataset(IDataset set);
+	public IDataset convertToAbstractDataset(IDataset data);
 
 	/**
 	 * 
-	 * @param sum
-	 * @param i
-	 * @return IDataset
+	 * @param data
+	 * @param axis
+	 * @return summed data
 	 */
-	public IDataset sum(IDataset sum, int i);
+	public IDataset sum(IDataset data, int axis);
 
 	/**
 	 * 
-	 * @param sum
-	 * @return transposed data set
+	 * @param data
+	 * @return transposed data
 	 */
-	public IDataset transpose(IDataset sum);
+	public IDataset transpose(IDataset data);
 
 	/**
 	 * Take the mean along a given dimension.
-	 * @param slice
-	 * @param i
+	 * @param data
+	 * @param axis
 	 * @return mean
 	 */
-	public IDataset mean(IDataset slice, int i);
+	public IDataset mean(IDataset data, int axis);
 
 	/**
 	 * 
-	 * @param slice
-	 * @param i
+	 * @param data
+	 * @param axis
 	 * @return max
 	 */
-	public IDataset max(IDataset slice, int i);
+	public IDataset max(IDataset data, int axis);
 
 	/**
 	 * 
-	 * @param slice
-	 * @param i
+	 * @param data
+	 * @param axis
 	 * @return min
 	 */
-	public IDataset min(IDataset slice, int i);
+	public IDataset min(IDataset data, int axis);
 
 	/**
 	 * 
-	 * @param slice
-	 * @param i
+	 * @param data
+	 * @param axis
 	 * @return median
 	 */
-	public IDataset median(IDataset slice, int i);
+	public IDataset median(IDataset data, int axis);
 
 	/**
 	 * 
-	 * @param slice
-	 * @param i
+	 * @param data
+	 * @param axis
 	 * @return mode
 	 */
-	public IDataset mode(IDataset slice, int i);
+	public IDataset mode(IDataset data, int axis);
 }

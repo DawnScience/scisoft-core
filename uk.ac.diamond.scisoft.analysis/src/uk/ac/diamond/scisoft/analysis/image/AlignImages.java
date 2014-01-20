@@ -52,7 +52,7 @@ public class AlignImages {
 		final AbstractDataset anchor = list.get(0);
 		final int length = list.size();
 		final List<double[]> shift = new ArrayList<double[]>();
-		if (preShift != null) {
+		if(preShift!=null){
 			shift.add(preShift);
 		}else{
 			shift.add(new double[] {0., 0.});
@@ -62,6 +62,11 @@ public class AlignImages {
 			AbstractDataset image = list.get(i);
 			
 			double[] s = Image.findTranslation2D(anchor, image, roi);
+			// We add the preShift to the shift data
+			if (preShift != null) {
+				s[0] += preShift[0];
+				s[1] += preShift[1];
+			}
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
 			AbstractDataset data = map.value(image).get(0);

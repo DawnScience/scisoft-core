@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,9 +52,9 @@ public class AlignImages {
 		final AbstractDataset anchor = list.get(0);
 		final int length = list.size();
 		final List<double[]> shift = new ArrayList<double[]>();
-		if(preShift!=null){
+		if (preShift != null) {
 			shift.add(preShift);
-		}else{
+		} else {
 			shift.add(new double[] {0., 0.});
 		}
 		shifted.add(anchor);

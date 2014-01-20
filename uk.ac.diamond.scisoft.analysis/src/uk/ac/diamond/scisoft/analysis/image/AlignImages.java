@@ -65,7 +65,7 @@ public class AlignImages {
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
 			AbstractDataset data = map.value(image).get(0);
-			data.setName(image.getName());
+			data.setName("aligned_" + image.getName());
 			shifted.add(data);
 		}
 		return shift;

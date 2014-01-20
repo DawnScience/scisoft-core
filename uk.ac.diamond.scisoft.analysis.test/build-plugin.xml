@@ -54,6 +54,7 @@
             <batchtest todir="@{report.dir}">
                 <fileset dir="${GDA-plugin.basedir}/src">
                     <include name="**/*Test.java" />
+                    <exclude name="**/*PluginTest.java" />
                 </fileset>
             </batchtest>
         </junit-call>

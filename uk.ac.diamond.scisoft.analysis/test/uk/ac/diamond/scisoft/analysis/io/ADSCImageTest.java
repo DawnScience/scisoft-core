@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -122,5 +122,14 @@ public class ADSCImageTest {
 		cmd = (IDiffractionMetadata) SerializationUtils.clone(md);
 		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
 		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
+	}
+
+	@Test
+	public void testLoadWithMissingMetadata() throws Exception {
+		DataHolder loader = new ADSCImageLoader(TestFileFolder + "ADSCImageTest/F6-invalidmd.img").loadFile();
+		Assert.assertEquals("Metadata", null, loader.getMetadata());
+		AbstractDataset data = loader.getDataset(0);
+		Assert.assertEquals("Data", 3072, data.getShapeRef()[0]);
+		Assert.assertEquals("Data", 3072, data.getShapeRef()[1]);
 	}
 }

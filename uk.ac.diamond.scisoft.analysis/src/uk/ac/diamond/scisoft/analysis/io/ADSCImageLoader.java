@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,9 @@ import java.util.Vector;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
@@ -39,9 +42,10 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 
 /**
- * Class to load ADSC images. Class returns a DataHolder that is called from the ScanFileHolder class.
+ * Class to load ADSC images
  */
 public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
+	private static final Logger logger = LoggerFactory.getLogger(ADSCImageLoader.class);
 
 	private String fileName = "";
 
@@ -113,6 +117,8 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("File not found", fnf);
+		} catch (ScanFileHolderException se) {
+			logger.warn("Ignoring problem with metadata in {}", fileName);
 		} catch (Exception e) {
 			try {
 				if (raf != null)
@@ -308,11 +314,10 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private String getMetadataValue(String key) throws ScanFileHolderException {
-		try {
-			return metadata.get(key);
-		} catch (Exception e) {
-			throw new ScanFileHolderException("The keyword " + key + " was not found in the ADSC Header", e);
-		}
+		String v = metadata.get(key);
+		if (v == null)
+			throw new ScanFileHolderException("The keyword " + key + " was not found in the ADSC Header");
+		return v;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.analysis.io.ScanFileHolderException;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public class ImageStackLoader implements ILazyLoader {
@@ -32,31 +31,30 @@ public class ImageStackLoader implements ILazyLoader {
 	private int[] shape;
 	private int dtype;
 	private Class<? extends AbstractFileLoader> loaderClass;
-	
-	
+
 	public int getDtype() {
 		return dtype;
 	}
-	
-	public ImageStackLoader(List<String> imageFilenames, IMonitor mon) throws Exception {
 
+	public ImageStackLoader(List<String> imageFilenames, IMonitor mon) throws Exception {
 		this(imageFilenames, LoaderFactory.getData(imageFilenames.get(0), mon), mon);
 	}
 
+	@SuppressWarnings("unused")
 	public ImageStackLoader(List<String> imageFilenames, DataHolder dh, IMonitor mon) throws Exception {
 		this.imageFilenames = imageFilenames;
 		// load the first image to get the shape of the whole thing
 		int stack = imageFilenames.size();
 		loaderClass = dh.getLoaderClass();
 
-		AbstractDataset data = dh.getDataset(0);
-		dtype = data.getDtype(); 
-		int[] data_shape = data.getShape();
-		
-		shape = new int[data_shape.length + 1];
+		ILazyDataset data = dh.getLazyDataset(0);
+		dtype = AbstractDataset.getDType(data);
+		int[] dShape = data.getShape();
+
+		shape = new int[dShape.length + 1];
 		shape[0] = stack;
-		for( int i=0;i<data_shape.length;i++){
-			shape[i+1]=data_shape[i];
+		for (int i = 0; i < dShape.length; i++) {
+			shape[i + 1] = dShape[i];
 		}
 	}
 
@@ -64,45 +62,66 @@ public class ImageStackLoader implements ILazyLoader {
 	public boolean isFileReadable() {
 		return true;
 	}
-	
 
 	private AbstractDataset getFullStack() throws ScanFileHolderException {
 		
- 		
     	DataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
-    	AbstractDataset a    = data.getDataset(0);
-    	
-		AbstractDataset result = AbstractDataset.zeros(shape, dtype);
+    	int size = data.getDataset(0).getSize();
+
+    	AbstractDataset result = AbstractDataset.zeros(shape, dtype);
      	Object          buffer = result.getBuffer();
-		
+		// this assumes that all files have images of the same shape and type
 		int image = 0;
         for (String path : imageFilenames) {
         	final DataHolder      d = LoaderFactory.getData(loaderClass, path, true, new IMonitor.Stub());
         	final AbstractDataset i = d.getDataset(0);
-        	System.arraycopy(i.getBuffer(), 0, buffer, image*a.getSize(), a.getSize());
+        	System.arraycopy(i.getBuffer(), 0, buffer, image*size, size);
         	++image;
 		}
         
         return result;
 	}
 
-
 	@Override
 	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 		
 		if (start==null && step==null) return getFullStack();// Might cause out of memory!
 		                                                     // But this allows expressions of the stack to work if the stack fit in memory.
-		
+
+		int rank = shape.length;
+		int[] lstart, lstop, lstep;
+
 		if (step == null) {
-			step = new int[shape.length];
-			Arrays.fill(step, 1);
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
 		}
-		int[] newShape = AbstractDataset.checkSlice(shape, start, stop, start, stop, step);
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+		int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
 		DataHolder data = null;
-		for (int i = start[0], j = 0; i < stop[0]; i += step[0], j++) {
+		// FIXME this seems to be designed for three dimensions only
+		int[] imageStart = new int[] {lstart[1], lstart[2]};
+		int[] imageStop = new int[] {lstop[1], lstop[2]};
+		int[] imageStep = new int[] {lstep[1], lstep[2]};
+		int[] resultStart = new int[3];
+		int[] resultStop = newShape.clone();
+		int[] resultStep = new int[] {1,1,1};
+		for (int i = lstart[0], j = 0; i < lstop[0]; i += lstep[0], j++) {
 			// load the file
 			if (loaderClass != null) {
 				try {
@@ -124,20 +143,12 @@ public class ImageStackLoader implements ILazyLoader {
 				loaderClass = data.getLoaderClass();
 			}
 
-			AbstractDataset abstractDataset = data.getDataset(0);
-			
-			int[] imageStart = new int[] {start[1],start[2]};
-			int[] imageStop = new int[] {stop[1],stop[2]};
-			int[] imageStep = new int[] {step[1],step[2]};
-			
-			AbstractDataset slice = abstractDataset.getSlice(imageStart, imageStop, imageStep);
-			
-			int[] resultStart = new int[] {j,0,0};
-			int[] resultStop = new int[] {j+1,newShape[1], newShape[2]};
-			int[] resultStep = new int[] {1,1,1};
+			AbstractDataset slice = data.getDataset(0).getSlice(imageStart, imageStop, imageStep);
+			resultStart[0] = j;
+			resultStop[0] = j + 1;
 			result.setSlice(slice, resultStart, resultStop, resultStep);
 		}
-		
+
 		IMetaData meta = LoaderFactory.getLockedMetaData();
 		if (meta!=null) {
 			 result.setMetadata(meta); // Locked overrides all

@@ -730,9 +730,23 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return dataset type
 	 */
 	public static int getDTypeFromClass(Class<? extends Object> cls) {
+		return getDTypeFromClass(cls, 1);
+	}
+
+	/**
+	 * Get dataset type from a class
+	 * 
+	 * @param cls
+	 * @return dataset type
+	 */
+	public static int getDTypeFromClass(Class<? extends Object> cls, int isize) {
 		Integer dtype = dtypeMap.get(cls);
 		if (dtype == null) {
 			throw new IllegalArgumentException("Class of object not supported");
+		}
+		if (isize != 1) {
+			if (dtype < FLOAT64)
+				dtype *= ARRAYMUL;
 		}
 		return dtype;
 	}
@@ -771,8 +785,8 @@ public abstract class AbstractDataset implements ADataset {
 			}
 		} else if (obj instanceof ADataset) {
 			return ((ADataset) obj).getDtype();
-		} else if (obj instanceof IDataset) {
-			dtype = getDTypeFromClass(((IDataset) obj).elementClass());
+		} else if (obj instanceof ILazyDataset) {
+			dtype = getDTypeFromClass(((ILazyDataset) obj).elementClass(), ((ILazyDataset) obj).getElementsPerItem());
 		} else {
 			dtype = getDTypeFromClass(obj.getClass());
 		}
@@ -787,7 +801,7 @@ public abstract class AbstractDataset implements ADataset {
 	public static int getDType(ILazyDataset d) {
 		if (d instanceof ADataset)
 			return ((ADataset) d).getDtype();
-		return getDTypeFromClass(d.elementClass());
+		return getDTypeFromClass(d.elementClass(), d.getElementsPerItem());
 	}
 
 	/**

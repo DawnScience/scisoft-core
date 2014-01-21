@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,12 +67,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
-		nameDataMappings =  new LinkedHashMap<String, ILazyDataset>();
+		nameDataMappings = new LinkedHashMap<String, ILazyDataset>();
 		metadata = new Metadata();
 	}
 
-	
-	
 	/**
 	 * The current data as a map of lazy datasets.
 	 * @return map of lazy datasets with keys from their corresponding names
@@ -88,7 +86,6 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public IDataHolder clone() {
-		
 		DataHolder ret = new DataHolder();
 		ret.nameDataMappings.putAll(nameDataMappings);
 		ret.metadata    = metadata;
@@ -136,7 +133,6 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * Add a ImetaData object
 	 * @param metadata which is an object implementing IMetaData
 	 */
-
 	public void setMetadata(IMetaData metadata) {
 		this.metadata = metadata;
 	}
@@ -163,7 +159,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(int index) {
-		final String key = new ArrayList<String>(nameDataMappings.keySet()).get(index);
+		final String key = getName(index);
 		if (key == null ) return null;
  		return nameDataMappings.get(key);
 	}
@@ -280,7 +276,9 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @see java.util.List#remove(int)
 	 */
 	public void remove(int index) {
-		nameDataMappings.remove(index);
+		final String key = getName(index);
+		if (key != null)
+			nameDataMappings.remove(key);
 	}
 
 	/**

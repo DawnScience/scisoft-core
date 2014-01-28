@@ -412,7 +412,7 @@ public class NexusDiffractionMetaReader {
 			ds = getSet(dataset);
 			units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
-				if (xCoord != Double.NaN) {
+				if (!Double.isNaN(xCoord)) {
 					detprop.setBeamCentreCoords(new double[] {xCoord,ds.getDouble(0)});
 					return true;
 				}

@@ -480,8 +480,6 @@ public class ROIProfile {
 		return profiles;
 	}
 
-	private static final int HORIZONTAL = 1 << 8;
-	private static final int VERTICAL = 1 << 9;
 	/**
 	 * @param data
 	 * @param mask
@@ -490,9 +488,10 @@ public class ROIProfile {
 	 * @param maskWithNans - normally masked pixels will use a multiply with 0 to mask. The plotting
 	 *                       deals with NaNs however, in this case we can set maskWithNans true and masked
 	 *                       pixels are NaN instead of 0.
+	 * @param isVertical
 	 * @return box line profiles
 	 */
-	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, int type) {
+	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, boolean isVertical) {
 
 		double[] startpt = rroi.getPoint();
 		double[] endpt = rroi.getEndPoint();
@@ -503,13 +502,14 @@ public class ROIProfile {
 		double[] leftbottompt = { new Double(startpt[0]), new Double(endpt[1]) };
 		LinearROI line1 = null, line2 = null;
 		
-		if(type == VERTICAL){
+		if (isVertical) {
 			line1 = new LinearROI(startpt, leftbottompt);
 			line2 = new LinearROI(righttoppt, endpt);
-		} else if(type == HORIZONTAL){
+		} else {
 			line1 = new LinearROI(startpt, righttoppt);
 			line2 = new LinearROI(leftbottompt, endpt);
 		}
+
 		AbstractDataset[] lineProfiles = ROIProfile.line(data, mask, line1, 1d, maskWithNans);
 		profiles[0] = lineProfiles != null ? lineProfiles[0] : null;
 		if(profiles[0] == null) return null;

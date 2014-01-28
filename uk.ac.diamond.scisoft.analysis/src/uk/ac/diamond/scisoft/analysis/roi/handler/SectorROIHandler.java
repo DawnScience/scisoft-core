@@ -107,7 +107,6 @@ public class SectorROIHandler extends ROIHandler {
 		return pt;
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public double[] getAnchorPoint(int handle, int size) {
 		SectorROI oroi = (SectorROI) roi;
@@ -146,6 +145,8 @@ public class SectorROIHandler extends ROIHandler {
 			break;
 		case 9:
 			return cpt;
+		default:
+			return pt;
 		}
 		pt[0] = cpt[0] + sc.getCartesian()[0];
 		pt[1] = cpt[1] + sc.getCartesian()[1];

@@ -122,6 +122,9 @@ public class Polynomial extends AFunction {
 
 	@Override
 	protected void fillParameters(double... params) {
+		if (params.length != nparams) {
+			throw new IllegalArgumentException("Number of parameters given does not match degree+1");
+		}
 		super.fillParameters(params);
 		paramNames = new String[nparams];
 		for (int i = 0; i < paramNames.length; i++) {

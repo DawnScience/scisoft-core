@@ -53,18 +53,30 @@ public class PixiumLoader extends TIFFImageLoader {
 		} 
 	}
 
-	private Map<String, Serializable> readMetadata(File metadata) throws NumberFormatException, IOException {
+	private double getDouble(BufferedReader in) throws IOException, ScanFileHolderException {
+		String line = in.readLine();
+		if (line == null) {
+			throw new ScanFileHolderException("End of file reached during metadata reading");
+		}
+		String[] parts = line.split("\t");
+		if (parts.length < 2) {
+			throw new ScanFileHolderException("No tab separated values on line");
+		}
+		return Double.parseDouble(parts[1]);
+	}
+
+	private Map<String, Serializable> readMetadata(File metadata) throws NumberFormatException, IOException, NullPointerException, ScanFileHolderException {
 		
 		// load the metadata info
 		BufferedReader br = new BufferedReader(new FileReader(metadata));
 		
-		double pixSize = Double.parseDouble(br.readLine().split("\t")[1]); 
-		double detX = Double.parseDouble(br.readLine().split("\t")[1]);
-		double detY = Double.parseDouble(br.readLine().split("\t")[1]);
-		double detDistance = Double.parseDouble(br.readLine().split("\t")[1]);
-		double centX = Double.parseDouble(br.readLine().split("\t")[1]);
-		double centY = Double.parseDouble(br.readLine().split("\t")[1]);
-		double wavelength = Double.parseDouble(br.readLine().split("\t")[1]);
+		double pixSize = getDouble(br);
+		double detX = getDouble(br);
+		double detY = getDouble(br);
+		double detDistance = getDouble(br);
+		double centX = getDouble(br);
+		double centY = getDouble(br);
+		double wavelength = getDouble(br);
 		
 		
 		HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>(); 

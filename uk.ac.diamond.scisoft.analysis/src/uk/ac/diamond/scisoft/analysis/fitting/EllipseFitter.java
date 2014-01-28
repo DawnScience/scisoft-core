@@ -114,7 +114,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	private double[] sa;
 
 	AngleDerivativeFunction angleDerivative = new AngleDerivativeFunction();
-	BrentSolver solver = new BrentSolver();
+	static BrentSolver solver = new BrentSolver();
 
 	public EllipseCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
 		setPoints(x, y);

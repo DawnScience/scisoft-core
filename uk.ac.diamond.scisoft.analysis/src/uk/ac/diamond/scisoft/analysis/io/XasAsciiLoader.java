@@ -86,7 +86,11 @@ public class XasAsciiLoader extends SRSLoader {
 					columnData = parseHeaderString(previousHeaderLine);
 				}
 
-				parseColumns(splitLine(dataStr.trim()), columnData);
+				if (columnData != null) {
+					parseColumns(splitLine(dataStr.trim()), columnData);
+				} else {
+					logger.warn("Dropped possible data owing to lack of column headers: {}", dataStr);
+				}
 			}
 
 			String[] names = datasetNames.toArray(new String[]{});

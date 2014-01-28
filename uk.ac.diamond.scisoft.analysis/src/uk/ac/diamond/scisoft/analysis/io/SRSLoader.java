@@ -176,6 +176,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 	private String[] readColumnHeaders(LineNumberReader in) throws IOException {
 		String headStr = in.readLine();
+		if (headStr == null)
+			throw new IOException("End of file reached too soon");
+
 		headStr = headStr.trim(); // remove whitespace to prevent the following split on white
 		String[] vals = SPLIT_REGEX.split(headStr);
 		datasetNames.clear();

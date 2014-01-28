@@ -168,14 +168,14 @@ public class SRSLoaderTest {
 			IDataset slice = dataset_image.getSlice( new int[]{0,0,0}, new int[]{1,195,1475}, new int[]{1,1,1});
 			slice.squeeze();
 			int[] shape = slice.getShape();
-			shape.toString();
+			assertNotNull(shape);
 		}
 		{
 			//take slice from second file - which is of a different size.
 			IDataset slice = dataset_image.getSlice( new int[]{1,0,0}, new int[]{2,195,1024}, new int[]{1,1,1});
 			slice.squeeze();
 			int[] shape = slice.getShape();
-			shape.toString();
+			assertNotNull(shape);
 		}
 	}
 

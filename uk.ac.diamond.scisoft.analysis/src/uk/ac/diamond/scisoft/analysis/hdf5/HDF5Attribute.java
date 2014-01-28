@@ -16,13 +16,15 @@
 
 package uk.ac.diamond.scisoft.analysis.hdf5;
 
+import java.io.Serializable;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 
 /**
  * Represent an attribute using a dataset
  */
-public class HDF5Attribute {
+public class HDF5Attribute implements Serializable {
 	private HDF5File file;
 	private String node;
 	private String name;

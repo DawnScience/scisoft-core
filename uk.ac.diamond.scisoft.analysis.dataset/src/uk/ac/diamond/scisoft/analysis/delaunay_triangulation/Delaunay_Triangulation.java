@@ -1099,7 +1099,7 @@ public class Delaunay_Triangulation {
 	}
 
 	private static Point_dt[] read_file(String file) throws Exception {
-		if (file.substring(file.length() - 4).equals(".smf") | file.substring(file.length() - 4).equals(".SMF"))
+		if (file.substring(file.length() - 4).equalsIgnoreCase(".smf"))
 			return read_smf(file);
 		return read_tsin(file);
 	}

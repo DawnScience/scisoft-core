@@ -175,10 +175,6 @@ public class ROIBase implements IROI {
 		return plot;
 	}
 
-	protected static double[] convertToDoubleArray(int[] pt) {
-		return new double[] { pt[0], pt[1] };
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ROIBase) {

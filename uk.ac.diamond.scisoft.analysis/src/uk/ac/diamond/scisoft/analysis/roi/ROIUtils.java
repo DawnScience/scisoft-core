@@ -75,4 +75,14 @@ public class ROIUtils {
 			return null;
 		return createNewROIList(roi.getClass());
 	}
+
+	/**
+	 * Convert int array of two numbers to double array
+	 * @param pt
+	 * @return double array
+	 */
+	public static double[] convertToDoubleArray(int[] pt) {
+		assert pt.length == 2;
+		return new double[] { pt[0], pt[1] };
+	}
 }

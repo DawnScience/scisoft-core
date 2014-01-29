@@ -84,7 +84,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @param pt
 	 */
 	public void setPointKeepEndPoint(int[] pt) {
-		setPointKeepEndPoint(convertToDoubleArray(pt));
+		setPointKeepEndPoint(ROIUtils.convertToDoubleArray(pt));
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @return angle as measured from midpoint to given point
 	 */
 	public double getAngleRelativeToMidPoint(int[] pt) {
-		return getAngleRelativeToMidPoint(convertToDoubleArray(pt));
+		return getAngleRelativeToMidPoint(ROIUtils.convertToDoubleArray(pt));
 	}
 	
 	/**

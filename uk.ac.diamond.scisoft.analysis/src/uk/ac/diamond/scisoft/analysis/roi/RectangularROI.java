@@ -254,7 +254,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @return angle as measured from midpoint to given point
 	 */
 	public double getAngleRelativeToMidPoint(int[] pt) {
-		return getAngleRelativeToPoint(0.5, 0.5, convertToDoubleArray(pt));
+		return getAngleRelativeToPoint(0.5, 0.5, ROIUtils.convertToDoubleArray(pt));
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @return angle as measured from normalized coordinates within rectangle to given point
 	 */
 	public double getAngleRelativeToPoint(double fx, double fy, int[] pt) {
-		return getAngleRelativeToPoint(fx, fy, convertToDoubleArray(pt));
+		return getAngleRelativeToPoint(fx, fy, ROIUtils.convertToDoubleArray(pt));
 	}
 
 	/**
@@ -535,7 +535,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param first
 	 */
 	public void adjustKeepDiagonalPoint(int[] cpt, double[] ept, int[] pt, boolean first) {
-		adjustKeepDiagonalPoint(convertToDoubleArray(cpt), ept, convertToDoubleArray(pt), first);
+		adjustKeepDiagonalPoint(ROIUtils.convertToDoubleArray(cpt), ept, ROIUtils.convertToDoubleArray(pt), first);
 	}
 
 	/**

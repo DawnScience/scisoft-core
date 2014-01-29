@@ -63,24 +63,6 @@ public class CircleFitterTest {
 		}
 	}
 
-//	@Test
-	public void testMatrix() {
-		double[][] am = {{1, 2}, {3,4}, {5,6}};
-		System.err.println(am.length + "; " + am[0].length);
-		Matrix M = new Matrix(am);
-		System.err.println(M.getRowDimension() + "x" + M.getColumnDimension() + ": " + Arrays.toString(M.getRowPackedCopy()));
-		M.print(4, 0);
-		DoubleDataset c1 = DoubleDataset.arange(5);
-		DoubleDataset c2 = DoubleDataset.arange(5).iadd(10);
-		double[][] an = {c1.getData(), c2.getData()};
-		Matrix N = new Matrix(an);
-		System.err.println(an + "|" + N.getArray());
-		System.err.println(N.getRowDimension() + "x" + N.getColumnDimension() + ": " + Arrays.toString(N.getRowPackedCopy()));
-		N.print(4, 0);
-		N.getMatrix(0, 1, 2, 2).print(4, 0);
-		System.err.println(Arrays.toString(N.svd().getSingularValues()));
-	}
-
 	@Test
 	public void testQuickCircle2() {
 		double[] original = new double[] { 3.5384, 4.7684, 4.7729};

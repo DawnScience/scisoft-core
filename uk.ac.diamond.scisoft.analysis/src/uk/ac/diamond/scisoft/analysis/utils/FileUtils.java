@@ -450,8 +450,10 @@ public final class FileUtils {
 			}
 
 		} finally {
-			source.close();
-			destination.close();
+			if (source != null)
+				source.close();
+			if (destination!= null)
+				destination.close();
 		}
 	}
 

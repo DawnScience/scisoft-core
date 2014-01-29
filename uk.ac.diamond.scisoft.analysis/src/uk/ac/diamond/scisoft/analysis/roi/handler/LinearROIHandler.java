@@ -84,7 +84,7 @@ public class LinearROIHandler extends ROIHandler {
 	 * @param pt
 	 * @return reoriented ROI
 	 */
-	public LinearROI reorient(int[] pt) {
+	public LinearROI reorient(double[] pt) {
 		final LinearROI oroi = (LinearROI) roi;
 		LinearROI croi = null;
 		double len;
@@ -111,7 +111,7 @@ public class LinearROIHandler extends ROIHandler {
 	 * @param pt
 	 * @return resized ROI
 	 */
-	public LinearROI resize(int[] pt) {
+	public LinearROI resize(double[] pt) {
 		final LinearROI oroi = (LinearROI) roi;
 		LinearROI croi = null;
 
@@ -129,7 +129,7 @@ public class LinearROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(double[] spt, double[] ept) {
 		final LinearROI lroi = (LinearROI) roi;
 		LinearROI croi = null; // return null if not a valid event
 

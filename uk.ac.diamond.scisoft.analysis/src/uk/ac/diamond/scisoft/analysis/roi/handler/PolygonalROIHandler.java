@@ -84,7 +84,7 @@ public class PolygonalROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(double[] spt, double[] ept) {
 		// TODO Auto-generated method stub
 		return null;
 	}

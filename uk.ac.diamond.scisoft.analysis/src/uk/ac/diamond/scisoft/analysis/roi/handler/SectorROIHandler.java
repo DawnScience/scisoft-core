@@ -244,7 +244,7 @@ public class SectorROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public SectorROI interpretMouseDragging(int[] cpt, int[] pt) {
+	public SectorROI interpretMouseDragging(double[] cpt, double[] pt) {
 		SectorROI croi = null; // return null if not a valid event
 		SectorROI sroi = (SectorROI) roi;
 

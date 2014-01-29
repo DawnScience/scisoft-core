@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi.handler;
 import java.util.ArrayList;
 
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
 
 /**
  * Abstract class for region of interest handles
@@ -85,5 +86,15 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	 * @param ept
 	 * @return roi
 	 */
-	abstract public IROI interpretMouseDragging(int[] spt, int[] ept);
+	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+		return interpretMouseDragging(ROIUtils.convertToDoubleArray(spt), ROIUtils.convertToDoubleArray(ept));
+	}
+
+	/**
+	 * Interpret mouse dragging
+	 * @param spt
+	 * @param ept
+	 * @return roi
+	 */
+	abstract public IROI interpretMouseDragging(double[] spt, double[] ept);
 }

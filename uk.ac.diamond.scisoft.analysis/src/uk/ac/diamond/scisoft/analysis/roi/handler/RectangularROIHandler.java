@@ -139,7 +139,7 @@ public class RectangularROIHandler extends ROIHandler {
 	 * @param pt 
 	 * @return resized ROI
 	 */
-	public RectangularROI resize(int[] spt, int[] pt) {
+	public RectangularROI resize(double[] spt, double[] pt) {
 		RectangularROI rroi = null;
 		double[] ept;
 
@@ -201,7 +201,7 @@ public class RectangularROIHandler extends ROIHandler {
 	 * @param pt
 	 * @return reoriented ROI
 	 */
-	public RectangularROI reorient(int[] pt) {
+	public RectangularROI reorient(double[] pt) {
 		RectangularROI rroi = null;
 
 		if (handle == 4 || (handle%2) == 1)
@@ -214,27 +214,27 @@ public class RectangularROIHandler extends ROIHandler {
 
 		switch (handle) {
 		case 0: // keep end point
-			oang = oroi.getAngleRelativeToPoint(1.0, 1.0, oroi.getIntPoint());
+			oang = oroi.getAngleRelativeToPoint(1.0, 1.0, oroi.getPoint());
 			nang = oroi.getAngleRelativeToPoint(1.0, 1.0, pt);
 			rroi.addAngle(nang-oang);
 			rroi.setEndPointKeepLengths(oroi.getEndPoint());
 			break;
 		case 2:
-			oang = oroi.getAngleRelativeToPoint(0.0, 1.0, oroi.getIntPoint(1.0, 0.0));
+			oang = oroi.getAngleRelativeToPoint(0.0, 1.0, oroi.getPoint(1.0, 0.0));
 			nang = oroi.getAngleRelativeToPoint(0.0, 1.0, pt);
 			rroi.translate(0.0, 1.0);
 			rroi.addAngle(nang-oang);
 			rroi.translate(0.0, -1.0);
 			break;
 		case 6:
-			oang = oroi.getAngleRelativeToPoint(1.0, 0.0, oroi.getIntPoint(0.0, 1.0));
+			oang = oroi.getAngleRelativeToPoint(1.0, 0.0, oroi.getPoint(0.0, 1.0));
 			nang = oroi.getAngleRelativeToPoint(1.0, 0.0, pt);
 			rroi.translate(1.0, 0.0);
 			rroi.addAngle(nang-oang);
 			rroi.translate(-1.0, 0.0);
 			break;
 		case 8: // keep start point
-			oang = oroi.getAngleRelativeToPoint(0, 0, oroi.getIntPoint(1.0, 1.0));
+			oang = oroi.getAngleRelativeToPoint(0, 0, oroi.getPoint(1.0, 1.0));
 			nang = oroi.getAngleRelativeToPoint(0, 0, pt);
 			rroi.addAngle(nang-oang);
 			break;
@@ -243,7 +243,7 @@ public class RectangularROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+	public IROI interpretMouseDragging(double[] spt, double[] ept) {
 		final RectangularROI rroi = (RectangularROI) roi;
 		RectangularROI croi = null; // return null if not a valid event
 

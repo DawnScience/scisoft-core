@@ -21,8 +21,6 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import Jama.Matrix;
-
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;

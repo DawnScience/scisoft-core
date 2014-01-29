@@ -171,6 +171,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param index (0 for width, 1 for height)
 	 * @return length
 	 */
+	@Override
 	public double getLength(int index) {
 		return len[index];
 	}
@@ -192,6 +193,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	/**
 	 * @return angle
 	 */
+	@Override
 	public double getAngle() {
 		return ang;
 	}
@@ -252,9 +254,16 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @return angle as measured from midpoint to given point
 	 */
 	public double getAngleRelativeToMidPoint(int[] pt) {
-		return getAngleRelativeToPoint(0.5, 0.5, pt);
+		return getAngleRelativeToPoint(0.5, 0.5, convertToDoubleArray(pt));
 	}
 
+	/**
+	 * @param pt
+	 * @return angle as measured from midpoint to given point
+	 */
+	public double getAngleRelativeToMidPoint(double[] pt) {
+		return getAngleRelativeToPoint(0.5, 0.5, pt);
+	}
 
 	/**
 	 * @param fx 
@@ -263,12 +272,21 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @return angle as measured from normalized coordinates within rectangle to given point
 	 */
 	public double getAngleRelativeToPoint(double fx, double fy, int[] pt) {
+		return getAngleRelativeToPoint(fx, fy, convertToDoubleArray(pt));
+	}
+
+	/**
+	 * @param fx 
+	 * @param fy 
+	 * @param pt 
+	 * @return angle as measured from normalized coordinates within rectangle to given point
+	 */
+	public double getAngleRelativeToPoint(double fx, double fy, double[] pt) {
 		double[] fpt = getPoint(fx, fy);
 		fpt[0] = pt[0] - fpt[0];
 		fpt[1] = pt[1] - fpt[1];
 		return Math.atan2(fpt[1], fpt[0]);
 	}
-
 	
 	/**
 	 * Start a rotated rectangle with predefined starting point and given end point and determine new starting point
@@ -334,6 +352,38 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param moveY
 	 */
 	public void setEndPoint(int[] pt, boolean moveX, boolean moveY) {
+		RotatedCoords src = null;
+		double[] ps = null;
+		double[] pe = null;
+
+		// work in rotated coords
+		src = new RotatedCoords(ang, false);
+		ps = src.transformToRotated(spt[0], spt[1]);
+		pe = src.transformToRotated(pt[0], pt[1]);
+
+		if (moveX) {
+			len[0] = pe[0] - ps[0];
+			if (len[0] < 0) { // don't allow negative lengths
+				len[0] = 0;
+			}
+		}
+		if (moveY) {
+			len[1] = pe[1] - ps[1];
+			if (len[1] < 0) { // don't allow negative lengths
+				len[1] = 0;
+			}
+		}
+	}
+
+	/**
+	 * Start a rotated rectangle with predefined starting point and given end point and determine new starting point and
+	 * lengths
+	 * 
+	 * @param pt
+	 * @param moveX
+	 * @param moveY
+	 */
+	public void setEndPoint(double[] pt, boolean moveX, boolean moveY) {
 		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
@@ -436,6 +486,47 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	}
 
 	/**
+	 * Set start point whilst keeping end point
+	 * 
+	 * @param dpt
+	 *            change in start point
+	 * @param moveX
+	 * @param moveY
+	 */
+	public void setPointKeepEndPoint(double[] dpt, boolean moveX, boolean moveY) {
+		RotatedCoords src = null;
+		double[] ps = null;
+		double[] pe = null;
+
+		// work in rotated coords
+		src = new RotatedCoords(ang, false);
+		pe = src.transformToRotated(dpt[0], dpt[1]);
+
+		if (moveX) {
+			ps = src.transformToOriginal(pe[0], 0);
+			if (len[0] > pe[0]) { // don't allow negative lengths
+				len[0] -= pe[0];
+				spt[0] += ps[0];
+				spt[1] += ps[1];
+			} else {
+				spt[0] += len[0];
+				len[0] = 0;
+			}
+		}
+		if (moveY) {
+			ps = src.transformToOriginal(0, pe[1]);
+			if (len[1] > pe[1]) { // don't allow negative lengths
+				len[1] -= pe[1];
+				spt[0] += ps[0];
+				spt[1] += ps[1];
+			} else {
+				spt[1] += len[1];
+				len[1] = 0;
+			}
+		}
+	}
+
+	/**
 	 * Adjust ROI whilst keeping a diagonal point in place
 	 * 
 	 * @param cpt
@@ -444,6 +535,18 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param first
 	 */
 	public void adjustKeepDiagonalPoint(int[] cpt, double[] ept, int[] pt, boolean first) {
+		adjustKeepDiagonalPoint(convertToDoubleArray(cpt), ept, convertToDoubleArray(pt), first);
+	}
+
+	/**
+	 * Adjust ROI whilst keeping a diagonal point in place
+	 * 
+	 * @param cpt
+	 * @param ept
+	 * @param pt
+	 * @param first
+	 */
+	public void adjustKeepDiagonalPoint(double[] cpt, double[] ept, double[] pt, boolean first) {
 		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;

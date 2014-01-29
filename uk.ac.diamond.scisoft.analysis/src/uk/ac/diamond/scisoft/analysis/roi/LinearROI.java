@@ -84,6 +84,14 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @param pt
 	 */
 	public void setPointKeepEndPoint(int[] pt) {
+		setPointKeepEndPoint(convertToDoubleArray(pt));
+	}
+
+	/**
+	 * Set start point whilst keeping end point
+	 * @param pt
+	 */
+	public void setPointKeepEndPoint(double[] pt) {
 		double[] ept = getEndPoint();
 		spt[0] = pt[0];
 		spt[1] = pt[1];
@@ -154,12 +162,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @param ept
 	 */
 	public void setEndPoint(int[] ept) {
-		double x = ept[0] - spt[0];
-		double y = ept[1] - spt[1];
-		len = Math.hypot(x, y);
-		ang = Math.atan2(y, x);
-		if (ang < 0) ang += 2.0*Math.PI;
-		calcTrig();
+		setEndPoint(ept[0], ept[1]);
 	}
 
 	/**
@@ -245,6 +248,14 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @return angle as measured from midpoint to given point
 	 */
 	public double getAngleRelativeToMidPoint(int[] pt) {
+		return getAngleRelativeToMidPoint(convertToDoubleArray(pt));
+	}
+	
+	/**
+	 * @param pt
+	 * @return angle as measured from midpoint to given point
+	 */
+	public double getAngleRelativeToMidPoint(double[] pt) {
 		double[] mpt = getMidPoint();
 		mpt[0] = pt[0] - mpt[0];
 		mpt[1] = pt[1] - mpt[1];
@@ -271,6 +282,15 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @param pt
 	 */
 	public void subPoint(int[] pt) {
+		spt[0] -= pt[0];
+		spt[1] -= pt[1];		
+	}
+
+	/**
+	 * Subtract an offset to starting point
+	 * @param pt
+	 */
+	public void subPoint(double[] pt) {
 		spt[0] -= pt[0];
 		spt[1] -= pt[1];		
 	}

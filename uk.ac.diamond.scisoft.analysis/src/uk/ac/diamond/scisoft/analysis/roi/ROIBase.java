@@ -127,6 +127,17 @@ public class ROIBase implements IROI {
 	}
 
 	/**
+	 * Add an offset to start (or centre) point
+	 * 
+	 * @param pt
+	 */
+	@Override
+	public void addPoint(double[] pt) {
+		spt[0] += pt[0];
+		spt[1] += pt[1];
+	}
+
+	/**
 	 * @return a copy
 	 */
 	@Override
@@ -162,6 +173,10 @@ public class ROIBase implements IROI {
 	@Override
 	public boolean isPlot() {
 		return plot;
+	}
+
+	protected static double[] convertToDoubleArray(int[] pt) {
+		return new double[] { pt[0], pt[1] };
 	}
 
 	@Override

@@ -79,6 +79,14 @@ public interface IROI extends Serializable {
 	 * @param pt
 	 */
 	public void addPoint(int[] pt);
+
+	/**
+	 * Add an offset to start (or centre) point
+	 * 
+	 * @param pt
+	 */
+	public void addPoint(double[] pt);
+
 	/**
 	 * To account for a down-sampling of the dataset, change ROI
 	 * @param subFactor

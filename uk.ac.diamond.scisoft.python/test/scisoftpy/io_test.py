@@ -23,7 +23,11 @@ import unittest
 
 import scisoftpy as dnp
 
-TestFolder = "../../../uk.ac.diamond.scisoft.analysis/testfiles/images/"
+import os
+
+from os import path
+TestFolder = path.dirname(__file__) + "/../../../uk.ac.diamond.scisoft.analysis/testfiles/images/"
+
 IOTestFolder = TestFolder + "../gda/analysis/io/"
 OutTestFolder = TestFolder + "../../test-scratch/"
 

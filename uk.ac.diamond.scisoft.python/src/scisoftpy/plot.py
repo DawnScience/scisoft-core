@@ -219,9 +219,6 @@ def _parselinearg(x, y, title, name):
 _AXES_SIDES = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom':_plot.axis_bottom},
               'y':{'default':_plot.axis_left, 'left':_plot.axis_left, 'right':_plot.axis_right} }
 
-from time import sleep as _sleep
-_NAP = 0.1 # in seconds need to sleep to synchronize state
-
 def _setup_axes(al, dirn, name):
     c = 0 # count use of default axis
     for a in al:
@@ -260,7 +257,6 @@ def _setup_axis(rename, n, dirn, name):
         _AXES_NAMES[dirn][name] = al
 
     if n not in al:
-        _sleep(_NAP)
         if rename:
             _plot_renameactiveaxis[dirn](name, n) # use default/selected axis
             al[0] = n
@@ -282,18 +278,14 @@ def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)
 
     if mode is None:
-        _sleep(_NAP)
         _plot_clear(name)
         _clear_axis(name)
 
     if xl is not None:
-        _sleep(_NAP)
         ax = _setup_axes(xl, 'x', name)
     else:
         ax = None
-    _sleep(_NAP)
     ay = _setup_axes(yl, 'y', name)
-    _sleep(_NAP)
 
     # generate list of axes
     xs = []

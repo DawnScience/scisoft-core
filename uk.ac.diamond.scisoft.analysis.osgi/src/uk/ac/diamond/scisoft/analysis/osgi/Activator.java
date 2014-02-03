@@ -9,6 +9,7 @@ import org.osgi.framework.BundleContext;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
+import uk.ac.diamond.scisoft.analysis.io.ILoaderService;
 
 public class Activator implements BundleActivator {
 
@@ -21,12 +22,18 @@ public class Activator implements BundleActivator {
 		context.registerService(ILoaderFactoryExtensionService.class, new LoaderFactoryExtensionService(), props);
 
 		props = new Hashtable<String, String>(1);
+		props.put("description", "A service for loading any data that is supported ");
+		context.registerService(ILoaderService.class, new LoaderServiceImpl(), props);
+
+		props = new Hashtable<String, String>(1);
 		props.put("description", "A service which replaces concrete classes in the scisoft.analysis plugin.");
 		context.registerService(IDatasetMathsService.class, new DatasetMathsServiceImpl(), props);
 
 		props = new Hashtable<String, String>(1);
 		props.put("description", "A service for loading of split analysis packages");
 		context.registerService(ClassLoaderService.class, new ClassLoaderServiceImpl(), props);
+		
+
 	}
 
 	@Override

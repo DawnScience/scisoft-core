@@ -33,6 +33,7 @@ abstract public class AbstractPlotServer implements PlotServer {
 	public AbstractPlotServer() {
 		this(false);
 	}
+
 	public AbstractPlotServer(boolean removeOnGet) {
 		super();
 		guiStore = new HashMap<String, GuiBean>();
@@ -70,7 +71,16 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public GuiBean getGuiState(String guiName) throws Exception {
-		return removeOnGet ? guiStore.remove(guiName):  guiStore.get(guiName);
+		if (removeOnGet) {
+			return guiStore.remove(guiName);
+		}
+
+		GuiBean bean = guiStore.get(guiName);
+		if (bean == null) {
+			bean = new GuiBean();
+			guiStore.put(guiName, bean);
+		}
+		return bean;
 	}
 
 	@Override

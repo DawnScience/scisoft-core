@@ -23,19 +23,20 @@ import java.util.List;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.jscience.physics.amount.Amount;
 
 public class CalibrantGenerator {
 	
-	public final static Unit<Length> ANGSTROM = NonSI.ANGSTROM;
+	public final static Unit<Length> NANO = SI.NANO(SI.METER);
 	
 	public static enum Cubic {
 		SIMPLE,BCC,FCC,DIAMOND;
 	}
 	
-	public static CalibrantSpacing createCubicStandard(String name, double a, int maxhkl, Cubic type) {
+	public static CalibrantSpacing createCubicStandard(String name, double a, int nReflections, Cubic type) {
 		
 		CalibrantSpacing calibrant = new CalibrantSpacing(name);
 		List<HKL> listHKL =  new ArrayList<HKL>();
@@ -43,7 +44,7 @@ public class CalibrantGenerator {
 		int k = 0;
 		int l = 1;
 		
-		while (l < maxhkl) {
+		while (listHKL.size() < nReflections) {
 			
 			if (isAllowedCubic(h,k,l, type)) {
 				HKL hkl = calculateCubicLatticeSpacing(a, h, k, l);
@@ -167,13 +168,13 @@ public class CalibrantGenerator {
 
 		double d = a/(Math.sqrt((Math.pow(h, 2)+Math.pow(k, 2)+Math.pow(l, 2))));
 
-		return new HKL(h, k, l, Amount.valueOf(d,  ANGSTROM));
+		return new HKL(h, k, l, Amount.valueOf(d,  NANO));
 	}
 
 	private static HKL calculateHexagonalLatticeSpacing(double a, double c, int h, int k, int l) {
 
 		double d = Math.sqrt(1/((4./3.)*(Math.pow(h, 2)+(h*k)+Math.pow(k, 2))/Math.pow(a, 2)+(Math.pow(l, 2)/Math.pow(c, 2))));
-		return new HKL(h, k, l, Amount.valueOf(d,  ANGSTROM));
+		return new HKL(h, k, l, Amount.valueOf(d,  NANO));
 
 	}
 

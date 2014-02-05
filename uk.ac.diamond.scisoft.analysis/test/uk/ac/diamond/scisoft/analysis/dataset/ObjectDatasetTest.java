@@ -44,5 +44,10 @@ public class ObjectDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(2*i+1, Double.parseDouble(c.getStringAbs(it.index)), 1e-5 * i);
 		}
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
+		c.hashCode();
 	}
 }

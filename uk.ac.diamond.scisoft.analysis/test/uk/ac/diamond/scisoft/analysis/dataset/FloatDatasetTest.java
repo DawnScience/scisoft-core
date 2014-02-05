@@ -42,6 +42,9 @@ public class FloatDatasetTest {
 			assertEquals(i, b.getElementDoubleAbs(it.index), 1e-5*i);
 		}
 
+		// test hashes
+		a.hashCode();
+		b.hashCode();
 	}
 
 	@Test

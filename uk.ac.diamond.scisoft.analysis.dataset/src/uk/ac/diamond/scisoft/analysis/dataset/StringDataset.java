@@ -95,6 +95,21 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	@Override
+	protected void calculateMaxMin(final boolean ignoreNaNs, final boolean ignoreInfs) {
+		// override to skip max/min calculation for hash only
+		IndexIterator iter = getIterator();
+		double hash = 0;
+
+		while (iter.hasNext()) {
+			final int val = getStringAbs(iter.index).hashCode();
+			hash = (hash * 19 + val) % Integer.MAX_VALUE;
+		}
+
+		int ihash = ((int) hash) * 19 + getDtype() * 17 + getElementsPerItem();
+		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_SHAPELESS_HASH), ihash);
+	}
+
+	@Override
 	public boolean getElementBooleanAbs(int index) {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}

@@ -1898,18 +1898,21 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (l != null) {
 					dh.addDataset(n, l);
 					metadata.addDataInfo(n, l.getShape());
-				}
-				// also add datasets under their local name (if defined) 
-				try {
-						String attr = n.concat("@local_name");
-						String localname = metadata.getMetaValue(attr).toString();
-						if (localname == null || localname.isEmpty())
-							continue;
-						if (dh.contains(localname))
-							continue;
-						dh.addDataset(localname, l);
-				} catch (Exception ex) {
-					logger.error("seen an exception populating local nexus name for "+n, ex);
+					// also add datasets under their local name (if defined) 
+					try {
+							String attr = n.concat("@local_name");
+							Object localattr = metadata.getMetaValue(attr);
+							if (localattr == null)
+								continue;
+							String localname = localattr.toString();
+							if (localname == null || localname.isEmpty())
+								continue;
+							if (lMap.keySet().contains(localname))
+								continue;
+							dh.addDataset(localname, l);
+					} catch (Exception ex) {
+						logger.info("seen an exception populating local nexus name for "+n, ex);
+					}
 				}
 			}
 			dh.setMetadata(metadata);

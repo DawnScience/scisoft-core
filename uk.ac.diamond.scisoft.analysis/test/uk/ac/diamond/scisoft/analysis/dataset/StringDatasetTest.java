@@ -44,5 +44,10 @@ public class StringDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(String.format("%d", 2*i + 1), c.getStringAbs(it.index));
 		}
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
+		c.hashCode();
 	}
 }

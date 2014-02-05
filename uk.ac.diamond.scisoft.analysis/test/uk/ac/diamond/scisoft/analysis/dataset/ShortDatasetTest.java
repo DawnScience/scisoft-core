@@ -41,6 +41,10 @@ public class ShortDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(i, b.getElementLongAbs(it.index));
 		}
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
 	}
 
 	@Test

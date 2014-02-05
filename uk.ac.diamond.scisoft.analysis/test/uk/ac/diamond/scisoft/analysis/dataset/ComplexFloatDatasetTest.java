@@ -49,6 +49,11 @@ public class ComplexFloatDatasetTest {
 		assertEquals(AbstractDataset.FLOAT32, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
 		assertEquals(4, aa.getItemsize());		
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
+		aa.hashCode();
 	}
 
 	@Test

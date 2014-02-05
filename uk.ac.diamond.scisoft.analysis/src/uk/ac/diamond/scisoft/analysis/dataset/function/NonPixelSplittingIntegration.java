@@ -40,33 +40,15 @@ import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
  * <p>
  * By default, outliers are ignored.
  */
-public class NonPixelSplittingIntegration implements DatasetToDatasetFunction {
-	private int nbins;
-	private Double min = null;
-	private Double max = null;
-	private DoubleDataset bins = null;
-	private AbstractDataset qArray;
-	private QSpace qSpace = null;
-
+public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 	
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
 	public NonPixelSplittingIntegration(QSpace qSpace, int numBins) {
-		this.qSpace = qSpace;
-		nbins = numBins;
+		super(qSpace, numBins);
 		
-	}
-	
-	/**
-	 * Constructor of the Histogram
-	 * @param numBins number of bins
-	 */
-	public NonPixelSplittingIntegration(AbstractDataset qArray, int numBins)
-	{
-		nbins = numBins;
-		this.qArray = qArray;
 	}
 	
 	/**
@@ -75,16 +57,9 @@ public class NonPixelSplittingIntegration implements DatasetToDatasetFunction {
 	 * @param lower minimum value of histogram range
 	 * @param upper maximum value of histogram range
 	 */
-	public NonPixelSplittingIntegration(AbstractDataset qArray, int numBins, double lower, double upper)
+	public NonPixelSplittingIntegration(QSpace qSpace, int numBins, double lower, double upper)
 	{
-		this(qArray, numBins);
-		min = lower;
-		max = upper;
-		if (min > max) {
-			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
-		}
-
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);
+		super(qSpace, numBins, lower, upper);
 	}
 
 	/**
@@ -96,24 +71,16 @@ public class NonPixelSplittingIntegration implements DatasetToDatasetFunction {
 		if (datasets.length == 0)
 			return null;
 		
-		if (qArray == null) {
+		if (axisArray == null) {
 			
-			if (qSpace == null) return null;
-
-			qArray = AbstractDataset.zeros(DatasetUtils.convertToAbstractDataset(datasets[0]), AbstractDataset.FLOAT64);
+			generateAxisArray(datasets[0].getShape(), true);
 			
-			PositionIterator iter = qArray.getPositionIterator();
-			int[] pos = iter.getPos();
-
-			while (iter.hasNext()) {
-				qArray.set(qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length(), pos);
-			}
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
 			if (bins == null) {
-				bins = (DoubleDataset) DatasetUtils.linSpace(qArray.min().doubleValue(), qArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 			}
 			final double[] edges = bins.getData();
 			final double lo = edges[0];
@@ -124,13 +91,13 @@ public class NonPixelSplittingIntegration implements DatasetToDatasetFunction {
 			final int[] h = histo.getData();
 			final double[] in = intensity.getData();
 			if (span <= 0) {
-				h[0] = qArray.getSize();
+				h[0] = axisArray.getSize();
 				result.add(histo);
 				result.add(bins);
 				continue;
 			}
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(qArray);
+			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 			IndexIterator iter = a.getIterator();
 
@@ -139,37 +106,18 @@ public class NonPixelSplittingIntegration implements DatasetToDatasetFunction {
 				final double sig = b.getElementDoubleAbs(iter.index);
 				if (val < lo && val > hi) {
 					continue;
-				} else {
-					if(((int) ((val-lo)/span))<h.length){
-						h[(int) ((val-lo)/span)]++;
-						in[(int) ((val-lo)/span)] += sig;
-					}
+				}
+				if(((int) ((val-lo)/span))<h.length){
+					h[(int) ((val-lo)/span)]++;
+					in[(int) ((val-lo)/span)] += sig;
 				}
 			}
 			
-			AbstractDataset axis = Maths.add(bins.getSlice(new int[]{1}, null ,null), bins.getSlice(null, new int[]{-1},null));
-			axis.idivide(2);
+			processAndAddToResult(intensity, histo, result, ds.getName());
 			
-			axis.setName("q");
-			
-			result.add(axis);
-			AbstractDataset out = Maths.divide(intensity, histo);
-			out.setName(ds.getName() + "_integrated");
-			result.add(out);
 		}
 
 		return result;
-	}
-
-	/**
-	 * Set minimum and maximum edges of histogram bins
-	 * @param min
-	 * @param max
-	 */
-	public void setMinMax(double min, double max) {
-		this.min = min;
-		this.max = max;
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);		
 	}
 	
 }

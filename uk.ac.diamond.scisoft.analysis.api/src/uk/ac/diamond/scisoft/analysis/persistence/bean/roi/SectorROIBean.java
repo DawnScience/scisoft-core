@@ -26,6 +26,10 @@ public class SectorROIBean extends ROIBean{
 
 	private double dpp; // Sampling rate used for profile calculations in dots per pixel
 
+	private boolean clippingCompensation; // compensate for clipping
+	private boolean averageArea;
+	private boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
+
 	public SectorROIBean(){
 		type = "SectorROI";
 	}
@@ -96,6 +100,30 @@ public class SectorROIBean extends ROIBean{
 	 */
 	public double getDpp() {
 		return dpp;
+	}
+
+	public boolean isClippingCompensation() {
+		return clippingCompensation;
+	}
+
+	public void setClippingCompensation(boolean clippingCompensation) {
+		this.clippingCompensation = clippingCompensation;
+	}
+
+	public boolean isAverageArea() {
+		return averageArea;
+	}
+
+	public void setAverageArea(boolean averageArea) {
+		this.averageArea = averageArea;
+	}
+
+	public boolean isCombineSymmetry() {
+		return combineSymmetry;
+	}
+
+	public void setCombineSymmetry(boolean combineSymmetry) {
+		this.combineSymmetry = combineSymmetry;
 	}
 
 	@Override

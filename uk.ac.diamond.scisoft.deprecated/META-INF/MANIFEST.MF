@@ -15,4 +15,4 @@ Export-Package: uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.plotserver
 Bundle-Vendor: Diamond Light Source
 Import-Package: junitx.framework,
- org.slf4j;version="[1.7.5,1.7.6)"
+ org.slf4j;version="[1.7.6,1.7.7)"

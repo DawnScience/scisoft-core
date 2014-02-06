@@ -34,6 +34,8 @@ import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.RingROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
+import uk.ac.diamond.scisoft.analysis.roi.XAxisBoxROI;
+import uk.ac.diamond.scisoft.analysis.roi.YAxisBoxROI;
 
 /**
  * Class used to convert from an IROI to a ROIBean and vice-versa
@@ -298,7 +300,9 @@ public class ROIBeanConverter {
 				|| roi instanceof SectorROI
 				|| roi instanceof FreeDrawROI
 				|| roi instanceof PolylineROI
-				|| roi instanceof PolygonalROI)
+				|| roi instanceof PolygonalROI
+				|| roi instanceof XAxisBoxROI
+				|| roi instanceof YAxisBoxROI)
 			return true;
 		return false;
 	}

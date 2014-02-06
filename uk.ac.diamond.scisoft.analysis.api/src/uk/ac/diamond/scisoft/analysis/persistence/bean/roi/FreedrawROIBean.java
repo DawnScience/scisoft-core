@@ -13,10 +13,11 @@ import java.util.List;
 
 public class FreedrawROIBean extends ROIBean{
 
+	public static final String TYPE = "FreedrawROI";
 	private List<double[]> points;
 
 	public FreedrawROIBean(){
-		type = "FreedrawROI";
+		type = TYPE;
 	}
 
 	/**

@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 public class RingROIBean extends ROIBean{
 
+	public static final String TYPE = "RingROI";
+
 	private double[] angles;   // angles in radians
 
 	private int symmetry; // symmetry
@@ -21,7 +23,7 @@ public class RingROIBean extends ROIBean{
 	private double dpp; // Sampling rate used for profile calculations in dots per pixel
 
 	public RingROIBean(){
-		type = "RingROI";
+		type = TYPE;
 	}
 
 	/**

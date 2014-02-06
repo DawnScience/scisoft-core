@@ -13,10 +13,11 @@ import java.util.Arrays;
 
 public class CircularROIBean extends ROIBean {
 
+	public static final String TYPE = "CircularROI";
 	private double radius;
 
 	public CircularROIBean() {
-		this.type = "CircularROI";
+		this.type = TYPE;
 	}
 
 	public CircularROIBean(String name) {

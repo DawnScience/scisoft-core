@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 public class RectangularROIBean extends ROIBean{
 
+	public static final String TYPE = "RectangularROI";
+
 	private double[] lengths; // width and height
 
 	private double angle;   // angle in radians
@@ -19,7 +21,7 @@ public class RectangularROIBean extends ROIBean{
 	private double[] endPoint; // end point
 
 	public RectangularROIBean(){
-		type = "RectangularROI";
+		type = TYPE;
 	}
 
 	/**

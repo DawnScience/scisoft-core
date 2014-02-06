@@ -11,12 +11,13 @@ package uk.ac.diamond.scisoft.analysis.persistence.bean.roi;
 
 public class LinearROIBean extends ROIBean {
 
+	public static final String TYPE = "LinearROI";
 	private double len;    // length
 	private double ang;    // angle in radians
 	private double[] endPoint;
 
 	public LinearROIBean() {
-		type = "LinearROI";
+		type = TYPE;
 	}
 
 	public double getLength() {

@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * Class for rectangular region of interest : XAxis type

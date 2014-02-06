@@ -11,7 +11,9 @@ package uk.ac.diamond.scisoft.analysis.persistence.bean.roi;
 
 public class PointROIBean extends ROIBean {
 
+	public static final String TYPE = "PointROI";
+
 	public PointROIBean () {
-		type = "PointROI";
+		type = TYPE;
 	}
 }

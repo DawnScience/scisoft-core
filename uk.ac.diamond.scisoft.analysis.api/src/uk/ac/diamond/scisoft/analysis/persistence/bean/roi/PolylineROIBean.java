@@ -13,10 +13,11 @@ import java.util.List;
 
 public class PolylineROIBean extends ROIBean{
 
+	public static final String TYPE = "PolylineROI";
 	private List<double[]> points;
 
 	public PolylineROIBean(){
-		type = "PolylineROI";
+		type = TYPE;
 	}
 
 	/**

@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 public class PerimeterBoxROIBean extends ROIBean {
 
+	public static final String TYPE = "PerimeterBoxROI";
+
 	private double[] lengths; // width and height
 
 	private double angle;   // angle in radians
@@ -20,7 +22,7 @@ public class PerimeterBoxROIBean extends ROIBean {
 	private double[] endPoint; // end point
 
 	public PerimeterBoxROIBean(){
-		type = "PerimeterBoxROI";
+		type = TYPE;
 	}
 
 	/**

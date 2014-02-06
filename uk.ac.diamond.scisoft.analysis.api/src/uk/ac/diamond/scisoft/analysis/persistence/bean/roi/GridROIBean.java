@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 public class GridROIBean extends ROIBean{
 
+	public static final String TYPE = "GridROI";
 	private double[] lengths; // width and height
 	private double angle;   // angle in radians
 	private double[] endPoint; // end point
@@ -21,7 +22,7 @@ public class GridROIBean extends ROIBean{
 	private boolean gridLinesOn = false;
 
 	public GridROIBean(){
-		type = "GridROI";
+		type = TYPE;
 	}
 
 	public double[] getLengths() {

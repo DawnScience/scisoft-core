@@ -13,10 +13,11 @@ import java.util.List;
 
 public class PolygonalROIBean extends ROIBean{
 
+	public static final String TYPE = "PolygonalROI";
 	private List<double[]> points;
 
 	public PolygonalROIBean(){
-		type = "PolygonalROI";
+		type = TYPE;
 	}
 
 	/**

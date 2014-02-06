@@ -101,7 +101,6 @@ public class ROIUtils {
 		if (t < 0 || t > l)
 			return false;
 
-		System.err.println(x * dy - y * dx);
 		return Math.abs(x * dy - y * dx) <= distance;
 	}
 

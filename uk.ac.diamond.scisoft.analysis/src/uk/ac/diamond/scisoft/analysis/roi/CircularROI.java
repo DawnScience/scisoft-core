@@ -115,6 +115,26 @@ public class CircularROI extends ROIBase {
 	}
 
 	@Override
+	public IRectangularROI getBounds() {
+		RectangularROI b = new RectangularROI();
+		b.setPoint(spt[0] - rad, spt[1] -rad);
+		b.setLengths(2*rad, 2*rad);
+		return b;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		return Math.hypot(x - spt[0], y - spt[1]) <= rad;
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		double r = Math.hypot(x - spt[0], y - spt[1]);
+
+		return Math.abs(r - rad) <= distance;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString() + String.format("point=%s, radius=%g", Arrays.toString(spt), rad);
 	}

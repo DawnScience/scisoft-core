@@ -18,8 +18,21 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 public interface IRectangularROI extends IROI {
 
-	double getLength(int i);
+	/**
+	 * @param i
+	 * @return length in given dimension
+	 */
+	public double getLength(int i);
 
-	double getAngle();
+	/**
+	 * @return angle, in radians
+	 */
+	public double getAngle();
 
+	/**
+	 * Add given amounts to lengths
+	 * @param dx
+	 * @param dy
+	 */
+	public void addToLengths(double dx, double dy);
 }

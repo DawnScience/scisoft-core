@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.diamond.scisoft.analysis.coords.SectorCoords;
+
 
 /**
  * Class for sector region of interest
@@ -193,6 +195,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		clippingCompensation = clip;
 		symmetry = sym;
 		combineSymmetry = false;
+		checkRadii();
 		checkAngles();
 	}
 
@@ -352,7 +355,6 @@ public class SectorROI extends ROIBase implements Serializable {
 	 *  0 <= ang1 - ang0 <= 2*pi
 	 */
 	protected void checkAngles() {
-
 		// sort out relative values
 		double a = ang[0];
 		while (a >= ang[1]) {
@@ -474,31 +476,36 @@ public class SectorROI extends ROIBase implements Serializable {
 		double[] nang = new double[] {0, TWO_PI};
 
 		switch (symmetry) {
-		case SectorROI.XREFLECT:
+		case XREFLECT:
 			// add in x reflected integral
 			nang[0] = Math.PI - ang[1];
 			nang[1] = Math.PI - ang[0];
 			break;
-		case SectorROI.YREFLECT:
+		case YREFLECT:
 			// add in y reflected integral
 			nang[0] = TWO_PI - ang[1];
 			nang[1] = TWO_PI - ang[0];
 			break;
-		case SectorROI.CNINETY:
+		case CNINETY:
 			// add in +90 rotated integral
 			nang[0] = ang[0] + HALF_PI;
 			nang[1] = ang[1] + HALF_PI;
 			break;
-		case SectorROI.ACNINETY:
+		case ACNINETY:
 			// add in -90 rotated integral
 			nang[0] = ang[0] - HALF_PI;
 			nang[1] = ang[1] - HALF_PI;
 			break;
-		case SectorROI.INVERT:
+		case INVERT:
 			// add in inverted integral
 			nang[0] = ang[0] + Math.PI;
 			nang[1] = ang[1] + Math.PI;
 			break;
+		case FULL:
+			break;
+		default:
+		case NONE:
+			return null;
 		}
 
 		return nang;
@@ -508,10 +515,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @return text for symmetry setting
 	 */
 	public String getSymmetryText() {
-		if (symmetryText.containsKey(symmetry))
-			return symmetryText.get(symmetry);
-
-		return "N";
+		return getSymmetryText(symmetry);
 	}
 
 	/**
@@ -578,6 +582,111 @@ public class SectorROI extends ROIBase implements Serializable {
 	 */
 	public boolean hasSeparateRegions() {
 		return !(symmetry == NONE || symmetry == FULL || combineSymmetry); 
+	}
+
+	@Override
+	public IRectangularROI getBounds() {
+		SectorCoords sc = new SectorCoords(rad[0], ang[0], false, false);
+		double[] pt = sc.getCartesian();
+		double[] max = pt;
+		double[] min = max.clone();
+
+		sc = new SectorCoords(rad[0], ang[1], false, false);
+		pt = sc.getCartesian();
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		sc = new SectorCoords(rad[1], ang[1], false, false);
+		pt = sc.getCartesian();
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		sc = new SectorCoords(rad[1], ang[0], false, false);
+		pt = sc.getCartesian();
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		int beg = (int) Math.ceil(ang[0] / HALF_PI);
+		int end = (int) Math.floor(ang[1] / HALF_PI);
+		for (; beg <= end; beg++) { // angle range spans multiples of pi/2
+			sc = new SectorCoords(rad[1], beg*HALF_PI, false, false);
+			pt = sc.getCartesian();
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		}
+
+		double[] angs = getSymmetryAngles();
+		if (angs != null) {
+			sc = new SectorCoords(rad[0], angs[0], false, false);
+			pt = sc.getCartesian();
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+			sc = new SectorCoords(rad[0], angs[1], false, false);
+			pt = sc.getCartesian();
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+			sc = new SectorCoords(rad[1], angs[1], false, false);
+			pt = sc.getCartesian();
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+			sc = new SectorCoords(rad[1], angs[0], false, false);
+			pt = sc.getCartesian();
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		}
+
+		RectangularROI b = new RectangularROI();
+		b.setPoint(min[0] + spt[0], min[1] + spt[1]);
+		b.setLengths(max[0] - min[0], max[1] - min[1]);
+		return b;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		x -= spt[0];
+		y -= spt[1];
+
+		SectorCoords sc = new SectorCoords(x, y, true);
+		double[] pol = sc.getPolarRadians();
+		double r = pol[0];
+		if (r < rad[0] || r > rad[1])
+			return false;
+
+		double p = pol[1];
+		if (p >= ang[0] && p <= ang[1])
+			return true;
+		double[] angs = getSymmetryAngles();
+		if (angs == null)
+			return false;
+		return p >= angs[0] && p <= angs[1];
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		x -= spt[0];
+		y -= spt[1];
+
+		SectorCoords sc = new SectorCoords(x, y, true);
+		double[] pol = sc.getPolarRadians();
+		double r = pol[0];
+		double p = pol[1];
+		if (p >= ang[0] && p <= ang[1]) { // near arcs
+			if (Math.abs(r - rad[0]) <= distance || Math.abs(r - rad[1]) <= distance)
+				return true;
+		}
+
+		// check radials
+		sc = new SectorCoords(rad[0], ang[0], false, false);
+		double[] pt = sc.getCartesian();
+		double px = pt[0];
+		double py = pt[1];
+		sc = new SectorCoords(rad[1], ang[0], false, false);
+		pt = sc.getCartesian();
+		if (ROIUtils.isNearSegment(pt[0] - px, pt[1] - py, x - px, y - py, distance))
+			return true;
+
+		sc = new SectorCoords(rad[0], ang[1], false, false);
+		pt = sc.getCartesian();
+		px = pt[0];
+		py = pt[1];
+		sc = new SectorCoords(rad[1], ang[1], false, false);
+		pt = sc.getCartesian();
+		return ROIUtils.isNearSegment(pt[0] - px, pt[1] - py, x - px, y - py, distance);
 	}
 
 	@Override

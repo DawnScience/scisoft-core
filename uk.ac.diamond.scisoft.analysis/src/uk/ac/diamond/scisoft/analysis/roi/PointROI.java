@@ -42,6 +42,24 @@ public class PointROI extends ROIBase {
 	}
 
 	@Override
+	public IRectangularROI getBounds() {
+		return new RectangularROI(spt[0], spt[1], 0, 0, 0);
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		return spt[0] == x && spt[1] == y;
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		if (!super.isNearOutline(x, y, distance))
+			return false;
+
+		return Math.hypot(spt[0] - x, spt[1] - y) <= distance;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString() + "point=" + Arrays.toString(spt);
 	}

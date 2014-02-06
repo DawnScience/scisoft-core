@@ -345,6 +345,32 @@ public class LinearROI extends ROIBase implements Serializable {
 	}
 
 	@Override
+	public IRectangularROI getBounds() {
+		RectangularROI b = new RectangularROI(1, 0);
+		double[] ept = getEndPoint();
+		double pax = Math.min(spt[0], ept[0]);
+		double pbx = Math.max(spt[0], ept[0]);
+		double pay = Math.min(spt[1], ept[1]);
+		double pby = Math.max(spt[1], ept[1]);
+		b.setPoint(pax, pay);
+		b.setLengths(pbx - pax, pby - pay);
+		return b;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		return isNearOutline(x, y, Math.max(Math.ulp(x), Math.ulp(y)));
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		if (!super.isNearOutline(x, y, distance))
+			return false;
+
+		return ROIUtils.isNearSegment(cang, sang, len, x - spt[0], y - spt[1], distance);
+	}
+
+	@Override
 	public String toString() {
 		return super.toString() + String.format("point=%s, length=%g, angle=%g", Arrays.toString(spt), len, getAngleDegrees());
 	}

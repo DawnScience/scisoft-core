@@ -95,6 +95,16 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	}
 
 	/**
+	 * Set point of polygon at index
+	 * @param i index
+	 * @param x
+	 * @param y
+	 */
+	public void setPoint(int i, double x, double y) {
+		setPoint(i, new PointROI(x, y));
+	}
+
+	/**
 	 * Add point to polygon
 	 * @param point
 	 */
@@ -209,6 +219,49 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		return pts.get(i);
 	}
 
+	@Override
+	public IRectangularROI getBounds() {
+		double[] max = new double[] {-Double.MAX_VALUE, -Double.MAX_VALUE};
+		double[] min = new double[] {Double.MAX_VALUE, Double.MAX_VALUE};
+		for (int i = 0, imax = pts.size(); i < imax; i++) {
+			double[] pt = pts.get(i).spt;
+			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		}
+		RectangularROI b = new RectangularROI();
+		b.setPoint(min);
+		b.setLengths(max[0] - min[0], max[1] - min[1]);
+		return b;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		return isNearOutline(x, y, Math.max(Math.ulp(x), Math.ulp(y)));
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		if (!super.isNearOutline(x, y, distance))
+			return false;
+
+		int imax = pts.size();
+		if (imax < 2)
+			return true;
+
+		double[] p = pts.get(0).spt;
+		double ox = p[0];
+		double oy = p[1];
+		for (int i = 1; i < imax; i++) {
+			p = pts.get(i).spt;
+			double px = p[0];
+			double py = p[1];
+			if (ROIUtils.isNearSegment(px - ox, py - oy, x - ox, y - oy, distance))
+				return true;
+			ox = px;
+			oy = py;
+		}
+		return false;
+	}
+
 	/**
 	 * @return iterator over points
 	 */
@@ -225,6 +278,21 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		c.name = name;
 		c.plot = plot;
 		return c;
+	}
+
+	/**
+	 * Remove point at given index
+	 * @param i
+	 */
+	public void removePoint(int i) {
+		pts.remove(i);
+	}
+
+	/**
+	 * Remove all points
+	 */
+	public void removeAllPoints() {
+		pts.clear();
 	}
 
 	@Override

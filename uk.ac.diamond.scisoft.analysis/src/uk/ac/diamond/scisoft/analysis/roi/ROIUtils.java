@@ -85,4 +85,55 @@ public class ROIUtils {
 		assert pt.length == 2;
 		return new double[] { pt[0], pt[1] };
 	}
+
+	/**
+	 * Check if point (x, y) is close to a line segment given by direction (dx, dy) and length
+	 * @param dx
+	 * @param dy
+	 * @param l
+	 * @param x
+	 * @param y
+	 * @param distance
+	 * @return true if given point is within distance of segment  
+	 */
+	public static boolean isNearSegment(double dx, double dy, double l, double x, double y, double distance) {
+		double t = x * dx + y * dy; // parameter on segment
+		if (t < 0 || t > l)
+			return false;
+
+		System.err.println(x * dy - y * dx);
+		return Math.abs(x * dy - y * dx) <= distance;
+	}
+
+	/**
+	 * Check if point (x, y) is close to a line segment given by vector (vx, vy)
+	 * @param vx
+	 * @param vy
+	 * @param x
+	 * @param y
+	 * @param distance
+	 * @return true if given point is within distance of segment  
+	 */
+	public static boolean isNearSegment(double vx, double vy, double x, double y, double distance) {
+		double l = Math.hypot(vx, vy);
+		return isNearSegment(vx/l, vy/l, l, x, y, distance);
+	}
+
+	/**
+	 * Update maximum and minimum values according to x and y
+	 * @param max
+	 * @param min
+	 * @param x
+	 * @param y
+	 */
+	public static void updateMaxMin(double[] max, double[] min, double x, double y) {
+		if (x > max[0])
+			max[0] = x;
+		if (y > max[1])
+			max[1] = x;
+		if (x < min[0])
+			min[0] = x;
+		if (y < min[1])
+			min[1] = y;
+	}
 }

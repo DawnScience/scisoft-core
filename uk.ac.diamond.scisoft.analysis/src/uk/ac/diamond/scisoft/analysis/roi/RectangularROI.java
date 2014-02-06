@@ -111,8 +111,18 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param minor (height)
 	 */
 	public void setLengths(double major, double minor) {
-		this.len[0] = major;
-		this.len[1] = minor;
+		len[0] = major;
+		len[1] = minor;
+	}
+
+	/**
+	 * @param x (width)
+	 * @param y (height)
+	 */
+	@Override
+	public void addToLengths(double x, double y) {
+		len[0] += x;
+		len[1] += y;
 	}
 
 	/**
@@ -587,6 +597,70 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[0] = 0;
 			}
 		}
+	}
+
+	@Override
+	public IRectangularROI getBounds() {
+		if (ang == 0)
+			return copy();
+
+		RectangularROI b = new RectangularROI();
+		double ac = Math.abs(cang);
+		double as = Math.abs(sang);
+		b.setLengths(as * len[0] + ac * len[1], ac * len[0] + as * len[1]);
+		if (sang >= 0) {
+			if (cang >= 0) {
+				b.addPoint(-sang * len[1], 0);
+			} else {
+				b.addPoint(-b.getLength(1), cang * len[1]);
+			}
+		} else {
+			if (cang < 0) {
+				b.addPoint(cang * len[0], -b.getLength(0));
+			} else {
+				b.addPoint(0, sang * len[0]);
+			}
+		}
+		return b;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		x -= spt[0];
+		y -= spt[1];
+		if (ang == 0) {
+			if (x < 0 || x > len[0])
+				return false;
+			return y >= 0 && y <= len[1];
+		}
+		// work in rotated coords
+		RotatedCoords src = new RotatedCoords(ang, false);
+		double[] pr = src.transformToRotated(x, y);
+		if (pr[0] < 0 || pr[0] > len[0])
+			return false;
+		return pr[1] >= 0 && pr[1] <= len[1];
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		if (!super.isNearOutline(x, y, distance))
+			return false;
+
+		double[] pta = spt;
+		double[] ptb = getPoint(1, 0);
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+			return true;
+		pta = ptb;
+		ptb = getPoint(1, 1);
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+			return true;
+		pta = ptb;
+		ptb = getPoint(0, 1);
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+			return true;
+		pta = ptb;
+		ptb = spt;
+		return ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance);
 	}
 
 	@Override

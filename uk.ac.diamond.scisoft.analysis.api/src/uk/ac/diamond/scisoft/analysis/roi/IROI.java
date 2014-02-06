@@ -12,7 +12,9 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 
 /**
- * Region of interest interface
+ * Region of interest interface. A region may be one or two dimensional and may enclose an area.
+ * If it is open (or does not enclose an area) then a point is consider to be inside it when it
+ * lies on its outline to within the accuracy given by that point's coordinates.
  */
 public interface IROI extends Serializable {
 
@@ -88,6 +90,14 @@ public interface IROI extends Serializable {
 	public void addPoint(double[] pt);
 
 	/**
+	 * Add an offset to start (or centre) point
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	void addPoint(double x, double y);
+
+	/**
 	 * To account for a down-sampling of the dataset, change ROI
 	 * @param subFactor
 	 */
@@ -102,6 +112,26 @@ public interface IROI extends Serializable {
 	 * @return true if plot is enabled
 	 */
 	public boolean isPlot();
+
+	/**
+	 * @return bounding box as rectangular ROI
+	 */
+	public IRectangularROI getBounds();
+
+	/**
+	 * @param x
+	 * @param y
+	 * @return true if given point is in ROI
+	 */
+	public boolean containsPoint(double x, double y);
+
+	/**
+	 * @param x
+	 * @param y
+	 * @param distance
+	 * @return true if given point within distance of outline of ROI 
+	 */
+	public boolean isNearOutline(double x, double y, double distance);
 
 	/**
 	 * @return a copy of ROI

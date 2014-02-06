@@ -21,52 +21,310 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ROITest {
+	@Test
+	public void testPointROI() {
+		PointROI p = new PointROI(10.0, 20.5);
+
+		IRectangularROI b = p.getBounds();
+		assertEquals(b.getPointX(), p.getPointX(), 1e-15);
+		assertEquals(b.getPointY(), p.getPointY(), 1e-15);
+		assertEquals(b.getLength(0), 0, 1e-15);
+		assertEquals(b.getLength(1), 0, 1e-15);
+		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
+		assertFalse(p.containsPoint(0, p.getPointY()));
+		assertTrue(p.isNearOutline(p.getPointX(), p.getPointY(), 2.5));
+		assertTrue(p.isNearOutline(p.getPointX()-1, p.getPointY(), 2.5));
+		assertFalse(p.isNearOutline(p.getPointX()-1, p.getPointY()+3, 2.5));
+	}
 
 	@Test
+	public void testLinearROI() {
+		LinearROI l = new LinearROI();
+		l.setLength(10);
+
+		IRectangularROI b = l.getBounds();
+		assertEquals(b.getPointX(), l.getPointX(), 1e-15);
+		assertEquals(b.getPointY(), l.getPointY(), 1e-15);
+		assertEquals(b.getLength(0), 10, 1e-15);
+		assertEquals(b.getLength(1), 0, 1e-15);
+		assertTrue(l.containsPoint(l.getPointX(), l.getPointY()));
+		assertFalse(l.containsPoint(-2, l.getPointY()));
+		assertTrue(l.isNearOutline(l.getPointX(), l.getPointY(), 2.5));
+		assertTrue(l.isNearOutline(l.getPointX(), l.getPointY()-1, 2.5));
+		assertFalse(l.isNearOutline(l.getPointX()-1, l.getPointY()+3, 2.5));
+
+		l.setAngleDegrees(45.);
+		assertTrue(l.containsPoint(l.getPointX(), l.getPointY()));
+		assertTrue(l.containsPoint(l.getPointX() + 2, l.getPointY() + 2));
+		assertFalse(l.containsPoint(2, l.getPointY()));
+		assertFalse(l.containsPoint(-2, l.getPointY()));
+	}
+
+	@Test
+	public void testRectangularROI() {
+		RectangularROI r = new RectangularROI();
+		r.setLengths(10.5, 23);
+
+		IRectangularROI b = r.getBounds();
+		assertEquals(boundingBox(r), b);
+		assertEquals(b.getPointX(), r.getPointX(), 1e-15);
+		assertEquals(b.getPointY(), r.getPointY(), 1e-15);
+		assertEquals(b.getLength(0), 10.5, 1e-15);
+		assertEquals(b.getLength(1), 23, 1e-15);
+		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertFalse(r.containsPoint(-2, r.getPointY()));
+		assertTrue(r.isNearOutline(r.getPointX(), r.getPointY(), 2.5));
+		assertTrue(r.isNearOutline(r.getPointX()-1, r.getPointY(), 2.5));
+		assertFalse(r.isNearOutline(r.getPointX()-1, r.getPointY()-3, 2.5));
+
+		r.setAngleDegrees(35.);
+		assertEquals(boundingBox(r), r.getBounds());
+		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertFalse(r.containsPoint(2, r.getPointY()));
+		assertFalse(r.containsPoint(-2, r.getPointY()));
+
+		r.setAngleDegrees(145.);
+		assertEquals(boundingBox(r), r.getBounds());
+		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertFalse(r.containsPoint(2, r.getPointY()));
+		assertTrue(r.containsPoint(-2, r.getPointY()));
+
+		r.setAngleDegrees(260.);
+		assertEquals(boundingBox(r), r.getBounds());
+		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertFalse(r.containsPoint(2, r.getPointY()));
+		assertFalse(r.containsPoint(-2, r.getPointY()));
+
+		r.setAngleDegrees(342.);
+		assertEquals(boundingBox(r), r.getBounds());
+		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertTrue(r.containsPoint(2, r.getPointY()));
+		assertFalse(r.containsPoint(-2, r.getPointY()));
+	}
+
+	public RectangularROI boundingBox(RectangularROI r) {
+		double[] p = r.getPointRef();
+		double xx = p[0];
+		double xn = p[0];
+		double yx = p[1];
+		double yn = p[1];
+
+		p = r.getPoint(1, 0);
+		if (p[0] > xx)
+			xx = p[0];
+		if (p[1] > yx)
+			yx = p[1];
+		if (p[0] < xn)
+			xn = p[0];
+		if (p[1] < yn)
+			yn = p[1];
+
+		p = r.getPoint(1, 1);
+		if (p[0] > xx)
+			xx = p[0];
+		if (p[1] > yx)
+			yx = p[1];
+		if (p[0] < xn)
+			xn = p[0];
+		if (p[1] < yn)
+			yn = p[1];
+
+		p = r.getPoint(0, 1);
+		if (p[0] > xx)
+			xx = p[0];
+		if (p[1] > yx)
+			yx = p[1];
+		if (p[0] < xn)
+			xn = p[0];
+		if (p[1] < yn)
+			yn = p[1];
+
+		RectangularROI b = new RectangularROI(1, 0);
+		b.setPoint(xn, yn);
+		xx -= xn;
+		yx -= yn;
+		if (xx > yx)
+			b.setLengths(xx, yx);
+		else
+			b.setLengths(yx, xx);
+		return b;
+	}
+
+	private static final int ANGLES = 180;
+
+	@Test
+	public void testCircularROI() {
+		CircularROI c = new CircularROI(10);
+
+		IRectangularROI b = c.getBounds();
+		assertEquals(b.getPointX() + 10, c.getPointX(), 1e-15);
+		assertEquals(b.getPointY() + 10, c.getPointY(), 1e-15);
+		assertEquals(b.getLength(0), 20, 1e-15);
+		assertEquals(b.getLength(1), 20, 1e-15);
+		assertTrue(c.containsPoint(c.getPointX(), c.getPointY()));
+		assertFalse(c.containsPoint(-20, c.getPointY()));
+		CircularROI sc = new CircularROI(9.9);
+		CircularROI lc = new CircularROI(10.1);
+		for (int i = 0; i < ANGLES; i++) {
+			double a = (i * Math.PI)/ANGLES;
+			assertTrue(c.containsPoint(sc.getPoint(a)));
+			assertTrue(c.isNearOutline(sc.getPoint(a), 1));
+			assertFalse(c.isNearOutline(sc.getPoint(a), 0.01));
+			assertFalse(c.containsPoint(lc.getPoint(a)));
+			assertTrue(c.isNearOutline(lc.getPoint(a), 1));
+			assertFalse(c.isNearOutline(lc.getPoint(a), 0.01));
+		}
+		assertTrue(c.isNearOutline(c.getPointX()+10, c.getPointY(), 2.5));
+		assertTrue(c.isNearOutline(c.getPointX()+10, c.getPointY()-1, 2.5));
+		assertFalse(c.isNearOutline(c.getPointX()+9, c.getPointY()+9, 2.5));
+	}
+
+	
+	@Test
 	public void testEllipticalROI() {
-		EllipticalROI roi = new EllipticalROI(10, 0, 0);
-		assertTrue(roi.containsPoint(3,3));
-		assertTrue(roi.containsPoint(9,0));
-		assertTrue(roi.containsPoint(10,0));
-		assertFalse(roi.containsPoint(10.0001,0));
-		assertFalse(roi.containsPoint(9,9));
+		EllipticalROI e = new EllipticalROI(10, 5, Math.PI/4., 0, 0);
+		assertTrue(e.containsPoint(3,3));
+		assertTrue(e.containsPoint(7,6));
+		assertTrue(e.containsPoint(7,7));
+		assertFalse(e.containsPoint(10.0001,10));
+		assertFalse(e.containsPoint(9,9));
 
-		RectangularROI rect = new RectangularROI(20, 0);
-		assertFalse(roi.isContainedBy(rect));
+		IRectangularROI b = e.getBounds();
+		double side = 15.811388300841898;
+		assertEquals(b.getPointX() + side/2, e.getPointX(), 1e-15);
+		assertEquals(b.getPointY() + side/2, e.getPointY(), 1e-15);
+		assertTrue(e.containsPoint(e.getPointX(), e.getPointY()));
+		assertFalse(e.containsPoint(-20, e.getPointY()));
 
-		rect.setPoint(-10, -10);
-		assertTrue(roi.isContainedBy(rect));
+		EllipticalROI se = new EllipticalROI(9.9, 4.9, Math.PI/4., 0, 0);
+		EllipticalROI le = new EllipticalROI(10.1, 5.1, Math.PI/4., 0, 0);
+		for (int i = 0; i < ANGLES; i++) {
+			double a = (i * Math.PI)/ANGLES;
+			assertTrue(e.containsPoint(se.getPoint(a)));
+			assertTrue(e.isNearOutline(se.getPoint(a), 1));
+			assertFalse(e.isNearOutline(se.getPoint(a), 0.01));
+			assertFalse(e.containsPoint(le.getPoint(a)));
+			assertTrue(e.isNearOutline(le.getPoint(a), 1));
+			assertFalse(e.isNearOutline(le.getPoint(a), 0.01));
+		}
+
+		RectangularROI rect = new RectangularROI(side, 0);
+		assertFalse(e.isContainedBy(rect));
+
+		rect.setPoint(-side/2, -side/2);
+		assertTrue(e.isContainedBy(rect));
 		rect.setLengths(20, 10);
-		assertFalse(roi.isContainedBy(rect));
+		assertFalse(e.isContainedBy(rect));
 
 		rect.setPoint(-10, -5);
-		roi.setSemiAxis(1, 5);
-		assertTrue(roi.isContainedBy(rect));
+		e.setSemiAxis(1, 5);
+		e.setAngleDegrees(0);
+		assertTrue(e.isContainedBy(rect));
 
-		roi.setAngleDegrees(90);
-		assertFalse(roi.isContainedBy(rect));
+		e.setAngleDegrees(90);
+		assertFalse(e.isContainedBy(rect));
 
 		rect.setPoint(-5, -10);
-		assertFalse(roi.isContainedBy(rect));
+		assertFalse(e.isContainedBy(rect));
 
 		rect.setLengths(10, 20);
-		assertTrue(roi.isContainedBy(rect));
+		assertTrue(e.isContainedBy(rect));
 
-		roi.setAngleDegrees(45);
-		assertFalse(roi.isContainedBy(rect));
+		e.setAngleDegrees(45);
+		assertFalse(e.isContainedBy(rect));
 
 		rect.setPoint(-10, -10);
 		rect.setLengths(20, 20);
-		assertTrue(roi.isContainedBy(rect));
+		assertTrue(e.isContainedBy(rect));
 
 		double d = Math.sqrt(0.5*(10*10 + 5*5));
 		rect.setPoint(-d, -d);
 		rect.setLengths(2*d, 2*d);
-		assertTrue(roi.isContainedBy(rect));
+		assertTrue(e.isContainedBy(rect));
 
 		d *= 0.99;
 		rect.setPoint(-d, -d);
 		rect.setLengths(2*d, 2*d);
-		assertFalse(roi.isContainedBy(rect));
+		assertFalse(e.isContainedBy(rect));
+	}
+
+	@Test
+	public void testSectorROI() {
+		SectorROI s = new SectorROI();
+		s.setPoint(3,  3);
+		s.setRadii(5, 10);
+		s.setAnglesDegrees(23, 69);
+
+		IRectangularROI b = s.getBounds();
+		assertFalse(b.containsPoint(s.getPointX(), s.getPointY()));
+		assertTrue(b.containsPoint(8, 8));
+
+		CircularROI sc = new CircularROI(9.9);
+		sc.setPoint(s.getPoint());
+		CircularROI lc = new CircularROI(10.1);
+		lc.setPoint(s.getPoint());
+		double ar = s.getAngle(1) - s.getAngle(0);
+		for (int i = 0; i < ANGLES; i++) {
+			double a = s.getAngle(0) + (i * ar)/(ANGLES - 1);
+			assertTrue(s.containsPoint(sc.getPoint(a)));
+			assertTrue(s.isNearOutline(sc.getPoint(a), 1));
+			boolean f = s.isNearOutline(sc.getPoint(a), 0.01);
+			if (i > 0 && i < ANGLES-1)
+				assertFalse(f);
+			else
+				assertTrue(f);
+			assertFalse(s.containsPoint(lc.getPoint(a)));
+			assertTrue(s.isNearOutline(lc.getPoint(a), 1));
+			assertFalse(s.isNearOutline(lc.getPoint(a), 0.01));
+		}
+	}
+
+	private static final int SIDES = 8;
+
+	@Test
+	public void testPolylineROI() {
+		PolylineROI p = new PolylineROI();
+		double r = 20;
+		for (int i = 0; i < SIDES; i++) {
+			double a = (2 * i * Math.PI) / SIDES;
+			p.insertPoint(r*Math.cos(a), r*Math.sin(a));
+		}
+
+		IRectangularROI b = p.getBounds();
+		assertEquals(b.getPointX(), -r, 1e-15);
+		assertEquals(b.getPointY(), -r, 1e-15);
+		assertEquals(b.getLength(0), 2*r, 1e-15);
+		assertEquals(b.getLength(1), 2*r, 1e-15);
+
+		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
+		assertFalse(p.containsPoint(0, 0));
+
+		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
+		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() + 1, 2.5));
+		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
+	}
+
+	@Test
+	public void testPolygonalROI() {
+		PolygonalROI p = new PolygonalROI();
+		double r = 20;
+		for (int i = 0; i < SIDES; i++) {
+			double a = (2 * i * Math.PI) / SIDES;
+			p.insertPoint(r*Math.cos(a), r*Math.sin(a));
+		}
+
+		IRectangularROI b = p.getBounds();
+		assertEquals(b.getPointX(), -r, 1e-15);
+		assertEquals(b.getPointY(), -r, 1e-15);
+		assertEquals(b.getLength(0), 2*r, 1e-15);
+		assertEquals(b.getLength(1), 2*r, 1e-15);
+
+		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
+		assertTrue(p.containsPoint(0, 0));
+		assertFalse(p.containsPoint(1, r));
+
+		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
+		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() - 1, 2.5));
+		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
 	}
 }

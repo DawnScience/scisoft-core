@@ -27,22 +27,11 @@ public class SectorCoords {
 
 	/**
 	 * @param ca
-	 * @param cb
+	 * @param cb (in degrees, if not Cartesian)
 	 * @param isCartesian
 	 */
 	public SectorCoords(double ca, double cb, boolean isCartesian) {
-		if (isCartesian) {
-			x = ca;
-			y = cb;
-			r = Math.hypot(x, y);
-			p = Math.atan2(y, x);
-			if (p < 0) p += 2*Math.PI;
-		} else {
-			r = ca;
-			p = Math.toRadians(cb);
-			x = r*Math.cos(p);
-			y = r*Math.sin(p);
-		}
+		this(ca, cb, isCartesian, true);
 	}
 
 	/**
@@ -85,7 +74,7 @@ public class SectorCoords {
 	 * @param ca
 	 * @param cb
 	 * @param isCartesian
-	 * @param isDegrees 
+	 * @param isDegrees (only used if not Cartesian)
 	 */
 	public SectorCoords(double ca, double cb, boolean isCartesian, boolean isDegrees) {
 		if (isCartesian) {

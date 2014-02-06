@@ -138,6 +138,18 @@ public class ROIBase implements IROI {
 	}
 
 	/**
+	 * Add an offset to start (or centre) point
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	@Override
+	public void addPoint(double x, double y) {
+		spt[0] += x;
+		spt[1] += y;
+	}
+
+	/**
 	 * @return a copy
 	 */
 	@Override
@@ -173,6 +185,32 @@ public class ROIBase implements IROI {
 	@Override
 	public boolean isPlot() {
 		return plot;
+	}
+
+	@Override
+	public IRectangularROI getBounds() {
+		return new RectangularROI(spt[0], spt[1], 0, 0, 0);
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		return getBounds().containsPoint(x, y);
+	}
+
+	public boolean containsPoint(double[] pt) {
+		return containsPoint(pt[0], pt[1]);
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		IRectangularROI b = getBounds();
+		b.addPoint(-distance, -distance);
+		b.addToLengths(2*distance, 2*distance);
+		return b.containsPoint(x, y);
+	}
+
+	public boolean isNearOutline(double[] pt, double distance) {
+		return isNearOutline(pt[0],  pt[1], distance);
 	}
 
 	@Override

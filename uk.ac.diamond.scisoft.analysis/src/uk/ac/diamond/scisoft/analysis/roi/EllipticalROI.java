@@ -203,11 +203,18 @@ public class EllipticalROI extends ROIBase {
 	 * @return point 
 	 */
 	public double[] getPoint(double angle) {
+		double[] pt = getRelativePoint(angle);
+		pt[0] += spt[0];
+		pt[1] += spt[1];
+		return pt;
+	}
+
+	public double[] getRelativePoint(double angle) {
 		double cb = Math.cos(angle);
 		double sb = Math.sin(angle);
 
-		return new double[] { spt[0] + saxis[0]*cang*cb - saxis[1]*sang*sb, 
-				spt[1] + saxis[0]*sang*cb + saxis[1]*cang*sb};
+		return new double[] { saxis[0] * cang * cb - saxis[1] * sang * sb,
+				saxis[0] * sang * cb + saxis[1] * cang * sb };
 	}
 
 	/**
@@ -225,22 +232,59 @@ public class EllipticalROI extends ROIBase {
 	 * @return distance
 	 */
 	public double getDistance(double angle) {
-		double[] p = getPoint(angle);
-		return Math.hypot(p[0] - spt[0], p[1] - spt[1]);
+		double[] p = getRelativePoint(angle);
+		return Math.hypot(p[0], p[1]);
+	}
+
+	@Override
+	public IRectangularROI getBounds() {
+		// angles which produce stationary points in x and y
+		double[] angles = new double[] { Math.atan2(-saxis[1] * sang, saxis[0] * cang),
+			Math.atan2(saxis[1] * cang, saxis[0] * sang)	 };
+
+		double[] pt = getRelativePoint(angles[0]);
+		double[] max = pt.clone();
+		double[] min = pt.clone();
+
+		pt = getRelativePoint(angles[0] + Math.PI);
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		pt = getRelativePoint(angles[1]);
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		pt = getRelativePoint(angles[1] + Math.PI);
+		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+
+		RectangularROI b = new RectangularROI();
+		b.setLengths(max[0] - min[0], max[1] - min[1]);
+		b.setPoint(spt[0] + min[0], spt[1] + min[1]);
+		return b;
+	}
+
+	protected double getAngleRelative(double x, double y) {
+		return Math.atan2(saxis[0]*(cang*y - sang*x), saxis[1]*(cang*x + sang*y));
 	}
 
 	/**
 	 * Determine if point is on or inside ellipse
-	 * @param point
+	 * @param x
+	 * @param y
 	 * @return true if ellipse contains point
 	 */
-	public boolean containsPoint(double... point) {
-		double dx = point[0] - spt[0];
-		double dy = point[1] - spt[1];
-		double a = Math.atan2(cang*dy - sang*dx, cang*dx + sang*dy);
-		double l = getDistance(a);
-		
-		return Math.hypot(dx, dy) <= l;
+	@Override
+	public boolean containsPoint(double x, double y) {
+		x -= spt[0];
+		y -= spt[1];
+		double a = getAngleRelative(x, y);
+		return Math.hypot(x, y) <= getDistance(a);
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		x -= spt[0];
+		y -= spt[1];
+		double a = getAngleRelative(x, y);
+		return Math.abs(getDistance(a) - Math.hypot(x, y)) <= distance;
 	}
 
 	/**

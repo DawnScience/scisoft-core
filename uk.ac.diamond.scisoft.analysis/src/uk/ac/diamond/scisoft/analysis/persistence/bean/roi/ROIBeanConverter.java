@@ -1,5 +1,5 @@
 /*-
- * Copyright 2013 Diamond Light Source Ltd.
+ * Copyright 2014 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class ROIBeanConverter {
 	 * @param roi
 	 * @return ROIBean
 	 */
-	public static ROIBean iroiToROIBean(String name, IROI roi){
+	public static ROIBean getROIBean(String name, IROI roi){
 		Class<? extends IROI> roiClass = roi.getClass();
 		if(roiClass == PointROI.class){
 			PointROI proi = (PointROI) roi;
@@ -163,7 +163,7 @@ public class ROIBeanConverter {
 	 * @param rbean
 	 * @return ROIBase
 	 */
-	public static IROI roiBeanToIROI(ROIBean rbean){
+	public static IROI getROI(ROIBean rbean){
 		if(rbean instanceof PointROIBean){
 			PointROIBean proibean = (PointROIBean) rbean;
 			PointROI proi = new PointROI();

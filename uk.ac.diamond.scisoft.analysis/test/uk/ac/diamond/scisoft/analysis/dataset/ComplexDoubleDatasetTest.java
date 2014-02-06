@@ -61,7 +61,14 @@ public class ComplexDoubleDatasetTest {
 		AbstractDataset aa = Maths.abs(a);
 		assertEquals(AbstractDataset.FLOAT64, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
-		assertEquals(8, aa.getItemsize());		
+		assertEquals(8, aa.getItemsize());
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
+		c.hashCode();
+		z.hashCode();
+		aa.hashCode();
 	}
 
 	@Test

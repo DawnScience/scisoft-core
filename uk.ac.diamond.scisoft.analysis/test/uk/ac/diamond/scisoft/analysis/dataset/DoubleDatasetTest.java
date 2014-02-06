@@ -38,6 +38,11 @@ public class DoubleDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(2*i+1, c.getElementDoubleAbs(it.index), 1e-5 * i);
 		}
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
+		c.hashCode();
 	}
 
 	@Test

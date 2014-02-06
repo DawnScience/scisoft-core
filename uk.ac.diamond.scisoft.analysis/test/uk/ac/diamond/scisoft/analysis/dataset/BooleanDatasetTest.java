@@ -40,6 +40,10 @@ public class BooleanDatasetTest {
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(i % 2 == 1, b.getElementBooleanAbs(it.index));
 		}
+
+		// test hashes
+		a.hashCode();
+		b.hashCode();
 	}
 
 	@Test

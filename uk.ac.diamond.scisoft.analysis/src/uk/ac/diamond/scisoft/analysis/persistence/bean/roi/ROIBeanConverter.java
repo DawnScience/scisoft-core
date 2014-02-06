@@ -1,5 +1,5 @@
 /*-
- * Copyright 2014 Diamond Light Source Ltd.
+ * Copyright 2013 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.FreeDrawROI;
+import uk.ac.diamond.scisoft.analysis.roi.GridROI;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.PerimeterBoxROI;
@@ -77,6 +78,20 @@ public class ROIBeanConverter {
 			rroibean.setAngle(rroi.getAngle());
 			rroibean.setLengths(rroi.getLengths());
 			return rroibean;
+
+		} else if(roiClass == GridROI.class){
+			GridROI groi = (GridROI) roi;
+			GridROIBean groibean = new GridROIBean();
+			groibean.setName(name);
+			groibean.setStartPoint(groi.getPoint());
+			groibean.setEndPoint(groi.getEndPoint());
+			groibean.setAngle(groi.getAngle());
+			groibean.setLengths(groi.getLengths());
+			groibean.setxSpacing(groi.getxSpacing());
+			groibean.setySpacing(groi.getySpacing());
+			groibean.setGridLinesOn(groi.isGridLineOn());
+			groibean.setMidPointOn(groi.isMidPointOn());
+			return groibean;
 
 		} else if(roiClass == LinearROI.class){
 			LinearROI lroi = (LinearROI) roi;
@@ -142,6 +157,9 @@ public class ROIBeanConverter {
 			sroibean.setRadii(sroi.getRadii());
 			sroibean.setSymmetry(sroi.getSymmetry());
 			sroibean.setDpp(sroi.getDpp());
+			sroibean.setClippingCompensation(sroi.isClippingCompensation());
+			sroibean.setCombineSymmetry(sroi.isCombineSymmetry());
+			sroibean.setAverageArea(sroi.isAverageArea());
 			return sroibean;
 
 		} else if(roiClass == CircularROI.class){
@@ -183,7 +201,17 @@ public class ROIBeanConverter {
 			RectangularROI rroi = new RectangularROI(rroibean.getStartPoint()[0], 
 					rroibean.getStartPoint()[1], rroibean.getLengths()[0], 
 					rroibean.getLengths()[1], rroibean.getAngle());
+			rroi.setName(rroibean.getName());
 			return rroi;
+		} else if(rbean instanceof GridROIBean){
+			GridROIBean groibean = (GridROIBean) rbean;
+			GridROI groi = new GridROI(groibean.getStartPoint()[0], 
+					groibean.getStartPoint()[1], groibean.getLengths()[0], 
+					groibean.getLengths()[1], groibean.getAngle(),
+					groibean.getxSpacing(), groibean.getySpacing(),
+					groibean.isGridLinesOn(), groibean.isMidPointOn());
+			groi.setName(groibean.getName());
+			return groi;
 		} else if(rbean instanceof LinearROIBean){
 			LinearROIBean lroibean = (LinearROIBean) rbean;
 			LinearROI lroi = new LinearROI();
@@ -208,6 +236,7 @@ public class ROIBeanConverter {
 				double[] point = it.next();
 				pgroi.insertPoint(point);
 			}
+			pgroi.setName(pgroibean.getName());
 			return pgroi;
 		} else if(rbean instanceof FreedrawROIBean){
 			FreedrawROIBean fdroibean = (FreedrawROIBean) rbean;
@@ -217,10 +246,12 @@ public class ROIBeanConverter {
 				double[] point = it.next();
 				fdroi.insertPoint(point);
 			}
+			fdroi.setName(fdroibean.getName());
 			return fdroi;
 		} else if(rbean instanceof RingROIBean){
 			RingROIBean sroibean = (RingROIBean) rbean;
 			RingROI sroi = new RingROI();
+			sroi.setName(sroibean.getName());
 			sroi.setPoint(sroibean.getStartPoint());
 			sroi.setRadii(sroibean.getRadii());
 			sroi.setAngles(sroibean.getAngles());
@@ -230,16 +261,21 @@ public class ROIBeanConverter {
 		} else if (rbean instanceof SectorROIBean){
 			SectorROIBean sroibean = (SectorROIBean) rbean;
 			SectorROI sroi = new SectorROI();
+			sroi.setName(sroibean.getName());
 			sroi.setPoint(sroibean.getStartPoint());
 			sroi.setRadii(sroibean.getRadii());
 			sroi.setAngles(sroibean.getAngles());
 			sroi.setDpp(sroibean.getDpp());
 			sroi.setSymmetry(sroibean.getSymmetry());
+			sroi.setClippingCompensation(sroibean.isClippingCompensation());
+			sroi.setCombineSymmetry(sroibean.isCombineSymmetry());
+			sroi.setAverageArea(sroibean.isAverageArea());
 			return sroi;
 		} else if(rbean instanceof CircularROIBean){
 			CircularROIBean croibean = (CircularROIBean) rbean;
 			CircularROI croi = new CircularROI(croibean.getRadius(), 
 					croibean.getStartPoint()[0], croibean.getStartPoint()[1]);
+			croibean.setName(croibean.getName());
 			return croi;
 		} else {
 			logger.debug("This type is not supported");
@@ -252,15 +288,18 @@ public class ROIBeanConverter {
 	 * @return boolean
 	 */
 	public static boolean isROISupported(IROI roi){
-		if(roi instanceof PointROI)return true;
-		else if(roi instanceof CircularROI)return true;
-		else if(roi instanceof PerimeterBoxROI)return true;
-		else if(roi instanceof RectangularROI)return true;
-		else if(roi instanceof RingROI)return true;
-		else if(roi instanceof SectorROI)return true;
-		else if(roi instanceof FreeDrawROI)return true;
-		else if(roi instanceof PolylineROI)return true;
-		else if(roi instanceof PolygonalROI)return true;
-		else return false;
+		if(roi instanceof PointROI
+				|| roi instanceof LinearROI
+				|| roi instanceof CircularROI
+				|| roi instanceof GridROI
+				|| roi instanceof PerimeterBoxROI
+				|| roi instanceof RectangularROI
+				|| roi instanceof RingROI
+				|| roi instanceof SectorROI
+				|| roi instanceof FreeDrawROI
+				|| roi instanceof PolylineROI
+				|| roi instanceof PolygonalROI)
+			return true;
+		return false;
 	}
 }

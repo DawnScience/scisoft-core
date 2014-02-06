@@ -67,6 +67,13 @@ public class GridROI extends RectangularROI implements Serializable {
 	}
 
 	public GridROI(double ptx, double pty, double width, double height, double angle, double xSpacing, double ySpacing,
+			boolean gridLinesOn, boolean midPointOn) {
+		this(ptx, pty, width, height, angle, xSpacing, ySpacing);
+		this.gridLinesOn = gridLinesOn;
+		this.midPointOn = midPointOn;
+	}
+
+	public GridROI(double ptx, double pty, double width, double height, double angle, double xSpacing, double ySpacing,
 			boolean gridLinesOn, boolean midPointOn, GridPreferences gridPref) {
 		this(ptx, pty, width, height, angle, xSpacing, ySpacing);
 		this.gridLinesOn = gridLinesOn;

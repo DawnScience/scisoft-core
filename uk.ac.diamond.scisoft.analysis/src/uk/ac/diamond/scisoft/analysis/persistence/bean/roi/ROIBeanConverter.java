@@ -22,7 +22,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.roi.CircularFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
+import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.FreeDrawROI;
 import uk.ac.diamond.scisoft.analysis.roi.GridROI;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
@@ -172,6 +175,44 @@ public class ROIBeanConverter {
 			croibean.setRadius(croi.getRadius());
 			return croibean;
 
+		} else if(roiClass == EllipticalROI.class){
+			EllipticalROI eroi = (EllipticalROI) roi;
+			EllipticalROIBean eroibean = new EllipticalROIBean();
+			eroibean.setName(name);
+			eroibean.setStartPoint(eroi.getPoint());
+			eroibean.setSemiAxes(eroi.getSemiAxes());
+			eroibean.setAngle(eroi.getAngle());
+			return eroibean;
+
+		} else if(roiClass == CircularFitROI.class){
+			CircularFitROI croi = (CircularFitROI) roi;
+			CircularFitROIBean croibean = new CircularFitROIBean();
+			croibean.setName(name);
+			croibean.setRadius(croi.getRadius());
+			croibean.setStartPoint(croi.getPoint());
+			List<double[]> points = new ArrayList<double[]>();
+			PolylineROI poly = croi.getPoints();
+			for (int i = 0; i < poly.getNumberOfPoints(); i++) {
+				points.add(poly.getPoint(i).getPoint());
+			}
+			croibean.setPoints(points);
+			return croibean;
+
+		} else if(roiClass == EllipticalFitROI.class){
+			EllipticalFitROI eroi = (EllipticalFitROI) roi;
+			EllipticalFitROIBean eroibean = new EllipticalFitROIBean();
+			eroibean.setName(name);
+			eroibean.setStartPoint(eroi.getPoint());
+			eroibean.setSemiAxes(eroi.getSemiAxes());
+			eroibean.setAngle(eroi.getAngle());
+			List<double[]> points = new ArrayList<double[]>();
+			PolylineROI poly = eroi.getPoints();
+			for (int i = 0; i < poly.getNumberOfPoints(); i++) {
+				points.add(poly.getPoint(i).getPoint());
+			}
+			eroibean.setPoints(points);
+			return eroibean;
+
 		} else {
 			logger.debug("This type is not supported");
 		}
@@ -277,8 +318,40 @@ public class ROIBeanConverter {
 			CircularROIBean croibean = (CircularROIBean) rbean;
 			CircularROI croi = new CircularROI(croibean.getRadius(), 
 					croibean.getStartPoint()[0], croibean.getStartPoint()[1]);
-			croibean.setName(croibean.getName());
+			croi.setName(croibean.getName());
 			return croi;
+		} else if(rbean instanceof CircularFitROIBean){
+			CircularFitROIBean croibean = (CircularFitROIBean) rbean;
+			Iterator<double[]> it = croibean.getPoints().iterator();
+			PolylineROI poly = new PolylineROI();
+			while (it.hasNext()) {
+				double[] point = it.next();
+				poly.insertPoint(point);
+			}
+			CircularFitROI croi = new CircularFitROI(poly);
+			croi.setName(croibean.getName());
+			return croi;
+		} else if(rbean instanceof EllipticalROIBean){
+			EllipticalROIBean eroibean = (EllipticalROIBean) rbean;
+			EllipticalROI croi = new EllipticalROI();
+			croi.setName(eroibean.getName());
+			croi.setPoint(eroibean.getStartPoint());
+			croi.setAngle(eroibean.getAngle());
+			croi.setSemiaxes(eroibean.getSemiAxes());
+			return croi;
+		} else if(rbean instanceof EllipticalFitROIBean){
+			EllipticalFitROIBean eroibean = (EllipticalFitROIBean) rbean;
+			Iterator<double[]> it = eroibean.getPoints().iterator();
+			PolylineROI poly = new PolylineROI();
+			while (it.hasNext()) {
+				double[] point = it.next();
+				poly.insertPoint(point);
+			}
+			EllipticalFitROI eroi = new EllipticalFitROI(poly);
+			eroi.setName(eroibean.getName());
+			eroi.setSemiaxes(eroibean.getSemiAxes());
+			eroi.setAngle(eroibean.getAngle());
+			return eroi;
 		} else {
 			logger.debug("This type is not supported");
 		}
@@ -302,7 +375,10 @@ public class ROIBeanConverter {
 				|| roi instanceof PolylineROI
 				|| roi instanceof PolygonalROI
 				|| roi instanceof XAxisBoxROI
-				|| roi instanceof YAxisBoxROI)
+				|| roi instanceof YAxisBoxROI
+				|| roi instanceof EllipticalROI
+				|| roi instanceof CircularFitROI
+				|| roi instanceof EllipticalFitROI)
 			return true;
 		return false;
 	}

@@ -21,7 +21,8 @@ import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.optim.nonlinear.vector.Target;
 import org.apache.commons.math3.optim.nonlinear.vector.Weight;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+
 
 /**
  * Conic section fit function which returns the coordinates (interleaved) for the points
@@ -34,7 +35,7 @@ public interface IConicSectionFitFunction extends MultivariateVectorFunction {
 	 * @param x
 	 * @param y
 	 */
-	public void setPoints(AbstractDataset x, AbstractDataset y);
+	public void setPoints(IDataset x, IDataset y);
 
 	/**
 	 * @return array of interleaved coordinates
@@ -52,7 +53,7 @@ public interface IConicSectionFitFunction extends MultivariateVectorFunction {
 	 * @return squared distances
 	 * @throws IllegalArgumentException
 	 */
-	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
+	public IDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
 
 	/**
 	 * @return a matrix function that calculates the Jacobian

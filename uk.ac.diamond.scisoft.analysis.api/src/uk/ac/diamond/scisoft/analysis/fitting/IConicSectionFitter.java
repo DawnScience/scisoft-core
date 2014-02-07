@@ -16,7 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+
 
 /**
  * Conic section fitter interface
@@ -41,14 +42,14 @@ public interface IConicSectionFitter {
 	 * @param y
 	 * @param init parameters (can be null)
 	 */
-	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init);
+	public void geometricFit(IDataset x, IDataset y, double[] init);
 
 	/**
 	 * Fit points given by x, y datasets to a conic section using an algebraic fit.
 	 * @param x
 	 * @param y
 	 */
-	public void algebraicFit(AbstractDataset x, AbstractDataset y);
+	public void algebraicFit(IDataset x, IDataset y);
 
 	/**
 	 * Create a function that is used by optimizer with optional
@@ -57,5 +58,5 @@ public interface IConicSectionFitter {
 	 * @param y can be null
 	 * @return function
 	 */
-	public IConicSectionFitFunction getFitFunction(AbstractDataset x, AbstractDataset y);
+	public IConicSectionFitFunction getFitFunction(IDataset x, IDataset y);
 }

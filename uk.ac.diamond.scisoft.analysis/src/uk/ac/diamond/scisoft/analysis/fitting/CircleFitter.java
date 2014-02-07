@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import Jama.EigenvalueDecomposition;
@@ -56,14 +57,14 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 	private double[] ca;
 	private double[] sa;
 
-	public CircleCoordinatesFunction(AbstractDataset x, AbstractDataset y) {
+	public CircleCoordinatesFunction(IDataset x, IDataset y) {
 		setPoints(x, y);
 	}
 
 	@Override
-	public void setPoints(AbstractDataset x, AbstractDataset y) {
-		X = x;
-		Y = y;
+	public void setPoints(IDataset x, IDataset y) {
+		X = (AbstractDataset)x;
+		Y = (AbstractDataset)y;
 		n = X.getSize();
 		m = 2*n;
 		v = new DoubleDataset(m);
@@ -224,7 +225,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	}
 
 	@Override
-	public IConicSectionFitFunction getFitFunction(AbstractDataset x, AbstractDataset y) {
+	public IConicSectionFitFunction getFitFunction(IDataset x, IDataset y) {
 		if (fitFunction == null) {
 			if (x == null || y == null)
 				throw new IllegalArgumentException("Fitter uninitialized so coordinate datasets are needed");
@@ -249,7 +250,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	 * @param init parameters (can be null)
 	 */
 	@Override
-	public void geometricFit(AbstractDataset x, AbstractDataset y, double[] init) {
+	public void geometricFit(IDataset x, IDataset y, double[] init) {
 		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
@@ -293,7 +294,7 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	 * @param y
 	 */
 	@Override
-	public void algebraicFit(AbstractDataset x, AbstractDataset y) {
+	public void algebraicFit(IDataset x, IDataset y) {
 		residual = Double.NaN;
 		if (x.getSize() < PARAMETERS || y.getSize() < PARAMETERS) {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
@@ -313,11 +314,13 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	 * This uses the Pratt method as mentioned in "Error analysis for circle fitting algorithms"
 	 * by A. Al-Sharadqah and N. Chernov, Electronic Journal of Statistics, v3, pp886-991 (2009)
 	 * <p>
-	 * @param x
-	 * @param y
+	 * @param ix
+	 * @param iy
 	 * @return geometric parameters
 	 */
-	private static double[] quickfit(AbstractDataset x, AbstractDataset y) {
+	private static double[] quickfit(IDataset ix, IDataset iy) {
+		AbstractDataset x = (AbstractDataset)ix;
+		AbstractDataset y = (AbstractDataset)iy;
 		double mx = (Double) x.mean();
 		double my = (Double) y.mean();
 		x = Maths.subtract(x.cast(AbstractDataset.FLOAT64), mx);

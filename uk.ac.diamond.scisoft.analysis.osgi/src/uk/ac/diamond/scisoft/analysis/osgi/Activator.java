@@ -8,6 +8,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService;
+import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderService;
 
@@ -33,6 +34,9 @@ public class Activator implements BundleActivator {
 		props.put("description", "A service for loading of split analysis packages");
 		context.registerService(ClassLoaderService.class, new ClassLoaderServiceImpl(), props);
 		
+		props = new Hashtable<String, String>(1);
+		props.put("description", "A service for creating fitters");
+		context.registerService(IFittingAlgorithmService.class, new FittingAlgorithmServiceImpl(), props);
 
 	}
 

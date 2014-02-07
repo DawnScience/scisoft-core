@@ -1,5 +1,5 @@
 /*-
- * Copyright 2012 Diamond Light Source Ltd.
+ * Copyright 2013 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,26 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
-import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
+import uk.ac.diamond.scisoft.analysis.dataset.Activator;
+import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 
 /**
- * An elliptical region of interest which fits the points in a polygonal region of interest
+ * A circular region of interest which fits the points in a polygonal region of interest
  */
-public class EllipticalFitROI extends EllipticalROI {
+public class CircularFitROI extends CircularROI {
 
 	private PolylineROI proi;
-	private boolean circleOnly;
-	private transient IConicSectionFitter fitter; // The fitter is not serializable, the EllipticalFitROI is.
+	private IConicSectionFitter fitter;
 	private double residual;
 
-	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
-		super(major, minor, angle, ptx, pty);
+	private CircularFitROI(double radius, double ptx, double pty) {
+		super(radius, ptx, pty);
 		residual = 0;
 	}
 
-	public EllipticalFitROI(PolylineROI points) {
-		this(points, false);
-	}
-
-	public EllipticalFitROI(PolylineROI points, boolean fitCircle) {
+	public CircularFitROI(PolylineROI points) {
 		super(1, 0, 0);
-		circleOnly = fitCircle;
 		setPoints(points);
 	}
 
@@ -53,42 +47,36 @@ public class EllipticalFitROI extends EllipticalROI {
 	}
 
 	@Override
-	public EllipticalFitROI copy() {
-		EllipticalFitROI c = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
-		c.proi = proi.copy();
+	public CircularFitROI copy() {
+		CircularFitROI c = new CircularFitROI(getRadius(), getPointX(), getPointY());
 		c.name = name;
+		c.proi = proi.copy();
 		c.plot = plot;
 		return c;
 	}
 
 	/**
-	 * Fit an ellipse to given polyline
+	 * Fit a circle to given polygon
 	 * @param polyline
 	 * @return fitter
 	 */
-	public static IConicSectionFitter fit(PolylineROI polyline, final boolean fitCircle) {
+	public static IConicSectionFitter fit(PolylineROI polyline) {
 		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
-		if (fitCircle) {
-			CircleFitter f = new CircleFitter();
-			f.geometricFit(xy[0], xy[1], null);
-			return f;
-		}
 
-		IConicSectionFitter f = new EllipseFitter();
+		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
+		IConicSectionFitter f = service.createCircleFitter();
 		f.geometricFit(xy[0], xy[1], null);
 		return f;
 	}
 
-	
 	/**
-	 * Set points which are then used to fit ellipse
+	 * Set points which are then used to fit circle
 	 * @param points
 	 */
 	public void setPoints(PolylineROI points) {
 		proi = points;
-		int n = points.getNumberOfPoints();
 		if (fitter == null) {
-			fitter = fit(points, n < 5 || circleOnly);
+			fitter = fit(points);
 		} else {
 			AbstractDataset[] xy = points.makeCoordinateDatasets();
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
@@ -96,17 +84,8 @@ public class EllipticalFitROI extends EllipticalROI {
 		final double[] p = fitter.getParameters();
 		residual = fitter.getRMS();
 
-		if (p.length < 5) {
-			setSemiAxis(0, p[0]);
-			setSemiAxis(1, p[0]);
-			setAngle(0);
-			setPoint(p[1], p[2]);
-		} else {
-			setSemiAxis(0, p[0]);
-			setSemiAxis(1, p[1]);
-			setAngle(p[2]);
-			setPoint(p[3], p[4]);
-		}
+		setRadius(p[0]);
+		setPoint(p[1], p[2]);
 	}
 
 	/**
@@ -122,12 +101,11 @@ public class EllipticalFitROI extends EllipticalROI {
 	public IConicSectionFitter getFitter() {
 		return fitter;
 	}
-	
+
 	/**
 	 * @return points in polygon for fitting
 	 */
 	public PolylineROI getPoints() {
 		return proi;
 	}
-
 }

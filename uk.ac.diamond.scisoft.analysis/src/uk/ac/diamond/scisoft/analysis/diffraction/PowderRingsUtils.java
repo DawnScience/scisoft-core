@@ -317,7 +317,7 @@ public class PowderRingsUtils {
 			IConicSectionFitter f = efroi.getFitter();
 			IConicSectionFitFunction fn = f.getFitFunction(null, null);
 
-			AbstractDataset d = fn.calcDistanceSquared(f.getParameters());
+			AbstractDataset d = (AbstractDataset)fn.calcDistanceSquared(f.getParameters());
 
 			// find outliers
 			double h = trimDelta * trimDelta;

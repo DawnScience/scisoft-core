@@ -10,9 +10,12 @@ Require-Bundle: org.apache.commons.math3;bundle-version="3.2.0",
  uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: uk.ac.diamond.scisoft.analysis.dataset,
+Export-Package: uk.ac.diamond.scisoft.analysis.coords,
+ uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.dataset.function,
- uk.ac.diamond.scisoft.analysis.delaunay_triangulation
+ uk.ac.diamond.scisoft.analysis.delaunay_triangulation,
+ uk.ac.diamond.scisoft.analysis.roi,
+ uk.ac.diamond.scisoft.analysis.roi.handler
 Import-Package: javax.media.jai;version="1.1.3",
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.6,1.7.7)"

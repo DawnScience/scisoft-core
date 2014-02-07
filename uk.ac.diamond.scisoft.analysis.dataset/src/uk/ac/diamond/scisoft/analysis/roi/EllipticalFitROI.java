@@ -1,5 +1,5 @@
 /*-
- * Copyright 2013 Diamond Light Source Ltd.
+ * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,32 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
+import uk.ac.diamond.scisoft.analysis.dataset.Activator;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 
 /**
- * A circular region of interest which fits the points in a polygonal region of interest
+ * An elliptical region of interest which fits the points in a polygonal region of interest
  */
-public class CircularFitROI extends CircularROI {
+public class EllipticalFitROI extends EllipticalROI {
 
 	private PolylineROI proi;
-	private IConicSectionFitter fitter;
+	private boolean circleOnly;
+	private transient IConicSectionFitter fitter; // The fitter is not serializable, the EllipticalFitROI is.
 	private double residual;
 
-	private CircularFitROI(double radius, double ptx, double pty) {
-		super(radius, ptx, pty);
+	private EllipticalFitROI(double major, double minor, double angle, double ptx, double pty) {
+		super(major, minor, angle, ptx, pty);
 		residual = 0;
 	}
 
-	public CircularFitROI(PolylineROI points) {
+	public EllipticalFitROI(PolylineROI points) {
+		this(points, false);
+	}
+
+	public EllipticalFitROI(PolylineROI points, boolean fitCircle) {
 		super(1, 0, 0);
+		circleOnly = fitCircle;
 		setPoints(points);
 	}
 
@@ -46,35 +53,44 @@ public class CircularFitROI extends CircularROI {
 	}
 
 	@Override
-	public CircularFitROI copy() {
-		CircularFitROI c = new CircularFitROI(getRadius(), getPointX(), getPointY());
-		c.name = name;
+	public EllipticalFitROI copy() {
+		EllipticalFitROI c = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
 		c.proi = proi.copy();
+		c.name = name;
 		c.plot = plot;
 		return c;
 	}
 
 	/**
-	 * Fit a circle to given polygon
+	 * Fit an ellipse to given polyline
 	 * @param polyline
 	 * @return fitter
 	 */
-	public static IConicSectionFitter fit(PolylineROI polyline) {
+	public static IConicSectionFitter fit(PolylineROI polyline, final boolean fitCircle) {
+		
+		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
 		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
+		if (fitCircle) {
+			IConicSectionFitter f = service.createCircleFitter();
+			f.geometricFit(xy[0], xy[1], null);
+			return f;
+		}
 
-		CircleFitter f = new CircleFitter();
+		IConicSectionFitter f = service.createEllipseFitter();
 		f.geometricFit(xy[0], xy[1], null);
 		return f;
 	}
 
+	
 	/**
-	 * Set points which are then used to fit circle
+	 * Set points which are then used to fit ellipse
 	 * @param points
 	 */
 	public void setPoints(PolylineROI points) {
 		proi = points;
+		int n = points.getNumberOfPoints();
 		if (fitter == null) {
-			fitter = fit(points);
+			fitter = fit(points, n < 5 || circleOnly);
 		} else {
 			AbstractDataset[] xy = points.makeCoordinateDatasets();
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
@@ -82,8 +98,17 @@ public class CircularFitROI extends CircularROI {
 		final double[] p = fitter.getParameters();
 		residual = fitter.getRMS();
 
-		setRadius(p[0]);
-		setPoint(p[1], p[2]);
+		if (p.length < 5) {
+			setSemiAxis(0, p[0]);
+			setSemiAxis(1, p[0]);
+			setAngle(0);
+			setPoint(p[1], p[2]);
+		} else {
+			setSemiAxis(0, p[0]);
+			setSemiAxis(1, p[1]);
+			setAngle(p[2]);
+			setPoint(p[3], p[4]);
+		}
 	}
 
 	/**
@@ -99,11 +124,12 @@ public class CircularFitROI extends CircularROI {
 	public IConicSectionFitter getFitter() {
 		return fitter;
 	}
-
+	
 	/**
 	 * @return points in polygon for fitting
 	 */
 	public PolylineROI getPoints() {
 		return proi;
 	}
+
 }

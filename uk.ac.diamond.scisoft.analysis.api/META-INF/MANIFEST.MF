@@ -10,6 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.diffraction,
+ uk.ac.diamond.scisoft.analysis.fitting,
  uk.ac.diamond.scisoft.analysis.fitting.functions,
  uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.monitor,
@@ -18,4 +19,5 @@ Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.roi
 Import-Package: javax.vecmath,
  org.slf4j;version="[1.7.6,1.7.7)"
-Require-Bundle: org.apache.commons.lang;bundle-version="[2.6.0,2.7.0)"
+Require-Bundle: org.apache.commons.lang;bundle-version="[2.6.0,2.7.0)",
+ org.apache.commons.math3;bundle-version="3.2.0"

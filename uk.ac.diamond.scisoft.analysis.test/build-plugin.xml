@@ -1,24 +1,20 @@
 <project name="plugin-uk.ac.diamond.scisoft.analysis.test" basedir=".">
 
-    <dirname property="GDA-plugin.basedir" file="${ant.file.${ant.project.name}}" />
+    <dirname property="plugin.basedir" file="${ant.file.${ant.project.name}}" />
     <pathconvert property="workspace.loc" setonempty="false">
         <regexpmapper from="(.*)_git/.+" to="\1"/>
-        <path><pathelement location="${GDA-plugin.basedir}" /></path>
+        <path><pathelement location="${plugin.basedir}" /></path>
     </pathconvert>
     <pathconvert property="workspace.loc" setonempty="false">
         <regexpmapper from="(.*)/plugins/.+" to="\1"/>
-        <path><pathelement location="${GDA-plugin.basedir}" /></path>
+        <path><pathelement location="${plugin.basedir}" /></path>
     </pathconvert>
     <property name="workspace.git.loc" value="${workspace.loc}_git" />
-    <pathconvert property="GDA-plugin.host.basedir" setonempty="false">
+    <pathconvert property="plugin.host.basedir" setonempty="false">
             <regexpmapper from="(.*).test" to="\1"/>
-            <path><pathelement location="${GDA-plugin.basedir}" /></path>
+            <path><pathelement location="${plugin.basedir}" /></path>
     </pathconvert>
-    <import file="${workspace.loc}/builder/build-common.xml" />
-
-    <!-- ====================================================================
-           Build
-         ==================================================================== -->    
+    <import file="${workspace.git.loc}/gda-common.git/uk.ac.diamond.test.runners/ant-headless/test-common.xml" />
 
     <!-- ====================================================================
            Invoke the tests
@@ -35,10 +31,10 @@
             <classpath>
                 <pathelement location="${junitjar.loc}" />
                 <pathelement location="${jythonjar.loc}"/>
-                <pathelement location="${GDA-plugin.basedir}/bin" />
-                <pathelement location="${GDA-plugin.basedir}/testfiles/logging" />  <!-- to pick up logback-test.xml -->
-                <pathelement location="${GDA-plugin.host.basedir}/bin" />
-                <pathelement location="${GDA-plugin.host.basedir}/jars/*" />
+                <pathelement location="${plugin.basedir}/bin" />
+                <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.diamond.test.runners/logging" />  <!-- to pick up logback-test.xml -->
+                <pathelement location="${plugin.host.basedir}/bin" />
+                <pathelement location="${plugin.host.basedir}/jars/*" />
                 <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.api/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
                 <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/jars/*" />
@@ -55,7 +51,7 @@
                 <path refid="libs.jars.path" />
             </classpath>
             <batchtest todir="@{report.dir}">
-                <fileset dir="${GDA-plugin.basedir}/src">
+                <fileset dir="${plugin.basedir}/src">
                     <include name="**/*Test.java" />
                     <exclude name="**/*PluginTest.java" />
                 </fileset>

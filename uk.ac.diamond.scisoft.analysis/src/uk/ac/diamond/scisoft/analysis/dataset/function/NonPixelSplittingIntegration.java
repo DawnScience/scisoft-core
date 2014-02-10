@@ -17,24 +17,15 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Maths;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-
-
-import com.amd.aparapi.Kernel;
-import com.amd.aparapi.Range;
 
 /**
  * Copy of Histogram class as base for nonpixelsplitting integration
@@ -105,7 +96,6 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 			IndexIterator iter = a.getIterator();
 
-			Range range = Range.create(a.getSize()); 
 			while (iter.hasNext()) {
 				final double val = a.getElementDoubleAbs(iter.index);
 				final double sig = b.getElementDoubleAbs(iter.index);
@@ -124,7 +114,5 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 
 		return result;
 	}
-	
-    
 	
 }

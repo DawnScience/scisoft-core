@@ -17,6 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -74,6 +77,8 @@ public class PeakFittingEllipseFinder {
 		if (ellipse.containsPoint(-1,-1) && ellipse.containsPoint(-1,h+1) && ellipse.containsPoint(w+1,h+1) && ellipse.containsPoint(w+1,-1)) {
 			throw new IllegalArgumentException("Ellipse does not intersect image!");
 		}
+		
+		//List<double[]> searchRange = findSuitableSearchRange(ellipse, shape);
 		
 		EllipticalROI inner = ellipse.copy();
 		inner.setSemiAxis(0, ellipse.getSemiAxis(0)-innerDelta);
@@ -223,6 +228,120 @@ public class PeakFittingEllipseFinder {
 		}
 		
 		return polyline;
+	}
+	
+	private static List<double[]> findSuitableSearchRange(EllipticalROI ellipse, int[] shape) {
+	
+		List<double[]> angles = new ArrayList<double[]>();
+		
+		angles.add(findDetectorEllipseInterceptX(0,ellipse));//t
+		angles.add(findDetectorEllipseInterceptY(0,ellipse));//l
+		angles.add(findDetectorEllipseInterceptX(shape[0],ellipse));//b
+		angles.add(findDetectorEllipseInterceptY(shape[1],ellipse));//r
+		
+		List<Double> all = new ArrayList<Double>();		
+		for (double[] angle : angles) {
+			if (angle != null) {
+				all.add(angle[0]);
+				all.add(angle[1]);
+			}
+		}
+		
+		Collections.sort(all);
+		
+		
+		List<double[]> startStop = new ArrayList<double[]>();
+		
+		for (int i = 0; i < all.size(); i++) {
+			
+			double current = all.get(i);
+			double next = 2*Math.PI;
+			
+			if (i+1 != all.size()) next = all.get(i+1);
+			
+			double a = (next-current)/2+current;
+			double[] point = ellipse.getPoint(a- ellipse.getAngle());
+			
+			if (point[0] < 0 || point[0] > shape[1] || point[1] < 0 || point[1] > shape[0]) continue;
+			
+			if (i+1 != all.size()) startStop.add(new double[] {current, next});
+			else startStop.add(new double[] {current, all.get(0)});
+			
+		}
+		
+		return startStop;
+	}
+	
+	
+	private static double[] findDetectorEllipseInterceptX(double x1, EllipticalROI roi) {
+		//XAxis
+		
+		double xCor = x1-roi.getPointY();
+		
+		double ca = Math.cos(roi.getAngle());
+		double sa = Math.sin(roi.getAngle());
+		double ca2 = Math.pow(ca, 2);
+		double sa2 = Math.pow(sa, 2);
+		double a2 = Math.pow(roi.getSemiAxis(0), 2);
+		double b2 = Math.pow(roi.getSemiAxis(1), 2);
+		
+		double a = ca2/a2+sa2/b2;
+		double b = -2*ca*sa*(1/a2-1/b2)*xCor;
+		double c = ((sa2/a2 + ca2/b2)*Math.pow(xCor, 2))-1;
+		
+		double quad = Math.pow(b, 2) - 4*a*c;
+		
+		if (quad < 0) return null;
+		
+		double[] out = new double[2];
+		
+//		out[0] = (-b + Math.sqrt(quad))/(2*a) + roi.getPointX();
+//		out[1] = (-b - Math.sqrt(quad))/(2*a)+ roi.getPointX();
+		
+		out[0] = Math.atan2(xCor,(-b + Math.sqrt(quad))/(2*a));
+		out[1] = Math.atan2(xCor,(-b - Math.sqrt(quad))/(2*a));
+		
+		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
+		if (out[1] < 0) out[1] = 2*Math.PI + out[1];
+		
+		return out;
+	}
+	
+	private static double[] findDetectorEllipseInterceptY(double y1, EllipticalROI roi) {
+		
+		double yCor = y1-roi.getPointX();
+		
+		double ca = Math.cos(roi.getAngle());
+		double sa = Math.sin(roi.getAngle());
+		double ca2 = Math.pow(ca, 2);
+		double sa2 = Math.pow(sa, 2);
+		double a2 = Math.pow(roi.getSemiAxis(0), 2);
+		double b2 = Math.pow(roi.getSemiAxis(1), 2);
+		
+		double a = sa2/a2+ca2/b2;
+		double b = -2*ca*sa*(1/a2-1/b2)*yCor;
+		double c = ((ca2/a2 + sa2/b2)*Math.pow(yCor, 2))-1;
+		
+		double quad = Math.pow(b, 2) - 4*a*c;
+		
+		if (quad < 0) return null;
+		 
+		double[] out = new double[2];
+		
+		//For point
+//		out[0] = (-b + Math.sqrt(quad))/(2*a) + roi.getPointY();
+//		out[1] = (-b - Math.sqrt(quad))/(2*a)+ roi.getPointY();
+		//For angle
+//		out[0] = Math.toDegrees(Math.atan2(yCor, (-b + Math.sqrt(quad))/(2*a)));
+//		out[1] = Math.toDegrees(Math.atan2(yCor, (-b - Math.sqrt(quad))/(2*a)));
+		
+		out[0] = Math.atan2((-b + Math.sqrt(quad))/(2*a),yCor);
+		out[1] = Math.atan2((-b - Math.sqrt(quad))/(2*a),yCor);
+		
+		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
+		if (out[1] < 0) out[1] = 2*Math.PI + out[1];
+		
+		return out;
 	}
 	
 }

@@ -32,6 +32,9 @@ import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
+/**
+ * TODO At some point, increase the test data used to benchmark the algorithm.
+ */
 public class PixelIntegrationTest {
 
 	
@@ -50,7 +53,10 @@ public class PixelIntegrationTest {
 
 		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(qSpace, 1592);
 		
+		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting (basic test) in "+(after-before));
 		
 		if (out.size() != 2) {
 			Assert.fail("Incorrect number of datasets returned");

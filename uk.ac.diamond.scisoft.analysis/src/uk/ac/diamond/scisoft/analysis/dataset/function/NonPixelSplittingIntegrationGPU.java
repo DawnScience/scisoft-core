@@ -17,21 +17,14 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Maths;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-
 
 import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
@@ -44,13 +37,13 @@ import com.amd.aparapi.Range;
  * <p>
  * By default, outliers are ignored.
  */
-public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
+public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
-	public NonPixelSplittingIntegration(QSpace qSpace, int numBins) {
+	public NonPixelSplittingIntegrationGPU(QSpace qSpace, int numBins) {
 		super(qSpace, numBins);
 		
 	}
@@ -61,7 +54,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 	 * @param lower minimum value of histogram range
 	 * @param upper maximum value of histogram range
 	 */
-	public NonPixelSplittingIntegration(QSpace qSpace, int numBins, double lower, double upper)
+	public NonPixelSplittingIntegrationGPU(QSpace qSpace, int numBins, double lower, double upper)
 	{
 		super(qSpace, numBins, lower, upper);
 	}
@@ -103,28 +96,96 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 
 			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-			IndexIterator iter = a.getIterator();
-
+	
 			Range range = Range.create(a.getSize()); 
-			while (iter.hasNext()) {
-				final double val = a.getElementDoubleAbs(iter.index);
-				final double sig = b.getElementDoubleAbs(iter.index);
-				if (val < lo && val > hi) {
-					continue;
-				}
-				if(((int) ((val-lo)/span))<h.length){
-					h[(int) ((val-lo)/span)]++;
-					in[(int) ((val-lo)/span)] += sig;
-				}
-			}
 			
-			processAndAddToResult(intensity, histo, result, ds.getName());
+			// Kernel copies primitive arrays to the GPU for us.
+			
+			/**
+			 * This is not a serious go at speeding up using GPU. This is because the
+			 * maths is simple and the memory copy large, therefore it will not give a 
+			 * speed up. This is just to show Jake how to use the Kernel object.
+			 * 
+			 * In practice this particular loop is better speeded up with a fork join or
+			 * with Java8 lambda run on a parallel stream.
+			 */
+			NonPixelSplittingKernel kernel = new NonPixelSplittingKernel();
+			kernel.setLow(lo);
+			kernel.setHi(hi);
+			kernel.setSpan(span);
+			kernel.setA((double[])a.getBuffer());
+			kernel.setB((float[])b.getBuffer());
+			kernel.setIntensity(in);
+			kernel.setHisto(h);
+			
+			kernel.execute(range);
+			
+			processAndAddToResult(new DoubleDataset(kernel.getIntensity(), nbins), 
+					              new IntegerDataset(kernel.getHisto(), nbins), result, ds.getName());
 			
 		}
 
 		return result;
 	}
 	
-    
+    private class NonPixelSplittingKernel extends Kernel {
+    	
+       	private double[] a;
+      	private float[] b;
+     	private double[] intensity;
+     	private int[] histo;
+      	private double lo, hi, span;
+
+		public int[] getHisto() {
+			return histo;
+		}
+
+		public void setHisto(int[] histo) {
+			this.histo = histo;
+		}
+
+		public double[] getIntensity() {
+			return intensity;
+		}
+
+		public void setIntensity(double[] intensity) {
+			this.intensity = intensity;
+		}
+
+		public void setLow(double low) {
+			this.lo = low;
+		}
+
+		public void setHi(double hi) {
+			this.hi = hi;
+		}
+		public void setSpan(double span) {
+			this.span = span;
+		}
+
+		public void setA(double[] a) {
+			this.a = a;
+		}
+
+		public void setB(float[] b) {
+			this.b = b;
+		}
+
+		@Override
+		public void run() {
+			int i     = getGlobalId();
+			final double val = a[i];
+			final double sig = b[i];
+			if (val < lo && val > hi) {
+				return;
+			}
+			if(((int) ((val-lo)/span))<histo.length){
+				histo[(int) ((val-lo)/span)]++;
+				intensity[(int) ((val-lo)/span)] += sig;
+			}
+			
+		}
+    	
+    }
 	
 }

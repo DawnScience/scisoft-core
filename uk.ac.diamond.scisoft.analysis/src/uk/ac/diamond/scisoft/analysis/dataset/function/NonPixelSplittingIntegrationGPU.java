@@ -108,6 +108,10 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 			 * 
 			 * In practice this particular loop is better speeded up with a fork join or
 			 * with Java8 lambda run on a parallel stream.
+			 * 
+			 * You will need to install a GPU driver to have this run on the GPU. Also the
+			 * NonPixelSplittingKernel might not compile properly, check the output messages
+			 * when the test runs.
 			 */
 			NonPixelSplittingKernel kernel = new NonPixelSplittingKernel();
 			kernel.setLow(lo);

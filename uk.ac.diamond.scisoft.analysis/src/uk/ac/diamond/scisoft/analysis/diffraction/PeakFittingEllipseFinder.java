@@ -78,8 +78,6 @@ public class PeakFittingEllipseFinder {
 			throw new IllegalArgumentException("Ellipse does not intersect image!");
 		}
 		
-		//List<double[]> searchRange = findSuitableSearchRange(ellipse, shape);
-		
 		EllipticalROI inner = ellipse.copy();
 		inner.setSemiAxis(0, ellipse.getSemiAxis(0)-innerDelta);
 		inner.setSemiAxis(1, ellipse.getSemiAxis(1)-innerDelta);
@@ -90,26 +88,25 @@ public class PeakFittingEllipseFinder {
 		
 		PolylineROI polyline = new PolylineROI();
 		
-		findNumberOfPointsOnEllipse(image, polyline, inner, outer, 0,nPoints, mon);
 		
-		if (mon != null && mon.isCancelled()) return null;
+		List<double[]> searchRange = findSuitableSearchRange(ellipse, shape);
 		
-		if (polyline.getNumberOfPoints() < nPoints *0.9) findNumberOfPointsOnEllipse(image, polyline, inner, outer, (Math.PI)/(nPoints),nPoints, mon);
+		if (searchRange.isEmpty()) searchRange.add(new double[]{0, Math.PI*2});
 		
-		int count = 0;
-		int num = 1;
-		int denom = 2;
+		double totalRange = 0;
+		for (double[]range : searchRange) totalRange += (range[1]-range[0]);
 		
-		while (count < 6 && polyline.getNumberOfPoints() < nPoints *0.9) {
-			
-			findNumberOfPointsOnEllipse(image, polyline, inner, outer, (num*Math.PI)/(denom*nPoints),nPoints, mon);
-
-			if (mon != null && mon.isCancelled()) return null;
-			num+=2;
-			
-			if (count == 1) {
-				denom *=2;
-				num = 1;
+		int count = 1;
+		
+		while (count < 5 && polyline.getNumberOfPoints() < nPoints *0.75) {
+			for (double[] range : searchRange) {
+				
+				double step = (range[1]-range[0])/nPoints;
+				int nPointFrac = (int)((range[1]-range[0])/totalRange*nPoints);
+				
+				double offset = 1/count*step;
+				
+				findNumberOfPointsOnEllipse(image, polyline, inner, outer, offset+range[0],range[1],nPointFrac, mon);
 			}
 			
 			count++;
@@ -124,7 +121,7 @@ public class PeakFittingEllipseFinder {
 	}
 	
 	private static PolylineROI findNumberOfPointsOnEllipse(AbstractDataset image, PolylineROI polyline,
-			EllipticalROI inner, EllipticalROI outer, double start, int nPoints, IMonitor mon) {
+			EllipticalROI inner, EllipticalROI outer, double start, double stop, int nPoints, IMonitor mon) {
 		
 		final int[] shape = image.getShape();
 		final int h = shape[1];
@@ -137,7 +134,9 @@ public class PeakFittingEllipseFinder {
 		List<PointROI> roiList = new ArrayList<PointROI>();
 		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
 		
-		for (double i = start; i < (start + Math.PI*2); i+=(Math.PI/(nPoints/2))) {
+		double step = (stop-start)/nPoints;
+		
+		for (double i = start; i < stop; i+=step) {
 			double[] beg = inner.getPoint(i);
 			double[] end = outer.getPoint(i);
 			
@@ -208,14 +207,12 @@ public class PeakFittingEllipseFinder {
 			widths.set(gaussianList.get(i).getFWHM(), i);
 		}
 		
-		double hMean = (Double)heights.mean();
-		double wMean = (Double)widths.mean();
 		
-		double hiqr = (Double)Stats.iqr(heights);
-		double wiqr = (Double)Stats.iqr(widths);
+		double med = (Double)Stats.median(widths);
+		double mad = (Double)Stats.median(Maths.abs(Maths.subtract(widths, med)));
 		
-		double upperw = wMean + 2*wiqr;
-		double lowerw = wMean - 2*wiqr;
+		double upperw = med + mad*3;
+		double lowerw = med - mad*3;
 //		double threshold = (Double) heights.mean() - iqr > 0 ? (Double) heights.mean() - iqr : (Double) heights.mean();
 		double threshold = 0;
 		
@@ -247,25 +244,29 @@ public class PeakFittingEllipseFinder {
 			}
 		}
 		
-		Collections.sort(all);
-		
-		
 		List<double[]> startStop = new ArrayList<double[]>();
 		
-		for (int i = 0; i < all.size(); i++) {
+		if (all.isEmpty()) return startStop;
+		
+		Collections.sort(all);
+		
+		for (int i = -1; i < all.size(); i++) {
 			
-			double current = all.get(i);
+			double current = 0;
+			
+			if (i != -1) current = all.get(i);
+			
 			double next = 2*Math.PI;
 			
 			if (i+1 != all.size()) next = all.get(i+1);
 			
 			double a = (next-current)/2+current;
-			double[] point = ellipse.getPoint(a- ellipse.getAngle());
+			double[] point = ellipse.getPoint(a);
 			
 			if (point[0] < 0 || point[0] > shape[1] || point[1] < 0 || point[1] > shape[0]) continue;
 			
-			if (i+1 != all.size()) startStop.add(new double[] {current, next});
-			else startStop.add(new double[] {current, all.get(0)});
+			startStop.add(new double[] {current, next});
+
 			
 		}
 		
@@ -295,11 +296,11 @@ public class PeakFittingEllipseFinder {
 		
 		double[] out = new double[2];
 		
-//		out[0] = (-b + Math.sqrt(quad))/(2*a) + roi.getPointX();
-//		out[1] = (-b - Math.sqrt(quad))/(2*a)+ roi.getPointX();
+		double yP = (-b + Math.sqrt(quad))/(2*a);
+		double yM = (-b - Math.sqrt(quad))/(2*a);
 		
-		out[0] = Math.atan2(xCor,(-b + Math.sqrt(quad))/(2*a));
-		out[1] = Math.atan2(xCor,(-b - Math.sqrt(quad))/(2*a));
+		out[0] = Math.atan2(roi.getSemiAxis(0)*(ca*xCor- sa*yP), roi.getSemiAxis(1)*(ca*yP + sa*xCor));
+		out[1] = Math.atan2(roi.getSemiAxis(0)*(ca*xCor - sa*yM), roi.getSemiAxis(1)*(ca*yM + sa*xCor));
 		
 		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
 		if (out[1] < 0) out[1] = 2*Math.PI + out[1];
@@ -327,16 +328,13 @@ public class PeakFittingEllipseFinder {
 		if (quad < 0) return null;
 		 
 		double[] out = new double[2];
+
+		double xP = (-b + Math.sqrt(quad))/(2*a);
+		double xM = (-b - Math.sqrt(quad))/(2*a);
 		
-		//For point
-//		out[0] = (-b + Math.sqrt(quad))/(2*a) + roi.getPointY();
-//		out[1] = (-b - Math.sqrt(quad))/(2*a)+ roi.getPointY();
-		//For angle
-//		out[0] = Math.toDegrees(Math.atan2(yCor, (-b + Math.sqrt(quad))/(2*a)));
-//		out[1] = Math.toDegrees(Math.atan2(yCor, (-b - Math.sqrt(quad))/(2*a)));
+		out[0] = Math.atan2(roi.getSemiAxis(0)*(ca*xP - sa*yCor), roi.getSemiAxis(1)*(ca*yCor + sa*xP));
+		out[1] = Math.atan2(roi.getSemiAxis(0)*(ca*xM - sa*yCor), roi.getSemiAxis(1)*(ca*yCor + sa*xM));
 		
-		out[0] = Math.atan2((-b + Math.sqrt(quad))/(2*a),yCor);
-		out[1] = Math.atan2((-b - Math.sqrt(quad))/(2*a),yCor);
 		
 		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
 		if (out[1] < 0) out[1] = 2*Math.PI + out[1];

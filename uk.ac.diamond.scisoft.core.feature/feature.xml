@@ -118,13 +118,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.apache.xmlrpc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="javax.xml"
          download-size="0"
          install-size="0"

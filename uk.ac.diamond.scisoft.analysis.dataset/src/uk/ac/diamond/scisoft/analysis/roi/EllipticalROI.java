@@ -242,18 +242,14 @@ public class EllipticalROI extends ROIBase {
 		double[] angles = new double[] { Math.atan2(-saxis[1] * sang, saxis[0] * cang),
 			Math.atan2(saxis[1] * cang, saxis[0] * sang)	 };
 
-		double[] pt = getRelativePoint(angles[0]);
-		double[] max = pt.clone();
-		double[] min = pt.clone();
+		double[] max = getRelativePoint(angles[0]);
+		double[] min = max.clone();
 
-		pt = getRelativePoint(angles[0] + Math.PI);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[0] + Math.PI));
 
-		pt = getRelativePoint(angles[1]);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1]));
 
-		pt = getRelativePoint(angles[1] + Math.PI);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1] + Math.PI));
 
 		RectangularROI b = new RectangularROI();
 		b.setLengths(max[0] - min[0], max[1] - min[1]);

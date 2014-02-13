@@ -586,39 +586,30 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	@Override
 	public IRectangularROI getBounds() {
-		double[] pt = SectorCoords.convertFromPolarRadians(rad[0], ang[0]);
-		double[] max = pt;
+		double[] max = SectorCoords.convertFromPolarRadians(rad[0], ang[0]);
 		double[] min = max.clone();
 
-		pt = SectorCoords.convertFromPolarRadians(rad[0], ang[1]);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], ang[1]));
 
-		pt = SectorCoords.convertFromPolarRadians(rad[1], ang[1]);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[1]));
 
-		pt = SectorCoords.convertFromPolarRadians(rad[1], ang[0]);
-		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[0]));
 
 		int beg = (int) Math.ceil(ang[0] / HALF_PI);
 		int end = (int) Math.floor(ang[1] / HALF_PI);
 		for (; beg <= end; beg++) { // angle range spans multiples of pi/2
-			pt = SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI);
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI));
 		}
 
 		double[] angs = getSymmetryAngles();
 		if (angs != null) {
-			pt = SectorCoords.convertFromPolarRadians(rad[0], angs[0]);
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], angs[0]));
 
-			pt = SectorCoords.convertFromPolarRadians(rad[0], angs[1]);
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], angs[1]));
 
-			pt = SectorCoords.convertFromPolarRadians(rad[1], angs[1]);
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[1]));
 
-			pt = SectorCoords.convertFromPolarRadians(rad[1], angs[0]);
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[0]));
 		}
 
 		RectangularROI b = new RectangularROI();

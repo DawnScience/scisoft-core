@@ -119,6 +119,16 @@ public class ROIUtils {
 	}
 
 	/**
+	 * Update maximum and minimum values according to point
+	 * @param max
+	 * @param min
+	 * @param pt
+	 */
+	public static void updateMaxMin(double[] max, double[] min, double[] pt) {
+		updateMaxMin(max, min, pt[0], pt[1]);
+	}
+
+	/**
 	 * Update maximum and minimum values according to x and y
 	 * @param max
 	 * @param min

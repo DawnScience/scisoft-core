@@ -224,8 +224,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		double[] max = new double[] {-Double.MAX_VALUE, -Double.MAX_VALUE};
 		double[] min = new double[] {Double.MAX_VALUE, Double.MAX_VALUE};
 		for (int i = 0, imax = pts.size(); i < imax; i++) {
-			double[] pt = pts.get(i).spt;
-			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
+			ROIUtils.updateMaxMin(max, min, pts.get(i).spt);
 		}
 		RectangularROI b = new RectangularROI();
 		b.setPoint(min);

@@ -71,6 +71,21 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(132.55555555555554, min,0.00001);
 		Assert.assertEquals(10.397824434316313, maxq,0.00001);
 		Assert.assertEquals(0.0073678526262440005, minq,0.00001);
+		//Second pass should be faster
+		before = System.currentTimeMillis();
+		out = npsi.value(data);
+		after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting repeat (basic test) in "+(after-before));
+		
+		max = out.get(1).max().doubleValue();
+		min = out.get(1).min().doubleValue();
+		maxq = out.get(0).max().doubleValue();
+		minq = out.get(0).min().doubleValue();
+		
+		Assert.assertEquals(318301.5494672755, max,0.00001);
+		Assert.assertEquals(132.55555555555554, min,0.00001);
+		Assert.assertEquals(10.397824434316313, maxq,0.00001);
+		Assert.assertEquals(0.0073678526262440005, minq,0.00001);
 		
 	}
 	
@@ -87,7 +102,10 @@ public class PixelIntegrationTest {
 
 		PixelSplittingIntegration npsi = new PixelSplittingIntegration(qSpace, 1592);
 		
+		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Pixel splitting (basic test) in "+(after-before));
 		
 		if (out.size() != 2) {
 			Assert.fail("Incorrect number of datasets returned");
@@ -103,6 +121,21 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(10.400892093105334, maxq,0.00001);
 		Assert.assertEquals(0.004904701898820428, minq,0.00001);
 		
+		//Second pass should be faster
+		before = System.currentTimeMillis();
+		out = npsi.value(data);
+		after = System.currentTimeMillis();
+		System.out.println("Pixel splitting repeat (basic test) in "+(after-before));
+		
+		max = out.get(1).max().doubleValue();
+		min = out.get(1).min().doubleValue();
+		maxq = out.get(0).max().doubleValue();
+		minq = out.get(0).min().doubleValue();
+		
+		Assert.assertEquals(300275.76460062194, max,0.00001);
+		Assert.assertEquals(136.5910102402878, min,0.00001);
+		Assert.assertEquals(10.400892093105334, maxq,0.00001);
+		Assert.assertEquals(0.004904701898820428, minq,0.00001);
 	}
 	
 	private AbstractDataset getData() {

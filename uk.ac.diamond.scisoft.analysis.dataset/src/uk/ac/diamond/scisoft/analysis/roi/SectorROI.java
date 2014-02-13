@@ -586,47 +586,38 @@ public class SectorROI extends ROIBase implements Serializable {
 
 	@Override
 	public IRectangularROI getBounds() {
-		SectorCoords sc = new SectorCoords(rad[0], ang[0], false, false);
-		double[] pt = sc.getCartesian();
+		double[] pt = SectorCoords.convertFromPolarRadians(rad[0], ang[0]);
 		double[] max = pt;
 		double[] min = max.clone();
 
-		sc = new SectorCoords(rad[0], ang[1], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[0], ang[1]);
 		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
-		sc = new SectorCoords(rad[1], ang[1], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[1], ang[1]);
 		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
-		sc = new SectorCoords(rad[1], ang[0], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[1], ang[0]);
 		ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
 		int beg = (int) Math.ceil(ang[0] / HALF_PI);
 		int end = (int) Math.floor(ang[1] / HALF_PI);
 		for (; beg <= end; beg++) { // angle range spans multiples of pi/2
-			sc = new SectorCoords(rad[1], beg*HALF_PI, false, false);
-			pt = sc.getCartesian();
+			pt = SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI);
 			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 		}
 
 		double[] angs = getSymmetryAngles();
 		if (angs != null) {
-			sc = new SectorCoords(rad[0], angs[0], false, false);
-			pt = sc.getCartesian();
+			pt = SectorCoords.convertFromPolarRadians(rad[0], angs[0]);
 			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
-			sc = new SectorCoords(rad[0], angs[1], false, false);
-			pt = sc.getCartesian();
+			pt = SectorCoords.convertFromPolarRadians(rad[0], angs[1]);
 			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
-			sc = new SectorCoords(rad[1], angs[1], false, false);
-			pt = sc.getCartesian();
+			pt = SectorCoords.convertFromPolarRadians(rad[1], angs[1]);
 			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 
-			sc = new SectorCoords(rad[1], angs[0], false, false);
-			pt = sc.getCartesian();
+			pt = SectorCoords.convertFromPolarRadians(rad[1], angs[0]);
 			ROIUtils.updateMaxMin(max, min, pt[0], pt[1]);
 		}
 
@@ -641,8 +632,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		x -= spt[0];
 		y -= spt[1];
 
-		SectorCoords sc = new SectorCoords(x, y, true);
-		double[] pol = sc.getPolarRadians();
+		double[] pol = SectorCoords.convertFromCartesianToPolarRadians(x, y);
 		double r = pol[0];
 		if (r < rad[0] || r > rad[1])
 			return false;
@@ -661,8 +651,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		x -= spt[0];
 		y -= spt[1];
 
-		SectorCoords sc = new SectorCoords(x, y, true);
-		double[] pol = sc.getPolarRadians();
+		double[] pol = SectorCoords.convertFromCartesianToPolarRadians(x, y);
 		double r = pol[0];
 		double p = pol[1];
 		if (p >= ang[0] && p <= ang[1]) { // near arcs
@@ -671,21 +660,17 @@ public class SectorROI extends ROIBase implements Serializable {
 		}
 
 		// check radials
-		sc = new SectorCoords(rad[0], ang[0], false, false);
-		double[] pt = sc.getCartesian();
+		double[] pt = SectorCoords.convertFromPolarRadians(rad[0],  ang[0]);
 		double px = pt[0];
 		double py = pt[1];
-		sc = new SectorCoords(rad[1], ang[0], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[1],  ang[0]);
 		if (ROIUtils.isNearSegment(pt[0] - px, pt[1] - py, x - px, y - py, distance))
 			return true;
 
-		sc = new SectorCoords(rad[0], ang[1], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[0],  ang[1]);
 		px = pt[0];
 		py = pt[1];
-		sc = new SectorCoords(rad[1], ang[1], false, false);
-		pt = sc.getCartesian();
+		pt = SectorCoords.convertFromPolarRadians(rad[1],  ang[1]);
 		return ROIUtils.isNearSegment(pt[0] - px, pt[1] - py, x - px, y - py, distance);
 	}
 

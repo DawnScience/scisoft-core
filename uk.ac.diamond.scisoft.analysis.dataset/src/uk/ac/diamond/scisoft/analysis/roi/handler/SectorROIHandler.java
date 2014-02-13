@@ -112,44 +112,44 @@ public class SectorROIHandler extends ROIHandler {
 		SectorROI oroi = (SectorROI) roi;
 		double[] pt = new double[2];
 		double[] cpt = roi.getPointRef();
-		SectorCoords sc = null;
+		double[] rpt = null;
 
 		switch (handle) {
 		case 0:
-			sc = new SectorCoords(oroi.getRadius(0), oroi.getAngle(0), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), oroi.getAngle(0));
 			break;
 		case 1:
-			sc = new SectorCoords(oroi.getRadius(0), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
 			break;
 		case 2:
-			sc = new SectorCoords(oroi.getRadius(0), oroi.getAngle(1), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), oroi.getAngle(1));
 			break;
 		case 3:
-			sc = new SectorCoords(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(0), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(0));
 			break;
 		case 4:
-			sc = new SectorCoords(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)),
-					0.5 * (oroi.getAngle(0) + oroi.getAngle(1)), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)),
+					0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
 			break;
 		case 5:
-			sc = new SectorCoords(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(1), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(1));
 			break;
 		case 6:
-			sc = new SectorCoords(oroi.getRadius(1), oroi.getAngle(0), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), oroi.getAngle(0));
 			break;
 		case 7:
-			sc = new SectorCoords(oroi.getRadius(1), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
 			break;
 		case 8:
-			sc = new SectorCoords(oroi.getRadius(1), oroi.getAngle(1), false, false);
+			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), oroi.getAngle(1));
 			break;
 		case 9:
 			return cpt;
 		default:
 			return pt;
 		}
-		pt[0] = cpt[0] + sc.getCartesian()[0];
-		pt[1] = cpt[1] + sc.getCartesian()[1];
+		pt[0] = cpt[0] + rpt[0];
+		pt[1] = cpt[1] + rpt[1];
 		return pt;
 	}
 

@@ -31,31 +31,19 @@ public class SectorCoords {
 	 * @param isCartesian
 	 */
 	public SectorCoords(double ca, double cb, boolean isCartesian) {
-		this(ca, cb, isCartesian, true);
-	}
-
-	/**
-	 * @param spt 
-	 * @param pt
-	 */
-	public SectorCoords(int[] spt, int[] pt) {
-		int px = pt[0] - spt[0];
-		int py = pt[1] - spt[1];
-		r = Math.hypot(px, py);
-		p = Math.atan2(py, px);
-		if (p < 0) p += 2*Math.PI;
-	}
-
-	/**
-	 * @param spt 
-	 * @param pt
-	 */
-	public SectorCoords(double[] spt, int[] pt) {
-		double px = pt[0] - spt[0];
-		double py = pt[1] - spt[1];
-		r = Math.hypot(px, py);
-		p = Math.atan2(py, px);
-		if (p < 0) p += 2*Math.PI;
+		if (isCartesian) {
+			x = ca;
+			y = cb;
+			double[] pol = convertFromCartesianToPolarRadians(x, y);
+			r = pol[0];
+			p = pol[1];
+		} else {
+			r = ca;
+			p = Math.toRadians(cb);
+			double[] car = convertFromPolarRadians(r, p);
+			x = car[0];
+			y = car[1];
+		}
 	}
 
 	/**
@@ -63,36 +51,22 @@ public class SectorCoords {
 	 * @param pt
 	 */
 	public SectorCoords(double[] spt, double[] pt) {
-		double px = pt[0] - spt[0];
-		double py = pt[1] - spt[1];
-		r = Math.hypot(px, py);
-		p = Math.atan2(py, px);
-		if (p < 0) p += 2*Math.PI;
+		this(pt[0] - spt[0], pt[1] - spt[1], true);
 	}
 
-	/**
-	 * @param ca
-	 * @param cb
-	 * @param isCartesian
-	 * @param isDegrees (only used if not Cartesian)
-	 */
-	public SectorCoords(double ca, double cb, boolean isCartesian, boolean isDegrees) {
-		if (isCartesian) {
-			x = ca;
-			y = cb;
-			r = Math.hypot(x, y);
-			p = Math.atan2(y, x);
-			if (p < 0) p += 2*Math.PI;
-		} else {
-			r = ca;
-			if (isDegrees) {
-				p = Math.toRadians(cb);
-			} else {
-				p = cb;
-			}
-			x = r*Math.cos(p);
-			y = r*Math.sin(p);
-		}
+	public static double[] convertFromPolarRadians(double r, double p) {
+		return new double[] {r*Math.cos(p), r*Math.sin(p)};
+	}
+
+	public static double[] convertFromPolarDegrees(double r, double p) {
+		return convertFromPolarRadians(r, Math.toRadians(p));
+	}
+
+	public static double[] convertFromCartesianToPolarRadians(double x, double y) {
+		double r = Math.hypot(x, y);
+		double p = Math.atan2(y, x);
+		if (p < 0) p += 2*Math.PI;
+		return new double[] {r, p};
 	}
 
 	/**

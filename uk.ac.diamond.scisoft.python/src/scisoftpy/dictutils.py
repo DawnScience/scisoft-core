@@ -44,6 +44,14 @@ def sanitise_name(text, warn=True):
         if text starts with double underscores then raise error
     '''
     from string import digits
+    if text is None:
+        if warn:
+            print "Warning in sanitising dict keys: text is None so replacing with 'none'"
+        text = 'none'
+
+    if not isinstance(text, str):
+        text = str(text)
+
     sane = text.translate(_translator)
     if not sane:
         return sane
@@ -70,7 +78,7 @@ def make_safe(items, warn=True):
         return []
 
     items = zip(*items) # transform to two lists
-    keys = [sanitise_name(str(k), warn) for k in items[0]]
+    keys = [sanitise_name(k, warn) for k in items[0]]
     vals = items[1]
 
     lk = len(keys)
@@ -381,6 +389,7 @@ def _test_setting_listdict(inter=True):
         del d['c']
     print d
     print d.keys()
+    d.append(('d', -2.3))
     d.append({'e': 2.3})
     d.append(['f', 2.3])
     d.append(['g', 1])
@@ -422,6 +431,14 @@ def _test_setting_listdict(inter=True):
     else:
         print d['d e']
     print d[6]
+
+    try:
+        d.append((None, -20))
+    except Exception, e:
+        print "Exception raised successfully " + str(e)
+
+    print sanitise_name(None)
+    print sanitise_name(1)
 
     ld = ListDict([('a', 1), ('c',-2)], lock=True, interactive=inter)
     try:

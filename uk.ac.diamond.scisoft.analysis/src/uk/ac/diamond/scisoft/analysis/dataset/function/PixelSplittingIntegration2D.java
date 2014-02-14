@@ -220,11 +220,6 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 							
 							histo.set(val+iPerPixel*modify, setPos);
 							double inVal = intensity.get(setPos);
-							
-							if (inVal == Double.NaN) {
-								histo.toString();
-							}
-							
 							intensity.set(inVal+sig*iPerPixel*modify, setPos);
 						}
 					}

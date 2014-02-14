@@ -138,6 +138,36 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(0.004904701898820428, minq,0.00001);
 	}
 	
+	@Test
+	public void testPixelSplitting2D() {
+		
+		AbstractDataset data = getData();
+		if (data == null) {
+			Assert.fail("Could not load test data");
+			return;
+		}
+		
+		QSpace qSpace = getQSpace();
+
+		PixelSplittingIntegration2D npsi = new PixelSplittingIntegration2D(qSpace, 1592, 3000);
+		
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = npsi.value(data);
+		long after = System.currentTimeMillis();
+		System.out.println("2D Pixel splitting (basic test) in "+(after-before));
+		
+		if (out.size() != 3) {
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		
+		Assert.assertEquals(10.400892093105334, maxq,0.00001);
+		Assert.assertEquals(0.004904701898820428, minq,0.00001);
+
+	}
+	
 	private AbstractDataset getData() {
 		final String path = testFileFolder+"/test1.f2d";
 		AbstractDataset data = null;

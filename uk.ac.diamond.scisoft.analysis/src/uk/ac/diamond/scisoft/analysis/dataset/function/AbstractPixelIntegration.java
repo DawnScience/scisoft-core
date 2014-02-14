@@ -109,7 +109,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		else axis.setName("2 Theta");
 		
 		result.add(axis);
-		AbstractDataset out = Maths.divide(intensity, histo);
+		AbstractDataset out = Maths.dividez(intensity, histo);
 		out.setName(name + "_integrated");
 		result.add(out);
 	}

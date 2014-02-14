@@ -154,9 +154,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				(int) (spt[1] + fx * len[0] * sang + fy * len[1] * cang) };
 	}
 
-	/**
-	 * @return end point
-	 */
+	@Override
 	public double[] getEndPoint() {
 		return getPoint(1., 1.);
 	}
@@ -189,6 +187,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	/**
 	 * @return reference to the lengths
 	 */
+	@Override
 	public double[] getLengths() {
 		return len;
 	}

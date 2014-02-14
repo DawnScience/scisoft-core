@@ -37,13 +37,13 @@ public interface IRectangularROI extends IROI {
 	public void addToLengths(double dx, double dy);
 	
 	/**
-	 * End of the rectangle
+	 * End point of rectangle
 	 * @return end
 	 */
 	public double[] getEndPoint();
 	
 	/**
-	 * Sides of the rectangle
+	 * Sides of rectangle
 	 * @return sides
 	 */
 	public double[] getLengths();

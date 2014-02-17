@@ -126,77 +126,78 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 				double maxBinExactChi = (chiMax-loChi)/spanChi;
 				int minBinChi = (int)minBinExactChi;
 				int maxBinChi = (int)maxBinExactChi;
-
+				
+				//FIXME better deal with the wrap around point
 				if (chiMax - chiMin > 270) continue;
 				
-				if (minBinQ == maxBinQ && minBinChi == maxBinChi) {
-					int[] setPos = new int[]{minBinChi,minBinQ};
-					double val = histo.get(setPos);
-					histo.set(val+1, setPos);
-					double inVal = intensity.get(setPos);
-					intensity.set(inVal+sig, setPos);
-				} else if  (minBinQ == maxBinQ && minBinChi != maxBinChi){
-					//Spread across chi
-					double iPerPixel = 1/(maxBinExactChi-minBinExactChi);
-
-					double minFrac = 1-(minBinExactChi-minBinChi);
-					double maxFrac = maxBinExactChi-maxBinChi;
-
-					if (minBinChi >= 0) {
-						int[] setPos = new int[]{minBinChi,minBinQ};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel*minFrac, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
-					}
-
-					if (maxBinChi < binsChi.getSize()) {
-						int[] setPos = new int[]{maxBinChi,minBinQ};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel*maxFrac, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
-					}
-
-					for (int i = (minBinChi+1); i < maxBinChi; i++) {
-						if (i >= binsChi.getSize() || i < 0) continue; 
-						int[] setPos = new int[]{i,minBinQ};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel, setPos);
-					}
-
-				}else if  (minBinQ != maxBinQ && minBinChi == maxBinChi) {
-					//spread across Q
-					double iPerPixel = 1/(maxBinExactQ-minBinExactQ);
-					double minFrac = 1-(minBinExactQ-minBinQ);
-					double maxFrac = maxBinExactQ-maxBinQ;
-
-					if (minBinQ >= 0) {
-						int[] setPos = new int[]{minBinChi,minBinQ};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel*minFrac, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
-					}
-
-					if (maxBinQ < bins.getSize()-1 && minBinChi > 0 && minBinChi < binsChi.getSize()) {
-						int[] setPos = new int[]{minBinChi,maxBinQ};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel*maxFrac, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
-					}
-					for (int i = (minBinQ+1); i < maxBinQ; i++) {
-						if (i >= binsChi.getSize() || i < 0) continue; 
-						int[] setPos = new int[]{minBinChi,i};
-						double val = histo.get(setPos);
-						histo.set(val+iPerPixel, setPos);
-						double inVal = intensity.get(setPos);
-						intensity.set(inVal+sig*iPerPixel, setPos);
-					}
-				} else {
+//				if (minBinQ == maxBinQ && minBinChi == maxBinChi) {
+//					int[] setPos = new int[]{minBinChi,minBinQ};
+//					double val = histo.get(setPos);
+//					histo.set(val+1, setPos);
+//					double inVal = intensity.get(setPos);
+//					intensity.set(inVal+sig, setPos);
+//				} else if  (minBinQ == maxBinQ && minBinChi != maxBinChi){
+//					//Spread across chi
+//					double iPerPixel = 1/(maxBinExactChi-minBinExactChi);
+//
+//					double minFrac = 1-(minBinExactChi-minBinChi);
+//					double maxFrac = maxBinExactChi-maxBinChi;
+//
+//					if (minBinChi >= 0) {
+//						int[] setPos = new int[]{minBinChi,minBinQ};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel*minFrac, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
+//					}
+//
+//					if (maxBinChi < binsChi.getSize()-1) {
+//						int[] setPos = new int[]{maxBinChi,minBinQ};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel*maxFrac, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
+//					}
+//
+//					for (int i = (minBinChi+1); i < maxBinChi; i++) {
+//						if (i >= binsChi.getSize() || i < 0) continue; 
+//						int[] setPos = new int[]{i,minBinQ};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel, setPos);
+//					}
+//
+//				}else if  (minBinQ != maxBinQ && minBinChi == maxBinChi) {
+//					//spread across Q
+//					double iPerPixel = 1/(maxBinExactQ-minBinExactQ);
+//					double minFrac = 1-(minBinExactQ-minBinQ);
+//					double maxFrac = maxBinExactQ-maxBinQ;
+//
+//					if (minBinQ >= 0) {
+//						int[] setPos = new int[]{minBinChi,minBinQ};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel*minFrac, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
+//					}
+//
+//					if (maxBinQ < bins.getSize()-1 && minBinChi > 0 && minBinChi < binsChi.getSize()) {
+//						int[] setPos = new int[]{minBinChi,maxBinQ};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel*maxFrac, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
+//					}
+//					for (int i = (minBinQ+1); i < maxBinQ; i++) {
+//						if (i >= binsChi.getSize() || i < 0) continue; 
+//						int[] setPos = new int[]{minBinChi,i};
+//						double val = histo.get(setPos);
+//						histo.set(val+iPerPixel, setPos);
+//						double inVal = intensity.get(setPos);
+//						intensity.set(inVal+sig*iPerPixel, setPos);
+//					}
+//				} else {
 					double iPerPixel = 1/((maxBinExactQ-minBinExactQ)*(maxBinExactChi-minBinExactChi));
 					double minFracQ = 1-(minBinExactQ-minBinQ);
 					double maxFracQ = maxBinExactQ-maxBinQ;
@@ -213,16 +214,16 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 							
 							double modify = 1;
 							
-							if (i == minBinQ) modify *= minFracQ;
-							if (i == maxBinQ) modify *= maxFracQ;
-							if (i == minBinChi) modify *= minFracChi;
-							if (i == maxBinChi) modify *= maxFracChi;
+							if (i == minBinQ && minBinQ != maxBinQ) modify *= minFracQ;
+							if (i == maxBinQ && minBinQ != maxBinQ) modify *= maxFracQ;
+							if (i == minBinChi && minBinChi != maxBinChi) modify *= minFracChi;
+							if (i == maxBinChi && minBinChi != maxBinChi) modify *= maxFracChi;
 							
 							histo.set(val+iPerPixel*modify, setPos);
 							double inVal = intensity.get(setPos);
 							intensity.set(inVal+sig*iPerPixel*modify, setPos);
 						}
-					}
+//					}
 				}
 			}
 			processAndAddToResult(intensity, histo, result, ds.getName());
@@ -240,7 +241,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		int[] pos = iter.getPos();
 
 		while (iter.hasNext()) {
-			out.set(Math.toDegrees(Math.atan2(pos[1]-beamCentre[1],pos[0]-beamCentre[0])), pos);
+			out.set(Math.toDegrees(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0])), pos);
 		}
 		
 		return out;

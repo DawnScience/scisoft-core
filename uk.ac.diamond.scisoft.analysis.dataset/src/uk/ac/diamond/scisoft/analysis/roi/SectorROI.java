@@ -196,7 +196,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		symmetry = sym;
 		combineSymmetry = false;
 		checkRadii();
-		checkAngles();
+		checkAngles(ang);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	public void setAngles(double startAngle, double endAngle) {
 		ang[0] = startAngle;
 		ang[1] = endAngle;
-		checkAngles();		
+		checkAngles(ang);
 	}
 
 	/**
@@ -302,7 +302,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	public void setAnglesDegrees(double startAngle, double endAngle) {
 		ang[0] = Math.toRadians(startAngle);
 		ang[1] = Math.toRadians(endAngle);
-		checkAngles();
+		checkAngles(ang);
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 */
 	public void addAngle(int index, double angle) {
 		ang[index] += angle;
-		checkAngles();
+		checkAngles(ang);
 	}
 
 	/**
@@ -354,27 +354,27 @@ public class SectorROI extends ROIBase implements Serializable {
 	 *  0 <= ang0 <= 2*pi, 0 <= ang1 <= 4*pi
 	 *  0 <= ang1 - ang0 <= 2*pi
 	 */
-	protected void checkAngles() {
+	protected void checkAngles(double[] angles) {
 		// sort out relative values
-		double a = ang[0];
-		while (a >= ang[1]) {
-			ang[1] += TWO_PI;
+		double a = angles[0];
+		while (a >= angles[1]) {
+			angles[1] += TWO_PI;
 		}
 
 		a += TWO_PI;
-		while (a < ang[1]) {
-			ang[1] -= TWO_PI;
+		while (a < angles[1]) {
+			angles[1] -= TWO_PI;
 		}
 		
 		// place correctly in absolute terms
-		while (ang[0] < 0) {
-			ang[0] += TWO_PI;
-			ang[1] += TWO_PI;
+		while (angles[0] < 0) {
+			angles[0] += TWO_PI;
+			angles[1] += TWO_PI;
 		}
 		
-		while (ang[0] > TWO_PI) {
-			ang[0] -= TWO_PI;
-			ang[1] -= TWO_PI;
+		while (angles[0] > TWO_PI) {
+			angles[0] -= TWO_PI;
+			angles[1] -= TWO_PI;
 		}
 	}
 
@@ -610,6 +610,12 @@ public class SectorROI extends ROIBase implements Serializable {
 			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[1]));
 
 			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[0]));
+
+			beg = (int) Math.ceil(angs[0] / HALF_PI);
+			end = (int) Math.floor(angs[1] / HALF_PI);
+			for (; beg <= end; beg++) { // angle range spans multiples of pi/2
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI));
+			}
 		}
 
 		RectangularROI b = new RectangularROI();
@@ -631,10 +637,22 @@ public class SectorROI extends ROIBase implements Serializable {
 		double p = pol[1];
 		if (p >= ang[0] && p <= ang[1])
 			return true;
+		if (ang[1] > TWO_PI && p + TWO_PI < ang[1]) // angle domain straddles branch cut
+			return true;
+
 		double[] angs = getSymmetryAngles();
 		if (angs == null)
 			return false;
-		return p >= angs[0] && p <= angs[1];
+
+		if (angs[0] > angs[1]) { // angles may not be ordered
+			double t = angs[1];
+			angs[1] = angs[0];
+			angs[0] = t;
+		}
+		checkAngles(angs); // make angles lie in [0, 2pi)
+		if (p >= angs[0] && p <= angs[1])
+			return true;
+		return angs[1] > TWO_PI && p + TWO_PI < angs[1];
 	}
 
 	@Override

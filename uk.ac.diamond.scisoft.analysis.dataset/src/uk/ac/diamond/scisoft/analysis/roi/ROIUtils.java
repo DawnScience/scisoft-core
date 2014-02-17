@@ -139,7 +139,7 @@ public class ROIUtils {
 		if (x > max[0])
 			max[0] = x;
 		if (y > max[1])
-			max[1] = x;
+			max[1] = y;
 		if (x < min[0])
 			min[0] = x;
 		if (y < min[1])

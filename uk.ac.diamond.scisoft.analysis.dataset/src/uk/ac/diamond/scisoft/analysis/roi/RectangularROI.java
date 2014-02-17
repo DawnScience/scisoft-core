@@ -606,16 +606,17 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		RectangularROI b = new RectangularROI();
 		double ac = Math.abs(cang);
 		double as = Math.abs(sang);
-		b.setLengths(as * len[0] + ac * len[1], ac * len[0] + as * len[1]);
+		b.setPoint(spt.clone());
+		b.setLengths(ac * len[0] + as * len[1], as * len[0] + ac * len[1]);
 		if (sang >= 0) {
 			if (cang >= 0) {
 				b.addPoint(-sang * len[1], 0);
 			} else {
-				b.addPoint(-b.getLength(1), cang * len[1]);
+				b.addPoint(-b.getLength(0), cang * len[1]);
 			}
 		} else {
 			if (cang < 0) {
-				b.addPoint(cang * len[0], -b.getLength(0));
+				b.addPoint(cang * len[0], -b.getLength(1));
 			} else {
 				b.addPoint(0, sang * len[0]);
 			}

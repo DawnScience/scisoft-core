@@ -648,19 +648,19 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 
 		double[] pta = spt;
 		double[] ptb = getPoint(1, 0);
-		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x - pta[0], y - pta[1], distance))
 			return true;
 		pta = ptb;
 		ptb = getPoint(1, 1);
-		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x - pta[0], y - pta[1], distance))
 			return true;
 		pta = ptb;
 		ptb = getPoint(0, 1);
-		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance))
+		if (ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x - pta[0], y - pta[1], distance))
 			return true;
 		pta = ptb;
 		ptb = spt;
-		return ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x, y, distance);
+		return ROIUtils.isNearSegment(ptb[0] - pta[0], ptb[1] - pta[1], x - pta[0], y - pta[1], distance);
 	}
 
 	@Override

@@ -94,6 +94,8 @@ public class Downsample implements DatasetToDatasetFunction {
 			final int[] epos = new int[drank];
 			final int isize = binned.getElementsPerItem();
 
+			
+			// TODO In Java8 switch these loops to using ParallelStreams
 			switch (mode) {
 			case POINT:
 				while (biter.hasNext()) {

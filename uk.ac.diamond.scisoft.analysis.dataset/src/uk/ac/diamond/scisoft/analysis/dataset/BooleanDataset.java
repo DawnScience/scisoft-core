@@ -92,7 +92,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	/**
 	 * @param shape
-	 * @return a dataset filled with ones
+	 * @return a dataset filled with trues
 	 */
 	public static BooleanDataset ones(final int... shape) {
 		BooleanDatasetBase result = BooleanDatasetBase.ones(shape);

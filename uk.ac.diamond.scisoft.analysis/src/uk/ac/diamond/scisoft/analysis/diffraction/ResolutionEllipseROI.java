@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
 
 /**
  *
@@ -24,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 public class ResolutionEllipseROI extends EllipticalROI {
 
 	double resolution = 0;
+	PolylineROI points;
 
 	public ResolutionEllipseROI(EllipticalROI eroi, double dSpace) {
 		this.setSemiAxes(eroi.getSemiAxes());
@@ -49,4 +51,11 @@ public class ResolutionEllipseROI extends EllipticalROI {
 		this.resolution = resolution;
 	}
 	
+	public void setPoints(PolylineROI points) {
+		this.points = points;
+	}
+	
+	public PolylineROI getPoints() {
+		return points;
+	}
 }

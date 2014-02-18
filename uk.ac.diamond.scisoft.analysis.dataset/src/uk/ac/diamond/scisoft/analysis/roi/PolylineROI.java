@@ -55,6 +55,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		for (int i = 1, imax = pts.size(); i < imax; i++) { // don't call for first point
 			pts.get(i).downsample(subFactor);
 		}
+		bounds = null;
 	}
 
 	@Override
@@ -79,10 +80,12 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	 * @param point
 	 */
 	public void setPoint(int i, PointROI point) {
-		if (i == 0)
+		if (i == 0) {
 			setPoint(point.spt);
-		else
+		} else {
 			pts.set(i, point);
+			bounds = null;
+		}
 	}
 
 	/**
@@ -114,6 +117,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 			pts.add(this);
 		} else {
 			pts.add(point);
+			bounds = null;
 		}
 	}
 
@@ -159,6 +163,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 		} else {
 			pts.add(i, point);
 		}
+		bounds = null;
 	}
 
 	/**
@@ -220,16 +225,18 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		double[] max = new double[] {-Double.MAX_VALUE, -Double.MAX_VALUE};
-		double[] min = new double[] {Double.MAX_VALUE, Double.MAX_VALUE};
-		for (int i = 0, imax = pts.size(); i < imax; i++) {
-			ROIUtils.updateMaxMin(max, min, pts.get(i).spt);
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			double[] max = new double[] { -Double.MAX_VALUE, -Double.MAX_VALUE };
+			double[] min = new double[] { Double.MAX_VALUE, Double.MAX_VALUE };
+			for (int i = 0, imax = pts.size(); i < imax; i++) {
+				ROIUtils.updateMaxMin(max, min, pts.get(i).spt);
+			}
+			bounds = new RectangularROI();
+			bounds.setPoint(min);
+			bounds.setLengths(max[0] - min[0], max[1] - min[1]);
 		}
-		RectangularROI b = new RectangularROI();
-		b.setPoint(min);
-		b.setLengths(max[0] - min[0], max[1] - min[1]);
-		return b;
+		return bounds;
 	}
 
 	@Override
@@ -285,6 +292,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	 */
 	public void removePoint(int i) {
 		pts.remove(i);
+		bounds = null;
 	}
 
 	/**
@@ -292,6 +300,7 @@ public class PolylineROI extends PointROI implements Serializable, Iterable<Poin
 	 */
 	public void removeAllPoints() {
 		pts.clear();
+		bounds = null;
 	}
 
 	@Override

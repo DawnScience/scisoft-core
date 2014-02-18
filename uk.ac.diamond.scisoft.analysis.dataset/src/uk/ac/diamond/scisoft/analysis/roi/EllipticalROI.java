@@ -108,6 +108,7 @@ public class EllipticalROI extends ROIBase {
 			throw new IllegalArgumentException("Need at least two semi-axis values");
 		saxis[0] = semiaxis[0];
 		saxis[1] = semiaxis[1];
+		bounds = null;
 	}
 
 	/**
@@ -127,6 +128,7 @@ public class EllipticalROI extends ROIBase {
 		if (index < 0 || index > 1)
 			throw new IllegalArgumentException("Index should be 0 or 1");
 		saxis[index] = semiaxis;
+		bounds = null;
 	}
 
 	/**
@@ -140,8 +142,7 @@ public class EllipticalROI extends ROIBase {
 	 * @param angle The angle in degrees to set
 	 */
 	public void setAngleDegrees(double angle) {
-		ang = Math.toRadians(angle);
-		checkAngle();
+		setAngle(Math.toRadians(angle));
 	}
 
 	/**
@@ -181,6 +182,7 @@ public class EllipticalROI extends ROIBase {
 	public void setAngle(double angle) {
 		ang = angle;
 		checkAngle();
+		bounds = null;
 	}
 
 	/**
@@ -237,24 +239,26 @@ public class EllipticalROI extends ROIBase {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		// angles which produce stationary points in x and y
-		double[] angles = new double[] { Math.atan2(-saxis[1] * sang, saxis[0] * cang),
-			Math.atan2(saxis[1] * cang, saxis[0] * sang)	 };
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			// angles which produce stationary points in x and y
+			double[] angles = new double[] { Math.atan2(-saxis[1] * sang, saxis[0] * cang),
+					Math.atan2(saxis[1] * cang, saxis[0] * sang) };
 
-		double[] max = getRelativePoint(angles[0]);
-		double[] min = max.clone();
+			double[] max = getRelativePoint(angles[0]);
+			double[] min = max.clone();
 
-		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[0] + Math.PI));
+			ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[0] + Math.PI));
 
-		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1]));
+			ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1]));
 
-		ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1] + Math.PI));
+			ROIUtils.updateMaxMin(max, min, getRelativePoint(angles[1] + Math.PI));
 
-		RectangularROI b = new RectangularROI();
-		b.setLengths(max[0] - min[0], max[1] - min[1]);
-		b.setPoint(spt[0] + min[0], spt[1] + min[1]);
-		return b;
+			bounds = new RectangularROI();
+			bounds.setLengths(max[0] - min[0], max[1] - min[1]);
+			bounds.setPoint(spt[0] + min[0], spt[1] + min[1]);
+		}
+		return bounds;
 	}
 
 	protected double getAngleRelative(double x, double y) {

@@ -109,6 +109,7 @@ public class EllipticalFitROI extends EllipticalROI {
 			setAngle(p[2]);
 			setPoint(p[3], p[4]);
 		}
+		bounds = null;
 	}
 
 	/**

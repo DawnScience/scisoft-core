@@ -104,49 +104,23 @@ public class ROITest {
 
 	public RectangularROI boundingBox(RectangularROI r) {
 		double[] p = r.getPointRef();
-		double xx = p[0];
-		double xn = p[0];
-		double yx = p[1];
-		double yn = p[1];
+		double[] max = p.clone();
+		double[] min = max.clone();
 
 		p = r.getPoint(1, 0);
-		if (p[0] > xx)
-			xx = p[0];
-		if (p[1] > yx)
-			yx = p[1];
-		if (p[0] < xn)
-			xn = p[0];
-		if (p[1] < yn)
-			yn = p[1];
+		ROIUtils.updateMaxMin(max, min, p);
 
 		p = r.getPoint(1, 1);
-		if (p[0] > xx)
-			xx = p[0];
-		if (p[1] > yx)
-			yx = p[1];
-		if (p[0] < xn)
-			xn = p[0];
-		if (p[1] < yn)
-			yn = p[1];
+		ROIUtils.updateMaxMin(max, min, p);
 
 		p = r.getPoint(0, 1);
-		if (p[0] > xx)
-			xx = p[0];
-		if (p[1] > yx)
-			yx = p[1];
-		if (p[0] < xn)
-			xn = p[0];
-		if (p[1] < yn)
-			yn = p[1];
+		ROIUtils.updateMaxMin(max, min, p);
 
 		RectangularROI b = new RectangularROI(1, 0);
-		b.setPoint(xn, yn);
-		xx -= xn;
-		yx -= yn;
-		if (xx > yx)
-			b.setLengths(xx, yx);
-		else
-			b.setLengths(yx, xx);
+		b.setPoint(min);
+		max[0] -= min[0];
+		max[1] -= min[1];
+		b.setLengths(max);
 		return b;
 	}
 

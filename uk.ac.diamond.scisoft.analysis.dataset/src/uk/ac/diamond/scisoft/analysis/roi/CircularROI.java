@@ -54,6 +54,7 @@ public class CircularROI extends ROIBase {
 	public void downsample(double subFactor) {
 		super.downsample(subFactor);
 		rad /= subFactor;
+		bounds = null;
 	}
 
 	@Override
@@ -77,6 +78,7 @@ public class CircularROI extends ROIBase {
 	 */
 	public void setRadius(double radius) {
 		rad = radius;
+		bounds = null;
 	}
 
 	/**
@@ -115,11 +117,13 @@ public class CircularROI extends ROIBase {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		RectangularROI b = new RectangularROI();
-		b.setPoint(spt[0] - rad, spt[1] -rad);
-		b.setLengths(2*rad, 2*rad);
-		return b;
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			bounds = new RectangularROI();
+			bounds.setPoint(spt[0] - rad, spt[1] - rad);
+			bounds.setLengths(2 * rad, 2 * rad);
+		}
+		return bounds;
 	}
 
 	@Override

@@ -42,11 +42,6 @@ public class PointROI extends ROIBase {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		return new RectangularROI(spt[0], spt[1], 0, 0, 0);
-	}
-
-	@Override
 	public boolean containsPoint(double x, double y) {
 		return spt[0] == x && spt[1] == y;
 	}

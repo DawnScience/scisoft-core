@@ -99,6 +99,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 */
 	public void setSymmetry(int symmetry) {
 		this.symmetry = symmetry;
+		bounds = null;
 	}
 
 	/**
@@ -214,6 +215,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		rad[0] = startRadius;
 		rad[1] = endRadius;
 		checkRadii();
+		bounds = null;
 	}
 
 	/**
@@ -255,6 +257,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		ang[0] = startAngle;
 		ang[1] = endAngle;
 		checkAngles(ang);
+		bounds = null;
 	}
 
 	/**
@@ -300,9 +303,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	 * @param endAngle in degrees
 	 */
 	public void setAnglesDegrees(double startAngle, double endAngle) {
-		ang[0] = Math.toRadians(startAngle);
-		ang[1] = Math.toRadians(endAngle);
-		checkAngles(ang);
+		setAngles(Math.toRadians(startAngle), Math.toRadians(endAngle));
 	}
 
 	/**
@@ -337,6 +338,7 @@ public class SectorROI extends ROIBase implements Serializable {
 			ang[0] += TWO_PI;
 			ang[1] += TWO_PI;
 		}
+		bounds = null;
 	}
 
 	/**
@@ -347,6 +349,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	public void addAngle(int index, double angle) {
 		ang[index] += angle;
 		checkAngles(ang);
+		bounds = null;
 	}
 
 	/**
@@ -389,6 +392,7 @@ public class SectorROI extends ROIBase implements Serializable {
 			radius = -rad[1];
 		rad[0] += radius;
 		rad[1] += radius;
+		bounds = null;
 	}
 
 	/**
@@ -399,6 +403,7 @@ public class SectorROI extends ROIBase implements Serializable {
 	public void addRadius(int index, double radius) {
 		rad[index] += radius;
 		checkRadii();
+		bounds = null;
 	}
 
 	/**
@@ -585,44 +590,55 @@ public class SectorROI extends ROIBase implements Serializable {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		double[] max = SectorCoords.convertFromPolarRadians(rad[0], ang[0]);
-		double[] min = max.clone();
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			double[] max = SectorCoords.convertFromPolarRadians(rad[0], ang[0]);
+			double[] min = max.clone();
 
-		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], ang[1]));
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], ang[1]));
 
-		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[1]));
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[1]));
 
-		ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[0]));
+			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], ang[0]));
 
-		int beg = (int) Math.ceil(ang[0] / HALF_PI);
-		int end = (int) Math.floor(ang[1] / HALF_PI);
-		for (; beg <= end; beg++) { // angle range spans multiples of pi/2
-			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI));
-		}
-
-		double[] angs = getSymmetryAngles();
-		if (angs != null) {
-			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], angs[0]));
-
-			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], angs[1]));
-
-			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[1]));
-
-			ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], angs[0]));
-
-			beg = (int) Math.ceil(angs[0] / HALF_PI);
-			end = (int) Math.floor(angs[1] / HALF_PI);
+			int beg = (int) Math.ceil(ang[0] / HALF_PI);
+			int end = (int) Math.floor(ang[1] / HALF_PI);
 			for (; beg <= end; beg++) { // angle range spans multiples of pi/2
-				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg*HALF_PI));
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg * HALF_PI));
 			}
-		}
 
-		RectangularROI b = new RectangularROI();
-		b.setPoint(min[0] + spt[0], min[1] + spt[1]);
-		b.setLengths(max[0] - min[0], max[1] - min[1]);
-		return b;
+			symAng = getSymmetryAngles();
+			if (symAng != null) {
+				if (symAng[0] > symAng[1]) { // angles may not be ordered
+					double t = symAng[1];
+					symAng[1] = symAng[0];
+					symAng[0] = t;
+				}
+				checkAngles(symAng); // make angles lie in [0, 2pi)
+
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], symAng[0]));
+
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[0], symAng[1]));
+
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], symAng[1]));
+
+				ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], symAng[0]));
+
+				beg = (int) Math.ceil(symAng[0] / HALF_PI);
+				end = (int) Math.floor(symAng[1] / HALF_PI);
+				for (; beg <= end; beg++) { // angle range spans multiples of pi/2
+					ROIUtils.updateMaxMin(max, min, SectorCoords.convertFromPolarRadians(rad[1], beg * HALF_PI));
+				}
+			}
+
+			bounds = new RectangularROI();
+			bounds.setPoint(min[0] + spt[0], min[1] + spt[1]);
+			bounds.setLengths(max[0] - min[0], max[1] - min[1]);
+		}
+		return bounds;
 	}
+
+	private transient double[] symAng = null;
 
 	@Override
 	public boolean containsPoint(double x, double y) {
@@ -640,19 +656,21 @@ public class SectorROI extends ROIBase implements Serializable {
 		if (ang[1] > TWO_PI && p + TWO_PI < ang[1]) // angle domain straddles branch cut
 			return true;
 
-		double[] angs = getSymmetryAngles();
-		if (angs == null)
+		if (bounds == null) { // calculate symmetry angles
+			getBounds();
+		}
+		if (symAng == null)
 			return false;
 
-		if (angs[0] > angs[1]) { // angles may not be ordered
-			double t = angs[1];
-			angs[1] = angs[0];
-			angs[0] = t;
+		if (symAng[0] > symAng[1]) { // angles may not be ordered
+			double t = symAng[1];
+			symAng[1] = symAng[0];
+			symAng[0] = t;
 		}
-		checkAngles(angs); // make angles lie in [0, 2pi)
-		if (p >= angs[0] && p <= angs[1])
+		checkAngles(symAng); // make angles lie in [0, 2pi)
+		if (p >= symAng[0] && p <= symAng[1])
 			return true;
-		return angs[1] > TWO_PI && p + TWO_PI < angs[1];
+		return symAng[1] > TWO_PI && p + TWO_PI < symAng[1];
 	}
 
 	@Override
@@ -688,6 +706,7 @@ public class SectorROI extends ROIBase implements Serializable {
 		super.downsample(subFactor);
 		rad[0] /= subFactor;
 		rad[1] /= subFactor;
+		bounds = null;
 	}
 
 	@Override

@@ -23,7 +23,9 @@ public class ROIBase implements IROI {
 	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
-	
+
+	protected transient RectangularROI bounds;
+
 	/**
 	 * 
 	 * @return the name
@@ -44,6 +46,7 @@ public class ROIBase implements IROI {
 	@Override
 	public void setPoint(double[] point) {
 		spt = point;
+		bounds = null;
 	}
 
 	/**
@@ -53,6 +56,7 @@ public class ROIBase implements IROI {
 	public void setPoint(int[] point) {
 		spt[0] = point[0];
 		spt[1] = point[1];
+		bounds = null;
 	}
 
 	/**
@@ -63,6 +67,7 @@ public class ROIBase implements IROI {
 	public void setPoint(int x, int y) {
 		spt[0] = x;
 		spt[1] = y;
+		bounds = null;
 	}
 
 	/**
@@ -73,6 +78,7 @@ public class ROIBase implements IROI {
 	public void setPoint(double x, double y) {
 		spt[0] = x;
 		spt[1] = y;
+		bounds = null;
 	}
 
 	/**
@@ -124,6 +130,7 @@ public class ROIBase implements IROI {
 	public void addPoint(int[] pt) {
 		spt[0] += pt[0];
 		spt[1] += pt[1];
+		bounds = null;
 	}
 
 	/**
@@ -135,6 +142,7 @@ public class ROIBase implements IROI {
 	public void addPoint(double[] pt) {
 		spt[0] += pt[0];
 		spt[1] += pt[1];
+		bounds = null;
 	}
 
 	/**
@@ -147,6 +155,7 @@ public class ROIBase implements IROI {
 	public void addPoint(double x, double y) {
 		spt[0] += x;
 		spt[1] += y;
+		bounds = null;
 	}
 
 	/**
@@ -169,6 +178,7 @@ public class ROIBase implements IROI {
 	public void downsample(double subFactor) {
 		spt[0] /= subFactor;
 		spt[1] /= subFactor;
+		bounds = null;
 	}
 
 	/**
@@ -188,8 +198,10 @@ public class ROIBase implements IROI {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		return new RectangularROI(spt[0], spt[1], 0, 0, 0);
+	public RectangularROI getBounds() {
+		if (bounds == null)
+			bounds = new RectangularROI(spt[0], spt[1], 0, 0, 0);
+		return bounds;
 	}
 
 	@Override
@@ -203,7 +215,7 @@ public class ROIBase implements IROI {
 
 	@Override
 	public boolean isNearOutline(double x, double y, double distance) {
-		IRectangularROI b = getBounds();
+		RectangularROI b = getBounds().copy();
 		b.addPoint(-distance, -distance);
 		b.addToLengths(2*distance, 2*distance);
 		return b.containsPoint(x, y);

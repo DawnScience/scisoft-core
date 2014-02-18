@@ -100,6 +100,7 @@ public class LinearROI extends ROIBase implements Serializable {
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
+		bounds = null;
 		calcTrig();
 	}
 
@@ -147,6 +148,7 @@ public class LinearROI extends ROIBase implements Serializable {
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
 		if (ang < 0) ang += 2.0*Math.PI;
+		bounds = null;
 		calcTrig();
 	}
 
@@ -179,6 +181,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	public void setMidPoint(double[] mpt) {
 		spt[0] = mpt[0] - 0.5*len*cang;
 		spt[1] = mpt[1] - 0.5*len*sang;
+		bounds = null;
 	}
 
 	/**
@@ -188,6 +191,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	public void setAngle(double ang) {
 		if (ang < 0) ang += 2.0*Math.PI;
 		this.ang = ang;
+		bounds = null;
 		calcTrig();
 	}
 
@@ -203,9 +207,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	 * @param ang
 	 */
 	public void setAngleDegrees(double ang) {
-		if (ang < 0) ang += 360.0;
-		this.ang = Math.toRadians(ang);
-		calcTrig();
+		setAngle(Math.toRadians(ang));
 	}
 
 	/**
@@ -234,6 +236,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	 */
 	public void setLength(double len) {
 		this.len = len;
+		bounds = null;
 	}
 
 	/**
@@ -283,7 +286,8 @@ public class LinearROI extends ROIBase implements Serializable {
 	 */
 	public void subPoint(int[] pt) {
 		spt[0] -= pt[0];
-		spt[1] -= pt[1];		
+		spt[1] -= pt[1];	
+		bounds = null;
 	}
 
 	/**
@@ -292,7 +296,8 @@ public class LinearROI extends ROIBase implements Serializable {
 	 */
 	public void subPoint(double[] pt) {
 		spt[0] -= pt[0];
-		spt[1] -= pt[1];		
+		spt[1] -= pt[1];	
+		bounds = null;
 	}
 
 	/**
@@ -302,6 +307,7 @@ public class LinearROI extends ROIBase implements Serializable {
 	public void translateAlongLength(double distance) {
 		spt[0] += distance*cang;
 		spt[1] += distance*sang;
+		bounds = null;
 	}
 
 	/**
@@ -345,16 +351,18 @@ public class LinearROI extends ROIBase implements Serializable {
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		RectangularROI b = new RectangularROI(1, 0);
-		double[] ept = getEndPoint();
-		double pax = Math.min(spt[0], ept[0]);
-		double pbx = Math.max(spt[0], ept[0]);
-		double pay = Math.min(spt[1], ept[1]);
-		double pby = Math.max(spt[1], ept[1]);
-		b.setPoint(pax, pay);
-		b.setLengths(pbx - pax, pby - pay);
-		return b;
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			bounds = new RectangularROI(1, 0);
+			double[] ept = getEndPoint();
+			double pax = Math.min(spt[0], ept[0]);
+			double pbx = Math.max(spt[0], ept[0]);
+			double pay = Math.min(spt[1], ept[1]);
+			double pby = Math.max(spt[1], ept[1]);
+			bounds.setPoint(pax, pay);
+			bounds.setLengths(pbx - pax, pby - pay);
+		}
+		return bounds;
 	}
 
 	@Override

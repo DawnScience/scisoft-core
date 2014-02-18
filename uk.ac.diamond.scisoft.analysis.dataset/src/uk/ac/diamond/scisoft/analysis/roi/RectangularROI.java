@@ -104,6 +104,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	public void setLengths(double len[]) {
 		this.len[0] = len[0];
 		this.len[1] = len[1];
+		bounds = null;
 	}
 
 	/**
@@ -113,16 +114,17 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	public void setLengths(double major, double minor) {
 		len[0] = major;
 		len[1] = minor;
+		bounds = null;
 	}
 
 	/**
 	 * @param x (width)
 	 * @param y (height)
 	 */
-	@Override
 	public void addToLengths(double x, double y) {
 		len[0] += x;
 		len[1] += y;
+		bounds = null;
 	}
 
 	/**
@@ -173,6 +175,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	public void setMidPoint(double[] mpt) {
 		spt[0] = mpt[0] - 0.5*len[0]*cang + 0.5*len[1]*sang;
 		spt[1] = mpt[1] - 0.5*len[0]*sang - 0.5*len[1]*cang;
+		bounds = null;
 	}
 
 	/**
@@ -187,7 +190,6 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	/**
 	 * @return reference to the lengths
 	 */
-	@Override
 	public double[] getLengths() {
 		return len;
 	}
@@ -214,6 +216,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		ang = angle;
 		if (ang < 0)
 			ang += 2.0 * Math.PI;
+		bounds = null;
 		calcTrig();
 	}
 
@@ -228,10 +231,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 * @param angle
 	 */
 	public void setAngleDegrees(double angle) {
-		if (angle < 0)
-			angle += 360.0;
-		ang = Math.toRadians(angle);
-		calcTrig();
+		setAngle(Math.toRadians(angle));
 	}
 
 	/**
@@ -311,6 +311,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		ps = src.transformToRotated(pt[0], pt[1]);
 
 		spt = src.transformToOriginal(ps[0] - len[0], ps[1] - len[1]);
+		bounds = null;
 	}
 
 	/**
@@ -350,6 +351,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		len[0] = pe[0] - ps[0];
 		len[1] = pe[1] - ps[1];
 		spt = src.transformToOriginal(ps[0], ps[1]);
+		bounds = null;
 	}
 
 	/**
@@ -382,6 +384,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[1] = 0;
 			}
 		}
+		bounds = null;
 	}
 
 	/**
@@ -414,6 +417,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[1] = 0;
 			}
 		}
+		bounds = null;
 	}
 
 	/**
@@ -427,6 +431,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 			ang += 2.0 * Math.PI;
 		if (ang > 2.0 * Math.PI)
 			ang -= 2.0 * Math.PI;
+		bounds = null;
 		calcTrig();
 	}
 
@@ -438,6 +443,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	public void subPoint(int[] pt) {
 		spt[0] -= pt[0];
 		spt[1] -= pt[1];
+		bounds = null;
 	}
 
 	
@@ -451,6 +457,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 
 		spt[0] += ps[0];
 		spt[1] += ps[1];
+		bounds = null;
 	}
 
 	/**
@@ -492,6 +499,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[1] = 0;
 			}
 		}
+		bounds = null;
 	}
 
 	/**
@@ -533,6 +541,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[1] = 0;
 			}
 		}
+		bounds = null;
 	}
 
 	/**
@@ -596,33 +605,40 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 				len[0] = 0;
 			}
 		}
+		bounds = null;
 	}
 
 	@Override
-	public IRectangularROI getBounds() {
-		if (ang == 0)
-			return copy();
-
-		RectangularROI b = new RectangularROI();
-		double ac = Math.abs(cang);
-		double as = Math.abs(sang);
-		b.setPoint(spt.clone());
-		b.setLengths(ac * len[0] + as * len[1], as * len[0] + ac * len[1]);
-		if (sang >= 0) {
-			if (cang >= 0) {
-				b.addPoint(-sang * len[1], 0);
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			if (ang == 0) {
+				bounds = copy();
 			} else {
-				b.addPoint(-b.getLength(0), cang * len[1]);
+				bounds = new RectangularROI();
+				double ac = Math.abs(cang);
+				double as = Math.abs(sang);
+				bounds.setPoint(spt.clone());
+				bounds.setLengths(ac * len[0] + as * len[1], as * len[0] + ac * len[1]);
+				if (sang >= 0) {
+					if (cang >= 0) {
+						bounds.addPoint(-sang * len[1], 0);
+					} else {
+						bounds.addPoint(-bounds.getLength(0), cang * len[1]);
+					}
+				} else {
+					if (cang < 0) {
+						bounds.addPoint(cang * len[0], -bounds.getLength(1));
+					} else {
+						bounds.addPoint(0, sang * len[0]);
+					}
+				}
 			}
-		} else {
-			if (cang < 0) {
-				b.addPoint(cang * len[0], -b.getLength(1));
-			} else {
-				b.addPoint(0, sang * len[0]);
-			}
+			src = new RotatedCoords(ang, false);
 		}
-		return b;
+		return bounds;
 	}
+
+	private transient RotatedCoords src = null;
 
 	@Override
 	public boolean containsPoint(double x, double y) {
@@ -634,7 +650,9 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 			return y >= 0 && y <= len[1];
 		}
 		// work in rotated coords
-		RotatedCoords src = new RotatedCoords(ang, false);
+		if (bounds == null) {
+			getBounds();
+		}
 		double[] pr = src.transformToRotated(x, y);
 		if (pr[0] < 0 || pr[0] > len[0])
 			return false;
@@ -669,6 +687,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		spt[1] /= subFactor;
 		len[0] /= subFactor;
 		len[1] /= subFactor;
+		bounds = null;
 	}
 
 	@Override

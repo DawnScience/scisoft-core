@@ -88,7 +88,7 @@ public class CircularROI extends ROIBase {
 	 */
 	public double[] getPoint(double angle) {
 		return new double[] { spt[0] + rad*Math.cos(angle), 
-				spt[1] + rad*Math.sin(angle)};
+				spt[1] + rad*Math.sin(angle) };
 	}
 
 	/**

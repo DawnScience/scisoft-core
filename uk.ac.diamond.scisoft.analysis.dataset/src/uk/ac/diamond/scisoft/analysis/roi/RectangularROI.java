@@ -201,9 +201,6 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		return new int[] { (int) len[0], (int) len[1] };
 	}
 
-	/**
-	 * @return angle
-	 */
 	@Override
 	public double getAngle() {
 		return ang;
@@ -247,9 +244,6 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		sang = Math.sin(ang);
 	}
 
-	/**
-	 * @return a copy
-	 */
 	@Override
 	public RectangularROI copy() {
 		RectangularROI c = new RectangularROI(spt[0], spt[1], len[0], len[1], ang, clippingCompensation);

@@ -265,9 +265,6 @@ public class LinearROI extends ROIBase implements Serializable {
 		return Math.atan2(mpt[1], mpt[0]);
 	}
 	
-	/**
-	 * @return a new copy
-	 */
 	@Override
 	public LinearROI copy() {
 		LinearROI roi = new LinearROI();

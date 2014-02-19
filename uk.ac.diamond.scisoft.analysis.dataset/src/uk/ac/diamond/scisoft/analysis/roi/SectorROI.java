@@ -421,9 +421,6 @@ public class SectorROI extends ROIBase implements Serializable {
 		}
 	}
 
-	/**
-	 * @return a copy
-	 */
 	@Override
 	public SectorROI copy() {
 		SectorROI c = new SectorROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);

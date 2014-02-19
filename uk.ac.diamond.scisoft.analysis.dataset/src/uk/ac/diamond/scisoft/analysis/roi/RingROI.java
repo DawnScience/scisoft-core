@@ -89,9 +89,6 @@ public class RingROI extends SectorROI implements Serializable {
 		super(ptx, pty, sr, er, sp, ep, dpp, clip, sym);
 	}
 
-	/**
-	 * @return a copy
-	 */
 	@Override
 	public RingROI copy() {
 		RingROI c = new RingROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);

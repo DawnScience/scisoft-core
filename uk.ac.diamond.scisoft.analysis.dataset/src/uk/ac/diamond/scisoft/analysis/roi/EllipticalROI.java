@@ -23,7 +23,7 @@ import java.util.Arrays;
  */
 public class EllipticalROI extends ROIBase {
 	private double[] saxis; // semi-axes
-	private double ang; // angles in radians
+	private double ang;     // angle in radians
 	private double cang;
 	private double sang;
 
@@ -211,6 +211,11 @@ public class EllipticalROI extends ROIBase {
 		return pt;
 	}
 
+	/**
+	 * Get point on ellipse at given angle relative to centre
+	 * @param angle in radians
+	 * @return point 
+	 */
 	public double[] getRelativePoint(double angle) {
 		double cb = Math.cos(angle);
 		double sb = Math.sin(angle);
@@ -265,12 +270,6 @@ public class EllipticalROI extends ROIBase {
 		return Math.atan2(saxis[0]*(cang*y - sang*x), saxis[1]*(cang*x + sang*y));
 	}
 
-	/**
-	 * Determine if point is on or inside ellipse
-	 * @param x
-	 * @param y
-	 * @return true if ellipse contains point
-	 */
 	@Override
 	public boolean containsPoint(double x, double y) {
 		x -= spt[0];

@@ -39,16 +39,28 @@ public class ImageStackLoaderExTest {
 	public void setUp() {
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void testInvalidArguments() throws Exception {
 		try {
-			String[] imageFilenames = null;
-			int[] dimensions = null;
+			new ImageStackLoaderEx(null, (String[]) null);
+			fail();
+		} catch (IllegalArgumentException ex) {
+
+		}
+
+		try {
+			String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFiles", true);
+
+
+			int[] multipliers= new int[]{2,3};
+			String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
+			int[] dimensions = new int[] { imageFilenames.length };
 			ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
 			int[] step = null;
-			int[] shape = null;
+			int[] shape = loaderEx.getShape();
 			int[] stop = null;
-			int[] start = null;
+			int[] start = shape.clone();
 			loaderEx.getDataset(null, shape, start, stop, step);
 			fail();
 		} catch (IllegalArgumentException ex) {
@@ -174,7 +186,6 @@ public class ImageStackLoaderExTest {
 	
 	}
 	
-
 	String [] makeFiles(String testScratchDirectoryName, int[] multipliers) throws ScanFileHolderException{
 		String [] filePaths = new String[multipliers.length];
 		for( int i =0 ; i< multipliers.length;i++){

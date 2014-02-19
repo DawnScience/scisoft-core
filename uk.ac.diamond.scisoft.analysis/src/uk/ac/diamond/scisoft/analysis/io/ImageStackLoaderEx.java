@@ -149,30 +149,45 @@ public class ImageStackLoaderEx implements ILazyLoader {
 
 	@Override
 	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
-		
-		if (step == null) {
-			step = new int[shape.length];
-			Arrays.fill(step, 1);
-		}
-		// check slice values are valid given shape of whole dataset
-		AbstractDataset.checkSlice(this.shape, start, stop, start, stop, step);
+		int rank = shape.length;
+		int[] lstart, lstop, lstep;
 
-		final int[] newShape = AbstractDataset.checkSlice(shape, start, stop, start, stop, step);
+		if (step == null) {
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+
+		// check slice values are valid given shape of whole dataset
+		final int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 
 		// dataset we will return
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
 		int [] resultStart = new int[newShape.length];
 
-		int [] resultStep= new int[step.length];
+		int [] resultStep= new int[lstep.length];
 		Arrays.fill(resultStep, 1);
 
 		// location in result for current file
-		int [] currentResultStart= new int[start.length];
+		int [] currentResultStart= new int[lstart.length];
 		
-		int [] currentResultStop= new int[start.length];
+		int [] currentResultStop= new int[lstart.length];
 		Arrays.fill(currentResultStop, 1);
-		for( int i=dimensions.length; i< start.length;i++){
+		for( int i=dimensions.length; i< lstart.length;i++){
 			currentResultStop[i] = newShape[i];
 		}
 
@@ -180,16 +195,16 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		do {
 			
 			// get pointer into file set = start+file in iteration
-			int [] fileLocation = Arrays.copyOfRange(start, 0, dimensions.length);
+			int [] fileLocation = Arrays.copyOfRange(lstart, 0, dimensions.length);
 			for(int i=0; i< fileLocation.length;i++){
 				fileLocation[i]+=currentResultStart[i];
 			}
 
 			AbstractDataset dataSetFromFile = getDataSetFromFile(fileLocation, mon);
 
-			int[] fileImageStart = Arrays.copyOfRange(start, dimensions.length, start.length);
-			int[] fileImageStop = Arrays.copyOfRange(stop, dimensions.length, start.length);
-			int[] fileImageStep = Arrays.copyOfRange(step, dimensions.length, start.length);
+			int[] fileImageStart = Arrays.copyOfRange(lstart, dimensions.length, lstart.length);
+			int[] fileImageStop = Arrays.copyOfRange(lstop, dimensions.length, lstart.length);
+			int[] fileImageStep = Arrays.copyOfRange(lstep, dimensions.length, lstart.length);
 			
 			// extract the slice required
 			AbstractDataset slice = dataSetFromFile.getSlice(fileImageStart, fileImageStop, fileImageStep);
@@ -201,7 +216,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				throw new IllegalArgumentException("Error adding slice",e);
 			}
 		
-		} while (addStep(currentResultStart, currentResultStop, resultStart, newShape, step, dimensions.length-1));
+		} while (addStep(currentResultStart, currentResultStop, resultStart, newShape, lstep, dimensions.length-1));
 		
 		return result;	
 		

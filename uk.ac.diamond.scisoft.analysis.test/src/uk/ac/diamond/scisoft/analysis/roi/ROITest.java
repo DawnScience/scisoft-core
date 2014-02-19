@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -253,7 +255,7 @@ public class ROITest {
 		}
 	}
 
-	private static final int SIDES = 8;
+	private static final int SIDES = 24;
 
 	@Test
 	public void testPolylineROI() {
@@ -300,5 +302,35 @@ public class ROITest {
 		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
 		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() - 1, 2.5));
 		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
+	}
+
+	@Test
+	public void testParabolicROI() {
+		ParabolicROI p = new ParabolicROI(3, 0, 0, 0);
+
+		double distance = 5.5;
+		double limit = p.getStartAngle(distance);
+		for (int i = 0; i < SIDES; i++) {
+			double a = (2 * i * Math.PI) / SIDES;
+			double[] pt = p.getPoint(a);
+			if (a > limit && a < 2* Math.PI - limit) {
+				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
+			}
+		}
+	}
+
+	@Test
+	public void testHyperbolicROI() {
+		HyperbolicROI h = new HyperbolicROI(3, 2, 0, 0, 0);
+
+		double distance = 5.5;
+		double limit = h.getStartAngle(distance);
+		for (int i = 0; i < SIDES; i++) {
+			double a = (2 * i * Math.PI) / SIDES;
+			double[] pt = h.getPoint(a);
+			if (a > limit && a < 2* Math.PI - limit) {
+				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
+			}
+		}
 	}
 }

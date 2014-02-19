@@ -7,9 +7,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.rpc,
  uk.ac.diamond.scisoft.analysis.rpc.flattening,
- uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers,
- uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher,
- uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes
+ uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers
 Require-Bundle: org.apache.commons.lang;bundle-version="[2.6.0,2.7.0)",
  uk.ac.diamond.org.apache.xmlrpc.client;bundle-version="3.1.3",
  uk.ac.diamond.org.apache.xmlrpc.common;bundle-version="3.1.3",

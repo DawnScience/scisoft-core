@@ -66,11 +66,6 @@ public class PeakFittingEllipseFinder {
 			throw new IllegalArgumentException("Mask must match image shape");
 		}
 		
-		if (innerDelta < 10 || outerDelta < 10) {
-			logger.debug("Gap between ellipses too small!");
-			return null;
-		}
-		
 		final int[] shape = image.getShape();
 		final int h = shape[0];
 		final int w = shape[1];

@@ -27,7 +27,7 @@ import java.util.List;
 public class CollectionStats {
 
 	private static interface StatFunction {
-		double evaluate(IDataset set);
+		double evaluate(AbstractDataset set);
 	}
 
 	/**
@@ -41,8 +41,8 @@ public class CollectionStats {
 		
 		return process(sets, new StatFunction() {
 			@Override
-			public double evaluate(IDataset set) {
-				return (Double)((AbstractDataset)set).mean();
+			public double evaluate(AbstractDataset set) {
+				return (Double)set.mean();
 			}
 		});
 	}
@@ -58,8 +58,8 @@ public class CollectionStats {
 		
 		return process(sets, new StatFunction() {
 			@Override
-			public double evaluate(IDataset set) {
-				return (Double)Stats.median((AbstractDataset)set);
+			public double evaluate(AbstractDataset set) {
+				return (Double)Stats.median(set);
 			}
 		});
 	}
@@ -74,31 +74,37 @@ public class CollectionStats {
 	private static AbstractDataset process(final List<IDataset> sets,
 			                               final StatFunction   function) throws Exception {
 		
-		assertSize(sets);
-		
-        final double[] data = new double[sets.get(0).getSize()];
-        for (int i = 0; i < data.length; i++) {
-			final double[] pixel = new double[sets.size()];
-			for (int ipix = 0; ipix < pixel.length; ipix++) {
-				pixel[ipix] = ((AbstractDataset)sets.get(ipix)).getElementDoubleAbs(i);
+		int[] shape = assertShapes(sets);
+		final DoubleDataset result = new DoubleDataset(shape);
+        final double[] rData = result.getData();
+        final IndexIterator iter = new PositionIterator(shape);
+        final int[] pos = iter.getPos();
+
+        final int len = sets.size();
+		final DoubleDataset pixel = new DoubleDataset(len);
+		final double[] pData = pixel.getData();
+        for (int i = 0; iter.hasNext(); i++) {
+			for (int ipix = 0; ipix < len; ipix++) {
+				pData[ipix] = sets.get(ipix).getDouble(pos);
 			}
-			
-			final DoubleDataset dbleDs = new DoubleDataset(pixel, pixel.length);
-			data[i] = function.evaluate(dbleDs);
+			pixel.setDirty();
+			rData[i] = function.evaluate(pixel);
 		}
         
-        return new DoubleDataset(data, sets.get(0).getShape());
+        return result;
 	}
 
-	private static void assertSize(final Collection<IDataset> sets) throws Exception{
+	private static int[] assertShapes(final Collection<IDataset> sets) throws Exception{
 		
 		if (sets.size()<2) throw new Exception("You must take the median of at least two sets!");
 		
 		final Iterator<IDataset> it = sets.iterator();
 		final int[] shape = it.next().getShape();
-		while(it.hasNext()) {
-			final int[] nextShape = it.next().getShape();
+		while (it.hasNext()) {
+			IDataset d = it.next();
+			final int[] nextShape = d.getShape();
 			if (!Arrays.equals(shape, nextShape)) throw new Exception("All data sets should be the same shape!");
 		}
+		return shape;
 	}
 }

@@ -36,6 +36,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	Double max = null;
 	DoubleDataset bins = null;
 	AbstractDataset axisArray;
+	AbstractDataset mask;
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
 	
@@ -77,6 +78,8 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	protected void generateAxisArray(int[] shape, boolean centre) {
 		
 		if (qSpace == null) return;
+		
+		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
 		axisArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
 
@@ -87,14 +90,28 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 			
 			Vector3d q;
 			double value = 0;
+			//FIXME or not fix me, but I would expect centre to be +0.5, but this
+			//clashes with much of the rest of DAWN
+			if (centre) q = qSpace.qFromPixelPosition(pos[1], pos[0]);
+			else q = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5);
 			
-			if (centre) q = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5);
-			else q = qSpace.qFromPixelPosition(pos[1], pos[0]);
-			
-			if (xAxis == XAxis.ANGLE) {
-        		value = Math.toDegrees(qSpace.scatteringAngle(q));
-			} else {
+			switch (xAxis) {
+			case ANGLE:
+				value = Math.toDegrees(qSpace.scatteringAngle(q));
+				break;
+			case Q:
 				value = q.length();
+				break;
+			case RESOLUTION:
+				value = (2*Math.PI)/q.length();
+				break;
+			case PIXEL:
+				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
+				break; 
+			}
+			
+			if (pos[0] < 2 && pos[1]< 2 && pos[0]+pos[1] < 3) {
+				axisArray.toString();
 			}
 			
 			axisArray.set(value, pos);
@@ -112,5 +129,29 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,AbstractDataset.FLOAT64));
 		out.setName(name + "_integrated");
 		result.add(out);
+	}
+	
+	public void setMask(AbstractDataset mask) {
+		this.mask = mask;
+	}
+	
+	public static int calculateNumberOfBins(double[] beamCentre, int[] shape) {
+		//within image
+		if (beamCentre[1] < shape[0] && beamCentre[1] > 0
+				&& beamCentre[0] < shape[1] && beamCentre[0] > 0) {
+			double[] farCorner = new double[]{0,0};
+			if (beamCentre[1] < shape[0]/2.0) farCorner[0] = shape[0];
+			if (beamCentre[0] < shape[1]/2.0) farCorner[1] = shape[1];
+			
+			return (int)Math.hypot(beamCentre[0]-farCorner[1], beamCentre[1]-farCorner[0]);
+		} else if (beamCentre[1] < shape[0] && beamCentre[1] > 0
+				&& (beamCentre[0] > shape[1] || beamCentre[0] < 0)) {
+				return shape[1];
+		} else if (beamCentre[0] < shape[1] && beamCentre[0] > 0
+				&& (beamCentre[1] > shape[0] || beamCentre[1] < 0)) {
+				return shape[0];
+		} else {
+			return (int)Math.hypot(shape[1], shape[0]);
+		}
 	}
 }

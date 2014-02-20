@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
  */
 public class PixelIntegrationTest {
 
-	
+	//FIXME Should test against values from other popular data reduction programs
 	final static String testFileFolder = "testfiles/gda/analysis/io/Fit2dLoaderTest/";
 	
 	@Test
@@ -68,10 +68,10 @@ public class PixelIntegrationTest {
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(318301.5494672755, max,0.00001);
+		Assert.assertEquals(431741.6495398773, max,0.00001);
 		Assert.assertEquals(132.55555555555554, min,0.00001);
-		Assert.assertEquals(10.397824434316313, maxq,0.00001);
-		Assert.assertEquals(0.0073678526262440005, minq,0.00001);
+		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+		Assert.assertEquals(0.004903786580700596, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
 		out = npsi.value(data);
@@ -83,10 +83,10 @@ public class PixelIntegrationTest {
 		maxq = out.get(0).max().doubleValue();
 		minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(318301.5494672755, max,0.00001);
+		Assert.assertEquals(431741.6495398773, max,0.00001);
 		Assert.assertEquals(132.55555555555554, min,0.00001);
-		Assert.assertEquals(10.397824434316313, maxq,0.00001);
-		Assert.assertEquals(0.0073678526262440005, minq,0.00001);
+		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+		Assert.assertEquals(0.004903786580700596, minq,0.00001);
 		
 	}
 	
@@ -117,10 +117,10 @@ public class PixelIntegrationTest {
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(300275.76460062194, max,0.00001);
-		Assert.assertEquals(136.5910102402878, min,0.00001);
-		Assert.assertEquals(10.400892093105334, maxq,0.00001);
-		Assert.assertEquals(0.004904701898820428, minq,0.00001);
+		Assert.assertEquals(353589.4987476404, max,0.00001);
+		Assert.assertEquals(136.5790195926834, min,0.00001);
+		Assert.assertEquals(10.401047688249356, maxq,0.00001);
+		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
 		//Second pass should be faster
 		before = System.currentTimeMillis();
@@ -133,10 +133,10 @@ public class PixelIntegrationTest {
 		maxq = out.get(0).max().doubleValue();
 		minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(300275.76460062194, max,0.00001);
-		Assert.assertEquals(136.5910102402878, min,0.00001);
-		Assert.assertEquals(10.400892093105334, maxq,0.00001);
-		Assert.assertEquals(0.004904701898820428, minq,0.00001);
+		Assert.assertEquals(353589.4987476404, max,0.00001);
+		Assert.assertEquals(136.5790195926834, min,0.00001);
+		Assert.assertEquals(10.401047688249356, maxq,0.00001);
+		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 	}
 	
 	@Test
@@ -170,10 +170,10 @@ public class PixelIntegrationTest {
 		double maxi = out.get(1).max().doubleValue();
 		double mini = out.get(1).min().doubleValue();
 		
-		Assert.assertEquals(10.400892093105334, maxq,0.00001);
-		Assert.assertEquals(0.004904701898820428, minq,0.00001);
+		Assert.assertEquals(10.401047688249356, maxq,0.00001);
+		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
-		Assert.assertEquals(647363.4901084385, maxi,0.00001);
+		Assert.assertEquals(662877.7117513434, maxi,0.00001);
 		//-24427.040167283067
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
@@ -192,10 +192,10 @@ public class PixelIntegrationTest {
 		maxi = out.get(1).max().doubleValue();
 		mini = out.get(1).min().doubleValue();
 		
-		Assert.assertEquals(10.400892093105334, maxq,0.00001);
-		Assert.assertEquals(0.004904701898820428, minq,0.00001);
+		Assert.assertEquals(10.401047688249356, maxq,0.00001);
+		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
-		Assert.assertEquals(647363.4901084385, maxi,0.00001);
+		Assert.assertEquals(662877.7117513434, maxi,0.00001);
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
 

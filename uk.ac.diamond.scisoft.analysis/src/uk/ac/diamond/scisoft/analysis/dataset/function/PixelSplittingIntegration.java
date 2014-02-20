@@ -73,7 +73,8 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 			int[] posStop = pos.clone();
 
 			while (iter.hasNext()) {
-
+				
+				if (mask != null && !mask.getBoolean(pos)) continue;
 				posStop[0] = pos[0]+2;
 				posStop[1] = pos[1]+2;
 				AbstractDataset qrange = a.getSlice(pos, posStop, null);
@@ -105,12 +106,12 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 					double minFrac = 1-(minBinExact-minBin);
 					double maxFrac = maxBinExact-maxBin;
 
-					if (minBin >= 0) {
+					if (minBin >= 0 && minBin < h.length) {
 						h[minBin]+=(iPerPixel*minFrac);
 						in[minBin] += (sig*iPerPixel*minFrac);
 					}
 
-					if (maxBin < h.length) {
+					if (maxBin < h.length && maxBin >=0) {
 						h[maxBin]+=(iPerPixel*maxFrac);
 						in[maxBin] += (sig*iPerPixel*maxFrac);
 					}

@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -67,13 +68,14 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			return null;
 		
 		if (axisArray == null) {
-			
 			generateAxisArray(datasets[0].getShape(), true);
-			
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
+			
+			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) return null;
+			
 			if (bins == null) {
 				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 			}
@@ -99,7 +101,9 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			while (iter.hasNext()) {
 				final double val = a.getElementDoubleAbs(iter.index);
 				final double sig = b.getElementDoubleAbs(iter.index);
-				if (val < lo && val > hi) {
+				if (mask != null && !mask.getElementBooleanAbs(iter.index)) continue;
+				
+				if (val < lo || val > hi) {
 					continue;
 				}
 				if(((int) ((val-lo)/span))<h.length){

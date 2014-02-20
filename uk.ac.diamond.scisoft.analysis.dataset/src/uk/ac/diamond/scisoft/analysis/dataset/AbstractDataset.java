@@ -1578,7 +1578,8 @@ public abstract class AbstractDataset implements ADataset {
 		if (Arrays.equals(this.shape, nshape))
 			return;
 
-		if (stride != null) { // the only compatible shapes are ones where new dimensions are factors of old dimensions
+		if (stride != null) {
+			 // the only compatible shapes are ones where new dimensions are factors of old dimensions
 			int[] oshape = this.shape;
 			int orank = oshape.length;
 			int nrank = nshape.length;
@@ -2433,13 +2434,6 @@ public abstract class AbstractDataset implements ADataset {
 		}
 	}
 
-	/**
-	 * Returns new dataset with new shape but old data if possible,
-	 * otherwise a copy is made
-	 * 
-	 * @param shape
-	 *            new shape
-	 */
 	@Override
 	public AbstractDataset reshape(final int... shape) {
 		AbstractDataset a = getView();

@@ -21,7 +21,18 @@ import java.io.Serializable;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
- * Interface for our implementation of dataset that adds a lot of extra functionality
+ * <p>
+ * Interface for our implementation of dataset that adds a lot of extra functionality.
+ * </p>
+ * <p>
+ * <b>Warning:</b>
+ * It is important to note that methods (get*Abs() and set*Abs()) which use the absolute
+ * index <emph>must</emph> be used with care. In (sliced) views of datasets, neighbouring
+ * positions do not necessarily correspond to contiguous indexes. This is also the case
+ * with multi-element (or compound) items. Therefore index iterators should be used in
+ * conjunction with these methods unless the dataset can be proven to be not a view or
+ * be a wholly contiguous slice of a dataset; a copy or new dataset satisfies this criterion.
+ * </p>
  */
 public interface ADataset extends IErrorDataset {
 
@@ -150,7 +161,7 @@ public interface ADataset extends IErrorDataset {
 	public boolean hasFloatingPointElements();
 
 	/**
-	 * @return number of bytes used (does not include reserved space)
+	 * @return number of bytes used
 	 */
 	public int getNbytes();
 
@@ -181,8 +192,8 @@ public interface ADataset extends IErrorDataset {
 	public ADataset clone();
 
 	/**
-	 * This function allows anything that dirties the dataset to set stored values to null so that the other functions
-	 * can work correctly.
+	 * This function allows anything that dirties the dataset to set stored values to null so that
+	 * the other functions can work correctly
 	 */
 	public void setDirty();
 
@@ -204,8 +215,8 @@ public interface ADataset extends IErrorDataset {
 	public int checkAxis(int axis);
 
 	/**
-	 * This function takes a dataset and checks its shape against the current dataset. If they are both of the same
-	 * size, then this returns true otherwise it returns false.
+	 * This function takes a dataset and checks its shape against the current dataset. If they are
+	 * both of the same size, then this returns true otherwise it returns false.
 	 * 
 	 * @param g
 	 *            The dataset to be compared
@@ -214,8 +225,9 @@ public interface ADataset extends IErrorDataset {
 	public boolean isCompatibleWith(ILazyDataset g);
 
 	/**
-	 * This function takes a dataset and checks its shape against the current dataset. If they are both of the same
-	 * size, then this returns with no error, if there is a problem, then an error is thrown.
+	 * This function takes a dataset and checks its shape against the current dataset. If they are
+	 * both of the same size, then this returns with no error, if there is a problem, then an error
+	 * is thrown.
 	 * 
 	 * @param g
 	 *            The dataset to be compared
@@ -225,8 +237,7 @@ public interface ADataset extends IErrorDataset {
 	public void checkCompatibility(ILazyDataset g) throws IllegalArgumentException;
 
 	/**
-	 * Returns dataset with new shape but old data <b>Warning</b> only works for un-expanded datasets! Copy the dataset
-	 * first
+	 * Returns new dataset with new shape but old data if possible, otherwise a copy is made
 	 * 
 	 * @param shape
 	 *            new shape
@@ -245,8 +256,8 @@ public interface ADataset extends IErrorDataset {
 
 
 	/**
-	 * Get the error array from the dataset, or creates an error array if all 
-	 * values are the same
+	 * Get the error array from the dataset, or creates an error array if all values are the same
+	 *
 	 * @return the dataset which contains the error information (can be null)
 	 */
 	@Override
@@ -254,12 +265,14 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * Get the buffer that backs the error data
+	 *
 	 * @return the buffer which contains the error information (can be null)
 	 */
 	public Serializable getErrorBuffer();
 
 	/**
 	 * Set the buffer that backs the error data
+	 *
 	 * @buffer the buffer which contains the error information (can be null)
 	 */
 	public void setErrorBuffer(Serializable buffer);
@@ -300,8 +313,9 @@ public interface ADataset extends IErrorDataset {
 	 *  such that n(i) = o(p(i)) for all i
 	 * </pre>
 	 * 
-	 * I.e. for a 3D dataset (1,0,2) implies the new dataset has its 1st dimension running along the old dataset's 2nd
-	 * dimension and the new 2nd is the old 1st. The 3rd dimension is left unchanged.
+	 * I.e. for a 3D dataset (1,0,2) implies the new dataset has its 1st dimension running along
+	 * the old dataset's 2nd dimension and the new 2nd is the old 1st. The 3rd dimension is left
+	 * unchanged.
 	 * 
 	 * @param axes
 	 *            if zero length then axes order reversed
@@ -333,6 +347,7 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * Fill dataset from object at depth dimension
+	 *
 	 * @param obj
 	 * @param depth
 	 * @param pos position
@@ -401,6 +416,7 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy array slice
+	 *
 	 * @param obj
 	 *            specifies the object used to set the specified slice
 	 * @param start
@@ -425,7 +441,8 @@ public interface ADataset extends IErrorDataset {
 	public ADataset setSlice(Object obj, IndexIterator iterator);
 
 	/**
-	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset is true
+	 * Get an iterator that visits every item in this dataset where the corresponding item in
+	 * choice dataset is true
 	 * 
 	 * @param choice
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
@@ -433,8 +450,8 @@ public interface ADataset extends IErrorDataset {
 	public IndexIterator getBooleanIterator(ADataset choice);
 
 	/**
-	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset
-	 * is given by value
+	 * Get an iterator that visits every item in this dataset where the corresponding item in
+	 * choice dataset is given by value
 	 * 
 	 * @param choice
 	 * @param value
@@ -444,7 +461,7 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy get item with a condition specified by a boolean dataset
-	 * 
+	 *
 	 * @param selection
 	 *            a boolean dataset of same shape to use for selecting items
 	 * @return The new selected dataset
@@ -453,6 +470,7 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy set item with a condition specified by a boolean dataset
+	 *
 	 * @param obj
 	 *            specifies the object used to set the selected items
 	 * @param selection
@@ -464,7 +482,7 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy get item with an index dataset
-	 * 
+	 *
 	 * @param index
 	 *            an integer dataset
 	 * @return The new selected dataset by indices
@@ -473,14 +491,17 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy get item with an array of indexing objects
+	 *
 	 * @param index
-	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
+	 *            an array of integer dataset, boolean dataset, slices or null entries (same as
+	 *            full slices)
 	 * @return The new selected dataset by index
 	 */
 	public ADataset getByIndexes(Object... index);
 
 	/**
 	 * This is modelled after the NumPy set item with an index dataset
+	 *
 	 * @param obj
 	 *            specifies the object used to set the selected items
 	 * @param index
@@ -492,10 +513,12 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
+	 *
 	 * @param obj
 	 *            specifies the object used to set the selected items
 	 * @param index
-	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
+	 *            an array of integer dataset, boolean dataset, slices or null entries (same as
+	 *            full slices)
 	 * 
 	 * @return The dataset with modified content
 	 */
@@ -510,8 +533,7 @@ public interface ADataset extends IErrorDataset {
 	public ADataset fill(Object obj);
 
 	/**
-	 * Get an element from given absolute index as a boolean - note this index does not take in account the item size so
-	 * be careful when using with multi-element items
+	 * Get an element from given absolute index as a boolean. See warning in interface doc
 	 * 
 	 * @param index
 	 * @return element as boolean
@@ -519,8 +541,7 @@ public interface ADataset extends IErrorDataset {
 	public boolean getElementBooleanAbs(int index);
 
 	/**
-	 * Get an element from given absolute index as a double - note this index does not take in account the item size so
-	 * be careful when using with multi-element items
+	 * Get an element from given absolute index as a double. See warning in interface doc
 	 * 
 	 * @param index
 	 * @return element as double
@@ -528,8 +549,7 @@ public interface ADataset extends IErrorDataset {
 	public double getElementDoubleAbs(int index);
 
 	/**
-	 * Get an element from given absolute index as a long - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
+	 * Get an element from given absolute index as a long. See warning in interface doc
 	 * 
 	 * @param index
 	 * @return element as long
@@ -537,8 +557,7 @@ public interface ADataset extends IErrorDataset {
 	public long getElementLongAbs(int index);
 
 	/**
-	 * Get an item from given absolute index as an object - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
+	 * Get an item from given absolute index as an object. See warning in interface doc
 	 * 
 	 * @param index
 	 * @return item
@@ -546,8 +565,7 @@ public interface ADataset extends IErrorDataset {
 	public Object getObjectAbs(int index);
 
 	/**
-	 * Get an item from given absolute index as a string - note this index does not take in account the item size so be
-	 * careful when using with multi-element items
+	 * Get an item from given absolute index as a string. See warning in interface doc
 	 * 
 	 * @param index
 	 * @return item
@@ -555,8 +573,8 @@ public interface ADataset extends IErrorDataset {
 	public String getStringAbs(int index);
 
 	/**
-	 * Set an item at absolute index from an object - note this index does not take into account the item size so be
-	 * careful when using with multi-element items
+	 * Set an item at absolute index from an object. See warning in interface doc
+	 * 
 	 * @param index
 	 * @param obj
 	 */
@@ -940,7 +958,8 @@ public interface ADataset extends IErrorDataset {
 
 	/**
 	 * @return sum over all items in dataset as appropriate to dataset type
-	 * (integers for boolean, byte, short and integer; longs for long; floats for float; doubles for double)
+	 * (integers for boolean, byte, short and integer; longs for long; floats for float; doubles
+	 * for double)
 	 */
 	public Object typedSum();
 
@@ -1002,8 +1021,8 @@ public interface ADataset extends IErrorDataset {
 	public Number variance();
 
 	/**
-	 * The sample variance can be calculated in two ways: if the dataset is considered as the entire population then the
-	 * sample variance is simply the second central moment:
+	 * The sample variance can be calculated in two ways: if the dataset is considered as the
+	 * entire population then the sample variance is simply the second central moment:
 	 * 
 	 * <pre>
 	 *    sum((x_i - m)^2)/N

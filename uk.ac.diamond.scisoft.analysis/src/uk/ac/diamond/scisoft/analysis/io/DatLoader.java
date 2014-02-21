@@ -335,6 +335,9 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	protected String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
 		
 		String line = in.readLine();
+		if (line == null) {
+			return null;
+		}
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metaData.clear();
 		vals.clear();
@@ -343,6 +346,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
+		// TODO clarify why this is a while loop
 		while (line.startsWith("#") || "".equals(line.trim())) {
 			
 			try {

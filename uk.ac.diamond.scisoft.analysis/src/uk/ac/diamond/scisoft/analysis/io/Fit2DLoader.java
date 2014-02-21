@@ -72,8 +72,9 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 			String line = br.readLine();
 			
 			// If the first line is not a { then we fail this loader.
-			if (!line.trim().startsWith("\\")) throw new ScanFileHolderException("Fit2D File should start with \\ !");
-			
+			if (line == null || !line.trim().startsWith("\\")) {
+				throw new ScanFileHolderException("Fit2D File should start with \\ !");
+			}
 
 			// Read the meta data
 			int index = readMetaData(br, line.length()+1, mon);
@@ -112,8 +113,10 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		try {
 			final String line       = br.readLine();
-			readMetaData(br, line.length()+1, mon);
-			createMetadata();
+			if (line != null) {
+				readMetaData(br, line.length()+1, mon);
+				createMetadata();
+			}
 		} finally {
 			br.close();
 		}
@@ -137,6 +140,9 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 		String headerEnd = "\\data_array:";
 		
 		String line = br.readLine();
+		if (line == null)
+			return index;
+
 		index += line.length()+1;
 		
 		while (!line.contains(headerEnd)) {
@@ -147,6 +153,8 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 			addValuesToMetaData(line);
 			
 			line = br.readLine();
+			if (line == null)
+				break;
 			index += line.length()+1;
 		}
 		

@@ -141,7 +141,7 @@ public class AbstractDatasetTest {
 	public void testGetSpeed() {
 		final int ITERATIONS = 1000;
 		AbstractDataset a = AbstractDataset.arange(1000000, AbstractDataset.FLOAT64);
-		long start, startN;
+		long start, startN, startP;
 
 		start = -System.nanoTime();
 		for (int i = 0; i < 10; i++) {
@@ -161,7 +161,15 @@ public class AbstractDatasetTest {
 		}
 		startN += System.nanoTime();
 
-		System.out.printf("Get 1D double took %gus (cf %gus)\n", start*1e-3/ITERATIONS, startN*1e-3/ITERATIONS);
+		startP = -System.nanoTime();
+		int[] pos = new int[1];
+		for (int i = 0; i < ITERATIONS; i++) {
+			pos[0] = i;
+			a.getDouble(pos);
+		}
+		startP += System.nanoTime();
+
+		System.out.printf("Get 1D double took %gus (cf %gus and %gus)\n", start*1e-3/ITERATIONS, startN*1e-3/ITERATIONS, startP*1e-3/ITERATIONS);
 
 		a.setShape(1000, 1000);
 		start = -System.nanoTime();
@@ -182,7 +190,16 @@ public class AbstractDatasetTest {
 		}
 		startN += System.nanoTime();
 
-		System.out.printf("Get 2D double took %gus (cf %gus)\n", start*1e-3/ITERATIONS, startN*1e-3/ITERATIONS);
+		startP = -System.nanoTime();
+		pos = new int[2];
+		for (int i = 0; i < ITERATIONS; i++) {
+			pos[0] = i;
+			pos[1] = i;
+			a.getDouble(pos);
+		}
+		startP += System.nanoTime();
+
+		System.out.printf("Get 2D double took %gus (cf %gus and %gus)\n", start*1e-3/ITERATIONS, startN*1e-3/ITERATIONS, startP*1e-3/ITERATIONS);
 	}
 
 	@Test

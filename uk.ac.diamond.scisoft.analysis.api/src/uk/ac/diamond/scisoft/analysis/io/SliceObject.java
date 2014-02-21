@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  * Holds data needed to get a slice from a nexus file. Since 
  * quite a bit of information is needed, we use an object.
  */
-public class SliceObject {
+public class SliceObject implements Cloneable {
 
 	private String path;
 	private String name;

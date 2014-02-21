@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DetectorPropertyEvent.EventTyp
  * the area detector frame's x and y axes; the area detector's outward (to the sample)
  * normal is anti-parallel to its z-axis.
  */
-public class DetectorProperties implements Serializable {
+public class DetectorProperties implements Serializable, Cloneable {
 	/**
 	 * Update this when there are any serious changes to API
 	 */

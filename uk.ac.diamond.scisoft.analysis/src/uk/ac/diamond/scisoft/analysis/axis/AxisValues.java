@@ -31,7 +31,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
  * Container that holds values for an axis to Plot
  */
 
-public class AxisValues implements Iterable<Double>, Serializable {
+public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 
 	private DoubleDataset values = null;
 	private String name;

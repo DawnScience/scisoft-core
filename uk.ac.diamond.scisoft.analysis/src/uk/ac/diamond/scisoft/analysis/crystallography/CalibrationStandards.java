@@ -39,7 +39,7 @@ import org.jscience.physics.amount.Amount;
  * This class is a bean which is persisted to disk and can be deep
  * cloned by the UI when the user is creating another calibrant list.
  */
-public class CalibrationStandards implements Serializable {
+public class CalibrationStandards implements Serializable, Cloneable {
 
 	@Override
 	public int hashCode() {

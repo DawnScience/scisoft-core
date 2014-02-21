@@ -18,7 +18,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironmentE
 /**
  * Container for parameters that a crystal is subject to in a diffraction experiment
  */
-public class DiffractionCrystalEnvironment implements Serializable {
+public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	/**
 	 * Update this when there are any serious changes to API
 	 */

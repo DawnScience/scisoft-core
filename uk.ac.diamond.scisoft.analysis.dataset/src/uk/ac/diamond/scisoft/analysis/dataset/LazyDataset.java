@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  * Class that implements lazy dataset interface
  */
-public class LazyDataset implements ILazyDataset {
+public class LazyDataset implements ILazyDataset, Cloneable {
 	
 	
 	private static final long serialVersionUID = -903717887381144620L;

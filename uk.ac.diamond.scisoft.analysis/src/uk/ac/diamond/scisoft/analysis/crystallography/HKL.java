@@ -36,7 +36,7 @@ import org.jscience.physics.amount.Amount;
  * Often if d is set, h,k and l are not needed but it is up to the 
  * user of the data to decide what happens with it.
  */
-public class HKL implements Serializable {
+public class HKL implements Serializable, Cloneable {
 	
 	private int[] hkl;
 	private String ringName;

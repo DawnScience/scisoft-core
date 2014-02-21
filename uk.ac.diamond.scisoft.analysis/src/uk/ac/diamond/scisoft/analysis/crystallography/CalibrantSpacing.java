@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Holds HKL data for a calibrant
  */
-public class CalibrantSpacing implements Serializable {
+public class CalibrantSpacing implements Serializable, Cloneable {
 
 	private String    name;
 	private List<HKL> hkls;

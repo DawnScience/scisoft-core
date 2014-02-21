@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Class to hold colour datasets as red, green, blue tuples of short integers
  */
-public class RGBDataset extends CompoundShortDataset {
+public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
 

@@ -302,6 +302,27 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public Complex get(final int i) {
+		int n = get1DIndex(i);
+		Complex z = new Complex(data[n], data[n+1]);
+		return z;
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public Complex get(final int i, final int j) {
+		int n = get1DIndex(i, j);
+		Complex z = new Complex(data[n], data[n+1]);
+		return z;
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
@@ -312,8 +333,37 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
+	public Object getObject(final int i) {
+		return getComplex(i);
+	}
+
+	@Override
+	public Object getObject(final int i, final int j) {
+		return getComplex(i, j);
+	}
+
+	@Override
 	public Object getObject(final int... pos) {
 		return getComplex(pos);
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	@SuppressWarnings("cast")
+	public double getReal(final int i) { // PRIM_TYPE
+		return (double) getFirstValue(i); // PRIM_TYPE
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	@SuppressWarnings("cast")
+	public double getReal(final int i, final int j) { // PRIM_TYPE
+		return (double) getFirstValue(i, j); // PRIM_TYPE
 	}
 
 	/**
@@ -326,11 +376,45 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public double getImag(final int i) { // PRIM_TYPE
+		return data[get1DIndex(i) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public double getImag(final int i, final int j) { // PRIM_TYPE
+		return data[get1DIndex(i, j) + 1];
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
 	public double getImag(final int... pos) { // PRIM_TYPE
 		return data[get1DIndex(pos) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public Complex getComplex(final int i) {
+		return get(i);
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public Complex getComplex(final int i, final int j) {
+		return get(i, j);
 	}
 
 	/**
@@ -341,9 +425,16 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		return get(pos);
 	}
 
+	@SuppressWarnings("cast")
 	@Override
-	public String getString(final int...pos) {
-		return getStringAbs(get1DIndex(pos));
+	public void set(final Object obj, final int i) {
+		setItem(new double[] {(double) toReal(obj), (double) toImag(obj)}, i); // PRIM_TYPE
+	}
+
+	@SuppressWarnings("cast")
+	@Override
+	public void set(final Object obj, final int i, final int j) {
+		setItem(new double[] {(double) toReal(obj), (double) toImag(obj)}, i, j); // PRIM_TYPE
 	}
 
 	@SuppressWarnings("cast")
@@ -354,6 +445,27 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		}
 
 		setItem(new double[] {(double) toReal(obj), (double) toImag(obj)}, pos); // PRIM_TYPE
+	}
+
+	/**
+	 * Set real and imaginary values at given position
+	 * @param dr
+	 * @param di
+	 * @param i
+	 */
+	public void set(final double dr, final double di, final int i) { // PRIM_TYPE
+		setItem(new double[] {dr, di}, i); // PRIM_TYPE
+	}
+
+	/**
+	 * Set real and imaginary values at given position
+	 * @param dr
+	 * @param di
+	 * @param i
+	 * @param j
+	 */
+	public void set(final double dr, final double di, final int i, final int j) { // PRIM_TYPE
+		setItem(new double[] {dr, di}, i, j); // PRIM_TYPE
 	}
 
 	/**

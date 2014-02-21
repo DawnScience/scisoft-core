@@ -58,6 +58,9 @@ public class EpicsCSVLoader extends DatLoader {
 	protected String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
 
 		String line = in.readLine();
+		if (line == null)
+			return null;
+
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metaData.clear();
 		vals.clear();
@@ -66,7 +69,8 @@ public class EpicsCSVLoader extends DatLoader {
 
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
-		while (line!=null) {
+		// TODO clean up as this should not be a while loop
+		while (line != null) {
 
 			try {
 				if ("".equals(line.trim())) continue;
@@ -93,11 +97,13 @@ public class EpicsCSVLoader extends DatLoader {
 
 			} finally {
 				line = in.readLine();
-				
+
 				// Ignore empty lines.
-				while("".equals(line.trim())) line = in.readLine();
-				
-				if (!line.startsWith("#")) { // We found the header line
+				while (line != null && "".equals(line.trim())) {
+					line = in.readLine();
+				}
+
+				if (line != null && !line.startsWith("#")) { // We found the header line
 					
 					if (DATA.matcher(line).matches()) break; // Data is not columns!
 					

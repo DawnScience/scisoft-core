@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Arrays;
 

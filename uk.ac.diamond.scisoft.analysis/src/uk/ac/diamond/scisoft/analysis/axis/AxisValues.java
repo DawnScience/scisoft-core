@@ -306,6 +306,7 @@ public class AxisValues implements Iterable<Double>, Serializable {
 		AxisValues cloned = new AxisValues(values);
 		cloned.maxValue = this.maxValue;
 		cloned.minValue = this.minValue;
+		cloned.isDirty = this.isDirty;
 		return cloned;
 	}
 

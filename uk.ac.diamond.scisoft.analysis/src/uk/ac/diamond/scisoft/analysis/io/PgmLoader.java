@@ -120,6 +120,9 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		if (mon!=null&&mon.isCancelled()) throw new ScanFileHolderException("Loader cancelled during reading!");
 
 		String line = br.readLine();
+		if (line == null) {
+			throw new ScanFileHolderException("End of file reached with no metadata found");
+		}
 		int index   = line.length()+1;
 		String token;
 		StringTokenizer s1 = new StringTokenizer(line);

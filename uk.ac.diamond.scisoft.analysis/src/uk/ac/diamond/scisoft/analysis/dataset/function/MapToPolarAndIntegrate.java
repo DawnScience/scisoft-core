@@ -427,10 +427,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 
 						if ((R >= srad) && (R < erad)) {
 							int k = (int) (R - srad);
-							if (mask != null && !mask.getBoolean(new int[] {j,i})) {
+							if (mask != null && !mask.getBoolean(j, i)) {
 									continue;
 							}
-							double val = ids.getDouble(new int[] {j,i});
+							double val = ids.getDouble(j, i);
 							
 							// Each point participating to the sector integration is weighted depending on
 							// how far/close it is from the following point i+1
@@ -457,8 +457,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 			
-			result.add(new FloatDataset(azimuth, new int[] {apts})) ;
-			result.add(new FloatDataset(intensity, new int[] {npts})) ;
+			result.add(new FloatDataset(azimuth, apts));
+			result.add(new FloatDataset(intensity, npts));
 		}
 		return result;
 	}
@@ -624,11 +624,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 								if (k < 0 || (k + 1) >= radAxis.getSize()) {
 									continue;
 								}
-								if (mask != null && !mask.getBoolean(new int[] {j,i})) {
+								if (mask != null && !mask.getBoolean(j, i)) {
 									continue;
 								}
 								
-								double val = ids.getDouble(new int[] {j,i});
+								double val = ids.getDouble(j, i);
 								
 								// Each point participating to the sector integration is weighted depending on
 								// how far/close it is from the following point i+1

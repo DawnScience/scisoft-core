@@ -248,30 +248,78 @@ public class RGBDataset extends CompoundShortDataset {
 	}
 
 	/**
+	 * @param i
+	 * @return red value in given position
+	 */
+	public short getRed(final int i) {
+		return data[get1DIndex(i)];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return red value in given position
+	 */
+	public short getRed(final int i, final int j) {
+		return data[get1DIndex(i, j)];
+	}
+
+	/**
 	 * @param pos
 	 * @return red value in given position
 	 */
-	public short getRed(int... pos) {
-		final int n = get1DIndex(pos)*isize;
-		return data[n];
+	public short getRed(final int... pos) {
+		return data[get1DIndex(pos)];
+	}
+
+	/**
+	 * @param i
+	 * @return green value in given position
+	 */
+	public short getGreen(final int i) {
+		return data[get1DIndex(i) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return green value in given position
+	 */
+	public short getGreen(final int i, final int j) {
+		return data[get1DIndex(i, j) + 1];
 	}
 
 	/**
 	 * @param pos
 	 * @return green value in given position
 	 */
-	public short getGreen(int... pos) {
-		final int n = get1DIndex(pos)*isize;
-		return data[n+1];
+	public short getGreen(final int... pos) {
+		return data[get1DIndex(pos) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @return blue value in given position
+	 */
+	public short getBlue(final int i) {
+		return data[get1DIndex(i) + 2];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return blue value in given position
+	 */
+	public short getBlue(final int i, final int j) {
+		return data[get1DIndex(i, j) + 2];
 	}
 
 	/**
 	 * @param pos
 	 * @return blue value in given position
 	 */
-	public short getBlue(int... pos) {
-		final int n = get1DIndex(pos)*isize;
-		return data[n+2];
+	public short getBlue(final int... pos) {
+		return data[get1DIndex(pos) + 2];
 	}
 
 	/**

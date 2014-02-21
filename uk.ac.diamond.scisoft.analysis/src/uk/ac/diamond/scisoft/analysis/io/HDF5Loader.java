@@ -1349,6 +1349,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	/**
 	 * Create a lazy dataset from given dataset and datatype IDs
 	 * @param file
+	 * @param dataset
 	 * @param nodePath full node path
 	 * @param name
 	 * @param did

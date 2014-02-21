@@ -115,8 +115,28 @@ public class BooleanDataset extends BooleanDatasetBase {
 	}
 
 	@Override
+	public double getDouble(final int i) {
+		return getInt(i);
+	}
+
+	@Override
+	public double getDouble(final int i, final int j) {
+		return getInt(i, j);
+	}
+
+	@Override
 	public double getDouble(final int... pos) {
 		return getInt(pos);
+	}
+
+	@Override
+	public float getFloat(final int i) {
+		return getInt(i);
+	}
+
+	@Override
+	public float getFloat(final int i, final int j) {
+		return getInt(i, j);
 	}
 
 	@Override
@@ -125,8 +145,28 @@ public class BooleanDataset extends BooleanDatasetBase {
 	}
 
 	@Override
+	public long getLong(final int i) {
+		return getInt(i);
+	}
+
+	@Override
+	public long getLong(final int i, final int j) {
+		return getInt(i, j);
+	}
+
+	@Override
 	public long getLong(final int... pos) {
 		return getInt(pos);
+	}
+
+	@Override
+	public int getInt(final int i) {
+		return get(i) ? 1 : 0;
+	}
+
+	@Override
+	public int getInt(final int i, final int j) {
+		return get(i, j) ? 1 : 0;
 	}
 
 	@Override
@@ -135,13 +175,43 @@ public class BooleanDataset extends BooleanDatasetBase {
 	}
 
 	@Override
+	public short getShort(final int i) {
+		return (short) getInt(i);
+	}
+
+	@Override
+	public short getShort(final int i, final int j) {
+		return (short) getInt(i, j);
+	}
+
+	@Override
 	public short getShort(final int... pos) {
 		return (short) getInt(pos);
 	}
 
 	@Override
+	public byte getByte(final int i) {
+		return (byte) getInt(i);
+	}
+
+	@Override
+	public byte getByte(final int i, final int j) {
+		return (byte) getInt(i, j);
+	}
+
+	@Override
 	public byte getByte(final int... pos) {
 		return (byte) getInt(pos);
+	}
+
+	@Override
+	public boolean getBoolean(final int i) {
+		return get(i);
+	}
+
+	@Override
+	public boolean getBoolean(final int i, final int j) {
+		return get(i, j);
 	}
 
 	@Override

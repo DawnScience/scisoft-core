@@ -1774,9 +1774,10 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Function that uses the knowledge of the dataset to calculate the index in the data array that corresponds to the
-	 * n-dimensional position given by the int array. The input values <b>must</b> be inside the arrays, this should be
-	 * ok as this function is mainly in code which will be run inside the get and set functions
+	 * Function that uses the knowledge of the dataset to calculate the index in the data array
+	 * that corresponds to the n-dimensional position given by the int array. The input values
+	 * <b>must</b> be inside the arrays, this should be ok as this function is mainly in code which
+	 * will be run inside the get and set functions
 	 * 
 	 * @param n
 	 *            the integer array specifying the n-D position
@@ -1800,6 +1801,54 @@ public abstract class AbstractDataset implements ADataset {
 		return stride == null ? get1DIndexFromShape(n) : get1DIndexFromStrides(n);
 	}
 
+	private static void throwAIOOBException(int i, int s, int d) {
+		throw new ArrayIndexOutOfBoundsException("Index (" + i + ") out of range [-" + s + "," + s
+				+ ") in dimension " + d);
+	}
+
+	/**
+	 * @param i
+	 * @return the index on the data array corresponding to that location
+	 */
+	protected int get1DIndex(int i) {
+		if (shape.length > 1) {
+			abstractLogger.debug("This dataset is not 1D but was addressed as such");
+			return get1DIndex(new int[] {i});
+		}
+		if (i < 0) {
+			i += shape[0];
+		}
+		if (i < 0 || i >= shape[0]) {
+			throwAIOOBException(i, shape[0], 0);
+		}
+		return stride == null ? i : i*stride[0] + offset;
+	}
+	
+	/**
+	 * @param i
+	 * @param j
+	 * @return the index on the data array corresponding to that location
+	 */
+	protected int get1DIndex(int i, int j) {
+		if (shape.length != 2) {
+			abstractLogger.debug("This dataset is not 2D but was addressed as such");
+			return get1DIndex(new int[] {i, j});
+		}
+		if (i < 0) {
+			i += shape[0];
+		}
+		if (i < 0 || i >= shape[0]) {
+			throwAIOOBException(i, shape[0], 0);
+		}
+		if (j < 0) {
+			j += shape[1];
+		}
+		if (j < 0 || j >= shape[1]) {
+			throwAIOOBException(i, shape[1], 1);
+		}
+		return stride == null ? i*shape[1] + j : i*stride[0] + j*stride[1] + offset;
+	}
+
 	protected int get1DIndexFromShape(final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
@@ -1812,8 +1861,7 @@ public abstract class AbstractDataset implements ADataset {
 				ni += si;
 			}
 			if (ni < 0 || ni >= si) {
-				throw new ArrayIndexOutOfBoundsException("Index (" + ni + ") out of range [-" + si + "," + si
-						+ ") in dimension " + i);
+				throwAIOOBException(ni, si, i);
 			}
 			index = index * si + ni;
 		}
@@ -1837,8 +1885,7 @@ public abstract class AbstractDataset implements ADataset {
 				ni += si;
 			}
 			if (ni < 0 || ni >= si) {
-				throw new ArrayIndexOutOfBoundsException("Index (" + ni + ") out of range [-" + si + "," + si
-						+ ") in dimension " + i);
+				throwAIOOBException(ni, si, i);
 			}
 			index += stride[i] * ni;
 		}
@@ -2163,39 +2210,6 @@ public abstract class AbstractDataset implements ADataset {
 	@Override
 	public void setDirty() {
 		storedValues = null;
-	}
-
-	/**
-	 * Check the position given against the shape to make sure it is valid and sanitise it
-	 * 
-	 * @param pos
-	 * @return boolean
-	 */
-	protected boolean isPositionInShape(final int... pos) {
-		int pmax = pos.length;
-
-		// check the dimensionality of the request
-		if (pmax > shape.length) {
-			throw new IllegalArgumentException(String.format(
-					"Dimensionalities of requested position, %d, and dataset, %d, are incompatible", pos.length,
-					shape.length));
-		}
-
-		// if it's the right size or less, check to see if it's within bounds
-		for (int i = 0; i < pmax; i++) {
-			final int si = shape[i];
-			if (pos[i] < 0) {
-				pos[i] += si;
-			}
-			if (pos[i] < 0) {
-				throw new ArrayIndexOutOfBoundsException("Index (" + pos[i] + ") out of range [-" + si + "," + si
-						+ ") in dimension " + i);
-			}
-			if (pos[i] >= si)
-				return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -4247,11 +4261,28 @@ public abstract class AbstractDataset implements ADataset {
 		return errors;
 	}
 
-	/**
-	 * Get the error value for a single point in the dataset
-	 * @param pos of the point to be referenced 
-	 * @return the value of the error at this point
-	 */
+	@Override
+	public double getError(final int i) {
+		if (errorData == null) {
+			return 0;
+		}
+		if (errorData instanceof IDataset) {
+			return Math.sqrt(((IDataset) errorData).getDouble(i));
+		}
+		return Math.sqrt(toReal(errorData));
+	}
+
+	@Override
+	public double getError(final int i, final int j) {
+		if (errorData == null) {
+			return 0;
+		}
+		if (errorData instanceof IDataset) {
+			return Math.sqrt(((IDataset) errorData).getDouble(i, j));
+		}
+		return Math.sqrt(toReal(errorData));
+	}
+
 	@Override
 	public double getError(int... pos) {
 		if (errorData == null) {
@@ -4261,6 +4292,22 @@ public abstract class AbstractDataset implements ADataset {
 			return Math.sqrt(((IDataset) errorData).getDouble(pos));
 		}
 		return Math.sqrt(toReal(errorData));
+	}
+
+	@Override
+	public double[] getErrorArray(final int i) {
+		if (errorData == null) {
+			return null;
+		}
+		return new double[] {getError(i)};
+	}
+
+	@Override
+	public double[] getErrorArray(final int i, final int j) {
+		if (errorData == null) {
+			return null;
+		}
+		return new double[] {getError(i, j)};
 	}
 
 	@Override

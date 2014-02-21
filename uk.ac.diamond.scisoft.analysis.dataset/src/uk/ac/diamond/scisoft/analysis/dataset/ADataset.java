@@ -581,6 +581,186 @@ public interface ADataset extends IErrorDataset {
 	public void setObjectAbs(int index, Object obj);
 
 	/**
+	 * Get an item from index i as an object. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public Object getObject(final int i);
+
+	/**
+	 * Get an item from indexes i, j as an object. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public Object getObject(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a string. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public String getString(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a string. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public String getString(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a double. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public double getDouble(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a double. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public double getDouble(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a float. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public float getFloat(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a float. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public float getFloat(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a long. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public long getLong(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a long. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public long getLong(final int i, final int j);
+
+	/**
+	 * Get an item from index i as an int. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public int getInt(final int i);
+
+	/**
+	 * Get an item from indexes i, j as an int. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public int getInt(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a short. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public short getShort(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a short. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public short getShort(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a byte. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public byte getByte(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a byte. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public byte getByte(final int i, final int j);
+
+	/**
+	 * Get an item from index i as a boolean. The dataset must be 1D
+	 * @param i
+	 * @return item
+	 */
+	public boolean getBoolean(final int i);
+
+	/**
+	 * Get an item from indexes i, j as a boolean. The dataset must be 2D
+	 * @param i
+	 * @param j
+	 * @return item
+	 */
+	public boolean getBoolean(final int i, final int j);
+
+	/**
+	 * Get the error for a given position.
+	 * @param i
+	 * @return error value (symmetric)
+	 */
+	public double getError(final int i);
+
+	/**
+	 * Get the error for a given position.
+	 * @param i
+	 * @param j
+	 * @return error value (symmetric)
+	 */
+	public double getError(final int i, final int j);
+
+	/**
+	 * Get the error values for a single point in the dataset
+	 * @param i
+	 * @return the values of the error at this point (can be null when no error defined)
+	 */
+	public double[] getErrorArray(final int i);
+
+	/**
+	 * Get the error values for a single point in the dataset
+	 * @param i
+	 * @param j
+	 * @return the values of the error at this point (can be null when no error defined)
+	 */
+	public double[] getErrorArray(final int i, final int j);
+
+	/**
+	 * Set the value given by object at given position. The dataset must be 1D
+	 * @param obj
+	 * @param i
+	 */
+	public void set(final Object obj, final int i);
+
+	/**
+	 * Set the value given by object at given position. The dataset must be 2D
+	 * @param obj
+	 * @param i
+	 * @param j
+	 */
+	public void set(final Object obj, final int i, final int j);
+
+	/**
 	 * In-place sort of dataset
 	 * 
 	 * @param axis

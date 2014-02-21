@@ -447,8 +447,34 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public Object getObject(final int i) {
+		return getShortArray(i); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int i, final int j) {
+		return getShortArray(i, j); // CLASS_TYPE
+	}
+
+	@Override
 	public Object getObject(final int... pos) {
 		return getShortArray(pos); // CLASS_TYPE
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public short[] getShortArray(final int i) { // CLASS_TYPE // PRIM_TYPE
+		return (short[]) getObjectAbs(get1DIndex(i)); // PRIM_TYPE
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public short[] getShortArray(final int i, final int j) { // CLASS_TYPE // PRIM_TYPE
+		return (short[]) getObjectAbs(get1DIndex(i, j)); // PRIM_TYPE
 	}
 
 	/**
@@ -466,8 +492,28 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public String getString(final int i) {
+		return getStringAbs(get1DIndex(i));
+	}
+
+	@Override
+	public String getString(final int i, final int j) {
+		return getStringAbs(get1DIndex(i, j));
+	}
+
+	@Override
 	public String getString(final int... pos) {
 		return getStringAbs(get1DIndex(pos));
+	}
+
+	@Override
+	protected double getFirstValue(int i) {
+		return data[get1DIndex(i)];
+	}
+
+	@Override
+	protected double getFirstValue(int i, int j) {
+		return data[get1DIndex(i, j)];
 	}
 
 	@Override
@@ -503,6 +549,16 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public void set(final Object obj, final int i) {
+		setItem(toShortArray(obj, isize), i); // CLASS_TYPE
+	}
+
+	@Override
+	public void set(final Object obj, final int i, final int j) {
+		setItem(toShortArray(obj, isize), i, j); // CLASS_TYPE
+	}
+
+	@Override
 	public void set(final Object obj, int... pos) {
 		if (pos == null || pos.length == 0) {
 			pos = new int[shape.length];
@@ -512,15 +568,39 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	}
 
 	/**
+	 * Set values at given position. The dataset must be 1D
+	 *
+	 * @param d
+	 * @param i
+	 */
+	public void setItem(final short[] d, final int i) { // PRIM_TYPE
+		if (d.length > isize) {
+			throw new IllegalArgumentException("Array is larger than number of elements in an item");
+		}
+		setAbs(get1DIndex(i), d);
+	}
+
+	/**
+	 * Set values at given position. The dataset must be 1D
+	 *
+	 * @param d
+	 * @param i
+	 * @param j
+	 */
+	public void setItem(final short[] d, final int i, final int j) { // PRIM_TYPE
+		if (d.length > isize) {
+			throw new IllegalArgumentException("Array is larger than number of elements in an item");
+		}
+		setAbs(get1DIndex(i, j), d);
+	}
+
+	/**
 	 * Set values at given position
 	 *
 	 * @param d
 	 * @param pos
 	 */
 	public void setItem(final short[] d, final int... pos) { // PRIM_TYPE
-		if (!isPositionInShape(pos)) {
-			throw new ArrayIndexOutOfBoundsException("Index out of bounds");
-		}
 		if (d.length > isize) {
 			throw new IllegalArgumentException("Array is larger than number of elements in an item");
 		}

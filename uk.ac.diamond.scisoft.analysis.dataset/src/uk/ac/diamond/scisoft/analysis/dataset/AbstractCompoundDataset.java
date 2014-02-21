@@ -52,6 +52,18 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
+	protected int get1DIndex(final int i) {
+		int n = super.get1DIndex(i);
+		return stride == null ? isize * n : n;
+	}
+
+	@Override
+	protected int get1DIndex(final int i, final int j) {
+		int n = super.get1DIndex(i, j);
+		return stride == null ? isize * n : n;
+	}
+
+	@Override
 	protected int get1DIndexFromShape(final int... n) {
 		return isize * super.get1DIndexFromShape(n);
 	}
@@ -417,11 +429,35 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		return result;
 	}
 
+	abstract protected double getFirstValue(final int i);
+
+	abstract protected double getFirstValue(final int i, final int j);
+
 	abstract protected double getFirstValue(final int...pos);
+
+	@Override
+	public boolean getBoolean(final int i) {
+		return getFirstValue(i) != 0;
+	}
+
+	@Override
+	public boolean getBoolean(final int i, final int j) {
+		return getFirstValue(i, j) != 0;
+	}
 
 	@Override
 	public boolean getBoolean(final int... pos) {
 		return getFirstValue(pos) != 0;
+	}
+
+	@Override
+	public byte getByte(final int i) {
+		return (byte) getFirstValue(i);
+	}
+
+	@Override
+	public byte getByte(final int i, final int j) {
+		return (byte) getFirstValue(i, j);
 	}
 
 	@Override
@@ -430,8 +466,28 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
+	public short getShort(final int i) {
+		return (short) getFirstValue(i);
+	}
+
+	@Override
+	public short getShort(final int i, final int j) {
+		return (short) getFirstValue(i, j);
+	}
+
+	@Override
 	public short getShort(final int... pos) {
 		return (short) getFirstValue(pos);
+	}
+
+	@Override
+	public int getInt(final int i) {
+		return (int) getFirstValue(i);
+	}
+
+	@Override
+	public int getInt(final int i, final int j) {
+		return (int) getFirstValue(i, j);
 	}
 
 	@Override
@@ -440,13 +496,43 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	}
 
 	@Override
+	public long getLong(final int i) {
+		return (long) getFirstValue(i);
+	}
+
+	@Override
+	public long getLong(final int i, final int j) {
+		return (long) getFirstValue(i, j);
+	}
+
+	@Override
 	public long getLong(final int... pos) {
 		return (long) getFirstValue(pos);
 	}
 
 	@Override
+	public float getFloat(final int i) {
+		return (float) getFirstValue(i);
+	}
+
+	@Override
+	public float getFloat(final int i, final int j) {
+		return (float) getFirstValue(i, j);
+	}
+
+	@Override
 	public float getFloat(final int... pos) {
 		return (float) getFirstValue(pos);
+	}
+
+	@Override
+	public double getDouble(final int i) {
+		return getFirstValue(i);
+	}
+
+	@Override
+	public double getDouble(final int i, final int j) {
+		return getFirstValue(i, j);
 	}
 
 	@Override
@@ -882,43 +968,99 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		return errors;
 	}
 
-	/**
-	 * Gets the total error value for a single point in the dataset
-	 * @param pos of the point to be referenced 
-	 * @return the value of the error at this point
-	 */
 	@Override
-	public double getError(int... pos) {
-		double[] es = getSquaredErrorArray(pos);
+	public double getError(final int i) {
+		return calcError(getSquaredErrorArray(i));
+	}
+
+	@Override
+	public double getError(final int i, final int j) {
+		return calcError(getSquaredErrorArray(i, j));
+	}
+
+	@Override
+	public double getError(final int... pos) {
+		return calcError(getSquaredErrorArray(pos));
+	}
+
+	private double calcError(double[] es) {
 		if (es == null)
 			return 0;
 
 		// assume elements are independent
 		double e = 0;
-		for (int i = 0; i < isize; i++) {
-			e += es[i];
+		for (int k = 0; k < isize; k++) {
+			e += es[k];
 		}
 
 		return Math.sqrt(e);
 	}
 
-	/**
-	 * Get the error values for a single point in the dataset
-	 * @param pos of the point to be referenced 
-	 * @return the values of the error at this point
-	 */
 	@Override
-	public double[] getErrorArray(int... pos) {
-		double[] e = getSquaredErrorArray(pos);
-		if (e != null) {
-			for (int i = 0; i < isize; i++) {
-				e[i] = Math.sqrt(e[i]);
-			}
-		}
-		return e;
+	public double[] getErrorArray(final int i) {
+		return calcErrorArray(getSquaredErrorArray(i));
 	}
 
-	private double[] getSquaredErrorArray(int... pos) {
+	@Override
+	public double[] getErrorArray(final int i, final int j) {
+		return calcErrorArray(getSquaredErrorArray(i, j));
+	}
+
+	@Override
+	public double[] getErrorArray(final int... pos) {
+		return calcErrorArray(getSquaredErrorArray(pos));
+	}
+
+	private double[] calcErrorArray(double[] es) {
+		if (es != null) {
+			for (int k = 0; k < isize; k++) {
+				es[k] = Math.sqrt(es[k]);
+			}
+		}
+		return es;
+	}
+
+	private double[] getSquaredErrorArray(final int i) {
+		if (errorData == null) {
+			return null;
+		}
+
+		double[] es = toDoubleArray(errorData, isize);
+		if (es == null) {
+			if (errorData instanceof CompoundDoubleDataset) {
+				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i);
+			} else {
+				es = new double[isize];
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
+			}
+		}
+		if (es == errorData) {
+			es = es.clone();
+		}
+		return es;
+	}
+
+	private double[] getSquaredErrorArray(final int i, final int j) {
+		if (errorData == null) {
+			return null;
+		}
+
+		double[] es = toDoubleArray(errorData, isize);
+		if (es == null) {
+			if (errorData instanceof CompoundDoubleDataset) {
+				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i, j);
+			} else {
+				es = new double[isize];
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
+			}
+		}
+		if (es == errorData) {
+			es = es.clone();
+		}
+		return es;
+	}
+
+	private double[] getSquaredErrorArray(final int... pos) {
 		if (errorData == null) {
 			return null;
 		}

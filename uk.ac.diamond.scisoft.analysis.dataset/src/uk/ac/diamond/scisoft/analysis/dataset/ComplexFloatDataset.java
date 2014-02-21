@@ -300,6 +300,27 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public Complex get(final int i) {
+		int n = get1DIndex(i);
+		Complex z = new Complex(data[n], data[n+1]);
+		return z;
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public Complex get(final int i, final int j) {
+		int n = get1DIndex(i, j);
+		Complex z = new Complex(data[n], data[n+1]);
+		return z;
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
@@ -310,8 +331,35 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
+	public Object getObject(final int i) {
+		return getComplex(i);
+	}
+
+	@Override
+	public Object getObject(final int i, final int j) {
+		return getComplex(i, j);
+	}
+
+	@Override
 	public Object getObject(final int... pos) {
 		return getComplex(pos);
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public float getReal(final int i) { // PRIM_TYPE
+		return (float) getFirstValue(i); // PRIM_TYPE
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public float getReal(final int i, final int j) { // PRIM_TYPE
+		return (float) getFirstValue(i, j); // PRIM_TYPE
 	}
 
 	/**
@@ -323,11 +371,45 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public float getImag(final int i) { // PRIM_TYPE
+		return data[get1DIndex(i) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public float getImag(final int i, final int j) { // PRIM_TYPE
+		return data[get1DIndex(i, j) + 1];
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
 	public float getImag(final int... pos) { // PRIM_TYPE
 		return data[get1DIndex(pos) + 1];
+	}
+
+	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public Complex getComplex(final int i) {
+		return get(i);
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public Complex getComplex(final int i, final int j) {
+		return get(i, j);
 	}
 
 	/**
@@ -339,8 +421,13 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public String getString(final int...pos) {
-		return getStringAbs(get1DIndex(pos));
+	public void set(final Object obj, final int i) {
+		setItem(new float[] {(float) toReal(obj), (float) toImag(obj)}, i); // PRIM_TYPE
+	}
+
+	@Override
+	public void set(final Object obj, final int i, final int j) {
+		setItem(new float[] {(float) toReal(obj), (float) toImag(obj)}, i, j); // PRIM_TYPE
 	}
 
 	@Override
@@ -350,6 +437,27 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		}
 
 		setItem(new float[] {(float) toReal(obj), (float) toImag(obj)}, pos); // PRIM_TYPE
+	}
+
+	/**
+	 * Set real and imaginary values at given position
+	 * @param dr
+	 * @param di
+	 * @param i
+	 */
+	public void set(final float dr, final float di, final int i) { // PRIM_TYPE
+		setItem(new float[] {dr, di}, i); // PRIM_TYPE
+	}
+
+	/**
+	 * Set real and imaginary values at given position
+	 * @param dr
+	 * @param di
+	 * @param i
+	 * @param j
+	 */
+	public void set(final float dr, final float di, final int i, final int j) { // PRIM_TYPE
+		setItem(new float[] {dr, di}, i, j); // PRIM_TYPE
 	}
 
 	/**

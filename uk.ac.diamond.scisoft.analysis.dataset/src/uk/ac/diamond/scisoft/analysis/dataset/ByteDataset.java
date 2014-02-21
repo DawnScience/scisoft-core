@@ -348,6 +348,23 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public byte get(final int i) { // PRIM_TYPE
+		return data[get1DIndex(i)];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public byte get(final int i, final int j) { // PRIM_TYPE
+		return data[get1DIndex(i, j)];
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
@@ -361,8 +378,53 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
+	public Object getObject(final int i) {
+		return Byte.valueOf(get(i)); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int i, final int j) {
+		return Byte.valueOf(get(i, j)); // CLASS_TYPE
+	}
+
+	@Override
+	public String getString(final int i) {
+		return getStringAbs(get1DIndex(i));
+	}
+
+	@Override
+	public String getString(final int i, final int j) {
+		return getStringAbs(get1DIndex(i, j));
+	}
+
+	@Override
+	public String getString(final int... pos) {
+		return getStringAbs(get1DIndex(pos));
+	}
+
+	@Override
+	public double getDouble(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+	}
+
+	@Override
+	public double getDouble(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+	}
+
+	@Override
 	public double getDouble(final int... pos) {
 		return get(pos); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+	}
+
+	@Override
+	public float getFloat(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_REAL_CAST
+	}
+
+	@Override
+	public float getFloat(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_REAL_CAST
 	}
 
 	@Override
@@ -371,8 +433,28 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
+	public long getLong(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public long getLong(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
 	public long getLong(final int... pos) {
 		return get(pos); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public int getInt(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public int getInt(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_UPCAST
 	}
 
 	@Override
@@ -381,8 +463,28 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
+	public short getShort(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public short getShort(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
 	public short getShort(final int... pos) {
 		return get(pos); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public byte getByte(final int i) {
+		return get(i); // BOOLEAN_ZERO // OMIT_UPCAST
+	}
+
+	@Override
+	public byte getByte(final int i, final int j) {
+		return get(i, j); // BOOLEAN_ZERO // OMIT_UPCAST
 	}
 
 	@Override
@@ -391,27 +493,59 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
+	public boolean getBoolean(final int i) {
+		return get(i) != 0; // BOOLEAN_FALSE
+	}
+
+	@Override
+	public boolean getBoolean(final int i, final int j) {
+		return get(i, j) != 0; // BOOLEAN_FALSE
+	}
+
+	@Override
 	public boolean getBoolean(final int... pos) {
 		return get(pos) != 0; // BOOLEAN_FALSE
 	}
 
-	@Override
-	public String getString(final int... pos) {
-		return getStringAbs(get1DIndex(pos));
+	/**
+	 * Sets the value at a particular point to the passed value. The dataset must be 1D
+	 *
+	 * @param value
+	 * @param i
+	 */
+	public void setItem(final byte value, final int i) { // PRIM_TYPE
+		setAbs(get1DIndex(i), value);
 	}
 
 	/**
-	 * Sets the value at a particular point to the passed value. Note, this will automatically expand the dataset if the
-	 * given position is outside its bounds and make it discontiguous.
+	 * Sets the value at a particular point to the passed value. The dataset must be 2D
+	 *
+	 * @param value
+	 * @param i
+	 * @param j
+	 */
+	public void setItem(final byte value, final int i, final int j) { // PRIM_TYPE
+		setAbs(get1DIndex(i, j), value);
+	}
+
+	/**
+	 * Sets the value at a particular point to the passed value
 	 *
 	 * @param value
 	 * @param pos
 	 */
 	public void setItem(final byte value, final int... pos) { // PRIM_TYPE
-		if (!isPositionInShape(pos)) {
-			throw new ArrayIndexOutOfBoundsException("Index out of bounds");
-		}
 		setAbs(get1DIndex(pos), value);
+	}
+
+	@Override
+	public void set(final Object obj, final int i) {
+		setItem((byte) toLong(obj), i); // FROM_OBJECT
+	}
+
+	@Override
+	public void set(final Object obj, final int i, final int j) {
+		setItem((byte) toLong(obj), i, j); // FROM_OBJECT
 	}
 
 	@Override

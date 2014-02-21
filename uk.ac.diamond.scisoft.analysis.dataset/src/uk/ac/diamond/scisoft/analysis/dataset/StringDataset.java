@@ -125,12 +125,27 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	@Override
+	public double getDouble(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public double getDouble(int i, int j) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
 	public double getDouble(int... pos) {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}
 
 	@Override
-	public long getLong(int... pos) {
+	public float getFloat(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public float getFloat(int i, int j) {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}
 
@@ -140,7 +155,42 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	@Override
+	public long getLong(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public long getLong(int i, int j) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public long getLong(int... pos) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public int getInt(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public int getInt(int i, int j) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
 	public int getInt(int... pos) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public short getShort(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public short getShort(int i, int j) {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}
 
@@ -150,7 +200,27 @@ public class StringDataset extends StringDatasetBase {
 	}
 
 	@Override
+	public byte getByte(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public byte getByte(int i, int j) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
 	public byte getByte(int... pos) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public boolean getBoolean(int i) {
+		throw new UnsupportedOperationException("Unsupported method for class");
+	}
+
+	@Override
+	public boolean getBoolean(int i, int j) {
 		throw new UnsupportedOperationException("Unsupported method for class");
 	}
 

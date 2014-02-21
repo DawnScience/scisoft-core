@@ -322,6 +322,23 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	/**
+	 * @param i
+	 * @return item in given position
+	 */
+	public String get(final int i) { // PRIM_TYPE
+		return data[get1DIndex(i)];
+	}
+
+	/**
+	 * @param i
+	 * @param j
+	 * @return item in given position
+	 */
+	public String get(final int i, final int j) { // PRIM_TYPE
+		return data[get1DIndex(i, j)];
+	}
+
+	/**
 	 * @param pos
 	 * @return item in given position
 	 */
@@ -335,7 +352,52 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
+	public Object getObject(final int i) {
+		return get(i); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int i, final int j) {
+		return get(i, j); // CLASS_TYPE
+	}
+
+	@Override
+	public String getString(final int i) {
+		return getStringAbs(get1DIndex(i));
+	}
+
+	@Override
+	public String getString(final int i, final int j) {
+		return getStringAbs(get1DIndex(i, j));
+	}
+
+	@Override
+	public String getString(final int... pos) {
+		return getStringAbs(get1DIndex(pos));
+	}
+
+	@Override
+	public double getDouble(final int i) {
+		return 0;
+	}
+
+	@Override
+	public double getDouble(final int i, final int j) {
+		return 0;
+	}
+
+	@Override
 	public double getDouble(final int... pos) {
+		return 0;
+	}
+
+	@Override
+	public float getFloat(final int i) {
+		return 0;
+	}
+
+	@Override
+	public float getFloat(final int i, final int j) {
 		return 0;
 	}
 
@@ -345,7 +407,27 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
+	public long getLong(final int i) {
+		return 0;
+	}
+
+	@Override
+	public long getLong(final int i, final int j) {
+		return 0;
+	}
+
+	@Override
 	public long getLong(final int... pos) {
+		return 0;
+	}
+
+	@Override
+	public int getInt(final int i) {
+		return 0;
+	}
+
+	@Override
+	public int getInt(final int i, final int j) {
 		return 0;
 	}
 
@@ -355,7 +437,27 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
+	public short getShort(final int i) {
+		return 0;
+	}
+
+	@Override
+	public short getShort(final int i, final int j) {
+		return 0;
+	}
+
+	@Override
 	public short getShort(final int... pos) {
+		return 0;
+	}
+
+	@Override
+	public byte getByte(final int i) {
+		return 0;
+	}
+
+	@Override
+	public byte getByte(final int i, final int j) {
 		return 0;
 	}
 
@@ -365,27 +467,59 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public boolean getBoolean(final int... pos) {
+	public boolean getBoolean(final int i) {
 		return false;
 	}
 
 	@Override
-	public String getString(final int... pos) {
-		return getStringAbs(get1DIndex(pos));
+	public boolean getBoolean(final int i, final int j) {
+		return false;
+	}
+
+	@Override
+	public boolean getBoolean(final int... pos) {
+		return false;
 	}
 
 	/**
-	 * Sets the value at a particular point to the passed value. Note, this will automatically expand the dataset if the
-	 * given position is outside its bounds and make it discontiguous.
+	 * Sets the value at a particular point to the passed value. The dataset must be 1D
+	 *
+	 * @param value
+	 * @param i
+	 */
+	public void setItem(final String value, final int i) { // PRIM_TYPE
+		setAbs(get1DIndex(i), value);
+	}
+
+	/**
+	 * Sets the value at a particular point to the passed value. The dataset must be 2D
+	 *
+	 * @param value
+	 * @param i
+	 * @param j
+	 */
+	public void setItem(final String value, final int i, final int j) { // PRIM_TYPE
+		setAbs(get1DIndex(i, j), value);
+	}
+
+	/**
+	 * Sets the value at a particular point to the passed value
 	 *
 	 * @param value
 	 * @param pos
 	 */
 	public void setItem(final String value, final int... pos) { // PRIM_TYPE
-		if (!isPositionInShape(pos)) {
-			throw new ArrayIndexOutOfBoundsException("Index out of bounds");
-		}
 		setAbs(get1DIndex(pos), value);
+	}
+
+	@Override
+	public void set(final Object obj, final int i) {
+		setItem(obj.toString(), i); // FROM_OBJECT
+	}
+
+	@Override
+	public void set(final Object obj, final int i, final int j) {
+		setItem(obj.toString(), i, j); // FROM_OBJECT
 	}
 
 	@Override

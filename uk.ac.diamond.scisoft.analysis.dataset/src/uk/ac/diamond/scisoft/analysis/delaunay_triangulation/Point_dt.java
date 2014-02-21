@@ -82,12 +82,39 @@ public class Point_dt {
 		this.z = z;
 	}
 
+	/**
+	 * return true iff this point [x,y] coordinates are the same as p [x,y] coordinates. (the z value is ignored).
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Point_dt) {
+			Point_dt p = (Point_dt) obj;
+			return (x == p.x) && (y == p.y);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	/** @return the L2 distance NOTE: 2D only!!! */
+	public double distance(Point_dt p) {
+		return Math.hypot(p.x - x, p.y - y);
+	}
+
+	/** @return the L2 distance NOTE: 3D only!!! */
+	public double distance3D(Point_dt p) {
+		return Math.hypot(Math.hypot(p.x - x, p.y - y), p.z - z);
+	}
+
 	double distance2(Point_dt p) {
-		return (p.x - x) * (p.x - x) + (p.y - y) * (p.y - y);
+		return distance(p);
 	}
 
 	double distance2(double px, double py) {
-		return (px - x) * (px - x) + (py - y) * (py - y);
+		return Math.hypot(px - x, py - y);
 	}
 
 	boolean isLess(Point_dt p) {
@@ -98,29 +125,10 @@ public class Point_dt {
 		return (x > p.x) || ((x == p.x) && (y > p.y));
 	}
 
-	/**
-	 * return true iff this point [x,y] coordinates are the same as p [x,y] coordinates. (the z value is ignored).
-	 */
-	public boolean equals(Point_dt p) {
-		return (x == p.x) && (y == p.y);
-	}
-
 	/** return a String in the [x,y,z] format */
 	@Override
 	public String toString() {
 		return (new String(" Pt[" + x + "," + y + "," + z + "]"));
-	}
-
-	/** @return the L2 distanse NOTE: 2D only!!! */
-	public double distance(Point_dt p) {
-		double temp = Math.pow(p.x() - x, 2) + Math.pow(p.y() - y, 2);
-		return Math.sqrt(temp);
-	}
-
-	/** @return the L2 distanse NOTE: 2D only!!! */
-	public double distance3D(Point_dt p) {
-		double temp = Math.pow(p.x() - x, 2) + Math.pow(p.y() - y, 2) + Math.pow(p.z() - z, 2);
-		return Math.sqrt(temp);
 	}
 
 	/** return a String: x y z (used by the save to file - write_tsin method). */
@@ -308,16 +316,5 @@ class Compare implements Comparator {
 				return -1;
 		}
 		return ans;
-	}
-
-	@Override
-	public boolean equals(Object ob) {
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
 	}
 }

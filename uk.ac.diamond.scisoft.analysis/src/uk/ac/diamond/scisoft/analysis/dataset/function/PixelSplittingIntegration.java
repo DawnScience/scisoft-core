@@ -12,6 +12,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
@@ -46,10 +47,23 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
-			if (bins == null) {
-
-				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			
+			AbstractDataset mt = mask;
+			AbstractDataset dst = DatasetUtils.convertToAbstractDataset(ds);
+			AbstractDataset axt = axisArray;
+			
+			
+			if (roi != null) {
+				if (maskRoiCached == null)
+					maskRoiCached = mergeMaskAndRoi(ds.getShape());
+				mt = maskRoiCached;
 			}
+			
+			
+			if (bins == null) {
+				calculateBins(axt,mt);
+			}
+			
 			final double[] edges = bins.getData();
 			final double lo = edges[0];
 			final double hi = edges[nbins];
@@ -65,24 +79,25 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 				continue;
 			}
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-			PositionIterator iter = b.getPositionIterator();
+//			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
+//			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
+			PositionIterator iter = dst.getPositionIterator();
 
 			int[] pos = iter.getPos();
 			int[] posStop = pos.clone();
 
 			while (iter.hasNext()) {
 				
-				if (mask != null && !mask.getBoolean(pos)) continue;
+				if (mt != null && !mt.getBoolean(pos)) continue;
+				
 				posStop[0] = pos[0]+2;
 				posStop[1] = pos[1]+2;
-				AbstractDataset qrange = a.getSlice(pos, posStop, null);
+				AbstractDataset qrange = axt.getSlice(pos, posStop, null);
 
 				final double qMax = (Double)qrange.max();
 				final double qMin = (Double)qrange.min();
 
-				final double sig = b.getDouble(pos);
+				final double sig = dst.getDouble(pos);
 
 				if (qMax < lo && qMin > hi) {
 					continue;

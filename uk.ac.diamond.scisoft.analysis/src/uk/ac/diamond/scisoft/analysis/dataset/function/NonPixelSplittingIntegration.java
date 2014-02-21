@@ -26,6 +26,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
 /**
@@ -74,10 +75,23 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
 			
-			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) return null;
+			AbstractDataset mt = mask;
+			
+			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
+			
+			AbstractDataset d = DatasetUtils.convertToAbstractDataset(ds);
+			AbstractDataset a = axisArray;
+			
+			
+			if (roi != null) {
+				if (maskRoiCached == null)
+					maskRoiCached = mergeMaskAndRoi(ds.getShape());
+				
+				mt = maskRoiCached;
+			}
 			
 			if (bins == null) {
-				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				calculateBins(a,mt);
 			}
 			final double[] edges = bins.getData();
 			final double lo = edges[0];
@@ -88,24 +102,23 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			final int[] h = histo.getData();
 			final double[] in = intensity.getData();
 			if (span <= 0) {
-				h[0] = axisArray.getSize();
+				h[0] = a.getSize();
 				result.add(histo);
 				result.add(bins);
 				continue;
 			}
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 			IndexIterator iter = a.getIterator();
 
 			while (iter.hasNext()) {
 				final double val = a.getElementDoubleAbs(iter.index);
-				final double sig = b.getElementDoubleAbs(iter.index);
-				if (mask != null && !mask.getElementBooleanAbs(iter.index)) continue;
+				final double sig = d.getElementDoubleAbs(iter.index);
+				if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
 				
 				if (val < lo || val > hi) {
 					continue;
 				}
+				
 				if(((int) ((val-lo)/span))<h.length){
 					h[(int) ((val-lo)/span)]++;
 					in[(int) ((val-lo)/span)] += sig;
@@ -113,7 +126,6 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			}
 			
 			processAndAddToResult(intensity, histo, result, ds.getName());
-			
 		}
 
 		return result;

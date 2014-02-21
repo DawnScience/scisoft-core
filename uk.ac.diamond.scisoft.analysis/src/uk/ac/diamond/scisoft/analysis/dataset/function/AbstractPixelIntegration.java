@@ -16,17 +16,24 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
@@ -37,8 +44,10 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	DoubleDataset bins = null;
 	AbstractDataset axisArray;
 	AbstractDataset mask;
+	AbstractDataset maskRoiCached;
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
+	IROI roi = null;
 	
 	public AbstractPixelIntegration(QSpace qSpace, int numBins) {
 		this.qSpace = qSpace;
@@ -115,7 +124,32 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 			}
 			
 			axisArray.set(value, pos);
+			
 		}
+	}
+	
+	protected Slice[] getSlice() {
+		if (roi != null) {
+			IRectangularROI bounds = roi.getBounds();
+			int[] s = bounds.getIntPoint();
+			int e0 = (int)bounds.getLength(0) + s[0];
+			int e1 = (int)bounds.getLength(1)+s[1];
+			
+			s[0] = Math.max(s[0], 0);
+			s[0] = Math.min(s[0], axisArray.getShape()[1]);
+			s[1] = Math.max(s[1], 0);
+			s[1] = Math.min(s[1], axisArray.getShape()[0]);
+			e0 = Math.max(e0, 0);
+			e0 = Math.min(e0, axisArray.getShape()[1]);
+			e1 = Math.max(e1, 0);
+			e1 = Math.min(e1, axisArray.getShape()[0]);
+			
+			Slice s1 = new Slice(s[1], e1, 1);
+			Slice s2 = new Slice(s[0], e0, 1);
+			return new Slice[]{s1,s2};
+		}
+		
+		return null;
 	}
 	
 	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
@@ -133,6 +167,11 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	
 	public void setMask(AbstractDataset mask) {
 		this.mask = mask;
+		if (axisArray != null && !Arrays.equals(axisArray.getShape(), mask.getShape())) axisArray = null;
+	}
+	
+	public void setROI(IROI roi) {
+		this.roi = roi;
 	}
 	
 	public static int calculateNumberOfBins(double[] beamCentre, int[] shape) {
@@ -153,5 +192,68 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		} else {
 			return (int)Math.hypot(shape[1], shape[0]);
 		}
+	}
+	
+	protected AbstractDataset mergeMaskAndRoi(int[] shape) {
+		
+		AbstractDataset out;
+		if (mask == null) out = new BooleanDataset(shape);
+		else out = mask.clone();
+		
+		PositionIterator pit = out.getPositionIterator();
+		int[] pos = pit.getPos();
+		
+		while (pit.hasNext()) {
+			
+			if (mask == null) {
+				if (roi.containsPoint(pos[1], pos[0])) out.set(true, pos);
+			} else {
+				if (!roi.containsPoint(pos[1], pos[0])) out.set(false, pos);
+			}
+		}
+		
+		return out;
+	}
+	
+	protected void calculateBins(AbstractDataset ax, AbstractDataset ma) {
+		//TODO test for ROIS
+		if (ma == null) {
+			bins = (DoubleDataset) DatasetUtils.linSpace(ax.min().doubleValue(), ax.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+		} else {
+			
+			if (Arrays.equals(ma.getShape(), ax.getShape())) {
+				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(ma,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
+				bins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			} else {
+				//extended array for pixel splitting
+				BooleanDataset biggerMask = new BooleanDataset(ma.getShape()[0]+1,ma.getShape()[1]+1);
+				
+				PositionIterator pit = ma.getPositionIterator();
+				int[] pos = pit.getPos();
+				
+				while (pit.hasNext()) biggerMask.set(ma.getObject(pos), pos);
+				
+				pos[0] = ma.getShape()[0]-1;
+				for (int i = 0; i < ma.getShape()[1]; i++) {
+					pos[1] = i;
+					biggerMask.set(ma.getObject(pos), new int[]{pos[1]+1, i});
+				}
+				
+				pos[1] = ma.getShape()[1]-1;
+				for (int i = 0; i < ma.getShape()[0]; i++) {
+					pos[0] = i;
+					biggerMask.set(ma.getObject(pos), new int[]{pos[0]+1, i});
+				}
+				
+				pos = ma.getShape();
+				
+				biggerMask.set(ma.getObject(new int[] {pos[0]-1,pos[1]-1}), pos);
+				
+				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(biggerMask,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
+				bins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			}
+			
+		}
+			
 	}
 }

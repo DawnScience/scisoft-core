@@ -1106,25 +1106,34 @@ public class Delaunay_Triangulation {
 
 	private static Point_dt[] read_tsin(String tsinFile) throws Exception {
 		FileReader fr = new FileReader(tsinFile);
+
 		BufferedReader is = new BufferedReader(fr);
-		String s = is.readLine();
+		Point_dt[] ans = null;
+		try {
+			String s = is.readLine();
 
-		while (s.charAt(0) == '/')
-			s = is.readLine();
-		StringTokenizer st = new StringTokenizer(s);
-		int numOfVer = new Integer(s).intValue();
+			while (s != null && s.charAt(0) == '/')
+				s = is.readLine();
 
-		Point_dt[] ans = new Point_dt[numOfVer];
+			if (s == null)
+				throw new Exception("Could not find vertices");
 
-		// ** reading the file verteces - insert them to the triangulation **
-		for (int i = 0; i < numOfVer; i++) {
-			st = new StringTokenizer(is.readLine());
-			double d1 = new Double(st.nextToken()).doubleValue();
-			double d2 = new Double(st.nextToken()).doubleValue();
-			double d3 = new Double(st.nextToken()).doubleValue();
-			ans[i] = new Point_dt((int) d1, (int) d2, d3);
+			StringTokenizer st = new StringTokenizer(s);
+			int numOfVer = new Integer(s).intValue();
+
+			ans = new Point_dt[numOfVer];
+
+			// ** reading the file vertices - insert them to the triangulation **
+			for (int i = 0; i < numOfVer; i++) {
+				st = new StringTokenizer(is.readLine());
+				double d1 = new Double(st.nextToken()).doubleValue();
+				double d2 = new Double(st.nextToken()).doubleValue();
+				double d3 = new Double(st.nextToken()).doubleValue();
+				ans[i] = new Point_dt((int) d1, (int) d2, d3);
+			}
+		} finally {
+			is.close();
 		}
-		is.close();
 		return ans;
 	}
 
@@ -1142,7 +1151,7 @@ public class Delaunay_Triangulation {
 		BufferedReader is = new BufferedReader(fr);
 		String s = is.readLine();
 
-		while (s.charAt(0) != 'v')
+		while (s != null && s.charAt(0) != 'v')
 			s = is.readLine();
 
 		Vector<Point_dt> vec = new Vector<Point_dt>();

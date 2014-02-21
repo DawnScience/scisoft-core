@@ -47,7 +47,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 public class GuiBeanHelper extends MapFlatteningHelper<GuiBean> {
 
 	static Set<GuiParameters> unsupported;
-	{
+	static {
 		unsupported = new HashSet<GuiParameters>();
 		unsupported.add(GuiParameters.FILEOPERATION);
 		unsupported.add(GuiParameters.GRIDPREFERENCES);

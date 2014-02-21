@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcRemoteException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcRemoteException;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 

@@ -24,6 +24,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
@@ -538,9 +539,10 @@ public class ROIProfile {
 		
 		FloatDataset nanalized = new FloatDataset(data.getShape());
 		float[]      buffer    = nanalized.getData();
-		for (int i = 0; i < buffer.length; i++) {
-			buffer[i] = mask.getElementBooleanAbs(i)
-					  ? (float)data.getElementDoubleAbs(i) // NOTE: Do not round, just lose precision.
+		IndexIterator it        = data.getIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			buffer[i] = mask.getElementBooleanAbs(i) // assumes mask is not a view
+					  ? (float) data.getElementDoubleAbs(it.index) // NOTE: Do not round, just lose precision.
 					  : Float.NaN;
 		}
 		return nanalized;

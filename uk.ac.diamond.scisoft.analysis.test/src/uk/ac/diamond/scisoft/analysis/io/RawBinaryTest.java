@@ -62,8 +62,8 @@ public class RawBinaryTest {
 		data = DatasetUtils.linSpace(0, range, range, AbstractDataset.FLOAT64);
 		data.setShape(sizex, sizey);
 		data.setName("test 2D");
-		testValue1 = data.getDouble(sizex-1);
-		testValue2 = data.getDouble(10,10);
+		testValue1 = data.getDouble(sizex-1, 0);
+		testValue2 = data.getDouble(10, 10);
 		try {
 			dh.addDataset("testing data", data);
 			new RawBinarySaver(testScratchDirectoryName + filePath2D).saveFile(dh);
@@ -81,8 +81,8 @@ public class RawBinaryTest {
 			assertEquals(data.getShape().length, 2);
 			assertEquals(data.getShape()[0], sizey);
 			assertEquals(data.getShape()[1], sizex);
-			assertEquals(data.getDouble(sizex-1), testValue1, 0.01);
-			assertEquals(data.getDouble(10,10), testValue2, 0.01);
+			assertEquals(data.getDouble(sizex-1, 0), testValue1, 0.01);
+			assertEquals(data.getDouble(10, 10), testValue2, 0.01);
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Problem testing rawOutput class",e);
 		}

@@ -30,20 +30,15 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 public class Polynomial extends AFunction {
 	private static final String NAME = "Polynomial";
 	private static final String DESC = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
-	double[] a;
+	private double[] a;
 	private String[] paramNames;
-	int nparams; // actually degree + 1
+	private int nparams; // actually degree + 1
 
 	/**
 	 * Basic constructor, not advisable to use
 	 */
 	public Polynomial() {
-		super(1);
-		nparams = 1;
-		a = new double[nparams];
-		fillParameters(a);
-
-		setNames();
+		this(0);
 	}
 
 	/**
@@ -52,8 +47,7 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(final int degree) {
 		super(degree + 1);
-		nparams = degree + 1;
-		a = new double[nparams];
+		a = new double[degree+1];
 		fillParameters(a);
 
 		setNames();
@@ -65,9 +59,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(double[] params) {
 		super(params);
-		nparams = params.length;
-		a = new double[nparams];
-		fillParameters(a);
 
 		setNames();
 	}
@@ -78,9 +69,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(IParameter... params) {
 		super(params);
-		nparams = params.length;
-		a = new double[nparams];
-		fillParameters(a);
 
 		setNames();
 	}
@@ -100,13 +88,12 @@ public class Polynomial extends AFunction {
 		}
 		nparams = min.length;
 		parameters = new Parameter[nparams];
+		a = new double[nparams];
 
 		for (int i = 0; i < nparams; i++) {
-			parameters[i] = new Parameter(0.5*(min[i] + max[i]), min[i], max[i]);
+			a[i] = 0.5*(min[i] + max[i]);
+			parameters[i] = new Parameter(a[i], min[i], max[i]);
 		}
-
-		a = new double[nparams];
-		fillParameters(a);
 
 		setNames();
 	}
@@ -122,12 +109,24 @@ public class Polynomial extends AFunction {
 
 	@Override
 	protected void fillParameters(double... params) {
-		if (params.length != nparams) {
-			throw new IllegalArgumentException("Number of parameters given does not match degree+1");
-		}
 		super.fillParameters(params);
+		nparams = getNoOfParameters();
+		a = new double[nparams];
+		paramNames = new String[nparams];
+		for (int i = 0; i < nparams; i++) {
+			a[i] = params[i];
+			paramNames[i] = "Parameter" + i;
+		}
+	}
+
+	@Override
+	protected void fillParameters(IParameter... params) {
+		super.fillParameters(params);
+		nparams = getNoOfParameters();
+		a = new double[nparams];
 		paramNames = new String[nparams];
 		for (int i = 0; i < paramNames.length; i++) {
+			a[i] = params[i].getValue();
 			paramNames[i] = "Parameter" + i;
 		}
 	}

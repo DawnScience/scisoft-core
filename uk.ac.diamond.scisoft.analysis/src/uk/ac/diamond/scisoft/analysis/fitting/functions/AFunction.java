@@ -548,7 +548,7 @@ public abstract class AFunction implements IFunction, Serializable {
 
 		IParameter[] localParameters = getParameters();
 		
-		AFunction function =  c.newInstance();
+		AFunction function = c.newInstance();
 		function.fillParameters(localParameters);
 		return function;
 	}

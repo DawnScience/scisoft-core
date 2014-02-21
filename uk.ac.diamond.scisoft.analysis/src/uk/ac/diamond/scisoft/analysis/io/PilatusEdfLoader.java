@@ -69,7 +69,9 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
-			
+			if (line == null)
+				throw new ScanFileHolderException("No lines found");
+
 			// If the first line is not a { then we fail this loader.
 			if (!line.trim().startsWith("{")) throw new ScanFileHolderException("EDF File should start with {"); 
 			
@@ -131,7 +133,9 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		try {
-			final String line       = br.readLine();
+			final String line = br.readLine();
+			if (line == null)
+				throw new ScanFileHolderException("No lines found");
 			readMetaData(br, line.length()+1, mon);
 			createMetadata();
 		} finally {
@@ -160,6 +164,9 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 			if (mon!=null&&mon.isCancelled()) throw new ScanFileHolderException("Loader cancelled during reading!");
 			
 			String line = br.readLine();
+			if (line == null) {
+				throw new ScanFileHolderException("No closing brace found");
+			}
 			index += line.length()+1;
 			if (line.contains("}")) {
 				break;

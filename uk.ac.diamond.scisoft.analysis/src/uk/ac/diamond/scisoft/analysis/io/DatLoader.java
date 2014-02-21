@@ -335,9 +335,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	protected String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
 		
 		String line = in.readLine();
-		if (line == null) {
-			return null;
-		}
+		if (line == null)
+			throw new ScanFileHolderException("No lines found");
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metaData.clear();
 		vals.clear();

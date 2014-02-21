@@ -132,6 +132,9 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 			if (!s1.hasMoreTokens()) {
 				do {
 					line = br.readLine();
+					if (line == null) {
+						throw new ScanFileHolderException("End of file reached with width not found");
+					}
 					index += line.length() + 1;
 				} while (line.startsWith("#")); // ignore comment lines
 				s1 = new StringTokenizer(line);
@@ -141,6 +144,9 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 			width = Integer.parseInt(token);
 			if (!s1.hasMoreTokens()) {
 				line = br.readLine();
+				if (line == null) {
+					throw new ScanFileHolderException("End of file reached with height not found");
+				}
 				index += line.length()+1;
 				s1 = new StringTokenizer(line);	
 			}
@@ -149,6 +155,9 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 			height = Integer.parseInt(token);
 			if (!s1.hasMoreTokens()) {
 				line = br.readLine();
+				if (line == null) {
+					throw new ScanFileHolderException("End of file reached with max value not found");
+				}
 				index += line.length()+1;
 				s1 = new StringTokenizer(line);	
 			}

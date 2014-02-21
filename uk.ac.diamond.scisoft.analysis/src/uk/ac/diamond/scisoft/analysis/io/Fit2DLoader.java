@@ -157,8 +157,8 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 				break;
 			index += line.length()+1;
 		}
-		
-		addValuesToMetaData(line);
+		if (line != null)
+			addValuesToMetaData(line);
 		
 		return index;
 	}

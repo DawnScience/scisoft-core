@@ -79,14 +79,14 @@ public class ROISliceTest {
 		
 		//AbstractDataset out0 = (AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(axis0, input, roi, 0);
 		Assert.assertArrayEquals(new int[]{20, 30},out0.getShape());
-		Assert.assertEquals(5.0, out0.getDouble(0),0);
+		Assert.assertEquals(5.0, out0.getDouble(0, 0),0);
 		
 		//Test basic slice from 3-4
 		slices[0] = new Slice(3, 4);
 		out0 = (AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(input, axis3,roi, slices, order[0], 1);
 		
 		Assert.assertArrayEquals(new int[]{20, 30},out0.getShape());
-		Assert.assertEquals(5.0, out0.getDouble(0),0);
+		Assert.assertEquals(5.0, out0.getDouble(0, 0),0);
 		
 		
 		//Test basic slice from 3-4, reduced range
@@ -95,7 +95,7 @@ public class ROISliceTest {
 		out0 = (AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(input, axis3,roi, slices, order[0], 1);
 
 		Assert.assertArrayEquals(new int[]{20, 10},out0.getShape());
-		Assert.assertEquals(5.0, out0.getDouble(0),0);
+		Assert.assertEquals(5.0, out0.getDouble(0, 0),0);
 		
 	}
 	

@@ -3327,7 +3327,7 @@ public class Maths {
 			bc = -(bc*(n-i+1))/i;
 			b[i] = bc;
 		}
-		if (n % 2 == 1) {
+		if (n % 2 != 0) {
 			for (int i = hn+1; i <= n; i++) {
 				b[i] = -b[n-i];
 			}

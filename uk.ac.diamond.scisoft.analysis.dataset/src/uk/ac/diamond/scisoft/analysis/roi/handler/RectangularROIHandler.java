@@ -204,7 +204,7 @@ public class RectangularROIHandler extends ROIHandler {
 	public RectangularROI reorient(double[] pt) {
 		RectangularROI rroi = null;
 
-		if (handle == 4 || (handle%2) == 1)
+		if (handle == 4 || handle % 2 != 0)
 			return rroi;
 
 		final RectangularROI oroi = (RectangularROI) roi;

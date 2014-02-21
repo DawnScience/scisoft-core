@@ -59,6 +59,7 @@ public class AggregateDatasetTest {
 								AbstractDataset.ones(new int[] { 2, 3 }, AbstractDataset.BOOL),
 								AbstractDataset.ones(new int[] { 3, 3 }, AbstractDataset.BOOL), });
 					} catch (Exception e3) {
+						System.out.println("Success!");
 						return;
 					}
 				}

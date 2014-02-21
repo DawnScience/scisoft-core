@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,14 +31,14 @@ public class BooleanDatasetTest {
 
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
-			assertEquals(i % 2 == 1, a.getElementBooleanAbs(it.index));
+			assertEquals(i % 2 != 0, a.getElementBooleanAbs(it.index));
 		}
 
 		BooleanDataset b = new BooleanDataset(da, 3, 4);
 
 		it = b.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
-			assertEquals(i % 2 == 1, b.getElementBooleanAbs(it.index));
+			assertEquals(i % 2 != 0, b.getElementBooleanAbs(it.index));
 		}
 
 		// test hashes

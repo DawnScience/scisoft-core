@@ -171,4 +171,18 @@ abstract public class AOperator extends AFunction implements IOperator {
 			return false;
 		return true;
 	}
+
+	@Override
+	public AOperator copy() throws Exception {
+		AOperator copy = (AOperator) super.copy();
+		for (IFunction f : getFunctions()) {
+			if (f == null) {
+				copy.addFunction(null);
+			} else {
+				copy.addFunction(f.copy());
+			}
+		}
+		return copy;
+	}
+
 }

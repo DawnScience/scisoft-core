@@ -119,10 +119,6 @@ public class CompositeFunction extends Add {
 
 	@Override
 	public CompositeFunction copy() throws Exception {
-		CompositeFunction copy = new CompositeFunction();
-		for (IFunction f : functions) {
-			copy.addFunction(f.copy());
-		}
-		return copy;
+		return (CompositeFunction)super.copy();
 	}
 }

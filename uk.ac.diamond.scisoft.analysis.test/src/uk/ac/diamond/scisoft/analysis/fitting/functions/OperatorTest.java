@@ -305,4 +305,21 @@ public class OperatorTest {
 		assertEquals(1, addCopy.getFunctions().length);
 		assertTrue(addCopy.getFunction(0) instanceof Gaussian);
 	}
+
+	public static class MockGaussianLikeThing extends Gaussian {
+		public MockGaussianLikeThing() {
+			name = "MockGaussianLikeThing";
+		}
+	}
+
+	@Test
+	public void testEquals() {
+		// Test that two function trees with different child functions
+		// but the same parameters do not compare to equals
+		CompositeFunction expected = new CompositeFunction();
+		expected.addFunction(new Gaussian());
+		CompositeFunction actual = new CompositeFunction();
+		actual.addFunction(new MockGaussianLikeThing());
+		assertTrue(!expected.equals(actual));
+	}
 }

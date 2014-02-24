@@ -290,4 +290,19 @@ public class OperatorTest {
 		CompositeFunction compositeFunction = new CompositeFunction();
 		compositeFunction.toString();
 	}
+
+	@Test
+	public void testCopy() throws Exception {
+		CompositeFunction compositeFunction = new CompositeFunction();
+		compositeFunction.addFunction(new Gaussian());
+		CompositeFunction copy = compositeFunction.copy();
+		assertEquals(1, copy.getFunctions().length);
+		assertTrue(copy.getFunction(0) instanceof Gaussian);
+
+		Add addOperator = new Add();
+		addOperator.addFunction(new Gaussian());
+		Add addCopy = (Add)addOperator.copy();
+		assertEquals(1, addCopy.getFunctions().length);
+		assertTrue(addCopy.getFunction(0) instanceof Gaussian);
+	}
 }

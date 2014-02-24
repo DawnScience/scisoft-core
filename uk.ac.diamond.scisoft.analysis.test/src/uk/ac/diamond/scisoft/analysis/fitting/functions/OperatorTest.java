@@ -1,12 +1,12 @@
 /*-
  * Copyright 2013 Diamond Light Source Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
+
+import static org.junit.Assert.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -278,5 +280,14 @@ public class OperatorTest {
 		DoubleDataset fgx = fg.calculateValues(xd);
 		DoubleDataset cfgx = cfg.calculateValues(xd);
 		Assert.assertArrayEquals(cfgx.getData(), fgx.getData(), 200*ABS_TOL);
+	}
+
+	@Test
+	public void testToString() {
+		// make sure empty CompositeFunction does not throw exception
+		// this test is not concerned with the contents of toString, just
+		// that there is no exception.
+		CompositeFunction compositeFunction = new CompositeFunction();
+		compositeFunction.toString();
 	}
 }

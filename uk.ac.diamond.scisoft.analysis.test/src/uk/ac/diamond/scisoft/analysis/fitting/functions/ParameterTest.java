@@ -30,4 +30,30 @@ public class ParameterTest {
 
 		assertEquals("KichwaParameter", copy.getName());
 	}
+
+	@Test
+	public void testSetLimitsChangeLowerLimit() {
+		Parameter parameter = new Parameter();
+		parameter.setLimits(0, 1);
+		parameter.setValue(0.5);
+
+		parameter.setLimits(-1, 1);
+		assertEquals(-1, parameter.getLowerLimit(), 0);
+		assertEquals(1, parameter.getUpperLimit(), 0);
+		assertEquals(0.5, parameter.getValue(), 0);
+	}
+
+
+	@Test
+	public void testSetLimitsChangeUpperLimit() {
+		Parameter parameter = new Parameter();
+		parameter.setLimits(0, 1);
+		parameter.setValue(0.5);
+
+		parameter.setLimits(0, 2);
+		assertEquals(0, parameter.getLowerLimit(), 0);
+		assertEquals(2, parameter.getUpperLimit(), 0);
+		assertEquals(0.5, parameter.getValue(), 0);
+	}
+
 }

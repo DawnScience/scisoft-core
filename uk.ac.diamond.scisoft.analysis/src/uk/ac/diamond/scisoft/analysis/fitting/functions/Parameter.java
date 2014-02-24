@@ -54,6 +54,7 @@ public class Parameter implements Serializable, IParameter {
 	 *            The parameter to be cloned
 	 */
 	public Parameter(IParameter p) {
+		this.name = p.getName();
 		this.value = p.getValue();
 		this.upperLimit = p.getUpperLimit();
 		this.lowerLimit = p.getLowerLimit();

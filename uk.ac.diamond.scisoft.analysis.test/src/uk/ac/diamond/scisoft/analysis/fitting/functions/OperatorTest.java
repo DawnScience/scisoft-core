@@ -459,4 +459,14 @@ public class OperatorTest {
 		assertNotNull(myOp.getFunction(0));
 		assertNotNull(myOp.getFunction(1));
 	}
+
+	@Test
+	public void testUpdateParametersWithEqualParameters() {
+		Add add = new Add();
+		assertEquals(0, add.getNoOfParameters());
+		add.addFunction(new Gaussian());
+		assertEquals(3, add.getNoOfParameters());
+		add.addFunction(new Gaussian());
+		assertEquals(6, add.getNoOfParameters());
+	}
 }

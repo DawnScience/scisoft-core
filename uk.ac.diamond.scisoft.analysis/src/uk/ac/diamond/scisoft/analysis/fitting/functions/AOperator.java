@@ -30,14 +30,44 @@ abstract public class AOperator extends AFunction implements IOperator {
 		params = new ArrayList<>();
 	}
 
+
+	// TODO This function needs to be called for the same reason
+	// testAddFunctionOrder_TopDown and testRemoveFunction fail
+	// that is because the change in parameters do not "bubble"
+	// up to the root as expected.
+	/**
+	 * Call this method to ensure all the paramters in the passed fuction and all its children are up to date.
+	 *
+	 * @param root
+	 *            the starting function to update.
+	 */
+	public static void updateAllParameters(IFunction root) {
+		if (root instanceof AOperator) {
+			AOperator operator = (AOperator) root;
+			IFunction[] functions = operator.getFunctions();
+			for (IFunction f : functions) {
+				updateAllParameters(f);
+			}
+			operator.updateParameters();
+		}
+	}
+
 	protected void updateParameters() {
 		params.clear();
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
 			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
 				IParameter p = f.getParameter(j);
-
-				if (!params.contains(p)) {
+				boolean add = true;
+				for (IParameter param : params) {
+					if (p == param) {
+						add = false;
+						break;
+					}
+				}
+				if (add) {
 					params.add(p);
 				}
 			}
@@ -121,17 +151,21 @@ abstract public class AOperator extends AFunction implements IOperator {
 	public String toString() {
 		StringBuffer out = new StringBuffer();
 		int nf = getNoOfFunctions();
-		for (int i = 0; i < nf; i++) {
-			IFunction f = getFunction(i);
-			if (f != null) {
-				if (nf > 1)
-					out.append(String.format("Function %d - \n", i));
-				out.append(f.toString());
-				out.append('\n');
+		if (nf > 0) {
+			for (int i = 0; i < nf; i++) {
+				IFunction f = getFunction(i);
+				if (f != null) {
+					if (nf > 1)
+						out.append(String.format("Function %d - \n", i));
+					out.append(f.toString());
+					out.append('\n');
+				}
 			}
+
+			return out.substring(0, out.length() - 1);
 		}
 
-		return out.substring(0, out.length() - 1);
+		return "Operator with no functions";
 	}
 
 	@Override
@@ -167,4 +201,18 @@ abstract public class AOperator extends AFunction implements IOperator {
 			return false;
 		return true;
 	}
+
+	@Override
+	public AOperator copy() throws Exception {
+		AOperator copy = (AOperator) super.copy();
+		for (IFunction f : getFunctions()) {
+			if (f == null) {
+				copy.addFunction(null);
+			} else {
+				copy.addFunction(f.copy());
+			}
+		}
+		return copy;
+	}
+
 }

@@ -119,10 +119,17 @@ public class CompositeFunction extends Add {
 
 	@Override
 	public CompositeFunction copy() throws Exception {
-		CompositeFunction copy = new CompositeFunction();
-		for (IFunction f : functions) {
-			copy.addFunction(f.copy());
-		}
-		return copy;
+		return (CompositeFunction)super.copy();
+	}
+
+	// TODO This function needs to be called for the same reason
+	// testAddFunctionOrder_TopDown and testRemoveFunction fail
+	// that is because the change in parameters do not "bubble"
+	// up to the root as expected.
+	/**
+	 * Call this method to ensure all the paramters in the CompositeFuction are up to date.
+	 */
+	public void updateAllParameters() {
+		AOperator.updateAllParameters(this);
 	}
 }

@@ -1,5 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FittingConstants {
 
 	public static final String PEAK_NUMBER             = "org.dawb.workbench.plotting.tools.peakNumber";
@@ -18,4 +21,32 @@ public class FittingConstants {
 	public static final String SHOW_POLY_RANGE         = "org.dawb.workbench.plotting.tools.showPolyRange";
 	public static final String INT_FORMAT              = "org.dawb.workbench.plotting.tools.fitting.intFormat";
 	public static final String REAL_FORMAT             = "org.dawb.workbench.plotting.tools.fitting.realFormat";
+	public static final String FIT_QUALITY             = "org.dawb.workbench.plotting.tools.fitQuality";
+	public static final String FIT_ALGORITHM           = "org.dawb.workbench.plotting.tools.fitAlgorithm";
+
+	private static Map<Integer, FIT_ALGORITHMS> idMap = new HashMap<>();
+	/**
+	 * Function fitting algorithms available
+	 */
+	public enum FIT_ALGORITHMS {
+		APACHENELDERMEAD(0, "Nelder Mead Fitting"),
+		GENETIC(1, "Genetic Algorithm");
+
+		public final int ID;
+		public final String NAME;
+
+		private FIT_ALGORITHMS(int id, String name) {
+			ID = id;
+			NAME = name;
+			idMap.put(id, this);
+		}
+
+		/**
+		 * Return the algorithm for the given id, or null if
+		 * no such id exists.
+		 */
+		public static FIT_ALGORITHMS fromId(int id) {
+			return idMap.get(id);
+		}
+	}
 }

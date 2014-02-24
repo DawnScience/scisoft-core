@@ -33,7 +33,7 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian"
             id="uk.ac.diamond.scisoft.analysis.lorentzian"
-            name="Lorentizian">
+            name="Lorentzian">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII"

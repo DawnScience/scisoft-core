@@ -60,8 +60,14 @@ abstract public class AOperator extends AFunction implements IOperator {
 				continue;
 			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
 				IParameter p = f.getParameter(j);
-
-				if (!params.contains(p)) {
+				boolean add = true;
+				for (IParameter param : params) {
+					if (p == param) {
+						add = false;
+						break;
+					}
+				}
+				if (add) {
 					params.add(p);
 				}
 			}

@@ -30,10 +30,34 @@ abstract public class AOperator extends AFunction implements IOperator {
 		params = new ArrayList<>();
 	}
 
+
+	// TODO This function needs to be called for the same reason
+	// testAddFunctionOrder_TopDown and testRemoveFunction fail
+	// that is because the change in parameters do not "bubble"
+	// up to the root as expected.
+	/**
+	 * Call this method to ensure all the paramters in the passed fuction and all its children are up to date.
+	 *
+	 * @param root
+	 *            the starting function to update.
+	 */
+	public static void updateAllParameters(IFunction root) {
+		if (root instanceof AOperator) {
+			AOperator operator = (AOperator) root;
+			IFunction[] functions = operator.getFunctions();
+			for (IFunction f : functions) {
+				updateAllParameters(f);
+			}
+			operator.updateParameters();
+		}
+	}
+
 	protected void updateParameters() {
 		params.clear();
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
 			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
 				IParameter p = f.getParameter(j);
 

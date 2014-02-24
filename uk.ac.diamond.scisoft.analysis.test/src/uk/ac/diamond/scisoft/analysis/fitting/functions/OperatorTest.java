@@ -362,4 +362,101 @@ public class OperatorTest {
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 	}
+
+	@Test
+	public void testRemoveFunction_WithWorkaround() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+		add.addFunction(gaussian);
+		composite.addFunction(add);
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+		add.removeFunction(0);
+		composite.updateAllParameters(); // workaround line
+		assertEquals(0, add.getParameters().length);
+		assertEquals(0, composite.getParameters().length);
+	}
+
+	@Test
+	public void testAddFunctionOrder_BottomUp_WithWorkaround() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+
+		add.addFunction(gaussian);
+		composite.addFunction(add);
+
+		composite.updateAllParameters(); // workaround line
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+	}
+
+	@Test
+	public void testAddFunctionOrder_TopDown_WithWorkaround() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+
+		composite.addFunction(add);
+		add.addFunction(gaussian);
+
+		composite.updateAllParameters(); // workaround line
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+	}
+
+	@Test
+	public void testUpdateParametersWorkaround() {
+		CompositeFunction composite = new CompositeFunction();
+		Subtract subtract = new Subtract();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+
+		composite.addFunction(subtract);
+		subtract.setFunction(1, gaussian);
+
+		composite.updateAllParameters();
+		assertEquals(3, gaussian.getParameters().length);
+		assertEquals(3, subtract.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+	}
+
+	private static final class TestGenericBinaryOperator extends ABinaryOperator {
+		@Override
+		public double val(double... values) {
+			return 0;
+		}
+
+		@Override
+		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+		}
+	}
+
+	@Test
+	public void testSetFunction() {
+		IOperator myOp = new TestGenericBinaryOperator();
+
+		myOp.setFunction(1, new Gaussian());
+		assertEquals(1, myOp.getNoOfFunctions());
+		assertEquals(2, myOp.getFunctions().length);
+		assertEquals(new Gaussian(), myOp.getFunction(1));
+		assertEquals(3, myOp.getNoOfParameters());
+	}
+
+	@Test
+	public void testNoOfFunctions() {
+		IOperator myOp = new TestGenericBinaryOperator();
+
+		myOp.addFunction(new Gaussian());
+		myOp.addFunction(new Gaussian());
+		assertEquals(2, myOp.getNoOfFunctions());
+		// From here on out things are weird, can
+		// setFunction really accept null?
+		myOp.setFunction(0, null);
+		assertEquals(1, myOp.getNoOfFunctions());
+		myOp.addFunction(new Gaussian());
+		assertEquals(2, myOp.getNoOfFunctions());
+		assertNotNull(myOp.getFunction(0));
+		assertNotNull(myOp.getFunction(1));
+	}
 }

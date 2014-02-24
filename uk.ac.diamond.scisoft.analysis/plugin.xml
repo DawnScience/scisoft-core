@@ -60,6 +60,31 @@
             id="uk.ac.diamond.scisoft.analysis.linear"
             name="Linear">
       </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Add"
+            id="uk.ac.diamond.scisoft.analysis.add"
+            name="Add">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Divide"
+            id="uk.ac.diamond.scisoft.analysis.divide"
+            name="Divide">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Multiply"
+            id="uk.ac.diamond.scisoft.analysis.multiply"
+            name="Multiply">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Subtract"
+            id="uk.ac.diamond.scisoft.analysis.subtract"
+            name="Subtract">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Convolve"
+            id="uk.ac.diamond.scisoft.analysis.convolve"
+            name="Convolve">
+      </function>
    </extension>
 
 

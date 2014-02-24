@@ -203,6 +203,19 @@ abstract public class AOperator extends AFunction implements IOperator {
 	}
 
 	@Override
+	public boolean isValid() {
+		if (!super.isValid())
+			return false;
+		for (IFunction function : getFunctions()) {
+			if (function == null)
+				return false;
+			if (!function.isValid())
+				return false;
+		}
+		return true;
+	}
+
+	@Override
 	public AOperator copy() throws Exception {
 		AOperator copy = (AOperator) super.copy();
 		for (IFunction f : getFunctions()) {

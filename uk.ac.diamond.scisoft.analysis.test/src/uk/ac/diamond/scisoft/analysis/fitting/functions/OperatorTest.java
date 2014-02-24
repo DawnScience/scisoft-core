@@ -469,4 +469,22 @@ public class OperatorTest {
 		add.addFunction(new Gaussian());
 		assertEquals(6, add.getNoOfParameters());
 	}
+
+	@Test
+	public void testIsValid() {
+		// invalid because binary operator requires 2 functions
+		assertFalse(new TestGenericBinaryOperator().isValid());
+
+		CompositeFunction compositeFunction = new CompositeFunction();
+		TestGenericBinaryOperator binaryOperator = new TestGenericBinaryOperator();
+		compositeFunction.addFunction(binaryOperator);
+		// make sure that the invalid is propagated up
+		assertFalse(compositeFunction.isValid());
+
+		// correct the invalidity and make sure it is valid and propagated
+		binaryOperator.addFunction(new Gaussian());
+		binaryOperator.addFunction(new Gaussian());
+		assertTrue(binaryOperator.isValid());
+		assertTrue(compositeFunction.isValid());
+	}
 }

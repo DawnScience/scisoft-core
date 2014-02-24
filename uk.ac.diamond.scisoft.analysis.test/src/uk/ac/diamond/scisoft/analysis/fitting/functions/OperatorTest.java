@@ -322,4 +322,44 @@ public class OperatorTest {
 		actual.addFunction(new MockGaussianLikeThing());
 		assertTrue(!expected.equals(actual));
 	}
+
+	@Test
+	public void testRemoveFunction() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+		add.addFunction(gaussian);
+		composite.addFunction(add);
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+		add.removeFunction(0);
+		assertEquals(0, add.getParameters().length);
+		assertEquals(0, composite.getParameters().length);
+	}
+
+	@Test
+	public void testAddFunctionOrder_BottomUp() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+
+		add.addFunction(gaussian);
+		composite.addFunction(add);
+
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+	}
+
+	@Test
+	public void testAddFunctionOrder_TopDown() {
+		CompositeFunction composite = new CompositeFunction();
+		Add add = new Add();
+		Gaussian gaussian = new Gaussian(1, 2, 3);
+
+		composite.addFunction(add);
+		add.addFunction(gaussian);
+
+		assertEquals(3, add.getParameters().length);
+		assertEquals(3, composite.getParameters().length);
+	}
 }

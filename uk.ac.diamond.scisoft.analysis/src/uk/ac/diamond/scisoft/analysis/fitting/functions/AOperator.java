@@ -121,17 +121,21 @@ abstract public class AOperator extends AFunction implements IOperator {
 	public String toString() {
 		StringBuffer out = new StringBuffer();
 		int nf = getNoOfFunctions();
-		for (int i = 0; i < nf; i++) {
-			IFunction f = getFunction(i);
-			if (f != null) {
-				if (nf > 1)
-					out.append(String.format("Function %d - \n", i));
-				out.append(f.toString());
-				out.append('\n');
+		if (nf > 0) {
+			for (int i = 0; i < nf; i++) {
+				IFunction f = getFunction(i);
+				if (f != null) {
+					if (nf > 1)
+						out.append(String.format("Function %d - \n", i));
+					out.append(f.toString());
+					out.append('\n');
+				}
 			}
+
+			return out.substring(0, out.length() - 1);
 		}
 
-		return out.substring(0, out.length() - 1);
+		return "Operator with no functions";
 	}
 
 	@Override

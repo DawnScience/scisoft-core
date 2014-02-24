@@ -562,4 +562,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	public void setMonitor(IMonitor monitor) {
 		this.monitor = monitor;
 	}
+
+	@Override
+	public boolean isValid() {
+		return true;
+	}
 }

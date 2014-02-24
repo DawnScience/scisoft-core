@@ -125,14 +125,14 @@ public class Parameter implements Serializable, IParameter {
 			return;
 		}
 
-		if (newLowerLimit < lowerLimit) {
+		if (value < newLowerLimit) {
 			logger.warn("Parameter value {} is lower than this new lower bound {} - Adjusting value to equal new lower bound value ", value, newLowerLimit);
-			value = lowerLimit;
+			value = newLowerLimit;
 		}
-		
-		if (newUpperLimit > upperLimit) {
-			logger.warn("Parameter value {} is higher than this new upper bound {} - Adjusting value to equal new upper bound value ",value, newUpperLimit);
-			value = upperLimit;
+
+		if (value > newUpperLimit) {
+			logger.warn("Parameter value {} is higher than this new upper bound {} - Adjusting value to equal new upper bound value ", value, newUpperLimit);
+			value = newUpperLimit;
 		}
 
 		this.lowerLimit = newLowerLimit;
@@ -161,7 +161,7 @@ public class Parameter implements Serializable, IParameter {
 		}
 
 		if (value > upperLimit) {
-			logger.warn("Parameter value is higher than this new upper bound - Adjusting value to equal new upper bound value ");
+			logger.warn("Parameter value {} is higher than this new upper bound {} - Adjusting value to equal new upper bound value ", value, upperLimit);
 			value = upperLimit;
 		}
 

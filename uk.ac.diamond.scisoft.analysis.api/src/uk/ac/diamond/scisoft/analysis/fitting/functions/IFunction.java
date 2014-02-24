@@ -225,4 +225,13 @@ public interface IFunction extends Serializable {
 	 * @throws Exception
 	 */
 	public IFunction copy() throws Exception;
+
+	/**
+	 * Check function tree is valid. For example, if an operator has a required
+	 * number of children this checks they are all set.
+	 *
+	 * @return validity of the Function
+	 */
+	boolean isValid();
+
 }

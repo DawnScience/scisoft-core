@@ -93,4 +93,9 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		}
 		updateParameters();
 	}
+
+	@Override
+	public boolean isValid() {
+		return super.isValid() && fa != null && fb != null;
+	}
 }

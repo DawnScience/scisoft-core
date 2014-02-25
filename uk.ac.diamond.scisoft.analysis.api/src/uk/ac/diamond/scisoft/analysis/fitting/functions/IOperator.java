@@ -65,4 +65,15 @@ public interface IOperator extends IFunction {
 	 * @param function
 	 */
 	public void setFunction(int index, IFunction function);
+
+	/**
+	 * Set operator that is its parent
+	 * @param parent
+	 */
+	public void setParentOperator(IOperator parent);
+
+	/**
+	 * Update parameters
+	 */
+	public void updateParameters();
 }

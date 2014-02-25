@@ -25,34 +25,20 @@ import java.util.List;
 abstract public class AOperator extends AFunction implements IOperator {
 	protected List<IParameter> params; // unique parameters
 
+	protected IOperator parent;
+
 	public AOperator() {
 		super(0);
 		params = new ArrayList<>();
 	}
 
-
-	// TODO This function needs to be called for the same reason
-	// testAddFunctionOrder_TopDown and testRemoveFunction fail
-	// that is because the change in parameters do not "bubble"
-	// up to the root as expected.
-	/**
-	 * Call this method to ensure all the paramters in the passed fuction and all its children are up to date.
-	 *
-	 * @param root
-	 *            the starting function to update.
-	 */
-	public static void updateAllParameters(IFunction root) {
-		if (root instanceof AOperator) {
-			AOperator operator = (AOperator) root;
-			IFunction[] functions = operator.getFunctions();
-			for (IFunction f : functions) {
-				updateAllParameters(f);
-			}
-			operator.updateParameters();
-		}
+	@Override
+	public void setParentOperator(IOperator parent) {
+		this.parent = parent;
 	}
 
-	protected void updateParameters() {
+	@Override
+	public void updateParameters() {
 		params.clear();
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
@@ -73,6 +59,10 @@ abstract public class AOperator extends AFunction implements IOperator {
 			}
 		}
 		setDirty(true);
+
+		if (parent != null) {
+			parent.updateParameters();
+		}
 	}
 
 	@Override

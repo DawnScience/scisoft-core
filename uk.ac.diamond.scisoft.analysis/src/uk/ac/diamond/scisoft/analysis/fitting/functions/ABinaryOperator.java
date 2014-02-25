@@ -39,7 +39,13 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 
 	@Override
 	public void addFunction(IFunction function) {
-		setFunction(getNoOfFunctions(), function);
+		if (fa == null) {
+			setFunction(0, function);
+		} else if (fb == null) {
+			setFunction(1, function);
+		} else {
+			throw new IndexOutOfBoundsException("Can only add two functions to a binary operator");
+		}
 	}
 
 	@Override

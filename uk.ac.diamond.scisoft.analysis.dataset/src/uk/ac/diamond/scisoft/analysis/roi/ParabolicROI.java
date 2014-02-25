@@ -22,11 +22,10 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
 
 /**
  * A parabolic region of interest with the start point as the focus. In the rotated frame,
- * it can be represented as x+p = 4 a y^2 where p = 2 a
+ * it can be represented as x-p = 4 a y^2 where p = 2 a
  */
-public class ParabolicROI extends ROIBase {
+public class ParabolicROI extends OrientableROIBase {
 	private double p;   // focal parameter (or semi-latus rectum) 
-	private double ang; // angle in radians
 
 	/**
 	 * No argument constructor need for serialization
@@ -90,54 +89,11 @@ public class ParabolicROI extends ROIBase {
 	}
 
 	/**
-	 * @return Returns the angle in degrees
-	 */
-	public double getAngleDegrees() {
-		return Math.toDegrees(ang);
-	}
-
-	/**
-	 * @param angle The angle in degrees to set
-	 */
-	public void setAngleDegrees(double angle) {
-		setAngle(Math.toRadians(angle));
-	}
-
-	/**
-	 * For Jython
-	 * @param angle The angle in degrees to set
-	 */
-	public void setAngledegrees(double angle) {
-		setAngleDegrees(angle);
-	}
-
-	private final static double TWOPI = 2.0 * Math.PI;
-	/**
-	 * Make sure angle lie in permitted ranges:
-	 *  0 <= ang < 2*pi
-	 */
-	private void checkAngle() {
-		while (ang < 0) {
-			ang += TWOPI;
-		}
-		while (ang >= TWOPI) {
-			ang -= TWOPI;
-		}
-	}
-
-	/**
-	 * @return Returns the angle
-	 */
-	public double getAngle() {
-		return ang;
-	}
-
-	/**
 	 * @param angle The axis angle to set
 	 */
+	@Override
 	public void setAngle(double angle) {
-		ang = angle;
-		checkAngle();
+		super.setAngle(angle);
 		src = null;
 	}
 

@@ -25,11 +25,9 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
 /**
  * Class for rectangular region of interest
  */
-public class RectangularROI extends ROIBase implements Serializable, IRectangularROI {
+public class RectangularROI extends OrientableROIBase implements Serializable, IRectangularROI {
 	protected double[] len; // width and height
-	private double ang;   // angle in radians
 	private boolean clippingCompensation; // compensate for clipping
-	private double cang, sang; // cosine and sine of angle
 
 	/**
 	 * @param clippingCompensation The clippingCompensation to set.
@@ -94,7 +92,7 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 		spt = new double[] { ptx, pty };
 		len = new double[] { width, height };
 		ang = angle;
-		calcTrig();
+		checkAngle();
 		clippingCompensation = clip;
 	}
 
@@ -207,41 +205,11 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	}
 
 	/**
-	 * @param angle
-	 */
-	public void setAngle(double angle) {
-		ang = angle;
-		if (ang < 0)
-			ang += 2.0 * Math.PI;
-		bounds = null;
-		calcTrig();
-	}
-
-	/**
-	 * @return angle
-	 */
-	public double getAngleDegrees() {
-		return Math.toDegrees(ang);
-	}
-
-	/**
-	 * @param angle
-	 */
-	public void setAngleDegrees(double angle) {
-		setAngle(Math.toRadians(angle));
-	}
-
-	/**
 	 * For Jython
 	 * @param angle The angle in degrees to set
 	 */
 	public void setAngledegrees(double angle) {
 		setAngleDegrees(angle);
-	}
-
-	private void calcTrig() {
-		cang = Math.cos(ang);
-		sang = Math.sin(ang);
 	}
 
 	@Override
@@ -421,12 +389,8 @@ public class RectangularROI extends ROIBase implements Serializable, IRectangula
 	 */
 	public void addAngle(double angle) {
 		ang += angle;
-		if (ang < 0)
-			ang += 2.0 * Math.PI;
-		if (ang > 2.0 * Math.PI)
-			ang -= 2.0 * Math.PI;
 		bounds = null;
-		calcTrig();
+		checkAngle();
 	}
 
 	/**

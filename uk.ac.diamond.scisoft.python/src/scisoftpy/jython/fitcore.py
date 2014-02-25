@@ -307,7 +307,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     optimizer -- description of the optimizer to use, e.g. ['local','global','simplex','genetic',
                  'gradient','apache_nm','apache_md','apache_cg']
                  local and global are general settings, which point the one of the specific methods
-                 If any global methods are picked, the bounds argument must aslo be filled in.
+                 If any global methods are picked, the bounds argument must also be filled in.
     Returns:
     fitresult object
     '''
@@ -318,6 +318,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
         bounds = [bounds]
     else:
         bounds = list(bounds) # make a copy
+    n_bounds = len(bounds)
     mixed = False
     for f in func:
         if isinstance(f, tuple):
@@ -368,7 +369,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     if optimizer == 'local' :
         _fitter.simplexFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'global' :
-        if len(bounds) == 0 :
+        if n_bounds == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
         _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
     elif optimizer == 'simplex' :
@@ -382,7 +383,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     elif optimizer == 'apache_cg' :
         _fitter.ApacheConjugateGradientFit(jcoords, jdata, cfunc)
     elif optimizer == 'genetic' :
-        if len(bounds) == 0 :
+        if n_bounds == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
         _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
 

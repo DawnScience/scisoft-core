@@ -343,6 +343,8 @@ public class OperatorTest {
 	public void testRemoveFunction() {
 		CompositeFunction composite = new CompositeFunction();
 		Add add = new Add();
+		assertEquals(0, add.getParameters().length);
+		assertEquals(0, composite.getParameters().length);
 		Gaussian gaussian = new Gaussian(1, 2, 3);
 		add.addFunction(gaussian);
 		composite.addFunction(add);
@@ -389,7 +391,6 @@ public class OperatorTest {
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 		add.removeFunction(0);
-		composite.updateAllParameters(); // workaround line
 		assertEquals(0, add.getParameters().length);
 		assertEquals(0, composite.getParameters().length);
 	}
@@ -402,8 +403,6 @@ public class OperatorTest {
 
 		add.addFunction(gaussian);
 		composite.addFunction(add);
-
-		composite.updateAllParameters(); // workaround line
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 	}
@@ -416,8 +415,6 @@ public class OperatorTest {
 
 		composite.addFunction(add);
 		add.addFunction(gaussian);
-
-		composite.updateAllParameters(); // workaround line
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 	}
@@ -430,8 +427,6 @@ public class OperatorTest {
 
 		composite.addFunction(subtract);
 		subtract.setFunction(1, gaussian);
-
-		composite.updateAllParameters();
 		assertEquals(3, gaussian.getParameters().length);
 		assertEquals(3, subtract.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
@@ -466,9 +461,7 @@ public class OperatorTest {
 		myOp.addFunction(new Gaussian());
 		myOp.addFunction(new Gaussian());
 		assertEquals(2, myOp.getNoOfFunctions());
-		// From here on out things are weird, can
-		// setFunction really accept null?
-		myOp.setFunction(0, null);
+		myOp.setFunction(0, null); // functions can be set to null(!)
 		assertEquals(1, myOp.getNoOfFunctions());
 		myOp.addFunction(new Gaussian());
 		assertEquals(2, myOp.getNoOfFunctions());

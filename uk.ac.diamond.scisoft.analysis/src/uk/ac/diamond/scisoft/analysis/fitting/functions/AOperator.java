@@ -175,6 +175,13 @@ abstract public class AOperator extends AFunction implements IOperator {
 		result = prime * result + (dirty ? 1231 : 1237);
 		result = prime * result + (name == null ? 0 : name.hashCode());
 		result = prime * result + params.hashCode();
+		for (IFunction f : getFunctions()) {
+			if (f != null) {
+				result = prime * result + f.hashCode();
+			} else {
+				result = prime * result;
+			}
+		}
 		return result;
 	}
 
@@ -199,6 +206,21 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 		if (!params.equals(other.params))
 			return false;
+
+		int nf = getNoOfFunctions();
+		if (nf != other.getNoOfFunctions())
+			return false;
+
+		for (int i = 0; i < nf; i++) {
+			IFunction fa = getFunction(i);
+			IFunction fo = other.getFunction(i);
+			if (fa == null) {
+				if (fo != null)
+					return false;
+			} else if (!fa.equals(fo)) {
+				return false;
+			}
+		}
 		return true;
 	}
 

@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -268,8 +270,8 @@ public class OperatorTest {
 		AFunction fg = new FermiGauss();
 		fg.setParameterValues(23., 110., 0, 1, 0, 1);
 
-		Assert.assertEquals(6, cfg.getNoOfParameters());
-		double[] cps = cfg.getParameterValues();
+		Assert.assertEquals(7, cfg.getNoOfParameters());
+		double[] cps = Arrays.copyOf(cfg.getParameterValues(), 6);
 		cps[1] /= FermiGauss.K2EV_CONVERSION_FACTOR;
 		cps[3] = cps[2];
 		cps[2] = 0;

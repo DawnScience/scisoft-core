@@ -147,25 +147,23 @@ abstract public class AOperator extends AFunction implements IOperator {
 		}
 	}
 
+	protected final String OPERATOR_NO_FUNCTIONS = "Operator has no functions"; 
+
 	@Override
 	public String toString() {
 		StringBuffer out = new StringBuffer();
 		int nf = getNoOfFunctions();
-		if (nf > 0) {
-			for (int i = 0; i < nf; i++) {
-				IFunction f = getFunction(i);
-				if (f != null) {
-					if (nf > 1)
-						out.append(String.format("Function %d - \n", i));
-					out.append(f.toString());
-					out.append('\n');
-				}
+		for (int i = 0; i < nf; i++) {
+			IFunction f = getFunction(i);
+			if (f != null) {
+				if (nf > 1)
+					out.append(String.format("Function %d - \n", i));
+				out.append(f.toString());
+				out.append('\n');
 			}
-
-			return out.substring(0, out.length() - 1);
 		}
 
-		return "Operator with no functions";
+		return out.length() == 0 ? OPERATOR_NO_FUNCTIONS : out.substring(0, out.length() - 1);
 	}
 
 	@Override

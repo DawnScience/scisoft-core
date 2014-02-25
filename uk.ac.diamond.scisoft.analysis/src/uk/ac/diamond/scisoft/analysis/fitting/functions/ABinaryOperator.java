@@ -75,6 +75,23 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 	}
 
 	@Override
+	public String toString() {
+		StringBuffer out = new StringBuffer();
+		if (fa != null) {
+			out.append(String.format("Function 0 - \n"));
+			out.append(fa.toString());
+			out.append('\n');
+		}
+		if (fb != null) {
+			out.append(String.format("Function 1 - \n"));
+			out.append(fb.toString());
+			out.append('\n');
+		}
+
+		return out.length() == 0 ? OPERATOR_NO_FUNCTIONS : out.substring(0, out.length() - 1);
+	}
+
+	@Override
 	public IFunction[] getFunctions() {
 		return new IFunction[] {fa, fb};
 	}

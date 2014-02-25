@@ -287,8 +287,24 @@ public class OperatorTest {
 		// make sure empty CompositeFunction does not throw exception
 		// this test is not concerned with the contents of toString, just
 		// that there is no exception.
+		final String operatorText = "Operator has no functions";
 		CompositeFunction compositeFunction = new CompositeFunction();
-		compositeFunction.toString();
+		Assert.assertTrue(compositeFunction.toString().startsWith(operatorText));
+
+		Subtract subFunction = new Subtract();
+		Assert.assertTrue(compositeFunction.toString().startsWith(operatorText));
+
+		subFunction.setFunction(0, new Gaussian());
+		Assert.assertFalse(subFunction.toString().startsWith(operatorText));
+
+		subFunction.removeFunction(0);
+		Assert.assertTrue(subFunction.toString().startsWith(operatorText));
+
+		subFunction.setFunction(1, new Gaussian());
+		Assert.assertFalse(subFunction.toString().startsWith(operatorText));
+
+		subFunction.removeFunction(1);
+		Assert.assertTrue(subFunction.toString().startsWith(operatorText));
 	}
 
 	@Test

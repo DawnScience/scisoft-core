@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.util.Arrays;
 
 /**
- * An elliptical region of interest
+ * An elliptical region of interest with the start point as the centre
  */
 public class EllipticalROI extends OrientableROIBase {
 	private double[] saxis; // semi-axes

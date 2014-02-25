@@ -208,6 +208,7 @@ public class HyperbolicROI extends OrientableROIBase {
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt), l, getAngleDegrees());
+		return super.toString() + String.format("point=%s, semi-latus=%g, eccentricity=%g, angle=%g",
+				Arrays.toString(spt), l, e, getAngleDegrees());
 	}
 }

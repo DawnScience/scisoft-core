@@ -167,8 +167,9 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	
 	public void setMask(AbstractDataset mask) {
 		this.mask = mask;
-		if (axisArray != null && !Arrays.equals(axisArray.getShape(), mask.getShape())) axisArray = null;
 		maskRoiCached = null;
+		if (mask == null) return;
+		if (axisArray != null && !Arrays.equals(axisArray.getShape(), mask.getShape())) axisArray = null;
 	}
 	
 	public void setROI(IROI roi) {

@@ -14,12 +14,30 @@ import java.util.EventObject;
 public class DetectorPropertyEvent extends EventObject {
 	private static final long serialVersionUID = -4124035392214967002L;
 
-	static enum EventType {
+	public static enum EventType {
+		/**
+		 * change in origin
+		 */
 		ORIGIN,
+		/**
+		 * change in beam centre
+		 */
 		BEAM_CENTRE,
+		/**
+		 * change in horizontal pixel size
+		 */
 		HPXSIZE,
+		/**
+		 * change in vertical pixel size
+		 */
 		VPXSIZE,
+		/**
+		 * change in normal direction
+		 */
 		NORMAL,
+		/**
+		 * change in geometry
+		 */
 		GEOMETRY,
 	}
 

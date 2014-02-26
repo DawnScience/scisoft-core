@@ -198,12 +198,13 @@ public class DSpacingTest {
 		det.setNormalAnglesInDegrees(0, 0, 0);
 		try {
 			roi = DSpacing.conicFromAngle(det, Math.PI*0.5);
-			Assert.fail("This should have thrown an exception");
 		} catch (UnsupportedOperationException e) {
 			// do nothing
+			Assert.fail("Now should not have thrown an exception");
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testConics() {
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
@@ -212,11 +213,13 @@ public class DSpacingTest {
 		IROI[] rois;
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
+		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
 		System.err.println(rois[0]);
 
 		det.setNormalAnglesInDegrees(29, 0, 0);
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
+		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
 		System.err.println(rois[0]);
 
 		det.setNormalAnglesInDegrees(30, 0, 0);
@@ -228,5 +231,14 @@ public class DSpacingTest {
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof HyperbolicROI);
 		System.err.println(rois[0]);
+	}
+
+	private void checkEllipses(EllipticalROI ea, EllipticalROI eb) {
+		double tol = 1e-8;
+		Assert.assertEquals(ea.getPointX(), eb.getPointX(), tol);
+		Assert.assertEquals(ea.getPointY(), eb.getPointY(), tol);
+		Assert.assertEquals(ea.getSemiAxis(0), eb.getSemiAxis(0), tol);
+		Assert.assertEquals(ea.getSemiAxis(1), eb.getSemiAxis(1), tol);
+		Assert.assertEquals(ea.getAngle(), eb.getAngle(), tol);
 	}
 }

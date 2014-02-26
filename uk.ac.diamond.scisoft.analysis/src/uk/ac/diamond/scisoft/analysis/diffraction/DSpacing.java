@@ -184,6 +184,17 @@ public class DSpacing {
 	 * @return roi
 	 */
 	public static IROI conicFromAngle(DetectorProperties detector, double alpha) {
+		return conicsFromAngles(detector, alpha)[0];
+	}
+
+	/**
+	 * Calculate a conic section
+	 * @param detector
+	 * @param alpha semi-angle (in radians)
+	 * @return roi
+	 */
+	@Deprecated
+	static IROI oldConicFromAngle(DetectorProperties detector, double alpha) {
 		final Vector3d normal = detector.getNormal();
 
 		Vector3d major = new Vector3d();
@@ -282,6 +293,7 @@ public class DSpacing {
 
 		IROI[] rois = new IROI[alphas.length];
 		Vector3d centre = new Vector3d();
+		double pixel = detector.getVPxSize();
 		for (int i = 0; i < rois.length; i++) {
 			double alpha = alphas[i];
 			double sa = Math.sin(alpha);
@@ -295,13 +307,13 @@ public class DSpacing {
 				double p = distance * sa / ca;
 				ParabolicROI proi = new ParabolicROI();
 				roi = proi;
-				proi.setFocalParameter(2 * p);
+				proi.setFocalParameter(2 * p / pixel);
 				// offset is +p
 				o = p;
 			} else {
 				double f = 1. / Math.abs(denom);
-				double a = distance * sa * ca * f;
-				double b = distance * sa * Math.sqrt(f);
+				double a = distance * sa * ca * f / pixel;
+				double b = distance * sa * Math.sqrt(f) / pixel;
 				o = distance * se * ce * f;
 
 				if (denom > 0) {
@@ -321,7 +333,7 @@ public class DSpacing {
 					hroi.setEccentricity(e);
 					hroi.setSemilatusRectum(l);
 					// shift is -l/e
-					o -= l / e;
+					o -= l * pixel / e;
 				}
 			}
 			roi.setAngle(angle);

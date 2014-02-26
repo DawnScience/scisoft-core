@@ -61,6 +61,10 @@ public class ROIUtils {
 			return new EllipticalFitROIList();
 		else if (EllipticalROI.class.isAssignableFrom(clazz))
 			return new EllipticalROIList();
+		else if (ParabolicROI.class.isAssignableFrom(clazz))
+			return new ParabolicROIList();
+		else if (HyperbolicROI.class.isAssignableFrom(clazz))
+			return new HyperbolicROIList();
 		// to-do add surface plot
 
 		throw new UnsupportedOperationException("No corresponding ROI list class");

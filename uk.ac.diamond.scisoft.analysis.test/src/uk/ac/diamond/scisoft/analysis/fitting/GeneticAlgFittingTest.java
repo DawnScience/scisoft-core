@@ -67,6 +67,6 @@ public class GeneticAlgFittingTest extends AbstractFittingTestBase {
 
 	@Test
 	public void testAreaPseudoVoigt() {
-		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 5*delta);
+		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 6*delta);
 	}
 }

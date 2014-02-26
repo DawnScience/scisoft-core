@@ -162,10 +162,13 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("pgm",  PgmLoader.class);
 		    LoaderFactory.registerLoader("f2d",  Fit2DLoader.class);
 		    LoaderFactory.registerLoader("msk",  Fit2DMaskLoader.class);
+		    LoaderFactory.registerLoader("bin", MerlinLoader.class);
 		    
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
 		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
+		    
+		    
 		    	
 		    try {
 			    /**

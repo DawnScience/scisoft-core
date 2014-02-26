@@ -203,7 +203,9 @@ public class HyperbolicROI extends OrientableROIBase {
 			src = new RotatedCoords(ang, false);
 
 		double[] pt = src.transformToRotated(x, y);
-		return Math.abs(pt[0] * pt[0] - 2 * l * pt[1]) <= distance; // FIXME
+		double a = Math.atan2(pt[1], pt[0]);
+		double[] pr = getRelativePoint(a);
+		return Math.hypot(pt[0] - pr[0], pt[1] - pr[1]) <= distance;
 	}
 
 	@Override

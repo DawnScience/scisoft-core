@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
  * it can be represented as x-p = 4 a y^2 where p = 2 a
  */
 public class ParabolicROI extends OrientableROIBase {
-	private double p;   // focal parameter (or semi-latus rectum) 
+	private double tp;   // twice focal parameter (or latus rectum) 
 
 	/**
 	 * No argument constructor need for serialization
@@ -53,7 +53,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 */
 	public ParabolicROI(double focal, double angle, double ptx, double pty) {
 		spt = new double[] { ptx, pty };
-		p = focal;
+		tp = 2*focal;
 		ang = angle;
 		checkAngle();
 	}
@@ -61,12 +61,12 @@ public class ParabolicROI extends OrientableROIBase {
 	@Override
 	public void downsample(double subFactor) {
 		super.downsample(subFactor);
-		p /= subFactor;
+		tp /= subFactor;
 	}
 
 	@Override
 	public ParabolicROI copy() {
-		ParabolicROI c = new ParabolicROI(p, ang, spt[0], spt[1]);
+		ParabolicROI c = new ParabolicROI(0.5*tp, ang, spt[0], spt[1]);
 		c.name = name;
 		c.plot = plot;
 		return c;
@@ -76,7 +76,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 * @return Returns focal parameter
 	 */
 	public double getFocalParameter() {
-		return p;
+		return 0.5*tp;
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 * @param focal
 	 */
 	public void setFocalParameter(double focal) {
-		p = focal;
+		tp = 2*focal;
 		bounds = null;
 	}
 
@@ -128,7 +128,7 @@ public class ParabolicROI extends OrientableROIBase {
 			return pt;
 		}
 		double sb = Math.sin(angle);
-		double r = 2 * p / (1 - cb);
+		double r = tp / (1 - cb);
 
 		return src.transformToOriginal(r * cb, r * sb);
 	}
@@ -138,7 +138,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 * @return start angle at distance from focus (end = 2pi - start)
 	 */
 	public double getStartAngle(double d) {
-		return Math.acos(1 - 2*p/d);
+		return Math.acos(1 - tp/d);
 	}
 
 	private transient RotatedCoords src = null;
@@ -190,11 +190,11 @@ public class ParabolicROI extends OrientableROIBase {
 			src = new RotatedCoords(ang, false);
 
 		double[] pt = src.transformToRotated(x, y);
-		return Math.abs(pt[0] * pt[0] - 2 * p * pt[1]) <= distance;
+		return Math.abs(pt[0] * pt[0] - tp * pt[1]) <= distance;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt), p, getAngleDegrees());
+		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt), 0.5*tp, getAngleDegrees());
 	}
 }

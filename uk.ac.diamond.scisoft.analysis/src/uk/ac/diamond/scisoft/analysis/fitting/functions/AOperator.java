@@ -25,34 +25,20 @@ import java.util.List;
 abstract public class AOperator extends AFunction implements IOperator {
 	protected List<IParameter> params; // unique parameters
 
+	protected IOperator parent;
+
 	public AOperator() {
 		super(0);
 		params = new ArrayList<>();
 	}
 
-
-	// TODO This function needs to be called for the same reason
-	// testAddFunctionOrder_TopDown and testRemoveFunction fail
-	// that is because the change in parameters do not "bubble"
-	// up to the root as expected.
-	/**
-	 * Call this method to ensure all the paramters in the passed fuction and all its children are up to date.
-	 *
-	 * @param root
-	 *            the starting function to update.
-	 */
-	public static void updateAllParameters(IFunction root) {
-		if (root instanceof AOperator) {
-			AOperator operator = (AOperator) root;
-			IFunction[] functions = operator.getFunctions();
-			for (IFunction f : functions) {
-				updateAllParameters(f);
-			}
-			operator.updateParameters();
-		}
+	@Override
+	public void setParentOperator(IOperator parent) {
+		this.parent = parent;
 	}
 
-	protected void updateParameters() {
+	@Override
+	public void updateParameters() {
 		params.clear();
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
@@ -73,6 +59,10 @@ abstract public class AOperator extends AFunction implements IOperator {
 			}
 		}
 		setDirty(true);
+
+		if (parent != null) {
+			parent.updateParameters();
+		}
 	}
 
 	@Override
@@ -147,25 +137,23 @@ abstract public class AOperator extends AFunction implements IOperator {
 		}
 	}
 
+	protected final String OPERATOR_NO_FUNCTIONS = "Operator has no functions"; 
+
 	@Override
 	public String toString() {
 		StringBuffer out = new StringBuffer();
 		int nf = getNoOfFunctions();
-		if (nf > 0) {
-			for (int i = 0; i < nf; i++) {
-				IFunction f = getFunction(i);
-				if (f != null) {
-					if (nf > 1)
-						out.append(String.format("Function %d - \n", i));
-					out.append(f.toString());
-					out.append('\n');
-				}
+		for (int i = 0; i < nf; i++) {
+			IFunction f = getFunction(i);
+			if (f != null) {
+				if (nf > 1)
+					out.append(String.format("Function %d - \n", i));
+				out.append(f.toString());
+				out.append('\n');
 			}
-
-			return out.substring(0, out.length() - 1);
 		}
 
-		return "Operator with no functions";
+		return out.length() == 0 ? OPERATOR_NO_FUNCTIONS : out.substring(0, out.length() - 1);
 	}
 
 	@Override
@@ -175,6 +163,13 @@ abstract public class AOperator extends AFunction implements IOperator {
 		result = prime * result + (dirty ? 1231 : 1237);
 		result = prime * result + (name == null ? 0 : name.hashCode());
 		result = prime * result + params.hashCode();
+		for (IFunction f : getFunctions()) {
+			if (f != null) {
+				result = prime * result + f.hashCode();
+			} else {
+				result = prime * result;
+			}
+		}
 		return result;
 	}
 
@@ -199,6 +194,21 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 		if (!params.equals(other.params))
 			return false;
+
+		int nf = getNoOfFunctions();
+		if (nf != other.getNoOfFunctions())
+			return false;
+
+		for (int i = 0; i < nf; i++) {
+			IFunction fa = getFunction(i);
+			IFunction fo = other.getFunction(i);
+			if (fa == null) {
+				if (fo != null)
+					return false;
+			} else if (!fa.equals(fo)) {
+				return false;
+			}
+		}
 		return true;
 	}
 

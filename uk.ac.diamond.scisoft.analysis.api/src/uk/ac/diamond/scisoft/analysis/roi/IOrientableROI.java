@@ -16,17 +16,29 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public interface IRectangularROI extends IOrientableROI {
+/**
+ * Represents an orientable region of interest with the start point being the centre of rotation
+ */
+public interface IOrientableROI extends IROI {
+	/**
+	 * @return angle, in degrees
+	 */
+	public double getAngleDegrees();
 
 	/**
-	 * @param i
-	 * @return length in given dimension
+	 * Set angle, in degrees
+	 * @param degrees
 	 */
-	public double getLength(int i);
+	public void setAngleDegrees(double degrees);
 
 	/**
-	 * End point of rectangle
-	 * @return end
+	 * @return angle, in radians
 	 */
-	public double[] getEndPoint();
+	public double getAngle();
+
+	/**
+	 * Set angle, in radians
+	 * @param angle
+	 */
+	public void setAngle(double angle);
 }

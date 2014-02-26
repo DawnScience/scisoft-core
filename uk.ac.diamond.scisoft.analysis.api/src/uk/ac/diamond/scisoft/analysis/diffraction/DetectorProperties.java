@@ -432,6 +432,15 @@ public class DetectorProperties implements Serializable, Cloneable {
 	}
 
 	/**
+	 * @return point on detector closest to origin
+	 */
+	public Vector3d getClosestPoint() {
+		Vector3d q = new Vector3d();
+		q.scale(normal.dot(origin), normal);
+		return q;
+	}
+
+	/**
 	 * Set distance from sample to detector
 	 * @param distance
 	 */
@@ -529,7 +538,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @return tilt of detector normal from beam direction (in radians)
 	 */
 	public double getTiltAngle() {
-		return Math.acos(-normal.z);
+		return Math.acos(-normal.dot(beamVector));
 	}
 
 	/**

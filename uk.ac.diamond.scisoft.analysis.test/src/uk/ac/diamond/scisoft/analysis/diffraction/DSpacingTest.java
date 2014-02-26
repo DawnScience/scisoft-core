@@ -27,7 +27,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.HyperbolicROI;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import uk.ac.diamond.scisoft.analysis.roi.ParabolicROI;
 
 /**
  * Class that will test calculating
@@ -200,5 +202,31 @@ public class DSpacingTest {
 		} catch (UnsupportedOperationException e) {
 			// do nothing
 		}
+	}
+
+	@Test
+	public void testConics() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
+
+		double[] alphas = new double[] {Math.toRadians(60)};
+		IROI[] rois;
+		rois = DSpacing.conicsFromAngles(det, alphas);
+		Assert.assertTrue(rois[0] instanceof EllipticalROI);
+		System.err.println(rois[0]);
+
+		det.setNormalAnglesInDegrees(29, 0, 0);
+		rois = DSpacing.conicsFromAngles(det, alphas);
+		Assert.assertTrue(rois[0] instanceof EllipticalROI);
+		System.err.println(rois[0]);
+
+		det.setNormalAnglesInDegrees(30, 0, 0);
+		rois = DSpacing.conicsFromAngles(det, alphas);
+		Assert.assertTrue(rois[0] instanceof ParabolicROI);
+		System.err.println(rois[0]);
+
+		det.setNormalAnglesInDegrees(31, 0, 0);
+		rois = DSpacing.conicsFromAngles(det, alphas);
+		Assert.assertTrue(rois[0] instanceof HyperbolicROI);
+		System.err.println(rois[0]);
 	}
 }

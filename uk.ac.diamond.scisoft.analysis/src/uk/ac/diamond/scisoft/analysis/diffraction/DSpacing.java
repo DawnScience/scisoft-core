@@ -26,7 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.HyperbolicROI;
+import uk.ac.diamond.scisoft.analysis.roi.IOrientableROI;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import uk.ac.diamond.scisoft.analysis.roi.ParabolicROI;
 
 /**
  * Utility class to hold methods that calculate or use d-spacings
@@ -242,5 +245,96 @@ public class DSpacing {
 		}
 
 		return eroi;
+	}
+
+	/**
+	 * Calculate conic sections. Can return nulls
+	 * @param detector
+	 * @param alphas semi-angles (in radians)
+	 * @return roi
+	 */
+	public static IROI[] conicsFromAngles(DetectorProperties detector, double... alphas) {
+		double distance = detector.getDetectorDistance();
+		if (distance == 0) {
+			// TODO three degenerate cases (point, line, line pair)
+			return null;
+		}
+
+		final Vector3d normal = detector.getNormal();
+		final Vector3d beam = detector.getBeamVector();
+
+		Vector3d major = new Vector3d();
+		Vector3d minor = new Vector3d();
+
+		minor.cross(normal, beam);
+		double se = minor.length();
+		double ce = Math.sqrt(1. - se*se);
+		if (se == 0) {
+			major.set(-1, 0, 0);
+		} else {
+			minor.normalize();
+			major.cross(minor, normal);
+			major.normalize();
+		}
+		Vector3d row = detector.getPixelRow();
+		Vector3d col = detector.getPixelColumn();
+		double angle = Math.atan2(major.dot(col), major.dot(row));
+
+		IROI[] rois = new IROI[alphas.length];
+		Vector3d centre = new Vector3d();
+		for (int i = 0; i < rois.length; i++) {
+			double alpha = alphas[i];
+			double sa = Math.sin(alpha);
+			double ca = Math.cos(alpha);
+			double denom = ca * ca - se * se;
+
+			IOrientableROI roi = null;
+			double o;
+			if (Math.abs(denom) < Math.ulp(1)) {
+				// parabolic
+				double p = distance * sa / ca;
+				ParabolicROI proi = new ParabolicROI();
+				roi = proi;
+				proi.setFocalParameter(2 * p);
+				// offset is +p
+				o = p;
+			} else {
+				double f = 1. / Math.abs(denom);
+				double a = distance * sa * ca * f;
+				double b = distance * sa * Math.sqrt(f);
+				o = distance * se * ce * f;
+
+				if (denom > 0) {
+					// circular/elliptical
+					EllipticalROI eroi = new EllipticalROI();
+					roi = eroi;
+					if (se == 0) {
+						b = a;
+					}
+					eroi.setSemiAxes(new double[] { a, b });
+				} else {
+					// hyperbolic
+					HyperbolicROI hroi = new HyperbolicROI();
+					roi = hroi;
+					double l = b * b / a;
+					double e = Math.sqrt(1 + l / a);
+					hroi.setEccentricity(e);
+					hroi.setSemilatusRectum(l);
+					// shift is -l/e
+					o -= l / e;
+				}
+			}
+			roi.setAngle(angle);
+
+			Vector3d point = detector.getClosestPoint();
+			major.scale(o);
+			point.add(major);
+
+			detector.pixelCoords(point, centre);
+			roi.setPoint(centre.x, centre.y);
+			rois[i] = roi;
+		}
+
+		return rois;
 	}
 }

@@ -54,7 +54,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 		data.fill(calcConvolution(da, db));
 	}
 
-	private AbstractDataset calcConvolution(DoubleDataset signal, AbstractDataset kernel) {
+	private static AbstractDataset calcConvolution(DoubleDataset signal, AbstractDataset kernel) {
 		int l = signal.getSize();
 		DoubleDataset padded = new DoubleDataset(2*l - 1);
 		int hl = l/2;

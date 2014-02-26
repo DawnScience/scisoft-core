@@ -39,7 +39,17 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 
 	@Override
 	public void addFunction(IFunction function) {
-		setFunction(getNoOfFunctions(), function);
+		if (fa == null) {
+			setFunction(0, function);
+		} else if (fb == null) {
+			setFunction(1, function);
+		} else {
+			throw new IndexOutOfBoundsException("Can only add two functions to a binary operator");
+		}
+		if (function instanceof IOperator) {
+			((IOperator) function).setParentOperator(this);
+		}
+		updateParameters();
 	}
 
 	@Override
@@ -54,7 +64,38 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		default:
 			throw new IndexOutOfBoundsException("Can not set this index as it is not 0 or 1");
 		}
+		if (function instanceof IOperator) {
+			((IOperator) function).setParentOperator(this);
+		}
 		updateParameters();
+	}
+
+	@Override
+	public void updateParameters() {
+		params.clear();
+		for (int i = 0; i < 2; i++) {
+			IFunction f = getFunction(i);
+			if (f == null)
+				continue;
+			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
+				IParameter p = f.getParameter(j);
+				boolean add = true;
+				for (IParameter param : params) {
+					if (p == param) {
+						add = false;
+						break;
+					}
+				}
+				if (add) {
+					params.add(p);
+				}
+			}
+		}
+		setDirty(true);
+
+		if (parent != null) {
+			parent.updateParameters();
+		}
 	}
 
 	@Override
@@ -72,6 +113,23 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		default:
 			throw new IndexOutOfBoundsException("Can not get this index as it is not 0 or 1");
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer out = new StringBuffer();
+		if (fa != null) {
+			out.append(String.format("Function 0 - \n"));
+			out.append(fa.toString());
+			out.append('\n');
+		}
+		if (fb != null) {
+			out.append(String.format("Function 1 - \n"));
+			out.append(fb.toString());
+			out.append('\n');
+		}
+
+		return out.length() == 0 ? OPERATOR_NO_FUNCTIONS : out.substring(0, out.length() - 1);
 	}
 
 	@Override

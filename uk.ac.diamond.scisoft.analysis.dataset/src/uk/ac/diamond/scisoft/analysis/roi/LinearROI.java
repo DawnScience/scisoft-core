@@ -23,11 +23,9 @@ import java.util.Arrays;
 /**
  * Class for linear regions of interest 
  */
-public class LinearROI extends ROIBase implements Serializable {
+public class LinearROI extends OrientableROIBase implements Serializable {
 	private double len;    // length
-	private double ang;    // angle in radians
 	private boolean crossHair; // enable secondary linear ROI that bisects at 90 degrees
-	private double cang, sang; // cosine and sine of angle
 
 	/**
 	 * Default new line
@@ -51,7 +49,7 @@ public class LinearROI extends ROIBase implements Serializable {
 		this.spt = new double[] {0, 0};
 		this.len = len;
 		this.ang = ang;
-		calcTrig();
+		checkAngle();
 		crossHair = false;
 	}
 
@@ -74,8 +72,7 @@ public class LinearROI extends ROIBase implements Serializable {
 		double y = ept[1] - spt[1];
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
-		if (ang < 0) ang += 2.0*Math.PI;
-		calcTrig();
+		checkAngle();
 		crossHair = false;
 	}
 
@@ -99,9 +96,8 @@ public class LinearROI extends ROIBase implements Serializable {
 		double y = ept[1] - pt[1];
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
-		if (ang < 0) ang += 2.0*Math.PI;
 		bounds = null;
-		calcTrig();
+		checkAngle();
 	}
 
 	/**
@@ -147,9 +143,8 @@ public class LinearROI extends ROIBase implements Serializable {
 		double y = epty - spt[1];
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
-		if (ang < 0) ang += 2.0*Math.PI;
 		bounds = null;
-		calcTrig();
+		checkAngle();
 	}
 
 	/**
@@ -185,49 +180,11 @@ public class LinearROI extends ROIBase implements Serializable {
 	}
 
 	/**
-	 * Change line to have specified angle
-	 * @param ang
-	 */
-	public void setAngle(double ang) {
-		if (ang < 0) ang += 2.0*Math.PI;
-		this.ang = ang;
-		bounds = null;
-		calcTrig();
-	}
-
-	/**
-	 * @return angle
-	 */
-	public double getAngle() {
-		return ang;
-	}
-
-	/**
-	 * Change line to have specified angle
-	 * @param ang
-	 */
-	public void setAngleDegrees(double ang) {
-		setAngle(Math.toRadians(ang));
-	}
-
-	/**
 	 * For Jython
 	 * @param angle The angle in degrees to set
 	 */
 	public void setAngledegrees(double angle) {
 		setAngleDegrees(angle);
-	}
-
-	private void calcTrig() {
-		cang = Math.cos(ang);
-		sang = Math.sin(ang);
-	}
-
-	/**
-	 * @return angle
-	 */
-	public double getAngleDegrees() {
-		return Math.toDegrees(ang);
 	}
 
 	/**

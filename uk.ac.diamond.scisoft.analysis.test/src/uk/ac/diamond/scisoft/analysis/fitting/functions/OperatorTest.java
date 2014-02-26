@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -268,8 +270,8 @@ public class OperatorTest {
 		AFunction fg = new FermiGauss();
 		fg.setParameterValues(23., 110., 0, 1, 0, 1);
 
-		Assert.assertEquals(6, cfg.getNoOfParameters());
-		double[] cps = cfg.getParameterValues();
+		Assert.assertEquals(7, cfg.getNoOfParameters());
+		double[] cps = Arrays.copyOf(cfg.getParameterValues(), 6);
 		cps[1] /= FermiGauss.K2EV_CONVERSION_FACTOR;
 		cps[3] = cps[2];
 		cps[2] = 0;
@@ -287,8 +289,24 @@ public class OperatorTest {
 		// make sure empty CompositeFunction does not throw exception
 		// this test is not concerned with the contents of toString, just
 		// that there is no exception.
+		final String operatorText = "Operator has no functions";
 		CompositeFunction compositeFunction = new CompositeFunction();
-		compositeFunction.toString();
+		Assert.assertTrue(compositeFunction.toString().startsWith(operatorText));
+
+		Subtract subFunction = new Subtract();
+		Assert.assertTrue(compositeFunction.toString().startsWith(operatorText));
+
+		subFunction.setFunction(0, new Gaussian());
+		Assert.assertFalse(subFunction.toString().startsWith(operatorText));
+
+		subFunction.removeFunction(0);
+		Assert.assertTrue(subFunction.toString().startsWith(operatorText));
+
+		subFunction.setFunction(1, new Gaussian());
+		Assert.assertFalse(subFunction.toString().startsWith(operatorText));
+
+		subFunction.removeFunction(1);
+		Assert.assertTrue(subFunction.toString().startsWith(operatorText));
 	}
 
 	@Test
@@ -327,6 +345,8 @@ public class OperatorTest {
 	public void testRemoveFunction() {
 		CompositeFunction composite = new CompositeFunction();
 		Add add = new Add();
+		assertEquals(0, add.getParameters().length);
+		assertEquals(0, composite.getParameters().length);
 		Gaussian gaussian = new Gaussian(1, 2, 3);
 		add.addFunction(gaussian);
 		composite.addFunction(add);
@@ -373,7 +393,6 @@ public class OperatorTest {
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 		add.removeFunction(0);
-		composite.updateAllParameters(); // workaround line
 		assertEquals(0, add.getParameters().length);
 		assertEquals(0, composite.getParameters().length);
 	}
@@ -386,8 +405,6 @@ public class OperatorTest {
 
 		add.addFunction(gaussian);
 		composite.addFunction(add);
-
-		composite.updateAllParameters(); // workaround line
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 	}
@@ -400,8 +417,6 @@ public class OperatorTest {
 
 		composite.addFunction(add);
 		add.addFunction(gaussian);
-
-		composite.updateAllParameters(); // workaround line
 		assertEquals(3, add.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
 	}
@@ -414,8 +429,6 @@ public class OperatorTest {
 
 		composite.addFunction(subtract);
 		subtract.setFunction(1, gaussian);
-
-		composite.updateAllParameters();
 		assertEquals(3, gaussian.getParameters().length);
 		assertEquals(3, subtract.getParameters().length);
 		assertEquals(3, composite.getParameters().length);
@@ -450,9 +463,7 @@ public class OperatorTest {
 		myOp.addFunction(new Gaussian());
 		myOp.addFunction(new Gaussian());
 		assertEquals(2, myOp.getNoOfFunctions());
-		// From here on out things are weird, can
-		// setFunction really accept null?
-		myOp.setFunction(0, null);
+		myOp.setFunction(0, null); // functions can be set to null(!)
 		assertEquals(1, myOp.getNoOfFunctions());
 		myOp.addFunction(new Gaussian());
 		assertEquals(2, myOp.getNoOfFunctions());

@@ -19,13 +19,10 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.util.Arrays;
 
 /**
- * An elliptical region of interest
+ * An elliptical region of interest with the start point as the centre
  */
-public class EllipticalROI extends ROIBase {
+public class EllipticalROI extends OrientableROIBase {
 	private double[] saxis; // semi-axes
-	private double ang;     // angle in radians
-	private double cang;
-	private double sang;
 
 	/**
 	 * No argument constructor need for serialization
@@ -63,6 +60,7 @@ public class EllipticalROI extends ROIBase {
 	public EllipticalROI(double major, double minor, double angle, double ptx, double pty) {
 		spt = new double[] { ptx, pty };
 		saxis = new double[] { major, minor };
+		setAngle(angle);
 		ang = angle;
 		checkAngle();
 	}
@@ -132,57 +130,11 @@ public class EllipticalROI extends ROIBase {
 	}
 
 	/**
-	 * @return Returns the angle in degrees
-	 */
-	public double getAngleDegrees() {
-		return Math.toDegrees(ang);
-	}
-
-	/**
-	 * @param angle The angle in degrees to set
-	 */
-	public void setAngleDegrees(double angle) {
-		setAngle(Math.toRadians(angle));
-	}
-
-	/**
 	 * For Jython
 	 * @param angle The angle in degrees to set
 	 */
 	public void setAngledegrees(double angle) {
 		setAngleDegrees(angle);
-	}
-
-	private final static double TWOPI = 2.0 * Math.PI;
-	/**
-	 * Make sure angle lie in permitted ranges:
-	 *  0 <= ang < 2*pi
-	 */
-	private void checkAngle() {
-		while (ang < 0) {
-			ang += TWOPI;
-		}
-		while (ang >= TWOPI) {
-			ang -= TWOPI;
-		}
-		cang = Math.cos(ang);
-		sang = Math.sin(ang);
-	}
-
-	/**
-	 * @return Returns the angle
-	 */
-	public double getAngle() {
-		return ang;
-	}
-
-	/**
-	 * @param angle The major axis angle to set
-	 */
-	public void setAngle(double angle) {
-		ang = angle;
-		checkAngle();
-		bounds = null;
 	}
 
 	/**

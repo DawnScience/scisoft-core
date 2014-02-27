@@ -53,7 +53,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 */
 	public ParabolicROI(double focal, double angle, double ptx, double pty) {
 		spt = new double[] { ptx, pty };
-		tp = 2*focal;
+		setFocalParameter(focal);
 		ang = angle;
 		checkAngle();
 	}
@@ -195,6 +195,7 @@ public class ParabolicROI extends OrientableROIBase {
 
 	@Override
 	public String toString() {
-		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt), 0.5*tp, getAngleDegrees());
+		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt),
+				getFocalParameter(), getAngleDegrees());
 	}
 }

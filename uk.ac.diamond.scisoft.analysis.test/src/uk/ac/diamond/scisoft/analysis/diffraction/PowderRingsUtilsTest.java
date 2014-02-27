@@ -244,7 +244,7 @@ public class PowderRingsUtilsTest {
 								d.getD().doubleValue(NonSI.ANGSTROM));
 						ds.add(d);
 						ells.add(e);
-					} catch (UnsupportedOperationException ex) {
+					} catch (Exception ex) {
 						continue;
 					}
 				}
@@ -354,7 +354,7 @@ public class PowderRingsUtilsTest {
 						try {
 							e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(), d.getD()
 									.doubleValue(NonSI.ANGSTROM));
-						} catch (UnsupportedOperationException ex) {
+						} catch (Exception ex) {
 							continue;
 						} finally {
 							ells.add(e);
@@ -473,7 +473,7 @@ public class PowderRingsUtilsTest {
 			try {
 				ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det, wavelength, dspacing));
 				ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det2, wavelength, dspacing));
-			} catch (UnsupportedOperationException e) {
+			} catch (Exception e) {
 				// do nothing
 			}
 		}

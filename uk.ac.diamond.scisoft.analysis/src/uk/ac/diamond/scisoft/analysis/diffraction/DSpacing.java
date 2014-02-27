@@ -184,7 +184,8 @@ public class DSpacing {
 	 * @return roi
 	 */
 	public static IROI conicFromAngle(DetectorProperties detector, double alpha) {
-		return conicsFromAngles(detector, alpha)[0];
+		IROI[] rois = conicsFromAngles(detector, alpha);
+		return rois != null && rois.length > 0 ? rois[0] : null;
 	}
 
 	/**
@@ -304,18 +305,15 @@ public class DSpacing {
 			double o;
 			if (Math.abs(denom) < Math.ulp(1)) {
 				// parabolic
-				double p = distance * sa / ca;
+				double p = distance * sa / (2 * ca);
 				ParabolicROI proi = new ParabolicROI();
 				roi = proi;
-				proi.setFocalParameter(2 * p / pixel);
-				// offset is +p
-				o = p;
+				proi.setFocalParameter(p / pixel);
+				o = distance * ca / (2*sa);
 			} else {
 				double f = 1. / Math.abs(denom);
 				double a = distance * sa * ca * f / pixel;
 				double b = distance * sa * Math.sqrt(f) / pixel;
-				o = distance * se * ce * f;
-
 				if (denom > 0) {
 					// circular/elliptical
 					EllipticalROI eroi = new EllipticalROI();
@@ -324,16 +322,16 @@ public class DSpacing {
 						b = a;
 					}
 					eroi.setSemiAxes(new double[] { a, b });
+					o = distance * se * ce * f;
 				} else {
 					// hyperbolic
 					HyperbolicROI hroi = new HyperbolicROI();
 					roi = hroi;
 					double l = b * b / a;
-					double e = Math.sqrt(1 + l / a);
+					double e = Math.hypot(1, l/a);
 					hroi.setEccentricity(e);
 					hroi.setSemilatusRectum(l);
-					// shift is -l/e
-					o -= l * pixel / e;
+					o = distance * se * (sa - ce) * f;
 				}
 			}
 			roi.setAngle(angle);

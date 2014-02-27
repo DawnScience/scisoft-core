@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
@@ -209,28 +211,39 @@ public class DSpacingTest {
 	public void testConics() {
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
 
-		double[] alphas = new double[] {Math.toRadians(60)};
+		double alpha = 60;
+		double[] alphas = new double[] {Math.toRadians(alpha)};
 		IROI[] rois;
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
 		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
 		System.err.println(rois[0]);
 
-		det.setNormalAnglesInDegrees(29, 0, 0);
+		double delta = 0.1;
+		det.setNormalAnglesInDegrees(90 - alpha - delta, 0, 0);
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
 		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
-		System.err.println(rois[0]);
+		double[] apt = ((EllipticalROI) rois[0]).getPoint(Math.PI);
+		System.err.println(rois[0] + ", point=" + Arrays.toString(apt));
 
 		det.setNormalAnglesInDegrees(30, 0, 0);
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof ParabolicROI);
-		System.err.println(rois[0]);
+		double[] bpt = ((ParabolicROI) rois[0]).getPoint(Math.PI);
+		System.err.println(rois[0] + ", point=" + Arrays.toString(bpt));
 
-		det.setNormalAnglesInDegrees(31, 0, 0);
+		det.setNormalAnglesInDegrees(30.1, 0, 0);
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof HyperbolicROI);
-		System.err.println(rois[0]);
+		double[] cpt = ((HyperbolicROI) rois[0]).getPoint(Math.PI);
+		System.err.println(rois[0] + ", point=" + Arrays.toString(cpt));
+
+		// check a point is close
+		Assert.assertEquals(apt[0], bpt[0], 2);
+		Assert.assertEquals(apt[1], bpt[1], 1e-8);
+		Assert.assertEquals(apt[0], cpt[0], 2);
+		Assert.assertEquals(apt[1], cpt[1], 1e-8);
 	}
 
 	private void checkEllipses(EllipticalROI ea, EllipticalROI eb) {

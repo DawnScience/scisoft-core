@@ -36,7 +36,6 @@ import uk.ac.diamond.scisoft.analysis.roi.ParabolicROI;
  */
 public class DSpacing {
 
-	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(DSpacing.class);
 
 	/**
@@ -269,6 +268,10 @@ public class DSpacing {
 		double distance = detector.getDetectorDistance();
 		if (distance == 0) {
 			// TODO three degenerate cases (point, line, line pair)
+			logger.warn("Origin is on plane of detector!");
+			return null;
+		} else if (distance < 0) {
+			logger.warn("Detector is behind origin!");
 			return null;
 		}
 

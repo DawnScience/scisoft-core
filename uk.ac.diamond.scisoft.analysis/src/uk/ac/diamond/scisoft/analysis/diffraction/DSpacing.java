@@ -128,23 +128,14 @@ public class DSpacing {
 	 * Calculate radius of circle assuming the detector is normal to the beam vector
 	 * 
 	 * @param detector
-	 * @param difExp
+	 * @param diffExp
 	 * @param dSpacing
 	 * @return radius of circle in PIXELS
 	 */
-	public static double radiusFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment difExp,
+	public static double radiusFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
 			double dSpacing) {
-		double theta = 2 * Math.asin(difExp.getWavelength() / (2 * dSpacing));
-		Vector3d radiusVector = new Vector3d(0, Math.sin(theta), Math.cos(theta));
-		Vector3d beam = new Vector3d(detector.getBeamVector());
-		Vector3d normal = detector.getNormal();
-		
-		// scale vectors
-		radiusVector.scale(detector.getOrigin().dot(normal) / radiusVector.dot(normal));
-		beam.scale(detector.getOrigin().dot(normal) / beam.dot(normal));
-
-		radiusVector.sub(beam);
-		return radiusVector.length() / detector.getVPxSize();
+		double alpha = coneAngleFromDSpacing(diffExp, dSpacing);
+		return detector.getDetectorDistance() * Math.tan(alpha);
 	}
 
 	/**
@@ -160,6 +151,30 @@ public class DSpacing {
 	}
 
 	/**
+	 * Calculate cone semi-angle
+	 * @param diffExp
+	 * @param dSpacing (in Angstroms)
+	 * @return semi-angle
+	 */
+	public static double coneAngleFromDSpacing(DiffractionCrystalEnvironment diffExp, double dSpacing) {
+		return coneAngleFromDSpacing(diffExp.getWavelength(), dSpacing);
+	}
+
+	/**
+	 * Calculate cone semi-angle
+	 * @param wavelength (in same units as d-spacing)
+	 * @param dSpacing (in same units as wavelength)
+	 * @return semi-angle
+	 */
+	public static double coneAngleFromDSpacing(double wavelength, double dSpacing) {
+		double s = 0.5 * wavelength / dSpacing;
+		if (s > 1) {
+			throw new IllegalArgumentException("Wavelength cannot be greater than 2 * dSpacing");
+		}
+		return 2 * Math.asin(s);
+	}
+
+	/**
 	 * Calculate a conic section
 	 * @param detector
 	 * @param wavelength (in same units as d-spacing)
@@ -168,11 +183,7 @@ public class DSpacing {
 	 */
 	public static IROI conicFromDSpacing(DetectorProperties detector, double wavelength,
 			double dSpacing) {
-		double s = 0.5 * wavelength / dSpacing;
-		if (s > 1) {
-			throw new IllegalArgumentException("Wavelength cannot be greater than 2 * dSpacing");
-		}
-		double alpha = 2 * Math.asin(s);
+		double alpha = coneAngleFromDSpacing(wavelength, dSpacing);
 		return conicFromAngle(detector, alpha);
 	}
 
@@ -215,16 +226,13 @@ public class DSpacing {
 			intersect = detector.getBeamCentrePosition();
 			r = intersect.length();
 		} catch (IllegalStateException e) {
-			// parabolic case TODO
 			throw new UnsupportedOperationException("Cannot handle parabolic case yet");
 		}
-
-		// TODO test for intersection behind sample (aka hyperbolic case)
 
 		double sa = Math.sin(alpha);
 		double ca = Math.cos(alpha);
 
-		if (ca*ce - sa*se < 1e-15) { // TODO
+		if (ca*ce - sa*se < 1e-15) {
 			throw new UnsupportedOperationException("Part of cone does not intersect detector plane");
 		}
 
@@ -244,7 +252,7 @@ public class DSpacing {
 		if (se != 0) {
 			double denom = ca*ca - se*se;
 			if (denom <= 0) { // if alpha >= 90 - eta
-				return null; // then parabolic or hyperbolic cases TODO
+				return null; // then parabolic or hyperbolic cases
 			}
 			double a = r*ce*sa*ca/denom;
 			double b = r*ce*sa/Math.sqrt(denom);
@@ -266,12 +274,12 @@ public class DSpacing {
 	 */
 	public static IROI[] conicsFromAngles(DetectorProperties detector, double... alphas) {
 		double distance = detector.getDetectorDistance();
-		if (distance == 0) {
+		if (distance < 0) {
+			logger.warn("Detector is behind origin!");
+			return null;
+		} else if (distance == 0) {
 			// TODO three degenerate cases (point, line, line pair)
 			logger.warn("Origin is on plane of detector!");
-			return null;
-		} else if (distance < 0) {
-			logger.warn("Detector is behind origin!");
 			return null;
 		}
 
@@ -346,6 +354,7 @@ public class DSpacing {
 			detector.pixelCoords(point, centre);
 			roi.setPoint(centre.x, centre.y);
 			rois[i] = roi;
+//			logger.debug("Ang: {}, d: {}, r: {}", alpha, distance, roi);
 		}
 
 		return rois;

@@ -15,8 +15,6 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.osgi;
-import net.sf.py4j.defaultserver.ClassLoaderService;
-
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 

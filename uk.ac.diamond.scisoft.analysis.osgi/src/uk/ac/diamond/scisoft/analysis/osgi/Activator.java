@@ -2,11 +2,10 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 
 import java.util.Hashtable;
 
-import net.sf.py4j.defaultserver.ClassLoaderService;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import py4j.ClassLoaderService;
 import uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService;
 import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;

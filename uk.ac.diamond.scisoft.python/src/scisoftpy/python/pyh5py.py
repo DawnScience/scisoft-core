@@ -163,8 +163,8 @@ class HDF5Loader(object):
         # convert tree to own tree
         pool = dict()
         t = self._copynode(pool, fh)
-        fh.close()
         pool.clear()
+        fh.close()
         return t
 
     def _mkgroup(self, node, attrs, parent):

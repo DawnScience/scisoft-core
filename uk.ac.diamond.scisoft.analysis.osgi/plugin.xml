@@ -18,7 +18,7 @@
       <serviceFactory
             factoryClass="uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl">
          <service
-               serviceClass="net.sf.py4j.defaultserver.ClassLoaderService"></service>
+               serviceClass="py4j.ClassLoaderService"></service>
       </serviceFactory>
    </extension>
 

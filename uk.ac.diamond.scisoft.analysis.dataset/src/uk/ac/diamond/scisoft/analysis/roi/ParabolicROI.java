@@ -176,6 +176,50 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 		return Math.abs(pt[0] * pt[0] - tp * pt[1]) <= distance;
 	}
 
+	/**
+	 * Calculate values for angle at which parabola will intersect vertical line of given x
+	 * @param x
+	 * @return possible angles
+	 */
+	public double[] getVerticalIntersectionAngles(double x) {
+		double[] pt = transformXToOriginal(tp);
+		x -= spt[0];
+
+		pt[0] += x;
+		x /= Math.hypot(pt[0], pt[1]);
+		if (x < -1 || x > 1) {
+			return null;
+		}
+		double t = Math.atan2(pt[1], pt[0]);
+		if (x == -1 || x == 1) { // touching case
+			return new double[] {Math.acos(x) - t};
+		}
+		x = Math.acos(x);
+		return new double[] {x - t, 2 * Math.PI - x - t};
+	}
+
+	/**
+	 * Calculate values for angle at which parabola will intersect horizontal line of given y
+	 * @param y
+	 * @return possible angles
+	 */
+	public double[] getHorizontalIntersectionAngles(double y) {
+		double[] pt = transformXToOriginal(tp);
+		y -= spt[1];
+
+		pt[1] += y;
+		y /= Math.hypot(pt[0], pt[1]);
+		if (y < -1 || y > 1) {
+			return null;
+		}
+		double t = Math.atan2(pt[1], pt[0]);
+		if (y == -1 || y == 1) { // touching case
+			return new double[] {Math.acos(y) - t};
+		}
+		y = Math.asin(y);
+		return new double[] {y - t, Math.PI - y - t};
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + String.format("point=%s, focal=%g, angle=%g", Arrays.toString(spt),

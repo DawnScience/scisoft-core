@@ -278,6 +278,50 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 		return true;
 	}
 
+	/**
+	 * Calculate values for angle at which ellipse will intersect vertical line of given x
+	 * @param x
+	 * @return possible angles
+	 */
+	public double[] getVerticalIntersectionAngles(double x) {
+		double tx = saxis[0]*cang;
+		double ty = saxis[1]*sang;
+
+		x -= spt[0];
+		x /= Math.hypot(tx, ty);
+		if (x < -1 || x > 1) {
+			return null;
+		}
+		double t = Math.atan2(ty, tx);
+		if (x == -1 || x == 1) { // touching case
+			return new double[] {Math.acos(x) - t};
+		}
+		x = Math.acos(x);
+		return new double[] {x - t, 2 * Math.PI - x - t};
+	}
+
+	/**
+	 * Calculate values for angle at which ellipse will intersect horizontal line of given y
+	 * @param y
+	 * @return possible angles
+	 */
+	public double[] getHorizontalIntersectionAngles(double y) {
+		double tx = saxis[0]*sang;
+		double ty = saxis[1]*cang;
+
+		y -= spt[1];
+		y /= Math.hypot(tx, ty);
+		if (y < -1 || y > 1) {
+			return null;
+		}
+		double t = Math.atan2(tx, ty);
+		if (y == -1 || y == 1) { // touching case
+			return new double[] {Math.asin(y) - t};
+		}
+		y = Math.asin(y);
+		return new double[] {y - t, Math.PI - y - t};
+	}
+
 	@Override
 	public String toString() {
 		if (isCircular()) {

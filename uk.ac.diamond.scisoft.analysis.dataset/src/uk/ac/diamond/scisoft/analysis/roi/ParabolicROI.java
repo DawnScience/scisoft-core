@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
@@ -24,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
  * A parabolic region of interest with the start point as the focus. In the rotated frame,
  * it can be represented as x-p = 4 a y^2 where p = 2 a
  */
-public class ParabolicROI extends OrientableROIBase {
+public class ParabolicROI extends OrientableROIBase implements IParametricROI, Serializable {
 	private double tp;   // twice focal parameter (or latus rectum) 
 
 	/**
@@ -102,6 +103,7 @@ public class ParabolicROI extends OrientableROIBase {
 	 * @param angle in radians
 	 * @return point 
 	 */
+	@Override
 	public double[] getPoint(double angle) {
 		double[] pt = getRelativePoint(angle);
 		pt[0] += spt[0];

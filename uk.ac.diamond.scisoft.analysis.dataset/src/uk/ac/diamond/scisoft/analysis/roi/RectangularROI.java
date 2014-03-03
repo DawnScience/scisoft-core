@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
 /**
  * Class for rectangular region of interest
  */
-public class RectangularROI extends OrientableROIBase implements Serializable, IRectangularROI {
+public class RectangularROI extends OrientableROIBase implements IRectangularROI, Serializable {
 	protected double[] len; // width and height
 	private boolean clippingCompensation; // compensate for clipping
 

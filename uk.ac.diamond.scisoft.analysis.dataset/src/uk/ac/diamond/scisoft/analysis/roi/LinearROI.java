@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import java.util.Arrays;
 /**
  * Class for linear regions of interest 
  */
-public class LinearROI extends OrientableROIBase implements Serializable {
+public class LinearROI extends OrientableROIBase implements IParametricROI, Serializable {
 	private double len;    // length
 	private boolean crossHair; // enable secondary linear ROI that bisects at 90 degrees
 
@@ -104,6 +104,7 @@ public class LinearROI extends OrientableROIBase implements Serializable {
 	 * @param f 
 	 * @return point from normalized length along line
 	 */
+	@Override
 	public double[] getPoint(double f) {
 		return new double[] { spt[0] + f*len*cang, 
 				spt[1] + f*len*sang };

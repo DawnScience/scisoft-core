@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public class OrientableROIBase extends ROIBase implements IOrientableROI {
+import java.io.Serializable;
+
+public class OrientableROIBase extends ROIBase implements IOrientableROI, Serializable {
 	protected double ang;     // angle in radians
 	protected double cang;
 	protected double sang;

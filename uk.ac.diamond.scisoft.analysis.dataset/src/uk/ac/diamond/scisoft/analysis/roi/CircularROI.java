@@ -16,12 +16,13 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * A circular region of interest
  */
-public class CircularROI extends ROIBase {
+public class CircularROI extends ROIBase implements IParametricROI, Serializable {
 	private double rad;
 
 	/**
@@ -86,6 +87,7 @@ public class CircularROI extends ROIBase {
 	 * @param angle in radians
 	 * @return point 
 	 */
+	@Override
 	public double[] getPoint(double angle) {
 		return new double[] { spt[0] + rad*Math.cos(angle), 
 				spt[1] + rad*Math.sin(angle) };

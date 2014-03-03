@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
@@ -24,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 /**
  * A circular region of interest which fits the points in a polygonal region of interest
  */
-public class CircularFitROI extends CircularROI {
+public class CircularFitROI extends CircularROI implements Serializable {
 
 	private PolylineROI proi;
 	private IConicSectionFitter fitter;

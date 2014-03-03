@@ -16,12 +16,13 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Class for 2D point region of interest
  */
-public class PointROI extends ROIBase {
+public class PointROI extends ROIBase implements Serializable {
 
 	public PointROI() {
 		spt = new double[2];

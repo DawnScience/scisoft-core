@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
@@ -24,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
  * A hyperbolic region of interest with the start point as the focus. In the rotated frame,
  * it can be represented as (x+l/e)^2 / a^2 - y^2 / b^2 = 1, where l = b^2/a and e = sqrt(1 + b^2/a^2)
  */
-public class HyperbolicROI extends OrientableROIBase {
+public class HyperbolicROI extends OrientableROIBase implements IParametricROI, Serializable {
 	private double l;   // semi-latus rectum
 	private double e;   // eccentricity
 
@@ -113,6 +114,7 @@ public class HyperbolicROI extends OrientableROIBase {
 	 * @param angle in radians
 	 * @return point 
 	 */
+	@Override
 	public double[] getPoint(double angle) {
 		double[] pt = getRelativePoint(angle);
 		pt[0] += spt[0];

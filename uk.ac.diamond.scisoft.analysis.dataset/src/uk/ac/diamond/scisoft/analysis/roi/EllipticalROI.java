@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * An elliptical region of interest with the start point as the centre
  */
-public class EllipticalROI extends OrientableROIBase {
+public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	private double[] saxis; // semi-axes
 
 	/**
@@ -60,7 +60,6 @@ public class EllipticalROI extends OrientableROIBase {
 	public EllipticalROI(double major, double minor, double angle, double ptx, double pty) {
 		spt = new double[] { ptx, pty };
 		saxis = new double[] { major, minor };
-		setAngle(angle);
 		ang = angle;
 		checkAngle();
 	}
@@ -156,6 +155,7 @@ public class EllipticalROI extends OrientableROIBase {
 	 * @param angle in radians
 	 * @return point 
 	 */
+	@Override
 	public double[] getPoint(double angle) {
 		double[] pt = getRelativePoint(angle);
 		pt[0] += spt[0];

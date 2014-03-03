@@ -19,8 +19,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
-
 /**
  * A hyperbolic region of interest with the start point as the focus. In the rotated frame,
  * it can be represented as (x+l/e)^2 / a^2 - y^2 / b^2 = 1, where l = b^2/a and e = sqrt(1 + b^2/a^2)
@@ -128,14 +126,11 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	 * @return point 
 	 */
 	public double[] getRelativePoint(double angle) {
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
 		double cb = Math.cos(angle);
 		double denom = 1 - e * cb;
 		// NB when this is negative, the point is on other nappe of double cone
 		if (denom == 0) {
-			double[] pt = src.transformToOriginal(1, 0);
+			double[] pt = transformToOriginal(1, 0);
 			if (pt[0] != 0)
 				pt[0] *= Double.POSITIVE_INFINITY;
 			if (pt[1] != 0)
@@ -145,7 +140,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 		double sb = Math.sin(angle);
 		double r = l / denom;
 
-		return src.transformToOriginal(r * cb, r * sb);
+		return transformToOriginal(r * cb, r * sb);
 	}
 
 	/**
@@ -155,8 +150,6 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	public double getStartAngle(double d) {
 		return Math.acos((1 - l/d)/e);
 	}
-
-	private transient RotatedCoords src = null;
 
 	/**
 	 * Get point on hyperbolic at given angle
@@ -201,10 +194,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 		x -= spt[0];
 		y -= spt[1];
 
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
-		double[] pt = src.transformToRotated(x, y);
+		double[] pt = transformToRotated(x, y);
 		double a = Math.atan2(pt[1], pt[0]);
 		double[] pr = getRelativePoint(a);
 		return Math.hypot(pt[0] - pr[0], pt[1] - pr[1]) <= distance;

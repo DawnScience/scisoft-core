@@ -56,6 +56,35 @@ public class OrientableROIBase extends ROIBase implements IOrientableROI, Serial
 	}
 
 	/**
+	 * @param rx 
+	 * @param ry 
+	 * @return array with original Cartesian coordinates
+	 */
+	protected double[] transformToOriginal(double rx, double ry) {
+		double[] car = { rx * cang - ry * sang, rx * sang + ry * cang };
+		return car;
+	}
+
+	/**
+	 * @param rx 
+	 * @return array with original Cartesian coordinates
+	 */
+	protected double[] transformXToOriginal(double rx) {
+		double[] car = { rx * cang, rx * sang };
+		return car;
+	}
+
+	/**
+	 * @param ox 
+	 * @param oy 
+	 * @return array with rotated Cartesian coordinates
+	 */
+	protected double[] transformToRotated(double ox, double oy) {
+		double[] car = { ox * cang + oy * sang, -ox * sang + oy * cang };
+		return car;
+	}
+
+	/**
 	 * @return Returns the angle
 	 */
 	@Override

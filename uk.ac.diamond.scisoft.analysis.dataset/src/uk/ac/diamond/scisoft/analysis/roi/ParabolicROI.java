@@ -19,8 +19,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
-
 /**
  * A parabolic region of interest with the start point as the focus. In the rotated frame,
  * it can be represented as x-p = 4 a y^2 where p = 2 a
@@ -90,15 +88,6 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	}
 
 	/**
-	 * @param angle The axis angle to set
-	 */
-	@Override
-	public void setAngle(double angle) {
-		super.setAngle(angle);
-		src = null;
-	}
-
-	/**
 	 * Get point on parabola at given angle
 	 * @param angle in radians
 	 * @return point 
@@ -117,12 +106,9 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	 * @return point 
 	 */
 	public double[] getRelativePoint(double angle) {
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
 		double cb = Math.cos(angle);
 		if (cb == 1) {
-			double[] pt = src.transformToOriginal(1, 0);
+			double[] pt = transformToOriginal(1, 0);
 			if (pt[0] != 0)
 				pt[0] *= Double.POSITIVE_INFINITY;
 			if (pt[1] != 0)
@@ -132,7 +118,7 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 		double sb = Math.sin(angle);
 		double r = tp / (1 - cb);
 
-		return src.transformToOriginal(r * cb, r * sb);
+		return transformToOriginal(r * cb, r * sb);
 	}
 
 	/**
@@ -142,8 +128,6 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	public double getStartAngle(double d) {
 		return Math.acos(1 - tp/d);
 	}
-
-	private transient RotatedCoords src = null;
 
 	/**
 	 * Get point on parabola at given angle
@@ -188,10 +172,7 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 		x -= spt[0];
 		y -= spt[1];
 
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
-		double[] pt = src.transformToRotated(x, y);
+		double[] pt = transformToRotated(x, y);
 		return Math.abs(pt[0] * pt[0] - tp * pt[1]) <= distance;
 	}
 

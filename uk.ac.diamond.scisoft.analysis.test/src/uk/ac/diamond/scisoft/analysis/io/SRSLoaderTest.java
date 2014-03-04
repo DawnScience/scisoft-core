@@ -27,9 +27,12 @@ import java.util.Collection;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
@@ -37,6 +40,20 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
  * Test for SRS Loader
  */
 public class SRSLoaderTest {
+
+	private static String testScratchDirectoryName;
+
+	/**
+	 * Creates an empty directory for use by test code.
+	 * 
+	 * @throws Exception
+	 *             if the directory is not created
+	 */
+	@BeforeClass
+	static public void setUpClass() throws Exception {
+		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(SRSLoaderTest.class.getCanonicalName());
+		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+	}
 
 	/**
 	 * Test Loader
@@ -237,5 +254,26 @@ public class SRSLoaderTest {
 		DataHolder dh = new SRSLoader("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat").loadFile();
 		AbstractDataset data = dh.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
+	}
+
+	@Test
+	public void testSpacesInNames() throws Exception {
+		DataHolder dh = new DataHolder();
+		String fileName = "quoted.dat";
+		AbstractDataset data1 = AbstractDataset.arange(20, AbstractDataset.INT32);
+		AbstractDataset data2 = DatasetUtils.linSpace(0, 576000, 20, AbstractDataset.FLOAT64);
+		try {
+			dh.addDataset("col1", data1);
+			dh.addDataset("testing data", data2);
+			new SRSLoader(testScratchDirectoryName + fileName).saveFile(dh);
+		} catch (Exception e) {
+			throw new ScanFileHolderException("Problem testing SRSLoader class", e);
+		}
+
+		dh = new SRSLoader(testScratchDirectoryName + fileName).loadFile();
+
+		assertEquals(2, dh.size());
+		assertEquals("col1", dh.getName(0));
+		assertEquals("testing data", dh.getName(1));
 	}
 }

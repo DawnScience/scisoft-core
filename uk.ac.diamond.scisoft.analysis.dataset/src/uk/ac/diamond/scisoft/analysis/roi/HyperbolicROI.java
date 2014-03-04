@@ -216,10 +216,10 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 		}
 		double t = Math.atan2(pt[1], pt[0]);
 		if (x == -1 || x == 1) { // touching case
-			return new double[] {Math.acos(x) - t};
+			return sanifyAngles(Math.acos(x) - t);
 		}
 		x = Math.acos(x);
-		return new double[] {x - t, 2 * Math.PI - x - t};
+		return sanifyAngles(x - t, 2 * Math.PI - x - t);
 	}
 
 	/**
@@ -238,10 +238,10 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 		}
 		double t = Math.atan2(pt[1], pt[0]);
 		if (y == -1 || y == 1) { // touching case
-			return new double[] {Math.acos(y) - t};
+			return sanifyAngles(Math.acos(y) - t);
 		}
 		y = Math.asin(y);
-		return new double[] {y - t, Math.PI - y - t};
+		return sanifyAngles(y - t, Math.PI - y - t);
 	}
 
 	@Override

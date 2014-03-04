@@ -85,6 +85,31 @@ public class OrientableROIBase extends ROIBase implements IOrientableROI, Serial
 	}
 
 	/**
+	 * @param angle
+	 * @return angle between 0 and 2pi
+	 */
+	protected static double sanifyAngle(double angle) {
+		while (angle < 0) {
+			angle += TWOPI;
+		}
+		while (angle >= TWOPI) {
+			angle -= TWOPI;
+		}
+		return angle;
+	}
+
+	/**
+	 * @param angles
+	 * @return angles between 0 and 2pi
+	 */
+	protected static double[] sanifyAngles(double... angles) {
+		for (int i = 0; i < angles.length; i++) {
+			angles[i] = sanifyAngle(angles[i]);
+		}
+		return angles;
+	}
+
+	/**
 	 * @return Returns the angle
 	 */
 	@Override

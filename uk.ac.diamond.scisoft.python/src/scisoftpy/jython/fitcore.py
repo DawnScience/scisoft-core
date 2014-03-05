@@ -293,7 +293,7 @@ class fitresult(object):
 
 import inspect as _inspect
 
-def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, optimizer="local"):
+def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, optimizer="apache_nm"):
     '''
     Arguments:
     func      -- function (or list of functions)

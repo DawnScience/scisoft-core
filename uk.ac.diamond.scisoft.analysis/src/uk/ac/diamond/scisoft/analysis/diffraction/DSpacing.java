@@ -267,10 +267,10 @@ public class DSpacing {
 	}
 
 	/**
-	 * Calculate conic sections. Can return nulls
+	 * Calculate conic sections
 	 * @param detector
 	 * @param alphas semi-angles (in radians)
-	 * @return roi
+	 * @return conic ROIs (can be null or contain nulls)
 	 */
 	public static IROI[] conicsFromAngles(DetectorProperties detector, double... alphas) {
 		double distance = detector.getDetectorDistance();
@@ -297,7 +297,6 @@ public class DSpacing {
 		} else {
 			minor.normalize();
 			major.cross(minor, normal);
-			major.normalize();
 		}
 		Vector3d row = detector.getPixelRow();
 		Vector3d col = detector.getPixelColumn();
@@ -308,13 +307,17 @@ public class DSpacing {
 		double pixel = detector.getVPxSize();
 		for (int i = 0; i < rois.length; i++) {
 			double alpha = alphas[i];
+			if (Double.isNaN(alpha) || alpha >= 0.5*Math.PI) {
+				continue;
+			}
 			double sa = Math.sin(alpha);
 			double ca = Math.cos(alpha);
 			double denom = ca * ca - se * se;
 
 			IOrientableROI roi = null;
 			double o;
-			if (Math.abs(denom) < Math.ulp(1)) {
+			double f = Math.abs(denom);
+			if (f < Math.ulp(1)) {
 				// parabolic
 				double p = distance * sa / (2 * ca);
 				ParabolicROI proi = new ParabolicROI();
@@ -322,7 +325,7 @@ public class DSpacing {
 				proi.setFocalParameter(p / pixel);
 				o = distance * ca / (2*sa);
 			} else {
-				double f = 1. / Math.abs(denom);
+				f = 1. / f;
 				double a = distance * sa * ca * f / pixel;
 				double b = distance * sa * Math.sqrt(f) / pixel;
 				if (denom > 0) {
@@ -348,8 +351,10 @@ public class DSpacing {
 			roi.setAngle(angle);
 
 			Vector3d point = detector.getClosestPoint();
-			major.scale(o);
-			point.add(major);
+			if (o != 0) {
+				major.scale(o/major.length()); // as reused
+				point.add(major);
+			}
 
 			detector.pixelCoords(point, centre);
 			roi.setPoint(centre.x, centre.y);

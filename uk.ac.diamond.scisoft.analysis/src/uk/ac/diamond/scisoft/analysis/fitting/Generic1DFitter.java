@@ -237,6 +237,18 @@ public class Generic1DFitter implements Serializable {
 			int[] start = { iniPeak.getIndexOfDatasetAtMinPos() };
 			int[] stop = { iniPeak.getIndexOfDatasetAtMaxPos() + 1 };
 			int[] step = { 1 };
+			
+			if (xData.getSize() > 2 && xData.getDouble(0) > xData.getDouble(1)) {
+				start[0] = xData.getSize() - start[0] -1;
+				stop[0] = xData.getSize() - stop[0];
+				
+				if (start[0] > stop[0]) {
+					int tmp = start[0];
+					start[0] = stop[0];
+					stop[0] = tmp;
+				}
+			}
+			
 			AbstractDataset y = ydata.getSlice(start, stop, step);
 			AbstractDataset x = xData.getSlice(start, stop, step);
 
@@ -334,6 +346,15 @@ public class Generic1DFitter implements Serializable {
 		boolean verbose = true;
 		ArrayList<IdentifiedPeak> peaks = new ArrayList<IdentifiedPeak>();
 
+		if (xdata.getSize() > 1 
+				&& xdata.getDouble(0) > xdata.getDouble(1) &&
+				xdata.getSize() == ydata.getSize()) {
+			
+			xdata = xdata.getSlice(null, null, new int[]{-1});
+			ydata = ydata.getSlice(null, null, new int[]{-1});
+		}
+		
+		
 		AbstractDataset data = Maths.derivative(xdata, ydata, smooth+1);
 		int backPos, forwardPos;
 		double backTotal, forwardTotal;
@@ -448,15 +469,21 @@ public class Generic1DFitter implements Serializable {
 			                                      final double endValue) {
 		
 		List<Double> cross = DatasetUtils.crossings(x, startValue);		
-		final int    start = cross==null || cross.isEmpty() 
+		int    start = cross==null || cross.isEmpty() 
 				           ? 0
 				           : (int)Math.floor(cross.get(0)); // Lower value
 		
 		cross = DatasetUtils.crossings(x, endValue);		
-		final int    stop  =  cross==null || cross.isEmpty() 
+		int    stop  =  cross==null || cross.isEmpty() 
 				           ? x.getSize()-1
 				           : (int)Math.ceil(cross.get(cross.size()-1)); // Upper value
 		
+		if (start > stop) {
+			int tmp = stop;
+			stop = start;
+			start = tmp;
+		}
+				           
 		x = x.getSlice(new int[] { start }, new int[] { stop }, null);
 		if (y != null)
 			y = y.getSlice(new int[] { start }, new int[] { stop }, null);		

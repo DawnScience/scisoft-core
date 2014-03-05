@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public class OrientableROIBase extends ROIBase implements IOrientableROI {
+import java.io.Serializable;
+
+public class OrientableROIBase extends ROIBase implements IOrientableROI, Serializable {
 	protected double ang;     // angle in radians
 	protected double cang;
 	protected double sang;
@@ -51,6 +53,60 @@ public class OrientableROIBase extends ROIBase implements IOrientableROI {
 		}
 		cang = Math.cos(ang);
 		sang = Math.sin(ang);
+	}
+
+	/**
+	 * @param rx 
+	 * @param ry 
+	 * @return array with original Cartesian coordinates
+	 */
+	protected double[] transformToOriginal(double rx, double ry) {
+		double[] car = { rx * cang - ry * sang, rx * sang + ry * cang };
+		return car;
+	}
+
+	/**
+	 * @param rx 
+	 * @return array with original Cartesian coordinates
+	 */
+	protected double[] transformXToOriginal(double rx) {
+		double[] car = { rx * cang, rx * sang };
+		return car;
+	}
+
+	/**
+	 * @param ox 
+	 * @param oy 
+	 * @return array with rotated Cartesian coordinates
+	 */
+	protected double[] transformToRotated(double ox, double oy) {
+		double[] car = { ox * cang + oy * sang, -ox * sang + oy * cang };
+		return car;
+	}
+
+	/**
+	 * @param angle
+	 * @return angle between 0 and 2pi
+	 */
+	protected static double sanifyAngle(double angle) {
+		while (angle < 0) {
+			angle += TWOPI;
+		}
+		while (angle >= TWOPI) {
+			angle -= TWOPI;
+		}
+		return angle;
+	}
+
+	/**
+	 * @param angles
+	 * @return angles between 0 and 2pi
+	 */
+	protected static double[] sanifyAngles(double... angles) {
+		for (int i = 0; i < angles.length; i++) {
+			angles[i] = sanifyAngle(angles[i]);
+		}
+		return angles;
 	}
 
 	/**

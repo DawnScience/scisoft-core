@@ -1,5 +1,5 @@
 /*-
- * Copyright 2011 Diamond Light Source Ltd.
+ * Copyright 2014 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import java.io.Serializable;
-
-public class Line3DROI extends LinearROI implements Serializable {
+/**
+ * A ROI whose boundary can be parameterised
+ */
+public interface IParametricROI extends IROI {
+	public double[] getPoint(double parameter);
 }

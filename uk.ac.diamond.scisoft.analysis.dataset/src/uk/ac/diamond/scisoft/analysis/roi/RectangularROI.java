@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,10 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
-
 /**
  * Class for rectangular region of interest
  */
-public class RectangularROI extends OrientableROIBase implements Serializable, IRectangularROI {
+public class RectangularROI extends OrientableROIBase implements IRectangularROI, Serializable {
 	protected double[] len; // width and height
 	private boolean clippingCompensation; // compensate for clipping
 
@@ -265,14 +263,12 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param pt
 	 */
 	public void setEndPointKeepLengths(double[] pt) {
-		RotatedCoords src = null;
 		double[] ps = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		ps = src.transformToRotated(pt[0], pt[1]);
+		ps = transformToRotated(pt[0], pt[1]);
 
-		spt = src.transformToOriginal(ps[0] - len[0], ps[1] - len[1]);
+		spt = transformToOriginal(ps[0] - len[0], ps[1] - len[1]);
 		bounds = null;
 	}
 
@@ -290,14 +286,12 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param pt
 	 */
 	public void setEndPoint(double[] pt) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		ps = src.transformToRotated(spt[0], spt[1]);
-		pe = src.transformToRotated(pt[0], pt[1]);
+		ps = transformToRotated(spt[0], spt[1]);
+		pe = transformToRotated(pt[0], pt[1]);
 		// check and correct bounding box
 		if (ps[0] > pe[0]) {
 			double t = ps[0];
@@ -312,7 +306,7 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 
 		len[0] = pe[0] - ps[0];
 		len[1] = pe[1] - ps[1];
-		spt = src.transformToOriginal(ps[0], ps[1]);
+		spt = transformToOriginal(ps[0], ps[1]);
 		bounds = null;
 	}
 
@@ -325,14 +319,12 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param moveY
 	 */
 	public void setEndPoint(int[] pt, boolean moveX, boolean moveY) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		ps = src.transformToRotated(spt[0], spt[1]);
-		pe = src.transformToRotated(pt[0], pt[1]);
+		ps = transformToRotated(spt[0], spt[1]);
+		pe = transformToRotated(pt[0], pt[1]);
 
 		if (moveX) {
 			len[0] = pe[0] - ps[0];
@@ -358,14 +350,12 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param moveY
 	 */
 	public void setEndPoint(double[] pt, boolean moveX, boolean moveY) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		ps = src.transformToRotated(spt[0], spt[1]);
-		pe = src.transformToRotated(pt[0], pt[1]);
+		ps = transformToRotated(spt[0], spt[1]);
+		pe = transformToRotated(pt[0], pt[1]);
 
 		if (moveX) {
 			len[0] = pe[0] - ps[0];
@@ -427,16 +417,14 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param moveY
 	 */
 	public void setPointKeepEndPoint(int[] dpt, boolean moveX, boolean moveY) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		pe = src.transformToRotated(dpt[0], dpt[1]);
+		pe = transformToRotated(dpt[0], dpt[1]);
 
 		if (moveX) {
-			ps = src.transformToOriginal(pe[0], 0);
+			ps = transformToOriginal(pe[0], 0);
 			if (len[0] > pe[0]) { // don't allow negative lengths
 				len[0] -= pe[0];
 				spt[0] += ps[0];
@@ -447,7 +435,7 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 			}
 		}
 		if (moveY) {
-			ps = src.transformToOriginal(0, pe[1]);
+			ps = transformToOriginal(0, pe[1]);
 			if (len[1] > pe[1]) { // don't allow negative lengths
 				len[1] -= pe[1];
 				spt[0] += ps[0];
@@ -469,16 +457,14 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param moveY
 	 */
 	public void setPointKeepEndPoint(double[] dpt, boolean moveX, boolean moveY) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		pe = src.transformToRotated(dpt[0], dpt[1]);
+		pe = transformToRotated(dpt[0], dpt[1]);
 
 		if (moveX) {
-			ps = src.transformToOriginal(pe[0], 0);
+			ps = transformToOriginal(pe[0], 0);
 			if (len[0] > pe[0]) { // don't allow negative lengths
 				len[0] -= pe[0];
 				spt[0] += ps[0];
@@ -489,7 +475,7 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 			}
 		}
 		if (moveY) {
-			ps = src.transformToOriginal(0, pe[1]);
+			ps = transformToOriginal(0, pe[1]);
 			if (len[1] > pe[1]) { // don't allow negative lengths
 				len[1] -= pe[1];
 				spt[0] += ps[0];
@@ -523,22 +509,20 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 	 * @param first
 	 */
 	public void adjustKeepDiagonalPoint(double[] cpt, double[] ept, double[] pt, boolean first) {
-		RotatedCoords src = null;
 		double[] ps = null;
 		double[] pe = null;
 
 		// work in rotated coords
-		src = new RotatedCoords(ang, false);
-		ps = src.transformToRotated(spt[0], spt[1]);
-		pe = src.transformToRotated(pt[0] - cpt[0] + ept[0], pt[1] - cpt[1] + ept[1]);
+		ps = transformToRotated(spt[0], spt[1]);
+		pe = transformToRotated(pt[0] - cpt[0] + ept[0], pt[1] - cpt[1] + ept[1]);
 
 		if (first) { // move end x, start y
 			len[0] = pe[0] - ps[0];
 			if (len[0] < 0)
 				len[0] = 0;
 
-			pe = src.transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
-			ps = src.transformToOriginal(0, pe[1]);
+			pe = transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
+			ps = transformToOriginal(0, pe[1]);
 			if (len[1] > pe[1]) { // don't allow negative lengths
 				len[1] -= pe[1];
 				spt[0] += ps[0];
@@ -552,8 +536,8 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 			if (len[1] < 0)
 				len[1] = 0;
 
-			pe = src.transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
-			ps = src.transformToOriginal(pe[0], 0);
+			pe = transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
+			ps = transformToOriginal(pe[0], 0);
 			if (len[0] > pe[0]) { // don't allow negative lengths
 				len[0] -= pe[0];
 				spt[0] += ps[0];
@@ -591,12 +575,9 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 					}
 				}
 			}
-			src = new RotatedCoords(ang, false);
 		}
 		return bounds;
 	}
-
-	private transient RotatedCoords src = null;
 
 	@Override
 	public boolean containsPoint(double x, double y) {
@@ -611,7 +592,7 @@ public class RectangularROI extends OrientableROIBase implements Serializable, I
 		if (bounds == null) {
 			getBounds();
 		}
-		double[] pr = src.transformToRotated(x, y);
+		double[] pr = transformToRotated(x, y);
 		if (pr[0] < 0 || pr[0] > len[0])
 			return false;
 		return pr[1] >= 0 && pr[1] <= len[1];

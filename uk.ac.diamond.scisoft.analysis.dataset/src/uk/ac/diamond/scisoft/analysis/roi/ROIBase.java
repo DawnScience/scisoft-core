@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
+
 /**
  * Base class for general region of interest
  */
-public class ROIBase implements IROI {
+public class ROIBase implements IROI, Serializable {
 	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;

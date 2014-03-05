@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * Class for a polygonal ROI is a closed form of a polyline ROI (end point is implicitly the start point)
  */
-public class PolygonalROI extends PolylineROI implements Serializable, Iterable<PointROI> {
+public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Serializable {
 
 	public PolygonalROI() {
 		super();

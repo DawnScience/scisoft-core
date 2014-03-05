@@ -176,13 +176,25 @@ public class ROITest {
 		EllipticalROI le = new EllipticalROI(10.1, 5.1, Math.PI/4., 0, 0);
 		for (int i = 0; i < ANGLES; i++) {
 			double a = (i * Math.PI)/ANGLES;
-			assertTrue(e.containsPoint(se.getPoint(a)));
-			assertTrue(e.isNearOutline(se.getPoint(a), 1));
-			assertFalse(e.isNearOutline(se.getPoint(a), 0.01));
-			assertFalse(e.containsPoint(le.getPoint(a)));
-			assertTrue(e.isNearOutline(le.getPoint(a), 1));
-			assertFalse(e.isNearOutline(le.getPoint(a), 0.01));
+			double[] ps = se.getPoint(a);
+			assertTrue(e.containsPoint(ps));
+			assertTrue(e.isNearOutline(ps, 1));
+			assertFalse(e.isNearOutline(ps, 0.01));
+
+			double[] pl = le.getPoint(a);
+			assertFalse(e.containsPoint(pl));
+			assertTrue(e.isNearOutline(pl, 1));
+			assertFalse(e.isNearOutline(pl, 0.01));
+
+			double[] p = e.getPoint(a);
+			checkPoint(e.getVerticalIntersectionAngles(p[0]), p, 0, e);
+			checkPoint(e.getHorizontalIntersectionAngles(p[1]), p, 1, e);
 		}
+
+		assertTrue(e.getVerticalIntersectionAngles(e.getBounds().getEndPoint()[0]+0.1) == null);
+		assertTrue(e.getVerticalIntersectionAngles(e.getBounds().getPointRef()[0]-0.1) == null);
+		assertTrue(e.getHorizontalIntersectionAngles(e.getBounds().getEndPoint()[1]+0.1) == null);
+		assertTrue(e.getHorizontalIntersectionAngles(e.getBounds().getPointRef()[1]-0.1) == null);
 
 		RectangularROI rect = new RectangularROI(side, 0);
 		assertFalse(e.isContainedBy(rect));
@@ -222,6 +234,13 @@ public class ROITest {
 		rect.setPoint(-d, -d);
 		rect.setLengths(2*d, 2*d);
 		assertFalse(e.isContainedBy(rect));
+	}
+
+	public void checkPoint(double[] t, double[] p, int i, IParametricROI e) {
+		if (t.length == 1)
+			assertTrue(Math.abs(e.getPoint(t[0])[i] - p[i]) < 1e-8);
+		else
+			assertTrue(Math.abs(e.getPoint(t[0])[i] - p[i]) < 1e-8 || Math.abs(e.getPoint(t[1])[i] - p[i]) < 1e-8);
 	}
 
 	@Test
@@ -315,6 +334,8 @@ public class ROITest {
 			double[] pt = p.getPoint(a);
 			if (a > limit && a < 2* Math.PI - limit) {
 				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
+				checkPoint(p.getVerticalIntersectionAngles(pt[0]), pt, 0, p);
+				checkPoint(p.getHorizontalIntersectionAngles(pt[1]), pt, 1, p);
 			}
 		}
 	}
@@ -330,6 +351,8 @@ public class ROITest {
 			double[] pt = h.getPoint(a);
 			if (a > limit && a < 2* Math.PI - limit) {
 				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
+				checkPoint(h.getVerticalIntersectionAngles(pt[0]), pt, 0, h);
+				checkPoint(h.getHorizontalIntersectionAngles(pt[1]), pt, 1, h);
 			}
 		}
 	}

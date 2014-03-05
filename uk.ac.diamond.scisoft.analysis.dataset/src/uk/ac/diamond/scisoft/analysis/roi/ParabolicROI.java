@@ -16,15 +16,14 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.io.Serializable;
 import java.util.Arrays;
-
-import uk.ac.diamond.scisoft.analysis.coords.RotatedCoords;
 
 /**
  * A parabolic region of interest with the start point as the focus. In the rotated frame,
  * it can be represented as x-p = 4 a y^2 where p = 2 a
  */
-public class ParabolicROI extends OrientableROIBase {
+public class ParabolicROI extends OrientableROIBase implements IParametricROI, Serializable {
 	private double tp;   // twice focal parameter (or latus rectum) 
 
 	/**
@@ -89,19 +88,11 @@ public class ParabolicROI extends OrientableROIBase {
 	}
 
 	/**
-	 * @param angle The axis angle to set
-	 */
-	@Override
-	public void setAngle(double angle) {
-		super.setAngle(angle);
-		src = null;
-	}
-
-	/**
 	 * Get point on parabola at given angle
 	 * @param angle in radians
 	 * @return point 
 	 */
+	@Override
 	public double[] getPoint(double angle) {
 		double[] pt = getRelativePoint(angle);
 		pt[0] += spt[0];
@@ -115,12 +106,9 @@ public class ParabolicROI extends OrientableROIBase {
 	 * @return point 
 	 */
 	public double[] getRelativePoint(double angle) {
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
 		double cb = Math.cos(angle);
 		if (cb == 1) {
-			double[] pt = src.transformToOriginal(1, 0);
+			double[] pt = transformToOriginal(1, 0);
 			if (pt[0] != 0)
 				pt[0] *= Double.POSITIVE_INFINITY;
 			if (pt[1] != 0)
@@ -130,7 +118,7 @@ public class ParabolicROI extends OrientableROIBase {
 		double sb = Math.sin(angle);
 		double r = tp / (1 - cb);
 
-		return src.transformToOriginal(r * cb, r * sb);
+		return transformToOriginal(r * cb, r * sb);
 	}
 
 	/**
@@ -140,8 +128,6 @@ public class ParabolicROI extends OrientableROIBase {
 	public double getStartAngle(double d) {
 		return Math.acos(1 - tp/d);
 	}
-
-	private transient RotatedCoords src = null;
 
 	/**
 	 * Get point on parabola at given angle
@@ -186,11 +172,52 @@ public class ParabolicROI extends OrientableROIBase {
 		x -= spt[0];
 		y -= spt[1];
 
-		if (src == null)
-			src = new RotatedCoords(ang, false);
-
-		double[] pt = src.transformToRotated(x, y);
+		double[] pt = transformToRotated(x, y);
 		return Math.abs(pt[0] * pt[0] - tp * pt[1]) <= distance;
+	}
+
+	/**
+	 * Calculate values for angle at which parabola will intersect vertical line of given x
+	 * @param x
+	 * @return possible angles
+	 */
+	public double[] getVerticalIntersectionAngles(double x) {
+		double[] pt = transformXToOriginal(tp);
+		x -= spt[0];
+
+		pt[0] += x;
+		x /= Math.hypot(pt[0], pt[1]);
+		if (x < -1 || x > 1) {
+			return null;
+		}
+		double t = Math.atan2(pt[1], pt[0]);
+		if (x == -1 || x == 1) { // touching case
+			return sanifyAngles(Math.acos(x) - t);
+		}
+		x = Math.acos(x);
+		return sanifyAngles(x - t, 2 * Math.PI - x - t);
+	}
+
+	/**
+	 * Calculate values for angle at which parabola will intersect horizontal line of given y
+	 * @param y
+	 * @return possible angles
+	 */
+	public double[] getHorizontalIntersectionAngles(double y) {
+		double[] pt = transformXToOriginal(tp);
+		y -= spt[1];
+
+		pt[1] += y;
+		y /= Math.hypot(pt[0], pt[1]);
+		if (y < -1 || y > 1) {
+			return null;
+		}
+		double t = Math.atan2(pt[1], pt[0]);
+		if (y == -1 || y == 1) { // touching case
+			return sanifyAngles(Math.acos(y) - t);
+		}
+		y = Math.asin(y);
+		return sanifyAngles(y - t, Math.PI - y - t);
 	}
 
 	@Override

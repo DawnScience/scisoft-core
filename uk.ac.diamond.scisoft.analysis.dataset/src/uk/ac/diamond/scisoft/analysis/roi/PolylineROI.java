@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 /**
  * Class for a polyline ROI (really a list of point ROIs)
  */
-public class PolylineROI extends PointROI implements Serializable, Iterable<PointROI> {
+public class PolylineROI extends PointROI implements Iterable<PointROI>, Serializable {
 	protected List<PointROI> pts; // first element should point to this if size > 0
 
 	/**

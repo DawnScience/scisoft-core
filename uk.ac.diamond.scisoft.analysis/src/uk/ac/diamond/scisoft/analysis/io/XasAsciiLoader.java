@@ -93,10 +93,9 @@ public class XasAsciiLoader extends SRSLoader {
 				}
 			}
 
-			String[] names = datasetNames.toArray(new String[]{});
 			DataHolder result = new DataHolder();
 			try {
-				convertToDatasets(result, names, columnData, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
+				convertToDatasets(result, datasetNames, columnData, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			} catch (Exception e) {
 				logger.warn(e.getMessage());
 			}

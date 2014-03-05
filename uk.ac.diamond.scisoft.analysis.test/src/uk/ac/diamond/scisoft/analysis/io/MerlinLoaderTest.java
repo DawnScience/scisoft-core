@@ -37,8 +37,20 @@ public class MerlinLoaderTest {
 		assertEquals(512,shape[0], 0.0);
 		assertEquals(512,shape[1], 0.0);
 		assertEquals(4095,data.max().intValue(), 0.0);
-//		assertEquals(2572.0, data.getDouble(1023, 1023), 0.0);
-//		assertEquals(0.0, data.getDouble(2047, 2047), 0.0);
 	}
 
+	@Test
+	public void testMerlinDataLoaderMultiFile()  throws Exception {
+		
+		final String path = testFileFolder+"multi.bin";
+		DataHolder dataHolder = LoaderFactory.getData(path, null);
+ 		
+		AbstractDataset data = dataHolder.getDataset(0);
+		int[] shape = data.getShape();
+		assertEquals(10,shape[0], 0.0);
+		assertEquals(515,shape[1], 0.0);
+		assertEquals(515,shape[2], 0.0);
+		assertEquals(2862,data.max().intValue(), 0.0);
+	}
+	
 }

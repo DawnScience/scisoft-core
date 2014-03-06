@@ -157,7 +157,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		axis.idivide(2);
 		
 		if (xAxis == XAxis.Q) axis.setName("q");
-		else axis.setName("2 Theta");
+		else axis.setName("2theta");
 		
 		result.add(axis);
 		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,AbstractDataset.FLOAT64));
@@ -169,6 +169,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
+		bins = null;
 		if (axisArray != null && !Arrays.equals(axisArray.getShape(), mask.getShape())) axisArray = null;
 	}
 	

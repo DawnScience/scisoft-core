@@ -290,13 +290,17 @@ public class DSpacing {
 		Vector3d minor = new Vector3d();
 
 		minor.cross(normal, beam);
-		double se = minor.length();
-		double ce = Math.sqrt(1. - se*se);
-		if (se == 0) {
+		double ce = -normal.dot(beam);
+		if (ce < 0)
+			return null;
+		double sse = 1 - ce*ce;
+		double se = Math.sqrt(sse);
+		if (sse == 0) {
 			major.set(-1, 0, 0);
 		} else {
 			minor.normalize();
 			major.cross(minor, normal);
+			major.normalize();
 		}
 		Vector3d row = detector.getPixelRow();
 		Vector3d col = detector.getPixelColumn();
@@ -312,12 +316,12 @@ public class DSpacing {
 			}
 			double sa = Math.sin(alpha);
 			double ca = Math.cos(alpha);
-			double denom = ca * ca - se * se;
+			double denom = ca * ca - sse;
 
 			IOrientableROI roi = null;
 			double o;
 			double f = Math.abs(denom);
-			if (f < Math.ulp(1)) {
+			if (f < 10*Math.ulp(1d)) {
 				// parabolic
 				double p = distance * sa / (2 * ca);
 				ParabolicROI proi = new ParabolicROI();
@@ -328,6 +332,7 @@ public class DSpacing {
 				f = 1. / f;
 				double a = distance * sa * ca * f / pixel;
 				double b = distance * sa * Math.sqrt(f) / pixel;
+				o = distance * se * ce * f;
 				if (denom > 0) {
 					// circular/elliptical
 					EllipticalROI eroi = new EllipticalROI();
@@ -336,7 +341,6 @@ public class DSpacing {
 						b = a;
 					}
 					eroi.setSemiAxes(new double[] { a, b });
-					o = distance * se * ce * f;
 				} else {
 					// hyperbolic
 					HyperbolicROI hroi = new HyperbolicROI();
@@ -345,15 +349,14 @@ public class DSpacing {
 					double e = Math.hypot(1, l/a);
 					hroi.setEccentricity(e);
 					hroi.setSemilatusRectum(l);
-					o = distance * se * (sa - ce) * f;
+					o = a * e * pixel - o;
 				}
 			}
 			roi.setAngle(angle);
 
 			Vector3d point = detector.getClosestPoint();
 			if (o != 0) {
-				major.scale(o/major.length()); // as reused
-				point.add(major);
+				point.scaleAdd(o, major, point);
 			}
 
 			detector.pixelCoords(point, centre);

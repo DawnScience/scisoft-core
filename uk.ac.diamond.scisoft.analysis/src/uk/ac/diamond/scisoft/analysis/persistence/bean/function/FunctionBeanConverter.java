@@ -52,32 +52,8 @@ public class FunctionBeanConverter {
 			parameters[i] = new Parameter(iParameters[i]);
 		}
 		fBean.setParameters(parameters);
-		if (function instanceof Cubic) {
-			fBean.setType(FunctionBean.TYPE_CUBIC);
-		} else if (function instanceof Fermi) {
-			fBean.setType(FunctionBean.TYPE_FERMI);
-		} else if (function instanceof FermiGauss) {
-			fBean.setType(FunctionBean.TYPE_FERMI_GAUSS);
-		} else if (function instanceof Gaussian) {
-			fBean.setType(FunctionBean.TYPE_GAUSSIAN);
-		} else if (function instanceof Lorentzian) {
-			fBean.setType(FunctionBean.TYPE_LORENTZIAN);
-		} else if (function instanceof Offset) {
-			fBean.setType(FunctionBean.TYPE_OFFSET);
-		} else if (function instanceof PearsonVII) {
-			fBean.setType(FunctionBean.TYPE_PEARSONVII);
-		} else if (function instanceof Polynomial) {
-			fBean.setType(FunctionBean.TYPE_POLYNOMIAL);
-		} else if (function instanceof PseudoVoigt) {
-			fBean.setType(FunctionBean.TYPE_PSEUDO_VOIGT);
-		} else if (function instanceof Quadratic) {
-			fBean.setType(FunctionBean.TYPE_QUADRATIC);
-		} else if (function instanceof Step) {
-			fBean.setType(FunctionBean.TYPE_STEP);
-		} else if (function instanceof StraightLine) {
-			fBean.setType(FunctionBean.TYPE_STRAIGHT_LINE);
-		}
-		
+		fBean.setType(function.getClass().getName());
+
 		return fBean;
 	}
 
@@ -88,34 +64,32 @@ public class FunctionBeanConverter {
 	 */
 	public static IFunction functionBeanToIFunction(FunctionBean fBean){
 		IParameter[] params = fBean.getParameters();
-		switch (fBean.getType()) {
-		case FunctionBean.TYPE_CUBIC:
+		if (fBean.getType().equals(Cubic.class.getName()))
 			return new Cubic(params);
-		case FunctionBean.TYPE_FERMI:
+		else if (fBean.getType().equals(Fermi.class.getName()))
 			return new Fermi(params);
-		case FunctionBean.TYPE_FERMI_GAUSS:
+		else if (fBean.getType().equals(FermiGauss.class.getName()))
 			return new FermiGauss(params);
-		case FunctionBean.TYPE_GAUSSIAN:
+		else if (fBean.getType().equals(Gaussian.class.getName()))
 			return new Gaussian(params);
-		case FunctionBean.TYPE_LORENTZIAN:
+		else if (fBean.getType().equals(Lorentzian.class.getName()))
 			return new Lorentzian(params);
-		case FunctionBean.TYPE_OFFSET:
+		else if (fBean.getType().equals(Offset.class.getName()))
 			return new Offset(params);
-		case FunctionBean.TYPE_PEARSONVII:
+		else if (fBean.getType().equals(PearsonVII.class.getName()))
 			return new PearsonVII(params);
-		case FunctionBean.TYPE_POLYNOMIAL:
+		else if (fBean.getType().equals(Polynomial.class.getName()))
 			return new Polynomial(params);
-		case FunctionBean.TYPE_PSEUDO_VOIGT:
+		else if (fBean.getType().equals(PseudoVoigt.class.getName()))
 			return new PseudoVoigt(params);
-		case FunctionBean.TYPE_QUADRATIC:
+		else if (fBean.getType().equals(Quadratic.class.getName()))
 			return new Quadratic(params);
-		case FunctionBean.TYPE_STEP:
+		else if (fBean.getType().equals(Step.class.getName()))
 			return new Step(params);
-		case FunctionBean.TYPE_STRAIGHT_LINE:
+		else if (fBean.getType().equals(StraightLine.class.getName()))
 			return new StraightLine(params);
-		default:
+		else
 			throw new IllegalArgumentException("The bean contains a nondescribed function argument");
-		}
 	}
 
 	/**

@@ -48,6 +48,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
 	IROI roi = null;
+	boolean correctSolidAngle = true;
 	
 	public AbstractPixelIntegration(QSpace qSpace, int numBins) {
 		this.qSpace = qSpace;
@@ -162,9 +163,37 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		result.add(axis);
 		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,AbstractDataset.FLOAT64));
 		out.setName(name + "_integrated");
+		
+		 if (correctSolidAngle) {
+			 
+			 if (out.getRank() != 2) {
+				 out = correctSolidAngle(axis, out);
+			 } else {
+				 PositionIterator it = out.getPositionIterator(1);
+				 int end = out.getShape()[1];
+				 int[] pos = it.getPos();
+				 int[] stop = pos.clone();
+				 while (it.hasNext()) {
+					 stop = pos.clone();
+					 stop[1] = end;
+					 stop[0]++;
+					 AbstractDataset ds = out.getSlice(pos,stop,null).squeeze();
+					 out.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
+				 }
+			 }
+		 }
+		
 		result.add(out);
 	}
 	
+	public boolean isCorrectSolidAngle() {
+		return correctSolidAngle;
+	}
+
+	public void setCorrectSolidAngle(boolean correctSolidAngle) {
+		this.correctSolidAngle = correctSolidAngle;
+	}
+
 	public void setMask(AbstractDataset mask) {
 		this.mask = mask;
 		maskRoiCached = null;
@@ -259,5 +288,22 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 			
 		}
 			
+	}
+	
+	private AbstractDataset correctSolidAngle(AbstractDataset x, AbstractDataset y) {
+		AbstractDataset cor = null;
+		
+		if (xAxis == XAxis.Q) {
+			double w = qSpace.getWavelength();
+			cor = Maths.multiply(x, w/(4*Math.PI));
+			cor = Maths.arcsin(cor);
+			cor.imultiply(2);
+		} else {
+			cor = Maths.toRadians(x);
+		}
+		
+		cor = Maths.cos(cor);
+		cor = Maths.power(cor, 3);
+		return Maths.divide(y, cor);
 	}
 }

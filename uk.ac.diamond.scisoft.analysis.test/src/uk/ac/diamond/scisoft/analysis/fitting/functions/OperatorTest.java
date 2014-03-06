@@ -434,6 +434,20 @@ public class OperatorTest {
 		assertEquals(3, composite.getParameters().length);
 	}
 
+	@Test
+	public void testUpdateParamtersChangingFunction() {
+		CompositeFunction composite = new CompositeFunction();
+		Polynomial poly = new Polynomial();
+		composite.addFunction(poly);
+
+		assertEquals(1, poly.getParameters().length);
+		assertEquals(1, composite.getParameters().length);
+
+		poly.setDegree(1);
+		assertEquals(2, poly.getParameters().length);
+		assertEquals(2, composite.getParameters().length);
+	}
+
 	private static final class TestGenericBinaryOperator extends ABinaryOperator {
 		@Override
 		public double val(double... values) {

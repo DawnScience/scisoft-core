@@ -254,7 +254,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		AbstractDataset axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
 		axis.idivide(2);
 		
-		axis.setName("Chi (degrees)");
+		axis.setName("chi");
 		result.add(axis);
 		
 	}

@@ -26,7 +26,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +106,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
 	private static final Pattern NUMBER_REGEX = Pattern.compile("^[-+]?[\\d]*\\.?\\d+.*");
 
+	private static final String QUOTE_CHAR = "\"";
+
 	/**
 	 * Function that loads in the standard SRS datafile
 	 * 
@@ -129,9 +130,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			readMetadata(in, mon);
 
 			// read in the names of the different datasets which will be needed
-			String[] vals = readColumnHeaders(in);
+			List<String> vals = readColumnHeaders(in);
 			
-			List<?> [] columns = new List<?>[vals.length];
+			List<?> [] columns = new List<?>[vals.size()];
 
 			// now add the data to the appropriate vectors
 			while ((dataStr = in.readLine()) != null) {
@@ -174,17 +175,38 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		return result;
 	}
 
-	private String[] readColumnHeaders(LineNumberReader in) throws IOException {
+	private List<String> readColumnHeaders(LineNumberReader in) throws IOException {
 		String headStr = in.readLine();
 		if (headStr == null)
 			throw new IOException("End of file reached too soon");
 
 		headStr = headStr.trim(); // remove whitespace to prevent the following split on white
 		String[] vals = SPLIT_REGEX.split(headStr);
+
+		List<String> names = new ArrayList<String>();
+		String quote = null;
+		for (int i = 0; i < vals.length; i++) { // remove quotes
+			String n = vals[i].trim();
+			if (quote != null) {
+				if (n.endsWith(QUOTE_CHAR)) {
+					quote += " " + n.substring(0, n.length()-QUOTE_CHAR.length());
+					names.add(quote);
+					quote = null;
+				} else {
+					quote += " " + n;
+				}
+			} else {
+				if (n.startsWith(QUOTE_CHAR)) {
+					quote = n.substring(QUOTE_CHAR.length());
+				} else {
+					names.add(n);
+				}
+			}
+		}
 		datasetNames.clear();
-		datasetNames.addAll(Arrays.asList(vals));
+		datasetNames.addAll(names);
 		dataShapes.clear();
-		return vals;
+		return names;
 	}
 
 	/**
@@ -238,15 +260,16 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @param storeStrings
 	 * @param useImageLoader
 	 */
-	protected final void convertToDatasets(DataHolder holder, String[] names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
-		for (int i = 0; i < names.length; i++) {
+	protected final void convertToDatasets(DataHolder holder, List<String> names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
+		for (int i = 0, imax = names.size(); i < imax; i++) {
 			if (columns[i] != null) {
+				String name = names.get(i);
 				final AbstractDataset ds = AbstractDataset.array(columns[i]);
-				ds.setName(names[i]);
+				ds.setName(name);
 				if (ds.getDtype() == AbstractDataset.STRING) {
 					StringDataset sds = (StringDataset) ds;
 					if (storeStrings) {
-						holder.addDataset(names[i], ds);
+						holder.addDataset(name, ds);
 					}
 					if (useImageLoader) {
 						ImageStackLoaderEx loader;
@@ -260,7 +283,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 									paths[j] = oldpaths[j];
 							}
 							loader = new ImageStackLoaderEx(sds.getShape(), paths);
-							String name = names[i] + "_image";
+							name += "_image";
 							LazyDataset lazyDataset = new LazyDataset(name, loader.dtype, loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);
 							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
@@ -269,7 +292,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 						}
 					}
 				} else {
-					holder.addDataset(names[i], ds);
+					holder.addDataset(name, ds);
 				}
 			}
 		}
@@ -457,7 +480,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		// now write out the data names
 		int imax = dh.size();
 		for (int i = 0; i < imax; i++) {
-			out.write(dh.getName(i) + "\t");
+			String name = dh.getName(i).trim();
+			if (name.indexOf(' ') >= 0) {
+				name = QUOTE_CHAR + name + QUOTE_CHAR;
+			}
+			out.write(name + "\t");
 		}
 		out.write("\n");
 	}

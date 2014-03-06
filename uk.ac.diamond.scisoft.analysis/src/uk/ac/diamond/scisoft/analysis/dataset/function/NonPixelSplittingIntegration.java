@@ -68,6 +68,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 		if (datasets.length == 0)
 			return null;
 		
+		//TODOtest shape of axis array
 		if (axisArray == null) {
 			generateAxisArray(datasets[0].getShape(), true);
 		}
@@ -76,7 +77,6 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 		for (IDataset ds : datasets) {
 			
 			AbstractDataset mt = mask;
-			
 			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 			
 			AbstractDataset d = DatasetUtils.convertToAbstractDataset(ds);

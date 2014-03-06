@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  * Holds data needed to get a slice from a nexus file. Since 
  * quite a bit of information is needed, we use an object.
  */
-public class SliceObject implements Cloneable {
+public class SliceObject implements Cloneable, Serializable {
 
 	private String path;
 	private String name;
@@ -49,7 +50,7 @@ public class SliceObject implements Cloneable {
 	 * the slice information. For instance if the axes have been marked with
 	 * mathematical operations.
 	 */
-	private Object dimensionalData;
+	private Serializable dimensionalData;
 
     public SliceObject() {
     	this.axisNames = new HashMap<Integer, String>(3);
@@ -266,11 +267,11 @@ public class SliceObject implements Cloneable {
 		return expressionAxes.get(name);
 	}
 
-	public Object getDimensionalData() {
+	public Serializable getDimensionalData() {
 		return dimensionalData;
 	}
 
-	public void setDimensionalData(Object dimensionalData) {
+	public void setDimensionalData(Serializable dimensionalData) {
 		this.dimensionalData = dimensionalData;
 	}
   

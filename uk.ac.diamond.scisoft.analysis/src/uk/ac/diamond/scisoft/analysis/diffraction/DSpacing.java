@@ -330,26 +330,26 @@ public class DSpacing {
 				o = distance * ca / (2*sa);
 			} else {
 				f = 1. / f;
-				double a = distance * sa * ca * f / pixel;
-				double b = distance * sa * Math.sqrt(f) / pixel;
-				o = distance * se * ce * f;
 				if (denom > 0) {
 					// circular/elliptical
+					double a = distance * sa * ca * f / pixel;
+					double b = distance * sa * Math.sqrt(f) / pixel;
 					EllipticalROI eroi = new EllipticalROI();
 					roi = eroi;
 					if (se == 0) {
 						b = a;
 					}
 					eroi.setSemiAxes(new double[] { a, b });
+					o = distance * se * ce * f;
 				} else {
 					// hyperbolic
 					HyperbolicROI hroi = new HyperbolicROI();
 					roi = hroi;
-					double l = b * b / a;
-					double e = Math.hypot(1, l/a);
+					double l = distance * sa / (ca * pixel);
+					double e = se / ca;
 					hroi.setEccentricity(e);
 					hroi.setSemilatusRectum(l);
-					o = a * e * pixel - o;
+					o = distance * (sa - ce) * se * f;
 				}
 			}
 			roi.setAngle(angle);
@@ -362,7 +362,9 @@ public class DSpacing {
 			detector.pixelCoords(point, centre);
 			roi.setPoint(centre.x, centre.y);
 			rois[i] = roi;
-//			logger.debug("Ang: {}, d: {}, r: {}", alpha, distance, roi);
+//			logger.debug("Ang {}: {} [{}], d: {}, r: {}", i, Math.toDegrees(alpha), 90-Math.toDegrees(alpha), distance, roi);
+//			double sample = ((roi instanceof EllipticalROI) && ((EllipticalROI) roi).isCircular() ) ? 0 : Math.PI;
+//			logger.debug("Pt: {}", ((IParametricROI) roi).getPoint(sample));
 		}
 
 		return rois;

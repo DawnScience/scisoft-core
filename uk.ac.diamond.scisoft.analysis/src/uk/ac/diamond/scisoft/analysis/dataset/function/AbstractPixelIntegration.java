@@ -48,7 +48,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
 	IROI roi = null;
-	boolean correctSolidAngle = true;
+	boolean correctSolidAngle = false;
 	
 	public AbstractPixelIntegration(QSpace qSpace, int numBins) {
 		this.qSpace = qSpace;

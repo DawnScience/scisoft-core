@@ -303,14 +303,31 @@ public class DSpacingTest {
 		checkHyperbolas(new HyperbolicROI(a, Math.sin(eta) / Math.cos(alpha), Math.PI, -x, 0), (HyperbolicROI) roi);
 		System.err.println(roi);
 
-		alpha = Math.toRadians(61);
-		eta = Math.toRadians(30);
-		det.setNormalAnglesInDegrees(Math.toDegrees(eta), 0, 0);
-		roi = (IParametricROI) DSpacing.conicFromAngle(det, alpha);
-		Assert.assertTrue(roi instanceof HyperbolicROI);
-		pt = roi.getPoint(Math.PI);
-		v = det.pixelPosition(pt[0], pt[1]);
-		Assert.assertEquals(-d * Math.sin(alpha) * Math.cos(eta) / Math.cos(eta - alpha), v.getX(), 1e-10);
+		alphas = new double[90];
+		for (int j = 0; j < alphas.length; j++) {
+			alphas[j] = Math.toRadians(j);
+		}
+		for (int i = 0; i < 90; i++) {
+			det.setNormalAnglesInDegrees(i, 0, 0);
+			eta = Math.toRadians(i);
+			rois = DSpacing.conicsFromAngles(det, alphas);
+
+			for (int j = 0; j < alphas.length; j++) {
+				alpha = alphas[j];
+				roi = (IParametricROI) rois[j];
+				int k = i + j;
+				if (k < 90) {
+					Assert.assertTrue(roi instanceof EllipticalROI);
+				} else if (k == 90) {
+					Assert.assertTrue(roi instanceof ParabolicROI);
+				} else {
+					Assert.assertTrue(roi instanceof HyperbolicROI);
+				}
+				pt = roi.getPoint(i == 0 ? 0 : Math.PI);
+				v = det.pixelPosition(pt[0], pt[1]);
+				Assert.assertEquals(-d * Math.sin(alpha) * Math.cos(eta) / Math.cos(eta - alpha), v.getX(), 1e-10);
+			}
+		}
 	}
 
 	private void checkEllipses(EllipticalROI ea, EllipticalROI eb) {

@@ -14,7 +14,6 @@ Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.fitting.functions,
  uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.monitor,
- uk.ac.diamond.scisoft.analysis.persistence.bean.roi,
  uk.ac.diamond.scisoft.analysis.roi
 Import-Package: javax.vecmath,
  org.slf4j;version="[1.7.6,1.7.7)"

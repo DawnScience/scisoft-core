@@ -34,7 +34,6 @@ Export-Package: gda.analysis.io,
  uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.io.tiff,
  uk.ac.diamond.scisoft.analysis.optimize,
- uk.ac.diamond.scisoft.analysis.persistence.bean.roi,
  uk.ac.diamond.scisoft.analysis.plotserver,
  uk.ac.diamond.scisoft.analysis.roi,
  uk.ac.diamond.scisoft.analysis.utils

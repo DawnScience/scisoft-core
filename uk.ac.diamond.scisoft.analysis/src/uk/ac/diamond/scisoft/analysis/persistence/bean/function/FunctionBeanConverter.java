@@ -15,6 +15,12 @@
  */
 package uk.ac.diamond.scisoft.analysis.persistence.bean.function;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Cubic;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss;
@@ -37,6 +43,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
  */
 public class FunctionBeanConverter {
 
+	private static Logger logger = LoggerFactory.getLogger(FunctionBeanConverter.class);
+
 	/**
 	 * Method that converts an IFunction to a FunctionBean
 	 * @param name
@@ -58,38 +66,38 @@ public class FunctionBeanConverter {
 	}
 
 	/**
-	 * Method that converts a function bean to an IFunction
+	 * Method that converts a function bean to an IFunction using reflection
 	 * @param fBean Bean
 	 * @return IFunction
 	 */
-	public static IFunction functionBeanToIFunction(FunctionBean fBean){
+	public static IFunction functionBeanToIFunction(FunctionBean fBean) {
 		IParameter[] params = fBean.getParameters();
-		if (fBean.getType().equals(Cubic.class.getName()))
-			return new Cubic(params);
-		else if (fBean.getType().equals(Fermi.class.getName()))
-			return new Fermi(params);
-		else if (fBean.getType().equals(FermiGauss.class.getName()))
-			return new FermiGauss(params);
-		else if (fBean.getType().equals(Gaussian.class.getName()))
-			return new Gaussian(params);
-		else if (fBean.getType().equals(Lorentzian.class.getName()))
-			return new Lorentzian(params);
-		else if (fBean.getType().equals(Offset.class.getName()))
-			return new Offset(params);
-		else if (fBean.getType().equals(PearsonVII.class.getName()))
-			return new PearsonVII(params);
-		else if (fBean.getType().equals(Polynomial.class.getName()))
-			return new Polynomial(params);
-		else if (fBean.getType().equals(PseudoVoigt.class.getName()))
-			return new PseudoVoigt(params);
-		else if (fBean.getType().equals(Quadratic.class.getName()))
-			return new Quadratic(params);
-		else if (fBean.getType().equals(Step.class.getName()))
-			return new Step(params);
-		else if (fBean.getType().equals(StraightLine.class.getName()))
-			return new StraightLine(params);
-		else
-			throw new IllegalArgumentException("The bean contains a nondescribed function argument");
+		try {
+			Class<?> clazz = Class.forName(fBean.getType());
+			Constructor<?> constructor = clazz.getConstructor(IParameter[].class);
+			return (IFunction) constructor.newInstance((Object)params);
+		} catch (ClassNotFoundException e) {
+			logger.error("The Class could not be found:" + e.getMessage());
+			return null;
+		} catch (NoSuchMethodException e) {
+			logger.error("Constructor does not exist:" + e.getMessage());
+			return null;
+		} catch (SecurityException e) {
+			logger.error("Security manager might be preventing reflection:" + e.getMessage());
+			return null;
+		} catch (InstantiationException e) {
+			logger.error("Could not instantiate class:" + e.getMessage());
+			return null;
+		} catch (IllegalAccessException e) {
+			logger.error("Constructor does not exist:" + e.getMessage());
+			return null;
+		} catch (IllegalArgumentException e) {
+			logger.error("Illegal arguments:" + e.getMessage());
+			return null;
+		} catch (InvocationTargetException e) {
+			logger.error("Invocation Exception:" + e.getMessage());
+			return null;
+		}
 	}
 
 	/**

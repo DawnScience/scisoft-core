@@ -144,11 +144,18 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	}
 
 	/**
+	 * @return angle of asymptote (which acts as a minimum for angle)
+	 */
+	public double getAsymptoteAngle() {
+		return Math.acos(1 / e);
+	}
+
+	/**
 	 * @param d
 	 * @return start angle of positive branch at distance from focus (end = 2pi - start)
 	 */
 	public double getStartAngle(double d) {
-		return Math.acos((1 - l/d)/e);
+		return Math.acos((1 - l / d) / e);
 	}
 
 	/**

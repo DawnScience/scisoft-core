@@ -207,6 +207,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	private void createGDAMetadata(int x, int y) throws ScanFileHolderException {
 		try {
 			String pixelSize = metadata.get("Pixel_size");
+			if (pixelSize == null) {
+				throw new ScanFileHolderException("No relevant metadata found");
+			}
 			String[] xypixVal = pixelSize.split("m x");
 			double xPxVal = Double.parseDouble(xypixVal[0])*1000;
 			double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;

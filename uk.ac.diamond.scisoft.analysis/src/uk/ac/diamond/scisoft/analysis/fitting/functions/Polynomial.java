@@ -253,6 +253,8 @@ public class Polynomial extends AFunction {
 		name = NAME;
 		description = DESC;
 		fillParameters(a);
+		if (parent != null)
+			parent.updateParameters();
 	}
 	
 	public String getStringEquation(){

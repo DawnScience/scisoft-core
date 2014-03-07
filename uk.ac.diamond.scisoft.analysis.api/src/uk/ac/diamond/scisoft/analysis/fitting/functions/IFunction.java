@@ -234,4 +234,14 @@ public interface IFunction extends Serializable {
 	 */
 	boolean isValid();
 
+	/**
+	 * @return parent operator
+	 */
+	public IOperator getParentOperator();
+
+	/**
+	 * Set operator that is its parent
+	 * @param parent
+	 */
+	public void setParentOperator(IOperator parent);
 }

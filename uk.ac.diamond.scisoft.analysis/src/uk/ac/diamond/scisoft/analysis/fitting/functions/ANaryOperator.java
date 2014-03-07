@@ -43,18 +43,14 @@ abstract public class ANaryOperator extends AOperator implements IOperator {
 	@Override
 	public void addFunction(IFunction function) {
 		functions.add(function);
-		if (function instanceof IOperator) {
-			((IOperator) function).setParentOperator(this);
-		}
+		function.setParentOperator(this);
 		updateParameters();
 	}
 
 	@Override
 	public void setFunction(int index, IFunction function) {
 		functions.set(index, function);
-		if (function instanceof IOperator) {
-			((IOperator) function).setParentOperator(this);
-		}
+		function.setParentOperator(this);
 		updateParameters();
 	}
 
@@ -75,7 +71,7 @@ abstract public class ANaryOperator extends AOperator implements IOperator {
 
 	@Override
 	public void removeFunction(int index) {
-		functions.remove(index);
+		functions.remove(index).setParentOperator(null);
 		updateParameters();
 	}
 }

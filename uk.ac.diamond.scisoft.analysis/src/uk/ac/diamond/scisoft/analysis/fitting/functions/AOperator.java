@@ -25,16 +25,9 @@ import java.util.List;
 abstract public class AOperator extends AFunction implements IOperator {
 	protected List<IParameter> params; // unique parameters
 
-	protected IOperator parent;
-
 	public AOperator() {
 		super(0);
 		params = new ArrayList<>();
-	}
-
-	@Override
-	public void setParentOperator(IOperator parent) {
-		this.parent = parent;
 	}
 
 	@Override

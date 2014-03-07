@@ -46,9 +46,7 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		} else {
 			throw new IndexOutOfBoundsException("Can only add two functions to a binary operator");
 		}
-		if (function instanceof IOperator) {
-			((IOperator) function).setParentOperator(this);
-		}
+		function.setParentOperator(this);
 		updateParameters();
 	}
 
@@ -64,9 +62,7 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		default:
 			throw new IndexOutOfBoundsException("Can not set this index as it is not 0 or 1");
 		}
-		if (function instanceof IOperator) {
-			((IOperator) function).setParentOperator(this);
-		}
+		function.setParentOperator(this);
 		updateParameters();
 	}
 
@@ -141,9 +137,12 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 	public void removeFunction(int index) {
 		switch (index) {
 		case 0:
+			fa.setParentOperator(null);
 			fa = fb;
-			//$FALL-THROUGH$
+			fb = null;
+			break;
 		case 1:
+			fb.setParentOperator(null);
 			fb = null;
 			break;
 		default:

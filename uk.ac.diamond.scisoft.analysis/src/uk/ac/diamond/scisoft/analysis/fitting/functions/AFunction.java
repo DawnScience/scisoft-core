@@ -31,8 +31,12 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
- * Class which is the fundamentals for any function which is to be used in a composite function. If the isPeak value is
- * specified as true, then the first parameter must be that peak's position
+ * Base abstract class for IFunction implementation. At a minimum, the fillWithValues() method needs
+ * to be added. The fillWithPartialDerivativeValues() and/or calculatePartialDerivativeValues()
+ * methods can be overridden if exact derivatives are needed.
+ * 
+ * Note, if the implemented function can alter the number of parameters then it should call its
+ * parent operator's update parameters method.
  */
 public abstract class AFunction implements IFunction, Serializable {
 
@@ -59,6 +63,8 @@ public abstract class AFunction implements IFunction, Serializable {
 	protected boolean dirty = true;
 
 	protected IMonitor monitor = null;
+
+	protected IOperator parent;
 
 	/**
 	 * Constructor which simply generates the parameters but uninitialised
@@ -566,5 +572,15 @@ public abstract class AFunction implements IFunction, Serializable {
 	@Override
 	public boolean isValid() {
 		return true;
+	}
+
+	@Override
+	public IOperator getParentOperator() {
+		return parent;
+	}
+
+	@Override
+	public void setParentOperator(IOperator parent) {
+		this.parent = parent;
 	}
 }

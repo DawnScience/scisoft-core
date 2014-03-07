@@ -29,7 +29,7 @@ public class MerlinLoaderTest {
 	@Test
 	public void testMerlinDataLoader()  throws Exception {
 		
-		final String path = testFileFolder+"default1.bin";
+		final String path = testFileFolder+"default1.mib";
 		DataHolder dataHolder = LoaderFactory.getData(path, null);
  		
 		AbstractDataset data = dataHolder.getDataset(0);
@@ -42,7 +42,7 @@ public class MerlinLoaderTest {
 	@Test
 	public void testMerlinDataLoaderMultiFile()  throws Exception {
 		
-		final String path = testFileFolder+"multi.bin";
+		final String path = testFileFolder+"multi.mib";
 		DataHolder dataHolder = LoaderFactory.getData(path, null);
  		
 		AbstractDataset data = dataHolder.getDataset(0);

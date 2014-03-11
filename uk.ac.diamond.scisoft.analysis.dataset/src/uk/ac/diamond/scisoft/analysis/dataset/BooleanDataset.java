@@ -383,17 +383,4 @@ public class BooleanDataset extends BooleanDatasetBase {
 		}
 		return sum;
 	}
-
-	/**
-	 * Inverses the Boolean Dataset
-	 * @return inverse of boolean dataset
-	 */
-	public BooleanDataset invert() {
-		IndexIterator it1 = getIterator();
-		while (it1.hasNext()) {
-			boolean b = data[it1.index];
-			data[it1.index] = !b;
-		}
-		return this;
-	}
 }

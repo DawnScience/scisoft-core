@@ -607,19 +607,31 @@ public class ROIProfile {
 	 * @param mask
 	 *            used for clipping compensation (can be null)
 	 * @param sroi
+	 * @param useInterpolateFJ
+	 *            uses interpolation and fork/join which might make things faster
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
-		return sector(data, mask, sroi, doRadial, doAzimuthal, fast, null, null, false);
+	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ) {
+		return sector(data, mask, sroi, doRadial, doAzimuthal, useInterpolateFJ, null, null, false);
 	}
 	/**
+	 * 
 	 * @param data
 	 * @param mask
 	 *            used for clipping compensation (can be null)
 	 * @param sroi
-	 * @return sector profile
+	 * 
+	 * @param doRadial
+	 * @param doAzimuthal
+	 * @param useInterpolateFJ
+	 *            uses interpolation and fork/join which might make things faster
+	 * @param qSpace
+	 * @param axisType
+	 * @param doErrors
+	 * @return 
+	 *     the profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast, QSpace qSpace, XAxis axisType, boolean doErrors) {
+	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();
@@ -642,7 +654,7 @@ public class ROIProfile {
 				pmapfint.setMask(mask);
 			}
 			pmapfint.setClip(clip);
-			pmapfint.setInterpolate(!fast);
+			pmapfint.setInterpolate(!useInterpolateFJ);
 			pmapfint.setDoRadial(doRadial);
 			pmapfint.setDoAzimuthal(doAzimuthal);
 			pmapfint.setQSpace(qSpace, axisType);
@@ -656,7 +668,7 @@ public class ROIProfile {
 				final SectorROI areaSector = sroi.copy();
 				areaSector.setAverageArea(false);
 				AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
-						areaSector, doRadial, doAzimuthal, fast, qSpace, axisType, false);
+						areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
 				if (doErrors) {
@@ -686,7 +698,7 @@ public class ROIProfile {
 			pmapint.setMask(mask);
 		}
 		pmapint.setClip(clip);
-		pmapint.setInterpolate(!fast);
+		pmapint.setInterpolate(!useInterpolateFJ);
 		pmapint.setDoRadial(doRadial);
 		pmapint.setDoAzimuthal(doAzimuthal);
 		pmapint.setQSpace(qSpace, axisType);
@@ -716,7 +728,7 @@ public class ROIProfile {
 				pmapsint.setMask(mask);
 			}
 			pmapsint.setClip(clip);
-			pmapsint.setInterpolate(!fast);
+			pmapsint.setInterpolate(!useInterpolateFJ);
 			pmapsint.setDoRadial(doRadial);
 			pmapsint.setDoAzimuthal(doAzimuthal);
 			pmapsint.setQSpace(qSpace, axisType);
@@ -748,7 +760,7 @@ public class ROIProfile {
 			final SectorROI areaSector = sroi.copy();
 			areaSector.setAverageArea(false);
 			AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
-					areaSector, doRadial, doAzimuthal, fast, qSpace, axisType, false);
+					areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
 					profiles[i] = Maths.dividez(profiles[i], areas[i]);

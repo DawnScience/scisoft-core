@@ -37,8 +37,6 @@ import com.sun.media.imageio.plugins.tiff.TIFFField;
  */
 public class PilatusTiffLoader extends TIFFImageLoader {
 	
-	private Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
-
 	/**
 	 * @param FileName
 	 */
@@ -51,6 +49,9 @@ public class PilatusTiffLoader extends TIFFImageLoader {
 
 	@Override
 	protected Map<String,Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
+
+		Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
+        
 		String temp = "";
 		TIFFDirectory tiffDir;
 		try {
@@ -90,12 +91,12 @@ public class PilatusTiffLoader extends TIFFImageLoader {
 				metadataTable.put(field.getTag().getName(), field.getValueAsString(0));
 		}
 		
-		return createGDAMetadata();
+		return createGDAMetadata(metadataTable);
 	}
 
 	// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-851 whereby the
 	// caching is not working for tifs because they have no metadata.
-	private Map<String, Serializable> createGDAMetadata() {
+	private Map<String, Serializable> createGDAMetadata(Map<String, Serializable> metadataTable ) {
 		
 		Map<String, Serializable> metaData = new HashMap<String, Serializable>();
 		metaData.putAll(metadataTable);

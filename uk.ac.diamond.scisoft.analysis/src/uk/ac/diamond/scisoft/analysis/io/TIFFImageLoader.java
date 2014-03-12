@@ -19,12 +19,16 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.analysis.io.ScanFileHolderException;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
@@ -34,6 +38,8 @@ import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
+import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
+import com.sun.media.imageio.plugins.tiff.TIFFField;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 
@@ -148,7 +154,24 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	 */
 	@SuppressWarnings("unused")
 	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
-		return null;
+		
+		Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
+		String temp = "";
+		TIFFDirectory tiffDir;
+		try {
+			tiffDir = TIFFDirectory.createFromMetadata(imageMetadata);
+		} catch (IIOInvalidTreeException e) {
+			throw new ScanFileHolderException("Problem creating TIFF directory from header", e);
+		}
+
+		TIFFField[] tiffField = tiffDir.getTIFFFields();
+		int unknownNum = 0;
+		boolean found = false;
+		for (int i = 0; i < tiffField.length; i++) {
+			TIFFField field = tiffField[i];
+			metadataTable.put(field.getTag().getName(), field.getValueAsString(0));
+		}
+		return metadataTable;
 	}
 
 	@Override

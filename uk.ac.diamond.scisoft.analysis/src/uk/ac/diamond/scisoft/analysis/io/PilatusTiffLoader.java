@@ -36,7 +36,8 @@ import com.sun.media.imageio.plugins.tiff.TIFFField;
  *
  */
 public class PilatusTiffLoader extends TIFFImageLoader {
-	private Map<String, String> metadataTable = new HashMap<String, String>();
+	
+	private Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
 
 	/**
 	 * @param FileName
@@ -92,22 +93,28 @@ public class PilatusTiffLoader extends TIFFImageLoader {
 		return createGDAMetadata();
 	}
 
+	// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-851 whereby the
+	// caching is not working for tifs because they have no metadata.
 	private Map<String, Serializable> createGDAMetadata() {
-		String pixelSize = metadataTable.get("Pixel_size");
-		if (pixelSize == null)
-			return null;
-		String[] xypixVal = pixelSize.split("m x");
+		
+		Map<String, Serializable> metaData = new HashMap<String, Serializable>();
+		metaData.putAll(metadataTable);
 
-		double xPxVal = Double.parseDouble(xypixVal[0])*1000;
-		double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;
+		String pixelSize = (String)metadataTable.get("Pixel_size");
+		if (pixelSize != null) {
+			String[] xypixVal = pixelSize.split("m x");
+	
+			double xPxVal = Double.parseDouble(xypixVal[0])*1000;
+			double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;
+			
+			// NXGeometery:NXFloat
+			metaData .put("NXdetector:x_pixel_size", xPxVal);
+			metaData.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
+			metaData.put("NXdetector:y_pixel_size", yPXVal);
+			metaData.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
+		} 
 		
-		
-		Map<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
-		// NXGeometery:NXFloat
-		GDAMetadata .put("NXdetector:x_pixel_size", xPxVal);
-		GDAMetadata.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
-		GDAMetadata.put("NXdetector:y_pixel_size", yPXVal);
-		GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
-		return GDAMetadata;
+		return metaData;
+	
 	}
 }

@@ -289,16 +289,19 @@ public class LoaderFactory {
 	 * all the loaders for a given extension if the extension is registered already. 
 	 * Otherwise it tries all loaders - in no particular order.
 	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data synmultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+	 * 
 	 * @param path to file
 	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
 	 * @param mon
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static DataHolder getData(final String   path, 
-									final boolean  willLoadMetadata, 
-									final boolean  loadImageStacks, 
-									final IMonitor mon) throws Exception {
+	public static /*THIS IS REQUIRED:*/ synchronized  DataHolder getData(final String   path, 
+												  final boolean  willLoadMetadata, 
+												  final boolean  loadImageStacks, 
+											      final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		
@@ -332,8 +335,11 @@ public class LoaderFactory {
 					holder = loader.loadFile(mon);
 					holder.setLoaderClass(clazz);
 					holder.setFilePath(path);
-					key.setMetadata(holder.getMetadata() != null);
-					recordSoftReference(key, holder);
+					
+					key.setMetadata(holder.getMetadata()!=null);
+					boolean cached = recordSoftReference(key, holder);
+					if (!cached) System.err.println("Loader factory failed to cache "+path);
+					
 					break;
 					
 				} catch (OutOfMemoryError ome) {
@@ -353,7 +359,6 @@ public class LoaderFactory {
 
 				if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2 && !isH5(path)) {
 					final ILazyDataset stack = getImageStack(path, holder, mon);
-
 					if (stack!=null) holder.addDataset(stack.getName(), stack);
 				}
 
@@ -365,14 +370,81 @@ public class LoaderFactory {
 	}
 	
 	/**
+	 * Call to load file into memory with specific loader class
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data synmultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+     *
+	 * @param clazz loader class
+	 * @param path to file
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param mon
+	 * @return data holder (can be null)
+	 * @throws ScanFileHolderException
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized DataHolder getData(Class<? extends AbstractFileLoader> clazz, 
+						                         String path, 
+			                                     boolean willLoadMetadata, 
+			                                     IMonitor mon) throws Exception {
+		
+		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
+
+		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
+		// Instead when loadImageStacks=true, we add the stack to the already
+		// cached data. So reducing the cache size.
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setMetadata(willLoadMetadata);
+		// END IMPORTANT
+
+		final Object cachedObject = getSoftReference(key);
+		DataHolder holder = null;
+		if (cachedObject!=null && cachedObject instanceof DataHolder) holder = (DataHolder)cachedObject;
+        if (holder!=null) return holder;
+		
+		AbstractFileLoader loader;
+		try {
+			loader = getLoader(clazz, path);
+		} catch (Exception e) {
+			logger.error("Cannot create loader", e);
+			throw new ScanFileHolderException("Cannot create loader", e);
+		}
+		if (loader == null) {
+			logger.error("Cannot create loader");
+			throw new ScanFileHolderException("Cannot create loader");
+		}
+
+		loader.setLoadMetadata(willLoadMetadata);
+		try {
+			holder = loader.loadFile(mon);
+			holder.setLoaderClass(clazz);
+			holder.setFilePath(path);
+			
+			key.setMetadata(holder.getMetadata()!=null);
+			boolean cached = recordSoftReference(key, holder);
+			if (!cached) System.err.println("Loader factory failed to cache "+path);
+			return holder;
+			
+		} catch (OutOfMemoryError ome) {
+			logger.error("There was not enough memory to load {}", path);
+			throw new ScanFileHolderException("Out of memory in loader factory", ome);
+		} catch (Throwable ne) {
+			logger.trace("Loader {} caused {}", loader, ne);
+			throw new ScanFileHolderException("Loader error", ne);
+		}
+	}
+
+
+	/**
 	 * This method can be used to load an image stack of other images in the same directory.
 	 * 
 	 * @param filePath - to one of the images in the stack.
+	 * @param holder
 	 * @param mon
 	 * @return and image stack for 
 	 * @throws Exception
 	 */
-	public static final ILazyDataset getImageStack(final String filePath, DataHolder dh, IMonitor mon) throws Exception {
+	public static final ILazyDataset getImageStack(final String filePath, DataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
 		final List<String> imageFilenames = new ArrayList<String>();
@@ -390,59 +462,13 @@ public class LoaderFactory {
 		
 		if (imageFilenames.size() > 1) {
  		    Collections.sort(imageFilenames, new SortNatural<String>(true));
-			ImageStackLoader loader = new ImageStackLoader(imageFilenames, dh, mon);
+			ImageStackLoader loader = new ImageStackLoader(imageFilenames, holder, mon);
 			LazyDataset lazyDataset = new LazyDataset("Image Stack", loader.getDtype(), loader.getShape(), loader);
 			return lazyDataset;
 		}
 		return null;
 	}
 
-
-	/**
-	 * Call to load file into memory with specific loader class
-	 * 
-	 * @param loaderClass loader class
-	 * @param path to file
-	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
-	 * @param mon
-	 * @return data holder (can be null)
-	 * @throws ScanFileHolderException
-	 */
-	public static DataHolder getData(Class<? extends AbstractFileLoader> loaderClass, String path, boolean willLoadMetadata, IMonitor mon) throws ScanFileHolderException {
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setMetadata(willLoadMetadata);
-
-		final Object cachedObject = getSoftReference(key);
-		if (cachedObject!=null && cachedObject instanceof DataHolder) return (DataHolder)cachedObject;
-
-		AbstractFileLoader loader;
-		try {
-			loader = getLoader(loaderClass, path);
-		} catch (Exception e) {
-			logger.error("Cannot create loader", e);
-			throw new ScanFileHolderException("Cannot create loader", e);
-		}
-		if (loader == null) {
-			logger.error("Cannot create loader");
-			throw new ScanFileHolderException("Cannot create loader");
-		}
-
-		loader.setLoadMetadata(willLoadMetadata);
-		try {
-			DataHolder holder = loader.loadFile(mon);
-			holder.setLoaderClass(loaderClass);
-			key.setMetadata(holder.getMetadata() != null);
-			recordSoftReference(key, holder);
-			return holder;
-		} catch (OutOfMemoryError ome) {
-			logger.error("There was not enough memory to load {}", path);
-			throw new ScanFileHolderException("Out of memory in loader factory", ome);
-		} catch (Throwable ne) {
-			logger.trace("Loader {} caused {}", loader, ne);
-			throw new ScanFileHolderException("Loader error", ne);
-		}
-	}
 
 
 	private final static Object LOCK = new Object();
@@ -491,7 +517,8 @@ public class LoaderFactory {
 			try {
 		        final Reference<IDataAnalysisObject> ref = SOFT_CACHE.get(key);
 		        if (ref == null) return null;
-		        return ref.get();
+		        IDataAnalysisObject got = ref.get();
+		        return got;
 			} catch (Throwable ne) {
 				return null;
 			}
@@ -703,8 +730,7 @@ public class LoaderFactory {
 			if (m.matches()) {
 				final String realExt = m.group(1);
 				if (LoaderFactory.LOADERS.keySet().contains(realExt)) {
-					final Collection<Class<? extends AbstractFileLoader>> ret = new ArrayList<Class<? extends AbstractFileLoader>>(
-							1);
+					final Collection<Class<? extends AbstractFileLoader>> ret = new ArrayList<Class<? extends AbstractFileLoader>>(1);
 					ret.add(CompressedLoader.class);
 					return ret.iterator();
 				}

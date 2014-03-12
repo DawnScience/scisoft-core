@@ -63,7 +63,7 @@ public class ImageStackLoader implements ILazyLoader {
 		return true;
 	}
 
-	private AbstractDataset getFullStack() throws ScanFileHolderException {
+	private AbstractDataset getFullStack() throws Exception {
 		
     	DataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
     	int size = data.getDataset(0).getSize();
@@ -83,7 +83,7 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	@Override
-	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
 		
 		if (start==null && step==null) return getFullStack();// Might cause out of memory!
 		                                                     // But this allows expressions of the stack to work if the stack fit in memory.

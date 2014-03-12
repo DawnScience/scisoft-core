@@ -187,14 +187,14 @@ public class ROITest {
 			assertFalse(e.isNearOutline(pl, 0.01));
 
 			double[] p = e.getPoint(a);
-			checkPoint(e.getVerticalIntersectionAngles(p[0]), p, 0, e);
-			checkPoint(e.getHorizontalIntersectionAngles(p[1]), p, 1, e);
+			checkPoint(e.getVerticalIntersectionParameters(p[0]), p, 0, e);
+			checkPoint(e.getHorizontalIntersectionParameters(p[1]), p, 1, e);
 		}
 
-		assertTrue(e.getVerticalIntersectionAngles(e.getBounds().getEndPoint()[0]+0.1) == null);
-		assertTrue(e.getVerticalIntersectionAngles(e.getBounds().getPointRef()[0]-0.1) == null);
-		assertTrue(e.getHorizontalIntersectionAngles(e.getBounds().getEndPoint()[1]+0.1) == null);
-		assertTrue(e.getHorizontalIntersectionAngles(e.getBounds().getPointRef()[1]-0.1) == null);
+		assertTrue(e.getVerticalIntersectionParameters(e.getBounds().getEndPoint()[0]+0.1) == null);
+		assertTrue(e.getVerticalIntersectionParameters(e.getBounds().getPointRef()[0]-0.1) == null);
+		assertTrue(e.getHorizontalIntersectionParameters(e.getBounds().getEndPoint()[1]+0.1) == null);
+		assertTrue(e.getHorizontalIntersectionParameters(e.getBounds().getPointRef()[1]-0.1) == null);
 
 		RectangularROI rect = new RectangularROI(side, 0);
 		assertFalse(e.isContainedBy(rect));
@@ -334,8 +334,8 @@ public class ROITest {
 			double[] pt = p.getPoint(a);
 			if (a > limit && a < 2* Math.PI - limit) {
 				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
-				checkPoint(p.getVerticalIntersectionAngles(pt[0]), pt, 0, p);
-				checkPoint(p.getHorizontalIntersectionAngles(pt[1]), pt, 1, p);
+				checkPoint(p.getVerticalIntersectionParameters(pt[0]), pt, 0, p);
+				checkPoint(p.getHorizontalIntersectionParameters(pt[1]), pt, 1, p);
 			}
 		}
 	}
@@ -351,8 +351,8 @@ public class ROITest {
 			double[] pt = h.getPoint(a);
 			if (a > limit && a < 2* Math.PI - limit) {
 				assertTrue(Math.hypot(pt[0], pt[1]) <= distance);
-				checkPoint(h.getVerticalIntersectionAngles(pt[0]), pt, 0, h);
-				checkPoint(h.getHorizontalIntersectionAngles(pt[1]), pt, 1, h);
+				checkPoint(h.getVerticalIntersectionParameters(pt[0]), pt, 0, h);
+				checkPoint(h.getHorizontalIntersectionParameters(pt[1]), pt, 1, h);
 			}
 		}
 	}

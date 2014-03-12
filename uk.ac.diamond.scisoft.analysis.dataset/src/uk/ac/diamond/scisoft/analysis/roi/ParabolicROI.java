@@ -181,7 +181,8 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	 * @param x
 	 * @return possible angles
 	 */
-	public double[] getVerticalIntersectionAngles(double x) {
+	@Override
+	public double[] getVerticalIntersectionParameters(double x) {
 		double[] pt = transformXToOriginal(tp);
 		x -= spt[0];
 
@@ -203,7 +204,8 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	 * @param y
 	 * @return possible angles
 	 */
-	public double[] getHorizontalIntersectionAngles(double y) {
+	@Override
+	public double[] getHorizontalIntersectionParameters(double y) {
 		double[] pt = transformXToOriginal(tp);
 		y -= spt[1];
 

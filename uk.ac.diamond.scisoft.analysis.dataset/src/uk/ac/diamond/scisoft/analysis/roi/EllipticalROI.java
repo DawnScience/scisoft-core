@@ -283,7 +283,8 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	 * @param x
 	 * @return possible angles
 	 */
-	public double[] getVerticalIntersectionAngles(double x) {
+	@Override
+	public double[] getVerticalIntersectionParameters(double x) {
 		double tx = saxis[0]*cang;
 		double ty = saxis[1]*sang;
 
@@ -305,7 +306,8 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	 * @param y
 	 * @return possible angles
 	 */
-	public double[] getHorizontalIntersectionAngles(double y) {
+	@Override
+	public double[] getHorizontalIntersectionParameters(double y) {
 		double tx = saxis[0]*sang;
 		double ty = saxis[1]*cang;
 

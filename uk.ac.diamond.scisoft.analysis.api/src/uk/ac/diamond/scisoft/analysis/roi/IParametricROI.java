@@ -20,5 +20,10 @@ package uk.ac.diamond.scisoft.analysis.roi;
  * A ROI whose boundary can be parameterised
  */
 public interface IParametricROI extends IROI {
+	
 	public double[] getPoint(double parameter);
+	
+	public double[] getHorizontalIntersectionParameters(double y);
+	
+	public double[] getVerticalIntersectionParameters(double x);
 }

@@ -144,4 +144,48 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	public String toString() {
 		return super.toString() + String.format("point=%s, radius=%g", Arrays.toString(spt), rad);
 	}
+	
+	/**
+	 * Calculate values for angle at which circle will intersect vertical line of given x
+	 * @param x
+	 * @return possible angles
+	 */
+	@Override
+	public double[] getVerticalIntersectionParameters(double x) {
+
+		x -= spt[0];
+		if (x < -rad || x > rad) {
+			return null;
+		}
+
+		if (x == -rad || x == rad) { // touching case
+			return new double[]{x < 0 ? Math.PI : 0};
+		}
+		
+		double ang = Math.acos(x/rad);
+		
+		return new double[] {ang, (Math.PI*2)-ang};
+	}
+
+	/**
+	 * Calculate values for angle at which circle will intersect horizontal line of given y
+	 * @param y
+	 * @return possible angles
+	 */
+	@Override
+	public double[] getHorizontalIntersectionParameters(double y) {
+
+		y -= spt[1];
+		if (y < -rad || y > rad) {
+			return null;
+		}
+
+		if (y == -rad || y == rad) { // touching case
+			return new double[]{y < 0 ? Math.PI : 0};
+		}
+		
+		double ang = Math.acos(y/rad);
+		
+		return new double[] {ang, (Math.PI*2)-ang};
+	}
 }

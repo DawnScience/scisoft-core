@@ -337,4 +337,38 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	public String toString() {
 		return super.toString() + String.format("point=%s, length=%g, angle=%g", Arrays.toString(spt), len, getAngleDegrees());
 	}
+	
+	/**
+	 * Calculate values for y at which line will intersect vertical line of given x
+	 * @param x
+	 * @return possible angles
+	 */
+	@Override
+	public double[] getVerticalIntersectionParameters(double x) {
+
+		double[] ept = getEndPoint();
+		double pax = Math.min(spt[0], ept[0]);
+		if (x < pax) return null;
+		pax = Math.max(spt[0], ept[0]);
+		if (x > pax) return null;
+		return new double[]{spt[1] + (x-spt[0])*cang};
+
+	}
+	
+	/**
+	 * Calculate values for x at which line will intersect horizontal line of given y
+	 * @param y
+	 * @return possible angles
+	 */
+	@Override
+	public double[] getHorizontalIntersectionParameters(double y) {
+		double[] ept = getEndPoint();
+		double pax = Math.min(spt[1], ept[1]);
+		if (y < pax) return null;
+		pax = Math.max(spt[1], ept[1]);
+		if (y > pax) return null;
+		return new double[]{spt[0] + (y-spt[1])*sang};
+		
+	
+	}
 }

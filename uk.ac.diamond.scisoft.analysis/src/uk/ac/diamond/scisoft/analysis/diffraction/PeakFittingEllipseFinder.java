@@ -17,9 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -35,6 +33,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import uk.ac.diamond.scisoft.analysis.roi.IParametricROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolylineROI;
@@ -43,6 +42,7 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 public class PeakFittingEllipseFinder {
 
 	private static Logger logger = LoggerFactory.getLogger(PeakFittingEllipseFinder.class);
+	
 	/**
 	 * Find a set of points of interests near given ellipse from an image.
 	 * <p>
@@ -51,12 +51,12 @@ public class PeakFittingEllipseFinder {
 	 * @param image
 	 * @param mask (can be null)
 	 * @param ellipse
-	 * @param innerDelta inner search range
-	 * @param outerDelta outer search range
+	 * @param inOut array of elliptical ROIs giving search range
 	 * @return polyline ROI
 	 */
-	public static PolylineROI findPointsOnEllipse(AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse,
-			double innerDelta, double outerDelta,int nPoints, IMonitor mon) {
+	public static PolylineROI findPointsOnConic(AbstractDataset image, BooleanDataset mask, IParametricROI ellipse,
+			IParametricROI[] inOut, int nPoints, IMonitor mon) {
+		
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
 			throw new IllegalArgumentException("Dataset must have two dimensions");
@@ -72,14 +72,6 @@ public class PeakFittingEllipseFinder {
 		if (ellipse.containsPoint(-1,-1) && ellipse.containsPoint(-1,h+1) && ellipse.containsPoint(w+1,h+1) && ellipse.containsPoint(w+1,-1)) {
 			throw new IllegalArgumentException("Ellipse does not intersect image!");
 		}
-		
-		EllipticalROI inner = ellipse.copy();
-		inner.setSemiAxis(0, ellipse.getSemiAxis(0)-innerDelta);
-		inner.setSemiAxis(1, ellipse.getSemiAxis(1)-innerDelta);
-		
-		EllipticalROI outer = ellipse.copy();
-		outer.setSemiAxis(0, ellipse.getSemiAxis(0)+outerDelta);
-		outer.setSemiAxis(1, ellipse.getSemiAxis(1)+outerDelta);
 		
 		PolylineROI polyline = new PolylineROI();
 		
@@ -101,7 +93,7 @@ public class PeakFittingEllipseFinder {
 				
 				double offset = 1/count*step;
 				
-				findNumberOfPointsOnEllipse(image, polyline, inner, outer, offset+range[0],range[1],nPointFrac, mon);
+				findNumberOfPointsOnEllipse(image, polyline,inOut, new double[]{offset+range[0],range[1]},nPointFrac, mon);
 			}
 			
 			count++;
@@ -116,24 +108,27 @@ public class PeakFittingEllipseFinder {
 	}
 	
 	private static PolylineROI findNumberOfPointsOnEllipse(AbstractDataset image, PolylineROI polyline,
-			EllipticalROI inner, EllipticalROI outer, double start, double stop, int nPoints, IMonitor mon) {
+			IParametricROI[] inOut, double[] startStop, int nPoints, IMonitor mon) {
 		
 		final int[] shape = image.getShape();
 		final int h = shape[1];
 		final int w = shape[0];
 		
-		double range = outer.getSemiAxis(0)-inner.getSemiAxis(0);
+		double ang =  0;
 		
-		double ang = inner.getAngle();
+		if (inOut[0] instanceof EllipticalROI) {
+			ang = ((EllipticalROI)inOut[0]).getAngle();
+		}
+		
 		
 		List<PointROI> roiList = new ArrayList<PointROI>();
 		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
 		
-		double step = (stop-start)/nPoints;
+		double step = (startStop[1]-startStop[0])/nPoints;
 		
-		for (double i = start; i < stop; i+=step) {
-			double[] beg = inner.getPoint(i);
-			double[] end = outer.getPoint(i);
+		for (double i = startStop[0]; i < startStop[1]; i+=step) {
+			double[] beg = inOut[0].getPoint(i);
+			double[] end = inOut[1].getPoint(i);
 			
 			if (end[0] > h || end[0] < 0 || end[1] > w || end[1] < 0) continue;
 			
@@ -146,7 +141,7 @@ public class PeakFittingEllipseFinder {
 			
 			double count = (Double)badVals.sum();
 			
-			if (count > range*0.1) continue;
+			if (count > sub.getSize()*0.1) continue;
 			
 			sub = sub.setByBoolean(Double.NaN, badVals);
 			double min = sub.min(true).doubleValue();
@@ -213,7 +208,7 @@ public class PeakFittingEllipseFinder {
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
 			double pw = gaussianList.get(i).getFWHM();
-			double ph = gaussianList.get(i).getHeight();
+//			double ph = gaussianList.get(i).getHeight();
 			if (gaussianList.get(i).getHeight() > threshold && pw > lowerw && pw < upperw) {
 				polyline.insertPoint(roiList.get(i));
 			}
@@ -222,14 +217,14 @@ public class PeakFittingEllipseFinder {
 		return polyline;
 	}
 	
-	private static List<double[]> findSuitableSearchRange(EllipticalROI ellipse, int[] shape) {
+	private static List<double[]> findSuitableSearchRange(IParametricROI ellipse, int[] shape) {
 	
 		List<double[]> angles = new ArrayList<double[]>();
 		
-		angles.add(findDetectorEllipseInterceptX(0,ellipse));//t
-		angles.add(findDetectorEllipseInterceptY(0,ellipse));//l
-		angles.add(findDetectorEllipseInterceptX(shape[0],ellipse));//b
-		angles.add(findDetectorEllipseInterceptY(shape[1],ellipse));//r
+		angles.add(ellipse.getHorizontalIntersectionParameters(0));//t
+		angles.add(ellipse.getVerticalIntersectionParameters(0));//l
+		angles.add(ellipse.getHorizontalIntersectionParameters(shape[0]));//b
+		angles.add(ellipse.getVerticalIntersectionParameters(shape[1]));//r
 		
 		List<Double> all = new ArrayList<Double>();		
 		for (double[] angle : angles) {
@@ -261,80 +256,8 @@ public class PeakFittingEllipseFinder {
 			if (point[0] < 0 || point[0] > shape[1] || point[1] < 0 || point[1] > shape[0]) continue;
 			
 			startStop.add(new double[] {current, next});
-
-			
 		}
 		
 		return startStop;
 	}
-	
-	
-	private static double[] findDetectorEllipseInterceptX(double x1, EllipticalROI roi) {
-		//XAxis
-		
-		double xCor = x1-roi.getPointY();
-		
-		double ca = Math.cos(roi.getAngle());
-		double sa = Math.sin(roi.getAngle());
-		double ca2 = Math.pow(ca, 2);
-		double sa2 = Math.pow(sa, 2);
-		double a2 = Math.pow(roi.getSemiAxis(0), 2);
-		double b2 = Math.pow(roi.getSemiAxis(1), 2);
-		
-		double a = ca2/a2+sa2/b2;
-		double b = -2*ca*sa*(1/a2-1/b2)*xCor;
-		double c = ((sa2/a2 + ca2/b2)*Math.pow(xCor, 2))-1;
-		
-		double quad = Math.pow(b, 2) - 4*a*c;
-		
-		if (quad < 0) return null;
-		
-		double[] out = new double[2];
-		
-		double yP = (-b + Math.sqrt(quad))/(2*a);
-		double yM = (-b - Math.sqrt(quad))/(2*a);
-		
-		out[0] = Math.atan2(roi.getSemiAxis(0)*(ca*xCor- sa*yP), roi.getSemiAxis(1)*(ca*yP + sa*xCor));
-		out[1] = Math.atan2(roi.getSemiAxis(0)*(ca*xCor - sa*yM), roi.getSemiAxis(1)*(ca*yM + sa*xCor));
-		
-		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
-		if (out[1] < 0) out[1] = 2*Math.PI + out[1];
-		
-		return out;
-	}
-	
-	private static double[] findDetectorEllipseInterceptY(double y1, EllipticalROI roi) {
-		
-		double yCor = y1-roi.getPointX();
-		
-		double ca = Math.cos(roi.getAngle());
-		double sa = Math.sin(roi.getAngle());
-		double ca2 = Math.pow(ca, 2);
-		double sa2 = Math.pow(sa, 2);
-		double a2 = Math.pow(roi.getSemiAxis(0), 2);
-		double b2 = Math.pow(roi.getSemiAxis(1), 2);
-		
-		double a = sa2/a2+ca2/b2;
-		double b = -2*ca*sa*(1/a2-1/b2)*yCor;
-		double c = ((ca2/a2 + sa2/b2)*Math.pow(yCor, 2))-1;
-		
-		double quad = Math.pow(b, 2) - 4*a*c;
-		
-		if (quad < 0) return null;
-		 
-		double[] out = new double[2];
-
-		double xP = (-b + Math.sqrt(quad))/(2*a);
-		double xM = (-b - Math.sqrt(quad))/(2*a);
-		
-		out[0] = Math.atan2(roi.getSemiAxis(0)*(ca*xP - sa*yCor), roi.getSemiAxis(1)*(ca*yCor + sa*xP));
-		out[1] = Math.atan2(roi.getSemiAxis(0)*(ca*xM - sa*yCor), roi.getSemiAxis(1)*(ca*yCor + sa*xM));
-		
-		
-		if (out[0] < 0) out[0] = 2*Math.PI + out[0];
-		if (out[1] < 0) out[1] = 2*Math.PI + out[1];
-		
-		return out;
-	}
-	
 }

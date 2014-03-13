@@ -46,8 +46,6 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		} else {
 			throw new IndexOutOfBoundsException("Can only add two functions to a binary operator");
 		}
-		function.setParentOperator(this);
-		updateParameters();
 	}
 
 	@Override
@@ -62,7 +60,8 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		default:
 			throw new IndexOutOfBoundsException("Can not set this index as it is not 0 or 1");
 		}
-		function.setParentOperator(this);
+		if (function != null)
+			function.setParentOperator(this);
 		updateParameters();
 	}
 

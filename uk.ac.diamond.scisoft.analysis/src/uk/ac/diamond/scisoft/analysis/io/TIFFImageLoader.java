@@ -155,23 +155,27 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	@SuppressWarnings("unused")
 	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
 		
-		Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
-		String temp = "";
-		TIFFDirectory tiffDir;
 		try {
-			tiffDir = TIFFDirectory.createFromMetadata(imageMetadata);
-		} catch (IIOInvalidTreeException e) {
-			throw new ScanFileHolderException("Problem creating TIFF directory from header", e);
+			Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
+			String temp = "";
+			TIFFDirectory tiffDir;
+			try {
+				tiffDir = TIFFDirectory.createFromMetadata(imageMetadata);
+			} catch (IIOInvalidTreeException e) {
+				throw new ScanFileHolderException("Problem creating TIFF directory from header", e);
+			}
+	
+			TIFFField[] tiffField = tiffDir.getTIFFFields();
+			int unknownNum = 0;
+			boolean found = false;
+			for (int i = 0; i < tiffField.length; i++) {
+				TIFFField field = tiffField[i];
+				metadataTable.put(field.getTag().getName(), field.getValueAsString(0));
+			}
+			return metadataTable;
+		} catch (Throwable ne) {
+			return null;
 		}
-
-		TIFFField[] tiffField = tiffDir.getTIFFFields();
-		int unknownNum = 0;
-		boolean found = false;
-		for (int i = 0; i < tiffField.length; i++) {
-			TIFFField field = tiffField[i];
-			metadataTable.put(field.getTag().getName(), field.getValueAsString(0));
-		}
-		return metadataTable;
 	}
 
 	@Override

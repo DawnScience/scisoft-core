@@ -105,24 +105,26 @@ def plot_viewnexustree(name, tree):
 plot_volume = _plotter.volumePlot
 
 from jybeans import parameters as _jyparams
-from jybeans import guibean as _jyguibean
+from jybeans import guibean as _guibean
+from uk.ac.diamond.scisoft.analysis.plotserver import GuiBean as _jyguibean
 
 from jyroi import _roi_wrap, _create_list, _jroi, _roi_list
 
-def _wrap_gui_bean(jb):
-    jb.setWarn(False)
-    if _jyparams.roi in jb:
-        jb[_jyparams.roi] = _roi_wrap(jb[_jyparams.roi])
-    if _jyparams.roilist in jb:
-        jl = jb[_jyparams.roilist]
-        if jl:
-            l = _create_list(jl[0])
-            for r in jl:
-                l.append(_roi_wrap(r))
-        else:
-            l = None
-        jb[_jyparams.roilist] = l
-    jb.setWarn(True)
+def _wrap_gui_bean(ob, nb):
+    for k in ob:
+        v = ob[k]
+        if k == _jyparams.roi:
+            v = _roi_wrap(v)
+        elif k == _jyparams.roilist:
+            if v:
+                l = _create_list(v[0])
+                for r in v:
+                    l.append(_roi_wrap(r))
+            else:
+                l = None
+            v = l
+        nb[k] = v
+    return nb
 
 def _unwrap_gui_bean(ob, nb):
     for k in ob:
@@ -131,16 +133,15 @@ def _unwrap_gui_bean(ob, nb):
             if v is not None and not isinstance(v, _jroi):
                 v = v._jroi()
         elif k == _jyparams.roilist:
-            ov = v
-            if isinstance(ov, _roi_list):
-                v = ov._jroilist()
+            if isinstance(v, _roi_list):
+                v = v._jroilist()
         nb[k] = v
     return nb
 
 def plot_getbean(name):
     jb = _plotter.getGuiBean(name)
     if jb is not None:
-        _wrap_gui_bean(jb)
+        return _wrap_gui_bean(jb, _guibean())
     return jb
 
 def plot_setbean(name, bean):
@@ -151,12 +152,13 @@ def plot_getdatabean(name):
     if jdb is not None:
         jgb = jdb.getGuiParameters()
         if jgb is not None:
-            _wrap_gui_bean(jgb)
+            _wrap_gui_bean(jgb, jgb)
     return jdb
 
 def plot_setdatabean(name, bean):
     gb = bean.getGuiParameters()
-    _plotter.setDataBean(name, _unwrap_gui_bean(gb, gb))
+    _unwrap_gui_bean(gb, gb)
+    _plotter.setDataBean(name, bean)
 
 plot_getguinames = _plotter.getGuiNames
 

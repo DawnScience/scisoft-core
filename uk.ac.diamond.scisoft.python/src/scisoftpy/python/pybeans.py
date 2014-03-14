@@ -20,8 +20,7 @@ import pyscisoft
 exception = Exception
 
 class guibean(dict):
-    def __init__(self):
-        pass
+    pass
 
 class _parameters(object):
     _params = []

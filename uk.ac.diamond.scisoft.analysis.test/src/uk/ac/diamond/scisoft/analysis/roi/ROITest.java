@@ -196,6 +196,17 @@ public class ROITest {
 		assertTrue(e.getHorizontalIntersectionParameters(e.getBounds().getEndPoint()[1]+0.1) == null);
 		assertTrue(e.getHorizontalIntersectionParameters(e.getBounds().getPointRef()[1]-0.1) == null);
 
+		// check a particular line through origin
+		double[] p = e.getHorizontalIntersectionParameters(0);
+		assertTrue(p != null);
+		double ymin = -2e-15;
+		assertTrue(e.getPoint(p[0])[1] >= ymin);
+		assertTrue(e.getPoint(p[1])[1] >= ymin);
+		assertFalse(e.getPoint(p[0]*0.99)[1] >= ymin);
+		assertTrue(e.getPoint(p[0]*1.01)[1] >= ymin);
+		assertTrue(e.getPoint(p[1]*0.99)[1] >= ymin);
+		assertFalse(e.getPoint(p[1]*1.01)[1] >= ymin);
+
 		RectangularROI rect = new RectangularROI(side, 0);
 		assertFalse(e.isContainedBy(rect));
 

@@ -47,9 +47,9 @@ class _plotmode:
 
 plotmode = _plotmode()
 
-from uk.ac.diamond.scisoft.analysis.plotserver import GuiBean as _guibean
+class guibean(dict):
+    pass
 
-guibean = _guibean
 
 import java.lang.Exception as _exception
 

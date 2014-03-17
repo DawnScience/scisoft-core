@@ -86,6 +86,10 @@ public class PeakFittingEllipseFinder {
 		int count = 1;
 		
 		while (count < 5 && polyline.getNumberOfPoints() < nPoints *0.75) {
+			
+			if (count == 1) mon.subTask("Starting peak fit...");
+			else mon.subTask("Not enough points found, continuing search...: " + count);
+			
 			for (double[] range : searchRange) {
 				
 				double step = (range[1]-range[0])/nPoints;

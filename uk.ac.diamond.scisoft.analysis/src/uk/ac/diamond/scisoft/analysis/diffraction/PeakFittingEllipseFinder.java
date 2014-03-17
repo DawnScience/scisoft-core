@@ -178,9 +178,12 @@ public class PeakFittingEllipseFinder {
 			
 			if (g == null) continue;
 			
+			//lineAngle != i for non-ellipical
+			double lineAngle = line.getAngle();
+			
 			double r = g.getParameter(0).getValue();
-			double x = r*Math.cos(i+ang)+beg[0];
-			double y = r*Math.sin(i+ang)+beg[1];
+			double x = r*Math.cos(lineAngle+ang)+beg[0];
+			double y = r*Math.sin(lineAngle+ang)+beg[1];
 			roiList.add(new PointROI(x,y));
 			gaussianList.add(g);
 			

@@ -135,7 +135,7 @@ public class DSpacing {
 	public static double radiusFromDSpacing(DetectorProperties detector, DiffractionCrystalEnvironment diffExp,
 			double dSpacing) {
 		double alpha = coneAngleFromDSpacing(diffExp, dSpacing);
-		return detector.getDetectorDistance() * Math.tan(alpha);
+		return (detector.getDetectorDistance() * Math.tan(alpha))/detector.getVPxSize();
 	}
 
 	/**

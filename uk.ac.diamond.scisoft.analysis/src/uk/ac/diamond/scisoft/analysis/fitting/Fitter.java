@@ -27,8 +27,6 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheMultiDirectional;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
@@ -50,9 +48,28 @@ public class Fitter {
 		NelderMead nm = new NelderMead(quality);
 		nm.optimize(coords, yAxis, function);	
 	}
-		
+	
+	/**
+	 * Run the Apache Nelder mead fitter with a set number of MaxEvals
+	 * @param coords
+	 * @param yAxis
+	 * @param function
+	 * @param maxEvals
+	 * @throws Exception
+	 */
+	public static void ApacheNelderMeadFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function, int maxEvals) throws Exception {
+		ApacheNelderMead anm = new ApacheNelderMead();
+		anm.optimize(coords, yAxis, function, maxEvals);	
+	}
+
+	/**
+	 * Run the Apache Nelder mead fitter
+	 * @param coords
+	 * @param yAxis
+	 * @param function
+	 * @throws Exception
+	 */
 	public static void ApacheNelderMeadFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
-//		IOptimizer anm = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
 		IOptimizer anm = new ApacheNelderMead();
 		anm.optimize(coords, yAxis, function);	
 	}	

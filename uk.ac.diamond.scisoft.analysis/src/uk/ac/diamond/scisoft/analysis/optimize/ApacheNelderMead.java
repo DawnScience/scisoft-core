@@ -16,16 +16,21 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.MultivariateRealFunction;
-import org.apache.commons.math.optimization.GoalType;
-import org.apache.commons.math.optimization.RealPointValuePair;
-import org.apache.commons.math.optimization.direct.NelderMead;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateFunctionPenaltyAdapter;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 
 
@@ -35,8 +40,17 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
  */
 public class ApacheNelderMead implements IOptimizer {
 
+	
+	private static final double REL_TOL = 1e-21;
+	private static final double ABS_TOL = 1e-21;
+	private static final int MAX_EVAL = 100000;
+	
 	@Override
 	public void optimize(IDataset[] coords, IDataset data, final IFunction function) throws Exception {
+		optimize(coords, data, function, MAX_EVAL);
+	}
+		
+	public void optimize(IDataset[] coords, IDataset data, final IFunction function, int maxEvals) throws Exception {
 		
 		// Pull out the data which is required from the inputs
 		final int numCoords = coords.length;
@@ -46,28 +60,23 @@ public class ApacheNelderMead implements IOptimizer {
 		}
 
 		final DoubleDataset values = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
-
-		// create an instance of the fitter
-		NelderMead nm = new NelderMead();
 		
-		// provide the fitting function which wrappers all the normal fitting functionality
-		MultivariateRealFunction f1 = new MultivariateRealFunction() {
-			
-			@Override
-			public double value(double[] arg0) throws FunctionEvaluationException, IllegalArgumentException {
-				function.setParameterValues(arg0);
-				return function.residual(true, values, null, newCoords);
-			}
-		};
+		// Get the objective function.
+		MultivariateFunctionPenaltyAdapter of = ((AFunction)function).getApacheMultivariateFunction(values, newCoords);
 			
 		// preform the optimisation
-		double[] start = function.getParameterValues();
+		double[] start = ((AFunction)function).getParameterValuesNoFixed();
 		
-		RealPointValuePair result = nm.optimize(f1, GoalType.MINIMIZE, start);
+		MultivariateOptimizer opt = new SimplexOptimizer(REL_TOL,ABS_TOL);
+		
+		PointValuePair result = opt.optimize(new InitialGuess(start), GoalType.MINIMIZE,
+				new ObjectiveFunction(of), new MaxEval(maxEvals),
+				new NelderMeadSimplex(start.length));	
+		
+		double[] results = result.getPoint();
 		
 		// set the input functions parameters to be the result before finishing.
-		function.setParameterValues(result.getPoint());
-		
+		((AFunction)function).setParameterValuesNoFixed(results);
 
 	}
 

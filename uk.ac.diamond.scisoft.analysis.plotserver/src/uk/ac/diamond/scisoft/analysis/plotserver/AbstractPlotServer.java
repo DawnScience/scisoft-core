@@ -85,6 +85,7 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public void updateGui(String guiName, GuiBean guiData) throws Exception {
+		guiData.remove(GuiParameters.QUIET_UPDATE);
 		guiStore.put(guiName, guiData);
 	}
 

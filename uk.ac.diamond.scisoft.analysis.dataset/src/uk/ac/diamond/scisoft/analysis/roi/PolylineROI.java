@@ -246,8 +246,8 @@ public class PolylineROI extends PointROI implements Iterable<PointROI>, Seriali
 
 	@Override
 	public boolean isNearOutline(double x, double y, double distance) {
-		if (!super.isNearOutline(x, y, distance))
-			return false;
+		if (super.isNearOutline(x, y, distance))
+			return true;
 
 		int imax = pts.size();
 		if (imax < 2)

@@ -331,7 +331,7 @@ public class ROITest {
 
 		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
 		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() - 1, 2.5));
-		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
+		assertFalse(p.isNearOutline(p.getPointX() + 2.5, p.getPointY() + 4, 2.5));
 	}
 
 	@Test

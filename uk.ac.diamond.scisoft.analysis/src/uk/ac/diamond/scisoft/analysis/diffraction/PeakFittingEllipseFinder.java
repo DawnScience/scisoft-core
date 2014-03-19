@@ -166,7 +166,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.arange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g);
+				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g,1000);
 				
 			} catch (Exception e) {
 				logger.debug(e.getMessage());

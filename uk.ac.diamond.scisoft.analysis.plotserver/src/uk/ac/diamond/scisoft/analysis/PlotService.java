@@ -48,7 +48,7 @@ public interface PlotService {
 	 * @param guiName
 	 *            The name of the GUI panel to plot to
 	 * @param plotData
-	 *            The data which requires plotting
+	 *            The data which requires plotting (can be null to reset server's cached data)
 	 * @throws Exception
 	 *             If there is a problem with communication with the object.
 	 */

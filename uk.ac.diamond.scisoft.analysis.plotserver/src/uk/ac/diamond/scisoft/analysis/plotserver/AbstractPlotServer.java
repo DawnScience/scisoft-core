@@ -49,6 +49,10 @@ abstract public class AbstractPlotServer implements PlotServer {
 
 	@Override
 	public void setData(String guiName, DataBean data) throws Exception {
+		if (data == null) {
+			dataStore.remove(guiName);
+			return;
+		}
 		GuiBean gb = data.getGuiParameters();
 		Serializable value = gb == null ? null : gb.get(GuiParameters.PLOTOPERATION);
 

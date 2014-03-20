@@ -882,6 +882,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			GuiBean guiBean = new GuiBean();
 			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.EMPTY);
 			plotServer.updateGui(viewName, guiBean);
+			plotServer.setData(viewName, null); // remove data too
 		}
 	}
 

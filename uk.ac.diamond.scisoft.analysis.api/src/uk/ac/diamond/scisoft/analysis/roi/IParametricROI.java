@@ -20,10 +20,28 @@ package uk.ac.diamond.scisoft.analysis.roi;
  * A ROI whose boundary can be parameterised
  */
 public interface IParametricROI extends IROI {
-	
+
+	/**
+	 * Get point on boundary of ROI for given parameter
+	 *
+	 * @param parameter
+	 * @return point coordinates
+	 */
 	public double[] getPoint(double parameter);
-	
+
+	/**
+	 * Calculate parameter values at which ROI may intersect horizontal line of given y
+	 *
+	 * @param y
+	 * @return parameters (can be null or contain one or more values)
+	 */
 	public double[] getHorizontalIntersectionParameters(double y);
-	
+
+	/**
+	 * Calculate parameter values at which ROI may intersect vertical line of given x
+	 *
+	 * @param x
+	 * @return parameters (can be null or contain one or more values)
+	 */
 	public double[] getVerticalIntersectionParameters(double x);
 }

@@ -172,7 +172,6 @@ public class NexusDiffractionMetaReader {
 			detprop.setHPxSize(xyPixelSize[1]);
 		}
 		
-		
 		return new DiffractionMetadata(filePath,detprop,diffcrys);
 	}
 	
@@ -447,13 +446,20 @@ public class NexusDiffractionMetaReader {
 	
 	
 	private void populateFromNexus(Group nxDetector, DetectorProperties detprop) {
-		
-		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
+		System.out.println("Distance 4: " + detprop.getBeamCentreDistance());
 		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(nxDetector, detprop));
+		System.out.println("Distance 6: " + detprop.getBeamCentreDistance());
 		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(nxDetector, detprop));
+		System.out.println("Distance 0 : " + detprop.getBeamCentreDistance());
+		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(nxDetector,detprop));
+		System.out.println("Distance 1 : " + detprop.getBeamCentreDistance());
+		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
+		System.out.println("Distance 3 : " + detprop.getBeamCentreDistance());
+		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(nxDetector,detprop));
+		System.out.println("Distance 5 : " + detprop.getBeamCentreDistance());
+		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(nxDetector,detprop));
+		System.out.println("Distance 2 : " + detprop.getBeamCentreDistance());
+		
 	}
 	
 	private boolean updateDetectorOrientation(Group nexusGroup, DetectorProperties detprop) {

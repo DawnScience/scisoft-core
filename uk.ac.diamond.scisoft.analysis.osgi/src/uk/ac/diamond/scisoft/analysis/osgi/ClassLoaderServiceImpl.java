@@ -21,7 +21,7 @@ import org.eclipse.ui.services.IServiceLocator;
 import py4j.ClassLoaderService;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
+import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 
@@ -35,7 +35,7 @@ public class ClassLoaderServiceImpl extends AbstractServiceFactory implements Cl
 	public ClassLoaderServiceImpl() {
 		loader = new CompositeClassLoader();
 		loader.add(AbstractDataset.class.getClassLoader()); // analysis.dataset
-		loader.add(LinearROI.class.getClassLoader());       // analysis
+		loader.add(NumPyFileLoader.class.getClassLoader()); // analysis
 		loader.add(Slice.class.getClassLoader());           // analysis.api
 	}
 

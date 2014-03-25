@@ -176,7 +176,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
-		Assert.assertEquals(662877.7117513434, maxi,0.00001);
+		Assert.assertEquals(662877.6875, maxi,0.00001);
 		//-24427.040167283067
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
@@ -198,7 +198,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
-		Assert.assertEquals(662877.7117513434, maxi,0.00001);
+		Assert.assertEquals(662877.6875, maxi,0.00001);
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
 

@@ -161,7 +161,8 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		else axis.setName("2theta");
 		
 		result.add(axis);
-		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,AbstractDataset.FLOAT64));
+		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,intensity.getDtype()));
+		
 		out.setName(name + "_integrated");
 		
 		 if (correctSolidAngle) {

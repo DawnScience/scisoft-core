@@ -120,9 +120,9 @@ public class CalibrantGenerator {
 		CalibrantSpacing calibrant = new CalibrantSpacing(name);
 		List<HKL> listHKL =  new ArrayList<HKL>();
 
-		for (int l = 0; l < maxhkl; l++) {
-			for (int k = 0; k < maxhkl; k++) {
-				for (int h = 0; h < maxhkl; h++) {
+		for (int l = -maxhkl; l < maxhkl; l++) {
+			for (int k = -maxhkl; k < maxhkl; k++) {
+				for (int h = -maxhkl; h < maxhkl; h++) {
 
 					if (h==0 && k == 0) continue;
 					
@@ -154,14 +154,34 @@ public class CalibrantGenerator {
 
 		for (int i = 0; i < listHKL.size(); i++) listHKL.get(i).setRingName("Position " + i);
 
-		calibrant.setHKLs(listHKL);
+		calibrant.setHKLs(listHKL.subList(0, maxhkl));
 
 		return calibrant;
 	}
 
 	private static boolean isAllowedRhombohedral(int h, int k, int l) {
-		//((-h+k+l)%3 == 0);
-		return (l%2 == 0 && (h+2*k)%3!=0);
+		
+		if (h != k && k != l && h != l && h != -k && h != 0 && k != 0 && l != 0)
+            if ((-h+k+l)%3 == 0) return true;
+		
+		 if (l == 0 && h != k && h != 0 && k != 0)
+             if ((-h + k)%3 == 0) return true;
+		
+		 int i = -(h+k);
+		 
+		 if (h == k && i == -2 * h && h != 0)
+             if ((l)%3 == 0) return true;
+		 
+		 if (h == -k && i == 0 && h != 0 && l != 0)
+             if ((h+l)%3 == 0 && (l)%2 == 0) return true;
+		 
+		 if (h == 0 && k == 0 && i == 0 && l != 0)
+             if ((l)%6 == 0) return true;
+		 
+		 if (h == -k && i == 0 && l == 0 && h != 0)
+             if ((h)%3 == 0) return true;
+		 
+		return false;
 	}
 	
 	private static HKL calculateCubicLatticeSpacing(double a, int h, int k, int l) {

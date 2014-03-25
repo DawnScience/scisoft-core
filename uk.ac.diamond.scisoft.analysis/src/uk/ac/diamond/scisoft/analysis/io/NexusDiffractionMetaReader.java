@@ -691,4 +691,8 @@ public class NexusDiffractionMetaReader {
 		for (int i = 0; i < intShape.length; i++) intShape[i] = (int)longShape[i];
 		return intShape;
 	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
 }

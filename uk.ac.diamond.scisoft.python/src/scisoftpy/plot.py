@@ -40,6 +40,7 @@ _plot_image = _plot.plot_image
 _plot_images = _plot.plot_images
 _plot_surface = _plot.plot_surface
 _plot_stack = _plot.plot_stack
+_plot_addstack = _plot.plot_addstack
 _plot_updatestack = _plot.plot_updatestack
 _plot_points2d = _plot.plot_points2d
 _plot_updatepoints2d = _plot.plot_updatepoints2d
@@ -440,8 +441,8 @@ def surface(s, x=None, y=None, name=None):
     _plot_surface(name, x, y, s)
 
 def stack(x, y=None, z=None, name=None):
-    '''Plot all of the given 1D y datasets against corresponding x as a 3D stack
-    with optional z coordinates in the named view
+    '''Plot all of the given 1D y datasets, optionally against any given x datasets,
+    as a 3D stack of lines with optional z coordinates in the named view
 
     Arguments:
     x -- optional dataset or list of datasets for x-axis
@@ -460,6 +461,28 @@ def stack(x, y=None, z=None, name=None):
         x = [ _core.arange(l) ]
 
     _plot_stack(name, _toList(x), _toList(y), z)
+
+def addstack(x, y=None, z=None, name=None):
+    '''Add line(s) to existing stack plot, optionally against any given x datasets
+    with optional z coordinates in the named view
+
+    Arguments:
+    x -- optional dataset or list of datasets for x-axis
+    y -- dataset or list of datasets
+    z -- optional dataset for z-axis
+    name -- name of plot view to use (if None, use default name)
+    '''
+    if name is None:
+        name = _PVNAME
+    if not y:
+        y = _toList(x)
+        l = 0
+        for d in y:
+            if d.size > l:
+                l = d.size
+        x = [ _core.arange(l) ]
+
+    _plot_addstack(name, _toList(x), _toList(y), z)
 
 def updatestack(x, y=None, z=None, name=None):
     '''Update existing 3D line stack by changing displayed y dataset (or list of datasets),

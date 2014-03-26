@@ -103,9 +103,10 @@ the optional keyword argument, ``name``. For example::
     dnp.plot.line(y, name="Plot 2")
 
 
-In line and points plots, more lines or points can be added with::
+In line, stack and points plots, more lines or points can be added with::
 
     dnp.plot.addline([x,] y)
+    dnp.plot.addstack([x,] y, z=None)
     dnp.plot.addpoints(x, y, z=None, size=0)
 
 Both 2D image plots, 2D surface plots and 3D points plots will open

@@ -30,7 +30,7 @@ abstract public class FlatteningViaAnalysisRpcToPythonTestAbstract extends Flatt
 	@BeforeClass
 	public static void start() throws Exception {
 		pythonRunInfo = PythonHelper
-				.runPythonFileBackground("test/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackanalysisrpc.py");
+				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackanalysisrpc.py");
 
 		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
 

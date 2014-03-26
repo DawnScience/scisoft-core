@@ -35,7 +35,7 @@ abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFl
 	@BeforeClass
 	public static void start() throws Exception {
 		pythonRunInfo = PythonHelper
-				.runPythonFileBackground("test/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackxmlrpc.py");
+				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackxmlrpc.py");
 
 		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
 

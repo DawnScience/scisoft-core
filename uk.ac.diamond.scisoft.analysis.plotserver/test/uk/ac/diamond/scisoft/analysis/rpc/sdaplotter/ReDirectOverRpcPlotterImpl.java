@@ -124,6 +124,11 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
+		request("addstack", xValues, yValues, zValues, plotName);
+	}
+
+	@Override
 	public void updateStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
 		request("updatestack", xValues, yValues, zValues, plotName);
 	}

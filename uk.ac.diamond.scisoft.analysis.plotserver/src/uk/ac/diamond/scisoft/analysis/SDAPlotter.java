@@ -745,6 +745,19 @@ public class SDAPlotter {
 	}
 
 	/**
+	 * Add more 1D plots to stack
+	 * 
+	 * @param plotName
+	 * @param xValues
+	 * @param yValues
+	 * @param zAxis
+	 * @throws Exception
+	 */
+	public static void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zAxis) throws Exception {
+		getPlotterImpl().addStackPlot(plotName, xValues, yValues, zAxis);
+	}
+
+	/**
 	 * Update stack with new data, keeping zoom level
 	 * 
 	 * @param plotName

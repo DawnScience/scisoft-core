@@ -606,12 +606,17 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
-		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, false);
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_NONE);
+	}
+
+	@Override
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_ADD);
 	}
 
 	@Override
 	public void updateStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
-		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, true);
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_UPDATE);
 	}
 
 	/**
@@ -620,10 +625,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param xValues
 	 * @param yValues
 	 * @param zValues
+	 * @param plotOperation one of GuiParameters.PLOTOP_*
 	 * @param updateMode if true, keep zoom settings
 	 * @throws Exception
 	 */
-	private void lstackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues, boolean updateMode) throws Exception {
+	private void lstackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues, String plotOperation) throws Exception {
 		for (IDataset x : xValues) {
 			if (!isDataND(x, 1)) {
 				logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
@@ -676,8 +682,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.ZAXIS, zValues);
 		}
 
-		if (updateMode)
-			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_UPDATE);
+		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
 
 		GuiBean guibean = new GuiBean();
 		guibean.put(GuiParameters.PLOTMODE, GuiPlotMode.ONED_THREED);

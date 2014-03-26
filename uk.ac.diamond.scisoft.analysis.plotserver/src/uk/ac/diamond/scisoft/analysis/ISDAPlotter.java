@@ -232,6 +232,17 @@ public interface ISDAPlotter {
 	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
 
 	/**
+	 * Add more 1D plots to stack
+	 * 
+	 * @param plotName
+	 * @param xValues
+	 * @param yValues
+	 * @param zValues
+	 * @throws Exception
+	 */
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
+
+	/**
 	 * Update stack with new data, keeping zoom level
 	 * 
 	 * @param plotName

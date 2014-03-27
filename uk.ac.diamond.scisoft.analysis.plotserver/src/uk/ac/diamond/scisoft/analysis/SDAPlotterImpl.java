@@ -191,14 +191,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 					} else {
 						yan = AxisMapBean.YAXIS;
 					}
-					IDataset yd = yValues[i];
-					if (yLabels != null) {
-						String yl = yLabels[i];
-						if (yl != null && yl.length() > 0) {
-							yd = yd.clone();
-							yd.setName(yl);
-						}
-					}
+					IDataset yd = renameDataset(yValues[i], yLabels == null ? null : yLabels[i]);
 					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
@@ -230,14 +223,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				} else {
 					yan = AxisMapBean.YAXIS; // single axis
 				}
-				IDataset yd = yValues[i];
-				if (yLabels != null) {
-					String yl = yLabels[i];
-					if (yl != null && yl.length() > 0) {
-						yd = yd.clone();
-						yd.setName(yl);
-					}
-				}
+				IDataset yd = renameDataset(yValues[i], yLabels == null ? null : yLabels[i]);
 				dataBean.addAxis(xid, x);
 				// now add it to the plot data
 				try {
@@ -258,6 +244,14 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		sendBeansToServer(plotName, dataBean, null);
 	}
 
+	private static IDataset renameDataset(IDataset d, String n) {
+		if (n != null && n.length() > 0) {
+			d = d.clone();
+			d.setName(n);
+		}
+		return d;
+	}
+
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
 
@@ -275,7 +269,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		try {
 			IDataset dataSet = dh.getDataset(0);
 			dataSet.setName(imageFileName);
-			imagePlot(plotName, null, null, dataSet);
+			imagePlot(plotName, null, null, dataSet, null, null);
 		} catch (Exception e) {
 			logger.error("Cannot plot non-image file from  " + imageFileName, e);
 			throw e;
@@ -283,7 +277,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
+	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xAxisName, String yAxisName) throws Exception {
 		if (!isDataND(image, 2)) {
 			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());
 			throw new Exception("Input dataset has incorrect rank: it should be 2");
@@ -313,10 +307,12 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		if (xValues != null) {
-			dataBean.addAxis(AxisMapBean.XAXIS, xValues);
+			IDataset xd = renameDataset(xValues, xAxisName);
+			dataBean.addAxis(AxisMapBean.XAXIS, xd);
 		}
 		if (yValues != null) {
-			dataBean.addAxis(AxisMapBean.YAXIS, yValues);
+			IDataset yd = renameDataset(yValues, yAxisName);
+			dataBean.addAxis(AxisMapBean.YAXIS, yd);
 		}
 		sendBeansToServer(plotName, dataBean, null);
 	}

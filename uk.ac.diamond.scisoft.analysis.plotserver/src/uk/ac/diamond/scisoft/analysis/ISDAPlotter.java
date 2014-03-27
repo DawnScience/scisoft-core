@@ -134,10 +134,11 @@ public interface ISDAPlotter {
 	 * @param yAxis
 	 *            can be null
 	 * @param image
+	 * @param xAxisName
+	 * @param yAxisName
 	 * @throws Exception
 	 */
-
-	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception;
+	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xAxisName, String yAxisName) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view

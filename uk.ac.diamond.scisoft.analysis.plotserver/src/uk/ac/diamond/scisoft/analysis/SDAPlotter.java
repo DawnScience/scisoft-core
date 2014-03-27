@@ -478,7 +478,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void imagePlot(String plotName, IDataset image) throws Exception {
-		getPlotterImpl().imagePlot(plotName, null, null, image);
+		getPlotterImpl().imagePlot(plotName, null, null, image, null, null);
 	}
 
 	/**
@@ -492,9 +492,25 @@ public class SDAPlotter {
 	 * @param image
 	 * @throws Exception
 	 */
-
 	public static void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
-		getPlotterImpl().imagePlot(plotName, xValues, yValues, image);
+		getPlotterImpl().imagePlot(plotName, xValues, yValues, image, null, null);
+	}
+
+	/**
+	 * Allows the plotting of an image to the defined view
+	 * 
+	 * @param plotName
+	 * @param xValues
+	 *            can be null
+	 * @param yValues
+	 *            can be null
+	 * @param image
+	 * @param xAxisName
+	 * @param yAxisName
+	 * @throws Exception
+	 */
+	public static void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xAxisName, String yAxisName) throws Exception {
+		getPlotterImpl().imagePlot(plotName, xValues, yValues, image, xAxisName, yAxisName);
 	}
 
 	/**

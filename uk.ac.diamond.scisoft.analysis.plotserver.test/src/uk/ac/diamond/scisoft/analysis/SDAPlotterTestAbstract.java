@@ -50,7 +50,7 @@ abstract public class SDAPlotterTestAbstract {
 		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
 		ds.setShape(10, 10);
 
-		sdaPlotterImplUnderTest.imagePlot("MyTest Image", null, null, ds);
+		sdaPlotterImplUnderTest.imagePlot("MyTest Image", null, null, ds, null, null);
 	
 		Assert.assertEquals("MyTest Image", testPlotServer.getLastPlotname());
 		Assert.assertEquals(GuiPlotMode.TWOD, testPlotServer.getLastDataBean().getGuiPlotMode());

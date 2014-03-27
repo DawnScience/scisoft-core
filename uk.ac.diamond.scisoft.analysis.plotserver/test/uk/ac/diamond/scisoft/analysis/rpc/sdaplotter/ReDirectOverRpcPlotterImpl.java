@@ -77,7 +77,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
+	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xName, String yName) throws Exception {
 		request("image", image, xValues, yValues, plotName);
 	}
 

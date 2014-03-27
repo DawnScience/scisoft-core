@@ -180,11 +180,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
+			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xName, String yName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.imagePlot(plotName, null, null, image);
+		redirectPlotter.imagePlot(plotName, null, null, image, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -206,11 +206,11 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		passed[0] = false;
 		registerHandler(new MockSDAPlotter() {
 			@Override
-			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception {
+			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xName, String yName) throws Exception {
 				passed[0] = true;
 			}
 		});
-		redirectPlotter.imagePlot(plotName, xAxis, yAxis, image);
+		redirectPlotter.imagePlot(plotName, xAxis, yAxis, image, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 

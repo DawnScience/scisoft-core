@@ -76,7 +76,8 @@ plotting package:
 
     dnp.plot.image(image, x=None, y=None)
 
-   plots the 2D dataset as an image
+   plots the 2D dataset as an image. The image axes can be labelled using a single-item dictionary in the same
+   manner as line plots
 
  * 2D scalar points plots::
 

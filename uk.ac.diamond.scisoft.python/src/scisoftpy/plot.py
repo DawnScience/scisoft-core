@@ -402,23 +402,59 @@ def updateline(x, y=None, title=None, name=None):
 plot = line
 updateplot = updateline
 
+def _checkimagearg(x, y, im, name):
+    '''x and y can be arrays or single-item dicts
+    (each dict comprises an axis name (or tuple of axis name/position) and array (can be None))
+    '''
+
+    if x is not None:
+        if type(x) is _types.DictType: # has axis name
+            x = x.values()[0]
+        if x is not None and x.shape[0] != im.shape[1]:
+            raise AttributeError("Width of image does not match the length of x" )
+
+    if y is not None:
+        if type(y) is _types.DictType: # has axis name
+            y = y.values()[0]
+        if y is not None and y.shape[0] != im.shape[0]:
+            raise AttributeError("Height of image does not match the length of y" )
+
+def _process_image(x, y, im, name):
+    _checkimagearg(x, y, im, name)
+
+    _plot_clear(name)
+    _clear_axis(name)
+
+    if x is not None:
+        ax = _setup_axes([x], 'x', name)[0]
+    else:
+        ax = None
+    if y is not None:
+        ay = _setup_axes([y], 'y', name)[0]
+    else:
+        ay = None
+
+    if type(x) is _types.DictType: # has axis name
+        _, x = x.items()[0]
+
+    if type(y) is _types.DictType: # has axis name
+        _, y = y.items()[0]
+
+    _plot_image(name, x, y, im, ax, ay)
+
 def image(im, x=None, y=None, name=None):
     '''Plot a 2D dataset as an image in the named view with optional x and y axes
 
     Arguments:
     im -- image dataset
-    x -- optional dataset for x-axis
-    y -- optional dataset for y-axis
+    x -- optional dataset or single-item dict for x-axis
+    y -- optional dataset or single-item dict for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
     if name is None:
         name = _PVNAME
-    if x is None:
-        y = None
-    if y is None:
-        x = None
 
-    _plot_image(name, x, y, im)
+    _process_image(x, y, im, name)
 
 def images(im, x=None, y=None, name=None):
     '''Plot 2D datasets as an image in the named view with optional x and y axes

@@ -52,13 +52,13 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		}
 
 		@Override
-		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] xAxisNames,
+		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] yLabels, String[] xAxisNames,
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
 
 		@Override
-		public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] xAxisNames,
+		public void addPlot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] yLabels, String[] xAxisNames,
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
@@ -83,7 +83,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	public void testPlotStringIDataset() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));
-		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -91,7 +91,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	public void testPlotStringIDatasetIDataset() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));
-		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -99,7 +99,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	public void testPlotStringIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));
-		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, new IDataset[] {yAxis}, null, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -107,7 +107,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	public void testPlotStringIDatasetIDatasetArray() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));
-		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, yAxes, null, null);
+		redirectPlotter.plot(plotName, null, new IDataset[] {xAxis}, yAxes, null, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 
@@ -115,7 +115,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 	public void testPlotStringIDatasetArrayIDatasetArray() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));
-		redirectPlotter.plot(plotName, null, xAxes, yAxes, null, null);
+		redirectPlotter.plot(plotName, null, xAxes, yAxes, null, null, null);
 		Assert.assertTrue(passed[0]);
 	}
 

@@ -73,13 +73,15 @@ public interface ISDAPlotter {
 	 *            The dataset to use as the X values
 	 * @param yValues
 	 *            The datasets to use as the Y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
 	 * @param xAxisNames
 	 *            The names of x axes, null if none
 	 * @param yAxisNames
 	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
+	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Add plot to existing plots
@@ -91,13 +93,15 @@ public interface ISDAPlotter {
 	 *            The dataset to use as the X values
 	 * @param yValues
 	 *            The datasets to use as the Y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
 	 * @param xAxisNames
 	 *            The names of x axes, null if none
 	 * @param yAxisNames
 	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
+	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level

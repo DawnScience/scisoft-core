@@ -121,18 +121,18 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, xAxisNames, yAxisNames, GuiParameters.PLOTOP_NONE);
+	public void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, yLabels, xAxisNames, yAxisNames, GuiParameters.PLOTOP_NONE);
 	}
 
 	@Override
-	public void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, xAxisNames, yAxisNames, GuiParameters.PLOTOP_ADD);
+	public void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, yLabels, xAxisNames, yAxisNames, GuiParameters.PLOTOP_ADD);
 	}
 
 	@Override
 	public void updatePlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, new String[] {xAxisName}, new String[] {yAxisName}, GuiParameters.PLOTOP_UPDATE);
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, null, new String[] {xAxisName}, new String[] {yAxisName}, GuiParameters.PLOTOP_UPDATE);
 	}
 
 	/**
@@ -141,12 +141,13 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param title (can be null)
 	 * @param xValues
 	 * @param yValues
+	 * @param yLabels (can be null)
 	 * @param xAxisNames (can be null)
 	 * @param yAxisNames (can be null)
 	 * @param plotOperation one of GuiParameters.PLOTOP_*
 	 * @throws Exception
 	 */
-	private void lplot(final String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames, final String plotOperation) throws Exception {
+	private void lplot(final String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames, final String plotOperation) throws Exception {
 		if (yValues.length == 0) {
 			return;
 		}
@@ -163,6 +164,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						y.getRank());
 				throw new Exception("Input y dataset has incorrect rank: it should be 1");
 			}
+		}
+		if (yLabels != null && yLabels.length != yValues.length) {
+			logger.error("Number of y labels ({}) should match number of y datasets ({})", yLabels.length, yValues.length);
+			throw new Exception("Number of y labels should match number of y datasets");
 		}
 
 		logger.info("Plot sent to {}", plotName);
@@ -186,7 +191,15 @@ public class SDAPlotterImpl implements ISDAPlotter {
 					} else {
 						yan = AxisMapBean.YAXIS;
 					}
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i], new String[] {xid}, new String[] {xan, yan}));
+					IDataset yd = yValues[i];
+					if (yLabels != null) {
+						String yl = yLabels[i];
+						if (yl != null && yl.length() > 0) {
+							yd = yd.clone();
+							yd.setName(yl);
+						}
+					}
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();
@@ -217,10 +230,18 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				} else {
 					yan = AxisMapBean.YAXIS; // single axis
 				}
+				IDataset yd = yValues[i];
+				if (yLabels != null) {
+					String yl = yLabels[i];
+					if (yl != null && yl.length() > 0) {
+						yd = yd.clone();
+						yd.setName(yl);
+					}
+				}
 				dataBean.addAxis(xid, x);
 				// now add it to the plot data
 				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i], new String[] {xid}, new String[] {xan, yan}));
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();

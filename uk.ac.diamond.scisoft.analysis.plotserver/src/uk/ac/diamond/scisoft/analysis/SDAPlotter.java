@@ -89,7 +89,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset yValues) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, null);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, null, null);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset yValues) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, null);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, null, null);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(null, yValues), new IDataset[] { yValues }, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xValues, final IDataset yValues) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), new IDataset[] { yValues }, null, null);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), new IDataset[] { yValues }, null, null, null);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, final IDataset xValues, final IDataset yValues) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), new IDataset[] { yValues }, null, null);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), new IDataset[] { yValues }, null, null, null);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xValues, final IDataset[] yValues) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, null);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, null, null);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final IDataset xValues, final IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, String title, final IDataset xValues, IDataset[] yValues) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, null);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, null, null);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, String title, final IDataset xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateXValues(xValues, yValues), yValues, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, IDataset[] xValues, IDataset[] yValues) throws Exception {
-		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateAllXValues(xValues, yValues), yValues, null, null);
+		getPlotterImpl().plot(plotName, null, SDAPlotterImpl.validateAllXValues(xValues, yValues), yValues, null, null, null);
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues) throws Exception {
-		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateAllXValues(xValues, yValues), yValues, null, null);
+		getPlotterImpl().plot(plotName, title, SDAPlotterImpl.validateAllXValues(xValues, yValues), yValues, null, null, null);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().plot(plotName, title, xValues, yValues, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().plot(plotName, title, xValues, yValues, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -288,7 +288,28 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		getPlotterImpl().plot(plotName, title, xValues, yValues, xAxisNames, yAxisNames);
+		getPlotterImpl().plot(plotName, title, xValues, yValues, null, xAxisNames, yAxisNames);
+	}
+
+	/**
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xValues
+	 *            The dataset to use as the x values
+	 * @param yValues
+	 *            The dataset to use as the y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
+	 * @throws Exception
+	 */
+	public static void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		getPlotterImpl().plot(plotName, title, xValues, yValues, yLabels, xAxisNames, yAxisNames);
 	}
 
 	/**
@@ -312,7 +333,7 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		getPlotterImpl().addPlot(plotName, title, xValues, yValues, new String[] {xAxisName}, new String[] {yAxisName});
+		getPlotterImpl().addPlot(plotName, title, xValues, yValues, null, new String[] {xAxisName}, new String[] {yAxisName});
 	}
 
 	/**
@@ -332,7 +353,29 @@ public class SDAPlotter {
 	 * @throws Exception
 	 */
 	public static void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		getPlotterImpl().addPlot(plotName, title, xValues, yValues, xAxisNames, yAxisNames);
+		getPlotterImpl().addPlot(plotName, title, xValues, yValues, null, xAxisNames, yAxisNames);
+	}
+
+	/**
+	 * Add plots to existing plots
+	 * @param plotName
+	 *            The name of the view to plot to
+	 * @param title
+	 *            The title of the plot
+	 * @param xValues
+	 *            The dataset to use as the x values
+	 * @param yValues
+	 *            The dataset to use as the y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
+	 * @param xAxisNames
+	 *            The names of x axes, null if none
+	 * @param yAxisNames
+	 *            The names of y axes, null if none
+	 * @throws Exception
+	 */
+	public static void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		getPlotterImpl().addPlot(plotName, title, xValues, yValues, yLabels, xAxisNames, yAxisNames);
 	}
 
 	/**

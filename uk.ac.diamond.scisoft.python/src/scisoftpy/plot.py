@@ -174,7 +174,9 @@ _AXES_NAMES = { 'x':{}, 'y':{} }
 import types as _types
 
 def _parselinearg(x, y, title, name):
-    '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
+    '''x and y can be lists of arrays, tuples or single-item dicts
+    (each tuple comprises an array and label)
+    (each dict comprises an axis name (or tuple of axis name/position) and array (or array/label tuple))
     '''
     if y is None:
         if isinstance(x, dict):
@@ -202,6 +204,8 @@ def _parselinearg(x, y, title, name):
                 for i in yl:
                     if type(i) is _types.DictType: # has axis name
                         i = i.values()[0]
+                    if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
+                        i = i[0]
                     if xLength != i.shape[0]:
                         raise AttributeError("length of y does not match the length of x" )
             elif len(xl) != len(yl):
@@ -212,6 +216,8 @@ def _parselinearg(x, y, title, name):
                         i = i.values()[0]
                     if type(j) is _types.DictType: # has axis name
                         j = j.values()[0]
+                    if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
+                        j = j[0]
                     if i.shape[0] != j.shape[0]:
                         raise AttributeError("length of y does not match the length of x")
 
@@ -291,6 +297,7 @@ def _process_line(x, y, title, name, mode):
     # generate list of axes
     xs = []
     ys = []
+    yn = [] # list of y names
     for i in range(len(yl)):
         if xl is not None:
             xi = xl[0] if len(xl) == 1 else xl[i]
@@ -303,20 +310,29 @@ def _process_line(x, y, title, name, mode):
                 xs.append(xi)
 
         yi = yl[i]
+        yt = None
         if type(yi) is _types.DictType: # has axis name
             _, yi = yi.items()[0]
+        if type(yi) is _types.ListType or type(yi) is _types.TupleType: # has y dataset labelling
+            yi, yt = yi[0], yi[1] 
         ys.append(yi)
+        yn.append(yt)
 
     for a in xs: # if all None then make it None
         if a is not None:
             break
     else:
         xs = None
+    for a in yn: # if all None then make it None
+        if a is not None:
+            break
+    else:
+        yn = None
 
     if mode is None:
-        _plot_line(name, t, xs, ys, ax, ay)
+        _plot_line(name, t, xs, ys, yn, ax, ay)
     else:
-        _plot_addline(name, t, xs, ys, ax, ay)
+        _plot_addline(name, t, xs, ys, yn, ax, ay)
 
 def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any

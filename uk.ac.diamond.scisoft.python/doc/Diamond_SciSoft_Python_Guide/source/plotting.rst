@@ -59,6 +59,12 @@ plotting package:
     ycos = dnp.cos(dnp.radians(degs))
     dnp.plot.line([rads, {"degrees":degs}], [ysin, {("cos","right"):ycos}])
 
+   Finally, labels can be set for each line in a plot by specifying a tuple of dataset and
+   label for each ``y`` dataset::
+
+    dnp.plot.line([rads, {"degrees":degs}], [(ysin, "sin in rads") , {("cos", "right"):(ycos, "cos in degs")}])
+
+
  * multiple 1D scalar line plots as 3D series::
 
     dnp.plot.stack([x,] y, z=None)

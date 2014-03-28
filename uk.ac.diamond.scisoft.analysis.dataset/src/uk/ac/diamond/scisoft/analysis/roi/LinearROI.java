@@ -362,16 +362,4 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 			return null;
 		return new double[] { f };
 	}
-
-	@Override
-	public double[] getHorizontalIntersectionParameters(double y) {
-		double[] ept = getEndPoint();
-		double pax = Math.min(spt[1], ept[1]);
-		if (y < pax) return null;
-		pax = Math.max(spt[1], ept[1]);
-		if (y > pax) return null;
-		return new double[]{spt[0] + (y-spt[1])*sang};
-		
-	
-	}
 }

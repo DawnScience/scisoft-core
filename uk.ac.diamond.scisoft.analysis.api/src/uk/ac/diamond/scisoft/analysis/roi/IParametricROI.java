@@ -33,7 +33,7 @@ public interface IParametricROI extends IROI {
 	 * Calculate parameter values at which ROI may intersect horizontal line of given y
 	 *
 	 * @param y
-	 * @return parameters (can be null or contain one or more values)
+	 * @return parameters (can be null for non-intersection, or contain one [NaN in degenerate case] or more values)
 	 */
 	public double[] getHorizontalIntersectionParameters(double y);
 
@@ -41,7 +41,8 @@ public interface IParametricROI extends IROI {
 	 * Calculate parameter values at which ROI may intersect vertical line of given x
 	 *
 	 * @param x
-	 * @return parameters (can be null or contain one or more values)
+	 * @return parameters (can be null for non-intersection or degenerate case,
+	 * or contain one or more values)
 	 */
 	public double[] getVerticalIntersectionParameters(double x);
 }

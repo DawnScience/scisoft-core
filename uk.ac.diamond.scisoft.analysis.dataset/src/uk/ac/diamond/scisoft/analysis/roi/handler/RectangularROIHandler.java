@@ -49,6 +49,11 @@ public class RectangularROIHandler extends ROIHandler {
 	}
 
 	@Override
+	public int getCentreHandle() {
+		return 4;
+	}
+
+	@Override
 	public double[] getHandlePoint(int handle, int size) {
 		final RectangularROI oroi = (RectangularROI) roi;
 		double[] pt = null;

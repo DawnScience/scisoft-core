@@ -50,6 +50,11 @@ public class LinearROIHandler extends ROIHandler {
 	}
 
 	@Override
+	public int getCentreHandle() {
+		return 1;
+	}
+
+	@Override
 	public double[] getHandlePoint(int handle, int size) {
 		double[] pt = getAnchorPoint(handle, size);
 		

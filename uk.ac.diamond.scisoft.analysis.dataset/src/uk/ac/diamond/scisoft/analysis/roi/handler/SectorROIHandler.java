@@ -50,6 +50,11 @@ public class SectorROIHandler extends ROIHandler {
 	}
 
 	@Override
+	public int getCentreHandle() {
+		return 9;
+	}
+
+	@Override
 	public double[] getHandlePoint(int handle, int size) {
 		return null;
 	}

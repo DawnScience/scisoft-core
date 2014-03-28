@@ -47,6 +47,11 @@ public class PolygonalROIHandler extends ROIHandler {
 	}
 
 	@Override
+	public int getCentreHandle() {
+		return -1;
+	}
+
+	@Override
 	public void setROI(IROI roi) {
 		PolygonalROI proi = (PolygonalROI) roi;
 

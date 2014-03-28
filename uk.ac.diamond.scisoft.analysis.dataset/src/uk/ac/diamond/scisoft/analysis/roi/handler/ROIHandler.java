@@ -34,19 +34,26 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	/**
 	 * @param handle
 	 * @param size 
-	 * @return handle point
+	 * @return handle point for corner of handle box
 	 */
 	abstract public double[] getHandlePoint(int handle, int size);
 
 	/**
 	 * @param handle
 	 * @param size
-	 * @return anchor point for scale invariant display
+	 * @return anchor point for scale invariant display and acts as centre of rotation
 	 */
 	abstract public double[] getAnchorPoint(int handle, int size);
 
+	/**
+	 * @return ROI
+	 */
 	abstract public IROI getROI();
 
+	/**
+	 * @return centre handle ID
+	 */
+	abstract public int getCentreHandle();
 
 	/**
 	 * @param roi The roi to set.

@@ -337,29 +337,32 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	public String toString() {
 		return super.toString() + String.format("point=%s, length=%g, angle=%g", Arrays.toString(spt), len, getAngleDegrees());
 	}
-	
-	/**
-	 * Calculate values for y at which line will intersect vertical line of given x
-	 * @param x
-	 * @return possible angles
-	 */
+
 	@Override
 	public double[] getVerticalIntersectionParameters(double x) {
-
-		double[] ept = getEndPoint();
-		double pax = Math.min(spt[0], ept[0]);
-		if (x < pax) return null;
-		pax = Math.max(spt[0], ept[0]);
-		if (x > pax) return null;
-		return new double[]{spt[1] + (x-spt[0])*cang};
-
+		if (Math.abs(cang) <= Math.ulp(1d)) {
+			return x == spt[0] ? new double[] { Double.NaN } : null;
+		}
+		x -= spt[0];
+		double f = x / (len * cang);
+		if (f < 0 || f > 1)
+			return null;
+		return new double[] { f };
 	}
-	
-	/**
-	 * Calculate values for x at which line will intersect horizontal line of given y
-	 * @param y
-	 * @return possible angles
-	 */
+
+	@Override
+	public double[] getHorizontalIntersectionParameters(double y) {
+		if (sang == 0) {
+			return y == spt[1] ? new double[] { Double.NaN } : null;
+		}
+
+		y -= spt[1];
+		double f = y / (len * sang);
+		if (f < 0 || f > 1)
+			return null;
+		return new double[] { f };
+	}
+
 	@Override
 	public double[] getHorizontalIntersectionParameters(double y) {
 		double[] ept = getEndPoint();

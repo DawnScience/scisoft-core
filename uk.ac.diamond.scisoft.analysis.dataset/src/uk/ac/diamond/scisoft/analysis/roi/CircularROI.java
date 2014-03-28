@@ -188,4 +188,22 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 		
 		return new double[] {ang, (Math.PI*2)-ang};
 	}
+
+	@Override
+	public double getAngleDegrees() {
+		return 0;
+	}
+
+	@Override
+	public void setAngleDegrees(double degrees) {
+	}
+
+	@Override
+	public double getAngle() {
+		return 0;
+	}
+
+	@Override
+	public void setAngle(double angle) {
+	}
 }

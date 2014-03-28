@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 /**
  * A ROI whose boundary can be parameterised
  */
-public interface IParametricROI extends IROI {
+public interface IParametricROI extends IOrientableROI {
 
 	/**
 	 * Get point on boundary of ROI for given parameter

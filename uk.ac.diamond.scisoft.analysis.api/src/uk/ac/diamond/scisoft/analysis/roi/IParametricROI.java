@@ -45,4 +45,16 @@ public interface IParametricROI extends IOrientableROI {
 	 * or contain one or more values)
 	 */
 	public double[] getVerticalIntersectionParameters(double x);
+
+	/**
+	 * @param d
+	 * @return start parameter at distance from centre or focus
+	 */
+	public double getStartParameter(double d);
+
+	/**
+	 * @param d
+	 * @return end parameter at distance from centre or focus
+	 */
+	public double getEndParameter(double d);
 }

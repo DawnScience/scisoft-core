@@ -122,14 +122,6 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	}
 
 	/**
-	 * @param d
-	 * @return start angle at distance from focus (end = 2pi - start)
-	 */
-	public double getStartAngle(double d) {
-		return Math.acos(1 - tp/d);
-	}
-
-	/**
 	 * Get point on parabola at given angle
 	 * @param angle in degrees
 	 * @return point 
@@ -220,6 +212,24 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 		}
 		y = Math.asin(y);
 		return sanifyAngles(y - t, Math.PI - y - t);
+	}
+
+	/**
+	 * @param d
+	 * @return start angle at distance from focus
+	 */
+	@Override
+	public double getStartParameter(double d) {
+		return Math.acos(1 - tp/d);
+	}
+
+	/**
+	 * @param d
+	 * @return end angle at distance from focus
+	 */
+	@Override
+	public double getEndParameter(double d) {
+		return Math.PI * 2 - getStartParameter(d);
 	}
 
 	@Override

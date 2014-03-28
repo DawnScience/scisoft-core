@@ -362,4 +362,20 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 			return null;
 		return new double[] { f };
 	}
+
+	/**
+	 * @return 0
+	 */
+	@Override
+	public double getStartParameter(double d) {
+		return 0;
+	}
+
+	/**
+	 * @return 1
+	 */
+	@Override
+	public double getEndParameter(double d) {
+		return 1;
+	}
 }

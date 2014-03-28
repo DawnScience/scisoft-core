@@ -382,7 +382,7 @@ public class ROITest {
 		ParabolicROI p = new ParabolicROI(3, 0, 0, 0);
 
 		double distance = 5.5;
-		double limit = p.getStartAngle(distance);
+		double limit = p.getStartParameter(distance);
 		for (int i = 0; i < SIDES; i++) {
 			double a = (2 * i * Math.PI) / SIDES;
 			double[] pt = p.getPoint(a);
@@ -399,7 +399,7 @@ public class ROITest {
 		HyperbolicROI h = new HyperbolicROI(3, 2, 0, 0, 0);
 
 		double distance = 5.5;
-		double limit = h.getStartAngle(distance);
+		double limit = h.getStartParameter(distance);
 		for (int i = 0; i < SIDES; i++) {
 			double a = (2 * i * Math.PI) / SIDES;
 			double[] pt = h.getPoint(a);

@@ -206,4 +206,14 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	@Override
 	public void setAngle(double angle) {
 	}
+
+	@Override
+	public double getStartParameter(double d) {
+		return 0;
+	}
+
+	@Override
+	public double getEndParameter(double d) {
+		return Math.PI * 2;
+	}
 }

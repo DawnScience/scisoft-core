@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 
 /**
  * Wrapper class for a LinearROI that adds handles
  */
-public class LinearROIHandler extends ROIHandler {
+public class LinearROIHandler extends ROIHandler<LinearROI> {
 
 	/**
 	 * Number of handle areas
@@ -39,14 +38,6 @@ public class LinearROIHandler extends ROIHandler {
 			add(-1);
 		}
 		this.roi = roi;
-	}
-
-	/**
-	 * @return Returns the roi.
-	 */
-	@Override
-	public LinearROI getROI() {
-		return (LinearROI) roi;
 	}
 
 	@Override
@@ -67,18 +58,17 @@ public class LinearROIHandler extends ROIHandler {
 
 	@Override
 	public double[] getAnchorPoint(int handle, int size) {
-		final LinearROI oroi = (LinearROI) roi;
 		double[] pt = null;
 
 		switch (handle) {
 		case 0:
-			pt = oroi.getPoint();
+			pt = roi.getPoint();
 			break;
 		case 1:
-			pt = oroi.getMidPoint();
+			pt = roi.getMidPoint();
 			break;
 		case 2:
-			pt = oroi.getEndPoint();
+			pt = roi.getEndPoint();
 			break;
 		}
 
@@ -90,20 +80,19 @@ public class LinearROIHandler extends ROIHandler {
 	 * @return reoriented ROI
 	 */
 	public LinearROI reorient(double[] pt) {
-		final LinearROI oroi = (LinearROI) roi;
 		LinearROI croi = null;
 		double len;
 
 		switch (handle) {
 		case 0:
-			croi = oroi.copy();
+			croi = roi.copy();
 			len = croi.getLength();
 			croi.setPointKeepEndPoint(pt);
 			croi.translateAlongLength(croi.getLength()-len);
 			croi.setLength(len);
 			break;
 		case 2:
-			croi = oroi.copy();
+			croi = roi.copy();
 			len = croi.getLength();
 			croi.setEndPoint(pt);
 			croi.setLength(len);
@@ -117,16 +106,15 @@ public class LinearROIHandler extends ROIHandler {
 	 * @return resized ROI
 	 */
 	public LinearROI resize(double[] pt) {
-		final LinearROI oroi = (LinearROI) roi;
 		LinearROI croi = null;
 
 		switch (handle) {
 		case 0:
-			croi = oroi.copy();
-			((LinearROI) roi).setPointKeepEndPoint(pt);
+			croi = roi.copy();
+			croi.setPointKeepEndPoint(pt);
 			break;
 		case 2:
-			croi = oroi.copy();
+			croi = roi.copy();
 			croi.setEndPoint(pt);
 			break;
 		}
@@ -134,18 +122,17 @@ public class LinearROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public IROI interpretMouseDragging(double[] spt, double[] ept) {
-		final LinearROI lroi = (LinearROI) roi;
+	public LinearROI interpretMouseDragging(double[] spt, double[] ept) {
 		LinearROI croi = null; // return null if not a valid event
 
 		switch (status) {
 		case RMOVE:
-			croi = lroi.copy();
+			croi = roi.copy();
 			croi.addPoint(ept);
 			croi.subPoint(spt);
 			break;
 		case NONE:
-			croi = lroi.copy();
+			croi = roi.copy();
 			croi.setEndPoint(ept);
 			break;
 		case REORIENT:
@@ -155,7 +142,7 @@ public class LinearROIHandler extends ROIHandler {
 			croi = resize(ept);
 			break;
 		case ROTATE:
-			croi = lroi.copy();
+			croi = roi.copy();
 			double ang = croi.getAngleRelativeToMidPoint(ept);
 			double[] mpt = croi.getMidPoint();
 			croi.setAngle(ang);

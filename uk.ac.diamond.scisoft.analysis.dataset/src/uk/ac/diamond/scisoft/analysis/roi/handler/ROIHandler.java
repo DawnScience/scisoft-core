@@ -27,8 +27,8 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
  * 
  * Its super class holds the primitive IDs for handle areas
  */
-abstract public class ROIHandler {
-	protected IROI roi;
+abstract public class ROIHandler<T extends IROI> {
+	protected T roi;
 	protected int handle;
 	protected HandleStatus status;
 	protected List<Integer> list;
@@ -86,7 +86,9 @@ abstract public class ROIHandler {
 	/**
 	 * @return ROI
 	 */
-	abstract public IROI getROI();
+	public T getROI() {
+		return roi;
+	}
 
 	/**
 	 * @return centre handle ID
@@ -96,7 +98,7 @@ abstract public class ROIHandler {
 	/**
 	 * @param roi The roi to set.
 	 */
-	public void setROI(IROI roi) {
+	public void setROI(T roi) {
 		this.roi = roi;
 	}
 
@@ -131,7 +133,7 @@ abstract public class ROIHandler {
 	 * @param ept
 	 * @return roi
 	 */
-	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+	public T interpretMouseDragging(int[] spt, int[] ept) {
 		return interpretMouseDragging(ROIUtils.convertToDoubleArray(spt), ROIUtils.convertToDoubleArray(ept));
 	}
 
@@ -141,5 +143,5 @@ abstract public class ROIHandler {
 	 * @param ept
 	 * @return roi
 	 */
-	abstract public IROI interpretMouseDragging(double[] spt, double[] ept);
+	abstract public T interpretMouseDragging(double[] spt, double[] ept);
 }

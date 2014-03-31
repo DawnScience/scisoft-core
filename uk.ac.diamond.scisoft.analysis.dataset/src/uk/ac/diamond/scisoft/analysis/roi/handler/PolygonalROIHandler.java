@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.PolygonalROI;
 
 /**
  * Wrapper class for polygon that adds handles for each point
  */
-public class PolygonalROIHandler extends ROIHandler {
+public class PolygonalROIHandler extends ROIHandler<PolygonalROI> {
 
 	/**
 	 * Handler for ROIBase
@@ -43,7 +42,7 @@ public class PolygonalROIHandler extends ROIHandler {
 	 */
 	@Override
 	public PolygonalROI getROI() {
-		return (PolygonalROI) roi;
+		return roi;
 	}
 
 	@Override
@@ -52,16 +51,14 @@ public class PolygonalROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public void setROI(IROI roi) {
-		PolygonalROI proi = (PolygonalROI) roi;
-
-		int n = proi.getSides();
+	public void setROI(PolygonalROI roi) {
+		int n = roi.getSides();
 		if (n > size()) {
 			for (int h = size(); h < n; h++) {
 				add(-1);
 			}
 		}
-		this.roi = proi;
+		this.roi = roi;
 	}
 
 	@Override
@@ -77,19 +74,18 @@ public class PolygonalROIHandler extends ROIHandler {
 
 	@Override
 	public double[] getAnchorPoint(int handle, int size) {
-		final PolygonalROI proi = (PolygonalROI) roi;
 		double[] pt = null;
 
-		int sides = proi.getSides();
+		int sides = roi.getSides();
 		if (handle < sides) {
-			pt = proi.getPoint(handle).getPoint();
+			pt = roi.getPoint(handle).getPoint();
 		}
 
 		return pt;
 	}
 
 	@Override
-	public IROI interpretMouseDragging(double[] spt, double[] ept) {
+	public PolygonalROI interpretMouseDragging(double[] spt, double[] ept) {
 		// TODO Auto-generated method stub
 		return null;
 	}

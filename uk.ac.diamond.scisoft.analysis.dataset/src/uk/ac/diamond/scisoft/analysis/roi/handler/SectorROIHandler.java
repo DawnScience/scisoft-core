@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 /**
  * Wrapper class for a SectorROI that adds handles
  */
-public class SectorROIHandler extends ROIHandler {
+public class SectorROIHandler extends ROIHandler<SectorROI> {
 	/**
 	 * Number of handle areas
 	 */
@@ -39,14 +39,6 @@ public class SectorROIHandler extends ROIHandler {
 			add(-1);
 		}
 		this.roi = roi;
-	}
-
-	/**
-	 * @return Returns the roi.
-	 */
-	@Override
-	public SectorROI getROI() {
-		return (SectorROI) roi;
 	}
 
 	@Override
@@ -66,45 +58,44 @@ public class SectorROIHandler extends ROIHandler {
 	 * @return handle point in polar coords
 	 */
 	public double[] getSectorPoint(int handle, int size, double dphi) {
-		SectorROI oroi = (SectorROI) roi;
 		double[] pt = new double[2];
 
 		switch (handle) {
 		case 0:
-			pt[0] = oroi.getRadius(0);
-			pt[1] = oroi.getAngle(0);
+			pt[0] = roi.getRadius(0);
+			pt[1] = roi.getAngle(0);
 			break;
 		case 1:
-			pt[0] = oroi.getRadius(0);
-			pt[1] = 0.5 * (oroi.getAngle(0) + oroi.getAngle(1) - dphi);
+			pt[0] = roi.getRadius(0);
+			pt[1] = 0.5 * (roi.getAngle(0) + roi.getAngle(1) - dphi);
 			break;
 		case 2:
-			pt[0] = oroi.getRadius(0);
-			pt[1] = oroi.getAngle(1) - dphi;
+			pt[0] = roi.getRadius(0);
+			pt[1] = roi.getAngle(1) - dphi;
 			break;
 		case 3:
-			pt[0] = 0.5 * (oroi.getRadius(0) + oroi.getRadius(1) - size);
-			pt[1] = oroi.getAngle(0);
+			pt[0] = 0.5 * (roi.getRadius(0) + roi.getRadius(1) - size);
+			pt[1] = roi.getAngle(0);
 			break;
 		case 4:
-			pt[0] = 0.5 * (oroi.getRadius(0) + oroi.getRadius(1) - size);
-			pt[1] = 0.5 * (oroi.getAngle(0) + oroi.getAngle(1) - dphi);
+			pt[0] = 0.5 * (roi.getRadius(0) + roi.getRadius(1) - size);
+			pt[1] = 0.5 * (roi.getAngle(0) + roi.getAngle(1) - dphi);
 			break;
 		case 5:
-			pt[0] = 0.5 * (oroi.getRadius(0) + oroi.getRadius(1) - size);
-			pt[1] = oroi.getAngle(1) - dphi;
+			pt[0] = 0.5 * (roi.getRadius(0) + roi.getRadius(1) - size);
+			pt[1] = roi.getAngle(1) - dphi;
 			break;
 		case 6:
-			pt[0] = oroi.getRadius(1) - size;
-			pt[1] = oroi.getAngle(0);
+			pt[0] = roi.getRadius(1) - size;
+			pt[1] = roi.getAngle(0);
 			break;
 		case 7:
-			pt[0] = oroi.getRadius(1) - size;
-			pt[1] = 0.5 * (oroi.getAngle(0) + oroi.getAngle(1) - dphi);
+			pt[0] = roi.getRadius(1) - size;
+			pt[1] = 0.5 * (roi.getAngle(0) + roi.getAngle(1) - dphi);
 			break;
 		case 8:
-			pt[0] = oroi.getRadius(1) - size;
-			pt[1] = oroi.getAngle(1) - dphi;
+			pt[0] = roi.getRadius(1) - size;
+			pt[1] = roi.getAngle(1) - dphi;
 			break;
 		case 9:
 			break;
@@ -114,39 +105,38 @@ public class SectorROIHandler extends ROIHandler {
 
 	@Override
 	public double[] getAnchorPoint(int handle, int size) {
-		SectorROI oroi = (SectorROI) roi;
 		double[] pt = new double[2];
 		double[] cpt = roi.getPointRef();
 		double[] rpt = null;
 
 		switch (handle) {
 		case 0:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), oroi.getAngle(0));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(0), roi.getAngle(0));
 			break;
 		case 1:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(0), 0.5 * (roi.getAngle(0) + roi.getAngle(1)));
 			break;
 		case 2:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(0), oroi.getAngle(1));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(0), roi.getAngle(1));
 			break;
 		case 3:
-			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(0));
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (roi.getRadius(0) + roi.getRadius(1)), roi.getAngle(0));
 			break;
 		case 4:
-			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)),
-					0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (roi.getRadius(0) + roi.getRadius(1)),
+					0.5 * (roi.getAngle(0) + roi.getAngle(1)));
 			break;
 		case 5:
-			rpt = SectorCoords.convertFromPolarRadians(0.5 * (oroi.getRadius(0) + oroi.getRadius(1)), oroi.getAngle(1));
+			rpt = SectorCoords.convertFromPolarRadians(0.5 * (roi.getRadius(0) + roi.getRadius(1)), roi.getAngle(1));
 			break;
 		case 6:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), oroi.getAngle(0));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(1), roi.getAngle(0));
 			break;
 		case 7:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), 0.5 * (oroi.getAngle(0) + oroi.getAngle(1)));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(1), 0.5 * (roi.getAngle(0) + roi.getAngle(1)));
 			break;
 		case 8:
-			rpt = SectorCoords.convertFromPolarRadians(oroi.getRadius(1), oroi.getAngle(1));
+			rpt = SectorCoords.convertFromPolarRadians(roi.getRadius(1), roi.getAngle(1));
 			break;
 		case 9:
 			return cpt;
@@ -170,7 +160,7 @@ public class SectorROIHandler extends ROIHandler {
 
 		if (handle == 4)
 			return sroi;
-		sroi = (SectorROI) roi.copy();
+		sroi = roi.copy();
 
 		switch (handle) {
 		case -1: // new definition
@@ -231,7 +221,7 @@ public class SectorROIHandler extends ROIHandler {
 
 		if (handle == 4)
 			return sroi;
-		sroi = (SectorROI) roi.copy();
+		sroi = roi.copy();
 
 		switch (handle) {
 		case 0: case 2: case 6: case 8:
@@ -251,9 +241,8 @@ public class SectorROIHandler extends ROIHandler {
 	@Override
 	public SectorROI interpretMouseDragging(double[] cpt, double[] pt) {
 		SectorROI croi = null; // return null if not a valid event
-		SectorROI sroi = (SectorROI) roi;
 
-		final double[] spt = sroi.getPointRef();
+		final double[] spt = roi.getPointRef();
 		SectorCoords ssc = null;
 		SectorCoords esc = null;
 		double[] sp = null;
@@ -261,13 +250,13 @@ public class SectorROIHandler extends ROIHandler {
 
 		switch (status) {
 		case CMOVE:
-			croi = sroi.copy();
+			croi = roi.copy();
 			pt[0] -= cpt[0];
 			pt[1] -= cpt[1];
 			croi.addPoint(pt);
 			break;
 		case RMOVE:
-			croi = sroi.copy();
+			croi = roi.copy();
 			ssc = new SectorCoords(spt, cpt);
 			esc = new SectorCoords(spt, pt);
 			sp = ssc.getPolarRadians();
@@ -276,7 +265,7 @@ public class SectorROIHandler extends ROIHandler {
 			croi.addAngles(ep[1] - sp[1]);
 			break;
 		case NONE:
-			croi = sroi.copy();
+			croi = roi.copy();
 			break;
 		case RESIZE:
 			ssc = new SectorCoords(spt, cpt);
@@ -286,7 +275,7 @@ public class SectorROIHandler extends ROIHandler {
 			croi = resize(sp, ep);
 			break;
 		case ROTATE:
-			croi = sroi.copy();
+			croi = roi.copy();
 			ssc = new SectorCoords(spt, cpt);
 			esc = new SectorCoords(spt, pt);
 			sp = ssc.getPolarRadians();

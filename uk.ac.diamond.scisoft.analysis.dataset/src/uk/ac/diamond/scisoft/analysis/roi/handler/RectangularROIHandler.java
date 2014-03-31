@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Wrapper class for a RectangularROI that adds handles
  */
-public class RectangularROIHandler extends ROIHandler {
+public class RectangularROIHandler extends ROIHandler<RectangularROI> {
 	/**
 	 * Number of handle areas
 	 */
@@ -40,14 +39,6 @@ public class RectangularROIHandler extends ROIHandler {
 		this.roi = roi;
 	}
 
-	/**
-	 * @return Returns the roi.
-	 */
-	@Override
-	public RectangularROI getROI() {
-		return (RectangularROI) roi;
-	}
-
 	@Override
 	public int getCentreHandle() {
 		return 4;
@@ -55,46 +46,45 @@ public class RectangularROIHandler extends ROIHandler {
 
 	@Override
 	public double[] getHandlePoint(int handle, int size) {
-		final RectangularROI oroi = (RectangularROI) roi;
 		double[] pt = null;
 
 		switch (handle) {
 		case 0:
-			pt = oroi.getPoint();
+			pt = roi.getPoint();
 			break;
 		case 1:
-			pt = oroi.getPoint(0.5, 0);
+			pt = roi.getPoint(0.5, 0);
 			pt[0] -= size/2;
 			break;
 		case 2:
-			pt = oroi.getPoint(1.0, 0);
+			pt = roi.getPoint(1.0, 0);
 			pt[0] -= size;
 			break;
 		case 3:
-			pt = oroi.getPoint(0.0, 0.5);
+			pt = roi.getPoint(0.0, 0.5);
 			pt[1] -= size/2;
 			break;
 		case 4:
-			pt = oroi.getPoint(0.5, 0.5);
+			pt = roi.getPoint(0.5, 0.5);
 			pt[0] -= size/2;
 			pt[1] -= size/2;
 			break;
 		case 5:
-			pt = oroi.getPoint(1.0, 0.5);
+			pt = roi.getPoint(1.0, 0.5);
 			pt[0] -= size;
 			pt[1] -= size/2;
 			break;
 		case 6:
-			pt = oroi.getPoint(0.0, 1.0);
+			pt = roi.getPoint(0.0, 1.0);
 			pt[1] -= size;
 			break;
 		case 7:
-			pt = oroi.getPoint(0.5, 1.0);
+			pt = roi.getPoint(0.5, 1.0);
 			pt[0] -= size/2;
 			pt[1] -= size;
 			break;
 		case 8:
-			pt = oroi.getPoint(1.0, 1.0);
+			pt = roi.getPoint(1.0, 1.0);
 			pt[0] -= size;
 			pt[1] -= size;
 			break;
@@ -104,36 +94,35 @@ public class RectangularROIHandler extends ROIHandler {
 
 	@Override
 	public double[] getAnchorPoint(int handle, int size) {
-		final RectangularROI oroi = (RectangularROI) roi;
 		double[] pt = null;
 
 		switch (handle) {
 		case 0:
-			pt = oroi.getPoint();
+			pt = roi.getPoint();
 			break;
 		case 1:
-			pt = oroi.getPoint(0.5, 0);
+			pt = roi.getPoint(0.5, 0);
 			break;
 		case 2:
-			pt = oroi.getPoint(1.0, 0);
+			pt = roi.getPoint(1.0, 0);
 			break;
 		case 3:
-			pt = oroi.getPoint(0.0, 0.5);
+			pt = roi.getPoint(0.0, 0.5);
 			break;
 		case 4:
-			pt = oroi.getPoint(0.5, 0.5);
+			pt = roi.getPoint(0.5, 0.5);
 			break;
 		case 5:
-			pt = oroi.getPoint(1.0, 0.5);
+			pt = roi.getPoint(1.0, 0.5);
 			break;
 		case 6:
-			pt = oroi.getPoint(0.0, 1.0);
+			pt = roi.getPoint(0.0, 1.0);
 			break;
 		case 7:
-			pt = oroi.getPoint(0.5, 1.0);
+			pt = roi.getPoint(0.5, 1.0);
 			break;
 		case 8:
-			pt = oroi.getPoint(1.0, 1.0);
+			pt = roi.getPoint(1.0, 1.0);
 			break;
 		}
 		return pt;
@@ -151,7 +140,7 @@ public class RectangularROIHandler extends ROIHandler {
 		if (handle == 4)
 			return rroi;
 
-		rroi = (RectangularROI) roi.copy();
+		rroi = roi.copy();
 		ept = rroi.getEndPoint();
 
 		switch (handle) {
@@ -212,35 +201,33 @@ public class RectangularROIHandler extends ROIHandler {
 		if (handle == 4 || handle % 2 != 0)
 			return rroi;
 
-		final RectangularROI oroi = (RectangularROI) roi;
-
-		rroi = oroi.copy();
+		rroi = roi.copy();
 		double nang, oang;
 
 		switch (handle) {
 		case 0: // keep end point
-			oang = oroi.getAngleRelativeToPoint(1.0, 1.0, oroi.getPoint());
-			nang = oroi.getAngleRelativeToPoint(1.0, 1.0, pt);
+			oang = roi.getAngleRelativeToPoint(1.0, 1.0, roi.getPoint());
+			nang = roi.getAngleRelativeToPoint(1.0, 1.0, pt);
 			rroi.addAngle(nang-oang);
-			rroi.setEndPointKeepLengths(oroi.getEndPoint());
+			rroi.setEndPointKeepLengths(roi.getEndPoint());
 			break;
 		case 2:
-			oang = oroi.getAngleRelativeToPoint(0.0, 1.0, oroi.getPoint(1.0, 0.0));
-			nang = oroi.getAngleRelativeToPoint(0.0, 1.0, pt);
+			oang = roi.getAngleRelativeToPoint(0.0, 1.0, roi.getPoint(1.0, 0.0));
+			nang = roi.getAngleRelativeToPoint(0.0, 1.0, pt);
 			rroi.translate(0.0, 1.0);
 			rroi.addAngle(nang-oang);
 			rroi.translate(0.0, -1.0);
 			break;
 		case 6:
-			oang = oroi.getAngleRelativeToPoint(1.0, 0.0, oroi.getPoint(0.0, 1.0));
-			nang = oroi.getAngleRelativeToPoint(1.0, 0.0, pt);
+			oang = roi.getAngleRelativeToPoint(1.0, 0.0, roi.getPoint(0.0, 1.0));
+			nang = roi.getAngleRelativeToPoint(1.0, 0.0, pt);
 			rroi.translate(1.0, 0.0);
 			rroi.addAngle(nang-oang);
 			rroi.translate(-1.0, 0.0);
 			break;
 		case 8: // keep start point
-			oang = oroi.getAngleRelativeToPoint(0, 0, oroi.getPoint(1.0, 1.0));
-			nang = oroi.getAngleRelativeToPoint(0, 0, pt);
+			oang = roi.getAngleRelativeToPoint(0, 0, roi.getPoint(1.0, 1.0));
+			nang = roi.getAngleRelativeToPoint(0, 0, pt);
 			rroi.addAngle(nang-oang);
 			break;
 		}
@@ -248,19 +235,18 @@ public class RectangularROIHandler extends ROIHandler {
 	}
 
 	@Override
-	public IROI interpretMouseDragging(double[] spt, double[] ept) {
-		final RectangularROI rroi = (RectangularROI) roi;
+	public RectangularROI interpretMouseDragging(double[] spt, double[] ept) {
 		RectangularROI croi = null; // return null if not a valid event
 
 		switch (status) {
 		case RMOVE:
-			croi = rroi.copy();
+			croi = roi.copy();
 			ept[0] -= spt[0];
 			ept[1] -= spt[1];
 			croi.addPoint(ept);
 			break;
 		case NONE:
-			croi = rroi.copy();
+			croi = roi.copy();
 			croi.setEndPoint(ept);
 			break;
 		case REORIENT:
@@ -270,7 +256,7 @@ public class RectangularROIHandler extends ROIHandler {
 			croi = resize(spt, ept);
 			break;
 		case ROTATE:
-			croi = rroi.copy();
+			croi = roi.copy();
 			double ang = croi.getAngleRelativeToMidPoint(ept);
 			double[] mpt = croi.getMidPoint();
 			croi.setAngle(ang);

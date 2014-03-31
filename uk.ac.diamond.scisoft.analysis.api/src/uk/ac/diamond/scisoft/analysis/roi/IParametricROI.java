@@ -21,6 +21,9 @@ package uk.ac.diamond.scisoft.analysis.roi;
  */
 public interface IParametricROI extends IOrientableROI {
 
+	@Override
+	public IParametricROI copy();
+
 	/**
 	 * Get point on boundary of ROI for given parameter
 	 *

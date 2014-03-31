@@ -20,6 +20,9 @@ package uk.ac.diamond.scisoft.analysis.roi;
  * Represents an orientable region of interest with the start point being the centre of rotation
  */
 public interface IOrientableROI extends IROI {
+	@Override
+	public IOrientableROI copy();
+
 	/**
 	 * @return angle, in degrees
 	 */

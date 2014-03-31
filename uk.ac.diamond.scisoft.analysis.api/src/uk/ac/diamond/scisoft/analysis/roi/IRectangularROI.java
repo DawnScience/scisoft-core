@@ -17,6 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 public interface IRectangularROI extends IOrientableROI {
+	@Override
+	public IRectangularROI copy();
 
 	/**
 	 * @param i

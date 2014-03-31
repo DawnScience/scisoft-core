@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
@@ -26,10 +27,47 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
  * 
  * Its super class holds the primitive IDs for handle areas
  */
-abstract public class ROIHandler extends ArrayList<Integer> {
+abstract public class ROIHandler {
 	protected IROI roi;
 	protected int handle;
 	protected HandleStatus status;
+	protected List<Integer> list;
+
+	public ROIHandler() {
+		list = new ArrayList<Integer>();
+	}
+
+	public boolean add(int e) {
+		return list.add(e);
+	}
+
+	public int get(int index) {
+		return list.get(index);
+	}
+
+	public int set(int index, int element) {
+		return list.set(index, element);
+	}
+
+	public int remove(int index) {
+		return list.remove(index);
+	}
+
+	public int size() {
+		return list.size();
+	}
+
+	public int indexOf(int o) {
+		return list.indexOf(o);
+	}
+
+	public boolean contains(int o) {
+		return list.contains(o);
+	}
+
+	public List<Integer> getAll() {
+		return list;
+	}
 
 	/**
 	 * @param handle

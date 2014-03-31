@@ -101,7 +101,7 @@ public class CalibrantGenerator {
 			int testd1 = h%2 + k%2 + l%2;
 			int testd2 = (h+k+l)%4;
 			if (testd1 == 0 && testd2 == 0) return true;
-			if (testd1 == 3 && testd2 == 0) return true;
+			if (testd1 == 3) return true;
 			break;
 		case FCC:
 			int testFcc = h%2 + k%2 + l%2;
@@ -111,7 +111,7 @@ public class CalibrantGenerator {
 		default:
 			break;
 		}
-		
+
 		return false;
 	}
 	

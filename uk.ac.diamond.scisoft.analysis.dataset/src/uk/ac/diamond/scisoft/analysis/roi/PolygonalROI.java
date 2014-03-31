@@ -27,6 +27,14 @@ public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Ser
 		super();
 	}
 
+	public PolygonalROI(PolylineROI poly) {
+		PolylineROI c = poly.copy();
+		name = c.name;
+		spt = c.spt;
+		plot = c.plot;
+		pts = c.pts;
+	}
+
 	public PolygonalROI(double[] start) {
 		super(start);
 	}

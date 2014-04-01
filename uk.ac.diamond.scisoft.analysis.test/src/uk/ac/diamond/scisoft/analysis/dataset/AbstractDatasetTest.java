@@ -135,6 +135,14 @@ public class AbstractDatasetTest {
 		b.mean(true);
 		assertEquals("Max", 11, b.max(true).doubleValue(), 1e-6);
 		assertEquals("Max arg", 11, b.argMax(true));
+
+		// check strided datasets give same max/min positions
+		a = AbstractDataset.arange(12, AbstractDataset.FLOAT64).reshape(3,4);
+		b = a.getSliceView(new Slice(1, null), new Slice(0, null, 2));
+		AbstractDataset c = a.getSlice(new Slice(1, null), new Slice(0, null, 2));
+
+		Assert.assertEquals(c.argMax(), b.argMax());
+		Assert.assertEquals(c.argMin(), b.argMin());
 	}
 
 	@Test
@@ -1539,6 +1547,12 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", 1.0, a.getObject());
+		assertEquals("Max", 1.0, a.max());
+		assertEquals("Min", 1.0, a.min());
+		assertEquals("MaxPos", 0, a.maxPos().length);
+		assertEquals("MinPos", 0, a.minPos().length);
+		assertEquals("ArgMax", 0, a.argMax());
+		assertEquals("ArgMin", 0, a.argMin());
 		assertEquals("Value", true, a.equals(new Double(1.0)));
 
 		a = AbstractDataset.zeros(new int[] {}, AbstractDataset.INT16);

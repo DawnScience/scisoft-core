@@ -1774,6 +1774,21 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Get flattened view index of given position 
+	 * @param pos
+	 *            the integer array specifying the n-D position
+	 * @return the index on the flattened dataset
+	 */
+	private int getFlat1DIndex(final int[] pos) {
+		final int imax = pos.length;
+		if (imax == 0) {
+			return 0;
+		}
+
+		return get1DIndexFromShape(pos);
+	}
+
+	/**
 	 * Function that uses the knowledge of the dataset to calculate the index in the data array
 	 * that corresponds to the n-dimensional position given by the int array. The input values
 	 * <b>must</b> be inside the arrays, this should be ok as this function is mainly in code which
@@ -1928,6 +1943,9 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return n-D position
 	 */
 	public static int[] getNDPositionFromShape(int n, int[] shape) {
+		if (shape == null || shape.length == 0)
+			return new int[0];
+
 		int rank = shape.length;
 		if (rank == 1) {
 			return new int[] { n };
@@ -3744,7 +3762,7 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of maximum value.
+	 * Find absolute index of maximum value (in a flattened view)
 	 * See {@link #argMax(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -3755,14 +3773,14 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of maximum value
+	 * Find absolute index of maximum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
 	@Override
 	public int argMax(boolean ignoreInvalids) {
-		return get1DIndex(maxPos(ignoreInvalids));
+		return getFlat1DIndex(maxPos(ignoreInvalids));
 	}
 
 	/**
@@ -3790,7 +3808,7 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of minimum value.
+	 * Find absolute index of minimum value (in a flattened view)
 	 * See {@link #argMin(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -3801,14 +3819,14 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of minimum value
+	 * Find absolute index of minimum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
 	@Override
 	public int argMin(boolean ignoreInvalids) {
-		return get1DIndex(minPos(ignoreInvalids));
+		return getFlat1DIndex(minPos(ignoreInvalids));
 	}
 
 	/**

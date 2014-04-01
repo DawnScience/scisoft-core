@@ -991,7 +991,7 @@ public interface ADataset extends IErrorDataset {
 	public ADataset min(boolean ignoreNaNs, int axis);
 
 	/**
-	 * Find absolute index of maximum value.
+	 * Find absolute index of maximum value (in a flattened view)
 	 * See {@link #argMax(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -999,7 +999,7 @@ public interface ADataset extends IErrorDataset {
 	public int argMax();
 
 	/**
-	 * Find absolute index of maximum value
+	 * Find absolute index of maximum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
@@ -1025,7 +1025,7 @@ public interface ADataset extends IErrorDataset {
 	public ADataset argMax(boolean ignoreNaNs, int axis);
 
 	/**
-	 * Find absolute index of minimum value.
+	 * Find absolute index of minimum value (in a flattened view)
 	 * See {@link #argMin(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -1033,7 +1033,7 @@ public interface ADataset extends IErrorDataset {
 	public int argMin();
 
 	/**
-	 * Find absolute index of minimum value
+	 * Find absolute index of minimum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index

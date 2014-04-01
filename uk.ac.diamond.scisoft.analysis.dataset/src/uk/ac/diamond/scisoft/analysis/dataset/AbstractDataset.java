@@ -1906,7 +1906,7 @@ public abstract class AbstractDataset implements ADataset {
 					+ "is larger then the size of the containing array");
 		}
 
-		return stride == null ? getNDPositionFromShape(n) : getNDPositionFromStrides(n);
+		return stride == null ? getNDPositionFromShape(n, shape) : getNDPositionFromStrides(n);
 	}
 
 	private boolean isIndexInRange(final int n) {
@@ -1921,7 +1921,13 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	abstract protected int getBufferLength();
 
-	private int[] getNDPositionFromShape(int n) {
+	/**
+	 * Get n-D position from given index
+	 * @param n index
+	 * @param shape
+	 * @return n-D position
+	 */
+	public static int[] getNDPositionFromShape(int n, int[] shape) {
 		int rank = shape.length;
 		if (rank == 1) {
 			return new int[] { n };

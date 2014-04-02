@@ -2392,4 +2392,93 @@ public class DatasetUtils {
 		}
 		return r;
 	}
+
+	/**
+	 * Calculate positions in given shape from a dataset of 1-D indexes
+	 * @param indices
+	 * @param shape
+	 * @return list of positions as integer datasets
+	 */
+	public static List<IntegerDataset> calcPositionsFromIndexes(AbstractDataset indices, int[] shape) {
+		int rank = shape.length;
+		List<IntegerDataset> posns = new ArrayList<IntegerDataset>();
+		int[] iShape = indices.getShapeRef();
+		for (int i = 0; i < rank; i++) {
+			posns.add(new IntegerDataset(iShape));
+		}
+		IndexIterator it = indices.getIterator(true);
+		int[] pos = it.getPos();
+		while (it.hasNext()) {
+			int n = indices.getInt(pos);
+			int[] p = AbstractDataset.getNDPositionFromShape(n, shape);
+			for (int i = 0; i < rank; i++) {
+				posns.get(i).setItem(p[i], pos);
+			}
+		}
+		return posns;
+	}
+
+
+	/**
+	 * Calculate indexes in given shape from datasets of position
+	 * @param positions as a list of datasets where each holds the position in a dimension
+	 * @param shape
+	 * @param mode either null, zero-length, unit length or length of rank of shape where
+	 *  0 = raise exception, 1 = wrap, 2 = clip
+	 * @return indexes as an integer dataset
+	 */
+	public static IntegerDataset calcIndexesFromPositions(List<? extends AbstractDataset> positions, int[] shape, int... mode) {
+		int rank = shape.length;
+		if (positions.size() != rank) {
+			throw new IllegalArgumentException("Number of position datasets must be equal to rank of shape");
+		}
+
+		if (mode == null || mode.length == 0) {
+			mode = new int[rank];
+		} else if (mode.length == 1) {
+			int m = mode[0];
+			mode = new int[rank];
+			Arrays.fill(mode, m);
+		} else if (mode.length != rank) {
+			throw new IllegalArgumentException("Mode length greater than one must match rank of shape");
+		}
+		for (int i = 0; i < rank; i++) {
+			int m = mode[i];
+			if (m < 0 || m > 2) {
+				throw new IllegalArgumentException("Unknown mode value - it must be 0, 1, or 2");
+			}
+		}
+
+		AbstractDataset p = positions.get(0);
+		IntegerDataset indexes = new IntegerDataset(p.getShapeRef());
+		IndexIterator it = p.getIterator(true);
+		int[] iPos = it.getPos();
+		int[] tPos = new int[rank];
+		while (it.hasNext()) {
+			for (int i = 0; i < rank; i++) {
+				p = positions.get(i);
+				int j = p.getInt(iPos);
+				int d = shape[i];
+				if (mode[i] == 0) {
+					if (j < 0 || j >= d) {
+						throw new ArrayIndexOutOfBoundsException("Position value exceeds dimension in shape");
+					}
+				} else if (mode[i] == 1) {
+					while (j < 0)
+						j += d;
+					while (j >= d)
+						j -= d;
+				} else {
+					if (j < 0)
+						j = 0;
+					if (j >= d)
+						j = d - 1;
+				}
+				tPos[i] = j;
+			}
+			indexes.set(AbstractDataset.getFlat1DIndex(shape, tPos), iPos);
+		}
+
+		return indexes;
+	}
 }

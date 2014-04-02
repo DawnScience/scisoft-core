@@ -1789,6 +1789,22 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Get flattened view index of given position 
+	 * @param shape
+	 * @param pos
+	 *            the integer array specifying the n-D position
+	 * @return the index on the flattened dataset
+	 */
+	public static int getFlat1DIndex(final int[] shape, final int[] pos) {
+		final int imax = pos.length;
+		if (imax == 0) {
+			return 0;
+		}
+
+		return get1DIndexFromShape(shape, pos);
+	}
+
+	/**
 	 * Function that uses the knowledge of the dataset to calculate the index in the data array
 	 * that corresponds to the n-dimensional position given by the int array. The input values
 	 * <b>must</b> be inside the arrays, this should be ok as this function is mainly in code which
@@ -1865,6 +1881,10 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	protected int get1DIndexFromShape(final int... n) {
+		return get1DIndexFromShape(shape, n);
+	}
+
+	protected static int get1DIndexFromShape(final int[] shape, final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
 		int index = 0;

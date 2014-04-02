@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Dataset
-Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.dataset
+Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.dataset;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.dataset.Activator
 Bundle-Vendor: Diamond Light Source

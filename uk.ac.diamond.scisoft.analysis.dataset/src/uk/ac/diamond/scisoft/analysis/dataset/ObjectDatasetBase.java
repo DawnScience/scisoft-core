@@ -724,14 +724,15 @@ public class ObjectDatasetBase extends AbstractDataset {
 		setDirty();
 	}
 
-	private List<Integer> findPositions(final Object value) { // PRIM_TYPE
-		IndexIterator iter = getIterator();
-		List<Integer> posns = new ArrayList<Integer>();
+	private List<int[]> findPositions(final Object value) { // PRIM_TYPE
+		IndexIterator iter = getIterator(true);
+		List<int[]> posns = new ArrayList<int[]>();
+		int[] pos = iter.getPos();
 
 		{
 			while (iter.hasNext()) {
 				if (data[iter.index] == value) {
-					posns.add(iter.index);
+					posns.add(pos.clone());
 				}
 			}
 		}
@@ -747,18 +748,18 @@ public class ObjectDatasetBase extends AbstractDataset {
 		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MAX_POS);
 		Object o = storedValues.get(n);
 
-		List<Integer> max = null;
+		List<int[]> max = null;
 		if (o == null) {
 			// max = findPositions(max(false).intValue() != 0); // BOOLEAN_USE
 			max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
 		} else if (o instanceof List<?>) {
-			max = (ArrayList<Integer>) o;
+			max = (List<int[]>) o;
 		} else {
 			throw new InternalError("Inconsistent internal state of stored values for statistics calculation");
 		}
 
-		return getNDPosition(max.get(0)); // first maximum
+		return max.get(0); // first maximum
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -769,18 +770,18 @@ public class ObjectDatasetBase extends AbstractDataset {
 		}
 		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MIN_POS);
 		Object o = storedValues.get(n);
-		List<Integer> min = null;
+		List<int[]> min = null;
 		if (o == null) {
 			// min = findPositions(min(false).intValue() != 0); // BOOLEAN_USE
 			min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
-		} else if (o instanceof ArrayList<?>) {
-			min = (ArrayList<Integer>) o;
+		} else if (o instanceof List<?>) {
+			min = (List<int[]>) o;
 		} else {
 			throw new InternalError("Inconsistent internal state of stored values for statistics calculation");
 		}
 
-		return getNDPosition(min.get(0)); // first minimum
+		return min.get(0); // first minimum
 	}
 
 	@Override

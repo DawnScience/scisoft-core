@@ -19,7 +19,7 @@ Key differences
  * No broadcasting except from single items
  * Incomplete implementation all NumPy's methods
 
-Implemented NumPy methods (1.3)
+Implemented NumPy methods (1.6)
  * Array attributes: shape, ndim, data, size, itemsize, nbytes, T, view, indices
  * Array methods: copy, fill, reshape, resize, transpose, flatten, squeeze,
    take, put, max, min, sum, prod, all, any, argmax, argmin
@@ -29,6 +29,7 @@ Implemented NumPy methods (1.3)
  * Array modification: fill, append
  * Array comparisons and logic operations: all, any, greater, greater_equal, less, less_equal, equal,
    not_equal, logical_not, logical_and, logical_or, logical_xor, allclose, nonzero, select, where, choose
+ * Indexing operations: unravel_index, ravel_multi_index
  * Maths: add, subtract, multiply, divide, negative, power, absolute, exp,
    log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
    floor_divide, reminder, phase, signum, diff, gradient

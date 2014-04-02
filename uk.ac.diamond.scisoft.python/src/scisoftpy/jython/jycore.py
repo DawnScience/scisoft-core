@@ -1339,3 +1339,39 @@ def nan_to_num(a):
     c = a.copy()
     _dsutils.removeNansAndInfinities(c)
     return c
+
+@_wrap
+def unravel_index(indices, dims):
+    '''Converts a flat index (or array of them) into a tuple of coordinate arrays
+    '''
+    if isinstance(indices, (tuple, list)):
+        indices = ndarray(buffer=indices)._jdataset()
+    if not isinstance(indices, _abstractds):
+        return tuple(_abstractds.getNDPositionFromShape(indices, dims))
+    return tuple(_dsutils.calcPositionsFromIndexes(indices, dims))
+
+
+_prep_mode = {'raise':0, 'wrap':1, 'clip':2}
+    
+@_wrap
+def ravel_multi_index(multi_index, dims, mode='raise'):
+    '''Converts a tuple of coordinate arrays to an array of flat indexes
+    '''
+    if isinstance(mode, tuple):
+        mode = [_prep_mode.get(m, -1) for m in mode]
+    else:
+        mode = _prep_mode.get(mode, -1)
+
+    if isinstance(multi_index, _abstractds): # split single array
+        multi_index = [ _getslice(multi_index, i) for i in range(multi_index.shape[0]) ]
+
+    single = False
+    if isinstance(multi_index[0], int):
+        single = True
+        multi_index = [ array(m)._jdataset() for m in multi_index ]
+
+
+    pos = _dsutils.calcIndexesFromPositions(multi_index, dims, mode)
+    if single:
+        return pos.getObject([])
+    return pos

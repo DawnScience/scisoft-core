@@ -254,13 +254,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="com.springsource.org.castor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.configuration"
          download-size="0"
          install-size="0"

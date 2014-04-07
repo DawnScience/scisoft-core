@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -44,6 +42,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.osgi.FittingAlgorithmServiceImpl;
 import uk.ac.diamond.scisoft.analysis.roi.CircularFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;

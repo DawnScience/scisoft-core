@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
 public class PgmLoaderTest {
@@ -60,9 +61,9 @@ public class PgmLoaderTest {
 	@Test
 	public void loadLoaderFactory()  throws Exception {
 		
-		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+file, null);
+		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder+file, null);
 
-		AbstractDataset data = dataHolder.getDataset("Portable Grey Map");
+		IDataset data = dataHolder.getDataset("Portable Grey Map");
 		// Check the first data point
 		assertEquals(data.getDouble(0, 0), 0.0, 0.0);
 		// Check the middle data point

@@ -30,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 public class EllipseFitterTest {
@@ -136,16 +136,13 @@ public class EllipseFitterTest {
 	}
 
 	@Test
-	public void testFit() {
+	public void testFit() throws Exception {
+
 		String fileName = "testfiles/points.dat";
-		AbstractDataset x = null;
-		AbstractDataset y = null;
-		try {
-			DataHolder dh = LoaderFactory.getData(fileName);
-			x = dh.getDataset(0);
-			y = dh.getDataset(1);
-		} catch (Exception e) {
-		}
+
+		IDataHolder dh = LoaderFactory.getData(fileName);
+		AbstractDataset	x = DatasetUtils.convertToAbstractDataset(dh.getDataset(0));
+		AbstractDataset y = DatasetUtils.convertToAbstractDataset(dh.getDataset(1));
 
 		if (x == null || y == null) {
 			Assert.fail("Could not load data from " + fileName);

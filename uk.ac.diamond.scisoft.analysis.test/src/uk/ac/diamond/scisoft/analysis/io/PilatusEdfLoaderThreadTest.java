@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
 public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
@@ -53,9 +53,9 @@ public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
 	@Override
 	public void doTestOfDataSet(int threadIndex) throws Exception {
 
-		DataHolder dataHolder = LoaderFactory.getData(testFileFolder + "diff6105.edf", null);
+		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder + "diff6105.edf", null);
 
-		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
+		IDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0), 98.0, 0.0);
 		assertEquals(data.getDouble(2047, 2047), 199.0, 0.0);
 	}

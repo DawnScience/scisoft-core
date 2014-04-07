@@ -16,17 +16,17 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import gda.analysis.io.IFileLoader;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.CBFLoader;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.MARLoader;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * Class to hold methods to handle diffraction images and associated metadata
@@ -39,9 +39,9 @@ public class DiffractionImage {
 		                                  CBFLoader.class,
 		                                  MARLoader.class};
 
-	public static AbstractDataset[] loadImages(String filename) {
+	public static IDataset[] loadImages(String filename) {
 		
-		DataHolder dh = null;
+		IDataHolder dh = null;
 
 		for (Class<?> clazz : loaders) {
 			try {
@@ -73,7 +73,7 @@ public class DiffractionImage {
 		if (numImages < 1) {
 			return null;
 		}
-		AbstractDataset[] allImages = new AbstractDataset[numImages];
+		IDataset[] allImages = new IDataset[numImages];
 
 		for (int i = 0; i < numImages; i++) {
 			allImages[i] = dh.getDataset(i);

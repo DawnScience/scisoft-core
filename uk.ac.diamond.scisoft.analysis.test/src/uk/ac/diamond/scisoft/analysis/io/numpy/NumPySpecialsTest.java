@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io.numpy;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 
 import org.junit.Assert;
@@ -27,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * This tests special cases not covered by the other tests which simply sweeps data types

@@ -27,13 +27,12 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
 /**
@@ -47,7 +46,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testNonPixelSplitting() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -96,7 +95,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testPixelSplitting() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -145,7 +144,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testPixelSplitting2D() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -208,7 +207,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testNonPixelSplittingMask() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -263,7 +262,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testPixelSplittingMask() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -318,7 +317,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testNonPixelSplittingROI() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -368,7 +367,7 @@ public class PixelIntegrationTest {
 	@Test
 	public void testPixelSplittingROI() {
 		
-		AbstractDataset data = getData();
+		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
@@ -416,11 +415,11 @@ public class PixelIntegrationTest {
 	}
 	
 	
-	private AbstractDataset getData() {
+	private IDataset getData() {
 		final String path = testFileFolder+"/test1.f2d";
-		AbstractDataset data = null;
+		IDataset data = null;
 		try {
-			DataHolder dataHolder = LoaderFactory.getData(path, null);
+			IDataHolder dataHolder = LoaderFactory.getData(path, null);
 			data = dataHolder.getDataset(0);
 		} catch (Exception e) {
 		}

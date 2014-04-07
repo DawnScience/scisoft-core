@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io.numpy;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -36,6 +34,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 @RunWith(Parameterized.class)
 public class NumPyTest {

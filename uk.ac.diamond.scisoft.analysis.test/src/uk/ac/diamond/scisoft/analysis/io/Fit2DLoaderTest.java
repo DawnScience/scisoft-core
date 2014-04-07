@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class Fit2DLoaderTest {
 	
@@ -50,9 +50,9 @@ public class Fit2DLoaderTest {
 	public void testF2dDataLoader()  throws Exception {
 		
 		final String path = testFileFolder+"/test1.f2d";
-		DataHolder dataHolder = LoaderFactory.getData(path, null);
+		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		AbstractDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(2048,shape[0], 0.0);
 		assertEquals(2048,shape[1], 0.0);

@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 

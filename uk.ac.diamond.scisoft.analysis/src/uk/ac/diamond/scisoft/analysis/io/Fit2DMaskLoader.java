@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

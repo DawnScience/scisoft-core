@@ -16,13 +16,13 @@
 
 package uk.ac.diamond.scisoft.analysis.io.emulated;
 
-import gda.analysis.io.IFileLoader;
-import gda.analysis.io.ScanFileHolderException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -51,19 +51,19 @@ public class FileSystemEmulatingFileLoader implements IFileLoader {
 	}
 
 	@Override
-	public DataHolder loadFile() throws ScanFileHolderException {
+	public IDataHolder loadFile() throws ScanFileHolderException {
 		waitForFileAvailable();
 		long loadStartTime = System.currentTimeMillis();
-		DataHolder loadedFile = loader.loadFile();
+		IDataHolder loadedFile = loader.loadFile();
 		waitForFileLoaded(loadStartTime);
 		return loadedFile;
 	}
 
 	@Override
-	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		waitForFileAvailable();
 		long loadStartTime = System.currentTimeMillis();
-		DataHolder loadedFile = loader.loadFile(mon);
+		IDataHolder loadedFile = loader.loadFile(mon);
 		waitForFileLoaded(loadStartTime);
 		return loadedFile;
 	}

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package gda.analysis.io;
+package uk.ac.diamond.scisoft.analysis.io;
 
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 
 /**
  * This interface specifies the methods required to allow the ScanFileHolder to save data to a file of some
@@ -32,5 +32,5 @@ public interface IFileSaver {
 	 *            The object storing all the data to be saved
 	 * @throws ScanFileHolderException
 	 */
-	void saveFile(DataHolder holder) throws ScanFileHolderException;
+	void saveFile(IDataHolder holder) throws ScanFileHolderException;
 }

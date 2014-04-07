@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Image;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -42,14 +43,14 @@ public class AlignImages {
 	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final AbstractDataset[] images, final List<AbstractDataset> shifted, 
+	public static List<double[]> align(final IDataset[] images, final List<IDataset> shifted, 
 			final RectangularROI roi, final boolean fromStart, double[] preShift) {
-		List<AbstractDataset> list = new ArrayList<AbstractDataset>();
+		List<IDataset> list = new ArrayList<IDataset>();
 		Collections.addAll(list, images);
 		if (!fromStart) {
 			Collections.reverse(list);
 		}
-		final AbstractDataset anchor = list.get(0);
+		final IDataset anchor = list.get(0);
 		final int length = list.size();
 		final List<double[]> shift = new ArrayList<double[]>();
 		if (preShift != null) {
@@ -59,7 +60,7 @@ public class AlignImages {
 		}
 		shifted.add(anchor);
 		for (int i = 1; i < length; i++) {
-			AbstractDataset image = list.get(i);
+			IDataset image = list.get(i);
 			
 			double[] s = Image.findTranslation2D(anchor, image, roi);
 			// We add the preShift to the shift data
@@ -85,8 +86,8 @@ public class AlignImages {
 	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final String[] files, final List<AbstractDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift) {
-		AbstractDataset[] images = new AbstractDataset[files.length];
+	public static List<double[]> align(final String[] files, final List<IDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift) {
+		IDataset[] images = new AbstractDataset[files.length];
 
 		for (int i = 0; i < files.length; i++) {
 			try {

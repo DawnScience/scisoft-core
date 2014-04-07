@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -215,7 +213,7 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static DataHolder getData(final String path) throws Exception {
+	public static IDataHolder getData(final String path) throws Exception {
 		return getData(path, true, new IMonitor.Stub() {
 			
 			@Override
@@ -249,7 +247,7 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static DataHolder getData(final String path, final IMonitor mon) throws Exception {
+	public static IDataHolder getData(final String path, final IMonitor mon) throws Exception {
 		return getData(path, true, mon);
 	}
 
@@ -272,7 +270,7 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static DataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
+	public static IDataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
 		return getData(path, willLoadMetadata, false, mon);
 	}
 
@@ -298,7 +296,7 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static /*THIS IS REQUIRED:*/ synchronized  DataHolder getData(final String   path, 
+	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(final String   path, 
 												  final boolean  willLoadMetadata, 
 												  final boolean  loadImageStacks, 
 											      final IMonitor mon) throws Exception {
@@ -314,8 +312,8 @@ public class LoaderFactory {
 		// END IMPORTANT
 
 		final Object cachedObject = getSoftReference(key);
-		DataHolder holder = null;
-		if (cachedObject!=null && cachedObject instanceof DataHolder) holder = (DataHolder)cachedObject;
+		IDataHolder holder = null;
+		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
 
 		if (holder==null) { // try and load it
 			final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
@@ -325,8 +323,8 @@ public class LoaderFactory {
 			// When it finds one which does not give an exception on loading it
 			// returns the data from this loader.
 			while (it.hasNext()) {
-				final Class<? extends AbstractFileLoader> clazz = it.next();
-				final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
+				final Class<? extends IFileLoader> clazz = it.next();
+				final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
 				loader.setLoadMetadata(willLoadMetadata);
 				try {
 					// NOTE Assumes loader fails quickly and nicely
@@ -382,7 +380,7 @@ public class LoaderFactory {
 	 * @return data holder (can be null)
 	 * @throws ScanFileHolderException
 	 */
-	public static /*THIS IS REQUIRED:*/ synchronized DataHolder getData(Class<? extends AbstractFileLoader> clazz, 
+	public static /*THIS IS REQUIRED:*/ synchronized IDataHolder getData(Class<? extends IFileLoader> clazz, 
 						                         String path, 
 			                                     boolean willLoadMetadata, 
 			                                     IMonitor mon) throws Exception {
@@ -398,11 +396,11 @@ public class LoaderFactory {
 		// END IMPORTANT
 
 		final Object cachedObject = getSoftReference(key);
-		DataHolder holder = null;
-		if (cachedObject!=null && cachedObject instanceof DataHolder) holder = (DataHolder)cachedObject;
+		IDataHolder holder = null;
+		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
         if (holder!=null) return holder;
 		
-		AbstractFileLoader loader;
+		IFileLoader loader;
 		try {
 			loader = getLoader(clazz, path);
 		} catch (Exception e) {
@@ -444,7 +442,7 @@ public class LoaderFactory {
 	 * @return and image stack for 
 	 * @throws Exception
 	 */
-	public static final ILazyDataset getImageStack(final String filePath, DataHolder holder, IMonitor mon) throws Exception {
+	public static final ILazyDataset getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
 		final List<String> imageFilenames = new ArrayList<String>();
@@ -598,7 +596,7 @@ public class LoaderFactory {
 		// returns the data from this loader.
 		while (it.hasNext()) {
 			final Class<? extends AbstractFileLoader> clazz = it.next();
-			final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
+			final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
 			if (!IMetaLoader.class.isInstance(loader)) continue;
 
 			try {
@@ -664,7 +662,7 @@ public class LoaderFactory {
 			final Collection<Class<? extends AbstractFileLoader>> loaders = LOADERS.get(extension);
 
 			for (Class<? extends AbstractFileLoader> clazz : loaders) {
-				final AbstractFileLoader loader = LoaderFactory.getLoader(clazz, path);
+				final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
 				if (interfaceClass.isInstance(loader))
 					return true;
 			}
@@ -680,9 +678,9 @@ public class LoaderFactory {
 	 * @return AbstractFileLoader
 	 * @throws Exception
 	 */
-	public static AbstractFileLoader getLoader(Class<? extends AbstractFileLoader> clazz, final String path) throws Exception {
+	public static IFileLoader getLoader(Class<? extends IFileLoader> clazz, final String path) throws Exception {
 
-		AbstractFileLoader loader;
+		IFileLoader loader;
 		try {
 			final Constructor<?> singleString = clazz.getConstructor(String.class);
 			loader = (AbstractFileLoader) singleString.newInstance(path);

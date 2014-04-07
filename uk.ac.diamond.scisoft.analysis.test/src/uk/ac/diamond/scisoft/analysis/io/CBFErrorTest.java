@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.fail;
-import gda.analysis.io.ScanFileHolderException;
 
 import org.junit.Test;
 

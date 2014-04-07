@@ -26,8 +26,6 @@ import java.util.Map;
 
 import javax.imageio.metadata.IIOMetadata;
 
-import gda.analysis.io.ScanFileHolderException;
-
 public class PixiumLoader extends TIFFImageLoader {
 	
 	/**

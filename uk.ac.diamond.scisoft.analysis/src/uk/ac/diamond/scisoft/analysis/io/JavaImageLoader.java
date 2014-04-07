@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.File;

@@ -50,7 +50,7 @@ public class RAxisImageLoaderTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		
-		final DataHolder dh = LoaderFactory.getData(filename, null);
+		final IDataHolder dh = LoaderFactory.getData(filename, null);
 		if (!dh.getNames()[0].equals("RAxis Image")) throw new Exception();
 	}
 

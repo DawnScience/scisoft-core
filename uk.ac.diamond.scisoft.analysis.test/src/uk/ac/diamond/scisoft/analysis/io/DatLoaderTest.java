@@ -69,7 +69,7 @@ public class DatLoaderTest {
 	public void testMoFoilLoaderFactory() throws Exception {
 	
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/MoFoil.dat";
-		final DataHolder dh = LoaderFactory.getData(testfile1, null);
+		final IDataHolder dh = LoaderFactory.getData(testfile1, null);
 		if (dh.getNames().length!=13) throw new Exception("There should be 13 columns!");
 
 		if (dh.getDataset("Unknown").getDouble(0)!=3556d) throw new Exception("The first value of Unknown should be 3556!");
@@ -106,7 +106,7 @@ public class DatLoaderTest {
         if (!names.contains("Unknown1")) throw new Exception("No Unknown1 in meta data!");
         if (!names.contains("Unknown2")) throw new Exception("No Unknown2 in meta data!");
 		
-        final DataHolder dh = LoaderFactory.getData(testfile1, null);
+        final IDataHolder dh = LoaderFactory.getData(testfile1, null);
         final Map<String,ILazyDataset> data = dh.toLazyMap();
         for (String name : data.keySet()) {
 			if (!data.get(name).getName().equals(name)) throw new Exception("DatLoader did not set dataset name correctly!");
@@ -127,7 +127,7 @@ public class DatLoaderTest {
         if (!names.contains("Column_1")) throw new Exception("No Unknown1 in meta data!");
         if (!names.contains("Column_2")) throw new Exception("No Unknown2 in meta data!");
 		
-        final DataHolder dh = LoaderFactory.getData(testfile1, null);
+        final IDataHolder dh = LoaderFactory.getData(testfile1, null);
         final Map<String,ILazyDataset> data = dh.toLazyMap();
         for (String name : data.keySet()) {
 			if (!data.get(name).getName().equals(name)) throw new Exception("DatLoader did not set dataset name correctly!");

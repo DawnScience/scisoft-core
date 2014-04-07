@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;

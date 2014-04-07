@@ -16,12 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.analysis.io.ScanFileHolderException;
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public class MockDataset implements IDataset {

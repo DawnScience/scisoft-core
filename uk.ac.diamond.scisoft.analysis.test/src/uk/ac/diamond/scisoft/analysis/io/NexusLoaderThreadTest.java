@@ -48,7 +48,7 @@ public class NexusLoaderThreadTest extends LoaderThreadTestBase {
 
 		Assert.assertTrue(new File(filename).canRead());
 
-		final DataHolder dh = LoaderFactory.getData(filename, null);
+		final IDataHolder dh = LoaderFactory.getData(filename, null);
 		Assert.assertTrue(dh.getLazyDataset("/entry1/counterTimer01/lnI0It").getSize() == 489);
 	}
 }

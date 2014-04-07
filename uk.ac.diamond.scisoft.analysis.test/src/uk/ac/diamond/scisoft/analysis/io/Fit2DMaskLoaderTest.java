@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class Fit2DMaskLoaderTest {
 	
@@ -40,9 +41,9 @@ public class Fit2DMaskLoaderTest {
 	public void testReadMask1()  throws Exception {
 		
 		final String path = testFileFolder+"/fit2d.msk";
-		DataHolder dataHolder = LoaderFactory.getData(path, null);
+		IDataHolder dataHolder = LoaderFactory.getData(path, null);
 		
-		AbstractDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(3072,shape[0], 0.0);
 		assertEquals(3072,shape[1], 0.0);
@@ -55,9 +56,9 @@ public class Fit2DMaskLoaderTest {
 	public void testReadMask2()  throws Exception {
 		
 		final String path = testFileFolder+"/fit2d2.msk";
-		DataHolder dataHolder = LoaderFactory.getData(path, null);
+		IDataHolder dataHolder = LoaderFactory.getData(path, null);
 		
-		AbstractDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(2048,shape[0], 0.0);
 		assertEquals(2048,shape[1], 0.0);

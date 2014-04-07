@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io.numpy;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -29,6 +27,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * Test that unsupported data types are correctly errored on

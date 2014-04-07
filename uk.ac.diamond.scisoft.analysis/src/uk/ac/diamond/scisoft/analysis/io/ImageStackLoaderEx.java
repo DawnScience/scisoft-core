@@ -16,12 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -50,7 +49,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	private int[] data_shapes;
 	AbstractDatasetRecord cache;
 	String parent;
-	private Class<? extends AbstractFileLoader> loaderClass;
+	private Class<? extends IFileLoader> loaderClass;
 	
 	public int getDtype() {
 		return dtype;
@@ -84,8 +83,8 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		// load the first image to get the shape of the whole thing
 		int [] location = new int[dimensions.length];
 		Arrays.fill(location, 0);
-		AbstractDataset dataSetFromFile = getDataSetFromFile(location, null);
-		dtype = dataSetFromFile.getDtype(); 
+		IDataset dataSetFromFile = getDataSetFromFile(location, null);
+		dtype = AbstractDataset.getDTypeFromClass(dataSetFromFile.getClass());
 		data_shapes = dataSetFromFile.getShape();
 		shape = Arrays.copyOf(dimensions, dimensions.length + data_shapes.length);
 		int offset = dimensions.length;
@@ -102,7 +101,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		return null;
 	}
 
-	private AbstractDataset getDataSetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
+	private IDataset getDataSetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
 		if (cache == null || !Arrays.equals(location, cache.location)) {
 			// load the file
 			String filename = getFilename(location);
@@ -113,7 +112,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				}
 				filename = new File(parent, filename).getAbsolutePath();
 			}
-			DataHolder data = null;
+			IDataHolder data = null;
 			if (loaderClass != null) {
 				try {
 					data = LoaderFactory.getData(loaderClass, filename, true, mon);
@@ -134,7 +133,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				loaderClass = data.getLoaderClass();
 			}
 
-			AbstractDataset abstractDataset = data.getDataset(0);
+			IDataset abstractDataset = data.getDataset(0);
 			abstractDataset.setName(filename);
 
 			cache = new AbstractDatasetRecord(abstractDataset, location);
@@ -200,14 +199,14 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				fileLocation[i]+=currentResultStart[i];
 			}
 
-			AbstractDataset dataSetFromFile = getDataSetFromFile(fileLocation, mon);
+			IDataset dataSetFromFile = getDataSetFromFile(fileLocation, mon);
 
 			int[] fileImageStart = Arrays.copyOfRange(lstart, dimensions.length, lstart.length);
 			int[] fileImageStop = Arrays.copyOfRange(lstop, dimensions.length, lstart.length);
 			int[] fileImageStep = Arrays.copyOfRange(lstep, dimensions.length, lstart.length);
 			
 			// extract the slice required
-			AbstractDataset slice = dataSetFromFile.getSlice(fileImageStart, fileImageStop, fileImageStep);
+			IDataset slice = dataSetFromFile.getSlice(fileImageStart, fileImageStop, fileImageStep);
 			
 			try{
 				// add data from this file to the overall result
@@ -243,10 +242,10 @@ public class ImageStackLoaderEx implements ILazyLoader {
 }
 
 class AbstractDatasetRecord {
-	AbstractDataset dataset;
+	IDataset dataset;
 	int[] location;
 
-	public AbstractDatasetRecord(AbstractDataset dataset, int[] location) {
+	public AbstractDatasetRecord(IDataset dataset, int[] location) {
 		super();
 		this.dataset = dataset;
 		// need to make copy rather than take reference to prevent value being

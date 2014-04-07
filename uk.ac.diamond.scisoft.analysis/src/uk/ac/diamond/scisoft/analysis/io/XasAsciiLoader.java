@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -150,7 +148,7 @@ public class XasAsciiLoader extends SRSLoader {
 	}
 
 	@Override
-	protected void writeHeader(BufferedWriter out, DataHolder dh) throws IOException {
+	protected void writeHeader(BufferedWriter out, IDataHolder dh) throws IOException {
 		// now write out the data names
 		out.write(COMMENT_PREFIX);
 		int imax = dh.size();

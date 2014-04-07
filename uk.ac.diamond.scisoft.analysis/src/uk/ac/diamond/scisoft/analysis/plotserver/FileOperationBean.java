@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.utils.ImageThumbnailLoader;
 
 /**
@@ -219,7 +219,7 @@ public class FileOperationBean implements Serializable {
 		Iterator<String> iter = files.iterator();
 		while (iter.hasNext()) {
 			String filename = iter.next();
-			AbstractDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetaData);
+			IDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetaData);
 			DataSetWithAxisInformation dsAxisInf = new DataSetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean();
 			dsAxisInf.setData(ds);

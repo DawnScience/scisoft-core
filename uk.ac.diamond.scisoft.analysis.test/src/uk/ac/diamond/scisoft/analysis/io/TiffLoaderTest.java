@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,7 +67,7 @@ public class TiffLoaderTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
-		DataHolder dh = LoaderFactory.getData(testfile1, null);
+		IDataHolder dh = LoaderFactory.getData(testfile1, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
  	}
 

@@ -69,7 +69,7 @@ public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
 		Assert.assertTrue(new File(filename).canRead());
 
-		final DataHolder   dh = LoaderFactory.getData(sliceObject.getPath(), false, null);
+		final IDataHolder  dh = LoaderFactory.getData(sliceObject.getPath(), false, null);
 		final ILazyDataset ld = dh.getLazyDataset(sliceObject.getName());
 		IDataset  slice = ld.getSlice(new int[] { 0, 0, threadIndex + 10 }, 
 				                      new int[] { 61, 171, threadIndex + 11 }, 

@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileLoader;
-import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -42,7 +40,7 @@ public abstract class AbstractFileLoader implements IFileLoader {
 	protected boolean loadMetadata = true;
 
 	@Override
-	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		return loadFile();
 	}
 

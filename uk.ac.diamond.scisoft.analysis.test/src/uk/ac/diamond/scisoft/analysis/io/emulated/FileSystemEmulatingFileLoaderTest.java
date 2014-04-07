@@ -20,14 +20,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gda.analysis.io.IFileLoader;
-import gda.analysis.io.ScanFileHolderException;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.diamond.scisoft.analysis.io.emulated.FileSystemEmulatingFileLoader;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 public class FileSystemEmulatingFileLoaderTest {
 	
 	private IFileLoader mockLoader;
@@ -64,7 +64,7 @@ public class FileSystemEmulatingFileLoaderTest {
 	private void verifyResultAndDelayWas1s()
 	throws ScanFileHolderException {
 		long t = System.currentTimeMillis();
-		DataHolder result = fileSystemEmulatingFileLoader.loadFile();
+		IDataHolder result = fileSystemEmulatingFileLoader.loadFile();
 		long dt = System.currentTimeMillis() - t;
 		System.out.println(dt);
 		assertTrue((dt<1100) && (dt>998));  /* 1000 is theoretically the lower bound, but accept 999 also as this is seen occasionally */

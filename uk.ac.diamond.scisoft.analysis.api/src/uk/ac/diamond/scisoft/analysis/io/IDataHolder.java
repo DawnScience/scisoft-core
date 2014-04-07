@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.List;
 import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -94,6 +95,13 @@ public interface IDataHolder extends IDataAnalysisObject {
 	public String getFilePath();
 	
 	/**
+	 * The file path, if any of the data loaded.
+	 * @param path
+	 */ 
+	public void setFilePath(String path);
+
+	
+	/**
 	 * Allows a dataset to be added to the holder.
 	 * WARNING expert use only! If you add data to a holder without
 	 * cloning it, you can change the cached LoaderFactory version.
@@ -113,6 +121,32 @@ public interface IDataHolder extends IDataAnalysisObject {
 	 * @return map of lazy data
 	 */
 	public Map<String, ILazyDataset> toLazyMap();
+
+	/**
+	 * Expert/internal use only.
+	 * @param clazz
+	 */
+	public void setLoaderClass(Class<? extends IFileLoader> clazz);
+
+	/**
+	 * 
+	 * @return the loader class, if any used to load this data.
+	 */
+	public Class<? extends IFileLoader> getLoaderClass();
+
+	/**
+	 * Clears the current data maps - use only when you are sure it is ok
+	 * because this data holder can be cached in the LoaderFactory!
+	 * 
+	 * Expert/internal use only.
+	 */
+	public void clear();
+
+	/**
+	 *
+	 * @return  The list of data in the holder (lazy)
+	 */
+	public List<ILazyDataset> getList();
 
 
 }

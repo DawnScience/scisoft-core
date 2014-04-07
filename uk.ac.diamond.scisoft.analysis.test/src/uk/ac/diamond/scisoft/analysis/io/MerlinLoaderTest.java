@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class MerlinLoaderTest {
 	
@@ -30,9 +30,9 @@ public class MerlinLoaderTest {
 	public void testMerlinDataLoader()  throws Exception {
 		
 		final String path = testFileFolder+"default1.mib";
-		DataHolder dataHolder = LoaderFactory.getData(path, null);
+		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		AbstractDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(512,shape[0], 0.0);
 		assertEquals(512,shape[1], 0.0);
@@ -43,9 +43,9 @@ public class MerlinLoaderTest {
 	public void testMerlinDataLoaderMultiFile()  throws Exception {
 		
 		final String path = testFileFolder+"multi.mib";
-		DataHolder dataHolder = LoaderFactory.getData(path, null);
+		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		AbstractDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(10,shape[0], 0.0);
 		assertEquals(515,shape[1], 0.0);

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gda.analysis.io.ScanFileHolderException;
 
 import java.util.Collection;
 
@@ -124,10 +123,10 @@ public class SRSLoaderTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
-		DataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat", null);
+		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat", null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-		int dt = dh.getDataset(6).getDtype();
+		int dt = AbstractDataset.getDType(dh.getDataset(6));
 		if (dt == AbstractDataset.FLOAT32)
 			assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
 		if (dt == AbstractDataset.FLOAT64)

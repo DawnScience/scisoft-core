@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 
 
@@ -47,7 +48,7 @@ public class PilatusEdfLoaderTest {
 	
 	private void testShortFile(final String filePath) throws Exception {
 		
-		DataHolder dataHolder = LoaderFactory.getData(filePath, null);		 		
+		IDataHolder dataHolder = LoaderFactory.getData(filePath, null);		 		
 	    if (dataHolder.toLazyMap().size()!=1) throw new Exception("Should only be one data set");
 
 	    final AbstractDataset set = (AbstractDataset)dataHolder.toLazyMap().values().iterator().next();
@@ -61,7 +62,7 @@ public class PilatusEdfLoaderTest {
 	@Test
 	public void testBoundsOnIntegerDataSet() throws Exception {
 		
-		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
+		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
      		
 		IntegerDataset dataSet = (IntegerDataset)dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		final int min = dataSet.min().intValue();
@@ -82,9 +83,9 @@ public class PilatusEdfLoaderTest {
 	@Test
 	public void testUseLoaderFactory() throws Exception {
 		
-		DataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
+		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder+"diff6105.edf", null);
      		
-		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
+		IDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0),      98, 0.0);
 		assertEquals(data.getDouble(2047, 2047), 199, 0.0);
 	}

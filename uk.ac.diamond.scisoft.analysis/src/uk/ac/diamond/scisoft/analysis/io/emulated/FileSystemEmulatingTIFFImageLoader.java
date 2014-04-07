@@ -16,9 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io.emulated;
 
-import gda.analysis.io.IFileLoader;
-import gda.analysis.io.ScanFileHolderException;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.io.TIFFImageLoader;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -45,12 +45,12 @@ public class FileSystemEmulatingTIFFImageLoader implements IFileLoader {
 	}
 
 	@Override
-	public DataHolder loadFile() throws ScanFileHolderException {
+	public IDataHolder loadFile() throws ScanFileHolderException {
 		return fileSystemEmulatingFileLoader.loadFile();
 	}
 
 	@Override
-	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		return fileSystemEmulatingFileLoader.loadFile(mon);
 	}
 

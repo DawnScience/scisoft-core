@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +50,7 @@ public class RawTextSaver implements IFileSaver {
 	}
 
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		File f = null;
 		for (int i = 0, imax = dh.size(); i < imax; i++) {
 			ILazyDataset ld = dh.getLazyDataset(i);

@@ -67,7 +67,7 @@ public class ADSCImageTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		
-		final DataHolder dh = LoaderFactory.getData(TestFileFolder + testfile1, null);
+		final IDataHolder dh = LoaderFactory.getData(TestFileFolder + testfile1, null);
 		if (!dh.getNames()[0].equals("ADSC Image")) throw new Exception();
 	}
 	

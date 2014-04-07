@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -36,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -438,7 +436,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @throws ScanFileHolderException
 	 */
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 
@@ -450,7 +448,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			int rows = dh.getDataset(0).getSize();
 			AbstractDataset[] datasets = new AbstractDataset[imax];
 			for (int i = 0; i < imax; i++) {
-				datasets[i] = dh.getDataset(i);
+				datasets[i] = DatasetUtils.convertToAbstractDataset(dh.getDataset(i));
 			}
 
 			for (int j = 0; j < rows; j++) {
@@ -472,7 +470,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		}
 	}
 
-	protected void writeHeader(BufferedWriter out, DataHolder dh) throws IOException {
+	protected void writeHeader(BufferedWriter out, IDataHolder dh) throws IOException {
 		out.write("&SRS\n");
 		writeMetadata(out, dh);
 		out.write("&END\n");
@@ -493,7 +491,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	 * @param out
 	 * @throws IOException
 	 */
-	protected void writeMetadata(BufferedWriter out, @SuppressWarnings("unused") DataHolder holder) throws IOException {
+	protected void writeMetadata(BufferedWriter out, @SuppressWarnings("unused") IDataHolder holder) throws IOException {
 		String[] metadataKeys = getKeysToSave();
 		if (!textMetadata.isEmpty() && metadataKeys != null) {
 			for (String k : metadataKeys) {

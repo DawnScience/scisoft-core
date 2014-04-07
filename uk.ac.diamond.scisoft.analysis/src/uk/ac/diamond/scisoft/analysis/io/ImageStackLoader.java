@@ -16,12 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -30,7 +30,7 @@ public class ImageStackLoader implements ILazyLoader {
 	private List<String> imageFilenames;
 	private int[] shape;
 	private int dtype;
-	private Class<? extends AbstractFileLoader> loaderClass;
+	private Class<? extends IFileLoader> loaderClass;
 
 	public int getDtype() {
 		return dtype;
@@ -41,7 +41,7 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	@SuppressWarnings("unused")
-	public ImageStackLoader(List<String> imageFilenames, DataHolder dh, IMonitor mon) throws Exception {
+	public ImageStackLoader(List<String> imageFilenames, IDataHolder dh, IMonitor mon) throws Exception {
 		this.imageFilenames = imageFilenames;
 		// load the first image to get the shape of the whole thing
 		int stack = imageFilenames.size();
@@ -65,7 +65,7 @@ public class ImageStackLoader implements ILazyLoader {
 
 	private AbstractDataset getFullStack() throws Exception {
 		
-    	DataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
+    	IDataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
     	int size = data.getDataset(0).getSize();
 
     	AbstractDataset result = AbstractDataset.zeros(shape, dtype);
@@ -73,8 +73,8 @@ public class ImageStackLoader implements ILazyLoader {
 		// this assumes that all files have images of the same shape and type
 		int image = 0;
         for (String path : imageFilenames) {
-        	final DataHolder      d = LoaderFactory.getData(loaderClass, path, true, new IMonitor.Stub());
-        	final AbstractDataset i = d.getDataset(0);
+        	final IDataHolder      d = LoaderFactory.getData(loaderClass, path, true, new IMonitor.Stub());
+        	final AbstractDataset i = DatasetUtils.convertToAbstractDataset(d.getDataset(0));
         	System.arraycopy(i.getBuffer(), 0, buffer, image*size, size);
         	++image;
 		}
@@ -113,7 +113,7 @@ public class ImageStackLoader implements ILazyLoader {
 
 		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
 
-		DataHolder data = null;
+		IDataHolder data = null;
 		// FIXME this seems to be designed for three dimensions only
 		int[] imageStart = new int[] {lstart[1], lstart[2]};
 		int[] imageStop = new int[] {lstop[1], lstop[2]};
@@ -143,7 +143,7 @@ public class ImageStackLoader implements ILazyLoader {
 				loaderClass = data.getLoaderClass();
 			}
 
-			AbstractDataset slice = data.getDataset(0).getSlice(imageStart, imageStop, imageStep);
+			IDataset slice = data.getLazyDataset(0).getSlice(imageStart, imageStop, imageStep);
 			resultStart[0] = j;
 			resultStop[0] = j + 1;
 			result.setSlice(slice, resultStart, resultStop, resultStep);

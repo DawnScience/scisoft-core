@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -81,7 +79,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 	@Override
 	public void doTestOfDataSet(int threadIndex) throws Exception{
 		@SuppressWarnings("unused")
-		DataHolder dh = LoaderFactory.getData(testfile1, null);
+		IDataHolder dh = LoaderFactory.getData(testfile1, null);
         dh = LoaderFactory.getData(testfile2, null);
         dh = LoaderFactory.getData(testfile3, null);
         dh = LoaderFactory.getData(testfile4, null);

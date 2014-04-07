@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import gda.analysis.io.ScanFileHolderException;
 
 import java.io.File;
 

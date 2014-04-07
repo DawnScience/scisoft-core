@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;

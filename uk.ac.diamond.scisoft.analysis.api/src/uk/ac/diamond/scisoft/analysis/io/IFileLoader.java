@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package gda.analysis.io;
+package uk.ac.diamond.scisoft.analysis.io;
 
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -32,7 +32,7 @@ public interface IFileLoader {
 	 * @return This returned object is all the data which has been loaded returned in a small object package.
 	 * @throws ScanFileHolderException
 	 */
-	DataHolder loadFile() throws ScanFileHolderException;
+	IDataHolder loadFile() throws ScanFileHolderException;
 
 	/**
 	 * This function is called when the ScanFileHolder needs to load data from a particular source
@@ -42,7 +42,7 @@ public interface IFileLoader {
 	 * @return This returned object is all the data which has been loaded returned in a small object package.
 	 * @throws ScanFileHolderException
 	 */
-	DataHolder loadFile(IMonitor mon) throws ScanFileHolderException;
+	IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException;
 
 	/**
 	 * Set the loader to load metadata as well as data (all loaders default to this behaviour)

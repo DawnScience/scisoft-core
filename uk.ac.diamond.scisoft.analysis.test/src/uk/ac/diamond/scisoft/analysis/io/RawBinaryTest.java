@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
-import gda.analysis.io.ScanFileHolderException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +24,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
  *
@@ -123,7 +123,7 @@ public class RawBinaryTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		String filePath1D = "testLoaderFactory.raw";
-		DataHolder dh = new DataHolder();
+		IDataHolder dh = new DataHolder();
 		data = DatasetUtils.linSpace(0, range, range, AbstractDataset.INT16);
 		data.setName("test factory");
 		try {
@@ -136,8 +136,8 @@ public class RawBinaryTest {
 
 		dh = LoaderFactory.getData(testScratchDirectoryName + filePath1D, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
-		AbstractDataset data = dh.getDataset(0);
-		assertEquals(data.getDtype(), AbstractDataset.INT16);
+		IDataset data = dh.getDataset(0);
+		assertEquals(AbstractDataset.getDType(data), AbstractDataset.INT16);
 		assertEquals(data.getSize(), range);
 		assertEquals(data.getName(), "test factory");
 		assertEquals(data.getShape().length, 1);

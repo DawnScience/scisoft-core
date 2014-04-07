@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
  */
@@ -49,7 +50,7 @@ public class MARImageTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
-		DataHolder dh = LoaderFactory.getData(testfile1, null);
+		IDataHolder dh = LoaderFactory.getData(testfile1, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
         		
         dh = LoaderFactory.getData(testfile2, null);
@@ -63,7 +64,7 @@ public class MARImageTest {
         
 		assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
 		
-		AbstractDataset data = dh.getDataset(0);
+		IDataset data = dh.getDataset(0);
 		assertEquals(299, data.getDouble(1500, 1514), 1);
 		assertEquals(89, data.getDouble(3009, 2168), 1);
 	}

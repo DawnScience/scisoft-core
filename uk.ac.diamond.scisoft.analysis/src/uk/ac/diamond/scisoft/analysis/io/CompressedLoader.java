@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
 public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader {
 
-	private AbstractFileLoader loader;
+	private IFileLoader loader;
 	
 	public CompressedLoader() {
 		
@@ -69,18 +67,18 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 			// work either from a file path or in memory representation.
 			FileUtils.write(new BufferedInputStream(in), tmp);
 			
-			final Class<? extends AbstractFileLoader> lclass = LoaderFactory.getLoaderClass(ext);
+			final Class<? extends IFileLoader> lclass = LoaderFactory.getLoaderClass(ext);
 			this.loader = LoaderFactory.getLoader(lclass, tmp.getAbsolutePath());
 		}
         
 	}
 	
 	@Override
-	public DataHolder loadFile() throws ScanFileHolderException {
+	public IDataHolder loadFile() throws ScanFileHolderException {
 		return loader.loadFile();
 	}
 	@Override
-	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		return loader.loadFile(mon);
 	}
 	

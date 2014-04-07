@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,8 +37,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinarySaver;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisOperation;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -255,7 +255,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
 
-		DataHolder dh = null;
+		IDataHolder dh = null;
 
 		try {
 			// This is the bit that can take a while.

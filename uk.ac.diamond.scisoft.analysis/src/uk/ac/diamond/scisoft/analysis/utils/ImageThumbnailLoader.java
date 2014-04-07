@@ -21,14 +21,15 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinaryLoader;
+import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -49,7 +50,7 @@ public class ImageThumbnailLoader {
 	 * @param createThumbnail
 	 * @return AbstractDataset
 	 */
-	public static AbstractDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData) {
+	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData) {
 		return loadImage(filename, createThumbnail, loadMetaData, null);
 	}
 
@@ -64,9 +65,9 @@ public class ImageThumbnailLoader {
 	 * @param createThumbnail
 	 * @return AbstractDataset
 	 */
-	public static AbstractDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData, IMonitor monitor) {
+	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData, IMonitor monitor) {
 		
-		DataHolder scan = null;
+		IDataHolder scan = null;
 		if (!filename.toLowerCase().endsWith(".raw")) {
 //			long start = -System.nanoTime();
 			try {
@@ -98,11 +99,11 @@ public class ImageThumbnailLoader {
 	 * @param scan
 	 * @return single data set
 	 */
-	public static AbstractDataset getSingle(final String     path,
+	public static IDataset getSingle(final String     path,
 			                                final boolean    createThumbnail,
-			                                final DataHolder scan) {
+			                                final IDataHolder scan) {
 		if (scan != null && scan.size() > 0) {
-			AbstractDataset ds = scan.getDataset(0);
+			IDataset ds = scan.getDataset(0);
 			if (ds.getRank() == 2) { // 2D datasets only!!!
 				int width = ds.getShape()[1];
 				int height = ds.getShape()[0];

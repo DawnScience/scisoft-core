@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -30,6 +27,9 @@ import javax.media.jai.TiledImage;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AWTImageUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.DatasetsIterator;
 
 /**
  * Class that saves data from DataHolder using native Java ImageIO library
@@ -73,7 +73,7 @@ public class JavaImageSaver implements IFileSaver {
 	}
 
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		File f = null;
 
 		if (numBits <= 0) {
@@ -106,7 +106,8 @@ public class JavaImageSaver implements IFileSaver {
 
 				f = new File(name);
 
-				AbstractDataset data = dh.getDataset(i);
+				IDataset idata = dh.getDataset(i);
+				AbstractDataset data = DatasetUtils.convertToAbstractDataset(idata);
 
 				if (numBits <= 16) {
 					// test to see if the values of the data are within the

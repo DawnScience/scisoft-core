@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +30,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -172,13 +169,13 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	 * @param dh
 	 */
 	@Override
-	public void saveFile(DataHolder dh) {
+	public void saveFile(IDataHolder dh) {
 		File f = null;
 		FileOutputStream fo = null;
 		try {
 			f = new File(fileName);
 			fo = new FileOutputStream(f);
-			AbstractDataset ds = dh.getDataset(0);
+			IDataset ds = dh.getDataset(0);
 			int[] dims = ds.getShape();
 			int height = dims[0];
 			int width = dims[1];
@@ -208,7 +205,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	}
 	@Override
 	public void loadMetaData(final IMonitor mon) throws Exception {
-		DataHolder dh = loadFile(mon);
+		IDataHolder dh = loadFile(mon);
 		// Reads data anyway - TODO fix to have read header one day.
 		dh.clear();
 	}

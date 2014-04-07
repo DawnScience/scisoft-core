@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package gda.analysis.io;
+package uk.ac.diamond.scisoft.analysis.io;
 
 /**
  *

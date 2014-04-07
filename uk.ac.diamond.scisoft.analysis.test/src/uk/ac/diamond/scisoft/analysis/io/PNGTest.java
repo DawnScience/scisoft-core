@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gda.analysis.io.ScanFileHolderException;
 
 import java.io.FileNotFoundException;
 
@@ -92,7 +91,7 @@ public class PNGTest {
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
 
-		final DataHolder dh = LoaderFactory.getData(testScratchDirectoryName + filePath, null);
+		final IDataHolder dh = LoaderFactory.getData(testScratchDirectoryName + filePath, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
 	}
 

@@ -285,7 +285,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @return class
 	 */
 	@SuppressWarnings("unchecked")
-	public Class<? extends AbstractFileLoader> getLoaderClass() {
+	public Class<? extends IFileLoader> getLoaderClass() {
 		try {
 			return (Class<? extends AbstractFileLoader>) Class.forName(loaderClass);
 		} catch (ClassNotFoundException e) {
@@ -294,7 +294,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		return null;
 	}
 
-	public void setLoaderClass(Class<? extends AbstractFileLoader> clazz) {
+	public void setLoaderClass(Class<? extends IFileLoader> clazz) {
 		loaderClass = clazz.getName();
 	}
 

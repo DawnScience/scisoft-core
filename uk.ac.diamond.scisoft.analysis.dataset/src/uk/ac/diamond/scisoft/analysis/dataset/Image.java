@@ -39,12 +39,16 @@ public class Image {
 
 	/**
 	 * Find translation shift between two 2D datasets
-	 * @param a
-	 * @param b
+	 * @param ia
+	 * @param ib
 	 * @param r rectangular region of interest to use for alignment
 	 * @return a vector containing the translation needed to be applied to dataset b to align with dataset a
 	 */
-	public static double[] findTranslation2D(AbstractDataset a, AbstractDataset b, IRectangularROI r) {
+	public static double[] findTranslation2D(IDataset ia, IDataset ib, IRectangularROI r) {
+		
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(ia);
+		AbstractDataset b = DatasetUtils.convertToAbstractDataset(ib);
+		
 		if (a.getRank() != 2 || b.getRank() != 2) {
 			logger.error("Both datasets should be two-dimensional");
 			throw new IllegalArgumentException("Both datasets should be two-dimensional");

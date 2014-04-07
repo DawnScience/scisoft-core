@@ -20,13 +20,15 @@ import java.io.File;
 import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IFlattener;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
-public class AbstractDatasetHelper extends MapFlatteningHelper<AbstractDataset> {
+public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 	/** Value to assign in {@link IFlattener#TYPE_KEY} */
 	public static final String TYPE_NAME = AbstractDataset.class.getCanonicalName();
 	/** File to load/save */
@@ -42,17 +44,17 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<AbstractDataset> 
 	public static final String NAME = "name";
 
 	public AbstractDatasetHelper() {
-		super(AbstractDataset.class);
+		super(IDataset.class);
 	}
 
 	@Override
-	public AbstractDataset unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
+	public IDataset unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
 		final String fileName = (String) rootFlattener.unflatten(thisMap.get(FILENAME));
 		final Boolean deleteFile = (Boolean) rootFlattener.unflatten(thisMap.get(DELETEFILEAFTERLOAD));
 		final Integer index = (Integer) rootFlattener.unflatten(thisMap.get(INDEX));
 		final String name = (String) rootFlattener.unflatten(thisMap.get(NAME));
 		try {
-			final DataHolder dataHolder = LoaderFactory.getData(fileName, false, null);
+			final IDataHolder dataHolder = LoaderFactory.getData(fileName, false, null);
 
 			if (deleteFile != null && deleteFile) {
 				File file = new File(fileName);
@@ -62,7 +64,7 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<AbstractDataset> 
 				}
 			}
 
-			final AbstractDataset data;
+			final IDataset data;
 			if (name != null) {
 				data = dataHolder.getDataset(name);
 			} else if (index != null) {

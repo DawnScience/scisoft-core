@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -30,6 +27,7 @@ import java.text.NumberFormat;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFile.DataTypeInfo;
 
 /**
@@ -61,7 +59,7 @@ public class NumPyFileSaver implements IFileSaver {
 	}
 
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		File f = null;
 		final int imax = dh.size();
 		for (int i = 0; i < imax; i++) {
@@ -87,7 +85,7 @@ public class NumPyFileSaver implements IFileSaver {
 				throw new ScanFileHolderException("Error saving file '" + filename + "'", e);
 			}
 
-			AbstractDataset dataset = dh.getDataset(i);
+			IDataset dataset = dh.getDataset(i);
 			if (dataset == null) {
 				throw new ScanFileHolderException("Dataset null at index " + i + " unsupported");
 			}

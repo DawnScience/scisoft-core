@@ -16,9 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.IFileSaver;
-import gda.analysis.io.ScanFileHolderException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -85,7 +82,7 @@ public class RawBinarySaver implements IFileSaver {
 	}
 
 	@Override
-	public void saveFile(DataHolder dh) throws ScanFileHolderException {
+	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		File f = null;
 		final int imax = dh.size();
 		for (int i = 0; i < imax; i++) {

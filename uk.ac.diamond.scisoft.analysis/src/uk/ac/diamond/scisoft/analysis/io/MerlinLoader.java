@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import gda.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;

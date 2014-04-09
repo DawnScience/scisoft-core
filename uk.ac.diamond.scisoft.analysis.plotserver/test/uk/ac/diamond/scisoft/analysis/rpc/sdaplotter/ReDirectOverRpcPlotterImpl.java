@@ -54,13 +54,13 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames)
+	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames)
 			throws Exception {
 		request("line", xValues, yValues, title, plotName);
 	}
 
 	@Override
-	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames)
+	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames)
 			throws Exception {
 		request("line", xValues, yValues, title, plotName);
 	}
@@ -77,7 +77,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
+	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xName, String yName) throws Exception {
 		request("image", image, xValues, yValues, plotName);
 	}
 
@@ -121,6 +121,11 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	@Override
 	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
 		request("stack", xValues, yValues, zValues, plotName);
+	}
+
+	@Override
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception {
+		request("addstack", xValues, yValues, zValues, plotName);
 	}
 
 	@Override

@@ -121,18 +121,18 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, xAxisNames, yAxisNames, GuiParameters.PLOTOP_NONE);
+	public void plot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, yLabels, xAxisNames, yAxisNames, GuiParameters.PLOTOP_NONE);
 	}
 
 	@Override
-	public void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, xAxisNames, yAxisNames, GuiParameters.PLOTOP_ADD);
+	public void addPlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames) throws Exception {
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, yLabels, xAxisNames, yAxisNames, GuiParameters.PLOTOP_ADD);
 	}
 
 	@Override
 	public void updatePlot(String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String xAxisName, final String yAxisName) throws Exception {
-		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, new String[] {xAxisName}, new String[] {yAxisName}, GuiParameters.PLOTOP_UPDATE);
+		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, null, new String[] {xAxisName}, new String[] {yAxisName}, GuiParameters.PLOTOP_UPDATE);
 	}
 
 	/**
@@ -141,12 +141,13 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param title (can be null)
 	 * @param xValues
 	 * @param yValues
+	 * @param yLabels (can be null)
 	 * @param xAxisNames (can be null)
 	 * @param yAxisNames (can be null)
 	 * @param plotOperation one of GuiParameters.PLOTOP_*
 	 * @throws Exception
 	 */
-	private void lplot(final String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] xAxisNames, final String[] yAxisNames, final String plotOperation) throws Exception {
+	private void lplot(final String plotName, final String title, IDataset[] xValues, IDataset[] yValues, final String[] yLabels, final String[] xAxisNames, final String[] yAxisNames, final String plotOperation) throws Exception {
 		if (yValues.length == 0) {
 			return;
 		}
@@ -163,6 +164,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						y.getRank());
 				throw new Exception("Input y dataset has incorrect rank: it should be 1");
 			}
+		}
+		if (yLabels != null && yLabels.length != yValues.length) {
+			logger.error("Number of y labels ({}) should match number of y datasets ({})", yLabels.length, yValues.length);
+			throw new Exception("Number of y labels should match number of y datasets");
 		}
 
 		logger.info("Plot sent to {}", plotName);
@@ -186,7 +191,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 					} else {
 						yan = AxisMapBean.YAXIS;
 					}
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i], new String[] {xid}, new String[] {xan, yan}));
+					IDataset yd = renameDataset(yValues[i], yLabels == null ? null : yLabels[i]);
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();
@@ -217,10 +223,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				} else {
 					yan = AxisMapBean.YAXIS; // single axis
 				}
+				IDataset yd = renameDataset(yValues[i], yLabels == null ? null : yLabels[i]);
 				dataBean.addAxis(xid, x);
 				// now add it to the plot data
 				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i], new String[] {xid}, new String[] {xan, yan}));
+					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();
@@ -235,6 +242,14 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.putGuiParameter(GuiParameters.TITLE, title);
 
 		sendBeansToServer(plotName, dataBean, null);
+	}
+
+	private static IDataset renameDataset(IDataset d, String n) {
+		if (n != null && n.length() > 0) {
+			d = d.clone();
+			d.setName(n);
+		}
+		return d;
 	}
 
 	@Override
@@ -254,7 +269,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		try {
 			IDataset dataSet = dh.getDataset(0);
 			dataSet.setName(imageFileName);
-			imagePlot(plotName, null, null, dataSet);
+			imagePlot(plotName, null, null, dataSet, null, null);
 		} catch (Exception e) {
 			logger.error("Cannot plot non-image file from  " + imageFileName, e);
 			throw e;
@@ -262,7 +277,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image) throws Exception {
+	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xAxisName, String yAxisName) throws Exception {
 		if (!isDataND(image, 2)) {
 			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());
 			throw new Exception("Input dataset has incorrect rank: it should be 2");
@@ -292,10 +307,12 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		if (xValues != null) {
-			dataBean.addAxis(AxisMapBean.XAXIS, xValues);
+			IDataset xd = renameDataset(xValues, xAxisName);
+			dataBean.addAxis(AxisMapBean.XAXIS, xd);
 		}
 		if (yValues != null) {
-			dataBean.addAxis(AxisMapBean.YAXIS, yValues);
+			IDataset yd = renameDataset(yValues, yAxisName);
+			dataBean.addAxis(AxisMapBean.YAXIS, yd);
 		}
 		sendBeansToServer(plotName, dataBean, null);
 	}
@@ -606,12 +623,17 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
-		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, false);
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_NONE);
+	}
+
+	@Override
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_ADD);
 	}
 
 	@Override
 	public void updateStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, final IDataset zValues) throws Exception {
-		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, true);
+		lstackPlot(plotName, validateAllXValues(xValues, yValues), yValues, zValues, GuiParameters.PLOTOP_UPDATE);
 	}
 
 	/**
@@ -620,10 +642,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 * @param xValues
 	 * @param yValues
 	 * @param zValues
+	 * @param plotOperation one of GuiParameters.PLOTOP_*
 	 * @param updateMode if true, keep zoom settings
 	 * @throws Exception
 	 */
-	private void lstackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues, boolean updateMode) throws Exception {
+	private void lstackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues, String plotOperation) throws Exception {
 		for (IDataset x : xValues) {
 			if (!isDataND(x, 1)) {
 				logger.error("Input x dataset has incorrect rank: it has {} dimensions when it should be 1",
@@ -676,8 +699,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.ZAXIS, zValues);
 		}
 
-		if (updateMode)
-			dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_UPDATE);
+		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
 
 		GuiBean guibean = new GuiBean();
 		guibean.put(GuiParameters.PLOTMODE, GuiPlotMode.ONED_THREED);
@@ -882,6 +904,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			GuiBean guiBean = new GuiBean();
 			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.EMPTY);
 			plotServer.updateGui(viewName, guiBean);
+			plotServer.setData(viewName, null); // remove data too
 		}
 	}
 

@@ -45,7 +45,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		}
 
 		@Override
-		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] xAxisNames,
+		public void plot(String plotName, String title, IDataset[] xAxes, IDataset[] yAxes, String[] yLabels, String[] xAxisNames,
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
@@ -69,7 +69,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
 		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
-				null, null);
+				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
 		
@@ -80,7 +80,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// make sure we arrive at the alternate handler
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
 		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
-				null, null);
+				null, null, null);
 		Assert.assertFalse(receivedAtDefaultHandler[0]);
 		Assert.assertTrue(receivedAtAlternatePortHandler[0]);
 		
@@ -91,7 +91,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
 		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
-				null, null);
+				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
 		

@@ -1141,7 +1141,7 @@ public class Comparisons {
 	/**
 	 * Create a list of indices of positions where items are non-zero
 	 * @param a
-	 * @return list of indices as integer datasets
+	 * @return list of positions as integer datasets
 	 */
 	public static List<IntegerDataset> nonZero(AbstractDataset a) {
 		final int rank = a.getRank();

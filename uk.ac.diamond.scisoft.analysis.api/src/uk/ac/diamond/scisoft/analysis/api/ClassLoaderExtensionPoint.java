@@ -14,34 +14,21 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.roi;
+package uk.ac.diamond.scisoft.analysis.api;
 
 /**
- * Represents an orientable region of interest with the start point being the centre of rotation
+ * This only holds constants for the extension point
  */
-public interface IOrientableROI extends IROI {
-	@Override
-	public IOrientableROI copy();
+public class ClassLoaderExtensionPoint {
 
 	/**
-	 * @return angle, in degrees
+	 * ID of extension point for class loading
 	 */
-	public double getAngleDegrees();
+	public static final String ID = "uk.ac.diamond.scisoft.analysis.classloader";
 
 	/**
-	 * Set angle, in degrees
-	 * @param degrees
+	 * attribute name in extension point
 	 */
-	public void setAngleDegrees(double degrees);
+	public static final String ATTR = "class";
 
-	/**
-	 * @return angle, in radians
-	 */
-	public double getAngle();
-
-	/**
-	 * Set angle, in radians
-	 * @param angle
-	 */
-	public void setAngle(double angle);
 }

@@ -40,6 +40,7 @@ _plot_image = _plot.plot_image
 _plot_images = _plot.plot_images
 _plot_surface = _plot.plot_surface
 _plot_stack = _plot.plot_stack
+_plot_addstack = _plot.plot_addstack
 _plot_updatestack = _plot.plot_updatestack
 _plot_points2d = _plot.plot_points2d
 _plot_updatepoints2d = _plot.plot_updatepoints2d
@@ -173,7 +174,9 @@ _AXES_NAMES = { 'x':{}, 'y':{} }
 import types as _types
 
 def _parselinearg(x, y, title, name):
-    '''x and y can be lists of arrays or single-item dicts (each dict comprises an axis name (or tuple) and array)
+    '''x and y can be lists of arrays, tuples or single-item dicts
+    (each tuple comprises an array and label)
+    (each dict comprises an axis name (or tuple of axis name/position) and array (or array/label tuple))
     '''
     if y is None:
         if isinstance(x, dict):
@@ -201,6 +204,8 @@ def _parselinearg(x, y, title, name):
                 for i in yl:
                     if type(i) is _types.DictType: # has axis name
                         i = i.values()[0]
+                    if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
+                        i = i[0]
                     if xLength != i.shape[0]:
                         raise AttributeError("length of y does not match the length of x" )
             elif len(xl) != len(yl):
@@ -211,6 +216,8 @@ def _parselinearg(x, y, title, name):
                         i = i.values()[0]
                     if type(j) is _types.DictType: # has axis name
                         j = j.values()[0]
+                    if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
+                        j = j[0]
                     if i.shape[0] != j.shape[0]:
                         raise AttributeError("length of y does not match the length of x")
 
@@ -290,6 +297,7 @@ def _process_line(x, y, title, name, mode):
     # generate list of axes
     xs = []
     ys = []
+    yn = [] # list of y names
     for i in range(len(yl)):
         if xl is not None:
             xi = xl[0] if len(xl) == 1 else xl[i]
@@ -302,20 +310,29 @@ def _process_line(x, y, title, name, mode):
                 xs.append(xi)
 
         yi = yl[i]
+        yt = None
         if type(yi) is _types.DictType: # has axis name
             _, yi = yi.items()[0]
+        if type(yi) is _types.ListType or type(yi) is _types.TupleType: # has y dataset labelling
+            yi, yt = yi[0], yi[1] 
         ys.append(yi)
+        yn.append(yt)
 
     for a in xs: # if all None then make it None
         if a is not None:
             break
     else:
         xs = None
+    for a in yn: # if all None then make it None
+        if a is not None:
+            break
+    else:
+        yn = None
 
     if mode is None:
-        _plot_line(name, t, xs, ys, ax, ay)
+        _plot_line(name, t, xs, ys, yn, ax, ay)
     else:
-        _plot_addline(name, t, xs, ys, ax, ay)
+        _plot_addline(name, t, xs, ys, yn, ax, ay)
 
 def line(x, y=None, title=None, name=None):
     '''Plot y dataset (or list of datasets), optionally against any
@@ -385,23 +402,59 @@ def updateline(x, y=None, title=None, name=None):
 plot = line
 updateplot = updateline
 
+def _checkimagearg(x, y, im, name):
+    '''x and y can be arrays or single-item dicts
+    (each dict comprises an axis name (or tuple of axis name/position) and array (can be None))
+    '''
+
+    if x is not None:
+        if type(x) is _types.DictType: # has axis name
+            x = x.values()[0]
+        if x is not None and x.shape[0] != im.shape[1]:
+            raise AttributeError("Width of image does not match the length of x" )
+
+    if y is not None:
+        if type(y) is _types.DictType: # has axis name
+            y = y.values()[0]
+        if y is not None and y.shape[0] != im.shape[0]:
+            raise AttributeError("Height of image does not match the length of y" )
+
+def _process_image(x, y, im, name):
+    _checkimagearg(x, y, im, name)
+
+    _plot_clear(name)
+    _clear_axis(name)
+
+    if x is not None:
+        ax = _setup_axes([x], 'x', name)[0]
+    else:
+        ax = None
+    if y is not None:
+        ay = _setup_axes([y], 'y', name)[0]
+    else:
+        ay = None
+
+    if type(x) is _types.DictType: # has axis name
+        _, x = x.items()[0]
+
+    if type(y) is _types.DictType: # has axis name
+        _, y = y.items()[0]
+
+    _plot_image(name, x, y, im, ax, ay)
+
 def image(im, x=None, y=None, name=None):
     '''Plot a 2D dataset as an image in the named view with optional x and y axes
 
     Arguments:
     im -- image dataset
-    x -- optional dataset for x-axis
-    y -- optional dataset for y-axis
+    x -- optional dataset or single-item dict for x-axis
+    y -- optional dataset or single-item dict for y-axis
     name -- name of plot view to use (if None, use default name)
     '''
     if name is None:
         name = _PVNAME
-    if x is None:
-        y = None
-    if y is None:
-        x = None
 
-    _plot_image(name, x, y, im)
+    _process_image(x, y, im, name)
 
 def images(im, x=None, y=None, name=None):
     '''Plot 2D datasets as an image in the named view with optional x and y axes
@@ -440,8 +493,8 @@ def surface(s, x=None, y=None, name=None):
     _plot_surface(name, x, y, s)
 
 def stack(x, y=None, z=None, name=None):
-    '''Plot all of the given 1D y datasets against corresponding x as a 3D stack
-    with optional z coordinates in the named view
+    '''Plot all of the given 1D y datasets, optionally against any given x datasets,
+    as a 3D stack of lines with optional z coordinates in the named view
 
     Arguments:
     x -- optional dataset or list of datasets for x-axis
@@ -460,6 +513,28 @@ def stack(x, y=None, z=None, name=None):
         x = [ _core.arange(l) ]
 
     _plot_stack(name, _toList(x), _toList(y), z)
+
+def addstack(x, y=None, z=None, name=None):
+    '''Add line(s) to existing stack plot, optionally against any given x datasets
+    with optional z coordinates in the named view
+
+    Arguments:
+    x -- optional dataset or list of datasets for x-axis
+    y -- dataset or list of datasets
+    z -- optional dataset for z-axis
+    name -- name of plot view to use (if None, use default name)
+    '''
+    if name is None:
+        name = _PVNAME
+    if not y:
+        y = _toList(x)
+        l = 0
+        for d in y:
+            if d.size > l:
+                l = d.size
+        x = [ _core.arange(l) ]
+
+    _plot_addstack(name, _toList(x), _toList(y), z)
 
 def updatestack(x, y=None, z=None, name=None):
     '''Update existing 3D line stack by changing displayed y dataset (or list of datasets),

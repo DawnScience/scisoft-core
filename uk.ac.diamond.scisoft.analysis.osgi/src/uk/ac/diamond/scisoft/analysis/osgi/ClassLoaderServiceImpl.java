@@ -15,13 +15,15 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.osgi;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 import py4j.ClassLoaderService;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
+import uk.ac.diamond.scisoft.analysis.api.ClassLoaderExtensionPoint;
 
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 
@@ -33,14 +35,29 @@ public class ClassLoaderServiceImpl extends AbstractServiceFactory implements Cl
 	private CompositeClassLoader loader;
 
 	public ClassLoaderServiceImpl() {
+	}
+
+	private void init() {
+		IExtensionRegistry reg = RegistryFactory.getRegistry();
+		if (reg == null)
+			return; // not running within OSGi?
+
 		loader = new CompositeClassLoader();
-		loader.add(AbstractDataset.class.getClassLoader()); // analysis.dataset
-		loader.add(LinearROI.class.getClassLoader());       // analysis
-		loader.add(Slice.class.getClassLoader());           // analysis.api
+		for (IConfigurationElement i : reg.getConfigurationElementsFor(ClassLoaderExtensionPoint.ID)) {
+			try {
+				Object e = i.createExecutableExtension(ClassLoaderExtensionPoint.ATTR);
+				loader.add(e.getClass().getClassLoader());
+			} catch (Exception ne) {
+				// do nothing
+			}
+		}
 	}
 
 	@Override
 	public ClassLoader getClassLoader() {
+		if (loader == null) {
+			init(); // delay initialization till registry exists
+		}
 		return loader;
 	}
 

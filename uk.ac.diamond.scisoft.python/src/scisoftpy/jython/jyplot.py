@@ -47,6 +47,10 @@ def plot_stack(*arg, **kwarg):
     _plotter.stackPlot(*arg, **kwarg)
 
 @_wrapin
+def plot_addstack(*arg, **kwarg):
+    _plotter.addStackPlot(*arg, **kwarg)
+
+@_wrapin
 def plot_updatestack(*arg, **kwarg):
     _plotter.updateStackPlot(*arg, **kwarg)
 

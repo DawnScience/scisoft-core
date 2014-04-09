@@ -36,7 +36,7 @@ public class AnalysisRpcBasicRemoteTest {
 	public void testBasicRemoteOperation() throws Exception {
 		// Start the Python server
 		PythonRunInfo server = PythonHelper
-				.runPythonFileBackground("test/uk/ac/diamond/scisoft/analysis/rpc/rpcremote.py");
+				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/rpcremote.py");
 
 		try {
 			// Create a new client to connect to the server (note that the ports match)

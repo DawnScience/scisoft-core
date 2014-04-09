@@ -209,6 +209,10 @@ roll = _np.roll
 
 rollaxis = _np.rollaxis
 
+unravel_index = _np.unravel_index
+
+ravel_multi_index = _np.ravel_multi_index
+
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items
 #    '''

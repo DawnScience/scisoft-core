@@ -151,14 +151,6 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	}
 
 	/**
-	 * @param d
-	 * @return start angle of positive branch at distance from focus (end = 2pi - start)
-	 */
-	public double getStartAngle(double d) {
-		return Math.acos((1 - l / d) / e);
-	}
-
-	/**
 	 * Get point on hyperbolic at given angle
 	 * @param angle in degrees
 	 * @return point 
@@ -251,6 +243,24 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 		}
 		y = Math.asin(y);
 		return sanifyAngles(y - t, Math.PI - y - t);
+	}
+
+	/**
+	 * @param d
+	 * @return start angle of positive branch at distance from focus
+	 */
+	@Override
+	public double getStartParameter(double d) {
+		return Math.acos((1 - l / d) / e);
+	}
+
+	/**
+	 * @param d
+	 * @return end angle of positive branch at distance from focus
+	 */
+	@Override
+	public double getEndParameter(double d) {
+		return Math.PI * 2 - getStartParameter(d);
 	}
 
 	@Override

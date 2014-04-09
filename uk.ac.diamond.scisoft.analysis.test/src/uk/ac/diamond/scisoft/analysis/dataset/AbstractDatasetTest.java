@@ -22,8 +22,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
 import org.junit.Assert;
@@ -135,6 +137,14 @@ public class AbstractDatasetTest {
 		b.mean(true);
 		assertEquals("Max", 11, b.max(true).doubleValue(), 1e-6);
 		assertEquals("Max arg", 11, b.argMax(true));
+
+		// check strided datasets give same max/min positions
+		a = AbstractDataset.arange(12, AbstractDataset.FLOAT64).reshape(3,4);
+		b = a.getSliceView(new Slice(1, null), new Slice(0, null, 2));
+		AbstractDataset c = a.getSlice(new Slice(1, null), new Slice(0, null, 2));
+
+		Assert.assertEquals(c.argMax(), b.argMax());
+		Assert.assertEquals(c.argMin(), b.argMin());
 	}
 
 	@Test
@@ -1539,6 +1549,12 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", 1.0, a.getObject());
+		assertEquals("Max", 1.0, a.max());
+		assertEquals("Min", 1.0, a.min());
+		assertEquals("MaxPos", 0, a.maxPos().length);
+		assertEquals("MinPos", 0, a.minPos().length);
+		assertEquals("ArgMax", 0, a.argMax());
+		assertEquals("ArgMin", 0, a.argMin());
 		assertEquals("Value", true, a.equals(new Double(1.0)));
 
 		a = AbstractDataset.zeros(new int[] {}, AbstractDataset.INT16);
@@ -1962,5 +1978,73 @@ public class AbstractDatasetTest {
 		b = AbstractDataset.zeros(3, a.getShapeRef(), AbstractDataset.ARRAYFLOAT32);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
+	}
+
+	@Test
+	public void testPositions() {
+		int[] shape = new int[] { 23, 34, 2 };
+		int[] indexes = new int[] {1, 10, 70, 171};
+		List<IntegerDataset> list = DatasetUtils.calcPositionsFromIndexes(new IntegerDataset(indexes, 2, 2), shape);
+
+		Assert.assertEquals(shape.length, list.size());
+		IntegerDataset l = list.get(0);
+		Assert.assertEquals(2, l.getRank());
+		Assert.assertEquals(2, l.getShapeRef()[0]);
+		Assert.assertEquals(2, l.getShapeRef()[1]);
+
+		checkPositions(list, new int[] {0, 0, 1},  0, 0);
+		checkPositions(list, new int[] {0, 5, 0},  0, 1);
+		checkPositions(list, new int[] {1, 1, 0},  1, 0);
+		checkPositions(list, new int[] {2, 17, 1},  1, 1);
+	}
+
+	private void checkPositions(List<IntegerDataset> list, int[] expected, int... position) {
+		int j = 0;
+		for (int i : expected) {
+			IntegerDataset l = list.get(j++);
+			Assert.assertEquals(i, l.getInt(position));
+		}
+	}
+
+	@Test
+	public void testIndexes() {
+		List<IntegerDataset> list = new ArrayList<IntegerDataset>();
+		int[] shape = new int[] { 23, 34, 2 };
+		list.add(new IntegerDataset(new int[] {0, 0, 1, 2}, 2, 2));
+		list.add(new IntegerDataset(new int[] {0, 5, 1, 17}, 2, 2));
+		list.add(new IntegerDataset(new int[] {1, 0, 0, 1}, 2, 2));
+		IntegerDataset indexes = DatasetUtils.calcIndexesFromPositions(list, shape, null);
+
+		checkDatasets(indexes, new IntegerDataset(new int[] {1, 10, 70, 171}, 2, 2));
+
+		list.set(1, new IntegerDataset(new int[] {0, -5, 1, 17}, 2, 2));
+		try {
+			indexes = DatasetUtils.calcIndexesFromPositions(list, shape, null);
+			Assert.fail("Should have thrown an exception");
+		} catch (Exception e) {
+		}
+
+		list.set(1, new IntegerDataset(new int[] {0, 34, 1, 17}, 2, 2));
+		try {
+			indexes = DatasetUtils.calcIndexesFromPositions(list, shape, null);
+			Assert.fail("Should have thrown an exception");
+		} catch (Exception e) {
+		}
+
+		list.set(1, new IntegerDataset(new int[] {0, 39, 1, 17}, 2, 2));
+		indexes = DatasetUtils.calcIndexesFromPositions(list, shape, 1);
+		checkDatasets(indexes, new IntegerDataset(new int[] {1, 10, 70, 171}, 2, 2));
+
+		list.set(1, new IntegerDataset(new int[] {0, -29, 1, 17}, 2, 2));
+		indexes = DatasetUtils.calcIndexesFromPositions(list, shape, 1);
+		checkDatasets(indexes, new IntegerDataset(new int[] {1, 10, 70, 171}, 2, 2));
+
+		list.set(1, new IntegerDataset(new int[] {-2, 5, 1, 17}, 2, 2));
+		indexes = DatasetUtils.calcIndexesFromPositions(list, shape, 2);
+		checkDatasets(indexes, new IntegerDataset(new int[] {1, 10, 70, 171}, 2, 2));
+
+		list.set(1, new IntegerDataset(new int[] {34, 5, 1, 17}, 2, 2));
+		indexes = DatasetUtils.calcIndexesFromPositions(list, shape, 2);
+		checkDatasets(indexes, new IntegerDataset(new int[] {33*2 + 1, 10, 70, 171}, 2, 2));
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi.handler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
@@ -26,32 +27,78 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIUtils;
  * 
  * Its super class holds the primitive IDs for handle areas
  */
-abstract public class ROIHandler extends ArrayList<Integer> {
-	protected IROI roi;
+abstract public class ROIHandler<T extends IROI> {
+	protected T roi;
 	protected int handle;
 	protected HandleStatus status;
+	protected List<Integer> list;
+
+	public ROIHandler() {
+		list = new ArrayList<Integer>();
+	}
+
+	public boolean add(int e) {
+		return list.add(e);
+	}
+
+	public int get(int index) {
+		return list.get(index);
+	}
+
+	public int set(int index, int element) {
+		return list.set(index, element);
+	}
+
+	public int remove(int index) {
+		return list.remove(index);
+	}
+
+	public int size() {
+		return list.size();
+	}
+
+	public int indexOf(int o) {
+		return list.indexOf(o);
+	}
+
+	public boolean contains(int o) {
+		return list.contains(o);
+	}
+
+	public List<Integer> getAll() {
+		return list;
+	}
 
 	/**
 	 * @param handle
 	 * @param size 
-	 * @return handle point
+	 * @return handle point for corner of handle box
 	 */
 	abstract public double[] getHandlePoint(int handle, int size);
 
 	/**
 	 * @param handle
 	 * @param size
-	 * @return anchor point for scale invariant display
+	 * @return anchor point for scale invariant display and acts as centre of rotation
 	 */
 	abstract public double[] getAnchorPoint(int handle, int size);
 
-	abstract public IROI getROI();
+	/**
+	 * @return ROI
+	 */
+	public T getROI() {
+		return roi;
+	}
 
+	/**
+	 * @return centre handle ID
+	 */
+	abstract public int getCentreHandle();
 
 	/**
 	 * @param roi The roi to set.
 	 */
-	public void setROI(IROI roi) {
+	public void setROI(T roi) {
 		this.roi = roi;
 	}
 
@@ -86,7 +133,7 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	 * @param ept
 	 * @return roi
 	 */
-	public IROI interpretMouseDragging(int[] spt, int[] ept) {
+	public T interpretMouseDragging(int[] spt, int[] ept) {
 		return interpretMouseDragging(ROIUtils.convertToDoubleArray(spt), ROIUtils.convertToDoubleArray(ept));
 	}
 
@@ -96,5 +143,5 @@ abstract public class ROIHandler extends ArrayList<Integer> {
 	 * @param ept
 	 * @return roi
 	 */
-	abstract public IROI interpretMouseDragging(double[] spt, double[] ept);
+	abstract public T interpretMouseDragging(double[] spt, double[] ept);
 }

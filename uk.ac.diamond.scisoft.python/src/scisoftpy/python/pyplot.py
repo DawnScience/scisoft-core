@@ -59,6 +59,7 @@ _plot_name_remapper = {
     'plot_addline': 'addPlot',
     'plot_updateline': 'updatePlot',
     'plot_stack': 'stackPlot',
+    'plot_addstack': 'addStackPlot',
     'plot_updatestack': 'updateStackPlot',
     'plot_image': 'imagePlot',
     'plot_images': 'imagesPlot',

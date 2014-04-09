@@ -60,10 +60,13 @@ public class SimplePlotServer extends AbstractPlotServer {
 
 	@Override
 	public void updateGui(String guiName, GuiBean guiData) throws Exception {
+		boolean respond = !guiData.containsKey(GuiParameters.QUIET_UPDATE);
 		super.updateGui(guiName, guiData);
-		respondToGui(guiName, guiData);
-		GuiUpdate update = new GuiUpdate(guiName, guiData);
-		notifyIObservers(this, update);
+		if (respond) {
+			respondToGui(guiName, guiData);
+			GuiUpdate update = new GuiUpdate(guiName, guiData);
+			notifyIObservers(this, update);
+		}
 	}
 
 	/**

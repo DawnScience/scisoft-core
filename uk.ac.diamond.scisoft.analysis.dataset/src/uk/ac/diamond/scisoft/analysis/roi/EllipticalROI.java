@@ -325,6 +325,16 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	}
 
 	@Override
+	public double getStartParameter(double d) {
+		return 0;
+	}
+
+	@Override
+	public double getEndParameter(double d) {
+		return Math.PI * 2;
+	}
+
+	@Override
 	public String toString() {
 		if (isCircular()) {
 			return super.toString() + String.format("point=%s, radius=%g, angle=%g", Arrays.toString(spt), saxis[0], getAngleDegrees());

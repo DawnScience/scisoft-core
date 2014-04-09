@@ -73,13 +73,15 @@ public interface ISDAPlotter {
 	 *            The dataset to use as the X values
 	 * @param yValues
 	 *            The datasets to use as the Y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
 	 * @param xAxisNames
 	 *            The names of x axes, null if none
 	 * @param yAxisNames
 	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
+	public void plot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Add plot to existing plots
@@ -91,13 +93,15 @@ public interface ISDAPlotter {
 	 *            The dataset to use as the X values
 	 * @param yValues
 	 *            The datasets to use as the Y values
+	 * @param yLabels
+	 *            The labels of y datasets, null if none
 	 * @param xAxisNames
 	 *            The names of x axes, null if none
 	 * @param yAxisNames
 	 *            The names of y axes, null if none
 	 * @throws Exception
 	 */
-	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] xAxisNames, String[] yAxisNames) throws Exception;
+	public void addPlot(String plotName, String title, IDataset[] xValues, IDataset[] yValues, String[] yLabels, String[] xAxisNames, String[] yAxisNames) throws Exception;
 
 	/**
 	 * Update existing plot with new data, keeping zoom level
@@ -130,10 +134,11 @@ public interface ISDAPlotter {
 	 * @param yAxis
 	 *            can be null
 	 * @param image
+	 * @param xAxisName
+	 * @param yAxisName
 	 * @throws Exception
 	 */
-
-	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image) throws Exception;
+	public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xAxisName, String yAxisName) throws Exception;
 
 	/**
 	 * Allows the plotting of an image to the defined view
@@ -230,6 +235,17 @@ public interface ISDAPlotter {
 	 * @throws Exception
 	 */
 	public void stackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
+
+	/**
+	 * Add more 1D plots to stack
+	 * 
+	 * @param plotName
+	 * @param xValues
+	 * @param yValues
+	 * @param zValues
+	 * @throws Exception
+	 */
+	public void addStackPlot(String plotName, IDataset[] xValues, IDataset[] yValues, IDataset zValues) throws Exception;
 
 	/**
 	 * Update stack with new data, keeping zoom level

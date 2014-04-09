@@ -23,11 +23,9 @@ import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -113,7 +111,8 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 				value = q.length();
 				break;
 			case RESOLUTION:
-				value = (2*Math.PI)/q.length();
+				value = q.length();
+				//value = (2*Math.PI)/q.length();
 				break;
 			case PIXEL:
 				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
@@ -157,32 +156,54 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		AbstractDataset axis = Maths.add(bins.getSlice(new int[]{1}, null ,null), bins.getSlice(null, new int[]{-1},null));
 		axis.idivide(2);
 		
-		if (xAxis == XAxis.Q) axis.setName("q");
+		switch (xAxis) {
+		case Q:
+			axis.setName("q");
+			break;
+		case ANGLE:
+			axis.setName("2theta");
+			break;
+		case RESOLUTION:
+			//convert to d after solid angle correction
+			axis.setName("q");
+			break;
+		case PIXEL:
+			axis.setName("pixel");
+		}
+		
+		if (xAxis == XAxis.Q) {
+			axis.setName("q");
+		}
 		else axis.setName("2theta");
 		
-		result.add(axis);
-		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,AbstractDataset.FLOAT64));
+		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,intensity.getDtype()));
+		
 		out.setName(name + "_integrated");
-		
-		 if (correctSolidAngle) {
-			 
-			 if (out.getRank() != 2) {
-				 out = correctSolidAngle(axis, out);
-			 } else {
-				 PositionIterator it = out.getPositionIterator(1);
-				 int end = out.getShape()[1];
-				 int[] pos = it.getPos();
-				 int[] stop = pos.clone();
-				 while (it.hasNext()) {
-					 stop = pos.clone();
-					 stop[1] = end;
-					 stop[0]++;
-					 AbstractDataset ds = out.getSlice(pos,stop,null).squeeze();
-					 out.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
-				 }
-			 }
-		 }
-		
+
+		if (correctSolidAngle) {
+
+			if (out.getRank() != 2) {
+				out = correctSolidAngle(axis, out);
+			} else {
+				PositionIterator it = out.getPositionIterator(1);
+				int end = out.getShape()[1];
+				int[] pos = it.getPos();
+				int[] stop = pos.clone();
+				while (it.hasNext()) {
+					stop = pos.clone();
+					stop[1] = end;
+					stop[0]++;
+					AbstractDataset ds = out.getSlice(pos,stop,null).squeeze();
+					out.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
+				}
+			}
+		}
+
+		if (xAxis == XAxis.RESOLUTION) {
+			axis = Maths.divide((2*Math.PI), axis);
+			axis.setName("d-spacing");
+		}
+		result.add(axis);
 		result.add(out);
 	}
 	

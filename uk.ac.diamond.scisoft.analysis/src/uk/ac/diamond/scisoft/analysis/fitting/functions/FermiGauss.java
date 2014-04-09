@@ -200,8 +200,21 @@ public class FermiGauss extends AFunction implements Serializable{
 		double realEnergy = k2eV(realTemperaure);
 		double fwhm = fitEnergy*fitEnergy - realEnergy*realEnergy;
 		fwhm = Math.sqrt(fwhm);
-		temp.setValue(realTemperaure);
-		width.setValue(fwhm);
+		if (temp.isFixed()) {
+			temp.setFixed(false);
+			temp.setValue(realTemperaure);
+			temp.setFixed(true);
+		} else {
+			temp.setValue(realTemperaure);
+		}
+		
+		if (width.isFixed()) {
+			width.setFixed(false);
+			width.setValue(fwhm);
+			width.setFixed(true);
+		} else {
+			width.setValue(fwhm);
+		}
 
 		return fitEnergy*6;
 	}

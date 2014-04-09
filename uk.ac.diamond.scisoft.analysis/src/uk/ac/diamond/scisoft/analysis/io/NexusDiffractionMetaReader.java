@@ -172,7 +172,6 @@ public class NexusDiffractionMetaReader {
 			detprop.setHPxSize(xyPixelSize[1]);
 		}
 		
-		
 		return new DiffractionMetadata(filePath,detprop,diffcrys);
 	}
 	
@@ -447,13 +446,12 @@ public class NexusDiffractionMetaReader {
 	
 	
 	private void populateFromNexus(Group nxDetector, DetectorProperties detprop) {
-		
-		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(nxDetector, detprop));
+		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(nxDetector,detprop));
+		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
+		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(nxDetector,detprop));
+		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(nxDetector,detprop));
 	}
 	
 	private boolean updateDetectorOrientation(Group nexusGroup, DetectorProperties detprop) {
@@ -692,5 +690,9 @@ public class NexusDiffractionMetaReader {
 		final int[] intShape  = new int[longShape.length];
 		for (int i = 0; i < intShape.length; i++) intShape[i] = (int)longShape[i];
 		return intShape;
+	}
+	
+	public String getFilePath() {
+		return filePath;
 	}
 }

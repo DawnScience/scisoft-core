@@ -32,7 +32,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Stats;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.roi.IParametricROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.roi.PointROI;
@@ -86,13 +85,17 @@ public class PeakFittingEllipseFinder {
 		int count = 1;
 		
 		while (count < 5 && polyline.getNumberOfPoints() < nPoints *0.75) {
+			
+			if (count == 1) mon.subTask("Starting peak fit...");
+			else mon.subTask("Not enough points found, continuing search...: " + count);
+			
 			for (double[] range : searchRange) {
 				
 				double step = (range[1]-range[0])/nPoints;
 				int nPointFrac = (int)((range[1]-range[0])/totalRange*nPoints);
 				
 				double offset = 1/count*step;
-				
+				offset = 0;
 				findNumberOfPointsOnEllipse(image, polyline,inOut, new double[]{offset+range[0],range[1]},nPointFrac, mon);
 			}
 			
@@ -113,13 +116,6 @@ public class PeakFittingEllipseFinder {
 		final int[] shape = image.getShape();
 		final int h = shape[1];
 		final int w = shape[0];
-		
-		double ang =  0;
-		
-		if (inOut[0] instanceof EllipticalROI) {
-			ang = ((EllipticalROI)inOut[0]).getAngle();
-		}
-		
 		
 		List<PointROI> roiList = new ArrayList<PointROI>();
 		List<Gaussian> gaussianList = new ArrayList<Gaussian>();
@@ -170,7 +166,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.arange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g);
+				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g,1000);
 				
 			} catch (Exception e) {
 				logger.debug(e.getMessage());
@@ -178,9 +174,12 @@ public class PeakFittingEllipseFinder {
 			
 			if (g == null) continue;
 			
+			//lineAngle != i for non-ellipical
+			double lineAngle = line.getAngle();
+			
 			double r = g.getParameter(0).getValue();
-			double x = r*Math.cos(i+ang)+beg[0];
-			double y = r*Math.sin(i+ang)+beg[1];
+			double x = r*Math.cos(lineAngle)+beg[0];
+			double y = r*Math.sin(lineAngle)+beg[1];
 			roiList.add(new PointROI(x,y));
 			gaussianList.add(g);
 			

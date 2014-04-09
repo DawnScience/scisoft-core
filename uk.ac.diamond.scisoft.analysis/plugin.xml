@@ -2,6 +2,12 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="uk.ac.diamond.scisoft.analysis.io.loader" name="Loader Factory Extension" schema="schema/uk.ac.diamond.scisoft.analysis.io.loader.exsd"/>
+   <extension
+         point="uk.ac.diamond.scisoft.analysis.classloader">
+      <bundle
+            class="uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader">
+      </bundle>
+   </extension>
 
 
 </plugin>

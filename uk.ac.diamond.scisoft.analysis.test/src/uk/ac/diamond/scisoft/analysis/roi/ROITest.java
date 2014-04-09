@@ -39,6 +39,8 @@ public class ROITest {
 		assertFalse(p.isNearOutline(p.getPointX()-1, p.getPointY()+3, 2.5));
 	}
 
+	private static final int POINTS = 200;
+
 	@Test
 	public void testLinearROI() {
 		LinearROI l = new LinearROI();
@@ -60,6 +62,49 @@ public class ROITest {
 		assertTrue(l.containsPoint(l.getPointX() + 2, l.getPointY() + 2));
 		assertFalse(l.containsPoint(2, l.getPointY()));
 		assertFalse(l.containsPoint(-2, l.getPointY()));
+
+		LinearROI sl = l.copy();
+		sl.setPoint(-0.1, 0);
+		LinearROI ll = l.copy();
+		ll.setPoint(0.1, 0);
+		for (int i = 20; i < POINTS-2; i++) {
+			double a = i / (POINTS - 1.0);
+
+			double[] ps = sl.getPoint(a);
+			assertTrue(l.isNearOutline(ps, 1));
+			assertFalse(l.isNearOutline(ps, 0.01));
+
+			double[] pl = ll.getPoint(a);
+			assertTrue(l.isNearOutline(pl, 1));
+			assertFalse(l.isNearOutline(pl, 0.01));
+
+			double[] p = l.getPoint(a);
+			assertTrue(l.containsPoint(p));
+			checkPoint(l.getVerticalIntersectionParameters(p[0]), p, 0, l);
+			checkPoint(l.getHorizontalIntersectionParameters(p[1]), p, 1, l);
+		}
+
+		assertTrue(l.getVerticalIntersectionParameters(l.getBounds().getEndPoint()[0]+0.1) == null);
+		assertTrue(l.getVerticalIntersectionParameters(l.getBounds().getPointRef()[0]-0.1) == null);
+		assertTrue(l.getHorizontalIntersectionParameters(l.getBounds().getEndPoint()[1]+0.1) == null);
+		assertTrue(l.getHorizontalIntersectionParameters(l.getBounds().getPointRef()[1]-0.1) == null);
+
+		l.setAngleDegrees(0);
+		assertTrue(l.getVerticalIntersectionParameters(10.1) == null);
+		assertTrue(l.getVerticalIntersectionParameters(-0.1) == null);
+		assertTrue(l.getHorizontalIntersectionParameters(10.1) == null);
+		assertTrue(l.getHorizontalIntersectionParameters(-0.1) == null);
+		assertTrue(Double.isNaN(l.getHorizontalIntersectionParameters(0)[0]));
+
+		l.setAngleDegrees(90);
+		assertTrue(l.getVerticalIntersectionParameters(10.1) == null);
+		assertTrue(l.getVerticalIntersectionParameters(-0.1) == null);
+		assertTrue(Double.isNaN(l.getVerticalIntersectionParameters(0)[0]));
+		assertTrue(l.getHorizontalIntersectionParameters(10.1) == null);
+		assertTrue(l.getHorizontalIntersectionParameters(-0.1) == null);
+
+		l.setPoint(0.1, 0);
+		assertTrue(Double.isNaN(l.getVerticalIntersectionParameters(0.1)[0]));
 	}
 
 	@Test
@@ -126,8 +171,6 @@ public class ROITest {
 		return b;
 	}
 
-	private static final int ANGLES = 180;
-
 	@Test
 	public void testCircularROI() {
 		CircularROI c = new CircularROI(10);
@@ -141,8 +184,8 @@ public class ROITest {
 		assertFalse(c.containsPoint(-20, c.getPointY()));
 		CircularROI sc = new CircularROI(9.9);
 		CircularROI lc = new CircularROI(10.1);
-		for (int i = 0; i < ANGLES; i++) {
-			double a = (i * Math.PI)/ANGLES;
+		for (int i = 0; i < POINTS; i++) {
+			double a = (i * Math.PI)/POINTS;
 			assertTrue(c.containsPoint(sc.getPoint(a)));
 			assertTrue(c.isNearOutline(sc.getPoint(a), 1));
 			assertFalse(c.isNearOutline(sc.getPoint(a), 0.01));
@@ -174,8 +217,8 @@ public class ROITest {
 
 		EllipticalROI se = new EllipticalROI(9.9, 4.9, Math.PI/4., 0, 0);
 		EllipticalROI le = new EllipticalROI(10.1, 5.1, Math.PI/4., 0, 0);
-		for (int i = 0; i < ANGLES; i++) {
-			double a = (i * Math.PI)/ANGLES;
+		for (int i = 0; i < POINTS; i++) {
+			double a = (i * Math.PI)/POINTS;
 			double[] ps = se.getPoint(a);
 			assertTrue(e.containsPoint(ps));
 			assertTrue(e.isNearOutline(ps, 1));
@@ -270,12 +313,12 @@ public class ROITest {
 		CircularROI lc = new CircularROI(10.1);
 		lc.setPoint(s.getPoint());
 		double ar = s.getAngle(1) - s.getAngle(0);
-		for (int i = 0; i < ANGLES; i++) {
-			double a = s.getAngle(0) + (i * ar)/(ANGLES - 1);
+		for (int i = 0; i < POINTS; i++) {
+			double a = s.getAngle(0) + (i * ar)/(POINTS - 1);
 			assertTrue(s.containsPoint(sc.getPoint(a)));
 			assertTrue(s.isNearOutline(sc.getPoint(a), 1));
 			boolean f = s.isNearOutline(sc.getPoint(a), 0.01);
-			if (i > 0 && i < ANGLES-1)
+			if (i > 0 && i < POINTS-1)
 				assertFalse(f);
 			else
 				assertTrue(f);
@@ -307,7 +350,7 @@ public class ROITest {
 
 		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
 		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() + 1, 2.5));
-		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
+		assertFalse(p.isNearOutline(p.getPointX() + 2.5, p.getPointY() + 4, 2.5));
 	}
 
 	@Test
@@ -331,7 +374,7 @@ public class ROITest {
 
 		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
 		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() - 1, 2.5));
-		assertFalse(p.isNearOutline(p.getPointX() - 2.5, p.getPointY() + 4, 2.5));
+		assertFalse(p.isNearOutline(p.getPointX() + 2.5, p.getPointY() + 4, 2.5));
 	}
 
 	@Test
@@ -339,7 +382,7 @@ public class ROITest {
 		ParabolicROI p = new ParabolicROI(3, 0, 0, 0);
 
 		double distance = 5.5;
-		double limit = p.getStartAngle(distance);
+		double limit = p.getStartParameter(distance);
 		for (int i = 0; i < SIDES; i++) {
 			double a = (2 * i * Math.PI) / SIDES;
 			double[] pt = p.getPoint(a);
@@ -356,7 +399,7 @@ public class ROITest {
 		HyperbolicROI h = new HyperbolicROI(3, 2, 0, 0, 0);
 
 		double distance = 5.5;
-		double limit = h.getStartAngle(distance);
+		double limit = h.getStartParameter(distance);
 		for (int i = 0; i < SIDES; i++) {
 			double a = (2 * i * Math.PI) / SIDES;
 			double[] pt = h.getPoint(a);

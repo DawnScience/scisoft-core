@@ -1774,6 +1774,37 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
+	 * Get flattened view index of given position 
+	 * @param pos
+	 *            the integer array specifying the n-D position
+	 * @return the index on the flattened dataset
+	 */
+	private int getFlat1DIndex(final int[] pos) {
+		final int imax = pos.length;
+		if (imax == 0) {
+			return 0;
+		}
+
+		return get1DIndexFromShape(pos);
+	}
+
+	/**
+	 * Get flattened view index of given position 
+	 * @param shape
+	 * @param pos
+	 *            the integer array specifying the n-D position
+	 * @return the index on the flattened dataset
+	 */
+	public static int getFlat1DIndex(final int[] shape, final int[] pos) {
+		final int imax = pos.length;
+		if (imax == 0) {
+			return 0;
+		}
+
+		return get1DIndexFromShape(shape, pos);
+	}
+
+	/**
 	 * Function that uses the knowledge of the dataset to calculate the index in the data array
 	 * that corresponds to the n-dimensional position given by the int array. The input values
 	 * <b>must</b> be inside the arrays, this should be ok as this function is mainly in code which
@@ -1850,6 +1881,10 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	protected int get1DIndexFromShape(final int... n) {
+		return get1DIndexFromShape(shape, n);
+	}
+
+	protected static int get1DIndexFromShape(final int[] shape, final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
 		int index = 0;
@@ -1906,7 +1941,7 @@ public abstract class AbstractDataset implements ADataset {
 					+ "is larger then the size of the containing array");
 		}
 
-		return stride == null ? getNDPositionFromShape(n) : getNDPositionFromStrides(n);
+		return stride == null ? getNDPositionFromShape(n, shape) : getNDPositionFromStrides(n);
 	}
 
 	private boolean isIndexInRange(final int n) {
@@ -1921,7 +1956,16 @@ public abstract class AbstractDataset implements ADataset {
 	 */
 	abstract protected int getBufferLength();
 
-	private int[] getNDPositionFromShape(int n) {
+	/**
+	 * Get n-D position from given index
+	 * @param n index
+	 * @param shape
+	 * @return n-D position
+	 */
+	public static int[] getNDPositionFromShape(int n, int[] shape) {
+		if (shape == null || shape.length == 0)
+			return new int[0];
+
 		int rank = shape.length;
 		if (rank == 1) {
 			return new int[] { n };
@@ -3738,7 +3782,7 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of maximum value.
+	 * Find absolute index of maximum value (in a flattened view)
 	 * See {@link #argMax(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -3749,14 +3793,14 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of maximum value
+	 * Find absolute index of maximum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
 	@Override
 	public int argMax(boolean ignoreInvalids) {
-		return get1DIndex(maxPos(ignoreInvalids));
+		return getFlat1DIndex(maxPos(ignoreInvalids));
 	}
 
 	/**
@@ -3784,7 +3828,7 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of minimum value.
+	 * Find absolute index of minimum value (in a flattened view)
 	 * See {@link #argMin(boolean ignoreNaNs)} with ignoreNaNs = false
 	 * 
 	 * @return absolute index
@@ -3795,14 +3839,14 @@ public abstract class AbstractDataset implements ADataset {
 	}
 
 	/**
-	 * Find absolute index of minimum value
+	 * Find absolute index of minimum value (in a flattened view)
 	 * 
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
 	 * @return absolute index
 	 */
 	@Override
 	public int argMin(boolean ignoreInvalids) {
-		return get1DIndex(minPos(ignoreInvalids));
+		return getFlat1DIndex(minPos(ignoreInvalids));
 	}
 
 	/**

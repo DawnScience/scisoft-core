@@ -308,7 +308,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	 * @param pt
 	 */
 	public void setEndPoint(int[] pt) {
-		setEndPoint(new double[] { pt[0], pt[1] });
+		setEndPoint(ROIUtils.convertToDoubleArray(pt));
 	}
 
 	/**
@@ -351,26 +351,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	 * @param moveY
 	 */
 	public void setEndPoint(int[] pt, boolean moveX, boolean moveY) {
-		double[] ps = null;
-		double[] pe = null;
-
-		// work in rotated coords
-		ps = transformToRotated(spt[0], spt[1]);
-		pe = transformToRotated(pt[0], pt[1]);
-
-		if (moveX) {
-			len[0] = pe[0] - ps[0];
-			if (len[0] < 0) { // don't allow negative lengths
-				len[0] = 0;
-			}
-		}
-		if (moveY) {
-			len[1] = pe[1] - ps[1];
-			if (len[1] < 0) { // don't allow negative lengths
-				len[1] = 0;
-			}
-		}
-		bounds = null;
+		setEndPoint(ROIUtils.convertToDoubleArray(pt), moveX, moveY);
 	}
 
 	/**
@@ -449,35 +430,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	 * @param moveY
 	 */
 	public void setPointKeepEndPoint(int[] dpt, boolean moveX, boolean moveY) {
-		double[] ps = null;
-		double[] pe = null;
-
-		// work in rotated coords
-		pe = transformToRotated(dpt[0], dpt[1]);
-
-		if (moveX) {
-			ps = transformToOriginal(pe[0], 0);
-			if (len[0] > pe[0]) { // don't allow negative lengths
-				len[0] -= pe[0];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[0] += len[0];
-				len[0] = 0;
-			}
-		}
-		if (moveY) {
-			ps = transformToOriginal(0, pe[1]);
-			if (len[1] > pe[1]) { // don't allow negative lengths
-				len[1] -= pe[1];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[1] += len[1];
-				len[1] = 0;
-			}
-		}
-		bounds = null;
+		setEndPoint(ROIUtils.convertToDoubleArray(dpt), moveX, moveY);
 	}
 
 	/**
@@ -496,26 +449,18 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		pe = transformToRotated(dpt[0], dpt[1]);
 
 		if (moveX) {
-			ps = transformToOriginal(pe[0], 0);
-			if (len[0] > pe[0]) { // don't allow negative lengths
-				len[0] -= pe[0];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[0] += len[0];
-				len[0] = 0;
-			}
+			double dx = pe[0] >= len[0] ? len[0] : pe[0]; // don't allow negative lengths
+			ps = transformToOriginal(dx, 0);
+			len[0] -= dx;
+			spt[0] += ps[0];
+			spt[1] += ps[1];
 		}
 		if (moveY) {
-			ps = transformToOriginal(0, pe[1]);
-			if (len[1] > pe[1]) { // don't allow negative lengths
-				len[1] -= pe[1];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[1] += len[1];
-				len[1] = 0;
-			}
+			double dy = pe[1] >= len[1] ? len[1] : pe[1]; // don't allow negative lengths
+			ps = transformToOriginal(0, dy);
+			len[1] -= dy;
+			spt[0] += ps[0];
+			spt[1] += ps[1];
 		}
 		bounds = null;
 	}

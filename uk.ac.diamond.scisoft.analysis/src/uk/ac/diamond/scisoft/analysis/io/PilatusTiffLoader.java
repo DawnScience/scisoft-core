@@ -108,9 +108,9 @@ public class PilatusTiffLoader extends TIFFImageLoader {
 			
 			// NXGeometery:NXFloat
 			metaData .put("NXdetector:x_pixel_size", xPxVal);
-			metaData.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
+			metaData.put("NXdetector:x_pixel_size@units", "milli*metre");
 			metaData.put("NXdetector:y_pixel_size", yPXVal);
-			metaData.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
+			metaData.put("NXdetector:y_pixel_size@units", "milli*metre");
 		} 
 		
 		return metaData;

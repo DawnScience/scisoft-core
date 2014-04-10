@@ -85,39 +85,39 @@ public class PixiumLoader extends TIFFImageLoader {
 				detX * pixelsize - centX,
 				detY * pixelsize - centY,
 				detDistance };
-		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
-		GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits","milli*meter");
+		GDAMetadata.put("NXdetector:NXgeometry:NXtranslation", detectorOrigin);
+		GDAMetadata.put("NXdetector:NXgeometry:NXtranslation@units","milli*meter");
 		
 		// NXGeometery:NXOrientation
 		double [] directionCosine = {1,0,0,0,1,0}; // to form identity matrix as no header data
-		GDAMetadata.put("NXdetector:NXgeometery:NXorientation",directionCosine);
+		GDAMetadata.put("NXdetector:NXgeometry:NXorientation",directionCosine);
 		// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
 		double[] detectorShape = {
 				detX * pixSize,
 				detY * pixSize,0,0,0,0 };
-		GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
-		GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXshape", "milli*metre");
+		GDAMetadata.put("NXdetector:NXgeometry:NXshape", detectorShape);
+		GDAMetadata.put("NXdetector:NXgeometry:NXshape@units", "milli*metre");
 		
 		// NXGeometery:NXFloat
 		double[] pixelSize = { pixSize,
 				pixSize };
 		GDAMetadata.put("NXdetector:x_pixel_size", pixelSize[0]);
-		GDAMetadata.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
+		GDAMetadata.put("NXdetector:x_pixel_size@units", "milli*metre");
 		GDAMetadata.put("NXdetector:y_pixel_size", pixelSize[1]);
-		GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
+		GDAMetadata.put("NXdetector:y_pixel_size@units", "milli*metre");
 		// "NXmonochromator:wavelength"
 		GDAMetadata.put("NXmonochromator:wavelength",wavelength);
-		GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
+		GDAMetadata.put("NXmonochromator:wavelength@units", "Angstrom");
 		
 		// oscillation range
-		GDAMetadata.put("NXSample:rotation_start",0.0);
-		GDAMetadata.put("NXSample:rotation_start:NXUnits","degree");
-		GDAMetadata.put("NXSample:rotation_range",0.0);
-		GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
+		GDAMetadata.put("NXsample:rotation_start",0.0);
+		GDAMetadata.put("NXsample:rotation_start@units","degree");
+		GDAMetadata.put("NXsample:rotation_range",0.0);
+		GDAMetadata.put("NXsample:rotation_range@units", "degree");
 		
 		//Exposure time
-		GDAMetadata.put("NXSample:exposure_time", 0.0);
-		GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
+		GDAMetadata.put("NXsample:exposure_time", 0.0);
+		GDAMetadata.put("NXsample:exposure_time@units", "seconds");
 		
 		br.close();
 		return GDAMetadata;

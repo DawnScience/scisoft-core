@@ -231,26 +231,26 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 //					Double.parseDouble(getMetadataValue("Detector_distance").split("m")[0])*1000 };
 			double[] detectorOrigin = {  beamPosX* xPxVal, beamPosY* yPXVal ,
 					getFirstDouble("Detector_distance", "m")*1000 };
-			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation", detectorOrigin);
+			GDAMetadata.put("NXdetector:NXgeometry:NXtranslation", detectorOrigin);
 			//System.out.println(detectorOrigin[0] +"  "+detectorOrigin[1]+"   "+detectorOrigin[2]);
-			GDAMetadata.put("NXdetector:NXgeometery:NXtranslation:NXunits", "milli*metre");
+			GDAMetadata.put("NXdetector:NXgeometry:NXtranslation@units", "milli*metre");
 			
 			// NXGeometery:NXOrientation
 			double [] directionCosine = {1,0,0,0,1,0}; // to form identity matrix as no header data
-			GDAMetadata.put("NXdetector:NXgeometery:NXorientation",directionCosine);
+			GDAMetadata.put("NXdetector:NXgeometry:NXorientation",directionCosine);
 			
 			// NXGeometery:XShape (shape from origin (+x, +y, +z,0, 0, 0) > x,y,0,0,0,0)
 			double[] detectorShape = {
 					getDouble("numPixels_x") * xPxVal,
 					getDouble("numPixels_y") * yPXVal,0,0,0,0 };
-			GDAMetadata.put("NXdetector:NXgeometery:NXshape", detectorShape);
-			GDAMetadata.put("NXdetector:NXgeometery:NXshape:NXunits","milli*metre");
+			GDAMetadata.put("NXdetector:NXgeometry:NXshape", detectorShape);
+			GDAMetadata.put("NXdetector:NXgeometry:NXshape@units","milli*metre");
 			
 			// NXGeometery:NXFloat
 			GDAMetadata.put("NXdetector:x_pixel_size", xPxVal);
-			GDAMetadata.put("NXdetector:x_pixel_size:NXunits", "milli*metre");
+			GDAMetadata.put("NXdetector:x_pixel_size@units", "milli*metre");
 			GDAMetadata.put("NXdetector:y_pixel_size", yPXVal);
-			GDAMetadata.put("NXdetector:y_pixel_size:NXunits", "milli*metre");
+			GDAMetadata.put("NXdetector:y_pixel_size@units", "milli*metre");
 
 			// "NXmonochromator:wavelength"
 			double lambda = Double.NaN;
@@ -266,20 +266,20 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				throw new ScanFileHolderException("The wavelength could not be parsed in from the mini cbf file header");
 
 			GDAMetadata.put("NXmonochromator:wavelength",lambda);
-			GDAMetadata.put("NXmonochromator:wavelength:NXunits", "Angstrom");
+			GDAMetadata.put("NXmonochromator:wavelength@units", "Angstrom");
 
 			// oscillation range
-			GDAMetadata.put("NXSample:rotation_start", getFirstDouble("Start_angle", "deg"));
-			GDAMetadata.put("NXSample:rotation_start:NXUnits","degree");
-			GDAMetadata.put("NXSample:rotation_range", getFirstDouble("Angle_increment", "deg"));
-			GDAMetadata.put("NXSample:rotation_range:NXUnits", "degree");
+			GDAMetadata.put("NXsample:rotation_start", getFirstDouble("Start_angle", "deg"));
+			GDAMetadata.put("NXsample:rotation_start@units","degree");
+			GDAMetadata.put("NXsample:rotation_range", getFirstDouble("Angle_increment", "deg"));
+			GDAMetadata.put("NXsample:rotation_range@units", "degree");
 			
 			//Exposure time
-			GDAMetadata.put("NXSample:exposure_time", getFirstDouble("Exposure_time", "s"));
-			GDAMetadata.put("NXSample:exposure_time:NXUnits", "seconds");
+			GDAMetadata.put("NXsample:exposure_time", getFirstDouble("Exposure_time", "s"));
+			GDAMetadata.put("NXsample:exposure_time@units", "seconds");
 			
 			GDAMetadata.put("NXdetector:pixel_overload", getFirstDouble("Count_cutoff", "counts"));
-			GDAMetadata.put("NXdetector:pixel_overload:NXUnits", "counts");
+			GDAMetadata.put("NXdetector:pixel_overload@units", "counts");
 			
 			createMetadata(detectorOrigin, xPxVal, yPXVal, lambda);
 		} catch (NumberFormatException e) {

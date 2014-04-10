@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.analysis.io.ScanFileHolderException;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.extractor.NexusGroupData;

@@ -30,6 +30,7 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.gda.util.OSUtils;
 
 /**
@@ -55,10 +56,10 @@ public class NexusLoaderTest {
 		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
-		final DataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
+		final IDataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
 		assert dh!=null;
 		
-		final AbstractDataset set = dh.getDataset("NXdata.data");
+		final IDataset set = dh.getDataset("NXdata.data");
 		assert set.getSize()==61*171*1699;
 	}
 
@@ -67,10 +68,10 @@ public class NexusLoaderTest {
 		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
-		final DataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
+		final IDataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
 		assert dh!=null;
 		
-		final AbstractDataset set = dh.getDataset("NXdata.data");
+		final IDataset set = dh.getDataset("NXdata.data");
 		assert set.getSize()==61*171*1699;
 	}
 	
@@ -239,7 +240,7 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
-		DataHolder dh = LoaderFactory.getData(TestFileFolder + "NexusLoaderTest.nxs", null);
+		IDataHolder dh = LoaderFactory.getData(TestFileFolder + "NexusLoaderTest.nxs", null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
 	}
 

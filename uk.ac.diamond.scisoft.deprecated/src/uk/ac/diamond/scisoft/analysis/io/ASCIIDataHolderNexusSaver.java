@@ -16,9 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.io.IOException;
-
 import gda.data.nexus.tree.NexusTreeProvider;
+
+import java.io.IOException;
 
 /**
  * This saver adds Nexus metadata to files
@@ -32,7 +32,7 @@ public class ASCIIDataHolderNexusSaver extends ASCIIDataHolderSaver {
 	}
 
 	@Override
-	protected void writeMetadata(DataHolder dh) throws IOException {
+	protected void writeMetadata(IDataHolder dh) throws IOException {
 		if (dh instanceof NexusTreeProvider) {
 			NexusTreeProvider ndh = (NexusTreeProvider) dh;
 			if(ndh.getNexusTree() != null) {

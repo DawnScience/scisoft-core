@@ -37,7 +37,7 @@ public class SRSNexusLoader extends SRSLoader {
 	}
 
 	@Override
-	protected void writeMetadata(BufferedWriter out, DataHolder holder) throws IOException {
+	protected void writeMetadata(BufferedWriter out, IDataHolder holder) throws IOException {
 		if (holder instanceof NexusTreeProvider) {
 			NexusTreeProvider ndh = (NexusTreeProvider) holder;
 			if (ndh.getNexusTree() != null) {

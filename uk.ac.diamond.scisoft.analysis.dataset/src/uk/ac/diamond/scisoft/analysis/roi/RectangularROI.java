@@ -499,30 +499,22 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 				len[0] = 0;
 
 			pe = transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
-			ps = transformToOriginal(0, pe[1]);
-			if (len[1] > pe[1]) { // don't allow negative lengths
-				len[1] -= pe[1];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[1] += len[1];
-				len[1] = 0;
-			}
+			double dy = pe[1] >= len[1] ? len[1] : pe[1]; // don't allow negative lengths
+			ps = transformToOriginal(0, dy);
+			len[1] -= dy;
+			spt[0] += ps[0];
+			spt[1] += ps[1];
 		} else { // move end y, start x
 			len[1] = pe[1] - ps[1];
 			if (len[1] < 0)
 				len[1] = 0;
 
 			pe = transformToRotated(pt[0] - cpt[0], pt[1] - cpt[1]);
-			ps = transformToOriginal(pe[0], 0);
-			if (len[0] > pe[0]) { // don't allow negative lengths
-				len[0] -= pe[0];
-				spt[0] += ps[0];
-				spt[1] += ps[1];
-			} else {
-				spt[0] += len[0];
-				len[0] = 0;
-			}
+			double dx = pe[0] >= len[0] ? len[0] : pe[0]; // don't allow negative lengths
+			ps = transformToOriginal(dx, 0);
+			len[0] -= dx;
+			spt[0] += ps[0];
+			spt[1] += ps[1];
 		}
 		bounds = null;
 	}

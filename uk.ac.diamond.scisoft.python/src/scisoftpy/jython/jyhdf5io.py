@@ -24,7 +24,7 @@ from uk.ac.diamond.scisoft.analysis.dataset import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 
-from gda.analysis.io import ScanFileHolderException as io_exception
+from uk.ac.diamond.scisoft.analysis.io import ScanFileHolderException as io_exception
 
 from java.io import OutputStream as _ostream #@UnresolvedImport
 

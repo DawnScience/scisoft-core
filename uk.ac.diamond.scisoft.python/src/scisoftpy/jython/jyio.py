@@ -64,7 +64,7 @@ from uk.ac.diamond.scisoft.analysis.io import NumPyFileSaver as _numpysave
 from uk.ac.diamond.scisoft.analysis.io import RAxisImageLoader as _raxisload
 from uk.ac.diamond.scisoft.analysis.io import PgmLoader as _pgmload
 
-from gda.analysis.io import ScanFileHolderException as io_exception
+from uk.ac.diamond.scisoft.analysis.io import ScanFileHolderException as io_exception
 
 from uk.ac.diamond.scisoft.analysis.io import DataHolder as _jdataholder
 from uk.ac.diamond.scisoft.analysis.io import MetaDataAdapter as _jmetadata

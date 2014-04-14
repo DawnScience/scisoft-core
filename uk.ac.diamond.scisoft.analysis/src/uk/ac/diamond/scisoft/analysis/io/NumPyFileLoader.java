@@ -153,7 +153,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 			shapeList.add(1);
 		} else {
 			for (int i = 0; i < shapeTupleStrArray.length; i++) {
-				shapeList.add(Integer.parseInt(shapeTupleStrArray[i]));
+				shapeList.add(Integer.parseInt(shapeTupleStrArray[i].replace("L", "")));
 			}
 		}
 		int rank = shapeList.size();

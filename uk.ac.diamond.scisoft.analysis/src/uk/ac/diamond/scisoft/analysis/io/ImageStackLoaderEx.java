@@ -84,7 +84,8 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		int [] location = new int[dimensions.length];
 		Arrays.fill(location, 0);
 		IDataset dataSetFromFile = getDataSetFromFile(location, null);
-		dtype = AbstractDataset.getDTypeFromClass(dataSetFromFile.getClass());
+		dtype = dataSetFromFile instanceof AbstractDataset ? ((AbstractDataset) dataSetFromFile).getDtype() : 
+				AbstractDataset.getDTypeFromClass(dataSetFromFile.elementClass());
 		data_shapes = dataSetFromFile.getShape();
 		shape = Arrays.copyOf(dimensions, dimensions.length + data_shapes.length);
 		int offset = dimensions.length;

@@ -23,6 +23,7 @@ public class FittingConstants {
 	public static final String REAL_FORMAT             = "org.dawb.workbench.plotting.tools.fitting.realFormat";
 	public static final String FIT_QUALITY             = "org.dawb.workbench.plotting.tools.fitQuality";
 	public static final String FIT_ALGORITHM           = "org.dawb.workbench.plotting.tools.fitAlgorithm";
+	public static final String ADD_PEAK_MODE           = "org.dawb.workbench.plotting.tools.addingPeaks";
 
 	private static Map<Integer, FIT_ALGORITHMS> idMap = new HashMap<>();
 	/**

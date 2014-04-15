@@ -365,6 +365,64 @@ public class PixelIntegrationTest {
 	}
 	
 	@Test
+	public void testNonPixelSplitting2D() {
+		
+		IDataset data = getData();
+		if (data == null) {
+			Assert.fail("Could not load test data");
+			return;
+		}
+		
+		QSpace qSpace = getQSpace();
+
+		NonPixelSplittingIntegration2D npsi = new NonPixelSplittingIntegration2D(qSpace, 1592, 1592);
+		//npsi.setAxisType(XAxis.ANGLE);
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = npsi.value(data);
+		long after = System.currentTimeMillis();
+		System.out.println("2D Pixel splitting (basic test) in "+(after-before));
+		
+		if (out.size() != 3) {
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		
+		double maxchi = out.get(2).max().doubleValue();
+		double minchi = out.get(2).min().doubleValue();
+		
+		double maxi = out.get(1).max().doubleValue();
+		double mini = out.get(1).min().doubleValue();
+		
+//		Assert.assertEquals(431741.6495398773, maxi,0.00001);
+//		Assert.assertEquals(132.55555555555554, mini,0.00001);
+//		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+//		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+		
+		before = System.currentTimeMillis();
+		out = npsi.value(data);
+		after = System.currentTimeMillis();
+		System.out.println("2D Pixel splitting (repeat test) in "+(after-before));
+		
+		if (out.size() != 3) {
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		
+		maxq = out.get(0).max().doubleValue();
+		minq = out.get(0).min().doubleValue();
+		
+		maxi = out.get(1).max().doubleValue();
+		mini = out.get(1).min().doubleValue();
+		
+//		Assert.assertEquals(431741.6495398773, maxi,0.00001);
+//		Assert.assertEquals(132.55555555555554, mini,0.00001);
+//		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+//		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+
+	}
+	
+	@Test
 	public void testPixelSplittingROI() {
 		
 		IDataset data = getData();

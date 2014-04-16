@@ -127,7 +127,9 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("jpeg", JPEGLoader.class);
 		    LoaderFactory.registerLoader("jpg",  JPEGLoader.class);
 		    LoaderFactory.registerLoader("mccd", MARLoader.class);
-		    
+		    LoaderFactory.registerLoader("mar3450", MAR345Loader.class);
+		    LoaderFactory.registerLoader("pck3450", MAR345Loader.class);
+
 		    // There is some disagreement about the proper nexus/hdf5 
 		    // file extension at different facilities
 		    LoaderFactory.registerLoader("nxs",  NexusHDF5Loader.class);
@@ -161,7 +163,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("f2d",  Fit2DLoader.class);
 		    LoaderFactory.registerLoader("msk",  Fit2DMaskLoader.class);
 		    LoaderFactory.registerLoader("mib", MerlinLoader.class);
-		    
+
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
 		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);

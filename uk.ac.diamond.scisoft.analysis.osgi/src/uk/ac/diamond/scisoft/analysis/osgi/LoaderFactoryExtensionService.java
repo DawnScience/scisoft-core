@@ -2,12 +2,12 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService{
 

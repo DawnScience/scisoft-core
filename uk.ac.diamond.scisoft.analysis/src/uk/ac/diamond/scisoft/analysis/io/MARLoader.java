@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,7 +101,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			metadataTable.put("headerType", getInteger(hbd, poss)); // flag for header type (can be used as magic number)
 			poss += 4;
 
-			metadataTable.put("headerName", getString(hbd, poss, 16)); // header name (MMX)
+			metadataTable.put("headerName", Utils.getString(hbd, poss, 16)); // header name (MMX)
 			poss += 16;
 
 			metadataTable.put("headerMajorVersion", getInteger(hbd, poss)) ;// header_major_version (n.)
@@ -427,29 +426,29 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			assert poss == 1024;
 
 			// File parameters 1024 bytes
-			metadataTable.put("filetitle", getString(hbd, poss, 128)); // Title
+			metadataTable.put("filetitle", Utils.getString(hbd, poss, 128)); // Title
 			poss += 128;
-			metadataTable.put("filepath", getString(hbd, poss, 128)); // path  name  for  data  file
+			metadataTable.put("filepath", Utils.getString(hbd, poss, 128)); // path  name  for  data  file
 			poss += 128;
-			metadataTable.put("filename", getString(hbd, poss, 64)); // name of data file
+			metadataTable.put("filename", Utils.getString(hbd, poss, 64)); // name of data file
 			poss += 64;
-			metadataTable.put("AcquireTimestamp", getString(hbd, poss, 32)); // date and time of acquisition
+			metadataTable.put("AcquireTimestamp", Utils.getString(hbd, poss, 32)); // date and time of acquisition
 			poss += 32;
-			metadataTable.put("headerTimestamp", getString(hbd, poss, 32)); // date and time of header update
+			metadataTable.put("headerTimestamp", Utils.getString(hbd, poss, 32)); // date and time of header update
 			poss += 32;
-			metadataTable.put("saveTimestamp", getString(hbd, poss, 32)); // date and time file saved
+			metadataTable.put("saveTimestamp", Utils.getString(hbd, poss, 32)); // date and time file saved
 			poss += 32;
-			metadataTable.put("fileComment", getString(hbd, poss, 512)); // comments
+			metadataTable.put("fileComment", Utils.getString(hbd, poss, 512)); // comments
 			poss += 512;
 
 			poss += 96; // 1024-(128+128+64+3*32+512) // reserve 6
 
 			assert poss == 2048;
 
-			metadataTable.put("datasetComments", getString(hbd, poss, 512)); // comments - can be used as desired
+			metadataTable.put("datasetComments", Utils.getString(hbd, poss, 512)); // comments - can be used as desired
 			poss += 512;
 
-			metadataTable.put("userData", getString(hbd, poss, 512)); // reserved for user definable data - will not be used by Mar!
+			metadataTable.put("userData", Utils.getString(hbd, poss, 512)); // reserved for user definable data - will not be used by Mar!
 			poss += 512;
 
 			assert poss == MAR_HEADER_SIZE;
@@ -468,7 +467,14 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 		return createGDAMetadata();
 	}
 
-	private boolean isLittleEndian(byte[] bytes, int pos) throws ScanFileHolderException {
+	/**
+	 * Check if four bytes from MAR file indicate little endian byte ordering 
+	 * @param bytes
+	 * @param pos
+	 * @return true if little endian
+	 * @throws ScanFileHolderException
+	 */
+	public static boolean isLittleEndian(byte[] bytes, int pos) throws ScanFileHolderException {
 		int ba = bytes[pos++];
 		int bb = bytes[pos++];
 		int bc = bytes[pos++];
@@ -488,12 +494,6 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	private int getShort(byte[] bytes, int pos) {
 		return littleEndian ? Utils.leInt(bytes[pos], bytes[pos + 1]) :
 			Utils.beInt(bytes[pos], bytes[pos + 1]);
-	}
-
-	private String getString(byte[] bytes, int pos, int length) throws UnsupportedEncodingException {
-		byte[] t = new byte[length];
-		System.arraycopy(bytes, pos, t, 0, length);
-		return new String(t, "US-ASCII"); 
 	}
 
 	private Map<String, Serializable> createGDAMetadata() throws ScanFileHolderException {

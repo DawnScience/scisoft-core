@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -531,5 +532,29 @@ public class Utils {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Get string from byte array by assuming the encoding is ASCII
+	 * @param bytes
+	 * @param pos
+	 * @param length
+	 * @return string
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String getString(byte[] bytes, int pos, int length) throws UnsupportedEncodingException {
+		byte[] t = new byte[length];
+		System.arraycopy(bytes, pos, t, 0, length);
+		return new String(t, "US-ASCII"); 
+	}
+
+	/**
+	 * Get string from byte array by assuming the encoding is ASCII
+	 * @param bytes
+	 * @return string
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String getString(byte[] bytes) throws UnsupportedEncodingException {
+		return new String(bytes, "US-ASCII"); 
 	}
 }

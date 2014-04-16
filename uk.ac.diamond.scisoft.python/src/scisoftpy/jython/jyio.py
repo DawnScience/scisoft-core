@@ -49,6 +49,7 @@ except:
 
 from uk.ac.diamond.scisoft.analysis.io import CrysalisLoader as _crysload
 from uk.ac.diamond.scisoft.analysis.io import MARLoader as _marload
+from uk.ac.diamond.scisoft.analysis.io import MAR345Loader as _mar345load
 from uk.ac.diamond.scisoft.analysis.io import PilatusTiffLoader as _ptiffload
 from uk.ac.diamond.scisoft.analysis.io import ExtendedSRSLoader as _srsload
 from uk.ac.diamond.scisoft.analysis.io import PilatusEdfLoader as _pilatusEdfLoader
@@ -217,6 +218,11 @@ class MARLoader(JavaLoader, _marload):
         _marload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
+class MAR345Loader(JavaLoader, _mar345load):
+    def __init__(self, *arg):
+        _mar345load.__init__(self, *arg) #@UndefinedVariable
+        self.load_metadata = True
+
 class PilLoader(JavaLoader, _ptiffload):
     def __init__(self, *arg):
         _ptiffload.__init__(self, *arg) #@UndefinedVariable
@@ -263,6 +269,7 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "adsc": ADSCLoader, "img": ADSCLoader,
                "cbf": CBFLoader, "crys": CrysLoader,
                "mar": MARLoader, "mccd": MARLoader,
+               "mar3450": MAR345Loader, "pck3450": MAR345Loader,
                "pil": PilLoader,
                "srs": SRSLoader,
                "binary": BinaryLoader, "xmap": XMapLoader,

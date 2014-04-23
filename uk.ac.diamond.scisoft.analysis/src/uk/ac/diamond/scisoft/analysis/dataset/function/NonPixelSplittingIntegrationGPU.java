@@ -68,18 +68,18 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		if (datasets.length == 0)
 			return null;
 		
-		if (axisArray == null) {
+		if (radialArray == null) {
 			
-			generateAxisArray(datasets[0].getShape(), true);
+			generateRadialArray(datasets[0].getShape(), true);
 			
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
-			if (bins == null) {
-				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			if (radialBins == null) {
+				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 			}
-			final double[] edges = bins.getData();
+			final double[] edges = radialBins.getData();
 			final double lo = edges[0];
 			final double hi = edges[nbins];
 			final double span = (hi - lo)/nbins;
@@ -88,13 +88,13 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 			final int[] h = histo.getData();
 			final double[] in = intensity.getData();
 			if (span <= 0) {
-				h[0] = axisArray.getSize();
+				h[0] = radialArray.getSize();
 				result.add(histo);
-				result.add(bins);
+				result.add(radialBins);
 				continue;
 			}
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
+			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 	
 			Range range = Range.create(a.getSize()); 

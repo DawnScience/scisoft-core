@@ -31,7 +31,6 @@ import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 
 	int nBinsChi;
-	AbstractDataset chiArray;
 	DoubleDataset binsChi;
 	
 	public PixelSplittingIntegration2D(QSpace qSpace, int numBinsQ, int numBinsChi) {
@@ -44,7 +43,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		if (datasets.length == 0)
 			return null;
 
-		if (axisArray == null) {
+		if (radialArray == null) {
 
 			if (qSpace == null) return null;
 
@@ -54,19 +53,19 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 			shape[0]++;
 			shape[1]++;
 			
-			generateAxisArray(shape, false);
-			chiArray = generateChiArray(qSpace.getDetectorProperties().getBeamCentreCoords(), axisArray.getShape());
+			generateRadialArray(shape, false);
+			azimuthalArray = generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), radialArray.getShape());
 
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		for (IDataset ds : datasets) {
-			if (bins == null) {
-				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-				binsChi = (DoubleDataset) DatasetUtils.linSpace(chiArray.min().doubleValue(), chiArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
+			if (radialBins == null) {
+				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
 			}
 			
-			final double[] edgesQ = bins.getData();
+			final double[] edgesQ = radialBins.getData();
 			final double loQ = edgesQ[0];
 			final double hiQ = edgesQ[nbins];
 			final double spanQ = (hiQ - loQ)/nbins;
@@ -87,7 +86,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 //				continue;
 //			}
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
+			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 			PositionIterator iter = b.getPositionIterator();
 
@@ -99,7 +98,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 				posStop[0] = pos[0]+2;
 				posStop[1] = pos[1]+2;
 				AbstractDataset qrange = a.getSlice(pos, posStop, null);
-				AbstractDataset chirange = chiArray.getSlice(pos, posStop, null);
+				AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
 
 				final double qMax = (Double)qrange.max();
 				final double qMin = (Double)qrange.min();
@@ -130,75 +129,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 				
 				//FIXME better deal with the wrap around point
 				if (chiMax - chiMin > 270) continue;
-				
-//				if (minBinQ == maxBinQ && minBinChi == maxBinChi) {
-//					int[] setPos = new int[]{minBinChi,minBinQ};
-//					double val = histo.get(setPos);
-//					histo.set(val+1, setPos);
-//					double inVal = intensity.get(setPos);
-//					intensity.set(inVal+sig, setPos);
-//				} else if  (minBinQ == maxBinQ && minBinChi != maxBinChi){
-//					//Spread across chi
-//					double iPerPixel = 1/(maxBinExactChi-minBinExactChi);
-//
-//					double minFrac = 1-(minBinExactChi-minBinChi);
-//					double maxFrac = maxBinExactChi-maxBinChi;
-//
-//					if (minBinChi >= 0) {
-//						int[] setPos = new int[]{minBinChi,minBinQ};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel*minFrac, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
-//					}
-//
-//					if (maxBinChi < binsChi.getSize()-1) {
-//						int[] setPos = new int[]{maxBinChi,minBinQ};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel*maxFrac, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
-//					}
-//
-//					for (int i = (minBinChi+1); i < maxBinChi; i++) {
-//						if (i >= binsChi.getSize() || i < 0) continue; 
-//						int[] setPos = new int[]{i,minBinQ};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel, setPos);
-//					}
-//
-//				}else if  (minBinQ != maxBinQ && minBinChi == maxBinChi) {
-//					//spread across Q
-//					double iPerPixel = 1/(maxBinExactQ-minBinExactQ);
-//					double minFrac = 1-(minBinExactQ-minBinQ);
-//					double maxFrac = maxBinExactQ-maxBinQ;
-//
-//					if (minBinQ >= 0) {
-//						int[] setPos = new int[]{minBinChi,minBinQ};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel*minFrac, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel*minFrac, setPos);
-//					}
-//
-//					if (maxBinQ < bins.getSize()-1 && minBinChi > 0 && minBinChi < binsChi.getSize()) {
-//						int[] setPos = new int[]{minBinChi,maxBinQ};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel*maxFrac, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel*maxFrac, setPos);
-//					}
-//					for (int i = (minBinQ+1); i < maxBinQ; i++) {
-//						if (i >= binsChi.getSize() || i < 0) continue; 
-//						int[] setPos = new int[]{minBinChi,i};
-//						double val = histo.get(setPos);
-//						histo.set(val+iPerPixel, setPos);
-//						double inVal = intensity.get(setPos);
-//						intensity.set(inVal+sig*iPerPixel, setPos);
-//					}
-//				} else {
+			
 					double iPerPixel = 1/((maxBinExactQ-minBinExactQ)*(maxBinExactChi-minBinExactChi));
 					double minFracQ = 1-(minBinExactQ-minBinQ);
 					double maxFracQ = maxBinExactQ-maxBinQ;
@@ -206,7 +137,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 					double maxFracChi = maxBinExactChi-maxBinChi;
 
 					for (int i = minBinQ ; i <= maxBinQ; i++) {
-						if (i < 0 || i >= bins.getSize()-1) continue;
+						if (i < 0 || i >= radialBins.getSize()-1) continue;
 						for (int j = minBinChi; j <= maxBinChi; j++) {
 							if (j < 0 || j >= binsChi.getSize()-1) continue;
 							
@@ -232,21 +163,6 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		}
 
 		return result;
-	}
-	
-	private AbstractDataset generateChiArray(double[] beamCentre, int[] shape) {
-		
-		AbstractDataset out = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
-		
-		PositionIterator iter = out.getPositionIterator();
-
-		int[] pos = iter.getPos();
-
-		while (iter.hasNext()) {
-			out.set(Math.toDegrees(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0])), pos);
-		}
-		
-		return out;
 	}
 	
 	@Override

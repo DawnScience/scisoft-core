@@ -31,7 +31,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 		if (datasets.length == 0)
 			return null;
 
-		if (axisArray == null) {
+		if (radialArray == null) {
 
 			if (qSpace == null) return null;
 
@@ -41,7 +41,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 			shape[0]++;
 			shape[1]++;
 			
-			generateAxisArray(shape, false);
+			generateRadialArray(shape, false);
 
 		}
 
@@ -50,7 +50,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 			
 			AbstractDataset mt = mask;
 			AbstractDataset dst = DatasetUtils.convertToAbstractDataset(ds);
-			AbstractDataset axt = axisArray;
+			AbstractDataset axt = radialArray;
 			
 			
 			if (roi != null) {
@@ -60,11 +60,11 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 			}
 			
 			
-			if (bins == null) {
+			if (radialBins == null) {
 				calculateBins(axt,mt);
 			}
 			
-			final double[] edges = bins.getData();
+			final double[] edges = radialBins.getData();
 			final double lo = edges[0];
 			final double hi = edges[nbins];
 			final double span = (hi - lo)/nbins;
@@ -75,7 +75,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 			if (span <= 0) {
 				h[0] = ds.getSize();
 				result.add(histo);
-				result.add(bins);
+				result.add(radialBins);
 				continue;
 			}
 

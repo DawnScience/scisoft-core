@@ -30,23 +30,30 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public abstract class AbstractPixelIntegration implements DatasetToDatasetFunction{
+	
 	int nbins;
-	Double min = null;
-	Double max = null;
-	DoubleDataset bins = null;
-	AbstractDataset axisArray;
+	
+	double[] radialRange = null;
+	double[] azimuthalRange = null;
+	
+	DoubleDataset radialBins = null;
+	
+	AbstractDataset radialArray;
+	AbstractDataset azimuthalArray;
 	AbstractDataset mask;
 	AbstractDataset maskRoiCached;
+	
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
+	
 	IROI roi = null;
-	boolean correctSolidAngle = false;
 	
 	public AbstractPixelIntegration(QSpace qSpace, int numBins) {
 		this.qSpace = qSpace;
@@ -56,42 +63,52 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	public AbstractPixelIntegration(QSpace qSpace, int numBins, double lower, double upper)
 	{
 		this(qSpace, numBins);
-		min = lower;
-		max = upper;
-		if (min > max) {
+		if (lower > upper) {
 			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
 		}
-
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);
+		
+		radialRange = new double[]{lower, upper};
+		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);
 	}
 
 	@Override
 	public abstract List<AbstractDataset> value(IDataset... datasets);
 	
 	/**
-	 * Set minimum and maximum edges of histogram bins
+	 * Set minimum and maximum edges of radial histogram bins
 	 * @param min
 	 * @param max
 	 */
-	public void setMinMax(double min, double max) {
-		this.min = min;
-		this.max = max;
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);		
+	public void setRadialRange(double min, double max) {
+		
+		if (min > max) {
+			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
+		}
+		
+		//TODO sanity check for dspace which is integrated as q
+		if (radialRange == null) {
+			radialRange = new double[]{min,max};
+		} else {
+			radialRange[0] = min;
+			radialRange[1] = max;
+		}
+		
+		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);		
 	}
 	
 	public void setAxisType(ROIProfile.XAxis axis) {
 		this.xAxis = axis;
 	}
 	
-	protected void generateAxisArray(int[] shape, boolean centre) {
+	protected void generateRadialArray(int[] shape, boolean centre) {
 		
 		if (qSpace == null) return;
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		axisArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		radialArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
 
-		PositionIterator iter = axisArray.getPositionIterator();
+		PositionIterator iter = radialArray.getPositionIterator();
 		int[] pos = iter.getPos();
 
 		while (iter.hasNext()) {
@@ -119,13 +136,13 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 				break; 
 			}
 			
-			if (pos[0] < 2 && pos[1]< 2 && pos[0]+pos[1] < 3) {
-				axisArray.toString();
-			}
-			
-			axisArray.set(value, pos);
+			radialArray.set(value, pos);
 			
 		}
+	}
+	
+	protected AbstractDataset generateAzimuthalArray(double[] beamCentre, int[] shape) {
+		return Maths.toDegrees(PixelIntegrationUtils.generateAzimuthalArrayRadians(beamCentre, shape));
 	}
 	
 	protected Slice[] getSlice() {
@@ -136,13 +153,13 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 			int e1 = (int)bounds.getLength(1)+s[1];
 			
 			s[0] = Math.max(s[0], 0);
-			s[0] = Math.min(s[0], axisArray.getShape()[1]);
+			s[0] = Math.min(s[0], radialArray.getShape()[1]);
 			s[1] = Math.max(s[1], 0);
-			s[1] = Math.min(s[1], axisArray.getShape()[0]);
+			s[1] = Math.min(s[1], radialArray.getShape()[0]);
 			e0 = Math.max(e0, 0);
-			e0 = Math.min(e0, axisArray.getShape()[1]);
+			e0 = Math.min(e0, radialArray.getShape()[1]);
 			e1 = Math.max(e1, 0);
-			e1 = Math.min(e1, axisArray.getShape()[0]);
+			e1 = Math.min(e1, radialArray.getShape()[0]);
 			
 			Slice s1 = new Slice(s[1], e1, 1);
 			Slice s2 = new Slice(s[0], e0, 1);
@@ -153,7 +170,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	}
 	
 	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
-		AbstractDataset axis = Maths.add(bins.getSlice(new int[]{1}, null ,null), bins.getSlice(null, new int[]{-1},null));
+		AbstractDataset axis = Maths.add(radialBins.getSlice(new int[]{1}, null ,null), radialBins.getSlice(null, new int[]{-1},null));
 		axis.idivide(2);
 		
 		switch (xAxis) {
@@ -176,51 +193,44 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		}
 		else axis.setName("2theta");
 		
-		AbstractDataset out = Maths.dividez(intensity, DatasetUtils.cast(histo,intensity.getDtype()));
+		intensity.idivide(histo);
+		DatasetUtils.makeFinite(intensity);
 		
-		out.setName(name + "_integrated");
+		intensity.setName(name + "_integrated");
 
-		if (correctSolidAngle) {
-
-			if (out.getRank() != 2) {
-				out = correctSolidAngle(axis, out);
-			} else {
-				PositionIterator it = out.getPositionIterator(1);
-				int end = out.getShape()[1];
-				int[] pos = it.getPos();
-				int[] stop = pos.clone();
-				while (it.hasNext()) {
-					stop = pos.clone();
-					stop[1] = end;
-					stop[0]++;
-					AbstractDataset ds = out.getSlice(pos,stop,null).squeeze();
-					out.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
-				}
-			}
-		}
-
+//		if (false) {
+//
+//			if (intensity.getRank() != 2) {
+//				intensity = correctSolidAngle(axis, intensity);
+//			} else {
+//				PositionIterator it = intensity.getPositionIterator(1);
+//				int end = intensity.getShape()[1];
+//				int[] pos = it.getPos();
+//				int[] stop = pos.clone();
+//				while (it.hasNext()) {
+//					stop = pos.clone();
+//					stop[1] = end;
+//					stop[0]++;
+//					AbstractDataset ds = intensity.getSlice(pos,stop,null).squeeze();
+//					intensity.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
+//				}
+//			}
+//		}
+		//FIXME
 		if (xAxis == XAxis.RESOLUTION) {
 			axis = Maths.divide((2*Math.PI), axis);
 			axis.setName("d-spacing");
 		}
 		result.add(axis);
-		result.add(out);
-	}
-	
-	public boolean isCorrectSolidAngle() {
-		return correctSolidAngle;
-	}
-
-	public void setCorrectSolidAngle(boolean correctSolidAngle) {
-		this.correctSolidAngle = correctSolidAngle;
+		result.add(intensity);
 	}
 
 	public void setMask(AbstractDataset mask) {
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
-		bins = null;
-		if (axisArray != null && !Arrays.equals(axisArray.getShape(), mask.getShape())) axisArray = null;
+		radialBins = null;
+		if (radialArray != null && !Arrays.equals(radialArray.getShape(), mask.getShape())) radialArray = null;
 	}
 	
 	public void setROI(IROI roi) {
@@ -272,12 +282,12 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	protected void calculateBins(AbstractDataset ax, AbstractDataset ma) {
 		//TODO test for ROIS
 		if (ma == null) {
-			bins = (DoubleDataset) DatasetUtils.linSpace(ax.min().doubleValue(), ax.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			radialBins = (DoubleDataset) DatasetUtils.linSpace(ax.min().doubleValue(), ax.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 		} else {
 			
 			if (Arrays.equals(ma.getShape(), ax.getShape())) {
 				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(ma,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
-				bins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				radialBins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 			} else {
 				//extended array for pixel splitting
 				BooleanDataset biggerMask = new BooleanDataset(ma.getShape()[0]+1,ma.getShape()[1]+1);
@@ -304,27 +314,8 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 				biggerMask.set(ma.getObject(new int[] {pos[0]-1,pos[1]-1}), pos);
 				
 				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(biggerMask,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
-				bins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				radialBins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 			}
-			
 		}
-			
-	}
-	
-	private AbstractDataset correctSolidAngle(AbstractDataset x, AbstractDataset y) {
-		AbstractDataset cor = null;
-		
-		if (xAxis == XAxis.Q) {
-			double w = qSpace.getWavelength();
-			cor = Maths.multiply(x, w/(4*Math.PI));
-			cor = Maths.arcsin(cor);
-			cor.imultiply(2);
-		} else {
-			cor = Maths.toRadians(x);
-		}
-		
-		cor = Maths.cos(cor);
-		cor = Maths.power(cor, 3);
-		return Maths.divide(y, cor);
 	}
 }

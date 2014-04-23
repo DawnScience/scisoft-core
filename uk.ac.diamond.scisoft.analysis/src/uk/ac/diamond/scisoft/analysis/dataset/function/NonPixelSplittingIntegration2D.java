@@ -34,7 +34,6 @@ import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 
 	int nBinsChi;
-	AbstractDataset chiArray;
 	DoubleDataset binsChi;
 	
 	public NonPixelSplittingIntegration2D(QSpace qSpace, int numBinsQ, int numBinsChi) {
@@ -47,13 +46,13 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 		if (datasets.length == 0)
 			return null;
 		
-		if (axisArray == null) {
+		if (radialArray == null) {
 
 			if (qSpace == null) return null;
 
 			int[] shape = datasets[0].getShape();
-			generateAxisArray(shape, false);
-			chiArray = generateChiArray(qSpace.getDetectorProperties().getBeamCentreCoords(), axisArray.getShape());
+			generateRadialArray(shape, false);
+			azimuthalArray = generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), radialArray.getShape());
 
 		}
 
@@ -64,12 +63,12 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 			
 			
-			if (bins == null) {
-				bins = (DoubleDataset) DatasetUtils.linSpace(axisArray.min().doubleValue(), axisArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-				binsChi = (DoubleDataset) DatasetUtils.linSpace(chiArray.min().doubleValue(), chiArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
+			if (radialBins == null) {
+				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+				binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
 			}
 			
-			final double[] edgesQ = bins.getData();
+			final double[] edgesQ = radialBins.getData();
 			final double loQ = edgesQ[0];
 			final double hiQ = edgesQ[nbins];
 			final double spanQ = (hiQ - loQ)/nbins;
@@ -82,7 +81,7 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 			IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.INT32);
 			FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
+			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
 			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
 			IndexIterator iter = a.getIterator();
 
@@ -90,7 +89,7 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 				
 				final double valq = a.getElementDoubleAbs(iter.index);
 				final double sig = b.getElementDoubleAbs(iter.index);
-				final double chi = chiArray.getElementDoubleAbs(iter.index);
+				final double chi = azimuthalArray.getElementDoubleAbs(iter.index);
 				if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
 				
 				if (valq < loQ || valq > hiQ) {
@@ -117,21 +116,6 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 		}
 
 		return result;
-	}
-	
-	private AbstractDataset generateChiArray(double[] beamCentre, int[] shape) {
-		
-		AbstractDataset out = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
-		
-		PositionIterator iter = out.getPositionIterator();
-
-		int[] pos = iter.getPos();
-
-		while (iter.hasNext()) {
-			out.set(Math.toDegrees(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0])), pos);
-		}
-		
-		return out;
 	}
 	
 	@Override

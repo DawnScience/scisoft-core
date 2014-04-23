@@ -69,8 +69,8 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			return null;
 		
 		//TODOtest shape of axis array
-		if (axisArray == null) {
-			generateAxisArray(datasets[0].getShape(), true);
+		if (radialArray == null) {
+			generateRadialArray(datasets[0].getShape(), true);
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
@@ -80,7 +80,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 			
 			AbstractDataset d = DatasetUtils.convertToAbstractDataset(ds);
-			AbstractDataset a = axisArray;
+			AbstractDataset a = radialArray;
 			
 			
 			if (roi != null) {
@@ -90,10 +90,10 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 				mt = maskRoiCached;
 			}
 			
-			if (bins == null) {
+			if (radialBins == null) {
 				calculateBins(a,mt);
 			}
-			final double[] edges = bins.getData();
+			final double[] edges = radialBins.getData();
 			final double lo = edges[0];
 			final double hi = edges[nbins];
 			final double span = (hi - lo)/nbins;
@@ -104,7 +104,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 			if (span <= 0) {
 				h[0] = a.getSize();
 				result.add(histo);
-				result.add(bins);
+				result.add(radialBins);
 				continue;
 			}
 

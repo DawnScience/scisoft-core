@@ -28,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 /**
  * Copy of Histogram class as base for nonpixelsplitting integration
@@ -43,8 +44,8 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
-	public NonPixelSplittingIntegration(QSpace qSpace, int numBins) {
-		super(qSpace, numBins);
+	public NonPixelSplittingIntegration(IDiffractionMetadata metadata, int numBins) {
+		super(metadata, numBins);
 		
 	}
 	
@@ -54,9 +55,9 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 	 * @param lower minimum value of histogram range
 	 * @param upper maximum value of histogram range
 	 */
-	public NonPixelSplittingIntegration(QSpace qSpace, int numBins, double lower, double upper)
+	public NonPixelSplittingIntegration(IDiffractionMetadata metadata, int numBins, double lower, double upper)
 	{
-		super(qSpace, numBins, lower, upper);
+		super(metadata, numBins, lower, upper);
 	}
 
 	/**

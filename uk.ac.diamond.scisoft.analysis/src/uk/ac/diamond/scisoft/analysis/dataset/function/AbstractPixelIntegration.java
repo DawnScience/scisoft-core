@@ -55,14 +55,17 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	
 	IROI roi = null;
 	
-	public AbstractPixelIntegration(QSpace qSpace, int numBins) {
-		this.qSpace = qSpace;
+	public AbstractPixelIntegration(IDiffractionMetadata metadata, int numBins) {
+		this.qSpace = new QSpace(metadata.getDetector2DProperties(), 
+								 metadata.getDiffractionCrystalEnvironment());
+		
 		this.nbins = numBins;
 	}
 	
-	public AbstractPixelIntegration(QSpace qSpace, int numBins, double lower, double upper)
+	
+	public AbstractPixelIntegration(IDiffractionMetadata metadata, int numBins, double lower, double upper)
 	{
-		this(qSpace, numBins);
+		this(metadata, numBins);
 		if (lower > upper) {
 			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
 		}
@@ -75,7 +78,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 	public abstract List<AbstractDataset> value(IDataset... datasets);
 	
 	/**
-	 * Set minimum and maximum edges of radial histogram bins
+	 * Set minimum and maximum of radial range
 	 * @param min
 	 * @param max
 	 */
@@ -94,6 +97,26 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		}
 		
 		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);		
+	}
+	
+	/**
+	 * Set minimum and maximum of azimuthal range
+	 * @param min
+	 * @param max
+	 */
+	public void setAzimutalRange(double min, double max) {
+		
+		if (min > max) throw new IllegalArgumentException("Given lower bound was higher than upper bound");
+		
+		if (min < -Math.PI) throw new IllegalArgumentException("Min cannot be less than -Pi");
+		if (max > -Math.PI) throw new IllegalArgumentException("Max cannot be greater than +Pi");
+		
+		if (azimuthalRange == null) {
+			azimuthalRange = new double[]{min,max};
+		} else {
+			azimuthalRange[0] = min;
+			azimuthalRange[1] = max;
+		}
 	}
 	
 	public void setAxisType(ROIProfile.XAxis axis) {
@@ -135,9 +158,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
 				break; 
 			}
-			
 			radialArray.set(value, pos);
-			
 		}
 	}
 	
@@ -181,46 +202,18 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 			axis.setName("2theta");
 			break;
 		case RESOLUTION:
-			//convert to d after solid angle correction
-			axis.setName("q");
+			axis = Maths.divide((2*Math.PI), axis);
+			axis.setName("d-spacing");
 			break;
 		case PIXEL:
 			axis.setName("pixel");
+			break;
 		}
-		
-		if (xAxis == XAxis.Q) {
-			axis.setName("q");
-		}
-		else axis.setName("2theta");
 		
 		intensity.idivide(histo);
 		DatasetUtils.makeFinite(intensity);
 		
 		intensity.setName(name + "_integrated");
-
-//		if (false) {
-//
-//			if (intensity.getRank() != 2) {
-//				intensity = correctSolidAngle(axis, intensity);
-//			} else {
-//				PositionIterator it = intensity.getPositionIterator(1);
-//				int end = intensity.getShape()[1];
-//				int[] pos = it.getPos();
-//				int[] stop = pos.clone();
-//				while (it.hasNext()) {
-//					stop = pos.clone();
-//					stop[1] = end;
-//					stop[0]++;
-//					AbstractDataset ds = intensity.getSlice(pos,stop,null).squeeze();
-//					intensity.setSlice(correctSolidAngle(axis,ds), pos, stop, null);
-//				}
-//			}
-//		}
-		//FIXME
-		if (xAxis == XAxis.RESOLUTION) {
-			axis = Maths.divide((2*Math.PI), axis);
-			axis.setName("d-spacing");
-		}
 		result.add(axis);
 		result.add(intensity);
 	}

@@ -25,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
@@ -43,8 +44,8 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
-	public NonPixelSplittingIntegrationGPU(QSpace qSpace, int numBins) {
-		super(qSpace, numBins);
+	public NonPixelSplittingIntegrationGPU(IDiffractionMetadata metadata, int numBins) {
+		super(metadata, numBins);
 		
 	}
 	
@@ -54,9 +55,9 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	 * @param lower minimum value of histogram range
 	 * @param upper maximum value of histogram range
 	 */
-	public NonPixelSplittingIntegrationGPU(QSpace qSpace, int numBins, double lower, double upper)
+	public NonPixelSplittingIntegrationGPU(IDiffractionMetadata metadata, int numBins, double lower, double upper)
 	{
-		super(qSpace, numBins, lower, upper);
+		super(metadata, numBins, lower, upper);
 	}
 
 	/**

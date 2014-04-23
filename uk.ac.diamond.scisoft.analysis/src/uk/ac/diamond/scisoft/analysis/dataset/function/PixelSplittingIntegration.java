@@ -15,6 +15,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class PixelSplittingIntegration extends AbstractPixelIntegration {
 
@@ -22,8 +23,8 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
-	public PixelSplittingIntegration(QSpace qSpace, int numBins) {
-		super(qSpace, numBins);
+	public PixelSplittingIntegration(IDiffractionMetadata metadata, int numBins) {
+		super(metadata, numBins);
 	}
 
 	@Override

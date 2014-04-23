@@ -27,14 +27,15 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 
 	int nBinsChi;
 	DoubleDataset binsChi;
 	
-	public PixelSplittingIntegration2D(QSpace qSpace, int numBinsQ, int numBinsChi) {
-		super(qSpace, numBinsQ);
+	public PixelSplittingIntegration2D(IDiffractionMetadata metadata, int numBinsQ, int numBinsChi) {
+		super(metadata, numBinsQ);
 		this.nBinsChi = numBinsChi;
 	}
 

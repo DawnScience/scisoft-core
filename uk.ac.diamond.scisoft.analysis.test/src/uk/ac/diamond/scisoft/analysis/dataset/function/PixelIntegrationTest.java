@@ -31,7 +31,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
@@ -52,9 +54,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(qSpace, 1592);
+		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
 		
 		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
@@ -101,9 +103,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		PixelSplittingIntegration npsi = new PixelSplittingIntegration(qSpace, 1592);
+		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		
 		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
@@ -150,9 +152,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		PixelSplittingIntegration2D npsi = new PixelSplittingIntegration2D(qSpace, 1592, 1592);
+		PixelSplittingIntegration2D npsi = new PixelSplittingIntegration2D(meta, 1592, 1592);
 		//npsi.setAxisType(XAxis.ANGLE);
 		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
@@ -213,14 +215,14 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 		BooleanDataset mask = new BooleanDataset(data.getShape());
 		
 		for (int i = 100; i < 1000; i++) 
 			for (int j = 100; j < 1000; j++) 
 			mask.set(true, new int[]{j,i});
 		
-		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(qSpace, 1592);
+		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
 		npsi.setMask(mask);
 		
 		long before = System.currentTimeMillis();
@@ -268,14 +270,14 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 		BooleanDataset mask = new BooleanDataset(data.getShape());
 		
 		for (int i = 100; i < 1000; i++) 
 			for (int j = 100; j < 1000; j++) 
 			mask.set(true, new int[]{j,i});
 		
-		PixelSplittingIntegration npsi = new PixelSplittingIntegration(qSpace, 1592);
+		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		npsi.setMask(mask);
 		
 		long before = System.currentTimeMillis();
@@ -323,9 +325,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(qSpace, 1592);
+		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
 		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
 		
 		long before = System.currentTimeMillis();
@@ -373,9 +375,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		NonPixelSplittingIntegration2D npsi = new NonPixelSplittingIntegration2D(qSpace, 1592, 1592);
+		NonPixelSplittingIntegration2D npsi = new NonPixelSplittingIntegration2D(meta, 1592, 1592);
 		//npsi.setAxisType(XAxis.ANGLE);
 		long before = System.currentTimeMillis();
 		List<AbstractDataset> out = npsi.value(data);
@@ -431,9 +433,9 @@ public class PixelIntegrationTest {
 			return;
 		}
 		
-		QSpace qSpace = getQSpace();
+		IDiffractionMetadata meta = getDiffractionMetadata();
 
-		PixelSplittingIntegration npsi = new PixelSplittingIntegration(qSpace, 1592);
+		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
 		
 		long before = System.currentTimeMillis();
@@ -485,7 +487,7 @@ public class PixelIntegrationTest {
 		return data;
 	}
 	
-	private QSpace getQSpace() {
+	private IDiffractionMetadata getDiffractionMetadata() {
 		Vector3d origin = new Vector3d(0, 0, 1);
 		
 		Matrix3d or = new Matrix3d(0.18890371330716021,
@@ -497,7 +499,7 @@ public class PixelIntegrationTest {
 		DetectorProperties dp = new DetectorProperties(bv, origin, 2048, 2048, 0.2, 0.2, or);
 		DiffractionCrystalEnvironment ce = new DiffractionCrystalEnvironment(0.42566937014852557);
 		
-		return new QSpace(dp, ce);
+		return new DiffractionMetadata("test",dp, ce);
 		
 
 	}

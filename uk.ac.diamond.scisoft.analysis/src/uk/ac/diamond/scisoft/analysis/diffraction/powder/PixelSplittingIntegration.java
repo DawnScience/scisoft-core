@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.dataset.function;
+package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

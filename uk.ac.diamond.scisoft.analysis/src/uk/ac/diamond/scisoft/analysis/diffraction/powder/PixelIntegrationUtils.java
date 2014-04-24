@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.dataset.function;
+package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import javax.vecmath.Vector3d;
 

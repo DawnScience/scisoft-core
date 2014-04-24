@@ -580,7 +580,8 @@ public class NexusDiffractionMetaReader {
 			@Override
 			public boolean inNexus(HObject nexusObject) {
 				if(nexusObject instanceof Group) {
-					if (NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS).toLowerCase().equals(groupText.toLowerCase())) {
+					String attrNexusObject = NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS);
+					if (attrNexusObject != null && attrNexusObject.toLowerCase().equals(groupText.toLowerCase())) {
 						for (Object ob: ((Group)nexusObject).getMemberList()) {
 							if(ob instanceof H5ScalarDS) {
 								if (((H5ScalarDS)ob).getName().toLowerCase().contains((childText.toLowerCase()))) {

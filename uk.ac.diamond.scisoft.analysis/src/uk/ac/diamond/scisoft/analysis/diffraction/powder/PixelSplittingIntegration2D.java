@@ -40,15 +40,13 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 	}
 
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
-		if (datasets.length == 0)
-			return null;
+	public List<AbstractDataset> integrate(IDataset dataset) {
 
 		if (radialArray == null) {
 
 			if (qSpace == null) return null;
 
-			int[] shape = datasets[0].getShape();
+			int[] shape = dataset.getShape();
 
 			//make one larger to know range of q for lower and right hand edges
 			shape[0]++;
@@ -60,108 +58,106 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		for (IDataset ds : datasets) {
-			if (radialBins == null) {
-				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-				binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
-			}
-			
-			final double[] edgesQ = radialBins.getData();
-			final double loQ = edgesQ[0];
-			final double hiQ = edgesQ[nbins];
-			final double spanQ = (hiQ - loQ)/nbins;
-			
-			final double[] edgesChi = binsChi.getData();
-			final double loChi = edgesChi[0];
-			final double hiChi = edgesChi[nBinsChi];
-			final double spanChi = (hiChi - loChi)/nBinsChi;
-			
-			FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.FLOAT32);
-			FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
-//			final double[] h = histo.getData();
-//			final double[] in = intensity.getData();
-//			if (spanQ <= 0) {
-//				h[0] = ds.getSize();
-//				result.add(histo);
-//				result.add(bins);
-//				continue;
-//			}
-
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-			PositionIterator iter = b.getPositionIterator();
-
-			int[] pos = iter.getPos();
-			int[] posStop = pos.clone();
-
-			while (iter.hasNext()) {
-
-				posStop[0] = pos[0]+2;
-				posStop[1] = pos[1]+2;
-				AbstractDataset qrange = a.getSlice(pos, posStop, null);
-				AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
-
-				final double qMax = (Double)qrange.max();
-				final double qMin = (Double)qrange.min();
-				final double chiMax = (Double)chirange.max();
-				final double chiMin = (Double)chirange.min();
-
-				final double sig = b.getDouble(pos);
-
-				if (qMax < loQ && qMin > hiQ) {
-					continue;
-				} 
-				
-				if (chiMax < loChi && chiMin > hiChi) {
-					continue;
-				} 
-
-				//losing something here?
-
-				double minBinExactQ = (qMin-loQ)/spanQ;
-				double maxBinExactQ = (qMax-loQ)/spanQ;
-				int minBinQ = (int)minBinExactQ;
-				int maxBinQ = (int)maxBinExactQ;
-				
-				double minBinExactChi = (chiMin-loChi)/spanChi;
-				double maxBinExactChi = (chiMax-loChi)/spanChi;
-				int minBinChi = (int)minBinExactChi;
-				int maxBinChi = (int)maxBinExactChi;
-				
-				//FIXME better deal with the wrap around point
-				if (chiMax - chiMin > 270) continue;
-			
-					double iPerPixel = 1/((maxBinExactQ-minBinExactQ)*(maxBinExactChi-minBinExactChi));
-					double minFracQ = 1-(minBinExactQ-minBinQ);
-					double maxFracQ = maxBinExactQ-maxBinQ;
-					double minFracChi = 1-(minBinExactChi-minBinChi);
-					double maxFracChi = maxBinExactChi-maxBinChi;
-
-					for (int i = minBinQ ; i <= maxBinQ; i++) {
-						if (i < 0 || i >= radialBins.getSize()-1) continue;
-						for (int j = minBinChi; j <= maxBinChi; j++) {
-							if (j < 0 || j >= binsChi.getSize()-1) continue;
-							
-							int[] setPos = new int[]{j,i};
-							double val = histo.get(setPos);
-							
-							double modify = 1;
-							
-							if (i == minBinQ && minBinQ != maxBinQ) modify *= minFracQ;
-							if (i == maxBinQ && minBinQ != maxBinQ) modify *= maxFracQ;
-							if (i == minBinChi && minBinChi != maxBinChi) modify *= minFracChi;
-							if (i == maxBinChi && minBinChi != maxBinChi) modify *= maxFracChi;
-							
-							histo.set(val+iPerPixel*modify, setPos);
-							double inVal = intensity.get(setPos);
-							intensity.set(inVal+sig*iPerPixel*modify, setPos);
-						}
-//					}
-				}
-			}
-			
-			processAndAddToResult(intensity, histo, result, ds.getName());
+		if (radialBins == null) {
+			radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
 		}
+
+		final double[] edgesQ = radialBins.getData();
+		final double loQ = edgesQ[0];
+		final double hiQ = edgesQ[nbins];
+		final double spanQ = (hiQ - loQ)/nbins;
+
+		final double[] edgesChi = binsChi.getData();
+		final double loChi = edgesChi[0];
+		final double hiChi = edgesChi[nBinsChi];
+		final double spanChi = (hiChi - loChi)/nBinsChi;
+
+		FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.FLOAT32);
+		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
+		//			final double[] h = histo.getData();
+		//			final double[] in = intensity.getData();
+		//			if (spanQ <= 0) {
+		//				h[0] = ds.getSize();
+		//				result.add(histo);
+		//				result.add(bins);
+		//				continue;
+		//			}
+
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
+		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
+		PositionIterator iter = b.getPositionIterator();
+
+		int[] pos = iter.getPos();
+		int[] posStop = pos.clone();
+
+		while (iter.hasNext()) {
+
+			posStop[0] = pos[0]+2;
+			posStop[1] = pos[1]+2;
+			AbstractDataset qrange = a.getSlice(pos, posStop, null);
+			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
+
+			final double qMax = (Double)qrange.max();
+			final double qMin = (Double)qrange.min();
+			final double chiMax = (Double)chirange.max();
+			final double chiMin = (Double)chirange.min();
+
+			final double sig = b.getDouble(pos);
+
+			if (qMax < loQ && qMin > hiQ) {
+				continue;
+			} 
+
+			if (chiMax < loChi && chiMin > hiChi) {
+				continue;
+			} 
+
+			//losing something here?
+
+			double minBinExactQ = (qMin-loQ)/spanQ;
+			double maxBinExactQ = (qMax-loQ)/spanQ;
+			int minBinQ = (int)minBinExactQ;
+			int maxBinQ = (int)maxBinExactQ;
+
+			double minBinExactChi = (chiMin-loChi)/spanChi;
+			double maxBinExactChi = (chiMax-loChi)/spanChi;
+			int minBinChi = (int)minBinExactChi;
+			int maxBinChi = (int)maxBinExactChi;
+
+			//FIXME better deal with the wrap around point
+			if (chiMax - chiMin > 270) continue;
+
+			double iPerPixel = 1/((maxBinExactQ-minBinExactQ)*(maxBinExactChi-minBinExactChi));
+			double minFracQ = 1-(minBinExactQ-minBinQ);
+			double maxFracQ = maxBinExactQ-maxBinQ;
+			double minFracChi = 1-(minBinExactChi-minBinChi);
+			double maxFracChi = maxBinExactChi-maxBinChi;
+
+			for (int i = minBinQ ; i <= maxBinQ; i++) {
+				if (i < 0 || i >= radialBins.getSize()-1) continue;
+				for (int j = minBinChi; j <= maxBinChi; j++) {
+					if (j < 0 || j >= binsChi.getSize()-1) continue;
+
+					int[] setPos = new int[]{j,i};
+					double val = histo.get(setPos);
+
+					double modify = 1;
+
+					if (i == minBinQ && minBinQ != maxBinQ) modify *= minFracQ;
+					if (i == maxBinQ && minBinQ != maxBinQ) modify *= maxFracQ;
+					if (i == minBinChi && minBinChi != maxBinChi) modify *= minFracChi;
+					if (i == maxBinChi && minBinChi != maxBinChi) modify *= maxFracChi;
+
+					histo.set(val+iPerPixel*modify, setPos);
+					double inVal = intensity.get(setPos);
+					intensity.set(inVal+sig*iPerPixel*modify, setPos);
+				}
+				//					}
+		}
+		}
+
+		processAndAddToResult(intensity, histo, result, dataset.getName());
 
 		return result;
 	}

@@ -37,7 +37,7 @@ import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
-public abstract class AbstractPixelIntegration implements DatasetToDatasetFunction{
+public abstract class AbstractPixelIntegration {
 	
 	int nbins;
 	
@@ -75,8 +75,7 @@ public abstract class AbstractPixelIntegration implements DatasetToDatasetFuncti
 		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);
 	}
 
-	@Override
-	public abstract List<AbstractDataset> value(IDataset... datasets);
+	public abstract List<AbstractDataset> integrate(IDataset dataset);
 	
 	/**
 	 * Set minimum and maximum of radial range

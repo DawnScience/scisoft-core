@@ -63,7 +63,7 @@ public class PixelIntegrationTest {
 		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting (basic test) in "+(after-before));
 		
@@ -82,7 +82,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(0.004903786580700596, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting repeat (basic test) in "+(after-before));
 		
@@ -112,7 +112,7 @@ public class PixelIntegrationTest {
 		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Pixel splitting (basic test) in "+(after-before));
 		
@@ -132,7 +132,7 @@ public class PixelIntegrationTest {
 		
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("Pixel splitting repeat (basic test) in "+(after-before));
 		
@@ -161,7 +161,7 @@ public class PixelIntegrationTest {
 		PixelSplittingIntegration2D npsi = new PixelSplittingIntegration2D(meta, 1592, 1592);
 		//npsi.setAxisType(XAxis.ANGLE);
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("2D Pixel splitting (basic test) in "+(after-before));
 		
@@ -186,7 +186,7 @@ public class PixelIntegrationTest {
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("2D Pixel splitting (repeat test) in "+(after-before));
 		
@@ -230,7 +230,7 @@ public class PixelIntegrationTest {
 		npsi.setMask(mask);
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting mask (basic test) in "+(after-before));
 		
@@ -249,7 +249,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(1.5283458922106619, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting repeat mask (basic test) in "+(after-before));
 		
@@ -285,7 +285,7 @@ public class PixelIntegrationTest {
 		npsi.setMask(mask);
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting mask (basic test) in "+(after-before));
 	
@@ -304,7 +304,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(1.5323281860305737, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("pixel splitting repeat mask (basic test) in "+(after-before));
 		
@@ -335,7 +335,7 @@ public class PixelIntegrationTest {
 		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting roi (basic test) in "+(after-before));
 		
@@ -354,7 +354,7 @@ public class PixelIntegrationTest {
 //		Assert.assertEquals(0.090283344944834, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting roi repeat (basic test) in "+(after-before));
 		
@@ -384,7 +384,7 @@ public class PixelIntegrationTest {
 		NonPixelSplittingIntegration2D npsi = new NonPixelSplittingIntegration2D(meta, 1592, 1592);
 		//npsi.setAxisType(XAxis.ANGLE);
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("2D Non Pixel splitting (basic test) in "+(after-before));
 		
@@ -407,7 +407,7 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(0.007367950424878316, minq,0.00001);
 		
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("2D Non Pixel splitting (repeat test) in "+(after-before));
 		
@@ -443,7 +443,7 @@ public class PixelIntegrationTest {
 		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
 		
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.value(data);
+		List<AbstractDataset> out = npsi.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting roi (basic test) in "+(after-before));
 		
@@ -462,7 +462,7 @@ public class PixelIntegrationTest {
 //		Assert.assertEquals(0.090283344944834, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
-		out = npsi.value(data);
+		out = npsi.integrate(data);
 		after = System.currentTimeMillis();
 		System.out.println("pixel splitting roi repeat (basic test) in "+(after-before));
 		

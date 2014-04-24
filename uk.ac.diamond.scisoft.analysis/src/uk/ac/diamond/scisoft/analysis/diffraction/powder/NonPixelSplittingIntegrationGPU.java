@@ -61,74 +61,69 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	}
 
 	/**
-	 * @param datasets input datasets
+	 * @param dataset input dataset
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
-		if (datasets.length == 0)
-			return null;
+	public List<AbstractDataset> integrate(IDataset dataset) {
 		
 		if (radialArray == null) {
 			
-			generateRadialArray(datasets[0].getShape(), true);
+			generateRadialArray(dataset.getShape(), true);
 			
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		for (IDataset ds : datasets) {
-			if (radialBins == null) {
-				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-			}
-			final double[] edges = radialBins.getData();
-			final double lo = edges[0];
-			final double hi = edges[nbins];
-			final double span = (hi - lo)/nbins;
-			IntegerDataset histo = new IntegerDataset(nbins);
-			DoubleDataset intensity = new DoubleDataset(nbins);
-			final int[] h = histo.getData();
-			final double[] in = intensity.getData();
-			if (span <= 0) {
-				h[0] = radialArray.getSize();
-				result.add(histo);
-				result.add(radialBins);
-				continue;
-			}
-
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-	
-			Range range = Range.create(a.getSize()); 
-			
-			// Kernel copies primitive arrays to the GPU for us.
-			
-			/**
-			 * This is not a serious go at speeding up using GPU. This is because the
-			 * maths is simple and the memory copy large, therefore it will not give a 
-			 * speed up. This is just to show Jake how to use the Kernel object.
-			 * 
-			 * In practice this particular loop is better speeded up with a fork join or
-			 * with Java8 lambda run on a parallel stream.
-			 * 
-			 * You will need to install a GPU driver to have this run on the GPU. Also the
-			 * NonPixelSplittingKernel might not compile properly, check the output messages
-			 * when the test runs.
-			 */
-			NonPixelSplittingKernel kernel = new NonPixelSplittingKernel();
-			kernel.setLow(lo);
-			kernel.setHi(hi);
-			kernel.setSpan(span);
-			kernel.setA((double[])a.getBuffer());
-			kernel.setB((float[])b.getBuffer());
-			kernel.setIntensity(in);
-			kernel.setHisto(h);
-			
-			kernel.execute(range);
-			
-			processAndAddToResult(new DoubleDataset(kernel.getIntensity(), nbins), 
-					              new IntegerDataset(kernel.getHisto(), nbins), result, ds.getName());
-			
+		if (radialBins == null) {
+			radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 		}
+		final double[] edges = radialBins.getData();
+		final double lo = edges[0];
+		final double hi = edges[nbins];
+		final double span = (hi - lo)/nbins;
+		IntegerDataset histo = new IntegerDataset(nbins);
+		DoubleDataset intensity = new DoubleDataset(nbins);
+		final int[] h = histo.getData();
+		final double[] in = intensity.getData();
+		if (span <= 0) {
+			h[0] = radialArray.getSize();
+			result.add(histo);
+			result.add(radialBins);
+			return result;
+		}
+
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
+		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
+
+		Range range = Range.create(a.getSize()); 
+
+		// Kernel copies primitive arrays to the GPU for us.
+
+		/**
+		 * This is not a serious go at speeding up using GPU. This is because the
+		 * maths is simple and the memory copy large, therefore it will not give a 
+		 * speed up. This is just to show Jake how to use the Kernel object.
+		 * 
+		 * In practice this particular loop is better speeded up with a fork join or
+		 * with Java8 lambda run on a parallel stream.
+		 * 
+		 * You will need to install a GPU driver to have this run on the GPU. Also the
+		 * NonPixelSplittingKernel might not compile properly, check the output messages
+		 * when the test runs.
+		 */
+		NonPixelSplittingKernel kernel = new NonPixelSplittingKernel();
+		kernel.setLow(lo);
+		kernel.setHi(hi);
+		kernel.setSpan(span);
+		kernel.setA((double[])a.getBuffer());
+		kernel.setB((float[])b.getBuffer());
+		kernel.setIntensity(in);
+		kernel.setHisto(h);
+
+		kernel.execute(range);
+
+		processAndAddToResult(new DoubleDataset(kernel.getIntensity(), nbins), 
+				new IntegerDataset(kernel.getHisto(), nbins), result, dataset.getName());
 
 		return result;
 	}

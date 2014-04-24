@@ -28,15 +28,13 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 	}
 
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
-		if (datasets.length == 0)
-			return null;
+	public List<AbstractDataset> integrate (IDataset dataset) {
 
 		if (radialArray == null) {
 
 			if (qSpace == null) return null;
 
-			int[] shape = datasets[0].getShape();
+			int[] shape = dataset.getShape();
 
 			//make one larger to know range of q for lower and right hand edges
 			shape[0]++;
@@ -47,103 +45,100 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		for (IDataset ds : datasets) {
-			
-			AbstractDataset mt = mask;
-			AbstractDataset dst = DatasetUtils.convertToAbstractDataset(ds);
-			AbstractDataset axt = radialArray;
-			
-			
-			if (roi != null) {
-				if (maskRoiCached == null)
-					maskRoiCached = mergeMaskAndRoi(ds.getShape());
-				mt = maskRoiCached;
-			}
-			
-			
-			if (radialBins == null) {
-				calculateBins(axt,mt);
-			}
-			
-			final double[] edges = radialBins.getData();
-			final double lo = edges[0];
-			final double hi = edges[nbins];
-			final double span = (hi - lo)/nbins;
-			DoubleDataset histo = new DoubleDataset(nbins);
-			DoubleDataset intensity = new DoubleDataset(nbins);
-			final double[] h = histo.getData();
-			final double[] in = intensity.getData();
-			if (span <= 0) {
-				h[0] = ds.getSize();
-				result.add(histo);
-				result.add(radialBins);
+
+		AbstractDataset mt = mask;
+		AbstractDataset dst = DatasetUtils.convertToAbstractDataset(dataset);
+		AbstractDataset axt = radialArray;
+
+
+		if (roi != null) {
+			if (maskRoiCached == null)
+				maskRoiCached = mergeMaskAndRoi(dataset.getShape());
+			mt = maskRoiCached;
+		}
+
+
+		if (radialBins == null) {
+			calculateBins(axt,mt);
+		}
+
+		final double[] edges = radialBins.getData();
+		final double lo = edges[0];
+		final double hi = edges[nbins];
+		final double span = (hi - lo)/nbins;
+		DoubleDataset histo = new DoubleDataset(nbins);
+		DoubleDataset intensity = new DoubleDataset(nbins);
+		final double[] h = histo.getData();
+		final double[] in = intensity.getData();
+		if (span <= 0) {
+			h[0] = dataset.getSize();
+			result.add(histo);
+			result.add(radialBins);
+			return result;
+		}
+
+		//			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
+		//			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
+		PositionIterator iter = dst.getPositionIterator();
+
+		int[] pos = iter.getPos();
+		int[] posStop = pos.clone();
+
+		while (iter.hasNext()) {
+
+			if (mt != null && !mt.getBoolean(pos)) continue;
+
+			posStop[0] = pos[0]+2;
+			posStop[1] = pos[1]+2;
+			AbstractDataset qrange = axt.getSlice(pos, posStop, null);
+
+			final double qMax = (Double)qrange.max();
+			final double qMin = (Double)qrange.min();
+
+			final double sig = dst.getDouble(pos);
+
+			if (qMax < lo && qMin > hi) {
 				continue;
-			}
+			} 
 
-//			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
-//			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-			PositionIterator iter = dst.getPositionIterator();
+			//losing something here?
 
-			int[] pos = iter.getPos();
-			int[] posStop = pos.clone();
+			double minBinExact = (qMin-lo)/span;
+			double maxBinExact = (qMax-lo)/span;
 
-			while (iter.hasNext()) {
-				
-				if (mt != null && !mt.getBoolean(pos)) continue;
-				
-				posStop[0] = pos[0]+2;
-				posStop[1] = pos[1]+2;
-				AbstractDataset qrange = axt.getSlice(pos, posStop, null);
+			int minBin = (int)minBinExact;
+			int maxBin = (int)maxBinExact;
 
-				final double qMax = (Double)qrange.max();
-				final double qMin = (Double)qrange.min();
+			if (minBin == maxBin) {
+				h[minBin]++;
+				in[minBin] += sig;
+			} else {
 
-				final double sig = dst.getDouble(pos);
+				double iPerPixel = 1/(maxBinExact-minBinExact);
 
-				if (qMax < lo && qMin > hi) {
-					continue;
-				} 
+				double minFrac = 1-(minBinExact-minBin);
+				double maxFrac = maxBinExact-maxBin;
 
-				//losing something here?
+				if (minBin >= 0 && minBin < h.length) {
+					h[minBin]+=(iPerPixel*minFrac);
+					in[minBin] += (sig*iPerPixel*minFrac);
+				}
 
-				double minBinExact = (qMin-lo)/span;
-				double maxBinExact = (qMax-lo)/span;
-
-				int minBin = (int)minBinExact;
-				int maxBin = (int)maxBinExact;
-
-				if (minBin == maxBin) {
-					h[minBin]++;
-					in[minBin] += sig;
-				} else {
-
-					double iPerPixel = 1/(maxBinExact-minBinExact);
-
-					double minFrac = 1-(minBinExact-minBin);
-					double maxFrac = maxBinExact-maxBin;
-
-					if (minBin >= 0 && minBin < h.length) {
-						h[minBin]+=(iPerPixel*minFrac);
-						in[minBin] += (sig*iPerPixel*minFrac);
-					}
-
-					if (maxBin < h.length && maxBin >=0) {
-						h[maxBin]+=(iPerPixel*maxFrac);
-						in[maxBin] += (sig*iPerPixel*maxFrac);
-					}
+				if (maxBin < h.length && maxBin >=0) {
+					h[maxBin]+=(iPerPixel*maxFrac);
+					in[maxBin] += (sig*iPerPixel*maxFrac);
+				}
 
 
-					for (int i = (minBin+1); i < maxBin; i++) {
-						if (i >= h.length || i < 0) continue; 
-						h[i]+=iPerPixel;
-						in[i] += (sig*iPerPixel);
-					}
+				for (int i = (minBin+1); i < maxBin; i++) {
+					if (i >= h.length || i < 0) continue; 
+					h[i]+=iPerPixel;
+					in[i] += (sig*iPerPixel);
 				}
 			}
-
-			processAndAddToResult(intensity, histo, result, ds.getName());
-			
 		}
+
+		processAndAddToResult(intensity, histo, result, dataset.getName());
 
 		return result;
 	}

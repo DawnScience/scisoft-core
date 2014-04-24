@@ -61,74 +61,70 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 	}
 
 	/**
-	 * @param datasets input datasets
+	 * @param dataset input dataset
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
-		if (datasets.length == 0)
-			return null;
+	public List<AbstractDataset> integrate(IDataset dataset) {
 		
 		//TODOtest shape of axis array
 		if (radialArray == null) {
-			generateRadialArray(datasets[0].getShape(), true);
+			generateRadialArray(dataset.getShape(), true);
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		for (IDataset ds : datasets) {
-			
-			AbstractDataset mt = mask;
-			if (mask != null && !Arrays.equals(mask.getShape(),ds.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
-			
-			AbstractDataset d = DatasetUtils.convertToAbstractDataset(ds);
-			AbstractDataset a = radialArray;
-			
-			
-			if (roi != null) {
-				if (maskRoiCached == null)
-					maskRoiCached = mergeMaskAndRoi(ds.getShape());
-				
-				mt = maskRoiCached;
-			}
-			
-			if (radialBins == null) {
-				calculateBins(a,mt);
-			}
-			final double[] edges = radialBins.getData();
-			final double lo = edges[0];
-			final double hi = edges[nbins];
-			final double span = (hi - lo)/nbins;
-			IntegerDataset histo = new IntegerDataset(nbins);
-			DoubleDataset intensity = new DoubleDataset(nbins);
-			final int[] h = histo.getData();
-			final double[] in = intensity.getData();
-			if (span <= 0) {
-				h[0] = a.getSize();
-				result.add(histo);
-				result.add(radialBins);
+
+		AbstractDataset mt = mask;
+		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
+
+		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
+		AbstractDataset a = radialArray;
+
+
+		if (roi != null) {
+			if (maskRoiCached == null)
+				maskRoiCached = mergeMaskAndRoi(dataset.getShape());
+
+			mt = maskRoiCached;
+		}
+
+		if (radialBins == null) {
+			calculateBins(a,mt);
+		}
+		final double[] edges = radialBins.getData();
+		final double lo = edges[0];
+		final double hi = edges[nbins];
+		final double span = (hi - lo)/nbins;
+		IntegerDataset histo = new IntegerDataset(nbins);
+		DoubleDataset intensity = new DoubleDataset(nbins);
+		final int[] h = histo.getData();
+		final double[] in = intensity.getData();
+		if (span <= 0) {
+			h[0] = a.getSize();
+			result.add(histo);
+			result.add(radialBins);
+			return result;
+		}
+
+		IndexIterator iter = a.getIterator();
+
+		while (iter.hasNext()) {
+			final double val = a.getElementDoubleAbs(iter.index);
+			final double sig = d.getElementDoubleAbs(iter.index);
+			if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
+
+			if (val < lo || val > hi) {
 				continue;
 			}
 
-			IndexIterator iter = a.getIterator();
-
-			while (iter.hasNext()) {
-				final double val = a.getElementDoubleAbs(iter.index);
-				final double sig = d.getElementDoubleAbs(iter.index);
-				if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
-				
-				if (val < lo || val > hi) {
-					continue;
-				}
-				
-				if(((int) ((val-lo)/span))<h.length){
-					h[(int) ((val-lo)/span)]++;
-					in[(int) ((val-lo)/span)] += sig;
-				}
+			if(((int) ((val-lo)/span))<h.length){
+				h[(int) ((val-lo)/span)]++;
+				in[(int) ((val-lo)/span)] += sig;
 			}
-			
-			processAndAddToResult(intensity, histo, result, ds.getName());
 		}
-
+		
+		processAndAddToResult(intensity, histo, result, dataset.getName());
+		
 		return result;
 	}
 	

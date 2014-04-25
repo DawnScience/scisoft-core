@@ -29,7 +29,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
@@ -44,10 +43,10 @@ public abstract class AbstractPixelIntegration {
 	double[] radialRange = null;
 	double[] azimuthalRange = null;
 	
-	DoubleDataset radialBins = null;
+	DoubleDataset binArray = null;
 	
-	AbstractDataset radialArray;
-	AbstractDataset azimuthalArray;
+	AbstractDataset[] radialArray;
+	AbstractDataset[] azimuthalArray;
 	AbstractDataset mask;
 	AbstractDataset maskRoiCached;
 	
@@ -63,75 +62,68 @@ public abstract class AbstractPixelIntegration {
 		this.nbins = numBins;
 	}
 	
-	
-	public AbstractPixelIntegration(IDiffractionMetadata metadata, int numBins, double lower, double upper)
-	{
-		this(metadata, numBins);
-		if (lower > upper) {
-			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
-		}
-		
-		radialRange = new double[]{lower, upper};
-		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);
-	}
-
 	public abstract List<AbstractDataset> integrate(IDataset dataset);
 	
 	/**
 	 * Set minimum and maximum of radial range
-	 * @param min
-	 * @param max
+	 * @param range
 	 */
-	public void setRadialRange(double min, double max) {
+	public void setRadialRange(double[] range) {
 		
-		if (min > max) {
-			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
+		if (range == null) {
+			radialRange = null;
+			return;
+		}
+		
+		if (range.length != 2) throw new IllegalArgumentException("Range array should be of length 2");
+		
+		if (range[0] > range[1]) {
+			Arrays.sort(range);
 		}
 		
 		//TODO sanity check for dspace which is integrated as q
-		if (radialRange == null) {
-			radialRange = new double[]{min,max};
-		} else {
-			radialRange[0] = min;
-			radialRange[1] = max;
-		}
-		
-		radialBins = (DoubleDataset) DatasetUtils.linSpace(radialRange[0], radialRange[1], nbins + 1, AbstractDataset.FLOAT64);		
+		radialRange = range;
+		binArray = null;
+
 	}
 	
 	/**
-	 * Set minimum and maximum of azimuthal range
-	 * @param min
-	 * @param max
+	 * Set minimum and maximum of azimuthal range (-180 to + 180)
+	 * @param range
 	 */
-	public void setAzimutalRange(double min, double max) {
+	public void setAzimuthalRange(double[] range) {
 		
-		if (min > max) throw new IllegalArgumentException("Given lower bound was higher than upper bound");
-		
-		if (min < -Math.PI) throw new IllegalArgumentException("Min cannot be less than -Pi");
-		if (max > -Math.PI) throw new IllegalArgumentException("Max cannot be greater than +Pi");
-		
-		if (azimuthalRange == null) {
-			azimuthalRange = new double[]{min,max};
-		} else {
-			azimuthalRange[0] = min;
-			azimuthalRange[1] = max;
+		if (range == null) {
+			azimuthalRange = null;
+			return;
 		}
+		
+		if (range.length != 2) throw new IllegalArgumentException("Range array should be of length 2");
+		
+		if (range[0] > range[1]) {
+			Arrays.sort(range);
+		}
+		
+		if (range[0] < -180) throw new IllegalArgumentException("Min cannot be less than -Pi");
+		if (range[1] > 180) throw new IllegalArgumentException("Max cannot be greater than +Pi");
+		
+		azimuthalRange = range;
+		binArray = null;
 	}
 	
 	public void setAxisType(ROIProfile.XAxis axis) {
 		this.xAxis = axis;
 	}
 	
-	protected void generateRadialArray(int[] shape, boolean centre) {
+	public void generateRadialArray(int[] shape, boolean centre) {
 		
 		if (qSpace == null) return;
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		radialArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset ra = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
 
-		PositionIterator iter = radialArray.getPositionIterator();
+		PositionIterator iter = ra.getPositionIterator();
 		int[] pos = iter.getPos();
 
 		while (iter.hasNext()) {
@@ -158,40 +150,97 @@ public abstract class AbstractPixelIntegration {
 				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
 				break; 
 			}
-			radialArray.set(value, pos);
+			ra.set(value, pos);
 		}
+		
+		radialArray = new AbstractDataset[]{ra};
 	}
 	
-	protected AbstractDataset generateAzimuthalArray(double[] beamCentre, int[] shape) {
-		return Maths.toDegrees(PixelIntegrationUtils.generateAzimuthalArrayRadians(beamCentre, shape));
+	protected void generateMinMaxRadialArray(int[] shape) {
+		
+		if (qSpace == null) return;
+		
+		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
+
+		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+
+		PositionIterator iter = radialArrayMax.getPositionIterator();
+		int[] pos = iter.getPos();
+
+		double[] vals = new double[4];
+		double w = qSpace.getWavelength();
+		while (iter.hasNext()) {
+			
+			Vector3d q;
+			double value = 0;
+			//FIXME or not fix me, but I would expect centre to be +0.5, but this
+			//clashes with much of the rest of DAWN
+			
+			vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
+			vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
+			vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
+			vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
+
+			Arrays.sort(vals);
+
+			//			if (centre) q = qSpace.qFromPixelPosition(pos[1], pos[0]);
+			//			else q = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5);
+
+			switch (xAxis) {
+			case ANGLE:
+				radialArrayMax.set(Math.toDegrees(Math.asin(vals[3] * w/(4*Math.PI))*2),pos);
+				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
+				break;
+			case Q:
+			case RESOLUTION:
+				radialArrayMax.set(vals[3],pos);
+				radialArrayMin.set(vals[0],pos);
+				//value = (2*Math.PI)/q.length();
+				break;
+			case PIXEL:
+				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
+				break; 
+			}
+		}
+		radialArray =  new AbstractDataset[]{radialArrayMin,radialArrayMax};
+	}
+	
+	protected void generateAzimuthalArray(double[] beamCentre, int[] shape,boolean centre) {
+		azimuthalArray = new AbstractDataset[]{Maths.toDegrees(PixelIntegrationUtils.generateAzimuthalArrayRadians(beamCentre, shape, centre))};
+	}
+	
+	protected void generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape) {
+		AbstractDataset[] out = PixelIntegrationUtils.generateMinMaxAzimuthalArrayRadians(beamCentre, shape);
+		azimuthalArray = new AbstractDataset[]{Maths.toDegrees(out[0]),Maths.toDegrees(out[1])};
 	}
 	
 	protected Slice[] getSlice() {
-		if (roi != null) {
-			IRectangularROI bounds = roi.getBounds();
-			int[] s = bounds.getIntPoint();
-			int e0 = (int)bounds.getLength(0) + s[0];
-			int e1 = (int)bounds.getLength(1)+s[1];
-			
-			s[0] = Math.max(s[0], 0);
-			s[0] = Math.min(s[0], radialArray.getShape()[1]);
-			s[1] = Math.max(s[1], 0);
-			s[1] = Math.min(s[1], radialArray.getShape()[0]);
-			e0 = Math.max(e0, 0);
-			e0 = Math.min(e0, radialArray.getShape()[1]);
-			e1 = Math.max(e1, 0);
-			e1 = Math.min(e1, radialArray.getShape()[0]);
-			
-			Slice s1 = new Slice(s[1], e1, 1);
-			Slice s2 = new Slice(s[0], e0, 1);
-			return new Slice[]{s1,s2};
-		}
+//		if (roi != null) {
+//			IRectangularROI bounds = roi.getBounds();
+//			int[] s = bounds.getIntPoint();
+//			int e0 = (int)bounds.getLength(0) + s[0];
+//			int e1 = (int)bounds.getLength(1)+s[1];
+//			
+//			s[0] = Math.max(s[0], 0);
+//			s[0] = Math.min(s[0], radialArray.getShape()[1]);
+//			s[1] = Math.max(s[1], 0);
+//			s[1] = Math.min(s[1], radialArray.getShape()[0]);
+//			e0 = Math.max(e0, 0);
+//			e0 = Math.min(e0, radialArray.getShape()[1]);
+//			e1 = Math.max(e1, 0);
+//			e1 = Math.min(e1, radialArray.getShape()[0]);
+//			
+//			Slice s1 = new Slice(s[1], e1, 1);
+//			Slice s2 = new Slice(s[0], e0, 1);
+//			return new Slice[]{s1,s2};
+//		}
 		
 		return null;
 	}
 	
 	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
-		AbstractDataset axis = Maths.add(radialBins.getSlice(new int[]{1}, null ,null), radialBins.getSlice(null, new int[]{-1},null));
+		AbstractDataset axis = Maths.add(binArray.getSlice(new int[]{1}, null ,null), binArray.getSlice(null, new int[]{-1},null));
 		axis.idivide(2);
 		
 		switch (xAxis) {
@@ -222,8 +271,8 @@ public abstract class AbstractPixelIntegration {
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
-		radialBins = null;
-		if (radialArray != null && !Arrays.equals(radialArray.getShape(), mask.getShape())) radialArray = null;
+		binArray = null;
+		if (radialArray != null && !Arrays.equals(radialArray[0].getShape(), mask.getShape())) radialArray = null;
 	}
 	
 	public void setROI(IROI roi) {
@@ -272,43 +321,28 @@ public abstract class AbstractPixelIntegration {
 		return out;
 	}
 	
-	protected void calculateBins(AbstractDataset ax, AbstractDataset ma) {
-		//TODO test for ROIS
-		if (ma == null) {
-			radialBins = (DoubleDataset) DatasetUtils.linSpace(ax.min().doubleValue(), ax.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-		} else {
-			
-			if (Arrays.equals(ma.getShape(), ax.getShape())) {
-				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(ma,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
-				radialBins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-			} else {
-				//extended array for pixel splitting
-				BooleanDataset biggerMask = new BooleanDataset(ma.getShape()[0]+1,ma.getShape()[1]+1);
-				
-				PositionIterator pit = ma.getPositionIterator();
-				int[] pos = pit.getPos();
-				
-				while (pit.hasNext()) biggerMask.set(ma.getObject(pos), pos);
-				
-				pos[0] = ma.getShape()[0]-1;
-				for (int i = 0; i < ma.getShape()[1]; i++) {
-					pos[1] = i;
-					biggerMask.set(ma.getObject(pos), new int[]{pos[1]+1, i});
-				}
-				
-				pos[1] = ma.getShape()[1]-1;
-				for (int i = 0; i < ma.getShape()[0]; i++) {
-					pos[0] = i;
-					biggerMask.set(ma.getObject(pos), new int[]{pos[0]+1, i});
-				}
-				
-				pos = ma.getShape();
-				
-				biggerMask.set(ma.getObject(new int[] {pos[0]-1,pos[1]-1}), pos);
-				
-				AbstractDataset unMaskedVals = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(biggerMask,AbstractDataset.BOOL)}, new Object[]{ax}, Double.NaN);
-				radialBins = (DoubleDataset) DatasetUtils.linSpace(unMaskedVals.min(true).doubleValue(), unMaskedVals.max(true).doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-			}
+	protected DoubleDataset calculateBins(AbstractDataset[] arrays, AbstractDataset mask, double[] binRange) {
+		
+		if (binRange != null) {
+			return (DoubleDataset) DatasetUtils.linSpace(binRange[0], binRange[1], nbins + 1, AbstractDataset.FLOAT64);
 		}
+		
+			
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+
+		for (AbstractDataset a : arrays) {
+
+			AbstractDataset data = a;
+			
+			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(mask,AbstractDataset.BOOL)}, new Object[]{a}, Double.NaN);
+
+			double n = data.min(true).doubleValue();
+			double x = data.max(true).doubleValue();
+			min = n < min ? n : min;
+			max = x > max ? x : max;
+		}
+
+		return (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);
 	}
 }

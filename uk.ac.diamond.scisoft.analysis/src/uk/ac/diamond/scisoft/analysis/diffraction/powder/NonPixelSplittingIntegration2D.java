@@ -45,76 +45,75 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 	@Override
 	public List<AbstractDataset> integrate(IDataset dataset) {
 		
+		//Generate radial and azimuthal look-up arrays as required
+		//TODO test shape of axis array
 		if (radialArray == null) {
-
-			if (qSpace == null) return null;
-
-			int[] shape = dataset.getShape();
-			generateRadialArray(shape, false);
-			azimuthalArray = generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), radialArray.getShape());
-
+			generateRadialArray(dataset.getShape(), true);
+		}
+		
+		if (azimuthalArray == null) {
+			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape(),true);
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-			
-			AbstractDataset mt = mask;
-			if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
-			
-			
-			if (radialBins == null) {
-				radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-				binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
-			}
-			
-			final double[] edgesQ = radialBins.getData();
-			final double loQ = edgesQ[0];
-			final double hiQ = edgesQ[nbins];
-			final double spanQ = (hiQ - loQ)/nbins;
 
-			final double[] edgesChi = binsChi.getData();
-			final double loChi = edgesChi[0];
-			final double hiChi = edgesChi[nBinsChi];
-			final double spanChi = (hiChi - loChi)/nBinsChi;
+		AbstractDataset mt = mask;
+		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
+		
+		if (binArray == null) {
+			binArray = calculateBins(radialArray,mt,radialRange);
+			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange);
+		}
 
-			//TODO early exit if spans are zero
-			
-			IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.INT32);
-			FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
+		final double[] edgesQ = binArray.getData();
+		final double loQ = edgesQ[0];
+		final double hiQ = edgesQ[nbins];
+		final double spanQ = (hiQ - loQ)/nbins;
 
-			AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
-			IndexIterator iter = a.getIterator();
+		final double[] edgesChi = binsChi.getData();
+		final double loChi = edgesChi[0];
+		final double hiChi = edgesChi[nBinsChi];
+		final double spanChi = (hiChi - loChi)/nBinsChi;
 
-			while (iter.hasNext()) {
+		//TODO early exit if spans are z
 
-				final double valq = a.getElementDoubleAbs(iter.index);
-				final double sig = b.getElementDoubleAbs(iter.index);
-				final double chi = azimuthalArray.getElementDoubleAbs(iter.index);
-				if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
+		IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.INT32);
+		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
 
-				if (valq < loQ || valq > hiQ) {
-					continue;
-				}
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
+		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
+		IndexIterator iter = a.getIterator();
 
-				if (chi < loChi || chi > hiChi) {
-					continue;
-				}
+		while (iter.hasNext()) {
 
-				int qPos = (int) ((valq-loQ)/spanQ);
-				int chiPos = (int) ((chi-loChi)/spanChi);
+			final double valq = a.getElementDoubleAbs(iter.index);
+			final double sig = b.getElementDoubleAbs(iter.index);
+			final double chi = azimuthalArray[0].getElementDoubleAbs(iter.index);
+			if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
 
-				if(qPos<nbins && chiPos<nBinsChi){
-					int cNum = histo.get(chiPos,qPos);
-					float cIn = intensity.get(chiPos,qPos);
-					histo.set(cNum+1, chiPos,qPos);
-					intensity.set(cIn+sig, chiPos,qPos);
-				}
-
+			if (valq < loQ || valq > hiQ) {
+				continue;
 			}
 
-			processAndAddToResult(intensity, histo, result, dataset.getName());
+			if (chi < loChi || chi > hiChi) {
+				continue;
+			}
 
-			return result;
+			int qPos = (int) ((valq-loQ)/spanQ);
+			int chiPos = (int) ((chi-loChi)/spanChi);
+
+			if(qPos<nbins && chiPos<nBinsChi){
+				int cNum = histo.get(chiPos,qPos);
+				float cIn = intensity.get(chiPos,qPos);
+				histo.set(cNum+1, chiPos,qPos);
+				intensity.set(cIn+sig, chiPos,qPos);
+			}
+
+		}
+
+		processAndAddToResult(intensity, histo, result, dataset.getName());
+
+		return result;
 	}
 	
 	@Override

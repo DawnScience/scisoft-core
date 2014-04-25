@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -24,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
@@ -42,28 +44,27 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 	@Override
 	public List<AbstractDataset> integrate(IDataset dataset) {
 
+		//Generate radial and azimuthal look-up arrays as required
+		//TODO test shape of axis array
 		if (radialArray == null) {
-
-			if (qSpace == null) return null;
-
-			int[] shape = dataset.getShape();
-
-			//make one larger to know range of q for lower and right hand edges
-			shape[0]++;
-			shape[1]++;
-			
-			generateRadialArray(shape, false);
-			azimuthalArray = generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), radialArray.getShape());
-
+			generateMinMaxRadialArray(dataset.getShape());
 		}
+
+		if (azimuthalArray == null) {
+			generateMinMaxAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(),dataset.getShape());
+		}
+
+		AbstractDataset mt = mask;
+		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
+		
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		if (radialBins == null) {
-			radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
-			binsChi = (DoubleDataset) DatasetUtils.linSpace(azimuthalArray.min().doubleValue(), azimuthalArray.max().doubleValue(), nBinsChi + 1, AbstractDataset.FLOAT64);
+		if (binArray == null) {
+			binArray = calculateBins(radialArray,mt,radialRange);
+			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange);
 		}
 
-		final double[] edgesQ = radialBins.getData();
+		final double[] edgesQ = binArray.getData();
 		final double loQ = edgesQ[0];
 		final double hiQ = edgesQ[nbins];
 		final double spanQ = (hiQ - loQ)/nbins;
@@ -84,26 +85,28 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 		//				continue;
 		//			}
 
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
 		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
-		PositionIterator iter = b.getPositionIterator();
-
-		int[] pos = iter.getPos();
-		int[] posStop = pos.clone();
+//		PositionIterator iter = b.getPositionIterator();
+//
+//		int[] pos = iter.getPos();
+//		int[] posStop = pos.clone();
+		
+		IndexIterator iter = a.getIterator();
 
 		while (iter.hasNext()) {
 
-			posStop[0] = pos[0]+2;
-			posStop[1] = pos[1]+2;
-			AbstractDataset qrange = a.getSlice(pos, posStop, null);
-			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
+//			posStop[0] = pos[0]+2;
+//			posStop[1] = pos[1]+2;
+//			AbstractDataset qrange = a.getSlice(pos, posStop, null);
+//			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
 
-			final double qMax = (Double)qrange.max();
-			final double qMin = (Double)qrange.min();
-			final double chiMax = (Double)chirange.max();
-			final double chiMin = (Double)chirange.min();
+			final double qMax = radialArray[1].getElementDoubleAbs(iter.index);
+			final double qMin = radialArray[0].getElementDoubleAbs(iter.index);
+			final double chiMax = azimuthalArray[1].getElementDoubleAbs(iter.index);
+			final double chiMin = azimuthalArray[0].getElementDoubleAbs(iter.index);
 
-			final double sig = b.getDouble(pos);
+			final double sig = b.getElementDoubleAbs(iter.index);
 
 			if (qMax < loQ && qMin > hiQ) {
 				continue;
@@ -135,7 +138,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 			double maxFracChi = maxBinExactChi-maxBinChi;
 
 			for (int i = minBinQ ; i <= maxBinQ; i++) {
-				if (i < 0 || i >= radialBins.getSize()-1) continue;
+				if (i < 0 || i >= binArray.getSize()-1) continue;
 				for (int j = minBinChi; j <= maxBinChi; j++) {
 					if (j < 0 || j >= binsChi.getSize()-1) continue;
 

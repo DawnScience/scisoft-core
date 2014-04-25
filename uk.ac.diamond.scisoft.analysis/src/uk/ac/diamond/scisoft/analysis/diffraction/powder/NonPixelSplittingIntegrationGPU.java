@@ -50,17 +50,6 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	}
 	
 	/**
-	 * Constructor of the Histogram
-	 * @param numBins number of bins
-	 * @param lower minimum value of histogram range
-	 * @param upper maximum value of histogram range
-	 */
-	public NonPixelSplittingIntegrationGPU(IDiffractionMetadata metadata, int numBins, double lower, double upper)
-	{
-		super(metadata, numBins, lower, upper);
-	}
-
-	/**
 	 * @param dataset input dataset
 	 * @return a list of 1D datasets which are histograms
 	 */
@@ -74,10 +63,10 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		if (radialBins == null) {
-			radialBins = (DoubleDataset) DatasetUtils.linSpace(radialArray.min().doubleValue(), radialArray.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+		if (binArray == null) {
+			binArray = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 		}
-		final double[] edges = radialBins.getData();
+		final double[] edges = binArray.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -86,13 +75,13 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		final int[] h = histo.getData();
 		final double[] in = intensity.getData();
 		if (span <= 0) {
-			h[0] = radialArray.getSize();
+			h[0] = radialArray[0].getSize();
 			result.add(histo);
-			result.add(radialBins);
+			result.add(binArray);
 			return result;
 		}
 
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray);
+		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
 		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
 
 		Range range = Range.create(a.getSize()); 

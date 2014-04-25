@@ -17,8 +17,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
-public class PixelSplittingIntegration extends AbstractPixelIntegration {
-
+public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
+	
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
@@ -29,26 +29,28 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 
 	@Override
 	public List<AbstractDataset> integrate (IDataset dataset) {
+		
+		int[] shape = dataset.getShape();
+		
+		//Generate radial and azimuthal look-up arrays as required
+		//TODO test shape of axis array
+		if (radialArray == null && (radialRange != null || isAzimuthalIntegration())) {
+			generateMinMaxRadialArray(dataset.getShape());
+		}
 
-		if (radialArray == null) {
-
-			if (qSpace == null) return null;
-
-			int[] shape = dataset.getShape();
-
-			//make one larger to know range of q for lower and right hand edges
-			shape[0]++;
-			shape[1]++;
-			
-			generateRadialArray(shape, false);
-
+		if (azimuthalArray == null && (azimuthalRange != null || !isAzimuthalIntegration())) {
+			generateMinMaxAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(),shape);
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
+//		AbstractDataset mt = mask;
+//		AbstractDataset dst = DatasetUtils.convertToAbstractDataset(dataset);
+//		AbstractDataset axt = radialArray;
+
+		//check mask and roi
 		AbstractDataset mt = mask;
-		AbstractDataset dst = DatasetUtils.convertToAbstractDataset(dataset);
-		AbstractDataset axt = radialArray;
+		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 
 
 		if (roi != null) {
@@ -58,11 +60,23 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 		}
 
 
-		if (radialBins == null) {
-			calculateBins(axt,mt);
+		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
+		AbstractDataset[] a = radialArray;
+		AbstractDataset[] r = azimuthalArray;
+		double[] integrationRange = azimuthalRange;
+		double[] binRange = radialRange;
+		
+		if (!isAzimuthalIntegration()) {
+			a = azimuthalArray;
+			r = radialArray;
+			integrationRange = radialRange;
+			binRange = azimuthalRange;
+		}
+		if (binArray == null) {
+			binArray = calculateBins(radialArray,mt,binRange);
 		}
 
-		final double[] edges = radialBins.getData();
+		final double[] edges = binArray.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -73,29 +87,44 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration {
 		if (span <= 0) {
 			h[0] = dataset.getSize();
 			result.add(histo);
-			result.add(radialBins);
+			result.add(binArray);
 			return result;
 		}
+		
 
-		//			AbstractDataset a = DatasetUtils.convertToAbstractDataset(axisArray);
-		//			AbstractDataset b = DatasetUtils.convertToAbstractDataset(ds);
-		PositionIterator iter = dst.getPositionIterator();
+		IndexIterator tIt = a[0].getIterator();
 
-		int[] pos = iter.getPos();
-		int[] posStop = pos.clone();
 
-		while (iter.hasNext()) {
+		while (tIt.hasNext()) {
+			
+			if (mt != null && !mt.getElementBooleanAbs(tIt.index)) continue;
+			
+			double rangeScale = 1;
+			
+			if (integrationRange != null && r != null) {
+				double rMin = r[0].getElementDoubleAbs(tIt.index);
+				double rMax = r[1].getElementDoubleAbs(tIt.index);
+				
+				if (rMin > integrationRange[1]) continue;
+				if (rMax < integrationRange[0]) continue;
+				
+				double fullRange = rMax-rMin;
+				
+				rMin = integrationRange[0] > rMin ? integrationRange[0] : rMin;
+				rMax = integrationRange[1] < rMax ? integrationRange[1] : rMax;
+				
+				double reducedRange = rMax-rMin;
+				
+				rangeScale = reducedRange/fullRange;
+				
+			}
+			
+			double sig = d.getElementDoubleAbs(tIt.index);
+			double qMin = a[0].getElementDoubleAbs(tIt.index);
+			double qMax = a[1].getElementDoubleAbs(tIt.index);
 
-			if (mt != null && !mt.getBoolean(pos)) continue;
-
-			posStop[0] = pos[0]+2;
-			posStop[1] = pos[1]+2;
-			AbstractDataset qrange = axt.getSlice(pos, posStop, null);
-
-			final double qMax = (Double)qrange.max();
-			final double qMin = (Double)qrange.min();
-
-			final double sig = dst.getDouble(pos);
+//			double sig = d.getDouble(pos);
+			sig *= rangeScale;
 
 			if (qMax < lo && qMin > hi) {
 				continue;

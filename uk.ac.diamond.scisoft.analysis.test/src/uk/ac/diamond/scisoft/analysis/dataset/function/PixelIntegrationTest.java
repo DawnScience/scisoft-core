@@ -96,6 +96,16 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(10.39797863552991, maxq,0.00001);
 		Assert.assertEquals(0.004903786580700596, minq,0.00001);
 		
+		npsi.setAzimuthalRange(new double[]{-180,-170});
+		
+		before = System.currentTimeMillis();
+		out = npsi.integrate(data);
+		after = System.currentTimeMillis();
+		System.out.println("non Pixel splitting (section) in "+(after-before));
+		
+		maxq = out.get(0).max().doubleValue();
+		minq = out.get(0).min().doubleValue();
+		
 	}
 	
 	@Test
@@ -125,10 +135,10 @@ public class PixelIntegrationTest {
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(353589.4987476404, max,0.00001);
-		Assert.assertEquals(136.5790195926834, min,0.00001);
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
+		Assert.assertEquals(353589.4987476404, max,0.00001);
+		Assert.assertEquals(136.5790195926834, min,0.00001);
 		
 		//Second pass should be faster
 		before = System.currentTimeMillis();
@@ -145,6 +155,25 @@ public class PixelIntegrationTest {
 		Assert.assertEquals(136.5790195926834, min,0.00001);
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
+		
+		npsi.setAzimuthalRange(new double[]{-180,-170});
+		
+		before = System.currentTimeMillis();
+		out = npsi.integrate(data);
+		after = System.currentTimeMillis();
+		System.out.println("Pixel splitting (section) in "+(after-before));
+		
+		before = System.currentTimeMillis();
+		out = npsi.integrate(data);
+		after = System.currentTimeMillis();
+		System.out.println("Pixel splitting (section repeat) in "+(after-before));
+		
+		max = out.get(1).max().doubleValue();
+		min = out.get(1).min().doubleValue();
+		maxq = out.get(0).max().doubleValue();
+		minq = out.get(0).min().doubleValue();
+		
+		
 	}
 	
 	@Test
@@ -174,14 +203,13 @@ public class PixelIntegrationTest {
 		
 		double maxchi = out.get(2).max().doubleValue();
 		double minchi = out.get(2).min().doubleValue();
-		
 		double maxi = out.get(1).max().doubleValue();
 		double mini = out.get(1).min().doubleValue();
 		
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
 		
-		Assert.assertEquals(662877.6875, maxi,0.00001);
+		Assert.assertEquals(662877.9375, maxi,0.00001);
 		//-24427.040167283067
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
@@ -196,17 +224,14 @@ public class PixelIntegrationTest {
 		
 		maxq = out.get(0).max().doubleValue();
 		minq = out.get(0).min().doubleValue();
-		
 		maxi = out.get(1).max().doubleValue();
 		mini = out.get(1).min().doubleValue();
 		
 		Assert.assertEquals(10.401047688249356, maxq,0.00001);
 		Assert.assertEquals(0.007368865272782814, minq,0.00001);
-		
-		Assert.assertEquals(662877.6875, maxi,0.00001);
+		Assert.assertEquals(662877.9375, maxi,0.00001);
 		//Assert.assertEquals(-26518.610477737853, mini,0.00001);
 		
-
 	}
 	
 	
@@ -298,10 +323,15 @@ public class PixelIntegrationTest {
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(375037.91325155017, max,0.00001);
-		Assert.assertEquals(379.2469979461525, min,0.00001);
+		Assert.assertEquals(359371.22672942874, max,0.00001);
+		Assert.assertEquals(379.1726904312658, min,0.00001);
 		Assert.assertEquals(9.45220790215385, maxq,0.00001);
-		Assert.assertEquals(1.5323281860305737, minq,0.00001);
+		Assert.assertEquals(1.5243689810252112, minq,0.00001);
+		
+//		Assert.assertEquals(375037.91325155017, max,0.00001);
+//		Assert.assertEquals(379.2469979461525, min,0.00001);
+//		Assert.assertEquals(9.45220790215385, maxq,0.00001);
+//		Assert.assertEquals(1.5323281860305737, minq,0.00001);
 		//Second pass should be faster
 		before = System.currentTimeMillis();
 		out = npsi.integrate(data);
@@ -313,10 +343,15 @@ public class PixelIntegrationTest {
 		maxq = out.get(0).max().doubleValue();
 		minq = out.get(0).min().doubleValue();
 		
-		Assert.assertEquals(375037.91325155017, max,0.00001);
-		Assert.assertEquals(379.2469979461525, min,0.00001);
+		Assert.assertEquals(359371.22672942874, max,0.00001);
+		Assert.assertEquals(379.1726904312658, min,0.00001);
 		Assert.assertEquals(9.45220790215385, maxq,0.00001);
-		Assert.assertEquals(1.5323281860305737, minq,0.00001);
+		Assert.assertEquals(1.5243689810252112, minq,0.00001);
+		
+//		Assert.assertEquals(375037.91325155017, max,0.00001);
+//		Assert.assertEquals(379.2469979461525, min,0.00001);
+//		Assert.assertEquals(9.45220790215385, maxq,0.00001);
+//		Assert.assertEquals(1.5323281860305737, minq,0.00001);
 		
 	}
 	
@@ -402,9 +437,16 @@ public class PixelIntegrationTest {
 		double mini = out.get(1).min().doubleValue();
 		
 		Assert.assertEquals(681098.0, maxi,0.00001);
-		Assert.assertEquals(-37369.5, mini,0.00001);
-		Assert.assertEquals(10.398135727369338, maxq,0.00001);
-		Assert.assertEquals(0.007367950424878316, minq,0.00001);
+		Assert.assertEquals(-29738.400390625, mini,0.00001);
+//		Assert.assertEquals(10.398135727369338, maxq,0.00001);
+//		Assert.assertEquals(0.007367950424878316, minq,0.00001);
+		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+		
+//		Assert.assertEquals(681098.0, maxi,0.00001);
+//		Assert.assertEquals(-37369.5, mini,0.00001);
+//		Assert.assertEquals(10.398135727369338, maxq,0.00001);
+//		Assert.assertEquals(0.007367950424878316, minq,0.00001);
 		
 		before = System.currentTimeMillis();
 		out = npsi.integrate(data);
@@ -422,9 +464,11 @@ public class PixelIntegrationTest {
 		mini = out.get(1).min().doubleValue();
 		
 		Assert.assertEquals(681098.0, maxi,0.00001);
-		Assert.assertEquals(-37369.5, mini,0.00001);
-		Assert.assertEquals(10.398135727369338, maxq,0.00001);
-		Assert.assertEquals(0.007367950424878316, minq,0.00001);
+		Assert.assertEquals(-29738.400390625, mini,0.00001);
+//		Assert.assertEquals(10.398135727369338, maxq,0.00001);
+//		Assert.assertEquals(0.007367950424878316, minq,0.00001);
+		Assert.assertEquals(10.39797863552991, maxq,0.00001);
+		Assert.assertEquals(0.004903786580700596, minq,0.00001);
 
 	}
 	
@@ -478,6 +522,32 @@ public class PixelIntegrationTest {
 		
 	}
 	
+	@Test
+	public void testJunkSpeed() {
+		
+//		IDataset data = getData();
+//		if (data == null) {
+//			Assert.fail("Could not load test data");
+//			return;
+//		}
+//		
+//		IDiffractionMetadata meta = getDiffractionMetadata();
+//
+//		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
+//		
+//		long before = System.currentTimeMillis();
+//		npsi.generateRadialArray(data.getShape(), true);
+//		long after = System.currentTimeMillis();
+//		System.out.println("get for non-split "+(after-before));
+//		
+//		before = System.currentTimeMillis();
+//		npsi.generateMinMaxRadialArray(data.getShape());
+//		after = System.currentTimeMillis();
+//		System.out.println("gen for split "+(after-before));
+		
+
+		
+	}
 	
 	private IDataset getData() {
 		final String path = testFileFolder+"/test1.f2d";

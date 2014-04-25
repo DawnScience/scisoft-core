@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
  * <p>
  * By default, outliers are ignored.
  */
-public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
+public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 	
 	/**
 	 * Constructor of the Histogram
@@ -48,38 +48,32 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 		super(metadata, numBins);
 		
 	}
-	
-	/**
-	 * Constructor of the Histogram
-	 * @param numBins number of bins
-	 * @param lower minimum value of histogram range
-	 * @param upper maximum value of histogram range
-	 */
-	public NonPixelSplittingIntegration(IDiffractionMetadata metadata, int numBins, double lower, double upper)
-	{
-		super(metadata, numBins, lower, upper);
-	}
 
+	public List<AbstractDataset> testIntegrateName(AbstractDataset dataset) {
+		return integrate(dataset);
+	}
+	
 	/**
 	 * @param dataset input dataset
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
 	public List<AbstractDataset> integrate(IDataset dataset) {
-		
-		//TODOtest shape of axis array
-		if (radialArray == null) {
+		//Generate radial and azimuthal look-up arrays as required
+		//TODO test shape of axis array
+		if (radialArray == null && (radialRange != null || isAzimuthalIntegration())) {
 			generateRadialArray(dataset.getShape(), true);
+		}
+		
+		if (azimuthalArray == null && (azimuthalRange != null || !isAzimuthalIntegration())) {
+			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape(),true);
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
+		//check mask and roi
 		AbstractDataset mt = mask;
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
-
-		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
-		AbstractDataset a = radialArray;
-
 
 		if (roi != null) {
 			if (maskRoiCached == null)
@@ -87,11 +81,27 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 
 			mt = maskRoiCached;
 		}
-
-		if (radialBins == null) {
-			calculateBins(a,mt);
+		
+		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
+		AbstractDataset a = radialArray[0];
+		AbstractDataset r = azimuthalArray != null ? azimuthalArray[0] : null;
+		double[] integrationRange = azimuthalRange;
+		double[] binRange = radialRange;
+		
+		if (!isAzimuthalIntegration()) {
+			a = azimuthalArray[0];
+			r = radialArray != null ? radialArray[0] : null;
+			integrationRange = radialRange;
+			binRange = azimuthalRange;
 		}
-		final double[] edges = radialBins.getData();
+		
+		if (binArray == null) {
+			binArray = calculateBins(new AbstractDataset[] {a},mt,binRange);
+		}
+
+		
+		//TODO make more generic for azimuthal vs radial integration
+		final double[] edges = binArray.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -102,16 +112,23 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration {
 		if (span <= 0) {
 			h[0] = a.getSize();
 			result.add(histo);
-			result.add(radialBins);
+			result.add(binArray);
 			return result;
 		}
 
+		//iterate over dataset, binning values per pixel
 		IndexIterator iter = a.getIterator();
-
+		
 		while (iter.hasNext()) {
 			final double val = a.getElementDoubleAbs(iter.index);
 			final double sig = d.getElementDoubleAbs(iter.index);
+			
 			if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
+			
+			if (integrationRange != null && r != null) {
+				final double ra = r.getElementDoubleAbs(iter.index);
+				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
+			}
 
 			if (val < lo || val > hi) {
 				continue;

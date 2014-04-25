@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
+import java.util.Arrays;
+
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -50,7 +52,7 @@ public class PixelIntegrationUtils {
 		return radialArray;
 	}
 	
-	public static AbstractDataset generateAzimuthalArrayRadians(double[] beamCentre, int[] shape) {
+	public static AbstractDataset generateAzimuthalArrayRadians(double[] beamCentre, int[] shape, boolean centre) {
 		
 		AbstractDataset out = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
 		
@@ -58,11 +60,40 @@ public class PixelIntegrationUtils {
 
 		int[] pos = iter.getPos();
 
+		double offset = 0;
+		
+		if (!centre) offset = 0.5;
+		
 		while (iter.hasNext()) {
-			out.set(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]), pos);
+			out.set(Math.atan2(pos[0]-beamCentre[1]-offset,pos[1]-beamCentre[0]-offset), pos);
 		}
 		
 		return out;
+	}
+	
+	public static AbstractDataset[] generateMinMaxAzimuthalArrayRadians(double[] beamCentre, int[] shape) {
+		
+		AbstractDataset aMax = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset aMin = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+
+		PositionIterator iter = aMax.getPositionIterator();
+		int[] pos = iter.getPos();
+		double[] vals = new double[4];
+		
+		while (iter.hasNext()) {
+			
+			vals[0] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]-0.5);
+			vals[1] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]-0.5);
+			vals[2] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]+0.5);
+			vals[3] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]+0.5);
+			
+			Arrays.sort(vals);
+			
+			aMax.set(vals[3], pos);
+			aMin.set(vals[0], pos);
+		}
+		
+		return new AbstractDataset[]{aMin,aMax};
 	}
 	
 	public static void solidAngleCorrection(AbstractDataset correctionArray, AbstractDataset tth) {

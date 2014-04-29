@@ -355,55 +355,55 @@ public class PixelIntegrationTest {
 		
 	}
 	
-	@Test
-	public void testNonPixelSplittingROI() {
-		
-		IDataset data = getData();
-		if (data == null) {
-			Assert.fail("Could not load test data");
-			return;
-		}
-		
-		IDiffractionMetadata meta = getDiffractionMetadata();
-
-		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
-		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
-		
-		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.integrate(data);
-		long after = System.currentTimeMillis();
-		System.out.println("Non pixel splitting roi (basic test) in "+(after-before));
-		
-		if (out.size() != 2) {
-			Assert.fail("Incorrect number of datasets returned");
-		}
-		
-		double max = out.get(1).max().doubleValue();
-		double min = out.get(1).min().doubleValue();
-		double maxq = out.get(0).max().doubleValue();
-		double minq = out.get(0).min().doubleValue();
-		
-//		Assert.assertEquals(451736.7508896797, max,0.00001);
-//		Assert.assertEquals(0.0, min,0.00001);
-//		Assert.assertEquals(8.332296339597459, maxq,0.00001);
-//		Assert.assertEquals(0.090283344944834, minq,0.00001);
-		//Second pass should be faster
-		before = System.currentTimeMillis();
-		out = npsi.integrate(data);
-		after = System.currentTimeMillis();
-		System.out.println("Non pixel splitting roi repeat (basic test) in "+(after-before));
-		
-		max = out.get(1).max().doubleValue();
-		min = out.get(1).min().doubleValue();
-		maxq = out.get(0).max().doubleValue();
-		minq = out.get(0).min().doubleValue();
-		
-//		Assert.assertEquals(451736.7508896797, max,0.00001);
-//		Assert.assertEquals(0.0, min,0.00001);
-//		Assert.assertEquals(8.332296339597459, maxq,0.00001);
-//		Assert.assertEquals(0.090283344944834, minq,0.00001);
-		
-	}
+//	@Test
+//	public void testNonPixelSplittingROI() {
+//		
+//		IDataset data = getData();
+//		if (data == null) {
+//			Assert.fail("Could not load test data");
+//			return;
+//		}
+//		
+//		IDiffractionMetadata meta = getDiffractionMetadata();
+//
+//		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 1592);
+//		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
+//		
+//		long before = System.currentTimeMillis();
+//		List<AbstractDataset> out = npsi.integrate(data);
+//		long after = System.currentTimeMillis();
+//		System.out.println("Non pixel splitting roi (basic test) in "+(after-before));
+//		
+//		if (out.size() != 2) {
+//			Assert.fail("Incorrect number of datasets returned");
+//		}
+//		
+//		double max = out.get(1).max().doubleValue();
+//		double min = out.get(1).min().doubleValue();
+//		double maxq = out.get(0).max().doubleValue();
+//		double minq = out.get(0).min().doubleValue();
+//		
+////		Assert.assertEquals(451736.7508896797, max,0.00001);
+////		Assert.assertEquals(0.0, min,0.00001);
+////		Assert.assertEquals(8.332296339597459, maxq,0.00001);
+////		Assert.assertEquals(0.090283344944834, minq,0.00001);
+//		//Second pass should be faster
+//		before = System.currentTimeMillis();
+//		out = npsi.integrate(data);
+//		after = System.currentTimeMillis();
+//		System.out.println("Non pixel splitting roi repeat (basic test) in "+(after-before));
+//		
+//		max = out.get(1).max().doubleValue();
+//		min = out.get(1).min().doubleValue();
+//		maxq = out.get(0).max().doubleValue();
+//		minq = out.get(0).min().doubleValue();
+//		
+////		Assert.assertEquals(451736.7508896797, max,0.00001);
+////		Assert.assertEquals(0.0, min,0.00001);
+////		Assert.assertEquals(8.332296339597459, maxq,0.00001);
+////		Assert.assertEquals(0.090283344944834, minq,0.00001);
+//		
+//	}
 	
 	@Test
 	public void testNonPixelSplitting2D() {
@@ -472,55 +472,55 @@ public class PixelIntegrationTest {
 
 	}
 	
-	@Test
-	public void testPixelSplittingROI() {
-		
-		IDataset data = getData();
-		if (data == null) {
-			Assert.fail("Could not load test data");
-			return;
-		}
-		
-		IDiffractionMetadata meta = getDiffractionMetadata();
-
-		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
-		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
-		
-		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = npsi.integrate(data);
-		long after = System.currentTimeMillis();
-		System.out.println("pixel splitting roi (basic test) in "+(after-before));
-		
-		if (out.size() != 2) {
-			Assert.fail("Incorrect number of datasets returned");
-		}
-		
-		double max = out.get(1).max().doubleValue();
-		double min = out.get(1).min().doubleValue();
-		double maxq = out.get(0).max().doubleValue();
-		double minq = out.get(0).min().doubleValue();
-		
-//		Assert.assertEquals(451736.7508896797, max,0.00001);
-//		Assert.assertEquals(0.0, min,0.00001);
-//		Assert.assertEquals(8.332296339597459, maxq,0.00001);
-//		Assert.assertEquals(0.090283344944834, minq,0.00001);
-		//Second pass should be faster
-		before = System.currentTimeMillis();
-		out = npsi.integrate(data);
-		after = System.currentTimeMillis();
-		System.out.println("pixel splitting roi repeat (basic test) in "+(after-before));
-		
-		max = out.get(1).max().doubleValue();
-		min = out.get(1).min().doubleValue();
-		maxq = out.get(0).max().doubleValue();
-		minq = out.get(0).min().doubleValue();
-		
-//		Assert.assertEquals(451736.7508896797, max,0.00001);
-//		Assert.assertEquals(0.0, min,0.00001);
-//		Assert.assertEquals(8.332296339597459, maxq,0.00001);
-//		Assert.assertEquals(0.090283344944834, minq,0.00001);
-		
-	}
+//	@Test
+//	public void testPixelSplittingROI() {
+//		
+//		IDataset data = getData();
+//		if (data == null) {
+//			Assert.fail("Could not load test data");
+//			return;
+//		}
+//		
+//		IDiffractionMetadata meta = getDiffractionMetadata();
+//
+//		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
+//		npsi.setROI(new SectorROI(1000, 1000, 0, 1000, 0, 1));
+//		
+//		long before = System.currentTimeMillis();
+//		List<AbstractDataset> out = npsi.integrate(data);
+//		long after = System.currentTimeMillis();
+//		System.out.println("pixel splitting roi (basic test) in "+(after-before));
+//		
+//		if (out.size() != 2) {
+//			Assert.fail("Incorrect number of datasets returned");
+//		}
+//		
+//		double max = out.get(1).max().doubleValue();
+//		double min = out.get(1).min().doubleValue();
+//		double maxq = out.get(0).max().doubleValue();
+//		double minq = out.get(0).min().doubleValue();
+//		
+////		Assert.assertEquals(451736.7508896797, max,0.00001);
+////		Assert.assertEquals(0.0, min,0.00001);
+////		Assert.assertEquals(8.332296339597459, maxq,0.00001);
+////		Assert.assertEquals(0.090283344944834, minq,0.00001);
+//		//Second pass should be faster
+//		before = System.currentTimeMillis();
+//		out = npsi.integrate(data);
+//		after = System.currentTimeMillis();
+//		System.out.println("pixel splitting roi repeat (basic test) in "+(after-before));
+//		
+//		max = out.get(1).max().doubleValue();
+//		min = out.get(1).min().doubleValue();
+//		maxq = out.get(0).max().doubleValue();
+//		minq = out.get(0).min().doubleValue();
+//		
+////		Assert.assertEquals(451736.7508896797, max,0.00001);
+////		Assert.assertEquals(0.0, min,0.00001);
+////		Assert.assertEquals(8.332296339597459, maxq,0.00001);
+////		Assert.assertEquals(0.090283344944834, minq,0.00001);
+//		
+//	}
 	
 	@Test
 	public void testJunkSpeed() {

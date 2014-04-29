@@ -23,6 +23,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
@@ -67,7 +68,16 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		secondTime =testSectionLimitedImageAzimuthal(data,npsi);
 		
 		//probably should take a similar time
-
+		
+		npsi.setRadialRange(null);
+		npsi.setAzimuthalRange(null);
+		AbstractDataset mask = getMask(data.getShape());
+		npsi.setMask(mask);
+		
+		firstTime =testMask(data,npsi);
+		secondTime =testMask(data,npsi);
+		//probably should take a similar time
+		
 	}
 	
 	@Test
@@ -281,6 +291,28 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
+		
+		return after-before;
+	}
+	
+	private double testMask(IDataset data, AbstractPixelIntegration integrator) {
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = integrator.integrate(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting (radial limited sector) in "+(after-before));
+		
+		if (out.size() != 2) {
+			
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		double max = out.get(1).max().doubleValue();
+		double min = out.get(1).min().doubleValue();
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		Assert.assertEquals(441337.6015625, max,0.00001);
+		Assert.assertEquals(367.64285714285717, min,0.00001);
+		Assert.assertEquals(9.448855451971152, maxq,0.00001);
+		Assert.assertEquals(1.5283458922106619, minq,0.00001);
 		
 		return after-before;
 	}

@@ -67,6 +67,13 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTest 
 		secondTime =testSectionLimitedImageAzimuthal(data,npsi);
 		
 		//probably should take a similar time
+		npsi.setRadialRange(null);
+		npsi.setAzimuthalRange(null);
+		AbstractDataset mask = getMask(data.getShape());
+		npsi.setMask(mask);
+		
+		firstTime =testMask(data,npsi);
+		secondTime =testMask(data,npsi);
 
 	}
 	
@@ -281,6 +288,28 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTest 
 		Assert.assertEquals(3892.45267414554, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
+		
+		return after-before;
+	}
+	
+	private double testMask(IDataset data, AbstractPixelIntegration integrator) {
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = integrator.integrate(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting (radial limited sector) in "+(after-before));
+		
+		if (out.size() != 2) {
+			
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		double max = out.get(1).max().doubleValue();
+		double min = out.get(1).min().doubleValue();
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		Assert.assertEquals(359371.22672942874, max,0.00001);
+		Assert.assertEquals(379.1726904312658, min,0.00001);
+		Assert.assertEquals(9.45220790215385, maxq,0.00001);
+		Assert.assertEquals(1.5243689810252112, minq,0.00001);
 		
 		return after-before;
 	}

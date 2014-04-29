@@ -288,10 +288,10 @@ public abstract class AbstractPixelIntegration {
 		if (radialArray != null && !Arrays.equals(radialArray[0].getShape(), mask.getShape())) radialArray = null;
 	}
 	
-	public void setROI(IROI roi) {
-		this.roi = roi;
-		maskRoiCached = null;
-	}
+//	public void setROI(IROI roi) {
+//		this.roi = roi;
+//		maskRoiCached = null;
+//	}
 	
 	public static int calculateNumberOfBins(double[] beamCentre, int[] shape) {
 		//within image

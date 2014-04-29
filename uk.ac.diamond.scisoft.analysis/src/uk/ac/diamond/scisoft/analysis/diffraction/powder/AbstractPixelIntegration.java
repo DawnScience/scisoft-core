@@ -32,7 +32,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
-import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
@@ -43,7 +42,7 @@ public abstract class AbstractPixelIntegration {
 	double[] radialRange = null;
 	double[] azimuthalRange = null;
 	
-	DoubleDataset binArray = null;
+	DoubleDataset binEdges = null;
 	
 	AbstractDataset[] radialArray;
 	AbstractDataset[] azimuthalArray;
@@ -77,13 +76,17 @@ public abstract class AbstractPixelIntegration {
 		
 		if (range.length != 2) throw new IllegalArgumentException("Range array should be of length 2");
 		
+		if (xAxis == XAxis.RESOLUTION) {
+			range[0] = (2*Math.PI)/range[0];
+			range[1] = (2*Math.PI)/range[1];
+		}
+		
 		if (range[0] > range[1]) {
 			Arrays.sort(range);
 		}
 		
-		//TODO sanity check for dspace which is integrated as q
 		radialRange = range;
-		binArray = null;
+		binEdges = null;
 
 	}
 	
@@ -108,11 +111,13 @@ public abstract class AbstractPixelIntegration {
 		if (range[1] > 180) throw new IllegalArgumentException("Max cannot be greater than +Pi");
 		
 		azimuthalRange = range;
-		binArray = null;
+		binEdges = null;
 	}
 	
 	public void setAxisType(ROIProfile.XAxis axis) {
 		this.xAxis = axis;
+		radialArray = null;
+		binEdges = null;
 	}
 	
 	public void generateRadialArray(int[] shape, boolean centre) {
@@ -172,20 +177,22 @@ public abstract class AbstractPixelIntegration {
 		double w = qSpace.getWavelength();
 		while (iter.hasNext()) {
 			
-			Vector3d q;
-			double value = 0;
 			//FIXME or not fix me, but I would expect centre to be +0.5, but this
 			//clashes with much of the rest of DAWN
 			
-			vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
-			vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
-			vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
-			vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
-
+			if (xAxis != XAxis.PIXEL) {
+				vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
+				vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
+				vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
+				vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
+			} else {
+				vals[0] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
+				vals[1] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
+				vals[2] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
+				vals[3] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
+			}
+			
 			Arrays.sort(vals);
-
-			//			if (centre) q = qSpace.qFromPixelPosition(pos[1], pos[0]);
-			//			else q = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5);
 
 			switch (xAxis) {
 			case ANGLE:
@@ -193,14 +200,12 @@ public abstract class AbstractPixelIntegration {
 				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
 				break;
 			case Q:
+			case PIXEL:
 			case RESOLUTION:
 				radialArrayMax.set(vals[3],pos);
 				radialArrayMin.set(vals[0],pos);
 				//value = (2*Math.PI)/q.length();
 				break;
-			case PIXEL:
-				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
-				break; 
 			}
 		}
 		radialArray =  new AbstractDataset[]{radialArrayMin,radialArrayMax};
@@ -239,9 +244,17 @@ public abstract class AbstractPixelIntegration {
 		return null;
 	}
 	
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
-		AbstractDataset axis = Maths.add(binArray.getSlice(new int[]{1}, null ,null), binArray.getSlice(null, new int[]{-1},null));
-		axis.idivide(2);
+	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
+			 double[] binRange, String name) {
+		
+		AbstractDataset axis = null;
+		
+		if (binRange == null) {
+			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
+			axis.idivide(2);
+		} else {
+			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, AbstractDataset.FLOAT64);
+		}
 		
 		switch (xAxis) {
 		case Q:
@@ -271,7 +284,7 @@ public abstract class AbstractPixelIntegration {
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
-		binArray = null;
+		binEdges = null;
 		if (radialArray != null && !Arrays.equals(radialArray[0].getShape(), mask.getShape())) radialArray = null;
 	}
 	
@@ -324,7 +337,9 @@ public abstract class AbstractPixelIntegration {
 	protected DoubleDataset calculateBins(AbstractDataset[] arrays, AbstractDataset mask, double[] binRange) {
 		
 		if (binRange != null) {
-			return (DoubleDataset) DatasetUtils.linSpace(binRange[0], binRange[1], nbins + 1, AbstractDataset.FLOAT64);
+			//range corresponds to bin centres
+			double shift = (binRange[1]- binRange[0])/(2*nbins);
+			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, nbins + 1, AbstractDataset.FLOAT64);
 		}
 		
 			

@@ -59,7 +59,7 @@ public class PixelIntegrationUtils {
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
-
+		//FIXME half pixel issue
 		double offset = 0;
 		
 		if (!centre) offset = 0.5;
@@ -81,13 +81,28 @@ public class PixelIntegrationUtils {
 		double[] vals = new double[4];
 		
 		while (iter.hasNext()) {
-			
+			//FIXME half pixel issue
 			vals[0] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]-0.5);
 			vals[1] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]-0.5);
 			vals[2] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]+0.5);
 			vals[3] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]+0.5);
 			
 			Arrays.sort(vals);
+			
+			
+			if (vals[0] < -Math.PI/2 && vals[3] > Math.PI/2) {
+				//FIXME do best to handle discontinuity here - saves changing the integration routine
+				//may not be as accurate - might need to make the integration aware.
+				//currently just squeeze all the signal in one side
+				
+				if (Math.PI-vals[3] > Math.PI + vals[0]) {
+					vals[3] = Math.PI;
+					vals[0] = vals[2];
+				} else {
+					vals[0] = -Math.PI;
+					vals[3] = vals[1];
+				}
+			}
 			
 			aMax.set(vals[3], pos);
 			aMin.set(vals[0], pos);

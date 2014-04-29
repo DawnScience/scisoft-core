@@ -24,7 +24,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 import com.amd.aparapi.Kernel;
@@ -63,10 +62,10 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		if (binArray == null) {
-			binArray = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+		if (binEdges == null) {
+			binEdges = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
 		}
-		final double[] edges = binArray.getData();
+		final double[] edges = binEdges.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -77,7 +76,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		if (span <= 0) {
 			h[0] = radialArray[0].getSize();
 			result.add(histo);
-			result.add(binArray);
+			result.add(binEdges);
 			return result;
 		}
 
@@ -112,7 +111,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		kernel.execute(range);
 
 		processAndAddToResult(new DoubleDataset(kernel.getIntensity(), nbins), 
-				new IntegerDataset(kernel.getHisto(), nbins), result, dataset.getName());
+				new IntegerDataset(kernel.getHisto(), nbins), result,null,  dataset.getName());
 
 		return result;
 	}

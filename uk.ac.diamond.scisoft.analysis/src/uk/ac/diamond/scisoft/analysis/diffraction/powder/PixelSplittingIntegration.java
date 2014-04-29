@@ -9,12 +9,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Maths;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToDatasetFunction;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
@@ -72,11 +66,11 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 			integrationRange = radialRange;
 			binRange = azimuthalRange;
 		}
-		if (binArray == null) {
-			binArray = calculateBins(radialArray,mt,binRange);
+		if (binEdges == null) {
+			binEdges = calculateBins(a,mt,binRange);
 		}
 
-		final double[] edges = binArray.getData();
+		final double[] edges = binEdges.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -87,7 +81,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 		if (span <= 0) {
 			h[0] = dataset.getSize();
 			result.add(histo);
-			result.add(binArray);
+			result.add(intensity);
 			return result;
 		}
 		
@@ -167,7 +161,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 			}
 		}
 
-		processAndAddToResult(intensity, histo, result, dataset.getName());
+		processAndAddToResult(intensity, histo, result,binRange, dataset.getName());
 
 		return result;
 	}

@@ -28,8 +28,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
@@ -60,12 +58,12 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 		AbstractDataset mt = mask;
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 		
-		if (binArray == null) {
-			binArray = calculateBins(radialArray,mt,radialRange);
+		if (binEdges == null) {
+			binEdges = calculateBins(radialArray,mt,radialRange);
 			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange);
 		}
 
-		final double[] edgesQ = binArray.getData();
+		final double[] edgesQ = binEdges.getData();
 		final double loQ = edgesQ[0];
 		final double hiQ = edgesQ[nbins];
 		final double spanQ = (hiQ - loQ)/nbins;
@@ -111,17 +109,24 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 
 		}
 
-		processAndAddToResult(intensity, histo, result, dataset.getName());
+		processAndAddToResult(intensity, histo, result,radialRange, dataset.getName());
 
 		return result;
 	}
 	
 	@Override
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
-		super.processAndAddToResult(intensity, histo, result, name);
+	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
+			double[] range, String name) {
+		super.processAndAddToResult(intensity, histo, result,range, name);
 		
-		AbstractDataset axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
-		axis.idivide(2);
+		AbstractDataset axis = null;
+		
+		if (azimuthalRange == null) {
+			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
+			axis.idivide(2);
+		} else {
+			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nbins, AbstractDataset.FLOAT64);
+		}
 		
 		axis.setName("chi");
 		result.add(axis);

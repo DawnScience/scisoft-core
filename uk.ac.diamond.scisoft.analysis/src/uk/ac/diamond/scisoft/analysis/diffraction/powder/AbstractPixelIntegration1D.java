@@ -40,15 +40,22 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 	}
 	
 	@Override
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result, String name) {
+	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
+			 double[] binRange, String name) {
 		
 		if (isAzimuthalIntegration) {
-			super.processAndAddToResult(intensity, histo, result, name);
+			super.processAndAddToResult(intensity, histo, result, binRange, name);
 			return;
 		} 
 		
-		AbstractDataset axis = Maths.add(binArray.getSlice(new int[]{1}, null ,null), binArray.getSlice(null, new int[]{-1},null));
-		axis.idivide(2);
+		AbstractDataset axis = null;
+		
+		if (binRange == null) {
+			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
+			axis.idivide(2);
+		} else {
+			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, AbstractDataset.FLOAT64);
+		}
 		
 		axis.setName("azimuthal angle (degrees)");
 		

@@ -26,8 +26,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 /**
@@ -83,7 +81,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 		
 		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
-		AbstractDataset a = radialArray[0];
+		AbstractDataset a = radialArray != null ? radialArray[0] : null;
 		AbstractDataset r = azimuthalArray != null ? azimuthalArray[0] : null;
 		double[] integrationRange = azimuthalRange;
 		double[] binRange = radialRange;
@@ -95,13 +93,13 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 			binRange = azimuthalRange;
 		}
 		
-		if (binArray == null) {
-			binArray = calculateBins(new AbstractDataset[] {a},mt,binRange);
+		if (binEdges == null) {
+			binEdges = calculateBins(new AbstractDataset[] {a},mt,binRange);
 		}
 
 		
 		//TODO make more generic for azimuthal vs radial integration
-		final double[] edges = binArray.getData();
+		final double[] edges = binEdges.getData();
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
@@ -109,10 +107,10 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		DoubleDataset intensity = new DoubleDataset(nbins);
 		final int[] h = histo.getData();
 		final double[] in = intensity.getData();
-		if (span <= 0) {
-			h[0] = a.getSize();
+		if (span <= 0 || a == null) {
+			h[0] = dataset.getSize();
 			result.add(histo);
-			result.add(binArray);
+			result.add(intensity);
 			return result;
 		}
 
@@ -140,7 +138,8 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 			}
 		}
 		
-		processAndAddToResult(intensity, histo, result, dataset.getName());
+		processAndAddToResult(intensity, histo, result, binRange, dataset.getName());
+
 		
 		return result;
 	}

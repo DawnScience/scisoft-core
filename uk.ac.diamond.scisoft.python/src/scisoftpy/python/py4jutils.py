@@ -136,26 +136,28 @@ def _pyload_arrays(names):
     return arrays
 
 def _jload_datasets(names):
-    datasets = []
+    n = len(names)
+    gw = get_gateway()
+    datasets = gw.new_array(gw.jvm.uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset, n)
     ldr = get_gateway().jvm.uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader
-    for n in names:
+    for i in range(n):
         try:
-            datasets.append(ldr(n).loadFile().getDataset(0))
+            datasets[i] = ldr(names[i]).loadFile().getDataset(0)
         finally:
-            _remove(n)
+            _remove(names[i])
     _rmdir(_path.dirname(names[0]))
     return datasets
 
 def convert_datasets(datasets):
     '''
-    Convert sequence of Java datasets to sequence of NumPy arrays
+    Convert sequence of Java datasets to list of NumPy arrays
     '''
     names = _jsave_datasets(datasets)
     return _pyload_arrays(names)
 
 def convert_arrays(arrays):
     '''
-    Convert sequence of NumPy arrays to sequence of Java datasets
+    Convert sequence of NumPy arrays to (Java) array of Java datasets
     '''
     names = _pysave_arrays(arrays)
     return _jload_datasets(names)

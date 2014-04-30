@@ -371,7 +371,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	@Override
-	final public DoubleDataset calculateValues(IDataset... coords) {
+	public DoubleDataset calculateValues(IDataset... coords) {
 		CoordinatesIterator it = getIterator(coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 		fillWithValues(result, it);

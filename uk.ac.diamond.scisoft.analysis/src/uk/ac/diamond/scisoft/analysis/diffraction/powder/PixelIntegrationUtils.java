@@ -52,6 +52,10 @@ public class PixelIntegrationUtils {
 		return radialArray;
 	}
 	
+	public static AbstractDataset generateAzimuthalArrayRadians(int[] shape, IDiffractionMetadata metadata) {
+		return generateAzimuthalArrayRadians(metadata.getDetector2DProperties().getBeamCentreCoords(), shape, true);
+	}
+	
 	public static AbstractDataset generateAzimuthalArrayRadians(double[] beamCentre, int[] shape, boolean centre) {
 		
 		AbstractDataset out = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);

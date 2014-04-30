@@ -59,8 +59,8 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration {
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 		
 		if (binEdges == null) {
-			binEdges = calculateBins(radialArray,mt,radialRange);
-			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange);
+			binEdges = calculateBins(radialArray,mt,radialRange, nbins);
+			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange, nBinsChi);
 		}
 
 		final double[] edgesQ = binEdges.getData();

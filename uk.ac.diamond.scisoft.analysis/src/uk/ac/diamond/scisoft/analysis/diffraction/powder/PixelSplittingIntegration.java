@@ -67,7 +67,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 			binRange = azimuthalRange;
 		}
 		if (binEdges == null) {
-			binEdges = calculateBins(a,mt,binRange);
+			binEdges = calculateBins(a,mt,binRange, nbins);
 		}
 
 		final double[] edges = binEdges.getData();

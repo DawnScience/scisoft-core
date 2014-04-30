@@ -58,8 +58,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		if (binEdges == null) {
-			binEdges = calculateBins(radialArray,mt,radialRange);
-			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange);
+			binEdges = calculateBins(radialArray,mt,radialRange, nbins);
+			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange, nBinsChi);
 		}
 
 		final double[] edgesQ = binEdges.getData();

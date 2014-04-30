@@ -94,7 +94,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 		
 		if (binEdges == null) {
-			binEdges = calculateBins(new AbstractDataset[] {a},mt,binRange);
+			binEdges = calculateBins(new AbstractDataset[] {a},mt,binRange, nbins);
 		}
 
 		

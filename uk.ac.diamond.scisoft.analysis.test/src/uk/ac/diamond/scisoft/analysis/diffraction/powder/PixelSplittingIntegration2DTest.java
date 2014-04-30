@@ -65,6 +65,16 @@ public class PixelSplittingIntegration2DTest extends AbstractPixelIntegrationTes
 		secondTime =testSectionLimitedImageAzimuthal(data,npsi);
 		
 		//probably should take a similar time
+		//Test different size axes
+		npsi = new PixelSplittingIntegration2D(meta,1592,360);
+		//first pass
+		firstTime =testDifferentSizeAxis(data,npsi);
+		//first pass
+		secondTime =testDifferentSizeAxis(data,npsi);
+		
+		if (firstTime < secondTime) {
+			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
+		}
 
 	}
 	
@@ -188,6 +198,31 @@ public class PixelSplittingIntegration2DTest extends AbstractPixelIntegrationTes
 		Assert.assertEquals(1, minq,0.00001);
 		Assert.assertEquals(-170, maxa,0.00001);
 		Assert.assertEquals(-180, mina,0.00001);
+		return after-before;
+	}
+	
+	private double testDifferentSizeAxis(IDataset data, AbstractPixelIntegration integrator) {
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = integrator.integrate(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting (different axis) in "+(after-before));
+		
+		if (out.size() != 3) {
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		double max = out.get(1).max().doubleValue();
+		double min = out.get(1).min().doubleValue();
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		double maxa = out.get(2).max().doubleValue();
+		double mina = out.get(2).min().doubleValue();
+		
+		Assert.assertEquals(603875.3125, max,0.00001);
+		Assert.assertEquals(-5552.111328125, min,0.00001);
+		Assert.assertEquals(10.401047688249356, maxq,0.00001);
+		Assert.assertEquals(0.007368865272782814, minq,0.00001);
+		Assert.assertEquals(179.48135894975297, maxa,0.00001);
+		Assert.assertEquals(-179.5000259263564, mina,0.00001);
 		return after-before;
 	}
 	

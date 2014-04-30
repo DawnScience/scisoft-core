@@ -334,12 +334,12 @@ public abstract class AbstractPixelIntegration {
 		return out;
 	}
 	
-	protected DoubleDataset calculateBins(AbstractDataset[] arrays, AbstractDataset mask, double[] binRange) {
+	protected DoubleDataset calculateBins(AbstractDataset[] arrays, AbstractDataset mask, double[] binRange, int numBins) {
 		
 		if (binRange != null) {
 			//range corresponds to bin centres
-			double shift = (binRange[1]- binRange[0])/(2*nbins);
-			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, nbins + 1, AbstractDataset.FLOAT64);
+			double shift = (binRange[1]- binRange[0])/(2*numBins);
+			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, AbstractDataset.FLOAT64);
 		}
 		
 			
@@ -358,6 +358,6 @@ public abstract class AbstractPixelIntegration {
 			max = x > max ? x : max;
 		}
 
-		return (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);
+		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, AbstractDataset.FLOAT64);
 	}
 }

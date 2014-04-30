@@ -13,6 +13,10 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 	
+	public PixelSplittingIntegration(IDiffractionMetadata metadata) {
+		super(metadata);
+	}
+	
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins

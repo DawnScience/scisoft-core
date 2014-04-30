@@ -125,6 +125,22 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	}
 	
 	@Test
+	public void testPixelSplittingBinSetting() {
+		IDataset data = getData();
+		if (data == null) {
+			Assert.fail("Could not load test data");
+			return;
+		}
+		
+		IDiffractionMetadata meta = getDiffractionMetadata();
+		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta);
+		
+		testWholeImageAzimuthal(data,npsi);
+		npsi.setNumberOfBins(1000);
+		testWholeImageAzimuthal1000Bins(data,npsi);
+	}
+	
+	@Test
 	public void testPixelSplittingAxis() {
 		
 		IDataset data = getData();
@@ -316,6 +332,31 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		Assert.assertEquals(379.1726904312658, min,0.00001);
 		Assert.assertEquals(9.45220790215385, maxq,0.00001);
 		Assert.assertEquals(1.5243689810252112, minq,0.00001);
+		
+		return after-before;
+	}
+	
+	private double testWholeImageAzimuthal1000Bins(IDataset data, AbstractPixelIntegration integrator) {
+		long before = System.currentTimeMillis();
+		List<AbstractDataset> out = integrator.integrate(data);
+		long after = System.currentTimeMillis();
+		System.out.println("Non pixel splitting (1000 bins) in "+(after-before));
+		
+		if (out.size() != 2) {
+			Assert.fail("Incorrect number of datasets returned");
+		}
+		
+		if (out.get(0).getSize() != 1000) {
+			Assert.fail("Incorrect number of points");
+		}
+		double max = out.get(1).max().doubleValue();
+		double min = out.get(1).min().doubleValue();
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		Assert.assertEquals(261085.9148959198, max,0.00001);
+		Assert.assertEquals(142.85524164959446, min,0.00001);
+		Assert.assertEquals(10.39911398056136, maxq,0.00001);
+		Assert.assertEquals(0.009302572960778455, minq,0.00001);
 		
 		return after-before;
 	}

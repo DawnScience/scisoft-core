@@ -30,6 +30,11 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 	
+	
+	public NonPixelSplittingIntegration2D(IDiffractionMetadata metadata) {
+		super(metadata);
+	}
+	
 	public NonPixelSplittingIntegration2D(IDiffractionMetadata metadata, int numBinsQ, int numBinsChi) {
 		super(metadata, numBinsQ,numBinsChi);
 	}

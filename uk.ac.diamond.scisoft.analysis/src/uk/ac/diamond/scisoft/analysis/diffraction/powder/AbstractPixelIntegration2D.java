@@ -41,7 +41,7 @@ public abstract class AbstractPixelIntegration2D extends AbstractPixelIntegratio
 	
 	public void setNumberOfAzimuthalBins(int nBins) {
 		if (nBins < 1) throw new IllegalArgumentException("Must be 1 or more");
-		this.nbins = nBins;
+		this.nBinsChi = nBins;
 		binsChi = null;
 	}
 	

@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
-public class AbstractPixelIntegrationTest {
+public class AbstractPixelIntegrationTestBase {
 	
 	//FIXME Should test against values from other popular data reduction programs
 	final static String testFileFolder = "testfiles/gda/analysis/io/Fit2dLoaderTest/";

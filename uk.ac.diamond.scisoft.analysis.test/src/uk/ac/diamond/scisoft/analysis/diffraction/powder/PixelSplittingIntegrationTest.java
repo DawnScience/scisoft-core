@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
-public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTest {
+public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestBase {
 
 	@Test
 	public void testPixelSplittingAzimuthal() {
@@ -39,6 +39,12 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTest 
 		}
 		
 		IDiffractionMetadata meta = getDiffractionMetadata();
+		
+		int[] shape = new int[]{meta.getDetector2DProperties().getPy(), meta.getDetector2DProperties().getPx()};
+		int binTest = AbstractPixelIntegration.calculateNumberOfBins(meta.getDetector2DProperties().getBeamCentreCoords(), shape);
+		
+		Assert.assertEquals(binTest,1592);
+		
 		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		
 		//first pass

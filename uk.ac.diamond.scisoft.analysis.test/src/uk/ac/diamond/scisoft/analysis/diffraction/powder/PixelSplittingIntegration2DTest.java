@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
-public class PixelSplittingIntegration2DTest extends AbstractPixelIntegrationTest {
+public class PixelSplittingIntegration2DTest extends AbstractPixelIntegrationTestBase {
 
 	@Test
 	public void testPixelSplitting2DAzimuthal() {

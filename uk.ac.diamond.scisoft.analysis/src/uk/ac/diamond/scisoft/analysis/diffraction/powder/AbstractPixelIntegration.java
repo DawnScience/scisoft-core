@@ -54,6 +54,14 @@ public abstract class AbstractPixelIntegration {
 	
 	IROI roi = null;
 	
+	public AbstractPixelIntegration(IDiffractionMetadata metadata) {
+		this.qSpace = new QSpace(metadata.getDetector2DProperties(), 
+								 metadata.getDiffractionCrystalEnvironment());
+		
+		int[] shape = new int[]{metadata.getDetector2DProperties().getPy(), metadata.getDetector2DProperties().getPx()};
+		this.nbins = calculateNumberOfBins(metadata.getDetector2DProperties().getBeamCentreCoords(), shape);
+	}
+	
 	public AbstractPixelIntegration(IDiffractionMetadata metadata, int numBins) {
 		this.qSpace = new QSpace(metadata.getDetector2DProperties(), 
 								 metadata.getDiffractionCrystalEnvironment());

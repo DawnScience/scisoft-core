@@ -27,6 +27,10 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 	
 	boolean isAzimuthalIntegration = true;
 	
+	public AbstractPixelIntegration1D(IDiffractionMetadata metadata) {
+		super(metadata);
+	}
+	
 	public AbstractPixelIntegration1D(IDiffractionMetadata metadata, int numBins) {
 		super(metadata, numBins);
 	}

@@ -40,6 +40,13 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 	
 	/**
 	 * Constructor of the Histogram
+	 */
+	public NonPixelSplittingIntegration(IDiffractionMetadata metadata) {
+		super(metadata);
+	}
+	
+	/**
+	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
 	public NonPixelSplittingIntegration(IDiffractionMetadata metadata, int numBins) {

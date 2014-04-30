@@ -29,14 +29,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
-public class PixelSplittingIntegration2D extends AbstractPixelIntegration {
+public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
-	int nBinsChi;
-	DoubleDataset binsChi;
-	
 	public PixelSplittingIntegration2D(IDiffractionMetadata metadata, int numBinsQ, int numBinsChi) {
-		super(metadata, numBinsQ);
-		this.nBinsChi = numBinsChi;
+		super(metadata, numBinsQ, numBinsChi);
 	}
 
 	@Override

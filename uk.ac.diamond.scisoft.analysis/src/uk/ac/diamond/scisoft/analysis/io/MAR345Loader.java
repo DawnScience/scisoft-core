@@ -659,10 +659,10 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 				if (i == 0) {
 					image[i] = value;
 				} else if (i <= side) {
-					image[i] = value + image[i-1];
+					image[i] = value + getSignedShort(image[i-1]);
 				} else {
 					int j = i - side - 1;
-					int sum = 2 + image[j++] + image[j++] + image[j] + image[i - 1];
+					int sum = 2 + getSignedShort(image[j++]) + getSignedShort(image[j++]) + getSignedShort(image[j]) + getSignedShort(image[i - 1]);
 					image[i] = value + sum/4;
 				}
 				i++;
@@ -670,6 +670,10 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 		}
 
 		return image;
+	}
+
+	private static short getSignedShort(int n) {
+		return (short) (n & 0xffff);
 	}
 
 	/**

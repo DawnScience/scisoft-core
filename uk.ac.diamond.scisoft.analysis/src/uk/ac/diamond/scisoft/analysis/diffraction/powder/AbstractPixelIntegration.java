@@ -122,6 +122,12 @@ public abstract class AbstractPixelIntegration {
 		binEdges = null;
 	}
 	
+	public void setNumberOfBins(int nBins) {
+		if (nBins < 1) throw new IllegalArgumentException("Must be 1 or more");
+		this.nbins = nBins;
+		binEdges = null;
+	}
+	
 	public void setAxisType(ROIProfile.XAxis axis) {
 		this.xAxis = axis;
 		radialArray = null;

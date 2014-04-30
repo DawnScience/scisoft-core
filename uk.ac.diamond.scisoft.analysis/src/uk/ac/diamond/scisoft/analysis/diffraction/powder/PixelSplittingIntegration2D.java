@@ -149,31 +149,12 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 					double inVal = intensity.get(setPos);
 					intensity.set(inVal+sig*iPerPixel*modify, setPos);
 				}
-				//					}
-		}
+
+			}
 		}
 
 		processAndAddToResult(intensity, histo, result,radialRange, dataset.getName());
 
 		return result;
 	}
-	
-	@Override
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
-			double[] range, String name) {
-		super.processAndAddToResult(intensity, histo, result,range, name);
-		
-		AbstractDataset axis = null;
-		
-		if (azimuthalRange == null) {
-			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
-			axis.idivide(2);
-		} else {
-			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nbins, AbstractDataset.FLOAT64);
-		}
-		
-		axis.setName("chi");
-		result.add(axis);
-	}
-
 }

@@ -115,7 +115,7 @@ public class PixelIntegrationUtils {
 		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
 		AbstractDataset cor = Maths.cos(tth);
 		cor.ipower(3);
-		correctionArray.imultiply(cor);
+		correctionArray.idivide(cor);
 	}
 	
 	public static void polarisationCorrection(AbstractDataset correctionArray, AbstractDataset tth, AbstractDataset angle, double factor) {
@@ -133,7 +133,6 @@ public class PixelIntegrationUtils {
 		AbstractDataset cor = Maths.add(cosSq, 1);
 		cor.isubtract(sub);
 		cor.idivide(2);
-		correctionArray.imultiply(cor);
+		correctionArray.idivide(cor);
 	}
-
 }

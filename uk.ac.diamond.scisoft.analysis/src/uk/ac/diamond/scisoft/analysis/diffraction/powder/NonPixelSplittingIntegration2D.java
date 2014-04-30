@@ -22,12 +22,10 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
@@ -39,7 +37,6 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 	@Override
 	public List<AbstractDataset> integrate(IDataset dataset) {
 		
-		//Generate radial and azimuthal look-up arrays as required
 		//TODO test shape of axis array
 		if (radialArray == null) {
 			generateRadialArray(dataset.getShape(), true);
@@ -109,24 +106,4 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
 		return result;
 	}
-	
-	@Override
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
-			double[] range, String name) {
-		super.processAndAddToResult(intensity, histo, result,range, name);
-		
-		AbstractDataset axis = null;
-		
-		if (azimuthalRange == null) {
-			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
-			axis.idivide(2);
-		} else {
-			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nbins, AbstractDataset.FLOAT64);
-		}
-		
-		axis.setName("chi");
-		result.add(axis);
-		
-	}
-
 }

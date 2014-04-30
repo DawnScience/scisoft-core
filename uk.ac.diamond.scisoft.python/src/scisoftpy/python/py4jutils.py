@@ -89,40 +89,65 @@ def convert_sector_roi(roi):
     s.setAnglesDegrees(roi.anglesdegrees[0], roi.anglesdegrees[1])
     return s
 
+def isjavaclass(obj):
+    from py4j.java_gateway import JavaClass  # @UnresolvedImport
+    return isinstance(obj, JavaClass)
+
 from numpy import save as _asave, load as _aload  # @UnresolvedImport
 from scisoftpy import ndarray
 from os import path as _path, remove as _remove, rmdir as _rmdir
 import tempfile as _tmp
 
-def _pysave_arrays(args, dir=None):  # @ReservedAssignment
-    p = _tmp.mkdtemp(prefix='py4j-pyargs', dir=dir)
-    n = 0
-    names = []
+def _pysave_array(arg, dir=None, names=None):  # @ReservedAssignment
+    if not isinstance(arg, ndarray):
+        return arg
+
+    if not names:
+        p = _tmp.mkdtemp(prefix='py4j-pyargs', dir=dir)
+        n = 0
+    else:
+        p = _path.dirname(names[-1])
+        n = len(names)
+
+    name = _path.join(p, "p%03d.npy" % n)
+    _asave(name, arg)
+    return name
+
+def _pysave_arrays(args, dir=None, names=None):  # @ReservedAssignment
+    if not names:
+        names = []
+
     for arg in args:
         if isinstance(arg, ndarray):
-            name = _path.join(p, "p%03d.npy" % n)
-            _asave(name, arg)
-            n += 1
-            names.append(name)
+            names.append(_pysave_array(arg, dir, names))
     return names
 
-def _jsave_datasets(datasets, dir=None):  # @ReservedAssignment
-    p = _tmp.mkdtemp(prefix='py4j-jargs', dir=dir)
-    n = 0
-    j = get_gateway().jvm
-    dh = j.uk.ac.diamond.scisoft.analysis.io.DataHolder()
-    svr = j.uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver
-    names = []
+def _jsave_dataset(dataset, dir=None, names=None):  # @ReservedAssignment
+    if not names:
+        p = _tmp.mkdtemp(prefix='py4j-jargs', dir=dir)
+        n = 0
+    else:
+        p = _path.dirname(names[-1])
+        n = len(names)
+
+    jio = get_gateway().jvm.uk.ac.diamond.scisoft.analysis.io
+    dh = jio.DataHolder()
+    svr = jio.NumPyFileSaver
+    name = _path.join(p, "p%03d.npy" % n)
+    dh.clear()
+    dh.addDataset(str(n), dataset)
+    fs = svr(name)
+    fs.saveFile(dh)
+    return name
+
+def _jsave_datasets(datasets, dir=None, names=None):  # @ReservedAssignment
+    if not names:
+        names = []
+
     for d in datasets:
         if d is None:
             continue
-        name = _path.join(p, "p%03d.npy" % n)
-        dh.clear()
-        dh.addDataset(str(n), d)
-        fs = svr(name)
-        fs.saveFile(dh)
-        n += 1
-        names.append(name)
+        names.append(_jsave_dataset(d, dir, names))
     return names
 
 def _pyload_arrays(names):
@@ -132,20 +157,23 @@ def _pyload_arrays(names):
             arrays.append(_aload(n))
         finally:
             _remove(n)
-    _rmdir(_path.dirname(names[0]))
+    if len(names) > 0:
+        _rmdir(_path.dirname(names[0]))
     return arrays
 
 def _jload_datasets(names):
-    n = len(names)
+    num = len(names)
     gw = get_gateway()
-    datasets = gw.new_array(gw.jvm.uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset, n)
-    ldr = get_gateway().jvm.uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader
-    for i in range(n):
+    datasets = gw.new_array(gw.jvm.uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset, num)
+    ldr = gw.jvm.uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader
+    for i in range(num):
+        n = names[i]
         try:
-            datasets[i] = ldr(names[i]).loadFile().getDataset(0)
+            datasets[i] = ldr(n).loadFile().getDataset(0)
         finally:
-            _remove(names[i])
-    _rmdir(_path.dirname(names[0]))
+            _remove(n)
+    if num > 0:
+        _rmdir(_path.dirname(names[0]))
     return datasets
 
 def convert_datasets(datasets):

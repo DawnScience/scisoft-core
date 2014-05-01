@@ -191,7 +191,7 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 		DetectorProperties detprop = new DetectorProperties(getKeyAsDouble(TextKey.DISTANCE),
 				0, 0,
 				getKeyAsInt(TextKey.FORMAT), getKeyAsInt(TextKey.FORMAT),
-				getKeyAsDouble(TextKey.PIXEL, 1), getKeyAsDouble(TextKey.PIXEL, 0));
+				getKeyAsDouble(TextKey.PIXEL, 1)/1000., getKeyAsDouble(TextKey.PIXEL, 0)/1000.);
 		detprop.setBeamCentreCoords(new double[] {getKeyAsDouble(TextKey.CENTER, 0),
 				getKeyAsDouble(TextKey.CENTER, 1)});
 

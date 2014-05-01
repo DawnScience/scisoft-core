@@ -27,8 +27,8 @@ public class PolygonalROI extends PolylineROI implements Serializable {
 		super();
 	}
 
-	public PolygonalROI(PolylineROI poly) {
-		PolylineROI c = poly.copy();
+	public PolygonalROI(IPolylineROI poly) {
+		PolylineROI c = (PolylineROI) (poly instanceof PolylineROI ? poly.copy() : new PolylineROI(poly));
 		name = c.name;
 		spt = c.spt;
 		plot = c.plot;

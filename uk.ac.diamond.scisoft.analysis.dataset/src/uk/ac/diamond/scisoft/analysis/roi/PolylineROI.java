@@ -38,6 +38,15 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 		pts = new ArrayList<IROI>();
 	}
 
+	public PolylineROI(IPolylineROI poly) {
+		this();
+		for (IROI p: poly) {
+			addPoint(p.getPoint());
+		}
+		name = poly.getName();
+		plot = poly.isPlot();
+	}
+
 	public PolylineROI(double[] start) {
 		super();
 		pts = new ArrayList<IROI>();

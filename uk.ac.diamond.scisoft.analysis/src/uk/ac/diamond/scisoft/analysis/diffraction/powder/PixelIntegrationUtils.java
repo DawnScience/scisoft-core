@@ -20,7 +20,14 @@ import java.util.Arrays;
 
 import javax.vecmath.Vector3d;
 
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
@@ -113,6 +120,31 @@ public class PixelIntegrationUtils {
 		}
 		
 		return new AbstractDataset[]{aMin,aMax};
+	}
+	
+	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, AbstractDataset array2Dx) {
+		
+		DoubleDataset[] inXy1D = new DoubleDataset[2];
+		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], AbstractDataset.FLOAT64);
+		inXy1D[1] = (DoubleDataset)DatasetUtils.cast(xy1d[1], AbstractDataset.FLOAT64);
+		
+		double min = inXy1D[0].min().doubleValue();
+		double max = inXy1D[0].max().doubleValue();
+		
+		SplineInterpolator si = new SplineInterpolator();
+		PolynomialSplineFunction poly = si.interpolate(inXy1D[0].getData(),inXy1D[1].getData());
+		AbstractDataset image = AbstractDataset.zeros(array2Dx.getShape(),AbstractDataset.FLOAT64);
+		double[] buf = (double[])image.getBuffer();
+		
+		IndexIterator iterator = array2Dx.getIterator();
+		
+		while (iterator.hasNext()) {
+			double e = array2Dx.getElementDoubleAbs(iterator.index);
+			if (e <= max && e >= min) buf[iterator.index] = poly.value(e);
+			
+		}
+		
+		return image;
 	}
 	
 	public static void solidAngleCorrection(AbstractDataset correctionArray, AbstractDataset tth) {

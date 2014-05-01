@@ -18,17 +18,17 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Activator;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 
 /**
  * A circular region of interest which fits the points in a polygonal region of interest
  */
-public class CircularFitROI extends CircularROI implements Serializable {
+public class CircularFitROI extends CircularROI implements IFitROI, Serializable {
 
-	private PolylineROI proi;
+	private IPolylineROI proi;
 	private IConicSectionFitter fitter;
 	private double residual;
 
@@ -37,7 +37,7 @@ public class CircularFitROI extends CircularROI implements Serializable {
 		residual = 0;
 	}
 
-	public CircularFitROI(PolylineROI points) {
+	public CircularFitROI(IPolylineROI points) {
 		super(1, 0, 0);
 		setPoints(points);
 	}
@@ -62,8 +62,8 @@ public class CircularFitROI extends CircularROI implements Serializable {
 	 * @param polyline
 	 * @return fitter
 	 */
-	public static IConicSectionFitter fit(PolylineROI polyline) {
-		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
+	public static IConicSectionFitter fit(IPolylineROI polyline) {
+		IDataset[] xy = polyline.makeCoordinateDatasets();
 
 		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
 		IConicSectionFitter f = service.createCircleFitter();
@@ -75,12 +75,12 @@ public class CircularFitROI extends CircularROI implements Serializable {
 	 * Set points which are then used to fit circle
 	 * @param points
 	 */
-	public void setPoints(PolylineROI points) {
+	public void setPoints(IPolylineROI points) {
 		proi = points;
 		if (fitter == null) {
 			fitter = fit(points);
 		} else {
-			AbstractDataset[] xy = points.makeCoordinateDatasets();
+			IDataset[] xy = points.makeCoordinateDatasets();
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();
@@ -107,7 +107,8 @@ public class CircularFitROI extends CircularROI implements Serializable {
 	/**
 	 * @return points in polygon for fitting
 	 */
-	public PolylineROI getPoints() {
+	@Override
+	public IPolylineROI getPoints() {
 		return proi;
 	}
 }

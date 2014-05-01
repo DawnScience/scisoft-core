@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * Class for a polygonal ROI is a closed form of a polyline ROI (end point is implicitly the start point)
  */
-public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Serializable {
+public class PolygonalROI extends PolylineROI implements Serializable {
 
 	public PolygonalROI() {
 		super();
@@ -51,7 +51,7 @@ public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Ser
 	public PolygonalROI copy() {
 		PolygonalROI c = new PolygonalROI(spt.clone());
 		for (int i = 1, imax = pts.size(); i < imax; i++)
-			c.insertPoint(pts.get(i).spt.clone());
+			c.insertPoint(pts.get(i).copy());
 		c.name = name;
 		c.plot = plot;
 		return c;
@@ -64,12 +64,12 @@ public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Ser
 
 		// after Eric Haines' non-division version of Stuart MacMartin's strategy
 		int imax = pts.size();
-		double[] pa = pts.get(imax - 1).spt;
+		double[] pa = pts.get(imax - 1).getPointRef();
 		boolean fya = pa[1] >= y; // segment crossing flag
 		boolean f = false; // inside flag
 
 		for (int i = 0; i < imax; i++) {
-			double[] pb = pts.get(i).spt;
+			double[] pb = pts.get(i).getPointRef();
 			boolean fyb = pb[1] >= y;
 			if (fya != fyb) { // test if in y-range of segment
 				boolean fi = (pb[1] - y) * (pa[0] - pb[0]) >= (pb[0] - x) * (pa[1] - pb[1]); 
@@ -93,10 +93,10 @@ public class PolygonalROI extends PolylineROI implements Iterable<PointROI>, Ser
 			return true;
 
 		// test last segment that completes circuit
-		double[] p = pts.get(imax - 1).spt;
+		double[] p = pts.get(imax - 1).getPointRef();
 		double ox = p[0];
 		double oy = p[1];
-		p = pts.get(0).spt;
+		p = pts.get(0).getPointRef();
 		return ROIUtils.isNearSegment(p[0] - ox, p[1] - oy, x - ox, y - oy, distance);
 	}
 }

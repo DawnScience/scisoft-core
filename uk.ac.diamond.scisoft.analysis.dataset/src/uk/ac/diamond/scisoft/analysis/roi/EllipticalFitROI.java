@@ -18,17 +18,17 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Activator;
-import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 
 /**
  * An elliptical region of interest which fits the points in a polygonal region of interest
  */
-public class EllipticalFitROI extends EllipticalROI implements Serializable {
+public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializable {
 
-	private PolylineROI proi;
+	private IPolylineROI proi;
 	private boolean circleOnly;
 	private transient IConicSectionFitter fitter; // The fitter is not serializable, the EllipticalFitROI is.
 	private double residual;
@@ -38,11 +38,11 @@ public class EllipticalFitROI extends EllipticalROI implements Serializable {
 		residual = 0;
 	}
 
-	public EllipticalFitROI(PolylineROI points) {
+	public EllipticalFitROI(IPolylineROI points) {
 		this(points, false);
 	}
 
-	public EllipticalFitROI(PolylineROI points, boolean fitCircle) {
+	public EllipticalFitROI(IPolylineROI points, boolean fitCircle) {
 		super(1, 0, 0);
 		circleOnly = fitCircle;
 		setPoints(points);
@@ -68,10 +68,10 @@ public class EllipticalFitROI extends EllipticalROI implements Serializable {
 	 * @param polyline
 	 * @return fitter
 	 */
-	public static IConicSectionFitter fit(PolylineROI polyline, final boolean fitCircle) {
+	public static IConicSectionFitter fit(IPolylineROI polyline, final boolean fitCircle) {
 		
 		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
-		AbstractDataset[] xy = polyline.makeCoordinateDatasets();
+		IDataset[] xy = polyline.makeCoordinateDatasets();
 		if (fitCircle) {
 			IConicSectionFitter f = service.createCircleFitter();
 			f.geometricFit(xy[0], xy[1], null);
@@ -88,13 +88,13 @@ public class EllipticalFitROI extends EllipticalROI implements Serializable {
 	 * Set points which are then used to fit ellipse
 	 * @param points
 	 */
-	public void setPoints(PolylineROI points) {
+	public void setPoints(IPolylineROI points) {
 		proi = points;
 		int n = points.getNumberOfPoints();
 		if (fitter == null) {
 			fitter = fit(points, n < 5 || circleOnly);
 		} else {
-			AbstractDataset[] xy = points.makeCoordinateDatasets();
+			IDataset[] xy = points.makeCoordinateDatasets();
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();
@@ -131,7 +131,8 @@ public class EllipticalFitROI extends EllipticalROI implements Serializable {
 	/**
 	 * @return points in polygon for fitting
 	 */
-	public PolylineROI getPoints() {
+	@Override
+	public IPolylineROI getPoints() {
 		return proi;
 	}
 

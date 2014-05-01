@@ -93,6 +93,7 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 	/**
 	 * @return root mean squared of residuals
 	 */
+	@Override
 	public double getRMS() {
 		return residual;
 	}

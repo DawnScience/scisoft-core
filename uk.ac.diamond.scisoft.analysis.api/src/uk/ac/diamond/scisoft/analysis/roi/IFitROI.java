@@ -25,4 +25,9 @@ public interface IFitROI extends IParametricROI {
 	 * @return a polyline
 	 */
 	public IPolylineROI getPoints();
+
+	/**
+	 * @return root mean squared of residuals
+	 */
+	public double getRMS();
 }

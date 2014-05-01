@@ -117,6 +117,7 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 	/**
 	 * @return root mean squared of residuals
 	 */
+	@Override
 	public double getRMS() {
 		return residual;
 	}

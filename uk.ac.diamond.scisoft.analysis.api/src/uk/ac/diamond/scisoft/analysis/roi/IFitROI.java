@@ -27,6 +27,12 @@ public interface IFitROI extends IParametricROI {
 	public IPolylineROI getPoints();
 
 	/**
+	 * Set points which are then used to fit ROI
+	 * @param points
+	 */
+	public void setPoints(IPolylineROI points);
+
+	/**
 	 * @return root mean squared of residuals
 	 */
 	public double getRMS();

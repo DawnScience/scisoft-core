@@ -75,6 +75,7 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 	 * Set points which are then used to fit circle
 	 * @param points
 	 */
+	@Override
 	public void setPoints(IPolylineROI points) {
 		proi = points;
 		if (fitter == null) {

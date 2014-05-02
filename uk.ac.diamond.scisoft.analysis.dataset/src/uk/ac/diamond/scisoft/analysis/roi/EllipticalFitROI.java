@@ -88,6 +88,7 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 	 * Set points which are then used to fit ellipse
 	 * @param points
 	 */
+	@Override
 	public void setPoints(IPolylineROI points) {
 		proi = points;
 		int n = points.getNumberOfPoints();

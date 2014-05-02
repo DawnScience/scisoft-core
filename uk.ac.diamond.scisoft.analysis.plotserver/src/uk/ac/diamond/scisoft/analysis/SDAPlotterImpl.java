@@ -241,7 +241,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		if (title != null)
 			dataBean.putGuiParameter(GuiParameters.TITLE, title);
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	private static IDataset renameDataset(IDataset d, String n) {
@@ -314,7 +314,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			IDataset yd = renameDataset(yValues, yAxisName);
 			dataBean.addAxis(AxisMapBean.YAXIS, yd);
 		}
-		sendBeansToServer(plotName, dataBean, null);
+
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -356,7 +357,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.YAXIS, yValues);
 		}
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -370,8 +371,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER2D);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_NONE);
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.SCATTER2D);
 		for (int i = 0; i < sizes.length; i++) {
 			AbstractCompoundDataset coordData = coordPairs[i];
 			if (coordData.getElementsPerItem() != 2) {
@@ -396,7 +395,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.XAXIS + Integer.toString(i), xCoord);
 			dataBean.addAxis(AxisMapBean.YAXIS + Integer.toString(i), yCoord);
 		}
-		sendBeansToServer(plotName, dataBean, guiBean);
+
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -435,7 +435,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.YAXIS + "0", yCoords);
 		}
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	// temporary(?) fix for plotting over too quickly when some additional points are omitted
@@ -473,7 +473,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		dataBean.addAxis(AxisMapBean.XAXIS + "0", xCoords);
 		dataBean.addAxis(AxisMapBean.YAXIS + "0", yCoords);
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -522,7 +522,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.ZAXIS, zCoords);
 		}
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -573,7 +573,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.ZAXIS, zCoords);
 		}
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -618,7 +618,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.YAXIS, yValues);
 		}
 
-		sendBeansToServer(plotName, dataBean, null);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -664,6 +664,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		DataBean dataBean = new DataBean(GuiPlotMode.ONED_THREED);
+		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
 		if (xValues.length == 1) {
 			dataBean.addAxis(AxisMapBean.XAXIS, xValues[0]);
 			for (int i = 0; i < yValues.length; i++) {
@@ -699,12 +700,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			dataBean.addAxis(AxisMapBean.ZAXIS, zValues);
 		}
 
-		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, plotOperation);
-
-		GuiBean guibean = new GuiBean();
-		guibean.put(GuiParameters.PLOTMODE, GuiPlotMode.ONED_THREED);
-		
-		sendBeansToServer(plotName, dataBean, guibean);
+		setDataBean(plotName, dataBean);
 	}
 
 	@Override
@@ -834,18 +830,15 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	@Override
 	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
 			int zdim) throws Exception {
-		PlotService plotServer = getPlotService();
-		if (plotServer != null) {
-			GuiBean guiBean = new GuiBean();
-			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
-			guiBean.put(GuiParameters.FILENAME, rawvolume);
-			guiBean.put(GuiParameters.VOLUMEHEADERSIZE, Integer.valueOf(headerSize));
-			guiBean.put(GuiParameters.VOLUMEVOXELTYPE, Integer.valueOf(voxelType));
-			guiBean.put(GuiParameters.VOLUMEXDIM, Integer.valueOf(xdim));
-			guiBean.put(GuiParameters.VOLUMEYDIM, Integer.valueOf(ydim));
-			guiBean.put(GuiParameters.VOLUMEZDIM, Integer.valueOf(zdim));
-			plotServer.updateGui(viewName, guiBean);
-		}
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
+		guiBean.put(GuiParameters.FILENAME, rawvolume);
+		guiBean.put(GuiParameters.VOLUMEHEADERSIZE, Integer.valueOf(headerSize));
+		guiBean.put(GuiParameters.VOLUMEVOXELTYPE, Integer.valueOf(voxelType));
+		guiBean.put(GuiParameters.VOLUMEXDIM, Integer.valueOf(xdim));
+		guiBean.put(GuiParameters.VOLUMEYDIM, Integer.valueOf(ydim));
+		guiBean.put(GuiParameters.VOLUMEZDIM, Integer.valueOf(zdim));
+		setGuiBean(viewName, guiBean);
 	}
 
 	@Override
@@ -888,13 +881,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void volumePlot(String viewName, String dsrvolume) throws Exception {
-		PlotService plotServer = getPlotService();
-		if (plotServer != null) {
-			GuiBean guiBean = new GuiBean();
-			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
-			guiBean.put(GuiParameters.FILENAME, dsrvolume);
-			plotServer.updateGui(viewName, guiBean);
-		}
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
+		guiBean.put(GuiParameters.FILENAME, dsrvolume);
+		setGuiBean(viewName, guiBean);
 	}
 
 	@Override
@@ -919,12 +909,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void resetAxes(String viewName) throws Exception {
-		PlotService plotServer = getPlotService();
-		if (plotServer != null) {
-			GuiBean guiBean = new GuiBean();
-			guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.RESETAXES);
-			plotServer.updateGui(viewName, guiBean);
-		}
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.RESETAXES);
+		setGuiBean(viewName, guiBean);
 	}
 
 	@Override
@@ -1021,7 +1008,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		DataBean db = new DataBean(null);
 		db.addHDF5Tree(tree);
-		sendBeansToServer(viewer, db, null);
+		setDataBean(viewer, db);
 	}
 
 	@Override
@@ -1030,7 +1017,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		DataBean db = new DataBean(null);
 		db.addHDF5Tree(tree);
-		sendBeansToServer(viewer, db, null);
+		setDataBean(viewer, db);
 	}
 
 	/**
@@ -1046,15 +1033,16 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	 */
 	private void sendBeansToServer(String plotName, DataBean dataBean, GuiBean guiBean) throws Exception {
 		PlotService plotServer = getPlotService();
-		if (plotServer != null) {
-			if (guiBean != null) {
-				guiBean.remove(GuiParameters.PLOTID); // remove any previous ID now it is being pushed to all the clients
+		if (plotServer == null)
+			return;
 
-				plotServer.updateGui(plotName, guiBean);
-			}
+		if (guiBean != null) {
+			guiBean.remove(GuiParameters.PLOTID); // remove any previous ID now it is being pushed to all the clients
+			plotServer.updateGui(plotName, guiBean);
+		}
 
-			if (dataBean != null)
-				plotServer.setData(plotName, dataBean);
+		if (dataBean != null) {
+			plotServer.setData(plotName, dataBean);
 		}
 	}
 
@@ -1065,12 +1053,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public GuiBean getGuiBean(String plotName) throws Exception {
-
 		PlotService plotService = getPlotService();
 
-		return plotService.getGuiState(plotName);
+		return plotService == null ? null : plotService.getGuiState(plotName);
 	}
-
 
 	@Override
 	public void setDataBean(String plotName, DataBean bean) throws Exception {
@@ -1079,10 +1065,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public DataBean getDataBean(String plotName) throws Exception {
-
 		PlotService plotService = getPlotService();
 
-		return plotService.getData(plotName);
+		return plotService == null ? null : plotService.getData(plotName);
 	}
 
 	@Override
@@ -1120,7 +1105,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.CREATE, title, side));
 
-		sendBeansToServer(plotName, null, guiBean);
+		setGuiBean(plotName, guiBean);
 	}
 
 	@Override
@@ -1128,7 +1113,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.RENAMEX, xAxisTitle));
 
-		sendBeansToServer(plotName, null, guiBean);
+		setGuiBean(plotName, guiBean);
 	}
 
 	@Override
@@ -1136,6 +1121,6 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		GuiBean guiBean = new GuiBean();
 		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(AxisOperation.RENAMEY, yAxisTitle));
 
-		sendBeansToServer(plotName, null, guiBean);
+		setGuiBean(plotName, guiBean);
 	}
 }

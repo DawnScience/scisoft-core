@@ -256,17 +256,20 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 			throw new IllegalArgumentException("Need " + PARAMETERS + " or more points");
 		}
 
+		if (x.getSize() == PARAMETERS) {
+			init = quickfit(x, y);
+			for (int i = 0; i < PARAMETERS; i++)
+				parameters[i] = init[i];
+			residual = 0;
+			return;
+		}
+
 		if (init == null)
 			init = quickfit(x, y);
 		else if (init.length < PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
 		CircleCoordinatesFunction f = (CircleCoordinatesFunction) getFitFunction(x, y);
-		if (x.getSize() == PARAMETERS) {
-			for (int i = 0; i < PARAMETERS; i++)
-				parameters[i] = init[i];
-			return;
-		}
 		LevenbergMarquardtOptimizer opt = new LevenbergMarquardtOptimizer();
 
 		try {

@@ -241,14 +241,6 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 		return residual;
 	}
 
-	/**
-	 * Fit points given by x, y datasets to a circle. If no initial parameters are given, then
-	 * an algebraic fit is performed then a non-linear least squares fitting routine is used to
-	 * provide the best geometric fit.
-	 * @param x
-	 * @param y
-	 * @param init parameters (can be null)
-	 */
 	@Override
 	public void geometricFit(IDataset x, IDataset y, double[] init) {
 		residual = Double.NaN;

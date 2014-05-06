@@ -70,7 +70,7 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 	 */
 	public static IConicSectionFitter fit(IPolylineROI polyline, final boolean fitCircle) {
 		
-		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
+		IFittingAlgorithmService service = (IFittingAlgorithmService) Activator.getService(IFittingAlgorithmService.class);
 		IDataset[] xy = polyline.makeCoordinateDatasets();
 		if (fitCircle) {
 			IConicSectionFitter f = service.createCircleFitter();
@@ -96,6 +96,18 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 			fitter = fit(points, n < 5 || circleOnly);
 		} else {
 			IDataset[] xy = points.makeCoordinateDatasets();
+			final double[] p = fitter.getParameters();
+			if (p.length < 5) {
+				p[0] = getSemiAxis(0);
+				p[1] = getPointX();
+				p[2] = getPointY();
+			} else {
+				p[0] = getSemiAxis(0);
+				p[1] = getSemiAxis(1);
+				p[2] = getAngle();
+				p[3] = getPointX();
+				p[4] = getPointY();
+			}
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();

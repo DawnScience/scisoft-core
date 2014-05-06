@@ -36,4 +36,7 @@ public interface IFitROI extends IParametricROI {
 	 * @return root mean squared of residuals
 	 */
 	public double getRMS();
+
+	@Override
+	public IFitROI copy();
 }

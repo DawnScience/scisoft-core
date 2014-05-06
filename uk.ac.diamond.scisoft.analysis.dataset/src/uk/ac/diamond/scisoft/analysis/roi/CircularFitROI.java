@@ -82,6 +82,10 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 			fitter = fit(points);
 		} else {
 			IDataset[] xy = points.makeCoordinateDatasets();
+			final double[] p = fitter.getParameters();
+			p[0] = getRadius();
+			p[1] = getPointX();
+			p[2] = getPointY();
 			fitter.geometricFit(xy[0], xy[1], fitter.getParameters());
 		}
 		final double[] p = fitter.getParameters();

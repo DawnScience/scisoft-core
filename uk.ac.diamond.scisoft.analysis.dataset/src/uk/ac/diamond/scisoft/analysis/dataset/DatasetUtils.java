@@ -940,11 +940,12 @@ public class DatasetUtils {
 			return AbstractDataset.array(start, dtype);
 		} else {
 			AbstractDataset ds = AbstractDataset.zeros(new int[] {length}, dtype);
-			double step = (stop - start) / (length - 1);
+			double num = stop - start;
+			double den = length - 1;
 			double value;
 
 			for (int i = 0; i < length; i++) {
-				value = start + i * step;
+				value = start + (num * i) / den;
 				ds.setObjectAbs(i, value);
 			}
 			return ds;

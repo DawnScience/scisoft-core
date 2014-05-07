@@ -1102,8 +1102,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
     retstep  -- if False (default), do not include the calculated step value as part of return tuple
     '''
     if not endpoint:
-        step = (stop - start) / (num - 1.)
-        stop -= step
+        stop = ((num - 1) * stop + start)/num
 
     dtype = _getdtypefromobj(((start, stop)))
 
@@ -1126,7 +1125,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
 
     if retstep:
         step = result[1] - result[0]
-        return (step, result)
+        return (result, step)
     else:
         return result
 

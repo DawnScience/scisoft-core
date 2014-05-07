@@ -124,7 +124,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 //			double sig = d.getDouble(pos);
 			sig *= rangeScale;
 
-			if (qMax < lo && qMin > hi) {
+			if (qMax < lo || qMin > hi) {
 				continue;
 			} 
 

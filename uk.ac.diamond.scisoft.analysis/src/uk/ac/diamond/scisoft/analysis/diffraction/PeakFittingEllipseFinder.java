@@ -86,8 +86,10 @@ public class PeakFittingEllipseFinder {
 		
 		while (count < 5 && polyline.getNumberOfPoints() < nPoints *0.75) {
 			
-			if (count == 1) mon.subTask("Starting peak fit...");
-			else mon.subTask("Not enough points found, continuing search...: " + count);
+			if (mon != null) {
+				if (count == 1) mon.subTask("Starting peak fit...");
+				else mon.subTask("Not enough points found, continuing search...: " + count);
+			}
 			
 			for (double[] range : searchRange) {
 				
@@ -131,7 +133,7 @@ public class PeakFittingEllipseFinder {
 			LinearROI line = new LinearROI(beg, end);
 			AbstractDataset sub = ROIProfile.line(image, line, 1)[0];
 
-			BooleanDataset badVals = Comparisons.lessThanOrEqualTo(sub, 0);
+			BooleanDataset badVals = Comparisons.lessThan(sub, 0);
 			
 			if (Comparisons.allTrue(badVals)) continue;
 			

@@ -59,6 +59,28 @@ public class PixelIntegrationUtils {
 		return radialArray;
 	}
 	
+	public static AbstractDataset generateQArray(int[] shape, IDiffractionMetadata md) {
+		
+		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
+
+		AbstractDataset radialArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+
+		PositionIterator iter = radialArray.getPositionIterator();
+		int[] pos = iter.getPos();
+
+		while (iter.hasNext()) {
+			
+			Vector3d q;
+			//FIXME or not fix me, but I would expect centre to be +0.5, but this
+			//clashes with much of the rest of DAWN
+			
+			q = qSpace.qFromPixelPosition(pos[1], pos[0]);
+			radialArray.set(q.length(), pos);
+		}
+		
+		return radialArray;
+	}
+	
 	public static AbstractDataset generateAzimuthalArrayRadians(int[] shape, IDiffractionMetadata metadata) {
 		return generateAzimuthalArrayRadians(metadata.getDetector2DProperties().getBeamCentreCoords(), shape, true);
 	}

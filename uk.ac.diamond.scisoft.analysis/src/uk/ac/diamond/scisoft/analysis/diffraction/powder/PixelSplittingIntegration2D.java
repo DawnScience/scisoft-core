@@ -104,11 +104,11 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
 			final double sig = b.getElementDoubleAbs(iter.index);
 
-			if (qMax < loQ && qMin > hiQ) {
+			if (qMax < loQ || qMin > hiQ) {
 				continue;
 			} 
 
-			if (chiMax < loChi && chiMin > hiChi) {
+			if (chiMax < loChi || chiMin > hiChi) {
 				continue;
 			} 
 

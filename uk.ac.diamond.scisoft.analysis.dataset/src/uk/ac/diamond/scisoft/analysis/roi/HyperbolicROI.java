@@ -69,7 +69,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 
 	@Override
 	public HyperbolicROI copy() {
-		HyperbolicROI c = new HyperbolicROI(l, ang, spt[0], spt[1]);
+		HyperbolicROI c = new HyperbolicROI(l, e, ang, spt[0], spt[1]);
 		c.name = name;
 		c.plot = plot;
 		return c;

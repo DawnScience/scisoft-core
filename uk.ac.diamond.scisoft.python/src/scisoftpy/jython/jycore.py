@@ -1132,8 +1132,12 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
 @_wrap
 def logspace(start, stop, num=50, endpoint=True, base=10.0):
     '''Create a 1D dataset of values equally spaced on a logarithmic scale'''
+    if not endpoint:
+        stop = ((num - 1) * stop + start)/num
+
     if complex(start).imag == 0 and complex(stop).imag == 0:
-        return _dsutils.logSpace(start, stop, num, base, endpoint)
+        dtype = _getdtypefromobj(((start, stop)))
+        return _dsutils.logSpace(start, stop, num, base, dtype.value)
     else:
         result = linspace(start, stop, num, endpoint)
         return _maths.power(base, result)

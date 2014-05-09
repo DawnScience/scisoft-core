@@ -223,6 +223,16 @@ public class RingROI extends ROIBase implements Serializable {
 	}
 
 	@Override
+	public RectangularROI getBounds() {
+		if (bounds == null) {
+			bounds = new RectangularROI();
+			bounds.setPoint(spt[0] - rad[1], spt[1] - rad[1]);
+			bounds.setLengths(2*rad[1], 2*rad[1]);
+		}
+		return bounds;
+	}
+
+	@Override
 	public void downsample(double subFactor) {
 		super.downsample(subFactor);
 		rad[0] /= subFactor;

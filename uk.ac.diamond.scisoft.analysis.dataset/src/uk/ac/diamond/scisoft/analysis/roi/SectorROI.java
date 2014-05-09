@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.coords.SectorCoords;
@@ -550,6 +551,18 @@ public class SectorROI extends RingROI implements Serializable {
 		py = pt[1];
 		pt = SectorCoords.convertFromPolarRadians(rad[1],  ang[1]);
 		return ROIUtils.isNearSegment(pt[0] - px, pt[1] - py, x - px, y - py, distance);
+	}
+
+	@Override
+	public Map<String, Double> getROIInfos() {
+		Map<String, Double> roiInfos = new LinkedHashMap<String, Double>(6);
+		roiInfos.put("X Centre", getPointX());
+		roiInfos.put("Y Centre", getPointY());
+		roiInfos.put("Inner Radius", getRadii()[0]);
+		roiInfos.put("Outer Radius", getRadii()[1]);
+		roiInfos.put("Angle 1", getAnglesDegrees()[0]);
+		roiInfos.put("Angle 2", getAnglesDegrees()[1]);
+		return roiInfos;
 	}
 
 	@Override

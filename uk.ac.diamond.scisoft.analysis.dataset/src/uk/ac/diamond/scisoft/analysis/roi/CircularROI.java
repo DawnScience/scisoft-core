@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A circular region of interest
@@ -215,5 +217,14 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	@Override
 	public double getEndParameter(double d) {
 		return Math.PI * 2;
+	}
+
+	@Override
+	public Map<String, Double> getROIInfos() {
+		Map<String, Double> roiInfos = new LinkedHashMap<String, Double>(3);
+		roiInfos.put("X Centre", getPointX());
+		roiInfos.put("Y Centre", getPointY());
+		roiInfos.put("Radius", getRadius());
+		return roiInfos;
 	}
 }

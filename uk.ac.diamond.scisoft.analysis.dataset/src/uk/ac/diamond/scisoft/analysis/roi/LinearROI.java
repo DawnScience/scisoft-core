@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -377,5 +379,17 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	@Override
 	public double getEndParameter(double d) {
 		return 1;
+	}
+
+	@Override
+	public Map<String, Double> getROIInfos() {
+		Map<String, Double> roiInfos = new LinkedHashMap<String, Double>(6);
+		roiInfos.put("X Start", getPointX());
+		roiInfos.put("Y Start", getPointY());
+		roiInfos.put("X End", getEndPoint()[0]);
+		roiInfos.put("Y End", getEndPoint()[1]);
+		roiInfos.put("Angle", getAngleDegrees());
+		roiInfos.put("Max Intensity", Double.NaN);
+		return roiInfos;
 	}
 }

@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Base class for general region of interest
@@ -164,6 +165,12 @@ public class ROIBase implements IROI, Serializable {
 	}
 
 	@Override
+	public Map<String, Double> getROIInfos() {
+		// TODO to be overridden
+		return null;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ROIBase) {
 			ROIBase that = (ROIBase) obj;
@@ -197,4 +204,5 @@ public class ROIBase implements IROI, Serializable {
 	public String toString() {
 		return name == null ? "" : String.format("name=%s, ", name);
 	}
+
 }

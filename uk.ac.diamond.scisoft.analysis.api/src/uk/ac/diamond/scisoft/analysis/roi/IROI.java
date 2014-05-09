@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Region of interest interface. A region may be one or two dimensional and may enclose an area.
@@ -137,4 +138,10 @@ public interface IROI extends Serializable {
 	 * @return a copy of ROI
 	 */
 	public IROI copy();
+
+	/**
+	 * 
+	 * @return a Map of key-value pairs defining a ROI
+	 */
+	public Map<String, Double> getROIInfos();
 }

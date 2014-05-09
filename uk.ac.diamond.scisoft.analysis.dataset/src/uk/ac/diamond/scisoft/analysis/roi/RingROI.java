@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.coords.SectorCoords;
 
@@ -247,6 +249,16 @@ public class RingROI extends ROIBase implements Serializable {
 		c.name = name;
 		c.plot = plot;
 		return c;
+	}
+
+	@Override
+	public Map<String, Double> getROIInfos() {
+		Map<String, Double> roiInfos = new LinkedHashMap<String, Double>(4);
+		roiInfos.put("X Centre", getPointX());
+		roiInfos.put("Y Centre", getPointY());
+		roiInfos.put("Inner Radius", getRadii()[0]);
+		roiInfos.put("Outer Radius", getRadii()[1]);
+		return roiInfos;
 	}
 
 	@Override

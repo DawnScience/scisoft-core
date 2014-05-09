@@ -46,10 +46,12 @@ public class SectorROIHandler extends ROIHandler<SectorROI> {
 		return NHANDLE - 1;
 	}
 
+	private final static int SECTOR_CENTRE_HANDLE = 4;
+
 	@Override
 	public void configureDragging(int handle, HandleStatus dragStatus) {
 		// re-interpret wrong statuses
-		if (handle == 4 && dragStatus == HandleStatus.RESIZE) {
+		if (handle == SECTOR_CENTRE_HANDLE && dragStatus == HandleStatus.RESIZE) {
 			// centre of sector
 			dragStatus = HandleStatus.RMOVE;
 		}
@@ -136,7 +138,7 @@ public class SectorROIHandler extends ROIHandler<SectorROI> {
 		case 3:
 			rpt = SectorCoords.convertFromPolarRadians(0.5 * (roi.getRadius(0) + roi.getRadius(1)), roi.getAngle(0));
 			break;
-		case 4:
+		case 4: // SECTOR_CENTRE_HANDLE
 			rpt = SectorCoords.convertFromPolarRadians(0.5 * (roi.getRadius(0) + roi.getRadius(1)),
 					0.5 * (roi.getAngle(0) + roi.getAngle(1)));
 			break;
@@ -172,7 +174,7 @@ public class SectorROIHandler extends ROIHandler<SectorROI> {
 	public SectorROI resize(double[] spt, double[] ept) {
 		SectorROI sroi = null;
 
-		if (handle == 4)
+		if (handle == SECTOR_CENTRE_HANDLE)
 			return sroi;
 		sroi = roi.copy();
 

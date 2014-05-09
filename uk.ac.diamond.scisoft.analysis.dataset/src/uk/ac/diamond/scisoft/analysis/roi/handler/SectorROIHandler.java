@@ -43,7 +43,21 @@ public class SectorROIHandler extends ROIHandler<SectorROI> {
 
 	@Override
 	public int getCentreHandle() {
-		return 9;
+		return NHANDLE - 1;
+	}
+
+	@Override
+	public void configureDragging(int handle, HandleStatus dragStatus) {
+		// re-interpret wrong statuses
+		if (handle == 4 && dragStatus == HandleStatus.RESIZE) {
+			// centre of sector
+			dragStatus = HandleStatus.RMOVE;
+		}
+		if (handle == NHANDLE-1 && dragStatus == HandleStatus.RMOVE) {
+			// not co-centre of arcs
+			dragStatus = HandleStatus.CMOVE;
+		}
+		super.configureDragging(handle, dragStatus);
 	}
 
 	@Override

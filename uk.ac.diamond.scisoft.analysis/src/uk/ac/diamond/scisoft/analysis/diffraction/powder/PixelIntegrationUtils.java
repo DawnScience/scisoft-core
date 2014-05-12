@@ -35,6 +35,10 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class PixelIntegrationUtils {
 	
+	public static AbstractDataset generate2ThetaArrayRadians(IDiffractionMetadata md) {
+		return generate2ThetaArrayRadians(getShape(md), md);
+	}
+	
 	public static AbstractDataset generate2ThetaArrayRadians(int[] shape, IDiffractionMetadata md) {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
@@ -59,6 +63,10 @@ public class PixelIntegrationUtils {
 		return radialArray;
 	}
 	
+	public static AbstractDataset generateQArray(IDiffractionMetadata md) {
+		return generateQArray(getShape(md), md);
+	}
+	
 	public static AbstractDataset generateQArray(int[] shape, IDiffractionMetadata md) {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
@@ -79,6 +87,10 @@ public class PixelIntegrationUtils {
 		}
 		
 		return radialArray;
+	}
+	
+	public static AbstractDataset generateAzimuthalArrayRadians(IDiffractionMetadata metadata) {
+		return generateAzimuthalArrayRadians(metadata.getDetector2DProperties().getBeamCentreCoords(), getShape(metadata), true);
 	}
 	
 	public static AbstractDataset generateAzimuthalArrayRadians(int[] shape, IDiffractionMetadata metadata) {
@@ -142,6 +154,10 @@ public class PixelIntegrationUtils {
 		}
 		
 		return new AbstractDataset[]{aMin,aMax};
+	}
+	
+	public static int[] getShape(IDiffractionMetadata metadata) {
+		return new int[]{metadata.getDetector2DProperties().getPy(), metadata.getDetector2DProperties().getPx()};
 	}
 	
 	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, AbstractDataset array2Dx) {

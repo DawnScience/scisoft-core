@@ -53,10 +53,6 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		super(metadata, numBins);
 		
 	}
-
-	public List<AbstractDataset> testIntegrateName(AbstractDataset dataset) {
-		return integrate(dataset);
-	}
 	
 	/**
 	 * @param dataset input dataset
@@ -83,7 +79,6 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		if (roi != null) {
 			if (maskRoiCached == null)
 				maskRoiCached = mergeMaskAndRoi(dataset.getShape());
-
 			mt = maskRoiCached;
 		}
 		

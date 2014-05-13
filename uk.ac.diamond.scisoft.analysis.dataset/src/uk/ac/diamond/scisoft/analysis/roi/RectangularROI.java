@@ -16,10 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Class for rectangular region of interest
@@ -29,7 +26,6 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	protected double[] len; // width and height
 	private boolean clippingCompensation; // compensate for clipping
 
-	public String[] labels = new String[]{"X Start", "Y Start", "Width", "Height", "Angle", "Max Intensity", "Sum"};
 	/**
 	 * @param clippingCompensation The clippingCompensation to set.
 	 */
@@ -599,19 +595,6 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		len[0] /= subFactor;
 		len[1] /= subFactor;
 		bounds = null;
-	}
-
-	@Override
-	public Map<String, Double> getROIInfos() {
-		Map<String, Double> roiInfos = new LinkedHashMap<String, Double>(7);
-		roiInfos.put("X Start", getPointX());
-		roiInfos.put("Y Start", getPointY());
-		roiInfos.put("Width", getLengths()[0]);
-		roiInfos.put("Height", getLengths()[1]);
-		roiInfos.put("Angle", getAngleDegrees());
-		roiInfos.put("Max Intensity", Double.NaN);
-		roiInfos.put("Sum", Double.NaN);
-		return roiInfos;
 	}
 
 	@Override

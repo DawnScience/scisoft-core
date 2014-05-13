@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Base class for general region of interest
@@ -162,12 +161,6 @@ public class ROIBase implements IROI, Serializable {
 
 	public boolean isNearOutline(double[] pt, double distance) {
 		return isNearOutline(pt[0],  pt[1], distance);
-	}
-
-	@Override
-	public Map<String, Double> getROIInfos() {
-		// TODO to be overridden
-		return null;
 	}
 
 	@Override

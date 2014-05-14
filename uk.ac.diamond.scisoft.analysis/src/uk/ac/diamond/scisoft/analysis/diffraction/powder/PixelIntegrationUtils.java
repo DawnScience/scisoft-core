@@ -209,4 +209,12 @@ public class PixelIntegrationUtils {
 		cor.idivide(2);
 		correctionArray.idivide(cor);
 	}
+	
+	public static void detectorTranmissionCorrection(AbstractDataset correctionArray, AbstractDataset tth, double transmissionFactor) {
+		//J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304 
+//		AbstractDataset cor = Maths.cos(tth);
+//		cor = Maths.divide(1-transmissionFactor, cor);
+//		cor.idivide(1-transmissionFactor);
+//		correctionArray.imultiply(cor);
+	}
 }

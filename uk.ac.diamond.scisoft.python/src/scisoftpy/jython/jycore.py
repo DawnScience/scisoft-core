@@ -18,7 +18,7 @@
 Core package contains wrappers for Java dataset classes
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.ADataset as _ads
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset as _ds
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _abstractds
 # import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
 
@@ -68,37 +68,37 @@ class _dtype(object):
             s += "(%d)" % self.elements
         return s
 
-bool = _dtype(_ads.BOOL, name='bool') #@ReservedAssignment
-int8 = _dtype(_ads.INT8, name='int8')
-int16 = _dtype(_ads.INT16, name='int16')
-int32 = _dtype(_ads.INT32, name='int32')
-int64 = _dtype(_ads.INT64, name='int64')
-cint8 = lambda e : _dtype(_ads.ARRAYINT8, e, 'cint8')
-cint16 = lambda e : _dtype(_ads.ARRAYINT16, e, 'cint16')
-cint32 = lambda e : _dtype(_ads.ARRAYINT32, e, 'cint32')
-cint64 = lambda e : _dtype(_ads.ARRAYINT64, e, 'cint64')
-float32 = _dtype(_ads.FLOAT32, name='float32')
-float64 = _dtype(_ads.FLOAT64, name='float64')
-cfloat32 = lambda e : _dtype(_ads.ARRAYFLOAT32, e, 'cfloat32')
-cfloat64 = lambda e : _dtype(_ads.ARRAYFLOAT64, e, 'cfloat64')
-complex64 = _dtype(_ads.COMPLEX64, name='complex64')
-complex128 = _dtype(_ads.COMPLEX128, name='complex128')
+bool = _dtype(_ds.BOOL, name='bool') #@ReservedAssignment
+int8 = _dtype(_ds.INT8, name='int8')
+int16 = _dtype(_ds.INT16, name='int16')
+int32 = _dtype(_ds.INT32, name='int32')
+int64 = _dtype(_ds.INT64, name='int64')
+cint8 = lambda e : _dtype(_ds.ARRAYINT8, e, 'cint8')
+cint16 = lambda e : _dtype(_ds.ARRAYINT16, e, 'cint16')
+cint32 = lambda e : _dtype(_ds.ARRAYINT32, e, 'cint32')
+cint64 = lambda e : _dtype(_ds.ARRAYINT64, e, 'cint64')
+float32 = _dtype(_ds.FLOAT32, name='float32')
+float64 = _dtype(_ds.FLOAT64, name='float64')
+cfloat32 = lambda e : _dtype(_ds.ARRAYFLOAT32, e, 'cfloat32')
+cfloat64 = lambda e : _dtype(_ds.ARRAYFLOAT64, e, 'cfloat64')
+complex64 = _dtype(_ds.COMPLEX64, name='complex64')
+complex128 = _dtype(_ds.COMPLEX128, name='complex128')
 
-rgb = _dtype(_ads.RGB, 3, 'rgb')
+rgb = _dtype(_ds.RGB, 3, 'rgb')
 
 # tuple of floating point types
-_floattype = (_ads.FLOAT32, _ads.FLOAT64, _ads.ARRAYFLOAT32, _ads.ARRAYFLOAT64)
+_floattype = (_ds.FLOAT32, _ds.FLOAT64, _ds.ARRAYFLOAT32, _ds.ARRAYFLOAT64)
 
 # dictionaries to map from Java dataset types to Jython types
-__jdtype2jytype = { _ads.BOOL : bool, _ads.INT8 : int8, _ads.INT16 : int16,
-                    _ads.INT32 : int32, _ads.INT64 : int64,
-                    _ads.FLOAT32 : float32, _ads.FLOAT64 : float64,
-                    _ads.COMPLEX64 : complex64, _ads.COMPLEX128 : complex128,
-                    _ads.RGB : rgb }
+__jdtype2jytype = { _ds.BOOL : bool, _ds.INT8 : int8, _ds.INT16 : int16,
+                    _ds.INT32 : int32, _ds.INT64 : int64,
+                    _ds.FLOAT32 : float32, _ds.FLOAT64 : float64,
+                    _ds.COMPLEX64 : complex64, _ds.COMPLEX128 : complex128,
+                    _ds.RGB : rgb }
 
-__jcdtype2jytype = { _ads.ARRAYINT8 : cint8, _ads.ARRAYINT16 : cint16,
-                    _ads.ARRAYINT32 : cint32, _ads.ARRAYINT64 : cint64,
-                    _ads.ARRAYFLOAT32 : cfloat32, _ads.ARRAYFLOAT64 : cfloat64 }
+__jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
+                    _ds.ARRAYINT32 : cint32, _ds.ARRAYINT64 : cint64,
+                    _ds.ARRAYFLOAT32 : cfloat32, _ds.ARRAYFLOAT64 : cfloat64 }
 
 # get dtype from object
 def _getdtypefromobj(jobj):
@@ -294,8 +294,8 @@ def asfarray(data, dtype=None):
         dtype = _translatenativetype(dtype)
     if dtype is None or dtype.value not in _floattype:
         if dt.elements == 1:
-            return jdata.cast(_ads.FLOAT64)
-        return jdata.cast(_ads.ARRAYFLOAT64)
+            return jdata.cast(_ds.FLOAT64)
+        return jdata.cast(_ds.ARRAYFLOAT64)
     return jdata.cast(dtype.value)
 
 def asDatasetList(dslist):

@@ -2941,32 +2941,30 @@ public class Maths {
 	}
 
 	/**
-	 * Interpolated a value from 1D dataset
+	 * Linearly interpolate a value at a point in a 1D dataset. The dataset is considered to have
+	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
+	 * value to zero.
 	 * @param d
 	 * @param x0
-	 * @return linear interpolation
+	 * @return linear interpolated value
 	 */
 	public static double getLinear(final AbstractDataset d, final double x0) {
-		final int[] shape = d.getShape();
-		if (shape.length != 1)
+		final int[] s = d.getShape();
+		if (s.length != 1)
 			throw new IllegalArgumentException("Only 1d datasets allowed");
+
+		final int i0 = (int) Math.floor(x0);
+		if (i0 < -1 || i0 >= s[0])
+			return 0;
+
+		final double u0 = x0 - i0;
+
 		double r = 0;
-		double f1, f2;
-		double u0;
-		int i0;
-
-		i0 = (int) Math.floor(x0);
-		u0 = x0 - i0;
-		if (i0 < 0 || i0 >= shape[0])
-			return r;
-
+		double f1;
 		// use linear interpolation
-		f1 = d.getElementDoubleAbs(i0);
+		f1 = i0 < 0 ? 0 : d.getDouble(i0);
 		if (u0 > 0) {
-			if (i0 == shape[0] - 1)
-				return r;
-			f2 = d.getElementDoubleAbs(i0 + 1);
-			r = (1 - u0) * f1 + u0 * f2;
+			r = (1 - u0) * f1 + (i0 == s[0] - 1 ? 0 : u0 * d.getDouble(i0 + 1));
 		} else {
 			r = f1;
 		}
@@ -2974,41 +2972,44 @@ public class Maths {
 	}
 
 	/**
-	 * Interpolated a value from 1D compound dataset
+	 * Linearly interpolate a value at a point in a compound 1D dataset. The dataset is considered
+	 * to have zero support outside its bounds. Thus points just outside are interpolated from the
+	 * boundary value to zero.
 	 * @param values linearly interpolated array
 	 * @param d
 	 * @param x0
 	 */
 	public static void getLinear(final double[] values, final AbstractCompoundDataset d, final double x0) {
-		final int[] shape = d.getShape();
-		if (shape.length != 1)
+		final int[] s = d.getShape();
+		if (s.length != 1)
 			throw new IllegalArgumentException("Only 1d datasets allowed");
 		final int is = d.isize;
 		if (is != values.length)
 			throw new IllegalArgumentException("Output array length must match elements in item");
 		final double[] f1, f2;
-		final double u0;
-		final int i0;
 
-		i0 = (int) Math.floor(x0);
-		u0 = x0 - i0;
-		if (i0 < 0 || i0 >= shape[0]) {
+		final int i0 = (int) Math.floor(x0);
+		if (i0 < -1 || i0 >= s[0]) {
 			Arrays.fill(values, 0);
 			return;
 		}
+		final double u0 = x0 - i0;
 
 		// use linear interpolation
 		if (u0 > 0) {
-			if (i0 == shape[0] - 1) {
-				Arrays.fill(values, 0);
-				return;
-			}
 			f1 = new double[is];
-			d.getDoubleArray(f1, i0);
-			f2 = new double[is];
-			d.getDoubleArray(f2, i0 + 1);
-			for (int j = 0; j < is; j++)
-				values[j] = (1 - u0) * f1[j] + u0 * f2[j];
+			if (i0 >= 0)
+				d.getDoubleArray(f1, i0);
+			double e = 1 - u0;
+			if (i0 == s[0] - 1) {
+				for (int j = 0; j < is; j++)
+					values[j] = e * f1[j];
+			} else {
+				f2 = new double[is];
+				d.getDoubleArray(f2, i0 + 1);
+				for (int j = 0; j < is; j++)
+					values[j] = e * f1[j] + u0 * f2[j];
+			}
 		} else {
 			d.getDoubleArray(values, i0);
 		}

@@ -1720,4 +1720,19 @@ public class MathsTest {
 			assertEquals(resRint[i], x.get(i), tol);
 		}
 	}
+
+	@Test
+	public void testLinearInterpolation() {
+		AbstractDataset xa = AbstractDataset.arange(60, AbstractDataset.INT32);
+		xa.iadd(1);
+
+		Assert.assertEquals(0, Maths.getLinear(xa, -1.25), 1e-15);
+		Assert.assertEquals(0, Maths.getLinear(xa, -1.), 1e-15);
+		Assert.assertEquals(0.75, Maths.getLinear(xa, -0.25), 1e-15);
+		Assert.assertEquals(1, Maths.getLinear(xa, 0), 1e-15);
+		Assert.assertEquals(1.25, Maths.getLinear(xa, 0.25), 1e-15);
+		Assert.assertEquals(59.75, Maths.getLinear(xa, 58.75), 1e-15);
+		Assert.assertEquals(60, Maths.getLinear(xa, 59), 1e-15);
+		Assert.assertEquals(60*0.75, Maths.getLinear(xa, 59.25), 1e-15);
+	}
 }

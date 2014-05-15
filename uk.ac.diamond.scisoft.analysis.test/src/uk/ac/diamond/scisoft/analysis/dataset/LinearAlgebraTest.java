@@ -30,8 +30,8 @@ public class LinearAlgebraTest {
 
 	@Test
 	public void testTensorDot() {
-		AbstractDataset a = AbstractDataset.arange(60, AbstractDataset.FLOAT32).reshape(3, 4, 5);
-		AbstractDataset b = AbstractDataset.arange(24, AbstractDataset.INT16).reshape(4, 3, 2);
+		AbstractDataset a = AbstractDataset.arange(60, Dataset.FLOAT32).reshape(3, 4, 5);
+		AbstractDataset b = AbstractDataset.arange(24, Dataset.INT16).reshape(4, 3, 2);
 
 		long start;
 		start = -System.nanoTime();
@@ -41,15 +41,15 @@ public class LinearAlgebraTest {
 		System.out.printf("Time taken %dus\n", start/1000);
 
 		Assert.assertArrayEquals("Shape", new int[] {5, 2}, c.getShape());
-		Assert.assertEquals("Type", AbstractDataset.FLOAT32, c.getDtype());
+		Assert.assertEquals("Type", Dataset.FLOAT32, c.getDtype());
 
 		AbstractDataset d = new DoubleDataset(new double[] { 4400., 4730.,
 			4532.,  4874., 4664., 5018., 4796.,  5162., 4928.,  5306. }, 5, 2);
 		Assert.assertTrue("Data does not match", d.cast(c.getDtype()).equals(c));
 
 		int n = 16;
-		a = AbstractDataset.arange(20*n, AbstractDataset.FLOAT32).reshape(n, 4, 5);
-		b = AbstractDataset.arange(8*n, AbstractDataset.INT16).reshape(4, n, 2);
+		a = AbstractDataset.arange(20*n, Dataset.FLOAT32).reshape(n, 4, 5);
+		b = AbstractDataset.arange(8*n, Dataset.INT16).reshape(4, n, 2);
 		start = -System.nanoTime();
 		c = LinearAlgebra.tensorDotProduct(a, b, 0, 1);
 		start += System.nanoTime();
@@ -64,8 +64,8 @@ public class LinearAlgebraTest {
 
 	@Test
 	public void testDot() {
-		AbstractDataset a = AbstractDataset.arange(10, AbstractDataset.FLOAT32);
-		AbstractDataset b = AbstractDataset.arange(-6, 4, 1, AbstractDataset.INT16);
+		AbstractDataset a = AbstractDataset.arange(10, Dataset.FLOAT32);
+		AbstractDataset b = AbstractDataset.arange(-6, 4, 1, Dataset.INT16);
 
 		long start;
 		start = -System.nanoTime();

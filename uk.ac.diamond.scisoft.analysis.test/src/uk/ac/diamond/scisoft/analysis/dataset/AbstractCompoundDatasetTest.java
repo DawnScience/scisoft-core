@@ -37,10 +37,10 @@ public class AbstractCompoundDatasetTest {
 		int size, type;
 
 		size = 1024;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testSliceND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testSliceND(size, type);
 
 	}
@@ -385,7 +385,7 @@ public class AbstractCompoundDatasetTest {
 		// test 1D errors for single value
 		AbstractDataset[] aa =  new AbstractDataset[5];
 		for (int i = 0 ; i < 5; i++) {
-			aa[i] = AbstractDataset.arange(100, AbstractDataset.INT32);
+			aa[i] = AbstractDataset.arange(100, Dataset.INT32);
 		}
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		
@@ -511,7 +511,7 @@ public class AbstractCompoundDatasetTest {
 		
 		AbstractDataset[] aa =  new AbstractDataset[5];
 		for (int i = 0 ; i < 5; i++) {
-			aa[i] = AbstractDataset.arange(100, AbstractDataset.INT32);
+			aa[i] = AbstractDataset.arange(100, Dataset.INT32);
 		}
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		

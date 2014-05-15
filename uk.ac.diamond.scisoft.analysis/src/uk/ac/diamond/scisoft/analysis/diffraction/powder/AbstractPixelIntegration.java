@@ -23,6 +23,7 @@ import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -140,7 +141,7 @@ public abstract class AbstractPixelIntegration {
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		AbstractDataset ra = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset ra = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = ra.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -181,8 +182,8 @@ public abstract class AbstractPixelIntegration {
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
-		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = radialArrayMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -267,7 +268,7 @@ public abstract class AbstractPixelIntegration {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, AbstractDataset.FLOAT64);
+			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
 		}
 		
 		switch (xAxis) {
@@ -353,7 +354,7 @@ public abstract class AbstractPixelIntegration {
 		if (binRange != null) {
 			//range corresponds to bin centres
 			double shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, AbstractDataset.FLOAT64);
+			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
 		}
 		
 			
@@ -364,7 +365,7 @@ public abstract class AbstractPixelIntegration {
 
 			AbstractDataset data = a;
 			
-			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(mask,AbstractDataset.BOOL)}, new Object[]{a}, Double.NaN);
+			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(mask,Dataset.BOOL)}, new Object[]{a}, Double.NaN);
 
 			double n = data.min(true).doubleValue();
 			double x = data.max(true).doubleValue();
@@ -372,6 +373,6 @@ public abstract class AbstractPixelIntegration {
 			max = x > max ? x : max;
 		}
 
-		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, AbstractDataset.FLOAT64);
+		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 }

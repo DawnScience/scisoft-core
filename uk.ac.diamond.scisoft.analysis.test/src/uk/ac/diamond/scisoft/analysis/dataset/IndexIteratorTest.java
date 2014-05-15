@@ -38,10 +38,10 @@ public class IndexIteratorTest {
 		int size, type;
 
 		size = 1024;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testIterationsND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testIterationsND(size, type);
 	}
 
@@ -109,7 +109,7 @@ public class IndexIteratorTest {
 		int rank = shape.length;
 		int[] lstart = siter.getStart();
 		int[] lstep = siter.getStep();
-		AbstractDataset result = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset result = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		// set up the vectors needed to do this
 		int relative[] = new int[rank];
@@ -213,10 +213,10 @@ public class IndexIteratorTest {
 		int size, type;
 
 		size = 60;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testSliceIterationND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testSliceIterationND(size, type);
 	}
 

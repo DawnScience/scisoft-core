@@ -48,7 +48,7 @@ public class LazyDatasetTest {
 
 	@Test
 	public void testSetShape() {
-		LazyDataset ld = new LazyDataset("", AbstractDataset.INT, new int[] {1, 2, 3, 4}, null);
+		LazyDataset ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4}, null);
 
 		setShape("check on same rank", true, ld, 1, 2, 3, 4);
 		setShape("check on same rank", false, ld, 1, 2, 3, 5);
@@ -64,17 +64,17 @@ public class LazyDatasetTest {
 		setShape("check on lesser rank", false, ld, 3, 4);
 		setShape("check on lesser rank", false, ld, 2, 3);
 
-		ld = new LazyDataset("", AbstractDataset.INT, new int[] {2, 3, 4, 1}, null);
+		ld = new LazyDataset("", Dataset.INT, new int[] {2, 3, 4, 1}, null);
 		setShape("check on lesser rank", true, ld, 2, 3, 4);
 
-		ld = new LazyDataset("", AbstractDataset.INT, new int[] {1, 2, 3, 4, 1}, null);
+		ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4, 1}, null);
 		setShape("check on lesser rank", true, ld, 2, 3, 4);
 	}
 
 	@Test
 	public void testGetSlice() {
 		final AbstractDataset d = Random.randn(new int[] {1, 2, 3, 4});
-		LazyDataset ld = new LazyDataset("", AbstractDataset.INT, new int[] {1, 2, 3, 4}, new ILazyLoader() {
+		LazyDataset ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4}, new ILazyLoader() {
 			@Override
 			public boolean isFileReadable() {
 				return true;

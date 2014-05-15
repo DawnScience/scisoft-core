@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
@@ -36,7 +37,7 @@ public class DownsampleTest extends TestCase {
 
 	@Override
 	public void setUp() {
-		d = AbstractDataset.arange(24, AbstractDataset.FLOAT32);
+		d = AbstractDataset.arange(24, Dataset.FLOAT32);
 		d.setShape(new int[] {4, 6});
 	}
 

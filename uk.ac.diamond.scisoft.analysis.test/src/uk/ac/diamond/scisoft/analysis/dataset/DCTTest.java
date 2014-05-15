@@ -35,17 +35,17 @@ public class DCTTest {
 
 	@Test
 	public void test1D() {
-		testdct1d(AbstractDataset.FLOAT32);
-		testdct1d(AbstractDataset.FLOAT64);
+		testdct1d(Dataset.FLOAT32);
+		testdct1d(Dataset.FLOAT64);
 	}
 
 	private void testdct1d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -188,17 +188,17 @@ public class DCTTest {
 
 	// This test is currently disabled
 	public void test2D() {
-		testdct2d(AbstractDataset.FLOAT32);
-		testdct2d(AbstractDataset.FLOAT64);
+		testdct2d(Dataset.FLOAT32);
+		testdct2d(Dataset.FLOAT64);
 	}
 
 	private void testdct2d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -238,7 +238,7 @@ public class DCTTest {
 				-12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0., 0., 10., 0., -10., 55.05527682, 0., 0., 0.,
 				12.99678785, 0., 0., 0., -12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0. };
 
-		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = DCT.dct2(a, null, null);
 		assertEquals("2D double: rank", 3, f.getRank());
@@ -365,17 +365,17 @@ public class DCTTest {
 
 	// This test is currently disabled
 	public void test3D() {
-		testdct3d(AbstractDataset.FLOAT32);
-		testdct3d(AbstractDataset.FLOAT64);
+		testdct3d(Dataset.FLOAT32);
+		testdct3d(Dataset.FLOAT64);
 	}
 
 	private void testdct3d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -407,7 +407,7 @@ public class DCTTest {
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
 
-		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = DCT.dctn(a, null, null);
 		assertEquals("3D double: rank", 3, f.getRank());
@@ -543,7 +543,7 @@ public class DCTTest {
 				0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14,
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
-		AbstractDataset b = AbstractDataset.arange(120, AbstractDataset.FLOAT64).reshape(2, 3, 5, 4);
+		AbstractDataset b = AbstractDataset.arange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
 		f = DCT.dctn(b, null, new int[] { -3, -2, -1 });
 		assertEquals("3D double: rank", 4, f.getRank());
 		assertEquals("3D double: shape", 2, f.getShape()[0]);
@@ -757,7 +757,7 @@ public class DCTTest {
 
 	@Test
 	public void testShift() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.FLOAT64);
+		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
 		AbstractDataset t;
 
 		t = DCT.dctshift(a, null);

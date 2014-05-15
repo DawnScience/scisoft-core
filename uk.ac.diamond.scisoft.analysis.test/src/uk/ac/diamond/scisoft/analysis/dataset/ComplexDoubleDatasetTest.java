@@ -30,7 +30,7 @@ public class ComplexDoubleDatasetTest {
 		double[] da = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 		ComplexDoubleDataset a = new ComplexDoubleDataset(da);
 
-		assertEquals(AbstractDataset.COMPLEX128, a.getDtype());
+		assertEquals(Dataset.COMPLEX128, a.getDtype());
 		assertEquals(2, a.getElementsPerItem());
 		assertEquals(16, a.getItemsize());
 
@@ -59,7 +59,7 @@ public class ComplexDoubleDatasetTest {
 		assertEquals(1.0, z.getComplex(0).getImaginary(), 1e-6);
 
 		AbstractDataset aa = Maths.abs(a);
-		assertEquals(AbstractDataset.FLOAT64, aa.getDtype());
+		assertEquals(Dataset.FLOAT64, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
 		assertEquals(8, aa.getItemsize());
 
@@ -101,7 +101,7 @@ public class ComplexDoubleDatasetTest {
 
 	@Test
 	public void testTake() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.COMPLEX128);
+		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX128);
 		AbstractDataset t;
 		System.out.println(a);
 
@@ -136,7 +136,7 @@ public class ComplexDoubleDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.COMPLEX128);
+		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX128);
 		assertEquals(5.5, ((Complex) a.mean()).getReal(), 1e-6);
 		assertEquals(0., ((Complex) a.mean()).getImaginary(), 1e-6);
 		assertEquals(13., a.variance().doubleValue(), 1e-6);

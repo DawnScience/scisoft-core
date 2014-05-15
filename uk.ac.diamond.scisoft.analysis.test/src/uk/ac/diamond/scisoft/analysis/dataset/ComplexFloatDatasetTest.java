@@ -29,7 +29,7 @@ public class ComplexFloatDatasetTest {
 		float[] da = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 		ComplexFloatDataset a = new ComplexFloatDataset(da);
 
-		assertEquals(AbstractDataset.COMPLEX64, a.getDtype());
+		assertEquals(Dataset.COMPLEX64, a.getDtype());
 		assertEquals(2, a.getElementsPerItem());
 		assertEquals(8, a.getItemsize());
 
@@ -46,7 +46,7 @@ public class ComplexFloatDatasetTest {
 		}
 
 		AbstractDataset aa = Maths.abs(a);
-		assertEquals(AbstractDataset.FLOAT32, aa.getDtype());
+		assertEquals(Dataset.FLOAT32, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
 		assertEquals(4, aa.getItemsize());		
 
@@ -58,7 +58,7 @@ public class ComplexFloatDatasetTest {
 
 	@Test
 	public void testTake() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.COMPLEX64);
+		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX64);
 		AbstractDataset t;
 		System.out.println(a);
 

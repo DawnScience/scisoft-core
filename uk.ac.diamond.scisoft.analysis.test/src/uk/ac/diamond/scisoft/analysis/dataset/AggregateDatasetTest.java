@@ -31,11 +31,11 @@ public class AggregateDatasetTest {
 	@Before
 	public void init() {
 		datasets = new ILazyDataset[] {
-				AbstractDataset.zeros(new int[] {2,3}, AbstractDataset.INT32).fill(0),
-				AbstractDataset.zeros(new int[] {2,3}, AbstractDataset.INT32).fill(1),
-				AbstractDataset.zeros(new int[] {2,3}, AbstractDataset.INT32).fill(2),
-				AbstractDataset.zeros(new int[] {2,3}, AbstractDataset.INT32).fill(3),
-				AbstractDataset.zeros(new int[] {2,3}, AbstractDataset.INT32).fill(4)
+				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(0),
+				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(1),
+				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(2),
+				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(3),
+				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(4)
 		};
 	}
 
@@ -51,13 +51,13 @@ public class AggregateDatasetTest {
 			} catch (Exception e1) {
 				try {
 					a = new AggregateDataset(false, new ILazyDataset[] {
-							AbstractDataset.ones(new int[] { 2, 3 }, AbstractDataset.BOOL),
-							AbstractDataset.ones(new int[] { 3, 4 }, AbstractDataset.BOOL), });
+							AbstractDataset.ones(new int[] { 2, 3 }, Dataset.BOOL),
+							AbstractDataset.ones(new int[] { 3, 4 }, Dataset.BOOL), });
 				} catch (Exception e2) {
 					try {
 						a = new AggregateDataset(true, new ILazyDataset[] {
-								AbstractDataset.ones(new int[] { 2, 3 }, AbstractDataset.BOOL),
-								AbstractDataset.ones(new int[] { 3, 3 }, AbstractDataset.BOOL), });
+								AbstractDataset.ones(new int[] { 2, 3 }, Dataset.BOOL),
+								AbstractDataset.ones(new int[] { 3, 3 }, Dataset.BOOL), });
 					} catch (Exception e3) {
 						System.out.println("Success!");
 						return;
@@ -104,7 +104,7 @@ public class AggregateDatasetTest {
 
 	@Test
 	public void testRepeatedDataset() {
-		AbstractDataset a = AbstractDataset.arange(3, AbstractDataset.FLOAT64);
+		AbstractDataset a = AbstractDataset.arange(3, Dataset.FLOAT64);
 		AbstractDataset[] as = new AbstractDataset[5];
 		Arrays.fill(as, a);
 		AggregateDataset b = new AggregateDataset(true, as);

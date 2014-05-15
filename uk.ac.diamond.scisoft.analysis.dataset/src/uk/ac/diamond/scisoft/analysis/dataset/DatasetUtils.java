@@ -575,79 +575,79 @@ public class DatasetUtils {
 		try {
 			// copy across the data
 			switch (dtype) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				c = new BooleanDataset(a);
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundByteDataset(a);
 				else
 					c = new ByteDataset(a);
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundShortDataset(a);
 				else
 					c = new ShortDataset(a);
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundIntegerDataset(a);
 				else
 					c = new IntegerDataset(a);
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundLongDataset(a);
 				else
 					c = new LongDataset(a);
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundByteDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundByteDataset(a);
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundShortDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundShortDataset(a);
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundIntegerDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundIntegerDataset(a);
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundLongDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundLongDataset(a);
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				c = new FloatDataset(a);
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				c = new DoubleDataset(a);
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundFloatDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundFloatDataset(a);
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				if (a instanceof AbstractCompoundDataset)
 					c = new CompoundDoubleDataset((AbstractCompoundDataset) a);
 				else
 					c = new CompoundDoubleDataset(a);
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				c = new ComplexFloatDataset(a);
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				c = new ComplexDoubleDataset(a);
 				break;
 			default:
@@ -679,7 +679,7 @@ public class DatasetUtils {
 			utilsLogger.error("Item size is invalid (>0)");
 			throw new IllegalArgumentException("Item size is invalid (>0)");
 		}
-		if (isize > 1 && dtype <= AbstractDataset.FLOAT64) {
+		if (isize > 1 && dtype <= Dataset.FLOAT64) {
 			utilsLogger.error("Item size is inconsistent with dataset type");
 			throw new IllegalArgumentException("Item size is inconsistent with dataset type");
 		}
@@ -689,49 +689,49 @@ public class DatasetUtils {
 		try {
 			// copy across the data
 			switch (dtype) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				c = new BooleanDataset(a);
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				c = new ByteDataset(a);
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				c = new ShortDataset(a);
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				c = new IntegerDataset(a);
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				c = new LongDataset(a);
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				c = new CompoundByteDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				c = new CompoundShortDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				c = new CompoundIntegerDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				c = new CompoundLongDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				c = new FloatDataset(a);
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				c = new DoubleDataset(a);
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				c = new CompoundFloatDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				c = new CompoundDoubleDataset(isize, repeat, a);
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				c = new ComplexFloatDataset(a);
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				c = new ComplexDoubleDataset(a);
 				break;
 			default:
@@ -756,37 +756,37 @@ public class DatasetUtils {
 		AbstractCompoundDataset c = null;
 
 		switch (dtype) {
-		case AbstractDataset.INT8:
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.INT8:
+		case Dataset.ARRAYINT8:
 			c = new CompoundByteDataset(a);
 			break;
-		case AbstractDataset.INT16:
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.INT16:
+		case Dataset.ARRAYINT16:
 			c = new CompoundShortDataset(a);
 			break;
-		case AbstractDataset.INT32:
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.INT32:
+		case Dataset.ARRAYINT32:
 			c = new CompoundIntegerDataset(a);
 			break;
-		case AbstractDataset.INT64:
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.INT64:
+		case Dataset.ARRAYINT64:
 			c = new CompoundLongDataset(a);
 			break;
-		case AbstractDataset.FLOAT32:
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.FLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			c = new CompoundFloatDataset(a);
 			break;
-		case AbstractDataset.FLOAT64:
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.FLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			c = new CompoundDoubleDataset(a);
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			if (a.length != 2) {
 				throw new IllegalArgumentException("Need two datasets for complex dataset type");
 			}
 			c = new ComplexFloatDataset(a[0], a[1]);
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			if (a.length != 2) {
 				throw new IllegalArgumentException("Need two datasets for complex dataset type");
 			}
@@ -812,11 +812,11 @@ public class DatasetUtils {
 		IndexIterator it = a.getIterator();
 
 		switch (dtype) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			ShortDataset sds = (ShortDataset) a;
 			final short soffset = (short) dv;
 			while (it.hasNext()) {
@@ -825,7 +825,7 @@ public class DatasetUtils {
 					sds.setAbs(it.index, (short) (x + soffset));
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			IntegerDataset ids = (IntegerDataset) a;
 			final int ioffset = (int) dv;
 			while (it.hasNext()) {
@@ -834,7 +834,7 @@ public class DatasetUtils {
 					ids.setAbs(it.index, x + ioffset);
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			LongDataset lds = (LongDataset) a;
 			final long loffset = (long) dv;
 			while (it.hasNext()) {
@@ -843,7 +843,7 @@ public class DatasetUtils {
 					lds.setAbs(it.index, x + loffset);
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDataset fds = (FloatDataset) a;
 			final float foffset = (float) dv;
 			while (it.hasNext()) {
@@ -852,7 +852,7 @@ public class DatasetUtils {
 					fds.setAbs(it.index, x + foffset);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDataset dds = (DoubleDataset) a;
 			final double doffset = dv;
 			while (it.hasNext()) {
@@ -861,9 +861,9 @@ public class DatasetUtils {
 					dds.setAbs(it.index, x + doffset);
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			CompoundShortDataset csds = (CompoundShortDataset) a;
 			final short csoffset = (short) dv;
 			final short[] csa = new short[isize];
@@ -881,7 +881,7 @@ public class DatasetUtils {
 					csds.setAbs(it.index, csa);
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			CompoundIntegerDataset cids = (CompoundIntegerDataset) a;
 			final int cioffset = (int) dv;
 			final int[] cia = new int[isize];
@@ -899,7 +899,7 @@ public class DatasetUtils {
 					cids.setAbs(it.index, cia);
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			CompoundLongDataset clds = (CompoundLongDataset) a;
 			final long cloffset = (long) dv;
 			final long[] cla = new long[isize];
@@ -1099,37 +1099,37 @@ public class DatasetUtils {
 		final IndexIterator it = result.getIterator(true);
 		final int[] pos = it.getPos();
 		switch (dtype) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getBoolean(pos));
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getByte(pos));
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getShort(pos));
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getInt(pos));
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getLong(pos));
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getFloat(pos));
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			while (it.hasNext()) {
 				result.setObjectAbs(it.index, data.getDouble(pos));
 			}
@@ -1139,9 +1139,10 @@ public class DatasetUtils {
 				result.setObjectAbs(it.index, data.getObject(pos));
 			}
 			break;
-		}		if (lazydata instanceof Dataset) {
+		}
+
+		if (lazydata instanceof Dataset) {
 			result.setErrorBuffer(((Dataset) lazydata).getErrorBuffer());
-;
 		}
 		return result;
 	}
@@ -1167,22 +1168,22 @@ public class DatasetUtils {
 		final int is = rank < 0 ? 1 : shape[rank];
 
 		switch (a.getDtype()) {
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			result = new CompoundByteDataset(is);
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			result = new CompoundShortDataset(is);
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			result = new CompoundIntegerDataset(is);
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			result = new CompoundLongDataset(is);
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			result = new CompoundFloatDataset(is);
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			result = new CompoundDoubleDataset(is);
 			break;
 		default:
@@ -1211,22 +1212,22 @@ public class DatasetUtils {
 
 		AbstractDataset result;
 		switch (a.getDtype()) {
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			result = new ByteDataset();
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			result = new ShortDataset();
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			result = new IntegerDataset();
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			result = new LongDataset();
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			result = new FloatDataset();
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			result = new DoubleDataset();
 			break;
 		default:
@@ -1297,14 +1298,14 @@ public class DatasetUtils {
 			result = AbstractDataset.zeros(d1);
 
 			switch (rt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
 					bdata[i++] = d1.getElementBooleanAbs(it1.index) || d2.getElementBooleanAbs(it2.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				byte[] i8data = ((ByteDataset) result).getData();
 				long i1;
 				long i2;
@@ -1315,7 +1316,7 @@ public class DatasetUtils {
 					i8data[i++] = (byte) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				short[] i16data = ((ShortDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1324,7 +1325,7 @@ public class DatasetUtils {
 					i16data[i++] = (short) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				int[] i32data = ((IntegerDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1333,7 +1334,7 @@ public class DatasetUtils {
 					i32data[i++] = (int) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				long[] i64data = ((LongDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1342,7 +1343,7 @@ public class DatasetUtils {
 					i64data[i++] = i1 > i2 ? i1 : i2;
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				float[] f32data = ((FloatDataset) result).getData();
 				double r1,
 				r2;
@@ -1353,7 +1354,7 @@ public class DatasetUtils {
 					f32data[i++] = (float) (r1 > r2 ? r1 : r2);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				double[] f64data = ((DoubleDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1373,7 +1374,7 @@ public class DatasetUtils {
 			double r2;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				boolean b2 = AbstractDataset.toBoolean(b);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -1381,7 +1382,7 @@ public class DatasetUtils {
 					bdata[i++] = a.getElementBooleanAbs(it1.index) || b2;
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				byte[] i8data = ((ByteDataset) result).getData();
 				long i1;
 				i2 = AbstractDataset.toLong(b);
@@ -1390,7 +1391,7 @@ public class DatasetUtils {
 					i8data[i++] = (byte) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				short[] i16data = ((ShortDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1399,7 +1400,7 @@ public class DatasetUtils {
 					i16data[i++] = (short) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				int[] i32data = ((IntegerDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1408,7 +1409,7 @@ public class DatasetUtils {
 					i32data[i++] = (int) (i1 > i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				long[] i64data = ((LongDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1417,7 +1418,7 @@ public class DatasetUtils {
 					i64data[i++] = i1 > i2 ? i1 : i2;
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				float[] f32data = ((FloatDataset) result).getData();
 				double r1;
 
@@ -1427,7 +1428,7 @@ public class DatasetUtils {
 					f32data[i++] = (float) (r1 > r2 ? r1 : r2);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				double[] f64data = ((DoubleDataset) result).getData();
 
 				r2 = AbstractDataset.toReal(b);
@@ -1476,14 +1477,14 @@ public class DatasetUtils {
 			result = AbstractDataset.zeros(d1);
 
 			switch (rt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
 					bdata[i++] = d1.getElementBooleanAbs(it1.index) && d2.getElementBooleanAbs(it2.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				byte[] i8data = ((ByteDataset) result).getData();
 				long i1;
 				long i2;
@@ -1494,7 +1495,7 @@ public class DatasetUtils {
 					i8data[i++] = (byte) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				short[] i16data = ((ShortDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1503,7 +1504,7 @@ public class DatasetUtils {
 					i16data[i++] = (short) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				int[] i32data = ((IntegerDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1512,7 +1513,7 @@ public class DatasetUtils {
 					i32data[i++] = (int) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				long[] i64data = ((LongDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1521,7 +1522,7 @@ public class DatasetUtils {
 					i64data[i++] = i1 < i2 ? i1 : i2;
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				float[] f32data = ((FloatDataset) result).getData();
 				double r1,
 				r2;
@@ -1532,7 +1533,7 @@ public class DatasetUtils {
 					f32data[i++] = (float) (r1 < r2 ? r1 : r2);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				double[] f64data = ((DoubleDataset) result).getData();
 
 				for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1552,7 +1553,7 @@ public class DatasetUtils {
 			double r2;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				boolean b2 = AbstractDataset.toBoolean(b);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -1560,7 +1561,7 @@ public class DatasetUtils {
 					bdata[i++] = a.getElementBooleanAbs(it1.index) && b2;
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				byte[] i8data = ((ByteDataset) result).getData();
 				long i1;
 				i2 = AbstractDataset.toLong(b);
@@ -1569,7 +1570,7 @@ public class DatasetUtils {
 					i8data[i++] = (byte) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				short[] i16data = ((ShortDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1578,7 +1579,7 @@ public class DatasetUtils {
 					i16data[i++] = (short) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				int[] i32data = ((IntegerDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1587,7 +1588,7 @@ public class DatasetUtils {
 					i32data[i++] = (int) (i1 < i2 ? i1 : i2);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				long[] i64data = ((LongDataset) result).getData();
 
 				i2 = AbstractDataset.toLong(b);
@@ -1596,7 +1597,7 @@ public class DatasetUtils {
 					i64data[i++] = i1 < i2 ? i1 : i2;
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				float[] f32data = ((FloatDataset) result).getData();
 				double r1;
 
@@ -1606,7 +1607,7 @@ public class DatasetUtils {
 					f32data[i++] = (float) (r1 < r2 ? r1 : r2);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				double[] f64data = ((DoubleDataset) result).getData();
 
 				r2 = AbstractDataset.toReal(b);
@@ -1933,25 +1934,25 @@ public class DatasetUtils {
 		Object matrix;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			matrix = Array.newInstance(boolean.class, a.getShape());
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			matrix = Array.newInstance(byte.class, a.getShape());
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			matrix = Array.newInstance(short.class, a.getShape());
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			matrix = Array.newInstance(int.class, a.getShape());
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			matrix = Array.newInstance(long.class, a.getShape());
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			matrix = Array.newInstance(float.class, a.getShape());
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			matrix = Array.newInstance(double.class, a.getShape());
 			break;
 		default:

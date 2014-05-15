@@ -37,17 +37,17 @@ public class PositionIteratorTest {
 		int size, type;
 
 		size = 1024;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testIterationND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testIterationND(size, type);
 	}
 
 	@Test
 	public void testOffsetIteration() {
 		int size = 3 * 3 * 1024 * 1024;
-		int type = AbstractDataset.FLOAT64;
+		int type = Dataset.FLOAT64;
 		
 		AbstractDataset ta = AbstractDataset.arange(0, size, 1, type).reshape(3, 3, 1024, 1024);
 		

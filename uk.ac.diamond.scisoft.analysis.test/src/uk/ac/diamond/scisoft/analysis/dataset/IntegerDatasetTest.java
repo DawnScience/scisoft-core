@@ -49,7 +49,7 @@ public class IntegerDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, AbstractDataset.INT32);
+		AbstractDataset a = AbstractDataset.arange(12, Dataset.INT32);
 		assertEquals(11., a.max().doubleValue(), 1e-6);
 		assertEquals(0., a.min().doubleValue(), 1e-6);
 		assertEquals(5.5, ((Number) a.mean()).doubleValue(), 1e-6);
@@ -65,7 +65,7 @@ public class IntegerDatasetTest {
 		assertEquals(6,a.maxPos()[0]);
 		assertEquals(0,a.minPos()[0]);
 		
-		AbstractDataset b = AbstractDataset.zeros(new int[]{100,200}, AbstractDataset.INT32 );
+		AbstractDataset b = AbstractDataset.zeros(new int[]{100,200}, Dataset.INT32 );
 		
 		b.set(100, new int[]{50,100});
 		b.set(-100, new int[]{51,101});

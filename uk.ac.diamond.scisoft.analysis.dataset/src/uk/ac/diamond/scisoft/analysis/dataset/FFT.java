@@ -191,8 +191,8 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
-		case AbstractDataset.COMPLEX64:
+		case Dataset.FLOAT32:
+		case Dataset.COMPLEX64:
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -209,8 +209,8 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-		case AbstractDataset.COMPLEX128:
+		case Dataset.FLOAT64:
+		case Dataset.COMPLEX128:
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -244,8 +244,8 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
-		case AbstractDataset.COMPLEX64:
+		case Dataset.FLOAT32:
+		case Dataset.COMPLEX64:
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
@@ -261,8 +261,8 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-		case AbstractDataset.COMPLEX128:
+		case Dataset.FLOAT64:
+		case Dataset.COMPLEX128:
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
@@ -295,8 +295,8 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
-		case AbstractDataset.COMPLEX64:
+		case Dataset.FLOAT32:
+		case Dataset.COMPLEX64:
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
@@ -313,8 +313,8 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-		case AbstractDataset.COMPLEX128:
+		case Dataset.FLOAT64:
+		case Dataset.COMPLEX128:
 			DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
@@ -477,7 +477,7 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
 			float[] fdata = null;
 			shape = a.getShape().clone();
@@ -495,7 +495,7 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
 			double[] ddata = null;
 			shape = a.getShape().clone();
@@ -530,7 +530,7 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
@@ -546,7 +546,7 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
@@ -579,7 +579,7 @@ public class FFT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
 			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
@@ -595,7 +595,7 @@ public class FFT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 				DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
 				double[] ddata = null;
 				result = new ComplexDoubleDataset(newShape(a.shape, s, axes));

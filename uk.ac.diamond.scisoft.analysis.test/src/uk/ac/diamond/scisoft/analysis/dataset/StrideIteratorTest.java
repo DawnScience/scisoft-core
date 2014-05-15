@@ -38,10 +38,10 @@ public class StrideIteratorTest {
 		int size, type;
 
 		size = 1024;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testIterationsND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testIterationsND(size, type);
 	}
 
@@ -109,7 +109,7 @@ public class StrideIteratorTest {
 		int rank = shape.length;
 		int[] lstart = siter.getStart();
 		int[] lstep = siter.getStep();
-		Dataset result = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		Dataset result = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		// set up the vectors needed to do this
 		int relative[] = new int[rank];
@@ -181,7 +181,7 @@ public class StrideIteratorTest {
 	private Dataset newSlice(Dataset t, int[] start, int[] stop, int[] step) {
 		StrideIterator iter = new StrideIterator(t.getElementsPerItem(), t.getShape(), start, stop, step);
 
-		Dataset result = AbstractDataset.zeros(iter.getShape(), AbstractDataset.FLOAT64);
+		Dataset result = AbstractDataset.zeros(iter.getShape(), Dataset.FLOAT64);
 		int i = 0;
 		while (iter.hasNext()) {
 			result.setObjectAbs(i++, t.getElementDoubleAbs(iter.index));
@@ -282,7 +282,7 @@ public class StrideIteratorTest {
 
 	@Test
 	public void testNegativeStrideIteration() {
-		AbstractDataset t = AbstractDataset.arange(40, AbstractDataset.FLOAT);
+		AbstractDataset t = AbstractDataset.arange(40, Dataset.FLOAT);
 
 		SliceIterator siter = (SliceIterator) t.getSliceIterator(new int[] {12}, null, new int[] {-2});
 		Dataset sliced = oldSlice(t, siter);
@@ -303,10 +303,10 @@ public class StrideIteratorTest {
 		int size, type;
 
 		size = 6000;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testSliceIterationND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testSliceIterationND(size, type);
 	}
 

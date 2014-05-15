@@ -32,6 +32,7 @@ import javax.vecmath.Vector3d;
 import org.apache.commons.math3.util.MathUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -377,8 +378,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			}
 		}
 		
-		AbstractDataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, AbstractDataset.FLOAT32);
-		AbstractDataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, AbstractDataset.FLOAT32);
+		AbstractDataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, Dataset.FLOAT32);
+		AbstractDataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, Dataset.FLOAT32);
 		return new AbstractDataset[] {rAxis, angAxis};
 	}
 	
@@ -804,8 +805,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 				AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
 				AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
-				AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, AbstractDataset.FLOAT64);
-				AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, AbstractDataset.FLOAT64);
+				AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, Dataset.FLOAT64);
+				AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, Dataset.FLOAT64);
 				
 				Map<Point2i, Map<Integer, Double>> pvarmap = new HashMap<Point2i, Map<Integer,Double>>();
 				

@@ -37,10 +37,10 @@ public class SliceIteratorTest {
 		int size, type;
 
 		size = 1024;
-		type = AbstractDataset.FLOAT64;
+		type = Dataset.FLOAT64;
 		testIterationsND(size, type);
 
-		type = AbstractDataset.COMPLEX128;
+		type = Dataset.COMPLEX128;
 		testIterationsND(size, type);
 	}
 

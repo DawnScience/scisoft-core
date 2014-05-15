@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  *
@@ -47,7 +48,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);
@@ -126,7 +127,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndIntegrate2() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(360,360,50.,0.,200.,45., dpp, true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);
@@ -142,7 +143,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndIntegrate3() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(250,250,50.,22.5,200.,-22.5, dpp, true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);

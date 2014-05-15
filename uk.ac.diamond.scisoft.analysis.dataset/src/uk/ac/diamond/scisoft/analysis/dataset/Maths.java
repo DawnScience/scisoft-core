@@ -238,7 +238,7 @@ public class Maths {
 		boolean bv;
 
 		switch (dt) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			bv = AbstractDataset.toBoolean(b);
 			boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -246,7 +246,7 @@ public class Maths {
 				bdata[i++] = bv || a.getElementBooleanAbs(it1.index);
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			lv = AbstractDataset.toLong(b);
 			byte[] i8data = ((ByteDataset) result).getData();
 
@@ -254,7 +254,7 @@ public class Maths {
 				i8data[i++] = (byte) (a.getElementLongAbs(it1.index) + lv);
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			lv = AbstractDataset.toLong(b);
 			short[] i16data = ((ShortDataset) result).getData();
 
@@ -262,7 +262,7 @@ public class Maths {
 				i16data[i++] = (short) (a.getElementLongAbs(it1.index) + lv);
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			lv = AbstractDataset.toLong(b);
 			int[] i32data = ((IntegerDataset) result).getData();
 			
@@ -270,7 +270,7 @@ public class Maths {
 				i32data[i++] = (int) (a.getElementLongAbs(it1.index) + lv);
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			lv = AbstractDataset.toLong(b);
 			long[] i64data = ((LongDataset) result).getData();
 
@@ -278,7 +278,7 @@ public class Maths {
 				i64data[i++] = a.getElementLongAbs(it1.index) + lv;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			byte[] ai8data = ((CompoundByteDataset) result).getData();
@@ -289,7 +289,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			short[] ai16data = ((CompoundShortDataset) result).getData();
@@ -300,7 +300,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			int[] ai32data = ((CompoundIntegerDataset) result).getData();
@@ -311,7 +311,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			long[] ai64data = ((CompoundLongDataset) result).getData();
@@ -322,7 +322,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			dvr = AbstractDataset.toReal(b);
 			float[] f32data = ((FloatDataset) result).getData();
 
@@ -330,7 +330,7 @@ public class Maths {
 				f32data[i++] = (float) (a.getElementDoubleAbs(it1.index) + dvr);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			dvr = AbstractDataset.toReal(b);
 			double[] f64data = ((DoubleDataset) result).getData();
 
@@ -338,7 +338,7 @@ public class Maths {
 				f64data[i++] = a.getElementDoubleAbs(it1.index) + dvr;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			dvr = AbstractDataset.toReal(b);
 			is = a.getElementsPerItem();
 			float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -349,7 +349,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			dvr = AbstractDataset.toReal(b);
 			is = a.getElementsPerItem();
 			double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -360,7 +360,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -370,7 +370,7 @@ public class Maths {
 				c64data[i++] = (float) (a.getElementDoubleAbs(it1.index+1) + dvi);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -414,7 +414,7 @@ public class Maths {
 			boolean bv;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				bv = AbstractDataset.toBoolean(b);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -422,7 +422,7 @@ public class Maths {
 					bdata[i++] = bv ^ ds.getElementBooleanAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(b);
 				byte[] i8data = ((ByteDataset) result).getData();
 
@@ -430,7 +430,7 @@ public class Maths {
 					i8data[i++] = (byte) (ds.getElementLongAbs(it1.index) - lv);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(b);
 				short[] i16data = ((ShortDataset) result).getData();
 
@@ -438,7 +438,7 @@ public class Maths {
 					i16data[i++] = (short) (ds.getElementLongAbs(it1.index) - lv);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(b);
 				int[] i32data = ((IntegerDataset) result).getData();
 				
@@ -446,7 +446,7 @@ public class Maths {
 					i32data[i++] = (int) (ds.getElementLongAbs(it1.index) - lv);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(b);
 				long[] i64data = ((LongDataset) result).getData();
 
@@ -454,7 +454,7 @@ public class Maths {
 					i64data[i++] = ds.getElementLongAbs(it1.index) - lv;
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(b);
 				is = result.getElementsPerItem();
 				byte[] ai8data = ((CompoundByteDataset) result).getData();
@@ -465,7 +465,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(b);
 				is = result.getElementsPerItem();
 				short[] ai16data = ((CompoundShortDataset) result).getData();
@@ -476,7 +476,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(b);
 				is = result.getElementsPerItem();
 				int[] ai32data = ((CompoundIntegerDataset) result).getData();
@@ -487,7 +487,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(b);
 				is = result.getElementsPerItem();
 				long[] ai64data = ((CompoundLongDataset) result).getData();
@@ -498,7 +498,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				float[] f32data = ((FloatDataset) result).getData();
 
@@ -506,7 +506,7 @@ public class Maths {
 					f32data[i++] = (float) (ds.getElementDoubleAbs(it1.index) - dvr);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				double[] f64data = ((DoubleDataset) result).getData();
 
@@ -514,7 +514,7 @@ public class Maths {
 					f64data[i++] = ds.getElementDoubleAbs(it1.index) - dvr;
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -525,7 +525,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -536,7 +536,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -546,7 +546,7 @@ public class Maths {
 					c64data[i++] = (float) (ds.getElementDoubleAbs(it1.index+1) - dvi);
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -578,7 +578,7 @@ public class Maths {
 			boolean bv;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				bv = AbstractDataset.toBoolean(a);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -586,7 +586,7 @@ public class Maths {
 					bdata[i++] = bv ^ ds.getElementBooleanAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(a);
 				byte[] i8data = ((ByteDataset) result).getData();
 
@@ -594,7 +594,7 @@ public class Maths {
 					i8data[i++] = (byte) (lv - ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(a);
 				short[] i16data = ((ShortDataset) result).getData();
 
@@ -602,7 +602,7 @@ public class Maths {
 					i16data[i++] = (short) (lv - ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(a);
 				int[] i32data = ((IntegerDataset) result).getData();
 
@@ -610,7 +610,7 @@ public class Maths {
 					i32data[i++] = (int) (lv - ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(a);
 				long[] i64data = ((LongDataset) result).getData();
 
@@ -618,7 +618,7 @@ public class Maths {
 					i64data[i++] = lv - ds.getElementLongAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(a);
 				is = result.getElementsPerItem();
 				byte[] ai8data = ((CompoundByteDataset) result).getData();
@@ -629,7 +629,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(a);
 				is = result.getElementsPerItem();
 				short[] ai16data = ((CompoundShortDataset) result).getData();
@@ -640,7 +640,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(a);
 				is = result.getElementsPerItem();
 				int[] ai32data = ((CompoundIntegerDataset) result).getData();
@@ -651,7 +651,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(a);
 				is = result.getElementsPerItem();
 				long[] ai64data = ((CompoundLongDataset) result).getData();
@@ -662,7 +662,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				float[] f32data = ((FloatDataset) result).getData();
 
@@ -670,7 +670,7 @@ public class Maths {
 					f32data[i++] = (float) (dvr - ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				double[] f64data = ((DoubleDataset) result).getData();
 
@@ -678,7 +678,7 @@ public class Maths {
 					f64data[i++] = dvr - ds.getElementDoubleAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -689,7 +689,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -700,7 +700,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -710,7 +710,7 @@ public class Maths {
 					c64data[i++] = (float) (dvi - ds.getElementDoubleAbs(it1.index+1));
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -751,7 +751,7 @@ public class Maths {
 		boolean bv;
 
 		switch (dt) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			bv = AbstractDataset.toBoolean(b);
 			boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -759,7 +759,7 @@ public class Maths {
 				bdata[i++] = bv && a.getElementBooleanAbs(it1.index);
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			lv = AbstractDataset.toLong(b);
 			byte[] i8data = ((ByteDataset) result).getData();
 
@@ -767,7 +767,7 @@ public class Maths {
 				i8data[i++] = (byte) (a.getElementLongAbs(it1.index) * lv);
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			lv = AbstractDataset.toLong(b);
 			short[] i16data = ((ShortDataset) result).getData();
 
@@ -775,7 +775,7 @@ public class Maths {
 				i16data[i++] = (short) (a.getElementLongAbs(it1.index) * lv);
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			lv = AbstractDataset.toLong(b);
 			int[] i32data = ((IntegerDataset) result).getData();
 			
@@ -783,7 +783,7 @@ public class Maths {
 				i32data[i++] = (int) (a.getElementLongAbs(it1.index) * lv);
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			lv = AbstractDataset.toLong(b);
 			long[] i64data = ((LongDataset) result).getData();
 
@@ -791,7 +791,7 @@ public class Maths {
 				i64data[i++] = a.getElementLongAbs(it1.index) * lv;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			byte[] ai8data = ((CompoundByteDataset) result).getData();
@@ -802,7 +802,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			short[] ai16data = ((CompoundShortDataset) result).getData();
@@ -813,7 +813,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			int[] ai32data = ((CompoundIntegerDataset) result).getData();
@@ -824,7 +824,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			lv = AbstractDataset.toLong(b);
 			is = a.getElementsPerItem();
 			long[] ai64data = ((CompoundLongDataset) result).getData();
@@ -835,7 +835,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			float[] f32data;
@@ -856,7 +856,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			double[] f64data;
@@ -877,7 +877,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			dvr = AbstractDataset.toReal(b);
 			is = result.getElementsPerItem();
 			float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -888,7 +888,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			dvr = AbstractDataset.toReal(b);
 			is = result.getElementsPerItem();
 			double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -899,7 +899,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -920,7 +920,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			dvr = AbstractDataset.toReal(b);
 			dvi = AbstractDataset.toImag(b);
 			double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -975,7 +975,7 @@ public class Maths {
 			boolean bv;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				bv = AbstractDataset.toBoolean(b);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -983,7 +983,7 @@ public class Maths {
 					bdata[i++] = bv && ds.getElementBooleanAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					byte[] i8data = ((ByteDataset) result).getData();
@@ -993,7 +993,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					short[] i16data = ((ShortDataset) result).getData();
@@ -1003,7 +1003,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					int[] i32data = ((IntegerDataset) result).getData();
@@ -1013,7 +1013,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					long[] i64data = ((LongDataset) result).getData();
@@ -1023,7 +1023,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1036,7 +1036,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1049,7 +1049,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1062,7 +1062,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1075,7 +1075,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				if (dvi == 0) {
@@ -1111,7 +1111,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				if (dvi == 0) {
@@ -1148,7 +1148,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -1159,7 +1159,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -1170,7 +1170,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -1204,7 +1204,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -1259,7 +1259,7 @@ public class Maths {
 			boolean bv;
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				bv = AbstractDataset.toBoolean(a);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -1267,7 +1267,7 @@ public class Maths {
 					bdata[i++] = bv && ds.getElementBooleanAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(a);
 				byte[] i8data = ((ByteDataset) result).getData();
 
@@ -1279,7 +1279,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(a);
 				short[] i16data = ((ShortDataset) result).getData();
 
@@ -1291,7 +1291,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(a);
 				int[] i32data = ((IntegerDataset) result).getData();
 
@@ -1303,7 +1303,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(a);
 				long[] i64data = ((LongDataset) result).getData();
 
@@ -1315,7 +1315,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1332,7 +1332,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1349,7 +1349,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1366,7 +1366,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1383,7 +1383,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
@@ -1404,7 +1404,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
@@ -1425,7 +1425,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				float[] c64data = ((ComplexFloatDataset) result).getData();
@@ -1464,7 +1464,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				double[] c128data = ((ComplexDoubleDataset) result).getData();
@@ -1503,7 +1503,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				float[] a32data = ((CompoundFloatDataset) result).getData();
@@ -1514,7 +1514,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				double[] a64data = ((CompoundDoubleDataset) result).getData();
@@ -1564,14 +1564,14 @@ public class Maths {
 				IndexIterator it2 = d2.getIterator();
 
 				switch (bt) {
-				case AbstractDataset.BOOL:
+				case Dataset.BOOL:
 					boolean[] bdata = ((BooleanDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
 						bdata[i++] = d1.getElementBooleanAbs(it1.index) && d2.getElementBooleanAbs(it2.index);
 					}
 					break;
-				case AbstractDataset.INT8:
+				case Dataset.INT8:
 					byte[] i8data = ((ByteDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1580,7 +1580,7 @@ public class Maths {
 						i8data[i++] = v == 0 ? 0 : (byte) (d1.getElementLongAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.INT16:
+				case Dataset.INT16:
 					short[] i16data = ((ShortDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1589,7 +1589,7 @@ public class Maths {
 						i16data[i++] = v == 0 ? 0 : (short) (d1.getElementLongAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.INT32:
+				case Dataset.INT32:
 					int[] i32data = ((IntegerDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1598,7 +1598,7 @@ public class Maths {
 						i32data[i++] = v == 0 ? 0 : (int) (d1.getElementLongAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.INT64:
+				case Dataset.INT64:
 					long[] i64data = ((LongDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1607,7 +1607,7 @@ public class Maths {
 						i64data[i++] = v == 0 ? 0 : (d1.getElementLongAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.ARRAYINT8:
+				case Dataset.ARRAYINT8:
 					byte[] ai8data = ((CompoundByteDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1619,7 +1619,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYINT16:
+				case Dataset.ARRAYINT16:
 					short[] ai16data = ((CompoundShortDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1631,7 +1631,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYINT32:
+				case Dataset.ARRAYINT32:
 					int[] ai32data = ((CompoundIntegerDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1643,7 +1643,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYINT64:
+				case Dataset.ARRAYINT64:
 					long[] ai64data = ((CompoundLongDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1655,7 +1655,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.FLOAT32:
+				case Dataset.FLOAT32:
 					float[] f32data = ((FloatDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1664,7 +1664,7 @@ public class Maths {
 						f32data[i++] = v == 0 ? 0 : (float) (d1.getElementDoubleAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.FLOAT64:
+				case Dataset.FLOAT64:
 					double[] f64data = ((DoubleDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -1673,7 +1673,7 @@ public class Maths {
 						f64data[i++] = v == 0 ? 0 : (d1.getElementDoubleAbs(it1.index) / v);
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT32:
+				case Dataset.ARRAYFLOAT32:
 					float[] af32data = ((CompoundFloatDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1685,7 +1685,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT64:
+				case Dataset.ARRAYFLOAT64:
 					double[] af64data = ((CompoundDoubleDataset) result).getData();
 					is = result.getElementsPerItem();
 
@@ -1697,7 +1697,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.COMPLEX64:
+				case Dataset.COMPLEX64:
 					float[] c64data = ((ComplexFloatDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext(); ) {
@@ -1718,7 +1718,7 @@ public class Maths {
 						}
 					}
 					break;
-				case AbstractDataset.COMPLEX128:
+				case Dataset.COMPLEX128:
 					double[] c128data = ((ComplexDoubleDataset) result).getData();
 
 					for (int i = 0; it1.hasNext() && it2.hasNext(); ) {
@@ -1779,7 +1779,7 @@ public class Maths {
 			IndexIterator it1 = ds.getIterator();
 
 			switch (dt) {
-			case AbstractDataset.BOOL:
+			case Dataset.BOOL:
 				bv = AbstractDataset.toBoolean(a);
 				boolean[] bdata = ((BooleanDataset) result).getData();
 
@@ -1787,7 +1787,7 @@ public class Maths {
 					bdata[i++] = bv && ds.getElementBooleanAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					byte[] i8data = ((ByteDataset) result).getData();
@@ -1799,7 +1799,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 				short[] i16data = ((ShortDataset) result).getData();
@@ -1811,7 +1811,7 @@ public class Maths {
 				}
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 				int[] i32data = ((IntegerDataset) result).getData();
@@ -1823,7 +1823,7 @@ public class Maths {
 				}
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 				long[] i64data = ((LongDataset) result).getData();
@@ -1835,7 +1835,7 @@ public class Maths {
 				}
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1849,7 +1849,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1863,7 +1863,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1877,7 +1877,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(a);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -1891,7 +1891,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
 					float[] f32data = ((FloatDataset) result).getData();
@@ -1913,7 +1913,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
 					double[] f64data = ((DoubleDataset) result).getData();
@@ -1935,7 +1935,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				is = result.getElementsPerItem();
 				float[] af32data = ((CompoundFloatDataset) result).getData();
 
@@ -1947,7 +1947,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				is = result.getElementsPerItem();
 				double[] af64data = ((CompoundDoubleDataset) result).getData();
 
@@ -1959,7 +1959,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvi = AbstractDataset.toImag(a);
 				float[] c64data = ((ComplexFloatDataset) result).getData();
 
@@ -1997,7 +1997,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvi = AbstractDataset.toImag(a);
 				double[] c128data = ((ComplexDoubleDataset) result).getData();
 
@@ -2069,35 +2069,35 @@ public class Maths {
 			dvr = AbstractDataset.toReal(b);
 
 			switch (dt) {
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				final byte[] i8data = ((ByteDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i8data[i++] = (byte) Math.pow(ds.getElementDoubleAbs(it1.index), dvr);
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				final short[] i16data = ((ShortDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i16data[i++] = (short) Math.pow(ds.getElementDoubleAbs(it1.index), dvr);
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				final int[] i32data = ((IntegerDataset) result).getData();
 				
 				for (int i = 0; it1.hasNext();) {
 					i32data[i++] = (int) Math.pow(ds.getElementDoubleAbs(it1.index), dvr);
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				final long[] i64data = ((LongDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i64data[i++] = (long) Math.pow(ds.getElementDoubleAbs(it1.index), dvr);
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				is = result.getElementsPerItem();
 				final byte[] ai8data = ((CompoundByteDataset) result).getData();
 
@@ -2107,7 +2107,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				is = result.getElementsPerItem();
 				final short[] ai16data = ((CompoundShortDataset) result).getData();
 
@@ -2117,7 +2117,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				is = result.getElementsPerItem();
 				final int[] ai32data = ((CompoundIntegerDataset) result).getData();
 
@@ -2127,7 +2127,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				is = result.getElementsPerItem();
 				final long[] ai64data = ((CompoundLongDataset) result).getData();
 
@@ -2137,7 +2137,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvi = AbstractDataset.toImag(b);
 				if (dvi == 0) {
 					final float[] f32data = ((FloatDataset) result).getData();
@@ -2158,7 +2158,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvi = AbstractDataset.toImag(b);
 				if (dvi == 0) {
 					result = new DoubleDataset(ds.getShape());
@@ -2180,7 +2180,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				is = result.getElementsPerItem();
 				final float[] a32data = ((CompoundFloatDataset) result).getData();
 
@@ -2190,7 +2190,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				is = result.getElementsPerItem();
 				final double[] a64data = ((CompoundDoubleDataset) result).getData();
 
@@ -2200,7 +2200,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvi = AbstractDataset.toImag(b);
 				final float[] c64data = ((ComplexFloatDataset) result).getData();
 				final Complex p64 = new Complex(dvr, dvi);
@@ -2212,7 +2212,7 @@ public class Maths {
 					c64data[i++] = (float) tz.getImaginary();
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvi = AbstractDataset.toImag(b);
 				final double[] c128data = ((ComplexDoubleDataset) result).getData();
 				final Complex p128 = new Complex(dvr, dvi);
@@ -2244,35 +2244,35 @@ public class Maths {
 			dvr = AbstractDataset.toReal(a);
 
 			switch (dt) {
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				final byte[] i8data = ((ByteDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i8data[i++] = (byte) Math.pow(dvr, ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				final short[] i16data = ((ShortDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i16data[i++] = (short) Math.pow(dvr, ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				final int[] i32data = ((IntegerDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i32data[i++] = (int) Math.pow(dvr, ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				final long[] i64data = ((LongDataset) result).getData();
 
 				for (int i = 0; it1.hasNext();) {
 					i64data[i++] = (long) Math.pow(dvr, ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				is = result.getElementsPerItem();
 				final byte[] ai8data = ((CompoundByteDataset) result).getData();
 
@@ -2282,7 +2282,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				is = result.getElementsPerItem();
 				final short[] ai16data = ((CompoundShortDataset) result).getData();
 
@@ -2292,7 +2292,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				is = result.getElementsPerItem();
 				final int[] ai32data = ((CompoundIntegerDataset) result).getData();
 
@@ -2302,7 +2302,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				is = result.getElementsPerItem();
 				final long[] ai64data = ((CompoundLongDataset) result).getData();
 
@@ -2312,7 +2312,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
 					final float[] f32data = ((FloatDataset) result).getData();
@@ -2334,7 +2334,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvi = AbstractDataset.toImag(a);
 				if (dvi == 0) {
 					final double[] f64data = ((DoubleDataset) result).getData();
@@ -2356,7 +2356,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				is = result.getElementsPerItem();
 				final float[] a32data = ((CompoundFloatDataset) result).getData();
 
@@ -2366,7 +2366,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				is = result.getElementsPerItem();
 				final double[] a64data = ((CompoundDoubleDataset) result).getData();
 
@@ -2376,7 +2376,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.COMPLEX64:
+			case Dataset.COMPLEX64:
 				dvi = AbstractDataset.toImag(a);
 				final float[] c64data = ((ComplexFloatDataset) result).getData();
 				final Complex b64 = new Complex(dvr, dvi);
@@ -2389,7 +2389,7 @@ public class Maths {
 					c64data[i++] = (float) tz.getImaginary();
 				}
 				break;
-			case AbstractDataset.COMPLEX128:
+			case Dataset.COMPLEX128:
 				dvi = AbstractDataset.toImag(a);
 				final double[] c128data = ((ComplexDoubleDataset) result).getData();
 				final Complex b128 = new Complex(dvr, dvi);
@@ -2436,7 +2436,7 @@ public class Maths {
 			long lv;
 
 			switch (dt) {
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					byte[] i8data = ((ByteDataset) result).getData();
@@ -2445,7 +2445,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					short[] i16data = ((ShortDataset) result).getData();
@@ -2455,7 +2455,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					int[] i32data = ((IntegerDataset) result).getData();
@@ -2465,7 +2465,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					long[] i64data = ((LongDataset) result).getData();
@@ -2475,7 +2475,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -2488,7 +2488,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -2501,7 +2501,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -2514,7 +2514,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				lv = AbstractDataset.toLong(b);
 				if (lv != 0) {
 					is = result.getElementsPerItem();
@@ -2527,7 +2527,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				if (dvi != 0) {
@@ -2539,7 +2539,7 @@ public class Maths {
 					f32data[i++] = (float) (ds.getElementDoubleAbs(it1.index) % dvr);
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				dvi = AbstractDataset.toImag(b);
 				if (dvi != 0) {
@@ -2551,7 +2551,7 @@ public class Maths {
 					f64data[i++] = ds.getElementDoubleAbs(it1.index) % dvr;
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				float[] af32data = ((CompoundFloatDataset) result).getData();
@@ -2562,7 +2562,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(b);
 				is = result.getElementsPerItem();
 				double[] af64data = ((CompoundDoubleDataset) result).getData();
@@ -2593,7 +2593,7 @@ public class Maths {
 			long lv;
 
 			switch (dt) {
-			case AbstractDataset.INT8:
+			case Dataset.INT8:
 				lv = AbstractDataset.toLong(a);
 				byte[] i8data = ((ByteDataset) result).getData();
 
@@ -2601,7 +2601,7 @@ public class Maths {
 					i8data[i++] = (byte) (lv % ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT16:
+			case Dataset.INT16:
 				lv = AbstractDataset.toLong(a);
 				short[] i16data = ((ShortDataset) result).getData();
 
@@ -2609,7 +2609,7 @@ public class Maths {
 					i16data[i++] = (short) (lv % ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT32:
+			case Dataset.INT32:
 				lv = AbstractDataset.toLong(a);
 				int[] i32data = ((IntegerDataset) result).getData();
 
@@ -2617,7 +2617,7 @@ public class Maths {
 					i32data[i++] = (int) (lv % ds.getElementLongAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.INT64:
+			case Dataset.INT64:
 				lv = AbstractDataset.toLong(a);
 				long[] i64data = ((LongDataset) result).getData();
 
@@ -2625,7 +2625,7 @@ public class Maths {
 					i64data[i++] = lv % ds.getElementLongAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case Dataset.ARRAYINT8:
 				is = result.getElementsPerItem();
 				lv = AbstractDataset.toLong(a);
 				byte[] ai8data = ((CompoundByteDataset) result).getData();
@@ -2636,7 +2636,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case Dataset.ARRAYINT16:
 				is = result.getElementsPerItem();
 				lv = AbstractDataset.toLong(a);
 				short[] ai16data = ((CompoundShortDataset) result).getData();
@@ -2647,7 +2647,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case Dataset.ARRAYINT32:
 				is = result.getElementsPerItem();
 				lv = AbstractDataset.toLong(a);
 				int[] ai32data = ((CompoundIntegerDataset) result).getData();
@@ -2658,7 +2658,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYINT64:
+			case Dataset.ARRAYINT64:
 				is = result.getElementsPerItem();
 				lv = AbstractDataset.toLong(a);
 				long[] ai64data = ((CompoundLongDataset) result).getData();
@@ -2669,7 +2669,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.FLOAT32:
+			case Dataset.FLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				if (dvi != 0) {
@@ -2681,7 +2681,7 @@ public class Maths {
 					f32data[i++] = (float) (dvr % ds.getElementDoubleAbs(it1.index));
 				}
 				break;
-			case AbstractDataset.FLOAT64:
+			case Dataset.FLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				dvi = AbstractDataset.toImag(a);
 				if (dvi != 0) {
@@ -2693,7 +2693,7 @@ public class Maths {
 					f64data[i++] = dvr % ds.getElementDoubleAbs(it1.index);
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
+			case Dataset.ARRAYFLOAT32:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				float[] af32data = ((CompoundFloatDataset) result).getData();
@@ -2704,7 +2704,7 @@ public class Maths {
 					}
 				}
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
+			case Dataset.ARRAYFLOAT64:
 				dvr = AbstractDataset.toReal(a);
 				is = result.getElementsPerItem();
 				double[] af64data = ((CompoundDoubleDataset) result).getData();
@@ -2755,7 +2755,7 @@ public class Maths {
 		AbstractDataset result = AbstractDataset.zeros(a);
 
 		switch (at) {
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			float[] c64data = ((ComplexFloatDataset) result).getData();
 
 			for (int i = 0; it1.hasNext();) {
@@ -2764,7 +2764,7 @@ public class Maths {
 			}
 			result.setName(bracketIfNecessary(a).append("^*").toString());
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			double[] c128data = ((ComplexDoubleDataset) result).getData();
 
 			for (int i = 0; it1.hasNext();) {
@@ -2801,49 +2801,49 @@ public class Maths {
 		IndexIterator it2 = a.getIterator();
 
 		switch (rt) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			boolean[] bdata = ((BooleanDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				bdata[i++] = Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index)) != 0;
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			byte[] i8data = ((ByteDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i8data[i++] = (byte) Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			short[] i16data = ((ShortDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i16data[i++] = (short) Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			int[] i32data = ((IntegerDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i32data[i++] = (int) Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			long[] i64data = ((LongDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i64data[i++] = (long) Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			float[] f32data = ((FloatDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				f32data[i++] = (float) Math.hypot(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			double[] f64data = ((DoubleDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -2881,49 +2881,49 @@ public class Maths {
 		IndexIterator it2 = b.getIterator();
 
 		switch (rt) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			boolean[] bdata = ((BooleanDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				bdata[i++] = Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index)) != 0;
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			byte[] i8data = ((ByteDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i8data[i++] = (byte) Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			short[] i16data = ((ShortDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i16data[i++] = (short) Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			int[] i32data = ((IntegerDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i32data[i++] = (int) Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			long[] i64data = ((LongDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				i64data[i++] = (long) Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			float[] f32data = ((FloatDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
 				f32data[i++] = (float) Math.atan2(a.getElementDoubleAbs(it1.index), b.getElementDoubleAbs(it2.index));
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			double[] f64data = ((DoubleDataset) result).getData();
 
 			for (int i = 0; it1.hasNext() && it2.hasNext();) {
@@ -2944,11 +2944,11 @@ public class Maths {
 	 * Linearly interpolate a value at a point in a 1D dataset. The dataset is considered to have
 	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
 	 * value to zero.
-	 * @param d
-	 * @param x0
-	 * @return linear interpolated value
+	 * @param d input dataset
+	 * @param x0 coordinate
+	 * @return interpolated value
 	 */
-	public static double getLinear(final AbstractDataset d, final double x0) {
+	public static double getLinear(final IDataset d, final double x0) {
 		final int[] s = d.getShape();
 		if (s.length != 1)
 			throw new IllegalArgumentException("Only 1d datasets allowed");
@@ -2975,9 +2975,9 @@ public class Maths {
 	 * Linearly interpolate a value at a point in a compound 1D dataset. The dataset is considered
 	 * to have zero support outside its bounds. Thus points just outside are interpolated from the
 	 * boundary value to zero.
-	 * @param values linearly interpolated array
-	 * @param d
-	 * @param x0
+	 * @param values interpolated array
+	 * @param d input dataset
+	 * @param x0 coordinate
 	 */
 	public static void getLinear(final double[] values, final AbstractCompoundDataset d, final double x0) {
 		final int[] s = d.getShape();
@@ -3207,8 +3207,8 @@ public class Maths {
 		IndexIterator it = a.getIterator();
 
 		switch (dt) {
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			float[] f32data = ((FloatDataset) ds).getData();
 			float[] c64data = ((ComplexFloatDataset) a).data;
 
@@ -3216,8 +3216,8 @@ public class Maths {
 				f32data[i++] = (float) Math.atan2(c64data[it.index+1], c64data[it.index]);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			double[] f64data = ((DoubleDataset) ds).getData();
 			double[] c128data = ((ComplexDoubleDataset) a).data;
 
@@ -3244,7 +3244,7 @@ public class Maths {
 		IndexIterator it = a.getIterator();
 
 		switch (dt) {
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			ds = AbstractDataset.zeros(a);
 
 			float[] z64data = ((ComplexFloatDataset) ds).getData();
@@ -3273,7 +3273,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			ds = AbstractDataset.zeros(a);
 
 			double[] z128data = ((ComplexDoubleDataset) ds).getData();
@@ -3354,7 +3354,7 @@ public class Maths {
 		int oi = it.index;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3362,7 +3362,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3370,7 +3370,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3378,7 +3378,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3386,7 +3386,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3396,7 +3396,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3406,7 +3406,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3416,7 +3416,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3426,7 +3426,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3434,7 +3434,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3442,7 +3442,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3451,7 +3451,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3460,7 +3460,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3470,7 +3470,7 @@ public class Maths {
 				oi = it.index;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) out).getData();
 			for (int i = 0; it.hasNext();) {
@@ -3530,7 +3530,7 @@ public class Maths {
 		indexes[n] = it.index;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3541,7 +3541,7 @@ public class Maths {
 				oi8data[i++] = (byte) ox;
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3552,7 +3552,7 @@ public class Maths {
 				oi16data[i++] = (short) ox;
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3563,7 +3563,7 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3574,7 +3574,7 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) out).getData();
 			int[] box = new int[isize];
@@ -3592,7 +3592,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) out).getData();
 			int[] sox = new int[isize];
@@ -3610,7 +3610,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) out).getData();
 			int[] iox = new int[isize];
@@ -3628,7 +3628,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) out).getData();
 			long[] lox = new long[isize];
@@ -3646,7 +3646,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3657,7 +3657,7 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3668,7 +3668,7 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3683,7 +3683,7 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) out).getData();
 			for (int i = 0; nextIndexes(it, indexes);) {
@@ -3698,7 +3698,7 @@ public class Maths {
 				oc128data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) out).getData();
 			float[] fox = new float[isize];
@@ -3716,7 +3716,7 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) out).getData();
 			double[] dox = new double[isize];
@@ -3853,25 +3853,25 @@ public class Maths {
 		int dtype = y.getDtype();
 		AbstractDataset result;
 		switch (dtype) {
-		case AbstractDataset.BOOL:
-		case AbstractDataset.INT8:
-		case AbstractDataset.INT16:
-		case AbstractDataset.ARRAYINT8:
-		case AbstractDataset.ARRAYINT16:
-			result = AbstractDataset.zeros(y, AbstractDataset.FLOAT32);
+		case Dataset.BOOL:
+		case Dataset.INT8:
+		case Dataset.INT16:
+		case Dataset.ARRAYINT8:
+		case Dataset.ARRAYINT16:
+			result = AbstractDataset.zeros(y, Dataset.FLOAT32);
 			break;
-		case AbstractDataset.INT32:
-		case AbstractDataset.INT64:
-		case AbstractDataset.ARRAYINT32:
-		case AbstractDataset.ARRAYINT64:
-			result = AbstractDataset.zeros(y, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+		case Dataset.INT64:
+		case Dataset.ARRAYINT32:
+		case Dataset.ARRAYINT64:
+			result = AbstractDataset.zeros(y, Dataset.FLOAT64);
 			break;
-		case AbstractDataset.FLOAT32:
-		case AbstractDataset.FLOAT64:
-		case AbstractDataset.COMPLEX64:
-		case AbstractDataset.COMPLEX128:
-		case AbstractDataset.ARRAYFLOAT32:
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.FLOAT32:
+		case Dataset.FLOAT64:
+		case Dataset.COMPLEX64:
+		case Dataset.COMPLEX128:
+		case Dataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT64:
 			result = AbstractDataset.zeros(y);
 			break;
 		default:
@@ -3976,7 +3976,7 @@ public class Maths {
 		int pi = it.index;
 
 		switch (dt) {
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) out).getData();
 			oi8data[0] = (byte) (i8data[pi] - i8data[oi]);
@@ -3987,7 +3987,7 @@ public class Maths {
 			}
 			oi8data[nlen] = (byte) (i8data[pi] - i8data[oi]);
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) out).getData();
 			oi16data[0] = (short) (i16data[pi] - i16data[oi]);
@@ -3998,7 +3998,7 @@ public class Maths {
 			}
 			oi16data[nlen] = (short) (i16data[pi] - i16data[oi]);
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) out).getData();
 			oi32data[0] = i32data[pi] - i32data[oi];
@@ -4009,7 +4009,7 @@ public class Maths {
 			}
 			oi32data[nlen] = i32data[pi] - i32data[oi];
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) out).getData();
 			oi64data[0] = i64data[pi] - i64data[oi];
@@ -4020,7 +4020,7 @@ public class Maths {
 			}
 			oi64data[nlen] = i64data[pi] - i64data[oi];
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4038,7 +4038,7 @@ public class Maths {
 				oai8data[nlen+k] = (byte) (ai8data[pi+k] - ai8data[oi+k]);
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4056,7 +4056,7 @@ public class Maths {
 				oai16data[nlen+k] = (short) (ai16data[pi+k] - ai16data[oi+k]);
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4074,7 +4074,7 @@ public class Maths {
 				oai32data[nlen+k] = ai32data[pi+k] - ai32data[oi+k];
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4092,7 +4092,7 @@ public class Maths {
 				oai64data[nlen+k] = ai64data[pi+k] - ai64data[oi+k];
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) out).getData();
 			of32data[0] = f32data[pi] - f32data[oi];
@@ -4103,7 +4103,7 @@ public class Maths {
 			}
 			of32data[nlen] = f32data[pi] - f32data[oi];
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) out).getData();
 			of64data[0] = f64data[pi] - f64data[oi];
@@ -4114,7 +4114,7 @@ public class Maths {
 			}
 			of64data[nlen] = f64data[pi] - f64data[oi];
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) out).getData();
 			oc64data[0] = c64data[pi] - c64data[oi];
@@ -4128,7 +4128,7 @@ public class Maths {
 			oc64data[nlen] = c64data[pi] - c64data[oi];
 			oc64data[nlen+1] = c64data[pi+1] - c64data[oi+1];
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) out).getData();
 			oc128data[0] = c128data[pi] - c128data[oi];
@@ -4142,7 +4142,7 @@ public class Maths {
 			oc128data[nlen] = c128data[pi] - c128data[oi];
 			oc128data[nlen+1] = c128data[pi+1] - c128data[oi+1];
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4160,7 +4160,7 @@ public class Maths {
 				oaf32data[nlen+k] = af32data[pi+k] - af32data[oi+k];
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) out).getData();
 			for (int k = 0; k < isize; k++) {
@@ -4258,8 +4258,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4269,8 +4269,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4280,8 +4280,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4291,8 +4291,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4302,8 +4302,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -4316,8 +4316,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -4330,8 +4330,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -4344,8 +4344,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -4358,8 +4358,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4369,8 +4369,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4380,8 +4380,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -4394,8 +4394,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -4408,8 +4408,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4423,8 +4423,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4460,8 +4460,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4471,8 +4471,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4482,8 +4482,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4493,8 +4493,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4504,8 +4504,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -4518,8 +4518,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -4532,8 +4532,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -4546,8 +4546,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -4560,8 +4560,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4571,8 +4571,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4582,8 +4582,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -4596,8 +4596,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -4610,8 +4610,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4625,8 +4625,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4662,8 +4662,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4673,8 +4673,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4684,8 +4684,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4695,8 +4695,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4706,8 +4706,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -4720,8 +4720,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -4734,8 +4734,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -4748,8 +4748,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -4762,8 +4762,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4773,8 +4773,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4784,8 +4784,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -4798,8 +4798,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -4812,8 +4812,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4833,8 +4833,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4876,8 +4876,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4887,8 +4887,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4898,8 +4898,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4909,8 +4909,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4920,8 +4920,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -4934,8 +4934,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -4948,8 +4948,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -4962,8 +4962,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -4976,8 +4976,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4987,8 +4987,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -4998,8 +4998,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -5012,8 +5012,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -5026,8 +5026,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5043,8 +5043,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5082,8 +5082,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5093,8 +5093,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5104,8 +5104,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5115,8 +5115,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5126,8 +5126,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -5140,8 +5140,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -5154,8 +5154,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -5168,8 +5168,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -5182,8 +5182,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5193,8 +5193,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5204,8 +5204,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -5218,8 +5218,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -5232,8 +5232,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5249,8 +5249,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5288,8 +5288,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5299,8 +5299,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5310,8 +5310,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5321,8 +5321,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5332,8 +5332,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -5346,8 +5346,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -5360,8 +5360,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -5374,8 +5374,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -5388,8 +5388,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5399,8 +5399,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5410,8 +5410,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -5424,8 +5424,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -5438,8 +5438,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5455,8 +5455,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5494,8 +5494,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5505,8 +5505,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5516,8 +5516,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5527,8 +5527,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5538,8 +5538,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -5552,8 +5552,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -5566,8 +5566,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -5580,8 +5580,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -5594,8 +5594,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5605,8 +5605,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5616,8 +5616,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -5630,8 +5630,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -5644,8 +5644,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5659,8 +5659,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5696,8 +5696,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5707,8 +5707,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5718,8 +5718,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5729,8 +5729,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5740,8 +5740,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -5754,8 +5754,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -5768,8 +5768,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -5782,8 +5782,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -5796,8 +5796,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5807,8 +5807,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5818,8 +5818,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -5832,8 +5832,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -5846,8 +5846,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5861,8 +5861,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5898,8 +5898,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5909,8 +5909,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5920,8 +5920,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5931,8 +5931,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -5942,8 +5942,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -5956,8 +5956,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -5970,8 +5970,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -5984,8 +5984,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -5998,8 +5998,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6009,8 +6009,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6020,8 +6020,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -6034,8 +6034,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -6048,8 +6048,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6069,8 +6069,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6112,8 +6112,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6123,8 +6123,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6134,8 +6134,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6145,8 +6145,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6156,8 +6156,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -6170,8 +6170,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -6184,8 +6184,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -6198,8 +6198,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -6212,8 +6212,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6223,8 +6223,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6234,8 +6234,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -6248,8 +6248,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -6262,8 +6262,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6279,8 +6279,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6318,8 +6318,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6329,8 +6329,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6340,8 +6340,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6351,8 +6351,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6362,8 +6362,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -6376,8 +6376,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -6390,8 +6390,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -6404,8 +6404,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -6418,8 +6418,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6429,8 +6429,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6440,8 +6440,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -6454,8 +6454,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -6468,8 +6468,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6485,8 +6485,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6524,8 +6524,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6535,8 +6535,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6546,8 +6546,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6557,8 +6557,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6568,8 +6568,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -6582,8 +6582,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -6596,8 +6596,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -6610,8 +6610,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -6624,8 +6624,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6635,8 +6635,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6646,8 +6646,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -6660,8 +6660,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -6674,8 +6674,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6691,8 +6691,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6730,8 +6730,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6741,8 +6741,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6752,8 +6752,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6763,8 +6763,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6774,8 +6774,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -6788,8 +6788,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -6802,8 +6802,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -6816,8 +6816,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -6830,8 +6830,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6841,8 +6841,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6852,8 +6852,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -6866,8 +6866,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -6880,8 +6880,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6895,8 +6895,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6932,8 +6932,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6943,8 +6943,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6954,8 +6954,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6965,8 +6965,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -6976,8 +6976,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -6990,8 +6990,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -7004,8 +7004,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -7018,8 +7018,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -7032,8 +7032,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7043,8 +7043,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7054,8 +7054,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -7068,8 +7068,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -7082,8 +7082,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7097,8 +7097,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7134,8 +7134,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7145,8 +7145,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7156,8 +7156,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7167,8 +7167,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7178,8 +7178,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -7192,8 +7192,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -7206,8 +7206,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -7220,8 +7220,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -7234,8 +7234,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7245,8 +7245,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7256,8 +7256,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -7270,8 +7270,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -7284,8 +7284,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7299,8 +7299,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7336,8 +7336,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7347,8 +7347,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7358,8 +7358,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7369,8 +7369,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7380,8 +7380,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -7394,8 +7394,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -7408,8 +7408,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -7422,8 +7422,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -7436,8 +7436,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7447,8 +7447,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7458,8 +7458,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -7472,8 +7472,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -7486,8 +7486,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7501,8 +7501,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7538,8 +7538,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7549,8 +7549,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7560,8 +7560,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7571,8 +7571,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7582,8 +7582,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -7596,8 +7596,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -7610,8 +7610,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -7624,8 +7624,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -7638,8 +7638,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7649,8 +7649,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7660,8 +7660,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -7674,8 +7674,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -7688,8 +7688,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7705,8 +7705,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7744,8 +7744,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7755,8 +7755,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7766,8 +7766,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7777,8 +7777,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7788,8 +7788,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -7802,8 +7802,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -7816,8 +7816,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -7830,8 +7830,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -7844,8 +7844,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7855,8 +7855,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7866,8 +7866,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -7880,8 +7880,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -7894,8 +7894,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7911,8 +7911,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7950,8 +7950,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7961,8 +7961,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7972,8 +7972,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7983,8 +7983,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -7994,8 +7994,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -8008,8 +8008,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -8022,8 +8022,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -8036,8 +8036,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -8050,8 +8050,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8061,8 +8061,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8072,8 +8072,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -8086,8 +8086,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -8100,8 +8100,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8117,8 +8117,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8156,8 +8156,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8167,8 +8167,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8178,8 +8178,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8189,8 +8189,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8200,8 +8200,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -8214,8 +8214,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -8228,8 +8228,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -8242,8 +8242,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -8256,8 +8256,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8267,8 +8267,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8278,8 +8278,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -8292,8 +8292,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -8306,8 +8306,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8323,8 +8323,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8362,8 +8362,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8373,8 +8373,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8384,8 +8384,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8395,8 +8395,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8406,8 +8406,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -8420,8 +8420,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -8434,8 +8434,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -8448,8 +8448,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -8462,8 +8462,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8473,8 +8473,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8484,8 +8484,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -8498,8 +8498,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -8512,8 +8512,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8527,8 +8527,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8564,8 +8564,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8575,8 +8575,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8586,8 +8586,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8597,8 +8597,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8608,8 +8608,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -8622,8 +8622,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -8636,8 +8636,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -8650,8 +8650,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -8664,8 +8664,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8675,8 +8675,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8686,8 +8686,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -8700,8 +8700,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -8714,8 +8714,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8729,8 +8729,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8766,8 +8766,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8777,8 +8777,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8788,8 +8788,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8799,8 +8799,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8810,8 +8810,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -8824,8 +8824,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -8838,8 +8838,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -8852,8 +8852,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -8866,8 +8866,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8877,8 +8877,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8888,8 +8888,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -8902,8 +8902,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -8916,8 +8916,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8931,8 +8931,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8968,8 +8968,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8979,8 +8979,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -8990,8 +8990,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9001,8 +9001,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9012,8 +9012,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -9026,8 +9026,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -9040,8 +9040,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -9054,8 +9054,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -9068,8 +9068,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9079,8 +9079,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9090,8 +9090,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -9104,8 +9104,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -9118,8 +9118,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9133,8 +9133,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9170,8 +9170,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9181,8 +9181,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9192,8 +9192,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9203,8 +9203,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9214,8 +9214,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -9228,8 +9228,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -9242,8 +9242,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -9256,8 +9256,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -9270,8 +9270,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9281,8 +9281,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9292,8 +9292,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -9306,8 +9306,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -9320,8 +9320,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9335,8 +9335,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9372,8 +9372,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final float[] oi8data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9383,8 +9383,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final short[] i16data = ((ShortDataset) a).data;
 			final float[] oi16data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9394,8 +9394,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final double[] oi32data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9405,8 +9405,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final double[] oi64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9416,8 +9416,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final float[] oai8data = ((CompoundFloatDataset) ds).getData();
@@ -9430,8 +9430,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final float[] oai16data = ((CompoundFloatDataset) ds).getData();
@@ -9444,8 +9444,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final double[] oai32data = ((CompoundDoubleDataset) ds).getData();
@@ -9458,8 +9458,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final double[] oai64data = ((CompoundDoubleDataset) ds).getData();
@@ -9472,8 +9472,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9483,8 +9483,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9494,8 +9494,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -9508,8 +9508,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -9522,8 +9522,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9537,8 +9537,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9574,8 +9574,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9585,8 +9585,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9596,8 +9596,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9607,8 +9607,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9618,8 +9618,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -9632,8 +9632,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -9646,8 +9646,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -9660,8 +9660,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -9674,8 +9674,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9685,8 +9685,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9696,8 +9696,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -9710,8 +9710,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -9724,8 +9724,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9739,8 +9739,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9776,8 +9776,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9787,8 +9787,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9798,8 +9798,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9809,8 +9809,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9820,8 +9820,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -9834,8 +9834,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -9848,8 +9848,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -9862,8 +9862,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -9876,8 +9876,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9887,8 +9887,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9898,8 +9898,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -9912,8 +9912,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -9926,8 +9926,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9938,8 +9938,8 @@ public class Maths {
 				oc64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9972,8 +9972,8 @@ public class Maths {
 		final int dt = a.getDtype();
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9983,8 +9983,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -9994,8 +9994,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10005,8 +10005,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10016,8 +10016,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -10030,8 +10030,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -10044,8 +10044,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -10058,8 +10058,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -10072,8 +10072,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10083,8 +10083,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10094,8 +10094,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -10108,8 +10108,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();
@@ -10122,8 +10122,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX64);
+		case Dataset.COMPLEX64:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX64);
 			final float[] c64data = ((ComplexFloatDataset) a).data;
 			final float[] oc64data = ((ComplexFloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10137,8 +10137,8 @@ public class Maths {
 				oc64data[i++] = oy;
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
-			ds = AbstractDataset.zeros(a, AbstractDataset.COMPLEX128);
+		case Dataset.COMPLEX128:
+			ds = AbstractDataset.zeros(a, Dataset.COMPLEX128);
 			final double[] c128data = ((ComplexDoubleDataset) a).data;
 			final double[] oc128data = ((ComplexDoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10176,8 +10176,8 @@ public class Maths {
 		final double pbx = AbstractDataset.toReal(pb);
 
 		switch(dt) {
-		case AbstractDataset.INT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT8);
+		case Dataset.INT8:
+			ds = AbstractDataset.zeros(a, Dataset.INT8);
 			final byte[] i8data = ((ByteDataset) a).data;
 			final byte[] oi8data = ((ByteDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10192,8 +10192,8 @@ public class Maths {
 				oi8data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT16);
+		case Dataset.INT16:
+			ds = AbstractDataset.zeros(a, Dataset.INT16);
 			final short[] i16data = ((ShortDataset) a).data;
 			final short[] oi16data = ((ShortDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10208,8 +10208,8 @@ public class Maths {
 				oi16data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT64);
+		case Dataset.INT64:
+			ds = AbstractDataset.zeros(a, Dataset.INT64);
 			final long[] i64data = ((LongDataset) a).data;
 			final long[] oi64data = ((LongDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10224,8 +10224,8 @@ public class Maths {
 				oi64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.INT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.INT32);
+		case Dataset.INT32:
+			ds = AbstractDataset.zeros(a, Dataset.INT32);
 			final int[] i32data = ((IntegerDataset) a).data;
 			final int[] oi32data = ((IntegerDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10240,8 +10240,8 @@ public class Maths {
 				oi32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYINT8:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT8);
+		case Dataset.ARRAYINT8:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT8);
 			isize = a.getElementsPerItem();
 			final byte[] ai8data = ((CompoundByteDataset) a).data;
 			final byte[] oai8data = ((CompoundByteDataset) ds).getData();
@@ -10259,8 +10259,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT16:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT16);
+		case Dataset.ARRAYINT16:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT16);
 			isize = a.getElementsPerItem();
 			final short[] ai16data = ((CompoundShortDataset) a).data;
 			final short[] oai16data = ((CompoundShortDataset) ds).getData();
@@ -10278,8 +10278,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT64);
+		case Dataset.ARRAYINT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT64);
 			isize = a.getElementsPerItem();
 			final long[] ai64data = ((CompoundLongDataset) a).data;
 			final long[] oai64data = ((CompoundLongDataset) ds).getData();
@@ -10297,8 +10297,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYINT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYINT32);
+		case Dataset.ARRAYINT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYINT32);
 			isize = a.getElementsPerItem();
 			final int[] ai32data = ((CompoundIntegerDataset) a).data;
 			final int[] oai32data = ((CompoundIntegerDataset) ds).getData();
@@ -10316,8 +10316,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT32);
+		case Dataset.FLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			final float[] f32data = ((FloatDataset) a).data;
 			final float[] of32data = ((FloatDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10334,8 +10334,8 @@ public class Maths {
 				of32data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.FLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.FLOAT64);
+		case Dataset.FLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			final double[] f64data = ((DoubleDataset) a).data;
 			final double[] of64data = ((DoubleDataset) ds).getData();
 			for (int i = 0; it.hasNext();) {
@@ -10352,8 +10352,8 @@ public class Maths {
 				of64data[i++] = ox;
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT32);
+		case Dataset.ARRAYFLOAT32:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT32);
 			isize = a.getElementsPerItem();
 			final float[] af32data = ((CompoundFloatDataset) a).data;
 			final float[] oaf32data = ((CompoundFloatDataset) ds).getData();
@@ -10373,8 +10373,8 @@ public class Maths {
 				}
 			}
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
-			ds = AbstractDataset.zeros(a, AbstractDataset.ARRAYFLOAT64);
+		case Dataset.ARRAYFLOAT64:
+			ds = AbstractDataset.zeros(a, Dataset.ARRAYFLOAT64);
 			isize = a.getElementsPerItem();
 			final double[] af64data = ((CompoundDoubleDataset) a).data;
 			final double[] oaf64data = ((CompoundDoubleDataset) ds).getData();

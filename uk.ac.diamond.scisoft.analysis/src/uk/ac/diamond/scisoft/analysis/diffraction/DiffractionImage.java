@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.CBFLoader;

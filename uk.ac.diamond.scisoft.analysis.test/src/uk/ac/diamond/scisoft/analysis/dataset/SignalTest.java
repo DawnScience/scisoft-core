@@ -29,8 +29,8 @@ public class SignalTest {
 	 */
 	@Test
 	public void testSimpleConvolveFilters() {
-		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, AbstractDataset.ARRAYFLOAT64);
-		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, AbstractDataset.ARRAYFLOAT64);
+		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
 		
 		
 		// test against a null filter
@@ -61,8 +61,8 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolveFilters() {
-		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, AbstractDataset.ARRAYFLOAT64);
-		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, AbstractDataset.ARRAYFLOAT64);
+		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
 		
 		// test against a null filter
 		f.iadd(1);
@@ -107,9 +107,9 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolve() {
-		AbstractDataset one_d = AbstractDataset.zeros(new int[] {10}, AbstractDataset.ARRAYFLOAT64);
-		AbstractDataset two_d = AbstractDataset.zeros(new int[] {10,10}, AbstractDataset.ARRAYFLOAT64);
-		AbstractDataset three_d = AbstractDataset.zeros(new int[] {10,10,10}, AbstractDataset.ARRAYFLOAT64);
+		AbstractDataset one_d = AbstractDataset.zeros(new int[] {10}, Dataset.ARRAYFLOAT64);
+		AbstractDataset two_d = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		AbstractDataset three_d = AbstractDataset.zeros(new int[] {10,10,10}, Dataset.ARRAYFLOAT64);
 		
 		@SuppressWarnings("unused")
 		AbstractDataset result;
@@ -174,8 +174,8 @@ public class SignalTest {
 
 	@Test
 	public void testConvolveAll() {
-		AbstractDataset d = AbstractDataset.arange(20, AbstractDataset.FLOAT64);
-		AbstractDataset k = AbstractDataset.ones(new int[] {5}, AbstractDataset.FLOAT64);
+		AbstractDataset d = AbstractDataset.arange(20, Dataset.FLOAT64);
+		AbstractDataset k = AbstractDataset.ones(new int[] {5}, Dataset.FLOAT64);
 		AbstractDataset c;
 
 		AbstractDataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
@@ -196,7 +196,7 @@ public class SignalTest {
 		c = Signal.convolveForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
 
-		d = AbstractDataset.arange(19, AbstractDataset.FLOAT64);
+		d = AbstractDataset.arange(19, Dataset.FLOAT64);
 		e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 
@@ -218,8 +218,8 @@ public class SignalTest {
 
 	@Test
 	public void testCorrelateAll() {
-		AbstractDataset d = AbstractDataset.arange(20, AbstractDataset.FLOAT64);
-		AbstractDataset k = AbstractDataset.ones(new int[] {5}, AbstractDataset.FLOAT64);
+		AbstractDataset d = AbstractDataset.arange(20, Dataset.FLOAT64);
+		AbstractDataset k = AbstractDataset.ones(new int[] {5}, Dataset.FLOAT64);
 		AbstractDataset c;
 
 		AbstractDataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20, 25,
@@ -243,7 +243,7 @@ public class SignalTest {
 		c = Signal.correlateForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(19, 3, -1)), c, 1e-7, 1e-9);
 		
-		d = AbstractDataset.arange(19, AbstractDataset.FLOAT64);
+		d = AbstractDataset.arange(19, Dataset.FLOAT64);
 		e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 

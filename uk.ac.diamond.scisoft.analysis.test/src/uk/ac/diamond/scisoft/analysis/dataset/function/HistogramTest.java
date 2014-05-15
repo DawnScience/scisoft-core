@@ -19,9 +19,9 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-
 import junit.framework.TestCase;
 
 /**
@@ -35,7 +35,7 @@ public class HistogramTest extends TestCase {
 	 */
 	@Override
 	public void setUp() {
-		d = (DoubleDataset) AbstractDataset.arange(1.0, 2048.0, 1.0, AbstractDataset.FLOAT64);
+		d = (DoubleDataset) AbstractDataset.arange(1.0, 2048.0, 1.0, Dataset.FLOAT64);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram8() {
 		Histogram histo = new Histogram(50);
-		AbstractDataset pd = histo.value(DatasetUtils.linSpace(0, 100, 101, AbstractDataset.INT32)).get(0);
+		AbstractDataset pd = histo.value(DatasetUtils.linSpace(0, 100, 101, Dataset.INT32)).get(0);
 
 		assertEquals(50, pd.getSize());
 		assertEquals(2, pd.getInt(0));
@@ -156,7 +156,7 @@ public class HistogramTest extends TestCase {
 		long start = 0;
 
 		Histogram h = new Histogram(50);
-		AbstractDataset d = DatasetUtils.linSpace(0, 100, 500000, AbstractDataset.FLOAT64);
+		AbstractDataset d = DatasetUtils.linSpace(0, 100, 500000, Dataset.FLOAT64);
 		
 		AbstractDataset a  = null;
 

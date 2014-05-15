@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -70,8 +71,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 		final double hiChi = edgesChi[nBinsChi];
 		final double spanChi = (hiChi - loChi)/nBinsChi;
 
-		FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.FLOAT32);
-		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
+		FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, Dataset.FLOAT32);
+		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},Dataset.FLOAT32);
 		//			final double[] h = histo.getData();
 		//			final double[] in = intensity.getData();
 		//			if (spanQ <= 0) {

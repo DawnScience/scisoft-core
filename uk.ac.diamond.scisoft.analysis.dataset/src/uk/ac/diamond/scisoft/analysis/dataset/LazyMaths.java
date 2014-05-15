@@ -49,7 +49,7 @@ public final class LazyMaths {
 		final int[] nshape = shape.clone();
 		nshape[axis] = 1;
 
-		final AbstractDataset sum = AbstractDataset.zeros(nshape, AbstractDataset.FLOAT64);
+		final AbstractDataset sum = AbstractDataset.zeros(nshape, Dataset.FLOAT64);
 		final int length = shape[axis];
 
 		final int[] start = new int[shape.length];
@@ -86,7 +86,7 @@ public final class LazyMaths {
 		final int[] nshape = shape.clone();
 		nshape[axis] = 1;
 
-		final AbstractDataset prod = AbstractDataset.ones(nshape, AbstractDataset.FLOAT64);
+		final AbstractDataset prod = AbstractDataset.ones(nshape, Dataset.FLOAT64);
 		final int length = shape[axis];
 
 		final int[] start = new int[shape.length];

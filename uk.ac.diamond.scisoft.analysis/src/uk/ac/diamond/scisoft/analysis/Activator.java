@@ -44,5 +44,4 @@ public class Activator implements BundleActivator {
 		if (ref==null) return null;
 		return context.getService(ref);
 	}
-
 }

@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
@@ -58,7 +59,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, AbstractDataset.FLOAT64);
+			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
 		}
 		
 		axis.setName("azimuthal angle (degrees)");

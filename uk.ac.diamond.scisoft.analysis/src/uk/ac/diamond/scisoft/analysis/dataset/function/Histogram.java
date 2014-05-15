@@ -22,6 +22,7 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -68,7 +69,7 @@ public class Histogram implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
 		}
 
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);
+		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, Dataset.FLOAT64);
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class Histogram implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Bin edges should be given as 1D dataset");
 		}
 
-		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToAbstractDataset(edges), AbstractDataset.FLOAT64);
+		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToAbstractDataset(edges), Dataset.FLOAT64);
 
 		// check for increasing order
 		AbstractDataset sorted = DatasetUtils.sort(bins, null);
@@ -133,7 +134,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		if (useEqualSpanBins) {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -173,7 +174,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		} else {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -226,7 +227,7 @@ public class Histogram implements DatasetToDatasetFunction {
 	public void setMinMax(double min, double max) {
 		this.min = min;
 		this.max = max;
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, AbstractDataset.FLOAT64);		
+		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, Dataset.FLOAT64);		
 	}
 
 	/**

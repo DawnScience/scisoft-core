@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -73,8 +74,8 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
 		//TODO early exit if spans are z
 
-		IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, AbstractDataset.INT32);
-		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},AbstractDataset.FLOAT32);
+		IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, Dataset.INT32);
+		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},Dataset.FLOAT32);
 
 		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
 		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);

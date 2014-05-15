@@ -43,20 +43,20 @@ public class MathsTest {
 	public void setUpClass() {
 		classes = new LinkedHashMap<String, Integer>();
 //		classes.put("Boolean", AbstractDataset.BOOL);
-		classes.put("Byte", AbstractDataset.INT8);
-		classes.put("Short", AbstractDataset.INT16);
-		classes.put("Integer", AbstractDataset.INT32);
-		classes.put("Long", AbstractDataset.INT64);
-		classes.put("Float", AbstractDataset.FLOAT32);
-		classes.put("Double", AbstractDataset.FLOAT64);
-		classes.put("ComplexF", AbstractDataset.COMPLEX64);
-		classes.put("ComplexD", AbstractDataset.COMPLEX128);
-		classes.put("ArrayB", AbstractDataset.ARRAYINT8);
-		classes.put("ArrayS", AbstractDataset.ARRAYINT16);
-		classes.put("ArrayI", AbstractDataset.ARRAYINT32);
-		classes.put("ArrayL", AbstractDataset.ARRAYINT64);
-		classes.put("ArrayF", AbstractDataset.ARRAYFLOAT32);
-		classes.put("ArrayD", AbstractDataset.ARRAYFLOAT64);
+		classes.put("Byte", Dataset.INT8);
+		classes.put("Short", Dataset.INT16);
+		classes.put("Integer", Dataset.INT32);
+		classes.put("Long", Dataset.INT64);
+		classes.put("Float", Dataset.FLOAT32);
+		classes.put("Double", Dataset.FLOAT64);
+		classes.put("ComplexF", Dataset.COMPLEX64);
+		classes.put("ComplexD", Dataset.COMPLEX128);
+		classes.put("ArrayB", Dataset.ARRAYINT8);
+		classes.put("ArrayS", Dataset.ARRAYINT16);
+		classes.put("ArrayI", Dataset.ARRAYINT32);
+		classes.put("ArrayL", Dataset.ARRAYINT64);
+		classes.put("ArrayF", Dataset.ARRAYFLOAT32);
+		classes.put("ArrayD", Dataset.ARRAYFLOAT64);
 	}
 
 	private Map<String, Integer> classes;
@@ -73,9 +73,9 @@ public class MathsTest {
 		final IndexIterator di = d.getIterator();
 		final int is = c.getElementsPerItem();
 
-		final double abserr = (c.getDtype() == AbstractDataset.FLOAT32 ||
-				c.getDtype() == AbstractDataset.COMPLEX64 ||
-				c.getDtype() == AbstractDataset.ARRAYFLOAT32) ? ABSERRF : ABSERRD;
+		final double abserr = (c.getDtype() == Dataset.FLOAT32 ||
+				c.getDtype() == Dataset.COMPLEX64 ||
+				c.getDtype() == Dataset.ARRAYFLOAT32) ? ABSERRF : ABSERRD;
 
 		if (is == 1) {
 			while (ci.hasNext() && di.hasNext()) {
@@ -146,7 +146,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -156,7 +156,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -182,30 +182,30 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).add((Complex) b
 											.getObjectAbs(itb.index)));
 							j += is;
 						}
-					} else if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& !(etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).add(new Complex(b.getElementDoubleAbs(itb.index), 0)));
 							j += is;
 						}
-					} else if (!(dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, new Complex(a.getElementDoubleAbs(ita.index), 0).add((Complex) b.getObjectAbs(itb.index)));
 							j += is;
 						}
 					} else {
-						if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
 								d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
 												+ ((Number) b.getObjectAbs(itb.index)).doubleValue());
@@ -261,7 +261,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Adding constant to " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -282,14 +282,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).add(zv));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue() + dv);
 						}
@@ -336,7 +336,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -346,7 +346,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -372,30 +372,30 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).subtract((Complex) b
 											.getObjectAbs(itb.index)));
 							j += is;
 						}
-					} else if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& !(etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).subtract(new Complex(b.getElementDoubleAbs(itb.index), 0)));
 							j += is;
 						}
-					} else if (!(dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, new Complex(a.getElementDoubleAbs(ita.index), 0).subtract((Complex) b.getObjectAbs(itb.index)));
 							j += is;
 						}
 					} else {
-						if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
 								d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
 												- ((Number) b.getObjectAbs(itb.index)).doubleValue());
@@ -452,7 +452,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Subtracting constant from " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -473,14 +473,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).subtract(zv));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue() - dv);
 						}
@@ -511,7 +511,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Subtracting " + dn + " from constant");
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -532,14 +532,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, zv.subtract((Complex) a.getObjectAbs(ita.index)));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, dv - ((Number) a.getObjectAbs(ita.index)).doubleValue());
 						}
@@ -587,7 +587,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -597,7 +597,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -623,30 +623,30 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).multiply((Complex) b
 											.getObjectAbs(itb.index)));
 							j += is;
 						}
-					} else if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& !(etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).multiply(b.getElementDoubleAbs(itb.index)));
 							j += is;
 						}
-					} else if (!(dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, new Complex(a.getElementDoubleAbs(ita.index), 0).multiply((Complex) b.getObjectAbs(itb.index)));
 							j += is;
 						}
 					} else {
-						if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
 								d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
 												* ((Number) b.getObjectAbs(itb.index)).doubleValue());
@@ -703,7 +703,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Multiplying constant with " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -724,14 +724,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).multiply(zv));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue() * dv);
 						}
@@ -779,7 +779,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -789,7 +789,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -815,30 +815,30 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).divide((Complex) b
 											.getObjectAbs(itb.index)));
 							j += is;
 						}
-					} else if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& !(etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).divide(new Complex(b.getElementDoubleAbs(itb.index), 0)));
 							j += is;
 						}
-					} else if (!(dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, new Complex(a.getElementDoubleAbs(ita.index), 0).divide((Complex) b.getObjectAbs(itb.index)));
 							j += is;
 						}
 					} else {
-						if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
 								d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
 												/ ((Number) b.getObjectAbs(itb.index)).doubleValue());
@@ -851,7 +851,7 @@ public class MathsTest {
 							if (a.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xa = a.getElementDoubleAbs(ita.index);
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										for (int k = 0; k < ISIZEB; k++) {
 											answer[k] = xa / b.getElementDoubleAbs(itb.index + k);
 										}
@@ -867,7 +867,7 @@ public class MathsTest {
 							} else if (b.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xb = b.getElementDoubleAbs(itb.index);
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										for (int k = 0; k < ISIZEA; k++) {
 											answer[k] = a.getElementDoubleAbs(ita.index + k) / xb;
 										}
@@ -887,7 +887,7 @@ public class MathsTest {
 								}
 							} else {
 								while (ita.hasNext() && itb.hasNext()) {
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										double v;
 										for (int k = 0; k < is; k++) {
 											v = a.getElementDoubleAbs(ita.index + k)
@@ -926,7 +926,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Dividing " + dn + " by constant");
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -947,14 +947,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).divide(zv));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue() / dv);
 						}
@@ -985,7 +985,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Dividing constant by " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -1006,14 +1006,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, zv.divide((Complex) a.getObjectAbs(ita.index)));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, dv / ((Number) a.getObjectAbs(ita.index)).doubleValue());
 						}
@@ -1061,7 +1061,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -1071,7 +1071,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -1100,7 +1100,7 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
 											% ((Number) b.getObjectAbs(itb.index)).doubleValue());
@@ -1155,7 +1155,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Remaindering " + dn + " by constant");
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -1184,7 +1184,7 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					while (ita.hasNext()) {
 						d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue() % dv);
 					}
@@ -1212,7 +1212,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Remaindering constant by " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -1241,7 +1241,7 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					while (ita.hasNext()) {
 						d.setObjectAbs(j++, dv % ((Number) a.getObjectAbs(ita.index)).doubleValue());
 					}
@@ -1286,7 +1286,7 @@ public class MathsTest {
 
 				n = 32;
 				for (int i = 0; i < SITER; i++) {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
@@ -1296,7 +1296,7 @@ public class MathsTest {
 						}
 						a = DatasetUtils.cast(aa, dtype);
 					}
-					if (etype < AbstractDataset.ARRAYINT8) {
+					if (etype < Dataset.ARRAYINT8) {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
@@ -1322,30 +1322,30 @@ public class MathsTest {
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
 					int j = 0;
-					if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).pow((Complex) b
 											.getObjectAbs(itb.index)));
 							j += is;
 						}
-					} else if ((dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& !(etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if ((dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).pow(new Complex(b.getElementDoubleAbs(itb.index), 0)));
 							j += is;
 						}
-					} else if (!(dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128)
-							&& (etype == AbstractDataset.COMPLEX64 || etype == AbstractDataset.COMPLEX128)) {
+					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
+							&& (etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
 							d.setObjectAbs(j, new Complex(a.getElementDoubleAbs(ita.index), 0).pow((Complex) b.getObjectAbs(itb.index)));
 							j += is;
 						}
 					} else {
-						if (dtype < AbstractDataset.ARRAYINT8 && etype < AbstractDataset.ARRAYINT8) {
+						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
 								d.setObjectAbs(j++, Math.pow(((Number) a.getObjectAbs(ita.index)).doubleValue(),
 												((Number) b.getObjectAbs(itb.index)).doubleValue()));
@@ -1359,7 +1359,7 @@ public class MathsTest {
 							if (a.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xa = a.getElementDoubleAbs(ita.index);
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										for (int k = 0; k < ISIZEB; k++) {
 											answer[k] = Math.pow(xa, b.getElementDoubleAbs(itb.index + k));
 										}
@@ -1375,7 +1375,7 @@ public class MathsTest {
 							} else if (b.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xb = b.getElementDoubleAbs(itb.index);
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										for (int k = 0; k < ISIZEA; k++) {
 											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k), xb);
 										}
@@ -1390,7 +1390,7 @@ public class MathsTest {
 								}
 							} else {
 								while (ita.hasNext() && itb.hasNext()) {
-									if (rtype == AbstractDataset.ARRAYFLOAT32 || rtype == AbstractDataset.ARRAYFLOAT64) {
+									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
 										for (int k = 0; k < is; k++) {
 											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k),
 													b.getElementDoubleAbs(itb.index + k));
@@ -1426,7 +1426,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Powering " + dn + " by constant");
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -1447,14 +1447,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).pow(zv));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, Math.pow(((Number) a.getObjectAbs(ita.index)).doubleValue(), dv));
 						}
@@ -1485,7 +1485,7 @@ public class MathsTest {
 			n = 32;
 			System.out.println("Powering constant by " + dn);
 			for (int i = 0; i < SITER; i++) {
-				if (dtype < AbstractDataset.ARRAYINT8) {
+				if (dtype < Dataset.ARRAYINT8) {
 					a = Random.randn(n);
 					a.imultiply(100);
 					a = a.cast(dtype);
@@ -1506,14 +1506,14 @@ public class MathsTest {
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
-				if (dtype == AbstractDataset.COMPLEX64 || dtype == AbstractDataset.COMPLEX128) {
+				if (dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128) {
 					final int is = d.getElementsPerItem();
 					while (ita.hasNext()) {
 						d.setObjectAbs(j, zv.pow((Complex) a.getObjectAbs(ita.index)));
 						j += is;
 					}
 				} else {
-					if (dtype < AbstractDataset.ARRAYINT8) {
+					if (dtype < Dataset.ARRAYINT8) {
 						while (ita.hasNext()) {
 							d.setObjectAbs(j++, Math.pow(dv, ((Number) a.getObjectAbs(ita.index)).doubleValue()));
 						}

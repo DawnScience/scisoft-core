@@ -132,7 +132,7 @@ public class StatsTest {
 
 	@Test
 	public void testNaNs() {
-		AbstractDataset a = AbstractDataset.arange(1, 7, 1, AbstractDataset.FLOAT64);
+		AbstractDataset a = AbstractDataset.arange(1, 7, 1, Dataset.FLOAT64);
 
 		assertEquals("Sum", 21, ((Number) a.sum()).doubleValue(), 1e-6);
 		assertEquals("Product", 720, (Double) Stats.product(a), 1e-6);
@@ -212,7 +212,7 @@ public class StatsTest {
 
 	@Test
 	public void testOutlierValues() {
-		AbstractDataset a = AbstractDataset.zeros(new int[] {20}, AbstractDataset.FLOAT64);
+		AbstractDataset a = AbstractDataset.zeros(new int[] {20}, Dataset.FLOAT64);
 
 		double[] o = Stats.outlierValues(a, 0.01, 99.9, 10);
 		assertEquals(0, o[0], 1e-4);

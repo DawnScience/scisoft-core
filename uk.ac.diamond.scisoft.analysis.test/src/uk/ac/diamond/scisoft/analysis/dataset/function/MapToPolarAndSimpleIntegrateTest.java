@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  *
@@ -47,7 +48,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,1.,true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);
@@ -130,7 +131,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndSimpleIntegrate2() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(360,360,50.,0.,200.,45., 1., true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);
@@ -148,7 +149,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndSimpleIntegrate3() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(250,250,50.,22.5,200.,-22.5, 1., true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, AbstractDataset.INT8);
+		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);

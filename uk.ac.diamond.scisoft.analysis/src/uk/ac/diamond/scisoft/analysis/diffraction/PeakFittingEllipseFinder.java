@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
@@ -145,7 +146,7 @@ public class PeakFittingEllipseFinder {
 			double min = sub.min(true).doubleValue();
 			sub = sub.setByBoolean(min, badVals);
 			
-			AbstractDataset xAx = AbstractDataset.arange(sub.getSize(), AbstractDataset.INT32);
+			AbstractDataset xAx = AbstractDataset.arange(sub.getSize(), Dataset.INT32);
 			
 			sub.isubtract(min);
 			
@@ -190,8 +191,8 @@ public class PeakFittingEllipseFinder {
 			}
 		}
 		
-		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);
-		AbstractDataset widths = AbstractDataset.zeros(new int[] {gaussianList.size()}, AbstractDataset.FLOAT64);
+		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
+		AbstractDataset widths = AbstractDataset.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
 			heights.set(gaussianList.get(i).getHeight(), i);

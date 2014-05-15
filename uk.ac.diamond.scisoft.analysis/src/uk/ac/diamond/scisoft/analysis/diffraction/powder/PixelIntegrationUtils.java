@@ -24,6 +24,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -43,7 +44,7 @@ public class PixelIntegrationUtils {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
 
-		AbstractDataset radialArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset radialArray = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = radialArray.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -71,7 +72,7 @@ public class PixelIntegrationUtils {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
 
-		AbstractDataset radialArray = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset radialArray = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = radialArray.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -99,7 +100,7 @@ public class PixelIntegrationUtils {
 	
 	public static AbstractDataset generateAzimuthalArrayRadians(double[] beamCentre, int[] shape, boolean centre) {
 		
-		AbstractDataset out = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset out = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 		
 		PositionIterator iter = out.getPositionIterator();
 
@@ -118,8 +119,8 @@ public class PixelIntegrationUtils {
 	
 	public static AbstractDataset[] generateMinMaxAzimuthalArrayRadians(double[] beamCentre, int[] shape) {
 		
-		AbstractDataset aMax = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
-		AbstractDataset aMin = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		AbstractDataset aMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		AbstractDataset aMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = aMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -163,15 +164,15 @@ public class PixelIntegrationUtils {
 	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, AbstractDataset array2Dx) {
 		
 		DoubleDataset[] inXy1D = new DoubleDataset[2];
-		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], AbstractDataset.FLOAT64);
-		inXy1D[1] = (DoubleDataset)DatasetUtils.cast(xy1d[1], AbstractDataset.FLOAT64);
+		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], Dataset.FLOAT64);
+		inXy1D[1] = (DoubleDataset)DatasetUtils.cast(xy1d[1], Dataset.FLOAT64);
 		
 		double min = inXy1D[0].min().doubleValue();
 		double max = inXy1D[0].max().doubleValue();
 		
 		SplineInterpolator si = new SplineInterpolator();
 		PolynomialSplineFunction poly = si.interpolate(inXy1D[0].getData(),inXy1D[1].getData());
-		AbstractDataset image = AbstractDataset.zeros(array2Dx.getShape(),AbstractDataset.FLOAT64);
+		AbstractDataset image = AbstractDataset.zeros(array2Dx.getShape(),Dataset.FLOAT64);
 		double[] buf = (double[])image.getBuffer();
 		
 		IndexIterator iterator = array2Dx.getIterator();

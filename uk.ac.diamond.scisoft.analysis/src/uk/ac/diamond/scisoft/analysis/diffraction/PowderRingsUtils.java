@@ -51,6 +51,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
@@ -488,7 +489,7 @@ public class PowderRingsUtils {
 		rroi.setClippingCompensation(true);
 		AbstractDataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
 
-		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), AbstractDataset.INT), profile, PEAK_SMOOTHING);
+		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), Dataset.INT), profile, PEAK_SMOOTHING);
 		if (mon != null)
 			mon.worked(profile.getSize());
 

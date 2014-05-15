@@ -36,17 +36,17 @@ public class FFTTest {
 
 	@Test
 	public void test1D() {
-		testfft1d(AbstractDataset.FLOAT32);
-		testfft1d(AbstractDataset.FLOAT64);
+		testfft1d(Dataset.FLOAT32);
+		testfft1d(Dataset.FLOAT64);
 	}
 
 	private void testfft1d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -203,17 +203,17 @@ public class FFTTest {
 
 	@Test
 	public void test2D() {
-		testfft2d(AbstractDataset.FLOAT32);
-		testfft2d(AbstractDataset.FLOAT64);
+		testfft2d(Dataset.FLOAT32);
+		testfft2d(Dataset.FLOAT64);
 	}
 
 	private void testfft2d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -255,7 +255,7 @@ public class FFTTest {
 				-12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0., 0., 10., 0., -10., 55.05527682, 0., 0., 0.,
 				12.99678785, 0., 0., 0., -12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0. };
 
-		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = FFT.fft2(a, null, null);
 		assertEquals("2D double: rank", 3, f.getRank());
@@ -382,17 +382,17 @@ public class FFTTest {
 
 	@Test
 	public void test3D() {
-		testfft3d(AbstractDataset.FLOAT32);
-		testfft3d(AbstractDataset.FLOAT64);
+		testfft3d(Dataset.FLOAT32);
+		testfft3d(Dataset.FLOAT64);
 	}
 
 	private void testfft3d(int dtype) {
 		double abstol = 0;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			abstol = fabstol;
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			abstol = dabstol;
 			break;
 		}
@@ -424,7 +424,7 @@ public class FFTTest {
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
 
-		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = FFT.fftn(a, null, null);
 		assertEquals("3D double: rank", 3, f.getRank());
@@ -560,7 +560,7 @@ public class FFTTest {
 				0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14,
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
-		AbstractDataset b = AbstractDataset.arange(120, AbstractDataset.FLOAT64).reshape(2, 3, 5, 4);
+		AbstractDataset b = AbstractDataset.arange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
 		f = FFT.fftn(b, null, new int[] { -3, -2, -1 });
 		assertEquals("3D double: rank", 4, f.getRank());
 		assertEquals("3D double: shape", 2, f.getShape()[0]);
@@ -777,7 +777,7 @@ public class FFTTest {
 		AbstractDataset a;
 		AbstractDataset t;
 
-		a = AbstractDataset.arange(6, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(6, Dataset.FLOAT64);
 		t = FFT.fftshift(a, null);
 		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {3, 4, 5, 0, 1, 2}), t, 1e-12, 1e-12);
 		System.out.println(t.toString(true));
@@ -816,7 +816,7 @@ public class FFTTest {
 		System.out.println(t.toString(true));
 		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
 
-		a = AbstractDataset.arange(7, AbstractDataset.FLOAT64);
+		a = AbstractDataset.arange(7, Dataset.FLOAT64);
 		t = FFT.fftshift(a, null);
 		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {4, 5, 6, 0, 1, 2, 3}), t, 1e-12, 1e-12);
 		System.out.println(t.toString(true));

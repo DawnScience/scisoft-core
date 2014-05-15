@@ -190,7 +190,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_1D ffft = new FloatDCT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -207,7 +207,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDCT_1D dfft = new DoubleDCT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -241,7 +241,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = new FloatDataset(newShape(a.shape, s, axes));
@@ -257,7 +257,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = new DoubleDataset(newShape(a.shape, s, axes));
@@ -290,7 +290,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
@@ -307,7 +307,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
@@ -470,7 +470,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_1D ffft = new FloatDCT_1D(n);
 			float[] fdata = null;
 			shape = a.getShape().clone();
@@ -488,7 +488,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDCT_1D dfft = new DoubleDCT_1D(n);
 			double[] ddata = null;
 			shape = a.getShape().clone();
@@ -523,7 +523,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = new FloatDataset(newShape(a.shape, s, axes));
@@ -539,7 +539,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = new DoubleDataset(newShape(a.shape, s, axes));
@@ -572,7 +572,7 @@ public class DCT {
 		boolean[] hit;
 
 		switch (a.getDtype()) {
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
 			result = new FloatDataset(newShape(a.shape, s, axes));
@@ -588,7 +588,7 @@ public class DCT {
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 				DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
 				double[] ddata = null;
 				result = new DoubleDataset(newShape(a.shape, s, axes));

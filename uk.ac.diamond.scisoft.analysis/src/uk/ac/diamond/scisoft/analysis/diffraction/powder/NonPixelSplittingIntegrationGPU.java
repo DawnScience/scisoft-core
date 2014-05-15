@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -63,7 +64,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		if (binEdges == null) {
-			binEdges = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, AbstractDataset.FLOAT64);
+			binEdges = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 		}
 		final double[] edges = binEdges.getData();
 		final double lo = edges[0];

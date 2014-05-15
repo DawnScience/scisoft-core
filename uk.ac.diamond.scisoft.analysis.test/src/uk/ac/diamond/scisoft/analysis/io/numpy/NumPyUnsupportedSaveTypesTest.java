@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
@@ -38,13 +39,13 @@ public class NumPyUnsupportedSaveTypesTest {
 	@Parameters
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
-		params.add(new Object[] { AbstractDataset.ARRAYINT8 });
-		params.add(new Object[] { AbstractDataset.ARRAYINT16 });
-		params.add(new Object[] { AbstractDataset.RGB });
-		params.add(new Object[] { AbstractDataset.ARRAYINT32 });
-		params.add(new Object[] { AbstractDataset.ARRAYINT64 });
-		params.add(new Object[] { AbstractDataset.ARRAYFLOAT32 });
-		params.add(new Object[] { AbstractDataset.ARRAYFLOAT64 });
+		params.add(new Object[] { Dataset.ARRAYINT8 });
+		params.add(new Object[] { Dataset.ARRAYINT16 });
+		params.add(new Object[] { Dataset.RGB });
+		params.add(new Object[] { Dataset.ARRAYINT32 });
+		params.add(new Object[] { Dataset.ARRAYINT64 });
+		params.add(new Object[] { Dataset.ARRAYFLOAT32 });
+		params.add(new Object[] { Dataset.ARRAYFLOAT64 });
 		return params;
 	}
 

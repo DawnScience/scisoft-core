@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -76,10 +76,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		int nc = coordinates.length;
 		this.coords = new DoubleDataset[nc];
 		for (int i = 0; i < nc; i++) {
-			coords[i] = (DoubleDataset) DatasetUtils.cast(coordinates[i], AbstractDataset.FLOAT64);
+			coords[i] = (DoubleDataset) DatasetUtils.cast(coordinates[i], Dataset.FLOAT64);
 		}
 
-		this.data = (DoubleDataset) DatasetUtils.cast(data, AbstractDataset.FLOAT64);
+		this.data = (DoubleDataset) DatasetUtils.cast(data, Dataset.FLOAT64);
 		initializeParameters();
 		internalOptimize();
 	}
@@ -129,7 +129,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	public DoubleDataset calculateValues() {
-		return (DoubleDataset) DatasetUtils.cast(function.calculateValues(coords), AbstractDataset.FLOAT64);
+		return (DoubleDataset) DatasetUtils.cast(function.calculateValues(coords), Dataset.FLOAT64);
 	}
 
 	public double calculateResidual(double[] parameters) {

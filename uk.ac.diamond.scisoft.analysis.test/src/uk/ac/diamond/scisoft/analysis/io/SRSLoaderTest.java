@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -74,9 +75,9 @@ public class SRSLoaderTest {
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 7, dh.size());
 			int dt = dh.getDataset(6).getDtype();
-			if (dt == AbstractDataset.FLOAT32)
+			if (dt == Dataset.FLOAT32)
 				assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
-			if (dt == AbstractDataset.FLOAT64)
+			if (dt == Dataset.FLOAT64)
 				assertEquals("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1), 10.);
 			assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1), 1.);
 		} catch (ScanFileHolderException e) {
@@ -127,9 +128,9 @@ public class SRSLoaderTest {
         if (dh==null || dh.getNames().length<1) throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());
 		int dt = AbstractDataset.getDType(dh.getDataset(6));
-		if (dt == AbstractDataset.FLOAT32)
+		if (dt == Dataset.FLOAT32)
 			assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
-		if (dt == AbstractDataset.FLOAT64)
+		if (dt == Dataset.FLOAT64)
 			assertEquals("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1), 10.);
 		assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1), 1.);
 	}
@@ -259,8 +260,8 @@ public class SRSLoaderTest {
 	public void testSpacesInNames() throws Exception {
 		DataHolder dh = new DataHolder();
 		String fileName = "quoted.dat";
-		AbstractDataset data1 = AbstractDataset.arange(20, AbstractDataset.INT32);
-		AbstractDataset data2 = DatasetUtils.linSpace(0, 576000, 20, AbstractDataset.FLOAT64);
+		AbstractDataset data1 = AbstractDataset.arange(20, Dataset.INT32);
+		AbstractDataset data2 = DatasetUtils.linSpace(0, 576000, 20, Dataset.FLOAT64);
 		try {
 			dh.addDataset("col1", data1);
 			dh.addDataset("testing data", data2);

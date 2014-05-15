@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -56,7 +57,7 @@ public abstract class AbstractPixelIntegration2D extends AbstractPixelIntegratio
 			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nBinsChi, AbstractDataset.FLOAT64);
+			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nBinsChi, Dataset.FLOAT64);
 		}
 		
 		axis.setName("chi");

@@ -25,7 +25,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.general.ConjugateGradientFormula;
 import org.apache.commons.math.optimization.general.NonLinearConjugateGradientOptimizer;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -45,10 +45,10 @@ public class ApacheConjugateGradient implements IOptimizer {
 		final int numCoords = coords.length;
 		final DoubleDataset[] newCoords = new DoubleDataset[numCoords];
 		for (int i = 0; i < numCoords; i++) {
-			newCoords[i] = (DoubleDataset) DatasetUtils.convertToAbstractDataset(coords[i]).cast(AbstractDataset.FLOAT64);
+			newCoords[i] = (DoubleDataset) DatasetUtils.convertToAbstractDataset(coords[i]).cast(Dataset.FLOAT64);
 		}
 
-		final DoubleDataset values = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
+		final DoubleDataset values = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(Dataset.FLOAT64);
 
 		NonLinearConjugateGradientOptimizer cg = new NonLinearConjugateGradientOptimizer(ConjugateGradientFormula.POLAK_RIBIERE);
 

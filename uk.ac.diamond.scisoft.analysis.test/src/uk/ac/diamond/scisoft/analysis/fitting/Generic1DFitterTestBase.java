@@ -25,6 +25,7 @@ import java.util.List;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
@@ -49,7 +50,7 @@ public abstract class Generic1DFitterTestBase {
 	static final double threshold = 0.10;
 	static final int numPeaks = -1;
 	static final int smoothing = 5;
-	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
+	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, Dataset.FLOAT64);
 
 	static final long seed = 12357L;
 
@@ -179,7 +180,7 @@ public abstract class Generic1DFitterTestBase {
 	@SuppressWarnings("unused")
 	private DoubleDataset addNoiseToDataSet(DoubleDataset data) {
 		Random.seed(123568);
-		DoubleDataset noise = (DoubleDataset) Random.poisson(lambda, dataRange).cast(AbstractDataset.FLOAT64);
+		DoubleDataset noise = (DoubleDataset) Random.poisson(lambda, dataRange).cast(Dataset.FLOAT64);
 		noise = (DoubleDataset) Maths.multiply(noise, 0.01);
 		return (DoubleDataset) Maths.add(data, noise);
 	}

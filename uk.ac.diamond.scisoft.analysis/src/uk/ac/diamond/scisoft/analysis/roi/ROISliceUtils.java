@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -142,14 +143,14 @@ public class ROISliceUtils {
 		
 		sl[dim] = new Slice(0,1);
 
-		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl).squeeze(),AbstractDataset.FLOAT32);
-		AbstractDataset result = AbstractDataset.zeros(datasetStart, AbstractDataset.FLOAT32);
+		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl).squeeze(),Dataset.FLOAT32);
+		AbstractDataset result = AbstractDataset.zeros(datasetStart, Dataset.FLOAT32);
 		AbstractDataset datasetEnd = AbstractDataset.zeros(datasetStart);
 
 		for (int i = 1; i < (end-start+1); i++) {
 			sl[dim].setStart(i);
 			sl[dim].setStop(i+1);
-			datasetEnd = DatasetUtils.cast(dataBlock.getSlice(sl),AbstractDataset.FLOAT32);
+			datasetEnd = DatasetUtils.cast(dataBlock.getSlice(sl),Dataset.FLOAT32);
 			datasetStart.iadd(datasetEnd);
 			datasetStart.idivide(2.0);
 			double val = axis.getDouble(start+i)-axis.getDouble(start+i-1);
@@ -183,10 +184,10 @@ public class ROISliceUtils {
 		
 		sl[dim].setStop(start+1);
 		
-		AbstractDataset dataStart = DatasetUtils.cast((AbstractDataset)lz.getSlice(sl),AbstractDataset.FLOAT32);
+		AbstractDataset dataStart = DatasetUtils.cast(lz.getSlice(sl),Dataset.FLOAT32);
 		sl[dim].setStart(end);
 		sl[dim].setStop(end+1);
-		dataStart.iadd(DatasetUtils.cast((AbstractDataset)lz.getSlice(sl),AbstractDataset.FLOAT32));
+		dataStart.iadd(DatasetUtils.cast(lz.getSlice(sl),Dataset.FLOAT32));
 		dataStart.idivide(2.0);
 		dataStart.imultiply(axis.getDouble(end)-axis.getDouble(start));
 		return dataStart.squeeze();

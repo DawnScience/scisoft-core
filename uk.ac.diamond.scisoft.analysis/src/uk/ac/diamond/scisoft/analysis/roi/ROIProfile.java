@@ -21,6 +21,7 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -103,7 +104,7 @@ public class ROIProfile {
 		// normalise plot for case when region is clipped to size of image
 		// and/or when a mask is specified
 		if (mask == null) {
-			mask = AbstractDataset.ones(data.getShape(), AbstractDataset.BOOL);
+			mask = AbstractDataset.ones(data.getShape(), Dataset.BOOL);
 		}
 
 		List<AbstractDataset> dsets = map.value(mask);

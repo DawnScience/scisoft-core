@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
 public class ImageStackLoaderExTest {
@@ -70,7 +71,7 @@ public class ImageStackLoaderExTest {
 	private void makeFile(String filePath, Object multiplier) throws ScanFileHolderException {
 		AbstractDataset data;
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.eye(sizex, sizey, 0, AbstractDataset.INT16);
+		data = DatasetUtils.eye(sizex, sizey, 0, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		data.imultiply(multiplier);
 		dha.addDataset("testing data", data);
@@ -87,7 +88,7 @@ public class ImageStackLoaderExTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
 		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(AbstractDataset.INT32, loaderEx.getDtype());
+		assertEquals(Dataset.INT32, loaderEx.getDtype());
 		int[] shape = loaderEx.getShape();
 		assertArrayEquals(new int[] { 2, sizex, sizey }, shape);
 
@@ -126,7 +127,7 @@ public class ImageStackLoaderExTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
 		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(AbstractDataset.INT32, loaderEx.getDtype());
+		assertEquals(Dataset.INT32, loaderEx.getDtype());
 		int[] shape = loaderEx.getShape();
 		assertArrayEquals(new int[] { multipliers.length, sizex, sizey }, shape);
 
@@ -203,7 +204,7 @@ public class ImageStackLoaderExTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { firstDim,secondDim };
 		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(AbstractDataset.INT32, loaderEx.getDtype());
+		assertEquals(Dataset.INT32, loaderEx.getDtype());
 		int[] shape = loaderEx.getShape();
 		assertArrayEquals(new int[] { firstDim, secondDim, sizex, sizey }, shape);
 

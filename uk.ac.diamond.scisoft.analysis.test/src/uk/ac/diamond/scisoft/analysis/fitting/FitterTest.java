@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -85,7 +86,7 @@ public class FitterTest {
 		DoubleDataset yAxis = DoubleDataset.arange(-20.0,20.0,yAxisStep);
 		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
-		DoubleDataset ds = (DoubleDataset) AbstractDataset.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , AbstractDataset.FLOAT64);
+		DoubleDataset ds = (DoubleDataset) AbstractDataset.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);
 		
 		IndexIterator iter = ds.getIterator(true);
 		int[] pos;

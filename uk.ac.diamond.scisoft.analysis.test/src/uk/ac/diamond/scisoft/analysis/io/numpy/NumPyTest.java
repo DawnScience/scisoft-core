@@ -31,6 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
@@ -69,11 +70,11 @@ public class NumPyTest {
 	}
 
 	static int[][] shapesToTest = { { 1 }, { 100 }, { 1000000 }, { 10, 10 }, { 5, 6, 7, 8 } };
-	static Object[][] types = new Object[][] { { "'|b1'", AbstractDataset.BOOL }, { "'|i1'", AbstractDataset.INT8 },
-		{ "'<i2'", AbstractDataset.INT16 }, { "'<i4'", AbstractDataset.INT32 }, { "'<i8'", AbstractDataset.INT64 },
-		{ "'|u1'", AbstractDataset.INT8, true }, { "'<u2'", AbstractDataset.INT16, true }, { "'<u4'", AbstractDataset.INT32, true },
-		{ "'<f4'", AbstractDataset.FLOAT32 }, { "'<f8'", AbstractDataset.FLOAT64 },
-		{ "'<c8'", AbstractDataset.COMPLEX64 }, { "'<c16'", AbstractDataset.COMPLEX128 },};
+	static Object[][] types = new Object[][] { { "'|b1'", Dataset.BOOL }, { "'|i1'", Dataset.INT8 },
+		{ "'<i2'", Dataset.INT16 }, { "'<i4'", Dataset.INT32 }, { "'<i8'", Dataset.INT64 },
+		{ "'|u1'", Dataset.INT8, true }, { "'<u2'", Dataset.INT16, true }, { "'<u4'", Dataset.INT32, true },
+		{ "'<f4'", Dataset.FLOAT32 }, { "'<f8'", Dataset.FLOAT64 },
+		{ "'<c8'", Dataset.COMPLEX64 }, { "'<c16'", Dataset.COMPLEX128 },};
 
 	@Parameters
 	public static Collection<Object[]> configs() {
@@ -85,8 +86,8 @@ public class NumPyTest {
 			for (int j = 0; j < shapesToTest.length; j++) {
 				params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], false, unsigned });
 				switch ((Integer) type[1]) {
-				case AbstractDataset.FLOAT32:
-				case AbstractDataset.FLOAT64:
+				case Dataset.FLOAT32:
+				case Dataset.FLOAT64:
 					// Add some Inf values
 					params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], true, unsigned });
 				}
@@ -128,7 +129,7 @@ public class NumPyTest {
 
 	private AbstractDataset createDataset() {
 		final AbstractDataset ds;
-		if (abstractDatasetDataType != AbstractDataset.BOOL) {
+		if (abstractDatasetDataType != Dataset.BOOL) {
 			ds = AbstractDataset.arange(len, abstractDatasetDataType);
 		} else {
 			// creates an array of all False, so make two entries True if the array is big enough
@@ -150,7 +151,7 @@ public class NumPyTest {
 	private String createNumPyArray(String postCommands) {
 		StringBuilder script = new StringBuilder();
 		script.append("import numpy; ");
-		if (abstractDatasetDataType != AbstractDataset.BOOL) {
+		if (abstractDatasetDataType != Dataset.BOOL) {
 			script.append("exp=numpy.arange(" + len + ", dtype=" + numpyDataType + "); ");
 		} else {
 			script.append("exp=numpy.array([False] * " + len + ", dtype=" + numpyDataType + "); ");

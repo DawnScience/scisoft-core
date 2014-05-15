@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -59,7 +60,7 @@ public class RawBinaryTest {
 	public void test2DSaveFile() throws ScanFileHolderException {
 		String filePath2D = "test2DSaveFile.raw";
 		DataHolder dh = new DataHolder();
-		data = DatasetUtils.linSpace(0, range, range, AbstractDataset.FLOAT64);
+		data = DatasetUtils.linSpace(0, range, range, Dataset.FLOAT64);
 		data.setShape(sizex, sizey);
 		data.setName("test 2D");
 		testValue1 = data.getDouble(sizex-1, 0);
@@ -75,7 +76,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath2D).loadFile();
 			AbstractDataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), AbstractDataset.FLOAT64);
+			assertEquals(data.getDtype(), Dataset.FLOAT64);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 2D");
 			assertEquals(data.getShape().length, 2);
@@ -97,7 +98,7 @@ public class RawBinaryTest {
 	public void test1DSaveFile() throws ScanFileHolderException {
 		String filePath1D = "test1DSaveFile.raw";
 		DataHolder dh = new DataHolder();
-		data = DatasetUtils.linSpace(0, range, range, AbstractDataset.FLOAT32);
+		data = DatasetUtils.linSpace(0, range, range, Dataset.FLOAT32);
 		data.setName("test 1D");
 		try {
 			dh.addDataset("testing data", data);
@@ -110,7 +111,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath1D).loadFile();
 			AbstractDataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), AbstractDataset.FLOAT32);
+			assertEquals(data.getDtype(), Dataset.FLOAT32);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 1D");
 			assertEquals(data.getShape().length, 1);
@@ -124,7 +125,7 @@ public class RawBinaryTest {
 	public void testLoaderFactory() throws Exception {
 		String filePath1D = "testLoaderFactory.raw";
 		IDataHolder dh = new DataHolder();
-		data = DatasetUtils.linSpace(0, range, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, range, range, Dataset.INT16);
 		data.setName("test factory");
 		try {
 			dh.addDataset("testing data", data);
@@ -137,7 +138,7 @@ public class RawBinaryTest {
 		dh = LoaderFactory.getData(testScratchDirectoryName + filePath1D, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
 		IDataset data = dh.getDataset(0);
-		assertEquals(AbstractDataset.getDType(data), AbstractDataset.INT16);
+		assertEquals(AbstractDataset.getDType(data), Dataset.INT16);
 		assertEquals(data.getSize(), range);
 		assertEquals(data.getName(), "test factory");
 		assertEquals(data.getShape().length, 1);

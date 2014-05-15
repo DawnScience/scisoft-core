@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -228,7 +229,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 			calcCachedParameters();
 
 		double w = 2*(halfwl + halfwg);
-		AbstractDataset x = DatasetUtils.linSpace(pos - w, pos + w, 200, AbstractDataset.FLOAT64);
+		AbstractDataset x = DatasetUtils.linSpace(pos - w, pos + w, 200, Dataset.FLOAT64);
 		DoubleDataset data = calculateValues(x);
 		data = (DoubleDataset) Maths.abs(data);
 		List<Double> crossings = DatasetUtils.crossings(x, data, height / 2);

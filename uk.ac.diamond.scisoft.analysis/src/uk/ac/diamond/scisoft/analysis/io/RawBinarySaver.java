@@ -35,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexFloatDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -111,23 +112,23 @@ public class RawBinarySaver implements IFileSaver {
 			AbstractDataset sdata = DatasetUtils.convertToAbstractDataset(dh.getDataset(i));
 			int dtype = sdata.getDtype();
 			switch (dtype) {
-			case AbstractDataset.ARRAYINT8:
-				dtype = AbstractDataset.INT8;
+			case Dataset.ARRAYINT8:
+				dtype = Dataset.INT8;
 				break;
-			case AbstractDataset.ARRAYINT16:
-				dtype = AbstractDataset.INT16;
+			case Dataset.ARRAYINT16:
+				dtype = Dataset.INT16;
 				break;
-			case AbstractDataset.ARRAYINT32:
-				dtype = AbstractDataset.INT32;
+			case Dataset.ARRAYINT32:
+				dtype = Dataset.INT32;
 				break;
-			case AbstractDataset.ARRAYINT64:
-				dtype = AbstractDataset.INT64;
+			case Dataset.ARRAYINT64:
+				dtype = Dataset.INT64;
 				break;
-			case AbstractDataset.ARRAYFLOAT32:
-				dtype = AbstractDataset.FLOAT32;
+			case Dataset.ARRAYFLOAT32:
+				dtype = Dataset.FLOAT32;
 				break;
-			case AbstractDataset.ARRAYFLOAT64:
-				dtype = AbstractDataset.FLOAT64;
+			case Dataset.ARRAYFLOAT64:
+				dtype = Dataset.FLOAT64;
 				break;
 			}
 
@@ -202,7 +203,7 @@ public class RawBinarySaver implements IFileSaver {
 		dbBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
 		switch (dtype) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			BooleanDataset b = (BooleanDataset) sdata;
 			boolean[] dataBln = b.getData();
 			IndexIterator iter = b.getIterator();
@@ -210,7 +211,7 @@ public class RawBinarySaver implements IFileSaver {
 				dbBuffer.put((byte) (dataBln[iter.index] ? 1 : 0));
 			}
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			ByteDataset i8 = (ByteDataset) sdata;
 			byte[] dataB = i8.getData();
 			iter = i8.getIterator();
@@ -225,7 +226,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			ShortDataset i16 = (ShortDataset) sdata;
 			ShortBuffer sDataBuffer = dbBuffer.asShortBuffer();
 			short[] dataS = i16.getData();
@@ -241,7 +242,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			IntegerDataset i32 = (IntegerDataset) sdata;
 			IntBuffer iDataBuffer = dbBuffer.asIntBuffer();
 			int[] dataI = i32.getData();
@@ -257,7 +258,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			LongDataset i64 = (LongDataset) sdata;
 			LongBuffer lDataBuffer = dbBuffer.asLongBuffer();
 			long[] dataL = i64.getData();
@@ -273,7 +274,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatDataset f32 = (FloatDataset) sdata;
 			FloatBuffer fDataBuffer = dbBuffer.asFloatBuffer();
 			float[] dataFlt = f32.getData();
@@ -289,7 +290,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDataset f64 = (DoubleDataset) sdata;
 			DoubleBuffer dataBuffer = dbBuffer.asDoubleBuffer();
 			double[] dataDbl = f64.getData();
@@ -305,7 +306,7 @@ public class RawBinarySaver implements IFileSaver {
 				}
 			}
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			ComplexFloatDataset c64 = (ComplexFloatDataset) sdata;
 			fDataBuffer = dbBuffer.asFloatBuffer();
 			dataFlt = c64.getData();
@@ -315,7 +316,7 @@ public class RawBinarySaver implements IFileSaver {
 				fDataBuffer.put(dataFlt[iter.index+1]);
 			}
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			ComplexDoubleDataset c128 = (ComplexDoubleDataset) sdata;
 			dataBuffer = dbBuffer.asDoubleBuffer();
 			dataDbl = c128.getData();

@@ -26,8 +26,8 @@ import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateFunctionPenal
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -494,7 +494,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public double residual(boolean allValues, IDataset data, IDataset weight, IDataset... coords) {
 		double residual = 0;
 		if (allValues) {
-			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(AbstractDataset.FLOAT64);
+			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(Dataset.FLOAT64);
 			residual = ddata.residual(calculateValues(coords), DatasetUtils.convertToAbstractDataset(weight), false);
 		} else {
 			// stochastic sampling of coords;

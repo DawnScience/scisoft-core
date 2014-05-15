@@ -1723,7 +1723,7 @@ public class MathsTest {
 
 	@Test
 	public void testLinearInterpolation() {
-		AbstractDataset xa = AbstractDataset.arange(60, AbstractDataset.INT32);
+		AbstractDataset xa = AbstractDataset.arange(60, Dataset.INT32);
 		xa.iadd(1);
 
 		Assert.assertEquals(0, Maths.getLinear(xa, -1.25), 1e-15);

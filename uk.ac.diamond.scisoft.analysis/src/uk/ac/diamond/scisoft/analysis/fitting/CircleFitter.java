@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -318,8 +319,8 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 		AbstractDataset y = (AbstractDataset)iy;
 		double mx = (Double) x.mean();
 		double my = (Double) y.mean();
-		x = Maths.subtract(x.cast(AbstractDataset.FLOAT64), mx);
-		y = Maths.subtract(y.cast(AbstractDataset.FLOAT64), my);
+		x = Maths.subtract(x.cast(Dataset.FLOAT64), mx);
+		y = Maths.subtract(y.cast(Dataset.FLOAT64), my);
 		final DoubleDataset z = (DoubleDataset) Maths.square(x).iadd(Maths.square(y));
 		final DoubleDataset o = DoubleDataset.ones(x.getShape());
 

@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 
@@ -54,7 +55,7 @@ public class CalibrationUtilsTest {
 	@Test
 	public void selectSpecifiedPeaks() {
 		
-		AbstractDataset testpoints = AbstractDataset.arange(0, 19, 2.2, AbstractDataset.FLOAT64);
+		AbstractDataset testpoints = AbstractDataset.arange(0, 19, 2.2, Dataset.FLOAT64);
 		
 		AbstractDataset calibPoints = CalibrationUtils.selectSpecifiedPeaks(testpoints, peaks);
 		

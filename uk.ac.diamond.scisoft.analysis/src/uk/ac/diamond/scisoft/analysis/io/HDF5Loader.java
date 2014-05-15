@@ -910,34 +910,34 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private static int getDtype(final int dclass, final int dsize, final boolean isComplex) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
-			return AbstractDataset.STRING;
+			return uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING;
 		case Datatype.CLASS_CHAR:
 		case Datatype.CLASS_INTEGER:
 			switch (dsize) {
 			case 1:
-				return AbstractDataset.INT8;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8;
 			case 2:
-				return AbstractDataset.INT16;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16;
 			case 4:
-				return AbstractDataset.INT32;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32;
 			case 8:
-				return AbstractDataset.INT64;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT64;
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
 			if (isComplex) {
 				switch (dsize) {
 				case 4:
-					return AbstractDataset.COMPLEX64;
+					return uk.ac.diamond.scisoft.analysis.dataset.Dataset.COMPLEX64;
 				case 8:
-					return AbstractDataset.COMPLEX128;
+					return uk.ac.diamond.scisoft.analysis.dataset.Dataset.COMPLEX128;
 				}
 			}
 			switch (dsize) {
 			case 4:
-				return AbstractDataset.FLOAT32;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT32;
 			case 8:
-				return AbstractDataset.FLOAT64;
+				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT64;
 			}
 			break;
 		}
@@ -1021,31 +1021,31 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			final boolean extend) {
 		AbstractDataset ds = null;
 		switch (dtype) {
-		case AbstractDataset.FLOAT32:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT32:
 			float[] fData = (float[]) data;
 			ds = new FloatDataset(fData, shape);
 			break;
-		case AbstractDataset.FLOAT64:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT64:
 			double[] dData = (double[]) data;
 			ds = new DoubleDataset(dData, shape);
 			break;
-		case AbstractDataset.INT8:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
 			byte[] bData = (byte[]) data;
 			ds = new ByteDataset(bData, shape);
 			break;
-		case AbstractDataset.INT16:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
 			short[] sData = (short[]) data;
 			ds = new ShortDataset(sData, shape);
 			break;
-		case AbstractDataset.INT32:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
 			int[] iData = (int[]) data;
 			ds = new IntegerDataset(iData, shape);
 			break;
-		case AbstractDataset.INT64:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT64:
 			long[] lData = (long[]) data;
 			ds = new LongDataset(lData, shape);
 			break;
-		case AbstractDataset.STRING:
+		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING:
 			String[] strData = (String[]) data;
 			ds = new StringDataset(strData, shape);
 			break;
@@ -1055,15 +1055,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		if (extend) {
 			switch (dtype) {
-			case AbstractDataset.INT32:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
 				ds = new LongDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 32);
 				break;
-			case AbstractDataset.INT16:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
 				ds = new IntegerDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 16);
 				break;
-			case AbstractDataset.INT8:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
 				ds = new ShortDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 8);
 				break;
@@ -1499,7 +1499,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
-		if (dtype == AbstractDataset.STRING && useExternalFiles) {
+		if (dtype == uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 			if (!isVLEN && !isText) {
 				logger.error("String dataset not variable length or text!");
@@ -1883,7 +1883,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						} else {
 							H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-							if (odata instanceof byte[] && ldtype != AbstractDataset.INT8) {
+							if (odata instanceof byte[] && ldtype != uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8) {
 								// TODO check if this is actually used
 								Object idata = null;
 								byte[] bdata = (byte[]) odata;
@@ -1955,7 +1955,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							} else {
 								H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-								if (odata instanceof byte[] && ldtype != AbstractDataset.INT8) {
+								if (odata instanceof byte[] && ldtype != uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8) {
 									// TODO check if this is actually used
 									byte[] bdata = (byte[]) odata;
 									if (isText) {
@@ -1988,15 +1988,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					}
 					if (extend) {
 						switch (ldtype) {
-						case AbstractDataset.INT32:
+						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
 							data = new LongDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 32);
 							break;
-						case AbstractDataset.INT16:
+						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
 							data = new IntegerDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 16);
 							break;
-						case AbstractDataset.INT8:
+						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
 							data = new ShortDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 8);
 							break;

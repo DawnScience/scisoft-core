@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -57,7 +57,7 @@ public class CompositeFunction extends Add {
 		// now add the data for each bit in turn
 		int j = 1;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(values), AbstractDataset.FLOAT64);
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(values), Dataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 
@@ -99,7 +99,7 @@ public class CompositeFunction extends Add {
 		// now add the data for each bit in turn
 		int j = 4;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(XValues), AbstractDataset.FLOAT64);
+			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(XValues), Dataset.FLOAT64);
 			outputs[j++].setName(f.getName());
 		}
 

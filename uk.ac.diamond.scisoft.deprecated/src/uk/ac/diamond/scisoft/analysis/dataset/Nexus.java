@@ -54,21 +54,21 @@ public class Nexus {
 	static public int getDType(int type) {
 		switch (type) {
 		case NexusFile.NX_FLOAT64:
-			return AbstractDataset.FLOAT64;
+			return Dataset.FLOAT64;
 		case NexusFile.NX_FLOAT32:
-			return AbstractDataset.FLOAT32;
+			return Dataset.FLOAT32;
 		case NexusFile.NX_INT64:
 		case NexusFile.NX_UINT64:
-			return AbstractDataset.INT64;
+			return Dataset.INT64;
 		case NexusFile.NX_INT32:
 		case NexusFile.NX_UINT32:
-			return AbstractDataset.INT32;
+			return Dataset.INT32;
 		case NexusFile.NX_INT16:
 		case NexusFile.NX_UINT16:
-			return AbstractDataset.INT16;
+			return Dataset.INT16;
 		case NexusFile.NX_INT8:
 		case NexusFile.NX_UINT8:
-			return AbstractDataset.INT8;
+			return Dataset.INT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported NeXus data type");
 		}
@@ -81,17 +81,17 @@ public class Nexus {
 	 */
 	static public int getGroupDataType(int dtype) {
 		switch (dtype) {
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			return NexusFile.NX_FLOAT64;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			return NexusFile.NX_FLOAT32;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			return NexusFile.NX_INT64;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			return NexusFile.NX_INT32;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			return NexusFile.NX_INT16;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			return NexusFile.NX_INT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported dataset type");
@@ -105,13 +105,13 @@ public class Nexus {
 	 */
 	static public int getUnsignedGroupDataType(int dtype) {
 		switch (dtype) {
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			return NexusFile.NX_UINT64;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			return NexusFile.NX_UINT32;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			return NexusFile.NX_UINT16;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			return NexusFile.NX_UINT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported dataset type");

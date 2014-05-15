@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
@@ -126,7 +127,7 @@ public class ImageThumbnailLoader {
 				return ds;
 			}
 		}
-		AbstractDataset ds_null = AbstractDataset.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, AbstractDataset.BOOL);
+		AbstractDataset ds_null = AbstractDataset.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
 		ds_null.setName("Invalid Image");
 		return ds_null;
 	}

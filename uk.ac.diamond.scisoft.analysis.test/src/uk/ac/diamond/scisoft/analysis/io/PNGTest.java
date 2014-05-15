@@ -27,6 +27,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
@@ -67,7 +68,7 @@ public class PNGTest {
 		String filePath = "testSaveFile.png";
 		DataHolder dha = new DataHolder();
 		AbstractDataset loadData;
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -86,7 +87,7 @@ public class PNGTest {
 	public void testLoaderFactory() throws Exception {
 		String filePath = "testLoaderFactory.png";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -114,7 +115,7 @@ public class PNGTest {
 	public void manyImages() throws ScanFileHolderException {
 		String filePath = "manyImages.png";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -131,7 +132,7 @@ public class PNGTest {
 	public void manyImagesScaled() throws ScanFileHolderException {
 		String filePath = "manyImagesScaled.png";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 250000, range, AbstractDataset.INT32);
+		data = DatasetUtils.linSpace(0, 250000, range, Dataset.INT32);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -148,7 +149,7 @@ public class PNGTest {
 	public void compareDataset() throws ScanFileHolderException {
 		String filePath = "compareDataset.png";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -168,7 +169,7 @@ public class PNGTest {
 	public void compareScaledDataset() throws ScanFileHolderException {
 		String filePath = "compareScaledDataset.png";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 250000, range, AbstractDataset.INT32);
+		data = DatasetUtils.linSpace(0, 250000, range, Dataset.INT32);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -190,7 +191,7 @@ public class PNGTest {
 	@Test
 	public void noEnding() throws Exception {
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + "noEnding.png").saveFile(dha);
@@ -211,7 +212,7 @@ public class PNGTest {
 		String filePath = "incorrectEnding.txt";
 		String filePath1 = "incorrectEnding1.txt";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 32000, range, AbstractDataset.INT16);
+		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new PNGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
@@ -147,7 +148,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 		
 			}
 			if (keepBitWidth || amax < (1 << 15)) {
-				data = DatasetUtils.cast(data, AbstractDataset.INT16);
+				data = DatasetUtils.cast(data, Dataset.INT16);
 			}
 
 			hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();

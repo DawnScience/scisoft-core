@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 
@@ -40,14 +41,14 @@ public class PearsonVIITest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		AbstractDataset x = DatasetUtils.linSpace(-50+23, 50+23, 200, AbstractDataset.FLOAT64);
+		AbstractDataset x = DatasetUtils.linSpace(-50+23, 50+23, 200, Dataset.FLOAT64);
 		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), 1e-4);
 	}
 
 	@Test
 	public void testExtremes() {
-		AbstractDataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, AbstractDataset.FLOAT64);
+		AbstractDataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
 
 		PearsonVII pv = new PearsonVII();
 		pv.getParameter(3).setUpperLimit(Double.MAX_VALUE);

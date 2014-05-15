@@ -263,7 +263,7 @@ public class Signal {
 	 * @return window
 	 */
 	public static AbstractDataset rectangularWindow(int n) {
-		return AbstractDataset.ones(new int[] {n}, AbstractDataset.FLOAT64);
+		return AbstractDataset.ones(new int[] {n}, Dataset.FLOAT64);
 	}
 
 	/**

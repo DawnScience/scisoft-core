@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -49,8 +50,8 @@ public class Convolve extends ABinaryOperator implements IOperator {
 			return;
 
 		IDataset[] values = it.getValues();
-		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), AbstractDataset.FLOAT64);
-		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), AbstractDataset.FLOAT64);
+		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
+		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
 		data.fill(calcConvolution(da, db));
 	}
 
@@ -73,13 +74,13 @@ public class Convolve extends ABinaryOperator implements IOperator {
 			return;
 
 		final IDataset[] values = it.getValues();
-		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculatePartialDerivativeValues(parameter, values), AbstractDataset.FLOAT64);
-		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), AbstractDataset.FLOAT64);
+		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
+		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
 
 		data.fill(calcConvolution(da, db));
 
-		da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), AbstractDataset.FLOAT64);
-		db = DatasetUtils.cast(fb.calculatePartialDerivativeValues(parameter, values), AbstractDataset.FLOAT64);
+		da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
+		db = DatasetUtils.cast(fb.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
 		data.iadd(calcConvolution(da, db));
 	}
 }

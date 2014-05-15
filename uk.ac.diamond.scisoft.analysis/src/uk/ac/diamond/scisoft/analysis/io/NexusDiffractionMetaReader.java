@@ -670,15 +670,15 @@ public class NexusDiffractionMetaReader {
         
 		if (set.getDatatype().isUnsigned()) {
 			switch (ret.getDtype()) {
-			case AbstractDataset.INT32:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
 				ret = new LongDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 32);
 				break;
-			case AbstractDataset.INT16:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
 				ret = new IntegerDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 16);
 				break;
-			case AbstractDataset.INT8:
+			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
 				ret = new ShortDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 8);
 				break;

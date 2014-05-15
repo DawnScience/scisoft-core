@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  * Tests the ADSC image loader with file in TestFiles
@@ -116,7 +117,7 @@ public class TiffLoaderTest {
 
 	@Test
 	public void testSaveFile() throws ScanFileHolderException {
-		AbstractDataset a = AbstractDataset.arange(128 * 128, AbstractDataset.FLOAT32).reshape(128, 128);
+		AbstractDataset a = AbstractDataset.arange(128 * 128, Dataset.FLOAT32).reshape(128, 128);
 		DataHolder d = new DataHolder();
 		d.addDataset("a", a);
 

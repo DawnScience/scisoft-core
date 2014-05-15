@@ -155,7 +155,7 @@ public class Stats {
 
 		oshape[axis] = 1;
 		int[] qshape = AbstractDataset.squeezeShape(oshape, false);
-		AbstractDataset qds = AbstractDataset.zeros(is, qshape, AbstractDataset.FLOAT64);
+		AbstractDataset qds = AbstractDataset.zeros(is, qshape, Dataset.FLOAT64);
 
 		IndexIterator qiter = qds.getIterator(true);
 		int[] qpos = qiter.getPos();
@@ -179,7 +179,7 @@ public class Stats {
 			qiter = qds.getIterator(true);
 			qpos = qiter.getPos();
 			qpt++;
-			AbstractDataset rds = AbstractDataset.zeros(is, qshape, AbstractDataset.FLOAT64);
+			AbstractDataset rds = AbstractDataset.zeros(is, qshape, Dataset.FLOAT64);
 			
 			while (qiter.hasNext()) {
 				int i = 0;
@@ -678,16 +678,16 @@ public class Stats {
 		final double[] dresults;
 
 		switch (dtype) {
-		case AbstractDataset.BOOL:
-		case AbstractDataset.INT8: case AbstractDataset.INT16:
-		case AbstractDataset.INT32: case AbstractDataset.INT64:
+		case Dataset.BOOL:
+		case Dataset.INT8: case Dataset.INT16:
+		case Dataset.INT32: case Dataset.INT64:
 			long lresult = 1;
 			while (it.hasNext()) {
 				lresult *= a.getElementLongAbs(it.index);
 			}
 			return new Long(lresult);
-		case AbstractDataset.ARRAYINT8: case AbstractDataset.ARRAYINT16:
-		case AbstractDataset.ARRAYINT32: case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT8: case Dataset.ARRAYINT16:
+		case Dataset.ARRAYINT32: case Dataset.ARRAYINT64:
 			lresult = 1;
 			is = a.getElementsPerItem();
 			lresults = new long[is];
@@ -699,7 +699,7 @@ public class Stats {
 					lresults[j] *= a.getElementLongAbs(it.index+j);
 			}
 			return lresults;
-		case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT32: case Dataset.FLOAT64:
 			double dresult = 1.;
 			if (ignoreNaNs) {
 				while (it.hasNext()) {
@@ -714,8 +714,8 @@ public class Stats {
 				}
 			}
 			return Double.valueOf(dresult);
-		case AbstractDataset.ARRAYFLOAT32:
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT64:
 			is = a.getElementsPerItem();
 			dresults = new double[is];
 			for (int j = 0; j < is; j++) {
@@ -804,7 +804,7 @@ public class Stats {
 			if (a.isComplex()) {
 				double rv = 1, iv = 0;
 				switch (dtype) {
-				case AbstractDataset.COMPLEX64:
+				case Dataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -828,7 +828,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.COMPLEX128:
+				case Dataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -860,9 +860,9 @@ public class Stats {
 				final double[] dresults;
 
 				switch (dtype) {
-				case AbstractDataset.BOOL:
-				case AbstractDataset.INT8: case AbstractDataset.INT16:
-				case AbstractDataset.INT32: case AbstractDataset.INT64:
+				case Dataset.BOOL:
+				case Dataset.INT8: case Dataset.INT16:
+				case Dataset.INT32: case Dataset.INT64:
 					long lresult = 1;
 					for (int j = 0; j < alen; j++) {
 						spos[axis] = j;
@@ -870,7 +870,7 @@ public class Stats {
 					}
 					result.set(lresult, qpos);
 					break;
-				case AbstractDataset.ARRAYINT8:
+				case Dataset.ARRAYINT8:
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
 						lresults[k] = 1;
@@ -884,7 +884,7 @@ public class Stats {
 					}
 					result.set(lresults, qpos);
 					break;
-				case AbstractDataset.ARRAYINT16:
+				case Dataset.ARRAYINT16:
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
 						lresults[k] = 1;
@@ -898,7 +898,7 @@ public class Stats {
 					}
 					result.set(lresults, qpos);
 					break;
-				case AbstractDataset.ARRAYINT32:
+				case Dataset.ARRAYINT32:
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
 						lresults[k] = 1;
@@ -912,7 +912,7 @@ public class Stats {
 					}
 					result.set(lresults, qpos);
 					break;
-				case AbstractDataset.ARRAYINT64:
+				case Dataset.ARRAYINT64:
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
 						lresults[k] = 1;
@@ -926,7 +926,7 @@ public class Stats {
 					}
 					result.set(lresults, qpos);
 					break;
-				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
+				case Dataset.FLOAT32: case Dataset.FLOAT64:
 					double dresult = 1.;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -944,7 +944,7 @@ public class Stats {
 					}
 					result.set(dresult, qpos);
 					break;
-				case AbstractDataset.ARRAYFLOAT32:
+				case Dataset.ARRAYFLOAT32:
 					dresults = new double[is];
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
@@ -976,7 +976,7 @@ public class Stats {
 					}
 					result.set(dresults, qpos);
 					break;
-				case AbstractDataset.ARRAYFLOAT64:
+				case Dataset.ARRAYFLOAT64:
 					dresults = new double[is];
 					for (int k = 0; k < is; k++) {
 						dresults[k] = 1.;
@@ -1067,7 +1067,7 @@ public class Stats {
 			if (a.isComplex()) {
 				double rv = 1, iv = 0;
 				switch (dtype) {
-				case AbstractDataset.COMPLEX64:
+				case Dataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1093,7 +1093,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.COMPLEX128:
+				case Dataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1128,9 +1128,9 @@ public class Stats {
 				final double[] dresults;
 
 				switch (dtype) {
-				case AbstractDataset.BOOL:
-				case AbstractDataset.INT8: case AbstractDataset.INT16:
-				case AbstractDataset.INT32: case AbstractDataset.INT64:
+				case Dataset.BOOL:
+				case Dataset.INT8: case Dataset.INT16:
+				case Dataset.INT32: case Dataset.INT64:
 					long lresult = 1;
 					for (int j = 0; j < alen; j++) {
 						pos[axis] = j;
@@ -1138,7 +1138,7 @@ public class Stats {
 						result.set(lresult, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT8:
+				case Dataset.ARRAYINT8:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
@@ -1153,7 +1153,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT16:
+				case Dataset.ARRAYINT16:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
@@ -1168,7 +1168,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT32:
+				case Dataset.ARRAYINT32:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
@@ -1183,7 +1183,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT64:
+				case Dataset.ARRAYINT64:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int k = 0; k < is; k++) {
@@ -1198,7 +1198,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
+				case Dataset.FLOAT32: case Dataset.FLOAT64:
 					double dresult = 1.;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1217,7 +1217,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT32:
+				case Dataset.ARRAYFLOAT32:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
 					for (int k = 0; k < is; k++) {
@@ -1251,7 +1251,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT64:
+				case Dataset.ARRAYFLOAT64:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
 					for (int k = 0; k < is; k++) {
@@ -1343,7 +1343,7 @@ public class Stats {
 			if (a.isComplex()) {
 				double rv = 0, iv = 0;
 				switch (dtype) {
-				case AbstractDataset.COMPLEX64:
+				case Dataset.COMPLEX64:
 					ComplexFloatDataset af = (ComplexFloatDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1365,7 +1365,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.COMPLEX128:
+				case Dataset.COMPLEX128:
 					ComplexDoubleDataset ad = (ComplexDoubleDataset) a;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1396,9 +1396,9 @@ public class Stats {
 				final double[] dresults;
 
 				switch (dtype) {
-				case AbstractDataset.BOOL:
-				case AbstractDataset.INT8: case AbstractDataset.INT16:
-				case AbstractDataset.INT32: case AbstractDataset.INT64:
+				case Dataset.BOOL:
+				case Dataset.INT8: case Dataset.INT16:
+				case Dataset.INT32: case Dataset.INT64:
 					long lresult = 0;
 					for (int j = 0; j < alen; j++) {
 						pos[axis] = j;
@@ -1406,7 +1406,7 @@ public class Stats {
 						result.set(lresult, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT8:
+				case Dataset.ARRAYINT8:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int j = 0; j < alen; j++) {
@@ -1418,7 +1418,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT16:
+				case Dataset.ARRAYINT16:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int j = 0; j < alen; j++) {
@@ -1430,7 +1430,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT32:
+				case Dataset.ARRAYINT32:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int j = 0; j < alen; j++) {
@@ -1442,7 +1442,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.ARRAYINT64:
+				case Dataset.ARRAYINT64:
 					is = a.getElementsPerItem();
 					lresults = new long[is];
 					for (int j = 0; j < alen; j++) {
@@ -1454,7 +1454,7 @@ public class Stats {
 						result.set(lresults, pos);
 					}
 					break;
-				case AbstractDataset.FLOAT32: case AbstractDataset.FLOAT64:
+				case Dataset.FLOAT32: case Dataset.FLOAT64:
 					double dresult = 0.;
 					if (ignoreNaNs) {
 						for (int j = 0; j < alen; j++) {
@@ -1473,7 +1473,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT32:
+				case Dataset.ARRAYFLOAT32:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
 					if (ignoreNaNs) {
@@ -1504,7 +1504,7 @@ public class Stats {
 						}
 					}
 					break;
-				case AbstractDataset.ARRAYFLOAT64:
+				case Dataset.ARRAYFLOAT64:
 					is = a.getElementsPerItem();
 					dresults = new double[is];
 					if (ignoreNaNs) {

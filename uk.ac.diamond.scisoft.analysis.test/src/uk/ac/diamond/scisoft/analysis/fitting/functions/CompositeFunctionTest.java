@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 
@@ -45,7 +46,7 @@ public class CompositeFunctionTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, cf.getParameterValues(), ABS_TOL);
 		double x = -23. - 10. - 1.2 - 5.2 - 4.2 - 7.5;
 		Assert.assertEquals(x, cf.val(-1), ABS_TOL);
-		Assert.assertEquals(x, cf.calculateValues(AbstractDataset.arange(-2., 2., 1, AbstractDataset.INT16)).getDouble(1), ABS_TOL);
+		Assert.assertEquals(x, cf.calculateValues(AbstractDataset.arange(-2., 2., 1, Dataset.INT16)).getDouble(1), ABS_TOL);
 
 		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
 		DoubleDataset dx;

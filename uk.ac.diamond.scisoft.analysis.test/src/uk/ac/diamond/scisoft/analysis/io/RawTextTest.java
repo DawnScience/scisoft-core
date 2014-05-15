@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
 /**
@@ -55,7 +56,7 @@ public class RawTextTest {
 	@Test
 	public void testSaveFile() throws ScanFileHolderException {
 		DataHolder dh = new DataHolder();
-		data = DatasetUtils.linSpace(0, 576000, range, AbstractDataset.FLOAT64);
+		data = DatasetUtils.linSpace(0, 576000, range, Dataset.FLOAT64);
 		data.setShape(sizex, sizey);
 		try {
 			dh.addDataset("testing data", data);

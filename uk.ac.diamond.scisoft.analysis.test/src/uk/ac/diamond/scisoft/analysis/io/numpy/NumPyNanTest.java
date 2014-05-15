@@ -30,6 +30,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 
 /**
@@ -41,8 +42,8 @@ public class NumPyNanTest {
 	@Parameters
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
-		params.add(new Object[] { "'<f4'", AbstractDataset.FLOAT32});
-		params.add(new Object[] { "'<f8'", AbstractDataset.FLOAT64});
+		params.add(new Object[] { "'<f4'", Dataset.FLOAT32});
+		params.add(new Object[] { "'<f8'", Dataset.FLOAT64});
 		return params;
 	}
 

@@ -41,6 +41,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.CompoundFloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundIntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundLongDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundShortDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
@@ -121,23 +122,23 @@ public class RawBinaryLoader extends AbstractFileLoader {
 
 			if (isize != 1) {
 				switch (dtype) {
-				case AbstractDataset.INT8:
-					dtype = AbstractDataset.ARRAYINT8;
+				case Dataset.INT8:
+					dtype = Dataset.ARRAYINT8;
 					break;
-				case AbstractDataset.INT16:
-					dtype = AbstractDataset.ARRAYINT16;
+				case Dataset.INT16:
+					dtype = Dataset.ARRAYINT16;
 					break;
-				case AbstractDataset.INT32:
-					dtype = AbstractDataset.ARRAYINT32;
+				case Dataset.INT32:
+					dtype = Dataset.ARRAYINT32;
 					break;
-				case AbstractDataset.INT64:
-					dtype = AbstractDataset.ARRAYINT64;
+				case Dataset.INT64:
+					dtype = Dataset.ARRAYINT64;
 					break;
-				case AbstractDataset.FLOAT32:
-					dtype = AbstractDataset.ARRAYFLOAT32;
+				case Dataset.FLOAT32:
+					dtype = Dataset.ARRAYFLOAT32;
 					break;
-				case AbstractDataset.FLOAT64:
-					dtype = AbstractDataset.ARRAYFLOAT64;
+				case Dataset.FLOAT64:
+					dtype = Dataset.ARRAYFLOAT64;
 					break;
 				}
 			}
@@ -193,7 +194,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		int hash = 0;
 		double dhash = 0;
 		switch (dtype) {
-		case AbstractDataset.BOOL:
+		case Dataset.BOOL:
 			BooleanDataset b = new BooleanDataset(shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -215,7 +216,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MAX, maxA);
 			data.setStoredValue(AbstractDataset.STORE_MIN, minA);
 			break;
-		case AbstractDataset.INT8:
+		case Dataset.INT8:
 			ByteDataset i8 = new ByteDataset(shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -237,7 +238,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MAX, maxB);
 			data.setStoredValue(AbstractDataset.STORE_MIN, minB);
 			break;
-		case AbstractDataset.INT16:
+		case Dataset.INT16:
 			ShortDataset i16 = new ShortDataset(shape);
 			ShortBuffer sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
@@ -260,7 +261,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MAX, maxS);
 			data.setStoredValue(AbstractDataset.STORE_MIN, minS);
 			break;
-		case AbstractDataset.INT32:
+		case Dataset.INT32:
 			IntegerDataset i32 = new IntegerDataset(shape);
 			IntBuffer iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
@@ -283,7 +284,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MAX, maxI);
 			data.setStoredValue(AbstractDataset.STORE_MIN, minI);
 			break;
-		case AbstractDataset.INT64:
+		case Dataset.INT64:
 			LongDataset i64 = new LongDataset(shape);
 			LongBuffer lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
@@ -306,7 +307,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MAX, maxL);
 			data.setStoredValue(AbstractDataset.STORE_MIN, minL);
 			break;
-		case AbstractDataset.ARRAYINT8:
+		case Dataset.ARRAYINT8:
 			CompoundByteDataset ci8 = new CompoundByteDataset(isize, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -320,7 +321,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = ci8;
 			break;
-		case AbstractDataset.ARRAYINT16:
+		case Dataset.ARRAYINT16:
 			CompoundShortDataset ci16 = new CompoundShortDataset(isize, shape);
 			sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
@@ -335,7 +336,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = ci16;
 			break;
-		case AbstractDataset.ARRAYINT32:
+		case Dataset.ARRAYINT32:
 			CompoundIntegerDataset ci32 = new CompoundIntegerDataset(isize, shape);
 			iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
@@ -350,7 +351,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = ci32;
 			break;
-		case AbstractDataset.ARRAYINT64:
+		case Dataset.ARRAYINT64:
 			CompoundLongDataset ci64 = new CompoundLongDataset(isize, shape);
 			lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
@@ -365,7 +366,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = ci64;
 			break;
-		case AbstractDataset.FLOAT32:
+		case Dataset.FLOAT32:
 			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			FloatDataset f32 = new FloatDataset(shape);
 			if (fltDataBuffer.remaining() != tSize) {
@@ -399,7 +400,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MIN, minF);
 			hash = (int) dhash;
 			break;
-		case AbstractDataset.ARRAYFLOAT32:
+		case Dataset.ARRAYFLOAT32:
 			CompoundFloatDataset cf32 = new CompoundFloatDataset(isize, shape);
 			fltDataBuffer = fBuffer.asFloatBuffer();
 			if (fltDataBuffer.remaining() != tSize) {
@@ -419,7 +420,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = cf32;
 			hash = (int) dhash;
 			break;
-		case AbstractDataset.COMPLEX64:
+		case Dataset.COMPLEX64:
 			ComplexFloatDataset c64 = new ComplexFloatDataset(shape);
 			fltDataBuffer = fBuffer.asFloatBuffer();
 			if (fltDataBuffer.remaining() != tSize) {
@@ -441,7 +442,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			hash = (int) dhash;
 			break;
 		case -1: // old dataset
-		case AbstractDataset.FLOAT64:
+		case Dataset.FLOAT64:
 			DoubleDataset f64 = new DoubleDataset(shape);
 			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
@@ -476,7 +477,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data.setStoredValue(AbstractDataset.STORE_MIN, minD);
 			hash = (int) dhash;
 			break;
-		case AbstractDataset.ARRAYFLOAT64:
+		case Dataset.ARRAYFLOAT64:
 			CompoundDoubleDataset cf64 = new CompoundDoubleDataset(isize, shape);
 			dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
@@ -496,7 +497,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = cf64;
 			hash = (int) dhash;
 			break;
-		case AbstractDataset.COMPLEX128:
+		case Dataset.COMPLEX128:
 			ComplexDoubleDataset c128 = new ComplexDoubleDataset(shape);
 			dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {

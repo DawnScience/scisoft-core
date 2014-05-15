@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 
@@ -27,7 +28,7 @@ public class ROISliceTest {
 	
 	@Test
 	public void testNDSlices() {
-		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, AbstractDataset.FLOAT32);
+		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, Dataset.FLOAT32);
 		
 		RectangularROI roi = new RectangularROI(10, 10, 5, 5, 0);
 		
@@ -61,11 +62,11 @@ public class ROISliceTest {
 	public void getAxisDatasetTrapzSumTestNDSlices() {
 		//TODO test different dimensions
 		//Create ND array and axes
-		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, AbstractDataset.FLOAT32);
+		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, Dataset.FLOAT32);
 //		AbstractDataset axis0 = DatasetUtils.linSpace(0, 9, 10, AbstractDataset.FLOAT32);
 //		AbstractDataset axis1 = DatasetUtils.linSpace(0, 19, 20, AbstractDataset.FLOAT32);
 //		AbstractDataset axis2 = DatasetUtils.linSpace(0, 29, 30, AbstractDataset.FLOAT32);
-		AbstractDataset axis3 = DatasetUtils.linSpace(0, 39, 40, AbstractDataset.FLOAT32);
+		AbstractDataset axis3 = DatasetUtils.linSpace(0, 39, 40, Dataset.FLOAT32);
 		
 		//Create ROI and slices
 		RectangularROI roi = new RectangularROI(10, 10, 5, 5, 0);
@@ -101,7 +102,7 @@ public class ROISliceTest {
 	
 	@Test
 	public void getDatasetLineROINDSlices() {
-		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, AbstractDataset.FLOAT32);
+		AbstractDataset input = AbstractDataset.ones(new int[] {10,20,30,40}, Dataset.FLOAT32);
 //		AbstractDataset axis0 = DatasetUtils.linSpace(0, 9, 10, AbstractDataset.FLOAT32);
 //		AbstractDataset axis1 = DatasetUtils.linSpace(0, 19, 20, AbstractDataset.FLOAT32);
 //		AbstractDataset axis2 = DatasetUtils.linSpace(0, 29, 30, AbstractDataset.FLOAT32);

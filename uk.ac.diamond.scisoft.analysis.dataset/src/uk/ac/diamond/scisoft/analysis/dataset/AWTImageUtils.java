@@ -179,7 +179,7 @@ public class AWTImageUtils {
 			// reconcile data with output format
 
 			// populate data buffer using sample model
-			IntegerDataset tmp = (IntegerDataset) DatasetUtils.cast(data, AbstractDataset.INT32);
+			IntegerDataset tmp = (IntegerDataset) DatasetUtils.cast(data, Dataset.INT32);
 
 			if (bits <= 8) {
 				buffer = new DataBufferByte(size);
@@ -261,14 +261,14 @@ public class AWTImageUtils {
 				sampleModel = RasterFactory.createBandedSampleModel(DataBuffer.TYPE_INT,
 								width, height, 1);
 
-				IntegerDataset tmp = (IntegerDataset) data.cast(AbstractDataset.INT32);
+				IntegerDataset tmp = (IntegerDataset) data.cast(Dataset.INT32);
 				sampleModel.setPixels(0, 0, width, height, tmp.getData(), buffer);
 			} else { // Only TIFF supports floats (so far)
 				buffer = new DataBufferFloat(size);
 				sampleModel = RasterFactory.createBandedSampleModel(DataBuffer.TYPE_FLOAT,
 								width, height, 1);
 
-				FloatDataset ftmp = (FloatDataset) data.cast(AbstractDataset.FLOAT32);
+				FloatDataset ftmp = (FloatDataset) data.cast(Dataset.FLOAT32);
 				sampleModel.setPixels(0, 0, width, height, ftmp.getData(), buffer);
 			}
 

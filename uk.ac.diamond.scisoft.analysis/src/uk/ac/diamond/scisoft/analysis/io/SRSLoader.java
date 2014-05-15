@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
@@ -264,7 +265,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				String name = names.get(i);
 				final AbstractDataset ds = AbstractDataset.array(columns[i]);
 				ds.setName(name);
-				if (ds.getDtype() == AbstractDataset.STRING) {
+				if (ds.getDtype() == Dataset.STRING) {
 					StringDataset sds = (StringDataset) ds;
 					if (storeStrings) {
 						holder.addDataset(name, ds);

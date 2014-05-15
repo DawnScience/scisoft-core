@@ -34,7 +34,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * be a wholly contiguous slice of a dataset; a copy or new dataset satisfies this criterion.
  * </p>
  */
-public interface ADataset extends IErrorDataset {
+public interface Dataset extends IErrorDataset {
 
 	/**
 	 * Boolean
@@ -175,12 +175,12 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return a copy of dataset
 	 */
-	public ADataset synchronizedCopy();
+	public Dataset synchronizedCopy();
 
 	/**
 	 * @return whole view of dataset (i.e. data buffer is shared)
 	 */
-	public ADataset getView();
+	public Dataset getView();
 
 	/**
 	 * @param showData
@@ -189,7 +189,7 @@ public interface ADataset extends IErrorDataset {
 	public String toString(boolean showData);
 
 	@Override
-	public ADataset clone();
+	public Dataset clone();
 
 	/**
 	 * This function allows anything that dirties the dataset to set stored values to null so that
@@ -242,7 +242,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param shape
 	 *            new shape
 	 */
-	public ADataset reshape(int... shape);
+	public Dataset reshape(int... shape);
 
 	/**
 	 * @return true if dataset is complex
@@ -252,7 +252,7 @@ public interface ADataset extends IErrorDataset {
 	/**
 	 * @return real part of dataset as new dataset
 	 */
-	public ADataset real();
+	public Dataset real();
 
 
 	/**
@@ -261,7 +261,7 @@ public interface ADataset extends IErrorDataset {
 	 * @return the dataset which contains the error information (can be null)
 	 */
 	@Override
-	public ADataset getError();
+	public Dataset getError();
 
 	/**
 	 * Get the buffer that backs the error data
@@ -284,7 +284,7 @@ public interface ADataset extends IErrorDataset {
 	 *            dataset type
 	 * @return a converted dataset
 	 */
-	public ADataset cast(int dtype);
+	public Dataset cast(int dtype);
 
 	/**
 	 * Cast a dataset
@@ -296,7 +296,7 @@ public interface ADataset extends IErrorDataset {
 	 *            item size
 	 * @return a converted dataset
 	 */
-	public ADataset cast(boolean repeat, int dtype, int isize);
+	public Dataset cast(boolean repeat, int dtype, int isize);
 
 	/**
 	 * Generate an index dataset for current dataset
@@ -321,13 +321,13 @@ public interface ADataset extends IErrorDataset {
 	 *            if zero length then axes order reversed
 	 * @return remapped view of data
 	 */
-	public ADataset getTransposedView(int... axes);
+	public Dataset getTransposedView(int... axes);
 
 	/**
 	 * See {@link #getTransposedView}
 	 * @return remapped copy of data
 	 */
-	public ADataset transpose(int... axes);
+	public Dataset transpose(int... axes);
 
 	/**
 	 * Swap two axes in dataset
@@ -336,14 +336,14 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis2
 	 * @return swapped view of dataset
 	 */
-	public ADataset swapAxes(int axis1, int axis2);
+	public Dataset swapAxes(int axis1, int axis2);
 
 	/**
 	 * Flatten shape
 	 * 
 	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy
 	 */
-	public ADataset flatten();
+	public Dataset flatten();
 
 	/**
 	 * Fill dataset from object at depth dimension
@@ -402,7 +402,7 @@ public interface ADataset extends IErrorDataset {
 	 *            - true means copy
 	 * @param dest
 	 */
-	public void copyItemsFromAxes(int[] pos, boolean[] axes, ADataset dest);
+	public void copyItemsFromAxes(int[] pos, boolean[] axes, Dataset dest);
 
 	/**
 	 * Set content on axes in given position to values in array
@@ -428,7 +428,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
-	public ADataset setSlice(Object obj, int[] start, int[] stop, int[] step);
+	public Dataset setSlice(Object obj, int[] start, int[] stop, int[] step);
 
 	/**
 	 * @param obj
@@ -438,7 +438,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with the sliced set to object
 	 */
-	public ADataset setSlice(Object obj, IndexIterator iterator);
+	public Dataset setSlice(Object obj, IndexIterator iterator);
 
 	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in
@@ -447,7 +447,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param choice
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public IndexIterator getBooleanIterator(ADataset choice);
+	public IndexIterator getBooleanIterator(Dataset choice);
 
 	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in
@@ -457,7 +457,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param value
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public IndexIterator getBooleanIterator(ADataset choice, boolean value);
+	public IndexIterator getBooleanIterator(Dataset choice, boolean value);
 
 	/**
 	 * This is modelled after the NumPy get item with a condition specified by a boolean dataset
@@ -466,7 +466,7 @@ public interface ADataset extends IErrorDataset {
 	 *            a boolean dataset of same shape to use for selecting items
 	 * @return The new selected dataset
 	 */
-	public ADataset getByBoolean(ADataset selection);
+	public Dataset getByBoolean(Dataset selection);
 
 	/**
 	 * This is modelled after the NumPy set item with a condition specified by a boolean dataset
@@ -478,7 +478,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	public ADataset setByBoolean(Object obj, ADataset selection);
+	public Dataset setByBoolean(Object obj, Dataset selection);
 
 	/**
 	 * This is modelled after the NumPy get item with an index dataset
@@ -487,7 +487,7 @@ public interface ADataset extends IErrorDataset {
 	 *            an integer dataset
 	 * @return The new selected dataset by indices
 	 */
-	public ADataset getByIndex(IntegerDataset index);
+	public Dataset getByIndex(IntegerDataset index);
 
 	/**
 	 * This is modelled after the NumPy get item with an array of indexing objects
@@ -497,7 +497,7 @@ public interface ADataset extends IErrorDataset {
 	 *            full slices)
 	 * @return The new selected dataset by index
 	 */
-	public ADataset getByIndexes(Object... index);
+	public Dataset getByIndexes(Object... index);
 
 	/**
 	 * This is modelled after the NumPy set item with an index dataset
@@ -509,7 +509,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	public ADataset setByIndex(Object obj, ADataset index);
+	public Dataset setByIndex(Object obj, Dataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
@@ -522,7 +522,7 @@ public interface ADataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	public ADataset setByIndexes(Object obj, Object... index);
+	public Dataset setByIndexes(Object obj, Object... index);
 
 	/**
 	 * Fill dataset with number represented by given object
@@ -530,7 +530,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param obj
 	 * @return filled dataset
 	 */
-	public ADataset fill(Object obj);
+	public Dataset fill(Object obj);
 
 	/**
 	 * Get an element from given absolute index as a boolean. See warning in interface doc
@@ -767,19 +767,19 @@ public interface ADataset extends IErrorDataset {
 	 *            to sort along
 	 * @return sorted dataset
 	 */
-	public ADataset sort(Integer axis);
+	public Dataset sort(Integer axis);
 
 	@Override
-	public ADataset getSlice(int[] start, int[] stop, int[] step);
+	public Dataset getSlice(int[] start, int[] stop, int[] step);
 
 	@Override
-	public ADataset getSlice(IMonitor mon, int[] start, int[] stop, int[] step);
+	public Dataset getSlice(IMonitor mon, int[] start, int[] stop, int[] step);
 
 	@Override
-	public ADataset getSlice(Slice... slice);
+	public Dataset getSlice(Slice... slice);
 
 	@Override
-	public ADataset getSlice(IMonitor mon, Slice... slice);
+	public Dataset getSlice(IMonitor mon, Slice... slice);
 
 	/**
 	 * Get a slice of the dataset. The returned dataset is a copied selection of items
@@ -787,13 +787,13 @@ public interface ADataset extends IErrorDataset {
 	 * @param iterator Slice iterator
 	 * @return The dataset of the sliced data
 	 */
-	public ADataset getSlice(SliceIterator iterator);
+	public Dataset getSlice(SliceIterator iterator);
 
 	@Override
-	public ADataset getSliceView(int[] start, int[] stop, int[] step);
+	public Dataset getSliceView(int[] start, int[] stop, int[] step);
 
 	@Override
-	public ADataset getSliceView(Slice... slice);
+	public Dataset getSliceView(Slice... slice);
 
 	/**
 	 * 
@@ -809,7 +809,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param iter
 	 *            over current dataset
 	 */
-	public void fillDataset(ADataset result, IndexIterator iter);
+	public void fillDataset(Dataset result, IndexIterator iter);
 
 	/**
 	 * Test if all items are true
@@ -820,7 +820,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return dataset where items are true if all items along axis are true
 	 */
-	public ADataset all(int axis);
+	public Dataset all(int axis);
 
 	/**
 	 * Test if any items are true
@@ -831,7 +831,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return dataset where items are true if any items along axis are true
 	 */
-	public ADataset any(int axis);
+	public Dataset any(int axis);
 
 	/**
 	 * In-place addition with object o
@@ -839,7 +839,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return sum dataset
 	 */
-	public ADataset iadd(Object o);
+	public Dataset iadd(Object o);
 
 	/**
 	 * In-place subtraction with object o
@@ -847,7 +847,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return difference dataset
 	 */
-	public ADataset isubtract(Object o);
+	public Dataset isubtract(Object o);
 
 	/**
 	 * In-place multiplication with object o
@@ -855,7 +855,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return product dataset
 	 */
-	public ADataset imultiply(Object o);
+	public Dataset imultiply(Object o);
 
 	/**
 	 * In-place division with object o
@@ -863,7 +863,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return dividend dataset
 	 */
-	public ADataset idivide(Object o);
+	public Dataset idivide(Object o);
 
 	/**
 	 * In-place floor division with object o
@@ -871,21 +871,21 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return dividend dataset
 	 */
-	public ADataset ifloorDivide(Object o);
+	public Dataset ifloorDivide(Object o);
 
 	/**
 	 * In-place remainder
 	 * 
 	 * @return remaindered dataset
 	 */
-	public ADataset iremainder(Object o);
+	public Dataset iremainder(Object o);
 
 	/**
 	 * In-place floor
 	 * 
 	 * @return floored dataset
 	 */
-	public ADataset ifloor();
+	public Dataset ifloor();
 
 	/**
 	 * In-place raise to power of object o
@@ -893,7 +893,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param o
 	 * @return raised dataset
 	 */
-	public ADataset ipower(Object o);
+	public Dataset ipower(Object o);
 
 	/**
 	 * Calculate residual of dataset with object o
@@ -922,7 +922,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return sum of the squares of the differences
 	 */
-	public double residual(Object o, ADataset weight, boolean ignoreNaNs);
+	public double residual(Object o, Dataset weight, boolean ignoreNaNs);
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and Infs
@@ -954,14 +954,14 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
-	public ADataset max(int axis);
+	public Dataset max(int axis);
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs
 	 * @param axis
 	 * @return maxima along axis in dataset
 	 */
-	public ADataset max(boolean ignoreNaNs, int axis);
+	public Dataset max(boolean ignoreNaNs, int axis);
 
 	/**
 	 * @param ignoreInvalids if true, ignore NaNs and infinities
@@ -981,14 +981,14 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
-	public ADataset min(int axis);
+	public Dataset min(int axis);
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs
 	 * @param axis
 	 * @return minima along axis in dataset
 	 */
-	public ADataset min(boolean ignoreNaNs, int axis);
+	public Dataset min(boolean ignoreNaNs, int axis);
 
 	/**
 	 * Find absolute index of maximum value (in a flattened view)
@@ -1013,7 +1013,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
-	public ADataset argMax(int axis);
+	public Dataset argMax(int axis);
 
 	/**
 	 * Find indices of maximum values along given axis
@@ -1022,7 +1022,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
-	public ADataset argMax(boolean ignoreNaNs, int axis);
+	public Dataset argMax(boolean ignoreNaNs, int axis);
 
 	/**
 	 * Find absolute index of minimum value (in a flattened view)
@@ -1047,7 +1047,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
-	public ADataset argMin(int axis);
+	public Dataset argMin(int axis);
 
 	/**
 	 * Find indices of minimum values along given axis
@@ -1056,7 +1056,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return index dataset
 	 */
-	public ADataset argMin(boolean ignoreNaNs, int axis);
+	public Dataset argMin(boolean ignoreNaNs, int axis);
 
 	/**
 	 * @return true if dataset contains any infinities
@@ -1082,7 +1082,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return peak-to-peak dataset, the difference of maxima and minima of dataset along axis
 	 */
-	public ADataset peakToPeak(int axis);
+	public Dataset peakToPeak(int axis);
 
 	/**
 	 * See {@link #count(boolean ignoreNaNs)} with ignoreNaNs = false
@@ -1101,14 +1101,14 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return number of items along axis in dataset
 	 */
-	public ADataset count(int axis);
+	public Dataset count(int axis);
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
 	 * @param axis
 	 * @return number of items along axis in dataset
 	 */
-	public ADataset count(boolean ignoreNaNs, int axis);
+	public Dataset count(boolean ignoreNaNs, int axis);
 
 	/**
 	 * See {@link #sum(boolean ignoreNaNs)} with ignoreNaNs = false
@@ -1127,14 +1127,14 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
-	public ADataset sum(int axis);
+	public Dataset sum(int axis);
 
 	/**
 	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
-	public ADataset sum(boolean ignoreNaNs, int axis);
+	public Dataset sum(boolean ignoreNaNs, int axis);
 
 	/**
 	 * @return sum over all items in dataset as appropriate to dataset type
@@ -1154,7 +1154,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return sum along axis in dataset
 	 */
-	public ADataset typedSum(int dtype, int axis);
+	public Dataset typedSum(int dtype, int axis);
 
 	/**
 	 * @return product over all items in dataset
@@ -1165,7 +1165,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return product along axis in dataset
 	 */
-	public ADataset product(int axis);
+	public Dataset product(int axis);
 
 	/**
 	 * @param dtype
@@ -1178,21 +1178,21 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return product along axis in dataset
 	 */
-	public ADataset typedProduct(int dtype, int axis);
+	public Dataset typedProduct(int dtype, int axis);
 
 	/**
 	 * See {@link #mean(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param axis
 	 * @return mean along axis in dataset
 	 */
-	public ADataset mean(int axis);
+	public Dataset mean(int axis);
 
 	/**
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @param axis
 	 * @return mean along axis in dataset
 	 */
-	public ADataset mean(boolean ignoreNaNs, int axis);
+	public Dataset mean(boolean ignoreNaNs, int axis);
 
 	/**
 	 * @return sample variance of whole dataset
@@ -1230,7 +1230,7 @@ public interface ADataset extends IErrorDataset {
 	 * @return sample variance along axis in dataset
 	 * @see #variance(boolean)
 	 */
-	public ADataset variance(int axis);
+	public Dataset variance(int axis);
 
 	/**
 	 * Standard deviation is square root of the variance
@@ -1253,7 +1253,7 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return standard deviation along axis in dataset
 	 */
-	public ADataset stdDeviation(int axis);
+	public Dataset stdDeviation(int axis);
 
 	/**
 	 * @return root mean square
@@ -1264,15 +1264,15 @@ public interface ADataset extends IErrorDataset {
 	 * @param axis
 	 * @return root mean square along axis in dataset
 	 */
-	public ADataset rootMeanSquare(int axis);
+	public Dataset rootMeanSquare(int axis);
 
 	/**
 	 * @see DatasetUtils#put(AbstractDataset, int[], Object[])
 	 */
-	public ADataset put(int[] indices, Object[] values);
+	public Dataset put(int[] indices, Object[] values);
 
 	/**
 	 * @see DatasetUtils#take(AbstractDataset, int[], Integer)
 	 */
-	public ADataset take(int[] indices, Integer axis);
+	public Dataset take(int[] indices, Integer axis);
 }

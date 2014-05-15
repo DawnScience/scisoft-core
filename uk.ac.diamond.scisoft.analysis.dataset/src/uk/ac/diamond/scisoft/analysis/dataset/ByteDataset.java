@@ -231,8 +231,8 @@ public class ByteDataset extends AbstractDataset {
 				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			if (ds instanceof ADataset) {
-				ADataset ads = (ADataset) ds;
+			if (ds instanceof Dataset) {
+				Dataset ads = (Dataset) ds;
 				IndexIterator itd = ads.getIterator();
 				IndexIterator iter = getIterator();
 				while (iter.hasNext() && itd.hasNext()) {
@@ -588,7 +588,7 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public void fillDataset(ADataset result, IndexIterator iter) {
+	public void fillDataset(Dataset result, IndexIterator iter) {
 		IndexIterator riter = result.getIterator();
 
 		byte[] rdata = ((ByteDataset) result).data; // PRIM_TYPE
@@ -598,9 +598,9 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ByteDataset setByBoolean(final Object obj, ADataset selection) {
-		if (obj instanceof ADataset) {
-			final ADataset ds = (ADataset) obj;
+	public ByteDataset setByBoolean(final Object obj, Dataset selection) {
+		if (obj instanceof Dataset) {
+			final Dataset ds = (Dataset) obj;
 			final int length = ((Number) selection.sum()).intValue();
 			if (length != ds.getSize()) {
 				throw new IllegalArgumentException(
@@ -625,9 +625,9 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ByteDataset setByIndex(final Object obj, final ADataset index) {
-		if (obj instanceof ADataset) {
-			final ADataset ds = (ADataset) obj;
+	public ByteDataset setByIndex(final Object obj, final Dataset index) {
+		if (obj instanceof Dataset) {
+			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in index dataset does not match number of items in dataset");
@@ -655,8 +655,8 @@ public class ByteDataset extends AbstractDataset {
 		final IntegersIterator iter = new IntegersIterator(shape, index);
 		final int[] pos = iter.getPos();
 
-		if (obj instanceof ADataset) {
-			final ADataset ds = (ADataset) obj;
+		if (obj instanceof Dataset) {
+			final Dataset ds = (Dataset) obj;
 			if (calcSize(iter.getShape()) != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in index datasets does not match number of items in dataset");
@@ -690,8 +690,8 @@ public class ByteDataset extends AbstractDataset {
 						Arrays.toString(siter.getShape())));
 			}
 
-			if (ds instanceof ADataset) {
-				final ADataset ads = (ADataset) ds;
+			if (ds instanceof Dataset) {
+				final Dataset ads = (Dataset) ds;
 				final IndexIterator oiter = ads.getIterator();
 
 				while (siter.hasNext() && oiter.hasNext())
@@ -718,7 +718,7 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final ADataset dest) {
+	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final Dataset dest) {
 		byte[] ddata = (byte[]) dest.getBuffer(); // PRIM_TYPE
 
 		SliceIterator siter = getSliceIteratorFromAxes(pos, axes);
@@ -829,8 +829,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset iadd(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -853,8 +853,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -877,8 +877,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -901,8 +901,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset idivide(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -938,8 +938,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset iremainder(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -970,8 +970,8 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public ByteDataset ipower(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();
@@ -1017,10 +1017,10 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
+	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 			// BOOLEAN_OMIT
 			IndexIterator it1 = getIterator();

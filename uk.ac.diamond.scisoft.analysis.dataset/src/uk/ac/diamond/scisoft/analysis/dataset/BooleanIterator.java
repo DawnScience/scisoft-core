@@ -33,7 +33,7 @@ public class BooleanIterator extends IndexIterator {
 	 * @param iter dataset iterator
 	 * @param selection boolean dataset
 	 */
-	public BooleanIterator(final IndexIterator iter, final ADataset selection) {
+	public BooleanIterator(final IndexIterator iter, final Dataset selection) {
 		this(iter, selection, true);
 	}
 
@@ -45,7 +45,7 @@ public class BooleanIterator extends IndexIterator {
 	 * @param selection boolean dataset
 	 * @param value
 	 */
-	public BooleanIterator(final IndexIterator iter, final ADataset selection, boolean value) {
+	public BooleanIterator(final IndexIterator iter, final Dataset selection, boolean value) {
 		b = (BooleanDataset) (selection instanceof BooleanDataset ? selection : DatasetUtils.convertToAbstractDataset(selection).cast(AbstractDataset.BOOL));
 
 		iterb = selection.getIterator();

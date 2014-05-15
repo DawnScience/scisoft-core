@@ -1078,7 +1078,7 @@ public class DatasetUtils {
 			return (AbstractDataset) lazydata;
 		}
 
-		int dtype = lazydata instanceof ADataset ? ((ADataset) lazydata).getDtype() :
+		int dtype = lazydata instanceof Dataset ? ((Dataset) lazydata).getDtype() :
 			AbstractDataset.getDType(lazydata);
 
 		IDataset data;
@@ -1139,10 +1139,9 @@ public class DatasetUtils {
 				result.setObjectAbs(it.index, data.getObject(pos));
 			}
 			break;
-		}
-
-		if (lazydata instanceof ADataset) {
-			result.setErrorBuffer(((ADataset) lazydata).getErrorBuffer());
+		}		if (lazydata instanceof Dataset) {
+			result.setErrorBuffer(((Dataset) lazydata).getErrorBuffer());
+;
 		}
 		return result;
 	}

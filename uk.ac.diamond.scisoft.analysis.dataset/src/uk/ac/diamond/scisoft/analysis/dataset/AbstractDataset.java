@@ -43,111 +43,111 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * <p/>
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
-public abstract class AbstractDataset implements ADataset {
+public abstract class AbstractDataset implements Dataset {
 
 	/**
 	 * Boolean
 	 */
-	public static final int BOOL = ADataset.BOOL;
+	public static final int BOOL = Dataset.BOOL;
 
 	/**
 	 * Signed 8-bit integer
 	 */
-	public static final int INT8 = ADataset.INT8;
+	public static final int INT8 = Dataset.INT8;
 
 	/**
 	 * Signed 16-bit integer
 	 */
-	public static final int INT16 = ADataset.INT16;
+	public static final int INT16 = Dataset.INT16;
 
 	/**
 	 * Signed 32-bit integer
 	 */
-	public static final int INT32 = ADataset.INT32;
+	public static final int INT32 = Dataset.INT32;
 	/**
 	 * Integer (same as signed 32-bit integer)
 	 */
-	public static final int INT = ADataset.INT;
+	public static final int INT = Dataset.INT;
 
 	/**
 	 * Signed 64-bit integer
 	 */
-	public static final int INT64 = ADataset.INT64;
+	public static final int INT64 = Dataset.INT64;
 
 	/**
 	 * 32-bit floating point
 	 */
-	public static final int FLOAT32 = ADataset.FLOAT32;
+	public static final int FLOAT32 = Dataset.FLOAT32;
 
 	/**
 	 * 64-bit floating point
 	 */
-	public static final int FLOAT64 = ADataset.FLOAT64;
+	public static final int FLOAT64 = Dataset.FLOAT64;
 
 	/**
 	 * Floating point (same as 64-bit floating point)
 	 */
-	public static final int FLOAT = ADataset.FLOAT;
+	public static final int FLOAT = Dataset.FLOAT;
 
 	/**
 	 * 64-bit complex floating point (real and imaginary parts are 32-bit floats)
 	 */
-	public static final int COMPLEX64 = ADataset.COMPLEX64;
+	public static final int COMPLEX64 = Dataset.COMPLEX64;
 
 	/**
 	 * 128-bit complex floating point (real and imaginary parts are 64-bit floats)
 	 */
-	public static final int COMPLEX128 = ADataset.COMPLEX128;
+	public static final int COMPLEX128 = Dataset.COMPLEX128;
 
 	/**
 	 * Complex floating point (same as 64-bit floating point)
 	 */
-	public static final int COMPLEX = ADataset.COMPLEX;
+	public static final int COMPLEX = Dataset.COMPLEX;
 
 	/**
 	 * String
 	 */
-	public static final int STRING = ADataset.STRING;
+	public static final int STRING = Dataset.STRING;
 
 	/**
 	 * Object
 	 */
-	public static final int OBJECT = ADataset.OBJECT;
+	public static final int OBJECT = Dataset.OBJECT;
 
 	/**
 	 * Array of signed 8-bit integers
 	 */
-	public static final int ARRAYINT8 = ADataset.ARRAYINT8;
+	public static final int ARRAYINT8 = Dataset.ARRAYINT8;
 
 	/**
 	 * Array of signed 16-bit integers
 	 */
-	public static final int ARRAYINT16 = ADataset.ARRAYINT16;
+	public static final int ARRAYINT16 = Dataset.ARRAYINT16;
 
 	/**
 	 * Array of three signed 16-bit integers for RGB values
 	 */
-	public static final int RGB = ADataset.RGB;
+	public static final int RGB = Dataset.RGB;
 
 	/**
 	 * Array of signed 32-bit integers
 	 */
-	public static final int ARRAYINT32 = ADataset.ARRAYINT32;
+	public static final int ARRAYINT32 = Dataset.ARRAYINT32;
 
 	/**
 	 * Array of signed 64-bit integers
 	 */
-	public static final int ARRAYINT64 = ADataset.ARRAYINT64;
+	public static final int ARRAYINT64 = Dataset.ARRAYINT64;
 
 	/**
 	 * Array of 32-bit floating points
 	 */
-	public static final int ARRAYFLOAT32 = ADataset.ARRAYFLOAT32;
+	public static final int ARRAYFLOAT32 = Dataset.ARRAYFLOAT32;
 
 	/**
 	 * Array of 64-bit floating points
 	 */
-	public static final int ARRAYFLOAT64 = ADataset.ARRAYFLOAT64;
+	public static final int ARRAYFLOAT64 = Dataset.ARRAYFLOAT64;
 
 	/**
 	 * Update this when there are any serious changes to API
@@ -367,8 +367,8 @@ public abstract class AbstractDataset implements ADataset {
 		view.base = orig.base;
 
 		Serializable error = orig.errorData;
-		if (error != null && error instanceof ADataset)
-			view.errorData = ((ADataset) error).getView();
+		if (error != null && error instanceof Dataset)
+			view.errorData = ((Dataset) error).getView();
 		else
 			view.errorData = error;
 
@@ -783,8 +783,8 @@ public abstract class AbstractDataset implements ADataset {
 					dtype = ldtype;
 				}
 			}
-		} else if (obj instanceof ADataset) {
-			return ((ADataset) obj).getDtype();
+		} else if (obj instanceof Dataset) {
+			return ((Dataset) obj).getDtype();
 		} else if (obj instanceof ILazyDataset) {
 			dtype = getDTypeFromClass(((ILazyDataset) obj).elementClass(), ((ILazyDataset) obj).getElementsPerItem());
 		} else {
@@ -799,8 +799,8 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return dataset type
 	 */
 	public static int getDType(ILazyDataset d) {
-		if (d instanceof ADataset)
-			return ((ADataset) d).getDtype();
+		if (d instanceof Dataset)
+			return ((Dataset) d).getDtype();
 		return getDTypeFromClass(d.elementClass(), d.getElementsPerItem());
 	}
 
@@ -1231,7 +1231,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
 	@Override
-	public BooleanIterator getBooleanIterator(ADataset choice) {
+	public BooleanIterator getBooleanIterator(Dataset choice) {
 		return getBooleanIterator(choice, true);
 	}
 
@@ -1244,7 +1244,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
 	@Override
-	public BooleanIterator getBooleanIterator(ADataset choice, boolean value) {
+	public BooleanIterator getBooleanIterator(Dataset choice, boolean value) {
 		return new BooleanIterator(getIterator(), choice, value);
 	}
 
@@ -1256,7 +1256,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return The new selected dataset
 	 */
 	@Override
-	public AbstractDataset getByBoolean(ADataset selection) {
+	public AbstractDataset getByBoolean(Dataset selection) {
 		checkCompatibility(selection);
 
 		final int length = ((Number) selection.sum()).intValue();
@@ -1282,7 +1282,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByBoolean(final Object obj, ADataset selection);
+	abstract public AbstractDataset setByBoolean(final Object obj, Dataset selection);
 
 	/**
 	 * This is modelled after the NumPy get item with an index dataset
@@ -1336,7 +1336,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByIndex(final Object obj, final ADataset index);
+	abstract public AbstractDataset setByIndex(final Object obj, final Dataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
@@ -1632,8 +1632,8 @@ public abstract class AbstractDataset implements ADataset {
 		}
 		this.shape = nshape;
 
-		if (errorData != null && errorData instanceof ADataset) {
-			((ADataset) errorData).setShape(nshape);
+		if (errorData != null && errorData instanceof Dataset) {
+			((Dataset) errorData).setShape(nshape);
 		}
 
 		if (storedValues != null)
@@ -2738,7 +2738,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with zeros
 	 */
-	public static AbstractDataset zeros(final ADataset dataset) {
+	public static AbstractDataset zeros(final Dataset dataset) {
 		return zeros(dataset, dataset.getDtype());
 	}
 
@@ -2749,7 +2749,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset zeros(final ADataset dataset, final int dtype) {
+	public static AbstractDataset zeros(final Dataset dataset, final int dtype) {
 		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 
@@ -2760,7 +2760,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with ones
 	 */
-	public static AbstractDataset ones(final ADataset dataset) {
+	public static AbstractDataset ones(final Dataset dataset) {
 		return ones(dataset, dataset.getDtype());
 	}
 
@@ -2771,7 +2771,7 @@ public abstract class AbstractDataset implements ADataset {
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset ones(final ADataset dataset, final int dtype) {
+	public static AbstractDataset ones(final Dataset dataset, final int dtype) {
 		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 

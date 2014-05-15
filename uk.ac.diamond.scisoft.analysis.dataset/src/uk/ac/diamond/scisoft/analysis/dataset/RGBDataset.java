@@ -155,7 +155,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param green
 	 * @param blue
 	 */
-	public RGBDataset(final ADataset red, final ADataset green, final ADataset blue) {
+	public RGBDataset(final Dataset red, final Dataset green, final Dataset blue) {
 		super(ISIZE, red.getShapeRef());
 		red.checkCompatibility(green);
 		red.checkCompatibility(blue);
@@ -181,7 +181,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * Create a dataset using given grey data
 	 * @param grey
 	 */
-	public RGBDataset(final ADataset grey) {
+	public RGBDataset(final Dataset grey) {
 		super(ISIZE, grey.getShapeRef());
 
 		IndexIterator giter = grey.getIterator();

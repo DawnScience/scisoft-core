@@ -100,7 +100,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	 * @param real
 	 * @param imag
 	 */
-	public ComplexFloatDataset(final ADataset real, final ADataset imag) {
+	public ComplexFloatDataset(final Dataset real, final Dataset imag) {
 		super(ISIZE, real.getShapeRef());
 		real.checkCompatibility(imag);
 
@@ -201,8 +201,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 				compoundLogger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			if (ds instanceof ADataset) {
-				ADataset ads = (ADataset) ds;
+			if (ds instanceof Dataset) {
+				Dataset ads = (Dataset) ds;
 				IndexIterator itd = ads.getIterator();
 				IndexIterator iter = getIterator();
 				while (iter.hasNext() && itd.hasNext()) {
@@ -596,8 +596,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset iadd(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -638,8 +638,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -680,8 +680,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -731,8 +731,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset idivide(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -826,8 +826,8 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset ipower(final Object b) {
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			IndexIterator it1 = getIterator();
@@ -866,10 +866,10 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	}
 
 	@Override
-	public double residual(final Object b, ADataset w, boolean ignoreNaNs) {
+	public double residual(final Object b, Dataset w, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof ADataset) {
-			ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();

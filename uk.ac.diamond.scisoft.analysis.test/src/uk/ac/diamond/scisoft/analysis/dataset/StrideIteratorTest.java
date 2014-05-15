@@ -46,7 +46,7 @@ public class StrideIteratorTest {
 	}
 
 	private void testIterationsND(int size, int type) {
-		ADataset ta;
+		Dataset ta;
 
 
 		System.out.println("Size: " + size);
@@ -79,7 +79,7 @@ public class StrideIteratorTest {
 
 	}
 
-	private void testDataset(ADataset ta) {
+	private void testDataset(Dataset ta) {
 		IndexIterator iter = new StrideIterator(ta.getElementsPerItem(), ta.getShape());
 		double[] data = (double[]) ta.getBuffer();
 
@@ -104,12 +104,12 @@ public class StrideIteratorTest {
 		}
 	}
 
-	private ADataset oldSlice(ADataset t, SliceIterator siter) {
+	private Dataset oldSlice(Dataset t, SliceIterator siter) {
 		int[] shape = siter.getShape();
 		int rank = shape.length;
 		int[] lstart = siter.getStart();
 		int[] lstep = siter.getStep();
-		ADataset result = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
+		Dataset result = AbstractDataset.zeros(shape, AbstractDataset.FLOAT64);
 
 		// set up the vectors needed to do this
 		int relative[] = new int[rank];
@@ -178,10 +178,10 @@ public class StrideIteratorTest {
 		}
 	}
 
-	private ADataset newSlice(ADataset t, int[] start, int[] stop, int[] step) {
+	private Dataset newSlice(Dataset t, int[] start, int[] stop, int[] step) {
 		StrideIterator iter = new StrideIterator(t.getElementsPerItem(), t.getShape(), start, stop, step);
 
-		ADataset result = AbstractDataset.zeros(iter.getShape(), AbstractDataset.FLOAT64);
+		Dataset result = AbstractDataset.zeros(iter.getShape(), AbstractDataset.FLOAT64);
 		int i = 0;
 		while (iter.hasNext()) {
 			result.setObjectAbs(i++, t.getElementDoubleAbs(iter.index));
@@ -190,21 +190,21 @@ public class StrideIteratorTest {
 		return result;
 	}
 
-	private void timeNewSlice(ADataset t, int[] start, int[] stop, int[] step) {
+	private void timeNewSlice(Dataset t, int[] start, int[] stop, int[] step) {
 		StrideIterator iter = new StrideIterator(t.getElementsPerItem(), t.getShape(), start, stop, step);
 
 		while (iter.hasNext()) {
 		}
 	}
 
-	private void timeCurrentSlice(ADataset t, int[] start, int[] stop, int[] step) {
+	private void timeCurrentSlice(Dataset t, int[] start, int[] stop, int[] step) {
 		IndexIterator iter = t.getSliceIterator(start, stop, step);
 
 		while (iter.hasNext()) {
 		}
 	}
 
-	private void testSlicedDataset(ADataset t, int start, int startaxis, int step, int stepaxis) {
+	private void testSlicedDataset(Dataset t, int start, int startaxis, int step, int stepaxis) {
 		int rank = t.getRank();
 		int[] steps = new int[rank];
 		int[] starts = new int[rank];
@@ -231,7 +231,7 @@ public class StrideIteratorTest {
 		long stime;
 		List<Long> elapsed = new ArrayList<Long>();
 
-		ADataset sliced = null;
+		Dataset sliced = null;
 		SliceIterator siter = (SliceIterator) t.getSliceIterator(starts, null, steps);
 
 		sliced = oldSlice(t, siter);
@@ -246,7 +246,7 @@ public class StrideIteratorTest {
 		Collections.sort(elapsed);
 		System.out.println(String.format("    old  %5.2fus", elapsed.get(0)*1e-3));
 
-		ADataset nsliced = null;
+		Dataset nsliced = null;
 
 		elapsed.clear();
 		for (int i = 0; i < nloop; i++) {
@@ -271,7 +271,7 @@ public class StrideIteratorTest {
 		checkSliced(sliced, nsliced);
 	}
 
-	private void checkSliced(ADataset sliced, ADataset nsliced) {
+	private void checkSliced(Dataset sliced, Dataset nsliced) {
 		double[] ndata = (double[]) nsliced.getBuffer();
 		IndexIterator iter = nsliced.getIterator();
 		double[] sdata = (double[]) sliced.getBuffer();
@@ -285,8 +285,8 @@ public class StrideIteratorTest {
 		AbstractDataset t = AbstractDataset.arange(40, AbstractDataset.FLOAT);
 
 		SliceIterator siter = (SliceIterator) t.getSliceIterator(new int[] {12}, null, new int[] {-2});
-		ADataset sliced = oldSlice(t, siter);
-		ADataset nsliced = newSlice(t, new int[] {12}, null, new int[] {-2});
+		Dataset sliced = oldSlice(t, siter);
+		Dataset nsliced = newSlice(t, new int[] {12}, null, new int[] {-2});
 		checkSliced(sliced, nsliced);
 
 		t.setShape(8,5);
@@ -311,7 +311,7 @@ public class StrideIteratorTest {
 	}
 
 	private void testSliceIterationND(int size, int type) {
-		ADataset ta;
+		Dataset ta;
 
 		System.out.println(" Size: " + size);
 

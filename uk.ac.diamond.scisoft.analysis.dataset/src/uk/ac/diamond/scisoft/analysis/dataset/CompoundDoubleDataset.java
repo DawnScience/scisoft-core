@@ -158,7 +158,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	 * Create a dataset using given datasets
 	 * @param datasets
 	 */
-	public CompoundDoubleDataset(final ADataset... datasets) {
+	public CompoundDoubleDataset(final Dataset... datasets) {
 		if (datasets.length < 1) {
 			throw new IllegalArgumentException("Array of datasets must have length greater than zero");
 		}
@@ -194,7 +194,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	 *            repeat first element
 	 * @param dataset
 	 */
-	public CompoundDoubleDataset(final int itemSize, final boolean repeat, final ADataset dataset) {
+	public CompoundDoubleDataset(final int itemSize, final boolean repeat, final Dataset dataset) {
 		isize = itemSize;
 		size = dataset.getSize();
 		shape = dataset.getShape();
@@ -304,8 +304,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				compoundLogger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
-			if (ds instanceof ADataset) {
-				ADataset ads = (ADataset) ds;
+			if (ds instanceof Dataset) {
+				Dataset ads = (Dataset) ds;
 				IndexIterator itd = ads.getIterator();
 				IndexIterator iter = getIterator();
 				while (iter.hasNext() && itd.hasNext()) {
@@ -670,7 +670,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public void copyElements(ADataset destination, int element) {
+	public void copyElements(Dataset destination, int element) {
 		if (element < 0)
 			element += isize;
 		if (element < 0 || element > isize) {
@@ -691,7 +691,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public void setElements(ADataset source, int element) {
+	public void setElements(Dataset source, int element) {
 		if (element < 0)
 			element += isize;
 		if (element < 0 || element > isize) {
@@ -712,7 +712,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public void fillDataset(ADataset result, IndexIterator iter) {
+	public void fillDataset(Dataset result, IndexIterator iter) {
 		IndexIterator riter = result.getIterator();
 
 		double[] rdata = ((CompoundDoubleDataset) result).data; // PRIM_TYPE
@@ -724,9 +724,9 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundDoubleDataset setByBoolean(final Object o, ADataset selection) {
-		if (o instanceof ADataset) {
-			ADataset ds = (ADataset) o;
+	public CompoundDoubleDataset setByBoolean(final Object o, Dataset selection) {
+		if (o instanceof Dataset) {
+			Dataset ds = (Dataset) o;
 			final int length = ((Number) selection.sum()).intValue();
 			if (length != ds.getSize()) {
 				throw new IllegalArgumentException(
@@ -771,9 +771,9 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundDoubleDataset setByIndex(final Object o, ADataset index) {
-		if (o instanceof ADataset) {
-			ADataset ds = (ADataset) o;
+	public CompoundDoubleDataset setByIndex(final Object o, Dataset index) {
+		if (o instanceof Dataset) {
+			Dataset ds = (Dataset) o;
 			if (index.getSize() != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in selection does not match number of items in dataset");
@@ -825,8 +825,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		final IntegersIterator iter = new IntegersIterator(shape, index);
 		final int[] pos = iter.getPos();
 
-		if (o instanceof ADataset) {
-			ADataset ds = (ADataset) o;
+		if (o instanceof Dataset) {
+			Dataset ds = (Dataset) o;
 			if (calcSize(iter.getShape()) != ds.getSize()) {
 				throw new IllegalArgumentException(
 						"Number of items in selection does not match number of items in dataset");
@@ -879,8 +879,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 						Arrays.toString(siter.getShape())));
 			}
 
-			if (ds instanceof ADataset) {
-				final ADataset ads = (ADataset) ds;
+			if (ds instanceof Dataset) {
+				final Dataset ads = (Dataset) ds;
 				IndexIterator oiter = ads.getIterator();
 
 				if (ds instanceof AbstractCompoundDataset) {
@@ -934,7 +934,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final ADataset dest) {
+	public void copyItemsFromAxes(final int[] pos, final boolean[] axes, final Dataset dest) {
 		double[] ddata = (double[]) dest.getBuffer(); // PRIM_TYPE
 
 		if (dest.getElementsPerItem() != isize) {
@@ -1021,8 +1021,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset iadd(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1059,8 +1059,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset isubtract(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1097,8 +1097,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset imultiply(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1135,8 +1135,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset idivide(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1196,8 +1196,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset iremainder(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1245,8 +1245,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset ipower(final Object b) {
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();
@@ -1300,10 +1300,10 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public double residual(final Object b, final ADataset w, boolean ignoreNaNs) {
+	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof ADataset) {
-			final ADataset bds = (ADataset) b;
+		if (b instanceof Dataset) {
+			final Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
 
 			final IndexIterator it1 = getIterator();

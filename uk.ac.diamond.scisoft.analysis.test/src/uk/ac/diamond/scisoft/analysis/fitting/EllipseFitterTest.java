@@ -24,7 +24,7 @@ import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.ADataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -99,7 +99,7 @@ public class EllipseFitterTest {
 		DoubleDataset theta;
 //		theta = new DoubleDataset(new double[] {0.1, 0.2, 0.25, 0.33, 0.35, 0.37, 0.43, });
 //		theta = Random.rand(0, 2*Math.PI, pts);
-		theta = (DoubleDataset) DatasetUtils.linSpace(0, 2*Math.PI, pts, ADataset.FLOAT64);
+		theta = (DoubleDataset) DatasetUtils.linSpace(0, 2*Math.PI, pts, Dataset.FLOAT64);
 
 		AbstractDataset[] coords = EllipseFitter.generateCoordinates(theta, original);
 

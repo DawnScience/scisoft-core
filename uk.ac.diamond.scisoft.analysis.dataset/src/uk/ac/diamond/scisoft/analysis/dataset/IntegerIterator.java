@@ -31,7 +31,7 @@ public class IntegerIterator extends IndexIterator {
 	 * @param index integer dataset
 	 * @param length of entire data array
 	 */
-	public IntegerIterator(final ADataset index, final int length) {
+	public IntegerIterator(final Dataset index, final int length) {
 		this(index, length, 1);
 	}
 
@@ -42,8 +42,8 @@ public class IntegerIterator extends IndexIterator {
 	 * @param length of entire data array
 	 * @param isize number of elements in an item
 	 */
-	public IntegerIterator(final ADataset index, final int length, final int isize) {
-		indices = (IntegerDataset) (index instanceof IntegerDataset ? index : DatasetUtils.convertToAbstractDataset(index).cast(ADataset.INT32));
+	public IntegerIterator(final Dataset index, final int length, final int isize) {
+		indices = (IntegerDataset) (index instanceof IntegerDataset ? index : DatasetUtils.convertToAbstractDataset(index).cast(Dataset.INT32));
 		iter = index.getIterator();
 		istep = isize;
 		imax = length*istep;

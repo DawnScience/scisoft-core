@@ -212,10 +212,24 @@ public class PixelIntegrationUtils {
 	}
 	
 	public static void detectorTranmissionCorrection(AbstractDataset correctionArray, AbstractDataset tth, double transmissionFactor) {
-		//J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304 
-//		AbstractDataset cor = Maths.cos(tth);
-//		cor = Maths.divide(1-transmissionFactor, cor);
-//		cor.idivide(1-transmissionFactor);
-//		correctionArray.imultiply(cor);
+		//J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304
+		//K = [1 - exp(lnT/cos(a))]/(1-T)
+		AbstractDataset cor = Maths.cos(tth);
+		cor = Maths.divide(Math.log(transmissionFactor), cor);
+		cor = Maths.exp(cor);
+		cor = Maths.subtract(1, cor);
+		cor.idivide(1-transmissionFactor);
+		correctionArray.idivide(cor);
+	}
+	
+	public static void lorentzCorrection(AbstractDataset correctionArray, AbstractDataset tth) {
+		//Norby J. Appl. Cryst. (1997). 30, 21-30
+		//1/sin2(theta)cos(theta)
+		AbstractDataset th = Maths.divide(tth, 2);
+		AbstractDataset s2 = Maths.sin(th);
+		s2.ipower(2);
+		th = Maths.cos(th);
+		s2.imultiply(th);
+		correctionArray.idivide(s2);
 	}
 }

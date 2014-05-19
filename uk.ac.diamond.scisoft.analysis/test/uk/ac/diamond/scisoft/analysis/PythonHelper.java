@@ -29,7 +29,7 @@ public class PythonHelper {
 	 * Change this to return false to skip (aka {@link Assume} failure) all tests that require launching python
 	 */
 	public static boolean enablePythonTests() {
-		return false;
+		return true;
 	}
 
 

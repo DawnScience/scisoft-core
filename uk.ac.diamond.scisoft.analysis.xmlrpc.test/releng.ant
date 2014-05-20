@@ -14,42 +14,42 @@
 		 ==================================================================== -->
 
 	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
-    <target name="junit-tests" depends="set-test-base-DAWN">
-        <condition property="plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory" value="1280m">
-            <os family="windows" />
-        </condition>
-        <property name="plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory" value="1536m" />
-        <junit-call description="${ant.project.name} Java JUnit tests" forkmode="perTest" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory}">
-            <!-- forkmode=perTest, since some tests can trigger a JVM out-of-memory crash, whence following tests will erroneously report failure unless in a new JVM -->
-            <formatter type="xml" />
-            <classpath>
-                <pathelement location="${junitjar.loc}" />
-                <pathelement location="${jythonjar.loc}"/>
-                <pathelement location="${plugin.basedir}/bin" />
-                <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.diamond.test.runners/logging" />  <!-- to pick up logback-test.xml -->
-                <pathelement location="${plugin.host.basedir}/bin" />
-                <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.api/bin" />
-                <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
-                <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/jars/*" />
-                <pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
-                <pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
-                <pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.util/bin" />
-                <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
-                <pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
-                <pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/bin" />
-                <pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/jars/*" />
-                <pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.hdf5/bin" />
-                <path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
-                <path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
-                <pathelement location="${workspace.loc}/tp/plugins/*" />
-                <path refid="libs.jars.path" />
-            </classpath>
-            <batchtest todir="@{report.dir}">
-                <fileset dir="${plugin.basedir}/src">
-                    <include name="**/*Test.java" />
-                </fileset>
-            </batchtest>
-        </junit-call>
-    </target>
+	<target name="junit-tests" depends="set-test-base-DAWN">
+		<condition property="plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory" value="1280m">
+			<os family="windows" />
+		</condition>
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory" value="1536m" />
+		<junit-call description="${ant.project.name} Java JUnit tests" forkmode="perTest" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.xmlrpc.junit-tests.maxmemory}">
+			<!-- forkmode=perTest, since some tests can trigger a JVM out-of-memory crash, whence following tests will erroneously report failure unless in a new JVM -->
+			<formatter type="xml" />
+			<classpath>
+				<pathelement location="${junitjar.loc}" />
+				<pathelement location="${jythonjar.loc}"/>
+				<pathelement location="${plugin.basedir}/bin" />
+				<pathelement location="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/logging" />  <!-- to pick up logback-test.xml -->
+				<pathelement location="${plugin.host.basedir}/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.api/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/jars/*" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
+				<pathelement location="${workspace.git.loc}/gda-common.git/uk.ac.gda.common/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.util/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-cbflib.git/uk.ac.diamond.CBFlib/jars/*" />
+				<pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/jars/*" />
+				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.hdf5/bin" />
+				<path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
+				<path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
+				<pathelement location="${workspace.loc}/tp/plugins/*" />
+				<path refid="libs.jars.path" />
+			</classpath>
+			<batchtest todir="@{report.dir}">
+				<fileset dir="${plugin.basedir}/src">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit-call>
+	</target>
 
 </project>

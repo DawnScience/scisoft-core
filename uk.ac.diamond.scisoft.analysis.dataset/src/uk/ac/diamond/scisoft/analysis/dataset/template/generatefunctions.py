@@ -100,7 +100,7 @@ def beginmethod(name, jdoc=None, params=0):
     print("\t\tfinal int dt = a.getDtype();")
     for p in plist:
         print("\t\tfinal double %s = AbstractDataset.toReal(%s);" % (p+"x", p))
-        print("\t\tfinal double %s = AbstractDataset.toImag(%s);" % (p+"y", p))
+#        print("\t\tfinal double %s = AbstractDataset.toImag(%s);" % (p+"y", p))
 
     print("")
     print("\t\tswitch(dt) {")
@@ -233,8 +233,8 @@ def preloop(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=None, odty
         otype = itype
     if odtype == None:
         odtype = dtype
-    print("\t\tcase AbstractDataset.%s:" % dtype)
-    print("\t\t\tds = AbstractDataset.zeros(a, AbstractDataset.%s);" % odtype)
+    print("\t\tcase Dataset.%s:" % dtype)
+    print("\t\t\tds = AbstractDataset.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
 
@@ -245,8 +245,8 @@ def preloopcompound(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=No
         otype = itype
     if odtype == None:
         odtype = dtype
-    print("\t\tcase AbstractDataset.%s:" % dtype)
-    print("\t\t\tds = AbstractDataset.zeros(a, AbstractDataset.%s);" % odtype)
+    print("\t\tcase Dataset.%s:" % dtype)
+    print("\t\t\tds = AbstractDataset.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tisize = a.getElementsPerItem();")
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
@@ -257,7 +257,7 @@ def postloop():
 
 def func(cargo):
     f, last = cargo
-    dummy, params = last.split("func:",1)
+    dummy, params = last.split("func:", 1)
     params = params.strip()
     if len(params) > 0:
         nparams = int(params)

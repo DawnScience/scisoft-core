@@ -10405,4 +10405,5 @@ public class Maths {
 		addFunctionName(ds, "clip");
 		return ds;
 	}
+// End of generated code
 }

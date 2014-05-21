@@ -370,7 +370,7 @@ public interface Dataset extends IErrorDataset {
 	 * @param axes
 	 * @return a PositionIterator that misses out axes
 	 */
-	public IndexIterator getPositionIterator(int... axes);
+	public PositionIterator getPositionIterator(int... axes);
 
 	/**
 	 * @param start
@@ -391,7 +391,7 @@ public interface Dataset extends IErrorDataset {
 	 *            to include
 	 * @return slice iterator
 	 */
-	public IndexIterator getSliceIteratorFromAxes(int[] pos, boolean[] axes);
+	public SliceIterator getSliceIteratorFromAxes(int[] pos, boolean[] axes);
 
 	/**
 	 * Copy content from axes in given position to array
@@ -447,7 +447,7 @@ public interface Dataset extends IErrorDataset {
 	 * @param choice
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public IndexIterator getBooleanIterator(Dataset choice);
+	public BooleanIterator getBooleanIterator(Dataset choice);
 
 	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in
@@ -457,7 +457,7 @@ public interface Dataset extends IErrorDataset {
 	 * @param value
 	 * @return an iterator of dataset that visits items chosen by given choice dataset
 	 */
-	public IndexIterator getBooleanIterator(Dataset choice, boolean value);
+	public BooleanIterator getBooleanIterator(Dataset choice, boolean value);
 
 	/**
 	 * This is modelled after the NumPy get item with a condition specified by a boolean dataset

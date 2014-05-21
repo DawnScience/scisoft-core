@@ -159,7 +159,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
 
-	private static boolean isDTypeElemental(int dtype) {
+	protected static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
 	}
 
@@ -2513,13 +2513,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj) {
-		if (obj instanceof AbstractDataset)
-			return (AbstractDataset) obj;
-		if (obj instanceof ILazyDataset)
-			return DatasetUtils.convertToAbstractDataset((ILazyDataset) obj);
-
-		final int dtype = getDTypeFromObject(obj);
-		return array(obj, dtype);
+		return (AbstractDataset) DatasetFactory.array(obj);
 	}
 
 	/**
@@ -2532,37 +2526,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj, boolean isUnsigned) {
-		AbstractDataset a = array(obj);
-		if (isUnsigned) {
-			switch (a.getDtype()) {
-			case INT32:
-				a = new LongDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 32);
-				break;
-			case INT16:
-				a = new IntegerDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 16);
-				break;
-			case INT8:
-				a = new ShortDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 8);
-				break;
-			case ARRAYINT32:
-				a = new CompoundLongDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 32);
-				break;
-			case ARRAYINT16:
-				a = new CompoundIntegerDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 16);
-				break;
-			case ARRAYINT8:
-				a = new CompoundShortDataset(a);
-				DatasetUtils.unwrapUnsigned(a, 8);
-				break;
-			}
-
-		}
-		return a;
+		return (AbstractDataset) DatasetFactory.array(obj, isUnsigned);
 	}
 
 	/**
@@ -2574,50 +2538,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj, final int dtype) {
-		if (obj instanceof AbstractDataset)
-			return DatasetUtils.cast((AbstractDataset) obj, dtype);
-
-		if (obj instanceof ILazyDataset)
-			return DatasetUtils.cast(DatasetUtils.convertToAbstractDataset((ILazyDataset) obj), dtype);
-
-		switch (dtype) {
-		case BOOL:
-			return BooleanDataset.createFromObject(obj);
-		case INT8:
-			return ByteDataset.createFromObject(obj);
-		case INT16:
-			return ShortDataset.createFromObject(obj);
-		case INT32:
-			return IntegerDataset.createFromObject(obj);
-		case INT64:
-			return LongDataset.createFromObject(obj);
-		case ARRAYINT8:
-			return CompoundByteDataset.createFromObject(obj);
-		case ARRAYINT16:
-			return CompoundShortDataset.createFromObject(obj);
-		case ARRAYINT32:
-			return CompoundIntegerDataset.createFromObject(obj);
-		case ARRAYINT64:
-			return CompoundLongDataset.createFromObject(obj);
-		case FLOAT32:
-			return FloatDataset.createFromObject(obj);
-		case FLOAT64:
-			return DoubleDataset.createFromObject(obj);
-		case ARRAYFLOAT32:
-			return CompoundFloatDataset.createFromObject(obj);
-		case ARRAYFLOAT64:
-			return CompoundDoubleDataset.createFromObject(obj);
-		case COMPLEX64:
-			return ComplexFloatDataset.createFromObject(obj);
-		case COMPLEX128:
-			return ComplexDoubleDataset.createFromObject(obj);
-		case STRING:
-			return StringDataset.createFromObject(obj);
-		case OBJECT:
-			return ObjectDataset.createFromObject(obj);
-		default:
-			return null;
-		}
+		return (AbstractDataset) DatasetFactory.array(obj, dtype);
 	}
 
 	/**
@@ -2627,22 +2548,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return dataset filled with values from list
 	 */
 	public static AbstractDataset createFromList(List<?> objectList) {
-		if (objectList == null || objectList.size() == 0) {
-			throw new IllegalArgumentException("No list or zero-length list given");
-		}
-		Object obj = objectList.get(0);
-		if (obj instanceof Number || obj instanceof Complex) {
-			int dtype = getDTypeFromClass(obj.getClass());
-			int len = objectList.size();
-			AbstractDataset result = zeros(new int[] { len }, dtype);
-
-			int i = 0;
-			for (Object object : objectList) {
-				result.setObjectAbs(i++, object);
-			}
-			return result;
-		}
-		throw new IllegalArgumentException("Class of list element not supported");
+		return (AbstractDataset) DatasetFactory.createFromList(objectList);
 	}
 
 	/**
@@ -2651,39 +2557,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return a new dataset of given shape and type, filled with zeros
 	 */
 	public static AbstractDataset zeros(final int[] shape, final int dtype) {
-		switch (dtype) {
-		case BOOL:
-			return new BooleanDataset(shape);
-		case INT8:
-		case ARRAYINT8:
-			return new ByteDataset(shape);
-		case INT16:
-		case ARRAYINT16:
-			return new ShortDataset(shape);
-		case RGB:
-			return new RGBDataset(shape);
-		case INT32:
-		case ARRAYINT32:
-			return new IntegerDataset(shape);
-		case INT64:
-		case ARRAYINT64:
-			return new LongDataset(shape);
-		case FLOAT32:
-		case ARRAYFLOAT32:
-			return new FloatDataset(shape);
-		case FLOAT64:
-		case ARRAYFLOAT64:
-			return new DoubleDataset(shape);
-		case COMPLEX64:
-			return new ComplexFloatDataset(shape);
-		case COMPLEX128:
-			return new ComplexDoubleDataset(shape);
-		case STRING:
-			return new StringDataset(shape);
-		case OBJECT:
-			return new ObjectDataset(shape);
-		}
-		throw new IllegalArgumentException("dtype not known or unsupported");
+		return (AbstractDataset) DatasetFactory.zeros(shape, dtype);
 	}
 
 	/**
@@ -2694,45 +2568,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return a new dataset of given item size, shape and type, filled with zeros
 	 */
 	public static AbstractDataset zeros(final int itemSize, final int[] shape, final int dtype) {
-		if (itemSize == 1) {
-			return zeros(shape, dtype);
-		}
-		switch (dtype) {
-		case INT8:
-		case ARRAYINT8:
-			return new CompoundByteDataset(itemSize, shape);
-		case INT16:
-		case ARRAYINT16:
-			return new CompoundShortDataset(itemSize, shape);
-		case RGB:
-			if (itemSize != 3) {
-				throw new IllegalArgumentException("Number of elements not compatible with RGB type");
-			}
-			return new RGBDataset(shape);
-		case INT32:
-		case ARRAYINT32:
-			return new CompoundIntegerDataset(itemSize, shape);
-		case INT64:
-		case ARRAYINT64:
-			return new CompoundLongDataset(itemSize, shape);
-		case FLOAT32:
-		case ARRAYFLOAT32:
-			return new CompoundFloatDataset(itemSize, shape);
-		case FLOAT64:
-		case ARRAYFLOAT64:
-			return new CompoundDoubleDataset(itemSize, shape);
-		case COMPLEX64:
-			if (itemSize != 2) {
-				throw new IllegalArgumentException("Number of elements not compatible with complex type");
-			}
-			return new ComplexFloatDataset(shape);
-		case COMPLEX128:
-			if (itemSize != 2) {
-				throw new IllegalArgumentException("Number of elements not compatible with complex type");
-			}
-			return new ComplexDoubleDataset(shape);
-		}
-		throw new IllegalArgumentException("dtype not a known compound type");
+		return (AbstractDataset) DatasetFactory.zeros(itemSize, shape, dtype);
 	}
 
 	/**
@@ -2785,29 +2621,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return a new dataset of given shape and type, filled with ones
 	 */
 	public static AbstractDataset ones(final int[] shape, final int dtype) {
-		switch (dtype) {
-		case BOOL:
-			return BooleanDataset.ones(shape);
-		case INT8:
-			return ByteDataset.ones(shape);
-		case INT16:
-			return ShortDataset.ones(shape);
-		case RGB:
-			return new RGBDataset(shape).fill(1);
-		case INT32:
-			return IntegerDataset.ones(shape);
-		case INT64:
-			return LongDataset.ones(shape);
-		case FLOAT32:
-			return FloatDataset.ones(shape);
-		case FLOAT64:
-			return DoubleDataset.ones(shape);
-		case COMPLEX64:
-			return ComplexFloatDataset.ones(shape);
-		case COMPLEX128:
-			return ComplexDoubleDataset.ones(shape);
-		}
-		throw new IllegalArgumentException("dtype not known");
+		return (AbstractDataset) DatasetFactory.ones(shape, dtype);
 	}
 
 	/**
@@ -2818,45 +2632,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return a new dataset of given item size, shape and type, filled with ones
 	 */
 	public static AbstractDataset ones(final int itemSize, final int[] shape, final int dtype) {
-		if (itemSize == 1) {
-			return ones(shape, dtype);
-		}
-		switch (dtype) {
-		case INT8:
-		case ARRAYINT8:
-			return CompoundByteDataset.ones(itemSize, shape);
-		case INT16:
-		case ARRAYINT16:
-			return CompoundShortDataset.ones(itemSize, shape);
-		case RGB:
-			if (itemSize != 3) {
-				throw new IllegalArgumentException("Number of elements not compatible with RGB type");
-			}
-			return new RGBDataset(shape).fill(1);
-		case INT32:
-		case ARRAYINT32:
-			return CompoundIntegerDataset.ones(itemSize, shape);
-		case INT64:
-		case ARRAYINT64:
-			return CompoundLongDataset.ones(itemSize, shape);
-		case FLOAT32:
-		case ARRAYFLOAT32:
-			return CompoundFloatDataset.ones(itemSize, shape);
-		case FLOAT64:
-		case ARRAYFLOAT64:
-			return CompoundDoubleDataset.ones(itemSize, shape);
-		case COMPLEX64:
-			if (itemSize != 2) {
-				throw new IllegalArgumentException("Number of elements not compatible with complex type");
-			}
-			return ComplexFloatDataset.ones(shape);
-		case COMPLEX128:
-			if (itemSize != 2) {
-				throw new IllegalArgumentException("Number of elements not compatible with complex type");
-			}
-			return ComplexDoubleDataset.ones(shape);
-		}
-		throw new IllegalArgumentException("dtype not a known compound type");
+		return (AbstractDataset) DatasetFactory.ones(itemSize, shape, dtype);
 	}
 
 	/**
@@ -2872,6 +2648,17 @@ public abstract class AbstractDataset implements Dataset {
 	 * @param start
 	 * @param stop
 	 * @param step
+	 * @param dtype
+	 * @return a new 1D dataset of given type, filled with values determined by parameters
+	 */
+	public static AbstractDataset arange(final double start, final double stop, final double step, final int dtype) {
+		return (AbstractDataset) DatasetFactory.arange(start, stop, step, dtype);
+	}
+
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
 	 * @return number of steps to take
 	 */
 	public static int calcSteps(final double start, final double stop, final double step) {
@@ -2879,41 +2666,6 @@ public abstract class AbstractDataset implements Dataset {
 			return (int) Math.ceil((stop - start) / step);
 		}
 		return (int) Math.ceil((stop - start) / step);
-	}
-
-	/**
-	 * @param start
-	 * @param stop
-	 * @param step
-	 * @param dtype
-	 * @return a new 1D dataset of given type, filled with values determined by parameters
-	 */
-	public static AbstractDataset arange(final double start, final double stop, final double step, final int dtype) {
-		if ((step > 0) != (start <= stop)) {
-			return null;
-		}
-
-		switch (dtype) {
-		case BOOL:
-			break;
-		case INT8:
-			return ByteDataset.arange(start, stop, step);
-		case INT16:
-			return ShortDataset.arange(start, stop, step);
-		case INT32:
-			return IntegerDataset.arange(start, stop, step);
-		case INT64:
-			return LongDataset.arange(start, stop, step);
-		case FLOAT32:
-			return FloatDataset.arange(start, stop, step);
-		case FLOAT64:
-			return DoubleDataset.arange(start, stop, step);
-		case COMPLEX64:
-			return ComplexFloatDataset.arange(start, stop, step);
-		case COMPLEX128:
-			return ComplexDoubleDataset.arange(start, stop, step);
-		}
-		throw new IllegalArgumentException("dtype not known");
 	}
 
 	/**

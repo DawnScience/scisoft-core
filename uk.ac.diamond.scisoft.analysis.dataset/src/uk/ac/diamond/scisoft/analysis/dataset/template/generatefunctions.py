@@ -91,9 +91,9 @@ def beginmethod(name, jdoc=None, params=0):
         for p in range(1,params):
             plist.append("p"+chr(ord('a')+p))
             psig += ", final Object " + plist[p]
-        print("\tpublic static AbstractDataset %s(final AbstractDataset a, %s) {" % (name, psig))
+        print("\tpublic static AbstractDataset %s(final Dataset a, %s) {" % (name, psig))
     else:
-        print("\tpublic static AbstractDataset %s(final AbstractDataset a) {" % name)
+        print("\tpublic static AbstractDataset %s(final Dataset a) {" % name)
     print("\t\tfinal int isize;")
     print("\t\tfinal IndexIterator it = a.getIterator();")
     print("\t\tAbstractDataset ds;")

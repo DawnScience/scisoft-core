@@ -62,7 +62,7 @@ public class StringDataset extends StringDatasetBase {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public StringDataset(final AbstractDataset dataset) {
+	public StringDataset(final Dataset dataset) {
 		super(dataset);
 	}
 

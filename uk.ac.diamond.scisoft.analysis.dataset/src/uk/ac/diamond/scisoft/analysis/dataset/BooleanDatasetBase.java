@@ -129,7 +129,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public BooleanDatasetBase(final AbstractDataset dataset) {
+	public BooleanDatasetBase(final Dataset dataset) {
 		copyToView(dataset, this, true, false);
 		offset = 0;
 		stride = null;

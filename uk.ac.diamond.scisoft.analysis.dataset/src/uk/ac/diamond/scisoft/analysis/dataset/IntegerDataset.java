@@ -130,7 +130,7 @@ public class IntegerDataset extends AbstractDataset {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public IntegerDataset(final AbstractDataset dataset) {
+	public IntegerDataset(final Dataset dataset) {
 		copyToView(dataset, this, true, false);
 		offset = 0;
 		stride = null;

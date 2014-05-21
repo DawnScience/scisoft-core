@@ -66,7 +66,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public BooleanDataset(final AbstractDataset dataset) {
+	public BooleanDataset(final Dataset dataset) {
 		super(dataset);
 	}
 

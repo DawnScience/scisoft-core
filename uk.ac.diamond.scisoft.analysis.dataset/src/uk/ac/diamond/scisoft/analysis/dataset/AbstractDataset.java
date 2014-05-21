@@ -359,29 +359,30 @@ public abstract class AbstractDataset implements Dataset {
 	 * @param clone if true, then clone everything but bulk data
 	 * @param cloneMetadata if true, clone metadata
 	 */
-	protected static void copyToView(AbstractDataset orig, AbstractDataset view, boolean clone, boolean cloneMetadata) {
-		view.name = orig.name;
-		view.size = orig.size;
-		view.odata = orig.odata;
-		view.offset = orig.offset;
-		view.base = orig.base;
+	protected static void copyToView(Dataset orig, AbstractDataset view, boolean clone, boolean cloneMetadata) {
+		view.name = orig.getName();
+		view.size = orig.getSize();
+		view.odata = orig.getBuffer();
+		view.offset = orig instanceof AbstractDataset ? ((AbstractDataset) orig).offset : 0;
+		view.base = orig instanceof AbstractDataset ? ((AbstractDataset) orig).base : null;
 
-		Serializable error = orig.errorData;
+		Serializable error = orig.getErrorBuffer();
 		if (error != null && error instanceof Dataset)
 			view.errorData = ((Dataset) error).getView();
 		else
 			view.errorData = error;
 
 		if (clone) {
-			view.shape = orig.shape.clone();
+			view.shape = orig.getShape();
 			copyStoredValues(orig, view, false);
-			view.stride = orig.stride == null ? null : orig.stride.clone();
+			view.stride = orig instanceof AbstractDataset && ((AbstractDataset) orig).stride != null ?
+					((AbstractDataset) orig).stride.clone() : null;
 		} else {
-			view.shape = orig.shape;
-			view.stride = orig.stride;
+			view.shape = orig.getShapeRef();
+			view.stride = orig instanceof AbstractDataset ? ((AbstractDataset) orig).stride : null;
 		}
 
-		IMetaData metadata = orig.metadataStructure;
+		IMetaData metadata = orig.getMetadata();
 		if (cloneMetadata) {
 			view.metadataStructure = metadata == null ? null : metadata.clone();
 		} else {

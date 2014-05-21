@@ -129,7 +129,7 @@ public class ObjectDatasetBase extends AbstractDataset {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public ObjectDatasetBase(final AbstractDataset dataset) {
+	public ObjectDatasetBase(final Dataset dataset) {
 		copyToView(dataset, this, true, false);
 		offset = 0;
 		stride = null;

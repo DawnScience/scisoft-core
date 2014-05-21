@@ -805,7 +805,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @param bitWidth width of original primitive in bits
 	 */
-	public static void unwrapUnsigned(AbstractDataset a, final int bitWidth) {
+	public static void unwrapUnsigned(Dataset a, final int bitWidth) {
 		final int dtype = a.getDtype();
 		final double dv = 1L << bitWidth;
 		final int isize = a.getElementsPerItem();

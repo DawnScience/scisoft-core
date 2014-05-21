@@ -130,7 +130,7 @@ public class ByteDataset extends AbstractDataset {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public ByteDataset(final AbstractDataset dataset) {
+	public ByteDataset(final Dataset dataset) {
 		copyToView(dataset, this, true, false);
 		offset = 0;
 		stride = null;

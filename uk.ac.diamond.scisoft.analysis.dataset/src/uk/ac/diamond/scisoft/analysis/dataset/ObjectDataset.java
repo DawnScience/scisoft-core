@@ -61,7 +61,7 @@ public class ObjectDataset extends ObjectDatasetBase {
 	 * Cast a dataset to this class type
 	 * @param dataset
 	 */
-	public ObjectDataset(final AbstractDataset dataset) {
+	public ObjectDataset(final Dataset dataset) {
 		super(dataset);
 	}
 

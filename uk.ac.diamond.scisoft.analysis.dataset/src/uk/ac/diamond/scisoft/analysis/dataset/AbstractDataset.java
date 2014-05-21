@@ -2534,27 +2534,27 @@ public abstract class AbstractDataset implements Dataset {
 		AbstractDataset a = array(obj);
 		if (isUnsigned) {
 			switch (a.getDtype()) {
-			case AbstractDataset.INT32:
+			case INT32:
 				a = new LongDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 32);
 				break;
-			case AbstractDataset.INT16:
+			case INT16:
 				a = new IntegerDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 16);
 				break;
-			case AbstractDataset.INT8:
+			case INT8:
 				a = new ShortDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 8);
 				break;
-			case AbstractDataset.ARRAYINT32:
+			case ARRAYINT32:
 				a = new CompoundLongDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 32);
 				break;
-			case AbstractDataset.ARRAYINT16:
+			case ARRAYINT16:
 				a = new CompoundIntegerDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 16);
 				break;
-			case AbstractDataset.ARRAYINT8:
+			case ARRAYINT8:
 				a = new CompoundShortDataset(a);
 				DatasetUtils.unwrapUnsigned(a, 8);
 				break;

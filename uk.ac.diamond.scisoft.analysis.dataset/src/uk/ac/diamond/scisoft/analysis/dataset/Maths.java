@@ -35,7 +35,7 @@ public class Maths {
 	 * @param dataset
 	 * @return the bracketed if necessary method name
 	 */
-	private static StringBuilder bracketIfNecessary(final AbstractDataset dataset) {
+	private static StringBuilder bracketIfNecessary(final Dataset dataset) {
 		final String name = dataset.getName().trim();
 		StringBuilder newName = new StringBuilder(name);
 		if (name.contains("+") || name.contains("-") || name.contains("*") ||
@@ -47,7 +47,7 @@ public class Maths {
 		return newName;
 	}
 
-	private static void addFunctionName(final AbstractDataset dataset, final String fname) {
+	private static void addFunctionName(final Dataset dataset, final String fname) {
 		StringBuilder name = new StringBuilder(dataset.getName());
 		name.insert(0, '(');
 		name.insert(0, fname);
@@ -56,12 +56,13 @@ public class Maths {
 		dataset.setName(name.toString());
 	}
 
-	private static AbstractDataset broadcastClone(final AbstractDataset a, final AbstractDataset b) {
+	private static AbstractDataset broadcastClone(final Dataset a, final Dataset b) {
 		final int rt = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
 		final int ia = a.getElementsPerItem();
 		final int ib = b.getElementsPerItem();
 
-		return ia > ib ? a.clone().cast(false, rt, ia) : a.clone().cast(true, rt, ib);
+		return DatasetUtils.convertToAbstractDataset(ia > ib ? a.clone().cast(false, rt, ia)
+				: a.clone().cast(true, rt, ib));
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class Maths {
 	 * @param b
 	 * @return a + b, addition of a and b
 	 */
-	public static AbstractDataset add(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset add(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -86,7 +87,7 @@ public class Maths {
 	 * @param b
 	 * @return a - b, subtraction of a by b
 	 */
-	public static AbstractDataset subtract(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset subtract(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -103,7 +104,7 @@ public class Maths {
 	 * @param b
 	 * @return a*b, product of a and b
 	 */
-	public static AbstractDataset multiply(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset multiply(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -121,7 +122,7 @@ public class Maths {
 	 * @param b
 	 * @return a/b, division of a by b
 	 */
-	public static AbstractDataset divide(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset divide(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -139,7 +140,7 @@ public class Maths {
 	 * @param b
 	 * @return a**b, raise a to power of b
 	 */
-	public static AbstractDataset power(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset power(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -156,7 +157,7 @@ public class Maths {
 	 * @param b
 	 * @return a%b, reminder of division of a by b
 	 */
-	public static AbstractDataset remainder(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset remainder(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final AbstractDataset result = broadcastClone(a, b);
@@ -187,7 +188,7 @@ public class Maths {
 			return null;
 		final Iterator<IDataset> it = sets.iterator();
 		if (sets.size() == 1)
-			return (AbstractDataset) it.next();
+			return DatasetUtils.convertToAbstractDataset(it.next());
 		AbstractDataset sum = requireClone ? ((AbstractDataset) it.next()).clone() : (AbstractDataset) it.next();
 
 		while (it.hasNext())
@@ -210,7 +211,7 @@ public class Maths {
 			return null;
 		final Iterator<IDataset> it = sets.iterator();
 		if (sets.size() == 1)
-			return (AbstractDataset) it.next();
+			return DatasetUtils.convertToAbstractDataset(it.next());
 		AbstractDataset product = requireClone ? ((AbstractDataset) it.next()).clone() : (AbstractDataset) it.next();
 
 		while (it.hasNext())
@@ -224,9 +225,9 @@ public class Maths {
 	 * @param b
 	 * @return a + b, addition of a and b
 	 */
-	public static AbstractDataset add(final AbstractDataset a, final Object b) {
-		if (b instanceof AbstractDataset) {
-			return add(a, (AbstractDataset) b);
+	public static AbstractDataset add(final Dataset a, final Object b) {
+		if (b instanceof Dataset) {
+			return add(a, (Dataset) b);
 		}
 
 		IndexIterator it1 = a.getIterator();
@@ -399,12 +400,12 @@ public class Maths {
 		AbstractDataset result = null;
 		final int is;
 
-		if (a instanceof AbstractDataset) {
-			if (b instanceof AbstractDataset) {
-				return subtract((AbstractDataset) a, (AbstractDataset) b);
+		if (a instanceof Dataset) {
+			if (b instanceof Dataset) {
+				return subtract((Dataset) a, (Dataset) b);
 			}
 
-			AbstractDataset ds = (AbstractDataset) a;
+			Dataset ds = (Dataset) a;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -564,11 +565,11 @@ public class Maths {
 			result.setName(bracketIfNecessary(ds).append('-').append(b).toString());
 
 		} else {
-			if (!(b instanceof AbstractDataset)) {
+			if (!(b instanceof Dataset)) {
 				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 
-			AbstractDataset ds = (AbstractDataset) b;
+			Dataset ds = (Dataset) b;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(a.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -736,9 +737,9 @@ public class Maths {
 	 * @param b
 	 * @return a * b, product of a and b
 	 */
-	public static AbstractDataset multiply(final AbstractDataset a, final Object b) {
-		if (b instanceof AbstractDataset) {
-			return multiply(a, (AbstractDataset) b);
+	public static AbstractDataset multiply(final Dataset a, final Object b) {
+		if (b instanceof Dataset) {
+			return multiply(a, (Dataset) b);
 		}
 
 		IndexIterator it1 = a.getIterator();
@@ -960,12 +961,12 @@ public class Maths {
 		AbstractDataset result = null;
 		final int is;
 
-		if (a instanceof AbstractDataset) {
-			if (b instanceof AbstractDataset) {
-				return divide((AbstractDataset) a, (AbstractDataset) b);
+		if (a instanceof Dataset) {
+			if (b instanceof Dataset) {
+				return divide((Dataset) a, (Dataset) b);
 			}
 
-			AbstractDataset ds = (AbstractDataset) a;
+			Dataset ds = (Dataset) a;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -1245,11 +1246,11 @@ public class Maths {
 			// set the name based on the changes made
 			result.setName(bracketIfNecessary(ds).append('/').append(b).toString());
 		} else {
-			if (!(b instanceof AbstractDataset)) {
+			if (!(b instanceof Dataset)) {
 				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 
-			AbstractDataset ds = (AbstractDataset) b;
+			Dataset ds = (Dataset) b;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(a.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -1545,18 +1546,18 @@ public class Maths {
 		AbstractDataset result = null;
 		final int is;
 
-		if (a instanceof AbstractDataset) {
-			if (b instanceof AbstractDataset) {
-				final int at = ((AbstractDataset) a).getDtype();
-				final int bt = ((AbstractDataset) b).getDtype();
+		if (a instanceof Dataset) {
+			if (b instanceof Dataset) {
+				final int at = ((Dataset) a).getDtype();
+				final int bt = ((Dataset) b).getDtype();
 
-				AbstractDataset d1, d2;
+				Dataset d1, d2;
 				if (bt > at) {
-					d1 = (AbstractDataset) b;
-					d2 = (AbstractDataset) a;
+					d1 = (Dataset) b;
+					d2 = (Dataset) a;
 				} else {
-					d1 = (AbstractDataset) a;
-					d2 = (AbstractDataset) b;
+					d1 = (Dataset) a;
+					d2 = (Dataset) b;
 				}
 				d1.checkCompatibility(d2);
 				result = AbstractDataset.zeros(d1, bt);
@@ -1743,7 +1744,7 @@ public class Maths {
 					throw new UnsupportedOperationException("dividez does not support this dataset type");
 				}
 			} else {
-				AbstractDataset ds = (AbstractDataset) a;
+				Dataset ds = (Dataset) a;
 				final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(b
 						.getClass()));
 
@@ -1759,11 +1760,11 @@ public class Maths {
 				}
 			}
 		} else {
-			if (!(b instanceof AbstractDataset)) {
+			if (!(b instanceof Dataset)) {
 				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 
-			AbstractDataset ds = (AbstractDataset) b;
+			Dataset ds = (Dataset) b;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(a.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 
@@ -2055,12 +2056,12 @@ public class Maths {
 		AbstractDataset result = null;
 		final int is;
 
-		if (a instanceof AbstractDataset) {
-			if (b instanceof AbstractDataset) {
-				return power((AbstractDataset) a, (AbstractDataset) b);
+		if (a instanceof Dataset) {
+			if (b instanceof Dataset) {
+				return power((Dataset) a, (Dataset) b);
 			}
 
-			final AbstractDataset ds = (AbstractDataset) a;
+			final Dataset ds = (Dataset) a;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			final IndexIterator it1 = ds.getIterator();
@@ -2231,11 +2232,11 @@ public class Maths {
 			// set the name based on the changes made
 			result.setName(bracketIfNecessary(ds).append("**").append(b).toString());
 		} else {
-			if (!(b instanceof AbstractDataset)) {
+			if (!(b instanceof Dataset)) {
 				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 
-			final AbstractDataset ds = (AbstractDataset) b;
+			final Dataset ds = (Dataset) b;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(a.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -2422,12 +2423,12 @@ public class Maths {
 		AbstractDataset result = null;
 		final int is;
 
-		if (a instanceof AbstractDataset) {
-			if (b instanceof AbstractDataset) {
-				return remainder((AbstractDataset) a, (AbstractDataset) b);
+		if (a instanceof Dataset) {
+			if (b instanceof Dataset) {
+				return remainder((Dataset) a, (Dataset) b);
 			}
 
-			AbstractDataset ds = (AbstractDataset) a;
+			Dataset ds = (Dataset) a;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -2580,11 +2581,11 @@ public class Maths {
 			// set the name based on the changes made
 			result.setName(bracketIfNecessary(ds).append('%').append(b).toString());
 		} else {
-			if (!(b instanceof AbstractDataset)) {
+			if (!(b instanceof Dataset)) {
 				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 
-			AbstractDataset ds = (AbstractDataset) b;
+			Dataset ds = (Dataset) b;
 			final int dt = AbstractDataset.getBestDType(ds.getDtype(), AbstractDataset.getDTypeFromClass(a.getClass()));
 			result = AbstractDataset.zeros(ds, dt);
 			IndexIterator it1 = ds.getIterator();
@@ -2740,7 +2741,7 @@ public class Maths {
 	 * @param a
 	 * @return reciprocal dataset
 	 */
-	public static AbstractDataset reciprocal(final AbstractDataset a) {
+	public static AbstractDataset reciprocal(final Dataset a) {
 		return divide(1, a);
 	}
 
@@ -2748,7 +2749,7 @@ public class Maths {
 	 * @param a
 	 * @return a^*, complex conjugate of a
 	 */
-	public static AbstractDataset conjugate(final AbstractDataset a) {
+	public static AbstractDataset conjugate(final Dataset a) {
 		int at = a.getDtype();
 		IndexIterator it1 = a.getIterator();
 
@@ -2774,7 +2775,7 @@ public class Maths {
 			result.setName(bracketIfNecessary(a).append("^*").toString());
 			break;
 		default:
-			result = a;
+			result = DatasetUtils.convertToAbstractDataset(a);
 		}
 
 		return result;
@@ -2785,7 +2786,7 @@ public class Maths {
 	 * @param b side of right-angled triangle
 	 * @return hypotenuse of right-angled triangle: sqrt(a^2 + a^2)
 	 */
-	public static AbstractDataset hypot(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset hypot(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final int is = Math.max(a.getElementsPerItem(), b.getElementsPerItem());
@@ -2795,7 +2796,7 @@ public class Maths {
 
 		final int rt = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
 
-		final AbstractDataset result = a.clone().cast(rt);
+		final AbstractDataset result = DatasetUtils.convertToAbstractDataset(a.clone().cast(rt));
 
 		IndexIterator it1 = a.getIterator();
 		IndexIterator it2 = a.getIterator();
@@ -2865,7 +2866,7 @@ public class Maths {
 	 * @param b adjacent side of right-angled triangle
 	 * @return angle of triangle: atan(a/b)
 	 */
-	public static AbstractDataset arctan2(final AbstractDataset a, final AbstractDataset b) {
+	public static AbstractDataset arctan2(final Dataset a, final Dataset b) {
 		a.checkCompatibility(b);
 
 		final int is = Math.max(a.getElementsPerItem(), b.getElementsPerItem());
@@ -2875,7 +2876,7 @@ public class Maths {
 
 		final int rt = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
 
-		final AbstractDataset result = a.clone().cast(rt);
+		final AbstractDataset result = DatasetUtils.convertToAbstractDataset(a.clone().cast(rt));
 
 		IndexIterator it1 = a.getIterator();
 		IndexIterator it2 = b.getIterator();
@@ -3201,8 +3202,9 @@ public class Maths {
 	 * @param a dataset
 	 * @return dataset of angles
 	 */
-	public static AbstractDataset angle(final AbstractDataset a) {
+	public static AbstractDataset angle(final Dataset a) {
 		AbstractDataset ds = null;
+		AbstractDataset da = DatasetUtils.convertToAbstractDataset(a);
 		int dt = a.getDtype();
 		IndexIterator it = a.getIterator();
 
@@ -3210,7 +3212,7 @@ public class Maths {
 		case Dataset.COMPLEX64:
 			ds = AbstractDataset.zeros(a, Dataset.FLOAT32);
 			float[] f32data = ((FloatDataset) ds).getData();
-			float[] c64data = ((ComplexFloatDataset) a).data;
+			float[] c64data = ((ComplexFloatDataset) da).getData();
 
 			for (int i = 0; it.hasNext();) {
 				f32data[i++] = (float) Math.atan2(c64data[it.index+1], c64data[it.index]);
@@ -3219,7 +3221,7 @@ public class Maths {
 		case Dataset.COMPLEX128:
 			ds = AbstractDataset.zeros(a, Dataset.FLOAT64);
 			double[] f64data = ((DoubleDataset) ds).getData();
-			double[] c128data = ((ComplexDoubleDataset) a).data;
+			double[] c128data = ((ComplexDoubleDataset) da).getData();
 
 			for (int i = 0; it.hasNext();) {
 				f64data[i++] = Math.atan2(c128data[it.index+1], c128data[it.index]);
@@ -3238,8 +3240,9 @@ public class Maths {
 	 * @param keepZeros if true then zero items are returned as zero rather than NaNs
 	 * @return complex dataset where items have unit amplitude
 	 */
-	public static AbstractDataset phaseAsComplexNumber(final AbstractDataset a, final boolean keepZeros) {
+	public static AbstractDataset phaseAsComplexNumber(final Dataset a, final boolean keepZeros) {
 		AbstractDataset ds = null;
+		AbstractDataset da = DatasetUtils.convertToAbstractDataset(a);
 		int dt = a.getDtype();
 		IndexIterator it = a.getIterator();
 
@@ -3248,7 +3251,7 @@ public class Maths {
 			ds = AbstractDataset.zeros(a);
 
 			float[] z64data = ((ComplexFloatDataset) ds).getData();
-			float[] c64data = ((ComplexFloatDataset) a).data;
+			float[] c64data = ((ComplexFloatDataset) da).getData();
 
 			if (keepZeros) {
 				for (int i = 0; it.hasNext();) {
@@ -3277,7 +3280,7 @@ public class Maths {
 			ds = AbstractDataset.zeros(a);
 
 			double[] z128data = ((ComplexDoubleDataset) ds).getData();
-			double[] c128data = ((ComplexDoubleDataset) a).data;
+			double[] c128data = ((ComplexDoubleDataset) da).getData();
 
 			if (keepZeros) {
 				for (int i = 0; it.hasNext();) {
@@ -3746,7 +3749,7 @@ public class Maths {
 	 * @param axis
 	 * @return difference
 	 */
-	public static AbstractDataset difference(AbstractDataset a, final int n, int axis) {
+	public static AbstractDataset difference(Dataset a, final int n, int axis) {
 		AbstractDataset ds;
 		final int dt = a.getDtype();
 		final int rank = a.getRank();
@@ -3768,7 +3771,7 @@ public class Maths {
 		nshape[axis] -= n;
 		ds = AbstractDataset.zeros(is, nshape, dt);
 		if (rank == 1) {
-			difference(a, ds, n);
+			difference(DatasetUtils.convertToAbstractDataset(a), ds, n);
 		} else {
 			final AbstractDataset src = AbstractDataset.zeros(is, new int[] { a.getShapeRef()[axis] }, dt);
 			final AbstractDataset dest = AbstractDataset.zeros(is, new int[] { nshape[axis] }, dt);
@@ -3918,7 +3921,7 @@ public class Maths {
 	 * @param axis
 	 * @return difference
 	 */
-	public static AbstractDataset centralDifference(AbstractDataset a, int axis) {
+	public static AbstractDataset centralDifference(Dataset a, int axis) {
 		AbstractDataset ds;
 		final int dt = a.getDtype();
 		final int rank = a.getRank();
@@ -3959,7 +3962,7 @@ public class Maths {
 	 * @param a is 1d dataset
 	 * @param out is 1d dataset
 	 */
-	private static void centralDifference(final AbstractDataset a, final AbstractDataset out) {
+	private static void centralDifference(final Dataset a, final AbstractDataset out) {
 		final int isize = a.getElementsPerItem();
 		final int dt = a.getDtype();
 

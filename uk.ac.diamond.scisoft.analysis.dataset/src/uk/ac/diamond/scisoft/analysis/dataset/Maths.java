@@ -3788,7 +3788,7 @@ public class Maths {
 		return ds;
 	}
 
-	private static double SelectedMean(AbstractDataset data, int Min, int Max) {
+	private static double SelectedMean(Dataset data, int Min, int Max) {
 
 		double result = 0.0;
 		for (int i = Min, imax = data.getSize(); i <= Max; i++) {
@@ -3808,7 +3808,7 @@ public class Maths {
 		return result;
 	}
 
-	private static void SelectedMeanArray(double[] out, AbstractDataset data, int Min, int Max) {
+	private static void SelectedMeanArray(double[] out, Dataset data, int Min, int Max) {
 		final int isize = out.length;
 		for (int j = 0; j < isize; j++)
 			out[j] = 0.;
@@ -3846,7 +3846,7 @@ public class Maths {
 	 *            smoothing, the higher the value, the more smoothing occurs.
 	 * @return A dataset which contains all the derivative point for point.
 	 */
-	public static AbstractDataset derivative(AbstractDataset x, AbstractDataset y, int n) {
+	public static AbstractDataset derivative(Dataset x, Dataset y, int n) {
 		if (x.getRank() != 1 || y.getRank() != 1) {
 			throw new IllegalArgumentException("Only one dimensional dataset supported");
 		}
@@ -4192,7 +4192,7 @@ public class Maths {
 	 * @param x one or more datasets for dependent variables
 	 * @return a list of datasets (one for each dimension in y)
 	 */
-	public static List<AbstractDataset> gradient(AbstractDataset y, AbstractDataset... x) {
+	public static List<AbstractDataset> gradient(Dataset y, Dataset... x) {
 		final int rank = y.getRank();
 
 		if (x.length > 0) {
@@ -4200,12 +4200,12 @@ public class Maths {
 				throw new IllegalArgumentException("Number of dependent datasets must be equal to rank of first argument");
 			}
 			for (int a = 0; a < rank; a++) {
-				int rx = x[a].shape.length;
+				int rx = x[a].getRank();
 				if (rx != rank && rx != 1) {
 					throw new IllegalArgumentException("Dependent datasets must be 1-D or match rank of first argument");
 				}
 				if (rx == 1) {
-					if (y.shape[a] != x[a].shape[0]) {
+					if (y.getShapeRef()[a] != x[a].getShapeRef()[0]) {
 						throw new IllegalArgumentException("Length of dependent dataset must match axis length");
 					}
 				} else {
@@ -4224,14 +4224,14 @@ public class Maths {
 		if (x.length > 0) {
 			for (int a = 0; a < rank; a++) {
 				AbstractDataset g = grad.get(a);
-				AbstractDataset dx = x[a];
-				int r = dx.shape.length;
+				Dataset dx = x[a];
+				int r = dx.getRank();
 				if (r == rank) {
 					g.idivide(centralDifference(dx, a));
 				} else {
 					final int dt = dx.getDtype();
 					final int is = dx.getElementsPerItem();
-					final AbstractDataset bdx = AbstractDataset.zeros(is, y.shape, dt);
+					final AbstractDataset bdx = AbstractDataset.zeros(is, y.getShapeRef(), dt);
 					final PositionIterator pi = y.getPositionIterator(a);
 					final int[] pos = pi.getPos();
 					final boolean[] hit = pi.getOmit();
@@ -4254,7 +4254,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset sin(final AbstractDataset a) {
+	public static AbstractDataset sin(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -4456,7 +4456,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset cos(final AbstractDataset a) {
+	public static AbstractDataset cos(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -4658,7 +4658,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset tan(final AbstractDataset a) {
+	public static AbstractDataset tan(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -4872,7 +4872,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arcsin(final AbstractDataset a) {
+	public static AbstractDataset arcsin(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -5078,7 +5078,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arccos(final AbstractDataset a) {
+	public static AbstractDataset arccos(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -5284,7 +5284,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arctan(final AbstractDataset a) {
+	public static AbstractDataset arctan(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -5490,7 +5490,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset sinh(final AbstractDataset a) {
+	public static AbstractDataset sinh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -5692,7 +5692,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset cosh(final AbstractDataset a) {
+	public static AbstractDataset cosh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -5894,7 +5894,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset tanh(final AbstractDataset a) {
+	public static AbstractDataset tanh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -6108,7 +6108,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arcsinh(final AbstractDataset a) {
+	public static AbstractDataset arcsinh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -6314,7 +6314,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arccosh(final AbstractDataset a) {
+	public static AbstractDataset arccosh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -6520,7 +6520,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset arctanh(final AbstractDataset a) {
+	public static AbstractDataset arctanh(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -6726,7 +6726,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset log(final AbstractDataset a) {
+	public static AbstractDataset log(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -6928,7 +6928,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset log2(final AbstractDataset a) {
+	public static AbstractDataset log2(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -7130,7 +7130,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset log10(final AbstractDataset a) {
+	public static AbstractDataset log10(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -7332,7 +7332,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset log1p(final AbstractDataset a) {
+	public static AbstractDataset log1p(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -7534,7 +7534,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset exp(final AbstractDataset a) {
+	public static AbstractDataset exp(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -7740,7 +7740,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset expm1(final AbstractDataset a) {
+	public static AbstractDataset expm1(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -7946,7 +7946,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset sqrt(final AbstractDataset a) {
+	public static AbstractDataset sqrt(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -8152,7 +8152,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset cbrt(final AbstractDataset a) {
+	public static AbstractDataset cbrt(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -8358,7 +8358,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset square(final AbstractDataset a) {
+	public static AbstractDataset square(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -8560,7 +8560,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset floor(final AbstractDataset a) {
+	public static AbstractDataset floor(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -8762,7 +8762,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset ceil(final AbstractDataset a) {
+	public static AbstractDataset ceil(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -8964,7 +8964,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset rint(final AbstractDataset a) {
+	public static AbstractDataset rint(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -9166,7 +9166,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset toDegrees(final AbstractDataset a) {
+	public static AbstractDataset toDegrees(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -9368,7 +9368,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset toRadians(final AbstractDataset a) {
+	public static AbstractDataset toRadians(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -9570,7 +9570,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset signum(final AbstractDataset a) {
+	public static AbstractDataset signum(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -9772,7 +9772,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset abs(final AbstractDataset a) {
+	public static AbstractDataset abs(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -9968,7 +9968,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset negative(final AbstractDataset a) {
+	public static AbstractDataset negative(final Dataset a) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -10170,7 +10170,7 @@ public class Maths {
 	 * @return dataset
 	 */
 	@SuppressWarnings("cast")
-	public static AbstractDataset clip(final AbstractDataset a, final Object pa, final Object pb) {
+	public static AbstractDataset clip(final Dataset a, final Object pa, final Object pb) {
 		final int isize;
 		final IndexIterator it = a.getIterator();
 		AbstractDataset ds;
@@ -10405,5 +10405,6 @@ public class Maths {
 		addFunctionName(ds, "clip");
 		return ds;
 	}
+
 // End of generated code
 }

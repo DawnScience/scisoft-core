@@ -23,7 +23,6 @@ import java.util.Random;
 import javax.measure.unit.NonSI;
 import javax.vecmath.Vector3d;
 
-import org.dawb.common.services.ServiceManager;
 import org.jscience.physics.amount.Amount;
 import org.junit.Assert;
 import org.junit.Before;

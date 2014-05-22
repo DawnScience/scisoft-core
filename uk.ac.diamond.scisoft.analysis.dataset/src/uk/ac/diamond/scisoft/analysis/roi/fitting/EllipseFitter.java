@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.fitting;
+package uk.ac.diamond.scisoft.analysis.roi.fitting;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -44,6 +44,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 import Jama.Matrix;
 
 /**

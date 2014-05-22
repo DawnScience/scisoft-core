@@ -15,8 +15,10 @@ Export-Package: uk.ac.diamond.scisoft.analysis.coords,
  uk.ac.diamond.scisoft.analysis.dataset.function,
  uk.ac.diamond.scisoft.analysis.delaunay_triangulation,
  uk.ac.diamond.scisoft.analysis.roi,
+ uk.ac.diamond.scisoft.analysis.roi.fitting,
  uk.ac.diamond.scisoft.analysis.roi.handler
-Import-Package: javax.media.jai;version="1.1.3",
+Import-Package: Jama;version="1.0.3",
+ javax.media.jai;version="1.1.3",
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.6,1.7.7)"
 Bundle-ClassPath: jars/jtransforms-2.4.jar,

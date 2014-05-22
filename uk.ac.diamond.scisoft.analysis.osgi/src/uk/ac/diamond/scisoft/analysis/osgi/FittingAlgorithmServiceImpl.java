@@ -17,9 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.osgi;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
-import uk.ac.diamond.scisoft.analysis.fitting.CircleFitter;
-import uk.ac.diamond.scisoft.analysis.fitting.EllipseFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.CircleFitter;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.EllipseFitter;
 
 public class FittingAlgorithmServiceImpl implements IFittingAlgorithmService {
 

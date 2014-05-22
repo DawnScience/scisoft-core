@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.fitting;
+package uk.ac.diamond.scisoft.analysis.roi.fitting;
 
 import java.util.Arrays;
 
@@ -27,6 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.CircleFitter;
 
 public class CircleFitterTest {
 

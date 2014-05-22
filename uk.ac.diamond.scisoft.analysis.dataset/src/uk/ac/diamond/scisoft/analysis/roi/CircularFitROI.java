@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.CircleFitter;
 
 /**
  * A circular region of interest which fits the points in a polygonal region of interest
@@ -65,8 +65,7 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 	public static IConicSectionFitter fit(IPolylineROI polyline) {
 		IDataset[] xy = polyline.makeCoordinateDatasets();
 
-		IFittingAlgorithmService service = (IFittingAlgorithmService)Activator.getService(IFittingAlgorithmService.class);
-		IConicSectionFitter f = service.createCircleFitter();
+		IConicSectionFitter f = new CircleFitter();
 		f.geometricFit(xy[0], xy[1], null);
 		return f;
 	}

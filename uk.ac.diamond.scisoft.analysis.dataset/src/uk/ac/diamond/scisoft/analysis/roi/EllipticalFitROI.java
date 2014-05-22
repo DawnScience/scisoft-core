@@ -20,8 +20,9 @@ import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.CircleFitter;
+import uk.ac.diamond.scisoft.analysis.roi.fitting.EllipseFitter;
 
 /**
  * An elliptical region of interest which fits the points in a polygonal region of interest
@@ -70,15 +71,15 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 	 */
 	public static IConicSectionFitter fit(IPolylineROI polyline, final boolean fitCircle) {
 		
-		IFittingAlgorithmService service = (IFittingAlgorithmService) Activator.getService(IFittingAlgorithmService.class);
+//		IFittingAlgorithmService service = (IFittingAlgorithmService) Activator.getService(IFittingAlgorithmService.class);
 		IDataset[] xy = polyline.makeCoordinateDatasets();
 		if (fitCircle) {
-			IConicSectionFitter f = service.createCircleFitter();
+			IConicSectionFitter f = new CircleFitter();
 			f.geometricFit(xy[0], xy[1], null);
 			return f;
 		}
 
-		IConicSectionFitter f = service.createEllipseFitter();
+		IConicSectionFitter f = new EllipseFitter();
 		f.geometricFit(xy[0], xy[1], null);
 		return f;
 	}

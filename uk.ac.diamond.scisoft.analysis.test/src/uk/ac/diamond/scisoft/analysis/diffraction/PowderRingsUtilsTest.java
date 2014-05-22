@@ -37,13 +37,11 @@ import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IFittingAlgorithmService;
 import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
-import uk.ac.diamond.scisoft.analysis.osgi.FittingAlgorithmServiceImpl;
 import uk.ac.diamond.scisoft.analysis.roi.CircularFitROI;
 import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
 import uk.ac.diamond.scisoft.analysis.roi.EllipticalFitROI;
@@ -59,8 +57,6 @@ public class PowderRingsUtilsTest {
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		ServiceManager.setService(IFittingAlgorithmService.class, new FittingAlgorithmServiceImpl());
-		uk.ac.diamond.scisoft.analysis.dataset.Activator.setTestService(IFittingAlgorithmService.class, new FittingAlgorithmServiceImpl());
 	}
 
 	// NIST Silicon SRM 640C as mentioned in IUCR International Tables vC 5.2.10

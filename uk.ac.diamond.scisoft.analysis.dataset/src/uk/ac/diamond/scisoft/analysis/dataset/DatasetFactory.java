@@ -21,23 +21,26 @@ import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 
 public class DatasetFactory {
+
 	/**
+	 * Create dataset with items ranging from 0 to given stop in steps of 1
 	 * @param stop
 	 * @param dtype
 	 * @return a new dataset of given shape and type, filled with values determined by parameters
 	 */
-	public static Dataset arange(final double stop, final int dtype) {
-		return arange(0, stop, 1, dtype);
+	public static Dataset createRange(final double stop, final int dtype) {
+		return createRange(0, stop, 1, dtype);
 	}
 
 	/**
+	 * Create dataset with items ranging from given start to given stop in given steps
 	 * @param start
 	 * @param stop
 	 * @param step
 	 * @param dtype
 	 * @return a new 1D dataset of given type, filled with values determined by parameters
 	 */
-	public static Dataset arange(final double start, final double stop, final double step, final int dtype) {
+	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
 		if ((step > 0) != (start <= stop)) {
 			return null;
 		}
@@ -69,30 +72,30 @@ public class DatasetFactory {
 	 * Create a dataset from object (automatically detect dataset type)
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be Java list, array or Number
 	 * @return dataset
 	 */
-	public static Dataset array(final Object obj) {
+	public static Dataset createFromObject(final Object obj) {
 		if (obj instanceof AbstractDataset)
 			return (AbstractDataset) obj;
 		if (obj instanceof ILazyDataset)
 			return DatasetUtils.convertToAbstractDataset((ILazyDataset) obj);
 
 		final int dtype = AbstractDataset.getDTypeFromObject(obj);
-		return array(obj, dtype);
+		return createFromObject(obj, dtype);
 	}
 
 	/**
 	 * Create a dataset from object (automatically detect dataset type)
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be a Java list, array or Number
 	 * @param isUnsigned
 	 *            if true, interpret integer values as unsigned by increasing element bit width
 	 * @return dataset
 	 */
-	public static Dataset array(final Object obj, boolean isUnsigned) {
-		Dataset a = array(obj);
+	public static Dataset createFromObject(final Object obj, boolean isUnsigned) {
+		Dataset a = createFromObject(obj);
 		if (isUnsigned) {
 			switch (a.getDtype()) {
 			case Dataset.INT32:
@@ -129,11 +132,11 @@ public class DatasetFactory {
 	 * Create a dataset from object
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be a Java list, array or Number
 	 * @param dtype
 	 * @return dataset
 	 */
-	public static Dataset array(final Object obj, final int dtype) {
+	public static Dataset createFromObject(final Object obj, final int dtype) {
 		if (obj instanceof AbstractDataset)
 			return DatasetUtils.cast((AbstractDataset) obj, dtype);
 

@@ -2509,36 +2509,36 @@ public abstract class AbstractDataset implements Dataset {
 	 * Create a dataset from object (automatically detect dataset type)
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be a Java list, array or Number
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj) {
-		return (AbstractDataset) DatasetFactory.array(obj);
+		return (AbstractDataset) DatasetFactory.createFromObject(obj);
 	}
 
 	/**
 	 * Create a dataset from object (automatically detect dataset type)
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be a Java list, array or Number
 	 * @param isUnsigned
 	 *            if true, interpret integer values as unsigned by increasing element bit width
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj, boolean isUnsigned) {
-		return (AbstractDataset) DatasetFactory.array(obj, isUnsigned);
+		return (AbstractDataset) DatasetFactory.createFromObject(obj, isUnsigned);
 	}
 
 	/**
 	 * Create a dataset from object
 	 * 
 	 * @param obj
-	 *            can be a PySequence, Java array or Number
+	 *            can be a Java list, array or Number
 	 * @param dtype
 	 * @return dataset
 	 */
 	public static AbstractDataset array(final Object obj, final int dtype) {
-		return (AbstractDataset) DatasetFactory.array(obj, dtype);
+		return (AbstractDataset) DatasetFactory.createFromObject(obj, dtype);
 	}
 
 	/**
@@ -2652,7 +2652,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return a new 1D dataset of given type, filled with values determined by parameters
 	 */
 	public static AbstractDataset arange(final double start, final double stop, final double step, final int dtype) {
-		return (AbstractDataset) DatasetFactory.arange(start, stop, step, dtype);
+		return (AbstractDataset) DatasetFactory.createRange(start, stop, step, dtype);
 	}
 
 	/**

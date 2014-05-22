@@ -167,7 +167,7 @@ public class ShortDataset extends AbstractDataset {
 	}
 
 	/**
-	 * Create a dataset from an object which could be a PySequence, a Java array (of arrays...) or Number. Ragged
+	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
 	 *
 	 * @param obj

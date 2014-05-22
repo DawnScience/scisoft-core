@@ -234,7 +234,7 @@ def preloop(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=None, odty
     if odtype == None:
         odtype = dtype
     print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = AbstractDataset.zeros(a, Dataset.%s);" % odtype)
+    print("\t\t\tds = (AbstractDataset) DatasetFactory.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
 
@@ -246,7 +246,7 @@ def preloopcompound(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=No
     if odtype == None:
         odtype = dtype
     print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = AbstractDataset.zeros(a, Dataset.%s);" % odtype)
+    print("\t\t\tds = (AbstractDataset) DatasetFactory.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tisize = a.getElementsPerItem();")
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))

@@ -22,6 +22,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -50,12 +51,12 @@ public class ROIProfile {
 	 *            size
 	 * @return line profile
 	 */
-	public static AbstractDataset[] line(AbstractDataset data, LinearROI lroi, double step) {
+	public static AbstractDataset[] line(Dataset data, LinearROI lroi, double step) {
 		
 		return ROIProfile.line(data, null, lroi, step, false);
 	}
 	
-	public static AbstractDataset[] line(AbstractDataset data, AbstractDataset mask, LinearROI lroi, double step, boolean maskWithNans) {
+	public static AbstractDataset[] line(Dataset data, Dataset mask, LinearROI lroi, double step, boolean maskWithNans) {
 
 		double[] spt = lroi.getPoint();
 		double[] ept = lroi.getEndPoint();
@@ -67,9 +68,7 @@ public class ROIProfile {
 			if (data.isCompatibleWith(mask)) {
 				// TODO both multiply and nanalize create copies of the whole data passed in
 				if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-					// convertToAbstractDataset should not be necessary here? 
-					// AbstractDataset is already here, the data is loaded - is this right?
-					data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+					data = Maths.multiply(data, mask);
 				} else {
 					// Masks values to NaN, also changes dtype to Float
 					data = nanalize(data, (BooleanDataset)mask);
@@ -104,7 +103,7 @@ public class ROIProfile {
 		// normalise plot for case when region is clipped to size of image
 		// and/or when a mask is specified
 		if (mask == null) {
-			mask = AbstractDataset.ones(data.getShape(), Dataset.BOOL);
+			mask = DatasetFactory.ones(data.getShape(), Dataset.BOOL);
 		}
 
 		List<AbstractDataset> dsets = map.value(mask);
@@ -123,7 +122,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(AbstractDataset data, RectangularROI rroi) {
+	public static AbstractDataset[] box(Dataset data, RectangularROI rroi) {
 		return box(data, null, rroi);
 	}
 
@@ -134,7 +133,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi) {
+	public static AbstractDataset[] box(Dataset data, Dataset mask, RectangularROI rroi) {
 		return box(data, mask, rroi, false);
 	}
 
@@ -148,7 +147,7 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static AbstractDataset[] box(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
@@ -171,7 +170,7 @@ public class ROIProfile {
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
-			AbstractDataset slicedData = null;
+			Dataset slicedData = null;
 			try {
 			    slicedData = data.getSlice(new int[]{xtart,   ystart}, 
 					                       new int[]{xend,    yend},
@@ -181,7 +180,7 @@ public class ROIProfile {
 				return null;
 			}
 			
-			final AbstractDataset slicedMask = mask!=null
+			final Dataset slicedMask = mask!=null
 					                         ? mask.getSlice(new int[]{xtart, ystart}, 
 					                                         new int[]{xend,  yend},
 					                                         new int[]{1,1})
@@ -192,9 +191,7 @@ public class ROIProfile {
 				if (slicedData.isCompatibleWith(slicedMask)) {
 					clip = true;
 					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessary here? 
-						// AbstractDataset is already here, the data is loaded - is this right?
-						slicedData = Maths.multiply(DatasetUtils.convertToAbstractDataset(slicedData), DatasetUtils.convertToAbstractDataset(slicedMask));
+						slicedData = Maths.multiply(slicedData, slicedMask);
 					} else {
 						// Masks values to NaN, also changes dtype to Float
 						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
@@ -227,9 +224,7 @@ public class ROIProfile {
 					clip = true;
 					// TODO both multiply and nanalize create copies of the whole data passed in
 					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessary here? 
-						// AbstractDataset is already here, the data is loaded - is this right?
-						data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+						data = Maths.multiply(data, mask);
 					} else {
 						// Masks values to NaN, also changes dtype to Float
 						data = nanalize(data, (BooleanDataset)mask);
@@ -265,7 +260,7 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
-	public static AbstractDataset[] boxMean(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static AbstractDataset[] boxMean(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 		if(data == null) return null;
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
@@ -287,7 +282,7 @@ public class ROIProfile {
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
-			AbstractDataset slicedData = null;
+			Dataset slicedData = null;
 			try {
 				slicedData = data.getSlice(new int[]{xtart,   ystart}, 
 					                       new int[]{xend,    yend},
@@ -297,7 +292,7 @@ public class ROIProfile {
 				return null;
 			}
 			
-			final AbstractDataset slicedMask = mask!=null
+			final Dataset slicedMask = mask!=null
 					                         ? mask.getSlice(new int[]{xtart, ystart}, 
 					                                         new int[]{xend,  yend},
 					                                         new int[]{1,1})
@@ -322,9 +317,9 @@ public class ROIProfile {
 			List<AbstractDataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
 
-			profiles[0] = slicedData.mean(0);
+			profiles[0] = DatasetUtils.convertToAbstractDataset(slicedData.mean(0));
 			
-			profiles[1] = slicedData.mean(1);
+			profiles[1] = DatasetUtils.convertToAbstractDataset(slicedData.mean(1));
 
 		} else {
 			
@@ -363,7 +358,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return max in box profile
 	 */
-	public static AbstractDataset[] maxInBox(AbstractDataset data, AbstractDataset mask, RectangularROI rroi) {
+	public static AbstractDataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi) {
 		return maxInBox(data, mask, rroi, false);
 	}
 
@@ -377,7 +372,7 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return max in box profile
 	 */
-	public static AbstractDataset[] maxInBox(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static AbstractDataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
@@ -400,7 +395,7 @@ public class ROIProfile {
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
-			AbstractDataset slicedData = null;
+			Dataset slicedData = null;
 			try {
 			    slicedData = data.getSlice(new int[]{xtart,   ystart}, 
 					                       new int[]{xend,    yend},
@@ -410,7 +405,7 @@ public class ROIProfile {
 				return null;
 			}
 			
-			final AbstractDataset slicedMask = mask!=null
+			final Dataset slicedMask = mask!=null
 					                         ? mask.getSlice(new int[]{xtart, ystart}, 
 					                                         new int[]{xend,  yend},
 					                                         new int[]{1,1})
@@ -421,9 +416,7 @@ public class ROIProfile {
 				if (slicedData.isCompatibleWith(slicedMask)) {
 					clip = true;
 					if (!maskWithNans || !(slicedMask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessary here? 
-						// AbstractDataset is already here, the data is loaded - is this right?
-						slicedData = Maths.multiply(DatasetUtils.convertToAbstractDataset(slicedData), DatasetUtils.convertToAbstractDataset(slicedMask));
+						slicedData = Maths.multiply(slicedData, slicedMask);
 					} else {
 						// Masks values to NaN, also changes dtype to Float
 						slicedData = nanalize(slicedData, (BooleanDataset)slicedMask);
@@ -437,8 +430,8 @@ public class ROIProfile {
 
 			
 			List<AbstractDataset> dsets = new ArrayList<AbstractDataset>();
-			dsets.add(slicedData.max(1));
-			dsets.add(slicedData.max(0));
+			dsets.add(DatasetUtils.convertToAbstractDataset(slicedData.max(1)));
+			dsets.add(DatasetUtils.convertToAbstractDataset(slicedData.max(0)));
 
 			profiles[0] = maskWithNans
 					    ? processColumnNans(dsets.get(1), slicedData)
@@ -455,9 +448,7 @@ public class ROIProfile {
 					clip = true;
 					// TODO both multiply and nanalize create copies of the whole data passed in
 					if (!maskWithNans || !(mask instanceof BooleanDataset)) {
-						// convertToAbstractDataset should not be necessary here? 
-						// AbstractDataset is already here, the data is loaded - is this right?
-						data = Maths.multiply(DatasetUtils.convertToAbstractDataset(data), DatasetUtils.convertToAbstractDataset(mask));
+						data = Maths.multiply(data, mask);
 					} else {
 						// Masks values to NaN, also changes dtype to Float
 						data = nanalize(data, (BooleanDataset)mask);
@@ -493,7 +484,7 @@ public class ROIProfile {
 	 * @param isVertical
 	 * @return box line profiles
 	 */
-	public static AbstractDataset[] boxLine(AbstractDataset data, AbstractDataset mask, RectangularROI rroi, boolean maskWithNans, boolean isVertical) {
+	public static AbstractDataset[] boxLine(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans, boolean isVertical) {
 
 		double[] startpt = rroi.getPoint();
 		double[] endpt = rroi.getEndPoint();
@@ -536,7 +527,7 @@ public class ROIProfile {
 	 * @param mask
 	 * @return clone of dataset with NaNs at the appropriate place.
 	 */
-	public static FloatDataset nanalize(AbstractDataset data, BooleanDataset mask) {
+	public static FloatDataset nanalize(Dataset data, BooleanDataset mask) {
 		
 		FloatDataset nanalized = new FloatDataset(data.getShape());
 		float[]      buffer    = nanalized.getData();
@@ -550,7 +541,7 @@ public class ROIProfile {
 	}
 
 
-	private static AbstractDataset processColumnNans(AbstractDataset cols, AbstractDataset data) {
+	private static AbstractDataset processColumnNans(AbstractDataset cols, Dataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
@@ -562,7 +553,7 @@ public class ROIProfile {
 	    return cols;
 	}
 	
-	private static AbstractDataset processRowNans(AbstractDataset rows, AbstractDataset data) {
+	private static AbstractDataset processRowNans(AbstractDataset rows, Dataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
@@ -581,7 +572,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, SectorROI sroi) {
+	public static AbstractDataset[] sector(Dataset data, SectorROI sroi) {
 		return sector(data, null, sroi, null);
 	}
 
@@ -590,7 +581,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi) {
+	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi) {
 		return sector(data, mask, sroi, true, true, false, null, null, false);
 	}
 
@@ -599,7 +590,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, QSpace qSpace) {
+	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, QSpace qSpace) {
 		return sector(data, mask, sroi, true, true, false, qSpace, null, false);
 	}
 
@@ -612,7 +603,7 @@ public class ROIProfile {
 	 *            uses interpolation and fork/join which might make things faster
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ) {
+	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ) {
 		return sector(data, mask, sroi, doRadial, doAzimuthal, useInterpolateFJ, null, null, false);
 	}
 	/**
@@ -632,7 +623,7 @@ public class ROIProfile {
 	 * @return 
 	 *     the profile
 	 */
-	public static AbstractDataset[] sector(AbstractDataset data, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
+	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();
@@ -668,7 +659,7 @@ public class ROIProfile {
 			if (aver) {
 				final SectorROI areaSector = sroi.copy();
 				areaSector.setAverageArea(false);
-				AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
+				AbstractDataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
 						areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
@@ -711,7 +702,7 @@ public class ROIProfile {
 		
 		profiles[0] = dsets.get(1);
 		profiles[1] = dsets.get(0);
-		if (doErrors) {
+		if (doErrors) { // TODO check if errors are datasets
 			errors[0] = (AbstractDataset) profiles[0].getErrorBuffer();
 			errors[1] = (AbstractDataset) profiles[1].getErrorBuffer();
 		}
@@ -746,7 +737,7 @@ public class ROIProfile {
 				} else {
 					profiles[2] = dsetss.get(1);
 					profiles[3] = dsetss.get(0);
-					if (doErrors) {
+					if (doErrors) { // TODO check if errors are datasets
 						errors[2] = (AbstractDataset) profiles[2].getErrorBuffer();
 						errors[3] = (AbstractDataset) profiles[3].getErrorBuffer();
 					}
@@ -760,7 +751,7 @@ public class ROIProfile {
 		if (aver) {
 			final SectorROI areaSector = sroi.copy();
 			areaSector.setAverageArea(false);
-			AbstractDataset[] areas = sector(mask != null ? mask : AbstractDataset.ones(data.getShape(), data.getDtype()), null,
+			AbstractDataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
 					areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
@@ -797,7 +788,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi) {
+	public static AbstractDataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi) {
 		return area(shape, dtype, mask, sroi, true, true, false);
 	}
 	
@@ -811,10 +802,10 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, int dtype, AbstractDataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
+	public static AbstractDataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
 		//TODO: This method only works on pixel axis. It can't be use for normalising data on non-pixel axes (e.g q-space, d-spacing).   
 		final SectorROI areaSector = sroi.copy();
 		areaSector.setAverageArea(false);
-		return sector(mask != null ? mask : AbstractDataset.ones(shape, dtype), null, areaSector, doRadial, doAzimuthal, fast);
+		return sector(mask != null ? mask : DatasetFactory.ones(shape, dtype), null, areaSector, doRadial, doAzimuthal, fast);
 	}
 }

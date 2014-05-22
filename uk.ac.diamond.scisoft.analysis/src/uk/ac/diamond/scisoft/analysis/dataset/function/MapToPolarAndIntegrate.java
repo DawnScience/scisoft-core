@@ -59,7 +59,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	private boolean doErrors = false;    // Default: calculate error estimates
 	
 	private XAxis axisType;
-	private AbstractDataset mask;
+	private Dataset mask;
 	
 	private QSpace qSpace;
 
@@ -73,7 +73,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *  
 	 * @param mask
 	 */
-	public void setMask(AbstractDataset mask) {
+	public void setMask(Dataset mask) {
 		this.mask = mask;
 	}
 	

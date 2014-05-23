@@ -28,6 +28,10 @@ public class ROIBase implements IROI, Serializable {
 
 	protected transient RectangularROI bounds;
 
+	public ROIBase() {
+		spt = new double[2];
+	}
+
 	@Override
 	public String getName() {
 		return name;

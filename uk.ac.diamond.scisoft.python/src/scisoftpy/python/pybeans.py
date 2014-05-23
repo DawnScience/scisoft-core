@@ -72,6 +72,9 @@ class _parameters(object):
         self.calibrationfunctionncd = self._parametershelper(self, "calibrationfunctionncd", "CalibrationFunction")
         self.onedfile = self._parametershelper(self, "onedfile", "OneDFile")
         self.axisop = self._parametershelper(self, "axisop", "AxisOp")
+        self.quietupdate = self._parametershelper(self, "quietupdate", "QuietUpdate")
+        self.fileformat = self._parametershelper(self, "fileformat", "FileFormat")
+        self.savepath = self._parametershelper(self, "savepath", "SavePath")
 
     def get(self, parametername):
         '''Return the GUIParameter with the given name, or return None for no matching'''
@@ -111,6 +114,8 @@ class _plotmode(object):
         self.imgexpl = self._plotmodehelper(self, "imgexpl", "IMGEXPL")
         self.volume = self._plotmodehelper(self, "volume", "VOLUME")
         self.empty = self._plotmodehelper(self, "empty", "EMPTY")
+        self.resetaxes = self._plotmodehelper(self, "resetaxes", "RESETAXES")
+        self.export = self._plotmodehelper(self, "export", "EXPORT")
         
     def get(self, modename):
         '''Return the GuiPlotMode with the given name, or return None for no matching'''

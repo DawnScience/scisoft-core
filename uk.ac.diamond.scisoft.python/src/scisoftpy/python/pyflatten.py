@@ -123,8 +123,8 @@ class axisMapBeanHelper(flatteningHelper):
     def flatten(self, thisAxisMapBean):
         rval = dict()
         rval[TYPE] = self.TYPE_NAME
-        rval[_beans.axismapbean._AXIS_ID] = thisAxisMapBean.axisID
-        rval[_beans.axismapbean._AXIS_NAMES] = thisAxisMapBean.axisNames
+        rval[_beans.axismapbean._AXIS_ID] = flatten(thisAxisMapBean.axisID)
+        rval[_beans.axismapbean._AXIS_NAMES] = flatten(thisAxisMapBean.axisNames)
         return rval
     
     def unflatten(self, obj):

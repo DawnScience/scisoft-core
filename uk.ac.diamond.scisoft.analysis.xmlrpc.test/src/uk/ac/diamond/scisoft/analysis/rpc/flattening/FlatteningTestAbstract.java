@@ -593,6 +593,9 @@ abstract public class FlatteningTestAbstract {
 		String[] names = { AxisMapBean.XAXIS, AxisMapBean.YAXIS };
 		amb.setAxisNames(names);
 		flattenAndUnflatten(amb);
+
+		amb.setAxisNames(null);
+		flattenAndUnflatten(amb);
 	}
 
 	@Test

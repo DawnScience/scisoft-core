@@ -54,6 +54,7 @@ public class GuiBeanHelper extends MapFlatteningHelper<GuiBean> {
 		unsupported.add(GuiParameters.MASKING);
 		unsupported.add(GuiParameters.CALIBRATIONFUNCTIONNCD);
 		unsupported.add(GuiParameters.CALIBRATIONPEAKS);
+		unsupported.add(GuiParameters.QUIET_UPDATE);
 	}
 
 	public GuiBeanHelper() {

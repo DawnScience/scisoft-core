@@ -62,15 +62,19 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
+
+		@Override
+		public void clearPlot(String plotName) throws Exception {
+		}
 	}
 
 	public AllPyPlotMethodsTest() {
 		// create some data sets and other objects to use, this test does not use
 		// the contents of the data set, except they are flattened
 		// and unflattened. The type of the object is more important
-		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = AbstractDataset.arange(100, AbstractDataset.INT);
+		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = AbstractDataset.arange(10, AbstractDataset.INT);
 		data = image = AbstractDataset.arange(100, AbstractDataset.INT).reshape(10, 10);
-		xAxes = yAxes = new IDataset[] { xAxis, AbstractDataset.arange(100, AbstractDataset.FLOAT) };
+		xAxes = yAxes = new IDataset[] { xAxis, AbstractDataset.arange(10, AbstractDataset.FLOAT) };
 		images = new IDataset[] { image, AbstractDataset.arange(100, AbstractDataset.FLOAT) };
 		plotName = "Plot 1";
 		sizes = AbstractDataset.arange(100, AbstractDataset.INT);
@@ -183,6 +187,10 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xName, String yName) throws Exception {
 				passed[0] = true;
 			}
+
+			@Override
+			public void clearPlot(String plotName) throws Exception {
+			}
 		});
 		redirectPlotter.imagePlot(plotName, null, null, image, null, null);
 		Assert.assertTrue(passed[0]);
@@ -208,6 +216,10 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 			@Override
 			public void imagePlot(String plotName, IDataset xAxis, IDataset yAxis, IDataset image, String xName, String yName) throws Exception {
 				passed[0] = true;
+			}
+
+			@Override
+			public void clearPlot(String plotName) throws Exception {
 			}
 		});
 		redirectPlotter.imagePlot(plotName, xAxis, yAxis, image, null, null);

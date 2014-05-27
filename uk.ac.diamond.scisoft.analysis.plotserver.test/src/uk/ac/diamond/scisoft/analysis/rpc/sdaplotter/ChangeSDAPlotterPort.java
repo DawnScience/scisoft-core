@@ -49,6 +49,10 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 				String[] yAxisNames) throws Exception {
 			flag[0] = true;
 		}
+
+		@Override
+		public void clearPlot(String plotName) throws Exception {
+		}
 	}
 
 	@Test

@@ -21,43 +21,72 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Assume;
 
+/**
+ * To run tests that require Python, the execution environment must have a Python with NumPy installed.
+ */
 public class PythonHelper {
-
-	private static final String PYTHON = "python";
+	/**
+	 * Set to true to enable python tests
+	 */
+	public static final String PYTHON_TEST = "org.dawnsci.python.test";
 
 	/**
-	 * Change this to return false to skip (aka {@link Assume} failure) all tests that require launching python
+	 * Path to Python executable (by default, the python in the current PATH is used)
+	 */
+	public static final String PYTHON_EXECUTABLE = "org.dawnsci.python.executable";
+
+	/**
+	 * Content of PYTHONPATH environment variable (by default, it is left to inherit the current environment)
+	 */
+	public static final String PYTHON_PATH = "org.dawnsci.python.path";
+
+	/**
+	 * This is by default false but may be overridden by the {@link #PYTHON_TEST} property
 	 */
 	public static boolean enablePythonTests() {
-		return false;
+		return "true".equalsIgnoreCase(System.getProperty(PYTHON_TEST, "false"));
 	}
 
+	private static String PYTHON_EXE = null;
+	private static String[] PYTHON_ENV = null;
+
+	private static void getDefaultPythonProperties() {
+		PYTHON_EXE = System.getProperty(PYTHON_EXECUTABLE, "python");
+		String path = System.getProperty(PYTHON_PATH);
+		if (path != null) {
+			PYTHON_ENV = new String[] {"PYTHONPATH=" + path};
+		}
+	}
+
+	static {
+		getDefaultPythonProperties();
+	}
 
 	/*
 	 * We are re-implementing a call to python here, we really want to reuse PythonTest#exec or
 	 * SimplePythonRunner#runAndGetOutput from PyDev. Any output on stderr means an error has occurred.
 	 */
 	public static String runPythonScript(String scriptContents, boolean failOnAnyOutput) throws Exception {
-		return runPythonScript(scriptContents, null, failOnAnyOutput);
+		return runPythonScript(scriptContents, PYTHON_ENV, failOnAnyOutput);
 	}
 	
-	public static String runPythonScript(String scriptContents, String[] envp, boolean failOnAnyOutput) throws Exception {
-		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON, "-c", scriptContents }, envp);
+	private static String runPythonScript(String scriptContents, String[] envp, boolean failOnAnyOutput) throws Exception {
+		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON_EXE, "-c", scriptContents }, envp);
 	}
 
-	public static String runPythonFile(String file, boolean failOnAnyOutput) throws Exception {
-		return runPythonFile(file, null, failOnAnyOutput);
-	}
-	
-	public static String runPythonFile(String file, String[] args, boolean failOnAnyOutput) throws Exception {
-		return runPythonFile(file, args, null, failOnAnyOutput);
-	}
-	
+//	public static String runPythonFile(String file, boolean failOnAnyOutput) throws Exception {
+//		return runPythonFile(file, null, failOnAnyOutput);
+//	}
+//	
+//	public static String runPythonFile(String file, String[] args, boolean failOnAnyOutput) throws Exception {
+//		return runPythonFile(file, args, PYTHON_ENV, failOnAnyOutput);
+//	}
+//	
 	public static String runPythonFile(String file, String[] args, String[] envp, boolean failOnAnyOutput) throws Exception {
 		if (args == null)
 			args = new String[0];
 		String[] allArgs = new String[2 + args.length];
-		allArgs[0] = PYTHON;
+		allArgs[0] = PYTHON_EXE;
 		allArgs[1] = file;
 		for (int i = 0; i < args.length; i++) {
 			allArgs[i + 2] = args[i];
@@ -65,26 +94,38 @@ public class PythonHelper {
 		return readAndProcessOutput(failOnAnyOutput, allArgs, envp);
 	}
 	
-	public static PythonRunInfo runPythonScriptBackground(String scriptContents) throws Exception {
-		return launch(new String[] { PYTHON, "-c", scriptContents }, null);
-	}
+//	public static PythonRunInfo runPythonScriptBackground(String scriptContents) throws Exception {
+//		return launch(new String[] { PYTHON_EXE, "-c", scriptContents }, null);
+//	}
 
 	public static PythonRunInfo runPythonFileBackground(String file) throws Exception {
 		return runPythonFileBackground(file, null);
 	}
 	
-	public static PythonRunInfo runPythonFileBackground(String file, String[] args) throws Exception {
-		return runPythonFileBackground(file, args, null);
+	private static PythonRunInfo runPythonFileBackground(String file, String[] args) throws Exception {
+		return runPythonFileBackground(file, args, PYTHON_ENV);
 	}
 	
 	public static PythonRunInfo runPythonFileBackground(String file, String[] args, String[] envp) throws Exception {
 		if (args == null)
 			args = new String[0];
 		String[] allArgs = new String[2 + args.length];
-		allArgs[0] = PYTHON;
+		allArgs[0] = PYTHON_EXE;
 		allArgs[1] = file;
-		for (int i = 0; i < args.length; i++) {
-			allArgs[i + 2] = args[i];
+		int i = 2;
+		for (String s : args) {
+			allArgs[i++] = s;
+		}
+		if (PYTHON_ENV != null) {
+			String[] allEnvs = new String[PYTHON_ENV.length + envp.length];
+			i = 0;
+			for (String s : PYTHON_ENV) {
+				allEnvs[i++] = s;
+			}
+			for (String s : envp) {
+				allEnvs[i++] = s;
+			}
+			return launch(allArgs, allEnvs);
 		}
 		return launch(allArgs, envp);
 	}
@@ -177,7 +218,4 @@ public class PythonHelper {
 		}
 		return split;
 	}
-
-
-
 }

@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
@@ -99,7 +98,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		Assert.assertTrue(passed[0]);
 	}
 
-	@Ignore("Python does not process the second axis currently, 17/12/2012")
+	@Test
 	public void testPlotStringIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;
 		registerHandler(new MyMockPlotter(passed));

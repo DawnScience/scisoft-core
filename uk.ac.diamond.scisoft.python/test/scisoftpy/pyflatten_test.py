@@ -315,7 +315,6 @@ class Test(unittest.TestCase):
     def testROIBase(self):
         self._flattenAndUnflatten(self._createROIBase())
         roibase = dnp.roi._roibase()
-        roibase.spt = None
         self._flattenAndUnflatten(roibase)
         
     def testPointROI(self):

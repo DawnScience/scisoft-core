@@ -185,23 +185,10 @@ class passThroughHelper(object):
         return obj
 
     def canflatten(self, obj):
-        return isinstance(obj, (str, int, long, float, _wrapper.binarywrapper))
+        return isinstance(obj, (unicode, str, int, long, float, _wrapper.binarywrapper))
 
     def canunflatten(self, obj):
         return self.canflatten(obj)
-
-class unicodeHelper(object):
-    def flatten(self, obj):
-        return str(obj)
-    
-    def unflatten(self, obj):
-        raise NotImplementedError()
-
-    def canflatten(self, obj):
-        return isinstance(obj, unicode)
-
-    def canunflatten(self, obj):
-        return False
 
 class ndArrayHelper(flatteningHelper):
     TYPE_NAME = "uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset"
@@ -592,7 +579,7 @@ helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPoi
            guiParametersHelper(), plotModeHelper(), axisMapBeanHelper(),
            datasetWithAxisInformationHelper(), dataBeanHelper(),
            dictHelper(), passThroughHelper(), listAndTupleHelper(),
-           uuidHelper(), exceptionHelper(), stackTraceElementHelper(), unicodeHelper()]
+           uuidHelper(), exceptionHelper(), stackTraceElementHelper()]
 
 def addhelper(helper):
     helpers.insert(0, helper)

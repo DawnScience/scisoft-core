@@ -61,7 +61,7 @@ class Test(unittest.TestCase):
             self.assertEquals(expected, actual)
     
     def _checkFlattenedState(self, flat):
-        if isinstance(flat, (str, int, float, bool, xmlrpclib.Binary)):
+        if isinstance(flat, (str, unicode, int, float, bool, xmlrpclib.Binary)):
             return
         if isinstance(flat, (list, tuple)):
             for elem in flat:
@@ -422,7 +422,7 @@ class Test(unittest.TestCase):
             self._flattenAndUnflatten(uuid.uuid4())
     
     def testUnicode(self):
-        self._flattenAndUnflatten(unicode("test"), "test", str)
+        self._flattenAndUnflatten(u"\u00b0")
     
     def testTypedNone(self):
         self._flattenAndUnflatten(dnp.rpc.typednone("java.lang.Double"))

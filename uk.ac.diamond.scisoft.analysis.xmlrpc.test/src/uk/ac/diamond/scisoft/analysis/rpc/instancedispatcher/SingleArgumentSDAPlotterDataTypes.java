@@ -24,7 +24,6 @@ import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
  * Tests for all the currently supported (i.e. flattenable) data types
  * used in SDAPlotter (apart from primitives and arrays of primitives tested elsewhere)
  */
-@SuppressWarnings("unused")
 public class SingleArgumentSDAPlotterDataTypes {
 	public Class<GuiBean> call(GuiBean param) {
 		return GuiBean.class;

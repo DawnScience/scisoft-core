@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes;
 
-@SuppressWarnings("unused")
 public class ManyArguments {
 	public static int call(int a, int b, int c, int d, int e, int f, int g, int h) {
 		return 8;

@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
 
-@SuppressWarnings("unused")
 public class NoArgument {
 	public String call() {
 		return "no argument";

@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes;
 
-@SuppressWarnings("unused")
 public class SingleArgumentPrimitives {
 	public static Class<Boolean> call(boolean param) {
 		return Boolean.TYPE;

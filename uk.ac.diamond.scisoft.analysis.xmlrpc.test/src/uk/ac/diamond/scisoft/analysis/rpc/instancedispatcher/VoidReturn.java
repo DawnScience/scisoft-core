@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
 
-@SuppressWarnings("unused")
 public class VoidReturn {
 	public void call(int o) {
 	}

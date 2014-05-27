@@ -272,25 +272,21 @@ public class InstanceDispatcherTest {
 		Assert.assertEquals("implcall", dispatcher.run(new Object[] { "implcall", 0 }));
 	}
 
-	@SuppressWarnings("unused")
 	@Test(expected = NullPointerException.class)
 	public void testExceptionOnCreation1() {
 		new AnalysisRpcGenericInstanceDispatcher(null, null);
 	}
 
-	@SuppressWarnings("unused")
 	@Test(expected = NullPointerException.class)
 	public void testExceptionOnCreation2() {
 		new AnalysisRpcGenericInstanceDispatcher(Object.class, null);
 	}
 
-	@SuppressWarnings("unused")
 	@Test(expected = NullPointerException.class)
 	public void testExceptionOnCreation3() {
 		new AnalysisRpcGenericInstanceDispatcher(null, new Object());
 	}
 
-	@SuppressWarnings("unused")
 	@Test(expected = IllegalArgumentException.class)
 	public void testExceptionOnCreation4() {
 		new AnalysisRpcGenericInstanceDispatcher(Integer.class, new Object());

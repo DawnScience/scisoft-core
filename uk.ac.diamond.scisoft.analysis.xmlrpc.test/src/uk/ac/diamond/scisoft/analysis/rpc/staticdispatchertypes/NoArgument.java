@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes;
 
-@SuppressWarnings("unused")
 public class NoArgument {
 	public static String call() {
 		return "no argument";

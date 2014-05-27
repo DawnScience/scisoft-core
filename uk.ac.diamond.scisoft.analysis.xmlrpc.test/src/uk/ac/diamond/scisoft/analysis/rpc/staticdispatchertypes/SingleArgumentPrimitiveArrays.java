@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes;
 
-@SuppressWarnings("unused")
 public class SingleArgumentPrimitiveArrays {
 	public static Class<boolean[]> call(boolean[] param) {
 		return boolean[].class;

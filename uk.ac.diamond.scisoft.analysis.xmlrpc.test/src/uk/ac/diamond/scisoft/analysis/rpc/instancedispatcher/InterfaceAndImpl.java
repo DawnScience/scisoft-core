@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
 
-@SuppressWarnings("unused")
 public interface InterfaceAndImpl {
 	public String interfacecall(int a);
 	public String implcalloverloaded(int a);

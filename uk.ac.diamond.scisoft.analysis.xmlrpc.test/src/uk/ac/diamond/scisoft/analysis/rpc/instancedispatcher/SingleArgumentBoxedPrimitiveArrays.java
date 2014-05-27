@@ -15,7 +15,6 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
-@SuppressWarnings("unused")
 
 public class SingleArgumentBoxedPrimitiveArrays {
 	public Class<Boolean[]> call(Boolean[] param) {

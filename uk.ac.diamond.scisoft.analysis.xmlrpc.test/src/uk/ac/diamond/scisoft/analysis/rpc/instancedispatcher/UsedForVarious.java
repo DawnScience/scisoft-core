@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.junit.Assert;
 
-@SuppressWarnings("unused")
 public class UsedForVarious {
 
 	public int callCheckedException(int o) throws IOException {

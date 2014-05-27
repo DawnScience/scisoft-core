@@ -16,10 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.staticdispatchertypes;
 
-@SuppressWarnings("unused")
 public class VoidReturn {
 	public static void call(int o) {
 	}
+
 	public static String call(boolean o) {
 		return "wrong one called";
 	}

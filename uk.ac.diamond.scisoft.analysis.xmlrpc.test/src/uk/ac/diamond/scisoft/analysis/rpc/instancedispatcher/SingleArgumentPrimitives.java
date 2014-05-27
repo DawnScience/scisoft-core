@@ -15,7 +15,6 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
-@SuppressWarnings("unused")
 
 public class SingleArgumentPrimitives {
 	public Class<Boolean> call(boolean param) {

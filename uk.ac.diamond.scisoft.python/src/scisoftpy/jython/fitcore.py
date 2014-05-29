@@ -510,7 +510,7 @@ def polyval(p, x):
 
 # need a cspline fit function
 
-from uk.ac.diamond.scisoft.analysis.fitting import EllipseFitter as _efitter
+from uk.ac.diamond.scisoft.analysis.roi.fitting import EllipseFitter as _efitter
 
 def ellipsefit(x, y, geo=True, init=None):
     '''Ellipse fit

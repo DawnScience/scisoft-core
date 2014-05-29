@@ -1863,7 +1863,7 @@ public class DatasetUtils {
 		List<Double> indices = crossings(yAxis, yValue);
 
 		for (double xi : indices) {
-			results.add(Maths.interpolate(xAxis, xi));
+			results.add(Maths.getLinear(xAxis, xi));
 		}
 		return results;
 	}

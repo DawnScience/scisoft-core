@@ -1071,11 +1071,20 @@ public class DatasetUtils {
 	 * @return Converted dataset or null
 	 */
 	public static AbstractDataset convertToAbstractDataset(ILazyDataset lazydata) {
+		return (AbstractDataset) convertToDataset(lazydata);
+	}
+
+	/**
+	 * Convert (if necessary) a dataset obeying the interface to our implementation
+	 * @param lazydata can be null
+	 * @return Converted dataset or null
+	 */
+	public static Dataset convertToDataset(ILazyDataset lazydata) {
 		if (lazydata == null) 
 			return null;
 
-		if (lazydata instanceof AbstractDataset) {
-			return (AbstractDataset) lazydata;
+		if (lazydata instanceof Dataset) {
+			return (Dataset) lazydata;
 		}
 
 		int dtype = lazydata instanceof Dataset ? ((Dataset) lazydata).getDtype() :
@@ -1083,7 +1092,7 @@ public class DatasetUtils {
 
 		IDataset data;
 		if (lazydata instanceof IDataset) {
-			data = (IDataset)lazydata;
+			data = (IDataset) lazydata;
 		} else {
 			throw new IllegalArgumentException("This is a lazy dataset and should not be fully loaded - use getSlice");
 		}
@@ -1093,7 +1102,7 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Datasets with " + isize + " elements per item not supported");
 		}
 
-		final AbstractDataset result = AbstractDataset.zeros(isize, data.getShape(), dtype);
+		final Dataset result = DatasetFactory.zeros(isize, data.getShape(), dtype);
 		result.setName(data.getName());
 
 		final IndexIterator it = result.getIterator(true);
@@ -1854,7 +1863,7 @@ public class DatasetUtils {
 		List<Double> indices = crossings(yAxis, yValue);
 
 		for (double xi : indices) {
-			results.add(Maths.getLinear(xAxis, xi));
+			results.add(Maths.interpolate(xAxis, xi));
 		}
 		return results;
 	}

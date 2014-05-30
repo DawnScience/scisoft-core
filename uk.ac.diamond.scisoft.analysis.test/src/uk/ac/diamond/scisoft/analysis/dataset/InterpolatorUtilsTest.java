@@ -35,13 +35,13 @@ public class InterpolatorUtilsTest {
 		AbstractDataset output = InterpolatorUtils.remapOneAxis(im, 0, off, axis, newaxis);
 		
 		// check that some values are correct
-		assertEquals("Cooridinate Incorrect", 1468.249, output.getDouble(62,29), 0.1);
-		assertEquals("Cooridinate Incorrect", 7124.733, output.getDouble(127,56), 0.1);
-		assertEquals("Cooridinate Incorrect", Double.NaN, output.getDouble(179,33), 0.1);
-		assertEquals("Cooridinate Incorrect", 9600.669, output.getDouble(144,2), 0.1);
-		assertEquals("Cooridinate Incorrect", 379.814, output.getDouble(53,63), 0.1);
-		assertEquals("Cooridinate Incorrect", 225.239, output.getDouble(54,97), 0.1);
-		assertEquals("Cooridinate Incorrect", 7118.775, output.getDouble(120,94), 0.1);
+		assertEquals("Coordinate incorrect", 1468.249, output.getDouble(62,29), 0.1);
+		assertEquals("Coordinate incorrect", 7124.733, output.getDouble(127,56), 0.1);
+		assertEquals("Coordinate incorrect", Double.NaN, output.getDouble(179,33), 0.1);
+		assertEquals("Coordinate incorrect", 9600.669, output.getDouble(144,2), 0.1);
+		assertEquals("Coordinate incorrect", 379.814, output.getDouble(53,63), 0.1);
+		assertEquals("Coordinate incorrect", 225.239, output.getDouble(54,97), 0.1);
+		assertEquals("Coordinate incorrect", 7118.775, output.getDouble(120,94), 0.1);
 	}
 	
 

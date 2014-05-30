@@ -22,6 +22,42 @@ import java.util.Comparator;
 
 import org.apache.commons.lang.ArrayUtils;
 
+class InterpolatedPoint {
+
+	AbstractDataset realPoint;
+	AbstractDataset coordPoint;
+
+	public InterpolatedPoint(AbstractDataset realPoint, AbstractDataset coordPoint) {
+		this.realPoint = realPoint;
+		this.coordPoint = coordPoint;
+	}
+
+	public AbstractDataset getRealPoint() {
+		return realPoint;
+	}
+
+	public AbstractDataset getCoordPoint() {
+		return coordPoint;
+	}
+	
+	@Override
+	public String toString() {
+		String realString = "[ " + realPoint.getDouble(0);
+		for(int i = 1; i < realPoint.getShape()[0]; i++) {
+			realString += " , " + realPoint.getDouble(i);
+		}
+		realString += " ]";
+		
+		String coordString = "[ " + coordPoint.getDouble(0);
+		for(int i = 1; i < coordPoint.getShape()[0]; i++) {
+			coordString += " , " + coordPoint.getDouble(i) ;
+		}
+		coordString += " ]";
+		
+		return realString + " : " + coordString;
+	}
+
+}
 public class InterpolatorUtils {
 
 	public static AbstractDataset regridOld(AbstractDataset data, AbstractDataset x, AbstractDataset y,
@@ -46,7 +82,7 @@ public class InterpolatorUtils {
 				int yindex = ity.index;
 				System.out.println("Testing : "+xindex+","+yindex);
 				double yPos = gridX.getDouble(yindex);
-				result.set(GetInterpolated(data, x, y, xPos, yPos), yindex, xindex);
+				result.set(getInterpolated(data, x, y, xPos, yPos), yindex, xindex);
 				
 			}
 		}
@@ -93,7 +129,7 @@ public class InterpolatorUtils {
 		return dataset.getSlice(start, stop, null);
 	}
 	
-	public static double GetInterpolated(AbstractDataset val, AbstractDataset x, AbstractDataset y, double xPos,
+	private static double getInterpolated(AbstractDataset val, AbstractDataset x, AbstractDataset y, double xPos,
 			double yPos) throws Exception {
 		
 		// initial guess
@@ -121,10 +157,10 @@ public class InterpolatorUtils {
 		AbstractDataset yReduced = selectDatasetRegion(y, pos[0], pos[1], 1, 1);
 		AbstractDataset valReduced = selectDatasetRegion(val, pos[0], pos[1], 1, 1);
 
-		return GetInterpolatedResultFromNinePoints(valReduced, xReduced, yReduced, xPos, yPos);
+		return getInterpolatedResultFromNinePoints(valReduced, xReduced, yReduced, xPos, yPos);
 	}
 
-	public static double GetInterpolatedResultFromNinePoints(AbstractDataset val, AbstractDataset x, AbstractDataset y,
+	private static double getInterpolatedResultFromNinePoints(AbstractDataset val, AbstractDataset x, AbstractDataset y,
 			double xPos, double yPos) throws Exception {
 		
 		// First build the nine points
@@ -253,24 +289,24 @@ public class InterpolatorUtils {
 	 *            Point 1
 	 * @param p2
 	 *            Point 2
-	 * @param interpolationDimention
+	 * @param interpolationDimension
 	 *            The dimension in which the interpolation should be carried out
 	 * @param interpolatedValue
 	 *            The value at which the interpolated point should be at in the chosen dimension
 	 * @return the new interpolated point.
 	 * @throws IllegalArgumentException
 	 */
-	public static InterpolatedPoint get1DInterpolatedPoint(InterpolatedPoint p1, InterpolatedPoint p2,
-			int interpolationDimention, double interpolatedValue) throws IllegalArgumentException {
+	private static InterpolatedPoint get1DInterpolatedPoint(InterpolatedPoint p1, InterpolatedPoint p2,
+			int interpolationDimension, double interpolatedValue) throws IllegalArgumentException {
 		
 		checkPoints(p1, p2);
 
-		if (interpolationDimention >= p1.getRealPoint().shape[0]) {
+		if (interpolationDimension >= p1.getRealPoint().shape[0]) {
 			throw new IllegalArgumentException("Dimention is too large for these datasets");
 		}
 
-		double p1_n = p1.getRealPoint().getDouble(interpolationDimention);
-		double p2_n = p2.getRealPoint().getDouble(interpolationDimention);
+		double p1_n = p1.getRealPoint().getDouble(interpolationDimension);
+		double p2_n = p2.getRealPoint().getDouble(interpolationDimension);
 		double max = Math.max(p1_n, p2_n);
 		double min = Math.min(p1_n, p2_n);
 		

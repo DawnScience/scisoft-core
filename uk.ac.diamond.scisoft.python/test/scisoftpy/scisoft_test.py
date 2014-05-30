@@ -428,6 +428,20 @@ class Test(unittest.TestCase):
         self.assertTrue(np.array(-2.+3.5j) == -2+3.5j)
         self.assertFalse(np.array(-2.) == -2+3.5j)
 
+    def testIndexesAndPositions(self):
+        print 'Indexes testing'
+        self.assertTrue(np.unravel_index(1621, (6,7,8,9)) == (3, 1, 4, 1))
+        l = np.unravel_index([22, 41, 37], (7,6))
+        self.checkitems([3, 6, 6], l[0])
+        self.checkitems([4, 5, 1], l[1])
+
+        print 'Positions testing'
+        self.assertTrue(np.ravel_multi_index((3,1,4,1), (6,7,8,9)) == 1621)
+        arr = np.array([[3,6,6],[4,5,1]])
+        self.checkitems([22, 41, 37], np.ravel_multi_index(arr, (7,6)))
+        self.checkitems([22, 23, 19], np.ravel_multi_index(arr, (4,6), mode='clip'))
+        self.checkitems([12, 13, 13], np.ravel_multi_index(arr, (4,4), mode=('clip', 'wrap')))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

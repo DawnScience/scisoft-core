@@ -117,7 +117,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	 * Cast a dataset to this complex type
 	 * @param dataset
 	 */
-	public ComplexDoubleDataset(final AbstractDataset dataset) {
+	public ComplexDoubleDataset(final Dataset dataset) {
 		super(ISIZE, dataset.getShapeRef());
 		copyToView(dataset, this, true, false);
 		offset = 0;

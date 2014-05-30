@@ -117,7 +117,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	 * Cast a dataset to this complex type
 	 * @param dataset
 	 */
-	public ComplexFloatDataset(final AbstractDataset dataset) {
+	public ComplexFloatDataset(final Dataset dataset) {
 		super(ISIZE, dataset.getShapeRef());
 		copyToView(dataset, this, true, false);
 		offset = 0;

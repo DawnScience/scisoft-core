@@ -189,6 +189,12 @@ public interface Dataset extends IErrorDataset {
 	public String toString(boolean showData);
 
 	@Override
+	public Dataset squeeze();
+
+	@Override
+	public Dataset squeeze(boolean onlyFromEnd);
+
+	@Override
 	public Dataset clone();
 
 	/**

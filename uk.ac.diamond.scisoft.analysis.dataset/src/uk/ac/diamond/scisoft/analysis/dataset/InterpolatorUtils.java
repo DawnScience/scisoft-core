@@ -373,7 +373,7 @@ public class InterpolatorUtils {
 			double point = outputAxis.getDouble(i);
 			double position = getRealPositionAsIndex(axis, point);
 			if (position >= 0.0) {
-				data.set(Maths.getLinear(dataset, position), i);
+				data.set(Maths.interpolate(dataset, position), i);
 			} else {
 				data.set(Double.NaN,i);
 			}
@@ -501,7 +501,7 @@ public class InterpolatorUtils {
 	}
 	
 	public static AbstractDataset regrid(AbstractDataset data, AbstractDataset x, AbstractDataset y,
-			AbstractDataset gridX, AbstractDataset gridY) throws Exception {
+			AbstractDataset gridX, AbstractDataset gridY) {
 		
 		// apply X then Y regridding
 		AbstractDataset result = remapAxis(data,1,x,gridX);

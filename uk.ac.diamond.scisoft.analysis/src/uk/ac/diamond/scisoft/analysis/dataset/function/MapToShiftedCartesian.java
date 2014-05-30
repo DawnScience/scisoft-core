@@ -70,7 +70,7 @@ public class MapToShiftedCartesian implements DatasetToDatasetFunction {
 				cx0 = x0 - ox0;
 				for (int x1 = 0; x1 < s[1]; x1++) {
 					cx1 = x1 - ox1;
-					newmap.set(Maths.getBilinear(ds, cx0, cx1), x0, x1);
+					newmap.set(Maths.interpolate(ds, cx0, cx1), x0, x1);
 				}
 			}
 			result.add(newmap);

@@ -91,7 +91,7 @@ public class LineSample implements DatasetToDatasetFunction {
 				final double r = step * i;
 				x = sx + r * cp;
 				y = sy + r * sp;
-				linsample.setObjectAbs(i, Maths.getBilinear(ids, y, x));
+				linsample.setObjectAbs(i, Maths.interpolate(ids, y, x));
 			}
 
 			result.add(linsample);

@@ -149,8 +149,8 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 					cy = oy + x * sp + y * cp;
 
 					if (mask != null)
-						msk = Maths.getBilinear(mask, y, x);
-					final double v = Maths.getBilinear(ids, mask, cy, cx);
+						msk = Maths.interpolate(mask, y, x);
+					final double v = Maths.interpolate(ids, mask, cy, cx);
 					sumy.set(v + sumy.getDouble(x), x);
 					usumy.set(msk + usumy.getDouble(x), x);
 					csum += v;
@@ -196,7 +196,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 					cx = ox + x * cp - y * sp;
 					cy = oy + x * sp + y * cp;
 
-					final double v = Maths.getBilinear(ids, mask, cy, cx);
+					final double v = Maths.interpolate(ids, mask, cy, cx);
 					my.set(Math.max(v, my.getDouble(x)), x);
 					if (v > cmax)
 						cmax = v;

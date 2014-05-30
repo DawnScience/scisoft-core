@@ -145,7 +145,7 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 					qspace.pixelPosition(q, t);
 					n = (int) (count.getElementLongAbs(i) + 1);
 					value = image.getElementDoubleAbs(i);
-					delta = Maths.getBilinear(ds, t.y, t.x) - value;
+					delta = Maths.interpolate(ds, t.y, t.x) - value;
 					image.setObjectAbs(i, value + (delta / n));
 					count.setObjectAbs(i, n);
 					i++;

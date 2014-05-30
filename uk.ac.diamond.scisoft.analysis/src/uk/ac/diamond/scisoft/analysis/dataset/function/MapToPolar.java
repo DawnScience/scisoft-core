@@ -125,7 +125,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 					phi = sphi + p * dphi;
 					x = cx + rad * Math.cos(phi);
 					y = cy + rad * Math.sin(phi);
-					polarmap.set(dphi * rad * Maths.getBilinear(ids, y, x), r, p);
+					polarmap.set(dphi * rad * Maths.interpolate(ids, y, x), r, p);
 				}
 			}
 

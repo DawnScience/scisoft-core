@@ -271,7 +271,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						isOutside = true;
 					}
 					
-					final double v = rad * dr * tdphi * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
+					final double v = rad * dr * tdphi * (isOutside ? 1.0 : Maths.interpolate(ids, mask, y, x));
 					
 					if (doRadial) {
 						csum += v;
@@ -844,7 +844,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						if (errIds != null) {
 							varmap = getBilinearWeights(ids.getShape(), mask, y, x);
 						} else {
-							v = du * (isOutside ? 1.0 : Maths.getBilinear(ids, mask, y, x));
+							v = du * (isOutside ? 1.0 : Maths.interpolate(ids, mask, y, x));
 						}
 						if (doRadial) {
 							if (varmap != null) {

@@ -139,7 +139,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 //					continue;
 //				qspace.pixelPosition(q, p, t);
 				value = newmap.getDouble(qpos);
-				value += Maths.getBilinear(inDS, t.y, t.x);
+				value += Maths.interpolate(inDS, t.y, t.x);
 				newmap.set(value, qpos);
 			}
 		}

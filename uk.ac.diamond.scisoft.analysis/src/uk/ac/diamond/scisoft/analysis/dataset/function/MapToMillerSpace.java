@@ -124,7 +124,7 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 
 					mspace.q(h, q);
 					qspace.pixelPosition(q, p, t);
-					value = Maths.getBilinear(ds, t.y, t.x);
+					value = Maths.interpolate(ds, t.y, t.x);
 
 					// Steve Collin's algorithm implemented as first attempt
 					// Assumes a pixel maps to a curvilinear patch that is

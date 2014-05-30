@@ -103,18 +103,15 @@ public class CalibrationFactory {
 	}
 	
 	static CalibrationStandards readCalibrationStandards() throws Exception {
-		XMLDecoder decoder=null;
-		decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
-		final ClassLoader originalLoader=setCustomClassLoader();
+		final XMLDecoder decoder = new XMLDecoder(new FileInputStream(getCalibrantFile()));
+		final ClassLoader originalLoader = setCustomClassLoader();
 		try {
-
-			final CalibrationStandards cs = (CalibrationStandards)decoder.readObject();
+			final CalibrationStandards cs = (CalibrationStandards) decoder.readObject();
 			cs.setModifiable(true);
 			return cs;
-			
-		} finally  {
-			Thread.currentThread().setContextClassLoader(originalLoader);			
-			if (decoder!=null) decoder.close();
+		} finally {
+			Thread.currentThread().setContextClassLoader(originalLoader);
+			decoder.close();
 		}
 	}
 

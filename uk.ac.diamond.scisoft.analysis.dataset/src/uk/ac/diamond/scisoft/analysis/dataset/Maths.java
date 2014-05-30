@@ -3248,18 +3248,7 @@ public class Maths {
 	 * @return interpolated value
 	 */
 	public static double interpolate(final IDataset d, final double... x) {
-		int r = d.getRank();
-		if (r != x.length) {
-			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
-		}
-		switch (r) {
-		case 1:
-			return interpolate(d, x[0]);
-		case 2:
-			return interpolate(d, x[0], x[1]);
-		default:
-			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
-		}
+		return interpolate(d, null, x);
 	}
 
 	/**
@@ -3276,22 +3265,84 @@ public class Maths {
 		if (r != x.length) {
 			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
 		}
-		if (m == null) {
-			return interpolate(d, x);
-		}
-
-		if (r != m.getRank()) {
-			throw new IllegalArgumentException("Rank of mask dataset must be equal to rank of dataset");
-		}
 
 		switch (r) {
 		case 1:
-			return interpolate(d, m, x[0]);
+			return m == null ? interpolate(d, x[0]) : interpolate(d, m, x[0]);
 		case 2:
-			return interpolate(d, m, x[0], x[1]);
-		default:
-			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
+			return m == null ? interpolate(d, x[0], x[1]) : interpolate(d, m, x[0], x[1]);
 		}
+
+		if (m != null && r != m.getRank()) {
+			throw new IllegalArgumentException("Rank of mask dataset must be equal to rank of dataset");
+		}
+
+		// now do it iteratively
+		int[] l = new int[r];       // lower indexes
+		double[] f = new double[r]; // fractions
+		for (int i = 0; i < r; i++) {
+			double xi = x[i];
+			l[i] = (int) Math.floor(xi);
+			f[i] = xi - l[i];
+		}
+
+		int[] s = d.getShape();
+		
+		int n = 1 << r;
+		double[] results = new double[n];
+
+		// iterate over permutations {l} and {l+1}
+		int[] twos = new int[r];
+		Arrays.fill(twos, 2);
+		PositionIterator it = new PositionIterator(twos);
+		int[] ip = it.getPos();
+		int j = 0;
+		if (m == null) {
+			while (it.hasNext()) {
+				int[] p = l.clone();
+				boolean omit = false;
+				for (int i = 0; i < r; i++) {
+					int pi = p[i] + ip[i];
+					if (pi < 0 || pi >= s[i]) {
+						omit = true;
+						break;
+					}
+					p[i] = pi;
+				}
+				results[j++] = omit ? 0 : d.getDouble(p);
+			}
+		} else {
+			while (it.hasNext()) {
+				int[] p = l.clone();
+				boolean omit = false;
+				for (int i = 0; i < r; i++) {
+					int pi = p[i] + ip[i];
+					if (pi < 0 || pi >= s[i]) {
+						omit = true;
+						break;
+					}
+					p[i] = pi;
+				}
+				results[j++] = omit ? 0 : d.getDouble(p) * m.getDouble(p);
+			}
+		}
+
+		// reduce recursively
+		for (int i = r - 1; i >= 0; i--) {
+			results = combine(results, f[i], 1 << i);
+		}
+		return results[0];
+	}
+
+	private static double[] combine(double[] values, double f, int n) {
+		double g = 1 - f;
+		double[] results = new double[n];
+		for (int j = 0; j < n; j++) {
+			int tj = 2 * j;
+			results[j] = g * values[tj] + f * values[tj + 1];
+		}
+
+		return results;
 	}
 
 	/**
@@ -3307,16 +3358,76 @@ public class Maths {
 		if (r != x.length) {
 			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
 		}
+
 		switch (r) {
 		case 1:
 			interpolate(values, d, x[0]);
-			break;
+			return;
 		case 2:
 			interpolate(values, d, x[0], x[1]);
-			break;
-		default:
-			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
+			return;
 		}
+
+		final int is = d.getElementsPerItem();
+		if (is != values.length)
+			throw new IllegalArgumentException("Output array length must match elements in item");
+
+		// now do it iteratively
+		int[] l = new int[r];       // lower indexes
+		double[] f = new double[r]; // fractions
+		for (int i = 0; i < r; i++) {
+			double xi = x[i];
+			l[i] = (int) Math.floor(xi);
+			f[i] = xi - l[i];
+		}
+
+		int[] s = d.getShape();
+		
+		int n = 1 << r;
+		double[][] results = new double[n][is];
+
+		// iterate over permutations {l} and {l+1}
+		int[] twos = new int[r];
+		Arrays.fill(twos, 2);
+		PositionIterator it = new PositionIterator(twos);
+		int[] ip = it.getPos();
+		int j = 0;
+		while (it.hasNext()) {
+			int[] p = l.clone();
+			boolean omit = false;
+			for (int i = 0; i < r; i++) {
+				int pi = p[i] + ip[i];
+				if (pi < 0 || pi >= s[i]) {
+					omit = true;
+					break;
+				}
+				p[i] = pi;
+			}
+			if (!omit) {
+				d.getDoubleArray(results[j++], p);
+			}
+		}
+
+		// reduce recursively
+		for (int i = r - 1; i >= 0; i--) {
+			results = combineArray(is, results, f[i], 1 << i);
+		}
+		for (int k = 0; k < is; k++) {
+			values[k] = results[0][k];
+		}
+	}
+
+	private static double[][] combineArray(int is, double[][] values, double f, int n) {
+		double g = 1 - f;
+		double[][] results = new double[n][is];
+		for (int j = 0; j < n; j++) {
+			int tj = 2 * j;
+			for (int k = 0; k < is; k++) {
+				results[j][k] = g * values[tj][k] + f * values[tj + 1][k];
+			}
+		}
+
+		return results;
 	}
 
 	/**

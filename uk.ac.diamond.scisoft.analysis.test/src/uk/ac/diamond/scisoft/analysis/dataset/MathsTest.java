@@ -1723,7 +1723,8 @@ public class MathsTest {
 
 	private void checkInterpolate(Dataset a, double x) {
 		int s = a.getShapeRef()[0];
-		double v = Maths.interpolate(a, x);
+//		double v = Maths.interpolate(a, x);
+		double v = Maths.interpolate(a, new double[] {x});
 		if (x <= -1 || x >= s) {
 			Assert.assertEquals(0, v, 1e-15);
 			return;
@@ -1773,7 +1774,8 @@ public class MathsTest {
 	private void checkInterpolate(Dataset a, double x, double y) {
 		int s0 = a.getShapeRef()[0];
 		int s1 = a.getShapeRef()[1];
-		double v = Maths.interpolate(a, x, y);
+//		double v = Maths.interpolate(a, x, y);
+		double v = Maths.interpolate(a, new double[] {x, y});
 		if (x <= -1 || x >= s0 || y <= -1 || y >= s1) {
 			Assert.assertEquals(0, v, 1e-15);
 			return;
@@ -1887,6 +1889,7 @@ public class MathsTest {
 
 		double[] xc = {-1.25, -1, -0.25, 0, 0.25, 58.25, 59, 59.25, 60, 60.25};
 		for (double x : xc) {
+//			System.out.printf("%g\n", x);
 			checkInterpolate(xa, x);
 		}
 
@@ -1909,7 +1912,7 @@ public class MathsTest {
 		double[] yc = {-1.25, -1, -0.25, 0, 0.25, 8.25, 9, 9.25, 10, 10.25};
 		for (double x : xc) {
 			for (double y : yc) {
-				System.out.printf("%g %g\n", x, y);
+//				System.out.printf("%g %g\n", x, y);
 				checkInterpolate(xa, x, y);
 			}
 		}
@@ -1919,7 +1922,7 @@ public class MathsTest {
 //		yc = new double[] {9.25, 10, 10.25};
 		for (double x : xc) {
 			for (double y : yc) {
-				System.out.printf("%g %g\n", x, y);
+//				System.out.printf("%g %g\n", x, y);
 				checkInterpolateArray(cxb, x, y);
 			}
 		}

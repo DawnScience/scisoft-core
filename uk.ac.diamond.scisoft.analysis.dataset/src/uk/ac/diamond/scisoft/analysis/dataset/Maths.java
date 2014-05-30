@@ -2949,27 +2949,388 @@ public class Maths {
 	 * @param x0 coordinate
 	 * @return interpolated value
 	 */
-	public static double getLinear(final IDataset d, final double x0) {
-		final int[] s = d.getShape();
-		if (s.length != 1)
-			throw new IllegalArgumentException("Only 1d datasets allowed");
+	public static double interpolate(final IDataset d, final double x0) {
+		assert d.getRank() == 1;
 
 		final int i0 = (int) Math.floor(x0);
-		if (i0 < -1 || i0 >= s[0])
+		final int e0 = d.getSize() - 1;
+		if (i0 < -1 || i0 > e0)
 			return 0;
 
 		final double u0 = x0 - i0;
 
 		double r = 0;
-		double f1;
-		// use linear interpolation
-		f1 = i0 < 0 ? 0 : d.getDouble(i0);
+		final double f1 = i0 < 0 ? 0 : d.getDouble(i0);
 		if (u0 > 0) {
-			r = (1 - u0) * f1 + (i0 == s[0] - 1 ? 0 : u0 * d.getDouble(i0 + 1));
+			r = (1 - u0) * f1 + (i0 == e0 ? 0 : u0 * d.getDouble(i0 + 1));
 		} else {
 			r = f1;
 		}
 		return r;
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a 1D dataset with a mask. The dataset is considered
+	 * to have zero support outside its bounds. Thus points just outside are interpolated from the
+	 * boundary value to zero.
+	 * @param d input dataset
+	 * @param m mask dataset
+	 * @param x0 coordinate
+	 * @return interpolated value
+	 */
+	public static double interpolate(final IDataset d, final IDataset m, final double x0) {
+		assert d.getRank() == 1;
+		assert m.getRank() == 1;
+
+		final int i0 = (int) Math.floor(x0);
+		final int e0 = d.getSize() - 1;
+		if (i0 < -1 || i0 > e0)
+			return 0;
+
+		final double u0 = x0 - i0;
+
+		double r = 0;
+		final double f1 = i0 < 0 ? 0 : d.getDouble(i0) * m.getDouble(i0);
+		if (u0 > 0) {
+			r = (1 - u0) * f1 + (i0 == e0 ? 0 : u0 * d.getDouble(i0 + 1) * m.getDouble(i0 + 1));
+		} else {
+			r = f1;
+		}
+		return r;
+	}
+
+	/**
+	 * Linearly interpolate an array of values at a point in a compound 1D dataset. The dataset is
+	 * considered to have zero support outside its bounds. Thus points just outside are interpolated
+	 * from the boundary value to zero.
+	 * @param values interpolated array
+	 * @param d input dataset
+	 * @param x0 coordinate
+	 */
+	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double x0) {
+		assert d.getRank() == 1;
+
+		final int is = d.isize;
+		if (is != values.length)
+			throw new IllegalArgumentException("Output array length must match elements in item");
+		final double[] f1, f2;
+	
+		final int i0 = (int) Math.floor(x0);
+		final int e0 = d.getSize() - 1;
+		if (i0 < -1 || i0 > e0) {
+			Arrays.fill(values, 0);
+			return;
+		}
+		final double u0 = x0 - i0;
+	
+		if (u0 > 0) {
+			f1 = new double[is];
+			if (i0 >= 0)
+				d.getDoubleArray(f1, i0);
+			double t = 1 - u0;
+			if (i0 == e0) {
+				for (int j = 0; j < is; j++)
+					values[j] = t * f1[j];
+			} else {
+				f2 = new double[is];
+				d.getDoubleArray(f2, i0 + 1);
+				for (int j = 0; j < is; j++)
+					values[j] = t * f1[j] + u0 * f2[j];
+			}
+		} else {
+			if (i0 >= 0)
+				d.getDoubleArray(values, i0);
+			else
+				Arrays.fill(values, 0);
+		}
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a 2D dataset. The dataset is considered to have
+	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
+	 * value to zero.
+	 * @param d input dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	public static double interpolate(final IDataset d, final double x0, final double x1) {
+		final int[] s = d.getShape();
+		assert s.length == 2;
+	
+		final int e0 = s[0] - 1;
+		final int e1 = s[1] - 1;
+		final int i0 = (int) Math.floor(x0);
+		final int i1 = (int) Math.floor(x1);
+		final double u0 = x0 - i0;
+		final double u1 = x1 - i1;
+		if (i0 < -1 || i0 > e0 || i1 < -1 || i1 > e1)
+			return 0;
+
+		// use bilinear interpolation
+		double r = 0;
+		final double f1, f2, f3, f4;
+		f1 = i0 < 0 || i1 < 0 ? 0 : d.getDouble(i0, i1);
+		if (u1 > 0) {
+			if (u0 > 0) {
+				if (i0 == e0) {
+					f2 = 0;
+					f4 = 0;
+					f3 = i1 == e1 ? 0 : d.getDouble(i0, i1 + 1);
+				} else {
+					f2 = i1 < 0 ? 0 : d.getDouble(i0 + 1, i1);
+					if (i1 == e1) {
+						f4 = 0;
+						f3 = 0;
+					} else {
+						f4 = d.getDouble(i0 + 1, i1 + 1);
+						f3 = i0 < 0 ? 0 : d.getDouble(i0, i1 + 1);
+					}
+				}
+				r = (1 - u0) * (1 - u1) * f1 + u0 * (1 - u1) * f2 + (1 - u0) * u1 * f3 + u0 * u1 * f4;
+			} else {
+				f3 = i0 < 0 || i1 == e1 ? 0 : d.getDouble(i0, i1 + 1);
+				r = (1 - u1) * f1 + u1 * f3;
+			}
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				f2 = i0 == e0 || i1 < 0 ? 0 : d.getDouble(i0 + 1, i1);
+				r = (1 - u0) * f1 + u0 * f2;
+			} else { // exactly on axis 0
+				r = f1;
+			}
+		}
+		return r;
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a 2D dataset with a mask. The dataset is considered
+	 * to have zero support outside its bounds. Thus points just outside are interpolated from the
+	 * boundary value to zero.
+	 * @param d input dataset
+	 * @param m mask dataset
+	 * @param x0 coordinate
+	 * @param x1 coordinate
+	 * @return bilinear interpolation
+	 */
+	public static double interpolate(final IDataset d, final IDataset m, final double x0, final double x1) {
+		if (m == null)
+			return interpolate(d, x0, x1);
+	
+		final int[] s = d.getShape();
+		assert s.length == 2;
+		assert m.getRank() == 2;
+
+		final int e0 = s[0] - 1;
+		final int e1 = s[1] - 1;
+		final int i0 = (int) Math.floor(x0);
+		final int i1 = (int) Math.floor(x1);
+		final double u0 = x0 - i0;
+		final double u1 = x1 - i1;
+		if (i0 < -1 || i0 > e0 || i1 < -1 || i1 > e1)
+			return 0;
+
+		// use bilinear interpolation
+		double r = 0;
+		final double f1, f2, f3, f4;
+		f1 = i0 < 0 || i1 < 0 ? 0 : d.getDouble(i0, i1) * m.getDouble(i0, i1);
+		if (u1 > 0) {
+			if (i0 == e0) {
+				f2 = 0;
+				f4 = 0;
+				f3 = i1 == e1 ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+			} else {
+				f2 = i1 < 0 ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
+				if (i1 == e1) {
+					f4 = 0;
+					f3 = 0;
+				} else {
+					f4 = d.getDouble(i0 + 1, i1 + 1) * m.getDouble(i0 + 1, i1 + 1);
+					f3 = i0 < 0 ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
+				}
+			}
+			r = (1 - u0) * (1 - u1) * f1 + u0 * (1 - u1) * f2 + (1 - u0) * u1 * f3 + u0 * u1 * f4;
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				f2 = i0 == e0 || i1 < 0 ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
+				r = (1 - u0) * f1 + u0 * f2;
+			} else { // exactly on axis 0
+				r = f1;
+			}
+		}
+		return r;
+	}
+
+	/**
+	 * Linearly interpolate an array of values at a point in a compound 2D dataset. The dataset is
+	 * considered to have zero support outside its bounds. Thus points just outside are interpolated
+	 * from the boundary value to zero.
+	 * @param values bilinear interpolated array
+	 * @param d
+	 * @param x0
+	 * @param x1
+	 */
+	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double x0, final double x1) {
+		final int[] s = d.getShapeRef();
+		assert s.length == 2;
+
+		final int is = d.getElementsPerItem();
+		if (is != values.length)
+			throw new IllegalArgumentException("Output array length must match elements in item");
+
+		final int e0 = s[0] - 1;
+		final int e1 = s[1] - 1;
+		final int i0 = (int) Math.floor(x0);
+		final int i1 = (int) Math.floor(x1);
+		final double u0 = x0 - i0;
+		final double u1 = x1 - i1;
+		if (i0 < -1 || i0 > e0 || i1 < -1 || i1 > e1) {
+			Arrays.fill(values, 0);
+			return;
+		}
+		// use bilinear interpolation
+		double[] f1 = new double[is];
+		if (i0 >= 0 && i1 >= 0)
+			d.getDoubleArray(f1, i0, i1);
+	
+		if (u1 > 0) {
+			if (u0 > 0) {
+				double[] f2 = new double[is];
+				double[] f3 = new double[is];
+				double[] f4 = new double[is];
+				if (i0 != e0) {
+					if (i1 != e1)
+						d.getDoubleArray(f3, i0 + 1, i1 + 1);
+					if (i1 >= 0)
+						d.getDoubleArray(f4, i0 + 1, i1);
+				}
+				if (i0 >= 0 && i1 != e1)
+					d.getDoubleArray(f2, i0, i1 + 1);
+				final double t0 = 1 - u0;
+				final double t1 = 1 - u1;
+				final double w1 = t0 * t1;
+				final double w2 = t0 * u1;
+				final double w3 = u0 * u1;
+				final double w4 = u0 * t1;
+				for (int j = 0; j < is; j++)
+					values[j] = w1 * f1[j] + w2 * f2[j] + w3 * f3[j] + w4 * f4[j];
+			} else {
+				double[] f2 = new double[is];
+				if (i0 >= 0 && i1 != e1)
+					d.getDoubleArray(f2, i0, i1 + 1);
+				final double t1 = 1 - u1;
+				for (int j = 0; j < is; j++)
+					values[j] = t1 * f1[j] + u1 * f2[j];
+			}
+		} else { // exactly on axis 1
+			if (u0 > 0) {
+				double[] f4 = new double[is];
+				if (i0 != e0 && i1 >= 0)
+					d.getDoubleArray(f4, i0 + 1, i1);
+				final double t0 = 1 - u0;
+				for (int j = 0; j < is; j++)
+					values[j] = t0 * f1[j] + u0 * f4[j];
+			} else { // exactly on axis 0
+				if (i0 >= 0 && i1 >= 0)
+					d.getDoubleArray(values, i0, i1);
+				else
+					Arrays.fill(values, 0);
+			}
+		}
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a n-D dataset. The dataset is considered to have
+	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
+	 * value to zero. The number of coordinates must match the rank of the dataset.
+	 * @param d input dataset
+	 * @param x coordinates
+	 * @return interpolated value
+	 */
+	public static double interpolate(final IDataset d, final double... x) {
+		int r = d.getRank();
+		if (r != x.length) {
+			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
+		}
+		switch (r) {
+		case 1:
+			return interpolate(d, x[0]);
+		case 2:
+			return interpolate(d, x[0], x[1]);
+		default:
+			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
+		}
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a n-D dataset with a mask. The dataset is considered to have
+	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
+	 * value to zero. The number of coordinates must match the rank of the dataset.
+	 * @param d input dataset
+	 * @param m mask dataset (can be null)
+	 * @param x coordinates
+	 * @return interpolated value
+	 */
+	public static double interpolate(final IDataset d, final IDataset m, final double... x) {
+		int r = d.getRank();
+		if (r != x.length) {
+			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
+		}
+		if (m == null) {
+			return interpolate(d, x);
+		}
+
+		if (r != m.getRank()) {
+			throw new IllegalArgumentException("Rank of mask dataset must be equal to rank of dataset");
+		}
+
+		switch (r) {
+		case 1:
+			return interpolate(d, m, x[0]);
+		case 2:
+			return interpolate(d, m, x[0], x[1]);
+		default:
+			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
+		}
+	}
+
+	/**
+	 * Linearly interpolate an array of values at a point in a compound n-D dataset. The dataset is
+	 * considered to have zero support outside its bounds. Thus points just outside are interpolated
+	 * from the boundary value to zero.
+	 * @param values linearly interpolated array
+	 * @param d
+	 * @param x
+	 */
+	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double... x) {
+		int r = d.getRank();
+		if (r != x.length) {
+			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");
+		}
+		switch (r) {
+		case 1:
+			interpolate(values, d, x[0]);
+			break;
+		case 2:
+			interpolate(values, d, x[0], x[1]);
+			break;
+		default:
+			throw new UnsupportedOperationException("Only 1D and 2D datasets supported so far");
+		}
+	}
+
+	/**
+	 * Linearly interpolate a value at a point in a 1D dataset. The dataset is considered to have
+	 * zero support outside its bounds. Thus points just outside are interpolated from the boundary
+	 * value to zero.
+	 * @param d input dataset
+	 * @param x0 coordinate
+	 * @return interpolated value
+	 * @deprecated Use {@link #interpolate(IDataset, double)}
+	 */
+	@Deprecated
+	public static double getLinear(final IDataset d, final double x0) {
+		return interpolate(d, x0);
 	}
 
 	/**
@@ -2979,41 +3340,11 @@ public class Maths {
 	 * @param values interpolated array
 	 * @param d input dataset
 	 * @param x0 coordinate
+	 * @deprecated Use {@link #interpolate(double[], AbstractCompoundDataset, double)}
 	 */
+	@Deprecated
 	public static void getLinear(final double[] values, final AbstractCompoundDataset d, final double x0) {
-		final int[] s = d.getShape();
-		if (s.length != 1)
-			throw new IllegalArgumentException("Only 1d datasets allowed");
-		final int is = d.isize;
-		if (is != values.length)
-			throw new IllegalArgumentException("Output array length must match elements in item");
-		final double[] f1, f2;
-
-		final int i0 = (int) Math.floor(x0);
-		if (i0 < -1 || i0 >= s[0]) {
-			Arrays.fill(values, 0);
-			return;
-		}
-		final double u0 = x0 - i0;
-
-		// use linear interpolation
-		if (u0 > 0) {
-			f1 = new double[is];
-			if (i0 >= 0)
-				d.getDoubleArray(f1, i0);
-			double e = 1 - u0;
-			if (i0 == s[0] - 1) {
-				for (int j = 0; j < is; j++)
-					values[j] = e * f1[j];
-			} else {
-				f2 = new double[is];
-				d.getDoubleArray(f2, i0 + 1);
-				for (int j = 0; j < is; j++)
-					values[j] = e * f1[j] + u0 * f2[j];
-			}
-		} else {
-			d.getDoubleArray(values, i0);
-		}
+		interpolate(values, d, x0);
 	}
 
 	/**
@@ -3022,51 +3353,13 @@ public class Maths {
 	 * @param x0 coordinate
 	 * @param x1 coordinate
 	 * @return bilinear interpolation
+	 * @deprecated Use {@link #interpolate(IDataset, double, double)}
 	 */
+	@Deprecated
 	public static double getBilinear(final IDataset d, final double x0, final double x1) {
-		final int[] s = d.getShape();
-		if (s.length != 2)
-			throw new IllegalArgumentException("Only 2d datasets allowed");
-		double r = 0;
-		final double f1, f2, f3, f4;
-		final double u1, u0;
-		final int i0, i1;
-
-		i0 = (int) Math.floor(x0);
-		i1 = (int) Math.floor(x1);
-		u0 = x0 - i0;
-		u1 = x1 - i1;
-		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1])
-			return r;
-		// use bilinear interpolation
-		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1);
-		if (u1 > 0) {
-			if (i1 == s[1] - 1)
-				return f1;
-			if (u0 > 0) {
-				if (i0 == s[0] - 1)
-					return f1;
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
-				f3 = d.getDouble(i0 + 1, i1 + 1);
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
-				r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
-			} else {
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1);
-				r = (1 - u1) * f1 + u1 * f2;
-			}
-		} else { // exactly on axis 1
-			if (u0 > 0) {
-				if (i0 == s[0] - 1)
-					return f1;
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1);
-				r = (1 - u0) * f1 + u0 * f4;
-			} else { // exactly on axis 0
-				r = f1;
-			}
-		}
-		return r;
+		return interpolate(d, x0, x1);
 	}
-	
+
 	/**
 	 * Interpolated a value from 2D dataset with mask
 	 * @param d input dataset
@@ -3074,52 +3367,11 @@ public class Maths {
 	 * @param x0 coordinate
 	 * @param x1 coordinate
 	 * @return bilinear interpolation
+	 * @deprecated Use {@link #interpolate(IDataset, IDataset, double, double)}
 	 */
+	@Deprecated
 	public static double getBilinear(final IDataset d, final IDataset m, final double x0, final double x1) {
-		if (m == null)
-			return getBilinear(d, x0, x1);
-
-		final int[] s = d.getShape();
-		if (s.length != 2)
-			throw new IllegalArgumentException("Only 2d datasets allowed");
-		double r = 0;
-		final double f1, f2, f3, f4;
-		final double u1, u0;
-		final int i0, i1;
-
-		i0 = (int) Math.floor(x0);
-		i1 = (int) Math.floor(x1);
-		u0 = x0 - i0;
-		u1 = x1 - i1;
-		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1])
-			return r;
-		// use bilinear interpolation
-		f1 = (i0 < 0 || i1 < 0) ? 0 : d.getDouble(i0, i1) * m.getDouble(i0, i1);
-		if (u1 > 0) {
-			if (i1 == s[1] - 1)
-				return f1;
-			if (u0 > 0) {
-				if (i0 == s[0] - 1)
-					return f1;
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
-				f3 = d.getDouble(i0 + 1, i1 + 1) * m.getDouble(i0 + 1, i1 + 1);
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
-				r = (1 - u1) * (1 - u0) * f1 + u1 * (1 - u0) * f2 + u1 * u0 * f3 + (1 - u1) * u0 * f4;
-			} else {
-				f2 = (i0 < 0) ? 0 : d.getDouble(i0, i1 + 1) * m.getDouble(i0, i1 + 1);
-				r = (1 - u1) * f1 + u1 * f2;
-			}
-		} else { // exactly on axis 1
-			if (u0 > 0) {
-				if (i0 == s[0] - 1)
-					return f1;
-				f4 = (i1 < 0) ? 0 : d.getDouble(i0 + 1, i1) * m.getDouble(i0 + 1, i1);
-				r = (1 - u0) * f1 + u0 * f4;
-			} else { // exactly on axis 0
-				r = f1;
-			}
-		}
-		return r;
+		return interpolate(d, m, x0, x1);
 	}
 
 	/**
@@ -3128,73 +3380,11 @@ public class Maths {
 	 * @param d
 	 * @param x0
 	 * @param x1
+	 * @deprecated Use {@link #interpolate(double[], AbstractCompoundDataset, double, double)}
 	 */
+	@Deprecated
 	public static void getBilinear(final double[] values, final AbstractCompoundDataset d, final double x0, final double x1) {
-		final int[] s = d.getShape();
-		if (s.length != 2)
-			throw new IllegalArgumentException("Only 2d datasets allowed");
-		final int is = d.isize;
-		if (is != values.length)
-			throw new IllegalArgumentException("Output array length must match elements in item");
-		final double[] f1, f2, f3, f4;
-		final double u1, u0;
-		final int i0, i1;
-
-		i0 = (int) Math.floor(x0);
-		i1 = (int) Math.floor(x1);
-		u0 = x0 - i0;
-		u1 = x1 - i1;
-		if (i0 < -1 || i0 >= s[0] || i1 < -1 || i1 >= s[1]) {
-			Arrays.fill(values, 0);
-			return;
-		}
-		// use bilinear interpolation
-		f1 = new double[is];
-		if (i0 >= 0 && i1 >= 0)
-			d.getDoubleArray(f1, i0, i1);
-
-		if (u1 > 0) {
-			if (i1 == s[1] - 1) {
-				Arrays.fill(values, 0);
-				return;
-			}
-			if (u0 > 0) {
-				if (i0 == s[0] - 1) {
-					Arrays.fill(values, 0);
-					return;
-				}
-				f2 = new double[is];
-				f3 = new double[is];
-				f4 = new double[is];
-				if (i0 >= 0)
-					d.getDoubleArray(f2, i0, i1 + 1);
-				d.getDoubleArray(f3, i0 + 1, i1 + 1);
-				if (i1 >= 0)
-					d.getDoubleArray(f4, i0 + 1, i1);
-				for (int j = 0; j < is; j++)
-					values[j] = (1 - u1) * (1 - u0) * f1[j] + u1 * (1 - u0) * f2[j] + u1 * u0 * f3[j] + (1 - u1) * u0 * f4[j];
-			} else {
-				f2 = new double[is];
-				if (i0 >= 0)
-					d.getDoubleArray(f2, i0, i1 + 1);
-				for (int j = 0; j < is; j++)
-					values[j] = (1 - u1) * f1[j] + u1 * f2[j];
-			}
-		} else { // exactly on axis 1
-			if (u0 > 0) {
-				if (i0 == s[0] - 1) {
-					Arrays.fill(values, 0);
-					return;
-				}
-				f4 = new double[is];
-				if (i1 >= 0)
-					d.getDoubleArray(f4, i0 + 1, i1);
-				for (int j = 0; j < is; j++)
-					values[j] = (1 - u0) * f1[j] + u0 * f4[j];
-			} else { // exactly on axis 0
-				d.getDoubleArray(values, i0, i1);
-			}
-		}
+		interpolate(values, d, x0, x1);
 	}
 
 	/**

@@ -1721,18 +1721,207 @@ public class MathsTest {
 		}
 	}
 
+	private void checkInterpolate(Dataset a, double x) {
+		int s = a.getShapeRef()[0];
+		double v = Maths.interpolate(a, x);
+		if (x <= -1 || x >= s) {
+			Assert.assertEquals(0, v, 1e-15);
+			return;
+		}
+
+		int i = (int) Math.floor(x);
+		double f1 = 0;
+		double f2 = 0;
+		double t = x - i;
+		if (x < 0) {
+			f2 = a.getDouble(0);
+		} else if (x >= s - 1) {
+			f1 = a.getDouble(i);
+		} else {
+			f1 = a.getDouble(i);
+			f2 = a.getDouble(i + 1);
+		}
+		Assert.assertEquals((1 - t) * f1 + t * f2, v, 1e-15);
+	}
+
+	private void checkInterpolateArray(AbstractCompoundDataset a, double x) {
+		int s = a.getShapeRef()[0];
+		int is = a.getElementsPerItem();
+		double[] v = new double[is];
+		Maths.interpolate(v, a, x);
+
+		int i = (int) Math.floor(x);
+		double[] e = new double[is];
+		double[] f1 = new double[is];
+		double[] f2 = new double[is];
+		if (x <= -1 || x >= s) {
+		} else if (x < 0) {
+			a.getDoubleArray(f2, 0);
+		} else if (x >= s - 1) {
+			a.getDoubleArray(f1, s - 1);
+		} else {
+			a.getDoubleArray(f1, i);
+			a.getDoubleArray(f2, i + 1);
+		}
+
+		double t = x - i;
+		for (int j = 0; j < is; j++)
+			e[j] = (1 - t) * f1[j] + t * f2[j];
+		Assert.assertArrayEquals(e, v, 1e-15);
+	}
+
+	private void checkInterpolate(Dataset a, double x, double y) {
+		int s0 = a.getShapeRef()[0];
+		int s1 = a.getShapeRef()[1];
+		double v = Maths.interpolate(a, x, y);
+		if (x <= -1 || x >= s0 || y <= -1 || y >= s1) {
+			Assert.assertEquals(0, v, 1e-15);
+			return;
+		}
+
+		int i = (int) Math.floor(x);
+		int j = (int) Math.floor(y);
+		double t1 = x - i;
+		double t2 = y - j;
+		double f1 = 0, f2 = 0, f3 = 0, f4 = 0;
+		if (y < 0) {
+			if (x < 0) {
+				f4 = a.getDouble(0, 0);
+			} else if (x >= s0 - 1) {
+				f3 = a.getDouble(s0 - 1, 0);
+			} else {
+				f3 = a.getDouble(i, 0);
+				f4 = a.getDouble(i + 1, 0);
+			}
+		} else if (y >= s1 - 1) {
+			if (x < 0) {
+				f2 = a.getDouble(0, s1 - 1);
+			} else if (x >= s0 - 1) {
+				f1 = a.getDouble(s0 - 1, s1 - 1);
+			} else {
+				f1 = a.getDouble(i, s1 - 1);
+				f2 = a.getDouble(i + 1, s1 -1);
+			}
+		} else {
+			if (x < 0) {
+				f2 = a.getDouble(0, j);
+				f4 = a.getDouble(0, j + 1);
+			} else if (x >= s0 - 1) {
+				f1 = a.getDouble(s0 - 1, j);
+				f3 = a.getDouble(s0 - 1, j + 1);
+			} else {
+				f1 = a.getDouble(i, j);
+				f2 = a.getDouble(i + 1, j);
+				f3 = a.getDouble(i, j + 1);
+				f4 = a.getDouble(i + 1, j + 1);
+			}
+		}
+		double r = (1 - t1) * (1 - t2) * f1 + t1 * (1 - t2) * f2 + (1 - t1) * t2 * f3 + t1 * t2 * f4;
+		Assert.assertEquals(r, v, 1e-15);
+
+		v = Maths.interpolate(a, DatasetFactory.ones(a), x, y);
+		Assert.assertEquals(r, v, 1e-15);
+	}
+
+	private void checkInterpolateArray(AbstractCompoundDataset a, double x, double y) {
+		int s0 = a.getShapeRef()[0];
+		int s1 = a.getShapeRef()[1];
+		int is = a.getElementsPerItem();
+		double[] v = new double[is];
+		Maths.interpolate(v, a, x, y);
+		if (x <= -1 || x >= s0 || y <= -1 || y >= s1) {
+			Assert.assertArrayEquals(new double[is], v, 1e-15);
+			return;
+		}
+
+		double[] f1 = new double[is];
+		double[] f2 = new double[is];
+		double[] f3 = new double[is];
+		double[] f4 = new double[is];
+		int i = (int) Math.floor(x);
+		int j = (int) Math.floor(y);
+		double t1 = x - i;
+		double t2 = y - j;
+		if (y < 0) {
+			if (x < 0) {
+				a.getDoubleArray(f4, 0, 0);
+			} else if (x >= s0 - 1) {
+				a.getDoubleArray(f3, s0 - 1, 0);
+			} else {
+				a.getDoubleArray(f3, i, 0);
+				a.getDoubleArray(f4, i + 1, 0);
+			}
+		} else if (y >= s1 - 1) {
+			if (x < 0) {
+				a.getDoubleArray(f2, 0, s1 - 1);
+			} else if (x >= s0 - 1) {
+				a.getDoubleArray(f1, s0 - 1, s1 - 1);
+			} else {
+				a.getDoubleArray(f1, i, s1 - 1);
+				a.getDoubleArray(f2, i + 1, s1 -1);
+			}
+		} else {
+			if (x < 0) {
+				a.getDoubleArray(f2, 0, j);
+				a.getDoubleArray(f4, 0, j + 1);
+			} else if (x >= s0 - 1) {
+				a.getDoubleArray(f1, s0 - 1, j);
+				a.getDoubleArray(f3, s0 - 1, j + 1);
+			} else {
+				a.getDoubleArray(f1, i, j);
+				a.getDoubleArray(f2, i + 1, j);
+				a.getDoubleArray(f3, i, j + 1);
+				a.getDoubleArray(f4, i + 1, j + 1);
+			}
+		}
+		for (j = 0; j < is; j++) {
+			f1[j] = (1 - t1) * (1 - t2) * f1[j] + t1 * (1 - t2) * f2[j] + (1 - t1) * t2 * f3[j] + t1 * t2 * f4[j];
+		}
+		Assert.assertArrayEquals(f1, v, 1e-15);
+	}
+
 	@Test
 	public void testLinearInterpolation() {
 		AbstractDataset xa = AbstractDataset.arange(60, Dataset.INT32);
 		xa.iadd(1);
 
-		Assert.assertEquals(0, Maths.getLinear(xa, -1.25), 1e-15);
-		Assert.assertEquals(0, Maths.getLinear(xa, -1.), 1e-15);
-		Assert.assertEquals(0.75, Maths.getLinear(xa, -0.25), 1e-15);
-		Assert.assertEquals(1, Maths.getLinear(xa, 0), 1e-15);
-		Assert.assertEquals(1.25, Maths.getLinear(xa, 0.25), 1e-15);
-		Assert.assertEquals(59.75, Maths.getLinear(xa, 58.75), 1e-15);
-		Assert.assertEquals(60, Maths.getLinear(xa, 59), 1e-15);
-		Assert.assertEquals(60*0.75, Maths.getLinear(xa, 59.25), 1e-15);
+		double[] xc = {-1.25, -1, -0.25, 0, 0.25, 58.25, 59, 59.25, 60, 60.25};
+		for (double x : xc) {
+			checkInterpolate(xa, x);
+		}
+
+		AbstractDataset xb = AbstractDataset.arange(120, Dataset.INT32);
+		xb.setShape(60, 2);
+		xb.ifloorDivide(2);
+		xb = DatasetUtils.createCompoundDatasetFromLastAxis(xb, true);
+
+		for (double x : xc) {
+			checkInterpolate(xb, x);
+		}
+
+		AbstractCompoundDataset cxb = (AbstractCompoundDataset) xb;
+		for (double x : xc) {
+			checkInterpolateArray(cxb, x);
+		}
+
+		xa.setShape(6, 10);
+		xc = new double[] {-1.25, -1, -0.25, 0, 0.25, 5.25, 6, 6.25, 7};
+		double[] yc = {-1.25, -1, -0.25, 0, 0.25, 8.25, 9, 9.25, 10, 10.25};
+		for (double x : xc) {
+			for (double y : yc) {
+				System.out.printf("%g %g\n", x, y);
+				checkInterpolate(xa, x, y);
+			}
+		}
+
+		cxb.setShape(6, 10);
+//		xc = new double[] {-0.25, 0, 0.25, 5.25, 6, 6.25, 7};
+//		yc = new double[] {9.25, 10, 10.25};
+		for (double x : xc) {
+			for (double y : yc) {
+				System.out.printf("%g %g\n", x, y);
+				checkInterpolateArray(cxb, x, y);
+			}
+		}
 	}
 }

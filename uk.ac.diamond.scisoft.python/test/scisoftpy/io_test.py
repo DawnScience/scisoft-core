@@ -26,7 +26,7 @@ import scisoftpy as dnp
 import os
 
 from os import path
-TestFolder = path.dirname(__file__) + "/../../../uk.ac.diamond.scisoft.analysis/testfiles/images/"
+TestFolder = path.dirname(__file__) + "/../../../uk.ac.diamond.scisoft.analysis.test/testfiles/images/"
 
 IOTestFolder = TestFolder + "../gda/analysis/io/"
 OutTestFolder = TestFolder + "../../test-scratch/"

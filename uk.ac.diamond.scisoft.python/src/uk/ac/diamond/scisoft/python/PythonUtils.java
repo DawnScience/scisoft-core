@@ -34,7 +34,8 @@ import org.python.core.PySlice;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -208,7 +209,7 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		IDataset dataSlice;
 		if (a instanceof IDataset) {
-			dataSlice = DatasetUtils.convertToAbstractDataset(a).getSliceView(slice.slice);
+			dataSlice = DatasetUtils.convertToDataset(a).getSliceView(slice.slice);
 		} else {
 			dataSlice = a.getSlice(slice.slice);
 		}
@@ -261,10 +262,10 @@ public class PythonUtils {
 	 * @param indexes
 	 *            can be a mixed array of integers or slices
 	 */
-	public static void setSlice(AbstractDataset a, Object object, final PyObject indexes) {
+	public static void setSlice(Dataset a, Object object, final PyObject indexes) {
 		if (a.isComplex() || a.getElementsPerItem() == 1) {
 			if (object instanceof PySequence) {
-				object = AbstractDataset.array(object, a.getDtype());
+				object = DatasetFactory.createFromObject(object, a.getDtype());
 			}
 		}
 

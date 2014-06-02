@@ -44,7 +44,7 @@ public class PixelIntegrationUtils {
 	public static AbstractDataset generate2ThetaArrayRadians(int[] shape, IDiffractionMetadata md) {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
-		return generateRadialArray(shape, qSpace, XAxis.ANGLE);
+		return generateRadialArray(shape, qSpace, XAxis.ANGLE, true);
 		
 	}
 	
@@ -181,6 +181,10 @@ public class PixelIntegrationUtils {
 	}
 	
 	public static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
+		return generateRadialArray(shape, qSpace, xAxis, false);
+	}
+	
+	private static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis, boolean radians) {
 		
 		if (qSpace == null) return null;
 		
@@ -201,7 +205,8 @@ public class PixelIntegrationUtils {
 			
 			switch (xAxis) {
 			case ANGLE:
-				value = Math.toDegrees(qSpace.scatteringAngle(q));
+				value = qSpace.scatteringAngle(q);
+				if (!radians)value = Math.toDegrees(value);
 				break;
 			case Q:
 				value = q.length();

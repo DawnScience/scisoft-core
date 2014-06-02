@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.jscience.physics.amount.Amount;
-import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,7 +164,7 @@ public class CalibrationFactory {
 				cs = null;
 			}
 		}
-		if (cs==null || cs.isEmpty() || isOldVersion(CalibrationStandards.CURRENT_VERSION, cs.getVersion())) {
+		if (cs==null || cs.isEmpty() || VersionUtils.isOldVersion(CalibrationStandards.CURRENT_VERSION, cs.getVersion())) {
 			cs = new CalibrationStandards();
 			cs.setVersion(CalibrationStandards.CURRENT_VERSION); // Versions are so that we can wipe out configurations with new Dawn versions if we have to
 			                        // TODO consider new file for this instead.
@@ -180,13 +179,6 @@ public class CalibrationFactory {
 		}
 		
 		return cs;
-	}
-	
-	private static boolean isOldVersion(String versionCompare, String versionWith) {
-		Version compare = new Version(versionCompare);
-		Version with    = new Version(versionWith);
-		int c    =  compare.compareTo(with);
-		return c > 0;
 	}
 
 	private static Collection<CalibrantSelectedListener> listeners;

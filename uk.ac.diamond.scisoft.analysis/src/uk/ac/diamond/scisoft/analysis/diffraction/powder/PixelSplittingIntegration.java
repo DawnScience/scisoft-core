@@ -33,7 +33,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 		//Generate radial and azimuthal look-up arrays as required
 		//TODO test shape of axis array
 		if (radialArray == null && (radialRange != null || isAzimuthalIntegration())) {
-			generateMinMaxRadialArray(dataset.getShape());
+			generateRadialArray(dataset.getShape(), false);
 		}
 
 		if (azimuthalArray == null && (azimuthalRange != null || !isAzimuthalIntegration())) {

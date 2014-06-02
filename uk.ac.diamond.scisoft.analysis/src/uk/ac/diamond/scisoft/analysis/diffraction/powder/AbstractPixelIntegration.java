@@ -138,101 +138,19 @@ public abstract class AbstractPixelIntegration {
 	public void generateRadialArray(int[] shape, boolean centre) {
 		
 		if (qSpace == null) return;
+		XAxis x = xAxis == XAxis.RESOLUTION ? XAxis.Q : xAxis;
 		
-		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
-
-		AbstractDataset ra = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-
-		PositionIterator iter = ra.getPositionIterator();
-		int[] pos = iter.getPos();
-
-		while (iter.hasNext()) {
-			
-			Vector3d q;
-			double value = 0;
-			//FIXME or not fix me, but I would expect centre to be +0.5, but this
-			//clashes with much of the rest of DAWN
-			if (centre) q = qSpace.qFromPixelPosition(pos[1], pos[0]);
-			else q = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5);
-			
-			switch (xAxis) {
-			case ANGLE:
-				value = Math.toDegrees(qSpace.scatteringAngle(q));
-				break;
-			case Q:
-				value = q.length();
-				break;
-			case RESOLUTION:
-				value = q.length();
-				//value = (2*Math.PI)/q.length();
-				break;
-			case PIXEL:
-				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
-				break; 
-			}
-			ra.set(value, pos);
-		}
+		if (centre) radialArray = new AbstractDataset[]{PixelIntegrationUtils.generateRadialArray(shape, qSpace, x)};
+		else radialArray = PixelIntegrationUtils.generateMinMaxRadialArray(shape, qSpace, x);
 		
-		radialArray = new AbstractDataset[]{ra};
 	}
 	
-	protected void generateMinMaxRadialArray(int[] shape) {
-		
-		if (qSpace == null) return;
-		
-		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
-
-		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-
-		PositionIterator iter = radialArrayMax.getPositionIterator();
-		int[] pos = iter.getPos();
-
-		double[] vals = new double[4];
-		double w = qSpace.getWavelength();
-		while (iter.hasNext()) {
-			
-			//FIXME or not fix me, but I would expect centre to be +0.5, but this
-			//clashes with much of the rest of DAWN
-			
-			if (xAxis != XAxis.PIXEL) {
-				vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
-				vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
-				vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
-				vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
-			} else {
-				vals[0] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
-				vals[1] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
-				vals[2] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
-				vals[3] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
-			}
-			
-			Arrays.sort(vals);
-
-			switch (xAxis) {
-			case ANGLE:
-				radialArrayMax.set(Math.toDegrees(Math.asin(vals[3] * w/(4*Math.PI))*2),pos);
-				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
-				break;
-			case Q:
-			case PIXEL:
-			case RESOLUTION:
-				radialArrayMax.set(vals[3],pos);
-				radialArrayMin.set(vals[0],pos);
-				//value = (2*Math.PI)/q.length();
-				break;
-			}
-		}
-		radialArray =  new AbstractDataset[]{radialArrayMin,radialArrayMax};
-	}
-	
-	protected void generateAzimuthalArray(double[] beamCentre, int[] shape,boolean centre) {
-		azimuthalArray = new AbstractDataset[]{Maths.toDegrees(PixelIntegrationUtils.generateAzimuthalArrayRadians(beamCentre, shape, centre))};
+	protected void generateAzimuthalArray(double[] beamCentre, int[] shape) {
+		azimuthalArray = new AbstractDataset[]{PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, false)};
 	}
 	
 	protected void generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape) {
-		AbstractDataset[] out = PixelIntegrationUtils.generateMinMaxAzimuthalArrayRadians(beamCentre, shape);
-		azimuthalArray = new AbstractDataset[]{Maths.toDegrees(out[0]),Maths.toDegrees(out[1])};
+		azimuthalArray = PixelIntegrationUtils.generateMinMaxAzimuthalArray(beamCentre, shape, false);
 	}
 	
 	protected Slice[] getSlice() {

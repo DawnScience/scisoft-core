@@ -49,7 +49,7 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 		}
 		
 		if (azimuthalArray == null) {
-			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape(),true);
+			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape());
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();

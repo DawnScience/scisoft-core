@@ -67,7 +67,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 		
 		if (azimuthalArray == null && (azimuthalRange != null || !isAzimuthalIntegration())) {
-			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape(),true);
+			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape());
 		}
 		
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();

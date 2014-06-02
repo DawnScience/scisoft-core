@@ -33,6 +33,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class PixelIntegrationUtils {
 	
@@ -43,25 +44,8 @@ public class PixelIntegrationUtils {
 	public static AbstractDataset generate2ThetaArrayRadians(int[] shape, IDiffractionMetadata md) {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
-
-		AbstractDataset radialArray = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-
-		PositionIterator iter = radialArray.getPositionIterator();
-		int[] pos = iter.getPos();
-
-		while (iter.hasNext()) {
-			
-			Vector3d q;
-			double value = 0;
-			//FIXME or not fix me, but I would expect centre to be +0.5, but this
-			//clashes with much of the rest of DAWN
-			
-			q = qSpace.qFromPixelPosition(pos[1], pos[0]);
-			value = qSpace.scatteringAngle(q);
-			radialArray.set(value, pos);
-		}
+		return generateRadialArray(shape, qSpace, XAxis.ANGLE);
 		
-		return radialArray;
 	}
 	
 	public static AbstractDataset generateQArray(IDiffractionMetadata md) {
@@ -69,55 +53,37 @@ public class PixelIntegrationUtils {
 	}
 	
 	public static AbstractDataset generateQArray(int[] shape, IDiffractionMetadata md) {
-		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
-
-		AbstractDataset radialArray = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-
-		PositionIterator iter = radialArray.getPositionIterator();
-		int[] pos = iter.getPos();
-
-		while (iter.hasNext()) {
-			
-			Vector3d q;
-			//FIXME or not fix me, but I would expect centre to be +0.5, but this
-			//clashes with much of the rest of DAWN
-			
-			q = qSpace.qFromPixelPosition(pos[1], pos[0]);
-			radialArray.set(q.length(), pos);
-		}
+		return generateRadialArray(shape, qSpace, XAxis.Q);
 		
-		return radialArray;
 	}
 	
-	public static AbstractDataset generateAzimuthalArrayRadians(IDiffractionMetadata metadata) {
-		return generateAzimuthalArrayRadians(metadata.getDetector2DProperties().getBeamCentreCoords(), getShape(metadata), true);
+	public static AbstractDataset generateAzimuthalArray(IDiffractionMetadata metadata, boolean radians) {
+		return generateAzimuthalArray(metadata.getDetector2DProperties().getBeamCentreCoords(), getShape(metadata), radians);
 	}
 	
-	public static AbstractDataset generateAzimuthalArrayRadians(int[] shape, IDiffractionMetadata metadata) {
-		return generateAzimuthalArrayRadians(metadata.getDetector2DProperties().getBeamCentreCoords(), shape, true);
+	public static AbstractDataset generateAzimuthalArray(int[] shape, IDiffractionMetadata metadata, boolean radians) {
+		return generateAzimuthalArray(metadata.getDetector2DProperties().getBeamCentreCoords(), shape,radians);
 	}
 	
-	public static AbstractDataset generateAzimuthalArrayRadians(double[] beamCentre, int[] shape, boolean centre) {
+	public static AbstractDataset generateAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
 		AbstractDataset out = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-		
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
 		//FIXME half pixel issue
-		double offset = 0;
-		
-		if (!centre) offset = 0.5;
 		
 		while (iter.hasNext()) {
-			out.set(Math.atan2(pos[0]-beamCentre[1]-offset,pos[1]-beamCentre[0]-offset), pos);
+			double val = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]);
+			if (radians) out.set(val, pos);
+			else out.set(Math.toDegrees(val), pos);
 		}
 		
 		return out;
 	}
 	
-	public static AbstractDataset[] generateMinMaxAzimuthalArrayRadians(double[] beamCentre, int[] shape) {
+	public static AbstractDataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
 		AbstractDataset aMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
 		AbstractDataset aMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
@@ -150,11 +116,107 @@ public class PixelIntegrationUtils {
 				}
 			}
 			
-			aMax.set(vals[3], pos);
-			aMin.set(vals[0], pos);
+			if (radians) {
+				aMax.set(vals[3], pos);
+				aMin.set(vals[0], pos);
+			} else {
+				aMax.set(Math.toDegrees(vals[3]), pos);
+				aMin.set(Math.toDegrees(vals[0]), pos);
+			}
 		}
 		
 		return new AbstractDataset[]{aMin,aMax};
+	}
+	
+	public static  AbstractDataset[] generateMinMaxRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
+		
+		if (qSpace == null) return null;
+		
+		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
+
+		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+
+		PositionIterator iter = radialArrayMax.getPositionIterator();
+		int[] pos = iter.getPos();
+
+		double[] vals = new double[4];
+		double w = qSpace.getWavelength();
+		while (iter.hasNext()) {
+			
+			//FIXME or not fix me, but I would expect centre to be +0.5, but this
+			//clashes with much of the rest of DAWN
+			
+			if (xAxis != XAxis.PIXEL) {
+				vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
+				vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
+				vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
+				vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
+			} else {
+				vals[0] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
+				vals[1] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
+				vals[2] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
+				vals[3] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
+			}
+			
+			Arrays.sort(vals);
+
+			switch (xAxis) {
+			case ANGLE:
+				radialArrayMax.set(Math.toDegrees(Math.asin(vals[3] * w/(4*Math.PI))*2),pos);
+				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
+				break;
+			case Q:
+			case PIXEL:
+				radialArrayMax.set(vals[3],pos);
+				radialArrayMin.set(vals[0],pos);
+				break;
+			case RESOLUTION:
+				radialArrayMax.set((2*Math.PI)/vals[0],pos);
+				radialArrayMin.set((2*Math.PI)/vals[3],pos);
+				break;
+			}
+		}
+		return  new AbstractDataset[]{radialArrayMin,radialArrayMax};
+	}
+	
+	public static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
+		
+		if (qSpace == null) return null;
+		
+		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
+
+		AbstractDataset ra = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+
+		PositionIterator iter = ra.getPositionIterator();
+		int[] pos = iter.getPos();
+
+		while (iter.hasNext()) {
+			
+			Vector3d q;
+			double value = 0;
+			//FIXME or not fix me, but I would expect centre to be +0.5, but this
+			//clashes with much of the rest of DAWN
+			q = qSpace.qFromPixelPosition(pos[1], pos[0]);
+			
+			switch (xAxis) {
+			case ANGLE:
+				value = Math.toDegrees(qSpace.scatteringAngle(q));
+				break;
+			case Q:
+				value = q.length();
+				break;
+			case RESOLUTION:
+				value = (2*Math.PI)/q.length();
+				break;
+			case PIXEL:
+				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
+				break; 
+			}
+			ra.set(value, pos);
+		}
+		
+		return ra;
 	}
 	
 	public static int[] getShape(IDiffractionMetadata metadata) {

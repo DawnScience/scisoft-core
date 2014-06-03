@@ -34,7 +34,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	AbstractDataset a = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
 	
 	boolean interpolate = false; // use simple integration algorithm
-	double racc = 1e-2; // set relative accuracy within 1.0%
+	double racc = 5e-3; // set relative accuracy within 1.0%
 
 	/**
 	 * 
@@ -55,7 +55,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setInterpolate(interpolate);
 		List<AbstractDataset> dsets = mp.value(d);
         
-		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
+		double answer = Math.PI*(200.*200. - 50.*50.)/8.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
 		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc);
 	}
@@ -73,22 +73,24 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,1.,true); // eighth of annulus
 		
-		for (int i = 0; i < shape[0]; i++)
+		AbstractDataset dc = d.clone();
+		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
 				int dy = j - ycentre;
 				double val = Math.sqrt(dx*dx + dy*dy);
-				d.set(val, new int[] {j,i});
+				dc.set(val, j, i);
 			}
+		}
 		mp.setMask(null);
 		mp.setClip(false);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<AbstractDataset> dsets = mp.value(dc);
 		List<AbstractDataset> asets = mp.value(a);
-		for (int i = 0; i < dsets.get(1).getShape()[0]; i++) {
+		for (int i = 0, imax = dsets.get(1).getSize(); i < imax; i++) {
 			double answer = rmin + i; 
-			double val = dsets.get(1).getDouble(new int[] {i}) / asets.get(1).getDouble(new int[] {i});
-			assertEquals(answer, val, answer*racc);
+			double val = dsets.get(1).getDouble(i) / asets.get(1).getDouble(i);
+			assertEquals(answer, val, answer*2*racc);
 		}
 	}
 
@@ -109,7 +111,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 				int dx = i - xcentre;
 				int dy = j - ycentre;
 				double phi = Math.atan2(dy, dx);
-				d.set(Math.toDegrees(phi), new int[] {j,i});
+				d.set(Math.toDegrees(phi), j, i);
 			}
 		mp.setMask(null);
 		mp.setClip(true);
@@ -119,7 +121,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		double dphi = Math.toDegrees(1./rmax);
 		for (int i = 0; i < dsets.get(0).getShape()[0]; i++) {
 			double answer = sphi + dphi*i; 
-			double val = dsets.get(0).getDouble(new int[] {i}) / asets.get(0).getDouble(new int[] {i});
+			double val = dsets.get(0).getDouble(i) / asets.get(0).getDouble(i);
 			assertEquals(answer, val, answer*racc);
 		}
 		

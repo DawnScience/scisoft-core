@@ -70,21 +70,22 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		
-		for (int i = 0; i < shape[0]; i++)
+		AbstractDataset dc = d.clone();
+		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
 				int dy = j - ycentre;
 				double val = Math.sqrt(dx*dx + dy*dy);
-				d.set(val, new int[] {j,i});
+				dc.set(val, j, i);
 			}
+		}
 		mp.setMask(null);
 		mp.setClip(false);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<AbstractDataset> dsets = mp.value(dc);
 		List<AbstractDataset> asets = mp.value(a);
-		for (int i = 0; i < dsets.get(1).getShape()[0]; i++) {
+		for (int i = 0, imax = dsets.get(1).getSize(); i < imax; i++) {
 			double answer = rmin + i/dpp; 
-			double val = dsets.get(1).getDouble(new int[] {i}) / asets.get(1).getDouble(new int[] {i});
+			double val = dsets.get(1).getDouble(i) / asets.get(1).getDouble(i);
 			assertEquals(answer, val, answer*racc);
 		}
 	}
@@ -101,24 +102,25 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 45.;
 		double ephi = 90.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		for (int i = 0; i < shape[0]; i++)
+		AbstractDataset dc = d.clone();
+		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
 				int dy = j - ycentre;
 				double phi = Math.atan2(dy, dx);
-				d.set(Math.toDegrees(phi), new int[] {j,i});
+				dc.set(Math.toDegrees(phi), j, i);
 			}
+		}
 		mp.setMask(null);
 		mp.setClip(true);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<AbstractDataset> dsets = mp.value(dc);
 		List<AbstractDataset> asets = mp.value(a);
 		double dphi = Math.toDegrees(1./(rmax*dpp));
-		for (int i = 0; i < dsets.get(0).getShape()[0]; i++) {
+		for (int i = 0, imax = dsets.get(0).getSize(); i < imax; i++) {
 			double answer = sphi + dphi*i; 
-			double val = dsets.get(0).getDouble(new int[] {i}) / asets.get(0).getDouble(new int[] {i});
+			double val = dsets.get(0).getDouble(i) / asets.get(0).getDouble(i);
 			assertEquals(answer, val, answer*racc);
 		}
-		
 	}
 
 	/**

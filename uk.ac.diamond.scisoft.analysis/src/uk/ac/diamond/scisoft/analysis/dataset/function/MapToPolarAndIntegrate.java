@@ -215,7 +215,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
-			
+			final int[] shape = ids.getShape();
+			final int xmax = shape[1] + 1;
+			final int ymax = shape[0] + 1;
 			final double dr = 1.0/dpp;
 			
 			//Find maximal radius on the detector
@@ -256,7 +258,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					
 					boolean isOutside = false;
 					final double x = cx + rad * Math.cos(phi);
-					if (x < 0. || x > (ids.getShape()[1] + 1.)) {
+					if (x < 0 || x > xmax) {
 						if (clip) {
 							continue;
 						}
@@ -264,7 +266,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 					
 					final double y = cy + rad * Math.sin(phi);
-					if (y < 0. || y > (ids.getShape()[0] + 1.)) {
+					if (y < 0 || y > ymax) {
 						if (clip) {
 							continue;
 						}
@@ -810,7 +812,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				
 				Map<Point2i, Map<Integer, Double>> pvarmap = new HashMap<Point2i, Map<Integer,Double>>();
 				
-				double csum;			
+				double csum;
+				final int[] shape = ids.getShape();
+				final int xmax = shape[1] + 1;
+				final int ymax = shape[0] + 1;
 				
 				for (int r = 0; r < nr; r++) {
 					final double rad = sr + r*dr;
@@ -823,7 +828,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						
 						boolean isOutside = false;
 						final double x = cx + rad * Math.cos(phi);
-						if (x < 0. || x > (ids.getShape()[1] + 1.)) {
+						if (x < 0 || x > xmax) {
 							if (clip) {
 								continue;
 							}
@@ -831,7 +836,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						}
 						
 						final double y = cy + rad * Math.sin(phi);
-						if (y < 0. || y > (ids.getShape()[0] + 1.)) {
+						if (y < 0 || y > ymax) {
 							if (clip) {
 								continue;
 							}
@@ -842,7 +847,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						double v = 0.0;
 						final double du = rad * dr * dphi;
 						if (errIds != null) {
-							varmap = getBilinearWeights(ids.getShape(), mask, y, x);
+							varmap = getBilinearWeights(shape, mask, y, x);
 						} else {
 							v = du * (isOutside ? 1.0 : Maths.interpolate(ids, mask, y, x));
 						}

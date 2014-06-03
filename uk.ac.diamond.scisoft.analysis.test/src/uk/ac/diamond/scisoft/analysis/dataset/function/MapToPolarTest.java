@@ -49,7 +49,7 @@ public class MapToPolarTest extends TestCase {
 		Sum s = new Sum();
 		List<Number> dsets = s.value(pd);
 		double answer = Math.PI*(200.*200. - 50.*50.)/8.;
-		assertEquals(answer, dsets.get(0).doubleValue(), answer*5e-3); // within 0.5% accuracy
+		assertEquals(answer, dsets.get(0).doubleValue(), answer*2e-3); // within 0.2% accuracy
 	}
 
 	/**
@@ -73,10 +73,8 @@ public class MapToPolarTest extends TestCase {
 
 		Sum s = new Sum();
 		List<Number> osets = s.value(pd);
-//		double answer = Math.PI*(200.*200. - 50.*50.)/8.;
-		double answer = Math.PI*(200.*200.)/8.;
-		answer = 140.*140./2 - Math.PI*(50.*50.)/8.;
-		assertEquals(answer, osets.get(0).doubleValue(), answer*10e-3); // within 1% accuracy
+		double answer = 140.*140./2 - Math.PI*(50.*50.)/8.;
+		assertEquals(answer, osets.get(0).doubleValue(), answer*2e-3); // within 0.2% accuracy
 	}
 
 	/**
@@ -90,7 +88,7 @@ public class MapToPolarTest extends TestCase {
 		Sum s = new Sum();
 		List<Number> dsets = s.value(pd);
 		double answer = Math.PI*(200.*200. - 50.*50.)/8.;
-		assertEquals(answer, dsets.get(0).doubleValue(), answer*5e-3); // within 0.5% accuracy
+		assertEquals(answer, dsets.get(0).doubleValue(), answer*2e-3); // within 0.2% accuracy
 	}
 
 

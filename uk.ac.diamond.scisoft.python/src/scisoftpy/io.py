@@ -82,7 +82,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         nx   -> returns a NeXus tree
     withmetadata -- if True, load metadata as well
     ascolour -- if True, attempt load as colour dataset
-    warn -- if True, suppress warning
+    warn -- if False, suppress warning
     '''
     if warn is None:
         warn = _LDRWARN

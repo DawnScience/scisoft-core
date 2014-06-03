@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 
 public class TestUtils {
@@ -210,7 +210,7 @@ public class TestUtils {
 	 * @param relTolerance
 	 * @param absTolerance
 	 */
-	public static void assertDatasetEquals(AbstractDataset expected, AbstractDataset calc, double relTolerance, double absTolerance) {
+	public static void assertDatasetEquals(Dataset expected, Dataset calc, double relTolerance, double absTolerance) {
 		Assert.assertEquals("Rank", expected.getRank(), calc.getRank());
 		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
 		Assert.assertEquals("Itemsize", expected.getElementsPerItem(), calc.getElementsPerItem());

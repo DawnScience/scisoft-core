@@ -952,11 +952,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		}
 
 		if (errorData instanceof CompoundDoubleDataset) {
-			return (CompoundDoubleDataset) Maths.sqrt((AbstractDataset) errorData);
+			return (CompoundDoubleDataset) Maths.sqrt((Dataset) errorData);
 		}
 
 		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-		AbstractDataset err = (AbstractDataset) errorData;
+		Dataset err = (Dataset) errorData;
 		IndexIterator it = err.getIterator();
 		int i = 0;
 		e = new double[isize];

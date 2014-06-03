@@ -74,7 +74,7 @@ public class DatasetUtils {
 		nshape[axis] += bshape[axis];
 		final int ot = AbstractDataset.getDType(b);
 		final int dt = AbstractDataset.getDType(a);
-		AbstractDataset ds = AbstractDataset.zeros(a.getElementsPerItem(), nshape, dt > ot ? dt : ot);
+		Dataset ds = DatasetFactory.zeros(a.getElementsPerItem(), nshape, dt > ot ? dt : ot);
 		IndexIterator iter = ds.getIterator(true);
 		int[] pos = iter.getPos();
 		while (iter.hasNext()) {
@@ -88,7 +88,7 @@ public class DatasetUtils {
 			}
 		}
 
-		return ds;
+		return (AbstractDataset) ds;
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class DatasetUtils {
 	 * @param values
 	 * @return changed dataset
 	 */
-	public static AbstractDataset put(final AbstractDataset a, final int[] indices, Object[] values) {
+	public static AbstractDataset put(final Dataset a, final int[] indices, Object[] values) {
 		int ilen = indices.length;
 		int vlen = values.length;
 		for (int i = 0, v= 0; i < ilen; i++, v++) {
@@ -106,7 +106,7 @@ public class DatasetUtils {
 
 			a.setObjectAbs(indices[i], values[v]);
 		}
-		return a;
+		return (AbstractDataset) a;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class DatasetUtils {
 	 * @param axis if null, then use flattened view
 	 * @return a sub-array
 	 */
-	public static AbstractDataset take(final AbstractDataset a, final int[] indices, Integer axis) {
+	public static AbstractDataset take(final Dataset a, final int[] indices, Integer axis) {
 		if (indices == null || indices.length == 0) {
 			utilsLogger.error("No indices given");
 			throw new IllegalArgumentException("No indices given");
@@ -126,19 +126,19 @@ public class DatasetUtils {
 		final int ilen = indices.length;
 		final int is = a.getElementsPerItem();
 
-		AbstractDataset result;
+		Dataset result;
 		if (axis == null) {
 			ashape = new int[1];
 			ashape[0] = ilen;
-			result = AbstractDataset.zeros(is, ashape, at);
+			result = DatasetFactory.zeros(is, ashape, at);
 			Serializable src = a.getBuffer();
 			for (int i = 0; i < ilen; i++) {
-				result.setItemDirect(i, indices[i], src);
+				((AbstractDataset) result).setItemDirect(i, indices[i], src);
 			}
 		} else {
 			axis = a.checkAxis(axis);
 			ashape[axis] = ilen;
-			result = AbstractDataset.zeros(is, ashape, at);
+			result = DatasetFactory.zeros(is, ashape, at);
 
 			int[] dpos = new int[rank];
 			int[] spos = new int[rank];
@@ -153,11 +153,11 @@ public class DatasetUtils {
 				SliceIterator diter = result.getSliceIteratorFromAxes(dpos, axes);
 
 				while (siter.hasNext() && diter.hasNext()) {
-					result.setItemDirect(diter.index, siter.index, src);
+					((AbstractDataset) result).setItemDirect(diter.index, siter.index, src);
 				}
 			}
 		}
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class DatasetUtils {
 			newShape[i] = shape[i]*reps[i];
 		}
 
-		AbstractDataset tdata = AbstractDataset.zeros(a.getElementsPerItem(), newShape, AbstractDataset.getDType(a));
+		Dataset tdata = DatasetFactory.zeros(a.getElementsPerItem(), newShape, AbstractDataset.getDType(a));
 
 		// decide which way to put slices
 		boolean manyColumns;
@@ -253,7 +253,7 @@ public class DatasetUtils {
 			}
 		}
 
-		return tdata;
+		return (AbstractDataset) tdata;
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class DatasetUtils {
 	 * @return remapped copy of data
 	 */
 	public static AbstractDataset transpose(final IDataset a, int... axes) {
-		return convertToAbstractDataset(a).transpose(axes);
+		return (AbstractDataset) convertToDataset(a).transpose(axes);
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class DatasetUtils {
 	 * @return swapped dataset
 	 */
 	public static AbstractDataset swapAxes(final IDataset a, int axis1, int axis2) {
-		return convertToAbstractDataset(a).swapAxes(axis1, axis2);
+		return (AbstractDataset) convertToDataset(a).swapAxes(axis1, axis2);
 	}
 
 	/**
@@ -290,9 +290,9 @@ public class DatasetUtils {
 	 * @param axis to sort along
 	 * @return dataset sorted along axis
 	 */
-	public static AbstractDataset sort(final AbstractDataset a, final Integer axis) {
-		AbstractDataset s = a.clone();
-		return s.sort(axis);
+	public static AbstractDataset sort(final Dataset a, final Integer axis) {
+		Dataset s = a.clone();
+		return (AbstractDataset) s.sort(axis);
 	}
 
 	/**
@@ -338,7 +338,7 @@ public class DatasetUtils {
 			ashape[axis] += as[i].getShape()[axis];
 		}
 
-		AbstractDataset result = AbstractDataset.zeros(isize, ashape, at);
+		Dataset result = DatasetFactory.zeros(isize, ashape, at);
 
 		int[] start = new int[ashape.length];
 		int[] stop = ashape;
@@ -351,7 +351,7 @@ public class DatasetUtils {
 			start[axis] += bshape[axis];
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -362,8 +362,8 @@ public class DatasetUtils {
 	 * @param checkEqual makes sure the division is into equal parts
 	 * @return list of split datasets
 	 */
-	public static List<AbstractDataset> split(final AbstractDataset a, int sections, final int axis, final boolean checkEqual) {
-		int[] ashape = a.shape;
+	public static List<AbstractDataset> split(final Dataset a, int sections, final int axis, final boolean checkEqual) {
+		int[] ashape = a.getShapeRef();
 		int rank = ashape.length;
 		if (axis > rank) {
 			utilsLogger.error("Axis exceeds rank of dataset");
@@ -388,8 +388,8 @@ public class DatasetUtils {
 	 * @param axis
 	 * @return list of split datasets
 	 */
-	public static List<AbstractDataset> split(final AbstractDataset a, int[] indices, final int axis) {
-		final int[] ashape = a.shape;
+	public static List<AbstractDataset> split(final Dataset a, int[] indices, final int axis) {
+		final int[] ashape = a.getShapeRef();
 		final int rank = ashape.length;
 		if (axis > rank) {
 			utilsLogger.error("Axis exceeds rank of dataset");
@@ -413,16 +413,16 @@ public class DatasetUtils {
 		}
 		for (int ind : indices) {
 			if (ind > imax) {
-				result.add(AbstractDataset.zeros(is, new int[] {0}, a.getDtype()));
+				result.add((AbstractDataset) DatasetFactory.zeros(is, new int[] {0}, a.getDtype()));
 			} else {
 				nshape[axis] = ind - oind;
 				start[axis] = oind;
 				stop[axis] = ind;
-				AbstractDataset n = AbstractDataset.zeros(is, nshape, a.getDtype());
+				Dataset n = DatasetFactory.zeros(is, nshape, a.getDtype());
 				IndexIterator iter = a.getSliceIterator(start, stop, step);
 
 				a.fillDataset(n, iter);
-				result.add(n);
+				result.add((AbstractDataset) n);
 				oind = ind;
 			}
 		}
@@ -431,11 +431,11 @@ public class DatasetUtils {
 			nshape[axis] = imax - oind;
 			start[axis] = oind;
 			stop[axis] = imax;
-			AbstractDataset n = AbstractDataset.zeros(is, nshape, a.getDtype());
+			Dataset n = DatasetFactory.zeros(is, nshape, a.getDtype());
 			IndexIterator iter = a.getSliceIterator(start, stop, step);
 
 			a.fillDataset(n, iter);
-			result.add(n);
+			result.add((AbstractDataset) n);
 		}
 
 		return result;
@@ -452,7 +452,7 @@ public class DatasetUtils {
 	 * @param axis
 	 * @return dataset
 	 */
-	public static AbstractDataset repeat(AbstractDataset a, int[] repeats, int axis) {
+	public static AbstractDataset repeat(Dataset a, int[] repeats, int axis) {
 		Serializable buf = a.getBuffer();
 		int[] shape = a.getShape();
 		int rank = shape.length;
@@ -465,7 +465,7 @@ public class DatasetUtils {
 
 		int alen;
 		if (axis < 0) {
-			alen = a.size;
+			alen = a.getSize();
 			axis = 0;
 			rank = 1;
 			shape[0] = alen;
@@ -500,7 +500,7 @@ public class DatasetUtils {
 			newShape[axis] = nlen;
 		}
 
-		AbstractDataset rdata = AbstractDataset.zeros(is, newShape, a.getDtype());
+		Dataset rdata = DatasetFactory.zeros(is, newShape, a.getDtype());
 		Serializable nbuf = rdata.getBuffer();
 
 		int csize = is; // chunk size
@@ -536,7 +536,7 @@ public class DatasetUtils {
 			}
 		}
 
-		return rdata;
+		return (AbstractDataset) rdata;
 	}
 
 	/**
@@ -545,15 +545,15 @@ public class DatasetUtils {
 	 * @param shape
 	 * @return new dataset with new shape and items that are truncated or repeated, as necessary
 	 */
-	public static AbstractDataset resize(final AbstractDataset a, final int... shape) {
+	public static AbstractDataset resize(final Dataset a, final int... shape) {
 		int size = a.getSize();
-		AbstractDataset rdata = AbstractDataset.zeros(a.getElementsPerItem(), shape, a.getDtype());
+		Dataset rdata = DatasetFactory.zeros(a.getElementsPerItem(), shape, a.getDtype());
 		IndexIterator it = rdata.getIterator();
 		while (it.hasNext()) {
 			rdata.setObjectAbs(it.index, a.getObjectAbs(it.index % size));
 		}
 
-		return rdata;
+		return (AbstractDataset) rdata;
 	}
 
 	/**
@@ -671,9 +671,9 @@ public class DatasetUtils {
 	 * @param dtype dataset type
 	 * @param isize item size
 	 */
-	public static AbstractDataset cast(final AbstractDataset a, final boolean repeat, final int dtype, final int isize) {
+	public static AbstractDataset cast(final Dataset a, final boolean repeat, final int dtype, final int isize) {
 		if (a.getDtype() == dtype && a.getElementsPerItem() == isize) {
-			return a;
+			return (AbstractDataset) a;
 		}
 		if (isize <= 0) {
 			utilsLogger.error("Item size is invalid (>0)");
@@ -752,7 +752,7 @@ public class DatasetUtils {
 	 * @param a
 	 *            The datasets to be cast.
 	 */
-	public static AbstractCompoundDataset cast(final AbstractDataset[] a, final int dtype) {
+	public static AbstractCompoundDataset cast(final Dataset[] a, final int dtype) {
 		AbstractCompoundDataset c = null;
 
 		switch (dtype) {
@@ -937,9 +937,9 @@ public class DatasetUtils {
 			utilsLogger.error("Length is less than one");
 			throw new IllegalArgumentException("Length is less than one");
 		} else if (length == 1) {
-			return AbstractDataset.array(start, dtype);
+			return (AbstractDataset) DatasetFactory.createFromObject(start, dtype);
 		} else {
-			AbstractDataset ds = AbstractDataset.zeros(new int[] {length}, dtype);
+			Dataset ds = DatasetFactory.zeros(new int[] {length}, dtype);
 			double num = stop - start;
 			double den = length - 1;
 			double value;
@@ -948,7 +948,8 @@ public class DatasetUtils {
 				value = start + (num * i) / den;
 				ds.setObjectAbs(i, value);
 			}
-			return ds;
+
+			return (AbstractDataset) ds;
 		}
 	}
 
@@ -969,9 +970,9 @@ public class DatasetUtils {
 			utilsLogger.error("Length is less than one");
 			throw new IllegalArgumentException("Length is less than one");
 		} else if (length == 1) {
-			return AbstractDataset.array(Math.pow(base, start), dtype);
+			return (AbstractDataset) DatasetFactory.createFromObject(Math.pow(base, start), dtype);
 		} else {
-			AbstractDataset ds = AbstractDataset.zeros(new int[] {length}, dtype);
+			Dataset ds = DatasetFactory.zeros(new int[] {length}, dtype);
 			double step = (stop - start) / (length - 1);
 			double value;
 
@@ -979,7 +980,8 @@ public class DatasetUtils {
 				value = start + i * step;
 				ds.setObjectAbs(i, Math.pow(base, value));
 			}
-			return ds;
+
+			return (AbstractDataset) ds;
 		}
 	}
 
@@ -992,7 +994,7 @@ public class DatasetUtils {
 	 */
 	public static AbstractDataset eye(final int rows, final int cols, final int offset, final int dtype) {
 		int[] shape = new int[] {rows, cols};
-		AbstractDataset a = AbstractDataset.zeros(shape, dtype);
+		Dataset a = DatasetFactory.zeros(shape, dtype);
 
 		int[] pos = new int[] {0, offset};
 		while (pos[1] < 0) {
@@ -1004,7 +1006,8 @@ public class DatasetUtils {
 			pos[0]++;
 			pos[1]++;
 		}
-		return a;
+
+		return (AbstractDataset) a;
 	}
 
 	/**
@@ -1013,7 +1016,7 @@ public class DatasetUtils {
 	 * @param offset
 	 * @return diagonal matrix
 	 */
-	public static AbstractDataset diag(final AbstractDataset a, final int offset) {
+	public static AbstractDataset diag(final Dataset a, final int offset) {
 		final int dtype = a.getDtype();
 		final int rank = a.getRank();
 		final int is = a.getElementsPerItem();
@@ -1023,11 +1026,12 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Rank of dataset should be one or two");
 		}
 
-		AbstractDataset result;
+		Dataset result;
+		final int[] shape = a.getShapeRef();
 		if (rank == 1) {
-			int side = a.shape[0] + Math.abs(offset);
+			int side = shape[0] + Math.abs(offset);
 			int[] pos = new int[] {side, side};
-			result = AbstractDataset.zeros(is, pos, dtype);
+			result = DatasetFactory.zeros(is, pos, dtype);
 			pos[0] = 0;
 			pos[1] = offset;
 			while (pos[1] < 0) {
@@ -1041,10 +1045,10 @@ public class DatasetUtils {
 				pos[1]++;
 			}
 		} else {
-			int side = offset >= 0 ? Math.min(a.shape[0], a.shape[1]-offset) : Math.min(a.shape[0]+offset, a.shape[1]);
+			int side = offset >= 0 ? Math.min(shape[0], shape[1]-offset) : Math.min(shape[0]+offset, shape[1]);
 			if (side < 0)
 				side = 0;
-			result = AbstractDataset.zeros(is, new int[] {side}, dtype);
+			result = DatasetFactory.zeros(is, new int[] {side}, dtype);
 
 			if (side > 0) {
 				int[] pos = new int[] { 0, offset };
@@ -1054,7 +1058,7 @@ public class DatasetUtils {
 					pos[1]++;
 				}
 				int i = 0;
-				while (pos[0] < a.shape[0] && pos[1] < a.shape[1]) {
+				while (pos[0] < shape[0] && pos[1] < shape[1]) {
 					result.set(a.getObject(pos), i++);
 					pos[0]++;
 					pos[1]++;
@@ -1062,7 +1066,7 @@ public class DatasetUtils {
 			}
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -1162,7 +1166,7 @@ public class DatasetUtils {
 	 * @param shareData if true, then share data
 	 * @return compound dataset
 	 */
-	public static AbstractCompoundDataset createCompoundDatasetFromLastAxis(final AbstractDataset a, final boolean shareData) {
+	public static AbstractCompoundDataset createCompoundDatasetFromLastAxis(final Dataset a, final boolean shareData) {
 		if (a instanceof AbstractCompoundDataset) {
 			utilsLogger.error("Need a single-element dataset");
 			throw new IllegalArgumentException("Need a single-element dataset");
@@ -1267,7 +1271,7 @@ public class DatasetUtils {
 	 * @param obj
 	 * @return coerced copy of dataset
 	 */
-	public static AbstractDataset coerce(AbstractDataset a, Object obj) {
+	public static AbstractDataset coerce(Dataset a, Object obj) {
 		final int dt = a.getDtype();
 		final int ot = AbstractDataset.getDTypeFromClass(obj.getClass());
 
@@ -1279,18 +1283,18 @@ public class DatasetUtils {
 	 * @param b
 	 * @return element-wise maximum of given datasets
 	 */
-	public static AbstractDataset maximum(final AbstractDataset a, final Object b) {
-		AbstractDataset result;
+	public static AbstractDataset maximum(final Dataset a, final Object b) {
+		Dataset result;
 
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			a.checkCompatibility(bds);
 
 			final int at = a.getDtype();
 			final int bt = bds.getDtype();
 			final int rt;
 
-			AbstractDataset d1, d2;
+			Dataset d1, d2;
 			if (bt > at) {
 				rt = bt;
 				d1 = bds;
@@ -1377,7 +1381,7 @@ public class DatasetUtils {
 			}
 		} else {
 			final int dt = AbstractDataset.getBestDType(a.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
-			result = AbstractDataset.zeros(a.shape, dt);
+			result = DatasetFactory.zeros(a.getShapeRef(), dt);
 			final IndexIterator it1 = a.getIterator();
 			long i2;
 			double r2;
@@ -1450,7 +1454,7 @@ public class DatasetUtils {
 				throw new IllegalArgumentException("Multiple-element datasets not supported");
 			}
 		}
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -1458,18 +1462,18 @@ public class DatasetUtils {
 	 * @param b
 	 * @return element-wise minimum of given datasets
 	 */
-	public static AbstractDataset minimum(final AbstractDataset a, final Object b) {
-		AbstractDataset result;
+	public static AbstractDataset minimum(final Dataset a, final Object b) {
+		Dataset result;
 
-		if (b instanceof AbstractDataset) {
-			AbstractDataset bds = (AbstractDataset) b;
+		if (b instanceof Dataset) {
+			Dataset bds = (Dataset) b;
 			a.checkCompatibility(bds);
 
 			final int at = a.getDtype();
 			final int bt = bds.getDtype();
 			final int rt;
 
-			AbstractDataset d1, d2;
+			Dataset d1, d2;
 			if (bt > at) {
 				rt = bt;
 				d1 = bds;
@@ -1556,7 +1560,7 @@ public class DatasetUtils {
 			}
 		} else {
 			final int dt = AbstractDataset.getBestDType(a.getDtype(), AbstractDataset.getDTypeFromClass(b.getClass()));
-			result = AbstractDataset.zeros(a.shape, dt);
+			result = DatasetFactory.zeros(a.getShapeRef(), dt);
 			final IndexIterator it1 = a.getIterator();
 			long i2;
 			double r2;
@@ -1629,7 +1633,8 @@ public class DatasetUtils {
 				throw new IllegalArgumentException("Multiple-element datasets not supported");
 			}
 		}
-		return result;
+
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -1637,7 +1642,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @return normalised dataset
 	 */
-	public static AbstractDataset norm(AbstractDataset a) {
+	public static AbstractDataset norm(Dataset a) {
 		double amin = a.min().doubleValue();
 		double aptp = a.max().doubleValue() - amin;
 		AbstractDataset temp = Maths.subtract(a, amin);
@@ -1685,7 +1690,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @return normalised dataset
 	 */
-	public static AbstractDataset lognorm(AbstractDataset a) {
+	public static AbstractDataset lognorm(Dataset a) {
 		double amin = a.min().doubleValue();
 		double aptp = Math.log10(a.max().doubleValue() - amin + 1.);
 		AbstractDataset temp = Maths.subtract(a, amin - 1.);
@@ -1700,7 +1705,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @return normalised dataset
 	 */
-	public static AbstractDataset lnnorm(AbstractDataset a) {
+	public static AbstractDataset lnnorm(Dataset a) {
 		double amin = a.min().doubleValue();
 		double aptp = Math.log(a.max().doubleValue() - amin + 1.);
 		AbstractDataset temp = Maths.subtract(a, amin - 1.);
@@ -1716,7 +1721,7 @@ public class DatasetUtils {
 	 * @param axes an array of 1D datasets representing axes
 	 * @return a list of coordinate datasets
 	 */
-	public static List<AbstractDataset> meshGrid(final AbstractDataset... axes) {
+	public static List<AbstractDataset> meshGrid(final Dataset... axes) {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		int rank = axes.length;
 
@@ -1728,20 +1733,20 @@ public class DatasetUtils {
 		int[] nshape = new int[rank];
 
 		for (int i = 0; i < rank; i++) {
-			AbstractDataset axis = axes[i];
+			Dataset axis = axes[i];
 			if (axis.getRank() != 1) {
 				utilsLogger.error("Given axis is not 1D");
 				throw new IllegalArgumentException("Given axis is not 1D");
 			}
-			nshape[i] = axis.size;
+			nshape[i] = axis.getSize();
 		}
 
 		for (int i = 0; i < rank; i++) {
-			AbstractDataset axis = axes[i];
-			AbstractDataset coord = AbstractDataset.zeros(nshape, axis.getDtype());
+			Dataset axis = axes[i];
+			AbstractDataset coord = (AbstractDataset) DatasetFactory.zeros(nshape, axis.getDtype());
 			result.add(coord);
 
-			final int alen = axis.size;
+			final int alen = axis.getSize();
 			for (int j = 0; j < alen; j++) {
 				final Object obj = axis.getObjectAbs(j);
 				PositionIterator pi = coord.getPositionIterator(i);
@@ -1823,7 +1828,7 @@ public class DatasetUtils {
 	 * @param value
 	 * @return list of interpolated indices
 	 */
-	public static List<Double> crossings(AbstractDataset d, double value) {
+	public static List<Double> crossings(Dataset d, double value) {
 		if (d.getRank() != 1) {
 			utilsLogger.error("Only 1d datasets supported");
 			throw new UnsupportedOperationException("Only 1d datasets supported");
@@ -1831,11 +1836,14 @@ public class DatasetUtils {
 		List<Double> results = new ArrayList<Double>();
 
 		// run through all pairs of points on the line and see if value lies within
+		IndexIterator it = d.getIterator();
 		double y1, y2;
-		y2 = d.getElementDoubleAbs(0);
-		for (int i = 1, imax = d.getSize(); i < imax; i++) {
+
+		y2 = it.hasNext() ? y2 = d.getElementDoubleAbs(it.index) : 0;
+
+		for (int i = 1; it.hasNext(); i++) {
 			y1 = y2;
-			y2 = d.getElementDoubleAbs(i);
+			y2 = d.getElementDoubleAbs(it.index);
 			// check if value lies within pair [y1, y2]
 			if ((y1 <= value && y2 > value) || (y1 > value && y2 <= value)) {
 				final double f = (value - y2)/(y2 - y1); // negative distance from right to left
@@ -1857,7 +1865,7 @@ public class DatasetUtils {
 	 *            The y value the X values are required for
 	 * @return An list of doubles containing all the X coordinates of where the line crosses
 	 */
-	public static List<Double> crossings(AbstractDataset xAxis, AbstractDataset yAxis, double yValue) {
+	public static List<Double> crossings(Dataset xAxis, Dataset yAxis, double yValue) {
 		List<Double> results = new ArrayList<Double>();
 
 		List<Double> indices = crossings(yAxis, yValue);
@@ -1882,7 +1890,7 @@ public class DatasetUtils {
 	 *            The proportion of the overall x spread used to prune result
 	 * @return A list containing all the unique crossing points
 	 */
-	public static List<Double> crossings(AbstractDataset xAxis, AbstractDataset yAxis, double yValue, double xRangeProportion) {
+	public static List<Double> crossings(Dataset xAxis, Dataset yAxis, double yValue, double xRangeProportion) {
 		// get the values found
 		List<Double> vals = crossings(xAxis, yAxis, yValue);
 
@@ -1911,7 +1919,7 @@ public class DatasetUtils {
 	}
 
 	// recursive function
-	private static void setRow(Object row, AbstractDataset a, int... pos) {
+	private static void setRow(Object row, Dataset a, int... pos) {
 		final int l = Array.getLength(row);
 		final int rank = pos.length;
 		final int[] npos = Arrays.copyOf(pos, rank+1);
@@ -1936,7 +1944,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @return Java array (of arrays...)
 	 */
-	public static Object createJavaArray(AbstractDataset a) {
+	public static Object createJavaArray(Dataset a) {
 		if (a.getElementsPerItem() > 1) {
 			a = createDatasetFromCompoundDataset((AbstractCompoundDataset) a, true);
 		}
@@ -1981,7 +1989,7 @@ public class DatasetUtils {
 	 * @param a dataset
 	 * @param value replacement value
 	 */
-	public static void removeNansAndInfinities(AbstractDataset a, final Number value) {
+	public static void removeNansAndInfinities(Dataset a, final Number value) {
 		if (a instanceof DoubleDataset) {
 			final double dvalue = AbstractDataset.toReal(value);
 			final DoubleDataset set = (DoubleDataset) a;
@@ -2038,7 +2046,7 @@ public class DatasetUtils {
 	 * 
 	 * @param a dataset
 	 */
-	public static void makeFinite(AbstractDataset a) {
+	public static void makeFinite(Dataset a) {
 		if (a instanceof DoubleDataset) {
 			final DoubleDataset set = (DoubleDataset) a;
 			final IndexIterator it = set.getIterator();
@@ -2098,7 +2106,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexEqualTo(final AbstractDataset a, final double n) {
+	public static int findIndexEqualTo(final Dataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) == n)
@@ -2114,7 +2122,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexGreaterThan(final AbstractDataset a, final double n) {
+	public static int findIndexGreaterThan(final Dataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) > n)
@@ -2130,7 +2138,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexGreaterThanOrEqualTo(final AbstractDataset a, final double n) {
+	public static int findIndexGreaterThanOrEqualTo(final Dataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) >= n)
@@ -2146,7 +2154,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexLessThan(final AbstractDataset a, final double n) {
+	public static int findIndexLessThan(final Dataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) < n)
@@ -2162,7 +2170,7 @@ public class DatasetUtils {
 	 * @param n
 	 * @return absolute index (if greater than a.getSize() then no value found)
 	 */
-	public static int findIndexLessThanOrEqualTo(final AbstractDataset a, final double n) {
+	public static int findIndexLessThanOrEqualTo(final Dataset a, final double n) {
 		IndexIterator iter = a.getIterator();
 		while (iter.hasNext()) {
 			if (a.getElementDoubleAbs(iter.index) <= n)
@@ -2179,7 +2187,7 @@ public class DatasetUtils {
 	 * @param axis if null, then roll flattened dataset
 	 * @return rolled dataset
 	 */
-	public static AbstractDataset roll(final AbstractDataset a, final int shift, final Integer axis) {
+	public static AbstractDataset roll(final Dataset a, final int shift, final Integer axis) {
 		AbstractDataset r = AbstractDataset.zeros(a);
 		int is = a.getElementsPerItem();
 		if (axis == null) {
@@ -2197,9 +2205,9 @@ public class DatasetUtils {
 			}
 		} else {
 			PositionIterator pi = a.getPositionIterator(axis);
-			int s = a.shape[axis];
-			AbstractDataset u = AbstractDataset.zeros(is, new int[] {s}, a.getDtype());
-			AbstractDataset v = AbstractDataset.zeros(u);
+			int s = a.getShapeRef()[axis];
+			Dataset u = DatasetFactory.zeros(is, new int[] {s}, a.getDtype());
+			Dataset v = DatasetFactory.zeros(u);
 			int[] pos = pi.getPos();
 			boolean[] hit = pi.getOmit();
 			while (pi.hasNext()) {
@@ -2227,7 +2235,7 @@ public class DatasetUtils {
 	 * @param start The position with it right of the destination of the rolled axis
 	 * @return dataset with rolled axis
 	 */
-	public static AbstractDataset rollAxis(final AbstractDataset a, int axis, int start) {
+	public static AbstractDataset rollAxis(final Dataset a, int axis, int start) {
 		int r = a.getRank();
 		if (axis < 0)
 			axis += r;
@@ -2243,7 +2251,7 @@ public class DatasetUtils {
 			start--;
 
 		if (axis == start)
-			return a;
+			return (AbstractDataset) a;
 
 		ArrayList<Integer> axes = new ArrayList<Integer>();
 		for (int i = 0; i < r; i++) {
@@ -2256,7 +2264,7 @@ public class DatasetUtils {
 		for (int i = 0; i < r; i++) {
 			aa[i] = axes.get(i);
 		}
-		return a.getTransposedView(aa);
+		return (AbstractDataset) a.getTransposedView(aa);
 	}
 
 	/**
@@ -2275,9 +2283,9 @@ public class DatasetUtils {
 		int ds = -1;
 		for (Object a : choices) {
 			final int s, t;
-			if (a instanceof AbstractDataset) {
-				t = ((AbstractDataset) a).getDtype();
-				s = ((AbstractDataset) a).getElementsPerItem();
+			if (a instanceof Dataset) {
+				t = ((Dataset) a).getDtype();
+				s = ((Dataset) a).getElementsPerItem();
 			} else {
 				t = AbstractDataset.getDTypeFromObject(a);
 				s = 1;
@@ -2291,26 +2299,26 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Dataset types of choices are invalid");
 		}
 
-		AbstractDataset r = AbstractDataset.zeros(ds, conditions[0].shape, dt);
+		Dataset r = DatasetFactory.zeros(ds, conditions[0].shape, dt);
 		for (AbstractDataset a : conditions) {
 			r.checkCompatibility(a);
 		}
 		for (Object a : choices) {
-			if (a instanceof AbstractDataset)
-				r.checkCompatibility((AbstractDataset) a);
+			if (a instanceof ILazyDataset)
+				r.checkCompatibility((ILazyDataset) a);
 		}
 	
-		PositionIterator iter = new PositionIterator(r.shape);
+		PositionIterator iter = new PositionIterator(r.getShapeRef());
 		final int[] pos = iter.getPos();
 		int i = 0;
-		if (def instanceof AbstractDataset) {
-			AbstractDataset d = (AbstractDataset) def;
+		if (def instanceof Dataset) {
+			Dataset d = (Dataset) def;
 			r.checkCompatibility(d);
 			while (iter.hasNext()) {
 				int j = 0;
 				for (; j < n; j++) {
 					if (conditions[j].get(pos)) {
-						Object x = choices[j] instanceof AbstractDataset ? ((AbstractDataset) choices[j]).getObject(pos) : choices[j];
+						Object x = choices[j] instanceof Dataset ? ((Dataset) choices[j]).getObject(pos) : choices[j];
 						r.setObjectAbs(i++, x);
 						break;
 					}
@@ -2324,7 +2332,7 @@ public class DatasetUtils {
 				int j = 0;
 				for (; j < n; j++) {
 					if (conditions[j].get(pos)) {
-						Object x = choices[j] instanceof AbstractDataset ? ((AbstractDataset) choices[j]).getObject(pos) : choices[j];
+						Object x = choices[j] instanceof Dataset ? ((Dataset) choices[j]).getObject(pos) : choices[j];
 						r.setObjectAbs(i++, x);
 						break;
 					}
@@ -2334,7 +2342,7 @@ public class DatasetUtils {
 				}
 			}
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**
@@ -2352,10 +2360,10 @@ public class DatasetUtils {
 		int mr = -1;
 		for (Object a : choices) {
 			final int r, s, t;
-			if (a instanceof AbstractDataset) {
-				r = ((AbstractDataset) a).getRank();
-				t = ((AbstractDataset) a).getDtype();
-				s = ((AbstractDataset) a).getElementsPerItem();
+			if (a instanceof Dataset) {
+				r = ((Dataset) a).getRank();
+				t = ((Dataset) a).getDtype();
+				s = ((Dataset) a).getElementsPerItem();
 			} else {
 				r = 0;
 				t = AbstractDataset.getDTypeFromObject(a);
@@ -2372,7 +2380,7 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Dataset types of choices are invalid");
 		}
 		
-		AbstractDataset r = AbstractDataset.zeros(ds, index.getShapeRef(), dt);
+		Dataset r = DatasetFactory.zeros(ds, index.getShapeRef(), dt);
 		IndexIterator iter = index.getIterator(true);
 		final int[] pos = iter.getPos();
 		int i = 0;
@@ -2400,7 +2408,7 @@ public class DatasetUtils {
 			Object c = choices[j];
 			r.setObjectAbs(i++, c instanceof IDataset ? ((IDataset) c).getObject(pos) : c);
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**

@@ -96,7 +96,7 @@ def beginmethod(name, jdoc=None, params=0):
         print("\tpublic static AbstractDataset %s(final Dataset a) {" % name)
     print("\t\tfinal int isize;")
     print("\t\tfinal IndexIterator it = a.getIterator();")
-    print("\t\tAbstractDataset ds;")
+    print("\t\tDataset ds;")
     print("\t\tfinal int dt = a.getDtype();")
     for p in plist:
         print("\t\tfinal double %s = AbstractDataset.toReal(%s);" % (p+"x", p))
@@ -114,7 +114,7 @@ def endmethod(name, types):
     print("\t\t}\n")
     print("\t\tds.setName(a.getName());")
     print("\t\taddFunctionName(ds, \"%s\");" % name)
-    print("\t\treturn ds;")
+    print("\t\treturn (AbstractDataset) ds;")
     print("\t}\n")
 
 def sameloop(codedict, cprefix, vletter, text, oclass=None, otype=None, odtype=None):
@@ -234,7 +234,7 @@ def preloop(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=None, odty
     if odtype == None:
         odtype = dtype
     print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = (AbstractDataset) DatasetFactory.zeros(a, Dataset.%s);" % odtype)
+    print("\t\t\tds = DatasetFactory.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
 
@@ -246,7 +246,7 @@ def preloopcompound(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=No
     if odtype == None:
         odtype = dtype
     print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = (AbstractDataset) DatasetFactory.zeros(a, Dataset.%s);" % odtype)
+    print("\t\t\tds = DatasetFactory.zeros(a, Dataset.%s);" % odtype)
     print("\t\t\tisize = a.getElementsPerItem();")
     print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
     print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))

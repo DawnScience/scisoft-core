@@ -178,7 +178,7 @@ public class DoubleDatasetTest {
 		assertEquals(6, a.maxPos()[0]);
 		assertEquals(0, a.minPos()[0]);
 
-		AbstractDataset b = AbstractDataset.zeros(new int[] { 100, 200 }, Dataset.FLOAT64);
+		Dataset b = DatasetFactory.zeros(new int[] { 100, 200 }, Dataset.FLOAT64);
 
 		b.set(100.00, new int[] { 50, 100 });
 		b.set(-100.00, new int[] { 51, 101 });
@@ -196,7 +196,7 @@ public class DoubleDatasetTest {
 		assertEquals(50, b.maxPos(true)[0]);
 		assertEquals(100, b.maxPos(true)[1]);
 
-		AbstractDataset c = AbstractDataset.zeros(new int[] { 100, 200 }, Dataset.FLOAT64);
+		Dataset c = DatasetFactory.zeros(new int[] { 100, 200 }, Dataset.FLOAT64);
 		c.set(100.00, new int[] { 99, 50 });
 		c.set(99.99, new int[] { 50, 50 });
 		assertEquals(99, c.maxPos()[0]);

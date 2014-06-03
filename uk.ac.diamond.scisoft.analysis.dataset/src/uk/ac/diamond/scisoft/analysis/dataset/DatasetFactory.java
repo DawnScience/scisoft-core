@@ -137,11 +137,11 @@ public class DatasetFactory {
 	 * @return dataset
 	 */
 	public static Dataset createFromObject(final Object obj, final int dtype) {
-		if (obj instanceof AbstractDataset)
-			return DatasetUtils.cast((AbstractDataset) obj, dtype);
+		if (obj instanceof Dataset)
+			return DatasetUtils.cast((Dataset) obj, dtype);
 
 		if (obj instanceof ILazyDataset)
-			return DatasetUtils.cast(DatasetUtils.convertToAbstractDataset((ILazyDataset) obj), dtype);
+			return DatasetUtils.cast(DatasetUtils.convertToDataset((ILazyDataset) obj), dtype);
 
 		switch (dtype) {
 		case Dataset.BOOL:

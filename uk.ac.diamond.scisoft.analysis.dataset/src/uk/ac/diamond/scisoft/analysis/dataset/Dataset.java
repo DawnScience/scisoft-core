@@ -1273,12 +1273,12 @@ public interface Dataset extends IErrorDataset {
 	public Dataset rootMeanSquare(int axis);
 
 	/**
-	 * @see DatasetUtils#put(AbstractDataset, int[], Object[])
+	 * @see DatasetUtils#put(Dataset, int[], Object[])
 	 */
 	public Dataset put(int[] indices, Object[] values);
 
 	/**
-	 * @see DatasetUtils#take(AbstractDataset, int[], Integer)
+	 * @see DatasetUtils#take(Dataset, int[], Integer)
 	 */
 	public Dataset take(int[] indices, Integer axis);
 }

@@ -234,10 +234,10 @@ public abstract class AbstractDataset implements Dataset {
 			return false;
 		}
 
-		AbstractDataset other = (AbstractDataset) obj;
+		Dataset other = (Dataset) obj;
 		if (getElementsPerItem() != other.getElementsPerItem())
 			return false;
-		if (!Arrays.equals(shape, other.shape)) {
+		if (!Arrays.equals(shape, other.getShapeRef())) {
 			return false;
 		}
 		return true;
@@ -1262,7 +1262,7 @@ public abstract class AbstractDataset implements Dataset {
 
 		final int length = ((Number) selection.sum()).intValue();
 		final int is = getElementsPerItem();
-		AbstractDataset r = zeros(is, new int[] { length }, getDtype());
+		Dataset r = DatasetFactory.zeros(is, new int[] { length }, getDtype());
 		BooleanIterator biter = getBooleanIterator(selection);
 
 		int i = 0;
@@ -1270,7 +1270,7 @@ public abstract class AbstractDataset implements Dataset {
 			r.setObjectAbs(i, getObjectAbs(biter.index));
 			i += is;
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**
@@ -1295,7 +1295,7 @@ public abstract class AbstractDataset implements Dataset {
 	@Override
 	public AbstractDataset getByIndex(IntegerDataset index) {
 		final int is = getElementsPerItem();
-		final AbstractDataset r = zeros(is, index.getShape(), getDtype());
+		final Dataset r = DatasetFactory.zeros(is, index.getShape(), getDtype());
 		final IntegerIterator iter = new IntegerIterator(index, size, is);
 
 		int i = 0;
@@ -1303,7 +1303,7 @@ public abstract class AbstractDataset implements Dataset {
 			r.setObjectAbs(i, getObjectAbs(iter.index));
 			i += is;
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**
@@ -1316,7 +1316,7 @@ public abstract class AbstractDataset implements Dataset {
 	public AbstractDataset getByIndexes(final Object... index) {
 		final IntegersIterator iter = new IntegersIterator(shape, index);
 		final int is = getElementsPerItem();
-		final AbstractDataset r = zeros(is, iter.getShape(), getDtype());
+		final Dataset r = DatasetFactory.zeros(is, iter.getShape(), getDtype());
 
 		final int[] pos = iter.getPos();
 		int i = 0;
@@ -1324,7 +1324,7 @@ public abstract class AbstractDataset implements Dataset {
 			r.setObjectAbs(i, getObject(pos));
 			i += is;
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**
@@ -2725,7 +2725,7 @@ public abstract class AbstractDataset implements Dataset {
 		} else {
 			axis = checkAxis(axis);
 
-			AbstractDataset ads = zeros(new int[] { shape[axis] }, dtype);
+			Dataset ads = DatasetFactory.zeros(new int[] { shape[axis] }, dtype);
 			Serializable adata = ads.getBuffer();
 
 			PositionIterator pi = getPositionIterator(axis);
@@ -3168,11 +3168,11 @@ public abstract class AbstractDataset implements Dataset {
 
 		final int dtype = getDtype();
 		IntegerDataset count = new IntegerDataset(nshape);
-		AbstractDataset max = zeros(nshape, dtype);
-		AbstractDataset min = zeros(nshape, dtype);
+		Dataset max = DatasetFactory.zeros(nshape, dtype);
+		Dataset min = DatasetFactory.zeros(nshape, dtype);
 		IntegerDataset maxIndex = new IntegerDataset(nshape);
 		IntegerDataset minIndex = new IntegerDataset(nshape);
-		AbstractDataset sum = zeros(nshape, getLargestDType(dtype));
+		Dataset sum = DatasetFactory.zeros(nshape, getLargestDType(dtype));
 		DoubleDataset mean = new DoubleDataset(nshape);
 		DoubleDataset var = new DoubleDataset(nshape);
 
@@ -3898,7 +3898,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	@Override
 	public AbstractDataset stdDeviation(int axis) {
-		final AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
+		final Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		return Maths.sqrt(v);
 	}
 
@@ -3918,14 +3918,14 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	@Override
 	public AbstractDataset rootMeanSquare(int axis) {
-		AbstractDataset v = (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
-		AbstractDataset m = (AbstractDataset) getStatistics(false, axis, STORE_MEAN + "-" + axis);
-		AbstractDataset result = Maths.power(m, 2);
+		Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
+		Dataset m = (Dataset) getStatistics(false, axis, STORE_MEAN + "-" + axis);
+		Dataset result = Maths.power(m, 2);
 		return Maths.sqrt(result.iadd(v));
 	}
 
 	/**
-	 * @see DatasetUtils#put(AbstractDataset, int[], Object[])
+	 * @see DatasetUtils#put(Dataset, int[], Object[])
 	 */
 	@Override
 	public AbstractDataset put(final int[] indices, Object[] values) {
@@ -3933,7 +3933,7 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	/**
-	 * @see DatasetUtils#take(AbstractDataset, int[], Integer)
+	 * @see DatasetUtils#take(Dataset, int[], Integer)
 	 */
 	@Override
 	public AbstractDataset take(final int[] indices, final Integer axis) {
@@ -4046,11 +4046,11 @@ public abstract class AbstractDataset implements Dataset {
 			return null;
 		}
 
-		if (errorData instanceof AbstractDataset) {
-			return Maths.sqrt((AbstractDataset) errorData);
+		if (errorData instanceof Dataset) {
+			return Maths.sqrt((Dataset) errorData);
 		} else if (errorData instanceof ILazyDataset) {
 			errorData = DatasetUtils.convertToAbstractDataset((ILazyDataset) errorData);
-			return Maths.sqrt((AbstractDataset) errorData);
+			return Maths.sqrt((Dataset) errorData);
 		}
 
 		DoubleDataset errors = new DoubleDataset(shape);

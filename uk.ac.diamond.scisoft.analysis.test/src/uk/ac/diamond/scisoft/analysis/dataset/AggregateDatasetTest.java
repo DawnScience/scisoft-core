@@ -51,13 +51,13 @@ public class AggregateDatasetTest {
 			} catch (Exception e1) {
 				try {
 					a = new AggregateDataset(false, new ILazyDataset[] {
-							AbstractDataset.ones(new int[] { 2, 3 }, Dataset.BOOL),
-							AbstractDataset.ones(new int[] { 3, 4 }, Dataset.BOOL), });
+							DatasetFactory.ones(new int[] { 2, 3 }, Dataset.BOOL),
+							DatasetFactory.ones(new int[] { 3, 4 }, Dataset.BOOL), });
 				} catch (Exception e2) {
 					try {
 						a = new AggregateDataset(true, new ILazyDataset[] {
-								AbstractDataset.ones(new int[] { 2, 3 }, Dataset.BOOL),
-								AbstractDataset.ones(new int[] { 3, 3 }, Dataset.BOOL), });
+								DatasetFactory.ones(new int[] { 2, 3 }, Dataset.BOOL),
+								DatasetFactory.ones(new int[] { 3, 3 }, Dataset.BOOL), });
 					} catch (Exception e3) {
 						System.out.println("Success!");
 						return;

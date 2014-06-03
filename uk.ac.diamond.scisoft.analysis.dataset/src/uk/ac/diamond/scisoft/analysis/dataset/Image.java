@@ -53,7 +53,7 @@ public class Image {
 			logger.error("Both datasets should be two-dimensional");
 			throw new IllegalArgumentException("Both datasets should be two-dimensional");
 		}
-		AbstractDataset f, g;
+		Dataset f, g;
 		if (r == null) {
 			f = a;
 			g = b;
@@ -79,7 +79,7 @@ public class Image {
 		// Refine shift using inverse of cross-power spectrum
 		// Foroosh et al, "Extension of Phase Correlation to Subpixel Registration",
 		// IEEE Trans. Image Processing, v11n3, 188-200 (2002)
-		AbstractDataset xcorr = corrs.get(1);
+		Dataset xcorr = corrs.get(1);
 
 		double c0 = xcorr.getDouble(maxpos);
 
@@ -108,11 +108,11 @@ public class Image {
 	}
 	
 	public static AbstractDataset regrid_delaunay(
-			AbstractDataset data, 
-			AbstractDataset x, 
-			AbstractDataset y, 
-			AbstractDataset gridX, 
-			AbstractDataset gridY) {
+			Dataset data, 
+			Dataset x, 
+			Dataset y, 
+			Dataset gridX, 
+			Dataset gridY) {
 		
 		// create a list of all the points
 		ArrayList<Point_dt> points = new ArrayList<Point_dt>();
@@ -155,11 +155,11 @@ public class Image {
 	}
 	
 	public static AbstractDataset regrid_kabsch(
-			AbstractDataset data, 
-			AbstractDataset x, 
-			AbstractDataset y, 
-			AbstractDataset gridX, 
-			AbstractDataset gridY) {
+			Dataset data, 
+			Dataset x, 
+			Dataset y, 
+			Dataset gridX, 
+			Dataset gridY) {
 		
 		// create the output array
 		DoubleDataset result = new DoubleDataset(gridY.getShapeRef()[0]+1, gridX.getShapeRef()[0]+1);
@@ -217,8 +217,8 @@ public class Image {
 		return result;
 	}
 	
-	private static int getLowerIndex(double point, AbstractDataset axis) {
-		AbstractDataset mins = Maths.abs(Maths.subtract(axis, point));
+	private static int getLowerIndex(double point, Dataset axis) {
+		Dataset mins = Maths.abs(Maths.subtract(axis, point));
 		return mins.minPos()[0];
 		
 	}
@@ -270,7 +270,7 @@ public class Image {
 		return result;
 	}
 	
-	public static AbstractDataset convolutionFilter(AbstractDataset input, AbstractDataset kernel) {
+	public static AbstractDataset convolutionFilter(AbstractDataset input, Dataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
 		int[] shape = input.getShape();
 		int[] kShape = kernel.getShape();
@@ -306,10 +306,10 @@ public class Image {
 					kClipped = true;
 				}
 			}
-			AbstractDataset tempKernel = kernel;
+			Dataset tempKernel = kernel;
 			if (kClipped)
 				tempKernel = kernel.getSlice(kStart, kStop, null);
-			AbstractDataset slice = input.getSlice(start, stop, null);
+			Dataset slice = input.getSlice(start, stop, null);
 			slice.imultiply(tempKernel);
 			result.set(slice.sum(), pos);
 		}

@@ -47,33 +47,33 @@ public class AbstractCompoundDatasetTest {
 
 	private void testSliceND(int size, int type) {
 		// 1D
-		AbstractDataset ta;
-		ta = AbstractDataset.arange(0, size, 1, type);
+		Dataset ta;
+		ta = DatasetFactory.createRange(0, size, 1, type);
 		testSlicedDataset(ta);
 
 		// 2D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, size / 16);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, size / 16);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 32, 32);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 32, 32);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
 		// 3D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 	}
 
-	private void testSlicedDataset(AbstractDataset ta) {
+	private void testSlicedDataset(Dataset ta) {
 		int[] stop = ta.getShape();
 		stop[stop.length - 1] -= 1;
-		AbstractDataset sa = ta.getSliceView(null, stop, null);
+		Dataset sa = ta.getSliceView(null, stop, null);
 
 		PositionIterator it = new PositionIterator(sa.getShape());
 		int[] pos = it.getPos();
@@ -264,9 +264,9 @@ public class AbstractCompoundDatasetTest {
 
 	@Test
 	public void testSum() {
-		AbstractDataset d = Random.randint(0, 255, new int[] {5,2});
+		Dataset d = Random.randint(0, 255, new int[] {5,2});
 		AbstractCompoundDataset dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
-		AbstractDataset dd = DatasetUtils.createDatasetFromCompoundDataset(dc, true);
+		Dataset dd = DatasetUtils.createDatasetFromCompoundDataset(dc, true);
 		double[] dcsum = (double[]) dc.sum();
 		double dsum = ((Number) d.sum()).doubleValue();
 		double ddsum = ((Number) dd.sum()).doubleValue();
@@ -275,14 +275,14 @@ public class AbstractCompoundDatasetTest {
 
 		d = Random.randint(0, 255, new int[] {5,3,2});
 		dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
-		AbstractDataset dca = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(0), true);
-		AbstractDataset da = d.sum(0);
+		Dataset dca = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(0), true);
+		Dataset da = d.sum(0);
 		IndexIterator it = da.getIterator();
 		while (it.hasNext()) {
 			assertEquals(da.getElementDoubleAbs(it.index), dca.getElementDoubleAbs(it.index), 1e-15);
 		}
-		AbstractDataset dcb = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(1), true);
-		AbstractDataset db = d.sum(1);
+		Dataset dcb = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(1), true);
+		Dataset db = d.sum(1);
 		it = db.getIterator();
 		while (it.hasNext()) {
 			assertEquals(db.getElementDoubleAbs(it.index), dcb.getElementDoubleAbs(it.index), 1e-15);
@@ -366,9 +366,9 @@ public class AbstractCompoundDatasetTest {
 	
 	@Test
 	public void testRGB() {
-		AbstractDataset r = Random.randint(0, 255, new int[] {128, 128});
-		AbstractDataset g = Random.randint(0, 255, r.getShape());
-		AbstractDataset b = Random.randint(0, 255, r.getShape());
+		Dataset r = Random.randint(0, 255, new int[] {128, 128});
+		Dataset g = Random.randint(0, 255, r.getShape());
+		Dataset b = Random.randint(0, 255, r.getShape());
 		RGBDataset c = new RGBDataset(r, g, b);
 		System.out.println("" + c.hashCode());
 		double[] mc = (double[]) c.mean();
@@ -383,9 +383,9 @@ public class AbstractCompoundDatasetTest {
 	public void test1DErrors() {
 	
 		// test 1D errors for single value
-		AbstractDataset[] aa =  new AbstractDataset[5];
+		Dataset[] aa =  new Dataset[5];
 		for (int i = 0 ; i < 5; i++) {
-			aa[i] = AbstractDataset.arange(100, Dataset.INT32);
+			aa[i] = DatasetFactory.createRange(100, Dataset.INT32);
 		}
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		
@@ -509,9 +509,9 @@ public class AbstractCompoundDatasetTest {
 	public void testInternalErrors() {
 		
 		
-		AbstractDataset[] aa =  new AbstractDataset[5];
+		Dataset[] aa =  new Dataset[5];
 		for (int i = 0 ; i < 5; i++) {
-			aa[i] = AbstractDataset.arange(100, Dataset.INT32);
+			aa[i] = DatasetFactory.createRange(100, Dataset.INT32);
 		}
 		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
 		

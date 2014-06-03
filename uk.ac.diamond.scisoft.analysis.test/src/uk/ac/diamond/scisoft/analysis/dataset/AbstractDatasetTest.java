@@ -70,29 +70,29 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testMaxMin() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		a.setShape(3,4);
 		assertEquals("Max", 11, a.max().doubleValue(), 1e-6);
-		assertEquals("Max 0", AbstractDataset.array(new double[] {8,9,10,11}), a.max(0));
-		assertEquals("Max 1", AbstractDataset.array(new double[] {3,7,11}), a.max(1));
+		assertEquals("Max 0", DatasetFactory.createFromObject(new double[] {8,9,10,11}), a.max(0));
+		assertEquals("Max 1", DatasetFactory.createFromObject(new double[] {3,7,11}), a.max(1));
 		assertEquals("Max arg", 11, a.argMax());
-		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(0));
-		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(1));
+		assertEquals("Max arg 0 ", DatasetFactory.createFromObject(new int[] {2,2,2,2}), a.argMax(0));
+		assertEquals("Max arg 1 ", DatasetFactory.createFromObject(new int[] {3,3,3}), a.argMax(1));
 		a.set(Double.NaN, 1, 0);
 		System.out.println(a.toString(true));
 		assertTrue("Max", Double.isNaN(a.max().doubleValue()));
 		assertTrue("Max", !Double.isNaN(a.max(true).doubleValue()));
-		assertTrue("Max 0", equalsWithNaNs(AbstractDataset.array(new double[] {Double.NaN,9,10,11}), a.max(0)));
-		assertTrue("Max 1", equalsWithNaNs(AbstractDataset.array(new double[] {3,Double.NaN,11}), a.max(1)));
+		assertTrue("Max 0", equalsWithNaNs(DatasetFactory.createFromObject(new double[] {Double.NaN,9,10,11}), a.max(0)));
+		assertTrue("Max 1", equalsWithNaNs(DatasetFactory.createFromObject(new double[] {3,Double.NaN,11}), a.max(1)));
 		assertEquals("Max arg", 4, a.argMax());
-		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {1,2,2,2}), a.argMax(0));
-		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,0,3}), a.argMax(1));
+		assertEquals("Max arg 0 ", DatasetFactory.createFromObject(new int[] {1,2,2,2}), a.argMax(0));
+		assertEquals("Max arg 1 ", DatasetFactory.createFromObject(new int[] {3,0,3}), a.argMax(1));
 		assertEquals("Max", 11, a.max(true).doubleValue(), 1e-6);
-		assertEquals("Max 0", AbstractDataset.array(new double[] {8,9,10,11}), a.max(true,0));
-		assertEquals("Max 1", AbstractDataset.array(new double[] {3,7,11}), a.max(true,1));
+		assertEquals("Max 0", DatasetFactory.createFromObject(new double[] {8,9,10,11}), a.max(true,0));
+		assertEquals("Max 1", DatasetFactory.createFromObject(new double[] {3,7,11}), a.max(true,1));
 		assertEquals("Max arg", 11, a.argMax(true));
-		assertEquals("Max arg 0 ", AbstractDataset.array(new int[] {2,2,2,2}), a.argMax(true, 0));
-		assertEquals("Max arg 1 ", AbstractDataset.array(new int[] {3,3,3}), a.argMax(true, 1));
+		assertEquals("Max arg 0 ", DatasetFactory.createFromObject(new int[] {2,2,2,2}), a.argMax(true, 0));
+		assertEquals("Max arg 1 ", DatasetFactory.createFromObject(new int[] {3,3,3}), a.argMax(true, 1));
 
 		a.set(Double.NEGATIVE_INFINITY, 1, 1);
 		System.out.println(a.toString(true));
@@ -125,7 +125,7 @@ public class AbstractDatasetTest {
 		assertEquals("+Min", 1, a.positiveMin(true).doubleValue(), 1e-6);
 
 		// test other code path
-		AbstractDataset b = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset b = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		b.setShape(3,4);
 		b.mean(); // trigger summary stats calculation
 		assertEquals("Max", 11, b.max().doubleValue(), 1e-6);
@@ -139,9 +139,9 @@ public class AbstractDatasetTest {
 		assertEquals("Max arg", 11, b.argMax(true));
 
 		// check strided datasets give same max/min positions
-		a = AbstractDataset.arange(12, Dataset.FLOAT64).reshape(3,4);
+		a = DatasetFactory.createRange(12, Dataset.FLOAT64).reshape(3,4);
 		b = a.getSliceView(new Slice(1, null), new Slice(0, null, 2));
-		AbstractDataset c = a.getSlice(new Slice(1, null), new Slice(0, null, 2));
+		Dataset c = a.getSlice(new Slice(1, null), new Slice(0, null, 2));
 
 		Assert.assertEquals(c.argMax(), b.argMax());
 		Assert.assertEquals(c.argMin(), b.argMin());
@@ -150,7 +150,7 @@ public class AbstractDatasetTest {
 	@Test
 	public void testGetSpeed() {
 		final int ITERATIONS = 1000;
-		AbstractDataset a = AbstractDataset.arange(1000000, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(1000000, Dataset.FLOAT64);
 		long start, startN, startP;
 
 		start = -System.nanoTime();
@@ -214,9 +214,9 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testHash() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		a.setShape(3,4);
-		AbstractDataset b = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset b = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		b.setShape(3,4);
 
 		b.mean(); // trigger other code path
@@ -233,7 +233,7 @@ public class AbstractDatasetTest {
 		assertEquals("Hash code", a.hashCode(), b.hashCode());
 	}
 
-	private static boolean equalsWithNaNs(AbstractDataset a, AbstractDataset b) {
+	private static boolean equalsWithNaNs(Dataset a, Dataset b) {
 		if (a.equals(b))
 			return true;
 
@@ -259,7 +259,7 @@ public class AbstractDatasetTest {
 		long elapsed;
 		final int ITERATIONS = 200;
 
-		AbstractDataset a = AbstractDataset.arange(1000000, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(1000000, Dataset.FLOAT64);
 		for (int i = 0; i < 10; i++) {
 			a.set(1, 0);
 			start = -System.nanoTime();
@@ -277,7 +277,7 @@ public class AbstractDatasetTest {
 		}
 		System.out.printf("Max double calculation took %g ms\n", elapsed*1e-6/ITERATIONS);
 
-		a = AbstractDataset.arange(1000000, Dataset.INT16);
+		a = DatasetFactory.createRange(1000000, Dataset.INT16);
 		elapsed = 0;
 		for (int i = 0; i < ITERATIONS; i++) {
 			a.set(1, 0);
@@ -292,7 +292,7 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testSort() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		a.set(Double.NaN, 0);
 		a.setShape(3, 4);
 		a.sort(-1);
@@ -317,8 +317,8 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testTake() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
-		AbstractDataset t;
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
+		Dataset t;
 
 		t = a.take(new int[] {0, 2, 4}, null);
 		System.out.println(t);
@@ -357,7 +357,7 @@ public class AbstractDatasetTest {
 	 */
 	@Test
 	public void testSqueeze() {
-		AbstractDataset ds = AbstractDataset.arange(10, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.createRange(10, Dataset.FLOAT64);
 		ds.setShape(2,1,5);
 
 		ds.squeeze();
@@ -417,9 +417,9 @@ public class AbstractDatasetTest {
 	@Test
 	public void testTile() {
 		// 1D
-		AbstractDataset ds = AbstractDataset.arange(3, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.createRange(3, Dataset.FLOAT64);
 
-		AbstractDataset ta = DatasetUtils.tile(ds, 2);
+		Dataset ta = DatasetUtils.tile(ds, 2);
 		double[] xa = { 0., 1., 2., 0., 1., 2. };
 
 		assertEquals(1, ta.getShape().length);
@@ -428,7 +428,7 @@ public class AbstractDatasetTest {
 			assertEquals(xa[i], ((DoubleDataset) ta).getData()[i], 1e-6);
 		}
 
-		AbstractDataset tb = DatasetUtils.tile(ds, 1, 2);
+		Dataset tb = DatasetUtils.tile(ds, 1, 2);
 
 		assertEquals(2, tb.getShape().length);
 		assertEquals(1, tb.getShape()[0]);
@@ -437,7 +437,7 @@ public class AbstractDatasetTest {
 			assertEquals(xa[i], ((DoubleDataset) tb).getData()[i], 1e-6);
 		}
 
-		AbstractDataset tc = DatasetUtils.tile(ds, 2, 1);
+		Dataset tc = DatasetUtils.tile(ds, 2, 1);
 
 		assertEquals(2, tc.getShape().length);
 		assertEquals(2, tc.getShape()[0]);
@@ -447,9 +447,9 @@ public class AbstractDatasetTest {
 		}
 
 		// 2D
-		ds = AbstractDataset.arange(6, Dataset.FLOAT64);
+		ds = DatasetFactory.createRange(6, Dataset.FLOAT64);
 		ds.setShape(2,3);
-		AbstractDataset td = DatasetUtils.tile(ds, 2);
+		Dataset td = DatasetUtils.tile(ds, 2);
 		double[] xd = { 0., 1., 2., 0., 1., 2., 3., 4., 5., 3., 4., 5. };
 
 		assertEquals(2, td.getShape().length);
@@ -459,7 +459,7 @@ public class AbstractDatasetTest {
 			assertEquals(xd[i], ((DoubleDataset) td).getData()[i], 1e-6);
 		}
 
-		AbstractDataset te = DatasetUtils.tile(ds, 1, 2);
+		Dataset te = DatasetUtils.tile(ds, 1, 2);
 
 		assertEquals(2, te.getShape().length);
 		assertEquals(2, te.getShape()[0]);
@@ -468,7 +468,7 @@ public class AbstractDatasetTest {
 			assertEquals(xd[i], ((DoubleDataset) te).getData()[i], 1e-6);
 		}
 
-		AbstractDataset tf = DatasetUtils.tile(ds, 2, 1);
+		Dataset tf = DatasetUtils.tile(ds, 2, 1);
 		double[] xf = { 0., 1., 2., 3., 4., 5., 0., 1., 2., 3., 4., 5. };
 
 		assertEquals(2, tf.getShape().length);
@@ -495,7 +495,7 @@ public class AbstractDatasetTest {
 	}
 
 	private void runTile(final int srows, final int scols, final int rows, final int cols) throws Exception {
-		AbstractDataset a = AbstractDataset.arange(srows*scols, Dataset.FLOAT64).reshape(srows, scols);
+		Dataset a = DatasetFactory.createRange(srows*scols, Dataset.FLOAT64).reshape(srows, scols);
 
 		long start, end;
 
@@ -526,7 +526,7 @@ public class AbstractDatasetTest {
 		System.out.printf("array = %d ms, ", diff1);
 
 		start = System.currentTimeMillis();
-		final AbstractDataset tiled = DatasetUtils.tile(a, nrows, ncols);
+		final Dataset tiled = DatasetUtils.tile(a, nrows, ncols);
 		end = System.currentTimeMillis();
 		long diff2 = end - start;
 		System.out.printf("tile = %d ms\n", diff2);
@@ -547,10 +547,10 @@ public class AbstractDatasetTest {
 	@Test
 	public void testTranspose() {
 		// 2D
-		AbstractDataset ds = AbstractDataset.arange(6, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.createRange(6, Dataset.FLOAT64);
 		ds.setShape(2,3);
 
-		AbstractDataset ta = DatasetUtils.transpose(ds, 1, 0);
+		Dataset ta = DatasetUtils.transpose(ds, 1, 0);
 		double[][] xa = { { 0., 1., 2. }, { 3., 4., 5. } };
 
 		assertEquals(2, ta.getShape().length);
@@ -568,13 +568,13 @@ public class AbstractDatasetTest {
 		assertEquals(-2., ta.getDouble(2, 1), 1e-6);
 
 		// 3D
-		ds = AbstractDataset.arange(24, Dataset.FLOAT64);
+		ds = DatasetFactory.createRange(24, Dataset.FLOAT64);
 		ds.setShape(2, 3, 4);
 
 		double[][][] xb = { {{ 0., 1., 2., 3.}, {4., 5., 6., 7.}, {8., 9., 10., 11. }},
 				{{12., 13., 14., 15.}, {16., 17., 18., 19.}, {20., 21., 22., 23.}} };
 
-		AbstractDataset tb;
+		Dataset tb;
 
 		try {
 			tb = DatasetUtils.transpose(ds, 0);
@@ -646,7 +646,7 @@ public class AbstractDatasetTest {
 	@Test
 	public void testRepeat() {
 		// 2D
-		AbstractDataset ds = AbstractDataset.arange(6, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.createRange(6, Dataset.FLOAT64);
 		ds.setShape(2,3);
 
 		double[] xa = { 0., 0., 1., 1., 2., 2., 3., 3., 4., 4., 5., 5. };
@@ -740,7 +740,7 @@ public class AbstractDatasetTest {
 	@Test
 	public void testResize() {
 		int size = 6;
-		AbstractDataset ds = AbstractDataset.arange(size, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.createRange(size, Dataset.FLOAT64);
 		DoubleDataset tf;
 		IndexIterator it;
 
@@ -810,7 +810,7 @@ public class AbstractDatasetTest {
 		assertEquals(true, Double.isNaN(tb.max().doubleValue()));
 		assertEquals(false, Double.isInfinite(tb.max().doubleValue()));
 
-		AbstractDataset f = tb.cast(Dataset.FLOAT32);
+		Dataset f = tb.cast(Dataset.FLOAT32);
 		assertEquals(true, f.containsNans());
 		assertEquals(true, f.containsInfs());
 		assertEquals(true, Double.isNaN(f.min().doubleValue()));
@@ -825,8 +825,8 @@ public class AbstractDatasetTest {
 	
 	@Test
 	public void testView() {
-		AbstractDataset a = AbstractDataset.arange(20, Dataset.FLOAT64);
-		AbstractDataset b = a.getView();
+		Dataset a = DatasetFactory.createRange(20, Dataset.FLOAT64);
+		Dataset b = a.getView();
 		assertEquals(true, a.equals(b));
 	}
 
@@ -835,12 +835,12 @@ public class AbstractDatasetTest {
 	 */
 	@Test
 	public void testEquals() {
-		AbstractDataset a, b, c, d, e;
-		a = AbstractDataset.arange(20, Dataset.FLOAT64);
-		b = AbstractDataset.arange(20, Dataset.FLOAT64);
+		Dataset a, b, c, d, e;
+		a = DatasetFactory.createRange(20, Dataset.FLOAT64);
+		b = DatasetFactory.createRange(20, Dataset.FLOAT64);
 		c = a.clone();
 		d = Maths.add(a, 0.5);
-		e = AbstractDataset.arange(20, Dataset.FLOAT32);
+		e = DatasetFactory.createRange(20, Dataset.FLOAT32);
 
 		assertTrue(a.equals(b));
 		assertFalse(a == b);
@@ -848,7 +848,7 @@ public class AbstractDatasetTest {
 		assertFalse(a == c);
 		assertFalse(a.equals(d));
 		assertFalse(a.equals(e));
-		HashSet<AbstractDataset> set = new HashSet<AbstractDataset>();
+		HashSet<Dataset> set = new HashSet<Dataset>();
 		set.add(a);
 		assertTrue(set.contains(a));
 		assertTrue(set.contains(b));
@@ -870,7 +870,7 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testPrint() {
-		AbstractDataset a = AbstractDataset.arange(1000000, Dataset.INT32);
+		Dataset a = DatasetFactory.createRange(1000000, Dataset.INT32);
 
 		System.out.println(a);
 
@@ -880,7 +880,7 @@ public class AbstractDatasetTest {
 
 //		System.out.println(a.reshape(10, 10, 100, 100));
 
-		AbstractDataset b = AbstractDataset.arange(12, Dataset.INT32);
+		Dataset b = DatasetFactory.createRange(12, Dataset.INT32);
 
 		System.out.println(b);
 
@@ -891,8 +891,8 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testSlicing() {
-		AbstractDataset a = AbstractDataset.arange(1000, Dataset.INT32);
-		AbstractDataset s, t;
+		Dataset a = DatasetFactory.createRange(1000, Dataset.INT32);
+		Dataset s, t;
 		IndexIterator is, it;
 
 		s = a.getSlice(null, new int[] {10}, null);
@@ -1032,12 +1032,12 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testSlicingViews() {
-		AbstractDataset a, b, c;
-		a = AbstractDataset.arange(32, Dataset.FLOAT64).reshape(4, 8);
+		Dataset a, b, c;
+		a = DatasetFactory.createRange(32, Dataset.FLOAT64).reshape(4, 8);
 		checkSliceView(a, new int[] {0, 1}, new int[] {3, 5}, new int[] {1, 2});
 		checkSliceView(a, new int[] {1, -1}, new int[] {-1, 3}, new int[] {1, -2});
 
-		a = AbstractDataset.arange(60, Dataset.FLOAT64).reshape(6, 10);
+		a = DatasetFactory.createRange(60, Dataset.FLOAT64).reshape(6, 10);
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2}); // 6x4
 		c = b.getSliceView(new int[] {0, 1}, new int[] {1, 4}, null);
 		c.setShape(3);
@@ -1069,15 +1069,15 @@ public class AbstractDatasetTest {
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 2}, new int[] {1, 2}); // 6x1
 	}
 
-	private AbstractDataset checkSliceView(AbstractDataset a, int[] start, int[] stop, int[] step) {
-		AbstractDataset s = a.getSliceView(start, stop, step).squeeze();
-		AbstractDataset t = a.getSlice(start, stop, step).squeeze();
+	private Dataset checkSliceView(Dataset a, int[] start, int[] stop, int[] step) {
+		Dataset s = a.getSliceView(start, stop, step).squeeze();
+		Dataset t = a.getSlice(start, stop, step).squeeze();
 		assertArrayEquals(t.getShape(), s.getShape());
 		assertEquals(t.toString(true), t, s);
 		IndexIterator iter = s.getIterator(true);
 		int[] pos = iter.getPos();
 		while (iter.hasNext()) {
-			assertEquals(iter.index, s.get1DIndex(pos));
+			assertEquals(iter.index, ((AbstractDataset) s).get1DIndex(pos));
 			int[] p = s.getNDPosition(iter.index);
 			assertArrayEquals(Arrays.toString(pos) + " : " + Arrays.toString(p), pos, p);
 		}
@@ -1365,7 +1365,7 @@ public class AbstractDatasetTest {
 	public void test1DErrors() {
 		
 		// test 1D errors for single value
-		AbstractDataset a = AbstractDataset.arange(100, Dataset.INT32);
+		Dataset a = DatasetFactory.createRange(100, Dataset.INT32);
 		a.setError(5);
 		
 		assertEquals(5.0, a.getError(0), 0.001);
@@ -1375,7 +1375,7 @@ public class AbstractDatasetTest {
 		assertTrue(a.hasErrors());
 
 		// now for pulling out the full error array
-		AbstractDataset error = a.getError();
+		Dataset error = a.getError();
 		
 		// check compatibility
 		try {
@@ -1396,7 +1396,7 @@ public class AbstractDatasetTest {
 		assertEquals(10.0, a.getError(99), 0.001);
 		
 		// test pulling the error out again, to make sure its correct
-		AbstractDataset error2 = a.getError();
+		Dataset error2 = a.getError();
 		
 		// check compatibility
 		try {
@@ -1415,7 +1415,7 @@ public class AbstractDatasetTest {
 	public void test2DErrors() {
 		
 		// test 1D errors for single value
-		AbstractDataset a = AbstractDataset.zeros(new int[] {100,100}, Dataset.INT32);
+		Dataset a = DatasetFactory.zeros(new int[] {100,100}, Dataset.INT32);
 		a.setError(5);
 		
 		assertEquals(5.0, a.getError(0,0), 0.001);
@@ -1425,7 +1425,7 @@ public class AbstractDatasetTest {
 		assertTrue(a.hasErrors());
 
 		// now for pulling out the full error array
-		AbstractDataset error = a.getError();
+		Dataset error = a.getError();
 		
 		// check compatibility
 		try {
@@ -1446,7 +1446,7 @@ public class AbstractDatasetTest {
 		assertEquals(10.0, a.getError(99,99), 0.001);
 		
 		// test pulling the error out again, to make sure its correct
-		AbstractDataset error2 = a.getError();
+		Dataset error2 = a.getError();
 		
 		// check compatibility
 		try {
@@ -1463,8 +1463,8 @@ public class AbstractDatasetTest {
 	@Test
 	public void testSetErrorBuffer() {
 		
-		AbstractDataset a = AbstractDataset.zeros(new int[] {100,100}, Dataset.INT32);
-		AbstractDataset err = DatasetUtils.linSpace(0, a.getSize() - 1, a.getSize(), Dataset.FLOAT64);
+		Dataset a = DatasetFactory.zeros(new int[] {100,100}, Dataset.INT32);
+		Dataset err = DatasetUtils.linSpace(0, a.getSize() - 1, a.getSize(), Dataset.FLOAT64);
 		err.setShape(a.getShape());
 		
 		a.setErrorBuffer(null);
@@ -1479,7 +1479,7 @@ public class AbstractDatasetTest {
 		assertTrue(a.hasErrors());
 		
 		// now for pulling out the full error array and check compatibility
-		AbstractDataset error = a.getError();
+		Dataset error = a.getError();
 		try {
 			AbstractDataset.checkCompatibility(a, error);
 		} catch (Exception e) {
@@ -1523,20 +1523,20 @@ public class AbstractDatasetTest {
 	public void testInternalErrors() {
 		
 		// test 1D errors for single value
-		AbstractDataset a = AbstractDataset.arange(100, Dataset.INT32);
+		Dataset a = DatasetFactory.createRange(100, Dataset.INT32);
 		a.setError(5);
 		
 		// should be squared
-		Number ne = (Number) a.errorData;
+		Number ne = (Number) a.getErrorBuffer();
 		assertEquals(25.0, ne.doubleValue(), 0.001);
 		
 		// now for pulling out the full error array
-		AbstractDataset error = a.getError();
+		Dataset error = a.getError();
 	
 		a.setError(Maths.multiply(error, 2));
 		
 		// should also be squared
-		AbstractDataset ae = (AbstractDataset) a.errorData;
+		Dataset ae = (Dataset) a.getErrorBuffer();
 		assertEquals(100.0, ae.getDouble(0), 0.001);
 		assertEquals(100.0, ae.getDouble(50), 0.001);
 		assertEquals(100.0, ae.getDouble(99), 0.001);	
@@ -1544,7 +1544,7 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testZeroRankDatasets() {
-		AbstractDataset a;
+		Dataset a;
 		a = DoubleDataset.ones();
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
@@ -1557,17 +1557,17 @@ public class AbstractDatasetTest {
 		assertEquals("ArgMin", 0, a.argMin());
 		assertEquals("Value", true, a.equals(new Double(1.0)));
 
-		a = AbstractDataset.zeros(new int[] {}, Dataset.INT16);
+		a = DatasetFactory.zeros(new int[] {}, Dataset.INT16);
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", (short) 0, a.getObject());
 
-		a = AbstractDataset.array(new Complex(1.0, -0.5));
+		a = DatasetFactory.createFromObject(new Complex(1.0, -0.5));
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", new Complex(1.0, -0.5), a.getObject());
 
-		a = AbstractDataset.array(1.f);
+		a = DatasetFactory.createFromObject(1.f);
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", 1.f, a.getObject());
@@ -1575,45 +1575,45 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testConcatenate() {
-		AbstractDataset a, b, c, d;
-		a = AbstractDataset.arange(6, Dataset.FLOAT64);
-		b = AbstractDataset.arange(6, 8, 1, Dataset.FLOAT64);
+		Dataset a, b, c, d;
+		a = DatasetFactory.createRange(6, Dataset.FLOAT64);
+		b = DatasetFactory.createRange(6, 8, 1, Dataset.FLOAT64);
 		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
-		d = AbstractDataset.arange(8, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(8, Dataset.FLOAT64);
 		assertEquals("Rank", 1, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 
-		a = AbstractDataset.arange(6, Dataset.FLOAT64).reshape(3,2);
-		b = AbstractDataset.arange(6, 8, 1, Dataset.FLOAT64).reshape(1,2);
+		a = DatasetFactory.createRange(6, Dataset.FLOAT64).reshape(3,2);
+		b = DatasetFactory.createRange(6, 8, 1, Dataset.FLOAT64).reshape(1,2);
 		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
-		d = AbstractDataset.arange(8, Dataset.FLOAT64).reshape(4,2);
+		d = DatasetFactory.createRange(8, Dataset.FLOAT64).reshape(4,2);
 		assertEquals("Rank", 2, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 
 		a.setShape(2,3);
-		b = AbstractDataset.arange(6, 9, 1, Dataset.FLOAT64).reshape(1,3);
+		b = DatasetFactory.createRange(6, 9, 1, Dataset.FLOAT64).reshape(1,3);
 		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
-		d = AbstractDataset.arange(9, Dataset.FLOAT64).reshape(3,3);
+		d = DatasetFactory.createRange(9, Dataset.FLOAT64).reshape(3,3);
 		assertEquals("Rank", 2, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 
-		a = AbstractDataset.arange(2, Dataset.FLOAT64).reshape(1,2);
-		b = AbstractDataset.arange(3, 5, 1, Dataset.FLOAT64).reshape(1,2);
+		a = DatasetFactory.createRange(2, Dataset.FLOAT64).reshape(1,2);
+		b = DatasetFactory.createRange(3, 5, 1, Dataset.FLOAT64).reshape(1,2);
 		a = DatasetUtils.concatenate(new IDataset[] {a, b}, 0);
-		b = AbstractDataset.arange(2, 6, 3, Dataset.FLOAT64).reshape(2,1);
+		b = DatasetFactory.createRange(2, 6, 3, Dataset.FLOAT64).reshape(2,1);
 		c = DatasetUtils.concatenate(new IDataset[] {a, b}, 1);
-		d = AbstractDataset.arange(6, Dataset.FLOAT64).reshape(2,3);
+		d = DatasetFactory.createRange(6, Dataset.FLOAT64).reshape(2,3);
 		assertEquals("Rank", 2, c.getRank());
 		assertTrue("Dataset", c.equals(d));
 	}
 
 	@Test
 	public void testSum() {
-		AbstractDataset a = AbstractDataset.arange(1024*1024, Dataset.INT32);
+		Dataset a = DatasetFactory.createRange(1024*1024, Dataset.INT32);
 
 		assertEquals("Typed sum", -524288, a.typedSum(Dataset.INT32));
 
-		a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		a.setShape(3,4);
 		assertEquals("Sum", 11*6, ((Number) a.sum()).doubleValue(), 1e-6);
 		a.set(Double.NaN, 0,0);
@@ -1623,34 +1623,34 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testMakeFinite() {
-		AbstractDataset a = AbstractDataset.array(new double[] {0, Double.POSITIVE_INFINITY, Double.NaN, Double.NEGATIVE_INFINITY });
+		Dataset a = DatasetFactory.createFromObject(new double[] {0, Double.POSITIVE_INFINITY, Double.NaN, Double.NEGATIVE_INFINITY });
 		DatasetUtils.makeFinite(a);
 
-		assertTrue("Make finite", AbstractDataset.array(new double[] {0, Double.MAX_VALUE, 0, -Double.MAX_VALUE}).equals(a));
+		assertTrue("Make finite", DatasetFactory.createFromObject(new double[] {0, Double.MAX_VALUE, 0, -Double.MAX_VALUE}).equals(a));
 	}
 
 	@Test
 	public void testCast() {
 		long[] udata = new long[] {0, 1, 127, 128, 255, 256, 32767, 32768, 65535, 65536, 2147483647L, 2147483648L, 4294967295L, 4294967296L};
-		AbstractDataset d = new LongDataset(udata);
-		AbstractDataset a, c;
+		Dataset d = new LongDataset(udata);
+		Dataset a, c;
 		c = DatasetUtils.cast(d, Dataset.INT32);
 		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue()); // check stored values
-		a = AbstractDataset.array(c, true);
+		a = DatasetFactory.createFromObject(c, true);
 		assertEquals("", 0, a.getLong(13));
 		for (int i = 0; i < 13; i++)
 			assertEquals("", udata[i], a.getLong(i));
 
 		c = DatasetUtils.cast(d, Dataset.INT16);
 		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue());
-		a = AbstractDataset.array(c, true);
+		a = DatasetFactory.createFromObject(c, true);
 		assertEquals("", 0, a.getLong(9));
 		for (int i = 0; i < 9; i++)
 			assertEquals("", udata[i], a.getLong(i));
 
 		c = DatasetUtils.cast(d, Dataset.INT8);
 		Assert.assertTrue(c.max().doubleValue() < d.max().doubleValue());
-		a = AbstractDataset.array(c, true);
+		a = DatasetFactory.createFromObject(c, true);
 		assertEquals("", 0, a.getLong(5));
 		for (int i = 0; i < 5; i++)
 			assertEquals("", udata[i], a.getLong(i));
@@ -1658,9 +1658,9 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testRoll() {
-		AbstractDataset a = AbstractDataset.arange(10, Dataset.INT32);
+		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
 
-		AbstractDataset r = DatasetUtils.roll(a, 2, null);
+		Dataset r = DatasetUtils.roll(a, 2, null);
 
 		TestUtils.assertDatasetEquals(r, Maths.add(a, 10-2).iremainder(10), 1e-6, 1e-6);
 
@@ -1680,7 +1680,7 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testRollAxis() {
-		AbstractDataset a = AbstractDataset.ones(new int[] {3, 4, 5, 6}, Dataset.INT8);
+		Dataset a = DatasetFactory.ones(new int[] {3, 4, 5, 6}, Dataset.INT8);
 		Assert.assertArrayEquals(new int[] {3, 6, 4, 5}, DatasetUtils.rollAxis(a, 3, 1).getShape());
 		Assert.assertArrayEquals(new int[] {5, 3, 4, 6}, DatasetUtils.rollAxis(a, 2, 0).getShape());
 		Assert.assertArrayEquals(new int[] {3, 5, 6, 4}, DatasetUtils.rollAxis(a, 1, 4).getShape());
@@ -1689,9 +1689,9 @@ public class AbstractDatasetTest {
 	@Test
 	public void testAppend() {
 		double[] x = { 0., 1., 2., 3., 4., 5. };
-		AbstractDataset d1 = DoubleDataset.arange(3.);
-		AbstractDataset d2 = DoubleDataset.arange(3., 6., 1.);
-		AbstractDataset d3 = DatasetUtils.append(d1, d2, 0);
+		Dataset d1 = DoubleDataset.arange(3.);
+		Dataset d2 = DoubleDataset.arange(3., 6., 1.);
+		Dataset d3 = DatasetUtils.append(d1, d2, 0);
 
 		for (int i = 0; i < x.length; i++) {
 			assertEquals("Append 1", x[i], d3.getDouble(i), 1e-8);
@@ -1700,7 +1700,7 @@ public class AbstractDatasetTest {
 		d1.setShape(1, 3);
 		d2.setShape(1, 3);
 		d3 = DatasetUtils.append(d1, d2, 0);
-		AbstractDataset d4 = new DoubleDataset(x);
+		Dataset d4 = new DoubleDataset(x);
 
 		d4.setShape(2, 3);
 		for (int i = 0; i < 2; i++) {
@@ -1758,11 +1758,11 @@ public class AbstractDatasetTest {
 		}
 	}
 
-	public static void checkDatasets(AbstractDataset expected, AbstractDataset calc, double relTol, double absTol) {
+	public static void checkDatasets(Dataset expected, Dataset calc, double relTol, double absTol) {
 		checkDatasets(expected, calc, false, relTol, absTol);
 	}
 
-	public static void checkDatasets(AbstractDataset expected, AbstractDataset calc, boolean valuesOnly, double relTol, double absTol) {
+	public static void checkDatasets(Dataset expected, Dataset calc, boolean valuesOnly, double relTol, double absTol) {
 		int type = expected.getDtype();
 		if (!valuesOnly) {
 			Assert.assertEquals("Type", type, calc.getDtype());
@@ -1828,16 +1828,16 @@ public class AbstractDatasetTest {
 		DoubleDataset a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });
 		DoubleDataset b = new DoubleDataset(new double[] { 0.01, 1.2, 2.9, 5, -7.1, -9 });
 
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		BooleanDataset d = new BooleanDataset(new boolean[] {false, true, false, false, true, false}, 2, 3);
 
 		DoubleDataset e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d}, new Object[] {c}, -2);
 		checkDatasets(e, new DoubleDataset(new double[] {-2, 1, -2, -2, -7, -2}, 2, 3));
 
-		AbstractDataset f = b.clone().reshape(2, 3);
+		Dataset f = b.clone().reshape(2, 3);
 		BooleanDataset g = new BooleanDataset(new boolean[] {false, true, true, false, false, false}, 2, 3);
 
-		e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d, g}, new AbstractDataset[] {c, f}, -2.5);
+		e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d, g}, new Dataset[] {c, f}, -2.5);
 
 		checkDatasets(e, new DoubleDataset(new double[] {-2.5, 1, 2.9, -2.5, -7, -2.5}, 2, 3));
 	}
@@ -1847,7 +1847,7 @@ public class AbstractDatasetTest {
 		DoubleDataset a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });
 		DoubleDataset b = new DoubleDataset(new double[] { 0.01, 1.2, 2.9, 5, -7.1, -9 });
 
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		IntegerDataset d = new IntegerDataset(new int[] {0, 0, 1, 1, 0, 1}, 2, 3);
 
 		DoubleDataset e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, true, false);
@@ -1866,7 +1866,7 @@ public class AbstractDatasetTest {
 		e = (DoubleDataset) DatasetUtils.choose(d, new Object[] {c, -2}, false, true);
 		checkDatasets(e, new DoubleDataset(new double[] {0, 1, -2, -2, -7, -2}, 2, 3));
 
-		AbstractDataset f = b.clone().reshape(2, 3);
+		Dataset f = b.clone().reshape(2, 3);
 		IntegerDataset g = new IntegerDataset(new int[] {1, 0, 1, 1, 2, 2}, 2, 3);
 
 		e = (DoubleDataset) DatasetUtils.choose(g, new Object[] {c, f, -2}, true, false);
@@ -1943,39 +1943,39 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testFill() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 
-		AbstractDataset b = AbstractDataset.zeros(a);
+		Dataset b = DatasetFactory.zeros(a);
 		a.fill(b);
 		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(a, Dataset.INT16);
+		b = DatasetFactory.zeros(a, Dataset.INT16);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(a, Dataset.COMPLEX64);
+		b = DatasetFactory.zeros(a, Dataset.COMPLEX64);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
+		b = DatasetFactory.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 
-		a = AbstractDataset.arange(12, Dataset.COMPLEX128);
+		a = DatasetFactory.createRange(12, Dataset.COMPLEX128);
 
-		b = AbstractDataset.zeros(a);
+		b = DatasetFactory.zeros(a);
 		a.fill(b);
 		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(a, Dataset.INT16);
+		b = DatasetFactory.zeros(a, Dataset.INT16);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(a, Dataset.COMPLEX64);
+		b = DatasetFactory.zeros(a, Dataset.COMPLEX64);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 
-		b = AbstractDataset.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
+		b = DatasetFactory.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
 		a.fill(b);
 		checkDatasets(a, b, true, 1e-15, 1e-20);
 	}

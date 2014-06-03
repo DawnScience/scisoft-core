@@ -84,14 +84,14 @@ public class MathsTest {
 				double tol = Math.max(abserr, Math.abs(av*RELERR));
 				if (Math.abs(av - bv) > tol) {
 					if (a != null) {
-						if (a instanceof AbstractDataset)
-							System.err.printf("A was %s ", ((AbstractDataset) a).getString(ci.getPos()));
+						if (a instanceof Dataset)
+							System.err.printf("A was %s ", ((Dataset) a).getString(ci.getPos()));
 						else
 							System.err.printf("A was %s ", a);
 					}
 					if (b != null) {
-						if (b instanceof AbstractDataset)
-							System.err.printf("B was %s ", ((AbstractDataset) b).getString(ci.getPos()));
+						if (b instanceof Dataset)
+							System.err.printf("B was %s ", ((Dataset) b).getString(ci.getPos()));
 						else
 							System.err.printf("B was %s ", b);
 					}
@@ -108,14 +108,14 @@ public class MathsTest {
 					double tol = Math.max(abserr, Math.abs(av*RELERR));
 					if (Math.abs(av - bv) > tol) {
 						if (a != null) {
-							if (a instanceof AbstractDataset)
-								System.err.printf("A was %s ", ((AbstractDataset) a).getString(ci.getPos()));
+							if (a instanceof Dataset)
+								System.err.printf("A was %s ", ((Dataset) a).getString(ci.getPos()));
 							else
 								System.err.printf("A was %s ", a);
 						}
 						if (b != null) {
-							if (b instanceof AbstractDataset)
-								System.err.printf("B was %s ", ((AbstractDataset) b).getString(ci.getPos()));
+							if (b instanceof Dataset)
+								System.err.printf("B was %s ", ((Dataset) b).getString(ci.getPos()));
 							else
 								System.err.printf("B was %s ", b);
 						}

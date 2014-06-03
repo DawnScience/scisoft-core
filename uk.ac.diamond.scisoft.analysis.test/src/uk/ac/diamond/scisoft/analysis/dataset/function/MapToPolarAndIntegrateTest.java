@@ -135,8 +135,8 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		List<AbstractDataset> dsets = mp.value(d);
 
 		double answer = 140.*140./2. - Math.PI*(50.*50.)/8. - 100.;
-		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
-		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc);
+		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc*10);
+		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc*10);
 	}
 
 	/**

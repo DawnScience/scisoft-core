@@ -37,6 +37,7 @@ _loaders = _io.loaders
 _oformats = _io.output_formats
 _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
+_fallback_loader = _io.fallback_loader
 
 from dictutils import DataHolder as _DataHolder, ListDict as _ListDict
 
@@ -118,6 +119,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         loaders = _loaders
     else:
         loaders = [ _iformats[f] for f in lformats ]
+        loaders.add(_fallback_loader)
 
     if loaders:
         for l in loaders:

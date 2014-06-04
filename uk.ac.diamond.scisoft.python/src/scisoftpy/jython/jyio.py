@@ -117,13 +117,13 @@ def loadnexus(name):
 from jyhdf5io import HDF5Loader
 from jynxio import NXLoader
 
-class JavaLoader(object):
+class BareJavaLoader(object):
     def load(self, warn=True):
         # capture all error messages
         oldErr = _system.err
         _system.setErr(_pstream(_NoOutputStream()))
         try:
-            jdh = self.loadFile()
+            jdh = self._loadFile()
         finally:
             _system.setErr(oldErr)
 
@@ -152,6 +152,13 @@ class JavaLoader(object):
 
     def setloadmetadata(self, load_metadata):
         self.load_metadata = load_metadata
+        self._setLoadMetadata(load_metadata)
+
+class JavaLoader(BareJavaLoader):
+    def _loadFile(self):
+        return self.loadFile()
+
+    def _setLoadMetadata(self, load_metadata):
         self.setLoadMetadata(load_metadata)
 
 class SRSLoader(JavaLoader, _srsload):
@@ -282,8 +289,9 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "edf": PilatusEdfLoader,
                "text": TextLoader
                }
+fallback_loader = None
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader ]
+loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader, fallback_loader ]
 
 class _Metadata(_jmetadata):
     def __init__(self, metadata):

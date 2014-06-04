@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,9 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	int[] shape;
 
 	public BicubicInterpolator(int[] newShape) {
+		if (newShape == null || newShape.length != 2) {
+			throw new IllegalArgumentException("Shape must be 2D");
+		}
 		shape = newShape;
 	}
 
@@ -61,7 +64,7 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	}
 
 	/**
-	 * initialy nicked from "http://www.paulinternet.nl/?page=bicubic"
+	 * initially nicked from "http://www.paulinternet.nl/?page=bicubic"
 	 * 
 	 * Interpolates the value of a point in a two dimensional surface using bicubic interpolation.
 	 * The value is calculated using the position of the point and the values of the 16 surrounding points.
@@ -86,54 +89,62 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 		a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 	}
 
-	protected double[][] generateSurroundingPoints(int x, int y, IDataset ds) {
+	protected double[][] generateSurroundingPoints(int x, int y, final IDataset ds, final int[] dShape) {
 
 		double[][] result = new double[4][4];
 
+		x--; // start to left
+		y--; // and below
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++)  {
-				result[i][j] = getPoint(x+(i-1),y+(j-1),ds);
+				result[i][j] = getPoint(x+i,y+j,ds, dShape);
 			}
 		}
 
-		return result;		
+		return result;
 	}
 
-	private double getPoint(int i, int j, IDataset ds) {
+	private double getPoint(int i, int j, final IDataset ds, final int[] dShape) {
 		// first check the bounds
-		if(i < 0) i = 0;
-		if(j < 0) j = 0;
-		if(i >= ds.getShape()[0]) i = ds.getShape()[0]-1;
-		if(j >= ds.getShape()[1]) j = ds.getShape()[1]-1;
+		if (i < 0)
+			i = 0;
+		if (j < 0)
+			j = 0;
+		if (i >= dShape[0])
+			i = dShape[0] - 1;
+		if (j >= dShape[1])
+			j = dShape[1] - 1;
 
-		return ds.getDouble(i,j);
+		return ds.getDouble(i, j);
 	}
 
 	@Override
 	public List<AbstractDataset> value(IDataset... datasets) {
 
-
 		//TODO should first check for correct shape.
 		ArrayList<AbstractDataset> result = new ArrayList<AbstractDataset>();
 
 		for (IDataset ds : datasets) {
-
+			final int[] dShape = ds.getShape();
+			if (dShape == null || dShape.length != 2) {
+				throw new IllegalArgumentException("Shape must be 2D");
+			}
 			// first create the dataset which we will put the data into
 			DoubleDataset dds = new DoubleDataset(shape);		
 
 			// calculate the new step size
-			double dx = (ds.getShape()[0]-1.0)/(shape[0]-1.0);
-			double dy = (ds.getShape()[1]-1.0)/(shape[1]-1.0);
-
-			for(int i = 0; i < ds.getShape()[0]-1; i++) {
-				for(int j = 0; j < ds.getShape()[1]-1; j++) {
-
-					// at this point we can make the precalculation to save time
-					calculateParameters(generateSurroundingPoints(i, j, ds));
+			double dx = (dShape[0]-1.0)/(shape[0]-1.0);
+			double dy = (dShape[1]-1.0)/(shape[1]-1.0);
+			double xscale = 1./dx;
+			double yscale = 1./dy;
 
 
-					double xscale = ((shape[0]-1.0)/(ds.getShape()[0]-1.0));
-					double yscale = ((shape[1]-1.0)/(ds.getShape()[1]-1.0));
+			for(int i = 0; i < dShape[0]-1; i++) {
+				for(int j = 0; j < dShape[1]-1; j++) {
+
+					// at this point we can make the pre-calculation to save time
+					calculateParameters(generateSurroundingPoints(i, j, ds, dShape));
+
 
 					int xstart = (int) (i*xscale);
 					int xend   = (int) ((i+1)*xscale);
@@ -151,8 +162,7 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 							xpos -= i;
 							ypos -= j;
 
-							dds.setItem( bicubicInterpolate(xpos,ypos), x, y);
-
+							dds.setItem(bicubicInterpolate(xpos,ypos), x, y);
 						}
 					}					
 				}
@@ -163,5 +173,4 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 
 		return result;
 	}
-
 }

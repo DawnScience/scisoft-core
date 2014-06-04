@@ -97,7 +97,7 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 		y--; // and below
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++)  {
-				result[i][j] = getPoint(x+i,y+j,ds, dShape);
+				result[i][j] = getPoint(x + i, y + j, ds, dShape);
 			}
 		}
 
@@ -133,8 +133,8 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 			DoubleDataset dds = new DoubleDataset(shape);		
 
 			// calculate the new step size
-			double dx = (dShape[0]-1.0)/(shape[0]-1.0);
-			double dy = (dShape[1]-1.0)/(shape[1]-1.0);
+			double dx = (dShape[0] - 1.0) / (shape[0] - 1.0);
+			double dy = (dShape[1] - 1.0) / (shape[1] - 1.0);
 			double xscale = 1./dx;
 			double yscale = 1./dy;
 

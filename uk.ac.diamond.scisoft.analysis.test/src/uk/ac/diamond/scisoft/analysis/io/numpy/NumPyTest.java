@@ -180,7 +180,7 @@ public class NumPyTest {
 		AbstractDataset ds = createDataset();
 		if (unsigned)
 			ds = AbstractDataset.array(ds, unsigned);
-		Assert.assertEquals(ds, loadedFile);
+		Assert.assertEquals(toString(), ds, loadedFile);
 	}
 
 	// This test writes an abstract data set with NumPyFileSaver and runs a short python script
@@ -193,7 +193,7 @@ public class NumPyTest {
 
 		String script = createNumPyArray(" act=numpy.load(r'" + loc.toString() + "');" + PYTHON_NUMPY_PRINT_MATCHES);
 		String pythonStdout = PythonHelper.runPythonScript(script, false);
-		Assert.assertTrue(Boolean.parseBoolean(pythonStdout.trim()));
+		Assert.assertTrue(toString(), Boolean.parseBoolean(pythonStdout.trim()));
 	}
 
 	// Test we can load what we just saved
@@ -207,7 +207,7 @@ public class NumPyTest {
 
 		if (unsigned)
 			exp = AbstractDataset.array(exp, unsigned);
-		Assert.assertEquals(exp, act);
+		Assert.assertEquals(toString(), exp, act);
 	}
 
 }

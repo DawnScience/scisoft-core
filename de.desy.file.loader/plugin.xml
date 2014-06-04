@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="uk.ac.diamond.scisoft.analysis.io.loader">
+      <loader
+            class="de.desy.file.loader.FioLoader"
+            file_extension="fio"
+            high_priority="true">
+      </loader>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.dawb.workbench.ui.editors.AsciiEditor"
+            default="true"
+            extensions="fio"
+            id="org.dawb.workbench.editors.AsciiEditor"
+            name="Ascii Data Editor">
+      </editor>
+   </extension>
+
+</plugin>

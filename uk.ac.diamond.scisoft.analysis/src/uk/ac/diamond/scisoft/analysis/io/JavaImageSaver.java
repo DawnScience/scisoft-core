@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,11 +25,9 @@ import java.text.NumberFormat;
 import javax.imageio.ImageIO;
 import javax.media.jai.TiledImage;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AWTImageUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.DatasetsIterator;
 
 /**
  * Class that saves data from DataHolder using native Java ImageIO library

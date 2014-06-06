@@ -159,7 +159,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		//q
 		npsi.setAxisType(XAxis.Q);
 		out = npsi.integrate(data);
-		Assert.assertEquals(10.39797863552991, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(10.39780997, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{1,5});
 		out = npsi.integrate(data);
 		Assert.assertEquals(5, out.get(0).getDouble(1591),0.00001);
@@ -176,7 +176,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		//pixel
 		npsi.setAxisType(XAxis.PIXEL);
 		out = npsi.integrate(data);
-		Assert.assertEquals(1591.1188954992163, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(1591.15895395, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{100,300});
 		out = npsi.integrate(data);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
@@ -197,10 +197,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(431741.6495398773, max,0.00001);
+		Assert.assertEquals(430662.6784073507, max,0.00001);
 		Assert.assertEquals(132.55555555555554, min,0.00001);
-		Assert.assertEquals(10.39797863552991, maxq,0.00001);
-		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+		Assert.assertEquals(10.397809970643454, maxq,0.00001);
+		Assert.assertEquals(0.004974794335012836, minq,0.00001);
 		
 		return after-before;
 	}
@@ -218,10 +218,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(402551.9459459459, max,0.00001);
+		Assert.assertEquals(397629.0263157895, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
-		Assert.assertEquals(10.39797863552991, maxq,0.00001);
-		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+		Assert.assertEquals(10.397809970643454, maxq,0.00001);
+		Assert.assertEquals(0.00497479433501283, minq,0.00001);
 		return after-before;
 	}
 	
@@ -238,8 +238,8 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(405072.0, max,0.00001);
-		Assert.assertEquals(824.5, min,0.00001);
+		Assert.assertEquals(416848.1666666667, max,0.00001);
+		Assert.assertEquals(817.5357142857143, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
 		return after-before;
@@ -259,10 +259,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(4299.590659340659, max,0.00001);
-		Assert.assertEquals(1937.2238955823293, min,0.00001);
-		Assert.assertEquals(179.84418431665182, maxq,0.00001);
-		Assert.assertEquals(-179.88153396074563, minq,0.00001);
+		Assert.assertEquals(4299.553645116919, max,0.00001);
+		Assert.assertEquals(1968.1277073968124, min,0.00001);
+		Assert.assertEquals(179.86866885973967, maxq,0.00001);
+		Assert.assertEquals(-179.85706986148784, minq,0.00001);
 		
 		return after-before;
 	}
@@ -281,10 +281,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5665.809641532756, max,0.00001);
-		Assert.assertEquals(3693.9962962962964, min,0.00001);
-		Assert.assertEquals(179.84418431665182, maxq,0.00001);
-		Assert.assertEquals(-179.88153396074563, minq,0.00001);
+		Assert.assertEquals(5674.178841309824, max,0.00001);
+		Assert.assertEquals(3527.4343558282208, min,0.00001);
+		Assert.assertEquals(179.86866885973967, maxq,0.00001);
+		Assert.assertEquals(-179.85706986148784, minq,0.00001);
 		
 		return after-before;
 	}
@@ -303,7 +303,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(38043.04761904762, max,0.00001);
+		Assert.assertEquals(39283.875, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
@@ -325,10 +325,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(441337.6015625, max,0.00001);
+		Assert.assertEquals(442581.4365079365, max,0.00001);
 		Assert.assertEquals(367.64285714285717, min,0.00001);
-		Assert.assertEquals(9.448855451971152, maxq,0.00001);
-		Assert.assertEquals(1.5283458922106619, minq,0.00001);
+		Assert.assertEquals(9.448531654925183, maxq,0.00001);
+		Assert.assertEquals(1.5284575228229946, minq,0.00001);
 		
 		return after-before;
 	}
@@ -350,10 +350,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(340835.51531100477, max,0.00001);
+		Assert.assertEquals(343570.1180154143, max,0.00001);
 		Assert.assertEquals(146.45, min,0.00001);
-		Assert.assertEquals(10.396045040209174, maxq,0.00001);
-		Assert.assertEquals(0.006837381901435333, minq,0.00001);
+		Assert.assertEquals(10.395876419912979, maxq,0.00001);
+		Assert.assertEquals(0.006908345065488825, minq,0.00001);
 		
 		return after-before;
 	}

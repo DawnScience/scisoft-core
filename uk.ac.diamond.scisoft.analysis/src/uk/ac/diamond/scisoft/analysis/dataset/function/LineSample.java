@@ -25,6 +25,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 /**
  * Sample along line and return list of one 1D dataset
+ * 
+ * When mapping from image to data, the array value is assumed to be
+ * associated with the centre of the pixel, i.e. pixel co-od - 0.5 = data co-ord.
+ * 
+ * This half pixel offset is handled in this class so does not need to be accounted for else where.
  *
  */
 public class LineSample implements DatasetToDatasetFunction {
@@ -44,10 +49,10 @@ public class LineSample implements DatasetToDatasetFunction {
 	 * @param step 
 	 */
 	public LineSample(double sx, double sy, double ex, double ey, double step) {
-		this.sx = sx;
-		this.sy = sy;
-		this.ex = ex;
-		this.ey = ey;
+		this.sx = sx - 0.5;
+		this.sy = sy - 0.5;
+		this.ex = ex - 0.5;
+		this.ey = ey - 0.5;
 		this.step = step;
 		rad = Math.hypot(ex - sx, ey - sy);
 		double phi = Math.atan2(ey - sy, ex - sx);

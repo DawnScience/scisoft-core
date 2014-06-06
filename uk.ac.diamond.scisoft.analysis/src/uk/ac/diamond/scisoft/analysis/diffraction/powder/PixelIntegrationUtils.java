@@ -148,15 +148,15 @@ public class PixelIntegrationUtils {
 			//clashes with much of the rest of DAWN
 			
 			if (xAxis != XAxis.PIXEL) {
-				vals[0] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]-0.5).length();
-				vals[1] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]-0.5).length();
-				vals[2] = qSpace.qFromPixelPosition(pos[1]-0.5, pos[0]+0.5).length();
-				vals[3] = qSpace.qFromPixelPosition(pos[1]+0.5, pos[0]+0.5).length();
+				vals[0] = qSpace.qFromPixelPosition(pos[1], pos[0]).length();
+				vals[1] = qSpace.qFromPixelPosition(pos[1]+1, pos[0]).length();
+				vals[2] = qSpace.qFromPixelPosition(pos[1], pos[0]+1).length();
+				vals[3] = qSpace.qFromPixelPosition(pos[1]+1, pos[0]+1).length();
 			} else {
-				vals[0] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
-				vals[1] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]-0.5-beamCentre[1]);
-				vals[2] = Math.hypot(pos[1]-0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
-				vals[3] = Math.hypot(pos[1]+0.5-beamCentre[0], pos[0]+0.5-beamCentre[1]);
+				vals[0] = Math.hypot(pos[1]-beamCentre[0], pos[0]-beamCentre[1]);
+				vals[1] = Math.hypot(pos[1]+1-beamCentre[0], pos[0]-beamCentre[1]);
+				vals[2] = Math.hypot(pos[1]-beamCentre[0], pos[0]+1-beamCentre[1]);
+				vals[3] = Math.hypot(pos[1]+1-beamCentre[0], pos[0]+1-beamCentre[1]);
 			}
 			
 			Arrays.sort(vals);
@@ -201,7 +201,7 @@ public class PixelIntegrationUtils {
 			double value = 0;
 			//FIXME or not fix me, but I would expect centre to be +0.5, but this
 			//clashes with much of the rest of DAWN
-			q = qSpace.qFromPixelPosition(pos[1], pos[0]);
+			q = qSpace.qFromPixelPosition(pos[1]+0.5,pos[0]+0.5);
 			
 			switch (xAxis) {
 			case ANGLE:

@@ -117,7 +117,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		//q
 		npsi.setAxisType(XAxis.Q);
 		out = npsi.integrate(data);
-		Assert.assertEquals(10.39797863552991, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(10.39780997, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{1,5});
 		out = npsi.integrate(data);
 		Assert.assertEquals(5, out.get(0).getDouble(1591),0.00001);
@@ -134,7 +134,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		//pixel
 		npsi.setAxisType(XAxis.PIXEL);
 		out = npsi.integrate(data);
-		Assert.assertEquals(1591.1188954992163, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(1591.1589539, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{100,300});
 		out = npsi.integrate(data);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
@@ -158,11 +158,11 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		double mina = out.get(2).min().doubleValue();
 		
 		Assert.assertEquals(681098.0, max,0.00001);
-		Assert.assertEquals(-29738.400390625, min,0.00001);
-		Assert.assertEquals(10.39797863552991, maxq,0.00001);
-		Assert.assertEquals(0.004903786580700596, minq,0.00001);
-		Assert.assertEquals(179.84418431665182, maxa,0.00001);
-		Assert.assertEquals(-179.88153396074563, mina,0.00001);
+		Assert.assertEquals(-29608.19921875, min,0.00001);
+		Assert.assertEquals(10.397809970643454, maxq,0.00001);
+		Assert.assertEquals(0.004974794335012836, minq,0.00001);
+		Assert.assertEquals(179.868668859739672, maxa,0.00001);
+		Assert.assertEquals(-179.85706986148784, mina,0.00001);
 		
 		return after-before;
 	}
@@ -185,8 +185,8 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		
 		Assert.assertEquals(463957.0, max,0.00001);
 		Assert.assertEquals(-17620.0, min,0.00001);
-		Assert.assertEquals(10.39797863552991, maxq,0.00001);
-		Assert.assertEquals(0.004903786580700596, minq,0.00001);
+		Assert.assertEquals(10.397809970643454, maxq,0.00001);
+		Assert.assertEquals(0.004974794335012836, minq,0.00001);
 		Assert.assertEquals(-170, maxa,0.00001);
 		Assert.assertEquals(-180, mina,0.00001);
 		
@@ -235,11 +235,11 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		double mina = out.get(2).min().doubleValue();
 		
 		Assert.assertEquals(630334.25, max,0.00001);
-		Assert.assertEquals(-7683.9443359375, min,0.00001);
-		Assert.assertEquals(10.39797863552991, maxq,0.00001);
-		Assert.assertEquals(0.004903786580700596, minq,0.00001);
-		Assert.assertEquals(179.45730142947588, maxa,0.00001);
-		Assert.assertEquals(-179.49465107356968, mina,0.00001);
+		Assert.assertEquals(-7693.72216796875, min,0.00001);
+		Assert.assertEquals(10.397809970643454, maxq,0.00001);
+		Assert.assertEquals(0.004974794335012836, minq,0.00001);
+		Assert.assertEquals(179.4817859505765, maxa,0.00001);
+		Assert.assertEquals(-179.47018695232472, mina,0.00001);
 		return after-before;
 	}
 	
@@ -260,10 +260,10 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(625602.3125, max,0.00001);
-		Assert.assertEquals(-6840.4501953125, min,0.00001);
-		Assert.assertEquals(10.396045040209174, maxq,0.00001);
-		Assert.assertEquals(0.006837381901435333, minq,0.00001);
+		Assert.assertEquals(637507.0, max,0.00001);
+		Assert.assertEquals(-6135.95458984375, min,0.00001);
+		Assert.assertEquals(10.395876419912979, maxq,0.00001);
+		Assert.assertEquals(0.006908345065488825, minq,0.00001);
 		
 		return after-before;
 	}

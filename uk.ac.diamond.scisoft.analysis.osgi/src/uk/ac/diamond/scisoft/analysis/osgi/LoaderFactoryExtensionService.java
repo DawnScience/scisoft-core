@@ -9,11 +9,10 @@ import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
-public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService{
+public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactoryExtensionService.class);
-	
-	
+
 	@Override
 	public void registerExtensionPoints() {
 		try {
@@ -38,16 +37,16 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 			final String[] exts = i.getAttribute("file_extension").split(",");
         	final String high = i.getAttribute("high_priority");
             final boolean isHigh = "true".equals(high);
+			Class<? extends AbstractFileLoader> clazz = loader.getClass();
 			for (String ext : exts) {
 				if (isHigh) {
-					LoaderFactory.registerLoader(ext.trim(), loader.getClass(), 0);
+					LoaderFactory.registerLoader(ext.trim(), clazz, 0);
 				} else {
-					LoaderFactory.registerLoader(ext.trim(), loader.getClass());
+					LoaderFactory.registerLoader(ext.trim(), clazz);
 				}
 			}
 		} catch (Throwable ne) {
 			logger.error("Cannot add loader "+i.getAttribute("class"), ne);
 		}
 	}
-
 }

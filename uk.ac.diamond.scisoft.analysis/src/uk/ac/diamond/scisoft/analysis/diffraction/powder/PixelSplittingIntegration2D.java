@@ -97,7 +97,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 //			posStop[1] = pos[1]+2;
 //			AbstractDataset qrange = a.getSlice(pos, posStop, null);
 //			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
-
+			if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
 			final double qMax = radialArray[1].getElementDoubleAbs(iter.index);
 			final double qMin = radialArray[0].getElementDoubleAbs(iter.index);
 			final double chiMax = azimuthalArray[1].getElementDoubleAbs(iter.index);

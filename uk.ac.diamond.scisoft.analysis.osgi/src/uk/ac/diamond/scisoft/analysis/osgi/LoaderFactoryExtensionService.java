@@ -1,5 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.osgi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
@@ -12,6 +15,10 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactoryExtensionService.class);
+
+	private static final List<String> plugins = new ArrayList<String>();
+
+	private static final List<String> extensions = new ArrayList<String>();
 
 	@Override
 	public void registerExtensionPoints() {
@@ -39,14 +46,31 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
             final boolean isHigh = "true".equals(high);
 			Class<? extends AbstractFileLoader> clazz = loader.getClass();
 			for (String ext : exts) {
+				String e = ext.trim();
 				if (isHigh) {
-					LoaderFactory.registerLoader(ext.trim(), clazz, 0);
+					LoaderFactory.registerLoader(e, clazz, 0);
 				} else {
-					LoaderFactory.registerLoader(ext.trim(), clazz);
+					LoaderFactory.registerLoader(e, clazz);
 				}
+				String f = String.format("%s:%s:%d", e, clazz.getCanonicalName(), isHigh ? 0 : 1);
+				if (!extensions.contains(f))
+					extensions.add(f);
 			}
+			final String name = i.getContributor().getName();
+			if (!plugins.contains(name))
+				plugins.add(name);
 		} catch (Throwable ne) {
 			logger.error("Cannot add loader "+i.getAttribute("class"), ne);
 		}
+	}
+
+	@Override
+	public List<String> getPlugins() {
+		return plugins;
+	}
+
+	@Override
+	public List<String> getExtensions() {
+		return extensions;
 	}
 }

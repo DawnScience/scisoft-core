@@ -16,9 +16,23 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.List;
+
 public interface ILoaderFactoryExtensionService {
 	/**
 	 * Loads external loaders into the factory.
 	 */
 	public void registerExtensionPoints();
+
+	/**
+	 * 
+	 * @return list of plugins that contributed loaders
+	 */
+	public List<String> getPlugins();
+
+	/**
+	 * 
+	 * @return list of extension strings that contributed loaders
+	 */
+	public List<String> getExtensions();
 }

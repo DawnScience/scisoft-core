@@ -121,6 +121,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         loaders = [ _iformats[f] for f in lformats ]
         loaders.insert(0, _fallback_loader)
 
+    errors = []
     if loaders:
         for l in loaders:
             if not l:
@@ -136,13 +137,17 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                 break
             except _ioexception, e:
                 if warn:
-                    print "Warning: ", e
+                    errors.append("Could not load using " + ldr.__name__)
+                    errors.extend(str(e).splitlines())
             except:
                 if warn:
                     import sys
-                    print >> sys.stderr, "Unexpected exception raised: ", sys.exc_info()
-
+                    errors.append("Unexpected exception raised in " + ldr.__name__)
+                    errors.extend(str(sys.exc_info()).splitlines())
     if lfh is None:
+        if warn and errors:
+            for l in errors:
+                print "Warning: ", l
         raise IOError, 'Cannot load file'
 
     return lfh

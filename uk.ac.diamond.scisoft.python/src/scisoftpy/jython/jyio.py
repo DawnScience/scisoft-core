@@ -291,7 +291,7 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                }
 fallback_loader = None
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader, fallback_loader ]
+loaders = [ fallback_loader, ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader ]
 
 class _Metadata(_jmetadata):
     def __init__(self, metadata):

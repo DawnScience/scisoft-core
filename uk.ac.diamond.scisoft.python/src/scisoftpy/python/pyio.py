@@ -619,9 +619,10 @@ class LoaderFactoryDelegate(PythonLoader):
         if self.load_metadata:
             meta = jdh.getMetadata()
             if meta:
-                mnames = meta.metaNames
+                mnames = meta.getMetaNames()
                 if mnames:
-                    metadata = [ (k, meta.getMetaValue(k)) for k in mnames ]
+                    mnames = java.java.util.ArrayList(mnames) # make it iterable
+                    metadata = [ (k, meta.getMetaValue(k)) for k in mnames if k is not None ]
 
         return DataHolder(zip(basenames, data), metadata, warn)
 
@@ -660,7 +661,7 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                }
 fallback_loader = LoaderFactoryDelegate
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PGMLoader, TextLoader, fallback_loader ]
+loaders = [ fallback_loader, PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PGMLoader, TextLoader ]
 
 output_formats = { "png": _pngsave, "gif": _imgsave, "jpeg": _jpegsave, "tiff": _tiffsave, "text": _rawtxtsave,
               "binary": _rawbinsave, "npy": NumPySaver }

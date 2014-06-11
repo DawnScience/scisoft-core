@@ -65,6 +65,8 @@ from uk.ac.diamond.scisoft.analysis.io import NumPyFileSaver as _numpysave
 from uk.ac.diamond.scisoft.analysis.io import RAxisImageLoader as _raxisload
 from uk.ac.diamond.scisoft.analysis.io import PgmLoader as _pgmload
 
+from uk.ac.diamond.scisoft.analysis.io import LoaderFactory as _loader_factory
+
 from uk.ac.diamond.scisoft.analysis.io import ScanFileHolderException as io_exception
 
 from uk.ac.diamond.scisoft.analysis.io import DataHolder as _jdataholder
@@ -270,6 +272,31 @@ class PGMLoader(JavaLoader, _pgmload):
         _pgmload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
+class LoaderFactoryDelegate(BareJavaLoader):
+    def __init__(self, *arg):
+        self.name = arg[0]
+        self.load_metadata = True
+
+    def _loadFile(self):
+        return _loader_factory.getData(self.name, self.load_metadata, None)
+
+    def _setLoadMetadata(self, load_metadata):
+        pass
+
+# register extra loaders as workaround for Jython not being OSGI
+import os as _os
+_lfe = _os.environ["LOADER_FACTORY_EXTENSIONS"]
+if _lfe:
+    _extensions = _lfe.split("|")
+    import java.lang.Class as _Class
+    for e in _extensions:
+        if e:
+            bits = e.split(":")
+            if bits[2] == "0":
+                _loader_factory.registerLoader(bits[0], _Class.forName(bits[1]), 0)
+            else:
+                _loader_factory.registerLoader(bits[0], _Class.forName(bits[1]))
+
 input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "jpeg": JPEGLoader,
                "tiff": TIFFLoader,
@@ -289,7 +316,7 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "edf": PilatusEdfLoader,
                "text": TextLoader
                }
-fallback_loader = None
+fallback_loader = LoaderFactoryDelegate
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
 loaders = [ fallback_loader, ImageLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PilatusEdfLoader, PGMLoader, HDF5Loader ]
 

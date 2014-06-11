@@ -137,12 +137,12 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                 break
             except _ioexception, e:
                 if warn:
-                    errors.append("Could not load using " + ldr.__name__)
+                    errors.append("Could not load using " + l.__name__)
                     errors.extend(str(e).splitlines())
             except:
                 if warn:
                     import sys
-                    errors.append("Unexpected exception raised in " + ldr.__name__)
+                    errors.append("Unexpected exception raised in " + l.__name__)
                     errors.extend(str(sys.exc_info()).splitlines())
     if lfh is None:
         if warn and errors:

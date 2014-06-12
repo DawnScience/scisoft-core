@@ -285,7 +285,7 @@ class LoaderFactoryDelegate(BareJavaLoader):
 
 # register extra loaders as workaround for Jython not being OSGI
 import os as _os
-_lfe = _os.environ["LOADER_FACTORY_EXTENSIONS"]
+_lfe = _os.environ.get("LOADER_FACTORY_EXTENSIONS")
 if _lfe:
     _extensions = _lfe.split("|")
     import java.lang.Class as _Class

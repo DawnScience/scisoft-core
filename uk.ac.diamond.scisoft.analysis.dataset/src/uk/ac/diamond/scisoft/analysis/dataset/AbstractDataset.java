@@ -3941,7 +3941,7 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	/**
-	 * Set item from compatible dataset in a direct and speedy way
+	 * Set item from compatible dataset in a direct and speedy way. Remember to setDirty afterwards.
 	 * 
 	 * @param dindex
 	 * @param sindex

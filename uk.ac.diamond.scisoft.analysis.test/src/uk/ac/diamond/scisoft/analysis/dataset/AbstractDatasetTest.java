@@ -2047,4 +2047,35 @@ public class AbstractDatasetTest {
 		indexes = DatasetUtils.calcIndexesFromPositions(list, shape, 2);
 		checkDatasets(indexes, new IntegerDataset(new int[] {33*2 + 1, 10, 70, 171}, 2, 2));
 	}
+
+	@Test
+	public void testSetByBoolean() {
+		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
+		a.max();
+		a.setByBoolean(0, Comparisons.greaterThan(a, 5));
+		Assert.assertEquals(a.max().longValue(), 5);
+	}
+
+	@Test
+	public void testSetByIndex() {
+		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
+		a.max();
+		a.setByIndex(0, Comparisons.nonZero(Comparisons.greaterThan(a, 5)).get(0));
+		Assert.assertEquals(a.max().longValue(), 5);
+	}
+
+	@Test
+	public void testSetByPosition() {
+		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
+		a.max();
+		List<IntegerDataset> list = Comparisons.nonZero(Comparisons.greaterThan(a, 5));
+		a.setByIndexes(0, list.get(0));
+		Assert.assertEquals(a.max().longValue(), 5);
+
+		a = DatasetFactory.createRange(10, Dataset.INT32).reshape(2, 5);
+		a.max();
+		list = Comparisons.nonZero(Comparisons.greaterThan(a, 5));
+		a.setByIndexes(0, list.get(0), list.get(1));
+		Assert.assertEquals(a.max().longValue(), 5);
+	}
 }

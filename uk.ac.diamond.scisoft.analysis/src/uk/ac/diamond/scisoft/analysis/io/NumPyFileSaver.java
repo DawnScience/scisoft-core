@@ -93,9 +93,6 @@ public class NumPyFileSaver implements IFileSaver {
 			int dtype = sdata.getDtype();
 			DataTypeInfo dataTypeInfo;
 			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(dtype) : NumPyFile.numPyTypeMap.get(dtype);
-			if (unsigned) {
-				dataTypeInfo = NumPyFile.unsignedNumPyTypeMap.get(dtype);
-			}
 			if (dataTypeInfo == null) { // ignore unsigned flag if not found
 				dataTypeInfo = NumPyFile.numPyTypeMap.get(dtype);
 			}

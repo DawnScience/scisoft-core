@@ -16,10 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
@@ -64,17 +64,19 @@ public class NumPyFile {
 	/*package*/ static Map<Integer, DataTypeInfo> numPyTypeMap = new HashMap<Integer, DataTypeInfo>();
 	/*package*/ static Map<Integer, DataTypeInfo> unsignedNumPyTypeMap = new HashMap<Integer, DataTypeInfo>();
 	static {
-		Set<DataTypeInfo> infos = new HashSet<DataTypeInfo>();
+		List<DataTypeInfo> infos = new ArrayList<DataTypeInfo>();
+		// order is important here - unsigned must precede the signed types so the latter overwrite
+		// them in the maps
 		infos.add(DataTypeInfo.create().setNumPyType("|b1").setDType(Dataset.BOOL).setISize(1));
-		infos.add(DataTypeInfo.create().setNumPyType("|i1").setDType(Dataset.INT8).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("|u1").setDType(Dataset.INT8).setISize(1).setUnsigned(true));
-		infos.add(DataTypeInfo.create().setNumPyType("<i2").setDType(Dataset.INT16).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("|i1").setDType(Dataset.INT8).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<u2").setDType(Dataset.INT16).setISize(1).setUnsigned(true));
-		infos.add(DataTypeInfo.create().setNumPyType("<i4").setDType(Dataset.INT32).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("<i2").setDType(Dataset.INT16).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<u4").setDType(Dataset.INT32).setISize(1).setUnsigned(true));
-		infos.add(DataTypeInfo.create().setNumPyType("<i8").setDType(Dataset.INT64).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("<i4").setDType(Dataset.INT32).setISize(1));
 		// Unsigned 64 bits cannot be unwrapped so do not set its unsignedness
 		infos.add(DataTypeInfo.create().setNumPyType("<u8").setDType(Dataset.INT64).setISize(1));
+		infos.add(DataTypeInfo.create().setNumPyType("<i8").setDType(Dataset.INT64).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f4").setDType(Dataset.FLOAT32).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<f8").setDType(Dataset.FLOAT64).setISize(1));
 		infos.add(DataTypeInfo.create().setNumPyType("<c8").setDType(Dataset.COMPLEX64).setISize(2));

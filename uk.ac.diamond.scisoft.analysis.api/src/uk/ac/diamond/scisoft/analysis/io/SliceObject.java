@@ -33,6 +33,8 @@ public class SliceObject implements Cloneable, Serializable {
     private int[]  sliceStep;
     private int    x=-1;
     private int    y=-1;
+    private int    xSize=-1;
+    private int    ySize=-1;
     private boolean isRange;
     
     /**
@@ -80,10 +82,12 @@ public class SliceObject implements Cloneable, Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((axes == null) ? 0 : axes.hashCode());
+		result = prime * result + ((axisNames == null) ? 0 : axisNames.hashCode());
+		result = prime * result + ((dimensionalData == null) ? 0 : dimensionalData.hashCode());
+		result = prime * result + ((expressionAxes == null) ? 0 : expressionAxes.hashCode());
 		result = prime * result + Arrays.hashCode(fullShape);
 		result = prime * result + (isRange ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((axisNames == null) ? 0 : axisNames.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		result = prime * result + ((shapeMessage == null) ? 0 : shapeMessage.hashCode());
 		result = prime * result + Arrays.hashCode(sliceStart);
@@ -91,7 +95,9 @@ public class SliceObject implements Cloneable, Serializable {
 		result = prime * result + Arrays.hashCode(sliceStop);
 		result = prime * result + Arrays.hashCode(slicedShape);
 		result = prime * result + x;
+		result = prime * result + xSize;
 		result = prime * result + y;
+		result = prime * result + ySize;
 		return result;
 	}
 	@Override
@@ -108,6 +114,21 @@ public class SliceObject implements Cloneable, Serializable {
 				return false;
 		} else if (!axes.equals(other.axes))
 			return false;
+		if (axisNames == null) {
+			if (other.axisNames != null)
+				return false;
+		} else if (!axisNames.equals(other.axisNames))
+			return false;
+		if (dimensionalData == null) {
+			if (other.dimensionalData != null)
+				return false;
+		} else if (!dimensionalData.equals(other.dimensionalData))
+			return false;
+		if (expressionAxes == null) {
+			if (other.expressionAxes != null)
+				return false;
+		} else if (!expressionAxes.equals(other.expressionAxes))
+			return false;
 		if (!Arrays.equals(fullShape, other.fullShape))
 			return false;
 		if (isRange != other.isRange)
@@ -116,11 +137,6 @@ public class SliceObject implements Cloneable, Serializable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (axisNames == null) {
-			if (other.axisNames != null)
-				return false;
-		} else if (!axisNames.equals(other.axisNames))
 			return false;
 		if (path == null) {
 			if (other.path != null)
@@ -142,7 +158,11 @@ public class SliceObject implements Cloneable, Serializable {
 			return false;
 		if (x != other.x)
 			return false;
+		if (xSize != other.xSize)
+			return false;
 		if (y != other.y)
+			return false;
+		if (ySize != other.ySize)
 			return false;
 		return true;
 	}
@@ -273,6 +293,22 @@ public class SliceObject implements Cloneable, Serializable {
 
 	public void setDimensionalData(Serializable dimensionalData) {
 		this.dimensionalData = dimensionalData;
+	}
+
+	public int getxSize() {
+		return xSize;
+	}
+
+	public void setxSize(int xSize) {
+		this.xSize = xSize;
+	}
+
+	public int getySize() {
+		return ySize;
+	}
+
+	public void setySize(int ySize) {
+		this.ySize = ySize;
 	}
   
 }

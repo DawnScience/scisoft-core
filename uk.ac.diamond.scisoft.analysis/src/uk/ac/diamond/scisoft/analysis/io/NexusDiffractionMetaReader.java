@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.vecmath.Matrix3d;
+import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
+import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
@@ -43,6 +46,8 @@ public class NexusDiffractionMetaReader {
 	public static final String CAMERA_LENGTH = "camera length";
 	public static final String ENERGY_NAME = "energy";
 	public static final String WAVELENGTH = "wavelength";
+	public static final String IN_ENERGY_NAME = "incident_energy";
+	public static final String IN_WAVELENGTH = "incident_wavelength";
 	public static final String UNITS = "units";
 	public static final String BEAM_CENTER_X = "beam_center_x";
 	public static final String BEAM_CENTER_Y = "beam_center_y";
@@ -119,7 +124,14 @@ public class NexusDiffractionMetaReader {
 //			if (rootGroup.getMemberList().size() > 1)
 //				logger.warn("More than one root node in file, metadata may be incorrect");
 
+			Group nxBeam = getNXGroup(rootGroup, "NXbeam");
+			if (nxBeam != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergyFromBeam(nxBeam,diffcrys));
+			
 			List<Group> nxInstruments = getNXGroups(rootGroup, NX_INSTRUMENT);
+			
+//			if (isFromPowderCalibration(rootGroup)) {
+//				return getMetaFromPowderCalibrationFile(rootGroup,hiFile);
+//			}
 
 			Group nxDetector = null;
 			Group nxInstrument = null;
@@ -133,7 +145,8 @@ public class NexusDiffractionMetaReader {
 				}
 			}
 			
-			if (nxInstrument != null) {
+			//if no beam look in mono
+			if (nxInstrument != null && !successMap.get(DiffractionMetaValue.ENERGY)) {
 				Group nxMono = getNXGroup(nxInstrument, NX_MONOCHROMATOR);
 				if (nxMono != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(nxMono,diffcrys));
 			}
@@ -142,7 +155,7 @@ public class NexusDiffractionMetaReader {
 			if (nxDetector == null) {
 				nxDetector= findNXDetectorByName(rootGroup, "SectorIntegration");
 			}
-			
+
 			
 			//if no detectors with pixel in search the entire nxInstrument group
 			if (nxDetector == null) {
@@ -201,8 +214,7 @@ public class NexusDiffractionMetaReader {
 			   successMap.get(DiffractionMetaValue.DISTANCE) &&
 			   successMap.get(DiffractionMetaValue.ENERGY) &&
 			   successMap.get(DiffractionMetaValue.PIXEL_NUMBER) &&
-			   successMap.get(DiffractionMetaValue.PIXEL_SIZE) &&
-			   successMap.get(DiffractionMetaValue.BEAM_VECTOR);
+			   successMap.get(DiffractionMetaValue.PIXEL_SIZE);
 	}
 	
 	public boolean isDetectorRead() {
@@ -223,7 +235,9 @@ public class NexusDiffractionMetaReader {
 		// detector from image size
 		List<Group> nxDetectors = findNXDetectors(nxInstrument, DATA_NAME);
 
-		if (nxDetectors.size() == 1 || imageSize == null) {
+		if (nxDetectors == null || nxDetectors.isEmpty()) return null;
+		
+		if (imageSize == null) {
 			//only one nxdetector or we dont know the image size
 			//so just use the first one
 			return nxDetectors.get(0);
@@ -293,7 +307,29 @@ public class NexusDiffractionMetaReader {
 	
 	private boolean updateEnergy(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
 		H5ScalarDS dataset = getDataset(nexusGroup, ENERGY_NAME);
-		if (dataset == null) getDataset(nexusGroup, WAVELENGTH);
+		if (dataset == null) dataset = getDataset(nexusGroup, WAVELENGTH);
+		if (dataset == null) return false;
+		
+		try {
+			AbstractDataset ds = getSet(dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			if (units.equals("keV")) {
+				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
+				return true;
+				}
+			if (units.contains("Angstrom")) {
+				diffcrys.setWavelength(ds.getDouble(0));
+				return true;
+				}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean updateEnergyFromBeam(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
+		H5ScalarDS dataset = getDataset(nexusGroup, IN_ENERGY_NAME);
+		if (dataset == null) dataset = getDataset(nexusGroup, IN_WAVELENGTH);
 		if (dataset == null) return false;
 		
 		try {
@@ -583,8 +619,8 @@ public class NexusDiffractionMetaReader {
 					String attrNexusObject = NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS);
 					if (attrNexusObject != null && attrNexusObject.toLowerCase().equals(groupText.toLowerCase())) {
 						for (Object ob: ((Group)nexusObject).getMemberList()) {
-							if(ob instanceof H5ScalarDS) {
-								if (((H5ScalarDS)ob).getName().toLowerCase().contains((childText.toLowerCase()))) {
+							if(ob instanceof HObject) {
+								if (((HObject)ob).getName().toLowerCase().contains((childText.toLowerCase()))) {
 									return true;
 								}
 							}
@@ -632,15 +668,16 @@ public class NexusDiffractionMetaReader {
 	
 	private DetectorProperties getInitialDetectorProperties() {
 		//Try to return harmless but not physical values
-		Matrix3d identityMatrix = new Matrix3d();
-		identityMatrix.setIdentity();
-		return new DetectorProperties(new Vector3d(1,1,1), 1,
-				1, 1, 1, identityMatrix);
+		return DetectorProperties.getDefaultDetectorProperties(1000,1000);
 	}
 	
 	private DiffractionCrystalEnvironment getInitialCrystalEnvironment() {
 		//Try to return harmless but not physical values
 		return new DiffractionCrystalEnvironment(1, 0, 0, 1);
+	}
+	
+	private String getString(final Dataset set) throws Exception {
+			return ((String[])set.getData())[0];
 	}
 	
 	private AbstractDataset getSet(final Dataset set) throws Exception {
@@ -695,5 +732,178 @@ public class NexusDiffractionMetaReader {
 	
 	public String getFilePath() {
 		return filePath;
+	}
+	
+	private boolean isFromPowderCalibration(Group group) {
+		
+		String method = "calibration_method";
+		String author = "author";
+		String dawn = "DAWNScience";
+		
+		List<Group> nxDets = findNXDetectors(group, method);
+		if (nxDets == null || nxDets.isEmpty()) return false;
+		Group nxD = nxDets.get(0);
+		
+		HObject ob = getFromGroupByName(nxD, method);
+		if (ob == null || !(ob instanceof Group)) return false;
+		ob = getFromGroupByName((Group)ob, author);
+		if (ob == null) return false;
+		
+		try {
+			return getString((Dataset)ob).equals(dawn);
+		} catch (Exception e) {
+			return false;
+		}
+		
+	}
+	
+	private IDiffractionMetadata getMetaFromPowderCalibrationFile(Group group, IHierarchicalDataFile file) throws Exception {
+		String method = "calibration_method";
+		String xs = "x_pixel_size";
+		String ys = "y_pixel_size";
+		String data = "data";
+		String depends_on = "depends_on";
+		String sample = "calibration_sample";
+		String beam = "beam";
+		String incident = "incident_wavelength";
+		
+		List<Group> nxDets = findNXDetectors(group, method);
+		if (nxDets == null || nxDets.isEmpty()) return null;
+		Group detector = nxDets.get(0);
+		
+		Group parent = detector.getParent().getParent();
+		HObject ob = getFromGroupByName(parent, sample);
+		ob = getFromGroupByName((Group)ob, beam);
+		ob = getFromGroupByName((Group)ob, incident);
+		AbstractDataset wave = getSet((Dataset)ob);
+		
+		ob = getFromGroupByName(detector, xs);
+		AbstractDataset xsd = getSet((Dataset)ob);
+		ob = getFromGroupByName(detector, ys);
+		AbstractDataset ysd = getSet((Dataset)ob);
+		
+		ob = getFromGroupByName(detector, data);
+		AbstractDataset cal = getSet((Dataset)ob);
+		int[] shape = cal.getShape();
+		
+		ob = getFromGroupByName(detector, depends_on);
+		String transPath = getString((Dataset)ob);
+		
+		Matrix4d trans = walkTransformationPath(transPath,file);
+		
+		Vector3d origin = new Vector3d();
+		Matrix3d orientation = new Matrix3d();
+		trans.get(orientation, origin);
+		
+		DetectorProperties detProp = new DetectorProperties(origin, shape[1], shape[0], xsd.getDouble(0), ysd.getDouble(0), orientation);
+		DiffractionCrystalEnvironment dc = new DiffractionCrystalEnvironment(wave.getDouble(0));
+		
+		successMap.put(DiffractionMetaValue.BEAM_CENTRE, true);
+		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, true);
+		successMap.put(DiffractionMetaValue.DISTANCE, true);
+		successMap.put(DiffractionMetaValue.ENERGY, true);
+		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, true);
+		successMap.put(DiffractionMetaValue.PIXEL_SIZE, true);
+		successMap.put(DiffractionMetaValue.BEAM_VECTOR, true);
+		
+		return new DiffractionMetadata(file.getPath(), detProp, dc);
+	}
+	
+	private Matrix4d walkTransformationPath(String path, IHierarchicalDataFile file) throws Exception {
+		
+		Stack<Dataset> stack = new Stack<Dataset>();
+		
+		Dataset ds = (Dataset)file.getData(path);
+		stack.add(ds);
+		
+		String next = NexusUtils.getNexusGroupAttributeValue(ds, "depends_on");
+		
+		while (!next.equals(".")) {
+			ds = (Dataset)file.getData(next);
+			stack.add(ds);
+			next = NexusUtils.getNexusGroupAttributeValue(ds, "depends_on");
+		}
+		
+		Matrix4d trans = new Matrix4d();
+		trans.setIdentity();
+		
+		consumeStack(trans, stack);
+		
+		return trans;
+	}
+	
+	private void consumeStack(Matrix4d matrix, Stack<Dataset> stack) throws Exception {
+		if (stack.isEmpty()) return;
+		Dataset ds = stack.pop();
+		processTransformation(matrix, ds);
+		consumeStack(matrix, stack);
+	}
+	
+	private void processTransformation(Matrix4d matrix, Dataset ds) throws Exception {
+		
+		String type = NexusUtils.getNexusGroupAttributeValue(ds, "transformation_type");
+		
+		switch (type) {
+		case "rotation":
+			rotate(matrix, ds);
+			break;
+
+		case "translation":
+			translate(matrix, ds);
+			break;
+		}
+		
+	}
+	
+	private void rotate(Matrix4d matrix, Dataset ds) throws Exception {
+		Vector3d v = getVectorAttribute(ds);
+		AbstractDataset value = getSet(ds);
+		//vecmaths active tranform, nexus passive so multiply by -1
+		double val = value.getDouble(0);
+		Matrix4d rot = new Matrix4d();
+		rot.setIdentity();
+		
+		if (v.x == 1) {
+			rot.rotX(Math.toRadians(val));
+		} else if (v.y == 1) {
+			rot.rotY(Math.toRadians(val));
+		} else if (v.z == 1) {
+			rot.rotZ(Math.toRadians(val));
+		}
+		
+		matrix.mul(rot);
+	}
+	
+	private void translate(Matrix4d matrix, Dataset ds) throws Exception {
+		Vector3d v = getVectorAttribute(ds);
+		AbstractDataset value = getSet(ds);
+		//vecmaths active tranform, nexus passive so multiply by -1
+		double val = value.getDouble(0);
+		Matrix4d trans = new Matrix4d();
+		trans.setIdentity();
+		v.scale(val);
+		trans.setTranslation(v);
+		matrix.mul(trans);
+	}
+	
+	private Vector3d getVectorAttribute(Dataset ds) throws Exception {
+		for (Object ob : ds.getMetadata()) {
+			if (ob instanceof Attribute) {
+				if (((Attribute)ob).getName().equals("vector")) {
+					return new Vector3d((double[])((Attribute)ob).getValue());
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	private HObject getFromGroupByName(Group group, String name) {
+		
+		for (HObject ob : group.getMemberList()) {
+			if (ob.getName().equals(name)) return ob;
+		}
+		return null;
+		
 	}
 }

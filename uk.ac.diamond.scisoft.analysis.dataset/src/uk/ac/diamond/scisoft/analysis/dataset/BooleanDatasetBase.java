@@ -595,6 +595,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 				data[biter.index] = dv;
 			}
 		}
+		setDirty();
 		return this;
 	}
 
@@ -621,6 +622,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 				data[iter.index] = dv;
 			}
 		}
+		setDirty();
 		return this;
 	}
 
@@ -648,6 +650,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 				setItem(dv, pos);
 			}
 		}
+		setDirty();
 		return this;
 	}
 

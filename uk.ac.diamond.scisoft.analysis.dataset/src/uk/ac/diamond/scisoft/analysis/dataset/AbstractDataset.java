@@ -2714,82 +2714,8 @@ public abstract class AbstractDataset implements Dataset {
 		return this;
 	}
 
-	/**
-	 * In-place sort of dataset
-	 * 
-	 * @param axis
-	 *            to sort along
-	 * @return sorted dataset
-	 */
 	@Override
-	public AbstractDataset sort(Integer axis) {
-		int dtype = getDtype();
-		if (dtype == BOOL || dtype == COMPLEX64 || dtype == COMPLEX128 || getElementsPerItem() != 1) {
-			throw new UnsupportedOperationException("Cannot sort dataset");
-		}
-		if (axis == null) {
-			switch (dtype) {
-			case INT8:
-				Arrays.sort((byte[]) odata);
-				break;
-			case INT16:
-				Arrays.sort((short[]) odata);
-				break;
-			case INT32:
-				Arrays.sort((int[]) odata);
-				break;
-			case INT64:
-				Arrays.sort((long[]) odata);
-				break;
-			case FLOAT32:
-				Arrays.sort((float[]) odata);
-				break;
-			case FLOAT64:
-				Arrays.sort((double[]) odata);
-				break;
-			case STRING:
-				Arrays.sort((String[]) odata);
-				break;
-			}
-		} else {
-			axis = checkAxis(axis);
-
-			Dataset ads = DatasetFactory.zeros(new int[] { shape[axis] }, dtype);
-			Serializable adata = ads.getBuffer();
-
-			PositionIterator pi = getPositionIterator(axis);
-			int[] pos = pi.getPos();
-			boolean[] hit = pi.getOmit();
-			while (pi.hasNext()) {
-				copyItemsFromAxes(pos, hit, ads);
-				switch (dtype) {
-				case INT8:
-					Arrays.sort((byte[]) adata);
-					break;
-				case INT16:
-					Arrays.sort((short[]) adata);
-					break;
-				case INT32:
-					Arrays.sort((int[]) adata);
-					break;
-				case INT64:
-					Arrays.sort((long[]) adata);
-					break;
-				case FLOAT32:
-					Arrays.sort((float[]) adata);
-					break;
-				case FLOAT64:
-					Arrays.sort((double[]) adata);
-					break;
-				case STRING:
-					Arrays.sort((String[]) adata);
-					break;
-				}
-				setItemsOnAxes(pos, hit, ads.getBuffer());
-			}
-		}
-		return this;
-	}
+	abstract public AbstractDataset sort(Integer axis);
 
 	@Override
 	public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step) {

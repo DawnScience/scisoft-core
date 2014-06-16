@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
@@ -568,7 +568,7 @@ public class SDAPlotter {
 	 * @param sizes
 	 * @throws Exception
 	 */
-	public static void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, int[] sizes)
+	public static void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, int[] sizes)
 			throws Exception {
 		IntegerDataset[] pSizes = new IntegerDataset[sizes.length];
 		for (int i = 0; i < sizes.length; i++) {
@@ -601,7 +601,7 @@ public class SDAPlotter {
 	 * @param sizes
 	 * @throws Exception
 	 */
-	public static void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes)
+	public static void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes)
 			throws Exception {
 		getPlotterImpl().scatter2DPlot(plotName, coordPairs, sizes);
 	}

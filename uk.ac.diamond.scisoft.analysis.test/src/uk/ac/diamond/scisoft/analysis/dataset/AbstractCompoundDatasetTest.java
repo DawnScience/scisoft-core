@@ -265,7 +265,7 @@ public class AbstractCompoundDatasetTest {
 	@Test
 	public void testSum() {
 		Dataset d = Random.randint(0, 255, new int[] {5,2});
-		AbstractCompoundDataset dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
+		CompoundDataset dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
 		Dataset dd = DatasetUtils.createDatasetFromCompoundDataset(dc, true);
 		double[] dcsum = (double[]) dc.sum();
 		double dsum = ((Number) d.sum()).doubleValue();

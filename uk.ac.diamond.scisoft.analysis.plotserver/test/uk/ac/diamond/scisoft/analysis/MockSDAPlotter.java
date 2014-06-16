@@ -17,7 +17,7 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import junit.framework.AssertionFailedError;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -67,7 +67,7 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes) throws Exception {
+	public void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes) throws Exception {
 		throw newShouldNotBeCalled();
 	}
 

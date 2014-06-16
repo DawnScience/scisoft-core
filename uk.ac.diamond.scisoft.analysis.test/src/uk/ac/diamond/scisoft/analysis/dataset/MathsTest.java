@@ -61,7 +61,7 @@ public class MathsTest {
 
 	private Map<String, Integer> classes;
 
-	private void checkDatasets(Object a, Object b, AbstractDataset c, AbstractDataset d) {
+	private void checkDatasets(Object a, Object b, Dataset c, Dataset d) {
 		Assert.assertNotNull(c);
 		Assert.assertNotNull(d);
 		Assert.assertEquals("Dtype does not match", c.getDtype(), d.getDtype());
@@ -130,7 +130,7 @@ public class MathsTest {
 
 	@Test
 	public void testAddition() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -177,7 +177,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -278,7 +278,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -320,7 +320,7 @@ public class MathsTest {
 
 	@Test
 	public void testSubtraction() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -367,7 +367,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -469,7 +469,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -528,7 +528,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -570,7 +570,7 @@ public class MathsTest {
 
 	@Test
 	public void testMultiplication() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -618,7 +618,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -720,7 +720,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -762,7 +762,7 @@ public class MathsTest {
 
 	@Test
 	public void testDivision() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -810,7 +810,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -943,7 +943,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1002,7 +1002,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1044,7 +1044,7 @@ public class MathsTest {
 
 	@Test
 	public void testRemainder() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -1095,7 +1095,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -1180,7 +1180,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1237,7 +1237,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1269,7 +1269,7 @@ public class MathsTest {
 
 	@Test
 	public void testPower() {
-		AbstractDataset a, b, c = null, d = null;
+		Dataset a, b, c = null, d = null;
 		Complex zv = new Complex(-3.5, 0);
 		final double dv = zv.getReal();
 		long start;
@@ -1317,7 +1317,7 @@ public class MathsTest {
 					start += System.nanoTime();
 					double ntime = ((double) start) / c.getSize();
 
-					d = AbstractDataset.zeros(c);
+					d = DatasetFactory.zeros(c);
 					start = -System.nanoTime();
 					IndexIterator ita = a.getIterator();
 					IndexIterator itb = b.getIterator();
@@ -1443,7 +1443,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1502,7 +1502,7 @@ public class MathsTest {
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
-				d = AbstractDataset.zeros(c);
+				d = DatasetFactory.zeros(c);
 				start = -System.nanoTime();
 				IndexIterator ita = a.getIterator();
 				int j = 0;
@@ -1745,7 +1745,7 @@ public class MathsTest {
 		Assert.assertEquals((1 - t) * f1 + t * f2, v, 1e-15);
 	}
 
-	private void checkInterpolateArray(AbstractCompoundDataset a, double x) {
+	private void checkInterpolateArray(CompoundDataset a, double x) {
 		int s = a.getShapeRef()[0];
 		int is = a.getElementsPerItem();
 		double[] v = new double[is];
@@ -1825,7 +1825,7 @@ public class MathsTest {
 		Assert.assertEquals(r, v, 1e-15);
 	}
 
-	private void checkInterpolateArray(AbstractCompoundDataset a, double x, double y) {
+	private void checkInterpolateArray(CompoundDataset a, double x, double y) {
 		int s0 = a.getShapeRef()[0];
 		int s1 = a.getShapeRef()[1];
 		int is = a.getElementsPerItem();
@@ -1893,7 +1893,7 @@ public class MathsTest {
 			checkInterpolate(xa, x);
 		}
 
-		AbstractDataset xb = AbstractDataset.arange(120, Dataset.INT32);
+		Dataset xb = AbstractDataset.arange(120, Dataset.INT32);
 		xb.setShape(60, 2);
 		xb.ifloorDivide(2);
 		xb = DatasetUtils.createCompoundDatasetFromLastAxis(xb, true);

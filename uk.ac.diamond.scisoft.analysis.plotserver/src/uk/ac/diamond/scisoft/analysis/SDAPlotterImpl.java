@@ -31,8 +31,10 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
@@ -106,7 +108,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						max = s;
 				}
 			}
-			return new IDataset[] { AbstractDataset.arange(max, AbstractDataset.INT32) };
+			return new IDataset[] { DatasetFactory.createRange(max, AbstractDataset.INT32) };
 		}
 
 		return new IDataset[] { xValues };
@@ -361,7 +363,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes)
+	public void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes)
 			throws Exception {
 		if (coordPairs.length != sizes.length) {
 			String msg = String.format("# of coordPairs does not match # of sizes (%d != %d)", coordPairs.length,
@@ -372,7 +374,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER2D);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_NONE);
 		for (int i = 0; i < sizes.length; i++) {
-			AbstractCompoundDataset coordData = coordPairs[i];
+			CompoundDataset coordData = coordPairs[i];
 			if (coordData.getElementsPerItem() != 2) {
 				String msg = String.format("# of elements of coordPair does not equal two it is %d",
 						coordData.getElementsPerItem());
@@ -385,8 +387,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				logger.error(msg);
 				throw new Exception(msg);
 			}
-			AbstractDataset xCoord = coordData.getElements(0);
-			AbstractDataset yCoord = coordData.getElements(1);
+			Dataset xCoord = coordData.getElements(0);
+			Dataset yCoord = coordData.getElements(1);
 			DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean();
 			axisData.setAxisMap(amb);
@@ -849,23 +851,23 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 		DataHolder tHolder = new DataHolder();
 		try {
-			AbstractDataset v = DatasetUtils.convertToAbstractDataset(volume);
-			if (v instanceof AbstractCompoundDataset) {
-				AbstractCompoundDataset cd = (AbstractCompoundDataset) v;
+			Dataset v = DatasetUtils.convertToDataset(volume);
+			if (v instanceof CompoundDataset) {
+				CompoundDataset cd = (CompoundDataset) v;
 				v = cd.getElements(0);
 			}
 			switch (v.getDtype()) {
-			case AbstractDataset.BOOL:
-				v = v.cast(AbstractDataset.FLOAT32);
+			case Dataset.BOOL:
+				v = v.cast(Dataset.FLOAT32);
 				break;
-			case AbstractDataset.FLOAT64:
-				v = v.cast(AbstractDataset.FLOAT32);
+			case Dataset.FLOAT64:
+				v = v.cast(Dataset.FLOAT32);
 				break;
-			case AbstractDataset.INT32:
-				v = v.cast(AbstractDataset.FLOAT32);
+			case Dataset.INT32:
+				v = v.cast(Dataset.FLOAT32);
 				break;
-			case AbstractDataset.INT64:
-				v = v.cast(AbstractDataset.FLOAT32);
+			case Dataset.INT64:
+				v = v.cast(Dataset.FLOAT32);
 				break;
 			}
 			//FIXME This is a horrible hack to get round some bugs in GigaCube.  Should be fixed in the GigaCube code as soon as possible

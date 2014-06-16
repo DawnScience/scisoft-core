@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -28,19 +28,19 @@ import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
  */
 public class CoordinateDatasetIterator extends CoordinatesIterator {
 	private int rank;
-	AbstractCompoundDataset cvalue;
+	CompoundDataset cvalue;
 
 	/**
 	 * A single, possibly compound, dataset
 	 * @param value
 	 */
 	public CoordinateDatasetIterator(IDataset value) {
-		if (!(value instanceof AbstractCompoundDataset)) {
+		if (!(value instanceof CompoundDataset)) {
 			int dtype = AbstractDataset.getBestDType(Dataset.ARRAYINT8,
 					AbstractDataset.getDTypeFromClass(value.elementClass()));
-			cvalue = (AbstractCompoundDataset) DatasetUtils.cast(value, dtype);
+			cvalue = (CompoundDataset) DatasetUtils.cast(value, dtype);
 		} else {
-			cvalue = (AbstractCompoundDataset) value;
+			cvalue = (CompoundDataset) value;
 		}
 		rank = cvalue.getRank();
 		shape = cvalue.getShape();

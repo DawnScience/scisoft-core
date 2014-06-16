@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -87,8 +87,8 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to AbstractCompoundDataset argument");
+	public void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes) throws Exception {
+		throw new AssertionFailedError("Method unsupported in python due to CompoundDataset argument");
 	}
 
 	@Override

@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -162,7 +162,7 @@ public interface ISDAPlotter {
 	 * @param sizes
 	 * @throws Exception
 	 */
-	public void scatter2DPlot(String plotName, AbstractCompoundDataset[] coordPairs, IDataset[] sizes) throws Exception;
+	public void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes) throws Exception;
 
 	/**
 	 * Allows plotting of points of given sizes on a 2D grid

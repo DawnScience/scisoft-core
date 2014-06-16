@@ -1575,18 +1575,19 @@ public abstract class AbstractDataset implements Dataset {
 	@Override
 	public void setShape(final int... shape) {
 		int[] nshape = shape.clone();
-		checkShape(nshape, this.size);
+		checkShape(nshape, size);
 		if (Arrays.equals(this.shape, nshape))
 			return;
 
 		if (stride != null) {
-			 // the only compatible shapes are ones where new dimensions are factors of old dimensions
+			// the only compatible shapes are ones where new dimensions are factors of old dimensions
+			// or are combined adjacent old dimensions 
 			int[] oshape = this.shape;
 			int orank = oshape.length;
 			int nrank = nshape.length;
 			int[] nstride = new int[nrank];
 			boolean ones = true;
-			for (int i = 0, j = 0; ones && (i < orank || j < nrank);) {
+			for (int i = 0, j = 0; i < orank || j < nrank;) {
 				if (i < orank && j < nrank && oshape[i] == nshape[j]) {
 					nstride[j++] = stride[i++];
 				} else if (j < nrank && nshape[j] == 1) {
@@ -1594,6 +1595,10 @@ public abstract class AbstractDataset implements Dataset {
 				} else if (i < orank && oshape[i] == 1) {
 					i++;
 				} else {
+					if (j < nrank)
+						j++;
+					if (i < orank)
+						i++;
 					ones = false;
 				}
 			}
@@ -1604,26 +1609,64 @@ public abstract class AbstractDataset implements Dataset {
 				int nb = 0;
 				int ne = 1;
 				while (ob < orank && nb < nrank) {
-					int os = oshape[ob];
-					int ns = nshape[nb];
-					while (os != ns) { // find group of shape dimensions that form common size
-						if (ns < os) {
-							ns *= nshape[ne++];
-						} else {
-							os *= oshape[oe++];
-						}
-					}
-					for (int o = ob+1; o < oe; o++) {
-						if (ostride[o-1] != oshape[o] * ostride[o]) {
+					int ol = oshape[ob];
+					int nl = nshape[nb];
+					
+					if (nl < ol) { // find group of shape dimensions that form common size
+						do { // case where new shape spreads single dimension over several dimensions
+							if (ne == nrank) {
+								break;
+							}
+							nl *= nshape[ne++];
+						} while (nl < ol);
+						if (nl != ol) {
 							abstractLogger.error("Shape is incompatible with this non-contiguous view");
 							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
 						}
+						int on = ne - 1;
+						while (nshape[on] == 1) {
+							on--;
+						}
+
+						nstride[on] = ostride[ob];
+						for (int n = on - 1; n >= nb; n--) {
+							if (nshape[n] == 1)
+								continue;
+
+							nstride[n] = nshape[on] * nstride[on];
+							on = n;
+						}
+					} else if (ol < nl) {
+						do { // case where new shape combines several dimensions into one dimension
+							if (oe == orank) {
+								break;
+							}
+							ol *= oshape[oe++];
+						} while (ol < nl);
+						if (nl != ol) {
+							abstractLogger.error("Shape is incompatible with this non-contiguous view");
+							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+						}
+
+						int oo = oe - 1;
+						while (oshape[oo] == 1) {
+							oo--;
+						}
+						int os = ostride[oo];
+						for (int o = oo - 1; o >= ob; o--) {
+							if (oshape[o] == 1)
+								continue;
+							if (ostride[o] != oshape[oo] * ostride[oo]) {
+								abstractLogger.error("Shape is incompatible with this non-contiguous view");
+								throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+							}
+							oo = o;
+						}
+						nstride[nb] = os;
+					} else {
+						nstride[nb] = ostride[ob];
 					}
 
-					nstride[ne - 1] = ostride[oe - 1];
-					for (int n = ne - 1; n > nb; n--) {
-						nstride[n - 1] = nshape[n] * nstride[n];
-					}
 					ob = oe++;
 					nb = ne++;
 				}

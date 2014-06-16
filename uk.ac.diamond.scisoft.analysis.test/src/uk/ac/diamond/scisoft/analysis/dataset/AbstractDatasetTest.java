@@ -1719,43 +1719,8 @@ public class AbstractDatasetTest {
 		}
 	}
 
-	public static void checkDatasets(IntegerDataset calc, IntegerDataset expected) {
-		IndexIterator at = calc.getIterator(true);
-		IndexIterator bt = expected.getIterator();
-		final int is = calc.getElementsPerItem();
-	
-		while (at.hasNext() && bt.hasNext()) {
-			for (int j = 0; j < is; j++) {
-				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
-						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j));
-			}
-		}
-	}
-
-	public static void checkDatasets(BooleanDataset calc, BooleanDataset expected) {
-		IndexIterator at = calc.getIterator(true);
-		IndexIterator bt = expected.getIterator();
-		final int is = calc.getElementsPerItem();
-	
-		while (at.hasNext() && bt.hasNext()) {
-			for (int j = 0; j < is; j++) {
-				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
-						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j));
-			}
-		}
-	}
-
-	public static void checkDatasets(DoubleDataset calc, DoubleDataset expected) {
-		IndexIterator at = calc.getIterator(true);
-		IndexIterator bt = expected.getIterator();
-		final int is = calc.getElementsPerItem();
-	
-		while (at.hasNext() && bt.hasNext()) {
-			for (int j = 0; j < is; j++) {
-				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
-						": ", expected.getAbs(at.index + j), calc.getAbs(bt.index + j), 1e-5);
-			}
-		}
+	public static void checkDatasets(Dataset calc, Dataset expected) {
+		checkDatasets(expected, calc, 1e-5, 1e-5);
 	}
 
 	public static void checkDatasets(Dataset expected, Dataset calc, double relTol, double absTol) {
@@ -1769,7 +1734,15 @@ public class AbstractDatasetTest {
 			Assert.assertEquals("Items", expected.getElementsPerItem(), calc.getElementsPerItem());
 		}
 		Assert.assertEquals("Size", expected.getSize(), calc.getSize());
-		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
+		try {
+			Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
+		} catch (AssertionError e) {
+			if (calc.getSize() == 1) {
+				Assert.assertArrayEquals("Shape", new int[0], calc.getShape());
+			} else {
+				throw e;
+			}
+		}
 		IndexIterator at = expected.getIterator(true);
 		IndexIterator bt = calc.getIterator();
 		final int eis = expected.getElementsPerItem();
@@ -2077,5 +2050,41 @@ public class AbstractDatasetTest {
 		list = Comparisons.nonZero(Comparisons.greaterThan(a, 5));
 		a.setByIndexes(0, list.get(0), list.get(1));
 		Assert.assertEquals(a.max().longValue(), 5);
+	}
+
+	@Test
+	public void testReshape() {
+		Dataset a = DatasetFactory.createRange(60, Dataset.INT32);
+		Dataset b = a.getSliceView(new int[] {1}, null, new int[] {2});
+		Dataset c = a.getSlice(new int[] {1}, null, new int[] {2});
+		checkDatasets(b, c);
+
+		// check if strides still work
+		b.setShape(6, 5);
+		c.setShape(6, 5);
+		checkDatasets(b, c);
+
+		b.setShape(1, 6, 5);
+		c.setShape(1, 6, 5);
+		checkDatasets(b, c);
+
+		b.setShape(1, 6, 1, 5);
+		c.setShape(1, 6, 1, 5);
+		checkDatasets(b, c);
+
+		b.setShape(30);
+		c.setShape(30);
+		checkDatasets(b, c);
+
+		b.setShape(6, 5);
+		try {
+			Dataset d = b.getSliceView(new Slice(1,6,2));
+			d.setShape(15);
+			Assert.fail("Should have thrown an illegal argument exception");
+		} catch (IllegalArgumentException e) {
+			// do nothing
+		} catch (Exception e) {
+			Assert.fail("Should have thrown an illegal argument exception");
+		}
 	}
 }

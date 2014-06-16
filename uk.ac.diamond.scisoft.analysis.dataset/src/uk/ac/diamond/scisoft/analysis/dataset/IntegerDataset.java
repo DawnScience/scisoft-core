@@ -239,15 +239,18 @@ public class IntegerDataset extends AbstractDataset {
 					data[iter.index] = ds.getInt(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		int dv = (int) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
+		int dv = (int) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

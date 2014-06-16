@@ -213,15 +213,18 @@ public class BooleanDatasetBase extends AbstractDataset {
 					data[iter.index] = ds.getBoolean(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
 
+		boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

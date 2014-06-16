@@ -239,15 +239,18 @@ public class DoubleDataset extends AbstractDataset {
 					data[iter.index] = ds.getDouble(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		double dv = toReal(obj); // PRIM_TYPE // FROM_OBJECT
 
+		double dv = toReal(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

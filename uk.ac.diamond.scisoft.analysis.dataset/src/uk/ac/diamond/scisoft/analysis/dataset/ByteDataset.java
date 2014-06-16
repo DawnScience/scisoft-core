@@ -239,15 +239,18 @@ public class ByteDataset extends AbstractDataset {
 					data[iter.index] = ds.getByte(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		byte dv = (byte) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
+		byte dv = (byte) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

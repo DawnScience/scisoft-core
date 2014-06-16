@@ -318,8 +318,10 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		short[] vr = toShortArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 
@@ -328,6 +330,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 				data[iter.index + i] = vr[i]; // PRIM_TYPE
 		}
 
+		setDirty();
 		return this;
 	}
 

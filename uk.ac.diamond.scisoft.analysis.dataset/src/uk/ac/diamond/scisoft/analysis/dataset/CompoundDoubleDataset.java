@@ -318,8 +318,10 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		double[] vr = toDoubleArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 
@@ -328,6 +330,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				data[iter.index + i] = vr[i]; // PRIM_TYPE
 		}
 
+		setDirty();
 		return this;
 	}
 

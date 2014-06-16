@@ -239,15 +239,18 @@ public class LongDataset extends AbstractDataset {
 					data[iter.index] = ds.getLong(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		long dv = toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
+		long dv = toLong(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

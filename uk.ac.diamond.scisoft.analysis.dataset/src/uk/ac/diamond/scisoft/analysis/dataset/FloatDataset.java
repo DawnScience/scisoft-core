@@ -239,15 +239,18 @@ public class FloatDataset extends AbstractDataset {
 					data[iter.index] = ds.getFloat(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		float dv = (float) toReal(obj); // PRIM_TYPE // FROM_OBJECT
 
+		float dv = (float) toReal(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

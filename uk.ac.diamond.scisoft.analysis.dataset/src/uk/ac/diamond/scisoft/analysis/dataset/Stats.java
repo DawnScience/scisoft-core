@@ -52,7 +52,7 @@ public class Stats {
 			a.setStoredValue(STORE_QUARTILE1, Double.valueOf(pQuantile(s, 0.25)));
 			a.setStoredValue(STORE_QUARTILE3, Double.valueOf(pQuantile(s, 0.75)));
 		} else {
-			AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
+			Dataset w = DatasetFactory.zeros(a.getShapeRef(), a.getDtype());
 			a.setStoredValue(STORE_MEDIAN, new double[is]);
 			a.setStoredValue(STORE_QUARTILE1, new double[is]);
 			a.setStoredValue(STORE_QUARTILE3, new double[is]);
@@ -68,7 +68,7 @@ public class Stats {
 				store = (double[]) a.getStoredValue(STORE_QUARTILE3);
 				store[j] = pQuantile(w, 0.75);
 				if (j == 0)
-					s = w.clone();
+					s = (AbstractDataset) w.clone();
 			}
 		}
 		return s;
@@ -96,19 +96,19 @@ public class Stats {
 				a.setStoredValue(STORE_QUARTILE1 + "-" + axis, pQuantile(s, axis, 0.25));
 				a.setStoredValue(STORE_QUARTILE3 + "-" + axis, pQuantile(s, axis, 0.75));
 			} else {
-				AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
+				Dataset w = DatasetFactory.zeros(a.getShapeRef(), a.getDtype());
 				for (int j = 0; j < is; j++) {
 					((AbstractCompoundDataset) a).copyElements(w, j);
 					w.sort(axis);
 
 					CompoundDoubleDataset s;
-					final AbstractDataset c = pQuantile(w, axis, 0.5);
+					final Dataset c = pQuantile(w, axis, 0.5);
 					if (j == 0) {
-						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
+						s = (CompoundDoubleDataset) DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
 						a.setStoredValue(STORE_MEDIAN + "-" + axis, s);
-						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
+						s = (CompoundDoubleDataset) DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
 						a.setStoredValue(STORE_QUARTILE1 + "-" + axis, s);
-						s = (CompoundDoubleDataset) AbstractDataset.zeros(is, c.shape, c.getDtype());
+						s = (CompoundDoubleDataset) DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
 						a.setStoredValue(STORE_QUARTILE3 + "-" + axis, s);
 					}
 					s = (CompoundDoubleDataset) a.getStoredValue(STORE_MEDIAN + "-" + axis);
@@ -128,8 +128,8 @@ public class Stats {
 	}
 
 	// process a sorted dataset
-	private static double pQuantile(final AbstractDataset s, final double q) {
-		double f = (s.size - 1) * q; // fraction of sample number
+	private static double pQuantile(final Dataset s, final double q) {
+		double f = (s.getSize() - 1) * q; // fraction of sample number
 		if (f < 0)
 			return Double.NaN;
 		int qpt = (int) Math.floor(f); // quantile point
@@ -143,7 +143,7 @@ public class Stats {
 	}
 
 	// process a sorted dataset and returns a double or compound double dataset
-	private static AbstractDataset pQuantile(final AbstractDataset s, final int axis, final double q) {
+	private static AbstractDataset pQuantile(final Dataset s, final int axis, final double q) {
 		final int rank = s.getRank();
 		final int is = s.getElementsPerItem();
 
@@ -155,7 +155,7 @@ public class Stats {
 
 		oshape[axis] = 1;
 		int[] qshape = AbstractDataset.squeezeShape(oshape, false);
-		AbstractDataset qds = AbstractDataset.zeros(is, qshape, Dataset.FLOAT64);
+		Dataset qds = DatasetFactory.zeros(is, qshape, Dataset.FLOAT64);
 
 		IndexIterator qiter = qds.getIterator(true);
 		int[] qpos = qiter.getPos();
@@ -179,7 +179,7 @@ public class Stats {
 			qiter = qds.getIterator(true);
 			qpos = qiter.getPos();
 			qpt++;
-			AbstractDataset rds = AbstractDataset.zeros(is, qshape, Dataset.FLOAT64);
+			Dataset rds = DatasetFactory.zeros(is, qshape, Dataset.FLOAT64);
 			
 			while (qiter.hasNext()) {
 				int i = 0;
@@ -199,7 +199,7 @@ public class Stats {
 			qds.iadd(rds);
 		}
 
-		return qds;
+		return (AbstractDataset) qds;
 	}
 
 	/**
@@ -208,11 +208,11 @@ public class Stats {
 	 * @param q
 	 * @return point at which CDF has value q
 	 */
-	public static double quantile(final AbstractDataset a, final double q) {
+	public static double quantile(final Dataset a, final double q) {
 		if (q < 0 || q > 1) {
 			throw new IllegalArgumentException("Quantile requested is outside [0,1]");
 		}
-		final AbstractDataset s = calcQuartileStats(a);
+		final Dataset s = calcQuartileStats(DatasetUtils.convertToAbstractDataset(a));
 		return pQuantile(s, q);
 	}
 
@@ -222,9 +222,9 @@ public class Stats {
 	 * @param values
 	 * @return points at which CDF has given values
 	 */
-	public static double[] quantile(final AbstractDataset a, final double... values) {
+	public static double[] quantile(final Dataset a, final double... values) {
 		final double[] points  = new double[values.length];
-		final AbstractDataset s = calcQuartileStats(a);
+		final Dataset s = calcQuartileStats(DatasetUtils.convertToAbstractDataset(a));
 		for (int i = 0; i < points.length; i++) {
 			final double q = values[i];
 			if (q < 0 || q > 1) {
@@ -242,7 +242,7 @@ public class Stats {
 	 * @param values
 	 * @return points at which CDF has given values
 	 */
-	public static AbstractDataset[] quantile(final AbstractDataset a, final int axis, final double... values) {
+	public static AbstractDataset[] quantile(final Dataset a, final int axis, final double... values) {
 		final AbstractDataset[] points  = new AbstractDataset[values.length];
 		final int is = a.getElementsPerItem();
 
@@ -256,7 +256,7 @@ public class Stats {
 				points[i] = pQuantile(s, axis, q);
 			}
 		} else {
-			AbstractDataset w = AbstractDataset.zeros(a.shape, a.getDtype());
+			Dataset w = DatasetFactory.zeros(a.getShapeRef(), a.getDtype());
 			for (int j = 0; j < is; j++) {
 				((AbstractCompoundDataset) a).copyElements(w, j);
 				w.sort(axis);
@@ -266,9 +266,9 @@ public class Stats {
 					if (q < 0 || q > 1) {
 						throw new IllegalArgumentException("Quantile requested is outside [0,1]");
 					}
-					final AbstractDataset c = pQuantile(w, axis, q);
+					final Dataset c = pQuantile(w, axis, q);
 					if (j == 0) {
-						points[i] = AbstractDataset.zeros(is, c.shape, c.getDtype());
+						points[i] = (AbstractDataset) DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
 					}
 					((CompoundDoubleDataset) points[i]).setElements(c, j);
 				}
@@ -283,16 +283,16 @@ public class Stats {
 	 * @param axis
 	 * @return median
 	 */
-	public static AbstractDataset median(final AbstractDataset a, final int axis) {
-		return getQStatistics(a, axis, STORE_MEDIAN + "-" + axis);
+	public static AbstractDataset median(final Dataset a, final int axis) {
+		return getQStatistics(DatasetUtils.convertToAbstractDataset(a), axis, STORE_MEDIAN + "-" + axis);
 	}
 
 	/**
 	 * @param a dataset
 	 * @return median
 	 */
-	public static Object median(final AbstractDataset a) {
-		return getQStatistics(a, STORE_MEDIAN);
+	public static Object median(final Dataset a) {
+		return getQStatistics(DatasetUtils.convertToAbstractDataset(a), STORE_MEDIAN);
 	}
 
 	/**
@@ -300,15 +300,16 @@ public class Stats {
 	 * @param a
 	 * @return range
 	 */
-	public static Object iqr(final AbstractDataset a) {
-		final int is = a.getElementsPerItem();
+	public static Object iqr(final Dataset a) {
+		AbstractDataset aa = DatasetUtils.convertToAbstractDataset(a);
+		final int is = aa.getElementsPerItem();
 		if (is == 1) {
-			double q3 = ((Double) getQStatistics(a, STORE_QUARTILE3));
-			return Double.valueOf(q3 - ((Double) a.getStoredValue(STORE_QUARTILE1)).doubleValue());
+			double q3 = ((Double) getQStatistics(aa, STORE_QUARTILE3));
+			return Double.valueOf(q3 - ((Double) aa.getStoredValue(STORE_QUARTILE1)).doubleValue());
 		}
 
-		double[] q1 = (double[]) getQStatistics(a, STORE_QUARTILE1);
-		double[] q3 = (double[]) getQStatistics(a, STORE_QUARTILE3);
+		double[] q1 = (double[]) getQStatistics(aa, STORE_QUARTILE1);
+		double[] q3 = (double[]) getQStatistics(aa, STORE_QUARTILE3);
 		for (int j = 0; j < is; j++) {
 			q3[j] -= q1[j];
 		}
@@ -321,10 +322,11 @@ public class Stats {
 	 * @param axis
 	 * @return range
 	 */
-	public static AbstractDataset iqr(final AbstractDataset a, final int axis) {
-		AbstractDataset q3 = getQStatistics(a, axis, STORE_QUARTILE3 + "-" + axis);
+	public static AbstractDataset iqr(final Dataset a, final int axis) {
+		AbstractDataset aa = DatasetUtils.convertToAbstractDataset(a);
+		AbstractDataset q3 = getQStatistics(aa, axis, STORE_QUARTILE3 + "-" + axis);
 
-		return Maths.subtract(q3, a.getStoredValue(STORE_QUARTILE1 + "-" + axis));
+		return Maths.subtract(q3, aa.getStoredValue(STORE_QUARTILE1 + "-" + axis));
 	}
 
 	static private Object getHigherStatistic(final AbstractDataset a, final boolean ignoreNaNs, String stat) {
@@ -425,8 +427,8 @@ public class Stats {
 		oshape[axis] = 1;
 	
 		final int[] nshape = AbstractDataset.squeezeShape(oshape, false);
-		final AbstractDataset sk;
-		final AbstractDataset ku;
+		final Dataset sk;
+		final Dataset ku;
 	
 	
 		if (is == 1) {
@@ -534,11 +536,11 @@ public class Stats {
 	}
 
 	/**
-	 * See {@link #skewness(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #skewness(Dataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @return skewness
 	 */
-	public static Object skewness(final AbstractDataset a) {
+	public static Object skewness(final Dataset a) {
 		return skewness(a, false);
 	}
 
@@ -547,16 +549,16 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return skewness
 	 */
-	public static Object skewness(final AbstractDataset a, final boolean ignoreNaNs) {
-		return getHigherStatistic(a, ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS));
+	public static Object skewness(final Dataset a, final boolean ignoreNaNs) {
+		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS));
 	}
 
 	/**
-	 * See {@link #kurtosis(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #kurtosis(Dataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @return kurtosis
 	 */
-	public static Object kurtosis(final AbstractDataset a) {
+	public static Object kurtosis(final Dataset a) {
 		return kurtosis(a, false);
 	}
 
@@ -565,17 +567,17 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return kurtosis
 	 */
-	public static Object kurtosis(final AbstractDataset a, final boolean ignoreNaNs) {
-		return getHigherStatistic(a, ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS));
+	public static Object kurtosis(final Dataset a, final boolean ignoreNaNs) {
+		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS));
 	}
 
 	/**
-	 * See {@link #skewness(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #skewness(Dataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @param axis
 	 * @return skewness
 	 */
-	public static AbstractDataset skewness(final AbstractDataset a, final int axis) {
+	public static AbstractDataset skewness(final Dataset a, final int axis) {
 		return skewness(a, false, axis);
 	}
 
@@ -585,17 +587,17 @@ public class Stats {
 	 * @param axis
 	 * @return skewness
 	 */
-	public static AbstractDataset skewness(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis));
+	public static AbstractDataset skewness(final Dataset a, final boolean ignoreNaNs, final int axis) {
+		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis));
 	}
 
 	/**
-	 * See {@link #kurtosis(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #kurtosis(Dataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a dataset
 	 * @param axis
 	 * @return kurtosis
 	 */
-	public static AbstractDataset kurtosis(final AbstractDataset a, final int axis) {
+	public static AbstractDataset kurtosis(final Dataset a, final int axis) {
 		return kurtosis(a, false, axis);
 	}
 
@@ -605,16 +607,16 @@ public class Stats {
 	 * @param axis
 	 * @return kurtosis
 	 */
-	public static AbstractDataset kurtosis(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
-		return getHigherStatistic(a, ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis));
+	public static AbstractDataset kurtosis(final Dataset a, final boolean ignoreNaNs, final int axis) {
+		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis));
 	}
 
 	/**
-	 * See {@link #product(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #product(Dataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return product of all items in dataset
 	 */
-	public static Object product(final AbstractDataset a) {
+	public static Object product(final Dataset a) {
 		return product(a, false);
 	}
 
@@ -623,17 +625,17 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return product of all items in dataset
 	 */
-	public static Object product(final AbstractDataset a, final boolean ignoreNaNs) {
+	public static Object product(final Dataset a, final boolean ignoreNaNs) {
 		return typedProduct(a, a.getDtype(), ignoreNaNs);
 	}
 
 	/**
-	 * See {@link #typedProduct(AbstractDataset a, int dtype, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #typedProduct(Dataset a, int dtype, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @param dtype
 	 * @return product of all items in dataset
 	 */
-	public static Object typedProduct(final AbstractDataset a, final int dtype) {
+	public static Object typedProduct(final Dataset a, final int dtype) {
 		return typedProduct(a, dtype, false);
 	}
 
@@ -643,7 +645,7 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return product of all items in dataset
 	 */
-	public static Object typedProduct(final AbstractDataset a, final int dtype, final boolean ignoreNaNs) {
+	public static Object typedProduct(final Dataset a, final int dtype, final boolean ignoreNaNs) {
 
 		if (a.isComplex()) {
 			IndexIterator it = a.getIterator();
@@ -748,12 +750,12 @@ public class Stats {
 	}
 
 	/**
-	 * See {@link #product(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #product(Dataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset product(final AbstractDataset a, final int axis) {
+	public static AbstractDataset product(final Dataset a, final int axis) {
 		return product(a, false, axis);
 	}
 
@@ -763,18 +765,18 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset product(final AbstractDataset a, final boolean ignoreNaNs, final int axis) {
+	public static AbstractDataset product(final Dataset a, final boolean ignoreNaNs, final int axis) {
 		return typedProduct(a, a.getDtype(), ignoreNaNs, axis);
 	}
 
 	/**
-	 * See {@link #typedProduct(AbstractDataset a, int dtype, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #typedProduct(Dataset a, int dtype, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param dtype
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, final int axis) {
+	public static AbstractDataset typedProduct(final Dataset a, final int dtype, final int axis) {
 		return typedProduct(a, dtype, false, axis);
 	}
 
@@ -785,14 +787,14 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset typedProduct(final AbstractDataset a, final int dtype, final boolean ignoreNaNs, int axis) {
+	public static AbstractDataset typedProduct(final Dataset a, final int dtype, final boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		final int[] oshape = a.getShape();
 		final int is = a.getElementsPerItem();
 		final int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		AbstractDataset result = AbstractDataset.zeros(is, oshape, dtype);
+		Dataset result = DatasetFactory.zeros(is, oshape, dtype);
 
 		IndexIterator qiter = result.getIterator(true);
 		int[] qpos = qiter.getPos();
@@ -1013,15 +1015,15 @@ public class Stats {
 		}
 
 		result.setShape(AbstractDataset.squeezeShape(oshape, axis));
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
-	 * See {@link #cumulativeProduct(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #cumulativeProduct(Dataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return cumulative product of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final AbstractDataset a) {
+	public static AbstractDataset cumulativeProduct(final Dataset a) {
 		return cumulativeProduct(a, false);
 	}
 
@@ -1030,17 +1032,17 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final AbstractDataset a, boolean ignoreNaNs) {
+	public static AbstractDataset cumulativeProduct(final Dataset a, boolean ignoreNaNs) {
 		return cumulativeProduct(a.flatten(), ignoreNaNs, 0);
 	}
 
 	/**
-	 * See {@link #cumulativeProduct(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #cumulativeProduct(Dataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final AbstractDataset a, int axis) {
+	public static AbstractDataset cumulativeProduct(final Dataset a, int axis) {
 		return cumulativeProduct(a, false, axis);
 	}
 
@@ -1050,14 +1052,14 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final AbstractDataset a, boolean ignoreNaNs, int axis) {
+	public static AbstractDataset cumulativeProduct(final Dataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
 		int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		AbstractDataset result = AbstractDataset.zeros(a);
+		Dataset result = DatasetFactory.zeros(a);
 		PositionIterator pi = result.getPositionIterator(axis);
 
 		int[] pos = pi.getPos();
@@ -1289,15 +1291,15 @@ public class Stats {
 			}
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
-	 * See {@link #cumulativeSum(AbstractDataset a, boolean ignoreNaNs)} with ignoreNaNs = false
+	 * See {@link #cumulativeSum(Dataset a, boolean ignoreNaNs)} with ignoreNaNs = false
 	 * @param a
 	 * @return cumulative sum of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeSum(final AbstractDataset a) {
+	public static AbstractDataset cumulativeSum(final Dataset a) {
 		return cumulativeSum(a, false);
 	}
 
@@ -1306,17 +1308,17 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return cumulative sum of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeSum(final AbstractDataset a, boolean ignoreNaNs) {
+	public static AbstractDataset cumulativeSum(final Dataset a, boolean ignoreNaNs) {
 		return cumulativeSum(a.flatten(), ignoreNaNs, 0);
 	}
 
 	/**
-	 * See {@link #cumulativeSum(AbstractDataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
+	 * See {@link #cumulativeSum(Dataset a, boolean ignoreNaNs, int axis)} with ignoreNaNs = false
 	 * @param a
 	 * @param axis
 	 * @return cumulative sum of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeSum(final AbstractDataset a, int axis) {
+	public static AbstractDataset cumulativeSum(final Dataset a, int axis) {
 		return cumulativeSum(a, false, axis);
 	}
 
@@ -1326,14 +1328,14 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative sum of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeSum(final AbstractDataset a, boolean ignoreNaNs, int axis) {
+	public static AbstractDataset cumulativeSum(final Dataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
 		int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		AbstractDataset result = AbstractDataset.zeros(a);
+		Dataset result = DatasetFactory.zeros(a);
 		PositionIterator pi = result.getPositionIterator(axis);
 
 		int[] pos = pi.getPos();
@@ -1539,14 +1541,14 @@ public class Stats {
 			}
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
 	 * @param a
 	 * @return average deviation value of all items the dataset
 	 */
-	public static Object averageDeviation(final AbstractDataset a) {
+	public static Object averageDeviation(final Dataset a) {
 		final IndexIterator it = a.getIterator();
 		final int is = a.getElementsPerItem();
 
@@ -1582,7 +1584,7 @@ public class Stats {
 	 * @param b
 	 * @return residual value
 	 */
-	public static double residual(final AbstractDataset a, final AbstractDataset b) {
+	public static double residual(final Dataset a, final Dataset b) {
 		return a.residual(b);
 	}
 
@@ -1593,7 +1595,7 @@ public class Stats {
 	 * @param w
 	 * @return residual value
 	 */
-	public static double weightedResidual(final AbstractDataset a, final AbstractDataset b, final AbstractDataset w) {
+	public static double weightedResidual(final Dataset a, final Dataset b, final Dataset w) {
 		return a.residual(b, w, false);
 	}
 
@@ -1613,7 +1615,7 @@ public class Stats {
 	 * @param length maximum number of items used internally, if negative, then unlimited
 	 * @return double array with low and high values, and low and high percentage thresholds
 	 */
-	public static double[] outlierValues(final AbstractDataset a, double lo, double hi, final int length) {
+	public static double[] outlierValues(final Dataset a, double lo, double hi, final int length) {
 		if (lo <= 0 || hi <= 0 || lo >= hi || hi >= 100  || Double.isNaN(lo)|| Double.isNaN(hi)) {
 			throw new IllegalArgumentException("Thresholds must be between (0,100) and in order");
 		}
@@ -1632,7 +1634,7 @@ public class Stats {
 		return results;
 	}
 
-	protected static double[] outlierValuesMap(final AbstractDataset a, int nl, int nh) {
+	protected static double[] outlierValuesMap(final Dataset a, int nl, int nh) {
 		final TreeMap<Double, Integer> lMap = new TreeMap<Double, Integer>();
 		final TreeMap<Double, Integer> hMap = new TreeMap<Double, Integer>();
 
@@ -1715,7 +1717,7 @@ public class Stats {
 		return new double[] {lMap.lastKey(), hMap.firstKey(), ml, mh};
 	}
 
-	protected static double[] outlierValuesList(final AbstractDataset a, int nl, int nh) {
+	protected static double[] outlierValuesList(final Dataset a, int nl, int nh) {
 		final List<Double> lList = new ArrayList<Double>(nl);
 		final List<Double> hList = new ArrayList<Double>(nh);
 //		final List<Double> lList = new LinkedList<Double>();

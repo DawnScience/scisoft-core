@@ -77,7 +77,7 @@ def make_safe(items, warn=True):
     if items is None or len(items) == 0:
         return []
 
-    items = zip(*items) # transform to two lists
+    items = zip(*items) # transform to list of two tuples
     keys = [sanitise_name(k, warn) for k in items[0]]
     vals = items[1]
 

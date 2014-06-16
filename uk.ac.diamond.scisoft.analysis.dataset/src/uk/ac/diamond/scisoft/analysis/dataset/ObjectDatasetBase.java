@@ -220,15 +220,18 @@ public class ObjectDatasetBase extends AbstractDataset {
 					data[iter.index] = ds.getObject(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		Object dv = obj; // PRIM_TYPE // FROM_OBJECT
 
+		Object dv = obj; // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

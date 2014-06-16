@@ -246,15 +246,18 @@ public class ShortDataset extends AbstractDataset {
 					data[iter.index] = ds.getShort(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		short dv = (short) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
+		short dv = (short) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

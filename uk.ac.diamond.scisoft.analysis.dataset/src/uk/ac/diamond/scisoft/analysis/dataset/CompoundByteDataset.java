@@ -326,8 +326,10 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		byte[] vr = toByteArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 
@@ -336,6 +338,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 				data[iter.index + i] = vr[i]; // PRIM_TYPE
 		}
 
+		setDirty();
 		return this;
 	}
 

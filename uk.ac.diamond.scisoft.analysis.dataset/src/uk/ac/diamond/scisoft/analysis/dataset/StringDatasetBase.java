@@ -220,15 +220,18 @@ public class StringDatasetBase extends AbstractDataset {
 					data[iter.index] = ds.getString(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
 
+		String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 

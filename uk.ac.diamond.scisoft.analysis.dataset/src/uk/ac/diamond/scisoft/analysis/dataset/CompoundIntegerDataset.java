@@ -326,8 +326,10 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		int[] vr = toIntegerArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 
@@ -336,6 +338,7 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 				data[iter.index + i] = vr[i]; // PRIM_TYPE
 		}
 
+		setDirty();
 		return this;
 	}
 

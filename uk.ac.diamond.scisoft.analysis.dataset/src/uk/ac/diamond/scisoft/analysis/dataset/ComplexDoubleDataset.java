@@ -225,8 +225,10 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		double vr = toReal(obj); // PRIM_TYPE // ADD_CAST
 		double vi = toImag(obj); // PRIM_TYPE // ADD_CAST
@@ -236,6 +238,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 			data[iter.index+1] = vi;
 		}
 
+		setDirty();
 		return this;
 	}
 

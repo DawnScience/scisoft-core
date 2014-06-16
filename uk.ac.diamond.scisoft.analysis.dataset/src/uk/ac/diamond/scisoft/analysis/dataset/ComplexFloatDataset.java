@@ -225,8 +225,10 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		float vr = (float) toReal(obj); // PRIM_TYPE // ADD_CAST
 		float vi = (float) toImag(obj); // PRIM_TYPE // ADD_CAST
@@ -236,6 +238,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			data[iter.index+1] = vi;
 		}
 
+		setDirty();
 		return this;
 	}
 

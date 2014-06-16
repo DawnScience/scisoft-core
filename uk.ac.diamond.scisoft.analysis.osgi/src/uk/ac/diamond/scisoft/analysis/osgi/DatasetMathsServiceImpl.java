@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -33,12 +33,12 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 
 	@Override
 	public IDataset arange(double stop, int dtype) {
-		return AbstractDataset.arange(stop, dtype);
+		return DatasetFactory.createRange(stop, dtype);
 	}
 
 	@Override
 	public IDataset arange(double start, double stop, double step, int dtype) {
-		return AbstractDataset.arange(start, stop, step, dtype);
+		return DatasetFactory.createRange(start, stop, step, dtype);
 	}
 
 	@Override
@@ -48,37 +48,37 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 
 	@Override
 	public IDataset convertToAbstractDataset(IDataset data) {
-		return DatasetUtils.convertToAbstractDataset(data);
+		return DatasetUtils.convertToDataset(data);
 	}
 
 	@Override
 	public IDataset sum(IDataset data, int axis) {
-		return DatasetUtils.convertToAbstractDataset(data).sum(axis);
+		return DatasetUtils.convertToDataset(data).sum(axis);
 	}
 
 	@Override
 	public IDataset transpose(IDataset data) {
-		return DatasetUtils.convertToAbstractDataset(data).transpose();
+		return DatasetUtils.convertToDataset(data).transpose();
 	}
 
 	@Override
 	public IDataset mean(IDataset data, int axis) {
-		return DatasetUtils.convertToAbstractDataset(data).mean(axis);
+		return DatasetUtils.convertToDataset(data).mean(axis);
 	}
 
 	@Override
 	public IDataset max(IDataset data, int axis) {
-		return DatasetUtils.convertToAbstractDataset(data).max(axis);
+		return DatasetUtils.convertToDataset(data).max(axis);
 	}
 
 	@Override
 	public IDataset min(IDataset data, int axis) {
-		return DatasetUtils.convertToAbstractDataset(data).min(axis);
+		return DatasetUtils.convertToDataset(data).min(axis);
 	}
 
 	@Override
 	public IDataset median(IDataset data, int axis) {
-		return Stats.median(DatasetUtils.convertToAbstractDataset(data), axis);
+		return Stats.median(DatasetUtils.convertToDataset(data), axis);
 	}
 
 	@Override

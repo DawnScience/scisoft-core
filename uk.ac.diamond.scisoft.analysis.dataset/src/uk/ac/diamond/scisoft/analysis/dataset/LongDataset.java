@@ -784,6 +784,14 @@ public class LongDataset extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		long r = (long) x; // ADD_CAST // PRIM_TYPE_LONG
+		return Long.valueOf(r); // CLASS_TYPE
+		// return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final long value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

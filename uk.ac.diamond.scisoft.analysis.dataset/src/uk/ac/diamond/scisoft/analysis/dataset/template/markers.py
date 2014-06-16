@@ -84,9 +84,9 @@ class transmutate(object):
         self.Dprim = self.dprim.capitalize()
 
         if (self.ddtype.startswith("INT") or self.ddtype.startswith("ARRAYINT")) and self.dprim is not "long":
-            self.dprimlong = self.dprim + ") (long"
+            self.dprimlong = self.dcast + "(long) "
         else:
-            self.dprimlong = self.dprim
+            self.dprimlong = self.dcast
 
         self.isreal = disreal
         self.isbool = disbool
@@ -171,7 +171,7 @@ class transmutate(object):
         return line
 
     def primitivelong(self, line):
-        return line.replace(self.dprim, self.dprimlong)
+        return line.replace(self.dcast, self.dprimlong)
 
     def getelement(self, line):
         return line.replace(self.sgetel, self.dgetel)

@@ -740,6 +740,12 @@ public class BooleanDatasetBase extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final boolean value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

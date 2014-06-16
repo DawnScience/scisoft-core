@@ -784,6 +784,14 @@ public class IntegerDataset extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		int r = (int) (long) x; // ADD_CAST // PRIM_TYPE_LONG
+		return Integer.valueOf(r); // CLASS_TYPE
+		// return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final int value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

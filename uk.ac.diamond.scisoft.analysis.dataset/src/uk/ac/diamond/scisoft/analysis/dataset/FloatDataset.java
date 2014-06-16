@@ -784,6 +784,14 @@ public class FloatDataset extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		float r = (float) x; // ADD_CAST // PRIM_TYPE_LONG
+		return Float.valueOf(r); // CLASS_TYPE
+		// return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final float value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

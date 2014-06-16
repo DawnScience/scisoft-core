@@ -542,6 +542,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		getDoubleArrayAbs(get1DIndex(pos), darray);
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		return null;
+	}
+
 	/**
 	 * Get an item as a double array
 	 * @param index

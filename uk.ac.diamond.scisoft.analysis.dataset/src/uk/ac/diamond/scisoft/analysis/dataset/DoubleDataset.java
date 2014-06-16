@@ -784,6 +784,14 @@ public class DoubleDataset extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		double r = x; // NAN_OMIT // ADD_CAST // PRIM_TYPE_LONG
+		return Double.valueOf(r); // CLASS_TYPE // NAN_OMIT
+		// return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final double value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

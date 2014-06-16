@@ -784,6 +784,14 @@ public class ShortDataset extends AbstractDataset {
 		setDirty();
 	}
 
+	@Override
+	protected Number fromDoubleToNumber(double x) {
+		short r = (short) (long) x; // ADD_CAST // PRIM_TYPE_LONG
+		return Short.valueOf(r); // CLASS_TYPE
+		// return Integer.valueOf((int) (long) x); // BOOLEAN_USE
+		// return null; // OBJECT_USE
+	}
+
 	private List<int[]> findPositions(final short value) { // PRIM_TYPE
 		IndexIterator iter = getIterator(true);
 		List<int[]> posns = new ArrayList<int[]>();

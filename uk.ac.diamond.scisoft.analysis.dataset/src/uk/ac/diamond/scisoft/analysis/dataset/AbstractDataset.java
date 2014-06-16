@@ -3269,24 +3269,11 @@ public abstract class AbstractDataset implements Dataset {
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MIN + STORE_INDEX + "-" + axis), minIndex);
 	}
 
-	private Number fromDoubleToNumber(double x) {
-		switch (getDtype()) {
-		case BOOL:
-		case INT32:
-			return Integer.valueOf((int) (long) x);
-		case INT8:
-			return Byte.valueOf((byte) (long) x);
-		case INT16:
-			return Short.valueOf((short) (long) x);
-		case INT64:
-			return Long.valueOf((long) x);
-		case FLOAT32:
-			return Float.valueOf((float) x);
-		case FLOAT64:
-			return Double.valueOf(x);
-		}
-		return null;
-	}
+	/**
+	 * @param x
+	 * @return number from given double
+	 */
+	abstract protected Number fromDoubleToNumber(double x);
 
 	// return biggest native primitive if integer (should test for 64bit?)
 	private static Number fromDoubleToBiggestNumber(double x, int dtype) {

@@ -709,6 +709,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 			data[it.index] = elements[n];
 			n++;
 		}
+		setDirty();
 	}
 
 	@Override

@@ -157,6 +157,7 @@ public class DatasetUtils {
 				}
 			}
 		}
+		result.setDirty();
 		return (AbstractDataset) result;
 	}
 

@@ -21,8 +21,10 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Collection;
 
 import javax.imageio.ImageIO;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -127,7 +129,7 @@ public class JavaImageSaver implements IFileSaver {
 						throw new ScanFileHolderException("Unable to create a buffered image to save file type");
 					}
 					
-					boolean w = writeImageLocked(image, fileType, f);
+					boolean w = writeImageLocked(image, fileType, f, dh);
 					if (!w)
 						throw new ScanFileHolderException("No writer for '" + fileName + "' of type " + fileType);
 				} else {
@@ -136,7 +138,7 @@ public class JavaImageSaver implements IFileSaver {
 					if (image == null) {
 						throw new ScanFileHolderException("Unable to create a tiled image to save file type");
 					}
-					boolean w = writeImageLocked(image, fileType, f);
+					boolean w = writeImageLocked(image, fileType, f, dh);
 					if (!w)
 						throw new ScanFileHolderException("No writer for '" + fileName + "' of type " + fileType);
 				}
@@ -150,7 +152,21 @@ public class JavaImageSaver implements IFileSaver {
 
 	}
 
-	private boolean writeImageLocked(RenderedImage image, String fileType, File f) throws Exception {
+	protected boolean writeImageLocked(RenderedImage image, String fileType, File f, IDataHolder dh) throws Exception {
+		
+		// Write meta data to image header
+		if (image instanceof PlanarImage) {
+			PlanarImage pi = (PlanarImage)image;
+			if (dh.getFilePath()!=null) {
+				pi.setProperty("originalDataSource", dh.getFilePath());
+			}
+
+			IMetaData meta = dh.getMetadata();
+			final Collection<String> dNames = meta.getMetaNames();
+			if (dNames!=null) for (String name : dNames) {
+				pi.setProperty(name, meta.getMetaValue(name));
+			}
+		}
 		// Separate method added as may add file locking option.
         return ImageIO.write(image, fileType, f);
 	}

@@ -27,6 +27,7 @@ import scisoftpy as _dnp
 _asIterable = _dnp.asIterable
 _toList = _dnp.toList
 _asDS = _dnp.asDataset
+_sciwrap = _dnp.Sciwrap
 
 from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj, _jinput
 
@@ -124,7 +125,7 @@ class fitfunc(_absfn):
             weights = None
         try:
             l = [p for p in self.parameterValues]
-            l.append([_dnp.Sciwrap(c) for c in coords])
+            l.append([_sciwrap(c) for c in coords])
             l.append(self.args)
             d = self.func(*l)
             return _dnp.residual(d, data, weights)
@@ -154,7 +155,7 @@ class cfitfunc(_compfn):
         '''
         vt = None
         for n in range(self.noOfFunctions):
-            v = _dnp.Sciwrap(self.getFunction(n).calculateValues(*coords))
+            v = _sciwrap(self.getFunction(n).calculateValues(*coords))
             if vt is None:
                 vt = v
             else:
@@ -240,12 +241,12 @@ class fitresult(object):
         nf = self.func.noOfFunctions
         coords = _jinput(self.coords)
         if nf > 1:
-            fdata = [_dnp.Sciwrap(self.func.calculateValues(coords))]
+            fdata = [_sciwrap(self.func.calculateValues(coords))]
             fdata[0].name = "Composite function"
             for n in range(nf):
-                fdata.append(_dnp.Sciwrap(self.func.getFunction(n).calculateValues(*coords)))
+                fdata.append(_sciwrap(self.func.getFunction(n).calculateValues(*coords)))
         elif nf == 1:
-            fdata = [_dnp.Sciwrap(self.func.getFunction(0).calculateValues(coords))]
+            fdata = [_sciwrap(self.func.getFunction(0).calculateValues(coords))]
         else:
             fdata = []
 
@@ -278,7 +279,7 @@ class fitresult(object):
         '''Area or hypervolume under fit assuming coordinates are uniformly spaced
         '''
         deltax = self._calcdelta(self.coords)
-        return _dnp.Sciwrap(self.func.calculateValues(_jinput(self.coords)).sum()) * deltax
+        return _sciwrap(self.func.calculateValues(_jinput(self.coords)).sum()) * deltax
     area = property(_area)
 
     def __str__(self):

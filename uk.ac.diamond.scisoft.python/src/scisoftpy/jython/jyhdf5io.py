@@ -19,7 +19,7 @@
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdataset
-from uk.ac.diamond.scisoft.analysis.dataset import AbstractDataset as _adataset
+from uk.ac.diamond.scisoft.analysis.dataset import Dataset as _dataset
 from uk.ac.diamond.scisoft.analysis.dataset import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
@@ -33,11 +33,11 @@ class _NoOutputStream(_ostream):
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
-from ..nexus.hdf5 import HDF5dataset as _dataset
+from ..nexus.hdf5 import HDF5dataset as _hdataset
 
 from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap
 
-class SDS(_dataset):
+class SDS(_hdataset):
     def __init__(self, dataset, attrs, parent):
         if isinstance(dataset, _jdataset):
             if dataset.isString() or not dataset.isSupported():
@@ -49,7 +49,7 @@ class SDS(_dataset):
             else:
                 maxshape = tuple(dataset.getMaxShape())
                 dataset = dataset.getDataset()
-                if isinstance(dataset, _ldataset) or isinstance(dataset, _adataset):
+                if isinstance(dataset, _ldataset) or isinstance(dataset, _dataset):
                     dtype = _getdtypefromjdataset(dataset)
                 else:
                     dtype = None
@@ -62,7 +62,7 @@ class SDS(_dataset):
             maxshape = None
             self.rank = dataset.ndim
 
-        _dataset.__init__(self, dataset, shape, dtype, maxshape, attrs, parent)
+        _hdataset.__init__(self, dataset, shape, dtype, maxshape, attrs, parent)
 
     def _toslice(self, key):
         '''Transform key to proper slice if necessary
@@ -193,5 +193,5 @@ def _convertgroup(group):
             g.addAttribute(ja)
         if isinstance(n, _group):
             pass
-        elif isinstance(n, _dataset):
+        elif isinstance(n, _hdataset):
             pass

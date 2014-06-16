@@ -23,7 +23,7 @@ import unittest
 
 import scisoftpy as dnp
 
-TestFolder = "../../../uk.ac.diamond.scisoft.analysis/testfiles/"
+TestFolder = "../../../uk.ac.diamond.scisoft.analysis.test/testfiles/"
 IOTestFolder = TestFolder + "gda/analysis/io/NexusLoaderTest/"
 OutTestFolder = TestFolder + "../test-scratch/"
 

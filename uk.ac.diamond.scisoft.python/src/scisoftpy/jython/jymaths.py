@@ -18,7 +18,7 @@
 Maths package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _ads
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset as _ds
 import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
 import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
 
@@ -441,7 +441,7 @@ def gradient(f, *varargs):
         xlist = []
         for i in range(vl):
             x = varargs[i]
-            xlist.append(x if isinstance(x, _ads) else (_ar(f.shape[i])*x)._jdataset())
+            xlist.append(x if isinstance(x, _ds) else (_ar(f.shape[i])*x)._jdataset())
         g = _maths.gradient(f, xlist)
 
     if len(g) == 1:

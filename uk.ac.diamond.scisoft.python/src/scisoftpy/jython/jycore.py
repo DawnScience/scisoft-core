@@ -20,7 +20,8 @@ Core package contains wrappers for Java dataset classes
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset as _ds
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset as _abstractds
-# import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory as _df
+# import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset as _compoundds
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset as _booleands
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset as _integerds
@@ -156,7 +157,7 @@ def Sciwrap(a):
         return a
     if isinstance(a, _rgbds):
         return ndarrayRGB(buffer=a)
-    if isinstance(a, _abstractds):
+    if isinstance(a, _ds):
         return ndarray(buffer=a)
     return a
 
@@ -229,7 +230,7 @@ def asIterable(items):
         items = [ i for i in items.items() ]
     elif isinstance(items, _jlist):
         pass
-    else: # isinstance(items, _abstractds) or isinstance(items, _dataset):
+    else: # isinstance(items, _ds):
         items = (items,)
     return items
 
@@ -244,7 +245,7 @@ def scalarToPython(ascalar):
 
 def fromDS(data):
     '''Convert from a Dataset'''
-    if isinstance(data, _abstractds):
+    if isinstance(data, _ds):
         return Sciwrap(data)
     return data
 
@@ -255,7 +256,7 @@ def asDataset(data, dtype=None, force=False):
     if isinstance(data, ndarray):
         return data
 
-    if isinstance(data, _abstractds):
+    if isinstance(data, _ds):
         return ndarray(buffer=data, dtype=dtype, copy=False)
 
     try:
@@ -335,7 +336,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     if isinstance(obj, ndarray):
         obj = obj._jdataset()
 
-    if isinstance(obj, _abstractds):
+    if isinstance(obj, _ds):
         if copy:
             if dtype is None or _translatenativetype(dtype).value == obj.dtype:
                 return obj.clone()
@@ -366,7 +367,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     else:
         dtype = _translatenativetype(dtype)
 
-    return _abstractds.array(obj, dtype.value)
+    return _df.createFromObject(obj, dtype.value)
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
@@ -391,7 +392,7 @@ class ndarray(object):
                 self.__dataset.setShape(asIterable(shape))
         else:
             dtype = _translatenativetype(dtype)
-            self.__dataset = _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
+            self.__dataset = _df.zeros(dtype.elements, asIterable(shape), dtype.value)
 
     def _jdataset(self): # private access to Java dataset class
         return self.__dataset
@@ -978,7 +979,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createRedDataset(dtype.value)
+        return self.__dataset.createRedDataset(dtype.value)
 
     @_wrapout
     def get_green(self, dtype=None):
@@ -986,7 +987,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createGreenDataset(dtype.value)
+        return self.__dataset.createGreenDataset(dtype.value)
 
     @_wrapout
     def get_blue(self, dtype=None):
@@ -994,7 +995,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createBlueDataset(dtype.value)
+        return self.__dataset.createBlueDataset(dtype.value)
 
     @_wrapout
     def get_grey(self, cweights=None, dtype=None):
@@ -1012,8 +1013,8 @@ class ndarrayRGB(ndarray):
             if len(cweights) != 3:
                 raise ValueError, "three colour channel weights needed"
             csum = float(sum(cweights))
-            return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
-        return self._jdataset().createGreyDataset(dtype.value)
+            return self.__dataset.createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
+        return self.__dataset.createGreyDataset(dtype.value)
 
     red = property(get_red)
     green = property(get_green)
@@ -1053,7 +1054,7 @@ def arange(start, stop=None, step=1, dtype=None):
     if dtype == bool:
         return None
 
-    return _abstractds.arange(start, stop, step, dtype.value)
+    return _df.createRange(start, stop, step, dtype.value)
 
 def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
@@ -1063,11 +1064,11 @@ def array(obj, dtype=None, copy=True):
 def ones(shape, dtype=float64):
     '''Create a dataset filled with 1'''
     dtype = _translatenativetype(dtype)
-    return _abstractds.ones(dtype.elements, asIterable(shape), dtype.value)
+    return _df.ones(dtype.elements, asIterable(shape), dtype.value)
 
 @_wrap
 def ones_like(a):
-    return _abstractds.zeros(a).fill(1)
+    return _df.zeros(a).fill(1)
 
 @_wrapout
 def zeros(shape, dtype=float64, elements=None):
@@ -1081,11 +1082,11 @@ def zeros(shape, dtype=float64, elements=None):
     elif type(dtype) is _types.FunctionType:
         raise ValueError, "Given data-type is a function and needs elements defining"
 
-    return _abstractds.zeros(dtype.elements, asIterable(shape), dtype.value)
+    return _df.zeros(dtype.elements, asIterable(shape), dtype.value)
 
 @_wrap
 def zeros_like(a):
-    return _abstractds.zeros(a)
+    return _df.zeros(a)
 
 empty = zeros
 
@@ -1242,7 +1243,7 @@ def append(arr, values, axis=None):
     Keyword argument:
     axis -- if None, then append flattened values to flattened array 
     '''
-    if not isinstance(values, _abstractds):
+    if not isinstance(values, _ds):
         values = __cvt_jobj(values, dtype=None, copy=False, force=True)
     if axis is None:
         return _dsutils.append(arr.flatten(), values.flatten(), 0)
@@ -1349,7 +1350,7 @@ def unravel_index(indices, dims):
     '''
     if isinstance(indices, (tuple, list)):
         indices = ndarray(buffer=indices)._jdataset()
-    if not isinstance(indices, _abstractds):
+    if not isinstance(indices, _ds):
         return tuple(_abstractds.getNDPositionFromShape(indices, dims))
     return tuple(_dsutils.calcPositionsFromIndexes(indices, dims))
 
@@ -1365,7 +1366,7 @@ def ravel_multi_index(multi_index, dims, mode='raise'):
     else:
         mode = _prep_mode.get(mode, -1)
 
-    if isinstance(multi_index, _abstractds): # split single array
+    if isinstance(multi_index, _ds): # split single array
         multi_index = [ _getslice(multi_index, i) for i in range(multi_index.shape[0]) ]
 
     single = False

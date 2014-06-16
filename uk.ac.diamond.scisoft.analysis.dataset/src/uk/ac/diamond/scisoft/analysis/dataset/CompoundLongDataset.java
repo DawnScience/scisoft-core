@@ -50,7 +50,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 	@Override
 	public int getDtype() {
-		return ARRAYINT64; // DATA_TYPE
+		return Dataset.ARRAYINT64; // DATA_TYPE
 	}
 
 	public CompoundLongDataset() {
@@ -448,41 +448,179 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 
 	@Override
 	public Object getObject(final int i) {
-		return getLongArray(i); // CLASS_TYPE
+		return getLongArray(i); // PRIM_TYPE
 	}
 
 	@Override
 	public Object getObject(final int i, final int j) {
-		return getLongArray(i, j); // CLASS_TYPE
+		return getLongArray(i, j); // PRIM_TYPE
 	}
 
 	@Override
 	public Object getObject(final int... pos) {
-		return getLongArray(pos); // CLASS_TYPE
+		return getLongArray(pos); // PRIM_TYPE
 	}
 
-	/**
-	 * @param i
-	 * @return item in given position
-	 */
-	public long[] getLongArray(final int i) { // CLASS_TYPE // PRIM_TYPE
-		return (long[]) getObjectAbs(get1DIndex(i)); // PRIM_TYPE
+	@Override
+	public byte[] getByteArray(final int i) {
+		byte[] result = new byte[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = (byte) data[index + k]; // OMIT_UPCAST
+		return result;
 	}
 
-	/**
-	 * @param i
-	 * @return item in given position
-	 */
-	public long[] getLongArray(final int i, final int j) { // CLASS_TYPE // PRIM_TYPE
-		return (long[]) getObjectAbs(get1DIndex(i, j)); // PRIM_TYPE
+	@Override
+	public byte[] getByteArray(final int i, final int j) {
+		byte[] result = new byte[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = (byte) data[index + k]; // OMIT_UPCAST
+		return result;
 	}
 
-	/**
-	 * @param pos
-	 * @return item in given position
-	 */
-	public long[] getLongArray(final int... pos) { // CLASS_TYPE // PRIM_TYPE
-		return (long[]) getObjectAbs(get1DIndex(pos)); // PRIM_TYPE
+	@Override
+	public byte[] getByteArray(final int... pos) {
+		byte[] result = new byte[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = (byte) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public short[] getShortArray(final int i) {
+		short[] result = new short[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = (short) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public short[] getShortArray(final int i, final int j) {
+		short[] result = new short[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = (short) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public short[] getShortArray(final int... pos) {
+		short[] result = new short[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = (short) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public int[] getIntArray(final int i) {
+		int[] result = new int[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = (int) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public int[] getIntArray(final int i, final int j) {
+		int[] result = new int[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = (int) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public int[] getIntArray(final int... pos) {
+		int[] result = new int[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = (int) data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public long[] getLongArray(final int i) {
+		long[] result = new long[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public long[] getLongArray(final int i, final int j) {
+		long[] result = new long[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public long[] getLongArray(final int... pos) {
+		long[] result = new long[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_UPCAST
+		return result;
+	}
+
+	@Override
+	public float[] getFloatArray(final int i) {
+		float[] result = new float[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
+	}
+
+	@Override
+	public float[] getFloatArray(final int i, final int j) {
+		float[] result = new float[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
+	}
+
+	@Override
+	public float[] getFloatArray(final int... pos) {
+		float[] result = new float[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
+	}
+
+	@Override
+	public double[] getDoubleArray(final int i) {
+		double[] result = new double[isize];
+		int index = get1DIndex(i);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
+	}
+
+	@Override
+	public double[] getDoubleArray(final int i, final int j) {
+		double[] result = new double[isize];
+		int index = get1DIndex(i, j);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
+	}
+
+	@Override
+	public double[] getDoubleArray(final int... pos) {
+		double[] result = new double[isize];
+		int index = get1DIndex(pos);
+		for (int k = 0; k < isize; k++)
+			result[k] = data[index + k]; // OMIT_REAL_CAST
+		return result;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * Data items can be Complex, Vector, etc
  * 
  */
-public abstract class AbstractCompoundDataset extends AbstractDataset {
+public abstract class AbstractCompoundDataset extends AbstractDataset implements CompoundDataset {
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
 
 	protected int isize; // number of elements per item
@@ -538,6 +538,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 	 * @param darray double array must be allocated and have sufficient length
 	 * @param pos
 	 */
+	@Override
 	public void getDoubleArray(final double[] darray, final int... pos) {
 		getDoubleArrayAbs(get1DIndex(pos), darray);
 	}
@@ -547,38 +548,14 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		return null;
 	}
 
-	/**
-	 * Get an item as a double array
-	 * @param index
-	 * @param darray double array must be allocated and have sufficient length
-	 */
-	abstract public void getDoubleArrayAbs(final int index, final double[] darray);
-
-	/**
-	 * Get chosen elements from each item as a dataset
-	 * @param element
-	 * @return dataset of chosen elements
-	 */
+	@Override
 	abstract public AbstractDataset getElements(int element);
-
-	/**
-	 * Set values of chosen elements from each item according to source dataset
-	 * @param source
-	 * @param element
-	 */
-	abstract public void setElements(Dataset source, int element);
-
-	/**
-	 * Copy chosen elements from each item to another dataset
-	 * @param destination
-	 * @param element
-	 */
-	abstract public void copyElements(Dataset destination, int element);
 
 	/**
 	 * Gets a view of compound dataset as a non-compound dataset
 	 * @return non-compound dataset
 	 */
+	@Override
 	public AbstractDataset asNonCompoundDataset() {
 		return DatasetUtils.createDatasetFromCompoundDataset(this, true);
 	}
@@ -776,10 +753,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	protected final static String STORE_STATS_ITEM_NAME = STORE_STATS + "=";
 
-	/**
-	 * Calculate maximum values of elements over all items in dataset
-	 * @return double array of element-wise maxima
-	 */
+	@Override
 	public double[] maxItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (isize < 1)
@@ -795,10 +769,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		return results;
 	}
 
-	/**
-	 * Calculate minimum values of elements over all items in dataset
-	 * @return double array of element-wise minima
-	 */
+	@Override
 	public double[] minItem() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
 		if (isize < 1)
@@ -832,25 +803,25 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	private static Object fromDoublesToBiggestPrimitives(double[] x, int dtype) {
 		switch (dtype) {
-		case BOOL:
-		case INT8:
-		case INT16:
-		case INT32:
+		case Dataset.BOOL:
+		case Dataset.INT8:
+		case Dataset.INT16:
+		case Dataset.INT32:
 			int[] i32 = new int[x.length];
 			for (int i = 0; i < x.length; i++)
 				i32[i] = (int) (long) x[i];
 			return i32;
-		case INT64:
+		case Dataset.INT64:
 			long[] i64 = new long[x.length];
 			for (int i = 0; i < x.length; i++)
 				i64[i] = (long) x[i];
 			return i64;
-		case FLOAT32:
+		case Dataset.FLOAT32:
 			float[] f32 = new float[x.length];
 			for (int i = 0; i < x.length; i++)
 				f32[i] = (float) x[i];
 			return f32;
-		case FLOAT64:
+		case Dataset.FLOAT64:
 			return x;
 		}
 		return null;

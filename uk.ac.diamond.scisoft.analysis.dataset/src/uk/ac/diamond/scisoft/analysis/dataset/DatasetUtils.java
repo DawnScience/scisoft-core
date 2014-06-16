@@ -1167,7 +1167,7 @@ public class DatasetUtils {
 	 * @param shareData if true, then share data
 	 * @return compound dataset
 	 */
-	public static AbstractCompoundDataset createCompoundDatasetFromLastAxis(final Dataset a, final boolean shareData) {
+	public static CompoundDataset createCompoundDatasetFromLastAxis(final Dataset a, final boolean shareData) {
 		if (a instanceof AbstractCompoundDataset) {
 			utilsLogger.error("Need a single-element dataset");
 			throw new IllegalArgumentException("Need a single-element dataset");
@@ -1221,7 +1221,7 @@ public class DatasetUtils {
 	 * @param shareData if true, then share data
 	 * @return non-compound dataset
 	 */
-	public static AbstractDataset createDatasetFromCompoundDataset(final AbstractCompoundDataset a, final boolean shareData) {
+	public static AbstractDataset createDatasetFromCompoundDataset(final CompoundDataset a, final boolean shareData) {
 		Serializable buffer = shareData ? a.getBuffer() : a.clone().getBuffer();
 
 		AbstractDataset result;
@@ -1660,11 +1660,11 @@ public class DatasetUtils {
 	 * @param overAllElements if true, then normalise over all elements in each item
 	 * @return normalised dataset
 	 */
-	public static AbstractCompoundDataset norm(AbstractCompoundDataset a, boolean overAllElements) {
+	public static AbstractCompoundDataset norm(CompoundDataset a, boolean overAllElements) {
 		double[] amin = a.minItem();
 		double[] amax = a.maxItem();
-		final int is = a.isize;
-		AbstractDataset result;
+		final int is = a.getElementsPerItem();
+		Dataset result;
 
 		if (overAllElements) {
 			Arrays.sort(amin);
@@ -2418,7 +2418,7 @@ public class DatasetUtils {
 	 * @param shape
 	 * @return list of positions as integer datasets
 	 */
-	public static List<IntegerDataset> calcPositionsFromIndexes(AbstractDataset indices, int[] shape) {
+	public static List<IntegerDataset> calcPositionsFromIndexes(Dataset indices, int[] shape) {
 		int rank = shape.length;
 		List<IntegerDataset> posns = new ArrayList<IntegerDataset>();
 		int[] iShape = indices.getShapeRef();
@@ -2446,7 +2446,7 @@ public class DatasetUtils {
 	 *  0 = raise exception, 1 = wrap, 2 = clip
 	 * @return indexes as an integer dataset
 	 */
-	public static IntegerDataset calcIndexesFromPositions(List<? extends AbstractDataset> positions, int[] shape, int... mode) {
+	public static IntegerDataset calcIndexesFromPositions(List<? extends Dataset> positions, int[] shape, int... mode) {
 		int rank = shape.length;
 		if (positions.size() != rank) {
 			throw new IllegalArgumentException("Number of position datasets must be equal to rank of shape");
@@ -2468,7 +2468,7 @@ public class DatasetUtils {
 			}
 		}
 
-		AbstractDataset p = positions.get(0);
+		Dataset p = positions.get(0);
 		IntegerDataset indexes = new IntegerDataset(p.getShapeRef());
 		IndexIterator it = p.getIterator(true);
 		int[] iPos = it.getPos();

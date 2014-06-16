@@ -36,7 +36,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public int getDtype() {
-		return COMPLEX64; // DATA_TYPE
+		return Dataset.COMPLEX64; // DATA_TYPE
 	}
 
 	public ComplexFloatDataset() {
@@ -612,7 +612,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			IndexIterator it2 = bds.getIterator();
 
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				while (it1.hasNext() && it2.hasNext()) {
 					data[it1.index]   += bds.getElementDoubleAbs(it2.index);
 					data[it1.index+1] += bds.getElementDoubleAbs(it2.index+1);
@@ -654,7 +654,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			IndexIterator it2 = bds.getIterator();
 
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				while (it1.hasNext() && it2.hasNext()) {
 					data[it1.index]   -= bds.getElementDoubleAbs(it2.index);
 					data[it1.index+1] -= bds.getElementDoubleAbs(it2.index+1);
@@ -696,7 +696,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			IndexIterator it2 = bds.getIterator();
 
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				while (it1.hasNext() && it2.hasNext()) {
 					double r1 = data[it1.index];
 					double r2 = bds.getElementDoubleAbs(it2.index);
@@ -747,7 +747,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			IndexIterator it2 = bds.getIterator();
 
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				while (it1.hasNext() && it2.hasNext()) {
 					double r1 = data[it1.index];
 					double r2 = bds.getElementDoubleAbs(it2.index);
@@ -841,7 +841,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				while (it1.hasNext() && it2.hasNext()) {
 					final Complex zv = new Complex(bds.getElementDoubleAbs(it2.index),
 							bds.getElementDoubleAbs(it2.index+1));
@@ -885,7 +885,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			double comp = 0;
 
 			switch (bds.getDtype()) {
-			case COMPLEX64: case COMPLEX128:
+			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
 				if (ignoreNaNs) {
 					if (w == null) {
 						while (it1.hasNext() && it2.hasNext()) {

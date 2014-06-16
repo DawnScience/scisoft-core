@@ -3007,10 +3007,10 @@ public class Maths {
 	 * @param d input dataset
 	 * @param x0 coordinate
 	 */
-	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double x0) {
+	public static void interpolate(final double[] values, final CompoundDataset d, final double x0) {
 		assert d.getRank() == 1;
 
-		final int is = d.isize;
+		final int is = d.getElementsPerItem();
 		if (is != values.length)
 			throw new IllegalArgumentException("Output array length must match elements in item");
 		final double[] f1, f2;
@@ -3170,7 +3170,7 @@ public class Maths {
 	 * @param x0
 	 * @param x1
 	 */
-	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double x0, final double x1) {
+	public static void interpolate(final double[] values, final CompoundDataset d, final double x0, final double x1) {
 		final int[] s = d.getShapeRef();
 		assert s.length == 2;
 
@@ -3451,10 +3451,10 @@ public class Maths {
 	 * @param values interpolated array
 	 * @param d input dataset
 	 * @param x0 coordinate
-	 * @deprecated Use {@link #interpolate(double[], AbstractCompoundDataset, double)}
+	 * @deprecated Use {@link #interpolate(double[], CompoundDataset, double)}
 	 */
 	@Deprecated
-	public static void getLinear(final double[] values, final AbstractCompoundDataset d, final double x0) {
+	public static void getLinear(final double[] values, final CompoundDataset d, final double x0) {
 		interpolate(values, d, x0);
 	}
 
@@ -3491,10 +3491,10 @@ public class Maths {
 	 * @param d
 	 * @param x0
 	 * @param x1
-	 * @deprecated Use {@link #interpolate(double[], AbstractCompoundDataset, double, double)}
+	 * @deprecated Use {@link #interpolate(double[], CompoundDataset, double, double)}
 	 */
 	@Deprecated
-	public static void getBilinear(final double[] values, final AbstractCompoundDataset d, final double x0, final double x1) {
+	public static void getBilinear(final double[] values, final CompoundDataset d, final double x0, final double x1) {
 		interpolate(values, d, x0, x1);
 	}
 

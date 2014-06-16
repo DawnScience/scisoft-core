@@ -27,7 +27,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 
 	@Override
 	public int getDtype() {
-		return RGB;
+		return Dataset.RGB;
 	}
 
 	public RGBDataset() {
@@ -191,14 +191,14 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param a
 	 * @return RGB dataset
 	 */
-	public static RGBDataset createFromCompoundDataset(final AbstractCompoundDataset a) {
+	public static RGBDataset createFromCompoundDataset(final CompoundDataset a) {
 		if (a instanceof RGBDataset)
 			return (RGBDataset) a;
-		final int is = a.isize;
+		final int is = a.getElementsPerItem();
 		if (is < 3) {
 			return new RGBDataset(a);
 		}
-		final RGBDataset rgb = new RGBDataset(a.shape);
+		final RGBDataset rgb = new RGBDataset(a.getShapeRef());
 		final IndexIterator it = a.getIterator();
 
 		int n = 0;

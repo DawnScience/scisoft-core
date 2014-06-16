@@ -158,6 +158,11 @@ public class BooleanDatasetBase extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public BooleanDatasetBase clone() {
+		return new BooleanDatasetBase(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -543,6 +548,18 @@ public class BooleanDatasetBase extends AbstractDataset {
 		stride = null;
 		offset = 0;
 		base = null;
+	}
+
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public BooleanDatasetBase sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
 	}
 
 	@Override

@@ -68,6 +68,11 @@ public class ObjectDataset extends ObjectDatasetBase {
 		return view;
 	}
 
+	@Override
+	public ObjectDataset clone() {
+		return new ObjectDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.

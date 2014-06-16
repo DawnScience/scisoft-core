@@ -71,6 +71,11 @@ public class BooleanDataset extends BooleanDatasetBase {
 		return view;
 	}
 
+	@Override
+	public BooleanDataset clone() {
+		return new BooleanDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.

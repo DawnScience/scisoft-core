@@ -249,69 +249,7 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	@Override
-	public AbstractDataset clone() {
-		AbstractDataset c = null;
-		try {
-			// copy across the data
-			switch (getDtype()) {
-			case BOOL:
-				c = new BooleanDataset((BooleanDataset) this);
-				break;
-			case INT8:
-				c = new ByteDataset((ByteDataset) this);
-				break;
-			case INT16:
-				c = new ShortDataset((ShortDataset) this);
-				break;
-			case INT32:
-				c = new IntegerDataset((IntegerDataset) this);
-				break;
-			case INT64:
-				c = new LongDataset((LongDataset) this);
-				break;
-			case ARRAYINT8:
-				c = new CompoundByteDataset((CompoundByteDataset) this);
-				break;
-			case ARRAYINT16:
-				c = new CompoundShortDataset((CompoundShortDataset) this);
-				break;
-			case ARRAYINT32:
-				c = new CompoundIntegerDataset((CompoundIntegerDataset) this);
-				break;
-			case ARRAYINT64:
-				c = new CompoundLongDataset((CompoundLongDataset) this);
-				break;
-			case FLOAT32:
-				c = new FloatDataset((FloatDataset) this);
-				break;
-			case FLOAT64:
-				c = new DoubleDataset((DoubleDataset) this);
-				break;
-			case ARRAYFLOAT32:
-				c = new CompoundFloatDataset((CompoundFloatDataset) this);
-				break;
-			case ARRAYFLOAT64:
-				c = new CompoundDoubleDataset((CompoundDoubleDataset) this);
-				break;
-			case COMPLEX64:
-				c = new ComplexFloatDataset((ComplexFloatDataset) this);
-				break;
-			case COMPLEX128:
-				c = new ComplexDoubleDataset((ComplexDoubleDataset) this);
-				break;
-			case STRING:
-				c = new StringDataset((StringDataset) this);
-			break;
-			default:
-				logger.error("Dataset of unknown type!");
-				break;
-			}
-		} catch (OutOfMemoryError e) {
-			throw new OutOfMemoryError("Not enough memory available to create dataset");
-		}
-
-		return c;
-	}
+	abstract public AbstractDataset clone();
 
 	/**
 	 * Cast a dataset

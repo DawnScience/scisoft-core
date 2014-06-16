@@ -159,6 +159,11 @@ public class FloatDataset extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public FloatDataset clone() {
+		return new FloatDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -178,7 +183,7 @@ public class FloatDataset extends AbstractDataset {
 		result.fillData(obj, 0, pos);
 		return result;
 	}
-	// BOOLEAN_OMIT
+	
 	/**
 	 *
 	 * @param stop
@@ -187,7 +192,7 @@ public class FloatDataset extends AbstractDataset {
 	public static FloatDataset arange(final double stop) {
 		return arange(0, stop, 1);
 	}
-	// BOOLEAN_OMIT
+	
 	/**
 	 *
 	 * @param start
@@ -571,6 +576,36 @@ public class FloatDataset extends AbstractDataset {
 		base = null;
 	}
 
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public FloatDataset sort(Integer axis) {
+		if (axis == null) {
+			Arrays.sort(data);
+		} else {
+			axis = checkAxis(axis);
+			
+			FloatDataset ads = new FloatDataset(shape[axis]);
+			PositionIterator pi = getPositionIterator(axis);
+			int[] pos = pi.getPos();
+			boolean[] hit = pi.getOmit();
+			while (pi.hasNext()) {
+				copyItemsFromAxes(pos, hit, ads);
+				Arrays.sort(ads.data);
+				setItemsOnAxes(pos, hit, ads.data);
+			}
+		}
+		
+		setDirty();
+		return this;
+		// throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
+	}
+
 	@Override
 	public FloatDataset getSlice(final SliceIterator siter) {
 		FloatDataset result = new FloatDataset(siter.getShape());
@@ -854,17 +889,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] += bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] += v;
 			}
@@ -878,17 +913,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] -= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] -= v;
 			}
@@ -902,17 +937,17 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] *= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			// NAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] *= v;
 			}
@@ -926,10 +961,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] /= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
 			}
@@ -939,7 +974,7 @@ public class FloatDataset extends AbstractDataset {
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] /= v;
 			}
@@ -952,7 +987,7 @@ public class FloatDataset extends AbstractDataset {
 	@Override
 	public FloatDataset ifloor() {
 		IndexIterator it1 = getIterator(); // REAL_ONLY
-		// REAL_ONLY
+		 // REAL_ONLY
 		while (it1.hasNext()) { // REAL_ONLY
 			data[it1.index] = (float) Math.floor(data[it1.index]); // PRIM_TYPE // REAL_ONLY // ADD_CAST
 		} // REAL_ONLY
@@ -965,10 +1000,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] %= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
 			}
@@ -978,7 +1013,7 @@ public class FloatDataset extends AbstractDataset {
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] %= v;
 			}
@@ -993,10 +1028,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				final double v = Math.pow(data[it1.index], bds.getElementDoubleAbs(it2.index));
 				// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
@@ -1009,7 +1044,7 @@ public class FloatDataset extends AbstractDataset {
 			double vr = toReal(b);
 			double vi = toImag(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			if (vi == 0.) {
 				while (it1.hasNext()) {
 					final double v = Math.pow(data[it1.index], vr);
@@ -1042,10 +1077,10 @@ public class FloatDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			double comp = 0;
 			if (ignoreNaNs) { // REAL_ONLY
 				if (w == null) { // REAL_ONLY

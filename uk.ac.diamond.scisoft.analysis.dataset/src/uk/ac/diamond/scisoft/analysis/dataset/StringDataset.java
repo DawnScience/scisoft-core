@@ -69,6 +69,11 @@ public class StringDataset extends StringDatasetBase {
 		return view;
 	}
 
+	@Override
+	public StringDataset clone() {
+		return new StringDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.

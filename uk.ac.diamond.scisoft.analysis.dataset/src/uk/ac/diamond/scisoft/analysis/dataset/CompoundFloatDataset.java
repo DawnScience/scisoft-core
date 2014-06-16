@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.Arrays;
 
 /**
- *
+ * Extend compound dataset for float values // PRIM_TYPE
  */
 public class CompoundFloatDataset extends AbstractCompoundDataset {
 	// pin UID to base class
@@ -238,6 +238,11 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	@Override
+	public CompoundFloatDataset clone() {
+		return new CompoundFloatDataset(this);
 	}
 
 	/**
@@ -639,6 +644,11 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 			rdata[riter.index] = data[iter.index];
 
 		return rdataset;
+	}
+
+	@Override
+	public CompoundFloatDataset sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset");
 	}
 
 	@Override

@@ -158,6 +158,11 @@ public class StringDatasetBase extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public StringDatasetBase clone() {
+		return new StringDatasetBase(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -543,6 +548,36 @@ public class StringDatasetBase extends AbstractDataset {
 		stride = null;
 		offset = 0;
 		base = null;
+	}
+
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public StringDatasetBase sort(Integer axis) {
+		if (axis == null) {
+			Arrays.sort(data);
+		} else {
+			axis = checkAxis(axis);
+			
+			StringDatasetBase ads = new StringDatasetBase(shape[axis]);
+			PositionIterator pi = getPositionIterator(axis);
+			int[] pos = pi.getPos();
+			boolean[] hit = pi.getOmit();
+			while (pi.hasNext()) {
+				copyItemsFromAxes(pos, hit, ads);
+				Arrays.sort(ads.data);
+				setItemsOnAxes(pos, hit, ads.data);
+			}
+		}
+		
+		setDirty();
+		return this;
+		// throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
 	}
 
 	@Override

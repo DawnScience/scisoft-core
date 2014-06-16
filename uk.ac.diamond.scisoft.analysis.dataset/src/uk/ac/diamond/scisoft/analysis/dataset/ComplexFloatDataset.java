@@ -138,6 +138,11 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		}
 	}
 
+	@Override
+	public ComplexFloatDataset clone() {
+		return new ComplexFloatDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.

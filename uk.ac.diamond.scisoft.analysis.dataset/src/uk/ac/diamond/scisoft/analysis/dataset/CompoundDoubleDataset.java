@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.Arrays;
 
 /**
- *
+ * Extend compound dataset for double values // PRIM_TYPE
  */
 public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	// pin UID to base class
@@ -238,6 +238,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	@Override
+	public CompoundDoubleDataset clone() {
+		return new CompoundDoubleDataset(this);
 	}
 
 	/**
@@ -639,6 +644,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			rdata[riter.index] = data[iter.index];
 
 		return rdataset;
+	}
+
+	@Override
+	public CompoundDoubleDataset sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset");
 	}
 
 	@Override
@@ -1257,7 +1267,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 						// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
 						// 	data[it1.index + i] = 0; // INT_ZEROTEST // CLASS_TYPE
 						// } else { // INT_ZEROTEST
-						data[it1.index + i] = v; // PRIM_TYPE_LONG // BOOLEAN_OMIT // ADD_CAST
+						data[it1.index + i] = v; // PRIM_TYPE_LONG // ADD_CAST
 						// } // INT_ZEROTEST
 					}
 				}

@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.Arrays;
 
 /**
- *
+ * Extend compound dataset for byte values // PRIM_TYPE
  */
 public class CompoundByteDataset extends AbstractCompoundDataset {
 	// pin UID to base class
@@ -238,6 +238,11 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	@Override
+	public CompoundByteDataset clone() {
+		return new CompoundByteDataset(this);
 	}
 
 	/**
@@ -639,6 +644,11 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 			rdata[riter.index] = data[iter.index];
 
 		return rdataset;
+	}
+
+	@Override
+	public CompoundByteDataset sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset");
 	}
 
 	@Override

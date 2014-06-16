@@ -754,7 +754,7 @@ public class DatasetUtils {
 	 *            The datasets to be cast.
 	 */
 	public static AbstractCompoundDataset cast(final Dataset[] a, final int dtype) {
-		AbstractCompoundDataset c = null;
+		CompoundDataset c = null;
 
 		switch (dtype) {
 		case Dataset.INT8:
@@ -798,7 +798,7 @@ public class DatasetUtils {
 			break;
 		}
 
-		return c;
+		return (AbstractCompoundDataset) c;
 	}
 
 	/**

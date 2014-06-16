@@ -1902,7 +1902,7 @@ public class MathsTest {
 			checkInterpolate(xb, x);
 		}
 
-		AbstractCompoundDataset cxb = (AbstractCompoundDataset) xb;
+		CompoundDataset cxb = (CompoundDataset) xb;
 		for (double x : xc) {
 			checkInterpolateArray(cxb, x);
 		}

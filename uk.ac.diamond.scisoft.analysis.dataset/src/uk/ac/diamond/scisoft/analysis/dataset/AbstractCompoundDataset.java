@@ -138,8 +138,8 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		if (!super.equals(obj)) {
 			return false;
 		}
-		AbstractCompoundDataset other = (AbstractCompoundDataset) obj;
-		return isize == other.isize;
+		CompoundDataset other = (CompoundDataset) obj;
+		return isize == other.getElementsPerItem();
 	}
 
 	@Override

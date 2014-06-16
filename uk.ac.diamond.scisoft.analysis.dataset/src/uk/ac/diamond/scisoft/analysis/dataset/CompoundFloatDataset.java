@@ -108,12 +108,12 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	 * Create a dataset using given dataset
 	 * @param dataset
 	 */
-	public CompoundFloatDataset(final AbstractCompoundDataset dataset) {
+	public CompoundFloatDataset(final CompoundDataset dataset) {
 		copyToView(dataset, this, true, false);
 		offset = 0;
 		stride = null;
 		base = null;
-		isize = dataset.isize;
+		isize = dataset.getElementsPerItem();
 		odata = data = createArray(size);
 
 		IndexIterator iter = dataset.getIterator();

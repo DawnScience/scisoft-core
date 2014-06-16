@@ -3353,7 +3353,7 @@ public class Maths {
 	 * @param d
 	 * @param x
 	 */
-	public static void interpolate(final double[] values, final AbstractCompoundDataset d, final double... x) {
+	public static void interpolate(final double[] values, final CompoundDataset d, final double... x) {
 		int r = d.getRank();
 		if (r != x.length) {
 			throw new IllegalArgumentException("Number of coordinates must be equal to rank of dataset");

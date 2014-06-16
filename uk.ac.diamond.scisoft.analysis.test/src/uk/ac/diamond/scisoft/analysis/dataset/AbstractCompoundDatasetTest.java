@@ -275,13 +275,13 @@ public class AbstractCompoundDatasetTest {
 
 		d = Random.randint(0, 255, new int[] {5,3,2});
 		dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
-		Dataset dca = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(0), true);
+		Dataset dca = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dc.sum(0), true);
 		Dataset da = d.sum(0);
 		IndexIterator it = da.getIterator();
 		while (it.hasNext()) {
 			assertEquals(da.getElementDoubleAbs(it.index), dca.getElementDoubleAbs(it.index), 1e-15);
 		}
-		Dataset dcb = DatasetUtils.createDatasetFromCompoundDataset((AbstractCompoundDataset) dc.sum(1), true);
+		Dataset dcb = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dc.sum(1), true);
 		Dataset db = d.sum(1);
 		it = db.getIterator();
 		while (it.hasNext()) {
@@ -387,7 +387,7 @@ public class AbstractCompoundDatasetTest {
 		for (int i = 0 ; i < 5; i++) {
 			aa[i] = DatasetFactory.createRange(100, Dataset.INT32);
 		}
-		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
+		CompoundDataset a = new CompoundIntegerDataset(aa);
 		
 		a.setError(5);
 		assertTrue(a.hasErrors());
@@ -405,7 +405,7 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(5.0, a.getErrorArray(99)[4], 0.001);
 		
 		// now for pulling out the full error array
-		AbstractCompoundDataset error = a.getError();
+		CompoundDataset error = a.getError();
 		
 		// check compatibility
 		try {
@@ -442,7 +442,7 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(10.0, a.getErrorArray(99)[4], 0.001);
 		
 		// test pulling the error out again, to make sure its correct
-		AbstractCompoundDataset error2 = a.getError();
+		CompoundDataset error2 = a.getError();
 		
 		// check compatibility
 		try {
@@ -481,7 +481,7 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(5.0, a.getErrorArray(99)[4], 0.001);
 		
 		// test pulling the error out again, to make sure its correct
-		AbstractCompoundDataset error3 = a.getError();
+		CompoundDataset error3 = a.getError();
 		
 		// check compatibility
 		try {
@@ -513,24 +513,24 @@ public class AbstractCompoundDatasetTest {
 		for (int i = 0 ; i < 5; i++) {
 			aa[i] = DatasetFactory.createRange(100, Dataset.INT32);
 		}
-		AbstractCompoundDataset a = new CompoundIntegerDataset(aa);
+		CompoundDataset a = new CompoundIntegerDataset(aa);
 		
 		a.setError(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
 		
 		// should be squared
-		assertEquals(1.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[0], 0.001);
-		assertEquals(4.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[1], 0.001);
-		assertEquals(9.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[2], 0.001);
-		assertEquals(16.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[3], 0.001);
-		assertEquals(25.0, AbstractCompoundDataset.toDoubleArray(a.errorData,5)[4], 0.001);
+		assertEquals(1.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[0], 0.001);
+		assertEquals(4.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[1], 0.001);
+		assertEquals(9.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[2], 0.001);
+		assertEquals(16.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[3], 0.001);
+		assertEquals(25.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[4], 0.001);
 		
 		// now for pulling out the full error array
-		AbstractCompoundDataset error = a.getError();
+		CompoundDataset error = a.getError();
 	
 		a.setError(error);
 		
 		// should also be squared
-		AbstractCompoundDataset ae = (AbstractCompoundDataset) a.errorData;
+		CompoundDataset ae = (CompoundDataset) a.getErrorBuffer();
 		assertEquals(1.0, ae.getElements(0).getDouble(0), 0.001);
 		assertEquals(4.0, ae.getElements(1).getDouble(0), 0.001);
 		assertEquals(9.0, ae.getElements(2).getDouble(0), 0.001);

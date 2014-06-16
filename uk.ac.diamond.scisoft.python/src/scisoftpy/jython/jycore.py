@@ -181,8 +181,6 @@ def _jinput(arg): # strip for java input
 
     return arg
 
-from decorator import decorator as _decorator
-
 def _joutput(result): # wrap java output
     if type(result) is _types.ListType:
         return [ Sciwrap(r) for r in result ]
@@ -193,6 +191,8 @@ def _joutput(result): # wrap java output
     elif type(result) is _arraytype:
         return [ Sciwrap(r) for r in result if r is not None ]
     return Sciwrap(result)
+
+from decorator import decorator as _decorator
 
 @_decorator
 def _wrap(func, *args, **kwargs): # strip input and wrap output
@@ -893,7 +893,7 @@ class ndarray(object):
             if isinstance(key, _booleands):
                 return self.__dataset.getByBoolean(key)
             if isinstance(key, _integerds):
-                return self.__dataset.getByIndex(key)
+                return self.__dataset.getBy1DIndex(key)
 # FIXME add integers indexing
         isslice, key = self._toslice(key)
         try:
@@ -913,7 +913,7 @@ class ndarray(object):
             if isinstance(key, _booleands):
                 return self.__dataset.setByBoolean(value, key)
             if isinstance(key, _integerds): #FIXME
-                return self.__dataset.setByIndex(value, key)
+                return self.__dataset.setBy1DIndex(value, key)
 
         isslice, key = self._toslice(key)
         try:

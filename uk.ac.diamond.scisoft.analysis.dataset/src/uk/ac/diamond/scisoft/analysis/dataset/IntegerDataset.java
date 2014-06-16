@@ -619,7 +619,7 @@ public class IntegerDataset extends AbstractDataset {
 	}
 
 	@Override
-	public IntegerDataset setByIndex(final Object obj, final Dataset index) {
+	public IntegerDataset setBy1DIndex(final Object obj, final Dataset index) {
 		if (obj instanceof Dataset) {
 			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
@@ -646,8 +646,8 @@ public class IntegerDataset extends AbstractDataset {
 	}
 
 	@Override
-	public IntegerDataset setByIndexes(final Object obj, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public IntegerDataset setByIndexes(final Object obj, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (obj instanceof Dataset) {

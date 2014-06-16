@@ -1293,7 +1293,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return The new selected dataset by indices
 	 */
 	@Override
-	public AbstractDataset getByIndex(IntegerDataset index) {
+	public AbstractDataset getBy1DIndex(IntegerDataset index) {
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, index.getShape(), getDtype());
 		final IntegerIterator iter = new IntegerIterator(index, size, is);
@@ -1308,13 +1308,13 @@ public abstract class AbstractDataset implements Dataset {
 
 	/**
 	 * This is modelled after the NumPy get item with an array of indexing objects
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 * @return The new selected dataset by index
 	 */
 	@Override
-	public AbstractDataset getByIndexes(final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public AbstractDataset getByIndexes(final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, iter.getShape(), getDtype());
 
@@ -1337,19 +1337,19 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByIndex(final Object obj, final Dataset index);
+	abstract public AbstractDataset setBy1DIndex(final Object obj, final Dataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
 	 * @param obj
 	 *            specifies the object used to set the selected items
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 * 
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByIndexes(final Object obj, final Object... index);
+	abstract public AbstractDataset setByIndexes(final Object obj, final Object... indexes);
 
 	/**
 	 * @param dtype

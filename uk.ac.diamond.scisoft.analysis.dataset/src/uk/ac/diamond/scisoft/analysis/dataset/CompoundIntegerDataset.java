@@ -764,7 +764,7 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundIntegerDataset setByIndex(final Object o, Dataset index) {
+	public CompoundIntegerDataset setBy1DIndex(final Object o, Dataset index) {
 		if (o instanceof Dataset) {
 			Dataset ds = (Dataset) o;
 			if (index.getSize() != ds.getSize()) {
@@ -814,8 +814,8 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundIntegerDataset setByIndexes(final Object o, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public CompoundIntegerDataset setByIndexes(final Object o, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (o instanceof Dataset) {

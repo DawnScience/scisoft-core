@@ -493,17 +493,17 @@ public interface Dataset extends IErrorDataset {
 	 *            an integer dataset
 	 * @return The new selected dataset by indices
 	 */
-	public Dataset getByIndex(IntegerDataset index);
+	public Dataset getBy1DIndex(IntegerDataset index);
 
 	/**
 	 * This is modelled after the NumPy get item with an array of indexing objects
 	 *
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as
 	 *            full slices)
 	 * @return The new selected dataset by index
 	 */
-	public Dataset getByIndexes(Object... index);
+	public Dataset getByIndexes(Object... indexes);
 
 	/**
 	 * This is modelled after the NumPy set item with an index dataset
@@ -515,20 +515,20 @@ public interface Dataset extends IErrorDataset {
 	 * 
 	 * @return The dataset with modified content
 	 */
-	public Dataset setByIndex(Object obj, Dataset index);
+	public Dataset setBy1DIndex(Object obj, Dataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
 	 *
 	 * @param obj
 	 *            specifies the object used to set the selected items
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as
 	 *            full slices)
 	 * 
 	 * @return The dataset with modified content
 	 */
-	public Dataset setByIndexes(Object obj, Object... index);
+	public Dataset setByIndexes(Object obj, Object... indexes);
 
 	/**
 	 * Fill dataset with number represented by given object

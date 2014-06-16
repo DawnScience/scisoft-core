@@ -2030,10 +2030,10 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
-	public void testSetByIndex() {
+	public void testSetBy1DIndex() {
 		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
 		a.max();
-		a.setByIndex(0, Comparisons.nonZero(Comparisons.greaterThan(a, 5)).get(0));
+		a.setBy1DIndex(0, Comparisons.nonZero(Comparisons.greaterThan(a, 5)).get(0));
 		Assert.assertEquals(a.max().longValue(), 5);
 	}
 

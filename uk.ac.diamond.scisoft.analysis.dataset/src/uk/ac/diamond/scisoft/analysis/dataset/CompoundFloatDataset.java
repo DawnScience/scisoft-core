@@ -764,7 +764,7 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundFloatDataset setByIndex(final Object o, Dataset index) {
+	public CompoundFloatDataset setBy1DIndex(final Object o, Dataset index) {
 		if (o instanceof Dataset) {
 			Dataset ds = (Dataset) o;
 			if (index.getSize() != ds.getSize()) {
@@ -814,8 +814,8 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundFloatDataset setByIndexes(final Object o, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public CompoundFloatDataset setByIndexes(final Object o, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (o instanceof Dataset) {

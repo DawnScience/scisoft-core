@@ -1620,8 +1620,8 @@ public abstract class AbstractDataset implements Dataset {
 							nl *= nshape[ne++];
 						} while (nl < ol);
 						if (nl != ol) {
-							logger.error("Shape is incompatible with this non-contiguous view");
-							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+							logger.error("Subshape is incompatible with single dimension");
+							throw new IllegalArgumentException("Subshape is incompatible with single dimension");
 						}
 						int on = ne - 1;
 						while (nshape[on] == 1) {
@@ -1644,8 +1644,8 @@ public abstract class AbstractDataset implements Dataset {
 							ol *= oshape[oe++];
 						} while (ol < nl);
 						if (nl != ol) {
-							logger.error("Shape is incompatible with this non-contiguous view");
-							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+							logger.error("Single dimension is incompatible with subshape");
+							throw new IllegalArgumentException("Single dimension is incompatible with subshape");
 						}
 
 						int oo = oe - 1;
@@ -1657,8 +1657,8 @@ public abstract class AbstractDataset implements Dataset {
 							if (oshape[o] == 1)
 								continue;
 							if (ostride[o] != oshape[oo] * ostride[oo]) {
-								logger.error("Shape is incompatible with this non-contiguous view");
-								throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+								logger.error("Subshape cannot be a non-contiguous view");
+								throw new IllegalArgumentException("Subshape cannot be a non-contiguous view");
 							}
 							oo = o;
 						}

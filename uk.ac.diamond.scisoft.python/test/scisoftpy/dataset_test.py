@@ -704,10 +704,17 @@ class Test(unittest.TestCase):
         d = tm[c]
         self.checkitems([ 12., 20., 30., 42., 56. ], d)
 
+        d = tm[tm > 11.6]
+        self.checkitems([ 12., 20., 30., 42., 56. ], d)
+
         d = tm[np.logical_not(c)]
         self.checkitems([ 0, 2., 6 ], d)
 
-        tm[c] = -2.3
+        ta = tm.copy()
+        ta[c] = -2.3
+        self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], ta)
+
+        tm[tm > 11.6] = -2.3
         self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
 
         tm[np.logical_not(c)] = -3.3

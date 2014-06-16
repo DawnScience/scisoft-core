@@ -18,7 +18,7 @@
 Scisoft-only package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset as _abscompoundds
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset as _compoundds
 import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
 import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
@@ -99,7 +99,7 @@ def normalise(a, allelements=True):
     Keyword argument:
     allelements -- if True, then normalise for all elements rather than per-element
     '''
-    if isinstance(a, _abscompoundds):
+    if isinstance(a, _compoundds):
         return _dsutils.norm(a, allelements)
     return _dsutils.norm(a)
 

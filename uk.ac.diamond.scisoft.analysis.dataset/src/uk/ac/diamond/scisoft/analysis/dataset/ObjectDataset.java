@@ -23,11 +23,6 @@ public class ObjectDataset extends ObjectDatasetBase {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
 
-	/**
-	 * Setup the logging facilities
-	 */
-//	transient private static final Logger logger = LoggerFactory.getLogger(ObjectDataset.class);
-
 	public ObjectDataset() {
 		super();
 	}

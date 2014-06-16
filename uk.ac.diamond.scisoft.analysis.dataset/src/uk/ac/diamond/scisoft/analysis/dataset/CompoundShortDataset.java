@@ -20,20 +20,12 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  */
 public class CompoundShortDataset extends AbstractCompoundDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	protected static final Logger compoundLogger = LoggerFactory.getLogger(CompoundShortDataset.class);
 
 	protected short[] data; // subclass alias // PRIM_TYPE
 
@@ -48,7 +40,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 		try {
 			array = new short[isize * size]; // PRIM_TYPE
 		} catch (OutOfMemoryError e) {
-			compoundLogger.error("The size of the dataset ({}) that is being created is too large "
+			logger.error("The size of the dataset ({}) that is being created is too large "
 					+ "and there is not enough memory to hold it.", size);
 			throw new OutOfMemoryError("The dimensions given are too large, and there is "
 					+ "not enough memory available in the Java Virtual Machine");
@@ -301,7 +293,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 		if (obj instanceof IDataset) {
 			IDataset ds = (IDataset) obj;
 			if (!isCompatibleWith(ds)) {
-				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
 			if (ds instanceof Dataset) {

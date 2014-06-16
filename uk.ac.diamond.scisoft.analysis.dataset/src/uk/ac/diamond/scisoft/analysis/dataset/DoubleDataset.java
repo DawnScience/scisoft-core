@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex; // BOOLEAN_OMIT
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -33,11 +31,6 @@ import org.slf4j.LoggerFactory;
 public class DoubleDataset extends AbstractDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(DoubleDataset.class);
 
 	protected double[] data; // subclass alias // PRIM_TYPE
 

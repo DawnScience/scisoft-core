@@ -198,7 +198,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		if (obj instanceof IDataset) {
 			IDataset ds = (IDataset) obj;
 			if (!isCompatibleWith(ds)) {
-				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
 			if (ds instanceof Dataset) {

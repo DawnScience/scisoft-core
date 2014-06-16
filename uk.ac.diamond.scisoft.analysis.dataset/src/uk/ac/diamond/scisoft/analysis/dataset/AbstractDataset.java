@@ -157,7 +157,7 @@ public abstract class AbstractDataset implements Dataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
+	protected static final Logger logger = LoggerFactory.getLogger(AbstractDataset.class);
 
 	protected static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
@@ -303,7 +303,7 @@ public abstract class AbstractDataset implements Dataset {
 				c = new StringDataset((StringDataset) this);
 			break;
 			default:
-				abstractLogger.error("Dataset of unknown type!");
+				logger.error("Dataset of unknown type!");
 				break;
 			}
 		} catch (OutOfMemoryError e) {
@@ -432,14 +432,14 @@ public abstract class AbstractDataset implements Dataset {
 		int i;
 
 		if (axes.length != rank) {
-			abstractLogger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
+			logger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
 			throw new IllegalArgumentException("axis permutation does not match shape of dataset");
 		}
 
 		// check all permutation values are within bounds
 		for (int d : axes) {
 			if (d < 0 || d >= rank) {
-				abstractLogger.error("axis permutation contains element {} outside rank of dataset", d);
+				logger.error("axis permutation contains element {} outside rank of dataset", d);
 				throw new IllegalArgumentException("axis permutation contains element outside rank of dataset");
 			}
 		}
@@ -449,7 +449,7 @@ public abstract class AbstractDataset implements Dataset {
 		Arrays.sort(perm);
 		for (i = 0; i < rank; i++) {
 			if (perm[i] != i) {
-				abstractLogger.error("axis permutation is not valid: it does not contain complete set of axes");
+				logger.error("axis permutation is not valid: it does not contain complete set of axes");
 				throw new IllegalArgumentException("axis permutation does not contain complete set of axes");	
 			}
 		}
@@ -522,7 +522,7 @@ public abstract class AbstractDataset implements Dataset {
 			axis2 += rank;
 
 		if (axis1 < 0 || axis2 < 0 || axis1 >= rank || axis2 >= rank) {
-			abstractLogger.error("Axis value invalid - out of range");
+			logger.error("Axis value invalid - out of range");
 			throw new IllegalArgumentException("Axis value invalid - out of range");
 		}
 
@@ -1520,7 +1520,7 @@ public abstract class AbstractDataset implements Dataset {
 	public int[] getShape() {
 		// make a copy of the dimensions data, and put that out
 		if (shape == null) {
-			abstractLogger.warn("Shape is null!!!");
+			logger.warn("Shape is null!!!");
 			return new int[] {};
 		}
 		return shape.clone();
@@ -1554,7 +1554,7 @@ public abstract class AbstractDataset implements Dataset {
 				if (found == -1) {
 					found = i;
 				} else {
-					abstractLogger.error("Can only have one -1 placeholder in shape");
+					logger.error("Can only have one -1 placeholder in shape");
 					throw new IllegalArgumentException("Can only have one -1 placeholder in shape");
 				}
 			} else {
@@ -1564,7 +1564,7 @@ public abstract class AbstractDataset implements Dataset {
 		if (found >= 0) {
 			shape[found] = size/nsize;
 		} else if (nsize != size) {
-			abstractLogger.error("New shape is not same size as old shape");
+			logger.error("New shape is not same size as old shape");
 			throw new IllegalArgumentException("New shape is not same size as old shape");
 		}
 	}
@@ -1620,7 +1620,7 @@ public abstract class AbstractDataset implements Dataset {
 							nl *= nshape[ne++];
 						} while (nl < ol);
 						if (nl != ol) {
-							abstractLogger.error("Shape is incompatible with this non-contiguous view");
+							logger.error("Shape is incompatible with this non-contiguous view");
 							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
 						}
 						int on = ne - 1;
@@ -1644,7 +1644,7 @@ public abstract class AbstractDataset implements Dataset {
 							ol *= oshape[oe++];
 						} while (ol < nl);
 						if (nl != ol) {
-							abstractLogger.error("Shape is incompatible with this non-contiguous view");
+							logger.error("Shape is incompatible with this non-contiguous view");
 							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
 						}
 
@@ -1657,7 +1657,7 @@ public abstract class AbstractDataset implements Dataset {
 							if (oshape[o] == 1)
 								continue;
 							if (ostride[o] != oshape[oo] * ostride[oo]) {
-								abstractLogger.error("Shape is incompatible with this non-contiguous view");
+								logger.error("Shape is incompatible with this non-contiguous view");
 								throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
 							}
 							oo = o;
@@ -1887,7 +1887,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected int get1DIndex(int i) {
 		if (shape.length > 1) {
-			abstractLogger.debug("This dataset is not 1D but was addressed as such");
+			logger.debug("This dataset is not 1D but was addressed as such");
 			return get1DIndex(new int[] {i});
 		}
 		if (i < 0) {
@@ -1906,7 +1906,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected int get1DIndex(int i, int j) {
 		if (shape.length != 2) {
-			abstractLogger.debug("This dataset is not 2D but was addressed as such");
+			logger.debug("This dataset is not 2D but was addressed as such");
 			return get1DIndex(new int[] {i, j});
 		}
 		if (i < 0) {
@@ -2047,7 +2047,7 @@ public abstract class AbstractDataset implements Dataset {
 				}
 			}
 			if (j == -1) {
-				abstractLogger.error("Index was not found in this strided dataset");
+				logger.error("Index was not found in this strided dataset");
 				throw new IllegalArgumentException("Index was not found in this strided dataset");
 			}
 		}
@@ -2430,7 +2430,7 @@ public abstract class AbstractDataset implements Dataset {
 			axis += rank;
 		}
 		if (axis < 0 || axis >= rank) {
-			abstractLogger.error("Axis argument is outside allowed range");
+			logger.error("Axis argument is outside allowed range");
 			throw new IllegalArgumentException("Axis argument is outside allowed range");
 		}
 		int[] nshape = new int[rank-1];

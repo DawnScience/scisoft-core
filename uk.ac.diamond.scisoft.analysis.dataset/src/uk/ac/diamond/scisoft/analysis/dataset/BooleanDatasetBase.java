@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -32,11 +30,6 @@ import org.slf4j.LoggerFactory;
 public class BooleanDatasetBase extends AbstractDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(BooleanDatasetBase.class);
 
 	protected boolean[] data; // subclass alias // PRIM_TYPE
 
@@ -165,6 +158,11 @@ public class BooleanDatasetBase extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public BooleanDatasetBase clone() {
+		return new BooleanDatasetBase(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -220,15 +218,18 @@ public class BooleanDatasetBase extends AbstractDataset {
 					data[iter.index] = ds.getBoolean(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
 
+		boolean dv = toBoolean(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 
@@ -549,6 +550,18 @@ public class BooleanDatasetBase extends AbstractDataset {
 		base = null;
 	}
 
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public BooleanDatasetBase sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
+	}
+
 	@Override
 	public BooleanDatasetBase getSlice(final SliceIterator siter) {
 		BooleanDatasetBase result = new BooleanDatasetBase(siter.getShape());
@@ -600,7 +613,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public BooleanDatasetBase setByIndex(final Object obj, final Dataset index) {
+	public BooleanDatasetBase setBy1DIndex(final Object obj, final Dataset index) {
 		if (obj instanceof Dataset) {
 			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
@@ -627,8 +640,8 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public BooleanDatasetBase setByIndexes(final Object obj, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public BooleanDatasetBase setByIndexes(final Object obj, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (obj instanceof Dataset) {

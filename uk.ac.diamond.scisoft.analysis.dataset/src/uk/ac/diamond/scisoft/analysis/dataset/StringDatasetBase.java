@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -32,11 +30,6 @@ import org.slf4j.LoggerFactory;
 public class StringDatasetBase extends AbstractDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(StringDatasetBase.class);
 
 	protected String[] data; // subclass alias // PRIM_TYPE
 
@@ -165,6 +158,11 @@ public class StringDatasetBase extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public StringDatasetBase clone() {
+		return new StringDatasetBase(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -220,15 +218,18 @@ public class StringDatasetBase extends AbstractDataset {
 					data[iter.index] = ds.getString(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
 
+		String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 
@@ -549,6 +550,36 @@ public class StringDatasetBase extends AbstractDataset {
 		base = null;
 	}
 
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public StringDatasetBase sort(Integer axis) {
+		if (axis == null) {
+			Arrays.sort(data);
+		} else {
+			axis = checkAxis(axis);
+			
+			StringDatasetBase ads = new StringDatasetBase(shape[axis]);
+			PositionIterator pi = getPositionIterator(axis);
+			int[] pos = pi.getPos();
+			boolean[] hit = pi.getOmit();
+			while (pi.hasNext()) {
+				copyItemsFromAxes(pos, hit, ads);
+				Arrays.sort(ads.data);
+				setItemsOnAxes(pos, hit, ads.data);
+			}
+		}
+		
+		setDirty();
+		return this;
+		// throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
+	}
+
 	@Override
 	public StringDatasetBase getSlice(final SliceIterator siter) {
 		StringDatasetBase result = new StringDatasetBase(siter.getShape());
@@ -600,7 +631,7 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public StringDatasetBase setByIndex(final Object obj, final Dataset index) {
+	public StringDatasetBase setBy1DIndex(final Object obj, final Dataset index) {
 		if (obj instanceof Dataset) {
 			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
@@ -627,8 +658,8 @@ public class StringDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public StringDatasetBase setByIndexes(final Object obj, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public StringDatasetBase setByIndexes(final Object obj, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (obj instanceof Dataset) {

@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Activator;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.IConicSectionFitter;
 import uk.ac.diamond.scisoft.analysis.roi.fitting.CircleFitter;

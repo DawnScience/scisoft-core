@@ -24,8 +24,6 @@ import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,11 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCompoundDataset extends AbstractDataset {
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger abstractCompoundLogger = LoggerFactory.getLogger(AbstractCompoundDataset.class);
 
 	protected int isize; // number of elements per item
 
@@ -85,7 +78,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 		if (element < 0)
 			element += isize;
 		if (element < 0 || element > isize) {
-			abstractCompoundLogger.error("Invalid choice of element: {}/{}", element, isize);
+			logger.error("Invalid choice of element: {}/{}", element, isize);
 			throw new IllegalArgumentException("Invalid choice of element: " + element + "/" + isize);
 		}
 		final IndexIterator it = stride != null ?  new StrideIterator(isize, shape, stride, offset) : new ContiguousIterator(size, isize);
@@ -171,7 +164,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -182,7 +175,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new double[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -190,7 +183,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 				result[i] = ((Number) Array.get(b, i)).doubleValue();
 		} else if (b instanceof Complex) {
 			if (itemSize > 2) {
-				abstractCompoundLogger.error("Complex number will not fit in compound dataset");
+				logger.error("Complex number will not fit in compound dataset");
 				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
 			}
 			switch (itemSize) {
@@ -230,7 +223,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -241,7 +234,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new float[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -273,7 +266,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -284,7 +277,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new long[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -316,7 +309,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -327,7 +320,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new int[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -359,7 +352,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -370,7 +363,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new short[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -402,7 +395,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			List<?> jl = (List<?>) b;
 			int ilen = jl.size();
 			if (ilen > 0 && !(jl.get(0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -413,7 +406,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 			result = new byte[itemSize];
 			int ilen = Array.getLength(b);
 			if (ilen > 0 && !(Array.get(b, 0) instanceof Number)) {
-				abstractCompoundLogger.error("Given array was not of a numerical primitive type");
+				logger.error("Given array was not of a numerical primitive type");
 				throw new IllegalArgumentException("Given array was not of a numerical primitive type");
 			}
 			ilen = Math.min(itemSize, ilen);
@@ -735,44 +728,44 @@ public abstract class AbstractCompoundDataset extends AbstractDataset {
 
 	@Override
 	public Number max(boolean... switches) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
 	public Number min(boolean... switches) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 
 	@Override
 	public Number positiveMin(boolean ignoreInvalids) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
 	public Number positiveMax(boolean ignoreNaNs, boolean ignoreInfs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
 	public Number positiveMin(boolean ignoreNaNs, boolean ignoreInfs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
 	public int[] maxPos(boolean ignoreNaNs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
 	public int[] minPos(boolean ignoreNaNs) {
-		abstractCompoundLogger.error("Cannot compare compound numbers");
+		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 

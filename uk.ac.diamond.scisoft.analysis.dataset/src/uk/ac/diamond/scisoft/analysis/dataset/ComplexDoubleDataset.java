@@ -138,6 +138,11 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		}
 	}
 
+	@Override
+	public ComplexDoubleDataset clone() {
+		return new ComplexDoubleDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...)
 	 * or Number. Ragged sequences or arrays are padded with zeros.
@@ -198,7 +203,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		if (obj instanceof IDataset) {
 			IDataset ds = (IDataset) obj;
 			if (!isCompatibleWith(ds)) {
-				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
 			if (ds instanceof Dataset) {
@@ -225,8 +230,10 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		double vr = toReal(obj); // PRIM_TYPE // ADD_CAST
 		double vi = toImag(obj); // PRIM_TYPE // ADD_CAST
@@ -236,6 +243,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 			data[iter.index+1] = vi;
 		}
 
+		setDirty();
 		return this;
 	}
 

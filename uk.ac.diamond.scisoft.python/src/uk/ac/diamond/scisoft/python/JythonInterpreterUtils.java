@@ -71,7 +71,6 @@ public class JythonInterpreterUtils {
 		File jyBundleLoc = null;
 		try {
 			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
-			logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
 		} catch (Exception ignored) {
 		}
 		if (jyBundleLoc == null) {
@@ -79,6 +78,7 @@ public class JythonInterpreterUtils {
 				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
 			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
 		}
+		logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);

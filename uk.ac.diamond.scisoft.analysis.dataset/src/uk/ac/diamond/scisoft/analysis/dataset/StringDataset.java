@@ -23,11 +23,6 @@ public class StringDataset extends StringDatasetBase {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
 
-	/**
-	 * Setup the logging facilities
-	 */
-//	transient private static final Logger logger = LoggerFactory.getLogger(ObjectDataset.class);
-
 	public StringDataset() {
 		super();
 	}
@@ -72,6 +67,11 @@ public class StringDataset extends StringDatasetBase {
 		copyToView(this, view, true, true);
 		view.data = data;
 		return view;
+	}
+
+	@Override
+	public StringDataset clone() {
+		return new StringDataset(this);
 	}
 
 	/**

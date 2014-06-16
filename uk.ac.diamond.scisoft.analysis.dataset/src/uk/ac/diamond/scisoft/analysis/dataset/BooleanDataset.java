@@ -17,8 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -27,11 +25,6 @@ import org.slf4j.LoggerFactory;
 public class BooleanDataset extends BooleanDatasetBase {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	transient private static final Logger logger = LoggerFactory.getLogger(BooleanDataset.class);
 
 	public BooleanDataset() {
 		super();
@@ -76,6 +69,11 @@ public class BooleanDataset extends BooleanDatasetBase {
 		copyToView(this, view, true, true);
 		view.data = data;
 		return view;
+	}
+
+	@Override
+	public BooleanDataset clone() {
+		return new BooleanDataset(this);
 	}
 
 	/**

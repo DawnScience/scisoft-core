@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -33,11 +31,6 @@ import org.slf4j.LoggerFactory;
 public class ByteDataset extends AbstractDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(ByteDataset.class);
 
 	protected byte[] data; // subclass alias // PRIM_TYPE
 
@@ -166,6 +159,11 @@ public class ByteDataset extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public ByteDataset clone() {
+		return new ByteDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -185,7 +183,7 @@ public class ByteDataset extends AbstractDataset {
 		result.fillData(obj, 0, pos);
 		return result;
 	}
-	// BOOLEAN_OMIT
+	
 	/**
 	 *
 	 * @param stop
@@ -194,7 +192,7 @@ public class ByteDataset extends AbstractDataset {
 	public static ByteDataset arange(final double stop) {
 		return arange(0, stop, 1);
 	}
-	// BOOLEAN_OMIT
+	
 	/**
 	 *
 	 * @param start
@@ -246,15 +244,18 @@ public class ByteDataset extends AbstractDataset {
 					data[iter.index] = ds.getByte(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		byte dv = (byte) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 
+		byte dv = (byte) toLong(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 
@@ -575,6 +576,36 @@ public class ByteDataset extends AbstractDataset {
 		base = null;
 	}
 
+	/**
+	 * In-place sort of dataset
+	 *
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public ByteDataset sort(Integer axis) {
+		if (axis == null) {
+			Arrays.sort(data);
+		} else {
+			axis = checkAxis(axis);
+			
+			ByteDataset ads = new ByteDataset(shape[axis]);
+			PositionIterator pi = getPositionIterator(axis);
+			int[] pos = pi.getPos();
+			boolean[] hit = pi.getOmit();
+			while (pi.hasNext()) {
+				copyItemsFromAxes(pos, hit, ads);
+				Arrays.sort(ads.data);
+				setItemsOnAxes(pos, hit, ads.data);
+			}
+		}
+		
+		setDirty();
+		return this;
+		// throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
+	}
+
 	@Override
 	public ByteDataset getSlice(final SliceIterator siter) {
 		ByteDataset result = new ByteDataset(siter.getShape());
@@ -626,7 +657,7 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ByteDataset setByIndex(final Object obj, final Dataset index) {
+	public ByteDataset setBy1DIndex(final Object obj, final Dataset index) {
 		if (obj instanceof Dataset) {
 			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
@@ -653,8 +684,8 @@ public class ByteDataset extends AbstractDataset {
 	}
 
 	@Override
-	public ByteDataset setByIndexes(final Object obj, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public ByteDataset setByIndexes(final Object obj, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (obj instanceof Dataset) {
@@ -835,17 +866,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] += bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] += v;
 			}
@@ -859,17 +890,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] -= bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] -= v;
 			}
@@ -883,17 +914,17 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				data[it1.index] *= bds.getElementLongAbs(it2.index); // GET_ELEMENT
 			}
 		} else {
 			final double v = toReal(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			// NAN_OMIT
 			while (it1.hasNext()) {
 				data[it1.index] *= v;
 			}
@@ -907,10 +938,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				try {
 					data[it1.index] /= bds.getElementLongAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
@@ -924,7 +955,7 @@ public class ByteDataset extends AbstractDataset {
 				fill(0); // INT_ZEROTEST
 			} else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] /= v;
 			}
@@ -944,10 +975,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				try {
 					data[it1.index] %= bds.getElementLongAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
@@ -961,7 +992,7 @@ public class ByteDataset extends AbstractDataset {
 				fill(0); // INT_ZEROTEST
 			} else { // INT_ZEROTEST
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext()) {
 				data[it1.index] %= v;
 			}
@@ -976,10 +1007,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			while (it1.hasNext() && it2.hasNext()) {
 				final double v = Math.pow(data[it1.index], bds.getElementDoubleAbs(it2.index));
 				if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
@@ -992,7 +1023,7 @@ public class ByteDataset extends AbstractDataset {
 			double vr = toReal(b);
 			double vi = toImag(b);
 			IndexIterator it1 = getIterator();
-			// BOOLEAN_OMIT
+			
 			if (vi == 0.) {
 				while (it1.hasNext()) {
 					final double v = Math.pow(data[it1.index], vr);
@@ -1025,10 +1056,10 @@ public class ByteDataset extends AbstractDataset {
 		if (b instanceof Dataset) {
 			Dataset bds = (Dataset) b;
 			checkCompatibility(bds);
-			// BOOLEAN_OMIT
+			
 			IndexIterator it1 = getIterator();
 			IndexIterator it2 = bds.getIterator();
-			// BOOLEAN_OMIT
+			
 			double comp = 0;
 			{
 				if (w == null) {

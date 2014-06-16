@@ -157,7 +157,7 @@ public abstract class AbstractDataset implements Dataset {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger abstractLogger = LoggerFactory.getLogger(AbstractDataset.class);
+	protected static final Logger logger = LoggerFactory.getLogger(AbstractDataset.class);
 
 	protected static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
@@ -249,69 +249,7 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	@Override
-	public AbstractDataset clone() {
-		AbstractDataset c = null;
-		try {
-			// copy across the data
-			switch (getDtype()) {
-			case BOOL:
-				c = new BooleanDataset((BooleanDataset) this);
-				break;
-			case INT8:
-				c = new ByteDataset((ByteDataset) this);
-				break;
-			case INT16:
-				c = new ShortDataset((ShortDataset) this);
-				break;
-			case INT32:
-				c = new IntegerDataset((IntegerDataset) this);
-				break;
-			case INT64:
-				c = new LongDataset((LongDataset) this);
-				break;
-			case ARRAYINT8:
-				c = new CompoundByteDataset((CompoundByteDataset) this);
-				break;
-			case ARRAYINT16:
-				c = new CompoundShortDataset((CompoundShortDataset) this);
-				break;
-			case ARRAYINT32:
-				c = new CompoundIntegerDataset((CompoundIntegerDataset) this);
-				break;
-			case ARRAYINT64:
-				c = new CompoundLongDataset((CompoundLongDataset) this);
-				break;
-			case FLOAT32:
-				c = new FloatDataset((FloatDataset) this);
-				break;
-			case FLOAT64:
-				c = new DoubleDataset((DoubleDataset) this);
-				break;
-			case ARRAYFLOAT32:
-				c = new CompoundFloatDataset((CompoundFloatDataset) this);
-				break;
-			case ARRAYFLOAT64:
-				c = new CompoundDoubleDataset((CompoundDoubleDataset) this);
-				break;
-			case COMPLEX64:
-				c = new ComplexFloatDataset((ComplexFloatDataset) this);
-				break;
-			case COMPLEX128:
-				c = new ComplexDoubleDataset((ComplexDoubleDataset) this);
-				break;
-			case STRING:
-				c = new StringDataset((StringDataset) this);
-			break;
-			default:
-				abstractLogger.error("Dataset of unknown type!");
-				break;
-			}
-		} catch (OutOfMemoryError e) {
-			throw new OutOfMemoryError("Not enough memory available to create dataset");
-		}
-
-		return c;
-	}
+	abstract public AbstractDataset clone();
 
 	/**
 	 * Cast a dataset
@@ -432,14 +370,14 @@ public abstract class AbstractDataset implements Dataset {
 		int i;
 
 		if (axes.length != rank) {
-			abstractLogger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
+			logger.error("axis permutation has length {} that does not match dataset's rank {}", axes.length, rank);
 			throw new IllegalArgumentException("axis permutation does not match shape of dataset");
 		}
 
 		// check all permutation values are within bounds
 		for (int d : axes) {
 			if (d < 0 || d >= rank) {
-				abstractLogger.error("axis permutation contains element {} outside rank of dataset", d);
+				logger.error("axis permutation contains element {} outside rank of dataset", d);
 				throw new IllegalArgumentException("axis permutation contains element outside rank of dataset");
 			}
 		}
@@ -449,7 +387,7 @@ public abstract class AbstractDataset implements Dataset {
 		Arrays.sort(perm);
 		for (i = 0; i < rank; i++) {
 			if (perm[i] != i) {
-				abstractLogger.error("axis permutation is not valid: it does not contain complete set of axes");
+				logger.error("axis permutation is not valid: it does not contain complete set of axes");
 				throw new IllegalArgumentException("axis permutation does not contain complete set of axes");	
 			}
 		}
@@ -522,7 +460,7 @@ public abstract class AbstractDataset implements Dataset {
 			axis2 += rank;
 
 		if (axis1 < 0 || axis2 < 0 || axis1 >= rank || axis2 >= rank) {
-			abstractLogger.error("Axis value invalid - out of range");
+			logger.error("Axis value invalid - out of range");
 			throw new IllegalArgumentException("Axis value invalid - out of range");
 		}
 
@@ -1293,7 +1231,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return The new selected dataset by indices
 	 */
 	@Override
-	public AbstractDataset getByIndex(IntegerDataset index) {
+	public AbstractDataset getBy1DIndex(IntegerDataset index) {
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, index.getShape(), getDtype());
 		final IntegerIterator iter = new IntegerIterator(index, size, is);
@@ -1308,13 +1246,13 @@ public abstract class AbstractDataset implements Dataset {
 
 	/**
 	 * This is modelled after the NumPy get item with an array of indexing objects
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 * @return The new selected dataset by index
 	 */
 	@Override
-	public AbstractDataset getByIndexes(final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public AbstractDataset getByIndexes(final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, iter.getShape(), getDtype());
 
@@ -1337,19 +1275,19 @@ public abstract class AbstractDataset implements Dataset {
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByIndex(final Object obj, final Dataset index);
+	abstract public AbstractDataset setBy1DIndex(final Object obj, final Dataset index);
 
 	/**
 	 * This is modelled after the NumPy set item with an array of indexing objects
 	 * @param obj
 	 *            specifies the object used to set the selected items
-	 * @param index
+	 * @param indexes
 	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
 	 * 
 	 * @return The dataset with modified content
 	 */
 	@Override
-	abstract public AbstractDataset setByIndexes(final Object obj, final Object... index);
+	abstract public AbstractDataset setByIndexes(final Object obj, final Object... indexes);
 
 	/**
 	 * @param dtype
@@ -1520,7 +1458,7 @@ public abstract class AbstractDataset implements Dataset {
 	public int[] getShape() {
 		// make a copy of the dimensions data, and put that out
 		if (shape == null) {
-			abstractLogger.warn("Shape is null!!!");
+			logger.warn("Shape is null!!!");
 			return new int[] {};
 		}
 		return shape.clone();
@@ -1554,7 +1492,7 @@ public abstract class AbstractDataset implements Dataset {
 				if (found == -1) {
 					found = i;
 				} else {
-					abstractLogger.error("Can only have one -1 placeholder in shape");
+					logger.error("Can only have one -1 placeholder in shape");
 					throw new IllegalArgumentException("Can only have one -1 placeholder in shape");
 				}
 			} else {
@@ -1564,7 +1502,7 @@ public abstract class AbstractDataset implements Dataset {
 		if (found >= 0) {
 			shape[found] = size/nsize;
 		} else if (nsize != size) {
-			abstractLogger.error("New shape is not same size as old shape");
+			logger.error("New shape is not same size as old shape");
 			throw new IllegalArgumentException("New shape is not same size as old shape");
 		}
 	}
@@ -1575,18 +1513,19 @@ public abstract class AbstractDataset implements Dataset {
 	@Override
 	public void setShape(final int... shape) {
 		int[] nshape = shape.clone();
-		checkShape(nshape, this.size);
+		checkShape(nshape, size);
 		if (Arrays.equals(this.shape, nshape))
 			return;
 
 		if (stride != null) {
-			 // the only compatible shapes are ones where new dimensions are factors of old dimensions
+			// the only compatible shapes are ones where new dimensions are factors of old dimensions
+			// or are combined adjacent old dimensions 
 			int[] oshape = this.shape;
 			int orank = oshape.length;
 			int nrank = nshape.length;
 			int[] nstride = new int[nrank];
 			boolean ones = true;
-			for (int i = 0, j = 0; ones && (i < orank || j < nrank);) {
+			for (int i = 0, j = 0; i < orank || j < nrank;) {
 				if (i < orank && j < nrank && oshape[i] == nshape[j]) {
 					nstride[j++] = stride[i++];
 				} else if (j < nrank && nshape[j] == 1) {
@@ -1594,6 +1533,10 @@ public abstract class AbstractDataset implements Dataset {
 				} else if (i < orank && oshape[i] == 1) {
 					i++;
 				} else {
+					if (j < nrank)
+						j++;
+					if (i < orank)
+						i++;
 					ones = false;
 				}
 			}
@@ -1604,26 +1547,64 @@ public abstract class AbstractDataset implements Dataset {
 				int nb = 0;
 				int ne = 1;
 				while (ob < orank && nb < nrank) {
-					int os = oshape[ob];
-					int ns = nshape[nb];
-					while (os != ns) { // find group of shape dimensions that form common size
-						if (ns < os) {
-							ns *= nshape[ne++];
-						} else {
-							os *= oshape[oe++];
+					int ol = oshape[ob];
+					int nl = nshape[nb];
+					
+					if (nl < ol) { // find group of shape dimensions that form common size
+						do { // case where new shape spreads single dimension over several dimensions
+							if (ne == nrank) {
+								break;
+							}
+							nl *= nshape[ne++];
+						} while (nl < ol);
+						if (nl != ol) {
+							logger.error("Subshape is incompatible with single dimension");
+							throw new IllegalArgumentException("Subshape is incompatible with single dimension");
 						}
-					}
-					for (int o = ob+1; o < oe; o++) {
-						if (ostride[o-1] != oshape[o] * ostride[o]) {
-							abstractLogger.error("Shape is incompatible with this non-contiguous view");
-							throw new IllegalArgumentException("Shape is incompatible with this non-contiguous view");
+						int on = ne - 1;
+						while (nshape[on] == 1) {
+							on--;
 						}
+
+						nstride[on] = ostride[ob];
+						for (int n = on - 1; n >= nb; n--) {
+							if (nshape[n] == 1)
+								continue;
+
+							nstride[n] = nshape[on] * nstride[on];
+							on = n;
+						}
+					} else if (ol < nl) {
+						do { // case where new shape combines several dimensions into one dimension
+							if (oe == orank) {
+								break;
+							}
+							ol *= oshape[oe++];
+						} while (ol < nl);
+						if (nl != ol) {
+							logger.error("Single dimension is incompatible with subshape");
+							throw new IllegalArgumentException("Single dimension is incompatible with subshape");
+						}
+
+						int oo = oe - 1;
+						while (oshape[oo] == 1) {
+							oo--;
+						}
+						int os = ostride[oo];
+						for (int o = oo - 1; o >= ob; o--) {
+							if (oshape[o] == 1)
+								continue;
+							if (ostride[o] != oshape[oo] * ostride[oo]) {
+								logger.error("Subshape cannot be a non-contiguous view");
+								throw new IllegalArgumentException("Subshape cannot be a non-contiguous view");
+							}
+							oo = o;
+						}
+						nstride[nb] = os;
+					} else {
+						nstride[nb] = ostride[ob];
 					}
 
-					nstride[ne - 1] = ostride[oe - 1];
-					for (int n = ne - 1; n > nb; n--) {
-						nstride[n - 1] = nshape[n] * nstride[n];
-					}
 					ob = oe++;
 					nb = ne++;
 				}
@@ -1728,6 +1709,54 @@ public abstract class AbstractDataset implements Dataset {
 		}
 
 		return newShape;
+	}
+
+	/**
+	 * Create a stride array from a dataset to a broadcast shape 
+	 * @param a dataset
+	 * @param broadcastShape
+	 * @return stride array
+	 */
+	public static int[] createBroadcastStrides(AbstractDataset a, final int[] broadcastShape) {
+		return createBroadcastStrides(a.getElementsPerItem(), a.shape, a.stride, broadcastShape);
+	}
+
+	/**
+	 * Create a stride array from a dataset to a broadcast shape 
+	 * @param isize
+	 * @param shape
+	 * @param oStride original stride
+	 * @param broadcastShape
+	 * @return stride array
+	 */
+	public static int[] createBroadcastStrides(final int isize, final int[] shape, final int[] oStride, final int[] broadcastShape) {
+		int rank = shape.length;
+		if (broadcastShape.length != rank) {
+			throw new IllegalArgumentException("Dataset must have same rank as broadcast shape");
+		}
+
+		int[] stride = new int[rank];
+		if (oStride == null) {
+			int s = isize;
+			for (int j = rank - 1; j >= 0; j--) {
+				if (broadcastShape[j] == shape[j]) {
+					stride[j] = s;
+					s *= shape[j];
+				} else {
+					stride[j] = 0;
+				}
+			}
+		} else {
+			for (int j = 0; j < rank; j++) {
+				if (broadcastShape[j] == shape[j]) {
+					stride[j] = oStride[j];
+				} else {
+					stride[j] = 0;
+				}
+			}
+		}
+
+		return stride;
 	}
 
 	/**
@@ -1844,7 +1873,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected int get1DIndex(int i) {
 		if (shape.length > 1) {
-			abstractLogger.debug("This dataset is not 1D but was addressed as such");
+			logger.debug("This dataset is not 1D but was addressed as such");
 			return get1DIndex(new int[] {i});
 		}
 		if (i < 0) {
@@ -1863,7 +1892,7 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected int get1DIndex(int i, int j) {
 		if (shape.length != 2) {
-			abstractLogger.debug("This dataset is not 2D but was addressed as such");
+			logger.debug("This dataset is not 2D but was addressed as such");
 			return get1DIndex(new int[] {i, j});
 		}
 		if (i < 0) {
@@ -2004,7 +2033,7 @@ public abstract class AbstractDataset implements Dataset {
 				}
 			}
 			if (j == -1) {
-				abstractLogger.error("Index was not found in this strided dataset");
+				logger.error("Index was not found in this strided dataset");
 				throw new IllegalArgumentException("Index was not found in this strided dataset");
 			}
 		}
@@ -2387,7 +2416,7 @@ public abstract class AbstractDataset implements Dataset {
 			axis += rank;
 		}
 		if (axis < 0 || axis >= rank) {
-			abstractLogger.error("Axis argument is outside allowed range");
+			logger.error("Axis argument is outside allowed range");
 			throw new IllegalArgumentException("Axis argument is outside allowed range");
 		}
 		int[] nshape = new int[rank-1];

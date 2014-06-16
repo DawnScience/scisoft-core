@@ -34,6 +34,7 @@ Mark up source class with following comment markers:
 // BOOLEAN_USE    - use commented out code
 // BOOLEAN_FALSE  - return false when boolean dataset
 // BOOLEAN_ZERO   - return zero when boolean dataset
+// NAN_OMIT       - omit line when not a numerical dataset
 // FORMAT_STRING  - format string for getString method
 // DEFAULT_VAL    - default value for expanded dataset
 // INT_EXCEPTION  - surround with try/catch for integer arithmetic exception
@@ -109,6 +110,7 @@ class transmutate(object):
             ("// BOOLEAN_USE", self.booluse),
             ("// BOOLEAN_FALSE", self.boolfalse),
             ("// BOOLEAN_ZERO", self.boolzero),
+            ("// NAN_OMIT", self.nanomit),
             ("// FORMAT_STRING", self.string),
             ("// INT_EXCEPTION", self.intexception),
             ("// INT_ZEROTEST", self.intzerotest),
@@ -254,7 +256,7 @@ class transmutate(object):
         return line
 
     def boolomit(self, line):
-        if self.isbool or self.isobj:
+        if self.isbool:
             return None
         return line.replace(" // BOOLEAN_OMIT", "")
 
@@ -273,6 +275,11 @@ class transmutate(object):
         if self.isbool or self.isobj:
             return "\t\treturn 0;"
         return line
+
+    def nanomit(self, line):
+        if self.isobj or self.isbool:
+            return None
+        return line.replace(" // NAN_OMIT", "")
 
     def string(self, line):
         if self.isobj and 'String' == self.dpclass:

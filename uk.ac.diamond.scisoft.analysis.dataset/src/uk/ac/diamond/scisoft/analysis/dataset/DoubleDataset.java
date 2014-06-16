@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math3.complex.Complex; // BOOLEAN_OMIT
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.math3.complex.Complex; // NAN_OMIT
 
 
 /**
@@ -33,11 +31,6 @@ import org.slf4j.LoggerFactory;
 public class DoubleDataset extends AbstractDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(DoubleDataset.class);
 
 	protected double[] data; // subclass alias // PRIM_TYPE
 
@@ -166,6 +159,11 @@ public class DoubleDataset extends AbstractDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public DoubleDataset clone() {
+		return new DoubleDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -185,31 +183,31 @@ public class DoubleDataset extends AbstractDataset {
 		result.fillData(obj, 0, pos);
 		return result;
 	}
-	// BOOLEAN_OMIT
-	/** // BOOLEAN_OMIT
-	 * // BOOLEAN_OMIT
-	 * @param stop // BOOLEAN_OMIT
-	 * @return a new 1D dataset, filled with values determined by parameters // BOOLEAN_OMIT
-	 */ // BOOLEAN_OMIT
-	public static DoubleDataset arange(final double stop) { // BOOLEAN_OMIT
-		return arange(0, stop, 1); // BOOLEAN_OMIT
-	} // BOOLEAN_OMIT
-	// BOOLEAN_OMIT
-	/** // BOOLEAN_OMIT
-	 * // BOOLEAN_OMIT
-	 * @param start // BOOLEAN_OMIT
-	 * @param stop // BOOLEAN_OMIT
-	 * @param step // BOOLEAN_OMIT
-	 * @return a new 1D dataset, filled with values determined by parameters // BOOLEAN_OMIT
-	 */ // BOOLEAN_OMIT
-	public static DoubleDataset arange(final double start, final double stop, final double step) { // BOOLEAN_OMIT
-		int size = calcSteps(start, stop, step); // BOOLEAN_OMIT
-		DoubleDataset result = new DoubleDataset(size); // BOOLEAN_OMIT
-		for (int i = 0; i < size; i++) { // BOOLEAN_OMIT
-			result.data[i] = (start + i * step); // PRIM_TYPE // BOOLEAN_OMIT // ADD_CAST
-		} // BOOLEAN_OMIT
-		return result; // BOOLEAN_OMIT
-	} // BOOLEAN_OMIT
+	 // NAN_OMIT
+	/** // NAN_OMIT
+	 * // NAN_OMIT
+	 * @param stop // NAN_OMIT
+	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
+	 */ // NAN_OMIT
+	public static DoubleDataset arange(final double stop) { // NAN_OMIT
+		return arange(0, stop, 1); // NAN_OMIT
+	} // NAN_OMIT
+	 // NAN_OMIT
+	/** // NAN_OMIT
+	 * // NAN_OMIT
+	 * @param start // NAN_OMIT
+	 * @param stop // NAN_OMIT
+	 * @param step // NAN_OMIT
+	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
+	 */ // NAN_OMIT
+	public static DoubleDataset arange(final double start, final double stop, final double step) { // NAN_OMIT
+		int size = calcSteps(start, stop, step); // NAN_OMIT
+		DoubleDataset result = new DoubleDataset(size); // NAN_OMIT
+		for (int i = 0; i < size; i++) { // NAN_OMIT
+			result.data[i] = (start + i * step); // PRIM_TYPE // NAN_OMIT // ADD_CAST
+		} // NAN_OMIT
+		return result; // NAN_OMIT
+	} // NAN_OMIT
 
 	/**
 	 * @param shape
@@ -246,15 +244,18 @@ public class DoubleDataset extends AbstractDataset {
 					data[iter.index] = ds.getDouble(pos); // PRIM_TYPE
 				}
 			}
+
+			setDirty();
 			return this;
 		}
-		double dv = toReal(obj); // PRIM_TYPE // FROM_OBJECT
 
+		double dv = toReal(obj); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {
 			data[iter.index] = dv;
 		}
 
+		setDirty();
 		return this;
 	}
 
@@ -575,6 +576,36 @@ public class DoubleDataset extends AbstractDataset {
 		base = null;
 	}
 
+	/**
+	 * In-place sort of dataset
+	 * 
+	 * @param axis
+	 *            to sort along
+	 * @return sorted dataset
+	 */
+	@Override
+	public DoubleDataset sort(Integer axis) {
+		if (axis == null) { // BOOLEAN_OMIT
+			Arrays.sort(data); // BOOLEAN_OMIT
+		} else { // BOOLEAN_OMIT
+			axis = checkAxis(axis); // BOOLEAN_OMIT
+			 // BOOLEAN_OMIT 
+			DoubleDataset ads = new DoubleDataset(shape[axis]); // BOOLEAN_OMIT
+			PositionIterator pi = getPositionIterator(axis); // BOOLEAN_OMIT
+			int[] pos = pi.getPos(); // BOOLEAN_OMIT
+			boolean[] hit = pi.getOmit(); // BOOLEAN_OMIT
+			while (pi.hasNext()) { // BOOLEAN_OMIT
+				copyItemsFromAxes(pos, hit, ads); // BOOLEAN_OMIT
+				Arrays.sort(ads.data); // BOOLEAN_OMIT
+				setItemsOnAxes(pos, hit, ads.data); // BOOLEAN_OMIT
+			} // BOOLEAN_OMIT
+		} // BOOLEAN_OMIT
+		 // BOOLEAN_OMIT 
+		setDirty(); // BOOLEAN_OMIT
+		return this; // BOOLEAN_OMIT
+		// throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE
+	}
+
 	@Override
 	public DoubleDataset getSlice(final SliceIterator siter) {
 		DoubleDataset result = new DoubleDataset(siter.getShape());
@@ -626,7 +657,7 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public DoubleDataset setByIndex(final Object obj, final Dataset index) {
+	public DoubleDataset setBy1DIndex(final Object obj, final Dataset index) {
 		if (obj instanceof Dataset) {
 			final Dataset ds = (Dataset) obj;
 			if (index.getSize() != ds.getSize()) {
@@ -653,8 +684,8 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public DoubleDataset setByIndexes(final Object obj, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public DoubleDataset setByIndexes(final Object obj, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (obj instanceof Dataset) {
@@ -786,7 +817,7 @@ public class DoubleDataset extends AbstractDataset {
 
 		List<int[]> max = null;
 		if (o == null) {
-			max = findPositions(max(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			max = findPositions(max(ignoreInvalids).doubleValue()); // PRIM_TYPE // NAN_OMIT
 			// max = findPositions(max(false).intValue() != 0); // BOOLEAN_USE
 			// max = findPositions(null); // OBJECT_USE
 			storedValues.put(n, max);
@@ -809,7 +840,7 @@ public class DoubleDataset extends AbstractDataset {
 		Object o = storedValues.get(n);
 		List<int[]> min = null;
 		if (o == null) {
-			min = findPositions(min(ignoreInvalids).doubleValue()); // PRIM_TYPE // BOOLEAN_OMIT
+			min = findPositions(min(ignoreInvalids).doubleValue()); // PRIM_TYPE // NAN_OMIT
 			// min = findPositions(min(false).intValue() != 0); // BOOLEAN_USE
 			// min = findPositions(null); // OBJECT_USE
 			storedValues.put(n, min);
@@ -855,108 +886,108 @@ public class DoubleDataset extends AbstractDataset {
 
 	@Override
 	public DoubleDataset iadd(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] += bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] += v; // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				data[it1.index] += bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // NAN_OMIT
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext()) { // NAN_OMIT
+				data[it1.index] += v; // NAN_OMIT
+			} // NAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset isubtract(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] -= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] -= v; // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				data[it1.index] -= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // NAN_OMIT
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext()) { // NAN_OMIT
+				data[it1.index] -= v; // NAN_OMIT
+			} // NAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset imultiply(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] *= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] *= v; // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				data[it1.index] *= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // NAN_OMIT
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			// NAN_OMIT
+			while (it1.hasNext()) { // NAN_OMIT
+				data[it1.index] *= v; // NAN_OMIT
+			} // NAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset idivide(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] /= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT // INT_EXCEPTION
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				data[it1.index] /= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // NAN_OMIT // INT_EXCEPTION
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
 			// if (v == 0) { // INT_ZEROTEST
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] /= v; // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext()) { // NAN_OMIT
+				data[it1.index] /= v; // NAN_OMIT
+			} // NAN_OMIT
 			// } // INT_ZEROTEST
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset ifloor() {
 		IndexIterator it1 = getIterator(); // REAL_ONLY
-		// REAL_ONLY
+		 // REAL_ONLY
 		while (it1.hasNext()) { // REAL_ONLY
 			data[it1.index] = Math.floor(data[it1.index]); // PRIM_TYPE // REAL_ONLY // ADD_CAST
 		} // REAL_ONLY
@@ -966,159 +997,159 @@ public class DoubleDataset extends AbstractDataset {
 
 	@Override
 	public DoubleDataset iremainder(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] %= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // BOOLEAN_OMIT // INT_EXCEPTION
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				data[it1.index] %= bds.getElementDoubleAbs(it2.index); // GET_ELEMENT // NAN_OMIT // INT_EXCEPTION
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
 			// if (v == 0) { // INT_ZEROTEST
 			// 	fill(0); // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext()) { // BOOLEAN_OMIT
-				data[it1.index] %= v; // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext()) { // NAN_OMIT
+				data[it1.index] %= v; // NAN_OMIT
+			} // NAN_OMIT
 			// } // INT_ZEROTEST
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public DoubleDataset ipower(final Object b) {
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-				final double v = Math.pow(data[it1.index], bds.getElementDoubleAbs(it2.index)); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+				final double v = Math.pow(data[it1.index], bds.getElementDoubleAbs(it2.index)); // NAN_OMIT
 				// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
 				// 	data[it1.index] = 0; // INT_ZEROTEST
 				// } else { // INT_ZEROTEST
-				data[it1.index] = v; // PRIM_TYPE_LONG // BOOLEAN_OMIT // ADD_CAST
+				data[it1.index] = v; // PRIM_TYPE_LONG // NAN_OMIT // ADD_CAST
 				// } // INT_ZEROTEST
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			double vr = toReal(b); // BOOLEAN_OMIT
-			double vi = toImag(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			if (vi == 0.) { // BOOLEAN_OMIT
-				while (it1.hasNext()) { // BOOLEAN_OMIT
-					final double v = Math.pow(data[it1.index], vr); // BOOLEAN_OMIT
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			double vr = toReal(b); // NAN_OMIT
+			double vi = toImag(b); // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			if (vi == 0.) { // NAN_OMIT
+				while (it1.hasNext()) { // NAN_OMIT
+					final double v = Math.pow(data[it1.index], vr); // NAN_OMIT
 					// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
 					// 	data[it1.index] = 0; // INT_ZEROTEST
 					// } else { // INT_ZEROTEST
-					data[it1.index] = v; // PRIM_TYPE_LONG // BOOLEAN_OMIT // ADD_CAST
+					data[it1.index] = v; // PRIM_TYPE_LONG // NAN_OMIT // ADD_CAST
 					// } // INT_ZEROTEST
-				} // BOOLEAN_OMIT
-			} else { // BOOLEAN_OMIT
-				Complex zv = new Complex(vr, vi); // BOOLEAN_OMIT
-				while (it1.hasNext()) { // BOOLEAN_OMIT
-					Complex zd = new Complex(data[it1.index], 0.); // BOOLEAN_OMIT
-					final double v = zd.pow(zv).getReal(); // BOOLEAN_OMIT
+				} // NAN_OMIT
+			} else { // NAN_OMIT
+				Complex zv = new Complex(vr, vi); // NAN_OMIT
+				while (it1.hasNext()) { // NAN_OMIT
+					Complex zd = new Complex(data[it1.index], 0.); // NAN_OMIT
+					final double v = zd.pow(zv).getReal(); // NAN_OMIT
 					// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
 					// 	data[it1.index] = 0; // INT_ZEROTEST
 					// } else { // INT_ZEROTEST
-					data[it1.index] = v; // PRIM_TYPE_LONG // BOOLEAN_OMIT // ADD_CAST
+					data[it1.index] = v; // PRIM_TYPE_LONG // NAN_OMIT // ADD_CAST
 					// } // INT_ZEROTEST
-				} // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} // BOOLEAN_OMIT
-		setDirty(); // BOOLEAN_OMIT
+				} // NAN_OMIT
+			} // NAN_OMIT
+		} // NAN_OMIT
+		setDirty(); // NAN_OMIT
 		return this;
 	}
 
 	@Override
 	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
 		double sum = 0;
-		if (b instanceof Dataset) { // BOOLEAN_OMIT
-			Dataset bds = (Dataset) b; // BOOLEAN_OMIT
-			checkCompatibility(bds); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
-			IndexIterator it2 = bds.getIterator(); // BOOLEAN_OMIT
-			// BOOLEAN_OMIT
-			double comp = 0; // BOOLEAN_OMIT
-			if (ignoreNaNs) { // REAL_ONLY // BOOLEAN_OMIT
-				if (w == null) { // REAL_ONLY // BOOLEAN_OMIT
-					while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
-						if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
-							continue; // REAL_ONLY // BOOLEAN_OMIT
-						final double err = diff * diff - comp; // REAL_ONLY // BOOLEAN_OMIT
-						final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
-						comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
-						sum = temp; // REAL_ONLY // BOOLEAN_OMIT
-					} // REAL_ONLY // BOOLEAN_OMIT
-				} else { // REAL_ONLY // BOOLEAN_OMIT
-					IndexIterator it3 = w.getIterator(); // REAL_ONLY // BOOLEAN_OMIT
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // REAL_ONLY // BOOLEAN_OMIT
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // BOOLEAN_OMIT
-						if (Double.isNaN(diff)) // REAL_ONLY // BOOLEAN_OMIT
-							continue; // REAL_ONLY // BOOLEAN_OMIT
-						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // REAL_ONLY // BOOLEAN_OMIT
-						final double temp = sum + err; // REAL_ONLY // BOOLEAN_OMIT
-						comp = (temp - sum) - err; // REAL_ONLY // BOOLEAN_OMIT
-						sum = temp; // REAL_ONLY // BOOLEAN_OMIT
-					} // REAL_ONLY // BOOLEAN_OMIT
-				} // REAL_ONLY // BOOLEAN_OMIT
-			} else // REAL_ONLY // BOOLEAN_OMIT
-			{ // BOOLEAN_OMIT
-				if (w == null) { // BOOLEAN_OMIT
-					while (it1.hasNext() && it2.hasNext()) { // BOOLEAN_OMIT
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
-						final double err = diff * diff - comp; // BOOLEAN_OMIT
-						final double temp = sum + err; // BOOLEAN_OMIT
-						comp = (temp - sum) - err; // BOOLEAN_OMIT
-						sum = temp; // BOOLEAN_OMIT
-					} // BOOLEAN_OMIT
-				} else { // BOOLEAN_OMIT
-					IndexIterator it3 = w.getIterator(); // BOOLEAN_OMIT
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // BOOLEAN_OMIT
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // BOOLEAN_OMIT
-						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // BOOLEAN_OMIT
-						final double temp = sum + err; // BOOLEAN_OMIT
-						comp = (temp - sum) - err; // BOOLEAN_OMIT
-						sum = temp; // BOOLEAN_OMIT
-					} // BOOLEAN_OMIT
-				} // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} else { // BOOLEAN_OMIT
-			final double v = toReal(b); // BOOLEAN_OMIT
-			IndexIterator it1 = getIterator(); // BOOLEAN_OMIT
+		if (b instanceof Dataset) { // NAN_OMIT
+			Dataset bds = (Dataset) b; // NAN_OMIT
+			checkCompatibility(bds); // NAN_OMIT
+			 // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
+			IndexIterator it2 = bds.getIterator(); // NAN_OMIT
+			 // NAN_OMIT
+			double comp = 0; // NAN_OMIT
+			if (ignoreNaNs) { // REAL_ONLY // NAN_OMIT
+				if (w == null) { // REAL_ONLY // NAN_OMIT
+					while (it1.hasNext() && it2.hasNext()) { // REAL_ONLY // NAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // NAN_OMIT
+						if (Double.isNaN(diff)) // REAL_ONLY // NAN_OMIT
+							continue; // REAL_ONLY // NAN_OMIT
+						final double err = diff * diff - comp; // REAL_ONLY // NAN_OMIT
+						final double temp = sum + err; // REAL_ONLY // NAN_OMIT
+						comp = (temp - sum) - err; // REAL_ONLY // NAN_OMIT
+						sum = temp; // REAL_ONLY // NAN_OMIT
+					} // REAL_ONLY // NAN_OMIT
+				} else { // REAL_ONLY // NAN_OMIT
+					IndexIterator it3 = w.getIterator(); // REAL_ONLY // NAN_OMIT
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // REAL_ONLY // NAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // REAL_ONLY // NAN_OMIT
+						if (Double.isNaN(diff)) // REAL_ONLY // NAN_OMIT
+							continue; // REAL_ONLY // NAN_OMIT
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // REAL_ONLY // NAN_OMIT
+						final double temp = sum + err; // REAL_ONLY // NAN_OMIT
+						comp = (temp - sum) - err; // REAL_ONLY // NAN_OMIT
+						sum = temp; // REAL_ONLY // NAN_OMIT
+					} // REAL_ONLY // NAN_OMIT
+				} // REAL_ONLY // NAN_OMIT
+			} else // REAL_ONLY // NAN_OMIT
+			{ // NAN_OMIT
+				if (w == null) { // NAN_OMIT
+					while (it1.hasNext() && it2.hasNext()) { // NAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // NAN_OMIT
+						final double err = diff * diff - comp; // NAN_OMIT
+						final double temp = sum + err; // NAN_OMIT
+						comp = (temp - sum) - err; // NAN_OMIT
+						sum = temp; // NAN_OMIT
+					} // NAN_OMIT
+				} else { // NAN_OMIT
+					IndexIterator it3 = w.getIterator(); // NAN_OMIT
+					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) { // NAN_OMIT
+						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index); // NAN_OMIT
+						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // NAN_OMIT
+						final double temp = sum + err; // NAN_OMIT
+						comp = (temp - sum) - err; // NAN_OMIT
+						sum = temp; // NAN_OMIT
+					} // NAN_OMIT
+				} // NAN_OMIT
+			} // NAN_OMIT
+		} else { // NAN_OMIT
+			final double v = toReal(b); // NAN_OMIT
+			IndexIterator it1 = getIterator(); // NAN_OMIT
 
-			double comp = 0; // BOOLEAN_OMIT
-			if (w == null) { // BOOLEAN_OMIT
-				while (it1.hasNext()) { // BOOLEAN_OMIT
-					final double diff = data[it1.index] - v; // BOOLEAN_OMIT
-					final double err = diff * diff - comp; // BOOLEAN_OMIT
-					final double temp = sum + err; // BOOLEAN_OMIT
-					comp = (temp - sum) - err; // BOOLEAN_OMIT
-					sum = temp; // BOOLEAN_OMIT
-				} // BOOLEAN_OMIT
-			} else { // BOOLEAN_OMIT
-				IndexIterator it3 = w.getIterator(); // BOOLEAN_OMIT
-				while (it1.hasNext() && it3.hasNext()) { // BOOLEAN_OMIT
-					final double diff = data[it1.index] - v; // BOOLEAN_OMIT
-					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // BOOLEAN_OMIT
-					final double temp = sum + err; // BOOLEAN_OMIT
-					comp = (temp - sum) - err; // BOOLEAN_OMIT
-					sum = temp; // BOOLEAN_OMIT
-				} // BOOLEAN_OMIT
-			} // BOOLEAN_OMIT
-		} // BOOLEAN_OMIT
+			double comp = 0; // NAN_OMIT
+			if (w == null) { // NAN_OMIT
+				while (it1.hasNext()) { // NAN_OMIT
+					final double diff = data[it1.index] - v; // NAN_OMIT
+					final double err = diff * diff - comp; // NAN_OMIT
+					final double temp = sum + err; // NAN_OMIT
+					comp = (temp - sum) - err; // NAN_OMIT
+					sum = temp; // NAN_OMIT
+				} // NAN_OMIT
+			} else { // NAN_OMIT
+				IndexIterator it3 = w.getIterator(); // NAN_OMIT
+				while (it1.hasNext() && it3.hasNext()) { // NAN_OMIT
+					final double diff = data[it1.index] - v; // NAN_OMIT
+					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp; // NAN_OMIT
+					final double temp = sum + err; // NAN_OMIT
+					comp = (temp - sum) - err; // NAN_OMIT
+					sum = temp; // NAN_OMIT
+				} // NAN_OMIT
+			} // NAN_OMIT
+		} // NAN_OMIT
 		return sum;
 	}
 }

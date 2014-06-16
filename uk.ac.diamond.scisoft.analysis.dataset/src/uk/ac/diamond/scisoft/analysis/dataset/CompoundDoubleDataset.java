@@ -20,20 +20,12 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- *
+ * Extend compound dataset for double values // PRIM_TYPE
  */
 public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
-
-	/**
-	 * Setup the logging facilities
-	 */
-	protected static final Logger compoundLogger = LoggerFactory.getLogger(CompoundDoubleDataset.class);
 
 	protected double[] data; // subclass alias // PRIM_TYPE
 
@@ -48,7 +40,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		try {
 			array = new double[isize * size]; // PRIM_TYPE
 		} catch (OutOfMemoryError e) {
-			compoundLogger.error("The size of the dataset ({}) that is being created is too large "
+			logger.error("The size of the dataset ({}) that is being created is too large "
 					+ "and there is not enough memory to hold it.", size);
 			throw new OutOfMemoryError("The dimensions given are too large, and there is "
 					+ "not enough memory available in the Java Virtual Machine");
@@ -248,6 +240,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		return super.hashCode();
 	}
 
+	@Override
+	public CompoundDoubleDataset clone() {
+		return new CompoundDoubleDataset(this);
+	}
+
 	/**
 	 * Create a dataset from an object which could be a Java list, array (of arrays...) or Number. Ragged
 	 * sequences or arrays are padded with zeros.
@@ -301,7 +298,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		if (obj instanceof IDataset) {
 			IDataset ds = (IDataset) obj;
 			if (!isCompatibleWith(ds)) {
-				compoundLogger.error("Tried to fill with dataset of incompatible shape");
+				logger.error("Tried to fill with dataset of incompatible shape");
 				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
 			}
 			if (ds instanceof Dataset) {
@@ -326,8 +323,10 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				}
 			}
 
+			setDirty();
 			return this;
 		}
+
 		IndexIterator iter = getIterator();
 		double[] vr = toDoubleArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
 
@@ -336,6 +335,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 				data[iter.index + i] = vr[i]; // PRIM_TYPE
 		}
 
+		setDirty();
 		return this;
 	}
 
@@ -647,6 +647,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public CompoundDoubleDataset sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset");
+	}
+
+	@Override
 	public CompoundDoubleDataset getSlice(final SliceIterator siter) {
 		CompoundDoubleDataset result = new CompoundDoubleDataset(isize, siter.getShape());
 		double[] rdata = result.data; // PRIM_TYPE
@@ -772,7 +777,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundDoubleDataset setByIndex(final Object o, Dataset index) {
+	public CompoundDoubleDataset setBy1DIndex(final Object o, Dataset index) {
 		if (o instanceof Dataset) {
 			Dataset ds = (Dataset) o;
 			if (index.getSize() != ds.getSize()) {
@@ -822,8 +827,8 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundDoubleDataset setByIndexes(final Object o, final Object... index) {
-		final IntegersIterator iter = new IntegersIterator(shape, index);
+	public CompoundDoubleDataset setByIndexes(final Object o, final Object... indexes) {
+		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int[] pos = iter.getPos();
 
 		if (o instanceof Dataset) {
@@ -1262,7 +1267,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 						// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
 						// 	data[it1.index + i] = 0; // INT_ZEROTEST // CLASS_TYPE
 						// } else { // INT_ZEROTEST
-						data[it1.index + i] = v; // PRIM_TYPE_LONG // BOOLEAN_OMIT // ADD_CAST
+						data[it1.index + i] = v; // PRIM_TYPE_LONG // ADD_CAST
 						// } // INT_ZEROTEST
 					}
 				}

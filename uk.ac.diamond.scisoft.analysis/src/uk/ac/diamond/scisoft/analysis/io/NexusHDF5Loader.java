@@ -40,6 +40,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 	public static final String NX_INDICES_SUFFIX = "_indices";
 	public static final String SDS = "SDS";
 
+	public static final String DATA = "data";
 
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
@@ -52,17 +53,19 @@ public class NexusHDF5Loader extends HDF5Loader {
 		// TODO FIXME Also there is the attribute way of specifying and error.
 		for (String name : dh.getNames()) {
 			ILazyDataset data  = dh.getLazyDataset(name);
-			ILazyDataset error = null;
-			if (dh.contains(name+NX_ERRORS_SUFFIX)) {
-				error = dh.getLazyDataset(name+NX_ERRORS_SUFFIX);
-				
-			} else if  (name.endsWith("/data")) {
-				final String ep = name.substring(0, name.length()-4)+NX_ERRORS;
-				error = dh.getLazyDataset(ep);
-				
-			}
-			if (data!=null && error!=null) data.setLazyErrors(error);
+			if (data == null)
+				continue;
 
+			ILazyDataset error = null;
+			String errorName = name + NX_ERRORS_SUFFIX;
+			if (dh.contains(errorName)) {
+				error = dh.getLazyDataset(errorName);
+			} else if (name.endsWith("/" + DATA)) {
+				final String ep = name.substring(0, name.length() - DATA.length()) + NX_ERRORS;
+				error = dh.getLazyDataset(ep);
+			}
+			if (error != null)
+				data.setLazyErrors(error);
 		}
 		return dh;
 	}

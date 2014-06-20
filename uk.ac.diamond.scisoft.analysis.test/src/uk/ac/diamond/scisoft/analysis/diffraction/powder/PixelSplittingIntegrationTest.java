@@ -162,7 +162,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//q
 		npsi.setAxisType(XAxis.Q);
 		out = npsi.integrate(data);
-		Assert.assertEquals(10.4008785, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(10.402591860873361, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{1,5});
 		out = npsi.integrate(data);
 		Assert.assertEquals(5, out.get(0).getDouble(1591),0.00001);
@@ -171,7 +171,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//d-spacing
 		npsi.setAxisType(XAxis.RESOLUTION);
 		out = npsi.integrate(data);
-		Assert.assertEquals(0.6040915776473221, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(0.6040019056031748, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{0.6,4});
 		out = npsi.integrate(data);
 		Assert.assertEquals(0.6, out.get(0).getDouble(1591),0.00001);
@@ -179,7 +179,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//pixel
 		npsi.setAxisType(XAxis.PIXEL);
 		out = npsi.integrate(data);
-		Assert.assertEquals(1591.82324625, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(1591.823246256255, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{100,300});
 		out = npsi.integrate(data);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
@@ -200,10 +200,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(356896.1287301707, max,0.00001);
-		Assert.assertEquals(136.5818284576162, min,0.00001);
-		Assert.assertEquals(10.400878542457326, maxq,0.00001);
-		Assert.assertEquals(0.007292651712160095, minq,0.00001);
+		Assert.assertEquals(356896.1287301564, max,0.00001);
+		Assert.assertEquals(136.58182845762153, min,0.00001);
+		Assert.assertEquals(10.402591860873361, maxq,0.00001);
+		Assert.assertEquals(0.007293853017842496, minq,0.00001);
 		
 		return after-before;
 	}
@@ -221,10 +221,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(341364.1286821687, max,0.00001);
+		Assert.assertEquals(336830.76975107513, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
-		Assert.assertEquals(10.400878542457326, maxq,0.00001);
-		Assert.assertEquals(0.007292651712160095, minq,0.00001);
+		Assert.assertEquals(10.402591860873361, maxq,0.00001);
+		Assert.assertEquals(0.007293853017842496, minq,0.00001);
 		return after-before;
 	}
 	
@@ -241,8 +241,8 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(377432.3180704197, max,0.00001);
-		Assert.assertEquals(831.5504299033472, min,0.00001);
+		Assert.assertEquals(370268.363719988, max,0.00001);
+		Assert.assertEquals(834.8830331973187, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
 		return after-before;
@@ -262,10 +262,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(3995.044067156658, max,0.00001);
-		Assert.assertEquals(2006.4853792280585, min,0.00001);
-		Assert.assertEquals(179.88693649405272, maxq,0.00001);
-		Assert.assertEquals(-179.88113943030953, minq,0.00001);
+		Assert.assertEquals(4003.5619624141973, max,0.00001);
+		Assert.assertEquals(2004.8229765125104, min,0.00001);
+		Assert.assertEquals(179.86865947533707, maxq,0.00001);
+		Assert.assertEquals(-179.88694041486792, minq,0.00001);
 		
 		return after-before;
 	}
@@ -284,10 +284,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5334.860152548063, max,0.00001);
-		Assert.assertEquals(3673.503011568377, min,0.00001);
-		Assert.assertEquals(179.88693649405272, maxq,0.00001);
-		Assert.assertEquals(-179.88113943030953, minq,0.00001);
+		Assert.assertEquals(5346.04087202132, max,0.00001);
+		Assert.assertEquals(3801.9952775754186, min,0.00001);
+		Assert.assertEquals(179.86865947533707, maxq,0.00001);
+		Assert.assertEquals(-179.88694041486792, minq,0.00001);
 		
 		return after-before;
 	}
@@ -306,8 +306,8 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5618.70862754681, max,0.00001);
-		Assert.assertEquals(0.0, min,0.00001);
+		Assert.assertEquals(5488.909329548431, max,0.00001);
+		Assert.assertEquals(3902.7255524746024, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
 		
@@ -328,10 +328,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(360487.458837651, max,0.00001);
-		Assert.assertEquals(379.1631977549574, min,0.00001);
-		Assert.assertEquals(9.451881009011508, maxq,0.00001);
-		Assert.assertEquals(1.5244806019035315, minq,0.00001);
+		Assert.assertEquals(360487.4588376416, max,0.00001);
+		Assert.assertEquals(379.16319775495685, min,0.00001);
+		Assert.assertEquals(9.45343800073416, maxq,0.00001);
+		Assert.assertEquals(1.5247317269098923, minq,0.00001);
 		
 		return after-before;
 	}
@@ -353,10 +353,10 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(255619.65547275505, max,0.00001);
-		Assert.assertEquals(142.85434233832953, min,0.00001);
-		Assert.assertEquals(10.398944852059048, maxq,0.00001);
-		Assert.assertEquals(0.009226342110438265, minq,0.00001);
+		Assert.assertEquals(255619.6554727802, max,0.00001);
+		Assert.assertEquals(142.85434233832973, min,0.00001);
+		Assert.assertEquals(10.400657851941666, maxq,0.00001);
+		Assert.assertEquals(0.009227861949536547, minq,0.00001);
 		
 		return after-before;
 	}

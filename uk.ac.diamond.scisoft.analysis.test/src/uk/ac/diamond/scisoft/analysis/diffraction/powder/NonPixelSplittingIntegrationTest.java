@@ -23,7 +23,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
@@ -159,7 +158,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		//q
 		npsi.setAxisType(XAxis.Q);
 		out = npsi.integrate(data);
-		Assert.assertEquals(10.39780997, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(10.399522783579055, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{1,5});
 		out = npsi.integrate(data);
 		Assert.assertEquals(5, out.get(0).getDouble(1591),0.00001);
@@ -168,7 +167,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		//d-spacing
 		npsi.setAxisType(XAxis.RESOLUTION);
 		out = npsi.integrate(data);
-		Assert.assertEquals(0.604269880465991, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(0.6041801569107378, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{0.6,4});
 		out = npsi.integrate(data);
 		Assert.assertEquals(0.6, out.get(0).getDouble(1591),0.00001);
@@ -176,7 +175,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		//pixel
 		npsi.setAxisType(XAxis.PIXEL);
 		out = npsi.integrate(data);
-		Assert.assertEquals(1591.15895395, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(1591.1174742301246, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{100,300});
 		out = npsi.integrate(data);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
@@ -199,8 +198,8 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double minq = out.get(0).min().doubleValue();
 		Assert.assertEquals(430662.6784073507, max,0.00001);
 		Assert.assertEquals(132.55555555555554, min,0.00001);
-		Assert.assertEquals(10.397809970643454, maxq,0.00001);
-		Assert.assertEquals(0.004974794335012836, minq,0.00001);
+		Assert.assertEquals(10.399522783579055, maxq,0.00001);
+		Assert.assertEquals(0.004975613824126736, minq,0.00001);
 		
 		return after-before;
 	}
@@ -220,8 +219,8 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double minq = out.get(0).min().doubleValue();
 		Assert.assertEquals(397629.0263157895, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
-		Assert.assertEquals(10.397809970643454, maxq,0.00001);
-		Assert.assertEquals(0.00497479433501283, minq,0.00001);
+		Assert.assertEquals(10.399522783579055, maxq,0.00001);
+		Assert.assertEquals(0.004975613824126736, minq,0.00001);
 		return after-before;
 	}
 	
@@ -238,10 +237,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(416848.1666666667, max,0.00001);
-		Assert.assertEquals(817.5357142857143, min,0.00001);
-		Assert.assertEquals(5, maxq,0.00001);
-		Assert.assertEquals(1, minq,0.00001);
+		Assert.assertEquals(420544.14285714284, max,0.00001);
+		Assert.assertEquals(824.7391304347826, min,0.00001);
+		Assert.assertEquals(5.0, maxq,0.00001);
+		Assert.assertEquals(1.0, minq,0.00001);
 		return after-before;
 	}
 	
@@ -259,10 +258,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(4299.553645116919, max,0.00001);
-		Assert.assertEquals(1968.1277073968124, min,0.00001);
-		Assert.assertEquals(179.86866885973967, maxq,0.00001);
-		Assert.assertEquals(-179.85706986148784, minq,0.00001);
+		Assert.assertEquals(4205.173402868318, max,0.00001);
+		Assert.assertEquals(1936.9358498349834, min,0.00001);
+		Assert.assertEquals(179.84457062163236, maxq,0.00001);
+		Assert.assertEquals(-179.88114786702272, minq,0.00001);
 		
 		return after-before;
 	}
@@ -281,10 +280,10 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5674.178841309824, max,0.00001);
-		Assert.assertEquals(3527.4343558282208, min,0.00001);
-		Assert.assertEquals(179.86866885973967, maxq,0.00001);
-		Assert.assertEquals(-179.85706986148784, minq,0.00001);
+		Assert.assertEquals(5661.3592592592595, max,0.00001);
+		Assert.assertEquals(3696.1310259579727, min,0.00001);
+		Assert.assertEquals(179.84457062163236, maxq,0.00001);
+		Assert.assertEquals(-179.88114786702272, minq,0.00001);
 		
 		return after-before;
 	}
@@ -303,7 +302,7 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(39283.875, max,0.00001);
+		Assert.assertEquals(37002.0, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
@@ -327,8 +326,8 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double minq = out.get(0).min().doubleValue();
 		Assert.assertEquals(442581.4365079365, max,0.00001);
 		Assert.assertEquals(367.64285714285717, min,0.00001);
-		Assert.assertEquals(9.448531654925183, maxq,0.00001);
-		Assert.assertEquals(1.5284575228229946, minq,0.00001);
+		Assert.assertEquals(9.45008809491463, maxq,0.00001);
+		Assert.assertEquals(1.5287093029405394, minq,0.00001);
 		
 		return after-before;
 	}
@@ -352,8 +351,8 @@ public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTe
 		double minq = out.get(0).min().doubleValue();
 		Assert.assertEquals(343570.1180154143, max,0.00001);
 		Assert.assertEquals(146.45, min,0.00001);
-		Assert.assertEquals(10.395876419912979, maxq,0.00001);
-		Assert.assertEquals(0.006908345065488825, minq,0.00001);
+		Assert.assertEquals(10.397588914338172, maxq,0.00001);
+		Assert.assertEquals(0.006909483065011375, minq,0.00001);
 		
 		return after-before;
 	}

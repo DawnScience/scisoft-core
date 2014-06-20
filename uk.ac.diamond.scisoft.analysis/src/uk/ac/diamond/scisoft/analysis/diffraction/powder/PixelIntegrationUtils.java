@@ -72,10 +72,10 @@ public class PixelIntegrationUtils {
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
-		//FIXME half pixel issue
 		
+		//+0.5 for centre of pixel
 		while (iter.hasNext()) {
-			double val = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]);
+			double val = Math.atan2(pos[0]+0.5-beamCentre[1],pos[1]+0.5-beamCentre[0]);
 			if (radians) out.set(val, pos);
 			else out.set(Math.toDegrees(val), pos);
 		}
@@ -93,11 +93,11 @@ public class PixelIntegrationUtils {
 		double[] vals = new double[4];
 		
 		while (iter.hasNext()) {
-			//FIXME half pixel issue
-			vals[0] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]-0.5);
-			vals[1] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]-0.5);
-			vals[2] = Math.atan2(pos[0]-beamCentre[1]-0.5,pos[1]-beamCentre[0]+0.5);
-			vals[3] = Math.atan2(pos[0]-beamCentre[1]+0.5,pos[1]-beamCentre[0]+0.5);
+			//find vals at pixel corners
+			vals[0] = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]);
+			vals[1] = Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]);
+			vals[2] = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]+1);
+			vals[3] = Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]+1);
 			
 			Arrays.sort(vals);
 			
@@ -215,7 +215,7 @@ public class PixelIntegrationUtils {
 				value = (2*Math.PI)/q.length();
 				break;
 			case PIXEL:
-				value = Math.hypot(pos[1]-beamCentre[0],pos[0]-beamCentre[1]);
+				value = Math.hypot(pos[1]-beamCentre[0]+0.5,pos[0]-beamCentre[1]+0.5);
 				break; 
 			}
 			ra.set(value, pos);

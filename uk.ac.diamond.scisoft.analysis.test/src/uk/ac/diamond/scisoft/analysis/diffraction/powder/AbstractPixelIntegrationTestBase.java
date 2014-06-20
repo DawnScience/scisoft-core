@@ -46,6 +46,22 @@ public class AbstractPixelIntegrationTestBase {
 		return data;
 	}
 	
+//	protected IDiffractionMetadata getDiffractionMetadata() {
+//		Vector3d origin = new Vector3d(0, 0, 1);
+//		
+//		Matrix3d or = new Matrix3d(0.18664903618587297, 0.9824227797520605, -0.002760274464467916,
+//				-0.9823153683880198, 0.1866694453418516, 0.014527050783780414,
+//				0.014786964515874404, 0.0, 0.9998906668633357);
+//		
+//		Vector3d bv = new Vector3d(-150.01354345745716, 270.6990771036326, 368.69731120612636);
+//		
+//		DetectorProperties dp = new DetectorProperties(bv, origin, 2048, 2048, 0.2, 0.2, or);
+//		DiffractionCrystalEnvironment ce = new DiffractionCrystalEnvironment(0.4257394899146627);
+//		
+//		return new DiffractionMetadata("test",dp, ce);
+//		
+//	}
+	
 	protected IDiffractionMetadata getDiffractionMetadata() {
 		Vector3d origin = new Vector3d(0, 0, 1);
 		
@@ -53,23 +69,7 @@ public class AbstractPixelIntegrationTestBase {
 				-0.9823153683880198, 0.1866694453418516, 0.014527050783780414,
 				0.014786964515874404, 0.0, 0.9998906668633357);
 		
-		Vector3d bv = new Vector3d(-150.01354345745716, 270.6990771036326, 368.69731120612636);
-		
-		DetectorProperties dp = new DetectorProperties(bv, origin, 2048, 2048, 0.2, 0.2, or);
-		DiffractionCrystalEnvironment ce = new DiffractionCrystalEnvironment(0.4257394899146627);
-		
-		return new DiffractionMetadata("test",dp, ce);
-		
-	}
-	
-	protected IDiffractionMetadata getDiffractionMetadataHalfCorrect() {
-		Vector3d origin = new Vector3d(0, 0, 1);
-		
-		Matrix3d or = new Matrix3d(0.18890371330716021,
-				0.9819916621345969, -0.0027861437324560243, -0.9818848715409118, 0.18892425862797949,
-				0.014481834861492937, 0.014747411225481444, 0.0, 0.9998912510179028);
-		
-		Vector3d bv = new Vector3d(-149.3111967697318, 270.9243609214487, 368.7598186824519);
+		Vector3d bv = new Vector3d(-150.0135434574571, 270.6990771036326, 368.6973112061264);
 		
 		DetectorProperties dp = new DetectorProperties(bv, origin, 2048, 2048, 0.2, 0.2, or);
 		DiffractionCrystalEnvironment ce = new DiffractionCrystalEnvironment(0.42566937014852557);

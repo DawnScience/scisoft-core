@@ -14,7 +14,10 @@
 		 ==================================================================== -->
 
 	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
-	<target name="junit-tests" depends="set-test-base-DAWN">
+
+	<target name="junit-tests" depends="netstat_report, _junit-tests, netstat_report_again" />
+
+	<target name="_junit-tests" depends="set-test-base-DAWN">
 		<condition property="plugin-uk.ac.diamond.scisoft.analysis.plotserver.junit-tests.maxmemory" value="1280m">
 			<os family="windows" />
 		</condition>

@@ -447,6 +447,11 @@ public class LoaderFactory {
 	public static final ILazyDataset getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
+		
+		// TODO FIXME - should the image stack be only files with a similar name?
+		// For instance each 0-9 character replaced with '\d' and a regex done?
+		// This would reduce the image stack to a more likely list of similar files 
+		// for directories with multiple collections.
 		final List<String> imageFilenames = new ArrayList<String>();
 		final File   file  = new File(filePath);
 		final String ext  = FileUtils.getFileExtension(file.getName());

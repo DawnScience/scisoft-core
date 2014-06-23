@@ -182,9 +182,9 @@ public class PythonHelper {
 		pythonRunInfo.std.start();
 		pythonRunInfo.err.start();
 		try {
-			// Allow the python process to start before continuing, this is required
-			// when starting a server in the Python side.
-			Thread.sleep(1000);
+			// Allow the python process to start before continuing, this is required when starting a server in the Python side.
+			// The sleep was originally 1000, but this was too low, resulting in intermittent failures during Jenkins testing (see SCI-1893).
+			Thread.sleep(1500);
 		} catch (InterruptedException e) {
 		}
 		return pythonRunInfo;

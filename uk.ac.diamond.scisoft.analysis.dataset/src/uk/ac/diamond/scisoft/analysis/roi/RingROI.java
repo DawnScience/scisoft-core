@@ -19,8 +19,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.coords.SectorCoords;
-
 /**
  * Class for ring region of interest
  */
@@ -213,16 +211,6 @@ public class RingROI extends ROIBase implements Serializable {
 	}
 
 	@Override
-	public boolean isNearOutline(double x, double y, double distance) {
-		x -= spt[0];
-		y -= spt[1];
-
-		double[] pol = SectorCoords.convertFromCartesianToPolarRadians(x, y);
-		double r = pol[0];
-		return Math.abs(r - rad[0]) <= distance || Math.abs(r - rad[1]) <= distance;
-	}
-
-	@Override
 	public RectangularROI getBounds() {
 		if (bounds == null) {
 			bounds = new RectangularROI();
@@ -247,6 +235,24 @@ public class RingROI extends ROIBase implements Serializable {
 		c.name = name;
 		c.plot = plot;
 		return c;
+	}
+
+	@Override
+	public boolean containsPoint(double x, double y) {
+		x -= spt[0];
+		y -= spt[1];
+
+		double r = Math.hypot(x, y);
+		return r >= rad[0] && r <= rad[1];
+	}
+
+	@Override
+	public boolean isNearOutline(double x, double y, double distance) {
+		x -= spt[0];
+		y -= spt[1];
+
+		double r = Math.hypot(x, y);
+		return Math.abs(r - rad[0]) <= distance || Math.abs(r - rad[1]) <= distance;
 	}
 
 	@Override

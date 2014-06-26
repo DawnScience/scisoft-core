@@ -76,7 +76,7 @@ public class GaussianTest {
 		dx = f.calculatePartialDerivativeValues(f.getParameter(2), xd);
 		Assert.assertArrayEquals(new double[] {0.5*h/1.2, h/1.2, 0.5*h/1.2}, dx.getData(), ABS_TOL);
 
-		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.arange(15, 30, 0.25)};
+		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
 		DoubleDataset weight = null;
 		CoordinatesIterator it = f.getIterator(coords);
 		DoubleDataset current = new DoubleDataset(it.getShape());

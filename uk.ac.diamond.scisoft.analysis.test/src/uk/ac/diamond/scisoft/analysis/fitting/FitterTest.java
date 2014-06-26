@@ -41,7 +41,7 @@ public class FitterTest {
 		double fwhm = 3.0;
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
-		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,0.1);
+		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,0.1);
 		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		AFunction result = Fitter.GaussianFit(ds, xAxis);
@@ -57,7 +57,7 @@ public class FitterTest {
 		double fwhm = 3.0;
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
-		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,0.1);
+		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,0.1);
 		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		NDGaussianFitResult result = Fitter.NDGaussianSimpleFit(ds, xAxis);
@@ -79,11 +79,11 @@ public class FitterTest {
 		double yAxisStep = 0.2;
 		
 		Gaussian gauss1 = new Gaussian(pos1,fwhm1,area1);
-		DoubleDataset xAxis = DoubleDataset.arange(-10.0,10.0,xAxisStep);
+		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,xAxisStep);
 		DoubleDataset ds1 = gauss1.calculateValues(xAxis);
 		
 		Gaussian gauss2 = new Gaussian(pos2,fwhm2,area2);
-		DoubleDataset yAxis = DoubleDataset.arange(-20.0,20.0,yAxisStep);
+		DoubleDataset yAxis = DoubleDataset.createRange(-20.0,20.0,yAxisStep);
 		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
 		DoubleDataset ds = (DoubleDataset) AbstractDataset.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);

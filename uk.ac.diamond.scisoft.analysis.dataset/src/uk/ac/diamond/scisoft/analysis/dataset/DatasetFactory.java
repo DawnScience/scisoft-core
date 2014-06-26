@@ -42,28 +42,81 @@ public class DatasetFactory {
 	 */
 	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
 		if ((step > 0) != (start <= stop)) {
-			return null;
+			throw new IllegalArgumentException("Invalid parameters: start and stop must be in correct order for step");
 		}
 
 		switch (dtype) {
 		case Dataset.BOOL:
 			break;
 		case Dataset.INT8:
-			return ByteDataset.arange(start, stop, step);
+			return ByteDataset.createRange(start, stop, step);
 		case Dataset.INT16:
-			return ShortDataset.arange(start, stop, step);
+			return ShortDataset.createRange(start, stop, step);
 		case Dataset.INT32:
-			return IntegerDataset.arange(start, stop, step);
+			return IntegerDataset.createRange(start, stop, step);
 		case Dataset.INT64:
-			return LongDataset.arange(start, stop, step);
+			return LongDataset.createRange(start, stop, step);
 		case Dataset.FLOAT32:
-			return FloatDataset.arange(start, stop, step);
+			return FloatDataset.createRange(start, stop, step);
 		case Dataset.FLOAT64:
-			return DoubleDataset.arange(start, stop, step);
+			return DoubleDataset.createRange(start, stop, step);
 		case Dataset.COMPLEX64:
-			return ComplexFloatDataset.arange(start, stop, step);
+			return ComplexFloatDataset.createRange(start, stop, step);
 		case Dataset.COMPLEX128:
-			return ComplexDoubleDataset.arange(start, stop, step);
+			return ComplexDoubleDataset.createRange(start, stop, step);
+		}
+		throw new IllegalArgumentException("dtype not known");
+	}
+
+	/**
+	 * Create compound dataset with items of given size ranging from 0 to given stop in steps of 1
+	 * @param itemSize
+	 * @param stop
+	 * @param dtype
+	 * @return a new dataset of given shape and type, filled with values determined by parameters
+	 */
+	public static CompoundDataset createRange(final int itemSize, final double stop, final int dtype) {
+		return createRange(itemSize, 0, stop, 1, dtype);
+	}
+
+	/**
+	 * Create compound dataset with items of given size ranging from given start to given stop in given steps
+	 * @param itemSize
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @param dtype
+	 * @return a new 1D dataset of given type, filled with values determined by parameters
+	 */
+	public static CompoundDataset createRange(final int itemSize, final double start, final double stop, final double step, final int dtype) {
+		if (itemSize < 1) {
+			throw new IllegalArgumentException("Item size must be greater or equal to 1");
+		}
+		if ((step > 0) != (start <= stop)) {
+			throw new IllegalArgumentException("Invalid parameters: start and stop must be in correct order for step");
+		}
+
+		switch (dtype) {
+		case Dataset.BOOL:
+			break;
+		case Dataset.ARRAYINT8:
+		case Dataset.INT8:
+			return CompoundIntegerDataset.createRange(itemSize, start, stop, step);
+		case Dataset.ARRAYINT16:
+		case Dataset.INT16:
+			return CompoundShortDataset.createRange(itemSize, start, stop, step);
+		case Dataset.ARRAYINT32:
+		case Dataset.INT32:
+			return CompoundIntegerDataset.createRange(itemSize, start, stop, step);
+		case Dataset.ARRAYINT64:
+		case Dataset.INT64:
+			return CompoundLongDataset.createRange(itemSize, start, stop, step);
+		case Dataset.ARRAYFLOAT32:
+		case Dataset.FLOAT32:
+			return CompoundFloatDataset.createRange(itemSize, start, stop, step);
+		case Dataset.ARRAYFLOAT64:
+		case Dataset.FLOAT64:
+			return CompoundDoubleDataset.createRange(itemSize, start, stop, step);
 		}
 		throw new IllegalArgumentException("dtype not known");
 	}

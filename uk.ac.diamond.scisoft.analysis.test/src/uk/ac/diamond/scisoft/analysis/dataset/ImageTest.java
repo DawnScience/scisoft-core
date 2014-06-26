@@ -28,7 +28,7 @@ public class ImageTest {
 	public void testregrid() {
 		
 		AbstractDataset ds = Random.rand(new int[] {100,100});
-		AbstractDataset pow = DoubleDataset.arange(100);
+		AbstractDataset pow = DoubleDataset.createRange(100);
 		pow.ipower(2);
 		
 		AbstractDataset tile = pow.reshape(pow.getShape()[0],1);
@@ -36,7 +36,7 @@ public class ImageTest {
 		
 		AbstractDataset y = DatasetUtils.transpose(x);
 		
-		AbstractDataset lin = DoubleDataset.arange(-100,900,10);
+		AbstractDataset lin = DoubleDataset.createRange(-100,900,10);
 		
 		// now apply the Transform
 		@SuppressWarnings("unused")
@@ -46,7 +46,7 @@ public class ImageTest {
 	
 	@Test
 	public void testMedianFilter() {
-		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset ds = DoubleDataset.createRange(1000);
 		AbstractDataset result = Image.medianFilter(ds, new int[] {3});
 		assertEquals(result.getDouble(2), ds.getDouble(2), 0.001);
 		
@@ -58,7 +58,7 @@ public class ImageTest {
 		result = Image.medianFilter(ds, new int[] {3,3,3});
 		assertEquals(result.getDouble(5,5,5), ds.getDouble(5,5,5), 0.001);
 		
-		ds = IntegerDataset.arange(1000);
+		ds = IntegerDataset.createRange(1000);
 		result = Image.medianFilter(ds, new int[] {3});
 		assertEquals(result.getDouble(2), ds.getDouble(2), 0.001);
 		
@@ -73,7 +73,7 @@ public class ImageTest {
 	
 	@Test
 	public void testConvolutionFilter() {
-		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset ds = DoubleDataset.createRange(1000);
 		AbstractDataset kernel = DoubleDataset.ones(27);
 		AbstractDataset result = Image.convolutionFilter(ds, kernel);
 		assertEquals(120, result.getDouble(2), 0.001);

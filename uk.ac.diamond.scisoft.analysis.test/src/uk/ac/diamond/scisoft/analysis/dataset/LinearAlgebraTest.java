@@ -112,8 +112,8 @@ public class LinearAlgebraTest {
 		AbstractDataset a;
 		AbstractDataset b;
 
-		a = DoubleDataset.arange(2);
-		b = DoubleDataset.arange(3);
+		a = DoubleDataset.createRange(2);
+		b = DoubleDataset.createRange(3);
 		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {0, 0, 0, 0, 1, 2}, 2, 3), LinearAlgebra.outerProduct(a, b),
 				1e-12, 1e-12);
 		

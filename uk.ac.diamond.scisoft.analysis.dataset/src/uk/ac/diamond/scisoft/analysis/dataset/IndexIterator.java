@@ -20,7 +20,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
  * <p>Class to provide iteration through whole data array that backs a dataset</p>
  * <p>Instantiate an iterator and use it in a while loop:
  * <pre>
- *  DoubleDataset ds = (DoubleDataset) AbstractDataset.linSpace(0,10,0.25, AbstractDataset.FLOAT64);
+ *  DoubleDataset ds = (DoubleDataset) DatasetUtils.linSpace(0,10,0.25, Dataset.FLOAT64);
  *  IndexIterator iter = ds.getIterator();
  *  double[] data = ds.getData();
  *  

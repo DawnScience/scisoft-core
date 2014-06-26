@@ -1168,49 +1168,23 @@ public class DatasetUtils {
 	 * @return compound dataset
 	 */
 	public static CompoundDataset createCompoundDatasetFromLastAxis(final Dataset a, final boolean shareData) {
-		if (a instanceof AbstractCompoundDataset) {
-			utilsLogger.error("Need a single-element dataset");
-			throw new IllegalArgumentException("Need a single-element dataset");
-		}
-
-		Serializable buffer = shareData ? a.getBuffer() : a.clone().getBuffer();
-
-		final AbstractCompoundDataset result;
-		final int[] shape = a.getShape();
-		final int rank = shape.length - 1;
-
-		final int is = rank < 0 ? 1 : shape[rank];
-
 		switch (a.getDtype()) {
 		case Dataset.INT8:
-			result = new CompoundByteDataset(is);
-			break;
+			return CompoundByteDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		case Dataset.INT16:
-			result = new CompoundShortDataset(is);
-			break;
+			return CompoundShortDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		case Dataset.INT32:
-			result = new CompoundIntegerDataset(is);
-			break;
+			return CompoundIntegerDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		case Dataset.INT64:
-			result = new CompoundLongDataset(is);
-			break;
+			return CompoundLongDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		case Dataset.FLOAT32:
-			result = new CompoundFloatDataset(is);
-			break;
+			return CompoundFloatDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		case Dataset.FLOAT64:
-			result = new CompoundDoubleDataset(is);
-			break;
+			return CompoundDoubleDataset.createCompoundDatasetWithLastDimension(a, shareData);
 		default:
 			utilsLogger.error("Dataset type not supported for this operation");
 			throw new UnsupportedOperationException("Dataset type not supported");
 		}
-
-		result.shape = rank > 0 ? Arrays.copyOf(shape, rank) : (rank < 0 ? new int[] {} : new int[] {1});
-		result.size = AbstractDataset.calcSize(result.shape);
-		result.odata = buffer;
-		result.setName(a.getName());
-		result.setData();
-		return result;
 	}
 
 	/**
@@ -1222,46 +1196,7 @@ public class DatasetUtils {
 	 * @return non-compound dataset
 	 */
 	public static AbstractDataset createDatasetFromCompoundDataset(final CompoundDataset a, final boolean shareData) {
-		Serializable buffer = shareData ? a.getBuffer() : a.clone().getBuffer();
-
-		AbstractDataset result;
-		switch (a.getDtype()) {
-		case Dataset.ARRAYINT8:
-			result = new ByteDataset();
-			break;
-		case Dataset.ARRAYINT16:
-			result = new ShortDataset();
-			break;
-		case Dataset.ARRAYINT32:
-			result = new IntegerDataset();
-			break;
-		case Dataset.ARRAYINT64:
-			result = new LongDataset();
-			break;
-		case Dataset.ARRAYFLOAT32:
-			result = new FloatDataset();
-			break;
-		case Dataset.ARRAYFLOAT64:
-			result = new DoubleDataset();
-			break;
-		default:
-			utilsLogger.error("Dataset type not supported for this operation");
-			throw new UnsupportedOperationException("Dataset type not supported");
-		}
-
-		final int[] shape = a.getShape();
-		final int is = a.getElementsPerItem();
-		final int rank = is == 1 ? shape.length : shape.length + 1;
-		final int[] nshape = Arrays.copyOf(shape, rank);
-		if (is != 1)
-			nshape[rank-1] = is;
-
-		result.shape = nshape;
-		result.size = AbstractDataset.calcSize(nshape);
-		result.odata = buffer;
-		result.setName(a.getName());
-		result.setData();
-		return result;
+		return (AbstractDataset) a.asNonCompoundDataset(shareData);
 	}
 
 	/**
@@ -2300,7 +2235,7 @@ public class DatasetUtils {
 			throw new IllegalArgumentException("Dataset types of choices are invalid");
 		}
 
-		Dataset r = DatasetFactory.zeros(ds, conditions[0].shape, dt);
+		Dataset r = DatasetFactory.zeros(ds, conditions[0].getShapeRef(), dt);
 		for (AbstractDataset a : conditions) {
 			r.checkCompatibility(a);
 		}

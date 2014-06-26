@@ -45,7 +45,7 @@ public class BicubicInterpolatorTest {
 	@Test
 	public void testGenerateSurroundingPoints() {
 
-		DoubleDataset ds = DoubleDataset.arange(0.0, 9.0, 1.0);
+		DoubleDataset ds = DoubleDataset.createRange(0.0, 9.0, 1.0);
 		ds = (DoubleDataset) ds.reshape(3, 3);
 		int[] shape = ds.getShapeRef();
 
@@ -67,7 +67,7 @@ public class BicubicInterpolatorTest {
 
 	@Test
 	public void testValue() {
-		DoubleDataset ds = DoubleDataset.arange(0.0, 9.0, 1.0);
+		DoubleDataset ds = DoubleDataset.createRange(0.0, 9.0, 1.0);
 		ds = (DoubleDataset) ds.reshape(3, 3);
 
 		BicubicInterpolator bicube = new BicubicInterpolator(new int[] { 5, 5 });

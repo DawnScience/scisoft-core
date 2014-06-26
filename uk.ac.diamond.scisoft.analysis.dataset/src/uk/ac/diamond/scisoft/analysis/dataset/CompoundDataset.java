@@ -54,10 +54,11 @@ public interface CompoundDataset extends Dataset {
 	public void copyElements(Dataset destination, int element);
 
 	/**
-	 * Gets a view of compound dataset as a non-compound dataset
+	 * Get a non-compound dataset version
+	 * @param shareData if true, share data otherwise copy it
 	 * @return non-compound dataset
 	 */
-	public Dataset asNonCompoundDataset();
+	public Dataset asNonCompoundDataset(final boolean shareData);
 
 	/**
 	 * Calculate maximum values of elements over all items in dataset

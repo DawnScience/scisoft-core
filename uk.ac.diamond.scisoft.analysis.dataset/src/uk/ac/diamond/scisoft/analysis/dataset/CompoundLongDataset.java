@@ -260,9 +260,31 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	/**
 	 * @param stop
 	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(int, double)}
 	 */
+	@Deprecated
 	public static CompoundLongDataset arange(final int itemSize, final double stop) {
-		return arange(itemSize, 0., stop, 1.);
+		return createRange(itemSize, 0, stop, 1);
+	}
+
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(int, double, double, double)}
+	 */
+	@Deprecated
+	public static CompoundLongDataset arange(final int itemSize, final double start, final double stop, final double step) {
+		return createRange(itemSize, start, stop, step);
+	}
+
+	/**
+	 * @param stop
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 */
+	public static CompoundLongDataset createRange(final int itemSize, final double stop) {
+		return createRange(itemSize, 0., stop, 1.);
 	}
 
 	/**
@@ -271,7 +293,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 * @param step
 	 * @return a new 1D dataset, filled with values determined by parameters
 	 */
-	public static CompoundLongDataset arange(final int itemSize, final double start, final double stop,
+	public static CompoundLongDataset createRange(final int itemSize, final double start, final double stop,
 			final double step) {
 		int size = calcSteps(start, stop, step);
 		CompoundLongDataset result = new CompoundLongDataset(itemSize, new int[] { size });
@@ -287,6 +309,56 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	 */
 	public static CompoundLongDataset ones(final int itemSize, final int... shape) {
 		return new CompoundLongDataset(itemSize, shape).fill(1);
+	}
+
+	/**
+	 * Create a compound dataset using last dimension of given dataset
+	 * @param a
+	 * @param shareData
+	 * @return compound dataset
+	 */
+	public static CompoundLongDataset createCompoundDatasetWithLastDimension(final Dataset a, final boolean shareData) {
+		if (a.getElementsPerItem() != 1) {
+			logger.error("Need a single-element dataset");
+			throw new IllegalArgumentException("Need a single-element dataset");
+		}
+		if (a.getDtype() != Dataset.INT64) { // DATA_TYPE
+			logger.error("Dataset type must be long"); // PRIM_TYPE
+			throw new IllegalArgumentException("Dataset type must be long"); // PRIM_TYPE
+		}
+
+		final int[] shape = a.getShape();
+		final int rank = shape.length - 1;
+		final int is = rank < 0 ? 1 : shape[rank];
+
+
+		CompoundLongDataset result = new CompoundLongDataset(is);
+
+		result.shape = rank > 0 ? Arrays.copyOf(shape, rank) : (rank < 0 ? new int[] {} : new int[] {1});
+		result.size = AbstractDataset.calcSize(result.shape);
+		result.odata = shareData ? a.getBuffer() : a.clone().getBuffer();
+		result.setName(a.getName());
+		result.setData();
+		return result;
+	}
+
+
+	@Override
+	public LongDataset asNonCompoundDataset(final boolean shareData) { // CLASS_TYPE
+		LongDataset result = new LongDataset(); // CLASS_TYPE
+
+		final int is = getElementsPerItem();
+		final int rank = is == 1 ? shape.length : shape.length + 1;
+		final int[] nshape = Arrays.copyOf(shape, rank);
+		if (is != 1)
+			nshape[rank-1] = is;
+
+		result.shape = nshape;
+		result.size = AbstractDataset.calcSize(nshape);
+		result.odata = shareData ? data : data.clone();
+		result.setName(name);
+		result.setData();
+		return result;
 	}
 
 	/**
@@ -1279,11 +1351,11 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 			} else if (bis == isize) {
 				while (it1.hasNext() && it2.hasNext()) {
 					for (int i = 0; i < isize; i++) {
-						try {
+				try {
 							data[it1.index + i] /= bds.getElementLongAbs(it2.index + i); // GET_ELEMENT // INT_EXCEPTION
-						} catch (ArithmeticException e) {
-							data[it1.index + i] = 0;
-						}
+				} catch (ArithmeticException e) {
+					data[it1.index + i] = 0;
+				}
 					}
 				}
 			} else {
@@ -1337,11 +1409,11 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 			} else if (bis == isize) {
 				while (it1.hasNext() && it2.hasNext()) {
 					for (int i = 0; i < isize; i++) {
-						try {
+				try {
 							data[it1.index + i] %= bds.getElementLongAbs(it2.index + i); // GET_ELEMENT // INT_EXCEPTION
-						} catch (ArithmeticException e) {
-							data[it1.index + i] = 0;
-						}
+				} catch (ArithmeticException e) {
+					data[it1.index + i] = 0;
+				}
 					}
 				}
 			} else {

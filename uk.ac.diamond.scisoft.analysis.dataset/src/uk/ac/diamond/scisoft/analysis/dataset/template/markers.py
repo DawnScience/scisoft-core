@@ -21,7 +21,7 @@ transmutation class for markers
 It performs line-by-line substitutions based on markers embedded in comments.
 
 Mark up source class with following comment markers:
-// DATA_TYPE      - abstract dataset constant
+// DATA_TYPE      - dataset constant
 // CLASS_TYPE     - boxed primitive class
 // PRIM_TYPE      - java primitive type
 // PRIM_TYPE_LONG - java primitive type (cast to long first if integer)
@@ -51,7 +51,7 @@ Mark up source class with following comment markers:
 
 class transmutate(object):
     def __init__(self, scriptfile, srcclass, source, dstclass, destination, disreal=True,
-                 disbool=False, disobj=False):
+                 disbool=False, disobj=False, isatomic=True):
         '''
         scriptfile
         srcclass
@@ -61,6 +61,7 @@ class transmutate(object):
         disreal indicates whether destination is a real dataset
         disbool indicates whether destination is a boolean dataset
         disobj indicates whether destination is an object type-dataset
+        isatomic indicates whether dataset is atomic or compound
 
         source and destination are lists of strings which describe dtype,
         Java boxed primitive class, Java primitive type, getElement abstract method,
@@ -91,8 +92,12 @@ class transmutate(object):
         self.isreal = disreal
         self.isbool = disbool
         self.isobj = disobj
+        self.isatomic = isatomic
         if self.isbool:
             self.isreal = False
+        if not self.isatomic: # make compound dataset types
+            self.scdtype = "ARRAY" + self.sdtype
+            self.dcdtype = "ARRAY" + self.ddtype
 
         from ordereddict import OrderedDict #@UnresolvedImport
         self.processors = OrderedDict([ ("// DATA_TYPE", self.data),
@@ -141,7 +146,10 @@ class transmutate(object):
         '''
         dataset type
         '''
-        return line.replace(self.sdtype, self.ddtype)
+        l = line.replace(self.sdtype, self.ddtype)
+        if not self.isatomic:
+            l = l.replace(self.scdtype, self.dcdtype)
+        return l
 
     def jclass(self, line):
         '''

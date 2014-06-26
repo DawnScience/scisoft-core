@@ -139,7 +139,7 @@ public class SliceIteratorTest {
 				tpos[j] = shape[j] - 1;
 		}
 
-		for (; iter.hasNext();) {
+		while (iter.hasNext()) {
 //			System.out.println("        " + Arrays.toString(pos));
 			for (int j = 0; j <= endrank; j++) {
 				assertEquals("  step: " + Arrays.toString(step) + "; shape: " + Arrays.toString(shape) + "; dim " + j,
@@ -175,7 +175,7 @@ public class SliceIteratorTest {
 		int endrank = shape.length - 1;
 		int[] tpos = new int[shape.length];
 
-		for (; iter.hasNext();) {
+		while (iter.hasNext()) {
 //			System.out.println("        " + Arrays.toString(pos));
 			for (int j = 0; j <= endrank; j++) {
 				assertEquals("  axes: " + Arrays.toString(axes) + "; shape: " + Arrays.toString(shape) + "; dim " + j,
@@ -193,7 +193,6 @@ public class SliceIteratorTest {
 					}
 				}
 			}
-
 		}
 	}
 }

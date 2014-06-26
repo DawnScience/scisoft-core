@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 /**
  * This service gives access to parts of the scisoft.analysis plugin
- * without having to import the concrete plugin uk.ac.diamond.scisoft.analysis.
+ * without having to import the concrete plugin uk.ac.diamond.scisoft.analysis.dataset.
  * 
  * So you don't end up with dependencies required by loaders when you do simple
  * dataset manipulation for instance.
@@ -68,22 +68,22 @@ public interface IDatasetMathsService {
 	public static final int FLOAT = FLOAT64;
 	
 	/**
-	 * 
+	 * Create a range without importing DatasetFactory
 	 * @param stop
 	 * @param dtype
 	 * @return IDataset
 	 */
-	public IDataset arange(final double stop, final int dtype);
+	public IDataset createRange(final double stop, final int dtype);
 
 	/**
-	 * Create an arange without importing AbstractDataset.
+	 * Create a range without importing DatasetFactory
 	 * @param start
 	 * @param stop
 	 * @param step
 	 * @param dtype
 	 * @return IDataset
 	 */
-	public IDataset arange(final double start, final double stop, final double step, final int dtype);
+	public IDataset createRange(final double start, final double stop, final double step, final int dtype);
 
 	/**
 	 * Create a dataset using a bunch of doubles.

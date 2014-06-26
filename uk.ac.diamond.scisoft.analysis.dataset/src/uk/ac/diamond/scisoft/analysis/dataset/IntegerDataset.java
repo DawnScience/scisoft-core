@@ -185,12 +185,34 @@ public class IntegerDataset extends AbstractDataset {
 	}
 	
 	/**
+	 * @param stop
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(double)}
+	 */
+	@Deprecated
+	public static IntegerDataset arange(final double stop) {
+		return createRange(0, stop, 1);
+	}
+	
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(double, double, double)}
+	 */
+	@Deprecated
+	public static IntegerDataset arange(final double start, final double stop, final double step) {
+		return createRange(start, stop, step);
+	}
+	
+	/**
 	 *
 	 * @param stop
 	 * @return a new 1D dataset, filled with values determined by parameters
 	 */
-	public static IntegerDataset arange(final double stop) {
-		return arange(0, stop, 1);
+	public static IntegerDataset createRange(final double stop) {
+		return createRange(0, stop, 1);
 	}
 	
 	/**
@@ -200,7 +222,7 @@ public class IntegerDataset extends AbstractDataset {
 	 * @param step
 	 * @return a new 1D dataset, filled with values determined by parameters
 	 */
-	public static IntegerDataset arange(final double start, final double stop, final double step) {
+	public static IntegerDataset createRange(final double start, final double stop, final double step) {
 		int size = calcSteps(start, stop, step);
 		IntegerDataset result = new IntegerDataset(size);
 		for (int i = 0; i < size; i++) {

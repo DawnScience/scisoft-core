@@ -185,12 +185,34 @@ public class DoubleDataset extends AbstractDataset {
 	}
 	 // NAN_OMIT
 	/** // NAN_OMIT
+	 * @param stop // NAN_OMIT
+	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
+	 * @deprecated Use {@link #createRange(double)} // NAN_OMIT
+	 */ // NAN_OMIT
+	@Deprecated // NAN_OMIT
+	public static DoubleDataset arange(final double stop) { // NAN_OMIT
+		return createRange(0, stop, 1); // NAN_OMIT
+	} // NAN_OMIT
+	 // NAN_OMIT
+	/** // NAN_OMIT
+	 * @param start // NAN_OMIT
+	 * @param stop // NAN_OMIT
+	 * @param step // NAN_OMIT
+	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
+	 * @deprecated Use {@link #createRange(double, double, double)} // NAN_OMIT
+	 */ // NAN_OMIT
+	@Deprecated // NAN_OMIT
+	public static DoubleDataset arange(final double start, final double stop, final double step) { // NAN_OMIT
+		return createRange(start, stop, step); // NAN_OMIT
+	} // NAN_OMIT
+	 // NAN_OMIT
+	/** // NAN_OMIT
 	 * // NAN_OMIT
 	 * @param stop // NAN_OMIT
 	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
 	 */ // NAN_OMIT
-	public static DoubleDataset arange(final double stop) { // NAN_OMIT
-		return arange(0, stop, 1); // NAN_OMIT
+	public static DoubleDataset createRange(final double stop) { // NAN_OMIT
+		return createRange(0, stop, 1); // NAN_OMIT
 	} // NAN_OMIT
 	 // NAN_OMIT
 	/** // NAN_OMIT
@@ -200,7 +222,7 @@ public class DoubleDataset extends AbstractDataset {
 	 * @param step // NAN_OMIT
 	 * @return a new 1D dataset, filled with values determined by parameters // NAN_OMIT
 	 */ // NAN_OMIT
-	public static DoubleDataset arange(final double start, final double stop, final double step) { // NAN_OMIT
+	public static DoubleDataset createRange(final double start, final double stop, final double step) { // NAN_OMIT
 		int size = calcSteps(start, stop, step); // NAN_OMIT
 		DoubleDataset result = new DoubleDataset(size); // NAN_OMIT
 		for (int i = 0; i < size; i++) { // NAN_OMIT

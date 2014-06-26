@@ -185,12 +185,34 @@ public class LongDataset extends AbstractDataset {
 	}
 	
 	/**
+	 * @param stop
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(double)}
+	 */
+	@Deprecated
+	public static LongDataset arange(final double stop) {
+		return createRange(0, stop, 1);
+	}
+	
+	/**
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return a new 1D dataset, filled with values determined by parameters
+	 * @deprecated Use {@link #createRange(double, double, double)}
+	 */
+	@Deprecated
+	public static LongDataset arange(final double start, final double stop, final double step) {
+		return createRange(start, stop, step);
+	}
+	
+	/**
 	 *
 	 * @param stop
 	 * @return a new 1D dataset, filled with values determined by parameters
 	 */
-	public static LongDataset arange(final double stop) {
-		return arange(0, stop, 1);
+	public static LongDataset createRange(final double stop) {
+		return createRange(0, stop, 1);
 	}
 	
 	/**
@@ -200,7 +222,7 @@ public class LongDataset extends AbstractDataset {
 	 * @param step
 	 * @return a new 1D dataset, filled with values determined by parameters
 	 */
-	public static LongDataset arange(final double start, final double stop, final double step) {
+	public static LongDataset createRange(final double start, final double stop, final double step) {
 		int size = calcSteps(start, stop, step);
 		LongDataset result = new LongDataset(size);
 		for (int i = 0; i < size; i++) {

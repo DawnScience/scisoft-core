@@ -707,6 +707,6 @@ public class FFT {
 	 */
 	public static AbstractDataset sampleFrequencies(int n, double d) {
 		int hn = n/2;
-		return DatasetUtils.roll(DoubleDataset.arange(n).isubtract(hn).imultiply(1/(d*n)), n - hn, null);
+		return DatasetUtils.roll(DoubleDataset.createRange(n).isubtract(hn).imultiply(1/(d*n)), n - hn, null);
 	}
 }

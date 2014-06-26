@@ -551,14 +551,8 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	@Override
 	abstract public AbstractDataset getElements(int element);
 
-	/**
-	 * Gets a view of compound dataset as a non-compound dataset
-	 * @return non-compound dataset
-	 */
 	@Override
-	public AbstractDataset asNonCompoundDataset() {
-		return DatasetUtils.createDatasetFromCompoundDataset(this, true);
-	}
+	abstract public AbstractDataset asNonCompoundDataset(final boolean shareData);
 
 	/**
 	 * Calculate minimum and maximum for a dataset

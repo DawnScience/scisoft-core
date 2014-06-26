@@ -86,7 +86,7 @@ public class SignalTest {
 
 	@Test
 	public void testConvolutionFilter() {
-		AbstractDataset ds = DoubleDataset.arange(1000);
+		AbstractDataset ds = DoubleDataset.createRange(1000);
 		AbstractDataset kernel = DoubleDataset.ones(27);
 		AbstractDataset result = Signal.convolveToSameShape(ds, kernel, null);
 		assertEquals(120, result.getDouble(2), 0.001);

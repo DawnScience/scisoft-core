@@ -32,12 +32,12 @@ import uk.ac.diamond.scisoft.analysis.dataset.Stats;
 public class DatasetMathsServiceImpl extends AbstractServiceFactory implements IDatasetMathsService {
 
 	@Override
-	public IDataset arange(double stop, int dtype) {
+	public IDataset createRange(double stop, int dtype) {
 		return DatasetFactory.createRange(stop, dtype);
 	}
 
 	@Override
-	public IDataset arange(double start, double stop, double step, int dtype) {
+	public IDataset createRange(double start, double stop, double step, int dtype) {
 		return DatasetFactory.createRange(start, stop, step, dtype);
 	}
 

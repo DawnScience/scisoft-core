@@ -1689,8 +1689,8 @@ public class AbstractDatasetTest {
 	@Test
 	public void testAppend() {
 		double[] x = { 0., 1., 2., 3., 4., 5. };
-		Dataset d1 = DoubleDataset.arange(3.);
-		Dataset d2 = DoubleDataset.arange(3., 6., 1.);
+		Dataset d1 = DoubleDataset.createRange(3.);
+		Dataset d2 = DoubleDataset.createRange(3., 6., 1.);
 		Dataset d3 = DatasetUtils.append(d1, d2, 0);
 
 		for (int i = 0; i < x.length; i++) {

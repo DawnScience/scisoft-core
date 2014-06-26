@@ -38,7 +38,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "MARImageTest/";
+		TestFileFolder += "/MARImageTest/";
 		testfile1 = TestFileFolder + "in1187_sample1.mccd";
 		testfile2 = TestFileFolder + "mar225_001.mccd";
 		testfile3 = TestFileFolder + "mar165_001.mccd";

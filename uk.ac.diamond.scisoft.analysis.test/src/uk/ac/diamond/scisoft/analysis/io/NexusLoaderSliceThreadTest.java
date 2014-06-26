@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
-	private static String filename = System.getProperty("GDALargeTestFilesLocation") + "NexusUITest/DCT_201006-good.h5";
+	private static String filename = System.getProperty("GDALargeTestFilesLocation") + "/NexusUITest/DCT_201006-good.h5";
 
 	private SliceObject sliceObject;
 

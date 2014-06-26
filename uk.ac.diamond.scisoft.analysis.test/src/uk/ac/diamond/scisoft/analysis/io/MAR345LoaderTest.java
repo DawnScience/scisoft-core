@@ -41,7 +41,7 @@ public class MAR345LoaderTest {
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "MAR3450LoaderTest/";
+		TestFileFolder += "/MAR3450LoaderTest/";
 		testfile = TestFileFolder + "image_130.mar3450";
 	}
 

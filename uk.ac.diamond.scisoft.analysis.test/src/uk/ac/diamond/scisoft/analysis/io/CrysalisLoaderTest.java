@@ -36,7 +36,7 @@ public class CrysalisLoaderTest {
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "CrysalisLoaderTest/";
+		TestFileFolder += "/CrysalisLoaderTest/";
 	}
 
 	/**

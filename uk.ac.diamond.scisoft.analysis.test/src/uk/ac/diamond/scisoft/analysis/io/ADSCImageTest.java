@@ -46,7 +46,7 @@ public class ADSCImageTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		testfile1 = "ADSCImageTest/F6_1_001.img";
+		testfile1 = "/ADSCImageTest/F6_1_001.img";
 	}
 
 	/**

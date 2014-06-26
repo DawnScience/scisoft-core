@@ -34,7 +34,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.LongDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 
 public class NexusDiffractionMetaReader {
 	
@@ -108,6 +107,7 @@ public class NexusDiffractionMetaReader {
 	 * @param xyPixelSize Guess at pixel size. Will be used if pixel size not read.
 	 */
 	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize,DetectorProperties detprop, DiffractionCrystalEnvironment diffcrys, double[] xyPixelSize) {
+		
 		if (!HierarchicalDataFactory.isHDF5(filePath)) return null;
 		
 		if (detprop == null) detprop = getInitialDetectorProperties();
@@ -118,27 +118,21 @@ public class NexusDiffractionMetaReader {
 		try {
 			hiFile = HierarchicalDataFactory.getReader(filePath);
 
-			Group rootGroup = hiFile.getRoot();
+			String rootGroup = hiFile.getRoot();
 
 			//Check only one entry in root - might not act on it at the moment but may be useful to know
-//			if (rootGroup.getMemberList().size() > 1)
-//				logger.warn("More than one root node in file, metadata may be incorrect");
 
-			Group nxBeam = getNXGroup(rootGroup, "NXbeam");
-			if (nxBeam != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergyFromBeam(nxBeam,diffcrys));
+			String nxBeam = getNXGroup(hiFile, rootGroup, "NXbeam");
+			if (nxBeam != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergyFromBeam(hiFile, nxBeam,diffcrys));
 			
-			List<Group> nxInstruments = getNXGroups(rootGroup, NX_INSTRUMENT);
+			List<String> nxInstruments = getNXGroups(hiFile, rootGroup, NX_INSTRUMENT);
 			
-//			if (isFromPowderCalibration(rootGroup)) {
-//				return getMetaFromPowderCalibrationFile(rootGroup,hiFile);
-//			}
-
-			Group nxDetector = null;
-			Group nxInstrument = null;
+			String nxDetector = null;
+			String nxInstrument = null;
 			if (nxInstruments != null) {
-				for (Group inst : nxInstruments) {
+				for (String inst : nxInstruments) {
 					nxInstrument =  inst;
-					nxDetector = findBestNXDetector(inst, imageSize);
+					nxDetector = findBestNXDetector(hiFile, inst, imageSize);
 					if (nxDetector != null) {
 						break;
 					}
@@ -147,26 +141,26 @@ public class NexusDiffractionMetaReader {
 			
 			//if no beam look in mono
 			if (nxInstrument != null && !successMap.get(DiffractionMetaValue.ENERGY)) {
-				Group nxMono = getNXGroup(nxInstrument, NX_MONOCHROMATOR);
-				if (nxMono != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(nxMono,diffcrys));
+				String nxMono = getNXGroup(hiFile, nxInstrument, NX_MONOCHROMATOR);
+				if (nxMono != null) successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(hiFile, nxMono,diffcrys));
 			}
 			
 			//For NCD results files
 			if (nxDetector == null) {
-				nxDetector= findNXDetectorByName(rootGroup, "SectorIntegration");
+				nxDetector= findNXDetectorByName(hiFile, rootGroup, "SectorIntegration");
 			}
 
 			
 			//if no detectors with pixel in search the entire nxInstrument group
 			if (nxDetector == null) {
-				nxDetector = getNXGroup(rootGroup, NX_DETECTOR);
+				nxDetector = getNXGroup(hiFile, rootGroup, NX_DETECTOR);
 			}
 			
 			if (nxDetector != null) {
 				//populate the crystal environment
-				populateFromNexus(nxDetector, diffcrys);
+				populateFromNexus(hiFile, nxDetector, diffcrys);
 				//populate detector properties
-				populateFromNexus(nxDetector, detprop);
+				populateFromNexus(hiFile, nxDetector, detprop);
 			}
 
 			} catch (Exception e) {
@@ -229,11 +223,12 @@ public class NexusDiffractionMetaReader {
 		return successMap.containsValue(true);
 	}
 	
-	private Group findBestNXDetector(Group nxInstrument, int[] imageSize) {
+	private String findBestNXDetector(IHierarchicalDataFile file, String nxInstrument, int[] imageSize) throws Exception {
+		
 		//Find nxDetectors in instrument
 		// TODO should probably change to find data then locate correct
 		// detector from image size
-		List<Group> nxDetectors = findNXDetectors(nxInstrument, DATA_NAME);
+		List<String> nxDetectors = findNXDetectors(file, nxInstrument, DATA_NAME);
 
 		if (nxDetectors == null || nxDetectors.isEmpty()) return null;
 		
@@ -242,11 +237,11 @@ public class NexusDiffractionMetaReader {
 			//so just use the first one
 			return nxDetectors.get(0);
 		}
-		for (Group detector : nxDetectors) {
-			H5ScalarDS dataset = getDataset(detector, DATA_NAME);
+		for (String detector : nxDetectors) {
+			String dataset = getDataset(file, detector, DATA_NAME);
 			long[] dataShape;
 			try {
-				dataShape = HierarchicalDataUtils.getDims(dataset);
+				dataShape = HierarchicalDataUtils.getDims(file, dataset);
 			} catch (Exception e) {
 				continue;
 			}
@@ -267,24 +262,24 @@ public class NexusDiffractionMetaReader {
 		return null;
 	}
 	
-	private Group getNXGroup(Group rootGroup, String nxAttribute) {
+	private String getNXGroup(IHierarchicalDataFile file, String rootGroup, String nxAttribute) throws Exception {
 		//Find NXinstrument (hopefully there is only one!)
-		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(nxAttribute,NexusUtils.NXCLASS);
-		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(finder, rootGroup, true);
-		if (hOb.isEmpty() || !(hOb.get(0) instanceof Group)) return null;
-		return (Group)hOb.get(0);
+		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(file, nxAttribute,NexusUtils.NXCLASS);
+		List<String> hOb = NexusUtils.nexusBreadthFirstSearch(file, finder, rootGroup, true);
+		if (hOb.isEmpty() || !file.isGroup(hOb.get(0))) return null;
+		return hOb.get(0);
 	}
 	
-	private List<Group> getNXGroups(Group rootGroup, String nxAttribute) {
+	private List<String> getNXGroups(IHierarchicalDataFile file, String rootGroup, String nxAttribute) throws Exception {
 		//Find NXinstrument (hopefully there is only one!)
-		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(nxAttribute,NexusUtils.NXCLASS);
-		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(finder, rootGroup, false);
+		NexusFindGroupByAttributeText finder = new NexusFindGroupByAttributeText(file, nxAttribute,NexusUtils.NXCLASS);
+		List<String> hOb = NexusUtils.nexusBreadthFirstSearch(file, finder, rootGroup, false);
 		if (hOb.isEmpty()) return null;
 		
-		List<Group> groupList = new ArrayList<Group>();
+		List<String> groupList = new ArrayList<String>();
 		
-		for (HObject ob : hOb) {
-			if (ob instanceof Group) groupList.add((Group)ob);
+		for (String ob : hOb) {
+			if (file.isGroup(ob)) groupList.add(ob);
 		}
 		
 		if (groupList.isEmpty()) return null;
@@ -293,26 +288,27 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	
-	private void populateFromNexus(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		successMap.put(DiffractionMetaValue.EXPOSURE, updateExposureTime(nexusGroup,diffcrys));
+	private void populateFromNexus(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcrys) throws Exception {
+		successMap.put(DiffractionMetaValue.EXPOSURE, updateExposureTime(file, nexusGroup,diffcrys));
 		
 		//Energy might not have been in NXmonochromator, if not look here
 		if (!successMap.get(DiffractionMetaValue.ENERGY)) {
-			successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(nexusGroup, diffcrys));
+			successMap.put(DiffractionMetaValue.ENERGY,updateEnergy(file, nexusGroup, diffcrys));
 		}
 		
-		boolean phi = updatePhiRange(nexusGroup, diffcrys) && updatePhiStart(nexusGroup, diffcrys);
+		boolean phi = updatePhiRange(file, nexusGroup, diffcrys) && updatePhiStart(file, nexusGroup, diffcrys);
 		successMap.put(DiffractionMetaValue.PHI, phi);
 	}
 	
-	private boolean updateEnergy(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		H5ScalarDS dataset = getDataset(nexusGroup, ENERGY_NAME);
-		if (dataset == null) dataset = getDataset(nexusGroup, WAVELENGTH);
+	private boolean updateEnergy(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcrys) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, ENERGY_NAME);
+		if (dataset == null) dataset = getDataset(file, nexusGroup, WAVELENGTH);
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals("keV")) {
 				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
 				return true;
@@ -327,14 +323,15 @@ public class NexusDiffractionMetaReader {
 		}
 	}
 	
-	private boolean updateEnergyFromBeam(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		H5ScalarDS dataset = getDataset(nexusGroup, IN_ENERGY_NAME);
-		if (dataset == null) dataset = getDataset(nexusGroup, IN_WAVELENGTH);
+	private boolean updateEnergyFromBeam(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcrys) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, IN_ENERGY_NAME);
+		if (dataset == null) dataset = getDataset(file, nexusGroup, IN_WAVELENGTH);
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals("keV")) {
 				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
 				return true;
@@ -349,12 +346,13 @@ public class NexusDiffractionMetaReader {
 		}
 	}
 		
-	private boolean updatePhiStart(Group nexusGroup, DiffractionCrystalEnvironment diffcry) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "phi_start");
+	private boolean updatePhiStart(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcry) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "phi_start");
 		if (dataset == null) return false;
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
 				diffcry.setPhiStart(ds.getDouble(0));
@@ -366,12 +364,13 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updatePhiRange(Group nexusGroup, DiffractionCrystalEnvironment diffcry) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "phi_range");
+	private boolean updatePhiRange(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcry) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "phi_range");
 		if (dataset == null) return false;
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
 				diffcry.setPhiRange(ds.getDouble(0));
@@ -383,14 +382,15 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updateExposureTime(Group nexusGroup, DiffractionCrystalEnvironment diffcrys) {
-		H5ScalarDS dataset = getDataset(nexusGroup, COUNT_TIME);
-		if (dataset == null) dataset = getDataset(nexusGroup, EXPOSURE_NAME);
+	private boolean updateExposureTime(IHierarchicalDataFile file, String nexusGroup, DiffractionCrystalEnvironment diffcrys) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, COUNT_TIME);
+		if (dataset == null) dataset = getDataset(file, nexusGroup, EXPOSURE_NAME);
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("s")) {
 				diffcrys.setExposureTime(ds.getDouble(0));
@@ -403,13 +403,14 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updateBeamCentre(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, BEAM_CENTER);
-		if (dataset == null) dataset = getDataset(nexusGroup, "beam_centre");
-		if (dataset == null) return updateBeamCentreFromXY(nexusGroup, detprop);
+	private boolean updateBeamCentre(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, BEAM_CENTER);
+		if (dataset == null) dataset = getDataset(file, nexusGroup, "beam_centre");
+		if (dataset == null) return updateBeamCentreFromXY(file, nexusGroup, detprop);
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0),ds.getDouble(1)});
 				return true;
@@ -428,24 +429,25 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updateBeamCentreFromXY(Group nexusGroup, DetectorProperties detprop){
-		H5ScalarDS dataset = getDataset(nexusGroup, BEAM_CENTER_X);
+	private boolean updateBeamCentreFromXY(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception{
+		
+		String dataset = getDataset(file, nexusGroup, BEAM_CENTER_X);
 		if (dataset == null) return false;
 		
 		double xCoord = Double.NaN;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset,UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				xCoord = ds.getDouble(0);
 			}
 			
-			dataset = getDataset(nexusGroup, BEAM_CENTER_Y);
+			dataset = getDataset(file, nexusGroup, BEAM_CENTER_Y);
 			if (dataset == null) return false;
 			
-			ds = getSet(dataset);
-			units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			ds = getSet(file, dataset);
+			units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				if (!Double.isNaN(xCoord)) {
 					detprop.setBeamCentreCoords(new double[] {xCoord,ds.getDouble(0)});
@@ -459,14 +461,15 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updateDetectorDistance(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, CAMERA_LENGTH);
-		if (dataset == null) dataset = getDataset(nexusGroup, DISTANCE_NAME);
+	private boolean updateDetectorDistance(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, CAMERA_LENGTH);
+		if (dataset == null) dataset = getDataset(file, nexusGroup, DISTANCE_NAME);
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals(MM)) {
 				detprop.setBeamCentreDistance(ds.getDouble(0));
 				return true;
@@ -481,21 +484,22 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	
-	private void populateFromNexus(Group nxDetector, DetectorProperties detprop) {
-		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(nxDetector, detprop));
-		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(nxDetector, detprop));
-		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(nxDetector, detprop));
-		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(nxDetector,detprop));
-		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(nxDetector,detprop));
+	private void populateFromNexus(IHierarchicalDataFile file, String nxDetector, DetectorProperties detprop) throws Exception {
+		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(file, nxDetector, detprop));
+		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(file, nxDetector, detprop));
+		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(file, nxDetector,detprop));
+		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(file, nxDetector, detprop));
+		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(file, nxDetector,detprop));
+		successMap.put(DiffractionMetaValue.BEAM_CENTRE, updateBeamCentre(file, nxDetector,detprop));
 	}
 	
-	private boolean updateDetectorOrientation(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "detector_orientation");
+	private boolean updateDetectorOrientation(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "detector_orientation");
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
+			AbstractDataset ds = getSet(file, dataset);
 			if (ds.getSize() != 9) return false;
 			if (ds instanceof DoubleDataset) {
 				detprop.setOrientation(new Matrix3d(((DoubleDataset)ds).getData()));
@@ -507,12 +511,13 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updateBeamVector(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "beam_vector");
+	private boolean updateBeamVector(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "beam_vector");
 		if (dataset == null) return false;
 
 		try {
-			AbstractDataset ds = getSet(dataset);
+			AbstractDataset ds = getSet(file, dataset);
 			if (ds.getSize() != 3) return false;
 			if (ds instanceof DoubleDataset) {
 				detprop.setBeamVector(new Vector3d(((DoubleDataset)ds).getData()));
@@ -525,13 +530,14 @@ public class NexusDiffractionMetaReader {
 		return false;
 	}
 	
-	private boolean updatePixelNumber(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "x_pixel_number");
+	private boolean updatePixelNumber(IHierarchicalDataFile file, String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "x_pixel_number");
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
 				detprop.setPx(ds.getInt(0));
@@ -541,12 +547,12 @@ public class NexusDiffractionMetaReader {
 		}
 		
 		
-		dataset = getDataset(nexusGroup, "y_pixel_number");
+		dataset = getDataset(file, nexusGroup, "y_pixel_number");
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
 				detprop.setPy(ds.getInt(0));
@@ -560,13 +566,14 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	
-	private boolean updatePixelSize(Group nexusGroup, DetectorProperties detprop) {
-		H5ScalarDS dataset = getDataset(nexusGroup, "x_pixel_size");
+	private boolean updatePixelSize(IHierarchicalDataFile file,String nexusGroup, DetectorProperties detprop) throws Exception {
+		
+		String dataset = getDataset(file, nexusGroup, "x_pixel_size");
 		if (dataset == null) return false;
 
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals(MM)) {detprop.setVPxSize(ds.getDouble(0));}
 			else if (units.equals(M)) {detprop.setVPxSize(ds.getDouble(0)*1000);}
@@ -574,11 +581,11 @@ public class NexusDiffractionMetaReader {
 			return false;
 		}
 
-		dataset = getDataset(nexusGroup, "y_pixel_size");
+		dataset = getDataset(file, nexusGroup, "y_pixel_size");
 
 		try {
-			AbstractDataset ds = getSet(dataset);
-			String units = NexusUtils.getNexusGroupAttributeValue(dataset, UNITS);
+			AbstractDataset ds = getSet(file, dataset);
+			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals(MM)) {
 				detprop.setHPxSize(ds.getDouble(0));
@@ -596,74 +603,85 @@ public class NexusDiffractionMetaReader {
 		
 	}
 	
-	private H5ScalarDS getDataset(Group group, String name) {
-		NexusFindDatasetByName dataFinder = new NexusFindDatasetByName(name);
-		List<HObject>  hOb = NexusUtils.nexusBreadthFirstSearch(dataFinder, group, true);
-		hOb = NexusUtils.nexusBreadthFirstSearch(dataFinder,group, false);
-		if (hOb.isEmpty() || !(hOb.get(0) instanceof H5ScalarDS)) { return null;}
-		H5ScalarDS h5data = (H5ScalarDS)hOb.get(0);
+	private String getDataset(IHierarchicalDataFile file, String group, String name) throws Exception {
 		
-		return h5data;
+		NexusFindDatasetByName dataFinder = new NexusFindDatasetByName(file, name);
+		List<String> hOb = NexusUtils.nexusBreadthFirstSearch(file, dataFinder,group, false);
+		if (hOb.isEmpty() || !file.isDataset(hOb.get(0))) return null;
+		
+		return hOb.get(0);
 	}
 	
 	
-	private List<Group> findNXDetectors(Group nxInstrument, String childNameContains) {
+	private List<String> findNXDetectors(final IHierarchicalDataFile file, String nxInstrument, String childNameContains) throws Exception {
+		
 		final String groupText = NX_DETECTOR;
 		final String childText = childNameContains;
 		
 		IFindInNexus findWithChild = new IFindInNexus() {
 			
 			@Override
-			public boolean inNexus(HObject nexusObject) {
-				if(nexusObject instanceof Group) {
-					String attrNexusObject = NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS);
-					if (attrNexusObject != null && attrNexusObject.toLowerCase().equals(groupText.toLowerCase())) {
-						for (Object ob: ((Group)nexusObject).getMemberList()) {
-							if(ob instanceof HObject) {
-								if (((HObject)ob).getName().toLowerCase().contains((childText.toLowerCase()))) {
+			public boolean inNexus(String nexusObjectPath) {
+				
+				try {
+					if (file.isGroup(nexusObjectPath)) {
+						String attrNexusObject = NexusUtils.getNexusGroupAttributeValue(file, nexusObjectPath,NexusUtils.NXCLASS);
+						if (attrNexusObject != null && attrNexusObject.toLowerCase().equals(groupText.toLowerCase())) {
+							for (String obPath : file.memberList(nexusObjectPath)) {
+								
+								final String name = obPath.substring(obPath.lastIndexOf('/')+1);
+								if (name.toLowerCase().contains((childText.toLowerCase()))) {
 									return true;
 								}
 							}
 						}
 					}
+				} catch (Exception ne) {
+					return false;
 				}
+				
 				return false;
 			}
 		};
 		
-		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(findWithChild, nxInstrument, false);
+		List<String> hOb = NexusUtils.nexusBreadthFirstSearch(file, findWithChild, nxInstrument, false);
 		
-		List<Group> detectorGroups = new ArrayList<Group>(hOb.size());
+		List<String> detectorGroups = new ArrayList<String>(hOb.size());
 		
-		for (HObject ob : hOb) {
-			if (ob instanceof Group) {
-				detectorGroups.add((Group)ob);
+		for (String path : hOb) {
+			if (file.isGroup(path)) {
+				detectorGroups.add(path);
 			}
 		}
 		return detectorGroups;
 	}
 	
-	private Group findNXDetectorByName(Group nxInstrument, final String name) {
-		final String groupText = NX_DETECTOR;
+	private String findNXDetectorByName(final IHierarchicalDataFile file, String nxInstrument, final String name) throws Exception {
+		
 		IFindInNexus findWithName = new IFindInNexus() {
 
 			@Override
-			public boolean inNexus(HObject nexusObject) {
-				if(nexusObject instanceof Group) {
-					if (NexusUtils.getNexusGroupAttributeValue(nexusObject,NexusUtils.NXCLASS).toLowerCase().equals(groupText.toLowerCase())) {
-						if  (nexusObject.getName().toLowerCase().contains((name.toLowerCase()))) return true;
+			public boolean inNexus(String nexusObject) {
+				try {
+					if (file.isGroup(nexusObject)) {
+						String attr = NexusUtils.getNexusGroupAttributeValue(file, nexusObject, NexusUtils.NXCLASS);
+						if (attr.toLowerCase().equals(NX_DETECTOR.toLowerCase())) {
+							final String cname = nexusObject.substring(nexusObject.lastIndexOf('/')+1);
+							if  (cname.toLowerCase().contains((name.toLowerCase()))) return true;
+						}
 					}
+				} catch (Exception e) {
+					return false;
 				}
 				return false;
 			}
 		};
 		
-		List<HObject> hOb = NexusUtils.nexusBreadthFirstSearch(findWithName, nxInstrument, true);
-
+		List<String> hOb = NexusUtils.nexusBreadthFirstSearch(file, findWithName, nxInstrument, true);
 		if (hOb == null || hOb.isEmpty()) return null;
 
 
-		return (Group)hOb.get(0);
+		return hOb.get(0);
 	}
 	
 	private DetectorProperties getInitialDetectorProperties() {
@@ -680,8 +698,11 @@ public class NexusDiffractionMetaReader {
 			return ((String[])set.getData())[0];
 	}
 	
-	private AbstractDataset getSet(final Dataset set) throws Exception {
+	private AbstractDataset getSet(IHierarchicalDataFile file, final String path) throws Exception {
 
+		if (!file.isDataset(path)) return null;
+		
+		Dataset       set = (Dataset)file.getData(path);
 		final Object  val = set.read();
 		
 		long[] dataShape = HierarchicalDataUtils.getDims(set);
@@ -733,177 +754,5 @@ public class NexusDiffractionMetaReader {
 	public String getFilePath() {
 		return filePath;
 	}
-	
-	private boolean isFromPowderCalibration(Group group) {
-		
-		String method = "calibration_method";
-		String author = "author";
-		String dawn = "DAWNScience";
-		
-		List<Group> nxDets = findNXDetectors(group, method);
-		if (nxDets == null || nxDets.isEmpty()) return false;
-		Group nxD = nxDets.get(0);
-		
-		HObject ob = getFromGroupByName(nxD, method);
-		if (ob == null || !(ob instanceof Group)) return false;
-		ob = getFromGroupByName((Group)ob, author);
-		if (ob == null) return false;
-		
-		try {
-			return getString((Dataset)ob).equals(dawn);
-		} catch (Exception e) {
-			return false;
-		}
-		
-	}
-	
-	private IDiffractionMetadata getMetaFromPowderCalibrationFile(Group group, IHierarchicalDataFile file) throws Exception {
-		String method = "calibration_method";
-		String xs = "x_pixel_size";
-		String ys = "y_pixel_size";
-		String data = "data";
-		String depends_on = "depends_on";
-		String sample = "calibration_sample";
-		String beam = "beam";
-		String incident = "incident_wavelength";
-		
-		List<Group> nxDets = findNXDetectors(group, method);
-		if (nxDets == null || nxDets.isEmpty()) return null;
-		Group detector = nxDets.get(0);
-		
-		Group parent = detector.getParent().getParent();
-		HObject ob = getFromGroupByName(parent, sample);
-		ob = getFromGroupByName((Group)ob, beam);
-		ob = getFromGroupByName((Group)ob, incident);
-		AbstractDataset wave = getSet((Dataset)ob);
-		
-		ob = getFromGroupByName(detector, xs);
-		AbstractDataset xsd = getSet((Dataset)ob);
-		ob = getFromGroupByName(detector, ys);
-		AbstractDataset ysd = getSet((Dataset)ob);
-		
-		ob = getFromGroupByName(detector, data);
-		AbstractDataset cal = getSet((Dataset)ob);
-		int[] shape = cal.getShape();
-		
-		ob = getFromGroupByName(detector, depends_on);
-		String transPath = getString((Dataset)ob);
-		
-		Matrix4d trans = walkTransformationPath(transPath,file);
-		
-		Vector3d origin = new Vector3d();
-		Matrix3d orientation = new Matrix3d();
-		trans.get(orientation, origin);
-		
-		DetectorProperties detProp = new DetectorProperties(origin, shape[1], shape[0], xsd.getDouble(0), ysd.getDouble(0), orientation);
-		DiffractionCrystalEnvironment dc = new DiffractionCrystalEnvironment(wave.getDouble(0));
-		
-		successMap.put(DiffractionMetaValue.BEAM_CENTRE, true);
-		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, true);
-		successMap.put(DiffractionMetaValue.DISTANCE, true);
-		successMap.put(DiffractionMetaValue.ENERGY, true);
-		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, true);
-		successMap.put(DiffractionMetaValue.PIXEL_SIZE, true);
-		successMap.put(DiffractionMetaValue.BEAM_VECTOR, true);
-		
-		return new DiffractionMetadata(file.getPath(), detProp, dc);
-	}
-	
-	private Matrix4d walkTransformationPath(String path, IHierarchicalDataFile file) throws Exception {
-		
-		Stack<Dataset> stack = new Stack<Dataset>();
-		
-		Dataset ds = (Dataset)file.getData(path);
-		stack.add(ds);
-		
-		String next = NexusUtils.getNexusGroupAttributeValue(ds, "depends_on");
-		
-		while (!next.equals(".")) {
-			ds = (Dataset)file.getData(next);
-			stack.add(ds);
-			next = NexusUtils.getNexusGroupAttributeValue(ds, "depends_on");
-		}
-		
-		Matrix4d trans = new Matrix4d();
-		trans.setIdentity();
-		
-		consumeStack(trans, stack);
-		
-		return trans;
-	}
-	
-	private void consumeStack(Matrix4d matrix, Stack<Dataset> stack) throws Exception {
-		if (stack.isEmpty()) return;
-		Dataset ds = stack.pop();
-		processTransformation(matrix, ds);
-		consumeStack(matrix, stack);
-	}
-	
-	private void processTransformation(Matrix4d matrix, Dataset ds) throws Exception {
-		
-		String type = NexusUtils.getNexusGroupAttributeValue(ds, "transformation_type");
-		
-		switch (type) {
-		case "rotation":
-			rotate(matrix, ds);
-			break;
 
-		case "translation":
-			translate(matrix, ds);
-			break;
-		}
-		
-	}
-	
-	private void rotate(Matrix4d matrix, Dataset ds) throws Exception {
-		Vector3d v = getVectorAttribute(ds);
-		AbstractDataset value = getSet(ds);
-		//vecmaths active tranform, nexus passive so multiply by -1
-		double val = value.getDouble(0);
-		Matrix4d rot = new Matrix4d();
-		rot.setIdentity();
-		
-		if (v.x == 1) {
-			rot.rotX(Math.toRadians(val));
-		} else if (v.y == 1) {
-			rot.rotY(Math.toRadians(val));
-		} else if (v.z == 1) {
-			rot.rotZ(Math.toRadians(val));
-		}
-		
-		matrix.mul(rot);
-	}
-	
-	private void translate(Matrix4d matrix, Dataset ds) throws Exception {
-		Vector3d v = getVectorAttribute(ds);
-		AbstractDataset value = getSet(ds);
-		//vecmaths active tranform, nexus passive so multiply by -1
-		double val = value.getDouble(0);
-		Matrix4d trans = new Matrix4d();
-		trans.setIdentity();
-		v.scale(val);
-		trans.setTranslation(v);
-		matrix.mul(trans);
-	}
-	
-	private Vector3d getVectorAttribute(Dataset ds) throws Exception {
-		for (Object ob : ds.getMetadata()) {
-			if (ob instanceof Attribute) {
-				if (((Attribute)ob).getName().equals("vector")) {
-					return new Vector3d((double[])((Attribute)ob).getValue());
-				}
-			}
-		}
-		
-		return null;
-	}
-	
-	private HObject getFromGroupByName(Group group, String name) {
-		
-		for (HObject ob : group.getMemberList()) {
-			if (ob.getName().equals(name)) return ob;
-		}
-		return null;
-		
-	}
 }

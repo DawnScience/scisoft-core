@@ -41,9 +41,9 @@ public class DiffractionImageTest {
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		testfile1 = TestFileFolder+"ADSCImageTest/F6_1_001.img";
-		testfile2 = TestFileFolder+"MARImageTest/mar225_001.mccd";
-		testfile3 = TestFileFolder+"CBFLoaderTest/xtal5e_1_0010.cbf";
+		testfile1 = TestFileFolder+"/ADSCImageTest/F6_1_001.img";
+		testfile2 = TestFileFolder+"/MARImageTest/mar225_001.mccd";
+		testfile3 = TestFileFolder+"/CBFLoaderTest/xtal5e_1_0010.cbf";
 	}
 
 	/**

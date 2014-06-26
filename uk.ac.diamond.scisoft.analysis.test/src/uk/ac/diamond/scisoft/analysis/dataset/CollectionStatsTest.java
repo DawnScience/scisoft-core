@@ -81,7 +81,7 @@ public class CollectionStatsTest {
 	   final long start = System.currentTimeMillis();
 	   final List<IDataset> images = new ArrayList<IDataset>(10);
 	   
-	   final File dir = new File(System.getProperty("GDALargeTestFilesLocation")+"EDFLoaderTest/");
+	   final File dir = new File(System.getProperty("GDALargeTestFilesLocation")+"/EDFLoaderTest/");
 	   final File[] files = dir.listFiles();
 	   for (int i = 0; i < files.length; i++) {
 		   if (files[i].getName().startsWith("billeA")) {

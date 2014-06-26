@@ -89,7 +89,7 @@ public class PowderRingsUtilsTest {
 	public void findEllipse() {
 		AbstractDataset image = null;
 		try {
-			image = new ADSCImageLoader(TestFileFolder + "ADSCImageTest/Si_200_1_0001.img").loadFile().getDataset(0);
+			image = new ADSCImageLoader(TestFileFolder + "/ADSCImageTest/Si_200_1_0001.img").loadFile().getDataset(0);
 		} catch (Exception e) {
 			Assert.fail("Could not open image");
 		}

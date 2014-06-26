@@ -182,7 +182,7 @@ public class HDF5LoaderTest {
 	
 
 	private void testLoadingNames(boolean async) throws ScanFileHolderException {
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "327.nxs";
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "/327.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
 

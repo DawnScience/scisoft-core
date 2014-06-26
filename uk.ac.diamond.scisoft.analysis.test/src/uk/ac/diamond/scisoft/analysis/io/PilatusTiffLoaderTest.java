@@ -35,7 +35,7 @@ public class PilatusTiffLoaderTest {
 		if( TestFileFolder == null){
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		testfile1 = TestFileFolder + "PilatusTiffLoaderTest/p678450.tif"; // 100k
+		testfile1 = TestFileFolder + "/PilatusTiffLoaderTest/p678450.tif"; // 100k
 	}
 
 	/**

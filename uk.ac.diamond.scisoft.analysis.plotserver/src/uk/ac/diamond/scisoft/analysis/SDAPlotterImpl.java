@@ -991,10 +991,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		try {
 			java.io.File tmpFile = File.createTempFile("image-explorer-store-", ".raw");
-			String dirName = "/dls/tmp/rkn21281";
+			String dirName = System.getProperty("java.io.tmpdir");
 			java.io.File directory = new java.io.File(dirName);
-			if (!directory.exists())
+			if (!directory.exists()) {
 				directory.mkdir();
+			}
 			String rawFilename = directory.getAbsolutePath() + System.getProperty("file.separator") + tmpFile.getName();
 			tHolder.setDataset("Data", dataset);
 			new RawBinarySaver(rawFilename).saveFile(tHolder);

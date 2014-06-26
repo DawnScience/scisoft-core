@@ -77,14 +77,16 @@ public class BroadcastIteratorTest {
 	}
 
 	@Test
-	public void testBroadcast() {
-		Dataset a = DatasetFactory.createRange(5, Dataset.FLOAT64).reshape(5, 1);
-		Dataset b = DatasetFactory.createRange(2, 8, 1, Dataset.FLOAT64).reshape(1, 6);
+	public void testBroadcastWithNoOutput() {
+		Dataset a, b, c;
+		BroadcastIterator it;
 
-		BroadcastIterator it = new BroadcastIterator(a, b);
+		a = DatasetFactory.createRange(5, Dataset.FLOAT64).reshape(5, 1);
+		b = DatasetFactory.createRange(2, 8, 1, Dataset.FLOAT64).reshape(1, 6);
+		it = new BroadcastIterator(a, b);
 		Assert.assertArrayEquals("Broadcast shape", new int[] {5, 6}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 
-		Dataset c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 6; j++) {
 				it.hasNext();
@@ -92,6 +94,138 @@ public class BroadcastIteratorTest {
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
 				Assert.assertEquals(c.getDouble(i, j), i*(j + 2.0), 1e-15);
+			}
+		}
+
+		b.setShape(6);
+		it = new BroadcastIterator(a, b);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {5, 6}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
+
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 6; j++) {
+				it.hasNext();
+				c.set(it.aValue * it.bValue, i, j);
+				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
+				Assert.assertEquals(c.getDouble(i, j), i*(j + 2.0), 1e-15);
+			}
+		}
+
+		a = DatasetFactory.ones(new int[] {1}, Dataset.INT16);
+		it = new BroadcastIterator(a, b);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {6}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
+
+		for (int j = 0; j < 6; j++) {
+			it.hasNext();
+			c.set(it.aValue * it.bValue, j);
+			Assert.assertEquals(a.getDouble(), it.aValue, 1e-15);
+			Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
+			Assert.assertEquals(c.getDouble(j), (j + 2.0), 1e-15);
+		}
+
+		// zero-rank dataset
+		a = DatasetFactory.createFromObject(1);
+		it = new BroadcastIterator(a, b);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {6}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
+
+		for (int j = 0; j < 6; j++) {
+			it.hasNext();
+			c.set(it.aValue * it.bValue, j);
+			Assert.assertEquals(a.getDouble(), it.aValue, 1e-15);
+			Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
+			Assert.assertEquals(c.getDouble(j), (j + 2.0), 1e-15);
+		}
+
+		// also sliced views
+		a = DatasetFactory.createRange(5, Dataset.FLOAT64).reshape(5, 1);
+		b = DatasetFactory.createRange(2, 8, 1, Dataset.FLOAT64).getSliceView(new Slice(null, null, 2));
+		it = new BroadcastIterator(a, b);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {5, 3}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
+
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 3; j++) {
+				it.hasNext();
+				c.set(it.aValue * it.bValue, i, j);
+				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
+				Assert.assertEquals(c.getDouble(i, j), i*(2*j + 2.0), 1e-15);
+			}
+		}
+
+	}
+
+	@Test
+	public void testBroadcastWithOutput() {
+		Dataset a, b, c;
+		BroadcastIterator it;
+
+		a = DatasetFactory.createRange(10, Dataset.FLOAT64).reshape(10, 1);
+		b = DatasetFactory.createRange(2, 14, 1, Dataset.FLOAT64).reshape(1, 12);
+		c = DatasetFactory.zeros(new int[] {10, 12}, Dataset.FLOAT64);
+		it = new BroadcastIterator(a, b, c);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {10, 12}, it.getShape());
+
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 12; j++) {
+				it.hasNext();
+				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
+				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
+				Assert.assertEquals(c.getDouble(i, j), i*(j + 2.0), 1e-15);
+			}
+		}
+
+		// same output
+		a = DatasetFactory.createRange(120, Dataset.FLOAT64).reshape(10, 12);
+		b = DatasetFactory.createRange(2, 14, 1, Dataset.FLOAT64).reshape(1, 12);
+		c = a;
+		it = new BroadcastIterator(a, b, c);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {10, 12}, it.getShape());
+
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 12; j++) {
+				it.hasNext();
+				Assert.assertEquals(a.getDouble(i, j), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
+				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
+				Assert.assertEquals(c.getDouble(i, j), (i*12+j)*(j + 2.0), 1e-15);
+			}
+		}
+
+		a = DatasetFactory.createRange(10, Dataset.FLOAT64).reshape(10, 1);
+		b = DatasetFactory.createRange(2, 122, 1, Dataset.FLOAT64).reshape(10, 12);
+		c = b;
+		it = new BroadcastIterator(a, b, c);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {10, 12}, it.getShape());
+
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 12; j++) {
+				it.hasNext();
+				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(i, j), it.bValue, 1e-15);
+				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
+				Assert.assertEquals(c.getDouble(i, j), i*((i*12 + j) + 2.0), 1e-15);
+			}
+		}
+
+		// sliced input/output view
+		a = DatasetFactory.createRange(240, Dataset.FLOAT64).reshape(20, 12).getSliceView(new Slice(null, null, 2));
+		b = DatasetFactory.createRange(2, 14, 1, Dataset.FLOAT64).reshape(1, 12);
+		c = a;
+		it = new BroadcastIterator(a, b, c);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {10, 12}, it.getShape());
+
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 12; j++) {
+				it.hasNext();
+				Assert.assertEquals(a.getDouble(i, j), it.aValue, 1e-15);
+				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
+				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
+				Assert.assertEquals(c.getDouble(i, j), (24*i+j)*(j + 2.0), 1e-15);
 			}
 		}
 	}

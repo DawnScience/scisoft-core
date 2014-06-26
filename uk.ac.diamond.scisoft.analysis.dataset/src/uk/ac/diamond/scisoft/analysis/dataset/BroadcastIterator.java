@@ -21,53 +21,96 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Class to run over a pair of datasets in parallel with
- * NumPy broadcasting to promote shapes which have lower rank
+ * Class to run over a pair of datasets in parallel with NumPy broadcasting to promote shapes
+ * which have lower rank and outputs to a third dataset
  */
 public class BroadcastIterator extends IndexIterator {
 	private int[] maxShape;
 	private int[] aShape;
 	private int[] bShape;
-	private AbstractDataset aDataset;
-	private AbstractDataset bDataset;
+	private Dataset aDataset;
+	private Dataset bDataset;
 	private int[] aStride;
 	private int[] bStride;
+	private int[] oStride;
 
 	final private int endrank;
 
 	/**
 	 * position in dataset
 	 */
-	private int[] pos;
-	private int[] aDelta, bDelta;
-	private int aStep, bStep;
+	private final int[] pos;
+	private final int[] aDelta, bDelta;
+	private final int[] oDelta; // this being non-null means output is different from inputs
+	private final int aStep, bStep, oStep;
 	private int aMax, bMax;
-	private int aStart, bStart;
+	private int aStart, bStart, oStart;
+	private final boolean outputA;
+	private final boolean outputB;
 
 	/**
 	 * Index in array
 	 */
-	public int aIndex, bIndex;
+	public int aIndex, bIndex, oIndex;
 
 	/**
 	 * Current value in array
 	 */
 	public double aValue, bValue;
 
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 */
 	public BroadcastIterator(Dataset a, Dataset b) {
+		this(a, b, null);
+	}
+
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 * @param o (can be null for new shape, a or b)
+	 */
+	@SuppressWarnings("null")
+	public BroadcastIterator(Dataset a, Dataset b, Dataset o) {
 		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef());
 		maxShape = fullShapes.remove(0);
+
+		oStride = null;
+		if (o != null && !Arrays.equals(maxShape, o.getShapeRef())) {
+			throw new IllegalArgumentException("Output does not match broadcasted shape");
+		}
 		aShape = fullShapes.remove(0);
 		bShape = fullShapes.remove(0);
 
-		// 
-		aDataset = DatasetUtils.convertToAbstractDataset(a.reshape(aShape));
-		bDataset = DatasetUtils.convertToAbstractDataset(b.reshape(bShape));
-		aStride = AbstractDataset.createBroadcastStrides(aDataset, maxShape);
-		bStride = AbstractDataset.createBroadcastStrides(bDataset, maxShape);
-
 		int rank = maxShape.length;
 		endrank = rank - 1;
+
+		aDataset = a.reshape(aShape);
+		bDataset = b.reshape(bShape);
+		aStride = AbstractDataset.createBroadcastStrides(aDataset, maxShape);
+		bStride = AbstractDataset.createBroadcastStrides(bDataset, maxShape);
+		outputA = o == a;
+		outputB = o == b;
+		if (outputA) {
+			oStride = aStride;
+			oDelta = null;
+			oStep = 0;
+		} else if (outputB) {
+			oStride = bStride;
+			oDelta = null;
+			oStep = 0;
+		} else if (o != null) {
+			oStride = AbstractDataset.createBroadcastStrides(o, maxShape);
+			oDelta = new int[rank];
+			oStep = o.getElementsPerItem();
+		} else {
+			oDelta = null;
+			oStep = 0;
+		}
+
 		pos = new int[rank];
 		aDelta = new int[rank];
 		aStep = aDataset.getElementsPerItem();
@@ -76,6 +119,9 @@ public class BroadcastIterator extends IndexIterator {
 		for (int j = endrank; j >= 0; j--) {
 			aDelta[j] = aStride[j] * aShape[j];
 			bDelta[j] = bStride[j] * bShape[j];
+			if (oDelta != null) {
+				oDelta[j] = oStride[j] * maxShape[j];
+			}
 		}
 		if (endrank < 0) {
 			aMax = aStep;
@@ -92,11 +138,11 @@ public class BroadcastIterator extends IndexIterator {
 				}
 			}
 		}
-		aStart = aDataset.offset;
+		aStart = aDataset.getOffset();
 		aMax += aStart;
-		bStart = bDataset.offset;
+		bStart = bDataset.getOffset();
 		bMax += bStart;
-
+		oStart = oDelta == null ? 0 : o.getOffset();
 		reset();
 	}
 
@@ -256,10 +302,14 @@ public class BroadcastIterator extends IndexIterator {
 			pos[j]++;
 			aIndex += aStride[j];
 			bIndex += bStride[j];
+			if (oDelta != null)
+				oIndex += oStride[j];
 			if (pos[j] >= maxShape[j]) {
 				pos[j] = 0;
-				aIndex -= aDelta[j]; // reset this dimension
-				bIndex -= bDelta[j]; // reset this dimension
+				aIndex -= aDelta[j]; // reset these dimensions
+				bIndex -= bDelta[j];
+				if (oDelta != null)
+					oIndex -= oDelta[j];
 			} else {
 				break;
 			}
@@ -272,6 +322,13 @@ public class BroadcastIterator extends IndexIterator {
 			}
 			aIndex += aStep;
 			bIndex += bStep;
+			if (oDelta != null)
+				oIndex += oStep;
+		}
+		if (outputA) {
+			oIndex = aIndex;
+		} else if (outputB) {
+			oIndex = bIndex;
 		}
 
 		if (oldA != aIndex) {
@@ -298,9 +355,19 @@ public class BroadcastIterator extends IndexIterator {
 			pos[endrank] = -1;
 			aIndex = aStart - aStride[endrank];
 			bIndex = bStart - bStride[endrank];
+			oIndex = oStart - (oStride == null ? 0 : oStride[endrank]);
 		} else {
 			aIndex = -aStep;
 			bIndex = -bStep;
+			oIndex = -oStep;
+		}
+
+		// for zero-ranked datasets
+		if (aIndex == 0) {
+			aValue = aDataset.getElementDoubleAbs(aIndex);
+		}
+		if (bIndex == 0) {
+			bValue = bDataset.getElementDoubleAbs(bIndex);
 		}
 	}
 }

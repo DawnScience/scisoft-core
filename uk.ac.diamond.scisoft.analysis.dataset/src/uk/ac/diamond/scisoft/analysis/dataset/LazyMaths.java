@@ -36,35 +36,23 @@ public final class LazyMaths {
 	 * @return sum along axis in lazy dataset
 	 */
 	public static AbstractDataset sum(final ILazyDataset data, int axis) {
-		int rank = data.getRank();
-		if (axis < 0)
-			axis += rank;
-		if (axis < 0 || axis >= rank) {
-			logger.error("Axis argument is outside allowed range");
-			throw new IllegalArgumentException("Axis argument is outside allowed range");
-		}
+		int[][] sliceInfo = new int[3][];
+		int[] shape = data.getShape();
+		final AbstractDataset result = (AbstractDataset) prepareDataset(axis, shape, sliceInfo);
 
-		final int[] shape = data.getShape();
-
-		final int[] nshape = shape.clone();
-		nshape[axis] = 1;
-
-		final AbstractDataset sum = (AbstractDataset) DatasetFactory.zeros(nshape, Dataset.FLOAT64);
+		final int[] start = sliceInfo[0];
+		final int[] stop = sliceInfo[1];
+		final int[] step = sliceInfo[2];
 		final int length = shape[axis];
-
-		final int[] start = new int[shape.length];
-		final int[] stop = shape.clone();
-		final int[] step = new int[shape.length];
-		Arrays.fill(step, 1);
 
 		for (int i = 0; i < length; i++) {
 			start[axis] = i;
 			stop[axis] = i + 1;
-			sum.iadd(data.getSlice(start, stop, step));
+			result.iadd(data.getSlice(start, stop, step));
 		}
 
-		sum.setShape(AbstractDataset.squeezeShape(shape, axis));
-		return sum;
+		result.setShape(AbstractDataset.squeezeShape(shape, axis));
+		return result;
 	}
 
 	/**
@@ -73,7 +61,28 @@ public final class LazyMaths {
 	 * @return product along axis in lazy dataset
 	 */
 	public static AbstractDataset product(final ILazyDataset data, int axis) {
-		int rank = data.getRank();
+		int[][] sliceInfo = new int[3][];
+		int[] shape = data.getShape();
+		final AbstractDataset result = (AbstractDataset) prepareDataset(axis, shape, sliceInfo);
+		result.fill(1);
+
+		final int[] start = sliceInfo[0];
+		final int[] stop = sliceInfo[1];
+		final int[] step = sliceInfo[2];
+		final int length = shape[axis];
+
+		for (int i = 0; i < length; i++) {
+			start[axis] = i;
+			stop[axis] = i + 1;
+			result.imultiply(data.getSlice(start, stop, step));
+		}
+
+		result.setShape(AbstractDataset.squeezeShape(shape, axis));
+		return result;
+	}
+
+	private static Dataset prepareDataset(int axis, int[] shape, int[][] sliceInfo) {
+		int rank = shape.length;
 		if (axis < 0)
 			axis += rank;
 		if (axis < 0 || axis >= rank) {
@@ -81,27 +90,14 @@ public final class LazyMaths {
 			throw new IllegalArgumentException("Axis argument is outside allowed range");
 		}
 
-		final int[] shape = data.getShape();
+		sliceInfo[0] = new int[rank];
+		sliceInfo[1] = shape.clone();
+		sliceInfo[2] = new int[rank];
+		Arrays.fill(sliceInfo[2], 1);
 
 		final int[] nshape = shape.clone();
 		nshape[axis] = 1;
 
-		final AbstractDataset prod = (AbstractDataset) DatasetFactory.ones(nshape, Dataset.FLOAT64);
-		final int length = shape[axis];
-
-		final int[] start = new int[shape.length];
-		final int[] stop = shape.clone();
-		final int[] step = new int[shape.length];
-		Arrays.fill(step, 1);
-
-		for (int i = 0; i < length; i++) {
-			start[axis] = i;
-			stop[axis] = i + 1;
-			prod.imultiply(data.getSlice(start, stop, step));
-		}
-
-		prod.setShape(AbstractDataset.squeezeShape(shape, axis));
-		return prod;
+		return DatasetFactory.zeros(nshape, Dataset.FLOAT64);
 	}
-
 }

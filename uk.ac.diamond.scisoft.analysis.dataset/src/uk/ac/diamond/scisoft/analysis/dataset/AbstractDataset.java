@@ -1627,6 +1627,16 @@ public abstract class AbstractDataset implements Dataset {
 		return shape;
 	}
 
+	@Override
+	public int getOffset() {
+		return offset;
+	}
+
+	@Override
+	public int[] getStrides() {
+		return stride;
+	}
+
 	/**
 	 * @return the buffer that backs the dataset
 	 */
@@ -1645,8 +1655,8 @@ public abstract class AbstractDataset implements Dataset {
 	 * @param offset output offset
 	 * @return new shape
 	 */
-	public static int[] createStrides(AbstractDataset a, final int[] start, final int[] stop, final int[] step, final int[] stride, final int[] offset) {
-		return createStrides(a.getElementsPerItem(), a.shape, a.stride, a.offset, start, stop, step, stride, offset);
+	public static int[] createStrides(Dataset a, final int[] start, final int[] stop, final int[] step, final int[] stride, final int[] offset) {
+		return createStrides(a.getElementsPerItem(), a.getShapeRef(), a.getStrides(), a.getOffset(), start, stop, step, stride, offset);
 	}
 
 	/**
@@ -1712,17 +1722,17 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	/**
-	 * Create a stride array from a dataset to a broadcast shape 
+	 * Create a stride array from a dataset to a broadcast shape
 	 * @param a dataset
 	 * @param broadcastShape
 	 * @return stride array
 	 */
-	public static int[] createBroadcastStrides(AbstractDataset a, final int[] broadcastShape) {
-		return createBroadcastStrides(a.getElementsPerItem(), a.shape, a.stride, broadcastShape);
+	public static int[] createBroadcastStrides(Dataset a, final int[] broadcastShape) {
+		return createBroadcastStrides(a.getElementsPerItem(), a.getShapeRef(), a.getStrides(), broadcastShape);
 	}
 
 	/**
-	 * Create a stride array from a dataset to a broadcast shape 
+	 * Create a stride array from a dataset to a broadcast shape
 	 * @param isize
 	 * @param shape
 	 * @param oStride original stride

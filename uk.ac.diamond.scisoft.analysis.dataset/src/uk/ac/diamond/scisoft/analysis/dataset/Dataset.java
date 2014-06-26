@@ -156,6 +156,16 @@ public interface Dataset extends IErrorDataset {
 	public int getDtype();
 
 	/**
+	 * @return a stride array (can be null)
+	 */
+	public int[] getStrides();
+
+	/**
+	 * @return offset
+	 */
+	public int getOffset();
+
+	/**
 	 * @return true if dataset has elements which are floating point values
 	 */
 	public boolean hasFloatingPointElements();

@@ -142,4 +142,10 @@ public interface IDataset extends ILazyDataset {
 	 */
 	@Override
 	public IMetaData getMetadata();
+
+	@Override
+	public IDataset getSliceView(int[] start, int[] stop, int[] step);
+
+	@Override
+	public IDataset getSliceView(Slice... slice);
 }

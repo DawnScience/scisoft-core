@@ -77,12 +77,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset getSliceView(int[] start, int[] stop, int[] step) {
+	public IDataset getSliceView(int[] start, int[] stop, int[] step) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public ILazyDataset getSliceView(Slice... slice) {
+	public IDataset getSliceView(Slice... slice) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 

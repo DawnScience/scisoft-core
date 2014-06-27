@@ -573,7 +573,7 @@ public class ByteDataset extends AbstractDataset {
 
 	@Override
 	public void set(final Object obj, int... pos) {
-		if (pos == null || pos.length == 0) {
+		if (pos == null || (pos.length == 0 && shape.length > 0)) {
 			pos = new int[shape.length];
 		}
 

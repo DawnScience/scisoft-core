@@ -28,8 +28,9 @@ public class BroadcastIterator extends IndexIterator {
 	private int[] maxShape;
 	private int[] aShape;
 	private int[] bShape;
-	private Dataset aDataset;
-	private Dataset bDataset;
+	private final Dataset aDataset;
+	private final Dataset bDataset;
+	private final Dataset oDataset;
 	private int[] aStride;
 	private int[] bStride;
 	private int[] oStride;
@@ -68,14 +69,25 @@ public class BroadcastIterator extends IndexIterator {
 	}
 
 	/**
-	 * 
 	 * @param a
 	 * @param b
 	 * @param o (can be null for new shape, a or b)
 	 */
-	@SuppressWarnings("null")
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o) {
+		this(a, b, o, false);
+	}
+
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 * @param o (can be null for new shape, a or b)
+	 * @param createIfNull
+	 */
+	public BroadcastIterator(Dataset a, Dataset b, Dataset o, boolean createIfNull) {
 		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef());
+
+		checkItemSize(a.getElementsPerItem(), b.getElementsPerItem());
 		maxShape = fullShapes.remove(0);
 
 		oStride = null;
@@ -98,17 +110,26 @@ public class BroadcastIterator extends IndexIterator {
 			oStride = aStride;
 			oDelta = null;
 			oStep = 0;
+			oDataset = aDataset;
 		} else if (outputB) {
 			oStride = bStride;
 			oDelta = null;
 			oStep = 0;
+			oDataset = bDataset;
 		} else if (o != null) {
 			oStride = AbstractDataset.createBroadcastStrides(o, maxShape);
 			oDelta = new int[rank];
 			oStep = o.getElementsPerItem();
+			oDataset = o;
+		} else if (createIfNull) {
+			oDataset = createDataset(aDataset, bDataset, maxShape);
+			oStride = AbstractDataset.createBroadcastStrides(oDataset, maxShape);
+			oDelta = new int[rank];
+			oStep = oDataset.getElementsPerItem();
 		} else {
 			oDelta = null;
 			oStep = 0;
+			oDataset = o;
 		}
 
 		pos = new int[rank];
@@ -142,8 +163,22 @@ public class BroadcastIterator extends IndexIterator {
 		aMax += aStart;
 		bStart = bDataset.getOffset();
 		bMax += bStart;
-		oStart = oDelta == null ? 0 : o.getOffset();
+		oStart = oDelta == null ? 0 : oDataset.getOffset();
 		reset();
+	}
+
+	private static void checkItemSize(int isa, int isb) {
+		if (isa != isb && (isa != 1 || isb != 1)) {
+			throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal one");
+		}
+	}
+
+	private static Dataset createDataset(final Dataset a, final Dataset b, final int[] shape) {
+		final int rt = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
+		final int ia = a.getElementsPerItem();
+		final int ib = b.getElementsPerItem();
+
+		return DatasetFactory.zeros(ia > ib ? ia : ib, shape, rt);
 	}
 
 	/**
@@ -339,6 +374,13 @@ public class BroadcastIterator extends IndexIterator {
 		}
 
 		return aIndex != aMax && bIndex != bMax;
+	}
+
+	/**
+	 * @return output dataset (can be null)
+	 */
+	public Dataset getOutput() {
+		return oDataset;
 	}
 
 	@Override

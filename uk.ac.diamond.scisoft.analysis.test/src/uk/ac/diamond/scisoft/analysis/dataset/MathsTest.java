@@ -42,7 +42,7 @@ public class MathsTest {
 	@Before
 	public void setUpClass() {
 		classes = new LinkedHashMap<String, Integer>();
-//		classes.put("Boolean", AbstractDataset.BOOL);
+//		classes.put("Boolean", Dataset.BOOL);
 		classes.put("Byte", Dataset.INT8);
 		classes.put("Short", Dataset.INT16);
 		classes.put("Integer", Dataset.INT32);
@@ -150,7 +150,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -160,7 +160,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -266,7 +266,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -340,7 +340,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -350,7 +350,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -457,7 +457,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -516,7 +516,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -591,7 +591,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -601,7 +601,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -708,7 +708,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -783,7 +783,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -793,7 +793,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -931,7 +931,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -990,7 +990,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -1065,7 +1065,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -1075,7 +1075,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -1160,7 +1160,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -1217,7 +1217,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -1290,7 +1290,7 @@ public class MathsTest {
 						a = Random.randn(n).imultiply(100);
 						a = a.cast(dtype);
 					} else {
-						AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+						Dataset[] aa = new Dataset[ISIZEA];
 						for (int j = 0; j < ISIZEA; j++) {
 							aa[j] = Random.randn(n).imultiply(100);
 						}
@@ -1300,7 +1300,7 @@ public class MathsTest {
 						b = Random.randn(n).imultiply(100);
 						b = b.cast(etype);
 					} else {
-						AbstractDataset[] ab = new AbstractDataset[ISIZEB];
+						Dataset[] ab = new Dataset[ISIZEB];
 						for (int j = 0; j < ISIZEB; j++) {
 							ab[j] = Random.randn(n).imultiply(100);
 						}
@@ -1431,7 +1431,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -1490,7 +1490,7 @@ public class MathsTest {
 					a.imultiply(100);
 					a = a.cast(dtype);
 				} else {
-					AbstractDataset[] aa = new AbstractDataset[ISIZEA];
+					Dataset[] aa = new Dataset[ISIZEA];
 					for (int j = 0; j < ISIZEA; j++) {
 						aa[j] = Random.randn(n).imultiply(100);
 					}
@@ -1546,11 +1546,11 @@ public class MathsTest {
 	public void testDifference() {
 		int[] data = {0,1,3,9,5,10};
 
-		AbstractDataset a = new IntegerDataset(data, null);
-		AbstractDataset d = Maths.difference(a, 1, -1);
+		Dataset a = new IntegerDataset(data, null);
+		Dataset d = Maths.difference(a, 1, -1);
 		int[] tdata;
 		tdata = new int[] {1,  2,  6, -4,  5};
-		AbstractDataset ta = new IntegerDataset(tdata, null);
+		Dataset ta = new IntegerDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
 
 		Slice[] slices = new Slice[] {new Slice(3)};
@@ -1609,10 +1609,10 @@ public class MathsTest {
 		double[] data = {1, 2, 4, 7, 11, 16};
 		double[] tdata;
 
-		AbstractDataset a = new DoubleDataset(data, null);
-		AbstractDataset d = Maths.gradient(a).get(0);
+		Dataset a = new DoubleDataset(data, null);
+		Dataset d = Maths.gradient(a).get(0);
 		tdata = new double[] {1., 1.5, 2.5, 3.5, 4.5, 5.};
-		AbstractDataset ta = new DoubleDataset(tdata, null);
+		Dataset ta = new DoubleDataset(tdata, null);
 		checkDatasets(null, null, d, ta);
 		Slice[] slices = new Slice[] {new Slice(3)};
 		d = Maths.gradient(a.getSliceView(slices)).get(0);
@@ -1620,7 +1620,7 @@ public class MathsTest {
 		checkDatasets(null, null, d, ta);
 
 		
-		AbstractDataset b = AbstractDataset.arange(a.getShape()[0], a.getDtype());
+		Dataset b = DatasetFactory.createRange(a.getShape()[0], a.getDtype());
 		b.imultiply(2);
 		tdata = new double[] {0.5 , 0.75, 1.25, 1.75, 2.25, 2.5};
 		ta = new DoubleDataset(tdata, null);
@@ -1640,9 +1640,9 @@ public class MathsTest {
 		ta = new DoubleDataset(tdata, 2, 3);
 		checkDatasets(null, null, l.get(1), ta);
 
-		b = AbstractDataset.arange(a.getShape()[0], a.getDtype());
+		b = DatasetFactory.createRange(a.getShape()[0], a.getDtype());
 		b.imultiply(2);
-		AbstractDataset c = AbstractDataset.arange(a.getShape()[1], a.getDtype());
+		Dataset c = DatasetFactory.createRange(a.getShape()[1], a.getDtype());
 		c.imultiply(-1.5);
 
 		l = Maths.gradient(a, b, c);
@@ -1884,7 +1884,7 @@ public class MathsTest {
 
 	@Test
 	public void testLinearInterpolation() {
-		AbstractDataset xa = AbstractDataset.arange(60, Dataset.INT32);
+		Dataset xa = DatasetFactory.createRange(60, Dataset.INT32);
 		xa.iadd(1);
 
 		double[] xc = {-1.25, -1, -0.25, 0, 0.25, 58.25, 59, 59.25, 60, 60.25};
@@ -1893,7 +1893,7 @@ public class MathsTest {
 			checkInterpolate(xa, x);
 		}
 
-		Dataset xb = AbstractDataset.arange(120, Dataset.INT32);
+		Dataset xb = DatasetFactory.createRange(120, Dataset.INT32);
 		xb.setShape(60, 2);
 		xb.ifloorDivide(2);
 		xb = DatasetUtils.createCompoundDatasetFromLastAxis(xb, true);

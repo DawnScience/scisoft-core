@@ -407,9 +407,13 @@ public class BroadcastIterator extends IndexIterator {
 		// for zero-ranked datasets
 		if (aIndex == 0) {
 			aValue = aDataset.getElementDoubleAbs(aIndex);
+			if (aMax == aIndex)
+				aMax++;
 		}
 		if (bIndex == 0) {
 			bValue = bDataset.getElementDoubleAbs(bIndex);
+			if (bMax == bIndex)
+				bMax++;
 		}
 	}
 }

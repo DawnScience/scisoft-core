@@ -89,7 +89,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 6; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				c.set(it.aValue * it.bValue, i, j);
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
@@ -104,7 +104,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 6; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				c.set(it.aValue * it.bValue, i, j);
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
@@ -118,7 +118,7 @@ public class BroadcastIteratorTest {
 		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 
 		for (int j = 0; j < 6; j++) {
-			it.hasNext();
+			Assert.assertTrue(it.hasNext());
 			c.set(it.aValue * it.bValue, j);
 			Assert.assertEquals(a.getDouble(), it.aValue, 1e-15);
 			Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
@@ -132,7 +132,7 @@ public class BroadcastIteratorTest {
 		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 
 		for (int j = 0; j < 6; j++) {
-			it.hasNext();
+			Assert.assertTrue(it.hasNext());
 			c.set(it.aValue * it.bValue, j);
 			Assert.assertEquals(a.getDouble(), it.aValue, 1e-15);
 			Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
@@ -148,7 +148,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 3; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				c.set(it.aValue * it.bValue, i, j);
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(j), it.bValue, 1e-15);
@@ -171,7 +171,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 12; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
 				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
@@ -188,7 +188,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 12; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				Assert.assertEquals(a.getDouble(i, j), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
 				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
@@ -204,7 +204,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 12; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				Assert.assertEquals(a.getDouble(i, 0), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(i, j), it.bValue, 1e-15);
 				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);
@@ -221,7 +221,7 @@ public class BroadcastIteratorTest {
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 12; j++) {
-				it.hasNext();
+				Assert.assertTrue(it.hasNext());
 				Assert.assertEquals(a.getDouble(i, j), it.aValue, 1e-15);
 				Assert.assertEquals(b.getDouble(0, j), it.bValue, 1e-15);
 				c.setObjectAbs(it.oIndex, it.aValue * it.bValue);

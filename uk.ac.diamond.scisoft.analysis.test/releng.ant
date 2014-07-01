@@ -19,8 +19,7 @@
 			<os family="windows" />
 		</condition>
 		<property name="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1536m" />
-		<junit-call description="${ant.project.name} Java JUnit tests" forkmode="perTest" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory}">
-			<!-- forkmode=perTest, since some tests can trigger a JVM out-of-memory crash, whence following tests will erroneously report failure unless in a new JVM -->
+		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory}">
 			<formatter type="xml" />
 			<classpath>
 				<pathelement location="${junitjar.loc}" />
@@ -46,10 +45,23 @@
 				<pathelement location="${workspace.loc}/tp/plugins/*" />
 				<path refid="libs.jars.path" />
 			</classpath>
+			<!-- define several batches (default forkmode=perBatch), since at some point in the past some tests triggered a JVM out-of-memory crash, whence following tests erroneously reported failure unless in a new JVM -->
 			<batchtest todir="@{report.dir}">
 				<fileset dir="${plugin.basedir}/src">
 					<include name="**/*Test.java" />
+					<exclude name="**/*Loader*Test.java" />
+					<exclude name="**/NumPy*Test.java" />
 					<exclude name="**/*PluginTest.java" />
+				</fileset>
+			</batchtest>
+			<batchtest todir="@{report.dir}">
+				<fileset dir="${plugin.basedir}/src">
+					<include name="**/*Loader*Test.java" />
+				</fileset>
+			</batchtest>
+			<batchtest todir="@{report.dir}">
+				<fileset dir="${plugin.basedir}/src">
+					<include name="**/NumPy*Test.java" />
 				</fileset>
 			</batchtest>
 		</junit-call>

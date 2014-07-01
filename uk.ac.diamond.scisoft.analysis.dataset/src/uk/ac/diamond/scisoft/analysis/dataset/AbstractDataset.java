@@ -1135,35 +1135,6 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	/**
-	 * This is modelled after the NumPy array slice
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param start
-	 *            specifies the starting indexes
-	 * @param stop
-	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
-	 * @param step
-	 *            specifies the steps in the slice
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
-	@Override
-	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
-		return setSlice(obj, getSliceIterator(start, stop, step));
-	}
-
-	/**
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param iterator
-	 *            specifies the slice iterator
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
-	@Override
-	abstract public AbstractDataset setSlice(final Object obj, final IndexIterator iterator);
-
-	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset is true
 	 * 
 	 * @param choice
@@ -2059,7 +2030,17 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	@Override
 	public int checkAxis(int axis) {
-		int rank = shape.length;
+		return checkAxis(shape.length, axis);
+	}
+
+	/**
+	 * Check that axis is in range [-rank,rank)
+	 * 
+	 * @param rank
+	 * @param axis
+	 * @return sanitized axis in range [0, rank)
+	 */
+	protected static int checkAxis(int rank, int axis) {
 		if (axis < 0) {
 			axis += rank;
 		}
@@ -2737,12 +2718,47 @@ public abstract class AbstractDataset implements Dataset {
 	}
 
 	/**
+	 * This is modelled after the NumPy array slice
+	 * @param obj
+	 *            specifies the object used to set the specified slice
+	 * @param start
+	 *            specifies the starting indexes
+	 * @param stop
+	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
+	 * @param step
+	 *            specifies the steps in the slice
+	 * 
+	 * @return The dataset with the sliced set to object
+	 */
+	@Override
+	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
+		Dataset ds;
+		if (obj instanceof Dataset) {
+			ds = (Dataset) obj;
+		} else if (!(obj instanceof IDataset)) {
+			ds = DatasetFactory.createFromObject(obj, FLOAT64);
+		} else {
+			ds = DatasetUtils.convertToDataset((ILazyDataset) obj);
+		}
+
+		return setSlicedView(getSliceView(start, stop, step), ds);
+	}
+
+	/**
+	 * Set a view of current dataset to given dataset with broadcasting
+	 * @param view
+	 * @param d
+	 * @return this dataset
+	 */
+	abstract AbstractDataset setSlicedView(Dataset view, Dataset d);
+
+	/**
 	 * 
 	 * @param object
 	 * @param slice
 	 */
 	@Override
-	public void setSlice(Object object, Slice... slice) {
+	public AbstractDataset setSlice(Object object, Slice... slice) {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -2751,7 +2767,19 @@ public abstract class AbstractDataset implements Dataset {
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 
 		setSlice(object, start, stop, step);
+		return this;
 	}
+
+	/**
+	 * @param obj
+	 *            specifies the object used to set the specified slice
+	 * @param iterator
+	 *            specifies the slice iterator
+	 * 
+	 * @return The dataset with the sliced set to object
+	 */
+	@Override
+	abstract public AbstractDataset setSlice(final Object obj, final IndexIterator iterator);
 
 	/**
 	 * Test if all items are true
@@ -2895,7 +2923,7 @@ public abstract class AbstractDataset implements Dataset {
 	protected static final String STORE_VAR = "var";
 	private static final String STORE_POS_MAX = "+max";
 	private static final String STORE_POS_MIN = "+min";
-	private static final String STORE_COUNT = "count";
+	protected static final String STORE_COUNT = "count";
 	private static final String STORE_INDEX = "Index";
 
 

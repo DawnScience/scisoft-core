@@ -580,6 +580,21 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	}
 
 	@Override
+	ComplexDoubleDataset setSlicedView(Dataset view, Dataset d) {
+		if (!(d instanceof ComplexFloatDataset || d instanceof ComplexDoubleDataset)) {
+			super.setSlicedView(view, d);
+		} else {
+			BroadcastIterator it = new BroadcastIterator(view, d);
+
+			while (it.hasNext()) {
+				data[it.aIndex] = it.bValue; // ADD_CAST
+				data[it.aIndex + 1] = d.getElementDoubleAbs(it.bIndex + 1); // GET_ELEMENT_WITH_CAST
+			}
+		}
+		return this;
+	}
+
+	@Override
 	public ComplexDoubleDataset setSlice(final Object o, final IndexIterator siter) {
 		if (o instanceof ComplexFloatDataset) {
 			ComplexFloatDataset zds = (ComplexFloatDataset) o;

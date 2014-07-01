@@ -1084,6 +1084,36 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	CompoundFloatDataset setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator it = new BroadcastIterator(view, d);
+
+		final int is = view.getElementsPerItem();
+
+		if (is > 1) {
+			if (d.getElementsPerItem() == 1) {
+				while (it.hasNext()) {
+					data[it.aIndex] = (float) it.bValue; // ADD_CAST
+					for (int j = 1; j < is; j++) {
+						data[it.aIndex + j] = 0;
+					}
+				}
+			} else {
+				while (it.hasNext()) {
+					data[it.aIndex] = (float) it.bValue; // ADD_CAST
+					for (int j = 1; j < is; j++) {
+						data[it.aIndex + j] = (float) d.getElementDoubleAbs(it.bIndex + j); // GET_ELEMENT_WITH_CAST
+					}
+				}
+			}
+		} else {
+			while (it.hasNext()) {
+				data[it.aIndex] = (float) it.bValue; // ADD_CAST
+			}
+		}
+		return this;
+	}
+
+	@Override
 	public CompoundFloatDataset setSlice(final Object o, final IndexIterator siter) {
 		if (o instanceof IDataset) {
 			final IDataset ds = (IDataset) o;

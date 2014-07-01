@@ -396,11 +396,6 @@ public class FloatDataset extends AbstractDataset {
 	}
 
 	@Override
-	public Object getObject(final int... pos) {
-		return Float.valueOf(get(pos)); // CLASS_TYPE
-	}
-
-	@Override
 	public Object getObject(final int i) {
 		return Float.valueOf(get(i)); // CLASS_TYPE
 	}
@@ -408,6 +403,11 @@ public class FloatDataset extends AbstractDataset {
 	@Override
 	public Object getObject(final int i, final int j) {
 		return Float.valueOf(get(i, j)); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int... pos) {
+		return Float.valueOf(get(pos)); // CLASS_TYPE
 	}
 
 	@Override
@@ -730,6 +730,16 @@ public class FloatDataset extends AbstractDataset {
 			}
 		}
 		setDirty();
+		return this;
+	}
+
+	@Override
+	FloatDataset setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator biter = new BroadcastIterator(view, d);
+
+		while (biter.hasNext()) {
+			data[biter.aIndex] = (float) d.getElementDoubleAbs(biter.bIndex); // GET_ELEMENT_WITH_CAST
+		}
 		return this;
 	}
 

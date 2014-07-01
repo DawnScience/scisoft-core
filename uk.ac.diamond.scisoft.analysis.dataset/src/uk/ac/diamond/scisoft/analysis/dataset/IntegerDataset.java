@@ -396,11 +396,6 @@ public class IntegerDataset extends AbstractDataset {
 	}
 
 	@Override
-	public Object getObject(final int... pos) {
-		return Integer.valueOf(get(pos)); // CLASS_TYPE
-	}
-
-	@Override
 	public Object getObject(final int i) {
 		return Integer.valueOf(get(i)); // CLASS_TYPE
 	}
@@ -408,6 +403,11 @@ public class IntegerDataset extends AbstractDataset {
 	@Override
 	public Object getObject(final int i, final int j) {
 		return Integer.valueOf(get(i, j)); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int... pos) {
+		return Integer.valueOf(get(pos)); // CLASS_TYPE
 	}
 
 	@Override
@@ -730,6 +730,16 @@ public class IntegerDataset extends AbstractDataset {
 			}
 		}
 		setDirty();
+		return this;
+	}
+
+	@Override
+	IntegerDataset setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator biter = new BroadcastIterator(view, d);
+
+		while (biter.hasNext()) {
+			data[biter.aIndex] = (int) d.getElementLongAbs(biter.bIndex); // GET_ELEMENT_WITH_CAST
+		}
 		return this;
 	}
 

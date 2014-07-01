@@ -640,6 +640,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 
 		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
 
+		IntegerDataset count = new IntegerDataset(nshape);
 		CompoundDoubleDataset sum = new CompoundDoubleDataset(isize, nshape);
 		CompoundDoubleDataset mean = new CompoundDoubleDataset(isize, nshape);
 		CompoundDoubleDataset var = new CompoundDoubleDataset(isize, nshape);
@@ -684,6 +685,8 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 					}
 			}
 
+			count.setAbs(qiter.index, (int) stats[0].getN());
+
 			for (int k = 0; k < isize; k++) {
 				darray[k] = stats[k].getSum();
 			}
@@ -697,7 +700,8 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			}
 			var.set(darray, qpos);
 		}
-		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_SUM + "-" + axis), sum);
+		setStoredValue(storeName(ignoreNaNs, ignoreInfs, STORE_COUNT + "-" + axis), count);
+		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_SUM + "-" + axis), sum);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_MEAN + "-" +axis), mean);
 		storedValues.put(storeName(ignoreNaNs, ignoreInfs, STORE_VAR + "-" +axis), var);
 	}
@@ -709,11 +713,34 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
+	public AbstractCompoundDataset max(boolean ignoreNaNs, int axis) {
+		logger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public AbstractCompoundDataset max(int axis) {
+		logger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
 	public Number min(boolean... switches) {
 		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
+	@Override
+	public AbstractCompoundDataset min(boolean ignoreNaNs, int axis) {
+		logger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
+
+	@Override
+	public AbstractCompoundDataset min(int axis) {
+		logger.error("Cannot compare compound numbers");
+		throw new UnsupportedOperationException("Cannot compare compound numbers");
+	}
 
 	@Override
 	public Number positiveMin(boolean ignoreInvalids) {

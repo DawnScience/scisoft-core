@@ -348,11 +348,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public Object getObject(final int... pos) {
-		return get(pos); // CLASS_TYPE
-	}
-
-	@Override
 	public Object getObject(final int i) {
 		return get(i); // CLASS_TYPE
 	}
@@ -360,6 +355,11 @@ public class ObjectDatasetBase extends AbstractDataset {
 	@Override
 	public Object getObject(final int i, final int j) {
 		return get(i, j); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int... pos) {
+		return get(pos); // CLASS_TYPE
 	}
 
 	@Override
@@ -682,6 +682,16 @@ public class ObjectDatasetBase extends AbstractDataset {
 			}
 		}
 		setDirty();
+		return this;
+	}
+
+	@Override
+	ObjectDatasetBase setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator biter = new BroadcastIterator(view, d);
+
+		while (biter.hasNext()) {
+			data[biter.aIndex] = d.getObjectAbs(biter.bIndex); // GET_ELEMENT_WITH_CAST
+		}
 		return this;
 	}
 

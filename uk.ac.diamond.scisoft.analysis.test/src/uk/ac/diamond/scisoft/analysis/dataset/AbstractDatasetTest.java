@@ -1360,7 +1360,45 @@ public class AbstractDatasetTest {
 			System.out.println("As expected: " + e);
 		}
 	}
-	
+
+	@Test
+	public void testSetSlice() {
+		Dataset a = DatasetFactory.createRange(100, Dataset.FLOAT64).reshape(20, 5);
+		a.setSlice(-2, null, new Slice(null, null, 2));
+
+		assertEquals(-2, a.getDouble(0, 0), 1e-15);
+		assertEquals(1,  a.getDouble(0, 1), 1e-15);
+		assertEquals(-2, a.getDouble(0, 2), 1e-15);
+		assertEquals(3,  a.getDouble(0, 3), 1e-15);
+		assertEquals(-2, a.getDouble(0, 4), 1e-15);
+
+		// with broadcasting
+		a = DatasetFactory.createRange(100, Dataset.FLOAT64).reshape(20, 5);
+		a.setSlice(DatasetFactory.createRange(3, Dataset.INT16), new Slice(2, 10), new Slice(null, null, 2));
+
+		assertEquals(0, a.getDouble(0, 0), 1e-15);
+		assertEquals(1, a.getDouble(0, 1), 1e-15);
+		assertEquals(2, a.getDouble(0, 2), 1e-15);
+		assertEquals(3, a.getDouble(0, 3), 1e-15);
+		assertEquals(4, a.getDouble(0, 4), 1e-15);
+
+		assertEquals(5, a.getDouble(1, 0), 1e-15);
+		assertEquals(6, a.getDouble(1, 1), 1e-15);
+		assertEquals(7, a.getDouble(1, 2), 1e-15);
+		assertEquals(8, a.getDouble(1, 3), 1e-15);
+		assertEquals(9, a.getDouble(1, 4), 1e-15);
+
+		assertEquals(0, a.getDouble(2, 0), 1e-15);
+		assertEquals(11, a.getDouble(2, 1), 1e-15);
+		assertEquals(1, a.getDouble(2, 2), 1e-15);
+		assertEquals(13, a.getDouble(2, 3), 1e-15);
+		assertEquals(2, a.getDouble(2, 4), 1e-15);
+
+		// compound
+		CompoundDataset c = DatasetFactory.createRange(3, 100, Dataset.ARRAYFLOAT64).reshape(20, 5);
+		a.setSlice(DatasetFactory.createRange(3, Dataset.INT16), new Slice(2, 10), new Slice(null, null, 2));
+	}
+
 	@Test
 	public void test1DErrors() {
 		

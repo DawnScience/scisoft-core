@@ -431,32 +431,6 @@ public interface Dataset extends IErrorDataset {
 	public void setItemsOnAxes(int[] pos, boolean[] axes, Object src);
 
 	/**
-	 * This is modelled after the NumPy array slice
-	 *
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param start
-	 *            specifies the starting indexes
-	 * @param stop
-	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
-	 * @param step
-	 *            specifies the steps in the slice
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
-	public Dataset setSlice(Object obj, int[] start, int[] stop, int[] step);
-
-	/**
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param iterator
-	 *            specifies the slice iterator
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
-	public Dataset setSlice(Object obj, IndexIterator iterator);
-
-	/**
 	 * Get an iterator that visits every item in this dataset where the corresponding item in
 	 * choice dataset is true
 	 * 
@@ -812,11 +786,37 @@ public interface Dataset extends IErrorDataset {
 	public Dataset getSliceView(Slice... slice);
 
 	/**
+	 * This is modelled after the NumPy array slice
+	 *
+	 * @param obj
+	 *            specifies the object used to set the specified slice
+	 * @param start
+	 *            specifies the starting indexes
+	 * @param stop
+	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
+	 * @param step
+	 *            specifies the steps in the slice
+	 * 
+	 * @return The dataset with the sliced set to object
+	 */
+	public Dataset setSlice(Object obj, int[] start, int[] stop, int[] step);
+
+	/**
 	 * 
 	 * @param object
 	 * @param slice
 	 */
-	public void setSlice(Object object, Slice... slice);
+	public Dataset setSlice(Object object, Slice... slice);
+
+	/**
+	 * @param obj
+	 *            specifies the object used to set the specified slice
+	 * @param iterator
+	 *            specifies the slice iterator
+	 * 
+	 * @return The dataset with the sliced set to object
+	 */
+	public Dataset setSlice(Object obj, IndexIterator iterator);
 
 	/**
 	 * Populate a dataset with part of current dataset

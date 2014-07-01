@@ -396,11 +396,6 @@ public class DoubleDataset extends AbstractDataset {
 	}
 
 	@Override
-	public Object getObject(final int... pos) {
-		return Double.valueOf(get(pos)); // CLASS_TYPE
-	}
-
-	@Override
 	public Object getObject(final int i) {
 		return Double.valueOf(get(i)); // CLASS_TYPE
 	}
@@ -408,6 +403,11 @@ public class DoubleDataset extends AbstractDataset {
 	@Override
 	public Object getObject(final int i, final int j) {
 		return Double.valueOf(get(i, j)); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int... pos) {
+		return Double.valueOf(get(pos)); // CLASS_TYPE
 	}
 
 	@Override
@@ -730,6 +730,16 @@ public class DoubleDataset extends AbstractDataset {
 			}
 		}
 		setDirty();
+		return this;
+	}
+
+	@Override
+	DoubleDataset setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator biter = new BroadcastIterator(view, d);
+
+		while (biter.hasNext()) {
+			data[biter.aIndex] = d.getElementDoubleAbs(biter.bIndex); // GET_ELEMENT_WITH_CAST
+		}
 		return this;
 	}
 

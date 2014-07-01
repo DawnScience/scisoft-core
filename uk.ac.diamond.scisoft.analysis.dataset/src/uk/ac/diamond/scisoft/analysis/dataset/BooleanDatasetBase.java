@@ -348,11 +348,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 	}
 
 	@Override
-	public Object getObject(final int... pos) {
-		return Boolean.valueOf(get(pos)); // CLASS_TYPE
-	}
-
-	@Override
 	public Object getObject(final int i) {
 		return Boolean.valueOf(get(i)); // CLASS_TYPE
 	}
@@ -360,6 +355,11 @@ public class BooleanDatasetBase extends AbstractDataset {
 	@Override
 	public Object getObject(final int i, final int j) {
 		return Boolean.valueOf(get(i, j)); // CLASS_TYPE
+	}
+
+	@Override
+	public Object getObject(final int... pos) {
+		return Boolean.valueOf(get(pos)); // CLASS_TYPE
 	}
 
 	@Override
@@ -664,6 +664,16 @@ public class BooleanDatasetBase extends AbstractDataset {
 			}
 		}
 		setDirty();
+		return this;
+	}
+
+	@Override
+	BooleanDatasetBase setSlicedView(Dataset view, Dataset d) {
+		BroadcastIterator biter = new BroadcastIterator(view, d);
+
+		while (biter.hasNext()) {
+			data[biter.aIndex] = d.getElementBooleanAbs(biter.bIndex); // GET_ELEMENT_WITH_CAST
+		}
 		return this;
 	}
 

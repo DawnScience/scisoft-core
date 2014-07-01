@@ -570,7 +570,7 @@ public class BooleanDatasetBase extends AbstractDataset {
 		for (int i = 0; siter.hasNext(); i++)
 			rdata[i] = data[siter.index];
 
-		result.setName(name + BLOCK_OPEN + createSliceString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
+		result.setName(name + BLOCK_OPEN + Slice.createString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
 		return result;
 	}
 

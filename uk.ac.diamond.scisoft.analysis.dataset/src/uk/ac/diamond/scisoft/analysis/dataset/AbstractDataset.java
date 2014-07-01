@@ -1793,7 +1793,7 @@ public abstract class AbstractDataset implements Dataset {
 		if (Arrays.equals(shape, s.shape)) {
 			s.setName(name);
 		} else {
-			s.setName(name + BLOCK_OPEN + createSliceString(shape, start, stop, step) + BLOCK_CLOSE);
+			s.setName(name + BLOCK_OPEN + Slice.createString(shape, start, stop, step) + BLOCK_CLOSE);
 		}
 		return s;
 	}
@@ -2068,33 +2068,6 @@ public abstract class AbstractDataset implements Dataset {
 			throw new IndexOutOfBoundsException("Axis " + axis + " given is out of range [0, " + rank + ")");
 		}
 		return axis;
-	}
-
-	/**
-	 * Create a string representing the slice taken from given shape
-	 * @param shape
-	 * @param start
-	 * @param stop
-	 * @param step
-	 * @return string representation
-	 */
-	protected static String createSliceString(final int[] shape, final int[] start, final int[] stop, final int[] step) {
-		final int rank = shape.length;
-		if (rank == 0) {
-			return "()";
-		}
-		StringBuilder s = new StringBuilder();
-		for (int i = 0; i < rank; i++) {
-			int l = shape[i];
-			int d = step == null ? 1 : step[i];
-			int b = start == null ? (d > 0 ? 0 : l - 1) : start[i];
-			int e = stop == null ? (d > 0 ? l : -1) : stop[i];
-
-			Slice.appendSliceToString(s, l, b, e, d);
-			s.append(',');
-		}
-
-		return s.substring(0, s.length()-1);
 	}
 
 	protected static final char BLOCK_OPEN = '[';

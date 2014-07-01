@@ -567,7 +567,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 			rdata[riter.index+1] = data[siter.index+1];
 		}
 
-		result.setName(name + BLOCK_OPEN + createSliceString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
+		result.setName(name + BLOCK_OPEN + Slice.createString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
 		return result;
 	}
 

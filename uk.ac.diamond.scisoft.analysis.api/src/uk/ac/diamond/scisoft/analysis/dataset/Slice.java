@@ -467,16 +467,47 @@ public class Slice implements Cloneable {
 	}
 
 	/**
+	 * Create a string representing the slice taken from given shape
+	 * @param shape
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @return string representation
+	 */
+	public static String createString(final int[] shape, final int[] start, final int[] stop, final int[] step) {
+		final int rank = shape.length;
+		if (rank == 0) {
+			return "";
+		}
+		StringBuilder s = new StringBuilder();
+		for (int i = 0; i < rank; i++) {
+			int l = shape[i];
+			int d = step == null ? 1 : step[i];
+			int b = start == null ? (d > 0 ? 0 : l - 1) : start[i];
+			int e = stop == null ? (d > 0 ? l : -1) : stop[i];
+	
+			appendSliceToString(s, l, b, e, d);
+			s.append(',');
+		}
+	
+		return s.substring(0, s.length()-1);
+	}
+
+	/**
 	 * @param slices
 	 * @return string specifying slices
 	 */
 	public static String createString(Slice... slices) {
+		if (slices == null || slices.length == 0) {
+			return "";
+		}
+
 		StringBuilder t = new StringBuilder();
 		for (Slice s : slices) {
 			t.append(s != null ? s.toString() : ':');
 			t.append(',');
 		}
-		t.deleteCharAt(t.length()-1);
-		return t.toString();
+
+		return t.substring(0, t.length() - 1);
 	}
 }

@@ -18,6 +18,9 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 public interface CompoundDataset extends Dataset {
 
+	@Override
+	public CompoundDataset reshape(int... shape);
+
 	/**
 	 * Get an item as a double array
 	 * @param darray double array must be allocated and have sufficient length

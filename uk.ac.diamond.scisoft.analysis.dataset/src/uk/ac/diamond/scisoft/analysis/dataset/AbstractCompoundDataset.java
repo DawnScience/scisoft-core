@@ -147,6 +147,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		return getHash();
 	}
 
+	@Override
+	public AbstractCompoundDataset reshape(int... shape) {
+		return (AbstractCompoundDataset) super.reshape(shape);
+	}
+
 	protected static double[] toDoubleArray(final Object b, final int itemSize) {
 		double[] result = null;
 

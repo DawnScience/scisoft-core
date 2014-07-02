@@ -148,6 +148,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * @return List of datasets
 	 */
+	@Override
 	public List<ILazyDataset> getList() {
 		return new ArrayList<ILazyDataset>(nameDataMappings.values());
 	}
@@ -265,6 +266,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * Clear list of names and datasets
 	 * @see java.util.List#clear()
 	 */
+	@Override
 	public void clear() {
 		nameDataMappings.clear();
 		metadata = null;
@@ -284,6 +286,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * @return class
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<? extends IFileLoader> getLoaderClass() {
 		try {
@@ -294,6 +297,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		return null;
 	}
 
+	@Override
 	public void setLoaderClass(Class<? extends IFileLoader> clazz) {
 		loaderClass = clazz.getName();
 	}
@@ -303,6 +307,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		return filePath;
 	}
 
+	@Override
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}

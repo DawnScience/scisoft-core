@@ -129,6 +129,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("mccd", MARLoader.class);
 		    LoaderFactory.registerLoader("mar3450", MAR345Loader.class);
 		    LoaderFactory.registerLoader("pck3450", MAR345Loader.class);
+		    LoaderFactory.registerLoader("mrc", MRCImageStackLoader.class);
 
 		    // There is some disagreement about the proper nexus/hdf5 
 		    // file extension at different facilities

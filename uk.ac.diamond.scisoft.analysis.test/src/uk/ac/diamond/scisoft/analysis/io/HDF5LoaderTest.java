@@ -329,7 +329,7 @@ public class HDF5LoaderTest {
 		assertEquals("Value of sum", 64.191261, x, x * 1e-5);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
-		assertTrue(timeTaken < 5000);
+		assertTrue(timeTaken < 10000);
 	}
 
 	@Test

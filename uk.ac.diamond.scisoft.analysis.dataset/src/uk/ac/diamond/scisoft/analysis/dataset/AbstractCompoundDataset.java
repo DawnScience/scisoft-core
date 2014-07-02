@@ -650,7 +650,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		CompoundDoubleDataset mean = new CompoundDoubleDataset(isize, nshape);
 		CompoundDoubleDataset var = new CompoundDoubleDataset(isize, nshape);
 
-		IndexIterator qiter = sum.getIterator(true);
+		IndexIterator qiter = count.getIterator(true);
 		int[] qpos = qiter.getPos();
 		int[] spos = oshape;
 		double[] darray = new double[isize];

@@ -164,6 +164,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("f2d",  Fit2DLoader.class);
 		    LoaderFactory.registerLoader("msk",  Fit2DMaskLoader.class);
 		    LoaderFactory.registerLoader("mib", MerlinLoader.class);
+		    LoaderFactory.registerLoader("bmp", BitmapLoader.class);
 
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);

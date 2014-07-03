@@ -129,10 +129,10 @@ public class DatasetFactory {
 	 * @return dataset
 	 */
 	public static Dataset createFromObject(final Object obj) {
-		if (obj instanceof AbstractDataset)
-			return (AbstractDataset) obj;
+		if (obj instanceof Dataset)
+			return (Dataset) obj;
 		if (obj instanceof ILazyDataset)
-			return DatasetUtils.convertToAbstractDataset((ILazyDataset) obj);
+			return DatasetUtils.convertToDataset((ILazyDataset) obj);
 
 		final int dtype = AbstractDataset.getDTypeFromObject(obj);
 		return createFromObject(obj, dtype);

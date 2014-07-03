@@ -152,6 +152,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		return (AbstractCompoundDataset) super.reshape(shape);
 	}
 
+	@Override
+	public AbstractCompoundDataset sort(Integer axis) {
+		throw new UnsupportedOperationException("Cannot sort dataset");
+	}
+
 	protected static double[] toDoubleArray(final Object b, final int itemSize) {
 		double[] result = null;
 

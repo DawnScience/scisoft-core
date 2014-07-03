@@ -857,11 +857,6 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundFloatDataset sort(Integer axis) {
-		throw new UnsupportedOperationException("Cannot sort dataset");
-	}
-
-	@Override
 	public CompoundFloatDataset getSlice(final SliceIterator siter) {
 		CompoundFloatDataset result = new CompoundFloatDataset(isize, siter.getShape());
 		float[] rdata = result.data; // PRIM_TYPE
@@ -877,7 +872,7 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public AbstractDataset getElements(int element) {
+	public FloatDataset getElements(int element) { // CLASS_TYPE
 		final FloatDataset elements = new FloatDataset(shape); // CLASS_TYPE
 
 		copyElements(elements, element);

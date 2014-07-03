@@ -301,7 +301,7 @@ public abstract class AbstractDataset implements Dataset {
 		view.name = orig.getName();
 		view.size = orig.getSize();
 		view.odata = orig.getBuffer();
-		view.offset = orig instanceof AbstractDataset ? ((AbstractDataset) orig).offset : 0;
+		view.offset = orig.getOffset();
 		view.base = orig instanceof AbstractDataset ? ((AbstractDataset) orig).base : null;
 
 		Serializable error = orig.getErrorBuffer();

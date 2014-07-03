@@ -857,11 +857,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundByteDataset sort(Integer axis) {
-		throw new UnsupportedOperationException("Cannot sort dataset");
-	}
-
-	@Override
 	public CompoundByteDataset getSlice(final SliceIterator siter) {
 		CompoundByteDataset result = new CompoundByteDataset(isize, siter.getShape());
 		byte[] rdata = result.data; // PRIM_TYPE
@@ -877,7 +872,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public AbstractDataset getElements(int element) {
+	public ByteDataset getElements(int element) { // CLASS_TYPE
 		final ByteDataset elements = new ByteDataset(shape); // CLASS_TYPE
 
 		copyElements(elements, element);

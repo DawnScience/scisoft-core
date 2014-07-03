@@ -857,11 +857,6 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public CompoundLongDataset sort(Integer axis) {
-		throw new UnsupportedOperationException("Cannot sort dataset");
-	}
-
-	@Override
 	public CompoundLongDataset getSlice(final SliceIterator siter) {
 		CompoundLongDataset result = new CompoundLongDataset(isize, siter.getShape());
 		long[] rdata = result.data; // PRIM_TYPE
@@ -877,7 +872,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public AbstractDataset getElements(int element) {
+	public LongDataset getElements(int element) { // CLASS_TYPE
 		final LongDataset elements = new LongDataset(shape); // CLASS_TYPE
 
 		copyElements(elements, element);

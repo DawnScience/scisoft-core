@@ -33,10 +33,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a == b
 	 */
-	public static BooleanDataset equalTo(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset equalTo(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -94,13 +94,13 @@ public class Comparisons {
 	public static BooleanDataset equalTo(Object a, Object b) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(ad, bd);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -141,8 +141,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(bd, a);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -164,10 +164,10 @@ public class Comparisons {
 	 * @param absTolerance
 	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
-	public static BooleanDataset almostEqualTo(AbstractDataset a, AbstractDataset b, double relTolerance, double absTolerance) {
+	public static BooleanDataset almostEqualTo(Dataset a, Dataset b, double relTolerance, double absTolerance) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -235,13 +235,13 @@ public class Comparisons {
 	public static BooleanDataset almostEqualTo(Object a, Object b, double relTolerance, double absTolerance) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = almostEqualTo(ad, bd, relTolerance, absTolerance);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -288,8 +288,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = almostEqualTo(bd, a, relTolerance, absTolerance);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -309,10 +309,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a > b
 	 */
-	public static BooleanDataset greaterThan(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset greaterThan(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -360,13 +360,13 @@ public class Comparisons {
 	public static BooleanDataset greaterThan(Object a, Object b) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(ad, bd);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -389,8 +389,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = lessThan(bd, a);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -410,10 +410,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a >= b
 	 */
-	public static BooleanDataset greaterThanOrEqualTo(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset greaterThanOrEqualTo(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -461,13 +461,13 @@ public class Comparisons {
 	public static BooleanDataset greaterThanOrEqualTo(Object a, Object b) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(ad, bd);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -490,8 +490,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = lessThanOrEqualTo(bd, a);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -511,10 +511,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a < b
 	 */
-	public static BooleanDataset lessThan(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset lessThan(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -562,13 +562,13 @@ public class Comparisons {
 	public static BooleanDataset lessThan(Object a, Object b) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(ad, bd);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -591,8 +591,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = greaterThan(bd, a);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -612,10 +612,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a <= b
 	 */
-	public static BooleanDataset lessThanOrEqualTo(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset lessThanOrEqualTo(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -663,13 +663,13 @@ public class Comparisons {
 	public static BooleanDataset lessThanOrEqualTo(Object a, Object b) {
 		BooleanDataset r = null;
 
-		if (a instanceof AbstractDataset) {
-			AbstractDataset ad = (AbstractDataset) a;
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+		if (a instanceof Dataset) {
+			Dataset ad = (Dataset) a;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = equalTo(ad, bd);
 			} else {
-				r = new BooleanDataset(ad.shape);
+				r = new BooleanDataset(ad.getShapeRef());
 
 				final IndexIterator ita = ad.getIterator();
 
@@ -692,8 +692,8 @@ public class Comparisons {
 				}
 			}
 		} else {
-			if (b instanceof AbstractDataset) {
-				AbstractDataset bd = (AbstractDataset) b;
+			if (b instanceof Dataset) {
+				Dataset bd = (Dataset) b;
 				r = greaterThanOrEqualTo(bd, a);
 			} else {
 				throw new IllegalArgumentException("Both arguments are not datasets");
@@ -710,14 +710,14 @@ public class Comparisons {
 	 * @param hi upper bound
 	 * @return dataset where item is true if l <= a <= h
 	 */
-	public static BooleanDataset withinRange(AbstractDataset a, double lo, double hi) {
+	public static BooleanDataset withinRange(Dataset a, double lo, double hi) {
 		if (lo >= hi) {
 			throw new IllegalArgumentException("Lower bound must be less than upper bound");
 		}
 
 		BooleanDataset r = null;
 
-		r = new BooleanDataset(a.shape);
+		r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 
@@ -756,7 +756,7 @@ public class Comparisons {
 	 * @param absTolerance
 	 * @return true if all items satisfy abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
-	public static boolean allCloseTo(AbstractDataset a, AbstractDataset b, double relTolerance, double absTolerance) {
+	public static boolean allCloseTo(Dataset a, Dataset b, double relTolerance, double absTolerance) {
 		a.checkCompatibility(b);
 	
 		final IndexIterator ita = a.getIterator();
@@ -814,7 +814,7 @@ public class Comparisons {
 	 * @param a
 	 * @return true if all elements are true
 	 */
-	public static boolean allTrue(AbstractDataset a) {
+	public static boolean allTrue(Dataset a) {
 		final IndexIterator it = a.getIterator();
 		final int as = a.getElementsPerItem();
 
@@ -838,8 +838,8 @@ public class Comparisons {
 	 * @param a
 	 * @return true if all elements are true
 	 */
-	public static BooleanDataset allTrue(AbstractDataset a, int axis) {
-		axis = a.checkAxis(axis);
+	public static BooleanDataset allTrue(IDataset a, int axis) {
+		axis = AbstractDataset.checkAxis(a.getRank(), axis);
 
 		int rank = a.getRank();
 		int[] oshape = a.getShape();
@@ -878,7 +878,7 @@ public class Comparisons {
 	 * @param a
 	 * @return true if any element is true
 	 */
-	public static boolean anyTrue(AbstractDataset a) {
+	public static boolean anyTrue(Dataset a) {
 		final IndexIterator it = a.getIterator();
 		final int as = a.getElementsPerItem();
 
@@ -902,8 +902,8 @@ public class Comparisons {
 	 * @param a
 	 * @return true if any element is true
 	 */
-	public static BooleanDataset anyTrue(AbstractDataset a, int axis) {
-		axis = a.checkAxis(axis);
+	public static BooleanDataset anyTrue(IDataset a, int axis) {
+		axis = AbstractDataset.checkAxis(a.getRank(), axis);
 
 		int rank = a.getRank();
 		int[] oshape = a.getShape();
@@ -946,8 +946,8 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true when a is false
 	 */
-	public static BooleanDataset logicalNot(AbstractDataset a) {
-		final BooleanDataset r = new BooleanDataset(a.shape);
+	public static BooleanDataset logicalNot(Dataset a) {
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 
@@ -980,10 +980,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a && b is true
 	 */
-	public static BooleanDataset logicalAnd(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset logicalAnd(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -1036,10 +1036,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a || b is true
 	 */
-	public static BooleanDataset logicalOr(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset logicalOr(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -1092,10 +1092,10 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a ^ b is true
 	 */
-	public static BooleanDataset logicalXor(AbstractDataset a, AbstractDataset b) {
+	public static BooleanDataset logicalXor(Dataset a, Dataset b) {
 		a.checkCompatibility(b);
 
-		final BooleanDataset r = new BooleanDataset(a.shape);
+		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
 
 		final IndexIterator ita = a.getIterator();
 		final IndexIterator itb = b.getIterator();
@@ -1143,7 +1143,7 @@ public class Comparisons {
 	 * @param a
 	 * @return list of positions as integer datasets
 	 */
-	public static List<IntegerDataset> nonZero(AbstractDataset a) {
+	public static List<IntegerDataset> nonZero(Dataset a) {
 		final int rank = a.getRank();
 		final List<List<Integer>> indices = new ArrayList<List<Integer>>();
 		List<IntegerDataset> indexList = new ArrayList<IntegerDataset>();
@@ -1169,7 +1169,7 @@ public class Comparisons {
 		final int length = indices.get(0).size();
 		if (length > 0 ) {
 			for (int j = 0; j < rank; j++) {
-				indexList.add((IntegerDataset) AbstractDataset.createFromList(indices.get(j)));
+				indexList.add((IntegerDataset) DatasetFactory.createFromList(indices.get(j)));
 			}
 		}
 		return indexList;
@@ -1182,10 +1182,10 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are NaNs
 	 */
-	public static BooleanDataset isNaN(AbstractDataset a) {
+	public static BooleanDataset isNaN(Dataset a) {
 		BooleanDataset r = null;
 
-		r = new BooleanDataset(a.shape);
+		r = new BooleanDataset(a.getShapeRef());
 
 		if (!a.hasFloatingPointElements()) {
 			return r;
@@ -1229,10 +1229,10 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are infinite
 	 */
-	public static BooleanDataset isInfinite(AbstractDataset a) {
+	public static BooleanDataset isInfinite(Dataset a) {
 		BooleanDataset r = null;
 
-		r = new BooleanDataset(a.shape);
+		r = new BooleanDataset(a.getShapeRef());
 
 		if (!a.hasFloatingPointElements()) {
 			return r;
@@ -1276,7 +1276,7 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where items are true if any of its elements are positive infinite
 	 */
-	public static BooleanDataset isPositiveInfinite(AbstractDataset a) {
+	public static BooleanDataset isPositiveInfinite(Dataset a) {
 		return isEqual(a, Double.POSITIVE_INFINITY);
 	}
 
@@ -1287,7 +1287,7 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where items are true if any of its elements are negative infinite
 	 */
-	public static BooleanDataset isNegativeInfinite(AbstractDataset a) {
+	public static BooleanDataset isNegativeInfinite(Dataset a) {
 		return isEqual(a, Double.NEGATIVE_INFINITY);
 	}
 
@@ -1299,10 +1299,10 @@ public class Comparisons {
 	 * @param match
 	 * @return dataset where items are true if any of its elements match
 	 */
-	private static BooleanDataset isEqual(AbstractDataset a, final double match) {
+	private static BooleanDataset isEqual(Dataset a, final double match) {
 		BooleanDataset r = null;
 
-		r = new BooleanDataset(a.shape);
+		r = new BooleanDataset(a.getShapeRef());
 
 		if (!a.hasFloatingPointElements()) {
 			return r;
@@ -1350,10 +1350,10 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are finite
 	 */
-	public static BooleanDataset isFinite(AbstractDataset a) {
+	public static BooleanDataset isFinite(Dataset a) {
 		BooleanDataset r = null;
 
-		r = new BooleanDataset(a.shape);
+		r = new BooleanDataset(a.getShapeRef());
 
 		if (!a.hasFloatingPointElements()) {
 			r.fill(true);

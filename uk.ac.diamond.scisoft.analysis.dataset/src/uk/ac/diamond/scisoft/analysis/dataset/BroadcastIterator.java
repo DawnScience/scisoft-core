@@ -87,7 +87,8 @@ public class BroadcastIterator extends IndexIterator {
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o, boolean createIfNull) {
 		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef());
 
-		checkItemSize(a.getElementsPerItem(), b.getElementsPerItem());
+		checkItemSize(a, b);
+
 		maxShape = fullShapes.remove(0);
 
 		oStride = null;
@@ -167,9 +168,14 @@ public class BroadcastIterator extends IndexIterator {
 		reset();
 	}
 
-	private static void checkItemSize(int isa, int isb) {
+	private static void checkItemSize(Dataset a, Dataset b) {
+		final int isa = a.getElementsPerItem();
+		final int isb = b.getElementsPerItem();
 		if (isa != isb && (isa != 1 || isb != 1)) {
-			throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal one");
+			// exempt single-value dataset case too
+			if ((isa == 1 || b.getSize() != 1) && (isb == 1 || a.getSize() != 1) ) {
+				throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal another");
+			}
 		}
 	}
 

@@ -54,7 +54,7 @@ public class Signal {
 	 * @param b
 	 * @return slice of c that has shape a but is offset by middle of shape b
 	 */
-	private static AbstractDataset getSame(AbstractDataset c, int[] a, int[] b) {
+	private static Dataset getSame(Dataset c, int[] a, int[] b) {
 		int rank = a.length;
 		int[] start = new int[rank];
 		int[] stop = new int[rank];
@@ -71,13 +71,13 @@ public class Signal {
 	 * @param b
 	 * @return slice of c that is the overlapping portion of shapes a and b
 	 */
-	private static AbstractDataset getValid(AbstractDataset c, int[] a, int[] b) {
+	private static Dataset getValid(Dataset c, int[] a, int[] b) {
 		int rank = a.length;
 		int[] start = new int[rank];
 		int[] stop = new int[rank];
 		for (int i = 0; i < start.length; i++) {
 			int l = Math.max(a[i], b[i]) - Math.min(a[i], b[i]) + 1;
-			start[i] = (c.shape[i] - l)/2;
+			start[i] = (c.getShapeRef()[i] - l)/2;
 			stop[i] = start[i] + l;
 		}
 		return c.getSlice(start, stop, null);
@@ -90,24 +90,24 @@ public class Signal {
 	 * @param axes
 	 * @return linear convolution
 	 */
-	public static AbstractDataset convolve(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
+	public static AbstractDataset convolve(final Dataset f, final Dataset g, final int[] axes) {
 		// compute using circular (DFT) algorithm
 		// to get a linear version, need to pad out axes to f-axes + g-axes - 1 before DFTs
 		
-		if (f.shape.length != g.shape.length) {
+		if (f.getRank() != g.getRank()) {
 			f.checkCompatibility(g);
 		}
 
-		AbstractDataset c = null, d = null;
-		int[] s = paddedShape(f.shape, g.shape, axes);
+		Dataset c = null, d = null;
+		int[] s = paddedShape(f.getShapeRef(), g.getShapeRef(), axes);
 		c = FFT.fftn(f, s, axes);
 		d = FFT.fftn(g, s, axes);
 		c = Maths.multiply(c, d);
 
-		AbstractDataset conv = FFT.ifftn(c, s, axes);
+		Dataset conv = FFT.ifftn(c, s, axes);
 		if (f.isComplex() || g.isComplex())
-			return conv;
-		return conv.real();
+			return (AbstractDataset) conv;
+		return (AbstractDataset) conv.real();
 	}
 
 	/**
@@ -117,8 +117,8 @@ public class Signal {
 	 * @param axes
 	 * @return central portion of linear convolution with same shape as f
 	 */
-	public static AbstractDataset convolveToSameShape(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
-		return getSame(convolve(f, g, axes), f.shape, g.shape);
+	public static AbstractDataset convolveToSameShape(final Dataset f, final Dataset g, final int[] axes) {
+		return (AbstractDataset) getSame(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class Signal {
 	 * @param axes
 	 * @return overlapping portion of linear convolution
 	 */
-	public static AbstractDataset convolveForOverlap(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
-		return getValid(convolve(f, g, axes), f.shape, g.shape);
+	public static AbstractDataset convolveForOverlap(final Dataset f, final Dataset g, final int[] axes) {
+		return (AbstractDataset) getValid(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class Signal {
 	 * @param axes
 	 * @return linear auto-correlation
 	 */
-	public static AbstractDataset correlate(final AbstractDataset f, final int[] axes) {
+	public static AbstractDataset correlate(final Dataset f, final int[] axes) {
 		return correlate(f, f, axes);
 	}
 
@@ -149,19 +149,19 @@ public class Signal {
 	 * @param axes
 	 * @return linear cross-correlation (centre-shifted)
 	 */
-	public static AbstractDataset correlate(final AbstractDataset f, final AbstractDataset g, int[] axes) {
-		if (f.shape.length != g.shape.length) {
+	public static AbstractDataset correlate(final Dataset f, final Dataset g, int[] axes) {
+		if (f.getRank() != g.getRank()) {
 			f.checkCompatibility(g);
 		}
 
-		AbstractDataset c = null, d = null;
-		int[] s = paddedShape(f.shape, g.shape, axes);
+		Dataset c = null, d = null;
+		int[] s = paddedShape(f.getShapeRef(), g.getShapeRef(), axes);
 		
 		c = FFT.fftn(f, s, axes);
 		d = FFT.fftn(g, s, axes);
 		c = Maths.multiply(c, Maths.conjugate(d));
 
-		AbstractDataset corr = FFT.ifftn(c, s, axes);
+		Dataset corr = FFT.ifftn(c, s, axes);
 		if (!f.isComplex() && !g.isComplex())
 			corr = corr.real();
 
@@ -185,14 +185,14 @@ public class Signal {
 			}
 		}
 		for (int a : axes) {
-			int l = Math.min(f.shape[a], g.shape[a]);
-			if (l == f.shape[a]) {
+			int l = Math.min(f.getShapeRef()[a], g.getShapeRef()[a]);
+			if (l == f.getShapeRef()[a]) {
 				l = -l + 1;
 			}
 			corr = DatasetUtils.roll(corr, l-1, a);
 		}
 		
-		return corr;
+		return (AbstractDataset) corr;
 	}
 
 	/**
@@ -202,8 +202,8 @@ public class Signal {
 	 * @param axes
 	 * @return central portion of linear cross-correlation with same shape as f
 	 */
-	public static AbstractDataset correlateToSameShape(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
-		return getSame(correlate(f, g, axes), f.shape, g.shape);
+	public static AbstractDataset correlateToSameShape(final Dataset f, final Dataset g, final int[] axes) {
+		return (AbstractDataset) getSame(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -213,8 +213,8 @@ public class Signal {
 	 * @param axes
 	 * @return overlapping portion of linear cross-correlation
 	 */
-	public static AbstractDataset correlateForOverlap(final AbstractDataset f, final AbstractDataset g, final int[] axes) {
-		return getValid(correlate(f, g, axes), f.shape, g.shape);
+	public static AbstractDataset correlateForOverlap(final Dataset f, final Dataset g, final int[] axes) {
+		return (AbstractDataset) getValid(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -228,30 +228,30 @@ public class Signal {
 	 * @param includeInverse 
 	 * @return linear phase cross-correlation and inverse of the normalized cross-power spectrum
 	 */
-	public static List<AbstractDataset> phaseCorrelate(final AbstractDataset f, final AbstractDataset g, final int[] axes, boolean includeInverse) {
-		AbstractDataset c = null, d = null;
-		int[] s = paddedShape(f.shape, g.shape, axes);
+	public static List<AbstractDataset> phaseCorrelate(final Dataset f, final Dataset g, final int[] axes, boolean includeInverse) {
+		Dataset c = null, d = null;
+		int[] s = paddedShape(f.getShapeRef(), g.getShapeRef(), axes);
 		c = FFT.fftn(f, s, axes);
 		d = FFT.fftn(g, s, axes);
 		c.idivide(d);
 
-		AbstractDataset corr;
-		ArrayList<AbstractDataset> results = new ArrayList<AbstractDataset>();
+		Dataset corr;
+		List<AbstractDataset> results = new ArrayList<AbstractDataset>();
 
 		d = Maths.phaseAsComplexNumber(c, true);
 
 		corr = FFT.ifftn(d, s, axes);
 		if (f.isComplex() || g.isComplex())
-			results.add(corr);
+			results.add((AbstractDataset) corr);
 		else
-			results.add(corr.real());
+			results.add((AbstractDataset) corr.real());
 
 		if (includeInverse) {
 			corr = FFT.ifftn(c, s, axes);
 			if (f.isComplex() || g.isComplex())
-				results.add(corr);
+				results.add((AbstractDataset) corr);
 			else
-				results.add(corr.real());
+				results.add((AbstractDataset) corr.real());
 		}
 
 		return results;

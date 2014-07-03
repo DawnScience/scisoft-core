@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,8 +46,8 @@ public class Image {
 	 */
 	public static double[] findTranslation2D(IDataset ia, IDataset ib, IRectangularROI r) {
 		
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(ia);
-		AbstractDataset b = DatasetUtils.convertToAbstractDataset(ib);
+		Dataset a = DatasetUtils.convertToDataset(ia);
+		Dataset b = DatasetUtils.convertToDataset(ib);
 		
 		if (a.getRank() != 2 || b.getRank() != 2) {
 			logger.error("Both datasets should be two-dimensional");
@@ -106,14 +106,8 @@ public class Image {
 
 		return shift;
 	}
-	
-	public static AbstractDataset regrid_delaunay(
-			Dataset data, 
-			Dataset x, 
-			Dataset y, 
-			Dataset gridX, 
-			Dataset gridY) {
-		
+
+	public static AbstractDataset regrid_delaunay(Dataset data, Dataset x, Dataset y, Dataset gridX, Dataset gridY) {
 		// create a list of all the points
 		ArrayList<Point_dt> points = new ArrayList<Point_dt>();
 		IndexIterator it = data.getIterator();
@@ -153,14 +147,8 @@ public class Image {
 		
 		return result;
 	}
-	
-	public static AbstractDataset regrid_kabsch(
-			Dataset data, 
-			Dataset x, 
-			Dataset y, 
-			Dataset gridX, 
-			Dataset gridY) {
-		
+
+	public static AbstractDataset regrid_kabsch(Dataset data, Dataset x, Dataset y, Dataset gridX, Dataset gridY) {
 		// create the output array
 		DoubleDataset result = new DoubleDataset(gridY.getShapeRef()[0]+1, gridX.getShapeRef()[0]+1);
 		IntegerDataset count = new IntegerDataset(gridY.getShapeRef()[0]+1, gridX.getShapeRef()[0]+1);
@@ -223,13 +211,7 @@ public class Image {
 		
 	}
 	
-	public static AbstractDataset regrid(
-			AbstractDataset data, 
-			AbstractDataset x, 
-			AbstractDataset y, 
-			AbstractDataset gridX, 
-			AbstractDataset gridY) {
-		
+	public static AbstractDataset regrid(Dataset data, Dataset x, Dataset y, Dataset gridX, Dataset gridY) {
 		//return regrid_kabsch(data, x, y, gridX, gridY);
 		
 		try {
@@ -241,13 +223,13 @@ public class Image {
 		return null;
 	}
 	
-	public static AbstractDataset medianFilter(AbstractDataset input, int[] kernel) {
+	public static AbstractDataset medianFilter(Dataset input, int[] kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
 		int[] shape = input.getShape();
 		if (kernel.length != shape.length)
 			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
 
-		AbstractDataset result = input.clone();
+		Dataset result = input.clone();
 		int[] offset = kernel.clone();
 		for (int i = 0; i < offset.length; i++) {
 			offset[i] = -kernel[i]/2;
@@ -263,21 +245,21 @@ public class Image {
 				if (start[i] < 0) start[i] = 0;
 				if (stop[i] >= shape[i]) stop[i] = shape[i];
 			}
-			AbstractDataset slice = input.getSlice(start, stop, null);
+			Dataset slice = input.getSlice(start, stop, null);
 			result.set(Stats.median(slice), pos);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 	
-	public static AbstractDataset convolutionFilter(AbstractDataset input, Dataset kernel) {
+	public static AbstractDataset convolutionFilter(Dataset input, Dataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
 		int[] shape = input.getShape();
 		int[] kShape = kernel.getShape();
 		if (kShape.length != shape.length)
 			throw new IllegalArgumentException("Kernel shape must be the same shape as the input dataset");
 
-		AbstractDataset result = input.clone();
+		Dataset result = input.clone();
 		int[] offset = kShape.clone();
 		for (int i = 0; i < offset.length; i++) {
 			offset[i] = -kShape[i] / 2;
@@ -314,18 +296,16 @@ public class Image {
 			result.set(slice.sum(), pos);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 	
-	public static AbstractDataset sobelFilter(AbstractDataset input) {
+	public static AbstractDataset sobelFilter(Dataset input) {
 		//TODO should be extended for Nd but 2D is all that is required for now.
 		if(input.getShape().length != 2) throw new IllegalArgumentException("The sobel filter only works on 2D datasets");
 		DoubleDataset kernel = new DoubleDataset(new double[] {-1,0,1,-2,0,2,-1,0,1}, 3 ,3);
-		AbstractDataset result = convolutionFilter(input, kernel);
+		Dataset result = convolutionFilter(input, kernel);
 		kernel = new DoubleDataset(new double[] {-1,-2,-1,0,0,0,1,2,1}, 3 ,3);
 		result.iadd(convolutionFilter(input, kernel));
-		return result;
-		
+		return (AbstractDataset) result;
 	}
-
 }

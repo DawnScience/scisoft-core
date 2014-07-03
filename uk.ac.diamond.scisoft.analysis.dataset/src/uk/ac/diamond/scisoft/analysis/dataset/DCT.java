@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,15 +40,15 @@ public class DCT {
 	/**
 	 * Setup the logging facilities
 	 */
-	transient protected static final Logger logger = LoggerFactory.getLogger(DCT.class);
+	protected static final Logger logger = LoggerFactory.getLogger(DCT.class);
 
 	/**
 	 * forward 1D Discrete Cosine Transform (DCT-II)
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct(final AbstractDataset a) {
-		return dct(a, a.shape[a.shape.length - 1], -1);
+	public static AbstractDataset dct(final Dataset a) {
+		return dct(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
 	/**
@@ -58,14 +58,14 @@ public class DCT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct(final AbstractDataset a, final int n, int axis) {
+	public static AbstractDataset dct(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return dct1d(a, n, axis);
+		return (AbstractDataset) dct1d(a, n, axis);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct2(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset dct2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -106,10 +106,10 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dctn(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset dctn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
-		AbstractDataset result = null;
+		Dataset result = null;
 
 		if (s == null) {
 			if (axes == null) {
@@ -168,7 +168,7 @@ public class DCT {
 			break;
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	private static int[] newShape(final int[] shape, final int[] s, final int[] axes) {
@@ -180,9 +180,9 @@ public class DCT {
 		return nshape;
 	}
 
-	private static AbstractDataset dct1d(final AbstractDataset a, final int n, final int axis) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset dct1d(final Dataset a, final int n, final int axis) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		int[] shape;
 		PositionIterator pi;
@@ -196,7 +196,7 @@ public class DCT {
 			shape[axis] = n;
 			result = new FloatDataset(shape);
 			dest = new FloatDataset(new int[] {n});
-			float[] fdata = (float[]) dest.odata;
+			float[] fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -213,7 +213,7 @@ public class DCT {
 			shape[axis] = n;
 			result = new DoubleDataset(shape);
 			dest = new DoubleDataset(new int[] {n});
-			double[] ddata = (double[]) dest.odata;
+			double[] ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -232,9 +232,9 @@ public class DCT {
 		return result;
 	}
 
-	private static AbstractDataset dct2d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset dct2d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -244,9 +244,9 @@ public class DCT {
 		case Dataset.FLOAT32:
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
-			result = new FloatDataset(newShape(a.shape, s, axes));
+			result = new FloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new FloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -260,9 +260,9 @@ public class DCT {
 		case Dataset.FLOAT64:
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
-			result = new DoubleDataset(newShape(a.shape, s, axes));
+			result = new DoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new DoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -281,9 +281,9 @@ public class DCT {
 		return result;
 	}
 
-	private static AbstractDataset dct3d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset dct3d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -294,9 +294,9 @@ public class DCT {
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
-			result = new FloatDataset(newShape(a.shape, s, axes));
+			result = new FloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new FloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -311,9 +311,9 @@ public class DCT {
 			DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
-			result = new DoubleDataset(newShape(a.shape, s, axes));
+			result = new DoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new DoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -337,8 +337,8 @@ public class DCT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct(final AbstractDataset a) {
-		return idct(a, a.shape[a.shape.length-1], -1);
+	public static AbstractDataset idct(final Dataset a) {
+		return idct(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
 	/**
@@ -348,14 +348,14 @@ public class DCT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct(final AbstractDataset a, final int n, int axis) {
+	public static AbstractDataset idct(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return idct1d(a, n, axis);
+		return (AbstractDataset) idct1d(a, n, axis);
 	}
 
 	/**
@@ -396,10 +396,10 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idctn(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset idctn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
-		AbstractDataset result = null;
+		Dataset result = null;
 
 		if (s == null) {
 			if (axes == null) {
@@ -457,12 +457,12 @@ public class DCT {
 			break;
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
-	private static AbstractDataset idct1d(final AbstractDataset a, final int n, final int axis) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset idct1d(final Dataset a, final int n, final int axis) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		int[] shape;
 		PositionIterator pi;
@@ -473,11 +473,11 @@ public class DCT {
 		case Dataset.FLOAT32:
 			FloatDCT_1D ffft = new FloatDCT_1D(n);
 			float[] fdata = null;
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new FloatDataset(shape);
 			dest = new FloatDataset(new int[] {n});
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -491,11 +491,11 @@ public class DCT {
 		case Dataset.FLOAT64:
 			DoubleDCT_1D dfft = new DoubleDCT_1D(n);
 			double[] ddata = null;
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new DoubleDataset(shape);
 			dest = new DoubleDataset(new int[] {n});
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -514,7 +514,7 @@ public class DCT {
 		return result;
 	}
 
-	private static AbstractDataset idct2d(final AbstractDataset a, final int[] s, final int[] axes) {
+	private static AbstractDataset idct2d(final Dataset a, final int[] s, final int[] axes) {
 		AbstractDataset result = null;
 		AbstractDataset dest = null;
 
@@ -526,9 +526,9 @@ public class DCT {
 		case Dataset.FLOAT32:
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
-			result = new FloatDataset(newShape(a.shape, s, axes));
+			result = new FloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new FloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -542,9 +542,9 @@ public class DCT {
 		case Dataset.FLOAT64:
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
-			result = new DoubleDataset(newShape(a.shape, s, axes));
+			result = new DoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new DoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -563,9 +563,9 @@ public class DCT {
 		return result;
 	}
 
-	private static AbstractDataset idct3d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset idct3d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -575,9 +575,9 @@ public class DCT {
 		case Dataset.FLOAT32:
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
-			result = new FloatDataset(newShape(a.shape, s, axes));
+			result = new FloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new FloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -591,9 +591,9 @@ public class DCT {
 		case Dataset.FLOAT64:
 				DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
 				double[] ddata = null;
-				result = new DoubleDataset(newShape(a.shape, s, axes));
+				result = new DoubleDataset(newShape(a.getShapeRef(), s, axes));
 				dest = new DoubleDataset(s);
-				ddata = (double[]) dest.odata;
+				ddata = (double[]) dest.getBuffer();
 				pi = a.getPositionIterator(axes);
 				pos = pi.getPos();
 				hit = pi.getOmit();
@@ -618,7 +618,7 @@ public class DCT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset dctshift(final AbstractDataset a, int[] axes) {
+	public static AbstractDataset dctshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -631,11 +631,11 @@ public class DCT {
 				axes[i] = a.checkAxis(axes[i]);
 		}
 
-		AbstractDataset result = a;
+		Dataset result = a;
 		int[] indices;
 		for (int i = 0; i < alen; i++) {
 			int axis = axes[i];
-			int n = a.shape[axis];
+			int n = a.getShapeRef()[axis];
 			int p = (n+1)/2;
 			logger.info("Shift {} by {}", axis, p);
 			indices = new int[n];
@@ -649,7 +649,7 @@ public class DCT {
 			result = result.take(indices, axis);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -658,7 +658,7 @@ public class DCT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset idctshift(final AbstractDataset a, int[] axes) {
+	public static AbstractDataset idctshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -671,11 +671,11 @@ public class DCT {
 				axes[i] = a.checkAxis(axes[i]);
 		}
 
-		AbstractDataset result = a;
+		Dataset result = a;
 		int[] indices;
 		for (int i = 0; i < alen; i++) {
 			int axis = axes[i];
-			int n = a.shape[axis];
+			int n = a.getShapeRef()[axis];
 			int p = n - (n+1)/2;
 			logger.info("Shift {} by {}", axis, p);
 			indices = new int[n];
@@ -689,7 +689,7 @@ public class DCT {
 			result = result.take(indices, axis);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 }

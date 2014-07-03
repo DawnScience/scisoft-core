@@ -48,8 +48,8 @@ public class FFT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft(final AbstractDataset a) {
-		return fft(a, a.shape[a.shape.length - 1], -1);
+	public static AbstractDataset fft(final Dataset a) {
+		return fft(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
 	/**
@@ -59,14 +59,14 @@ public class FFT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft(final AbstractDataset a, final int n, int axis) {
+	public static AbstractDataset fft(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return fft1d(a, n, axis);
+		return (AbstractDataset) fft1d(a, n, axis);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft2(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset fft2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -107,10 +107,10 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fftn(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset fftn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
-		AbstractDataset result = null;
+		Dataset result = null;
 
 		if (s == null) {
 			if (axes == null) {
@@ -169,7 +169,7 @@ public class FFT {
 			break;
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	private static int[] newShape(final int[] shape, final int[] s, final int[] axes) {
@@ -181,9 +181,9 @@ public class FFT {
 		return nshape;
 	}
 
-	private static AbstractDataset fft1d(final AbstractDataset a, final int n, final int axis) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset fft1d(final Dataset a, final int n, final int axis) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		int[] shape;
 		PositionIterator pi;
@@ -194,11 +194,11 @@ public class FFT {
 		case Dataset.FLOAT32:
 		case Dataset.COMPLEX64:
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new ComplexFloatDataset(shape);
 			dest = new ComplexFloatDataset(new int[] {2*n});
-			float[] fdata = (float[]) dest.odata;
+			float[] fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -212,11 +212,11 @@ public class FFT {
 		case Dataset.FLOAT64:
 		case Dataset.COMPLEX128:
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new ComplexDoubleDataset(shape);
 			dest = new ComplexDoubleDataset(new int[] {2*n});
-			double[] ddata = (double[]) dest.odata;
+			double[] ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -235,9 +235,9 @@ public class FFT {
 		return result;
 	}
 
-	private static AbstractDataset fft2d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset fft2d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -248,9 +248,9 @@ public class FFT {
 		case Dataset.COMPLEX64:
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
-			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
+			result = new ComplexFloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexFloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -265,9 +265,9 @@ public class FFT {
 		case Dataset.COMPLEX128:
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
-			result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
+			result = new ComplexDoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexDoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -286,9 +286,9 @@ public class FFT {
 		return result;
 	}
 
-	private static AbstractDataset fft3d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset fft3d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -300,9 +300,9 @@ public class FFT {
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
-			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
+			result = new ComplexFloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexFloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -318,9 +318,9 @@ public class FFT {
 			DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
-			result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
+			result = new ComplexDoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexDoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -344,8 +344,8 @@ public class FFT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft(final AbstractDataset a) {
-		return ifft(a, a.shape[a.shape.length-1], -1);
+	public static AbstractDataset ifft(final Dataset a) {
+		return ifft(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
 	/**
@@ -355,14 +355,14 @@ public class FFT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft(final AbstractDataset a, final int n, int axis) {
+	public static AbstractDataset ifft(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return ifft1d(a, n, axis);
+		return (AbstractDataset) ifft1d(a, n, axis);
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class FFT {
 	 * @param axes for FFT (default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft2(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset ifft2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -403,10 +403,10 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifftn(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset ifftn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
-		AbstractDataset result = null;
+		Dataset result = null;
 
 		if (s == null) {
 			if (axes == null) {
@@ -464,12 +464,12 @@ public class FFT {
 			break;
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
-	private static AbstractDataset ifft1d(final AbstractDataset a, final int n, final int axis) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset ifft1d(final Dataset a, final int n, final int axis) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		int[] shape;
 		PositionIterator pi;
@@ -480,11 +480,11 @@ public class FFT {
 		case Dataset.COMPLEX64:
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
 			float[] fdata = null;
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new ComplexFloatDataset(shape);
 			dest = new ComplexFloatDataset(new int[] {n});
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -498,11 +498,11 @@ public class FFT {
 		case Dataset.COMPLEX128:
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
 			double[] ddata = null;
-			shape = a.getShape().clone();
+			shape = a.getShape();
 			shape[axis] = n;
 			result = new ComplexDoubleDataset(shape);
 			dest = new ComplexDoubleDataset(new int[] {n});
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axis);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -521,9 +521,9 @@ public class FFT {
 		return result;
 	}
 
-	private static AbstractDataset ifft2d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset ifft2d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -533,9 +533,9 @@ public class FFT {
 		case Dataset.COMPLEX64:
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
-			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
+			result = new ComplexFloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexFloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -549,9 +549,9 @@ public class FFT {
 		case Dataset.COMPLEX128:
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
-			result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
+			result = new ComplexDoubleDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexDoubleDataset(s);
-			ddata = (double[]) dest.odata;
+			ddata = (double[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -570,9 +570,9 @@ public class FFT {
 		return result;
 	}
 
-	private static AbstractDataset ifft3d(final AbstractDataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset ifft3d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -582,9 +582,9 @@ public class FFT {
 		case Dataset.COMPLEX64:
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
-			result = new ComplexFloatDataset(newShape(a.shape, s, axes));
+			result = new ComplexFloatDataset(newShape(a.getShapeRef(), s, axes));
 			dest = new ComplexFloatDataset(s);
-			fdata = (float[]) dest.odata;
+			fdata = (float[]) dest.getBuffer();
 			pi = a.getPositionIterator(axes);
 			pos = pi.getPos();
 			hit = pi.getOmit();
@@ -598,9 +598,9 @@ public class FFT {
 		case Dataset.COMPLEX128:
 				DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
 				double[] ddata = null;
-				result = new ComplexDoubleDataset(newShape(a.shape, s, axes));
+				result = new ComplexDoubleDataset(newShape(a.getShapeRef(), s, axes));
 				dest = new ComplexDoubleDataset(s);
-				ddata = (double[]) dest.odata;
+				ddata = (double[]) dest.getBuffer();
 				pi = a.getPositionIterator(axes);
 				pos = pi.getPos();
 				hit = pi.getOmit();
@@ -625,7 +625,7 @@ public class FFT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset fftshift(final AbstractDataset a, int[] axes) {
+	public static AbstractDataset fftshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -638,11 +638,11 @@ public class FFT {
 				axes[i] = a.checkAxis(axes[i]);
 		}
 
-		AbstractDataset result = a;
+		Dataset result = a;
 		int[] indices;
 		for (int i = 0; i < alen; i++) {
 			int axis = axes[i];
-			int n = a.shape[axis];
+			int n = a.getShapeRef()[axis];
 			int p = (n+1)/2;
 			logger.info("Shift {} by {}", axis, p);
 			indices = new int[n];
@@ -656,7 +656,7 @@ public class FFT {
 			result = result.take(indices, axis);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -665,7 +665,7 @@ public class FFT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset ifftshift(final AbstractDataset a, int[] axes) {
+	public static AbstractDataset ifftshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -678,11 +678,11 @@ public class FFT {
 				axes[i] = a.checkAxis(axes[i]);
 		}
 
-		AbstractDataset result = a;
+		Dataset result = a;
 		int[] indices;
 		for (int i = 0; i < alen; i++) {
 			int axis = axes[i];
-			int n = a.shape[axis];
+			int n = a.getShapeRef()[axis];
 			int p = n - (n+1)/2;
 			logger.info("Shift {} by {}", axis, p);
 			indices = new int[n];
@@ -696,7 +696,7 @@ public class FFT {
 			result = result.take(indices, axis);
 		}
 
-		return result;
+		return (AbstractDataset) result;
 	}
 
 	/**

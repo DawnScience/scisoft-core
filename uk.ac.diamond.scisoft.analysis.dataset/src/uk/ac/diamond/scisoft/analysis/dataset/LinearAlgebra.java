@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2011 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,10 +31,10 @@ public class LinearAlgebra {
 	 * @param axisb axis dimension in b to sum over (can be -ve)
 	 * @return tensor dot product
 	 */
-	public static AbstractDataset tensorDotProduct(final AbstractDataset a, final AbstractDataset b, final int axisa, final int axisb) {
+	public static AbstractDataset tensorDotProduct(final Dataset a, final Dataset b, final int axisa, final int axisb) {
 		// this is slower for summing lengths < ~15
-		final int[] ashape = a.shape;
-		final int[] bshape = b.shape;
+		final int[] ashape = a.getShapeRef();
+		final int[] bshape = b.getShapeRef();
 		final int arank = ashape.length;
 		final int brank = bshape.length;
 		int aaxis = axisa;
@@ -76,7 +76,7 @@ public class LinearAlgebra {
 				dshape[d++] = bshape[i];
 		}
 		int dtype = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
-		AbstractDataset data = AbstractDataset.zeros(dshape, dtype);
+		Dataset data = AbstractDataset.zeros(dshape, dtype);
 
 		SliceIterator ita = a.getSliceIteratorFromAxes(null, achoice);
 		int l = 0;
@@ -99,7 +99,7 @@ public class LinearAlgebra {
 			}
 		}
 
-		return data;
+		return (AbstractDataset) data;
 	}
 
 	/**
@@ -111,12 +111,12 @@ public class LinearAlgebra {
 	 * @param axisb axis dimensions in b to sum over (can be -ve)
 	 * @return tensor dot product
 	 */
-	public static AbstractDataset tensorDotProduct(final AbstractDataset a, final AbstractDataset b, final int[] axisa, final int[] axisb) {
+	public static AbstractDataset tensorDotProduct(final Dataset a, final Dataset b, final int[] axisa, final int[] axisb) {
 		if (axisa.length != axisb.length) {
 			throw new IllegalArgumentException("Numbers of summing axes must be same");
 		}
-		final int[] ashape = a.shape;
-		final int[] bshape = b.shape;
+		final int[] ashape = a.getShapeRef();
+		final int[] bshape = b.getShapeRef();
 		final int arank = ashape.length;
 		final int brank = bshape.length;
 		final int[] aaxes = new int[axisa.length];
@@ -161,7 +161,7 @@ public class LinearAlgebra {
 				dshape[d++] = bshape[i];
 		}
 		int dtype = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
-		AbstractDataset data = AbstractDataset.zeros(dshape, dtype);
+		Dataset data = AbstractDataset.zeros(dshape, dtype);
 
 		SliceIterator ita = a.getSliceIteratorFromAxes(null, achoice);
 		int l = 0;
@@ -198,7 +198,7 @@ public class LinearAlgebra {
 			}
 		}
 
-		return data;
+		return (AbstractDataset) data;
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class LinearAlgebra {
 	 * @param b
 	 * @return dot product
 	 */
-	public static AbstractDataset dotProduct(AbstractDataset a, AbstractDataset b) {
+	public static AbstractDataset dotProduct(Dataset a, Dataset b) {
 		if (b.getRank() < 2)
 			return tensorDotProduct(a, b, -1, 0);
 		return tensorDotProduct(a, b, -1, -2);
@@ -221,9 +221,9 @@ public class LinearAlgebra {
 	 * @param b
 	 * @return outer product
 	 */
-	public static AbstractDataset outerProduct(AbstractDataset a, AbstractDataset b) {
-		int[] as = a.getShape();
-		int[] bs = b.getShape();
+	public static AbstractDataset outerProduct(Dataset a, Dataset b) {
+		int[] as = a.getShapeRef();
+		int[] bs = b.getShapeRef();
 		int rank = as.length + bs.length;
 		int[] shape = new int[rank];
 		for (int i = 0; i < as.length; i++) {
@@ -237,18 +237,18 @@ public class LinearAlgebra {
 		if (isa != 1 || isb != 1) {
 			throw new UnsupportedOperationException("Compound datasets not supported");
 		}
-		AbstractDataset o = AbstractDataset.zeros(shape, AbstractDataset.getBestDType(a.getDtype(), b.getDtype()));
+		Dataset o = DatasetFactory.zeros(shape, AbstractDataset.getBestDType(a.getDtype(), b.getDtype()));
 
 		IndexIterator ita = a.getIterator();
 		IndexIterator itb = b.getIterator();
 		int j = 0;
 		while (ita.hasNext()) {
-			double va = ((Number) a.getObjectAbs(ita.index)).doubleValue();
+			double va = a.getElementDoubleAbs(ita.index);
 			while (itb.hasNext()) {
-				o.setObjectAbs(j++, va * ((Number) b.getObjectAbs(itb.index)).doubleValue());
+				o.setObjectAbs(j++, va * b.getElementDoubleAbs(itb.index));
 			}
 			itb.reset();
 		}
-		return o;
+		return (AbstractDataset) o;
 	}
 }

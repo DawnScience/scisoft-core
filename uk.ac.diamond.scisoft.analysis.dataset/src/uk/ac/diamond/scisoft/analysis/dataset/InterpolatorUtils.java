@@ -24,32 +24,32 @@ import org.apache.commons.lang.ArrayUtils;
 
 class InterpolatedPoint {
 
-	AbstractDataset realPoint;
-	AbstractDataset coordPoint;
+	Dataset realPoint;
+	Dataset coordPoint;
 
-	public InterpolatedPoint(AbstractDataset realPoint, AbstractDataset coordPoint) {
+	public InterpolatedPoint(Dataset realPoint, Dataset coordPoint) {
 		this.realPoint = realPoint;
 		this.coordPoint = coordPoint;
 	}
 
-	public AbstractDataset getRealPoint() {
+	public Dataset getRealPoint() {
 		return realPoint;
 	}
 
-	public AbstractDataset getCoordPoint() {
+	public Dataset getCoordPoint() {
 		return coordPoint;
 	}
 	
 	@Override
 	public String toString() {
 		String realString = "[ " + realPoint.getDouble(0);
-		for(int i = 1; i < realPoint.getShape()[0]; i++) {
+		for(int i = 1; i < realPoint.getShapeRef()[0]; i++) {
 			realString += " , " + realPoint.getDouble(i);
 		}
 		realString += " ]";
 		
 		String coordString = "[ " + coordPoint.getDouble(0);
-		for(int i = 1; i < coordPoint.getShape()[0]; i++) {
+		for(int i = 1; i < coordPoint.getShapeRef()[0]; i++) {
 			coordString += " , " + coordPoint.getDouble(i) ;
 		}
 		coordString += " ]";
@@ -60,10 +60,10 @@ class InterpolatedPoint {
 }
 public class InterpolatorUtils {
 
-	public static AbstractDataset regridOld(AbstractDataset data, AbstractDataset x, AbstractDataset y,
-			AbstractDataset gridX, AbstractDataset gridY) throws Exception {
+	public static AbstractDataset regridOld(Dataset data, Dataset x, Dataset y,
+			Dataset gridX, Dataset gridY) throws Exception {
 		
-		DoubleDataset result = new DoubleDataset(gridX.shape[0], gridY.shape[0]);
+		DoubleDataset result = new DoubleDataset(gridX.getShapeRef()[0], gridY.getShapeRef()[0]);
 		
 		IndexIterator itx = gridX.getIterator();
 		
@@ -92,14 +92,14 @@ public class InterpolatorUtils {
 	
 	
 	
-	public static AbstractDataset selectDatasetRegion(AbstractDataset dataset, int x, int y, int xSize, int ySize) {
+	public static AbstractDataset selectDatasetRegion(Dataset dataset, int x, int y, int xSize, int ySize) {
 		int startX = x - xSize;
 		int startY = y - ySize;
 		int endX = x + xSize + 1;
 		int endY = y + ySize +1;
 		
-		int shapeX = dataset.getShape()[0];
-		int shapeY = dataset.getShape()[1];
+		int shapeX = dataset.getShapeRef()[0];
+		int shapeY = dataset.getShapeRef()[1];
 		
 		// Do edge checking
 		if (startX < 0) {
@@ -126,16 +126,16 @@ public class InterpolatorUtils {
 		int[] stop = new int[] { endX, endY };
 		
 		
-		return dataset.getSlice(start, stop, null);
+		return (AbstractDataset) dataset.getSlice(start, stop, null);
 	}
 	
-	private static double getInterpolated(AbstractDataset val, AbstractDataset x, AbstractDataset y, double xPos,
+	private static double getInterpolated(Dataset val, Dataset x, Dataset y, double xPos,
 			double yPos) throws Exception {
 		
 		// initial guess
-		AbstractDataset xPosDS = x.getSlice(new int[] {0,0}, new int[] {x.getShape()[0],1}, null).isubtract(xPos);
+		Dataset xPosDS = x.getSlice(new int[] {0,0}, new int[] {x.getShapeRef()[0],1}, null).isubtract(xPos);
 		int xPosMin = xPosDS.minPos()[0];
-		AbstractDataset yPosDS = y.getSlice(new int[] {xPosMin,0}, new int[] {xPosMin+1,y.getShape()[1]}, null).isubtract(yPos);
+		Dataset yPosDS = y.getSlice(new int[] {xPosMin,0}, new int[] {xPosMin+1,y.getShapeRef()[1]}, null).isubtract(yPos);
 		int yPosMin = yPosDS.minPos()[0];
 		
 		
@@ -160,7 +160,7 @@ public class InterpolatorUtils {
 		return getInterpolatedResultFromNinePoints(valReduced, xReduced, yReduced, xPos, yPos);
 	}
 
-	private static double getInterpolatedResultFromNinePoints(AbstractDataset val, AbstractDataset x, AbstractDataset y,
+	private static double getInterpolatedResultFromNinePoints(Dataset val, Dataset x, Dataset y,
 			double xPos, double yPos) throws Exception {
 		
 		// First build the nine points
@@ -276,7 +276,7 @@ public class InterpolatorUtils {
 		return result;
 	}
 
-	private static InterpolatedPoint makePoint(AbstractDataset x, AbstractDataset y, int i, int j) {
+	private static InterpolatedPoint makePoint(Dataset x, Dataset y, int i, int j) {
 		DoubleDataset realPoint = new DoubleDataset(new double[] { x.getDouble(i, j), y.getDouble(i, j) }, 2);
 		DoubleDataset coordPoint = new DoubleDataset(new double[] { i, j }, 2);
 		return new InterpolatedPoint(realPoint, coordPoint);
@@ -301,7 +301,7 @@ public class InterpolatorUtils {
 		
 		checkPoints(p1, p2);
 
-		if (interpolationDimension >= p1.getRealPoint().shape[0]) {
+		if (interpolationDimension >= p1.getRealPoint().getShapeRef()[0]) {
 			throw new IllegalArgumentException("Dimention is too large for these datasets");
 		}
 
@@ -338,15 +338,15 @@ public class InterpolatorUtils {
 			throw new IllegalArgumentException("Proportion must be between 0 and 1");
 		}
 
-		AbstractDataset p1RealContribution = Maths.multiply(p1.getRealPoint(), (1.0 - proportion));
-		AbstractDataset p2RealContribution = Maths.multiply(p2.getRealPoint(), (proportion));
+		Dataset p1RealContribution = Maths.multiply(p1.getRealPoint(), (1.0 - proportion));
+		Dataset p2RealContribution = Maths.multiply(p2.getRealPoint(), (proportion));
 
-		AbstractDataset realPoint = Maths.add(p1RealContribution, p2RealContribution);
+		Dataset realPoint = Maths.add(p1RealContribution, p2RealContribution);
 
-		AbstractDataset p1CoordContribution = Maths.multiply(p1.getCoordPoint(), (1.0 - proportion));
-		AbstractDataset p2CoordContribution = Maths.multiply(p2.getCoordPoint(), (proportion));
+		Dataset p1CoordContribution = Maths.multiply(p1.getCoordPoint(), (1.0 - proportion));
+		Dataset p2CoordContribution = Maths.multiply(p2.getCoordPoint(), (proportion));
 
-		AbstractDataset coordPoint = Maths.add(p1CoordContribution, p2CoordContribution);
+		Dataset coordPoint = Maths.add(p1CoordContribution, p2CoordContribution);
 
 		return new InterpolatedPoint(realPoint, coordPoint);
 	}
@@ -371,7 +371,7 @@ public class InterpolatorUtils {
 	
 	
 	
-	private static AbstractDataset getTrimmedAxis(AbstractDataset axis, int axisIndex, InterpolatedPoint p1, InterpolatedPoint p2) {
+	private static AbstractDataset getTrimmedAxis(Dataset axis, int axisIndex, InterpolatedPoint p1, InterpolatedPoint p2) {
 		double startPoint = p1.getRealPoint().getDouble(axisIndex);
 		double endPoint = p2.getRealPoint().getDouble(axisIndex);
 		
@@ -384,28 +384,28 @@ public class InterpolatorUtils {
 		int start = getTrimmedAxisStart(axis, startPoint);
 		int end = getTrimmedAxisEnd(axis, start, endPoint);
 		
-		return axis.getSlice(new int[] {start}, new int[] {end}, null);
+		return (AbstractDataset) axis.getSlice(new int[] {start}, new int[] {end}, null);
 	}
 
-	private static int getTrimmedAxisStart(AbstractDataset axis, double startPoint) {
-		for (int i = 0; i < axis.getShape()[0]; i++) {
+	private static int getTrimmedAxisStart(Dataset axis, double startPoint) {
+		for (int i = 0; i < axis.getShapeRef()[0]; i++) {
 			if (axis.getDouble(i) > startPoint) return i;
 		}
 		// if we get to here then the start point is higher than the whole system
 		return -1;
 	}
 	
-	private static int getTrimmedAxisEnd(AbstractDataset axis, int startPos, double endPoint) {
-		for (int i = startPos; i < axis.getShape()[0]; i++) {
+	private static int getTrimmedAxisEnd(Dataset axis, int startPos, double endPoint) {
+		for (int i = startPos; i < axis.getShapeRef()[0]; i++) {
 			if (axis.getDouble(i) > endPoint) return i-1;
 		}
 		// if we get to here then the end point is higher than the whole system
-		return axis.getShape()[0];
+		return axis.getShapeRef()[0];
 	}
 	
-	public static AbstractDataset remap1D(AbstractDataset dataset, AbstractDataset axis, AbstractDataset outputAxis) {
-		DoubleDataset data = new DoubleDataset(outputAxis.getShape());
-		for(int i = 0; i < outputAxis.getShape()[0]; i++) {
+	public static AbstractDataset remap1D(Dataset dataset, Dataset axis, Dataset outputAxis) {
+		DoubleDataset data = new DoubleDataset(outputAxis.getShapeRef());
+		for(int i = 0; i < outputAxis.getShapeRef()[0]; i++) {
 			double point = outputAxis.getDouble(i);
 			double position = getRealPositionAsIndex(axis, point);
 			if (position >= 0.0) {
@@ -419,8 +419,8 @@ public class InterpolatorUtils {
 	}
 
 	// TODO need to make this work with reverse number lists
-	private static double getRealPositionAsIndex(AbstractDataset dataset, double point) {
-		for (int j = 0; j < dataset.getShape()[0]-1; j++) {
+	private static double getRealPositionAsIndex(Dataset dataset, double point) {
+		for (int j = 0; j < dataset.getShapeRef()[0]-1; j++) {
 			double end = dataset.getDouble(j+1);
 			double start = dataset.getDouble(j);
 			//TODO could make this check once outside the loop with a minor assumption.
@@ -441,7 +441,8 @@ public class InterpolatorUtils {
 		return -1.0;
 	}
 	
-	public static AbstractDataset remapOneAxis(AbstractDataset dataset, int axisIndex, AbstractDataset corrections, AbstractDataset originalAxisForCorrection, AbstractDataset outputAxis) {
+	public static AbstractDataset remapOneAxis(Dataset dataset, int axisIndex, Dataset corrections,
+			Dataset originalAxisForCorrection, Dataset outputAxis) {
 		int[] stop = dataset.getShape();
 		int[] start = new int[stop.length];
 		int[] step = new int[stop.length];
@@ -452,10 +453,10 @@ public class InterpolatorUtils {
 			resultSize[i] = stop[i];
 		}
 		
-		resultSize[axisIndex] = outputAxis.getShape()[0];
+		resultSize[axisIndex] = outputAxis.getShapeRef()[0];
 		DoubleDataset result = new DoubleDataset(resultSize);
 		
-		step[axisIndex] = dataset.getShape()[axisIndex];
+		step[axisIndex] = dataset.getShapeRef()[axisIndex];
 		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
 		
 		int[] pos = iter.getPos();
@@ -466,7 +467,7 @@ public class InterpolatorUtils {
 			}
 			posEnd[axisIndex] = stop[axisIndex];
 			// get the dataset
-			AbstractDataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
+			Dataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
 			int[] correctionPos = new int[pos.length-1];
 			int index = 0;
 			for(int j = 0; j < pos.length; j++) {
@@ -475,12 +476,12 @@ public class InterpolatorUtils {
 					index++;
 				}
 			}
-			AbstractDataset axis = Maths.subtract(originalAxisForCorrection,corrections.getDouble(correctionPos));
-			AbstractDataset remapped = remap1D(slice,axis,outputAxis);
+			Dataset axis = Maths.subtract(originalAxisForCorrection,corrections.getDouble(correctionPos));
+			Dataset remapped = remap1D(slice,axis,outputAxis);
 			
 			int[] ref = ArrayUtils.clone(pos);
 			
-			for (int k = 0; k < result.shape[axisIndex]; k++) {
+			for (int k = 0; k < result.getShapeRef()[axisIndex]; k++) {
 				ref[axisIndex] = k;
 				result.set(remapped.getDouble(k), ref);
 			}
@@ -490,12 +491,12 @@ public class InterpolatorUtils {
 	}
 	
 	
-	public static AbstractDataset remapAxis(AbstractDataset dataset, int axisIndex, AbstractDataset originalAxisForCorrection, AbstractDataset outputAxis) {
+	public static AbstractDataset remapAxis(Dataset dataset, int axisIndex, Dataset originalAxisForCorrection, Dataset outputAxis) {
 		if (!dataset.isCompatibleWith(originalAxisForCorrection)) {
 			throw new IllegalArgumentException("Datasets must be of the same shape");
 		}
 		
-		int[] stop = dataset.getShape();
+		int[] stop = dataset.getShapeRef();
 		int[] start = new int[stop.length];
 		int[] step = new int[stop.length];
 		int[] resultSize = new int[stop.length];
@@ -505,10 +506,10 @@ public class InterpolatorUtils {
 			resultSize[i] = stop[i];
 		}
 		
-		resultSize[axisIndex] = outputAxis.getShape()[0];
+		resultSize[axisIndex] = outputAxis.getShapeRef()[0];
 		DoubleDataset result = new DoubleDataset(resultSize);
 		
-		step[axisIndex] = dataset.getShape()[axisIndex];
+		step[axisIndex] = dataset.getShapeRef()[axisIndex];
 		IndexIterator iter = dataset.getSliceIterator(start, stop, step);
 		
 		int[] pos = iter.getPos();
@@ -520,10 +521,10 @@ public class InterpolatorUtils {
 			posEnd[axisIndex] = stop[axisIndex];
 			
 			// get the dataset
-			AbstractDataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
-			AbstractDataset axis = originalAxisForCorrection.getSlice(pos, posEnd, null).squeeze();
+			Dataset slice = dataset.getSlice(pos, posEnd, null).squeeze();
+			Dataset axis = originalAxisForCorrection.getSlice(pos, posEnd, null).squeeze();
 			
-			AbstractDataset remapped = remap1D(slice,axis,outputAxis);
+			Dataset remapped = remap1D(slice,axis,outputAxis);
 			
 			int[] ref = ArrayUtils.clone(pos);
 			
@@ -535,17 +536,13 @@ public class InterpolatorUtils {
 		
 		return result;
 	}
-	
-	public static AbstractDataset regrid(AbstractDataset data, AbstractDataset x, AbstractDataset y,
-			AbstractDataset gridX, AbstractDataset gridY) {
+
+	public static AbstractDataset regrid(Dataset data, Dataset x, Dataset y, Dataset gridX, Dataset gridY) {
 		
 		// apply X then Y regridding
-		AbstractDataset result = remapAxis(data,1,x,gridX);
+		Dataset result = remapAxis(data,1,x,gridX);
 		result = remapAxis(result,0,y,gridY);
 		
-		return result;
-		
-
+		return (AbstractDataset) result;
 	}
-	
 }

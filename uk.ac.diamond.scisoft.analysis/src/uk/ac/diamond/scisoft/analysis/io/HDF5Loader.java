@@ -514,10 +514,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						}
 
 						// System.err.println("G: " + oname);
+						String newname = name + HDF5Node.SEPARATOR + oname + HDF5Node.SEPARATOR;
+						newname = newname.replaceAll("([" + HDF5Node.SEPARATOR + "])\\1+",
+								HDF5Node.SEPARATOR);
 						if (queue != null) {
-							queue.add(name + oname + HDF5Node.SEPARATOR);
+							queue.add(newname);
 						} else {
-							HDF5Node g = createGroup(fid, f, oid, pool, queue, name + oname + HDF5Node.SEPARATOR, keepBitWidth);
+							HDF5Node g = createGroup(fid, f, oid, pool, queue, newname, keepBitWidth);
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {

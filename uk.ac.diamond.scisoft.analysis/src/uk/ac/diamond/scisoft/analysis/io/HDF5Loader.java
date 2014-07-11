@@ -538,7 +538,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						}
 
 						// System.err.println("D: " + oname);
-						HDF5Node n = createDataset(fid, f, oid, pool, name + oname, keepBitWidth);
+						String newname = name + HDF5Node.SEPARATOR + oname;
+						newname = newname.replaceAll("([" + HDF5Node.SEPARATOR + "])\\1+",
+								HDF5Node.SEPARATOR);
+						HDF5Node n = createDataset(fid, f, oid, pool, newname, keepBitWidth);
 
 						if (n != null)
 							group.addNode(f, name, oname, n);

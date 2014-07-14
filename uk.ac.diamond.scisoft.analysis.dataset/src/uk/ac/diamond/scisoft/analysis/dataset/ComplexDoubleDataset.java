@@ -587,7 +587,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 			BroadcastIterator it = new BroadcastIterator(view, d);
 
 			while (it.hasNext()) {
-				data[it.aIndex] = it.bValue; // ADD_CAST
+				data[it.aIndex] = it.bDouble; // ADD_CAST
 				data[it.aIndex + 1] = d.getElementDoubleAbs(it.bIndex + 1); // GET_ELEMENT_WITH_CAST
 			}
 		}
@@ -636,8 +636,8 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 				double vi = toImag(o); // PRIM_TYPE // ADD_CAST
 
 				while (siter.hasNext()) {
-					data[siter.index] = vr;
-					data[siter.index+1] = vi;
+					data[siter.index]     = vr;
+					data[siter.index + 1] = vi;
 				}
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("Object for setting slice is not a dataset or number");
@@ -649,40 +649,16 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset iadd(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					data[it1.index]   += bds.getElementDoubleAbs(it2.index);
-					data[it1.index+1] += bds.getElementDoubleAbs(it2.index+1);
-				}
-				break;
-			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					data[it1.index] += bds.getElementDoubleAbs(it2.index);
-				}
-				break;
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex] += it.bDouble;
 			}
 		} else {
-			double vr = toReal(b); // PRIM_TYPE // ADD_CAST
-			double vi = toImag(b); // PRIM_TYPE // ADD_CAST
-			IndexIterator it1 = getIterator();
-
-			if (vi == 0) {
-				while (it1.hasNext()) {
-					data[it1.index] += vr;
-				}
-			} else {
-				while (it1.hasNext()) {
-					data[it1.index]   += vr;
-					data[it1.index+1] += vi;
-				}
+			while (it.hasNext()) {
+				data[it.aIndex]     += it.bDouble;
+				data[it.aIndex + 1] += bds.getElementDoubleAbs(it.bIndex + 1); // GET_ELEMENT_WITH_CAST
 			}
 		}
 		setDirty();
@@ -691,40 +667,16 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset isubtract(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					data[it1.index]   -= bds.getElementDoubleAbs(it2.index);
-					data[it1.index+1] -= bds.getElementDoubleAbs(it2.index+1);
-				}
-				break;
-			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					data[it1.index] -= bds.getElementDoubleAbs(it2.index);
-				}
-				break;
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex] -= it.bDouble;
 			}
 		} else {
-			double vr = toReal(b); // PRIM_TYPE // ADD_CAST
-			double vi = toImag(b); // PRIM_TYPE // ADD_CAST
-			IndexIterator it1 = getIterator();
-
-			if (vi == 0) {
-				while (it1.hasNext()) {
-					data[it1.index] -= vr;
-				}
-			} else {
-				while (it1.hasNext()) {
-					data[it1.index]   -= vr;
-					data[it1.index+1] -= vi;
-				}
+			while (it.hasNext()) {
+				data[it.aIndex]     -= it.bDouble;
+				data[it.aIndex + 1] -= bds.getElementDoubleAbs(it.bIndex + 1); // GET_ELEMENT_WITH_CAST
 			}
 		}
 		setDirty();
@@ -733,48 +685,38 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset imultiply(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					double r1 = data[it1.index];
-					double r2 = bds.getElementDoubleAbs(it2.index);
-					double i1 = data[it1.index+1];
-					double i2 = bds.getElementDoubleAbs(it2.index + 1);
-					data[it1.index]   = (r1*r2 - i1*i2); // ADD_CAST
-					data[it1.index+1] = (r1*i2 + i1*r2); // ADD_CAST
-				}
-				break;
-			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					double r2 = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // ADD_CAST
-					data[it1.index]   *= r2;
-					data[it1.index+1] *= r2;
-				}
-				break;
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex]     *= it.bDouble; // ADD_CAST
+				data[it.aIndex + 1] *= it.bDouble; // ADD_CAST
 			}
 		} else {
-			double vr = toReal(b); // PRIM_TYPE // ADD_CAST
-			double vi = toImag(b); // PRIM_TYPE // ADD_CAST
-			IndexIterator it1 = getIterator();
-
-			if (vi == 0) {
-				while (it1.hasNext()) {
-					data[it1.index]   *= vr;
-					data[it1.index+1] *= vr;
+			if (bds.getSize() == 1) {
+				double r2 = it.bDouble;
+				double i2 = bds.getElementDoubleAbs(it.bIndex + 1);
+				if (i2 == 0) {
+					while (it.hasNext()) {
+						data[it.aIndex]     *= r2; // ADD_CAST
+						data[it.aIndex + 1] *= r2; // ADD_CAST
+					}
+				} else {
+					while (it.hasNext()) {
+						double r1 = it.aDouble;
+						double i1 = data[it.aIndex + 1];
+						data[it.aIndex]     = (r1*r2 - i1*i2); // ADD_CAST
+						data[it.aIndex + 1] = (r1*i2 + i1*r2); // ADD_CAST
+					}
 				}
 			} else {
-				while (it1.hasNext()) {
-					double r1 = data[it1.index]; // PRIM_TYPE
-					double i1 = data[it1.index+1]; // PRIM_TYPE
-					data[it1.index]   = r1*vr - i1*vi;
-					data[it1.index+1] = r1*vi + i1*vr;
+				while (it.hasNext()) {
+					double r1 = it.aDouble;
+					double r2 = it.bDouble;
+					double i1 = data[it.aIndex + 1];
+					double i2 = bds.getElementDoubleAbs(it.bIndex + 1);
+					data[it.aIndex]     = (r1*r2 - i1*i2); // ADD_CAST
+					data[it.aIndex + 1] = (r1*i2 + i1*r2); // ADD_CAST
 				}
 			}
 		}
@@ -784,86 +726,65 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset idivide(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					double r1 = data[it1.index];
-					double r2 = bds.getElementDoubleAbs(it2.index);
-					double i1 = data[it1.index+1];
-					double i2 = bds.getElementDoubleAbs(it2.index + 1);
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex]     /= it.bDouble; // ADD_CAST
+				data[it.aIndex + 1] /= it.bDouble; // ADD_CAST
+			}
+		} else {
+			if (bds.getSize() == 1) {
+				double r2 = it.bDouble;
+				double i2 = bds.getElementDoubleAbs(it.bIndex + 1);
+				if (i2 == 0) {
+					while (it.hasNext()) {
+						data[it.aIndex]     /= r2; // ADD_CAST
+						data[it.aIndex + 1] /= r2; // ADD_CAST
+					}
+				} else {
+					while (it.hasNext()) {
+						double r1 = it.aDouble;
+						double i1 = data[it.aIndex + 1];
+						if (Math.abs(r2) < Math.abs(i2)) {
+							double q = r2/i2;
+							double den = r2*q + i2;
+							data[it.aIndex]   = ((r1*q + i1) / den); // ADD_CAST
+							data[it.aIndex+1] = ((i1*q - r1) / den); // ADD_CAST
+						} else {
+							double q = i2/r2;
+							double den = i2*q + r2;
+							if (den == 0) {
+								data[it.aIndex]   = Double.NaN; // CLASS_TYPE
+								data[it.aIndex+1] = Double.NaN; // CLASS_TYPE
+							} else {
+								data[it.aIndex]   = ((i1 * q + r1) / den); // ADD_CAST
+								data[it.aIndex+1] = ((i1 - r1 * q) / den); // ADD_CAST
+							}
+						}
+					}
+				}
+			} else {
+				while (it.hasNext()) {
+					double r1 = it.aDouble;
+					double r2 = it.bDouble;
+					double i1 = data[it.aIndex + 1];
+					double i2 = bds.getElementDoubleAbs(it.bIndex + 1);
 					if (Math.abs(r2) < Math.abs(i2)) {
 						double q = r2/i2;
 						double den = r2*q + i2;
-						data[it1.index]   = ((r1*q + i1) / den); // ADD_CAST
-						data[it1.index+1] = ((i1*q - r1) / den); // ADD_CAST
+						data[it.aIndex]   = ((r1*q + i1) / den); // ADD_CAST
+						data[it.aIndex+1] = ((i1*q - r1) / den); // ADD_CAST
 					} else {
 						double q = i2/r2;
 						double den = i2*q + r2;
 						if (den == 0) {
-							data[it1.index]   = Double.NaN; // CLASS_TYPE
-							data[it1.index+1] = Double.NaN; // CLASS_TYPE
+							data[it.aIndex]   = Double.NaN; // CLASS_TYPE
+							data[it.aIndex+1] = Double.NaN; // CLASS_TYPE
 						} else {
-							data[it1.index]   = ((i1 * q + r1) / den); // ADD_CAST
-							data[it1.index+1] = ((i1 - r1 * q) / den); // ADD_CAST
+							data[it.aIndex]   = ((i1 * q + r1) / den); // ADD_CAST
+							data[it.aIndex+1] = ((i1 - r1 * q) / den); // ADD_CAST
 						}
-					}
-				}
-				break;
-			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					double r2 = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // ADD_CAST
-					if (r2 == 0) {
-						data[it1.index]   = Double.NaN; // CLASS_TYPE
-						data[it1.index+1] = Double.NaN; // CLASS_TYPE
-					} else {
-						data[it1.index]   /= r2;
-						data[it1.index+1] /= r2;
-					}
-				}
-				break;
-			}
-		} else {
-			double vr = toReal(b); // PRIM_TYPE // ADD_CAST
-			double vi = toImag(b); // PRIM_TYPE // ADD_CAST
-			IndexIterator it1 = getIterator();
-
-			if (vi == 0) {
-				if (vr == 0) {
-					while (it1.hasNext()) {
-						data[it1.index]   = Double.NaN; // CLASS_TYPE
-						data[it1.index+1] = Double.NaN; // CLASS_TYPE
-					}
-				} else {
-					while (it1.hasNext()) {
-						data[it1.index]   /= vr;
-						data[it1.index+1] /= vr;
-					}
-				}
-			} else {
-				if (Math.abs(vr) < Math.abs(vi)) {
-					double q = vr/vi;
-					double den = vr*q + vi;
-					while (it1.hasNext()) {
-						double r1 = data[it1.index];
-						double i1 = data[it1.index+1];
-						data[it1.index]   = ((r1*q + i1) / den); // ADD_CAST
-						data[it1.index+1] = ((i1*q - r1) / den); // ADD_CAST
-					}
-				} else {
-					double q = vi/vr;
-					double den = vi*q + vr;
-					while (it1.hasNext()) {
-						double r1 = data[it1.index];
-						double i1 = data[it1.index+1];
-						data[it1.index]   = ((i1*q + r1) / den); // ADD_CAST
-						data[it1.index+1] = ((i1 - r1*q) / den); // ADD_CAST
 					}
 				}
 			}
@@ -879,39 +800,30 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexDoubleDataset ipower(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				while (it1.hasNext() && it2.hasNext()) {
-					final Complex zv = new Complex(bds.getElementDoubleAbs(it2.index),
-							bds.getElementDoubleAbs(it2.index+1));
-					final Complex zd = new Complex(data[it1.index], data[it1.index+1]).pow(zv);
-					data[it1.index]   = zd.getReal(); // ADD_CAST
-					data[it1.index+1] = zd.getImaginary(); // ADD_CAST
-				}
-				break;
-			default:
-				while (it1.hasNext() && it2.hasNext()) {
-					final Complex zv = new Complex(bds.getElementDoubleAbs(it2.index), 0);
-					final Complex zd = new Complex(data[it1.index], data[it1.index+1]).pow(zv);
-					data[it1.index]   = zd.getReal(); // ADD_CAST
-					data[it1.index+1] = zd.getImaginary(); // ADD_CAST
-				}
-				break;
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				final Complex zv = new Complex(it.bDouble, 0);
+				final Complex zd = new Complex(it.aDouble, data[it.aIndex + 1]).pow(zv);
+				data[it.aIndex]     = zd.getReal(); // ADD_CAST
+				data[it.aIndex + 1] = zd.getImaginary(); // ADD_CAST
 			}
 		} else {
-			final Complex zv = new Complex(toReal(b), toImag(b));
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				Complex zd = new Complex(data[it1.index], data[it1.index+1]).pow(zv);
-				data[it1.index]   = zd.getReal(); // ADD_CAST
-				data[it1.index+1] = zd.getImaginary(); // ADD_CAST
+			if (bds.getSize() == 1) {
+				final Complex zv = new Complex(it.bDouble, bds.getElementDoubleAbs(it.bIndex + 1));
+				while (it.hasNext()) {
+					final Complex zd = new Complex(it.aDouble, data[it.aIndex + 1]).pow(zv);
+					data[it.aIndex]     = zd.getReal(); // ADD_CAST
+					data[it.aIndex + 1] = zd.getImaginary(); // ADD_CAST
+				}
+			} else {
+				while (it.hasNext()) {
+					final Complex zv = new Complex(it.bDouble, bds.getElementDoubleAbs(it.bIndex + 1));
+					final Complex zd = new Complex(it.aDouble, data[it.aIndex + 1]).pow(zv);
+					data[it.aIndex]     = zd.getReal(); // ADD_CAST
+					data[it.aIndex + 1] = zd.getImaginary(); // ADD_CAST
+				}
 			}
 		}
 		setDirty();
@@ -920,200 +832,86 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	public double residual(final Object b, Dataset w, boolean ignoreNaNs) {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		double sum = 0;
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
+		double comp = 0;
+		final int bis = bds.getElementsPerItem();
 
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			double comp = 0;
-
-			switch (bds.getDtype()) {
-			case Dataset.COMPLEX64: case Dataset.COMPLEX128:
-				if (ignoreNaNs) {
-					if (w == null) {
-						while (it1.hasNext() && it2.hasNext()) {
-							double diffr, diffi, err, temp;
-							diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-							diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-							if (Double.isNaN(diffr) || Double.isNaN(diffi))
-								continue;
-	
-							err = diffr*diffr - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-	
-							err = diffi*diffi - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					} else {
-						final IndexIterator it3 = w.getIterator();
-						while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-							double dw = w.getElementDoubleAbs(it3.index);
-							double diffr, diffi, err, temp;
-							diffr = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-							diffi = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-							if (Double.isNaN(diffr) || Double.isNaN(diffi))
-								continue;
-	
-							err = diffr*diffr*dw - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-	
-							err = diffi*diffi*dw - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				} else {
-					if (w == null) {
-						while (it1.hasNext() && it2.hasNext()) {
-							double diff, err, temp;
-							diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-							err = diff*diff - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-	
-							diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-							err = diff*diff - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					} else {
-						final IndexIterator it3 = w.getIterator();
-						while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-							double dw = w.getElementDoubleAbs(it3.index);
-							double diff, err, temp;
-							diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-							err = diff*diff*dw - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-	
-							diff = data[it1.index + 1] - bds.getElementDoubleAbs(it2.index + 1);
-							err = diff*diff*dw - comp;
-							temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				}
-				break;
-			default:
-				if (w == null) {
-					while (it1.hasNext() && it2.hasNext()) {
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						if (ignoreNaNs && Double.isInfinite(diff))
-							continue;
-						final double err  = diff*diff - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-					}
-				} else {
-					final IndexIterator it3 = w.getIterator();
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-						double dw = w.getElementDoubleAbs(it3.index);
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						if (ignoreNaNs && Double.isInfinite(diff))
-							continue;
-						final double err  = diff*diff*dw - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-					}
-				}
-				break;
-			}
-		} else {
-			final Complex zv = new Complex(toReal(b), toImag(b));
-			if (ignoreNaNs) {
-				if (zv.isNaN())
-					return sum;
-			}
-			IndexIterator it1 = getIterator();
-
-			double comp = 0;
+		if (bis == 1) {
 			if (w == null) {
-				if (ignoreNaNs) {
-					while (it1.hasNext()) {
-						double diffr, diffi, err, temp;
-						diffr = data[it1.index] - zv.getReal();
-						diffi = data[it1.index + 1] - zv.getImaginary();
-						if (Double.isNaN(diffr) || Double.isNaN(diffi))
-							continue;
-	
-						err = diffr*diffr - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-	
-						err = diffi*diffi - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+				while (it.hasNext()) {
+					double diffr = it.aDouble - it.bDouble;
+					double diffi = data[it.aIndex + 1];
+					if (ignoreNaNs && (Double.isNaN(diffr) || Double.isNaN(diffi))) {
+						continue;
 					}
-				} else {
-					while (it1.hasNext()) {
-						double diff, err, temp;
-						diff = data[it1.index] - zv.getReal();
-						err = diff*diff - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-	
-						diff = data[it1.index + 1] - zv.getImaginary();
-						err = diff*diff - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-					}
+					double err = diffr * diffr - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					err = diffi * diffi - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
 				}
 			} else {
-				final IndexIterator it3 = w.getIterator();
-				if (ignoreNaNs) {
-					while (it1.hasNext() && it3.hasNext()) {
-						double dw = w.getElementDoubleAbs(it3.index);
-						double diffr, diffi, err, temp;
-						diffr = data[it1.index] - zv.getReal();
-						diffi = data[it1.index + 1] - zv.getImaginary();
-						if (Double.isNaN(diffr) || Double.isNaN(diffi))
-							continue;
-	
-						err = diffr*diffr*dw - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-	
-						err = diffi*diffi*dw - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+				IndexIterator itw = w.getIterator();
+				while (it.hasNext() && itw.hasNext()) {
+					final double dw = w.getElementDoubleAbs(itw.index);
+					double diffr = it.aDouble - it.bDouble;
+					double diffi = data[it.aIndex + 1];
+					if (ignoreNaNs && (Double.isNaN(diffr) || Double.isNaN(diffi))) {
+						continue;
 					}
-				} else {
-					while (it1.hasNext() && it3.hasNext()) {
-						double dw = w.getElementDoubleAbs(it3.index);
-						double diff, err, temp;
-						diff = data[it1.index] - zv.getReal();
-						err = diff*diff*dw - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-	
-						diff = data[it1.index + 1] - zv.getImaginary();
-						err = diff*diff*dw - comp;
-						temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
+					double err = diffr * diffr * dw - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					err = diffi * diffi * dw - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
+			}
+		} else {
+			if (w == null) {
+				while (it.hasNext()) {
+					double diffr = it.aDouble - it.bDouble;
+					double diffi = data[it.aIndex] - bds.getElementDoubleAbs(it.bIndex + 1);
+					if (ignoreNaNs && (Double.isNaN(diffr) || Double.isNaN(diffi))) {
+						continue;
 					}
+					double err = diffr * diffr - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					err = diffi * diffi - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+				}
+			} else {
+				IndexIterator itw = w.getIterator();
+				while (it.hasNext() && itw.hasNext()) {
+					final double dw = w.getElementDoubleAbs(itw.index);
+					double diffr = it.aDouble - it.bDouble;
+					double diffi = data[it.aIndex] - bds.getElementDoubleAbs(it.bIndex + 1);
+					if (ignoreNaNs && (Double.isNaN(diffr) || Double.isNaN(diffi))) {
+						continue;
+					}
+					double err = diffr * diffr * dw - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+
+					err = diffi * diffi * dw - comp;
+					temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
 				}
 			}
 		}

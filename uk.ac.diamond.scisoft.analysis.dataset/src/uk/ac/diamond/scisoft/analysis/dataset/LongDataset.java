@@ -427,17 +427,17 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public double getDouble(final int i) {
-		return get(i); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+		return get(i); // BOOLEAN_ZERO
 	}
 
 	@Override
 	public double getDouble(final int i, final int j) {
-		return get(i, j); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+		return get(i, j); // BOOLEAN_ZERO
 	}
 
 	@Override
 	public double getDouble(final int... pos) {
-		return get(pos); // BOOLEAN_ZERO // OMIT_SAME_CAST // ADD_CAST
+		return get(pos); // BOOLEAN_ZERO
 	}
 
 	@Override
@@ -903,23 +903,10 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset iadd(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] += bds.getElementLongAbs(it2.index); // GET_ELEMENT
-			}
-		} else {
-			final double v = toReal(b);
-			IndexIterator it1 = getIterator();
-			
-			while (it1.hasNext()) {
-				data[it1.index] += v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] += (long) it.bDouble; // ADD_CAST
 		}
 		setDirty();
 		return this;
@@ -927,23 +914,10 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset isubtract(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] -= bds.getElementLongAbs(it2.index); // GET_ELEMENT
-			}
-		} else {
-			final double v = toReal(b);
-			IndexIterator it1 = getIterator();
-			
-			while (it1.hasNext()) {
-				data[it1.index] -= v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] -= (long) it.bDouble; // ADD_CAST
 		}
 		setDirty();
 		return this;
@@ -951,23 +925,10 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset imultiply(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] *= bds.getElementLongAbs(it2.index); // GET_ELEMENT
-			}
-		} else {
-			final double v = toReal(b);
-			IndexIterator it1 = getIterator();
-			// NAN_OMIT
-			while (it1.hasNext()) {
-				data[it1.index] *= v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] *= (long) it.bDouble; // ADD_CAST
 		}
 		setDirty();
 		return this;
@@ -975,30 +936,13 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset idivide(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
-				try {
-					data[it1.index] /= bds.getElementLongAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
-				} catch (ArithmeticException e) {
-					data[it1.index] = 0;
-				}
-			}
-		} else {
-			final double v = toReal(b);
-			if (v == 0) { // INT_ZEROTEST
-				fill(0); // INT_ZEROTEST
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			if (it.bDouble == 0) { // INT_ZEROTEST
+				data[it.aIndex] = 0; // INT_ZEROTEST
 			} else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator();
-			
-			while (it1.hasNext()) {
-				data[it1.index] /= v;
-			}
+			data[it.aIndex] /= (long) it.bDouble; // ADD_CAST
 			} // INT_ZEROTEST
 		}
 		setDirty();
@@ -1012,31 +956,14 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset iremainder(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
 				try {
-					data[it1.index] %= bds.getElementLongAbs(it2.index); // GET_ELEMENT // INT_EXCEPTION
+				data[it.aIndex] %= (long) it.bDouble; // ADD_CAST // INT_EXCEPTION
 				} catch (ArithmeticException e) {
-					data[it1.index] = 0;
+					data[it.aIndex] = 0;
 				}
-			}
-		} else {
-			final double v = toReal(b);
-			if (v == 0) { // INT_ZEROTEST
-				fill(0); // INT_ZEROTEST
-			} else { // INT_ZEROTEST
-			IndexIterator it1 = getIterator();
-			
-			while (it1.hasNext()) {
-				data[it1.index] %= v;
-			}
-			} // INT_ZEROTEST
 		}
 		setDirty();
 		return this;
@@ -1044,46 +971,42 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public LongDataset ipower(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			while (it1.hasNext() && it2.hasNext()) {
-				final double v = Math.pow(data[it1.index], bds.getElementDoubleAbs(it2.index));
-				if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-					data[it1.index] = 0; // INT_ZEROTEST
-				} else { // INT_ZEROTEST
-				data[it1.index] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
-				} // INT_ZEROTEST
-			}
-		} else {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		if (bds.getSize() == 1 && bds.getElementsPerItem() > 1) {
 			double vr = toReal(b);
 			double vi = toImag(b);
-			IndexIterator it1 = getIterator();
+			IndexIterator it = getIterator();
 			
 			if (vi == 0.) {
-				while (it1.hasNext()) {
-					final double v = Math.pow(data[it1.index], vr);
+				while (it.hasNext()) {
+					final double v = Math.pow(data[it.index], vr);
 					if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-						data[it1.index] = 0; // INT_ZEROTEST
+						data[it.index] = 0; // INT_ZEROTEST
 					} else { // INT_ZEROTEST
-					data[it1.index] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
+					data[it.index] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
 					} // INT_ZEROTEST
 				}
 			} else {
 				Complex zv = new Complex(vr, vi);
-				while (it1.hasNext()) {
-					Complex zd = new Complex(data[it1.index], 0.);
+				while (it.hasNext()) {
+					Complex zd = new Complex(data[it.index], 0.);
 					final double v = zd.pow(zv).getReal();
 					if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-						data[it1.index] = 0; // INT_ZEROTEST
+						data[it.index] = 0; // INT_ZEROTEST
 					} else { // INT_ZEROTEST
-					data[it1.index] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
+					data[it.index] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
 					} // INT_ZEROTEST
 				}
+			}
+		} else {
+			final BroadcastIterator it = new BroadcastIterator(this, bds);
+			while (it.hasNext()) {
+				final double v = Math.pow(it.aDouble, it.bDouble);
+				if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
+					data[it.aIndex] = 0; // INT_ZEROTEST
+				} else { // INT_ZEROTEST
+				data[it.aIndex] = (long) v; // PRIM_TYPE_LONG // ADD_CAST
+				} // INT_ZEROTEST
 			}
 		}
 		setDirty();
@@ -1092,53 +1015,24 @@ public class LongDataset extends AbstractDataset {
 
 	@Override
 	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		double sum = 0;
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-			
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-			
-			double comp = 0;
-			{
-				if (w == null) {
-					while (it1.hasNext() && it2.hasNext()) {
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						final double err = diff * diff - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-					}
-				} else {
-					IndexIterator it3 = w.getIterator();
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-						final double diff = data[it1.index] - bds.getElementDoubleAbs(it2.index);
-						final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
-						final double temp = sum + err;
-						comp = (temp - sum) - err;
-						sum = temp;
-					}
-				}
-			}
-		} else {
-			final double v = toReal(b);
-			IndexIterator it1 = getIterator();
-
-			double comp = 0;
+		double comp = 0;
+		{
 			if (w == null) {
-				while (it1.hasNext()) {
-					final double diff = data[it1.index] - v;
+				while (it.hasNext()) {
+					final double diff = it.aDouble - it.bDouble;
 					final double err = diff * diff - comp;
 					final double temp = sum + err;
 					comp = (temp - sum) - err;
 					sum = temp;
 				}
 			} else {
-				IndexIterator it3 = w.getIterator();
-				while (it1.hasNext() && it3.hasNext()) {
-					final double diff = data[it1.index] - v;
-					final double err = diff * diff * w.getElementDoubleAbs(it3.index) - comp;
+				IndexIterator itw = w.getIterator();
+				while (it.hasNext() && itw.hasNext()) {
+					final double diff = it.aDouble - it.bDouble;
+					final double err = diff * diff * w.getElementDoubleAbs(itw.index) - comp;
 					final double temp = sum + err;
 					comp = (temp - sum) - err;
 					sum = temp;

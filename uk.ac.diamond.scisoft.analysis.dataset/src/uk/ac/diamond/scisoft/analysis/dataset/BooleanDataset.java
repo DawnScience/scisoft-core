@@ -229,23 +229,10 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset iadd(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] |= bds.getElementBooleanAbs(it2.index);
-			}
-		} else {
-			boolean v = toBoolean(b);
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				data[it1.index] |= v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] |= bds.getElementBooleanAbs(it.bIndex);
 		}
 		setDirty();
 		return this;
@@ -256,28 +243,10 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset isubtract(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] ^= bds.getElementBooleanAbs(it2.index);
-			}
-		} else {
-			boolean v = toBoolean(b);
-			IndexIterator it1 = getIterator();
-
-			if (!(b instanceof Number)) {
-				logger.error("Argument is of unsupported class");
-				throw new IllegalArgumentException("Argument is of unsupported class");
-			}
-
-			while (it1.hasNext()) {
-				data[it1.index] ^= v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] ^= bds.getElementBooleanAbs(it.bIndex);
 		}
 		setDirty();
 		return this;
@@ -288,28 +257,10 @@ public class BooleanDataset extends BooleanDatasetBase {
 	 */
 	@Override
 	public BooleanDataset imultiply(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] &= bds.getElementBooleanAbs(it2.index);
-			}
-		} else {
-			boolean v = toBoolean(b);
-			IndexIterator it1 = getIterator();
-
-			if (!(b instanceof Number)) {
-				logger.error("Argument is of unsupported class");
-				throw new IllegalArgumentException("Argument is of unsupported class");
-			}
-
-			while (it1.hasNext()) {
-				data[it1.index] &= v;
-			}
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		while (it.hasNext()) {
+			data[it.aIndex] &= bds.getElementBooleanAbs(it.bIndex);
 		}
 		setDirty();
 		return this;
@@ -317,31 +268,7 @@ public class BooleanDataset extends BooleanDatasetBase {
 
 	@Override
 	public BooleanDataset idivide(final Object b) {
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-				data[it1.index] &= bds.getElementBooleanAbs(it2.index);
-			}
-		} else {
-			boolean v = toBoolean(b);
-			IndexIterator it1 = getIterator();
-
-			if (!(b instanceof Number)) {
-				logger.error("Argument is of unsupported class");
-				throw new IllegalArgumentException("Argument is of unsupported class");
-			}
-
-			while (it1.hasNext()) {
-				data[it1.index] &= v;
-			}
-		}
-		setDirty();
-		return this;
+		return imultiply(b);
 	}
 
 	@Override
@@ -357,26 +284,27 @@ public class BooleanDataset extends BooleanDatasetBase {
 	}
 
 	@Override
-	public double residual(final Object b) {
+	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		double sum = 0;
-		if (b instanceof Dataset) {
-			Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			IndexIterator it1 = getIterator();
-			IndexIterator it2 = bds.getIterator();
-
-			while (it1.hasNext() && it2.hasNext()) {
-				if (data[it1.index] ^ bds.getElementBooleanAbs(it2.index))
-					sum++;
-			}
-		} else {
-			boolean v = toBoolean(b);
-			IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				if (data[it1.index] ^ v)
-					sum++;
+		{
+			if (w == null) {
+				while (it.hasNext()) {
+					if (data[it.aIndex] ^ bds.getElementBooleanAbs(it.bIndex))
+						sum++;
+				}
+			} else {
+				IndexIterator itw = w.getIterator();
+				double comp = 0;
+				while (it.hasNext() && itw.hasNext()) {
+					if (data[it.aIndex] ^ bds.getElementBooleanAbs(it.bIndex)) {
+						final double err = w.getElementDoubleAbs(itw.index) - comp;
+						final double temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				}
 			}
 		}
 		return sum;

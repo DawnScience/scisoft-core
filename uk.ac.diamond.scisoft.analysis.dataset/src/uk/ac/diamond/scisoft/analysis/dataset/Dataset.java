@@ -161,7 +161,7 @@ public interface Dataset extends IErrorDataset {
 	public int[] getStrides();
 
 	/**
-	 * @return offset
+	 * @return offset where dataset view begins
 	 */
 	public int getOffset();
 

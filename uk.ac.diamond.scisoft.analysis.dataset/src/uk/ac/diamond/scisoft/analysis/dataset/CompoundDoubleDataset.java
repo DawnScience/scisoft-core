@@ -1087,14 +1087,14 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		if (is > 1) {
 			if (d.getElementsPerItem() == 1) {
 				while (it.hasNext()) {
-					data[it.aIndex] = it.bValue; // ADD_CAST
+					data[it.aIndex] = it.bDouble; // ADD_CAST
 					for (int j = 1; j < is; j++) {
 						data[it.aIndex + j] = 0;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
-					data[it.aIndex] = it.bValue; // ADD_CAST
+					data[it.aIndex] = it.bDouble; // ADD_CAST
 					for (int j = 1; j < is; j++) {
 						data[it.aIndex + j] = d.getElementDoubleAbs(it.bIndex + j); // GET_ELEMENT_WITH_CAST
 					}
@@ -1102,7 +1102,7 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			}
 		} else {
 			while (it.hasNext()) {
-				data[it.aIndex] = it.bValue; // ADD_CAST
+				data[it.aIndex] = it.bDouble; // ADD_CAST
 			}
 		}
 		return this;
@@ -1262,36 +1262,19 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset iadd(final Object b) {
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // GET_ELEMENT_WITH_CAST
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] += db;
-				}
-			} else if (bis == isize) {
-				while (it1.hasNext() && it2.hasNext()) {
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] += bds.getElementDoubleAbs(it2.index + i); // GET_ELEMENT
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex] += it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] += it.bDouble; // ADD_CAST
 			}
 		} else {
-			final double[] vr = toDoubleArray(b, isize); // PRIM_TYPE // CLASS_TYPE
-			final IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				for (int i = 0; i < isize; i++)
-					data[it1.index + i] += vr[i];
+			while (it.hasNext()) {
+				data[it.aIndex] += it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] += bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT_WITH_CAST
 			}
 		}
 		setDirty();
@@ -1300,36 +1283,19 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset isubtract(final Object b) {
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // GET_ELEMENT_WITH_CAST
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] -= db;
-				}
-			} else if (bis == isize) {
-				while (it1.hasNext() && it2.hasNext()) {
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] -= bds.getElementDoubleAbs(it2.index + i); // GET_ELEMENT
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex] -= it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] -= it.bDouble; // ADD_CAST
 			}
 		} else {
-			final double[] vr = toDoubleArray(b, isize); // PRIM_TYPE // CLASS_TYPE
-			final IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				for (int i = 0; i < isize; i++)
-					data[it1.index + i] -= vr[i];
+			while (it.hasNext()) {
+				data[it.aIndex] -= it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] -= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT_WITH_CAST
 			}
 		}
 		setDirty();
@@ -1338,36 +1304,19 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset imultiply(final Object b) {
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // GET_ELEMENT_WITH_CAST
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] *= db;
-				}
-			} else if (bis == isize) {
-				while (it1.hasNext() && it2.hasNext()) {
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] *= bds.getElementDoubleAbs(it2.index + i); // GET_ELEMENT
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				data[it.aIndex] *= it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] *= it.bDouble; // ADD_CAST
 			}
 		} else {
-			final double[] vr = toDoubleArray(b, isize); // PRIM_TYPE // CLASS_TYPE
-			final IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
-				for (int i = 0; i < isize; i++)
-					data[it1.index + i] *= vr[i];
+			while (it.hasNext()) {
+				data[it.aIndex] *= it.bDouble;
+				for (int i = 1; i < isize; i++)
+					data[it.aIndex + i] *= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT_WITH_CAST
 			}
 		}
 		setDirty();
@@ -1376,46 +1325,23 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset idivide(final Object b) {
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // GET_ELEMENT_WITH_CAST
-					// if (db == 0) { // INT_ZEROTEST
-					// for (int i = 0; i < isize; i++) // INT_ZEROTEST
-					// 	data[it1.index + i] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] /= db;
-					// } // INT_ZEROTEST
-				}
-			} else if (bis == isize) {
-				while (it1.hasNext() && it2.hasNext()) {
-					for (int i = 0; i < isize; i++) {
-						data[it1.index + i] /= bds.getElementDoubleAbs(it2.index + i); // GET_ELEMENT // INT_EXCEPTION
-					}
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				final double db = it.bDouble; // PRIM_TYPE // ADD_CAST
+				// if (db == 0) { // INT_ZEROTEST
+				// for (int i = 0; i < isize; i++) // INT_ZEROTEST
+				// 	data[it.aIndex + i] = 0; // INT_ZEROTEST
+				// } else { // INT_ZEROTEST
+				for (int i = 0; i < isize; i++)
+					data[it.aIndex + i] /= db;
+				// } // INT_ZEROTEST
 			}
 		} else {
-			final double[] vr = toDoubleArray(b, isize);
-			final IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			while (it.hasNext()) {
 				for (int i = 0; i < isize; i++) {
-					// if (vr[i] == 0) { // INT_ZEROTEST
-					// 	data[it1.index + i] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					data[it1.index + i] /= vr[i];
-					// } // INT_ZEROTEST
+					data[it.aIndex + i] /= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT // INT_EXCEPTION
 				}
 			}
 		}
@@ -1425,11 +1351,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset ifloor() {
-		final IndexIterator it1 = getIterator(); // REAL_ONLY
+		final IndexIterator it = getIterator(); // REAL_ONLY
 		// REAL_ONLY
-		while (it1.hasNext()) { // REAL_ONLY
+		while (it.hasNext()) { // REAL_ONLY
 			for (int i = 0; i < isize; i++) // REAL_ONLY
-				data[it1.index + i] = Math.floor(data[it1.index] + i); // REAL_ONLY // ADD_CAST
+				data[it.index + i] = Math.floor(data[it.index] + i); // REAL_ONLY // ADD_CAST
 		} // REAL_ONLY
 		setDirty(); // REAL_ONLY
 		return this;
@@ -1437,46 +1363,23 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundDoubleDataset iremainder(final Object b) {
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
-
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				while (it1.hasNext() && it2.hasNext()) {
-					final double db = bds.getElementDoubleAbs(it2.index); // PRIM_TYPE // GET_ELEMENT_WITH_CAST
-					// if (db == 0) { // INT_ZEROTEST
-					// for (int i = 0; i < isize; i++) // INT_ZEROTEST
-					// 	data[it1.index + i] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					for (int i = 0; i < isize; i++)
-						data[it1.index + i] %= db;
-					// } // INT_ZEROTEST
-				}
-			} else if (bis == isize) {
-				while (it1.hasNext() && it2.hasNext()) {
-					for (int i = 0; i < isize; i++) {
-						data[it1.index + i] %= bds.getElementDoubleAbs(it2.index + i); // GET_ELEMENT // INT_EXCEPTION
-					}
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
+		if (bds.getElementsPerItem() == 1) {
+			while (it.hasNext()) {
+				final double db = it.bDouble; // PRIM_TYPE // ADD_CAST
+				// if (db == 0) { // INT_ZEROTEST
+				// for (int i = 0; i < isize; i++) // INT_ZEROTEST
+				// 	data[it.aIndex + i] = 0; // INT_ZEROTEST
+				// } else { // INT_ZEROTEST
+				for (int i = 0; i < isize; i++)
+					data[it.aIndex + i] %= db;
+				// } // INT_ZEROTEST
 			}
 		} else {
-			final double[] vr = toDoubleArray(b, isize);
-			final IndexIterator it1 = getIterator();
-
-			while (it1.hasNext()) {
+			while (it.hasNext()) {
 				for (int i = 0; i < isize; i++) {
-					// if (vr[i] == 0) { // INT_ZEROTEST
-					// 	data[it1.index + i] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					data[it1.index + i] %= vr[i];
-					// } // INT_ZEROTEST
+					data[it.aIndex + i] %= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT // INT_EXCEPTION
 				}
 			}
 		}
@@ -1542,185 +1445,133 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 	@Override
 	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
+		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		double sum = 0;
-		if (b instanceof Dataset) {
-			final Dataset bds = (Dataset) b;
-			checkCompatibility(bds);
+		double comp = 0;
+		final int bis = bds.getElementsPerItem();
 
-			final IndexIterator it1 = getIterator();
-			final IndexIterator it2 = bds.getIterator();
-			final int bis = bds.getElementsPerItem();
-
-			if (bis == 1) {
-				double comp = 0;
-				if (w == null) {
-					while (it1.hasNext() && it2.hasNext()) {
-						final double db = bds.getElementDoubleAbs(it2.index);
-						if (ignoreNaNs) {
-							if (Double.isNaN(db))
-								continue;
-							boolean skip = false;
-							for (int i = 0; i < isize; i++) {
-								if (Double.isNaN(data[it1.index + i])) {
-									skip = true;
-									break;
-								}
-							}
-							if (skip) {
-								continue;
-							}
-						}
-						for (int i = 0; i < isize; i++) {
-							final double diff = data[it1.index + i] - db;
-							final double err = diff * diff - comp;
-							final double temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				} else {
-					final IndexIterator it3 = w.getIterator();
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-						final double db = bds.getElementDoubleAbs(it2.index);
-						final double dw = w.getElementDoubleAbs(it3.index);
-						if (ignoreNaNs) {
-							if (Double.isNaN(db))
-								continue;
-							boolean skip = false;
-							for (int i = 0; i < isize; i++) {
-								if (Double.isNaN(data[it1.index + i])) {
-									skip = true;
-									break;
-								}
-							}
-							if (skip) {
-								continue;
-							}
-						}
-						for (int i = 0; i < isize; i++) {
-							final double diff = (data[it1.index + i] - db);
-							final double err = diff * diff * dw - comp;
-							final double temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				}
-			} else if (bis == isize) {
-				double comp = 0;
-				if (w == null) {
-					while (it1.hasNext() && it2.hasNext()) {
-						if (ignoreNaNs) {
-							boolean skip = false;
-							for (int i = 0; i < isize; i++) {
-								if (Double.isNaN(data[it1.index + i])
-										|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
-									skip = true;
-									break;
-								}
-							}
-							if (skip) {
-								continue;
-							}
-						}
-						for (int i = 0; i < isize; i++) {
-							final double diff = data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i);
-							final double err = diff * diff - comp;
-							final double temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				} else {
-					final IndexIterator it3 = w.getIterator();
-					while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
-						if (ignoreNaNs) {
-							boolean skip = false;
-							for (int i = 0; i < isize; i++) {
-								if (Double.isNaN(data[it1.index + i])
-										|| Double.isNaN(bds.getElementDoubleAbs(it2.index + i))) {
-									skip = true;
-									break;
-								}
-							}
-							if (skip) {
-								continue;
-							}
-						}
-						final double dw = w.getElementDoubleAbs(it3.index);
-						for (int i = 0; i < isize; i++) {
-							final double diff = (data[it1.index + i] - bds.getElementDoubleAbs(it2.index + i));
-							final double err = diff * diff * dw - comp;
-							final double temp = sum + err;
-							comp = (temp - sum) - err;
-							sum = temp;
-						}
-					}
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"Argument does not have same number of elements per item or is not a non-compound dataset");
-			}
-		} else {
-			final double[] vr = toDoubleArray(b, isize);
-			final IndexIterator it1 = getIterator();
-
-			if (ignoreNaNs) {
-				boolean skip = false;
-				for (int i = 0; i < isize; i++) {
-					if (Double.isNaN(vr[i])) {
-						skip = true;
-						break;
-					}
-				}
-				if (skip) {
-					return sum;
-				}
-			}
-
-			double comp = 0;
+		if (bis == 1) {
 			if (w == null) {
-				while (it1.hasNext()) {
-					if (ignoreNaNs) {
-						boolean skip = false;
-						for (int i = 0; i < isize; i++) {
-							if (Double.isNaN(data[it1.index + i])) {
-								skip = true;
-								break;
-							}
-						}
-						if (skip) {
-							continue;
-						}
-					}
-					for (int i = 0; i < isize; i++) {
-						final double diff = data[it1.index + i] - vr[i];
-						final double err = diff * diff - comp;
-						final double temp = sum + err;
+				while (it.hasNext()) {
+					final double db = it.bDouble;
+					double diff = it.aDouble - db;
+					if (ignoreNaNs) { // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						boolean skip = false; // REAL_ONLY
+						for (int i = 1; i < isize; i++) { // REAL_ONLY
+							if (Double.isNaN(data[it.aIndex + i])) { // REAL_ONLY
+								skip = true; // REAL_ONLY
+								break; // REAL_ONLY
+							} // REAL_ONLY
+						} // REAL_ONLY
+						if (skip) { // REAL_ONLY
+							continue; // REAL_ONLY
+						} // REAL_ONLY
+					} // REAL_ONLY
+					double err = diff * diff - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+					for (int i = 1; i < isize; i++) {
+						diff = data[it.aIndex + i] - db;
+						err = diff * diff - comp;
+						temp = sum + err;
 						comp = (temp - sum) - err;
 						sum = temp;
 					}
 				}
 			} else {
-				final IndexIterator it3 = w.getIterator();
-				while (it1.hasNext() && it3.hasNext()) {
-					if (ignoreNaNs) {
-						boolean skip = false;
-						for (int i = 0; i < isize; i++) {
-							if (Double.isNaN(data[it1.index + i])) {
-								skip = true;
-								break;
-							}
-						}
-						if (skip) {
-							continue;
-						}
+				IndexIterator itw = w.getIterator();
+				while (it.hasNext() && itw.hasNext()) {
+					final double db = it.bDouble;
+					double diff = it.aDouble - db;
+					if (ignoreNaNs) { // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						boolean skip = false; // REAL_ONLY
+						for (int i = 1; i < isize; i++) { // REAL_ONLY
+							if (Double.isNaN(data[it.aIndex + i])) { // REAL_ONLY
+								skip = true; // REAL_ONLY
+								break; // REAL_ONLY
+							} // REAL_ONLY
+						} // REAL_ONLY
+						if (skip) { // REAL_ONLY
+							continue; // REAL_ONLY
+						} // REAL_ONLY
+					} // REAL_ONLY
+					final double dw = w.getElementDoubleAbs(itw.index);
+					double err = diff * diff * dw - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+					for (int i = 1; i < isize; i++) {
+						diff = data[it.aIndex + i] - db;
+						err = diff * diff * dw - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
 					}
-					final double dw = w.getElementDoubleAbs(it3.index);
-					for (int i = 0; i < isize; i++) {
-						final double diff = data[it1.index + i] - vr[i];
-						final double err = diff * diff * dw - comp;
-						final double temp = sum + err;
+				}
+			}
+		} else {
+			if (w == null) {
+				while (it.hasNext()) {
+					double diff = it.aDouble - it.bDouble;
+					if (ignoreNaNs) { // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						boolean skip = false; // REAL_ONLY
+						for (int i = 1; i < isize; i++) { // REAL_ONLY
+							if (Double.isNaN(data[it.aIndex + i]) || Double.isNaN(bds.getElementDoubleAbs(it.bIndex + i))) { // REAL_ONLY
+								skip = true; // REAL_ONLY
+								break; // REAL_ONLY
+							} // REAL_ONLY
+						} // REAL_ONLY
+						if (skip) { // REAL_ONLY
+							continue; // REAL_ONLY
+						} // REAL_ONLY
+					} // REAL_ONLY
+					double err = diff * diff - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+					for (int i = 1; i < isize; i++) {
+						diff = data[it.aIndex + i] - bds.getElementDoubleAbs(it.bIndex + i);
+						err = diff * diff - comp;
+						temp = sum + err;
+						comp = (temp - sum) - err;
+						sum = temp;
+					}
+				}
+			} else {
+				IndexIterator itw = w.getIterator();
+				while (it.hasNext() && itw.hasNext()) {
+					double diff = it.aDouble - it.bDouble;
+					if (ignoreNaNs) { // REAL_ONLY
+						if (Double.isNaN(diff)) // REAL_ONLY
+							continue; // REAL_ONLY
+						boolean skip = false; // REAL_ONLY
+						for (int i = 1; i < isize; i++) { // REAL_ONLY
+							if (Double.isNaN(data[it.aIndex + i]) || Double.isNaN(bds.getElementDoubleAbs(it.bIndex + i))) { // REAL_ONLY
+								skip = true; // REAL_ONLY
+								break; // REAL_ONLY
+							} // REAL_ONLY
+						} // REAL_ONLY
+						if (skip) { // REAL_ONLY
+							continue; // REAL_ONLY
+						} // REAL_ONLY
+					} // REAL_ONLY
+					final double dw = w.getElementDoubleAbs(itw.index);
+					double err = diff * diff * dw - comp;
+					double temp = sum + err;
+					comp = (temp - sum) - err;
+					sum = temp;
+					for (int i = 1; i < isize; i++) {
+						diff = data[it.aIndex + i] - bds.getElementDoubleAbs(it.bIndex + i);
+						err = diff * diff * dw - comp;
+						temp = sum + err;
 						comp = (temp - sum) - err;
 						sum = temp;
 					}

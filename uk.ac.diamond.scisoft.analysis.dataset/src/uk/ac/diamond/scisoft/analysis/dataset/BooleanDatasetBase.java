@@ -848,10 +848,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 	@Override
 	public BooleanDatasetBase idivide(final Object b) {
-			// if (v == 0) { // INT_ZEROTEST
-			// 	fill(0); // INT_ZEROTEST
-			// } else { // INT_ZEROTEST
-			// } // INT_ZEROTEST
 		return this;
 	}
 
@@ -862,34 +858,17 @@ public class BooleanDatasetBase extends AbstractDataset {
 
 	@Override
 	public BooleanDatasetBase iremainder(final Object b) {
-			// if (v == 0) { // INT_ZEROTEST
-			// 	fill(0); // INT_ZEROTEST
-			// } else { // INT_ZEROTEST
-			// } // INT_ZEROTEST
 		return this;
 	}
 
 	@Override
 	public BooleanDatasetBase ipower(final Object b) {
-				// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-				// 	data[it1.index] = 0; // INT_ZEROTEST
-				// } else { // INT_ZEROTEST
-				// } // INT_ZEROTEST
-					// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-					// 	data[it1.index] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					// } // INT_ZEROTEST
-					// if (Double.isInfinite(v) || Double.isNaN(v)) { // INT_ZEROTEST
-					// 	data[it1.index] = 0; // INT_ZEROTEST
-					// } else { // INT_ZEROTEST
-					// } // INT_ZEROTEST
 		return this;
 	}
 
 	@Override
 	public double residual(final Object b, final Dataset w, boolean ignoreNaNs) {
 		double sum = 0;
-
 		return sum;
 	}
 }

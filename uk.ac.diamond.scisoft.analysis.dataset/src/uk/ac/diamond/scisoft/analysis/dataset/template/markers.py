@@ -190,8 +190,11 @@ class transmutate(object):
             l = self.addcastmethod(l, self.dgetel)
         return l
 
-    def addcast(self, line, text=' = '):
-        return line.replace(text, text + self.dcast)
+    def addcast(self, line):
+        l = line
+        for t in [' = ', ' += ', ' -= ', ' *= ', ' /= ', ' %= ']:
+            l = l.replace(t, t + self.dcast)
+        return l
 
 #    t.rfind(separator.split(t)[-1]
     

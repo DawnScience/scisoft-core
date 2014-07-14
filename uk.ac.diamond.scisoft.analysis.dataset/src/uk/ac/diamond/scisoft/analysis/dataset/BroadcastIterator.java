@@ -78,7 +78,7 @@ public class BroadcastIterator extends IndexIterator {
 	/**
 	 * @param a
 	 * @param b
-	 * @param o (can be null for new shape, a or b)
+	 * @param o (can be null for new dataset, a or b)
 	 */
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o) {
 		this(a, b, o, false);
@@ -88,7 +88,7 @@ public class BroadcastIterator extends IndexIterator {
 	 * 
 	 * @param a
 	 * @param b
-	 * @param o (can be null for new shape, a or b)
+	 * @param o (can be null for new dataset, a or b)
 	 * @param createIfNull
 	 */
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o, boolean createIfNull) {

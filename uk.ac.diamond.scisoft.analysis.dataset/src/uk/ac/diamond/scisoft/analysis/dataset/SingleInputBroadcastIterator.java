@@ -63,7 +63,7 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 
 	/**
 	 * @param a
-	 * @param o (can be null for new shape, or a)
+	 * @param o (can be null for new dataset, or a)
 	 */
 	public SingleInputBroadcastIterator(Dataset a, Dataset o) {
 		this(a, o, false);
@@ -71,10 +71,21 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 
 	/**
 	 * @param a
-	 * @param o (can be null for new shape, or a)
-	 * @param createIfNull
+	 * @param o (can be null for new dataset, or a)
+	 * @param createIfNull (by default, can create float or complex datasets)
 	 */
 	public SingleInputBroadcastIterator(Dataset a, Dataset o, boolean createIfNull) {
+		this(a, o, createIfNull, false, true);
+	}
+
+	/**
+	 * @param a
+	 * @param o (can be null for new dataset, or a)
+	 * @param createIfNull
+	 * @param allowInteger if true, can create integer datasets
+	 * @param allowComplex if true, can create complex datasets
+	 */
+	public SingleInputBroadcastIterator(Dataset a, Dataset o, boolean createIfNull, boolean allowInteger, boolean allowComplex) {
 		List<int[]> fullShapes = BroadcastIterator.setupShapes(a.getShapeRef(), o == null ? null : o.getShapeRef());
 
 		checkItemSize(a, o);
@@ -104,8 +115,15 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 			oStep = o.getElementsPerItem();
 			oDataset = o;
 		} else if (createIfNull) {
-			int dt = AbstractDataset.getBestFloatDType(aDataset.getDtype());
-			oDataset = DatasetFactory.zeros(aDataset.getElementsPerItem(), maxShape, dt);
+			int is = aDataset.getElementsPerItem();
+			int dt = aDataset.getDtype();
+			if (aDataset.isComplex() && !allowComplex) {
+				is = 1;
+				dt = AbstractDataset.getBestFloatDType(dt);
+			} else if (!aDataset.hasFloatingPointElements() && !allowInteger) {
+				dt = AbstractDataset.getBestFloatDType(dt);
+			}
+			oDataset = DatasetFactory.zeros(is, maxShape, dt);
 			oStride = AbstractDataset.createBroadcastStrides(oDataset, maxShape);
 			oDelta = new int[rank];
 			oStep = oDataset.getElementsPerItem();

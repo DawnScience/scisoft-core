@@ -40,6 +40,20 @@ imaginary parts. The order of the function specification should be set
 as shown in the example. If integer code is not specified, then a case
 is automatically generated with a promoted dataset type: int 8 & 16 to
 float32 and int 32 & 64 to float64.
+
+Or a binary operation can be specified like:
+biop: [number of parameters]
+  add - a + b, addition of a and b
+integer:
+  ox = iax + ibx;
+real:
+  ox = iax + ibx;
+complex:
+  ox = iax + ibx;
+  oy = iay + iby;
+
+
+
 '''
 
 #
@@ -79,31 +93,101 @@ class StateMachine:
             else:
                 handler = newState
 
+is_binaryop = False
 
-def beginmethod(name, jdoc=None, params=0):
-    print("\t/**\n\t * %s - %s" %  (name, jdoc))
-    print("\t * @param a\n\t * @return dataset\n\t */")
-    print("\t@SuppressWarnings(\"cast\")")
+def oldmethod(name, jdoc=None, params=0):
+    if is_binaryop:
+        print("\t/**\n\t * %s operator" %  name)
+        print("\t * @param a")
+        print("\t * @param b")
+    else:
+        print("\t/**\n\t * %s - %s" %  (name, jdoc))
+        print("\t * @param a")
+
     plist = []
     if params > 0:
         plist = ["pa"]
         psig = "final Object " + plist[0]
-        for p in range(1,params):
+        for p in range(1, params):
             plist.append("p"+chr(ord('a')+p))
             psig += ", final Object " + plist[p]
-        print("\tpublic static AbstractDataset %s(final Dataset a, %s) {" % (name, psig))
+
+        ptext = ""
+        for p in plist:
+            print("\t * @param %s" % p)
+            ptext += "%s, " % p
+        ptext = ptext[:-2]
+        if is_binaryop:
+            print("\t * @return %s\n\t */" % jdoc)
+            print("\tpublic static AbstractDataset %s(final Object a, final Object b, %s) {" % (name, psig))
+            print ("\t\treturn %s(a, b, null, %s);" % (name, ptext))
+        else:
+            print("\t * @return dataset\n\t */")
+            print("\tpublic static AbstractDataset %s(final Object a, %s) {" % (name, psig))
+            print ("\t\treturn %s(a, null, %s);" % (name, ptext))
     else:
-        print("\tpublic static AbstractDataset %s(final Dataset a) {" % name)
-    print("\t\tfinal int isize;")
-    print("\t\tfinal IndexIterator it = a.getIterator();")
-    print("\t\tDataset ds;")
-    print("\t\tfinal int dt = a.getDtype();")
+        if is_binaryop:
+            print("\t * @return %s\n\t */" % jdoc)
+            print("\tpublic static AbstractDataset %s(final Object a, final Object b) {" % name)
+            print("\t\treturn %s(a, b, null);" % name)
+        else:
+            print("\t * @return dataset\n\t */")
+            print("\tpublic static AbstractDataset %s(final Object a) {" % name)
+            print("\t\treturn %s(a, null);" % name)
+    print("\t}\n")
+
+def beginmethod(name, jdoc=None, params=0):
+    oldmethod(name, jdoc, params)
+    if is_binaryop:
+        print("\t/**\n\t * %s operator" %  name)
+        print("\t * @param a")
+        print("\t * @param b")
+        print("\t * @param o output can be null - in which case, a new dataset is created")
+    else:
+        print("\t/**\n\t * %s - %s" %  (name, jdoc))
+        print("\t * @param a")
+        print("\t * @param o output can be null - in which case, a new dataset is created")
+
+    plist = []
+    if params > 0:
+        plist = ["pa"]
+        psig = "final Object " + plist[0]
+        for p in range(1, params):
+            plist.append("p"+chr(ord('a')+p))
+            psig += ", final Object " + plist[p]
+
+        for p in plist:
+            print("\t * @param %s" % p)
+        if is_binaryop:
+            print("\t * @return %s\n\t */" % jdoc)
+            print("\tpublic static AbstractDataset %s(final Object a, final Object b, final Dataset o, %s) {" % (name, psig))
+        else:
+            print("\t * @return dataset\n\t */")
+            print("\tpublic static AbstractDataset %s(final Object a, final Dataset o, %s) {" % (name, psig))
+    else:
+        if is_binaryop:
+            print("\t * @return %s\n\t */" % jdoc)
+            print("\tpublic static AbstractDataset %s(final Object a, final Object b, final Dataset o) {" % name)
+        else:
+            print("\t * @return dataset\n\t */")
+            print("\tpublic static AbstractDataset %s(final Object a, final Dataset o) {" % name)
+    print("\t\tfinal Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);")
+    if is_binaryop:
+        print("\t\tfinal Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);")
+        print("\t\tfinal BroadcastIterator it = new BroadcastIterator(da, db, o, true);")
+    else:
+        # TODO allow integer and complex datasets to be created
+        print("\t\tfinal SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);")
+    print("\t\tfinal Dataset result = it.getOutput();")
+    print("\t\tfinal int is = result.getElementsPerItem();")
+    print("\t\tfinal int dt = result.getDtype();")
     for p in plist:
         print("\t\tfinal double %s = AbstractDataset.toReal(%s);" % (p+"x", p))
 #        print("\t\tfinal double %s = AbstractDataset.toImag(%s);" % (p+"y", p))
 
     print("")
     print("\t\tswitch(dt) {")
+
 
 def endmethod(name, types):
     print("\t\tdefault:")
@@ -112,53 +196,44 @@ def endmethod(name, types):
         dtypes += ", %s" % t
     print("\t\t\tthrow new IllegalArgumentException(\"%s supports %s datasets only\");" % (name, dtypes))
     print("\t\t}\n")
-    print("\t\tds.setName(a.getName());")
-    print("\t\taddFunctionName(ds, \"%s\");" % name)
-    print("\t\treturn (AbstractDataset) ds;")
+    print("\t\taddFunctionName(result, \"%s\");" % name)
+    print("\t\treturn (AbstractDataset) result;")
     print("\t}\n")
 
-def sameloop(codedict, cprefix, vletter, text, oclass=None, otype=None, odtype=None):
+def sameloop(codedict, cprefix, vletter, text, use_long=False, override_long=False):
+    is_int = cprefix.endswith("INT")
     for w in codedict.keys():
         dtype = "%s%d" % (cprefix, w)
-        ivar = "%s%ddata" % (vletter,w)
-        itype, iclass = codedict[w]
+        otype, oclass = codedict[w]
         ovar = "o%s%ddata" % (vletter,w)
-        preloop(dtype, itype, iclass, ivar, oclass, ovar, otype, odtype)
-        loop(text, itype, ivar, ovar, otype)
+        preloop(dtype, otype, oclass, ovar, is_int, use_long, override_long=override_long)
+        loop(text, otype, ovar, is_int, use_long, override_long)
         postloop()
 
 def complexloop(codedict, cprefix, vletter, text, real):
+    is_int = cprefix.endswith("INT")
     for w in codedict.keys():
         dtype = "%s%d" % (cprefix, w)
-        ivar = "%s%ddata" % (vletter,w)
         ovar = "o%s%ddata" % (vletter,w)
-        itype, iclass, iwide = codedict[w]
-        odtype = None
-        if real:
-            if iclass.find("Complex") >= 0:
-                dummy, oclass = iclass.split("Complex",1)
-                odtype = "FLOAT%s" % iwide
-            else:
-                raise ValueError, "Cannot find complex class"
-        else:
-            oclass = iclass
-        preloop(dtype, itype, iclass, ivar, oclass, ovar, odtype=odtype)
-        loopcomplex(text, itype, ivar, ovar, real)
+        otype, oclass, owide = codedict[w]
+        preloop(dtype, otype, oclass, ovar, is_int)
+        loopcomplex(text, otype, ovar, real, is_int)
         postloop()
 
-def compoundloop(codedict, cprefix, vletter, text, oclass=None, otype=None, odtype=None):
+def compoundloop(codedict, cprefix, vletter, text, use_long=False, override_long=False):
+    is_int = cprefix.endswith("INT")
     for w in codedict.keys():
         dtype = "%s%d" % (cprefix, w)
-        ivar = "%s%ddata" % (vletter,w)
         ovar = "o%s%ddata" % (vletter,w)
-        itype, iclass = codedict[w]
-        preloopcompound(dtype, itype, iclass, ivar, oclass, ovar, otype, odtype)
-        loopcompound(text, itype, ivar, ovar, otype)
+        otype, oclass = codedict[w]
+        preloop(dtype, otype, oclass, ovar, is_int, use_long, override_long=override_long)
+        loopcompound(text, otype, ovar, is_int, use_long, override_long)
         postloop()
 
-def deftemps(text, jtype, lprefix):
+def deftemps(text, jtype, lprefix, vars):
 #    vars = { 'ox':jtype, 'oy':jtype }
-    vars = {}
+    if vars is None:
+        vars = {}
     for t in text:
         # need to build up list of temporaries
         if t.find(" = ") >= 0:
@@ -179,77 +254,186 @@ def deftemps(text, jtype, lprefix):
                     print "%s%s %s;" % (lprefix, jtype, lhs)
     return vars
 
-def transtext(text, jtype, otype=None, lprefix="\t\t\t\t"):
+def transtext(text, jtype, otype=None, lprefix="\t\t\t\t", is_int=True, use_long=False, override_long=False, vars=None):
     if otype == None:
         otype = jtype
-    vars = deftemps(text, otype, lprefix)
+    vars = deftemps(text, jtype, lprefix, vars)
+
+    if is_int:
+        jprim = "long"
+        if is_binaryop and not override_long:
+            jconv = ""
+        else:
+            jconv = "toLong"
+    else:
+        jprim = "double"
+        jconv = ""
+
     for t in text:
         # need to build up list of temporaries
         if t.find(" = ") >= 0:
-            lhs, rhs = t.split(" = ",1)
+            lhs, rhs = t.split(" = ", 1)
             slhs = lhs.strip()
             if slhs not in vars:
                 raise ValueError, "Cannot find class of new variable in line: %s" % t
             if t.find(" new") < 0:
-                print "%s%s = (%s) (%s);" % (lprefix, lhs, vars[slhs], rhs[:-2])
+                rhs = rhs[:-2]
+                if rhs == "0":
+                    print "%s%s = 0;" % (lprefix, lhs)
+                elif vars[slhs] == jprim:
+                    print "%s%s = %s(%s);" % (lprefix, lhs, jconv, rhs)
+                else:
+                    print "%s%s = (%s) %s(%s);" % (lprefix, lhs, vars[slhs], jconv, rhs)
             else:
                 print "%s%s" % (lprefix, t),
         else:
             print "%s%s" % (lprefix, t),
 
-#    print("vars used", vars)
+    return vars
 
-def loop(text, jtype, ivar, ovar, otype):
-    print("\t\t\tfor (int i = 0; it.hasNext();) {")
-    print("\t\t\t\tfinal %s %s = %s[it.index];" % (jtype, "ix", ivar))
-    transtext(text, jtype, otype)
-    print("\t\t\t\t%s[i++] = %s;" % (ovar, "ox"))
+def loop(text, jtype, ovar, is_int, use_long, override_long):
+    if is_int and use_long:
+        jprim = "long"
+        jbox = "Long"
+    else:
+        jprim = "double"
+        jbox = "Double"
+
+    print("\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\tfinal %s iax = it.a%s;" % (jprim, jbox))
+        print("\t\t\t\tfinal %s ibx = it.b%s;" % (jprim, jbox))
+    else:
+        print("\t\t\t\tfinal %s ix = it.a%s;" % (jprim, jbox))
+    transtext(text, jtype, is_int=is_int, use_long=use_long, override_long=override_long)
+    print("\t\t\t\t%s[it.oIndex] = ox;" % ovar)
     print("\t\t\t}")
 
-def loopcomplex(text, jtype, ivar, ovar, real):
-    print("\t\t\tfor (int i = 0; it.hasNext();) {")
-    print("\t\t\t\tfinal %s %s = %s[it.index];" % (jtype, "ix", ivar))
-    print("\t\t\t\tfinal %s %s = %s[it.index+1];" % (jtype, "iy", ivar))
-    transtext(text, jtype)
-    print("\t\t\t\t%s[i++] = %s;" % (ovar, "ox"))
+def loopcomplex(text, jtype, ovar, real, is_int):
+    print("\t\t\tif (da.getElementsPerItem() == 1) {")
+    if is_binaryop:
+        print("\t\t\t\tfinal double iay = 0;")
+    else:
+        print("\t\t\t\tfinal double iy = 0;")
+    print("\t\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\t\tfinal double iax = it.aDouble;")
+        print("\t\t\t\t\tfinal double ibx = it.bDouble;")
+        print("\t\t\t\t\tfinal double iby = db.getElementDoubleAbs(it.bIndex + 1);")
+    else:
+        print("\t\t\t\t\tfinal double ix = it.aDouble;")
+    transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int)
+    print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
     if not real:
-        print("\t\t\t\t%s[i++] = %s;" % (ovar, "oy"))
-    print("\t\t\t}")
-
-def loopcompound(text, jtype, ivar, ovar, otype):
-    print("\t\t\tfor (int i = 0; it.hasNext();) {")
-    print("\t\t\t\tfor (int j = 0; j < isize; j++) {")
-    print("\t\t\t\t\tfinal %s %s = %s[it.index+j];" % (jtype, "ix", ivar))
-    transtext(text, jtype, otype, lprefix="\t\t\t\t\t")
-    print("\t\t\t\t\t%s[i++] = %s;" % (ovar, "ox"))
+        print("\t\t\t\t\t%s[it.oIndex + 1] = oy;" % ovar)
+    print("\t\t\t\t}")
+    if is_binaryop:
+        print("\t\t\t} else if (db.getElementsPerItem() == 1) {")
+        print("\t\t\t\tfinal double iby = 0;")
+        print("\t\t\t\twhile (it.hasNext()) {")
+        print("\t\t\t\t\tfinal double iax = it.aDouble;")
+        print("\t\t\t\t\tfinal double ibx = it.bDouble;")
+        print("\t\t\t\t\tfinal double iay = da.getElementDoubleAbs(it.aIndex + 1);")
+        transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int)
+        print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+        if not real:
+            print("\t\t\t\t\t%s[it.oIndex + 1] = oy;" % ovar)
+        print("\t\t\t\t}")
+    print("\t\t\t} else {")
+    print("\t\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\t\tfinal double iax = it.aDouble;")
+        print("\t\t\t\t\tfinal double ibx = it.bDouble;")
+        print("\t\t\t\t\tfinal double iay = da.getElementDoubleAbs(it.aIndex + 1);")
+        print("\t\t\t\t\tfinal double iby = db.getElementDoubleAbs(it.bIndex + 1);")
+    else:
+        print("\t\t\t\t\tfinal double ix = it.aDouble;")
+        print("\t\t\t\t\tfinal double iy = da.getElementDoubleAbs(it.aIndex + 1);")
+    transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int)
+    print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+    if not real:
+        print("\t\t\t\t\t%s[it.oIndex + 1] = oy;" % ovar)
     print("\t\t\t\t}")
     print("\t\t\t}")
 
+def loopcompound(text, jtype, ovar, is_int, use_long, override_long):
+    if is_int and use_long:
+        jprim = "long"
+        jbox = "Long"
+    else:
+        jprim = "double"
+        jbox = "Double"
+    print("\t\t\tif (is == 1) {")
+    print("\t\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\t\tfinal %s iax = it.a%s;" % (jprim, jbox))
+        print("\t\t\t\t\tfinal %s ibx = it.b%s;" % (jprim, jbox))
+    else:
+        print("\t\t\t\t\tfinal %s ix = it.a%s;" % (jprim, jbox))
+    transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int, override_long=override_long)
+    print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+    print("\t\t\t\t}")
+    print("\t\t\t} else if (da.getElementsPerItem() == 1) {")
+    print("\t\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\t\tfinal %s iax = it.a%s;" % (jprim, jbox))
+        print("\t\t\t\t\t%s ibx = it.b%s;" % (jprim, jbox))
+        vars = transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int, override_long=override_long)
+        print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+        print("\t\t\t\t\tfor (int j = 1; j < is; j++) {")
+        print("\t\t\t\t\t\tibx = db.getElement%sAbs(it.bIndex + j);" % jbox)
+        transtext(text, jtype, lprefix="\t\t\t\t\t\t", is_int=is_int, vars=vars, override_long=override_long)
+        print("\t\t\t\t\t\t%s[it.oIndex + j] = ox;" % ovar)
+        print("\t\t\t\t\t}")
+        print("\t\t\t\t}")
+    else:
+        print("\t\t\t\t\tfinal %s ix = it.a%s;" % (jprim, jbox))
+        transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int, override_long=override_long)
+        print("\t\t\t\t\tfor (int j = 0; j < is; j++) {")
+        print("\t\t\t\t\t\t%s[it.oIndex + j] = ox;" % ovar)
+        print("\t\t\t\t\t}")
+        print("\t\t\t\t}")
+    if is_binaryop:
+        print("\t\t\t} else if (db.getElementsPerItem() == 1) {")
+        print("\t\t\t\twhile (it.hasNext()) {")
+        print("\t\t\t\t\t%s iax = it.a%s;" % (jprim, jbox))
+        print("\t\t\t\t\tfinal %s ibx = it.b%s;" % (jprim, jbox))
+        vars = transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int, override_long=override_long)
+        print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+        print("\t\t\t\t\tfor (int j = 1; j < is; j++) {")
+        print("\t\t\t\t\t\tiax = da.getElement%sAbs(it.aIndex + j);" % jbox)
+        transtext(text, jtype, lprefix="\t\t\t\t\t\t", is_int=is_int, vars=vars, override_long=override_long)
+        print("\t\t\t\t\t\t%s[it.oIndex + j] = ox;" % ovar)
+        print("\t\t\t\t\t}")
+        print("\t\t\t\t}")
+    print("\t\t\t} else {")
+    print("\t\t\t\twhile (it.hasNext()) {")
+    if is_binaryop:
+        print("\t\t\t\t\t%s iax = it.a%s;" % (jprim, jbox))
+        print("\t\t\t\t\t%s ibx = it.b%s;" % (jprim, jbox))
+        vars = transtext(text, jtype, lprefix="\t\t\t\t\t", is_int=is_int, override_long=override_long)
+        print("\t\t\t\t\t%s[it.oIndex] = ox;" % ovar)
+        print("\t\t\t\t\tfor (int j = 1; j < is; j++) {")
+        print("\t\t\t\t\t\tiax = da.getElement%sAbs(it.aIndex + j);" % jbox)
+        print("\t\t\t\t\t\tibx = db.getElement%sAbs(it.bIndex + j);" % jbox)
+    else:
+        vars = None
+        print("\t\t\t\t\tfor (int j = 0; j < is; j++) {")
+        print("\t\t\t\t\t\tfinal %s ix = da.getElement%sAbs(it.aIndex + j);" % (jprim, jbox))
+    transtext(text, jtype, lprefix="\t\t\t\t\t\t", is_int=is_int, vars=vars, override_long=override_long)
+    print("\t\t\t\t\t\t%s[it.oIndex + j] = ox;" % ovar)
+    print("\t\t\t\t\t}")
+    print("\t\t\t\t}")
+    print("\t\t\t}")
 
-def preloop(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=None, odtype=None):
-    if oclass == None:
-        oclass = iclass
-    if otype == None:
-        otype = itype
-    if odtype == None:
-        odtype = dtype
+def preloop(dtype, otype, oclass, ovar=None, is_int=True, use_long=False, override_long=False):
     print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = DatasetFactory.zeros(a, Dataset.%s);" % odtype)
-    print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
-    print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
-
-def preloopcompound(dtype, itype, iclass, ivar, oclass=None, ovar=None, otype=None, odtype=None):
-    if oclass == None:
-        oclass = iclass
-    if otype == None:
-        otype = itype
-    if odtype == None:
-        odtype = dtype
-    print("\t\tcase Dataset.%s:" % dtype)
-    print("\t\t\tds = DatasetFactory.zeros(a, Dataset.%s);" % odtype)
-    print("\t\t\tisize = a.getElementsPerItem();")
-    print("\t\t\tfinal %s[] %s = ((%s) a).data;" % (itype, ivar, iclass))
-    print("\t\t\tfinal %s[] %s = ((%s) ds).getData();" % (otype, ovar, oclass))
+    print("\t\t\tfinal %s[] %s = ((%s) result).data;" % (otype, ovar, oclass))
+    if is_binaryop or use_long:
+        if is_int and not override_long:
+            print("\t\t\tit.setDoubleOutput(false);\n")
+        else:
+            print("\t\t\tit.setDoubleOutput(true);\n")
 
 def postloop():
     print("\t\t\tbreak;")
@@ -257,7 +441,14 @@ def postloop():
 
 def func(cargo):
     f, last = cargo
-    dummy, params = last.split("func:", 1)
+    global is_binaryop
+    if "func" in last:
+        dummy, params = last.split("func:", 1)
+        is_binaryop = False
+    else:
+        dummy, params = last.split("biop:", 1)
+        is_binaryop = True
+
     params = params.strip()
     if len(params) > 0:
         nparams = int(params)
@@ -302,14 +493,17 @@ def cases(cargo):
 
 
 def whichcode(line):
+    global is_binaryop
     typespec, out = line.split(":", 1)
     if typespec == "integer":
         return icode, out
+    elif typespec == "integer_with_reals":
+        return ircode, out
     elif typespec == "real":
         return rcode, out
     elif typespec == "complex":
         return ccode, out
-    elif typespec == "func":
+    elif "func" in typespec or typespec == "biop":
         return None, None
     else:
         return None, out
@@ -342,11 +536,26 @@ def icode(cargo):
 #    print text
     sameloop({ 8 : ("byte", "ByteDataset"), 16 : ("short", "ShortDataset"),
                 32 : ("int", "IntegerDataset"), 64 : ("long", "LongDataset") },
-                "INT", "i", text)
+                "INT", "i", text, use_long=True)
     types.append("integer")
     compoundloop({ 8 : ("byte", "CompoundByteDataset"), 16 : ("short", "CompoundShortDataset"),
                 32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
-                "ARRAYINT", "ai", text)
+                "ARRAYINT", "ai", text, use_long=True)
+    types.append("compound integer")
+    return cases, (f, last, name, types)
+
+def ircode(cargo):
+    f, all, name, types = cargo
+    text, last = getcode(f)
+#    print "int case:", name
+#    print text
+    sameloop({ 8 : ("byte", "ByteDataset"), 16 : ("short", "ShortDataset"),
+                32 : ("int", "IntegerDataset"), 64 : ("long", "LongDataset") },
+                "INT", "i", text, override_long=True)
+    types.append("integer")
+    compoundloop({ 8 : ("byte", "CompoundByteDataset"), 16 : ("short", "CompoundShortDataset"),
+                32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
+                "ARRAYINT", "ai", text, override_long=True)
     types.append("compound integer")
     return cases, (f, last, name, types)
 
@@ -355,17 +564,14 @@ def rcode(cargo):
     text, last = getcode(f)
 #    print "real case:", name
 #    print text
-# TODO check for integer type and promote if not found
     if "integer" not in types:
-        sameloop({ 8 : ("byte", "ByteDataset"), 16 : ("short", "ShortDataset") },
-                "INT", "i", text, oclass="FloatDataset", otype="float", odtype="FLOAT32")
-        sameloop({ 32 : ("int", "IntegerDataset"), 64 : ("long", "LongDataset") },
-                "INT", "i", text, oclass="DoubleDataset", otype="double", odtype="FLOAT64")
+        sameloop({ 8 : ("byte", "ByteDataset"), 16 : ("short", "ShortDataset"),
+                    32 : ("int", "IntegerDataset"), 64 : ("long", "LongDataset") },
+                    "INT", "i", text)
         types.append("integer")
-        compoundloop({ 8 : ("byte", "CompoundByteDataset"), 16 : ("short", "CompoundShortDataset") },
-                "ARRAYINT", "ai", text, oclass="CompoundFloatDataset", otype="float", odtype="ARRAYFLOAT32")
-        compoundloop({ 32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
-                "ARRAYINT", "ai", text, oclass="CompoundDoubleDataset", otype="double", odtype="ARRAYFLOAT64")
+        compoundloop({ 8 : ("byte", "CompoundByteDataset"), 16 : ("short", "CompoundShortDataset"),
+                    32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
+                    "ARRAYINT", "ai", text)
         types.append("compound integer")
 
     sameloop({ 32: ("float", "FloatDataset"), 64 : ("double", "DoubleDataset") },
@@ -403,9 +609,9 @@ def parsefile(cargo):
             return eof, (f, l)
         l = l.strip(' ')
         if len(l) > 0:
-            if l.find("func:") < 0:
-                raise ValueError, "Line is not a function definition: %s" % l
-            return func, (f, l)
+            if l.find("func:") >= 0 or l.find("biop:") >= 0:
+                return func, (f, l)
+            raise ValueError, "Line is not a function definition: %s" % l
 
 def eof(cargo):
     pass
@@ -416,6 +622,7 @@ def generatefunctions(funcs_file):
     m.add_state(func)
     m.add_state(cases)
     m.add_state(icode)
+    m.add_state(ircode)
     m.add_state(rcode)
     m.add_state(ccode)
     m.add_state(eof, end_state=1)
@@ -448,14 +655,14 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
         fname = sys.argv[1]
-        funcs_file = open(fname, 'r')
     else:
-        funcs_file = sys.stdin
+        fname = "functions.txt"
+    funcs_file = open(fname, 'r')
 
     if len(sys.argv) > 2:
         fname = sys.argv[2]
     else:
-        fname = "Maths.txt"
+        fname = "../Maths.java"
     shell_file = open(fname, 'r')
 
     generateclass(funcs_file, shell_file)

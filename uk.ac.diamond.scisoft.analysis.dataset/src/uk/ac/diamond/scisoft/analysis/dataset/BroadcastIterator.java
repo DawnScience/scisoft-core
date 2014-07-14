@@ -57,7 +57,14 @@ public class BroadcastIterator extends IndexIterator {
 	/**
 	 * Current value in array
 	 */
-	public double aValue, bValue;
+	public double aDouble, bDouble;
+
+	/**
+	 * Current value in array
+	 */
+	public long aLong, bLong;
+
+	private boolean asDouble = true;
 
 	/**
 	 * 
@@ -85,9 +92,9 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param createIfNull
 	 */
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o, boolean createIfNull) {
-		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef());
+		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		checkItemSize(a, b);
+		checkItemSize(a, b, o);
 
 		maxShape = fullShapes.remove(0);
 
@@ -168,13 +175,28 @@ public class BroadcastIterator extends IndexIterator {
 		reset();
 	}
 
-	private static void checkItemSize(Dataset a, Dataset b) {
+	/**
+	 * Set to output doubles
+	 * @param asDouble
+	 */
+	public void setDoubleOutput(boolean asDouble) {
+		this.asDouble = asDouble;
+	}
+
+	private static void checkItemSize(Dataset a, Dataset b, Dataset o) {
 		final int isa = a.getElementsPerItem();
 		final int isb = b.getElementsPerItem();
-		if (isa != isb && (isa != 1 || isb != 1)) {
+		final int ism = Math.max(isa, isb);
+		if (isa != isb && ism != 1) {
 			// exempt single-value dataset case too
 			if ((isa == 1 || b.getSize() != 1) && (isb == 1 || a.getSize() != 1) ) {
 				throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal another");
+			}
+		}
+		if (o != null) {
+			final int iso = o.getElementsPerItem();
+			if (iso != ism && ism != 1) {
+				throw new IllegalArgumentException("Can not output to dataset whose number of elements per item mismatch inputs'");
 			}
 		}
 	}
@@ -300,6 +322,9 @@ public class BroadcastIterator extends IndexIterator {
 	static List<int[]> setupShapes(int[]... shapes) {
 		int maxRank = -1;
 		for (int[] s : shapes) {
+			if (s == null)
+				continue;
+
 			int r = s.length;
 			if (r > maxRank) {
 				maxRank = r;
@@ -308,6 +333,8 @@ public class BroadcastIterator extends IndexIterator {
 
 		List<int[]> newShapes = new ArrayList<int[]>();
 		for (int[] s : shapes) {
+			if (s == null)
+				continue;
 			newShapes.add(padShape(s, maxRank - s.length));
 		}
 
@@ -373,10 +400,18 @@ public class BroadcastIterator extends IndexIterator {
 		}
 
 		if (oldA != aIndex) {
-			aValue = aDataset.getElementDoubleAbs(aIndex);
+			if (asDouble) {
+				aDouble = aDataset.getElementDoubleAbs(aIndex);
+			} else {
+				aLong = aDataset.getElementLongAbs(aIndex);
+			}
 		}
 		if (oldB != bIndex) {
-			bValue = bDataset.getElementDoubleAbs(bIndex);
+			if (asDouble) {
+				bDouble = bDataset.getElementDoubleAbs(bIndex);
+			} else {
+				bLong = bDataset.getElementLongAbs(bIndex);
+			}
 		}
 
 		return aIndex != aMax && bIndex != bMax;
@@ -412,12 +447,20 @@ public class BroadcastIterator extends IndexIterator {
 
 		// for zero-ranked datasets
 		if (aIndex == 0) {
-			aValue = aDataset.getElementDoubleAbs(aIndex);
+			if (asDouble) {
+				aDouble = aDataset.getElementDoubleAbs(aIndex);
+			} else {
+				aLong = aDataset.getElementLongAbs(aIndex);
+			}
 			if (aMax == aIndex)
 				aMax++;
 		}
 		if (bIndex == 0) {
-			bValue = bDataset.getElementDoubleAbs(bIndex);
+			if (asDouble) {
+				bDouble = bDataset.getElementDoubleAbs(bIndex);
+			} else {
+				bLong = bDataset.getElementLongAbs(bIndex);
+			}
 			if (bMax == bIndex)
 				bMax++;
 		}

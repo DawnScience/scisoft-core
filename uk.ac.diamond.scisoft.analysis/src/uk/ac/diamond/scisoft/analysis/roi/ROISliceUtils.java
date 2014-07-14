@@ -143,7 +143,7 @@ public class ROISliceUtils {
 		
 		sl[dim] = new Slice(0,1);
 
-		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl).squeeze(),Dataset.FLOAT32);
+		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl),Dataset.FLOAT32);
 		AbstractDataset result = AbstractDataset.zeros(datasetStart, Dataset.FLOAT32);
 		AbstractDataset datasetEnd = AbstractDataset.zeros(datasetStart);
 
@@ -158,7 +158,7 @@ public class ROISliceUtils {
 			result.iadd(datasetStart);
 			datasetStart = datasetEnd;
 		}
-		return result;
+		return result.squeeze();
 	}
 	
 	/**

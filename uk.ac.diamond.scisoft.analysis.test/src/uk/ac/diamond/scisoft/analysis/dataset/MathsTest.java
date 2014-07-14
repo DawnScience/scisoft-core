@@ -95,7 +95,7 @@ public class MathsTest {
 						else
 							System.err.printf("B was %s ", b);
 					}
-					System.err.printf("\n");
+					System.err.printf("at %s\n", Arrays.toString(ci.getPos()));
 				}
 				Assert.assertEquals("Value does not match at " + Arrays.toString(ci.getPos()) + ", with tol " + tol + ": ",
 						av, bv, tol);
@@ -119,7 +119,7 @@ public class MathsTest {
 							else
 								System.err.printf("B was %s ", b);
 						}
-						System.err.printf("\n");
+						System.err.printf("at %s\n", Arrays.toString(ci.getPos()));
 					}
 					Assert.assertEquals("Value does not match at " + Arrays.toString(ci.getPos()) + "; " + j +
 							", with tol " + tol + ": ", av, bv, tol);
@@ -135,6 +135,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -172,6 +173,7 @@ public class MathsTest {
 						c = Maths.add(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					}
 					start += System.nanoTime();
@@ -274,7 +276,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.add(a, dv);
+				try {
+					c = Maths.add(a, dv);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -316,6 +324,10 @@ public class MathsTest {
 				n *= SSTEP;
 			}
 		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
+		}
 	}
 
 	@Test
@@ -325,6 +337,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -362,6 +375,7 @@ public class MathsTest {
 						c = Maths.subtract(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					}
 					start += System.nanoTime();
@@ -465,7 +479,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.subtract(a, dv);
+				try {
+					c = Maths.subtract(a, dv);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -524,7 +544,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.subtract(dv, a);
+				try {
+					c = Maths.subtract(dv, a);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -566,6 +592,10 @@ public class MathsTest {
 				n *= SSTEP;
 			}
 		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
+		}
 	}
 
 	@Test
@@ -575,6 +605,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -613,6 +644,7 @@ public class MathsTest {
 						c = Maths.multiply(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					}
 					start += System.nanoTime();
@@ -716,7 +748,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.multiply(a, dv);
+				try {
+					c = Maths.multiply(a, dv);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -758,6 +796,10 @@ public class MathsTest {
 				n *= SSTEP;
 			}
 		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
+		}
 	}
 
 	@Test
@@ -767,6 +809,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -805,6 +848,7 @@ public class MathsTest {
 						c = Maths.divide(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					}
 					start += System.nanoTime();
@@ -827,7 +871,14 @@ public class MathsTest {
 							&& !(etype == Dataset.COMPLEX64 || etype == Dataset.COMPLEX128)) {
 						final int is = d.getElementsPerItem();
 						while (ita.hasNext() && itb.hasNext()) {
-							d.setObjectAbs(j, ((Complex) a.getObjectAbs(ita.index)).divide(new Complex(b.getElementDoubleAbs(itb.index), 0)));
+							Complex z = (Complex) a.getObjectAbs(ita.index);
+							double br = b.getElementDoubleAbs(itb.index);
+							Complex zr = z.divide(br);
+							if (br == 0) { // CM's implementation is different to NumPy's
+								zr = new Complex(z.getReal() != 0 ? z.getReal() / br : zr.getReal(),
+										z.getImaginary() != 0 ? z.getImaginary() / br : zr.getImaginary());
+							}
+							d.setObjectAbs(j, zr);
 							j += is;
 						}
 					} else if (!(dtype == Dataset.COMPLEX64 || dtype == Dataset.COMPLEX128)
@@ -939,7 +990,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.divide(a, dv);
+				try {
+					c = Maths.divide(a, dv);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -998,7 +1055,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.divide(dv, a);
+				try {
+					c = Maths.divide(dv, a);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -1040,6 +1103,10 @@ public class MathsTest {
 				n *= SSTEP;
 			}
 		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
+		}
 	}
 
 	@Test
@@ -1049,6 +1116,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -1087,6 +1155,7 @@ public class MathsTest {
 						c = Maths.remainder(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					} catch (UnsupportedOperationException ue) {
 						System.out.println("Could not perform this operation: " + ue.getMessage());
@@ -1172,6 +1241,7 @@ public class MathsTest {
 					c = Maths.remainder(a, dv);
 				} catch (IllegalArgumentException e) {
 					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
 					continue;
 				} catch (UnsupportedOperationException ue) {
 					System.out.println("Could not perform this operation: " + ue.getMessage());
@@ -1229,6 +1299,7 @@ public class MathsTest {
 					c = Maths.remainder(dv, a);
 				} catch (IllegalArgumentException e) {
 					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
 					continue;
 				} catch (UnsupportedOperationException ue) {
 					System.out.println("Could not perform this operation: " + ue.getMessage());
@@ -1265,6 +1336,10 @@ public class MathsTest {
 				n *= SSTEP;
 			}
 		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
+		}
 	}
 
 	@Test
@@ -1274,6 +1349,7 @@ public class MathsTest {
 		final double dv = zv.getReal();
 		long start;
 		int n;
+		int eCount = 0;
 
 		for (String dn : classes.keySet()) {
 			final int dtype = classes.get(dn);
@@ -1312,6 +1388,7 @@ public class MathsTest {
 						c = Maths.power(a, b);
 					} catch (IllegalArgumentException e) {
 						System.out.println("Could not perform this operation: " + e.getMessage());
+						eCount++;
 						continue;
 					}
 					start += System.nanoTime();
@@ -1347,8 +1424,8 @@ public class MathsTest {
 					} else {
 						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
 							while (ita.hasNext() && itb.hasNext()) {
-								d.setObjectAbs(j++, Math.pow(((Number) a.getObjectAbs(ita.index)).doubleValue(),
-												((Number) b.getObjectAbs(itb.index)).doubleValue()));
+								d.setObjectAbs(j++, Math.pow(a.getElementDoubleAbs(ita.index),
+												b.getElementDoubleAbs(itb.index)));
 							}
 						} else {
 							final double[] answer = new double[MAXISIZE];
@@ -1439,7 +1516,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.power(a, dv);
+				try {
+					c = Maths.power(a, dv);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -1498,7 +1581,13 @@ public class MathsTest {
 				}
 
 				start = -System.nanoTime();
-				c = Maths.power(dv, a);
+				try {
+					c = Maths.power(dv, a);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Could not perform this operation: " + e.getMessage());
+					eCount++;
+					continue;
+				}
 				start += System.nanoTime();
 				double ntime = ((double) start)/c.getSize();
 
@@ -1539,6 +1628,10 @@ public class MathsTest {
 
 				n *= SSTEP;
 			}
+		}
+
+		if (eCount > 0) {
+			System.err.printf("Number of exceptions caught: %d\n", eCount);
 		}
 	}
 

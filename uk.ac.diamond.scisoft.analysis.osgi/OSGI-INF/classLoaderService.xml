@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="Class Loader Service">
    <implementation class="uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl"/>
    <service>
-      <provide interface="org.dawb.common.services.IClassLoaderService"/>
+      <provide interface="py4j.ClassLoaderService"/>
    </service>
 </scr:component>

@@ -22,7 +22,6 @@ import uk.ac.diamond.scisoft.analysis.io.ILoaderService;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-//import org.dawb.fabio.FabioFile;
 
 /**
  * Provides a class which will use any loaders available to load a particular file

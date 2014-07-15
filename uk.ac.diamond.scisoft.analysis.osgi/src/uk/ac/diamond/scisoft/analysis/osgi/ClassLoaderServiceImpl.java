@@ -35,6 +35,7 @@ public class ClassLoaderServiceImpl extends AbstractServiceFactory implements Cl
 	private CompositeClassLoader loader;
 
 	public ClassLoaderServiceImpl() {
+		System.out.println("Starting class loader service");
 	}
 
 	private void init() {

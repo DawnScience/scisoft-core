@@ -19,6 +19,10 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 	private static final List<String> plugins = new ArrayList<String>();
 
 	private static final List<String> extensions = new ArrayList<String>();
+	
+	public LoaderFactoryExtensionService() {
+		System.out.println("Starting loader factory extension service");
+	}
 
 	@Override
 	public void registerExtensionPoints() {

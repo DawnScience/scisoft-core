@@ -33,6 +33,9 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  */
 public class LoaderServiceImpl extends AbstractServiceFactory implements ILoaderService {
 
+	public LoaderServiceImpl() {
+		System.out.println("Starting loader service");
+	}
 	
 	@Override
 	public IDataHolder getData(String filePath, final IMonitor monitor) throws Throwable {

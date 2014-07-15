@@ -189,14 +189,18 @@ def beginmethod(name, jdoc=None, params=0):
     print("\t\tswitch(dt) {")
 
 
-def endmethod(name, types):
+def endmethod(name, jdoc, types):
     print("\t\tdefault:")
     dtypes = types[0]
     for t in types[1:]:
         dtypes += ", %s" % t
     print("\t\t\tthrow new IllegalArgumentException(\"%s supports %s datasets only\");" % (name, dtypes))
     print("\t\t}\n")
-    print("\t\taddFunctionName(result, \"%s\");" % name)
+    if is_binaryop:
+        opsym = jdoc.split()[1]
+        print("\t\taddBinaryOperatorName(da, db, result, \"%s\");" % opsym)
+    else:
+        print("\t\taddFunctionName(result, \"%s\");" % name)
     print("\t\treturn (AbstractDataset) result;")
     print("\t}\n")
 
@@ -463,12 +467,13 @@ def func(cargo):
             return eof, (f, l)
         l = l.strip(' ')
         name, jdoc = l.split(" - ", 1)
-        beginmethod(name, jdoc.strip(), nparams)
+        jdoc = jdoc.strip()
+        beginmethod(name, jdoc, nparams)
 #        if len(plist) > 0: print "Parameters", plist
-        return cases, (f, '', name, [])
+        return cases, (f, '', name, jdoc, [])
 
 def cases(cargo):
-    f, last, name, types = cargo
+    f, last, name, jdoc, types = cargo
 #    print "cases: |%s|, |%s|" % (name, last)
     while True:
         if last == None or len(last) > 0:
@@ -477,18 +482,18 @@ def cases(cargo):
         else:
             l = f.readline()
         if l == None:
-            endmethod(name, types)
+            endmethod(name, jdoc, types)
             return eof
         if len(l) > 0:
             code, out = whichcode(l)
             if code == None:
                 if out == None:
-                    endmethod(name, types)
+                    endmethod(name, jdoc, types)
                     return func, (f, l)
                 return parsefile, (f, l)
-            return code, (f, out, name, types)
+            return code, (f, out, name, jdoc, types)
         else:
-            endmethod(name, types)
+            endmethod(name, jdoc, types)
             return eof, None
 
 
@@ -530,7 +535,7 @@ def getcode(f):
     return text, l
 
 def icode(cargo):
-    f, all, name, types = cargo
+    f, all, name, jdoc, types = cargo
     text, last = getcode(f)
 #    print "int case:", name
 #    print text
@@ -542,10 +547,10 @@ def icode(cargo):
                 32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
                 "ARRAYINT", "ai", text, use_long=True)
     types.append("compound integer")
-    return cases, (f, last, name, types)
+    return cases, (f, last, name, jdoc, types)
 
 def ircode(cargo):
-    f, all, name, types = cargo
+    f, all, name, jdoc, types = cargo
     text, last = getcode(f)
 #    print "int case:", name
 #    print text
@@ -557,10 +562,10 @@ def ircode(cargo):
                 32 : ("int", "CompoundIntegerDataset"), 64 : ("long", "CompoundLongDataset") },
                 "ARRAYINT", "ai", text, override_long=True)
     types.append("compound integer")
-    return cases, (f, last, name, types)
+    return cases, (f, last, name, jdoc, types)
 
 def rcode(cargo):
-    f, all, name, types = cargo
+    f, all, name, jdoc, types = cargo
     text, last = getcode(f)
 #    print "real case:", name
 #    print text
@@ -581,10 +586,10 @@ def rcode(cargo):
     compoundloop({ 32: ("float", "CompoundFloatDataset"), 64 : ("double", "CompoundDoubleDataset") },
                 "ARRAYFLOAT", "af", text)
     types.append("compound real")
-    return cases, (f, last, name, types)
+    return cases, (f, last, name, jdoc, types)
 
 def ccode(cargo):
-    f, all, name, types = cargo
+    f, all, name, jdoc, types = cargo
     text, last = getcode(f)
 #    print "comp case:", name
 #    print text
@@ -595,7 +600,7 @@ def ccode(cargo):
     complexloop({ 64: ("float", "ComplexFloatDataset", "32"), 128 : ("double", "ComplexDoubleDataset", "64") },
                 "COMPLEX", "c", text, real)
     types.append("complex")
-    return cases, (f, last, name, types)
+    return cases, (f, last, name, jdoc, types)
 
 def parsefile(cargo):
     f,last = cargo

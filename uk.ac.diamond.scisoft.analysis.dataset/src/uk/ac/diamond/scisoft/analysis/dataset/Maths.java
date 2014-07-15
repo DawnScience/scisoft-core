@@ -39,12 +39,23 @@ public class Maths {
 		final String name = dataset.getName().trim();
 		StringBuilder newName = new StringBuilder(name);
 		if (name.contains("+") || name.contains("-") || name.contains("*") ||
-				name.contains("/") || name.contains("^") || name.contains("'")) {
+				name.contains("/") || name.contains("%") || name.contains("^") || name.contains("'")) {
 			newName.insert(0, '(');
 			newName.append(')');
 		}
 
 		return newName;
+	}
+
+	private static void addFunctionName(final Dataset a, final Dataset b, final Dataset dataset, final String fname) {
+		StringBuilder name = new StringBuilder(a.getName());
+		name.insert(0, '(');
+		name.insert(0, fname);
+		name.append(", ");
+		name.append(b.getName());
+		name.append(')');
+
+		dataset.setName(name.toString());
 	}
 
 	private static void addFunctionName(final Dataset dataset, final String fname) {
@@ -56,6 +67,10 @@ public class Maths {
 		dataset.setName(name.toString());
 	}
 
+	private static void addBinaryOperatorName(final Dataset a, final Dataset b, final Dataset dataset, final String oname) {
+		StringBuilder newName = bracketIfNecessary(a).append(oname).append(bracketIfNecessary(b));
+		dataset.setName(newName.toString());
+	}
 
 	private static long toLong(double d) {
 		if (Double.isInfinite(d) || Double.isNaN(d))
@@ -410,7 +425,7 @@ public class Maths {
 		}
 	
 		// set the name based on the changes made
-		result.setName(bracketIfNecessary(da).append(op.toString()).append(bracketIfNecessary(db)).toString());
+		addBinaryOperatorName(da, db, result, op.toString());
 	
 		return (AbstractDataset) result;
 	}
@@ -477,6 +492,7 @@ public class Maths {
 		final Dataset result = it.getOutput();
 		final int is = result.getElementsPerItem();
 		final int dt = result.getDtype();
+		final int as = da.getElementsPerItem();
 	
 		switch(dt) {
 		case Dataset.INT8:
@@ -484,10 +500,7 @@ public class Maths {
 			it.setDoubleOutput(false);
 	
 			while (it.hasNext()) {
-				final long ix = it.aLong;
-				byte ox;
-				ox = (byte) toLong(Math.abs(ix));
-				oi8data[it.oIndex] = ox;
+				oi8data[it.oIndex] = (byte) Math.abs(it.aLong);
 			}
 			break;
 		case Dataset.INT16:
@@ -495,21 +508,7 @@ public class Maths {
 			it.setDoubleOutput(false);
 	
 			while (it.hasNext()) {
-				final long ix = it.aLong;
-				short ox;
-				ox = (short) toLong(Math.abs(ix));
-				oi16data[it.oIndex] = ox;
-			}
-			break;
-		case Dataset.INT64:
-			final long[] oi64data = ((LongDataset) result).data;
-			it.setDoubleOutput(false);
-	
-			while (it.hasNext()) {
-				final long ix = it.aLong;
-				long ox;
-				ox = toLong(Math.abs(ix));
-				oi64data[it.oIndex] = ox;
+				oi16data[it.oIndex] = (short) Math.abs(it.aLong);
 			}
 			break;
 		case Dataset.INT32:
@@ -517,10 +516,15 @@ public class Maths {
 			it.setDoubleOutput(false);
 	
 			while (it.hasNext()) {
-				final long ix = it.aLong;
-				int ox;
-				ox = (int) toLong(Math.abs(ix));
-				oi32data[it.oIndex] = ox;
+				oi32data[it.oIndex] = (int) Math.abs(it.aLong);
+			}
+			break;
+		case Dataset.INT64:
+			final long[] oi64data = ((LongDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				oi64data[it.oIndex] = Math.abs(it.aLong);
 			}
 			break;
 		case Dataset.ARRAYINT8:
@@ -529,27 +533,20 @@ public class Maths {
 	
 			if (is == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					byte ox;
-					ox = (byte) toLong(Math.abs(ix));
-					oai8data[it.oIndex] = ox;
+					oai8data[it.oIndex] = (byte) Math.abs(it.aLong);
 				}
-			} else if (da.getElementsPerItem() == 1) {
+			} else if (as == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					byte ox;
-					ox = (byte) toLong(Math.abs(ix));
+					byte ox = (byte) Math.abs(it.aLong);
 					for (int j = 0; j < is; j++) {
 						oai8data[it.oIndex + j] = ox;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
-					for (int j = 0; j < is; j++) {
-						final long ix = da.getElementLongAbs(it.aIndex + j);
-						byte ox;
-						ox = (byte) toLong(Math.abs(ix));
-						oai8data[it.oIndex + j] = ox;
+					oai8data[it.oIndex] = (byte) Math.abs(it.aLong);
+					for (int j = 1; j < is; j++) {
+						oai8data[it.oIndex + j] = (byte) Math.abs(da.getElementLongAbs(it.aIndex + j));
 					}
 				}
 			}
@@ -560,58 +557,20 @@ public class Maths {
 	
 			if (is == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					short ox;
-					ox = (short) toLong(Math.abs(ix));
-					oai16data[it.oIndex] = ox;
+					oai16data[it.oIndex] = (short) Math.abs(it.aLong);
 				}
-			} else if (da.getElementsPerItem() == 1) {
+			} else if (as == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					short ox;
-					ox = (short) toLong(Math.abs(ix));
+					short ox = (short) Math.abs(it.aLong);
 					for (int j = 0; j < is; j++) {
 						oai16data[it.oIndex + j] = ox;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
-					for (int j = 0; j < is; j++) {
-						final long ix = da.getElementLongAbs(it.aIndex + j);
-						short ox;
-						ox = (short) toLong(Math.abs(ix));
-						oai16data[it.oIndex + j] = ox;
-					}
-				}
-			}
-			break;
-		case Dataset.ARRAYINT64:
-			final long[] oai64data = ((CompoundLongDataset) result).data;
-			it.setDoubleOutput(false);
-	
-			if (is == 1) {
-				while (it.hasNext()) {
-					final long ix = it.aLong;
-					long ox;
-					ox = toLong(Math.abs(ix));
-					oai64data[it.oIndex] = ox;
-				}
-			} else if (da.getElementsPerItem() == 1) {
-				while (it.hasNext()) {
-					final long ix = it.aLong;
-					long ox;
-					ox = toLong(Math.abs(ix));
-					for (int j = 0; j < is; j++) {
-						oai64data[it.oIndex + j] = ox;
-					}
-				}
-			} else {
-				while (it.hasNext()) {
-					for (int j = 0; j < is; j++) {
-						final long ix = da.getElementLongAbs(it.aIndex + j);
-						long ox;
-						ox = toLong(Math.abs(ix));
-						oai64data[it.oIndex + j] = ox;
+					oai16data[it.oIndex] = (short) Math.abs(it.aLong);
+					for (int j = 1; j < is; j++) {
+						oai16data[it.oIndex + j] = (short) Math.abs(da.getElementLongAbs(it.aIndex + j));
 					}
 				}
 			}
@@ -622,67 +581,70 @@ public class Maths {
 	
 			if (is == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					int ox;
-					ox = (int) toLong(Math.abs(ix));
-					oai32data[it.oIndex] = ox;
+					oai32data[it.oIndex] = (int) Math.abs(it.aLong);
 				}
-			} else if (da.getElementsPerItem() == 1) {
+			} else if (as == 1) {
 				while (it.hasNext()) {
-					final long ix = it.aLong;
-					int ox;
-					ox = (int) toLong(Math.abs(ix));
+					int ox = (int) Math.abs(it.aLong);
 					for (int j = 0; j < is; j++) {
 						oai32data[it.oIndex + j] = ox;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
+					oai32data[it.oIndex] = (int) Math.abs(it.aLong);
+					for (int j = 1; j < is; j++) {
+						oai32data[it.oIndex + j] = (int) Math.abs(da.getElementLongAbs(it.aIndex + j));
+					}
+				}
+			}
+			break;
+		case Dataset.ARRAYINT64:
+			final long[] oai64data = ((CompoundLongDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			if (is == 1) {
+				while (it.hasNext()) {
+					oai64data[it.oIndex] = Math.abs(it.aLong);
+				}
+			} else if (as == 1) {
+				while (it.hasNext()) {
+					long ox = Math.abs(it.aLong);
 					for (int j = 0; j < is; j++) {
-						final long ix = da.getElementLongAbs(it.aIndex + j);
-						int ox;
-						ox = (int) toLong(Math.abs(ix));
-						oai32data[it.oIndex + j] = ox;
+						oai64data[it.oIndex + j] = ox;
+					}
+				}
+			} else {
+				while (it.hasNext()) {
+					oai64data[it.oIndex] = Math.abs(it.aLong);
+					for (int j = 1; j < is; j++) {
+						oai64data[it.oIndex + j] = Math.abs(da.getElementLongAbs(it.aIndex + j));
 					}
 				}
 			}
 			break;
 		case Dataset.FLOAT32:
 			final float[] of32data = ((FloatDataset) result).data;
-			if (da.getElementsPerItem() == 1) {
+			if (as == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					float ox;
-					ox = (float) (Math.abs(ix));
-					of32data[it.oIndex] = ox;
+					of32data[it.oIndex] = (float) (Math.abs(it.aDouble));
 				}
 			} else {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					final double iy = da.getElementDoubleAbs(it.aIndex + 1);
-					float ox;
-					ox = (float) (Math.hypot(ix, iy));
-					of32data[it.oIndex] = ox;
+					of32data[it.oIndex] = (float) (Math.hypot(it.aDouble, da.getElementDoubleAbs(it.aIndex + 1)));
 				}
 				
 			}
 			break;
 		case Dataset.FLOAT64:
 			final double[] of64data = ((DoubleDataset) result).data;
-			if (da.getElementsPerItem() == 1) {
+			if (as == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					double ox;
-					ox = (Math.abs(ix));
-					of64data[it.oIndex] = ox;
+					of64data[it.oIndex] = Math.abs(it.aDouble);
 				}
 			} else {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					final double iy = da.getElementDoubleAbs(it.aIndex + 1);
-					double ox;
-					ox = (Math.hypot(ix, iy));
-					of64data[it.oIndex] = ox;
+					of64data[it.oIndex] = Math.hypot(it.aDouble, da.getElementDoubleAbs(it.aIndex + 1));
 				}
 			}
 			break;
@@ -690,27 +652,20 @@ public class Maths {
 			final float[] oaf32data = ((CompoundFloatDataset) result).data;
 			if (is == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					float ox;
-					ox = (float) (Math.abs(ix));
-					oaf32data[it.oIndex] = ox;
+					oaf32data[it.oIndex] = (float) (Math.abs(it.aDouble));
 				}
-			} else if (da.getElementsPerItem() == 1) {
+			} else if (as == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					float ox;
-					ox = (float) (Math.abs(ix));
+					float ox = (float) (Math.abs(it.aDouble));
 					for (int j = 0; j < is; j++) {
 						oaf32data[it.oIndex + j] = ox;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
-					for (int j = 0; j < is; j++) {
-						final double ix = da.getElementDoubleAbs(it.aIndex + j);
-						float ox;
-						ox = (float) (Math.abs(ix));
-						oaf32data[it.oIndex + j] = ox;
+					oaf32data[it.oIndex] = (float) Math.abs(it.aDouble);
+					for (int j = 1; j < is; j++) {
+						oaf32data[it.oIndex + j] = (float) Math.abs(da.getElementDoubleAbs(it.aIndex + j));
 					}
 				}
 			}
@@ -719,68 +674,46 @@ public class Maths {
 			final double[] oaf64data = ((CompoundDoubleDataset) result).data;
 			if (is == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					double ox;
-					ox = (Math.abs(ix));
-					oaf64data[it.oIndex] = ox;
+					oaf64data[it.oIndex] = Math.abs(it.aDouble);
 				}
-			} else if (da.getElementsPerItem() == 1) {
+			} else if (as == 1) {
 				while (it.hasNext()) {
 					final double ix = it.aDouble;
-					double ox;
-					ox = (Math.abs(ix));
+					double ox = Math.abs(ix);
 					for (int j = 0; j < is; j++) {
 						oaf64data[it.oIndex + j] = ox;
 					}
 				}
 			} else {
 				while (it.hasNext()) {
-					for (int j = 0; j < is; j++) {
-						final double ix = da.getElementDoubleAbs(it.aIndex + j);
-						double ox;
-						ox = (Math.abs(ix));
-						oaf64data[it.oIndex + j] = ox;
+					oaf64data[it.oIndex] = Math.abs(it.aDouble);
+					for (int j = 1; j < is; j++) {
+						oaf64data[it.oIndex + j] = Math.abs(da.getElementDoubleAbs(it.aIndex + j));
 					}
 				}
 			}
 			break;
 		case Dataset.COMPLEX64:
 			final float[] oc64data = ((ComplexFloatDataset) result).data;
-			if (da.getElementsPerItem() == 1) {
-				final double iy = 0;
+			if (as == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					float ox;
-					ox = (float) (Math.hypot(ix, iy));
-					oc64data[it.oIndex] = ox;
+					oc64data[it.oIndex] = (float) Math.abs(it.aDouble);
 				}
 			} else {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					final double iy = da.getElementDoubleAbs(it.aIndex + 1);
-					float ox;
-					ox = (float) (Math.hypot(ix, iy));
-					oc64data[it.oIndex] = ox;
+					oc64data[it.oIndex] = (float) Math.hypot(it.aDouble, da.getElementDoubleAbs(it.aIndex + 1));
 				}
 			}
 			break;
 		case Dataset.COMPLEX128:
 			final double[] oc128data = ((ComplexDoubleDataset) result).data;
-			if (da.getElementsPerItem() == 1) {
-				final double iy = 0;
+			if (as == 1) {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					double ox;
-					ox = (Math.hypot(ix, iy));
-					oc128data[it.oIndex] = ox;
+					oc128data[it.oIndex] = Math.abs(it.aDouble);
 				}
 			} else {
 				while (it.hasNext()) {
-					final double ix = it.aDouble;
-					final double iy = da.getElementDoubleAbs(it.aIndex + 1);
-					double ox;
-					ox = (Math.hypot(ix, iy));
-					oc128data[it.oIndex] = ox;
+					oc128data[it.oIndex] = Math.hypot(it.aDouble, da.getElementDoubleAbs(it.aIndex + 1));
 				}
 			}
 			break;
@@ -1096,8 +1029,7 @@ public class Maths {
 			throw new UnsupportedOperationException("hypot does not support this dataset type");
 		}
 
-		// set the name based on the changes made
-		result.setName(new StringBuilder("hypot(").append(da.getName()).append(", ").append(db.getName()).append(")").toString());
+		addFunctionName(da, db, result, "hypot");
 
 		return (AbstractDataset) result;
 	}
@@ -1105,7 +1037,7 @@ public class Maths {
 	/**
 	 * @param a opposite side of right-angled triangle
 	 * @param b adjacent side of right-angled triangle
-	 * @return angle of triangle: atan(a/b)
+	 * @return angle of triangle: atan(b/a)
 	 */
 	public static AbstractDataset arctan2(final Object a, final Object b) {
 		return arctan2(a, b, null);
@@ -1115,7 +1047,7 @@ public class Maths {
 	 * @param a opposite side of right-angled triangle
 	 * @param b adjacent side of right-angled triangle
 	 * @param o output can be null - in which case, a new dataset is created
-	 * @return angle of triangle: atan(a/b)
+	 * @return angle of triangle: atan(b/a)
 	 */
 	public static AbstractDataset arctan2(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
@@ -1359,8 +1291,7 @@ public class Maths {
 			throw new UnsupportedOperationException("atan2 does not support multiple-element dataset");
 		}
 
-		// set the name based on the changes made
-		result.setName(new StringBuilder("atan2(").append(da.getName()).append(", ").append(db.getName()).append(")").toString());
+		addFunctionName(da, db, result, "atan2");
 
 		return (AbstractDataset) result;
 	}
@@ -1368,38 +1299,154 @@ public class Maths {
 	/**
 	 * Create a dataset of the arguments from a complex dataset
 	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset of angles
 	 */
-	public static AbstractDataset angle(final Object a) {
+	public static AbstractDataset angle(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
-		Dataset ds = null;
-		int dt = da.getDtype();
-		IndexIterator it = da.getIterator();
+
+		if (!da.isComplex()) {
+			throw new UnsupportedOperationException("angle does not support this dataset type");
+		}
+
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true, false, false);
+		final Dataset result = it.getOutput();
+		final int is = result.getElementsPerItem();
+		final int dt = result.getDtype();
 	
-		switch (dt) {
+		switch(dt) {
+		case Dataset.INT8:
+			final byte[] oi8data = ((ByteDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				oi8data[it.oIndex] = (byte) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+			}
+			break;
+		case Dataset.INT16:
+			final short[] oi16data = ((ShortDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				oi16data[it.oIndex] = (short) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+			}
+			break;
+		case Dataset.INT32:
+			final int[] oi32data = ((IntegerDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				oi32data[it.oIndex] = (int) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+			}
+			break;
+		case Dataset.INT64:
+			final long[] oi64data = ((LongDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				oi64data[it.oIndex] = toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+			}
+			break;
+		case Dataset.ARRAYINT8:
+			final byte[] oai8data = ((CompoundByteDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				final byte ox = (byte) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+				for (int j = 0; j < is; j++) {
+					oai8data[it.oIndex + j] = ox;
+				}
+			}
+			break;
+		case Dataset.ARRAYINT16:
+			final short[] oai16data = ((CompoundShortDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				final short ox = (short) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+				for (int j = 0; j < is; j++) {
+					oai16data[it.oIndex + j] = ox;
+				}
+			}
+			break;
+		case Dataset.ARRAYINT32:
+			final int[] oai32data = ((CompoundIntegerDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				final int ox = (int) toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+				for (int j = 0; j < is; j++) {
+					oai32data[it.oIndex + j] = ox;
+				}
+			}
+			break;
+		case Dataset.ARRAYINT64:
+			final long[] oai64data = ((CompoundLongDataset) result).data;
+			it.setDoubleOutput(false);
+	
+			while (it.hasNext()) {
+				final long ox = toLong(Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble));
+				for (int j = 0; j < is; j++) {
+					oai64data[it.oIndex + j] = ox;
+				}
+			}
+			break;
+		case Dataset.FLOAT32:
+			final float[] of32data = ((FloatDataset) result).data;
+
+			while (it.hasNext()) {
+				of32data[it.oIndex] = (float) Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+			}
+			break;
+		case Dataset.FLOAT64:
+			final double[] of64data = ((DoubleDataset) result).data;
+
+			while (it.hasNext()) {
+				of64data[it.oIndex] = Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+			}
+			break;
+		case Dataset.ARRAYFLOAT32:
+			final float[] oaf32data = ((CompoundFloatDataset) result).data;
+
+			while (it.hasNext()) {
+				final float ox = (float) Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+				for (int j = 0; j < is; j++) {
+					oaf32data[it.oIndex + j] = ox;
+				}
+			}
+			break;
+		case Dataset.ARRAYFLOAT64:
+			final double[] oaf64data = ((CompoundDoubleDataset) result).data;
+			while (it.hasNext()) {
+				final double ox = Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+				for (int j = 0; j < is; j++) {
+					oaf64data[it.oIndex + j] = ox;
+				}
+			}
+			break;
 		case Dataset.COMPLEX64:
-			ds = DatasetFactory.zeros(da, Dataset.FLOAT32);
-			float[] f32data = ((FloatDataset) ds).getData();
-			float[] c64data = ((ComplexFloatDataset) da).getData();
-	
-			for (int i = 0; it.hasNext();) {
-				f32data[i++] = (float) Math.atan2(c64data[it.index+1], c64data[it.index]);
+			final float[] oc64data = ((ComplexFloatDataset) result).data;
+
+			while (it.hasNext()) {
+				oc64data[it.oIndex]      = (float) Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+				oc64data[it.oIndex + 1]  = 0;
 			}
 			break;
 		case Dataset.COMPLEX128:
-			ds = DatasetFactory.zeros(da, Dataset.FLOAT64);
-			double[] f64data = ((DoubleDataset) ds).getData();
-			double[] c128data = ((ComplexDoubleDataset) da).getData();
-	
-			for (int i = 0; it.hasNext();) {
-				f64data[i++] = Math.atan2(c128data[it.index+1], c128data[it.index]);
+			final double[] oc128data = ((ComplexDoubleDataset) result).data;
+
+			while (it.hasNext()) {
+				oc128data[it.oIndex]     = Math.atan2(da.getElementDoubleAbs(it.aIndex + 1), it.aDouble);
+				oc128data[it.oIndex + 1] = 0;
 			}
 			break;
 		default:
-			throw new UnsupportedOperationException("angle does not support this dataset type");
+			throw new IllegalArgumentException("angle does not support this dataset type");
 		}
+
+		addFunctionName(result, "angle");
 	
-		return (AbstractDataset) ds;
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -1409,75 +1456,87 @@ public class Maths {
 	 * @return complex dataset where items have unit amplitude
 	 */
 	public static AbstractDataset phaseAsComplexNumber(final Object a, final boolean keepZeros) {
+		return phaseAsComplexNumber(a, null, keepZeros);
+	}
+
+	/**
+	 * Create a phase only dataset. NB it will contain NaNs if there are any items with zero amplitude
+	 * @param a dataset
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @param keepZeros if true then zero items are returned as zero rather than NaNs
+	 * @return complex dataset where items have unit amplitude
+	 */
+	public static AbstractDataset phaseAsComplexNumber(final Object a, final Dataset o, final boolean keepZeros) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
-		Dataset ds = null;
-		int dt = da.getDtype();
-		IndexIterator it = da.getIterator();
-	
+
+		if (!da.isComplex()) {
+			throw new IllegalArgumentException("Input dataset is not of complex type");
+		}
+		Dataset result = o == null ? DatasetFactory.zeros(da) : o;
+		if (!result.isComplex()) {
+			throw new IllegalArgumentException("Output dataset is not of complex type");
+		}
+		final int dt = result.getDtype();
+		SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, result);
+
 		switch (dt) {
 		case Dataset.COMPLEX64:
-			ds = DatasetFactory.zeros(da);
-	
-			float[] z64data = ((ComplexFloatDataset) ds).getData();
-			float[] c64data = ((ComplexFloatDataset) da).getData();
+			float[] z64data = ((ComplexFloatDataset) result).getData();
 	
 			if (keepZeros) {
-				for (int i = 0; it.hasNext();) {
-					double rr = c64data[it.index];
-					double ri = c64data[it.index+1];
+				while (it.hasNext()) {
+					double rr = it.aDouble;
+					double ri = da.getElementDoubleAbs(it.aIndex + 1);
 					double am = Math.hypot(rr, ri);
 					if (am == 0) {
-						z64data[i++] = 0;
-						z64data[i++] = 0;
+						z64data[it.oIndex]     = 0;
+						z64data[it.oIndex + 1] = 0;
 					} else {
-						z64data[i++] = (float) (rr/am);
-						z64data[i++] = (float) (ri/am);
+						z64data[it.oIndex]     = (float) (rr/am);
+						z64data[it.oIndex + 1] = (float) (ri/am);
 					}
 				}
 			} else {
-				for (int i = 0; it.hasNext();) {
-					double rr = c64data[it.index];
-					double ri = c64data[it.index+1];
+				while (it.hasNext()) {
+					double rr = it.aDouble;
+					double ri = da.getElementDoubleAbs(it.aIndex + 1);
 					double am = Math.hypot(rr, ri);
-					z64data[i++] = (float) (rr/am);
-					z64data[i++] = (float) (ri/am);
+					z64data[it.oIndex]     = (float) (rr/am);
+					z64data[it.oIndex + 1] = (float) (ri/am);
 				}
 			}
 			break;
 		case Dataset.COMPLEX128:
-			ds = DatasetFactory.zeros(da);
-	
-			double[] z128data = ((ComplexDoubleDataset) ds).getData();
-			double[] c128data = ((ComplexDoubleDataset) da).getData();
+			double[] z128data = ((ComplexDoubleDataset) result).getData();
 	
 			if (keepZeros) {
-				for (int i = 0; it.hasNext();) {
-					double rr = c128data[it.index];
-					double ri = c128data[it.index+1];
+				while (it.hasNext()) {
+					double rr = it.aDouble;
+					double ri = da.getElementDoubleAbs(it.aIndex + 1);
 					double am = Math.hypot(rr, ri);
 					if (am == 0) {
-						z128data[i++] = 0;
-						z128data[i++] = 0;
+						z128data[it.oIndex]     = 0;
+						z128data[it.oIndex + 1] = 0;
 					} else {
-						z128data[i++] = rr/am;
-						z128data[i++] = ri/am;
+						z128data[it.oIndex]     = rr / am;
+						z128data[it.oIndex + 1] = ri / am;
 					}
 				}
 			} else {
-				for (int i = 0; it.hasNext();) {
-					double rr = c128data[it.index];
-					double ri = c128data[it.index+1];
+				while (it.hasNext()) {
+					double rr = it.aDouble;
+					double ri = da.getElementDoubleAbs(it.aIndex + 1);
 					double am = Math.hypot(rr, ri);
-					z128data[i++] = rr/am;
-					z128data[i++] = ri/am;
+					z128data[it.oIndex]     = rr / am;
+					z128data[it.oIndex + 1] = ri / am;
 				}
 			}
 			break;
-		default:
-			throw new IllegalArgumentException("Dataset is not of complex type");
 		}
-	
-		return (AbstractDataset) ds;
+
+		addFunctionName(result, "phase");
+
+		return (AbstractDataset) result;
 	}
 
 	/**
@@ -3544,7 +3603,7 @@ public class Maths {
 			throw new IllegalArgumentException("add supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "add");
+		addBinaryOperatorName(da, db, result, "+");
 		return (AbstractDataset) result;
 	}
 
@@ -4064,7 +4123,7 @@ public class Maths {
 			throw new IllegalArgumentException("subtract supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "subtract");
+		addBinaryOperatorName(da, db, result, "-");
 		return (AbstractDataset) result;
 	}
 
@@ -4584,7 +4643,7 @@ public class Maths {
 			throw new IllegalArgumentException("multiply supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "multiply");
+		addBinaryOperatorName(da, db, result, "*");
 		return (AbstractDataset) result;
 	}
 
@@ -5170,7 +5229,7 @@ public class Maths {
 			throw new IllegalArgumentException("divide supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "divide");
+		addBinaryOperatorName(da, db, result, "/");
 		return (AbstractDataset) result;
 	}
 
@@ -5774,7 +5833,7 @@ public class Maths {
 			throw new IllegalArgumentException("dividez supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "dividez");
+		addBinaryOperatorName(da, db, result, "/");
 		return (AbstractDataset) result;
 	}
 
@@ -6306,7 +6365,7 @@ public class Maths {
 			throw new IllegalArgumentException("power supports integer, compound integer, real, compound real, complex datasets only");
 		}
 
-		addFunctionName(result, "power");
+		addBinaryOperatorName(da, db, result, "**");
 		return (AbstractDataset) result;
 	}
 
@@ -6736,7 +6795,7 @@ public class Maths {
 			throw new IllegalArgumentException("remainder supports integer, compound integer, real, compound real datasets only");
 		}
 
-		addFunctionName(result, "remainder");
+		addBinaryOperatorName(da, db, result, "%");
 		return (AbstractDataset) result;
 	}
 

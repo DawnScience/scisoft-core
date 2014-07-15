@@ -842,6 +842,15 @@ public class Maths {
 	/**
 	 * @param a side of right-angled triangle
 	 * @param b side of right-angled triangle
+	 * @return hypotenuse of right-angled triangle: sqrt(a^2 + a^2)
+	 */
+	public static AbstractDataset hypot(final Object a, final Object b) {
+		return hypot(a, b, null);
+	}
+
+	/**
+	 * @param a side of right-angled triangle
+	 * @param b side of right-angled triangle
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return hypotenuse of right-angled triangle: sqrt(a^2 + a^2)
 	 */
@@ -1091,6 +1100,15 @@ public class Maths {
 		result.setName(new StringBuilder("hypot(").append(da.getName()).append(", ").append(db.getName()).append(")").toString());
 
 		return (AbstractDataset) result;
+	}
+
+	/**
+	 * @param a opposite side of right-angled triangle
+	 * @param b adjacent side of right-angled triangle
+	 * @return angle of triangle: atan(a/b)
+	 */
+	public static AbstractDataset arctan2(final Object a, final Object b) {
+		return arctan2(a, b, null);
 	}
 
 	/**

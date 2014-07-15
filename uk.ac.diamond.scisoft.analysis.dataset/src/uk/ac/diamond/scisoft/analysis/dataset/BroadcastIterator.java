@@ -186,14 +186,14 @@ public class BroadcastIterator extends IndexIterator {
 	private static void checkItemSize(Dataset a, Dataset b, Dataset o) {
 		final int isa = a.getElementsPerItem();
 		final int isb = b.getElementsPerItem();
-		final int ism = Math.max(isa, isb);
-		if (isa != isb && ism != 1) {
+		if (isa != isb && isa != 1 && isb != 1) {
 			// exempt single-value dataset case too
 			if ((isa == 1 || b.getSize() != 1) && (isb == 1 || a.getSize() != 1) ) {
 				throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal another");
 			}
 		}
 		if (o != null) {
+			final int ism = Math.max(isa, isb);
 			final int iso = o.getElementsPerItem();
 			if (iso != ism && ism != 1) {
 				throw new IllegalArgumentException("Can not output to dataset whose number of elements per item mismatch inputs'");

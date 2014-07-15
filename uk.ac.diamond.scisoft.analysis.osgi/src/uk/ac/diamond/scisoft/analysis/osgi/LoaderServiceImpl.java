@@ -33,8 +33,11 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  */
 public class LoaderServiceImpl extends AbstractServiceFactory implements ILoaderService {
 
-	public LoaderServiceImpl() {
+	static {
 		System.out.println("Starting loader service");
+	}
+	public LoaderServiceImpl() {
+		// Important do nothing here, OSGI may start the service more than once.
 	}
 	
 	@Override

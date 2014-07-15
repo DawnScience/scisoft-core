@@ -31,8 +31,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.Stats;
  */
 public class DatasetMathsServiceImpl extends AbstractServiceFactory implements IDatasetMathsService {
 
-	public DatasetMathsServiceImpl() {
+	static {
 		System.out.println("Starting dataset maths service");
+	}
+	public DatasetMathsServiceImpl() {
+		// Important do nothing here, OSGI may start the service more than once.
 	}
 	
 	@Override

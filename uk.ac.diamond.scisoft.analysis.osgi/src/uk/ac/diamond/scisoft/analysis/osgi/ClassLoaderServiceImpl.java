@@ -34,8 +34,11 @@ public class ClassLoaderServiceImpl extends AbstractServiceFactory implements Cl
 
 	private CompositeClassLoader loader;
 
-	public ClassLoaderServiceImpl() {
+	static {
 		System.out.println("Starting class loader service");
+	}
+	public ClassLoaderServiceImpl() {
+		// Important do nothing here, OSGI may start the service more than once.
 	}
 
 	private void init() {

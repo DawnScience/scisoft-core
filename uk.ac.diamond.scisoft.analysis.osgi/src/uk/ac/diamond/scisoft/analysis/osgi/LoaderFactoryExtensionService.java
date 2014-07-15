@@ -20,8 +20,11 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 
 	private static final List<String> extensions = new ArrayList<String>();
 	
-	public LoaderFactoryExtensionService() {
+	static {
 		System.out.println("Starting loader factory extension service");
+	}
+	public LoaderFactoryExtensionService() {
+		// Important do nothing here, OSGI may start the service more than once.
 	}
 
 	@Override

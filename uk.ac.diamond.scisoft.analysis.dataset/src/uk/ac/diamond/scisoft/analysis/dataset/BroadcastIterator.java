@@ -180,7 +180,10 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param asDouble
 	 */
 	public void setDoubleOutput(boolean asDouble) {
-		this.asDouble = asDouble;
+		if (this.asDouble != asDouble) {
+			this.asDouble = asDouble;
+			storeCurrentValues();
+		}
 	}
 
 	private static void checkItemSize(Dataset a, Dataset b, Dataset o) {
@@ -445,24 +448,29 @@ public class BroadcastIterator extends IndexIterator {
 			oIndex = -oStep;
 		}
 
-		// for zero-ranked datasets
-		if (aIndex == 0) {
+		if (aIndex == 0 || bIndex == 0) { // for zero-ranked datasets
+			storeCurrentValues();
+			if (aMax == aIndex)
+				aMax++;
+			if (bMax == bIndex)
+				bMax++;
+		}
+	}
+
+	private void storeCurrentValues() {
+		if (aIndex >= 0) {
 			if (asDouble) {
 				aDouble = aDataset.getElementDoubleAbs(aIndex);
 			} else {
 				aLong = aDataset.getElementLongAbs(aIndex);
 			}
-			if (aMax == aIndex)
-				aMax++;
 		}
-		if (bIndex == 0) {
+		if (bIndex >= 0) {
 			if (asDouble) {
 				bDouble = bDataset.getElementDoubleAbs(bIndex);
 			} else {
 				bLong = bDataset.getElementLongAbs(bIndex);
 			}
-			if (bMax == bIndex)
-				bMax++;
 		}
 	}
 }

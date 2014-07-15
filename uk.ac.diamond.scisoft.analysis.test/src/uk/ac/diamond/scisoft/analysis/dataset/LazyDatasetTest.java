@@ -73,7 +73,7 @@ public class LazyDatasetTest {
 
 	@Test
 	public void testGetSlice() {
-		final AbstractDataset d = Random.randn(new int[] {1, 2, 3, 4});
+		final Dataset d = Random.randn(new int[] {1, 2, 3, 4});
 		LazyDataset ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4}, new ILazyLoader() {
 			@Override
 			public boolean isFileReadable() {
@@ -81,7 +81,7 @@ public class LazyDatasetTest {
 			}
 			
 			@Override
-			public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 					throws Exception {
 				return d.getSlice(mon, start, stop, step);
 			}
@@ -98,7 +98,7 @@ public class LazyDatasetTest {
 		Assert.assertEquals("Full slice", d, ld.getSlice(new int[4], new int[] { 1, 2, 3, 4 }, new int[] { 1, 1, 1, 1 }));
 		Assert.assertEquals("Part slice", d.getSlice(slice), ld.getSlice(slice));
 
-		AbstractDataset nd;
+		Dataset nd;
 		ld.setShape(1, 1, 1, 2, 3, 4);
 		nd = d.getView();
 		nd.setShape(1, 1, 1, 2, 3, 4);
@@ -126,5 +126,32 @@ public class LazyDatasetTest {
 		Assert.assertEquals("Full slice", nd, ld.getSlice());
 		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3), null, null, null};
 		Assert.assertEquals("Part slice", nd.getSlice(slice), ld.getSlice(slice));
+	}
+
+	@Test
+	public void testGetSliceView() {
+		final Dataset d = Random.randn(new int[] {1, 2, 3, 4});
+		LazyDataset ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4}, new ILazyLoader() {
+			@Override
+			public boolean isFileReadable() {
+				return true;
+			}
+			
+			@Override
+			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+					throws Exception {
+				return d.getSliceView(start, stop, step);
+			}
+		});
+
+		Slice[] slice;
+		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3)};
+		ILazyDataset l = ld.getSliceView();
+		System.out.println(l);
+		Assert.assertEquals("Full slice", d, l);
+		Assert.assertEquals("Full slice", d, l.getSlice());
+		l = ld.getSliceView(slice);
+		System.out.println(l);
+		Assert.assertEquals("Part slice", d.getSlice(slice), l.getSlice());
 	}
 }

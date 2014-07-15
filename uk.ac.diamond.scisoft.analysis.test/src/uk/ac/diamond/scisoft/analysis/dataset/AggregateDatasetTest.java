@@ -31,11 +31,11 @@ public class AggregateDatasetTest {
 	@Before
 	public void init() {
 		datasets = new ILazyDataset[] {
-				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(0),
-				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(1),
-				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(2),
-				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(3),
-				AbstractDataset.zeros(new int[] {2,3}, Dataset.INT32).fill(4)
+				DatasetFactory.zeros(new int[] {2,3}, Dataset.INT32).fill(0),
+				DatasetFactory.zeros(new int[] {2,3}, Dataset.INT32).fill(1),
+				DatasetFactory.zeros(new int[] {2,3}, Dataset.INT32).fill(2),
+				DatasetFactory.zeros(new int[] {2,3}, Dataset.INT32).fill(3),
+				DatasetFactory.zeros(new int[] {2,3}, Dataset.INT32).fill(4)
 		};
 	}
 
@@ -74,14 +74,27 @@ public class AggregateDatasetTest {
 		assertEquals("Incorrect rank", datasets[0].getRank(), a.getRank());
 		assertArrayEquals("Incorrect shape", new int[] {2*datasets.length, 3}, a.getShape());
 
-		AbstractDataset s;
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice((Slice) null, null));
+		Dataset s;
+		s = DatasetUtils.convertToDataset(a.getSlice((Slice) null, null));
 		assertArrayEquals("Incorrect shape", new int[] {2*datasets.length, 3}, s.getShape());
 
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice(null, new int[] {2,2}, null));
+		s = DatasetUtils.convertToDataset(a.getSlice(null, new int[] {2,2}, null));
 		assertArrayEquals("Incorrect shape", new int[] {2, 2}, s.getShape());
 
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice(new int[] {1,0}, new int[] {2,2}, null));
+		s = DatasetUtils.convertToDataset(a.getSlice(new int[] {1,0}, new int[] {2,2}, null));
+		assertArrayEquals("Incorrect shape", new int[] {1, 2}, s.getShape());
+
+		ILazyDataset l;
+		l = a.getSliceView(null, new int[] {2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		assertArrayEquals("Incorrect shape", new int[] {2, 2}, s.getShape());
+
+		l = a.getSliceView(new int[] {1,0}, new int[] {2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
+		s = DatasetUtils.convertToDataset(l.getSlice());
 		assertArrayEquals("Incorrect shape", new int[] {1, 2}, s.getShape());
 	}
 
@@ -90,33 +103,56 @@ public class AggregateDatasetTest {
 		AggregateDataset a = new AggregateDataset(true, datasets);
 		assertEquals("Incorrect rank", datasets[0].getRank() + 1, a.getRank());
 		assertArrayEquals("Incorrect shape", new int[] {datasets.length, 2, 3}, a.getShape());
-
-		AbstractDataset s;
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice((Slice) null, null, null));
+		Dataset s;
+		s = DatasetUtils.convertToDataset(a.getSlice((Slice) null, null, null));
 		assertArrayEquals("Incorrect shape", new int[] {datasets.length, 2, 3}, s.getShape());
 
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice(null, new int[] {2,2,2}, null));
+		s = DatasetUtils.convertToDataset(a.getSlice(null, new int[] {2,2,2}, null));
 		assertArrayEquals("Incorrect shape", new int[] {2, 2, 2}, s.getShape());
 
-		s = DatasetUtils.convertToAbstractDataset(a.getSlice(new int[] {1,0,0}, new int[] {2,2,2}, null));
+		s = DatasetUtils.convertToDataset(a.getSlice(new int[] {1,0,0}, new int[] {2,2,2}, null));
+		assertArrayEquals("Incorrect shape", new int[] {1, 2, 2}, s.getShape());
+
+		ILazyDataset l;
+		l = a.getSliceView(null, new int[] {2,2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
+		assertArrayEquals("Incorrect shape", new int[] {2, 2, 2}, s.getShape());
+
+		l = a.getSliceView(new int[] {1,0,0}, new int[] {2,2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
 		assertArrayEquals("Incorrect shape", new int[] {1, 2, 2}, s.getShape());
 	}
 
 	@Test
 	public void testRepeatedDataset() {
-		AbstractDataset a = AbstractDataset.arange(3, Dataset.FLOAT64);
-		AbstractDataset[] as = new AbstractDataset[5];
+		Dataset a = DatasetFactory.createRange(3, Dataset.FLOAT64);
+		Dataset[] as = new Dataset[5];
 		Arrays.fill(as, a);
 		AggregateDataset b = new AggregateDataset(true, as);
 		assertEquals("Incorrect rank", a.getRank() + 1, b.getRank());
 		assertArrayEquals("Incorrect shape", new int[] {as.length, 3}, b.getShape());
 
-		AbstractDataset s;
-		s = DatasetUtils.convertToAbstractDataset(b.getSlice(new int[] {1,0}, new int[] {2,2}, null));
+		Dataset s;
+		s = DatasetUtils.convertToDataset(b.getSlice(new int[] {1,0}, new int[] {2,2}, null));
 		assertArrayEquals("Incorrect shape", new int[] {1, 2}, s.getShape());
 		assertArrayEquals("Incorrect values", new double[] {0, 1}, (double[])s.getBuffer(), 1e-5);
 
-		s = DatasetUtils.convertToAbstractDataset(b.getSlice(new int[] {0,1}, new int[] {2,2}, null));
+		s = DatasetUtils.convertToDataset(b.getSlice(new int[] {0,1}, new int[] {2,2}, null));
+		assertArrayEquals("Incorrect shape", new int[] {2, 1}, s.getShape());
+		assertArrayEquals("Incorrect values", new double[] {1, 1}, (double[])s.getBuffer(), 1e-5);
+
+		ILazyDataset l;
+		l = b.getSliceView(new int[] {1,0}, new int[] {2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
+		assertArrayEquals("Incorrect shape", new int[] {1, 2}, s.getShape());
+		assertArrayEquals("Incorrect values", new double[] {0, 1}, (double[])s.getBuffer(), 1e-5);
+
+		l = b.getSliceView(new int[] {0,1}, new int[] {2,2}, null);
+		s = DatasetUtils.convertToDataset(l.getSlice());
+		System.out.println("View is " + l + "; slice is " + s);
 		assertArrayEquals("Incorrect shape", new int[] {2, 1}, s.getShape());
 		assertArrayEquals("Incorrect values", new double[] {1, 1}, (double[])s.getBuffer(), 1e-5);
 	}

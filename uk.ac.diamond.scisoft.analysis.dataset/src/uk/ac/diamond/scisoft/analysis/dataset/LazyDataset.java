@@ -42,9 +42,12 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	protected ILazyLoader loader;
 	private int          dtype;
 	private int          isize; // number of elements per item
-	private int          oOffset; // original shape offset
+	private int          oOffset; // original shape offset (first non-unit dimension)
 	private int          nOffset; // current shape offset
 	private IMetaData    metadata = null;
+	protected LazyDataset base = null;
+	private int[] sliceStart = null;
+	private int[] sliceStep  = null;
 	protected ILazyDataset lazyErrorDelegate;
 
 	/**
@@ -91,6 +94,10 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	@Override
 	public LazyDataset clone() {
 		LazyDataset ret = new LazyDataset(new String(name), dtype, shape.clone(), loader);
+		if (sliceStart != null) {
+			ret.sliceStart = sliceStart.clone();
+			ret.sliceStep = sliceStep.clone();
+		}
 		ret.lazyErrorDelegate = lazyErrorDelegate;
 		return ret;
 	}
@@ -125,6 +132,12 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 			return false;
 		}
 		if (!Arrays.equals(shape, other.shape)) {
+			return false;
+		}
+		if (!Arrays.equals(sliceStart, other.sliceStart)) {
+			return false;
+		}
+		if (!Arrays.equals(sliceStep, other.sliceStep)) {
 			return false;
 		}
 		return true;
@@ -297,7 +310,7 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 
 	@Override
 	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) throws Exception {
-		if (!loader.isFileReadable())
+		if (loader != null && !loader.isFileReadable())
 			return null; // TODO add interaction to use plot server to load dataset
 
 		int rank = shape.length;
@@ -336,24 +349,33 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 			int i = 0;
 			for (; i < oOffset; i++) {
 				nstart[i] = 0;
-				nstop[i] = 1;
-				nstep[i] = 1;
+				nstop[i]  = 1;
+				nstep[i]  = 1;
 			}
 			int j = nOffset;
 			for (; i < r && j < shape.length; i++, j++) {
 				nstart[i] = lstart[j];
-				nstop[i] = lstop[j];
-				nstep[i] = lstep[j];
+				nstop[i]  = lstop[j];
+				nstep[i]  = lstep[j];
 			}
 			for (; i < r; i++) {
 				nstart[i] = 0;
-				nstop[i] = 1;
-				nstep[i] = 1;
+				nstop[i]  = 1;
+				nstep[i]  = 1;
 			}
 		} else {
-			nstart = start;
-			nstop = stop;
-			nstep = step;
+			nstart = lstart;
+			nstop  = lstop;
+			nstep  = lstep;
+		}
+
+		if (base != null) {
+			for (int i = 0; i < r; i++) {
+				nstart[i] = sliceStart[i] + nstart[i];
+				nstop[i]  = nstart[i] + sliceStep[i] * nshape[i];
+				nstep[i]  = sliceStep[i] * nstep[i];
+			}
+			return base.getSlice(monitor, nstart, nstop, nstep);
 		}
 
 		IDataset a;
@@ -399,11 +421,44 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	}
 
 	@Override
-	public ILazyDataset getSliceView(int[] start, int[] stop, int[] step) {
-		// TODO Auto-generated method stub
-		return null;
+	public LazyDataset getSliceView(int[] start, int[] stop, int[] step) {
+		int[] lstart, lstop, lstep;
+		final int rank = shape.length;
+
+		if (step == null) {
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+
+		int[] nShape;
+		if (rank > 1 || (rank > 0 && shape[0] > 0)) {
+			nShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+		} else {
+			nShape = new int[rank];
+		}
+		LazyDataset lazy = new LazyDataset(name + "[" + Slice.createString(nShape, lstart, lstop, lstep) + "]",
+				dtype, nShape, null);
+		lazy.sliceStart = lstart.clone();
+		lazy.sliceStep  = lstep.clone();
+		lazy.base = base == null ? this : base;
+		lazy.metadata = metadata;
+		return lazy;
 	}
-	
+
 	@Override
 	public void setMetadata(IMetaData metadata) {
 		this.metadata = metadata;

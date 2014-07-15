@@ -40,6 +40,9 @@ public class AggregateDataset implements ILazyDataset {
 	private String name;
 	private int dtype = -1;
 	private int isize; // number of elements per item
+	protected AggregateDataset base = null;
+	private int[] sliceStart = null;
+	private int[] sliceStep  = null;
 
 	/**
 	 * Calculate (possibly extended) shapes from given datasets
@@ -84,6 +87,17 @@ public class AggregateDataset implements ILazyDataset {
 		}
 
 		return shapes;
+	}
+
+	AggregateDataset(int itemSize, int[] shape, int dtype) {
+		isize = itemSize;
+		this.shape = shape.clone();
+		try {
+			size = AbstractDataset.calcSize(shape);
+		} catch (IllegalArgumentException e) {
+			size = Integer.MAX_VALUE; // this indicates that the entire dataset cannot be read in! 
+		}
+		this.dtype = dtype;
 	}
 
 	/**
@@ -244,6 +258,16 @@ public class AggregateDataset implements ILazyDataset {
 			Arrays.fill(step, 1);
 		}
 
+		if (base != null) {
+			for (int i = 0; i < shape.length; i++) {
+				start[i] = sliceStart[i] + start[i];
+				stop[i]  = start[i] + sliceStep[i] * shape[i];
+				step[i]  = sliceStep[i] * step[i];
+
+			}
+			return base.getSlice(monitor, start, stop, step);
+		}
+
 		// convert first dimension's slice to individual slices per stored dataset
 		int fb = start[0];
 		int fe = stop[0];
@@ -311,9 +335,41 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public ILazyDataset getSliceView(int[] start, int[] stop, int[] step) {
-		// TODO Auto-generated method stub
-		return null;
+	public AggregateDataset getSliceView(int[] start, int[] stop, int[] step) {
+		int[] lstart, lstop, lstep;
+		final int rank = shape.length;
+
+		if (step == null) {
+			lstep = new int[rank];
+			Arrays.fill(lstep, 1);
+		} else {
+			lstep = step;
+		}
+
+		if (start == null) {
+			lstart = new int[rank];
+		} else {
+			lstart = start;
+		}
+
+		if (stop == null) {
+			lstop = new int[rank];
+		} else {
+			lstop = stop;
+		}
+
+		int[] nShape;
+		if (rank > 1 || (rank > 0 && shape[0] > 0)) {
+			nShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+		} else {
+			nShape = new int[rank];
+		}
+		AggregateDataset lazy = new AggregateDataset(isize, nShape, dtype);
+		lazy.sliceStart = lstart.clone();
+		lazy.sliceStep  = lstep.clone();
+		lazy.name = name + "[" + Slice.createString(nShape, lstart, lstop, lstep) + "]";
+		lazy.base = base == null ? this : base;
+		return lazy;
 	}
 
 	@Override

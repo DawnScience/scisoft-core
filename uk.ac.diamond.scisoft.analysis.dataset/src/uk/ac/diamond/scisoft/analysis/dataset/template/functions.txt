@@ -35,7 +35,13 @@ integer:
 real:
   ox = iax / ibx;
 complex:
-  if (Math.abs(ibx) < Math.abs(iby)) {
+  if (iby == 0) {
+  	ox = iax / ibx;
+  	oy = iay / ibx;
+  } else if (ibx == 0) {
+  	ox = iay / iby;
+  	oy = -iax / iby;
+  } else if (Math.abs(ibx) < Math.abs(iby)) {
   	q = ibx / iby;
   	den = ibx * q + iby;
   	ox = (iax * q + iay) / den;

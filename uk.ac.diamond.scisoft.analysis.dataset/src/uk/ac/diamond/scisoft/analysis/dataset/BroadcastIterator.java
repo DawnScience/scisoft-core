@@ -180,20 +180,23 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param asDouble
 	 */
 	public void setDoubleOutput(boolean asDouble) {
-		this.asDouble = asDouble;
+		if (this.asDouble != asDouble) {
+			this.asDouble = asDouble;
+			storeCurrentValues();
+		}
 	}
 
 	private static void checkItemSize(Dataset a, Dataset b, Dataset o) {
 		final int isa = a.getElementsPerItem();
 		final int isb = b.getElementsPerItem();
-		final int ism = Math.max(isa, isb);
-		if (isa != isb && ism != 1) {
+		if (isa != isb && isa != 1 && isb != 1) {
 			// exempt single-value dataset case too
 			if ((isa == 1 || b.getSize() != 1) && (isb == 1 || a.getSize() != 1) ) {
 				throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal another");
 			}
 		}
 		if (o != null) {
+			final int ism = Math.max(isa, isb);
 			final int iso = o.getElementsPerItem();
 			if (iso != ism && ism != 1) {
 				throw new IllegalArgumentException("Can not output to dataset whose number of elements per item mismatch inputs'");
@@ -445,24 +448,29 @@ public class BroadcastIterator extends IndexIterator {
 			oIndex = -oStep;
 		}
 
-		// for zero-ranked datasets
-		if (aIndex == 0) {
+		if (aIndex == 0 || bIndex == 0) { // for zero-ranked datasets
+			storeCurrentValues();
+			if (aMax == aIndex)
+				aMax++;
+			if (bMax == bIndex)
+				bMax++;
+		}
+	}
+
+	private void storeCurrentValues() {
+		if (aIndex >= 0) {
 			if (asDouble) {
 				aDouble = aDataset.getElementDoubleAbs(aIndex);
 			} else {
 				aLong = aDataset.getElementLongAbs(aIndex);
 			}
-			if (aMax == aIndex)
-				aMax++;
 		}
-		if (bIndex == 0) {
+		if (bIndex >= 0) {
 			if (asDouble) {
 				bDouble = bDataset.getElementDoubleAbs(bIndex);
 			} else {
 				bLong = bDataset.getElementLongAbs(bIndex);
 			}
-			if (bMax == bIndex)
-				bMax++;
 		}
 	}
 }

@@ -16,13 +16,13 @@ import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
-import org.dawb.hdf5.HierarchicalDataFactory;
-import org.dawb.hdf5.HierarchicalDataUtils;
-import org.dawb.hdf5.IHierarchicalDataFile;
-import org.dawb.hdf5.nexus.IFindInNexus;
-import org.dawb.hdf5.nexus.NexusFindDatasetByName;
-import org.dawb.hdf5.nexus.NexusFindGroupByAttributeText;
-import org.dawb.hdf5.nexus.NexusUtils;
+import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
+import org.eclipse.dawnsci.hdf5.HierarchicalDataUtils;
+import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
+import org.eclipse.dawnsci.hdf5.nexus.IFindInNexus;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFindDatasetByName;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFindGroupByAttributeText;
+import org.eclipse.dawnsci.hdf5.nexus.NexusUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;

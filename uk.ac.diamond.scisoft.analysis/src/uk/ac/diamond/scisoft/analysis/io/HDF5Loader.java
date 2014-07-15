@@ -50,7 +50,7 @@ import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5Link;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
-import org.dawb.hdf5.HierarchicalDataFactory;
+import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

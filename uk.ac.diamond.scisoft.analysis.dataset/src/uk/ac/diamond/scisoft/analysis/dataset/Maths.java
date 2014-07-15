@@ -5079,11 +5079,17 @@ public class Maths {
 					final double iax = it.aDouble;
 					final double ibx = it.bDouble;
 					final double iby = db.getElementDoubleAbs(it.bIndex + 1);
-					float q;
-					float den;
 					float ox;
 					float oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					float q;
+					float den;
+					if (iby == 0) {
+						ox = (float) (iax / ibx);
+						oy = (float) (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (float) (iay / iby);
+						oy = (float) (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (float) (ibx / iby);
 						den = (float) (ibx * q + iby);
 						ox = (float) ((iax * q + iay) / den);
@@ -5103,11 +5109,17 @@ public class Maths {
 					final double iax = it.aDouble;
 					final double ibx = it.bDouble;
 					final double iay = da.getElementDoubleAbs(it.aIndex + 1);
-					float q;
-					float den;
 					float ox;
 					float oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					float q;
+					float den;
+					if (iby == 0) {
+						ox = (float) (iax / ibx);
+						oy = (float) (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (float) (iay / iby);
+						oy = (float) (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (float) (ibx / iby);
 						den = (float) (ibx * q + iby);
 						ox = (float) ((iax * q + iay) / den);
@@ -5127,11 +5139,17 @@ public class Maths {
 					final double ibx = it.bDouble;
 					final double iay = da.getElementDoubleAbs(it.aIndex + 1);
 					final double iby = db.getElementDoubleAbs(it.bIndex + 1);
-					float q;
-					float den;
 					float ox;
 					float oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					float q;
+					float den;
+					if (iby == 0) {
+						ox = (float) (iax / ibx);
+						oy = (float) (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (float) (iay / iby);
+						oy = (float) (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (float) (ibx / iby);
 						den = (float) (ibx * q + iby);
 						ox = (float) ((iax * q + iay) / den);
@@ -5157,11 +5175,17 @@ public class Maths {
 					final double iax = it.aDouble;
 					final double ibx = it.bDouble;
 					final double iby = db.getElementDoubleAbs(it.bIndex + 1);
-					double q;
-					double den;
 					double ox;
 					double oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					double q;
+					double den;
+					if (iby == 0) {
+						ox = (iax / ibx);
+						oy = (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (iay / iby);
+						oy = (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (ibx / iby);
 						den = (ibx * q + iby);
 						ox = ((iax * q + iay) / den);
@@ -5181,11 +5205,17 @@ public class Maths {
 					final double iax = it.aDouble;
 					final double ibx = it.bDouble;
 					final double iay = da.getElementDoubleAbs(it.aIndex + 1);
-					double q;
-					double den;
 					double ox;
 					double oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					double q;
+					double den;
+					if (iby == 0) {
+						ox = (iax / ibx);
+						oy = (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (iay / iby);
+						oy = (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (ibx / iby);
 						den = (ibx * q + iby);
 						ox = ((iax * q + iay) / den);
@@ -5205,11 +5235,17 @@ public class Maths {
 					final double ibx = it.bDouble;
 					final double iay = da.getElementDoubleAbs(it.aIndex + 1);
 					final double iby = db.getElementDoubleAbs(it.bIndex + 1);
-					double q;
-					double den;
 					double ox;
 					double oy;
-					if (Math.abs(ibx) < Math.abs(iby)) {
+					double q;
+					double den;
+					if (iby == 0) {
+						ox = (iax / ibx);
+						oy = (iay / ibx);
+					} else if (ibx == 0) {
+						ox = (iay / iby);
+						oy = (-iax / iby);
+					} else if (Math.abs(ibx) < Math.abs(iby)) {
 						q = (ibx / iby);
 						den = (ibx * q + iby);
 						ox = ((iax * q + iay) / den);

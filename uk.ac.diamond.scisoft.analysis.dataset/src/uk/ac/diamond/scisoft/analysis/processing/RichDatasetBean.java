@@ -22,6 +22,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * Deals with holding the data which a RichDataset requires.
@@ -32,12 +33,20 @@ class RichDatasetBean implements Serializable {
 	protected List<IDataset>       axes;
 	protected ILazyDataset         mask;
 	protected IMetaData            meta;
+	protected List<IROI>           rois;
 	
-	public RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
+	RichDatasetBean(ILazyDataset data, List<IDataset> axes) {
+        this(data, axes, null, null, null);
+	}
+	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
+        this(data, axes, mask, meta, null);
+	}
+	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta, List<IROI> rois) {
 		this.data = data;
 		this.axes = axes;
 		this.mask = mask;
 		this.meta = meta;
+		this.rois = rois;
 	}
 	
 	public ILazyDataset getData() {
@@ -64,7 +73,12 @@ class RichDatasetBean implements Serializable {
 	public void setMeta(IMetaData meta) {
 		this.meta = meta;
 	}
-	
+	public List<IROI> getRegions() {
+		return rois;
+	}
+	public void setRegions(List<IROI> rois) {
+		this.rois = rois;
+	}
 
 	@Override
 	public int hashCode() {
@@ -74,6 +88,7 @@ class RichDatasetBean implements Serializable {
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((mask == null) ? 0 : mask.hashCode());
 		result = prime * result + ((meta == null) ? 0 : meta.hashCode());
+		result = prime * result + ((rois == null) ? 0 : rois.hashCode());
 		return result;
 	}
 	@Override
@@ -104,6 +119,11 @@ class RichDatasetBean implements Serializable {
 			if (other.meta != null)
 				return false;
 		} else if (!meta.equals(other.meta))
+			return false;
+		if (rois == null) {
+			if (other.rois != null)
+				return false;
+		} else if (!rois.equals(other.rois))
 			return false;
 		return true;
 	}

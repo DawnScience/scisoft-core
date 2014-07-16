@@ -21,6 +21,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * This dataset holds several bits of information about scientific data.
@@ -37,6 +38,11 @@ public interface IRichDataset {
 	public List<IDataset> getAxes();
 
 	public void setAxes(List<IDataset> axes);
+	
+	public List<IROI> getRegions();
+
+	public void setRegions(List<IROI> rois);
+
 
 	public ILazyDataset getMask();
 

@@ -23,16 +23,25 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * A dataset which holds several bits of information to do with real data.
  */
 public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyDataset {
 
+	
+	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta, List<IROI> rois) {
+		super(data, axes, mask, meta, rois);
+	}
+
 	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
 		super(data, axes, mask, meta);
 	}
-	
+
+	public RichDataset(ILazyDataset data, List<IDataset> axes) {
+		super(data, axes);
+	}
 	
 	// TODO add methods operating on the rich data for instance:
 	// 
@@ -89,6 +98,7 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	public void setShape(int... shape) {
 		data.setShape(shape);
 		// TODO FIXME Is the mask really always the same size as the data as the design doc says?
+		// It could be the size of n-1 where n is the dimensions of the data (or less?) 
 		mask.setShape(shape);
 	}
 
@@ -129,12 +139,18 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 
 	@Override
 	public ILazyDataset getSliceView(int[] start, int[] stop, int[] step) {
-		return data.getSliceView(start, stop, step);
+		final ILazyDataset d = data.getSliceView(start, stop, step);
+		final ILazyDataset m = mask!=null ? mask.getSliceView(start, stop, step) : null;
+		// TODO Slice axes?
+		return new RichDataset(d, axes, m, meta, rois);
 	}
 
 	@Override
 	public ILazyDataset getSliceView(Slice... slice) {
-		return data.getSliceView(slice);
+		final ILazyDataset d = data.getSliceView(slice);
+		final ILazyDataset m = mask!=null ? mask.getSliceView(slice) : null;
+		// TODO Slice axes?
+		return new RichDataset(d, axes, m, meta, rois);
 	}
 
 	@Override

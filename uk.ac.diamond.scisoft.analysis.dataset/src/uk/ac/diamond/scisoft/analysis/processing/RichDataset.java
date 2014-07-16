@@ -32,6 +32,15 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
 		super(data, axes, mask, meta);
 	}
+	
+	
+	// TODO add methods operating on the rich data for instance:
+	// 
+	// o get values taking mask into consideration
+	// o process mask over all data or return an ILaztDataset implementation which will mask on the fly
+	// o get value from axis location (axis lookup followed by using those indices with real data)
+	// etc.
+
 
 	@Override
 	public IMetaData getMetadata() throws Exception {
@@ -143,12 +152,5 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 		return data.getLazyErrors();
 	}
 	
-	
-	// TODO add methods operating on the rich data for instance:
-	// 
-	// o get values taking mask into consideration
-	// o process mask over all data or return an ILaztDataset implementation which will mask on the fly
-	// o get value from axis location (axis lookup followed by using those indices with real data)
-	// etc.
 
 }

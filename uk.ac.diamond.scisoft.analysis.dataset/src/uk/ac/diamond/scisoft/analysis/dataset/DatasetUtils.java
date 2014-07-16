@@ -1162,6 +1162,34 @@ public class DatasetUtils {
 	}
 
 	/**
+	 * Create a compound dataset from given datasets
+	 * @param datasets
+	 * @return compound dataset or null if none given
+	 */
+	public static CompoundDataset createCompoundDataset(final Dataset... datasets) {
+		if (datasets == null || datasets.length == 0)
+			return null;
+
+		switch (datasets[0].getDtype()) {
+		case Dataset.INT8:
+			return new CompoundByteDataset(datasets);
+		case Dataset.INT16:
+			return new CompoundShortDataset(datasets);
+		case Dataset.INT32:
+			return new CompoundIntegerDataset(datasets);
+		case Dataset.INT64:
+			return new CompoundLongDataset(datasets);
+		case Dataset.FLOAT32:
+			return new CompoundFloatDataset(datasets);
+		case Dataset.FLOAT64:
+			return new CompoundDoubleDataset(datasets);
+		default:
+			utilsLogger.error("Dataset type not supported for this operation");
+			throw new UnsupportedOperationException("Dataset type not supported");
+		}
+	}
+
+	/**
 	 * Create a compound dataset by using last axis as elements of an item
 	 * @param a
 	 * @param shareData if true, then share data

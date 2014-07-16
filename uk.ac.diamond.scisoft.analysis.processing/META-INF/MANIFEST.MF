@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Processing
+Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: uk.ac.diamond.scisoft.analysis.processing.Activator
+Bundle-Vendor: DLS
+Require-Bundle: uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis.dataset;bundle-version="1.0.0",
+ org.eclipse.core.runtime;bundle-version="3.8.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: org.junit;version="4.10.0",
+ org.osgi.framework;version="1.7.0"
+Service-Component: OSGI-INF/component.xml

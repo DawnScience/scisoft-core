@@ -31,7 +31,14 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
  */
 public interface IRichDataset extends ILazyDataset {
 
-	// TODO Code specific to operations on rich datasets.
+	// TODO add methods operating on the rich data for instance:
+	// 
+	// o get values taking mask into consideration
+	// o process mask over all data or return an ILaztDataset implementation which will mask on the fly
+	// o get value from axis location (axis lookup followed by using those indices with real data)
+	// etc.
+	
+	
 	
 	// Boiler plate getters and setters for data
 	public ILazyDataset getData();

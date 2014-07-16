@@ -29,8 +29,11 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
  * The class contains methods for getting/setting the data components and
  * operating on the rich dataset.
  */
-public interface IRichDataset {
+public interface IRichDataset extends ILazyDataset {
 
+	// TODO Code specific to operations on rich datasets.
+	
+	// Boiler plate getters and setters for data
 	public ILazyDataset getData();
 
 	public void setData(ILazyDataset data);

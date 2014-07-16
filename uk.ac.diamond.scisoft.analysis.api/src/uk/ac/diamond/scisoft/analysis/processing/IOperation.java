@@ -22,8 +22,20 @@ import java.io.Serializable;
  * Interface to encapsulate processing operations on an IRichDataset
  * 
  * For instance background correction, azimuthal integration.
+ * 
+ * Your operation many be contributed via an extension point from any plugin. 
+ * In this case the operation will be instantiated through a no argument constructor
+ * so that the operation type can be retrieved. 
  */
 public interface IOperation {
+	
+	/**
+	 * The operation name. The operation service allows operations to be 
+	 * found by name which can be used to determine available operations.
+	 * 
+	 * @return OperationType
+	 */
+	public String getOperationDescription();
 
 	/**
 	 * Provide the data required for this operation, generally one IRichDataset.

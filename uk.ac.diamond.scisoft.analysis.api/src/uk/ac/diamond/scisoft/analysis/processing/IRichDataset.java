@@ -43,7 +43,6 @@ public interface IRichDataset {
 
 	public void setRegions(List<IROI> rois);
 
-
 	public ILazyDataset getMask();
 
 	public void setMask(ILazyDataset mask);

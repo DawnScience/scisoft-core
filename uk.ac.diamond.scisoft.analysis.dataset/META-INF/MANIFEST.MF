@@ -14,6 +14,7 @@ Export-Package: uk.ac.diamond.scisoft.analysis.coords,
  uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.dataset.function,
  uk.ac.diamond.scisoft.analysis.delaunay_triangulation,
+ uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.roi,
  uk.ac.diamond.scisoft.analysis.roi.fitting,
  uk.ac.diamond.scisoft.analysis.roi.handler

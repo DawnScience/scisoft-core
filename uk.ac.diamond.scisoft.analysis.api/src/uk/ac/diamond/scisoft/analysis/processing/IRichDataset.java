@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.dataset;
+package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.List;
 
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 
 /**

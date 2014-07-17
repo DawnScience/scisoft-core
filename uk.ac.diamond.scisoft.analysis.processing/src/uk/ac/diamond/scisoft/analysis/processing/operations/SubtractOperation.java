@@ -10,8 +10,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  */
 public class SubtractOperation extends AbstractMathsOperation {
 
-	protected IDataset operation(Dataset a, Object value) {
-		return a.isubtract(value);
+	protected IDataset operation(IDataset a, Object value) {
+		return ((Dataset)a).isubtract(value);
 	}
 
 	@Override

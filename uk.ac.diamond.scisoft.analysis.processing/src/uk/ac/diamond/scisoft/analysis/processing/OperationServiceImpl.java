@@ -1,27 +1,21 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
+import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
 
 /**
  * Do not use this class externally. Instead get the IOperationService
@@ -41,15 +35,40 @@ public class OperationServiceImpl implements IOperationService {
 		// Intentionally do nothing
 	}
 
+	/**
+	 * Uses the Slicer.visitAll(...) method which conversions also use to process
+	 * stacks out of the rich dataset passed in.
+	 */
 	@Override
-	public IRichDataset executeSeries(IOperation... series) throws OperationException {
+	public void executeSeries(final IRichDataset dataset, final IExecutionVisitor visitor, final IOperation... series) throws OperationException {
 
-		IRichDataset value = series[0].execute();
-		if (series.length>1) for (int i = 1; i < series.length; i++) {
-			series[i].setData(value);
-			value = series[i].execute();
+		series[0].setDataset(dataset);
+		
+		Map<Integer, String> slicing = dataset.getSlicing();
+		if (slicing==null) slicing = Collections.emptyMap();
+				
+		// Jakes slicing from the conversion tool.
+		try {
+			
+			Slicer.visitAll(dataset.getData(), slicing, "Slice", new SliceVisitor() {
+
+				@Override
+				public void visit(IDataset slice, Slice... slices) throws Exception {
+			        
+					boolean required = visitor.isRequired(slice, series);
+					if (!required) return;
+					
+					for (IOperation i : series) slice = i.execute(slice);
+					
+					visitor.executed(slice);
+				}
+			});
+			
+		} catch (OperationException o) {
+			throw o;
+		} catch (Exception e) {
+			throw new OperationException(null, e.getMessage());
 		}
-		return value;
 	}
 
 	// Reads the declared operations from extension point, if they have not been already.

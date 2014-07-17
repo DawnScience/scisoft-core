@@ -82,12 +82,13 @@ public interface IOperationService {
 	 * its data set and other operations should have their parameters set before
 	 * execution.
 	 * 
+	 * @param dataset
+	 * @param visitor - notified of the result of each slice result after processing
 	 * @param series
-	 * @return IRichDataset result returned from last operation.
 	 * @throws OperationException
 	 */
-	public IRichDataset executeSeries(IOperation... series) throws OperationException;
-
+	public void executeSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+	
 	/**
 	 * Runs a set of operations by following a graph chaining the operations together.
 	 * This run uses a recursive method and 

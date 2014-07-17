@@ -29,7 +29,7 @@ public abstract class AbstractMathsOperation implements IOperation {
 	}
 
 	@Override
-	public void setData(IRichDataset... data) throws IllegalArgumentException {
+	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
 		if (data.length<1 || data.length>2) throw new IllegalArgumentException("You can only set one or two datasets for "+getClass().getSimpleName());
 	    this.data = data;
 	}
@@ -38,29 +38,27 @@ public abstract class AbstractMathsOperation implements IOperation {
 	 * TODO This operation is only an example.
 	 */
 	@Override
-	public IRichDataset execute() throws OperationException {
+	public IDataset execute(IDataset a) throws OperationException {
 		
 		try {
 			IDataset result;
 			if (value!=null) {
 				// TODO FIXME We simply get all data out of the lazy and return it
-				final Dataset a = (Dataset)data[0].getData().getSlice((Slice)null);
-				result = operation(a, value);
+			result = operation(a, value);
 			} else {
-				final Dataset a = (Dataset)data[0].getData().getSlice((Slice)null);
 				final Dataset b = (Dataset)data[1].getData().getSlice((Slice)null);
 				result = operation(a, b);
 
 			}
 			// TODO Need to set up axes and meta correctly.
-			return new RichDataset(result, data[0].getAxes(), data[0].getMask(), data[0].getMeta());
+			return result;
 			
 		} catch (Exception e) {
 			throw new OperationException(this, e.getMessage());
 		}
 	}
 	
-	protected abstract IDataset operation(Dataset a, Object value);
+	protected abstract IDataset operation(IDataset a, Object value);
 
 	@Override
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {

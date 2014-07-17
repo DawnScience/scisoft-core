@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -60,5 +61,11 @@ public interface IRichDataset extends ILazyDataset {
 	public IMetaData getMeta()  throws Exception;
 
 	public void setMeta(IMetaData meta);
+
+	public Map<Integer, String> getSlicing();
+
+	public void setSlicing(Map<Integer, String> slicing);
+
+	public void setSlicing(String... slicing);
 
 }

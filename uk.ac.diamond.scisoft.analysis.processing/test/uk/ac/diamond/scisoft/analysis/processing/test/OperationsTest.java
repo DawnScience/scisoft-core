@@ -9,6 +9,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
@@ -53,18 +54,19 @@ public class OperationsTest {
 	public void testSimpleSubtract() throws Exception {
 				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
-		subtract.setData(rand);
 		subtract.setParameters(100);
 		
-		final IRichDataset   result = service.executeSeries(subtract);
-		IDataset all = result.getData().getSlice((Slice)null);
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
-		for (int i = 0; i < all.getShape()[0]; i++) {
-			for (int j = 0; j < all.getShape()[0]; j++) {
-			    assert all.getDouble(i,j)<0;
-			}
-		}
+		service.executeSeries(rand, new IExecutionVisitor.Stub() {
+			public void executed(IDataset result) {
+				for (int i = 0; i < result.getShape()[0]; i++) {
+					for (int j = 0; j < result.getShape()[0]; j++) {
+					    assert result.getDouble(i,j)<0;
+					}
+				}
+			}			
+		}, subtract);
 	}
 
 	@Test
@@ -74,18 +76,19 @@ public class OperationsTest {
 		final IOperation subtract = service.findFirst("subtract");
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
-		subtract.setData(rand);
+		
 		subtract.setParameters(100);
 		add.setParameters(101);
 		
-		final IRichDataset   result = service.executeSeries(subtract, add);
-		IDataset all = result.getData().getSlice((Slice)null);
-		
-		for (int i = 0; i < all.getShape()[0]; i++) {
-			for (int j = 0; j < all.getShape()[0]; j++) {
-			    assert all.getDouble(i,j)>0;
-			}
-		}
+		service.executeSeries(rand, new IExecutionVisitor.Stub() {
+			public void executed(IDataset result) {
+				for (int i = 0; i < result.getShape()[0]; i++) {
+					for (int j = 0; j < result.getShape()[0]; j++) {
+					    assert result.getDouble(i,j)>0;
+					}
+				}
+			}			
+		}, subtract, add);
 	}
 
 }

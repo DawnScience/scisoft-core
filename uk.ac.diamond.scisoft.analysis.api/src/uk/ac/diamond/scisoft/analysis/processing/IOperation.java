@@ -18,8 +18,13 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.io.Serializable;
 
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+
 /**
  * Interface to encapsulate processing operations on an IRichDataset
+ * The idea of this class is that its data context, the data it is operating
+ * on is passed in as an IRichDataset. Then each slice is operated on in the
+ * execute method.
  * 
  * For instance background correction, azimuthal integration.
  * 
@@ -61,12 +66,12 @@ public interface IOperation {
 	 * @param data
 	 * @throws IllegalArgumentException if the operation does not support this count or type of data.
 	 */
-	public void setData(IRichDataset... data) throws IllegalArgumentException;
+	public void setDataset(IRichDataset... data) throws IllegalArgumentException;
 		
 	/**
-	 * The execute method operates on the data set last send via setData() and the
+	 * The execute method operates on the data set last send via setDataset() and the
 	 * information specific to this operation provided and 
-	 * returns the processed data in the form of an IRichDataset
+	 * returns the processed data in the form of an IDataset
 	 * 
 	 * Multiple setData(..) and execute methods may be called. In addition execute()
 	 * may be called multiple times for operations such as differential. Each time
@@ -74,7 +79,7 @@ public interface IOperation {
 	 * 
 	 * @return dataset which is the result of this operation.
 	 */
-	public IRichDataset execute() throws OperationException;
+	public IDataset execute(IDataset slice) throws OperationException;
 	
 	
 	/**

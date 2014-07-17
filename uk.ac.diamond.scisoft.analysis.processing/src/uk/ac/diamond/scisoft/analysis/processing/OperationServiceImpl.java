@@ -50,11 +50,41 @@ public class OperationServiceImpl implements IOperationService {
 		
 		Collection<IOperation> ret = new ArrayList<IOperation>(3);
 		for (String id : operations.keySet()) {
-			if (id.matches(regex) || id.toLowerCase().matches(regex)) {
-				ret.add(operations.get(id));
+			IOperation operation = operations.get(id);
+			if (matches(id, operation, regex)) {
+				ret.add(operation);
 			}
 		}
 		return ret;
+	}
+	
+	@Override
+	public IOperation findFirst(String regex) throws Exception {
+		checkOperations();
+		
+		for (String id : operations.keySet()) {
+			IOperation operation = operations.get(id);
+			if (matches(id, operation, regex)) {
+				return operation;
+			}
+		}
+		return null;
+	}
+
+     /**
+	 * NOTE the regex will be matched as follows on the id of the operation:
+	 * 1. if matching on the id
+	 * 2. if matching the description in lower case.
+	 * 3. if indexOf the regex in the id is >0
+	 * 4. if indexOf the regex in the description is >0
+	 */
+	private boolean matches(String id, IOperation operation, String regex) {
+		if (id.matches(regex)) return true;
+		final String description = operation.getOperationDescription();
+		if (description.matches(regex)) return true;
+		if (id.indexOf(regex)>0) return true;
+		if (description.indexOf(regex)>0) return true;
+		return false;
 	}
 
 	@Override

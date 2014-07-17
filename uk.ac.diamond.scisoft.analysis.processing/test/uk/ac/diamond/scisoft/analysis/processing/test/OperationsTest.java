@@ -58,4 +58,31 @@ public class OperationsTest {
 		}
 	}
 
+	@Test
+	public void testSimpleAddAndSubtractUsingFind() throws Exception {
+		
+		final IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
+		if (service == null) throw new Exception("Cannot get the service!");
+		
+		final Collection<String> operations = service.getRegisteredOperations();
+		if (operations==null || operations.isEmpty()) throw new Exception("No operations were registered!");
+		
+		final IOperation add      = service.findFirst("add");
+		final IOperation subtract = service.findFirst("subtract");
+		
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		subtract.setData(rand);
+		subtract.setParameters(100);
+		add.setParameters(101);
+		
+		final IRichDataset   result = service.executeSeries(subtract, add);
+		IDataset all = result.getData().getSlice((Slice)null);
+		
+		for (int i = 0; i < all.getShape()[0]; i++) {
+			for (int j = 0; j < all.getShape()[0]; j++) {
+			    assert all.getDouble(i,j)>0;
+			}
+		}
+	}
+
 }

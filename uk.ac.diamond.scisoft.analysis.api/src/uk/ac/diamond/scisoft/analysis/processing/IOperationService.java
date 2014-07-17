@@ -26,19 +26,42 @@ import java.util.Collection;
 public interface IOperationService {
 	
 	/**
-	 * Finds an operation by a string which does a search
-	 * on the regex passed in. All operations whose descriptions
+	 * Finds all operations by doing a search
+	 * using the regex passed in. All operations whose descriptions/ids
 	 * match the regex are returned. For instance:
 	 * 
 	 * find("correction");  // Might give operations "Dark correction", "Flat correction"
 	 * find("integration"); // Might give operations "Azimuthal integration", "Radial integration", "Box integration", "Line integration"
 	 * 
-	 * NOTE the regex will be checked if matching on the description, and if not the description in lower case.
+	 * NOTE the regex will be matched as follows on the id of the operation:
+	 * 1. if matching on the id
+	 * 2. if matching the description in lower case.
+	 * 3. if indexOf the regex in the id is >0
+	 * 4. if indexOf the regex in the description is >0
 	 * 
 	 * @param operationRegex
 	 * @return list of operations which match
 	 */
 	public Collection<IOperation> find(String operationRegex)  throws Exception;
+	
+	/**
+	 * Finds the first operation matcing a search
+	 * using the regex passed in. All operations whose descriptions/ids
+	 * match the regex are returned. For instance:
+	 * 
+	 * find("correction");  // Might give operations "Dark correction", "Flat correction"
+	 * find("integration"); // Might give operations "Azimuthal integration", "Radial integration", "Box integration", "Line integration"
+	 * 
+	 * NOTE the regex will be matched as follows on the id of the operation:
+	 * 1. if matching on the id
+	 * 2. if matching the description in lower case.
+	 * 3. if indexOf the regex in the id is >0
+	 * 4. if indexOf the regex in the description is >0
+	 * 
+	 * @param operationRegex
+	 * @return list of operations which match
+	 */
+	public IOperation findFirst(String operationRegex)  throws Exception;
 	
 	/**
 	 * Gets the ids of all the operations. The id is defined in the extension point.

@@ -1,14 +1,35 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * Do not use this class externally. Instead get the IOperationService
+ * from OSGI.
+ * 
+ * @author fcp94556
+ *
+ */
 public class OperationServiceImpl implements IOperationService {
 	
 	static {
@@ -99,4 +120,20 @@ public class OperationServiceImpl implements IOperationService {
 		return operations.get(operationId).getClass().newInstance();
 	}
 
-}
+	@Override
+	public void createOperations(ClassLoader cl, String pakage) throws Exception {
+		
+		final List<Class<?>> classes = ClassUtils.getClassesForPackage(cl, pakage);
+		for (Class<?> class1 : classes) {
+			if (Modifier.isAbstract(class1.getModifiers())) continue;
+			if (IOperation.class.isAssignableFrom(class1)) {
+				
+				IOperation op = (IOperation) class1.newInstance();
+				if (operations==null) operations = new HashMap<String, IOperation>(31);
+				
+				operations.put(op.getId(), op);
+
+			}
+		}
+	}
+ }

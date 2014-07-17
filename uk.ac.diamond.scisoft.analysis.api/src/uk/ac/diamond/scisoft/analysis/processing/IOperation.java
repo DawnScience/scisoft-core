@@ -26,6 +26,9 @@ import java.io.Serializable;
  * Your operation many be contributed via an extension point from any plugin. 
  * In this case the operation will be instantiated through a no argument constructor
  * so that the operation type can be retrieved. 
+ * 
+ * When you create an IOperation is must be marked with @Operation so that 
+ * it can be read into the operation service.
  */
 public interface IOperation {
 	
@@ -36,6 +39,13 @@ public interface IOperation {
 	 * @return OperationType
 	 */
 	public String getOperationDescription();
+
+	/**
+	 * 
+	 * @return The unique id for this operation.
+	 */
+	public String getId();
+
 
 	/**
 	 * Provide the data required for this operation, generally one IRichDataset.
@@ -76,4 +86,5 @@ public interface IOperation {
 	 * @throws IllegalArgumentException if the parameters are not those required by the operation.
 	 */
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException;
+
 }

@@ -87,7 +87,7 @@ public interface IOperationService {
 	 * @throws OperationException
 	 */
 	public IRichDataset executeSeries(IOperation... series) throws OperationException;
-	
+
 	/**
 	 * Runs a set of operations by following a graph chaining the operations together.
 	 * This run uses a recursive method and 
@@ -97,4 +97,17 @@ public interface IOperationService {
 	// If we start to need things like this:
 	//public IRichDataset executeGraph(IOperationNode root) throws OperationException;
 	// Then this service has inadvertently become a workflow tool and we are reinventing ptolemy
+	
+	
+	/**
+	 * Call this method to load some operations not by extension point but by parsing the classes
+	 * in a package which implement IOperation. This is useful if your code for the operations is
+	 * not eclipse or you are writing a unit test.
+	 * 
+	 * @param l classloader where pacakage can be found.
+	 * @param pakage separated by dots.
+	 */
+	public void createOperations(ClassLoader l, String pakage)  throws Exception;
+	
+
 }

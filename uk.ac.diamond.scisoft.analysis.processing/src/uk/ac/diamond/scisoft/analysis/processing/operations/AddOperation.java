@@ -14,4 +14,9 @@ public class AddOperation extends AbstractMathsOperation {
 		return a.iadd(value);
 	}
 
+	@Override
+	public String getId() {
+		return "uk.ac.diamond.scisoft.analysis.processing.addOperation";
+	}
+
 }

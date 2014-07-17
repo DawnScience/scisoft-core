@@ -25,7 +25,7 @@ public abstract class AbstractMathsOperation implements IOperation {
 
 	@Override
 	public String getOperationDescription() {
-		return "Add dataset mathematics";
+		return "Dataset mathematics operation "+getClass().getSimpleName();
 	}
 
 	@Override

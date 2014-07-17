@@ -37,12 +37,10 @@ public class OperationsPluginTest {
 
 	@Test
 	public void testSimpleSubtract() throws Exception {
+		
 		final IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
-		
-		final Collection<String> operations = service.getRegisteredOperations();
-		if (operations==null || operations.isEmpty()) throw new Exception("No operations were registered!");
-		
+				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		subtract.setData(rand);
@@ -63,10 +61,7 @@ public class OperationsPluginTest {
 		
 		final IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
-		
-		final Collection<String> operations = service.getRegisteredOperations();
-		if (operations==null || operations.isEmpty()) throw new Exception("No operations were registered!");
-		
+				
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		

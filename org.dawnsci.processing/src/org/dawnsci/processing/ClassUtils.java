@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing;
+package org.dawnsci.processing;
 
 import java.io.File;
 import java.io.IOException;

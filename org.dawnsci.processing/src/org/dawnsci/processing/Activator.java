@@ -1,8 +1,10 @@
-package uk.ac.diamond.scisoft.analysis.processing;
+package org.dawnsci.processing;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
+import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 
 public class Activator implements BundleActivator {
 

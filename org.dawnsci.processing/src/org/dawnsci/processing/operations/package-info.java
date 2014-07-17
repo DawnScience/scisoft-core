@@ -7,5 +7,5 @@
  * 
  * @author fcp94556
  */
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package org.dawnsci.processing.operations;
 

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Processing
-Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing;singleton:=true
+Bundle-SymbolicName: org.dawnsci.processing;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: uk.ac.diamond.scisoft.analysis.processing.Activator
+Bundle-Activator: org.dawnsci.processing.Activator
 Bundle-Vendor: DLS
 Require-Bundle: uk.ac.diamond.scisoft.analysis.api;bundle-version="1.0.0",
  uk.ac.diamond.scisoft.analysis.dataset;bundle-version="1.0.0",
@@ -14,11 +14,5 @@ Import-Package: org.junit;version="4.10.0",
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.6"
 Service-Component: OSGI-INF/component.xml
-Bundle-ClassPath: .,
- jars/dom4j-1.6.1.jar,
- jars/gson-1.4.jar,
- jars/guava-11.0.2.jar,
- jars/javassist-3.12.1.GA.jar,
- jars/jsr305-1.3.9.jar,
- jars/reflections-0.9.8.jar,
- jars/xml-apis-1.0.b2.jar
+Bundle-ClassPath: .
+

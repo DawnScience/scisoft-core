@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing;
+package org.dawnsci.processing;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -22,6 +22,11 @@ import java.util.jar.JarFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+
+import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
+import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 
 /**
  * Do not use this class externally. Instead get the IOperationService

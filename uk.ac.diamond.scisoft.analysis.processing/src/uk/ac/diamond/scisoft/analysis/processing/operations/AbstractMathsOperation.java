@@ -1,4 +1,4 @@
-package org.dawnsci.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.io.Serializable;
 

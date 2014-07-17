@@ -1,4 +1,4 @@
-package org.dawnsci.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -8,15 +8,15 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  * @author fcp94556
  *
  */
-public class AddOperation extends AbstractMathsOperation {
+public class SubtractOperation extends AbstractMathsOperation {
 
 	protected IDataset operation(Dataset a, Object value) {
-		return a.iadd(value);
+		return a.isubtract(value);
 	}
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.addOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.subtractOperation";
 	}
 
 }

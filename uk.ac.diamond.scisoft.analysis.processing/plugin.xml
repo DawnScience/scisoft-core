@@ -4,13 +4,13 @@
    <extension
          point="uk.ac.diamond.scisoft.analysis.api.operation">
       <operation
-            class="org.dawnsci.processing.operations.SubtractOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.subtractOperation"
             name="Subtract"
             visible="false">
       </operation>
       <operation
-            class="org.dawnsci.processing.operations.AddOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AddOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.addOperation"
             name="Add"
             visible="false">

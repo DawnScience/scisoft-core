@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="Operation Service">
-   <implementation class="org.dawnsci.processing.OperationServiceImpl"/>
+   <implementation class="uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl"/>
    <service>
       <provide interface="uk.ac.diamond.scisoft.analysis.processing.IOperationService"/>
    </service>

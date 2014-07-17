@@ -17,7 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -34,7 +36,8 @@ class RichDatasetBean implements Serializable {
 	protected ILazyDataset         mask;
 	protected IMetaData            meta;
 	protected List<IROI>           rois;
-	
+	protected Map<Integer, String> slicing;
+
 	RichDatasetBean(ILazyDataset data, List<IDataset> axes) {
         this(data, axes, null, null, null);
 	}
@@ -89,6 +92,7 @@ class RichDatasetBean implements Serializable {
 		result = prime * result + ((mask == null) ? 0 : mask.hashCode());
 		result = prime * result + ((meta == null) ? 0 : meta.hashCode());
 		result = prime * result + ((rois == null) ? 0 : rois.hashCode());
+		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
 		return result;
 	}
 	@Override
@@ -125,7 +129,31 @@ class RichDatasetBean implements Serializable {
 				return false;
 		} else if (!rois.equals(other.rois))
 			return false;
+		if (slicing == null) {
+			if (other.slicing != null)
+				return false;
+		} else if (!slicing.equals(other.slicing))
+			return false;
 		return true;
 	}
-
+	
+	public List<IROI> getRois() {
+		return rois;
+	}
+	public void setRois(List<IROI> rois) {
+		this.rois = rois;
+	}
+	public Map<Integer, String> getSlicing() {
+		return slicing;
+	}
+	public void setSlicing(Map<Integer, String> slicing) {
+		this.slicing = slicing;
+	}
+    public void setSlicing(String... slices) {
+    	if (slicing==null) slicing= new HashMap<Integer, String>(slices.length);
+    	slicing.clear();
+    	for (int i = 0; i < slices.length; i++) {
+    		slicing.put(i, slices[i]);
+		}
+    }
 }

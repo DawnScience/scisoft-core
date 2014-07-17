@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,10 @@ public class OperationServiceImpl implements IOperationService {
 		
 		Map<Integer, String> slicing = dataset.getSlicing();
 		if (slicing==null) slicing = Collections.emptyMap();
+		for (Iterator<Integer> iterator = slicing.keySet().iterator(); iterator.hasNext();) {
+			Integer dim = iterator.next();
+			if ("".equals(slicing.get(dim))) iterator.remove();
+		}
 				
 		// Jakes slicing from the conversion tool.
 		try {

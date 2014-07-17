@@ -124,7 +124,7 @@ public class Slicer {
 
 			IDataset data = lz.getSlice(slice);
 			data = data.squeeze();
-			data.setName(nameFragment!=null? nameFragment: "" + " ("+ sliceName+")");
+			data.setName((nameFragment!=null ? nameFragment : "") + " ("+ sliceName+")");
 			visitor.visit(data, outSlice);
 		}
 

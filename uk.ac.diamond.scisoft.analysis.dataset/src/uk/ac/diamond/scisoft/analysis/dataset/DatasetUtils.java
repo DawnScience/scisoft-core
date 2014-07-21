@@ -565,13 +565,13 @@ public class DatasetUtils {
 	 * @param dtype dataset type
 	 */
 	public static AbstractDataset cast(final IDataset d, final int dtype) {
-		AbstractDataset a = convertToAbstractDataset(d);
+		Dataset a = convertToDataset(d);
 
 		if (a.getDtype() == dtype) {
-			return a;
+			return (AbstractDataset) a;
 		}
 
-		AbstractDataset c = null;
+		Dataset c = null;
 
 		try {
 			// copy across the data
@@ -580,50 +580,50 @@ public class DatasetUtils {
 				c = new BooleanDataset(a);
 				break;
 			case Dataset.INT8:
-				if (a instanceof AbstractCompoundDataset)
+				if (a instanceof CompoundDataset)
 					c = new CompoundByteDataset(a);
 				else
 					c = new ByteDataset(a);
 				break;
 			case Dataset.INT16:
-				if (a instanceof AbstractCompoundDataset)
+				if (a instanceof CompoundDataset)
 					c = new CompoundShortDataset(a);
 				else
 					c = new ShortDataset(a);
 				break;
 			case Dataset.INT32:
-				if (a instanceof AbstractCompoundDataset)
+				if (a instanceof CompoundDataset)
 					c = new CompoundIntegerDataset(a);
 				else
 					c = new IntegerDataset(a);
 				break;
 			case Dataset.INT64:
-				if (a instanceof AbstractCompoundDataset)
+				if (a instanceof CompoundDataset)
 					c = new CompoundLongDataset(a);
 				else
 					c = new LongDataset(a);
 				break;
 			case Dataset.ARRAYINT8:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundByteDataset((AbstractCompoundDataset) a);
+				if (a instanceof CompoundDataset)
+					c = new CompoundByteDataset((CompoundDataset) a);
 				else
 					c = new CompoundByteDataset(a);
 				break;
 			case Dataset.ARRAYINT16:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundShortDataset((AbstractCompoundDataset) a);
+				if (a instanceof CompoundDataset)
+					c = new CompoundShortDataset((CompoundDataset) a);
 				else
 					c = new CompoundShortDataset(a);
 				break;
 			case Dataset.ARRAYINT32:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundIntegerDataset((AbstractCompoundDataset) a);
+				if (a instanceof CompoundDataset)
+					c = new CompoundIntegerDataset((CompoundDataset) a);
 				else
 					c = new CompoundIntegerDataset(a);
 				break;
 			case Dataset.ARRAYINT64:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundLongDataset((AbstractCompoundDataset) a);
+				if (a instanceof AbstractDataset)
+					c = new CompoundLongDataset((CompoundDataset) a);
 				else
 					c = new CompoundLongDataset(a);
 				break;
@@ -634,14 +634,14 @@ public class DatasetUtils {
 				c = new DoubleDataset(a);
 				break;
 			case Dataset.ARRAYFLOAT32:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundFloatDataset((AbstractCompoundDataset) a);
+				if (a instanceof CompoundDataset)
+					c = new CompoundFloatDataset((CompoundDataset) a);
 				else
 					c = new CompoundFloatDataset(a);
 				break;
 			case Dataset.ARRAYFLOAT64:
-				if (a instanceof AbstractCompoundDataset)
-					c = new CompoundDoubleDataset((AbstractCompoundDataset) a);
+				if (a instanceof CompoundDataset)
+					c = new CompoundDoubleDataset((CompoundDataset) a);
 				else
 					c = new CompoundDoubleDataset(a);
 				break;
@@ -660,7 +660,7 @@ public class DatasetUtils {
 			throw new OutOfMemoryError("Not enough memory available to create dataset");
 		}
 
-		return c;
+		return (AbstractDataset) c;
 	}
 
 	/**

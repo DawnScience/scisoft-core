@@ -39,7 +39,7 @@ public interface IExecutionVisitor {
 	 * Called when the series of operations has been done
 	 * @param result
 	 */
-	public void executed(IDataset result);
+	public void executed(OperationData result) throws Exception;
 	
 	public class Stub implements IExecutionVisitor {
 
@@ -50,7 +50,7 @@ public interface IExecutionVisitor {
 		}
 
 		@Override
-		public void executed(IDataset result) {
+		public void executed(OperationData result) throws Exception {
 			// TODO Auto-generated method stub
 			
 		}

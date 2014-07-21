@@ -84,9 +84,10 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						for (IOperation i : series) slice = i.execute(slice);
+						OperationData data = new OperationData(slice, slices);
+						for (IOperation i : series) data = i.execute(data);
 						
-						visitor.executed(slice);
+						visitor.executed(data);
 					}
 				});
 			} else if (type==ExecutionType.PARALLEL) {
@@ -98,9 +99,10 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						for (IOperation i : series) slice = i.execute(slice);
+						OperationData data = new OperationData(slice, slices);
+						for (IOperation i : series) data = i.execute(data);
 						
-						visitor.executed(slice);
+						visitor.executed(data);
 					}
 				}, parallelTimeout>0 ? parallelTimeout : 5000);
 			} else {

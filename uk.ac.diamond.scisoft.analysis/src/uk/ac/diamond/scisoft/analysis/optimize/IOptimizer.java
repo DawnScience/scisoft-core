@@ -16,13 +16,15 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import java.io.Serializable;
+
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 
 /**
  * The interface for the optimizers
  */
-public interface IOptimizer {
+public interface IOptimizer extends Serializable {
 
 	/**
 	 * The standard optimize function

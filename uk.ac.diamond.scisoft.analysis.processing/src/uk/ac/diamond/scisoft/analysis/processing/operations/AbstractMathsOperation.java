@@ -7,8 +7,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
-import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 
 /**
  * Maths operations are bascially just for testing at the moment.
@@ -38,27 +38,27 @@ public abstract class AbstractMathsOperation implements IOperation {
 	 * TODO This operation is only an example.
 	 */
 	@Override
-	public IDataset execute(IDataset a) throws OperationException {
+	public OperationData execute(OperationData a) throws OperationException {
 		
 		try {
 			IDataset result;
 			if (value!=null) {
 				// TODO FIXME We simply get all data out of the lazy and return it
-			result = operation(a, value);
+			    result = operation(a, value);
 			} else {
 				final Dataset b = (Dataset)data[1].getData().getSlice((Slice)null);
 				result = operation(a, b);
 
 			}
 			// TODO Need to set up axes and meta correctly.
-			return result;
+			return new OperationData(result);
 			
 		} catch (Exception e) {
 			throw new OperationException(this, e.getMessage());
 		}
 	}
 	
-	protected abstract IDataset operation(IDataset a, Object value);
+	protected abstract IDataset operation(OperationData a, Object value);
 
 	@Override
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {

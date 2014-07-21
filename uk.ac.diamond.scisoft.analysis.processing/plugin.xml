@@ -15,6 +15,16 @@
             name="Add"
             visible="false">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AzimuthalIntegration"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
+            name="Azimithal Integration">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
+            name="Function Operation">
+      </operation>
    </extension>
 
 </plugin>

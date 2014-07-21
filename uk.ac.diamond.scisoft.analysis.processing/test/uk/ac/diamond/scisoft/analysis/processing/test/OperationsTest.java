@@ -12,6 +12,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 
 /**
@@ -58,10 +59,10 @@ public class OperationsTest {
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
 		service.executeSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)<0;
+			public void executed(OperationData result) throws Exception {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -80,10 +81,10 @@ public class OperationsTest {
 		add.setParameters(101);
 		
 		service.executeSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)>0;
+			public void executed(OperationData result) throws Exception {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+result.getData().getDouble(i,j));
 					}
 				}
 			}			
@@ -106,13 +107,13 @@ public class OperationsTest {
 		
 		counter = 0;
 		service.executeSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
+			public void executed(OperationData result) throws Exception {
 				
-				System.out.println(result.getName());
+				System.out.println(result.getData().getName());
 				counter++;
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)>0;
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -135,7 +136,7 @@ public class OperationsTest {
 		
 		counter = 0;
 		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
+			public void executed(OperationData result) throws Exception {
 				
 			    try {
 			    	// This sleep simply introduces some random behaviour
@@ -147,9 +148,9 @@ public class OperationsTest {
 				}
 
 				counter++;
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)>0;
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -172,7 +173,7 @@ public class OperationsTest {
 				
 		try {
 			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
-				public void executed(IDataset result) {
+				public void executed(OperationData result) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -183,9 +184,9 @@ public class OperationsTest {
 						e.printStackTrace();
 					}
 	
-					for (int i = 0; i < result.getShape()[0]; i++) {
-						for (int j = 0; j < result.getShape()[0]; j++) {
-						    assert result.getDouble(i,j)>0;
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 						}
 					}
 				}			
@@ -214,7 +215,7 @@ public class OperationsTest {
 		service.setParallelTimeout(50000);
 		try {
 			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
-				public void executed(IDataset result) {
+				public void executed(OperationData result) throws Exception {
 	
 					try {
 						// This sleep simply introduces some random behaviour
@@ -225,9 +226,9 @@ public class OperationsTest {
 						e.printStackTrace();
 					}
 					counter++;
-					for (int i = 0; i < result.getShape()[0]; i++) {
-						for (int j = 0; j < result.getShape()[0]; j++) {
-							assert result.getDouble(i,j)>0;
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 						}
 					}
 				}			

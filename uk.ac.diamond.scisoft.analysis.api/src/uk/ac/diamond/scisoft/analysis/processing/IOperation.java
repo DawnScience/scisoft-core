@@ -79,7 +79,7 @@ public interface IOperation {
 	 * 
 	 * @return dataset which is the result of this operation.
 	 */
-	public IDataset execute(IDataset slice) throws OperationException;
+	public OperationData execute(OperationData slice) throws OperationException;
 	
 	
 	/**

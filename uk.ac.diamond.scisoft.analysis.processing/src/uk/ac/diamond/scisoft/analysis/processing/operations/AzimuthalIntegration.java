@@ -2,8 +2,8 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
@@ -16,11 +16,11 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	}
 
 	@Override
-	public IDataset execute(IDataset islice) throws OperationException {
+	public OperationData execute(OperationData islice) throws OperationException {
 		
 		// TODO FIXME This is not right for the operation.
 		
-		Dataset slice = (Dataset)islice;
+		Dataset slice = (Dataset)islice.getData();
 		Dataset mask  = (Dataset)data.getMask().getSlice((Slice)null);
 		SectorROI sector = (SectorROI)data.getRegions().get(0);
 		
@@ -37,7 +37,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 			throw new OperationException(this, "Symmetry as separate dataset not currently supported!");
 	    	
 	    } else {
-	    	return integral;
+	    	return new OperationData(integral);
 	    }
 
 	}

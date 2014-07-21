@@ -16,13 +16,15 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.io.Serializable;
+
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
  * Add several functions (missing functions are treated as zero)
  */
-public class Add extends ANaryOperator implements IOperator {
+public class Add extends ANaryOperator implements IOperator, Serializable {
 	private static final String NAME = "Add";
 	private static final String DESC = "Add several functions together";
 

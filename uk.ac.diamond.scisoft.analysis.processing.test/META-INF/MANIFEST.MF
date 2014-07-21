@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Processing
+Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Diamond Light Source
+Fragment-Host: uk.ac.diamond.scisoft.analysis.processing
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: org.slf4j;version="1.7.6"
+Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"

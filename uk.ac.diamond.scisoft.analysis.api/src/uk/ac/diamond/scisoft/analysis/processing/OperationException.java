@@ -24,6 +24,10 @@ public class OperationException extends RuntimeException {
 		super();
 		this.operation = operation;
 	}
+	public OperationException(IOperation operation, Throwable cause) {
+		super(cause);
+		this.operation = operation;
+	}
 	
 	public OperationException(IOperation operation, String reason) {
 		super(reason);

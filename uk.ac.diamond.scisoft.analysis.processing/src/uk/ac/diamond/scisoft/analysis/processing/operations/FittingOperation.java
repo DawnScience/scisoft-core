@@ -53,7 +53,7 @@ public class FittingOperation implements IOperation {
 		try {
 			optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
 		} catch (Exception e) {
-			throw new OperationException(this, e.getMessage());
+			throw new OperationException(this, e);
 		}
 
 		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)xAxis, 

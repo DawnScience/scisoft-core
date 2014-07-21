@@ -20,14 +20,14 @@ public class FittingOperation implements IOperation {
 	private IRichDataset   dataset;
 	private Class<? extends APeak> peakClass;
 	private IDataset xAxis;
-	private Integer smoothing;
-	private Integer numPeaks;
-	private Double threshold;
-	private Boolean autoStopping;
-	private Boolean backgroundDominated;
+	private int smoothing;
+	private int numPeaks;
+	private double threshold;
+	private boolean autoStopping;
+	private boolean backgroundDominated;
 	private Class<? extends IOptimizer> optimClass;
-	private Double quality;
-	private Long seed;
+	private double quality;
+	private Long   seed;
 
 	@Override
 	public String getOperationDescription() {
@@ -50,10 +50,12 @@ public class FittingOperation implements IOperation {
 	public OperationData execute(OperationData data, IMonitor monitor) throws OperationException {
 		
 		IOptimizer optimizer;
-		try {
-			optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
-		} catch (Exception e) {
-			throw new OperationException(this, e);
+		synchronized(this) { // Seemed to fail thread test without this.
+			try {
+				optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
+			} catch (Exception e) {
+				throw new OperationException(this, e);
+			}
 		}
 
 		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)xAxis, 

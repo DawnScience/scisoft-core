@@ -107,6 +107,13 @@ public interface IOperationService {
 	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
 
 	/**
+	 * Optionally configure the parallel timeout of this service.
+	 * 
+	 * @param timeoutMs
+	 */
+	public void setParallelTimeout(long timeoutMs);
+
+	/**
 	 * Runs a set of operations by following a graph chaining the operations together.
 	 * This run uses a recursive method and 
 	 * @param root
@@ -126,6 +133,7 @@ public interface IOperationService {
 	 * @param pakage separated by dots.
 	 */
 	public void createOperations(ClassLoader l, String pakage)  throws Exception;
+
 	
 
 }

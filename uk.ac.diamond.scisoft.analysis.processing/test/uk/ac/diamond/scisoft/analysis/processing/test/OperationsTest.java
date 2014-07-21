@@ -119,7 +119,7 @@ public class OperationsTest {
 			}			
 		}, subtract, add);
 		
-		assert counter == 24;
+		if ( counter != 24 ) throw new Exception();
 	}
 
 	@Test
@@ -138,7 +138,15 @@ public class OperationsTest {
 		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
 			public void executed(IDataset result) {
 				
-				System.out.println(result.getName());
+			    try {
+			    	// This sleep simply introduces some random behaviour
+			    	// on the parallel jobs so that we 
+					final long time = Math.round(Math.random()*1000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
 				counter++;
 				for (int i = 0; i < result.getShape()[0]; i++) {
 					for (int j = 0; j < result.getShape()[0]; j++) {
@@ -148,7 +156,85 @@ public class OperationsTest {
 			}			
 		}, subtract, add);
 		
-		assert counter == 24;
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+	}
+
+	@Test
+	public void testParallelLongerThanDefault() throws Exception {
+						
+		final IOperation add      = service.findFirst("add");
+		final IOperation subtract = service.findFirst("subtract");
+		
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		rand.setSlicing("all"); // 
+		
+		subtract.setParameters(100);
+		add.setParameters(101);
+				
+		try {
+			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+				public void executed(IDataset result) {
+					
+				    try {
+				    	// This sleep simply introduces some random behaviour
+				    	// on the parallel jobs so that we 
+						final long time = Math.round(Math.random()*10000);
+						Thread.sleep(time);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+	
+					for (int i = 0; i < result.getShape()[0]; i++) {
+						for (int j = 0; j < result.getShape()[0]; j++) {
+						    assert result.getDouble(i,j)>0;
+						}
+					}
+				}			
+			}, subtract, add);
+		} catch (Exception shouldThrowException) {
+			return;
+		}
+		
+		throw new Exception("The default wait time of 5000ms should have been ");
+	}
+
+	@Test
+	public void testParallelTimeout() throws Exception {
+						
+		final IOperation add      = service.findFirst("add");
+		final IOperation subtract = service.findFirst("subtract");
+		
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		rand.setSlicing("all"); // 
+		
+		subtract.setParameters(100);
+		add.setParameters(101);
+				
+		counter = 0;
+		
+		service.setParallelTimeout(20000);
+		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+			public void executed(IDataset result) {
+
+				try {
+					// This sleep simply introduces some random behaviour
+					// on the parallel jobs so that we 
+					final long time = Math.round(Math.random()*10000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				counter++;
+				for (int i = 0; i < result.getShape()[0]; i++) {
+					for (int j = 0; j < result.getShape()[0]; j++) {
+						assert result.getDouble(i,j)>0;
+					}
+				}
+			}			
+		}, subtract, add);
+		
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+
 	}
 
 }

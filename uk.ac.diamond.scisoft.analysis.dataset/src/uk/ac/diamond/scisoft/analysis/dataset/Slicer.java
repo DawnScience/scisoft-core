@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Methods for slicing data using visit patterns.
@@ -44,6 +46,8 @@ public class Slicer {
 	/**
 	 * This method provides a way to slice over a lazydataset providing the values
 	 * in each dimension for the slice using a visit pattern.
+	 * 
+	 * Block until complete.
 	 * 
 	 * @param lz
 	 * @param sliceDimensions
@@ -131,13 +135,14 @@ public class Slicer {
 
 	}
 
-	
 	/**
 	 * This method provides a way to slice over a lazydataset providing the values
 	 * in each dimension for the slice using a visit pattern. The call on to the 
 	 * SliceVisitor is done in a parallel way by delegating the calling of the visit method
 	 * to a thread pool.
 	 * 
+	 * Blocks until complete or timeout of 5s is reached.
+     *
 	 * @param lz
 	 * @param sliceDimensions
 	 * @param nameFragment may be null
@@ -145,6 +150,24 @@ public class Slicer {
 	 * @throws Exception 
 	 */
 	public static void visitAllParallel(ILazyDataset lz, Map<Integer, String> sliceDimensions, String nameFragment, final SliceVisitor visitor) throws Exception {
+        visitAllParallel(lz, sliceDimensions, nameFragment, visitor, 5000);
+	}
+	/**
+	 * This method provides a way to slice over a lazydataset providing the values
+	 * in each dimension for the slice using a visit pattern. The call on to the 
+	 * SliceVisitor is done in a parallel way by delegating the calling of the visit method
+	 * to a thread pool.
+	 * 
+	 * Blocks until complete or timeout is reached.
+	 * 
+	 * @param lz
+	 * @param sliceDimensions
+	 * @param nameFragment may be null
+	 * @param visitor - if used with visitAllParallel, visit should not normally throw an exception or if it does it will stop the execution but not throw back to the calling code. Instead an internal RuntimeException is thrown back to the fork/join API.
+	 * @param timeout in ms.
+	 * @throws Exception 
+	 */
+	public static void visitAllParallel(ILazyDataset lz, Map<Integer, String> sliceDimensions, String nameFragment, final SliceVisitor visitor, long timeout) throws Exception {
 
 		// Just farm out each slice to a different runnable.
 		final ForkJoinPool pool = new ForkJoinPool();
@@ -170,5 +193,10 @@ public class Slicer {
 		};
 		
 		Slicer.visitAll(lz, sliceDimensions, nameFragment, parallel);
+		
+		pool.shutdown();
+		
+		boolean allDone = pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+		if (!allDone) throw new TimeoutException("The timeout of "+timeout+" was exceeded for parallel run, please increase it!");
 	}
 }

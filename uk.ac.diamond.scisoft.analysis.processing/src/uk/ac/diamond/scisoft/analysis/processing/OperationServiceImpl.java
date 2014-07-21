@@ -27,6 +27,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
  */
 public class OperationServiceImpl implements IOperationService {
 	
+	enum ExecutionType {
+		SERIES, PARALLEL, GRAPH;
+	}
+	
 	static {
 		System.out.println("Starting operation service");
 	}
@@ -42,7 +46,23 @@ public class OperationServiceImpl implements IOperationService {
 	 */
 	@Override
 	public void executeSeries(final IRichDataset dataset, final IExecutionVisitor visitor, final IOperation... series) throws OperationException {
+        execute(dataset, visitor, series, ExecutionType.SERIES);
+	}
 
+
+	@Override
+	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException {
+        execute(dataset, visitor, series, ExecutionType.PARALLEL);
+	}
+
+	private long parallelTimeout;
+	
+	private void execute(final IRichDataset dataset, final IExecutionVisitor visitor, final IOperation[] series, ExecutionType type) throws OperationException {
+		
+		if (type==ExecutionType.GRAPH) {
+			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
+		}
+		
 		series[0].setDataset(dataset);
 		
 		Map<Integer, String> slicing = dataset.getSlicing();
@@ -55,25 +75,50 @@ public class OperationServiceImpl implements IOperationService {
 		// Jakes slicing from the conversion tool.
 		try {
 			
-			Slicer.visitAll(dataset.getData(), slicing, "Slice", new SliceVisitor() {
-
-				@Override
-				public void visit(IDataset slice, Slice... slices) throws Exception {
-			        
-					boolean required = visitor.isRequired(slice, series);
-					if (!required) return;
+			if (type==ExecutionType.SERIES) {
+				Slicer.visitAll(dataset.getData(), slicing, "Slice", new SliceVisitor() {
+	
+					@Override
+					public void visit(IDataset slice, Slice... slices) throws Exception {
+				        
+						boolean required = visitor.isRequired(slice, series);
+						if (!required) return;
+						
+						for (IOperation i : series) slice = i.execute(slice);
+						
+						visitor.executed(slice);
+					}
+				});
+			} else if (type==ExecutionType.PARALLEL) {
+				Slicer.visitAllParallel(dataset.getData(), slicing, "Slice", new SliceVisitor() {
 					
-					for (IOperation i : series) slice = i.execute(slice);
-					
-					visitor.executed(slice);
-				}
-			});
-			
+					@Override
+					public void visit(IDataset slice, Slice... slices) throws Exception {
+				        
+						boolean required = visitor.isRequired(slice, series);
+						if (!required) return;
+						
+						for (IOperation i : series) slice = i.execute(slice);
+						
+						visitor.executed(slice);
+					}
+				}, parallelTimeout>0 ? parallelTimeout : 5000);
+			} else {
+				throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
+			}
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {
 			throw new OperationException(null, e.getMessage());
 		}
+	}
+
+	public long getParallelTimeout() {
+		return parallelTimeout;
+	}
+
+	public void setParallelTimeout(long parallelTimeout) {
+		this.parallelTimeout = parallelTimeout;
 	}
 
 	// Reads the declared operations from extension point, if they have not been already.
@@ -159,11 +204,5 @@ public class OperationServiceImpl implements IOperationService {
 
 			}
 		}
-	}
-
-	@Override
-	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException {
-		
-        throw new OperationException(series[0], "Parallel not implemented yet! Intending to make use of Slicer.visitAllParallel(...)");
 	}
  }

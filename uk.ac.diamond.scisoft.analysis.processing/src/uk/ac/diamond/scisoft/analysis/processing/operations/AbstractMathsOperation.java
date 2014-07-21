@@ -5,6 +5,7 @@ import java.io.Serializable;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
@@ -38,7 +39,7 @@ public abstract class AbstractMathsOperation implements IOperation {
 	 * TODO This operation is only an example.
 	 */
 	@Override
-	public OperationData execute(OperationData a) throws OperationException {
+	public OperationData execute(OperationData a, IMonitor monitor) throws OperationException {
 		
 		try {
 			IDataset result;

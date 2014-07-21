@@ -17,6 +17,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
 import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Do not use this class externally. Instead get the IOperationService
@@ -45,19 +46,19 @@ public class OperationServiceImpl implements IOperationService {
 	 * stacks out of the rich dataset passed in.
 	 */
 	@Override
-	public void executeSeries(final IRichDataset dataset, final IExecutionVisitor visitor, final IOperation... series) throws OperationException {
-        execute(dataset, visitor, series, ExecutionType.SERIES);
+	public void executeSeries(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation... series) throws OperationException {
+        execute(dataset, monitor, visitor, series, ExecutionType.SERIES);
 	}
 
 
 	@Override
-	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException {
-        execute(dataset, visitor, series, ExecutionType.PARALLEL);
+	public void executeParallelSeries(IRichDataset dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException {
+        execute(dataset, monitor, visitor, series, ExecutionType.PARALLEL);
 	}
 
 	private long parallelTimeout;
 	
-	private void execute(final IRichDataset dataset, final IExecutionVisitor visitor, final IOperation[] series, ExecutionType type) throws OperationException {
+	private void execute(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation[] series, ExecutionType type) throws OperationException {
 		
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
@@ -85,7 +86,7 @@ public class OperationServiceImpl implements IOperationService {
 						if (!required) return;
 						
 						OperationData data = new OperationData(slice, slices);
-						for (IOperation i : series) data = i.execute(data);
+						for (IOperation i : series) data = i.execute(data, monitor);
 						
 						visitor.executed(data);
 					}
@@ -100,7 +101,7 @@ public class OperationServiceImpl implements IOperationService {
 						if (!required) return;
 						
 						OperationData data = new OperationData(slice, slices);
-						for (IOperation i : series) data = i.execute(data);
+						for (IOperation i : series) data = i.execute(data, monitor);
 						
 						visitor.executed(data);
 					}
@@ -108,6 +109,9 @@ public class OperationServiceImpl implements IOperationService {
 			} else {
 				throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
 			}
+			
+			
+			
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {

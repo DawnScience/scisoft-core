@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
@@ -31,7 +32,7 @@ public class FunctionOperation implements IOperation {
 	}
 
 	@Override
-	public OperationData execute(OperationData slice) throws OperationException {
+	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException {
 		return new OperationData(function.calculateValues(slice.getData()));
 	}
 

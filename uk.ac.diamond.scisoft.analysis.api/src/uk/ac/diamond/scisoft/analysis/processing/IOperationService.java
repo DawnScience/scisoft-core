@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.Collection;
 
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+
 /**
  * This is a service for creating and returning operations.
  * 
@@ -87,7 +89,7 @@ public interface IOperationService {
 	 * @param series
 	 * @throws OperationException
 	 */
-	public void executeSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+	public void executeSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException;
 	
 
 	/**
@@ -104,7 +106,7 @@ public interface IOperationService {
 	 * @param series
 	 * @throws OperationException
 	 */
-	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+	public void executeParallelSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException;
 
 	/**
 	 * Optionally configure the parallel timeout of this service.

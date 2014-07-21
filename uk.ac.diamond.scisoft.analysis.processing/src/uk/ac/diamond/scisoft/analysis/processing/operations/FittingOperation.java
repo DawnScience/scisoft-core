@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -8,6 +9,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
@@ -44,7 +46,7 @@ public class FittingOperation implements IOperation {
 	}
 
 	@Override
-	public OperationData execute(OperationData data) throws OperationException {
+	public OperationData execute(OperationData data, IMonitor monitor) throws OperationException {
 		
 		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)xAxis, 
 				                                                                  (AbstractDataset)data.getData(), 
@@ -59,16 +61,29 @@ public class FittingOperation implements IOperation {
 	@Override
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
 
-		if (parameters.length!=1) throw new IllegalArgumentException("The parameters accepted must be a single function!");
+		// TODO FIXME In order to drive the fitting we have to have all these arguments. 
+		// Bit funny at moment and probably other IOptimizer do not have two argument constructors.
+		// However the fitting must have new IOptimizers and not reuse the same one because
+		// otherwise the parallel execution does not work.
+		if (parameters.length!=10) throw new IllegalArgumentException("The parameters accepted must be the same as the Generic1DFitter.fitPeakFunctions(...) [without the data to fit] !");
+
 
 		this.xAxis     = (IDataset)parameters[0];
 		this.peakClass = (Class<? extends APeak>)parameters[1];
-		this.optimizer = (IOptimizer)parameters[2];
-		this.smoothing = (Integer)parameters[3];
-		this.numPeaks  = (Integer)parameters[4];
-		this.threshold = (Double)parameters[5];
-		this.autoStopping        = (Boolean)parameters[6];
-		this.backgroundDominated = (Boolean)parameters[7];
+		Class<? extends IOptimizer> optimClass = (Class<? extends IOptimizer>)parameters[2];
+		final double quality = (Double)parameters[3];
+		final long   seed    = (Long)parameters[4];
+		try {
+			this.optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("The third argument must be the optimizer class, the fourth and fifth, its arguments.");
+		}
+		
+		this.smoothing = (Integer)parameters[5];
+		this.numPeaks  = (Integer)parameters[6];
+		this.threshold = (Double)parameters[7];
+		this.autoStopping        = (Boolean)parameters[8];
+		this.backgroundDominated = (Boolean)parameters[9];
 	}
 
 

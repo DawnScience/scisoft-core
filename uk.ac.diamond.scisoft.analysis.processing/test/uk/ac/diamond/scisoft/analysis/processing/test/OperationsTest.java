@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
@@ -58,7 +58,7 @@ public class OperationsTest {
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
-		service.executeSeries(rand, new IExecutionVisitor.Stub() {
+		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -80,7 +80,7 @@ public class OperationsTest {
 		subtract.setParameters(100);
 		add.setParameters(101);
 		
-		service.executeSeries(rand, new IExecutionVisitor.Stub() {
+		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -106,7 +106,7 @@ public class OperationsTest {
 		add.setParameters(101);
 		
 		counter = 0;
-		service.executeSeries(rand, new IExecutionVisitor.Stub() {
+		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result) throws Exception {
 				
 				System.out.println(result.getData().getName());
@@ -135,12 +135,12 @@ public class OperationsTest {
 		add.setParameters(101);
 		
 		counter = 0;
-		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+		service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result) throws Exception {
 				
 			    try {
 			    	// This sleep simply introduces some random behaviour
-			    	// on the parallel jobs so that we 
+			    	// on the parallel jobs so that we definitely get a different order.
 					final long time = Math.round(Math.random()*1000);
 					Thread.sleep(time);
 				} catch (InterruptedException e) {
@@ -172,7 +172,7 @@ public class OperationsTest {
 		add.setParameters(101);
 				
 		try {
-			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				public void executed(OperationData result) throws Exception {
 					
 				    try {
@@ -214,7 +214,7 @@ public class OperationsTest {
 		
 		service.setParallelTimeout(50000);
 		try {
-			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				public void executed(OperationData result) throws Exception {
 	
 					try {

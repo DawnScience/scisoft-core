@@ -4,13 +4,14 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 
 /**
@@ -46,11 +47,11 @@ public class OperationsPluginTest {
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
-		service.executeSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)<0;
+		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			public void executed(OperationData result) {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    assert result.getData().getDouble(i,j)<0;
 					}
 				}
 			}			
@@ -72,11 +73,11 @@ public class OperationsPluginTest {
 		subtract.setParameters(100);
 		add.setParameters(101);
 		
-		service.executeSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-					    assert result.getDouble(i,j)>0;
+		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			public void executed(OperationData result) {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    assert result.getData().getDouble(i,j)>0;
 					}
 				}
 			}			

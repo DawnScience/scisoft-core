@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Interface to encapsulate processing operations on an IRichDataset
@@ -79,7 +79,7 @@ public interface IOperation {
 	 * 
 	 * @return dataset which is the result of this operation.
 	 */
-	public OperationData execute(OperationData slice) throws OperationException;
+	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException;
 	
 	
 	/**

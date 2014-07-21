@@ -1,20 +1,27 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.AggregateDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
-import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
@@ -54,7 +61,7 @@ public class FunctionsTest {
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
 		functionOp.setParameters(poly);
 		
-		service.executeSeries(rich, new IExecutionVisitor.Stub() {
+		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result) throws Exception {
 				
 				System.out.println(result.getData().getName());
@@ -79,7 +86,12 @@ public class FunctionsTest {
 
 	}
 	
-	static int[] defaultPeakPos = new int[] { 100, 200, 300, 400, 500, 150, 250, 350, 450 };
+	static final int[] defaultPeakPos;
+	static {
+		int[] tmp = new int[] { 100, 200, 300, 400, 500, 150, 250, 350, 450 };
+		Arrays.sort(tmp);
+		defaultPeakPos = tmp;
+	}
 	static final int defaultFWHM = 20;
 	static final int defaultArea = 50;
 	static final int dataRange = 550;
@@ -91,23 +103,111 @@ public class FunctionsTest {
 	static final int smoothing = 5;
 	static final long seed = 12357L;
 
+	private volatile int count;
 	@Test
 	public void testPseudoVoigtGenetic() throws Exception {
 		
 
-		final IOperation fittingOp = service.findFirst("function");
+		final IOperation fittingOp = service.findFirst("fitting");
 		
 		// We do 10 Peak fits
-		final IDataset     pvoigt = DatasetUtils.tile(generatePseudoVoigt(defaultPeakPos.length), 10);
-		final IRichDataset   rich = new RichDataset(pvoigt, null);
+		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
+		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
+		final IRichDataset   rich = new RichDataset(aggy, null);
+		rich.setSlicing("all", "");
 		
 		fittingOp.setDataset(rich);
-		fittingOp.setParameters(xAxis, PseudoVoigt.class, new GeneticAlg(0.0001, seed), smoothing, numPeaks, threshold, autoStopping, backgroundDominated);      
+		// Cannot send a concrete GeneticAlg here because does not work in parallel.
+		fittingOp.setParameters(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated);      
 	
-	    
+		count = 0;
+		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			public void executed(OperationData result) throws Exception {
+				
+				System.out.println(result.getData().getName());
+				
+				final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
+				
+				double[] fittedPeakPos = new double[fittedPeakList.size()];
+				int i = 0;
+				for (CompositeFunction p : fittedPeakList) {
+					fittedPeakPos[i++] = p.getPeak(0).getPosition();
+				}
+				Arrays.sort(fittedPeakPos);
+
+				assertEquals("The number of peaks found was not the same as generated", defaultPeakPos.length, fittedPeakPos.length);
+
+				for (int k = 0; k < fittedPeakPos.length; k++) {
+					assertEquals(defaultPeakPos[k], fittedPeakPos[k], 2d);
+				}
+				count++;
+
+			}			
+		}, fittingOp);
+
+		
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
 	}
 	
+	@Test
+	public void testPseudoVoigtGeneticParallel() throws Exception {
+		
+
+		final IOperation fittingOp = service.findFirst("fitting");
+		
+		// We do 10 Peak fits
+		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
+		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
+		final IRichDataset   rich = new RichDataset(aggy, null);
+		rich.setSlicing("all", "");
+		
+		fittingOp.setDataset(rich);
+		
+		// Cannot send a concrete GeneticAlg here because does not work in parallel.
+		fittingOp.setParameters(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated);      
 	
+		count = 0;
+		try {
+			service.setParallelTimeout(30000);
+			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+				public void executed(OperationData result) throws Exception {
+
+					System.out.println(result.getData().getName());
+
+					final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
+
+					double[] fittedPeakPos = new double[fittedPeakList.size()];
+					int i = 0;
+					for (CompositeFunction p : fittedPeakList) {
+						fittedPeakPos[i++] = p.getPeak(0).getPosition();
+					}
+					Arrays.sort(fittedPeakPos);
+
+					assertEquals("The number of peaks found was not the same as generated", defaultPeakPos.length, fittedPeakPos.length);
+
+					for (int k = 0; k < fittedPeakPos.length; k++) {
+						assertEquals(defaultPeakPos[k], fittedPeakPos[k], 2d);
+					}
+					try {
+						// This sleep simply introduces some random behaviour
+						// on the parallel jobs so that we definitely get a different order.
+						final long time = Math.round(Math.random()*1000);
+						Thread.sleep(time);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					count++;
+
+				}			
+			}, fittingOp);
+		} finally {
+			service.setParallelTimeout(5000);
+		}
+
+		
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+	}
+
 	private DoubleDataset generatePseudoVoigt(int numPeaks) {
 		CompositeFunction function = new CompositeFunction();
 		if (numPeaks > defaultPeakPos.length)

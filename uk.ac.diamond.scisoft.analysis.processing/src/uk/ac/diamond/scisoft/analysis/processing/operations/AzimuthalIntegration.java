@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
@@ -16,7 +17,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	}
 
 	@Override
-	public OperationData execute(OperationData islice) throws OperationException {
+	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
 		
 		// TODO FIXME This is not right for the operation.
 		

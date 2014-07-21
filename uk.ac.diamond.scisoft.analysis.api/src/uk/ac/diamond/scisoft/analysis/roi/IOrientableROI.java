@@ -24,13 +24,13 @@ public interface IOrientableROI extends IROI {
 	public IOrientableROI copy();
 
 	/**
-	 * @return angle, in degrees
+	 * @return angle, in degrees, from 0 to 90 is from x-axis to y-axis
 	 */
 	public double getAngleDegrees();
 
 	/**
 	 * Set angle, in degrees
-	 * @param degrees
+	 * @param degrees from 0 to 90 is from x-axis to y-axis
 	 */
 	public void setAngleDegrees(double degrees);
 
@@ -40,8 +40,8 @@ public interface IOrientableROI extends IROI {
 	public double getAngle();
 
 	/**
-	 * Set angle, in radians
-	 * @param angle
+	 * Set angle, in radians, from 0 to pi/2 is from x-axis to y-axis
+	 * @param angle from 0 to pi/2 is from x-axis to y-axis
 	 */
 	public void setAngle(double angle);
 }

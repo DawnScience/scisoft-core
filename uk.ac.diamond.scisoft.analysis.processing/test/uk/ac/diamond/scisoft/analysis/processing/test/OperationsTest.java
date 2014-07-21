@@ -212,7 +212,7 @@ public class OperationsTest {
 				
 		counter = 0;
 		
-		service.setParallelTimeout(20000);
+		service.setParallelTimeout(50000);
 		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
 			public void executed(IDataset result) {
 

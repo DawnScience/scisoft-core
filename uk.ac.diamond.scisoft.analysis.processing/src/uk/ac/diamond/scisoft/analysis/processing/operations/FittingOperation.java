@@ -1,7 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
@@ -20,13 +19,15 @@ public class FittingOperation implements IOperation {
 
 	private IRichDataset   dataset;
 	private Class<? extends APeak> peakClass;
-	private IOptimizer optimizer;
 	private IDataset xAxis;
 	private Integer smoothing;
 	private Integer numPeaks;
 	private Double threshold;
 	private Boolean autoStopping;
 	private Boolean backgroundDominated;
+	private Class<? extends IOptimizer> optimClass;
+	private Double quality;
+	private Long seed;
 
 	@Override
 	public String getOperationDescription() {
@@ -48,6 +49,13 @@ public class FittingOperation implements IOperation {
 	@Override
 	public OperationData execute(OperationData data, IMonitor monitor) throws OperationException {
 		
+		IOptimizer optimizer;
+		try {
+			optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
+		} catch (Exception e) {
+			throw new OperationException(this, e.getMessage());
+		}
+
 		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)xAxis, 
 				                                                                  (AbstractDataset)data.getData(), 
 				                                                                  peakClass, optimizer,
@@ -70,14 +78,9 @@ public class FittingOperation implements IOperation {
 
 		this.xAxis     = (IDataset)parameters[0];
 		this.peakClass = (Class<? extends APeak>)parameters[1];
-		Class<? extends IOptimizer> optimClass = (Class<? extends IOptimizer>)parameters[2];
-		final double quality = (Double)parameters[3];
-		final long   seed    = (Long)parameters[4];
-		try {
-			this.optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("The third argument must be the optimizer class, the fourth and fifth, its arguments.");
-		}
+		this.optimClass = (Class<? extends IOptimizer>)parameters[2];
+		this.quality = (Double)parameters[3];
+		this.seed    = (Long)parameters[4];
 		
 		this.smoothing = (Integer)parameters[5];
 		this.numPeaks  = (Integer)parameters[6];

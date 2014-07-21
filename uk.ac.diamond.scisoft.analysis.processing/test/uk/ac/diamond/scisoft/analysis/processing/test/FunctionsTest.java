@@ -168,7 +168,7 @@ public class FunctionsTest {
 	
 		count = 0;
 		try {
-			service.setParallelTimeout(30000);
+			service.setParallelTimeout(50000);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				public void executed(OperationData result) throws Exception {
 

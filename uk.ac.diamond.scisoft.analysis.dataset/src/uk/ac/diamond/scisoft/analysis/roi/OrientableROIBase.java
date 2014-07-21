@@ -136,6 +136,6 @@ public class OrientableROIBase extends ROIBase implements IOrientableROI, Serial
 	public void setAngle(double angle) {
 		ang = angle;
 		checkAngle();
-		bounds = null;
+		setDirty();
 	}
 }

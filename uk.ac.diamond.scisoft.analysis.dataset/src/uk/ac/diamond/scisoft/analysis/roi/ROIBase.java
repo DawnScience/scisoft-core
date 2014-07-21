@@ -32,6 +32,10 @@ public class ROIBase implements IROI, Serializable {
 		spt = new double[2];
 	}
 
+	protected void setDirty() {
+		bounds = null;
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -45,7 +49,7 @@ public class ROIBase implements IROI, Serializable {
 	@Override
 	public void setPoint(double[] point) {
 		spt = point;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -57,14 +61,14 @@ public class ROIBase implements IROI, Serializable {
 	public void setPoint(int x, int y) {
 		spt[0] = x;
 		spt[1] = y;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
 	public void setPoint(double x, double y) {
 		spt[0] = x;
 		spt[1] = y;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -96,21 +100,21 @@ public class ROIBase implements IROI, Serializable {
 	public void addPoint(int[] pt) {
 		spt[0] += pt[0];
 		spt[1] += pt[1];
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
 	public void addPoint(double[] pt) {
 		spt[0] += pt[0];
 		spt[1] += pt[1];
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
 	public void addPoint(double x, double y) {
 		spt[0] += x;
 		spt[1] += y;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -126,7 +130,7 @@ public class ROIBase implements IROI, Serializable {
 	public void downsample(double subFactor) {
 		spt[0] /= subFactor;
 		spt[1] /= subFactor;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -202,4 +206,18 @@ public class ROIBase implements IROI, Serializable {
 		return name == null ? "" : String.format("name=%s, ", name);
 	}
 
+	/**
+	 * @param y ordinate of line
+	 * @return true if given horizontal line intersects ROI
+	 */
+	protected boolean intersectHorizontal(double y) {
+		RectangularROI r = getBounds();
+		double oy = r.spt[1];
+		return y >= oy && y <= (oy + r.len[1]);
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		return null;
+	}
 }

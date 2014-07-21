@@ -134,6 +134,13 @@ public interface IROI extends Serializable {
 	public boolean isNearOutline(double x, double y, double distance);
 
 	/**
+	 * Calculate x values at which ROI will intersect horizontal line of given y
+	 * @param y
+	 * @return x values in ascending order, is null in the non-intersecting case
+	 */
+	public double[] findHorizontalIntersections(double y);
+
+	/**
 	 * @return a copy of ROI
 	 */
 	public IROI copy();

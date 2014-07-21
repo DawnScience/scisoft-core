@@ -117,7 +117,7 @@ public class RingROI extends ROIBase implements Serializable {
 		rad[0] = startRadius;
 		rad[1] = endRadius;
 		checkRadii();
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class RingROI extends ROIBase implements Serializable {
 			radius = -rad[1];
 		rad[0] += radius;
 		rad[1] += radius;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class RingROI extends ROIBase implements Serializable {
 	public void addRadius(int index, double radius) {
 		rad[index] += radius;
 		checkRadii();
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class RingROI extends ROIBase implements Serializable {
 		super.downsample(subFactor);
 		rad[0] /= subFactor;
 		rad[1] /= subFactor;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -258,5 +258,30 @@ public class RingROI extends ROIBase implements Serializable {
 	@Override
 	public String toString() {
 		return super.toString() + String.format("Centre %s Radii %s", Arrays.toString(spt), Arrays.toString(rad));
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		y -= spt[1];
+		if (y < -rad[1] || y > rad[1]) {
+			return null;
+		}
+
+		double x = spt[0];
+		if (y == -rad[1] || y == rad[1]) { // outer touching case
+			return new double[]{x};
+		}
+
+		double xo = Math.sqrt(rad[1]*rad[1] - y*y);
+		if (y < -rad[0] || y > rad[0]) {
+			 return new double[] {x - xo, x + xo};
+		}
+
+		if (y == -rad[0] || y == rad[0]) { // inner touching case
+			return new double[]{x - xo, x, x + xo};
+		}
+
+		double xi = Math.sqrt(rad[0]*rad[0] - y*y);
+		return new double[]{x - xo, x - xi, x + xi, x + xo};
 	}
 }

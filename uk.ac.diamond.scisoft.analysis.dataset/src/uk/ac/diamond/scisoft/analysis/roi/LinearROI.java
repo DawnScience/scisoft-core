@@ -27,6 +27,8 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	private double len;    // length
 	private boolean crossHair; // enable secondary linear ROI that bisects at 90 degrees
 
+	private transient double[] ept;
+
 	/**
 	 * Default new line
 	 */
@@ -67,13 +69,20 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 * @param ept
 	 */
 	public LinearROI(double[] spt, double[] ept) {
-		this.spt = new double[] {spt[0], spt[1]};
+		this.spt = spt.clone();
+		this.ept = ept.clone();
 		double x = ept[0] - spt[0];
 		double y = ept[1] - spt[1];
 		len = Math.hypot(x, y);
 		ang = Math.atan2(y, x);
 		checkAngle();
 		crossHair = false;
+	}
+
+	@Override
+	protected void setDirty() {
+		super.setDirty();
+		ept = null;
 	}
 
 	/**
@@ -114,7 +123,10 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 * @return end point
 	 */
 	public double[] getEndPoint() {
-		return getPoint(1);
+		if (ept == null)
+			ept = getPoint(1);
+
+		return ept;
 	}
 
 	/**
@@ -140,6 +152,11 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 * @param epty 
 	 */
 	public void setEndPoint(double eptx, double epty) {
+		if (ept == null) {
+			ept = new double[2];
+		}
+		ept[0] = eptx;
+		ept[1] = epty;
 		double x = eptx - spt[0];
 		double y = epty - spt[1];
 		len = Math.hypot(x, y);
@@ -177,7 +194,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	public void setMidPoint(double[] mpt) {
 		spt[0] = mpt[0] - 0.5*len*cang;
 		spt[1] = mpt[1] - 0.5*len*sang;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -194,7 +211,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 */
 	public void setLength(double len) {
 		this.len = len;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -241,8 +258,8 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 */
 	public void subPoint(int[] pt) {
 		spt[0] -= pt[0];
-		spt[1] -= pt[1];	
-		bounds = null;
+		spt[1] -= pt[1];
+		setDirty();
 	}
 
 	/**
@@ -252,7 +269,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	public void subPoint(double[] pt) {
 		spt[0] -= pt[0];
 		spt[1] -= pt[1];	
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -262,7 +279,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	public void translateAlongLength(double distance) {
 		spt[0] += distance*cang;
 		spt[1] += distance*sang;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -377,5 +394,23 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	@Override
 	public double getEndParameter(double d) {
 		return 1;
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		double[] xi = null;
+		if (sang == 0) {
+			if (y == spt[1]) {
+				xi = new double[] {spt[0], getEndPoint()[0]};
+				Arrays.sort(xi);
+			}
+		} else {
+			y -= spt[1];
+			double f = y / sang;
+			if (f >= 0 && f <= len) {
+				xi = new double[] {spt[0] + f*cang};
+			}
+		}
+		return xi;
 	}
 }

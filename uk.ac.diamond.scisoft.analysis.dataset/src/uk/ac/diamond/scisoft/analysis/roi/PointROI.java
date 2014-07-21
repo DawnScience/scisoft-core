@@ -59,4 +59,11 @@ public class PointROI extends ROIBase implements Serializable {
 	public String toString() {
 		return super.toString() + "point=" + Arrays.toString(spt);
 	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		if (y == spt[1])
+			return new double[] {spt[0]};
+		return null;
+	}
 }

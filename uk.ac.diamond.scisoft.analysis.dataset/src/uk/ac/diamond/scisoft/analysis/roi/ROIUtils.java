@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import java.util.Arrays;
+
 public class ROIUtils {
 
 	/**
@@ -148,5 +150,30 @@ public class ROIUtils {
 			min[0] = x;
 		if (y < min[1])
 			min[1] = y;
+	}
+
+	/**
+	 * Find intersect of horizontal line with a line segment
+	 * @param spt start point of segment
+	 * @param ept end point of segment
+	 * @param y ordinate
+	 * @return abscissa can be null for non-intersecting case, else one or two values
+	 */
+	public static double[] findYIntersection(final double[] spt, final double[] ept, final double y) {
+		double[] xi = null;
+		double dy = ept[1] - spt[1];
+		if (dy == 0) {
+			if (y == spt[1]) {
+				xi = new double[] { spt[0], ept[0] };
+				Arrays.sort(xi);
+			}
+		} else {
+			double ny = y - spt[1];
+			if ((ny >= 0 && ny <= dy) || (ny <= 0 && ny >= dy)) {
+				xi = new double[] { spt[0] + (ept[0] - spt[0]) * ny / dy};
+			}
+		}
+
+		return xi;
 	}
 }

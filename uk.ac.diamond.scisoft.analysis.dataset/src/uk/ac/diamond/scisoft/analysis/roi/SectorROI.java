@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import uk.ac.diamond.scisoft.analysis.coords.SectorCoords;
 
@@ -80,7 +82,13 @@ public class SectorROI extends RingROI implements Serializable {
 	 */
 	public void setSymmetry(int symmetry) {
 		this.symmetry = symmetry;
-		bounds = null;
+		setDirty();
+	}
+
+	@Override
+	protected void setDirty() {
+		super.setDirty();
+		symAng = null;
 	}
 
 	/**
@@ -186,7 +194,7 @@ public class SectorROI extends RingROI implements Serializable {
 		ang[0] = startAngle;
 		ang[1] = endAngle;
 		checkAngles(ang);
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -267,7 +275,7 @@ public class SectorROI extends RingROI implements Serializable {
 			ang[0] += TWO_PI;
 			ang[1] += TWO_PI;
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -278,7 +286,7 @@ public class SectorROI extends RingROI implements Serializable {
 	public void addAngle(int index, double angle) {
 		ang[index] += angle;
 		checkAngles(ang);
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -286,7 +294,7 @@ public class SectorROI extends RingROI implements Serializable {
 	 *  0 <= ang0 <= 2*pi, 0 <= ang1 <= 4*pi
 	 *  0 <= ang1 - ang0 <= 2*pi
 	 */
-	protected void checkAngles(double[] angles) {
+	protected static void checkAngles(double[] angles) {
 		// sort out relative values
 		double a = angles[0];
 		while (a >= angles[1]) {
@@ -308,6 +316,17 @@ public class SectorROI extends RingROI implements Serializable {
 			angles[0] -= TWO_PI;
 			angles[1] -= TWO_PI;
 		}
+	}
+
+	private static boolean isAngleInSector(double[] limits, double angle) {
+		if (angle < 0) {
+			angle += TWO_PI;
+		}
+		if (limits[0] <= angle) {
+			return angle <= limits[1];
+		}
+
+		return angle + TWO_PI <= limits[1];
 	}
 
 	@Override
@@ -418,6 +437,7 @@ public class SectorROI extends RingROI implements Serializable {
 
 		return "N";
 	}
+
 	/**
 	 * @param combineSymmetry The combineSymmetry to set.
 	 */
@@ -554,5 +574,94 @@ public class SectorROI extends RingROI implements Serializable {
 	@Override
 	public String toString() {
 		return super.toString() + String.format("point=%s, radii=%s, angles=[%g, %g]", Arrays.toString(spt), Arrays.toString(rad), getAngleDegrees(0), getAngleDegrees(1));
+	}
+
+	protected static double[] calculateArcIntersections(final double[] angles, final double xc, final double yc, final double r) {
+		if (yc < -r || yc > r)
+			return null;
+
+		if (yc == -r) {
+			return isAngleInSector(angles, 1.5*Math.PI) ? new double[] {xc} : null;
+		} else if (yc == r) {
+			return isAngleInSector(angles, HALF_PI) ? new double[] {xc} : null;
+		}
+
+		double x = Math.sqrt(r*r - yc*yc);
+		double a = Math.atan2(yc, x);
+		if (isAngleInSector(angles, a)) {
+			return isAngleInSector(angles, Math.PI - a) ? new double[] {xc - x, xc + x} : new double[] {xc + x};
+		}
+
+		return isAngleInSector(angles, Math.PI - a) ? new double[] {xc - x} : null;
+	}
+
+	/**
+	 * Get relative point on circle at given angle
+	 * @param rad
+	 * @param angle in radians
+	 * @return point with relative y-values
+	 */
+	double[] getRelativePoint(double rad, double angle) {
+		return new double[] { spt[0] + rad*Math.cos(angle), 
+				rad*Math.sin(angle) };
+	}
+
+	private void findHorizontalIntersections(Set<Double> values, double[] angles, double y) {
+		double[] xi;
+
+		xi = calculateArcIntersections(angles, spt[0], y, rad[1]);
+		if (xi != null) {
+			for (double x : xi)
+				values.add(x);
+		}
+
+		xi = calculateArcIntersections(angles, spt[0], y, rad[0]);
+		if (xi != null) {
+			for (double x : xi)
+				values.add(x);
+		}
+
+		if (angles[1] - angles[0] != TWO_PI) {
+			xi = ROIUtils.findYIntersection(getRelativePoint(rad[0],  angles[0]), getRelativePoint(rad[1],  angles[0]), y);
+			if (xi != null) {
+				for (double x : xi)
+					values.add(x);
+			}
+	
+			xi = ROIUtils.findYIntersection(getRelativePoint(rad[0],  angles[1]), getRelativePoint(rad[1],  angles[1]), y);
+			if (xi != null) {
+				for (double x : xi)
+					values.add(x);
+			}
+		}
+		
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		y -= spt[1];
+
+		double[] xi;
+		Set<Double> values = new TreeSet<Double>();
+		if (symmetry != FULL)
+			findHorizontalIntersections(values, ang, y);
+
+		if (symmetry != NONE) {
+			if (symAng == null) {
+				symAng = getSymmetryAngles();
+			}
+			findHorizontalIntersections(values, symAng, y);
+		}
+
+		if (values.size() == 0)
+			return null;
+
+		xi = new double[values.size()];
+		int i = 0;
+		for (Double d : values) {
+			xi[i++] = d;
+		}
+
+		return xi;
 	}
 }

@@ -88,7 +88,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	 */
 	public void setSemilatusRectum(double semi) {
 		l = semi;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	 */
 	public void setEccentricity(double eccentricity) {
 		e = eccentricity;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -136,6 +136,8 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 			if (pt[1] != 0)
 				pt[1] *= Double.POSITIVE_INFINITY;
 			return pt;
+//		} else if (denom < 0) {
+//			return new double[] {Double.NaN, Double.NaN};
 		}
 		double sb = Math.sin(angle);
 		double r = l / denom;

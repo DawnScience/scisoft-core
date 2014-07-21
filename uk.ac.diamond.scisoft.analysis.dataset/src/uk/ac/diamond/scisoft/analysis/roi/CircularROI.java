@@ -55,7 +55,7 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	public void downsample(double subFactor) {
 		super.downsample(subFactor);
 		rad /= subFactor;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	 */
 	public void setRadius(double radius) {
 		rad = radius;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -183,10 +183,30 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 		if (y == -rad || y == rad) { // touching case
 			return new double[]{y < 0 ? Math.PI : 0};
 		}
-		
+
 		double ang = Math.acos(y/rad);
-		
+
 		return new double[] {ang, (Math.PI*2)-ang};
+	}
+
+	/**
+	 * Calculate x values at which circle will intersect horizontal line of given y
+	 * @param y
+	 * @return x values
+	 */
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		y -= spt[1];
+		if (y < -rad || y > rad) {
+			return null;
+		}
+
+		if (y == -rad || y == rad) { // touching case
+			return new double[]{spt[0]};
+		}
+
+		double x = Math.sqrt(rad*rad - y*y);
+		return new double[] {spt[0] - x, spt[0] + x};
 	}
 
 	@Override

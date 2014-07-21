@@ -17,6 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Class for rectangular region of interest
@@ -131,7 +133,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	public void setLengths(double len[]) {
 		this.len[0] = len[0];
 		this.len[1] = len[1];
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -141,7 +143,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	public void setLengths(double major, double minor) {
 		len[0] = major;
 		len[1] = minor;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -151,7 +153,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	public void addToLengths(double x, double y) {
 		len[0] += x;
 		len[1] += y;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -202,7 +204,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	public void setMidPoint(double[] mpt) {
 		spt[0] = mpt[0] - 0.5*len[0]*cang + 0.5*len[1]*sang;
 		spt[1] = mpt[1] - 0.5*len[0]*sang - 0.5*len[1]*cang;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -300,7 +302,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		ps = transformToRotated(pt[0], pt[1]);
 
 		spt = transformToOriginal(ps[0] - len[0], ps[1] - len[1]);
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -338,7 +340,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		len[0] = pe[0] - ps[0];
 		len[1] = pe[1] - ps[1];
 		spt = transformToOriginal(ps[0], ps[1]);
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -381,7 +383,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 				len[1] = 0;
 			}
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -391,8 +393,8 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	 */
 	public void addAngle(double angle) {
 		ang += angle;
-		bounds = null;
 		checkAngle();
+		setDirty();
 	}
 
 	/**
@@ -403,7 +405,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	public void subPoint(int[] pt) {
 		spt[0] -= pt[0];
 		spt[1] -= pt[1];
-		bounds = null;
+		setDirty();
 	}
 
 	
@@ -417,7 +419,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 
 		spt[0] += ps[0];
 		spt[1] += ps[1];
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -461,7 +463,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 			spt[0] += ps[0];
 			spt[1] += ps[1];
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -515,7 +517,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 			spt[0] += ps[0];
 			spt[1] += ps[1];
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -594,7 +596,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		spt[1] /= subFactor;
 		len[0] /= subFactor;
 		len[1] /= subFactor;
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -604,4 +606,54 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 				String.valueOf(len[0]), String.valueOf(len[1]), getAngleDegrees());
 	}
 
+	@Override
+	public double[] findHorizontalIntersections(final double y) {
+		if (!intersectHorizontal(y))
+			return null;
+
+		double[] xi, pta, ptb;
+		Set<Double> values = new TreeSet<Double>();
+		pta = spt;
+		ptb = getPoint(1, 0);
+		xi = ROIUtils.findYIntersection(pta, ptb, y);
+		if (xi != null) {
+			if (xi.length == 2)
+				return xi;
+			values.add(xi[0]);
+		}
+
+		pta = ptb;
+		ptb = getPoint(1, 1);
+		xi = ROIUtils.findYIntersection(pta, ptb, y);
+		if (xi != null) {
+			if (xi.length == 2)
+				return xi;
+			values.add(xi[0]);
+		}
+
+		pta = ptb;
+		ptb = getPoint(0, 1);
+		xi = ROIUtils.findYIntersection(pta, ptb, y);
+		if (xi != null) {
+			if (xi.length == 2)
+				return xi;
+			values.add(xi[0]);
+		}
+
+		pta = ptb;
+		ptb = spt;
+		xi = ROIUtils.findYIntersection(pta, ptb, y);
+		if (xi != null) {
+			if (xi.length == 2)
+				return xi;
+			values.add(xi[0]);
+		}
+
+		xi = new double[values.size()];
+		int i = 0;
+		for (Double d : values) {
+			xi[i++] = d;
+		}
+		return xi;
+	}
 }

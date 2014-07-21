@@ -69,6 +69,7 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 		super.downsample(subFactor);
 		saxis[0] /= subFactor;
 		saxis[1] /= subFactor;
+		setDirty();
 	}
 
 	@Override
@@ -105,7 +106,7 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 			throw new IllegalArgumentException("Need at least two semi-axis values");
 		saxis[0] = semiaxis[0];
 		saxis[1] = semiaxis[1];
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 		if (index < 0 || index > 1)
 			throw new IllegalArgumentException("Index should be 0 or 1");
 		saxis[index] = semiaxis;
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -278,6 +279,12 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 		return true;
 	}
 
+	@Override
+	protected void setDirty() {
+		super.setDirty();
+		qhB = Double.NaN;
+	}
+
 	/**
 	 * Calculate values for angle at which ellipse will intersect vertical line of given x
 	 * @param x
@@ -287,12 +294,13 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	public double[] getVerticalIntersectionParameters(double x) {
 		double tx = saxis[0]*cang;
 		double ty = saxis[1]*sang;
+		double r = Math.hypot(tx, ty); 
 
 		x -= spt[0];
-		x /= Math.hypot(tx, ty);
-		if (x < -1 || x > 1) {
+		if (x < -r || x > r) {
 			return null;
 		}
+		x /= r;
 		double t = Math.atan2(ty, tx);
 		if (x == -1 || x == 1) { // touching case
 			return sanifyAngles(Math.acos(x) - t);
@@ -308,14 +316,15 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	 */
 	@Override
 	public double[] getHorizontalIntersectionParameters(double y) {
-		double tx = saxis[0]*sang;
-		double ty = saxis[1]*cang;
+		double tx = saxis[0] * sang;
+		double ty = saxis[1] * cang;
+		double r = Math.hypot(tx, ty); 
 
 		y -= spt[1];
-		y /= Math.hypot(tx, ty);
-		if (y < -1 || y > 1) {
+		if (y < -r || y > r) {
 			return null;
 		}
+		y /= r;
 		double t = Math.atan2(tx, ty);
 		if (y == -1 || y == 1) { // touching case
 			return sanifyAngles(Math.asin(y) - t);
@@ -340,5 +349,38 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 			return super.toString() + String.format("point=%s, radius=%g, angle=%g", Arrays.toString(spt), saxis[0], getAngleDegrees());
 		}
 		return super.toString() + String.format("point=%s, semiaxes=%s, angle=%g", Arrays.toString(spt), Arrays.toString(saxis), getAngleDegrees());
+	}
+
+	private transient double qhB = Double.NaN;  // coefficients of quadratic equation of ellipse
+	private transient double qBC = -1;
+	private transient double qC2 = -1;
+
+	private void updateQValues() {
+		double a = saxis[0];
+		double b = saxis[1];
+		double a2 = a * a;
+		double b2 = b * b;
+		double f = a2 * sang * sang + b2 * cang * cang;
+		double asbs = (a2 + b2) / f;
+		qhB = - asbs * sang * cang / 2;
+		qBC = qhB * qhB - asbs + 1;
+		qC2 = - a2 * b2 / f;
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		if (Double.isNaN(qhB)) {
+			updateQValues();
+		}
+		double disc = qBC * y * y - qC2;
+		double[] xi = null;
+		double hb = qhB * y;
+		if (Math.abs(disc) < Math.ulp(hb*hb + 1e-15)) {
+			xi = new double[] { -hb };
+		} else if (disc > 0) {
+			disc = Math.sqrt(disc);
+			xi = new double[] { -hb - disc, -hb + disc };
+		}
+		return xi;
 	}
 }

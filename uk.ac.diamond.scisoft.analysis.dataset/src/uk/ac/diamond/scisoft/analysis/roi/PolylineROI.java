@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -64,7 +66,7 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 		for (int i = 1, imax = pts.size(); i < imax; i++) { // don't call for first point
 			pts.get(i).downsample(subFactor);
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -94,8 +96,8 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 			setPoint(point.getPointRef());
 		} else {
 			pts.set(i, point instanceof PointROI ? (PointROI) point : new PointROI(point.getPointRef()));
-			bounds = null;
 		}
+		setDirty();
 	}
 
 	public void setPoint(int i, double[] point) {
@@ -123,7 +125,7 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 			pts.add(this);
 		} else {
 			pts.add(point instanceof PointROI ? (PointROI) point : new PointROI(point.getPointRef()));
-			bounds = null;
+			setDirty();
 		}
 	}
 
@@ -165,7 +167,7 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 		} else {
 			pts.add(i, point);
 		}
-		bounds = null;
+		setDirty();
 	}
 
 	/**
@@ -289,13 +291,13 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 	 */
 	public void removePoint(int i) {
 		pts.remove(i);
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
 	public void removeAllPoints() {
 		pts.clear();
-		bounds = null;
+		setDirty();
 	}
 
 	@Override
@@ -320,5 +322,41 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 		}
 
 		return new DoubleDataset[] { new DoubleDataset(x), new DoubleDataset(y) };
+	}
+
+	protected Set<Double> calculateHorizontalIntersections(final double y) {
+		double[] xi;
+		double[] pta;
+		double[] ptb = null;
+		Set<Double> values = new TreeSet<Double>();
+		Iterator<IROI> it = pts.iterator();
+		pta = it.next().getPointRef();
+		while (it.hasNext()) {
+			ptb = it.next().getPointRef();
+			xi = ROIUtils.findYIntersection(pta, ptb, y);
+			if (xi != null) {
+				for (double x : xi)
+					values.add(x);
+			}
+		}
+		return values;
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(final double y) {
+		if (!intersectHorizontal(y))
+			return null;
+
+		if (pts.size() == 1) {
+			return pts.get(0).findHorizontalIntersections(y);
+		}
+
+		Set<Double> values = calculateHorizontalIntersections(y);
+		double[] xi = new double[values.size()];
+		int i = 0;
+		for (Double d : values) {
+			xi[i++] = d;
+		}
+		return xi;
 	}
 }

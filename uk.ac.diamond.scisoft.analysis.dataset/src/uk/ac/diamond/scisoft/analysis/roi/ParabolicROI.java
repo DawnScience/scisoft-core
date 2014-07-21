@@ -84,7 +84,7 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	 */
 	public void setFocalParameter(double focal) {
 		tp = 2*focal;
-		bounds = null;
+		setDirty();
 	}
 
 	/**

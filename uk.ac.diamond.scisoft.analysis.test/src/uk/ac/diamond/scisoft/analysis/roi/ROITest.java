@@ -16,27 +16,36 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public class ROITest {
+	private static final double ABS_TOL = 1e-14;
+
 	@Test
 	public void testPointROI() {
 		PointROI p = new PointROI(10.0, 20.5);
 
 		IRectangularROI b = p.getBounds();
-		assertEquals(b.getPointX(), p.getPointX(), 1e-15);
-		assertEquals(b.getPointY(), p.getPointY(), 1e-15);
-		assertEquals(b.getLength(0), 0, 1e-15);
-		assertEquals(b.getLength(1), 0, 1e-15);
+		assertEquals(b.getPointX(), p.getPointX(), ABS_TOL);
+		assertEquals(b.getPointY(), p.getPointY(), ABS_TOL);
+		assertEquals(b.getLength(0), 0, ABS_TOL);
+		assertEquals(b.getLength(1), 0, ABS_TOL);
 		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
 		assertFalse(p.containsPoint(0, p.getPointY()));
 		assertTrue(p.isNearOutline(p.getPointX(), p.getPointY(), 2.5));
 		assertTrue(p.isNearOutline(p.getPointX()-1, p.getPointY(), 2.5));
 		assertFalse(p.isNearOutline(p.getPointX()-1, p.getPointY()+3, 2.5));
+
+		assertNull(p.findHorizontalIntersections(0));
+		assertNull(p.findHorizontalIntersections(30));
+		double[] xi = p.findHorizontalIntersections(20.5);
+		assertArrayEquals(new double[]{10}, xi, ABS_TOL);
 	}
 
 	private static final int POINTS = 200;
@@ -47,10 +56,10 @@ public class ROITest {
 		l.setLength(10);
 
 		IRectangularROI b = l.getBounds();
-		assertEquals(b.getPointX(), l.getPointX(), 1e-15);
-		assertEquals(b.getPointY(), l.getPointY(), 1e-15);
-		assertEquals(b.getLength(0), 10, 1e-15);
-		assertEquals(b.getLength(1), 0, 1e-15);
+		assertEquals(b.getPointX(), l.getPointX(), ABS_TOL);
+		assertEquals(b.getPointY(), l.getPointY(), ABS_TOL);
+		assertEquals(b.getLength(0), 10, ABS_TOL);
+		assertEquals(b.getLength(1), 0, ABS_TOL);
 		assertTrue(l.containsPoint(l.getPointX(), l.getPointY()));
 		assertFalse(l.containsPoint(-2, l.getPointY()));
 		assertTrue(l.isNearOutline(l.getPointX(), l.getPointY(), 2.5));
@@ -96,6 +105,11 @@ public class ROITest {
 		assertTrue(l.getHorizontalIntersectionParameters(-0.1) == null);
 		assertTrue(Double.isNaN(l.getHorizontalIntersectionParameters(0)[0]));
 
+		assertNull(l.findHorizontalIntersections(-1));
+		assertNull(l.findHorizontalIntersections(1));
+		double[] xi = l.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{0, 10}, xi, ABS_TOL);
+
 		l.setAngleDegrees(90);
 		assertTrue(l.getVerticalIntersectionParameters(10.1) == null);
 		assertTrue(l.getVerticalIntersectionParameters(-0.1) == null);
@@ -103,6 +117,20 @@ public class ROITest {
 		assertTrue(l.getHorizontalIntersectionParameters(10.1) == null);
 		assertTrue(l.getHorizontalIntersectionParameters(-0.1) == null);
 
+		assertNull(l.findHorizontalIntersections(-1));
+		assertNull(l.findHorizontalIntersections(11));
+		xi = l.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		l.setAngleDegrees(45);
+		assertNull(l.findHorizontalIntersections(-1));
+		assertNull(l.findHorizontalIntersections(15));
+		xi = l.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+		xi = l.findHorizontalIntersections(5);
+		assertArrayEquals(new double[]{5}, xi, ABS_TOL);
+
+		l.setAngleDegrees(90);
 		l.setPoint(0.1, 0);
 		assertTrue(Double.isNaN(l.getVerticalIntersectionParameters(0.1)[0]));
 	}
@@ -114,21 +142,37 @@ public class ROITest {
 
 		IRectangularROI b = r.getBounds();
 		assertEquals(boundingBox(r), b);
-		assertEquals(b.getPointX(), r.getPointX(), 1e-15);
-		assertEquals(b.getPointY(), r.getPointY(), 1e-15);
-		assertEquals(b.getLength(0), 10.5, 1e-15);
-		assertEquals(b.getLength(1), 23, 1e-15);
+		assertEquals(b.getPointX(), r.getPointX(), ABS_TOL);
+		assertEquals(b.getPointY(), r.getPointY(), ABS_TOL);
+		assertEquals(b.getLength(0), 10.5, ABS_TOL);
+		assertEquals(b.getLength(1), 23, ABS_TOL);
 		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
 		assertFalse(r.containsPoint(-2, r.getPointY()));
 		assertTrue(r.isNearOutline(r.getPointX(), r.getPointY(), 2.5));
 		assertTrue(r.isNearOutline(r.getPointX()-1, r.getPointY(), 2.5));
 		assertFalse(r.isNearOutline(r.getPointX()-1, r.getPointY()-3, 2.5));
 
+		assertNull(r.findHorizontalIntersections(-1));
+		assertNull(r.findHorizontalIntersections(24));
+		double[] xi = r.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{0, 10.5}, xi, ABS_TOL);
+
+		xi = r.findHorizontalIntersections(23);
+		assertArrayEquals(new double[]{0, 10.5}, xi, ABS_TOL);
+
 		r.setAngleDegrees(35.);
 		assertEquals(boundingBox(r), r.getBounds());
 		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
 		assertFalse(r.containsPoint(2, r.getPointY()));
 		assertFalse(r.containsPoint(-2, r.getPointY()));
+
+		r.setAngleDegrees(45.);
+		assertNull(r.findHorizontalIntersections(-1));
+		assertNull(r.findHorizontalIntersections(45));
+		xi = r.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+		xi = r.findHorizontalIntersections(5);
+		assertArrayEquals(new double[]{-5, 5}, xi, ABS_TOL);
 
 		r.setAngleDegrees(145.);
 		assertEquals(boundingBox(r), r.getBounds());
@@ -176,10 +220,10 @@ public class ROITest {
 		CircularROI c = new CircularROI(10);
 
 		IRectangularROI b = c.getBounds();
-		assertEquals(b.getPointX() + 10, c.getPointX(), 1e-15);
-		assertEquals(b.getPointY() + 10, c.getPointY(), 1e-15);
-		assertEquals(b.getLength(0), 20, 1e-15);
-		assertEquals(b.getLength(1), 20, 1e-15);
+		assertEquals(b.getPointX() + 10, c.getPointX(), ABS_TOL);
+		assertEquals(b.getPointY() + 10, c.getPointY(), ABS_TOL);
+		assertEquals(b.getLength(0), 20, ABS_TOL);
+		assertEquals(b.getLength(1), 20, ABS_TOL);
 		assertTrue(c.containsPoint(c.getPointX(), c.getPointY()));
 		assertFalse(c.containsPoint(-20, c.getPointY()));
 		CircularROI sc = new CircularROI(9.9);
@@ -196,6 +240,15 @@ public class ROITest {
 		assertTrue(c.isNearOutline(c.getPointX()+10, c.getPointY(), 2.5));
 		assertTrue(c.isNearOutline(c.getPointX()+10, c.getPointY()-1, 2.5));
 		assertFalse(c.isNearOutline(c.getPointX()+9, c.getPointY()+9, 2.5));
+
+		assertNull(c.findHorizontalIntersections(-11));
+		assertNull(c.findHorizontalIntersections(11));
+		double[] xi = c.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, 10}, xi, ABS_TOL);
+		xi = c.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+		xi = c.findHorizontalIntersections(8);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
 	}
 
 	
@@ -210,8 +263,8 @@ public class ROITest {
 
 		IRectangularROI b = e.getBounds();
 		double side = 15.811388300841898;
-		assertEquals(b.getPointX() + side/2, e.getPointX(), 1e-15);
-		assertEquals(b.getPointY() + side/2, e.getPointY(), 1e-15);
+		assertEquals(b.getPointX() + side/2, e.getPointX(), ABS_TOL);
+		assertEquals(b.getPointY() + side/2, e.getPointY(), ABS_TOL);
 		assertTrue(e.containsPoint(e.getPointX(), e.getPointY()));
 		assertFalse(e.containsPoint(-20, e.getPointY()));
 
@@ -288,6 +341,35 @@ public class ROITest {
 		rect.setPoint(-d, -d);
 		rect.setLengths(2*d, 2*d);
 		assertFalse(e.isContainedBy(rect));
+
+		e = new EllipticalROI(10, 5, 0, 0, 0);
+		System.out.println("Bounds: " + e.getBounds());
+		assertNull(e.findHorizontalIntersections(-6));
+		assertNull(e.findHorizontalIntersections(6));
+		double[] xi = e.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, 10}, xi, ABS_TOL);
+		xi = e.findHorizontalIntersections(5);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		e.setAngleDegrees(90);
+		System.out.println("Bounds: " + e.getBounds());
+		assertNull(e.findHorizontalIntersections(-11));
+		assertNull(e.findHorizontalIntersections(11));
+		xi = e.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-5, 5}, xi, ABS_TOL);
+		xi = e.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		e.setAngleDegrees(45);
+		System.out.println("Bounds: " + e.getBounds());
+		assertNull(e.findHorizontalIntersections(-8));
+		assertNull(e.findHorizontalIntersections(8));
+		xi = e.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-2*Math.sqrt(10), 2*Math.sqrt(10)}, xi, ABS_TOL);
+
+		double y = Math.sqrt(160./3);
+		xi = e.findHorizontalIntersections(y*(1 - 1e-15));
+		assertArrayEquals(new double[]{y/2, y/2}, xi, 1e-6);
 	}
 
 	public void checkPoint(double[] t, double[] p, int i, IParametricROI e) {
@@ -295,6 +377,48 @@ public class ROITest {
 			assertTrue(Math.abs(e.getPoint(t[0])[i] - p[i]) < 1e-8);
 		else
 			assertTrue(Math.abs(e.getPoint(t[0])[i] - p[i]) < 1e-8 || Math.abs(e.getPoint(t[1])[i] - p[i]) < 1e-8);
+	}
+
+	@Test
+	public void testRingROI() {
+		RingROI r = new RingROI(0, 0, 5, 10);
+
+		IRectangularROI b = r.getBounds();
+		assertTrue(b.containsPoint(r.getPointX(), r.getPointY()));
+		assertTrue(b.containsPoint(8, 8));
+		assertTrue(b.containsPoint(4, 0));
+		
+		assertFalse(r.containsPoint(r.getPointX(), r.getPointY()));
+		assertFalse(r.containsPoint(8, 8));
+		assertTrue(r.containsPoint(4, 4));
+
+		CircularROI sc = new CircularROI(9.9);
+		sc.setPoint(r.getPoint());
+		CircularROI lc = new CircularROI(10.1);
+		lc.setPoint(r.getPoint());
+		double ar = Math.PI*2;
+		for (int i = 0; i < POINTS; i++) {
+			double a = (i * ar)/(POINTS - 1);
+			assertTrue(r.containsPoint(sc.getPoint(a)));
+			assertTrue(r.isNearOutline(sc.getPoint(a), 1));
+			assertFalse(r.isNearOutline(sc.getPoint(a), 0.01));
+			assertFalse(r.containsPoint(lc.getPoint(a)));
+			assertTrue(r.isNearOutline(lc.getPoint(a), 1));
+			assertFalse(r.isNearOutline(lc.getPoint(a), 0.01));
+		}
+
+		assertNull(r.findHorizontalIntersections(-11));
+		assertNull(r.findHorizontalIntersections(11));
+		double[] xi = r.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, -5, 5, 10}, xi, ABS_TOL);
+		xi = r.findHorizontalIntersections(3);
+		assertArrayEquals(new double[]{-Math.sqrt(91), -4, 4, Math.sqrt(91)}, xi, ABS_TOL);
+		xi = r.findHorizontalIntersections(5);
+		assertArrayEquals(new double[]{-Math.sqrt(75), 0, Math.sqrt(75)}, xi, ABS_TOL);
+		xi = r.findHorizontalIntersections(7);
+		assertArrayEquals(new double[]{-Math.sqrt(51), Math.sqrt(51)}, xi, ABS_TOL);
+		xi = r.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
 	}
 
 	@Test
@@ -326,6 +450,67 @@ public class ROITest {
 			assertTrue(s.isNearOutline(lc.getPoint(a), 1));
 			assertFalse(s.isNearOutline(lc.getPoint(a), 0.01));
 		}
+
+		s = new SectorROI(0, 0, 5, 10, 0, Math.PI);
+		assertNull(s.findHorizontalIntersections(-11));
+		assertNull(s.findHorizontalIntersections(11));
+		double[] xi = s.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, -5, 5, 10}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		s.setAngles(0.25*Math.PI, 0.75*Math.PI);
+		assertNull(s.findHorizontalIntersections(0));
+		assertNull(s.findHorizontalIntersections(3));
+		xi = s.findHorizontalIntersections(4);
+		assertArrayEquals(new double[]{-4, -3, 3, 4}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(6);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(8);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+		assertNull(s.findHorizontalIntersections(-3));
+		assertNull(s.findHorizontalIntersections(-4));
+
+		s.setSymmetry(SectorROI.INVERT);
+		assertNull(s.findHorizontalIntersections(-3));
+		xi = s.findHorizontalIntersections(-4);
+		assertArrayEquals(new double[]{-4, -3, 3, 4}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(-6);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(-8);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(-10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		s.setSymmetry(SectorROI.FULL);
+		xi = s.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, -5, 5, 10}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(3);
+		assertArrayEquals(new double[]{-Math.sqrt(91), -4, 4, Math.sqrt(91)}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(4);
+		assertArrayEquals(new double[]{-Math.sqrt(84), -3, 3, Math.sqrt(84)}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(6);
+		assertArrayEquals(new double[]{-8, 8}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(8);
+		assertArrayEquals(new double[]{-6, 6}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(10);
+		assertArrayEquals(new double[]{0}, xi, ABS_TOL);
+
+		s.setSymmetry(SectorROI.NONE);
+		s.setAngles(0.75*Math.PI, 2.25*Math.PI);
+		xi = s.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-10, -5, 5, 10}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(3);
+		assertArrayEquals(new double[]{-Math.sqrt(91), -4, 4, Math.sqrt(91)}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(4);
+		assertArrayEquals(new double[]{-Math.sqrt(84), -4, 4, Math.sqrt(84)}, xi, ABS_TOL);
+		xi = s.findHorizontalIntersections(6);
+		assertArrayEquals(new double[]{-8, -6, 6, 8}, xi, ABS_TOL);
+		assertNull(s.findHorizontalIntersections(8));
+		assertNull(s.findHorizontalIntersections(10));
+
 	}
 
 	private static final int SIDES = 24;
@@ -340,10 +525,10 @@ public class ROITest {
 		}
 
 		IRectangularROI b = p.getBounds();
-		assertEquals(b.getPointX(), -r, 1e-15);
-		assertEquals(b.getPointY(), -r, 1e-15);
-		assertEquals(b.getLength(0), 2*r, 1e-15);
-		assertEquals(b.getLength(1), 2*r, 1e-15);
+		assertEquals(b.getPointX(), -r, ABS_TOL);
+		assertEquals(b.getPointY(), -r, ABS_TOL);
+		assertEquals(b.getLength(0), 2*r, ABS_TOL);
+		assertEquals(b.getLength(1), 2*r, ABS_TOL);
 
 		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
 		assertFalse(p.containsPoint(0, 0));
@@ -363,10 +548,10 @@ public class ROITest {
 		}
 
 		IRectangularROI b = p.getBounds();
-		assertEquals(b.getPointX(), -r, 1e-15);
-		assertEquals(b.getPointY(), -r, 1e-15);
-		assertEquals(b.getLength(0), 2*r, 1e-15);
-		assertEquals(b.getLength(1), 2*r, 1e-15);
+		assertEquals(b.getPointX(), -r, ABS_TOL);
+		assertEquals(b.getPointY(), -r, ABS_TOL);
+		assertEquals(b.getLength(0), 2*r, ABS_TOL);
+		assertEquals(b.getLength(1), 2*r, ABS_TOL);
 
 		assertTrue(p.containsPoint(p.getPointX(), p.getPointY()));
 		assertTrue(p.containsPoint(0, 0));

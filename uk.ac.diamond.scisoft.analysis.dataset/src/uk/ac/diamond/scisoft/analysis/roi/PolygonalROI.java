@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Class for a polygonal ROI is a closed form of a polyline ROI (end point is implicitly the start point)
@@ -98,5 +99,32 @@ public class PolygonalROI extends PolylineROI implements Serializable {
 		double oy = p[1];
 		p = pts.get(0).getPointRef();
 		return ROIUtils.isNearSegment(p[0] - ox, p[1] - oy, x - ox, y - oy, distance);
+	}
+
+	@Override
+	public double[] findHorizontalIntersections(double y) {
+		if (!intersectHorizontal(y))
+			return null;
+
+		if (pts.size() == 1) {
+			return pts.get(0).findHorizontalIntersections(y);
+		}
+
+		Set<Double> values = calculateHorizontalIntersections(y);
+		double[] xi;
+		double[] pta = pts.get(pts.size() - 1).getPointRef();
+		double[] ptb = spt;
+		xi = ROIUtils.findYIntersection(pta, ptb, y);
+		if (xi != null) {
+			for (double x : xi)
+				values.add(x);
+		}
+
+		xi = new double[values.size()];
+		int i = 0;
+		for (Double d : values) {
+			xi[i++] = d;
+		}
+		return xi;
 	}
 }

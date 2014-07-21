@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Methods for slicing data using visit patterns.
@@ -130,4 +131,44 @@ public class Slicer {
 
 	}
 
+	
+	/**
+	 * This method provides a way to slice over a lazydataset providing the values
+	 * in each dimension for the slice using a visit pattern. The call on to the 
+	 * SliceVisitor is done in a parallel way by delegating the calling of the visit method
+	 * to a thread pool.
+	 * 
+	 * @param lz
+	 * @param sliceDimensions
+	 * @param nameFragment may be null
+	 * @param visitor - if used with visitAllParallel, visit should not normally throw an exception or if it does it will stop the execution but not throw back to the calling code. Instead an internal RuntimeException is thrown back to the fork/join API.
+	 * @throws Exception 
+	 */
+	public static void visitAllParallel(ILazyDataset lz, Map<Integer, String> sliceDimensions, String nameFragment, final SliceVisitor visitor) throws Exception {
+
+		// Just farm out each slice to a different runnable.
+		final ForkJoinPool pool = new ForkJoinPool();
+		
+		final SliceVisitor parallel = new SliceVisitor() {
+
+			@Override
+			public void visit(final IDataset slice, final Slice... slices) throws Exception {
+				
+				pool.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+						    visitor.visit(slice, slices);
+						} catch (Exception ne) {
+							// TODO Fix me - should runtime exception really be thrown back to Fork/Join?
+							throw new RuntimeException(ne.getMessage(), ne);
+						}
+					}
+				});
+			}
+		};
+		
+		Slicer.visitAll(lz, sliceDimensions, nameFragment, parallel);
+	}
 }

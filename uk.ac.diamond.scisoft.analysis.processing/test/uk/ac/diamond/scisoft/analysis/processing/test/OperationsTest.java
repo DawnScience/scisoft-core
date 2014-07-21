@@ -122,5 +122,33 @@ public class OperationsTest {
 		assert counter == 24;
 	}
 
+	@Test
+	public void testSimpleAddAndSubtractOnStackParallel() throws Exception {
+						
+		final IOperation add      = service.findFirst("add");
+		final IOperation subtract = service.findFirst("subtract");
+		
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		rand.setSlicing("all"); // 
+		
+		subtract.setParameters(100);
+		add.setParameters(101);
+		
+		counter = 0;
+		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+			public void executed(IDataset result) {
+				
+				System.out.println(result.getName());
+				counter++;
+				for (int i = 0; i < result.getShape()[0]; i++) {
+					for (int j = 0; j < result.getShape()[0]; j++) {
+					    assert result.getDouble(i,j)>0;
+					}
+				}
+			}			
+		}, subtract, add);
+		
+		assert counter == 24;
+	}
 
 }

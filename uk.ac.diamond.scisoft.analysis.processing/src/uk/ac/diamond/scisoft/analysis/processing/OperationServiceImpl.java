@@ -160,4 +160,10 @@ public class OperationServiceImpl implements IOperationService {
 			}
 		}
 	}
+
+	@Override
+	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException {
+		
+        throw new OperationException(series[0], "Parallel not implemented yet! Intending to make use of Slicer.visitAllParallel(...)");
+	}
  }

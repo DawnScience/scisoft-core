@@ -89,6 +89,23 @@ public interface IOperationService {
 	 */
 	public void executeSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
 	
+
+	/**
+	 * Executes a chain of operations in series the same as executeSeries however the
+	 * data slices are parallel and will not be sliced necessarily in order. To do this
+	 * a ForkJoinPool is used the size of the available local CPUs.
+	 * 
+	 * NOTE the fist operation must have
+	 * its data set and other operations should have their parameters set before
+	 * execution.
+	 * 
+	 * @param dataset
+	 * @param visitor - notified of the result of each slice result after processing
+	 * @param series
+	 * @throws OperationException
+	 */
+	public void executeParallelSeries(IRichDataset dataset, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+
 	/**
 	 * Runs a set of operations by following a graph chaining the operations together.
 	 * This run uses a recursive method and 

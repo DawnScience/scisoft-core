@@ -212,27 +212,32 @@ public class OperationsTest {
 		counter = 0;
 		
 		service.setParallelTimeout(50000);
-		service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
-			public void executed(IDataset result) {
-
-				try {
-					// This sleep simply introduces some random behaviour
-					// on the parallel jobs so that we 
-					final long time = Math.round(Math.random()*10000);
-					Thread.sleep(time);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				counter++;
-				for (int i = 0; i < result.getShape()[0]; i++) {
-					for (int j = 0; j < result.getShape()[0]; j++) {
-						assert result.getDouble(i,j)>0;
+		try {
+			service.executeParallelSeries(rand, new IExecutionVisitor.Stub() {
+				public void executed(IDataset result) {
+	
+					try {
+						// This sleep simply introduces some random behaviour
+						// on the parallel jobs so that we 
+						final long time = Math.round(Math.random()*10000);
+						Thread.sleep(time);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
-				}
-			}			
-		}, subtract, add);
-		
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+					counter++;
+					for (int i = 0; i < result.getShape()[0]; i++) {
+						for (int j = 0; j < result.getShape()[0]; j++) {
+							assert result.getDouble(i,j)>0;
+						}
+					}
+				}			
+			}, subtract, add);
+			
+			if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+			
+		} finally {
+			service.setParallelTimeout(5000);
+		}
 
 	}
 

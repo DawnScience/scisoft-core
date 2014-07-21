@@ -52,7 +52,7 @@ public class FittingOperation implements IOperation {
 				                                                                  (AbstractDataset)data.getData(), 
 				                                                                  peakClass, optimizer,
 				                                                                  smoothing, numPeaks, threshold, 
-				                                                                  autoStopping, backgroundDominated);
+				                                                                  autoStopping, backgroundDominated, monitor);
 		
         // Same original data but with some fitted peaks added to auxillary data.
 		return new OperationData(data.getData(), (Serializable)fittedPeakList);

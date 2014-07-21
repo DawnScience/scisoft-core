@@ -183,9 +183,10 @@ public class Slicer {
 					public void run() {
 						try {
 						    visitor.visit(slice, slices);
-						} catch (Exception ne) {
+						} catch (Throwable ne) {
+							ne.printStackTrace();
 							// TODO Fix me - should runtime exception really be thrown back to Fork/Join?
-							throw new RuntimeException(ne.getMessage(), ne);
+							//throw new RuntimeException(ne.getMessage(), ne);
 						}
 					}
 				});

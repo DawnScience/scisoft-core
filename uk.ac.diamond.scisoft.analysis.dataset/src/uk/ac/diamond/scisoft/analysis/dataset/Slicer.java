@@ -30,6 +30,11 @@ import java.util.concurrent.TimeoutException;
  */
 public class Slicer {
 
+	public static IDataset getFirstSlice(ILazyDataset lz, Map<Integer, String> sliceDimensions) throws Exception {
+		
+        return visit(lz, sliceDimensions, "Slice", null);
+	}
+
 	/**
 	 * This method provides a way to slice over a lazydataset providing the values
 	 * in each dimension for the slice using a visit pattern.
@@ -56,6 +61,19 @@ public class Slicer {
 	 * @throws Exception 
 	 */
 	public static void visitAll(ILazyDataset lz, Map<Integer, String> sliceDimensions, String nameFragment, SliceVisitor visitor) throws Exception {
+		visit(lz, sliceDimensions, nameFragment, visitor);
+	}
+	
+	/**
+	 * 
+	 * @param lz
+	 * @param sliceDimensions
+	 * @param nameFragment
+	 * @param visitor - if null just returns the first slice
+	 * @return null if visitor != null otherwise returns first slice.
+	 * @throws Exception
+	 */
+	private static IDataset visit(ILazyDataset lz, Map<Integer, String> sliceDimensions, String nameFragment, SliceVisitor visitor) throws Exception {
 		
 		final int[] fullDims = lz.getShape();
 		
@@ -130,9 +148,14 @@ public class Slicer {
 			IDataset data = lz.getSlice(slice);
 			data = data.squeeze();
 			data.setName((nameFragment!=null ? nameFragment : "") + " ("+ sliceName+")");
-			visitor.visit(data, outSlice);
+			if (visitor!=null) {
+			    visitor.visit(data, outSlice);
+			} else {
+				return data;
+			}
 		}
 
+		return null;
 	}
 
 	/**

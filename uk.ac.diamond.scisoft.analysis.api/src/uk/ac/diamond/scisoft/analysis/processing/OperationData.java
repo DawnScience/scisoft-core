@@ -24,6 +24,9 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 /**
  * Object to hold data and parameters for execution of operations in
  * a pipeline.
+ * 
+ * TODO - should this just be a DataMessageComponent?
+ * 
  */
 public class OperationData {
 

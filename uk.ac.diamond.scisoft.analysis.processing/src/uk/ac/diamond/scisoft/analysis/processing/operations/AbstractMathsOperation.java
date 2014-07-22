@@ -10,6 +10,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
+import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 /**
  * Maths operations are bascially just for testing at the moment.
@@ -65,6 +66,14 @@ public abstract class AbstractMathsOperation implements IOperation {
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
 		if (parameters.length!=1) throw new IllegalArgumentException("You can only set one value to subtract "+getClass().getSimpleName());
 		this.value = (Number)parameters[0];
+	}
+
+	
+	public OperationRank getInputRank() {
+		return OperationRank.TWO; // Images
+	}
+	public OperationRank getOutputRank() {
+		return OperationRank.TWO; // Addition for instance
 	}
 
 }

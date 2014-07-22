@@ -14,6 +14,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
+import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public class FittingOperation implements IOperation {
 
@@ -78,18 +79,25 @@ public class FittingOperation implements IOperation {
 		if (parameters.length!=10) throw new IllegalArgumentException("The parameters accepted must be the same as the Generic1DFitter.fitPeakFunctions(...) [without the data to fit] !");
 
 
-		this.xAxis     = (IDataset)parameters[0];
-		this.peakClass = (Class<? extends APeak>)parameters[1];
+		this.xAxis      = (IDataset)parameters[0];
+		this.peakClass  = (Class<? extends APeak>)parameters[1];
 		this.optimClass = (Class<? extends IOptimizer>)parameters[2];
-		this.quality = (Double)parameters[3];
-		this.seed    = (Long)parameters[4];
+		this.quality    = (Double)parameters[3];
+		this.seed       = (Long)parameters[4];
 		
-		this.smoothing = (Integer)parameters[5];
-		this.numPeaks  = (Integer)parameters[6];
-		this.threshold = (Double)parameters[7];
+		this.smoothing  = (Integer)parameters[5];
+		this.numPeaks   = (Integer)parameters[6];
+		this.threshold  = (Double)parameters[7];
 		this.autoStopping        = (Boolean)parameters[8];
 		this.backgroundDominated = (Boolean)parameters[9];
 	}
 
+	
+	public OperationRank getInputRank() {
+		return OperationRank.ONE; // XY data
+	}
+	public OperationRank getOutputRank() {
+		return OperationRank.ZERO; 
+	}
 
 }

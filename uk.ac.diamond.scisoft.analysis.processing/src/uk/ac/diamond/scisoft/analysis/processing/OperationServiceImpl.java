@@ -73,58 +73,44 @@ public class OperationServiceImpl implements IOperationService {
 			Integer dim = iterator.next();
 			if ("".equals(slicing.get(dim))) iterator.remove();
 		}
-				
-		// Jakes slicing from the conversion tool.
-		try {
 			
-			if (type==ExecutionType.SERIES) {
-				Slicer.visitAll(dataset.getData(), slicing, "Slice", new SliceVisitor() {
-	
-					@Override
-					public void visit(IDataset slice, Slice... slices) throws Exception {
-				        
-						boolean required = visitor.isRequired(slice, series);
-						if (!required) return;
-						
-						IDataset mask = getMask(dataset, slice, slices);
-						if (mask!=null) mask = mask.squeeze();
-						
-						OperationData  data = new OperationData(slice, slices);
-						data.setMask(mask);
-						
-						data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
-						
-						for (IOperation i : series) data = i.execute(data, monitor);
-						
-						visitor.executed(data, monitor);
-					}
-				});
-			} else if (type==ExecutionType.PARALLEL) {
-				Slicer.visitAllParallel(dataset.getData(), slicing, "Slice", new SliceVisitor() {
+		try {
+			// We check the pipeline ranks are ok
+			checkPipeline(dataset, slicing, series);
+
+			// Create the slice visitor
+			SliceVisitor sv = new SliceVisitor() {
+				
+				@Override
+				public void visit(IDataset slice, Slice... slices) throws Exception {
+			        
+					boolean required = visitor.isRequired(slice, series);
+					if (!required) return;
 					
-					@Override
-					public void visit(IDataset slice, Slice... slices) throws Exception {
-				        
-						boolean required = visitor.isRequired(slice, series);
-						if (!required) return;
-						
-						IDataset mask = getMask(dataset, slice, slices);
-						if (mask!=null) mask = mask.squeeze();
-
-						OperationData  data = new OperationData(slice, slices);
-						data.setMask(mask);
-						
-						data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
-
-						for (IOperation i : series) data = i.execute(data, monitor);
-						
-						visitor.executed(data, monitor);
-					}
-				}, parallelTimeout>0 ? parallelTimeout : 5000);
+					IDataset mask = getMask(dataset, slice, slices);
+					if (mask!=null) mask = mask.squeeze();
+					
+					OperationData  data = new OperationData(slice, slices);
+					data.setMask(mask);
+					
+					data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
+					
+					for (IOperation i : series) data = i.execute(data, monitor);
+					
+					visitor.executed(data, monitor);
+				}
+			};
+			
+			// Jakes slicing from the conversion tool is now in Slicer.
+			if (type==ExecutionType.SERIES) {
+				Slicer.visitAll(dataset.getData(), slicing, "Slice", sv);
+				
+			} else if (type==ExecutionType.PARALLEL) {
+				Slicer.visitAllParallel(dataset.getData(), slicing, "Slice", sv, parallelTimeout>0 ? parallelTimeout : 5000);
+				
 			} else {
 				throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
 			}
-			
 			
 			
 		} catch (OperationException o) {
@@ -132,6 +118,36 @@ public class OperationServiceImpl implements IOperationService {
 		} catch (Exception e) {
 			throw new OperationException(null, e);
 		}
+	}
+
+	/**
+	 * Checks that the pipeline passed in has a reasonable rank (for instance)
+	 * 
+	 * @param dataset
+	 * @param slicing
+	 * @param series
+	 */
+	private void checkPipeline(IRichDataset dataset, Map<Integer, String> slicing, IOperation... series) throws Exception {
+		
+        final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
+        
+        if (series[0].getInputRank().isDiscrete()) {
+	        if (firstSlice.getRank() != series[0].getInputRank().getRank()) {
+	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getOperationDescription()+"' is "+series[0].getInputRank().getRank());
+	            throw e;
+	        }
+        }
+        
+        if (series.length > 1) {
+        	
+        	OperationRank output = series[0].getOutputRank();
+	        for (int i = 1; i < series.length; i++) {
+	        	OperationRank input = series[i].getInputRank();
+	        	if (!input.isCompatibleWith(output)) {
+	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getOperationDescription()+"' is not compatible with the input of '"+series[i].getOperationDescription()+"'.");
+	        	}
+			}
+        }
 	}
 
 	protected IDataset getMask(IRichDataset dataset, IDataset currentSlice, Slice[] slices) {

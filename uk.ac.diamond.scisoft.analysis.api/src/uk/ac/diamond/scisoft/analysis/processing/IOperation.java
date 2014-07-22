@@ -92,4 +92,23 @@ public interface IOperation {
 	 */
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException;
 
+	/**
+	 * Gets the rank of input data for the operations algorithm. You might be iterating
+	 * 4D data but when this operation is run on a slice of it, it must be done with a
+	 * fixed input rank.
+	 * 
+	 * @return rank of slice data which we accept. For instance for integration we input 2(image) and output 1(integration)
+	 */
+	public OperationRank getInputRank();
+	
+	
+	/**
+	 * Gets the rank of output data for the operations algorithm. You might be iterating
+	 * 4D data but when this operation is run on a slice of it, it must be done with a
+	 * fixed input rank and this input will result in a fixed output rank.
+	 * 
+	 * @return rank of output data which we return. For instance for integration we input 2(image) and output 1(integration)
+	 */
+	public OperationRank getOutputRank();
+
 }

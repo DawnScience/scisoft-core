@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public abstract class AbstractIntegrationOperation implements IOperation {
 
@@ -22,5 +23,12 @@ public abstract class AbstractIntegrationOperation implements IOperation {
 	@Override
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
 		throw new IllegalArgumentException("Parameters are not accepted for "+getClass().getSimpleName());
+	}
+	
+	public OperationRank getInputRank() {
+		return OperationRank.TWO; // Images
+	}
+	public OperationRank getOutputRank() {
+		return OperationRank.ONE; // Addition for instance
 	}
 }

@@ -8,6 +8,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
+import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public class FunctionOperation implements IOperation {
 
@@ -44,5 +45,11 @@ public class FunctionOperation implements IOperation {
 		this.function = (IFunction)parameters[0];
 	}
 	
-	
+	public OperationRank getInputRank() {
+		return OperationRank.ANY; 
+	}
+	public OperationRank getOutputRank() {
+		return OperationRank.ANY;
+	}
+
 }

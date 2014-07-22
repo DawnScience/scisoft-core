@@ -62,7 +62,8 @@ public class FunctionsTest {
 		functionOp.setParameters(poly);
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -122,7 +123,8 @@ public class FunctionsTest {
 	
 		count = 0;
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				
@@ -170,7 +172,8 @@ public class FunctionsTest {
 		try {
 			service.setParallelTimeout(50000);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				public void executed(OperationData result) throws Exception {
+				@Override
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 					System.out.println(result.getData().getName());
 

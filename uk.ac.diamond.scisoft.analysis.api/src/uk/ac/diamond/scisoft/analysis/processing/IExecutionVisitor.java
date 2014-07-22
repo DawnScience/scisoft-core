@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This interface is designed to be called when a series of operations has been 
@@ -36,10 +37,19 @@ public interface IExecutionVisitor {
 	public boolean isRequired(IDataset slice, IOperation... operations);
 	
 	/**
+	 * Optionally 
+	 * @param result
+	 * @return OperationData processed before execution. For instance the mask may be changed or calculated.
+	 * @throws Exception
+	 */
+	public OperationData filter(OperationData result, IMonitor monitor) throws Exception;
+
+	/**
 	 * Called when the series of operations has been done
 	 * @param result
 	 */
-	public void executed(OperationData result) throws Exception;
+	public void executed(OperationData result, IMonitor monitor) throws Exception;
+	
 	
 	public class Stub implements IExecutionVisitor {
 
@@ -50,9 +60,14 @@ public interface IExecutionVisitor {
 		}
 
 		@Override
-		public void executed(OperationData result) throws Exception {
+		public void executed(OperationData result, IMonitor monitor) throws Exception {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public OperationData filter(OperationData od, IMonitor monitor) throws Exception {
+			return od;
 		}
 		
 	}

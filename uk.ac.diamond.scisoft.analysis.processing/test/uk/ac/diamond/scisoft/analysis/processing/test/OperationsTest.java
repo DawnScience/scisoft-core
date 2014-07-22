@@ -59,7 +59,8 @@ public class OperationsTest {
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
@@ -81,7 +82,8 @@ public class OperationsTest {
 		add.setParameters(101);
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+result.getData().getDouble(i,j));
@@ -107,7 +109,8 @@ public class OperationsTest {
 		
 		counter = 0;
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				counter++;
@@ -136,7 +139,8 @@ public class OperationsTest {
 		
 		counter = 0;
 		service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) throws Exception {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 			    try {
 			    	// This sleep simply introduces some random behaviour
@@ -173,7 +177,8 @@ public class OperationsTest {
 				
 		try {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				public void executed(OperationData result) throws Exception {
+				@Override
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -215,7 +220,8 @@ public class OperationsTest {
 		service.setParallelTimeout(50000);
 		try {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				public void executed(OperationData result) throws Exception {
+				@Override
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 	
 					try {
 						// This sleep simply introduces some random behaviour

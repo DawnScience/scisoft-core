@@ -86,11 +86,17 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						final IDataset mask = getMask(dataset, slice, slices);
-						OperationData  data = new OperationData(slice, mask, slices);
+						IDataset mask = getMask(dataset, slice, slices);
+						if (mask!=null) mask = mask.squeeze();
+						
+						OperationData  data = new OperationData(slice, slices);
+						data.setMask(mask);
+						
+						data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
+						
 						for (IOperation i : series) data = i.execute(data, monitor);
 						
-						visitor.executed(data);
+						visitor.executed(data, monitor);
 					}
 				});
 			} else if (type==ExecutionType.PARALLEL) {
@@ -102,11 +108,17 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						final IDataset mask = getMask(dataset, slice, slices);
-						OperationData data = new OperationData(slice, mask, slices);
+						IDataset mask = getMask(dataset, slice, slices);
+						if (mask!=null) mask = mask.squeeze();
+
+						OperationData  data = new OperationData(slice, slices);
+						data.setMask(mask);
+						
+						data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
+
 						for (IOperation i : series) data = i.execute(data, monitor);
 						
-						visitor.executed(data);
+						visitor.executed(data, monitor);
 					}
 				}, parallelTimeout>0 ? parallelTimeout : 5000);
 			} else {
@@ -118,7 +130,7 @@ public class OperationServiceImpl implements IOperationService {
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {
-			throw new OperationException(null, e.getMessage());
+			throw new OperationException(null, e);
 		}
 	}
 

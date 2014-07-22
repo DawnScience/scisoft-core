@@ -48,7 +48,7 @@ public class OperationsPluginTest {
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) {
+			public void executed(OperationData result, IMonitor monitor) {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    assert result.getData().getDouble(i,j)<0;
@@ -74,7 +74,7 @@ public class OperationsPluginTest {
 		add.setParameters(101);
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			public void executed(OperationData result) {
+			public void executed(OperationData result, IMonitor monitor) {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    assert result.getData().getDouble(i,j)>0;

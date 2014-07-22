@@ -82,12 +82,6 @@ public class OperationData {
 		this.data    = data;
 		this.auxData = aux;
 	}
-	public OperationData(IDataset data, IDataset mask, Serializable[] auxData) {
-		super();
-		this.data = data;
-		this.mask = mask;
-		this.auxData = auxData;
-	}
 	public IDataset getMask() {
 		return mask;
 	}

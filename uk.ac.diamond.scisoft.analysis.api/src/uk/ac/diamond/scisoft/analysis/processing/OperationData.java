@@ -30,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  */
 public class OperationData {
 
-	private IDataset        data;
+	private IDataset[]      data;
 	private IDataset        mask;
 	private Serializable[]  auxData;
 	
@@ -67,22 +67,28 @@ public class OperationData {
 		return true;
 	}
 	public IDataset getData() {
-		return data;
+		return getData(0);
 	}
-	public void setData(IDataset data) {
+	public IDataset getData(int index) {
+		return data[index];
+	}
+	public void setData(IDataset... data) {
 		this.data = data;
 	}
 	public Serializable[] getAuxData() {
 		return auxData;
 	}
-	public void setAuxData(Serializable[] auxData) {
+	public void setAuxData(Serializable... auxData) {
 		this.auxData = auxData;
 	}
 	public OperationData(IDataset data) {
 		this(data, (Serializable)null);
 	}
+	public OperationData(IDataset... data) {
+		this.data = data;
+	}
 	public OperationData(IDataset data, Serializable... aux) {
-		this.data    = data;
+		this.data    = new IDataset[]{data};
 		this.auxData = aux;
 	}
 	public IDataset getMask() {

@@ -5,10 +5,12 @@ import java.io.Serializable;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 public abstract class AbstractIntegrationOperation implements IOperation {
 
 	protected IRichDataset data;
+	private IROI region;
 	@Override
 	public String getOperationDescription() {
 		return getClass().getSimpleName();
@@ -22,7 +24,13 @@ public abstract class AbstractIntegrationOperation implements IOperation {
 
 	@Override
 	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
-		throw new IllegalArgumentException("Parameters are not accepted for "+getClass().getSimpleName());
+		if (parameters.length!=1) throw new IllegalArgumentException("You may optionally set the region to use with an integration operation, one region only!");
+		this.region = (IROI)parameters[0];
+	}
+	
+	protected IROI getRegion() {
+		if (region!=null) return region;
+		return data.getRegions().get(0); // Might throw exception but all AbstractIntegrationOperation must have a region!
 	}
 	
 	public OperationRank getInputRank() {

@@ -146,6 +146,8 @@ public class OperationServiceImpl implements IOperationService {
         if (series.length > 1) {
         	
         	OperationRank output = series[0].getOutputRank();
+        	if (output == OperationRank.SAME) output = series[0].getInputRank();
+        	
 	        for (int i = 1; i < series.length; i++) {
 	        	OperationRank input = series[i].getInputRank();
 	        	if (!input.isCompatibleWith(output)) {
@@ -225,6 +227,21 @@ public class OperationServiceImpl implements IOperationService {
 		}
 		return ret;
 	}
+	
+	@Override
+	public Collection<IOperation> find(OperationRank rank, boolean isInput) throws Exception {
+		checkOperations();
+
+		Collection<IOperation> ret = new ArrayList<IOperation>(3);
+		for (String id : operations.keySet()) {
+			IOperation operation = operations.get(id);
+			OperationRank r      = isInput ? operation.getInputRank() : operation.getOutputRank();
+			if (rank==r) {
+				ret.add(operation);
+			}
+		}
+		return ret;
+	}	
 	
 	@Override
 	public IOperation findFirst(String regex) throws Exception {

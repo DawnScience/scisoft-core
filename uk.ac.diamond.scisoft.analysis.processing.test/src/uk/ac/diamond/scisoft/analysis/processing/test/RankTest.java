@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.InvalidRankException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
+import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
@@ -91,9 +93,8 @@ public class RankTest {
 	public void testInvalidSlice() throws Exception {
 		
 		try {
-			final IOperation add      = service.findFirst("add");
-			add.setParameters(100);
-			
+			final IOperation box      = service.findFirst("box");
+
 			final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
 			rand.setSlicing("all", "500");
 					
@@ -102,7 +103,7 @@ public class RankTest {
 				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, add);
+			}, box);
 			
 		} catch (InvalidRankException expected) {
 			return;
@@ -121,6 +122,7 @@ public class RankTest {
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi = service.findFirst("azimuthal");
+		final IOperation box = service.findFirst("box");
 		final IOperation add = service.findFirst("add");
 		add.setParameters(100);
 
@@ -139,7 +141,7 @@ public class RankTest {
 				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, azi, add);
+			}, azi, box);
 
 		} catch (InvalidRankException expected) {
 			return;
@@ -158,10 +160,11 @@ public class RankTest {
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
-		final IOperation azi = service.findFirst("azimuthal");
-		final IOperation add = service.findFirst("add");
-		final IOperation sub = service.findFirst("subtract");
+		final IOperation azi      = service.findFirst("azimuthal");
+		final IOperation add      = service.findFirst("add");
+		final IOperation sub      = service.findFirst("subtract");
 		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation");
+		final IOperation box      = service.findFirst("box");
 		
 		// Parameters
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
@@ -183,7 +186,7 @@ public class RankTest {
 				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, add, sub, function, azi, add);
+			}, add, sub, function, azi, box);
 
 		} catch (InvalidRankException expected) {
 			return;
@@ -192,4 +195,21 @@ public class RankTest {
 		throw new Exception("A invalid slice rank not detected!");
 	}
 
+	
+	@Test
+	public void testFindByRank() throws Exception {
+
+		Collection<IOperation> ones = service.find(OperationRank.ONE, true);
+		if (ones.isEmpty()) throw new Exception("No one dimensional inputs found but there should be fitting!");
+		
+		Collection<IOperation> twos = service.find(OperationRank.TWO, true);
+		if (twos.isEmpty()) throw new Exception("No two dimensional inputs found but there should be integration!");
+		
+		ones = service.find(OperationRank.ONE, false);
+		if (ones.isEmpty()) throw new Exception("No one dimensional outputs found but there should be integration!");
+		
+		twos = service.find(OperationRank.SAME, false);
+		if (twos.isEmpty()) throw new Exception("No twos dimensional outputs found but there should be add/subtract!");
+
+	}
 }

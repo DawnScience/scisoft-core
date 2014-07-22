@@ -56,7 +56,7 @@ public abstract class AbstractMathsOperation implements IOperation {
 			return new OperationData(result);
 			
 		} catch (Exception e) {
-			throw new OperationException(this, e.getMessage());
+			throw new OperationException(this, e);
 		}
 	}
 	
@@ -70,10 +70,10 @@ public abstract class AbstractMathsOperation implements IOperation {
 
 	
 	public OperationRank getInputRank() {
-		return OperationRank.TWO; // Images
+		return OperationRank.ANY; // Images
 	}
 	public OperationRank getOutputRank() {
-		return OperationRank.TWO; // Addition for instance
+		return OperationRank.SAME; // Addition for instance
 	}
 
 }

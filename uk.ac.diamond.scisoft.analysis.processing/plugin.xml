@@ -25,6 +25,11 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
             name="Function Operation">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegration"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
+            name="Box Integration">
+      </operation>
    </extension>
 
 </plugin>

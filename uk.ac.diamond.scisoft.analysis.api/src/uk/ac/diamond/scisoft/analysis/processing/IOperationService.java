@@ -47,6 +47,19 @@ public interface IOperationService {
 	public Collection<IOperation> find(String operationRegex)  throws Exception;
 	
 	/**
+	 * Finds all operations with either the input rank or output rank (when isInput=false)
+	 * is passed in.
+	 * 
+	 * If rank of ANY is used then only those matching exactly ANY are returned, not all operations.
+	 * If rank of SAME is used then only those matching exactly SAME are returned, not all operations.
+	 * 
+	 * @param rank
+	 * @param isInput - true to search inputs, false to search outputs.
+	 * @return list of operations which match
+	 */
+	public Collection<IOperation> find(OperationRank rank, boolean isInput)  throws Exception;
+
+	/**
 	 * Finds the first operation matcing a search
 	 * using the regex passed in. All operations whose descriptions/ids
 	 * match the regex are returned. For instance:

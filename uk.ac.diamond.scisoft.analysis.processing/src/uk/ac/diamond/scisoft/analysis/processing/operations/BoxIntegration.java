@@ -6,13 +6,13 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
-import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
+import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
-public class AzimuthalIntegration extends AbstractIntegrationOperation {
+public class BoxIntegration extends AbstractIntegrationOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration";
 	}
 
 	@Override
@@ -20,24 +20,24 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 		
 		Dataset slice    = (Dataset)islice.getData();
 		Dataset mask     = (Dataset)islice.getMask();
-		SectorROI sector = (SectorROI)getRegion();
+		RectangularROI rect = (RectangularROI)getRegion();
 		
 		
-		final AbstractDataset[] profile = ROIProfile.sector(slice, mask, sector, false, true, false);
+		final AbstractDataset[] profile = ROIProfile.box(slice, mask, rect);
 		
-		AbstractDataset integral = profile[1];
-		integral.setName("Azimuthal Profile "+sector.getName());
+		AbstractDataset x = profile[0];
+		x.setName("Box X Profile "+rect.getName());
+		
+		AbstractDataset y = profile[1];
+		y.setName("Box Y Profile "+rect.getName());
 		
 
 		// If not symmetry profile[3] is null, otherwise plot it.
-	    if (profile.length>=4 && profile[3]!=null && sector.hasSeparateRegions()) {
-	    	
-			throw new OperationException(this, "Symmetry as separate dataset not currently supported!");
-	    	
-	    } else {
-	    	return new OperationData(integral, mask, sector);
-	    }
+		OperationData ret = new OperationData(x, y);
+	    ret.setMask(mask);
+	    ret.setAuxData(rect);
 
+	    return ret;
 	}
-	
+
 }

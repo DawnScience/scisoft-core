@@ -330,8 +330,9 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 		double[] ptb = null;
 		Set<Double> values = new TreeSet<Double>();
 		Iterator<IROI> it = pts.iterator();
-		pta = it.next().getPointRef();
+		ptb = it.next().getPointRef();
 		while (it.hasNext()) {
+			pta = ptb;
 			ptb = it.next().getPointRef();
 			xi = ROIUtils.findYIntersection(pta, ptb, y);
 			if (xi != null) {

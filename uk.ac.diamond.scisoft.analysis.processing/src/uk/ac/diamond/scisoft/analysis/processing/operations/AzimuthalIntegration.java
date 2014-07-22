@@ -19,10 +19,8 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	@Override
 	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
 		
-		// TODO FIXME This is not right for the operation.
-		
-		Dataset slice = (Dataset)islice.getData();
-		Dataset mask  = (Dataset)data.getMask().getSlice((Slice)null);
+		Dataset slice    = (Dataset)islice.getData();
+		Dataset mask     = (Dataset)islice.getMask();
 		SectorROI sector = (SectorROI)data.getRegions().get(0);
 		
 		
@@ -38,7 +36,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 			throw new OperationException(this, "Symmetry as separate dataset not currently supported!");
 	    	
 	    } else {
-	    	return new OperationData(integral);
+	    	return new OperationData(integral, mask, sector);
 	    }
 
 	}

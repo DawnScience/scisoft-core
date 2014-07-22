@@ -28,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 public class OperationData {
 
 	private IDataset        data;
+	private IDataset        mask;
 	private Serializable[]  auxData;
 	
 	@Override
@@ -36,6 +37,7 @@ public class OperationData {
 		int result = 1;
 		result = prime * result + Arrays.hashCode(auxData);
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((mask == null) ? 0 : mask.hashCode());
 		return result;
 	}
 	@Override
@@ -53,6 +55,11 @@ public class OperationData {
 			if (other.data != null)
 				return false;
 		} else if (!data.equals(other.data))
+			return false;
+		if (mask == null) {
+			if (other.mask != null)
+				return false;
+		} else if (!mask.equals(other.mask))
 			return false;
 		return true;
 	}
@@ -75,4 +82,17 @@ public class OperationData {
 		this.data    = data;
 		this.auxData = aux;
 	}
+	public OperationData(IDataset data, IDataset mask, Serializable[] auxData) {
+		super();
+		this.data = data;
+		this.mask = mask;
+		this.auxData = auxData;
+	}
+	public IDataset getMask() {
+		return mask;
+	}
+	public void setMask(IDataset mask) {
+		this.mask = mask;
+	}
+
 }

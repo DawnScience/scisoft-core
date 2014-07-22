@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
 import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
@@ -85,7 +86,8 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						OperationData data = new OperationData(slice, slices);
+						final IDataset mask = getMask(dataset, slice, slices);
+						OperationData  data = new OperationData(slice, mask, slices);
 						for (IOperation i : series) data = i.execute(data, monitor);
 						
 						visitor.executed(data);
@@ -100,7 +102,8 @@ public class OperationServiceImpl implements IOperationService {
 						boolean required = visitor.isRequired(slice, series);
 						if (!required) return;
 						
-						OperationData data = new OperationData(slice, slices);
+						final IDataset mask = getMask(dataset, slice, slices);
+						OperationData data = new OperationData(slice, mask, slices);
 						for (IOperation i : series) data = i.execute(data, monitor);
 						
 						visitor.executed(data);
@@ -117,6 +120,40 @@ public class OperationServiceImpl implements IOperationService {
 		} catch (Exception e) {
 			throw new OperationException(null, e.getMessage());
 		}
+	}
+
+	protected IDataset getMask(IRichDataset dataset, IDataset currentSlice, Slice[] slices) {
+		
+		ILazyDataset lmask = dataset.getMask();
+		if (lmask==null) return null;
+		
+		ILazyDataset fullData = dataset.getData();
+		if (isCompatible(fullData.getShape(), lmask.getShape())) {
+			return lmask.getSlice(slices);
+		} else if (isCompatible(currentSlice.getShape(), lmask.getShape())) {
+			return lmask.getSlice((Slice)null);
+		}
+		throw new OperationException(null, "The mask is neither the shape of the full data or the shape of the requested slice!");
+	}
+	
+	protected static boolean isCompatible(final int[] ashape, final int[] bshape) {
+
+		List<Integer> alist = new ArrayList<Integer>();
+
+		for (int a : ashape) {
+			if (a > 1) alist.add(a);
+		}
+
+		final int imax = alist.size();
+		int i = 0;
+		for (int b : bshape) {
+			if (b == 1)
+				continue;
+			if (i >= imax || b != alist.get(i++))
+				return false;
+		}
+
+		return i == imax;
 	}
 
 	public long getParallelTimeout() {

@@ -49,7 +49,7 @@ public class FunctionOperation implements IOperation {
 		return OperationRank.ANY; 
 	}
 	public OperationRank getOutputRank() {
-		return OperationRank.ANY;
+		return OperationRank.SAME;
 	}
 
 }

@@ -65,8 +65,6 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
 		}
 		
-		series[0].setDataset(dataset);
-		
 		Map<Integer, String> slicing = dataset.getSlicing();
 		if (slicing==null) slicing = Collections.emptyMap();
 		for (Iterator<Integer> iterator = slicing.keySet().iterator(); iterator.hasNext();) {
@@ -77,6 +75,10 @@ public class OperationServiceImpl implements IOperationService {
 		try {
 			// We check the pipeline ranks are ok
 			checkPipeline(dataset, slicing, series);
+			
+			// We provide the series with the rich dataset which in the data context on 
+			// which we are operating.
+			for (IOperation iOperation : series) iOperation.setDataset(dataset);
 
 			// Create the slice visitor
 			SliceVisitor sv = new SliceVisitor() {
@@ -131,6 +133,9 @@ public class OperationServiceImpl implements IOperationService {
 		
         final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
         
+        if (series[0].getInputRank()==OperationRank.SAME) {
+        	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
+        }
         if (series[0].getInputRank().isDiscrete()) {
 	        if (firstSlice.getRank() != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getOperationDescription()+"' is "+series[0].getInputRank().getRank());
@@ -146,6 +151,8 @@ public class OperationServiceImpl implements IOperationService {
 	        	if (!input.isCompatibleWith(output)) {
 	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getOperationDescription()+"' is not compatible with the input of '"+series[i].getOperationDescription()+"'.");
 	        	}
+	        	output = series[i].getOutputRank();
+	        	if (output == OperationRank.SAME) output = input;
 			}
         }
 	}

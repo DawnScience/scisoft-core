@@ -24,7 +24,8 @@ public enum OperationRank {
 	THREE(3),
 	FOUR(4),
 	ANY(-1),
-	NONE(-2);
+	NONE(-2), 
+	SAME(-3); // Denotes that this is the same as the input
 	
 	private final int rank;
 	

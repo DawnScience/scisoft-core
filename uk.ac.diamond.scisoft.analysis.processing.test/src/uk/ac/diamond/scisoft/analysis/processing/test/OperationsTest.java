@@ -138,27 +138,34 @@ public class OperationsTest {
 		add.setParameters(101);
 		
 		counter = 0;
-		service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
-				
-			    try {
-			    	// This sleep simply introduces some random behaviour
-			    	// on the parallel jobs so that we definitely get a different order.
-					final long time = Math.round(Math.random()*1000);
-					Thread.sleep(time);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				counter++;
-				for (int i = 0; i < result.getData().getShape()[0]; i++) {
-					for (int j = 0; j < result.getData().getShape()[1]; j++) {
-					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+		try {
+			service.setParallelTimeout(Long.MAX_VALUE);
+	
+			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+				@Override
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
+					
+				    try {
+				    	// This sleep simply introduces some random behaviour
+				    	// on the parallel jobs so that we definitely get a different order.
+						final long time = Math.round(Math.random()*1000);
+						Thread.sleep(time);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
-				}
-			}			
-		}, subtract, add);
+	
+					counter++;
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+						}
+					}
+				}			
+			}, subtract, add);
+			
+		} finally {
+			service.setParallelTimeout(5000);
+		}
 		
 		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 	}
@@ -217,8 +224,8 @@ public class OperationsTest {
 				
 		counter = 0;
 		
-		service.setParallelTimeout(50000);
 		try {
+			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor) throws Exception {

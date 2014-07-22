@@ -1,0 +1,43 @@
+<project name="plugin-uk.ac.diamond.scisoft.analysis.processing.test" basedir=".">
+
+	<dirname property="plugin.basedir" file="${ant.file}" />
+	<pathconvert property="workspace.loc" setonempty="false">
+		<regexpmapper from="(.*)_git/.+" to="\1"/>
+		<path><pathelement location="${plugin.basedir}" /></path>
+	</pathconvert>
+	<fail message="ERROR: Could not determine workspace.loc" unless="workspace.loc" />
+	<property name="workspace.git.loc" value="${workspace.loc}_git" />
+	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/common.ant" />
+
+	<!-- ====================================================================
+		   JUnit tests
+		 ==================================================================== -->
+
+	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
+	<target name="junit-tests" depends="set-test-base-DAWN">
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.processing.test-maxmemory" value="1536m" />
+		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.processing.test-maxmemory}">
+			<formatter type="xml" />
+			<classpath>
+				<pathelement location="${junitjar.loc}" />
+				<pathelement location="${plugin.basedir}/bin" />
+				<pathelement location="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/logging" />  <!-- to pick up logback-test.xml -->
+				<pathelement location="${plugin.host.basedir}/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.api/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/jars/*" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
+				<path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
+				<path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
+				<pathelement location="${workspace.loc}/tp/plugins/*" />
+			</classpath>
+			<batchtest todir="@{report.dir}">
+				<fileset dir="${plugin.basedir}/src">
+					<include name="**/*Test.java" />
+					<exclude name="**/*PluginTest.java" />
+				</fileset>
+			</batchtest>
+		</junit-call>
+	</target>
+
+</project>

@@ -43,7 +43,6 @@
 				<path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
 				<path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
 				<pathelement location="${workspace.loc}/tp/plugins/*" />
-				<path refid="libs.jars.path" />
 			</classpath>
 			<!-- define several batches (default forkmode=perBatch), since at some point in the past some tests triggered a JVM out-of-memory crash, whence following tests erroneously reported failure unless in a new JVM -->
 			<batchtest todir="@{report.dir}">

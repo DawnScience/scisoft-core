@@ -146,10 +146,12 @@ public class OperationServiceImpl implements IOperationService {
         if (series.length > 1) {
         	
         	OperationRank output = series[0].getOutputRank();
-        	if (output == OperationRank.SAME) output = series[0].getInputRank();
+        	if (output == OperationRank.SAME) output = OperationRank.get(firstSlice.getRank());
+        	if (output == OperationRank.ANY)  output = OperationRank.get(firstSlice.getRank());
         	
 	        for (int i = 1; i < series.length; i++) {
 	        	OperationRank input = series[i].getInputRank();
+	        	if (input == OperationRank.ANY)  input = OperationRank.get(firstSlice.getRank());
 	        	if (!input.isCompatibleWith(output)) {
 	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getOperationDescription()+"' is not compatible with the input of '"+series[i].getOperationDescription()+"'.");
 	        	}

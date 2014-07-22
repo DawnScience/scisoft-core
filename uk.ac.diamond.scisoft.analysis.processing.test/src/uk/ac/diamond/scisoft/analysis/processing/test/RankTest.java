@@ -175,7 +175,7 @@ public class RankTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
-				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
+				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
 		}, add, sub, function, azi);
 
@@ -212,4 +212,34 @@ public class RankTest {
 		if (twos.isEmpty()) throw new Exception("No twos dimensional outputs found but there should be add/subtract!");
 
 	}
+	
+	
+	@Test
+	public void testFittingImages() throws Exception {
+
+		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
+		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
+
+		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		rand.setSlicing("all"); // All 2 images in first dimension.
+
+		final IOperation add      = service.findFirst("add");
+		final IOperation fitting  = service.findFirst("fitting");
+		
+		// This order is not ok.
+		try {
+			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+				@Override
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
+					throw new Exception("Unexpected execution of invalid pipeline!");
+				}			
+			}, add, fitting);
+
+		} catch (InvalidRankException expected) {
+			return;
+		}
+
+		throw new Exception("A invalid slice rank not detected!");
+	}
+
 }

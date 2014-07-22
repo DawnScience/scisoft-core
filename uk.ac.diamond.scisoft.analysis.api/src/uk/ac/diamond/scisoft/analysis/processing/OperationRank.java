@@ -37,7 +37,7 @@ public enum OperationRank {
 		return rank;
 	}
 	
-	public OperationRank get(int rank) {
+	public static OperationRank get(int rank) {
 		for (OperationRank or : values()) {
 			if (or.rank == rank) return or;
 		}

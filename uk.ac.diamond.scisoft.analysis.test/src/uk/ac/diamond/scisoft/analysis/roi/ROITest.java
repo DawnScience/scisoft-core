@@ -560,6 +560,17 @@ public class ROITest {
 		assertTrue(p.isNearOutline(p.getPointRef(), 0.01));
 		assertTrue(p.isNearOutline(p.getPointX() - 0.5, p.getPointY() - 1, 2.5));
 		assertFalse(p.isNearOutline(p.getPointX() + 2.5, p.getPointY() + 4, 2.5));
+
+		p = new PolygonalROI();
+		for (int i = 0; i < 4; i++) {
+			double a = (2 * i * Math.PI) / 4;
+			p.insertPoint(r*Math.cos(a), r*Math.sin(a));
+		}
+		assertNull(p.findHorizontalIntersections(-21));
+		assertNull(p.findHorizontalIntersections(21));
+		double[] xi = p.findHorizontalIntersections(0);
+		assertArrayEquals(new double[]{-20, 20}, xi, ABS_TOL);
+
 	}
 
 	@Test

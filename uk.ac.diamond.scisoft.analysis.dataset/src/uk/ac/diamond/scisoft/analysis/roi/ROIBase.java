@@ -212,8 +212,8 @@ public class ROIBase implements IROI, Serializable {
 	 */
 	protected boolean intersectHorizontal(double y) {
 		RectangularROI r = getBounds();
-		double oy = r.spt[1];
-		return y >= oy && y <= (oy + r.len[1]);
+		y -= r.spt[1];
+		return y >= 0 && y <= r.len[1];
 	}
 
 	@Override

@@ -106,13 +106,14 @@ public class PolygonalROI extends PolylineROI implements Serializable {
 		if (!intersectHorizontal(y))
 			return null;
 
-		if (pts.size() == 1) {
+		int n = pts.size() - 1;
+		if (n == 0) {
 			return pts.get(0).findHorizontalIntersections(y);
 		}
 
 		Set<Double> values = calculateHorizontalIntersections(y);
 		double[] xi;
-		double[] pta = pts.get(pts.size() - 1).getPointRef();
+		double[] pta = pts.get(n).getPointRef();
 		double[] ptb = spt;
 		xi = ROIUtils.findYIntersection(pta, ptb, y);
 		if (xi != null) {

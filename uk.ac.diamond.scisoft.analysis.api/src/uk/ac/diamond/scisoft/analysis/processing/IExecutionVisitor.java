@@ -38,14 +38,23 @@ public interface IExecutionVisitor {
 	
 	/**
 	 * Optionally 
-	 * @param result
+	 * @param intermeadiateData
 	 * @return OperationData processed before execution. For instance the mask may be changed or calculated.
 	 * @throws Exception
 	 */
-	public OperationData filter(OperationData result, IMonitor monitor) throws Exception;
+	public OperationData filter(OperationData intermeadiateData, IMonitor monitor) throws Exception;
 
+    /**
+     * Called when an execution in the pipeline has run, before the end	but after a given operation.
+     * Provides the option of saving the steps information to a file if required.
+     * 
+     * @param intermeadiateData
+     * @param data
+     */
+	public void notify(IOperation intermeadiateData, OperationData data);
+	
 	/**
-	 * Called when the series of operations has been done
+	 * Called when the series of operations has been done, with the 
 	 * @param result
 	 */
 	public void executed(OperationData result, IMonitor monitor) throws Exception;
@@ -69,6 +78,15 @@ public interface IExecutionVisitor {
 		public OperationData filter(OperationData od, IMonitor monitor) throws Exception {
 			return od;
 		}
+
+		@Override
+		public void notify(IOperation intermeadiateData, OperationData data) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
+
+
+
 }

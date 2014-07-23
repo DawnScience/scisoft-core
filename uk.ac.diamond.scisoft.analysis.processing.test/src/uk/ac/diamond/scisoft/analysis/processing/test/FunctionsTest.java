@@ -169,7 +169,7 @@ public class FunctionsTest {
 	
 		count = 0;
 		try {
-			service.setParallelTimeout(50000);
+			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor) throws Exception {

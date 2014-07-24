@@ -46,8 +46,8 @@ public class JavaImageLoader extends AbstractFileLoader {
 
 	protected String fileName = "";
 	private String fileType = "";
-	private boolean asGrey;
-	private boolean keepBitWidth = false;
+	protected boolean asGrey;
+	protected boolean keepBitWidth = false;
 
 	
 	public void setFile(final String fileName) {
@@ -144,6 +144,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	protected AbstractDataset createDataset(BufferedImage input) throws ScanFileHolderException {
+		return createDataset(input, asGrey, keepBitWidth);
+	}
+
+	protected static AbstractDataset createDataset(BufferedImage input, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
 		AbstractDataset data = null;
 		try {
 			AbstractDataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);

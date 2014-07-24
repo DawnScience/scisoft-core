@@ -95,9 +95,9 @@ In this case the columns will be labelled Column_1...Column_N.
  */
 public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	
-	transient protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
 	
-	transient private static final String  FLOAT = "([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)|(0\\.)";
+	private static final String  FLOAT = "([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)|(0\\.)";
 	transient protected final Pattern DATA;
 
 	protected String                    fileName;

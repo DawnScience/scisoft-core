@@ -35,7 +35,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
  * Reads files in npy format as defined here; http://svn.scipy.org/svn/numpy/trunk/doc/neps/npy-format.txt
  */
 public class NumPyFileLoader extends AbstractFileLoader {
-	transient private static final Logger logger = LoggerFactory.getLogger(NumPyFileLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(NumPyFileLoader.class);
 	private String fileName;
 
 	public NumPyFileLoader() {

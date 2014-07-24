@@ -53,7 +53,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * TODO remove Nexus dependency
  */
 public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
-	transient protected static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
 	private String fileName = null;
 	private HashMap<String, String> metadata = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();

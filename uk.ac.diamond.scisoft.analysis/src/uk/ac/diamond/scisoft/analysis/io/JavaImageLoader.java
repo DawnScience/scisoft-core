@@ -42,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset;
  * so access the image data via the BufferedImage's Raster attribute.
  */
 public class JavaImageLoader extends AbstractFileLoader {
-	transient protected static final Logger logger = LoggerFactory.getLogger(JavaImageLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(JavaImageLoader.class);
 
 	protected String fileName = "";
 	private String fileType = "";

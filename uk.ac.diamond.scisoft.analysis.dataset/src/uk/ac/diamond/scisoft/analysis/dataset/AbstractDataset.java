@@ -656,6 +656,13 @@ public abstract class AbstractDataset implements Dataset {
 		result.put(Long.class, INT64);
 		result.put(Float.class, FLOAT32);
 		result.put(Double.class, FLOAT64);
+		result.put(boolean.class, BOOL);
+		result.put(byte.class, INT8);
+		result.put(short.class, INT16);
+		result.put(int.class, INT32);
+		result.put(long.class, INT64);
+		result.put(float.class, FLOAT32);
+		result.put(double.class, FLOAT64);
 		result.put(Complex.class, COMPLEX128);
 		result.put(String.class, STRING);
 		result.put(Object.class, OBJECT);

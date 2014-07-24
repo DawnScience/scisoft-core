@@ -41,7 +41,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * 
  */
 public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Serializable {
-	transient protected static final Logger logger = LoggerFactory.getLogger(MAR345Loader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(MAR345Loader.class);
 
 	private String fileName;
 	protected Map<String, Serializable> headers = new HashMap<>();

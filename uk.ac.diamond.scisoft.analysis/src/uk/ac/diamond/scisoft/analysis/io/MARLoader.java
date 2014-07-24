@@ -28,7 +28,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -622,7 +622,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	}
 	
 	@Override
-	public IMetaData getMetaData(AbstractDataset data) {
+	public IMetaData getMetaData(Dataset data) {
 		if (metadata == null) {
 			if (data!=null) return data.getMetadata(); 
 			return null;

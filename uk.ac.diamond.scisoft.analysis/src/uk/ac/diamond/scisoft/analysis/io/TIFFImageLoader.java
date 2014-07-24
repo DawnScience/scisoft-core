@@ -30,6 +30,7 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -187,7 +188,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		return getMetaData(null);
 	}
 
-	public IMetaData getMetaData(AbstractDataset data) {
+	public IMetaData getMetaData(Dataset data) {
 		if (metadata == null) {
 			if (data!=null) return data.getMetadata(); // Might be null or might be set in AWTImageUtils.
 			return null;

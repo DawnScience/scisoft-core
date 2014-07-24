@@ -388,7 +388,8 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 							Arrays.toString(step)), e);
 			a = new DoubleDataset(1);
 		}
-		a.setName(name);
+		a.setName(name + "[" + Slice.createString(oShape, nstart, nstop, nstep) + "]");
+		a.setMetadata(metadata);
 		
 		if (a instanceof IErrorDataset) {
 			IErrorDataset ea = (IErrorDataset)a;

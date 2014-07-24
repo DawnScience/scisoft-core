@@ -21,20 +21,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 public class MerlinLoader extends AbstractFileLoader {
 
 	private String fileName;
 	private static final String DATA_NAME = "MerlinData";
 	private static final String U16 = "U16";
-	private static final String U32 = "U32";
+//	private static final String U32 = "U32";
 	
 	public MerlinLoader(String fileName) {
 		this.fileName = fileName;
@@ -70,7 +67,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
-
+		BufferedReader br = null;
 		ArrayList<AbstractDataset> dataList = new ArrayList<AbstractDataset>();
 		
 		ArrayList<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
@@ -83,7 +80,7 @@ public class MerlinLoader extends AbstractFileLoader {
 			char[] cbuf = new char[54];
 			
 			
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			br = new BufferedReader(new FileReader(f));
 			
 			br.read(cbuf);
 			
@@ -193,8 +190,8 @@ public class MerlinLoader extends AbstractFileLoader {
 					Utils.readBeInt(fi, data, imageReadStart);
 				}			
 				
-				Number max = data.max(false);
-				Number min = data.min(false);
+//				Number max = data.max(false);
+//				Number min = data.min(false);
 				
 				//imageReadStart += Integer.parseInt(imageX)*Integer.parseInt(imageY)*2 + Integer.parseInt(imageStart) + 100000;
 				
@@ -204,6 +201,13 @@ public class MerlinLoader extends AbstractFileLoader {
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
 			if (fi != null) {
 				try {
 					fi.close();

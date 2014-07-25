@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -31,17 +33,6 @@ import uk.ac.diamond.scisoft.analysis.processing.NXCite;
  */
 public abstract class AbstractOperationModel implements IOperationModel {
 	
-	@OperationModelField(editable=false, visible=true) // They can see it not change it in the UI
-    private NXCite citation;
-    
-	public NXCite getCitation() {
-		return citation;
-	}
-
-	public void setCitation(NXCite citation) {
-		this.citation = citation;
-	}
-
 	/**
 	 * Tries to find the no-argument getter for this field, ignoring case
 	 * so that camel case may be used in method names. This means that this
@@ -129,29 +120,31 @@ public abstract class AbstractOperationModel implements IOperationModel {
 		return fieldName.substring(0, 1).toUpperCase(Locale.US) + fieldName.substring(1);
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((citation == null) ? 0 : citation.hashCode());
-		return result;
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AbstractOperationModel other = (AbstractOperationModel) obj;
-		if (citation == null) {
-			if (other.citation != null)
-				return false;
-		} else if (!citation.equals(other.citation))
-			return false;
-		return true;
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyName,
+				listener);
+	}
+
+	protected void firePropertyChange(String propertyName, Object oldValue,
+			Object newValue) {
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
+				newValue);
 	}
 
 }

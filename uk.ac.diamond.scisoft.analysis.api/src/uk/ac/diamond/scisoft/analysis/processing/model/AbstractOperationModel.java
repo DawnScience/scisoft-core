@@ -31,9 +31,9 @@ import uk.ac.diamond.scisoft.analysis.processing.NXCite;
  */
 public abstract class AbstractOperationModel implements IOperationModel {
 	
+	@OperationModelField(editable=false, visible=true) // They can see it not change it in the UI
     private NXCite citation;
     
-
 	public NXCite getCitation() {
 		return citation;
 	}

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
@@ -43,7 +44,12 @@ public class OperationsPluginTest {
 		if (service == null) throw new Exception("Cannot get the service!");
 				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
-		subtract.setParameters(100);
+		subtract.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 100;
+			}
+		});
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
@@ -70,8 +76,18 @@ public class OperationsPluginTest {
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
-		subtract.setParameters(100);
-		add.setParameters(101);
+		subtract.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 100;
+			}
+		});
+		add.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 101;
+			}
+		});
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			public void executed(OperationData result, IMonitor monitor) {

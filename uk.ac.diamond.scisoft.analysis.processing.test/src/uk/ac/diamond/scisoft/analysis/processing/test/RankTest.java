@@ -11,6 +11,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
@@ -49,7 +50,12 @@ public class RankTest {
 		System.out.println("Testing function which can run with any rank of data");
 		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation");
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		function.setParameters(poly);
+		function.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public IFunction getFunction() {
+				return poly;
+			}
+		});
 		
 		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
 		rand.setSlicing("all");
@@ -124,7 +130,12 @@ public class RankTest {
 		final IOperation azi = service.findFirst("azimuthal");
 		final IOperation box = service.findFirst("box");
 		final IOperation add = service.findFirst("add");
-		add.setParameters(100);
+		add.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 100;
+			}
+		});
 
 		// This order is ok
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
@@ -168,9 +179,24 @@ public class RankTest {
 		
 		// Parameters
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		function.setParameters(poly);
-		add.setParameters(100);
-		sub.setParameters(100);
+		function.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public IFunction getFunction() {
+				return poly;
+			}
+		});
+		add.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 100;
+			}
+		});
+		sub.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public double getValue() {
+				return 100;
+			}
+		});
 
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override

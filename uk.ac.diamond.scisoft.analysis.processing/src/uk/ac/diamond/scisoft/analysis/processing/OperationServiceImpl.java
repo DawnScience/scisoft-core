@@ -94,9 +94,7 @@ public class OperationServiceImpl implements IOperationService {
 					
 					OperationData  data = new OperationData(slice, slices);
 					data.setMask(mask);
-					
-					data = visitor.filter(data, monitor); // They may compute a custom mask for instance.
-					
+										
 					for (IOperation i : series) {
 						data = i.execute(data, monitor);
 						visitor.notify(i, data); // Optionally send intermeadiate result

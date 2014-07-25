@@ -146,9 +146,9 @@ public class ImageStackLoader implements ILazyLoader {
 			}
 
 			ILazyDataset slice = data.getLazyDataset(0).getSliceView(imageStart, imageStop, imageStep);
-			resultStart[0]++;
 			resultStop[0] = resultStart[0] + 1;
 			result.setSlice(slice, resultStart, resultStop, resultStep);
+			resultStart[0]++;
 			n += lstep[0];
 		} while (resultStart[0] < newShape[0]);
 

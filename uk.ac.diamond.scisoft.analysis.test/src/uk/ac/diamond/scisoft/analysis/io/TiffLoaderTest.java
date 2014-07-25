@@ -21,8 +21,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 
 /**
  * Tests the ADSC image loader with file in TestFiles
@@ -117,7 +120,7 @@ public class TiffLoaderTest {
 
 	@Test
 	public void testSaveFile() throws ScanFileHolderException {
-		AbstractDataset a = AbstractDataset.arange(128 * 128, Dataset.FLOAT32).reshape(128, 128);
+		Dataset a = DatasetFactory.createRange(128 * 128, Dataset.FLOAT32).reshape(128, 128);
 		DataHolder d = new DataHolder();
 		d.addDataset("a", a);
 
@@ -139,7 +142,25 @@ public class TiffLoaderTest {
 		checkDataset(a, in.getDataset(0));
 	}
 
-	private void checkDataset(AbstractDataset e, AbstractDataset a) {
+	@Test
+	public void testStackedFile() throws ScanFileHolderException {
+		ILazyDataset image = new TIFFImageLoader(TestFileFolder + "untitled1020.TIF").loadFile().getLazyDataset(0);
+		Assert.assertArrayEquals("Shape not equal", new int[] {3, 2048, 2048}, image.getShape());
+
+		IDataset d = image.getSlice(new Slice(1));
+		Assert.assertArrayEquals("Shape not equal", new int[] {1, 2048, 2048}, d.getShape());
+		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+
+		d = image.getSlice(new Slice(1, 3), new Slice(1));
+		Assert.assertArrayEquals("Shape not equal", new int[] {2, 1, 2048}, d.getShape());
+		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+
+		d = image.getSlice(new Slice(1, 3), new Slice(null, null, 4), new Slice(2, 25));
+		Assert.assertArrayEquals("Shape not equal", new int[] {2, 512, 23}, d.getShape());
+		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+	}
+
+	private void checkDataset(Dataset e, Dataset a) {
 		int[] shape = e.getShape();
 		Assert.assertArrayEquals("Shape not equal", shape, a.getShape());
 		Assert.assertEquals("1st value", e.getDouble(0, 0), a.getDouble(0, 0), 1e-5);

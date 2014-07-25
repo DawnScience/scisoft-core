@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * By default all fields in the model are editable this annotation can be used to 
+ * By default all fields in the model are editable. This annotation can be used to 
  * mark fields as invisible or just read only. This is used in the GUI to determine which
  * fields of the model should be editable in the UI.
  */

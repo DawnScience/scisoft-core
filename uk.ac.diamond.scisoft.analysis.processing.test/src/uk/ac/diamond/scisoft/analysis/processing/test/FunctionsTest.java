@@ -30,6 +30,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel;
 
 public class FunctionsTest {
 
@@ -234,124 +235,5 @@ public class FunctionsTest {
 	}
 
 	
-	
-	/**
-	 * Hacky temp model for fitting.
-	 * 
-	 * @author fcp94556
-	 *
-	 */
-	public class FittingModel extends AbstractOperationModel {
-
-		private IDataset xAxis;
-		public IDataset getxAxis() {
-			return xAxis;
-		}
-
-		public void setxAxis(IDataset xAxis) {
-			this.xAxis = xAxis;
-		}
-
-		public Class<PseudoVoigt> getPeak() {
-			return peak;
-		}
-
-		public void setPeak(Class<PseudoVoigt> peak) {
-			this.peak = peak;
-		}
-
-		public Class<GeneticAlg> getOptimizer() {
-			return optimizer;
-		}
-
-		public void setOptimizer(Class<GeneticAlg> optimizer) {
-			this.optimizer = optimizer;
-		}
-
-		public double getQuality() {
-			return quality;
-		}
-
-		public void setQuality(double quality) {
-			this.quality = quality;
-		}
-
-		public long getSeed() {
-			return seed;
-		}
-
-		public void setSeed(long seed) {
-			this.seed = seed;
-		}
-
-		public int getSmoothing() {
-			return smoothing;
-		}
-
-		public void setSmoothing(int smoothing) {
-			this.smoothing = smoothing;
-		}
-
-		public int getNumberOfPeaks() {
-			return numberOfPeaks;
-		}
-
-		public void setNumberOfPeaks(int numberOfPeaks) {
-			this.numberOfPeaks = numberOfPeaks;
-		}
-
-		public double getThreshold() {
-			return threshold;
-		}
-
-		public void setThreshold(double threshold) {
-			this.threshold = threshold;
-		}
-
-		public boolean isAutostopping() {
-			return autostopping;
-		}
-
-		public void setAutostopping(boolean autostopping) {
-			this.autostopping = autostopping;
-		}
-
-		public boolean isBackgrounddominated() {
-			return backgrounddominated;
-		}
-
-		public void setBackgrounddominated(boolean backgrounddominated) {
-			this.backgrounddominated = backgrounddominated;
-		}
-
-		private Class<PseudoVoigt> peak;
-		private Class<GeneticAlg> optimizer;
-		private double quality;
-		private long seed;
-		private int smoothing;
-		private int numberOfPeaks;
-		private double threshold;
-		private boolean autostopping;
-		private boolean backgrounddominated;
-
-		public FittingModel(IDataset xaxis, Class<PseudoVoigt> class1,
-				Class<GeneticAlg> class2, double d, long seed, int smoothing,
-				int numpeaks, double threshold, boolean autostopping,
-				boolean backgrounddominated) {
-			
-			this.xAxis = xaxis;
-		    this.peak  = class1;
-		    this.optimizer = class2;
-		    this.quality = d;
-		    this.seed = seed;
-		    this.smoothing = smoothing;
-		    this.numberOfPeaks = numpeaks;
-		    this.threshold = threshold;
-		    this.autostopping = autostopping;
-		    this.backgrounddominated = backgrounddominated;
-		}
-
-	}
-
 }
 

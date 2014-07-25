@@ -20,16 +20,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 public class FittingOperation implements IOperation {
 
 	private IRichDataset   dataset;
-	private Class<? extends APeak> peakClass;
-	private IDataset xAxis;
-	private int smoothing;
-	private int numPeaks;
-	private double threshold;
-	private boolean autoStopping;
-	private boolean backgroundDominated;
-	private Class<? extends IOptimizer> optimClass;
-	private double quality;
-	private Long   seed;
+	private FittingModel model;
 
 	@Override
 	public String getOperationDescription() {
@@ -51,40 +42,25 @@ public class FittingOperation implements IOperation {
 	@Override
 	public OperationData execute(OperationData data, IMonitor monitor) throws OperationException {
 		
-		IOptimizer optimizer;
-		synchronized(this) { // Seemed to fail thread test without this.
-			try {
-				optimizer = optimClass.getConstructor(double.class, Long.class).newInstance(quality, seed);
-			} catch (Exception e) {
-				throw new OperationException(this, e);
-			}
+		try {
+			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)model.getxAxis(), 
+					                                                                  (AbstractDataset)data.getData(), 
+					                                                                  model.getPeak(), model.createOptimizer(),
+					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
+					                                                                  model.getThreshold(), 
+					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);
+			
+	        // Same original data but with some fitted peaks added to auxillary data.
+			return new OperationData(data.getData(), (Serializable)fittedPeakList);
+		} catch (Exception ne) {
+			throw new OperationException(this, ne);
 		}
-
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)xAxis, 
-				                                                                  (AbstractDataset)data.getData(), 
-				                                                                  peakClass, optimizer,
-				                                                                  smoothing, numPeaks, threshold, 
-				                                                                  autoStopping, backgroundDominated, monitor);
-		
-        // Same original data but with some fitted peaks added to auxillary data.
-		return new OperationData(data.getData(), (Serializable)fittedPeakList);
 	}
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
 
-		// TODO FIXME - maybe just store the model and use the values when needed...
-		this.xAxis      = (IDataset)model.get("xaxis");
-		this.peakClass  = (Class<? extends APeak>)model.get("peak");
-		this.optimClass = (Class<? extends IOptimizer>)model.get("optimizer");
-		this.quality    = (Double)model.get("quality");
-		this.seed       = (Long)model.get("seed");
-		
-		this.smoothing  = (Integer)model.get("smoothing");
-		this.numPeaks   = (Integer)model.get("numberOfPeaks");
-		this.threshold  = (Double)model.get("threshold");
-		this.autoStopping        = (Boolean)model.get("autoStopping");
-		this.backgroundDominated = (Boolean)model.get("backgroundDominated");
+		this.model = (FittingModel)model;
 	}
 
 	

@@ -2709,7 +2709,7 @@ public abstract class AbstractDataset implements Dataset {
 		if (Arrays.equals(shape, s.shape)) {
 			s.setName(name);
 		} else {
-			s.setName(name + '[' + Slice.createString(slice) + ']');
+			s.setName(name + BLOCK_OPEN + Slice.createString(slice) + BLOCK_CLOSE);
 		}
 		return s;
 	}
@@ -4007,10 +4007,10 @@ public abstract class AbstractDataset implements Dataset {
 		}
 
 		if (errorData instanceof Dataset) {
-			return Maths.sqrt((Dataset) errorData);
+			return Maths.sqrt(errorData);
 		} else if (errorData instanceof ILazyDataset) {
-			errorData = DatasetUtils.convertToAbstractDataset((ILazyDataset) errorData);
-			return Maths.sqrt((Dataset) errorData);
+			errorData = DatasetUtils.convertToDataset((ILazyDataset) errorData);
+			return Maths.sqrt(errorData);
 		}
 
 		DoubleDataset errors = new DoubleDataset(shape);

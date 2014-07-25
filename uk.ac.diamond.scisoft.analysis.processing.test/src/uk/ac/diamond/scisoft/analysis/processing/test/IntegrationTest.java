@@ -80,32 +80,12 @@ public class IntegrationTest {
 				
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
-		final IOperation azi = service.findFirst("azimuthal");
+		final IOperation thresh = service.findFirst("threshold");
+		final IOperation azi    = service.findFirst("azimuthal");
 		
 		count = 0;
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			
-			@Override
-			public OperationData filter(OperationData od, IMonitor monitor) throws Exception {
-				
-				final BooleanDataset mask = (BooleanDataset)od.getMask();
-				if (!isCompatible(od.getData().getShape(), mask.getShape())) {
-					throw new Exception("Mask is incorrect shape!");
-				}
-				
-				// Apply a threshold
-				PositionIterator it = new PositionIterator(mask.getShape());
-				while (it.hasNext()) {
-									
-					int[] pos = it.getPos();
-					if (od.getData().getDouble(pos)>750 || od.getData().getDouble(pos)<250) {
-						mask.set(false, pos);
-					}
-				}
-				monitor.worked(1);
-				return od;
-			}
-
 			@Override
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
@@ -116,7 +96,7 @@ public class IntegrationTest {
 				
 				count++;
 			}
-		}, azi);
+		}, thresh, azi);
 		
 		if (count!=24) throw new Exception("Size of integrated results incorrect!");
 
@@ -132,7 +112,8 @@ public class IntegrationTest {
 				
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
-		final IOperation azi = service.findFirst("azimuthal");
+		final IOperation thresh = service.findFirst("threshold");
+		final IOperation azi    = service.findFirst("azimuthal");
 		
 		count = 0;
 		try {
@@ -140,27 +121,6 @@ public class IntegrationTest {
 			
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				
-				@Override
-				public OperationData filter(OperationData od, IMonitor monitor) throws Exception {
-					
-					final BooleanDataset mask = (BooleanDataset)od.getMask();
-					if (!isCompatible(od.getData().getShape(), mask.getShape())) {
-						throw new Exception("Mask is incorrect shape!");
-					}
-					
-					// Apply a threshold
-					PositionIterator it = new PositionIterator(mask.getShape());
-					while (it.hasNext()) {
-										
-						int[] pos = it.getPos();
-						if (od.getData().getDouble(pos)>750 || od.getData().getDouble(pos)<250) {
-							mask.set(false, pos);
-						}
-					}
-					monitor.worked(1);
-					return od;
-				}
-	
 				@Override
 				public void executed(OperationData result, IMonitor monitor) throws Exception {
 	
@@ -171,7 +131,7 @@ public class IntegrationTest {
 					
 					count++;
 				}
-			}, azi);
+			}, thresh, azi);
 		} finally {
 			service.setParallelTimeout(5000);
 		}
@@ -180,24 +140,5 @@ public class IntegrationTest {
 
 	}
 
-	protected static boolean isCompatible(final int[] ashape, final int[] bshape) {
-
-		List<Integer> alist = new ArrayList<Integer>();
-
-		for (int a : ashape) {
-			if (a > 1) alist.add(a);
-		}
-
-		final int imax = alist.size();
-		int i = 0;
-		for (int b : bshape) {
-			if (b == 1)
-				continue;
-			if (i >= imax || b != alist.get(i++))
-				return false;
-		}
-
-		return i == imax;
-	}
 
 }

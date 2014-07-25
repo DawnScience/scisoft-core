@@ -1,11 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
-
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -51,8 +50,7 @@ public class SelectROI implements IOperation {
 	}
 
 	@Override
-	public void setParameters(Serializable... parameters)
-			throws IllegalArgumentException {
+	public void setModel(IOperationModel model) {
 		// TODO Auto-generated method stub
 
 	}

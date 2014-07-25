@@ -36,14 +36,6 @@ public interface IExecutionVisitor {
 	 */
 	public boolean isRequired(IDataset slice, IOperation... operations);
 	
-	/**
-	 * Optionally 
-	 * @param intermeadiateData
-	 * @return OperationData processed before execution. For instance the mask may be changed or calculated.
-	 * @throws Exception
-	 */
-	public OperationData filter(OperationData intermeadiateData, IMonitor monitor) throws Exception;
-
     /**
      * Called when an execution in the pipeline has run, before the end	but after a given operation.
      * Provides the option of saving the steps information to a file if required.
@@ -72,11 +64,6 @@ public interface IExecutionVisitor {
 		public void executed(OperationData result, IMonitor monitor) throws Exception {
 			// TODO Auto-generated method stub
 			
-		}
-
-		@Override
-		public OperationData filter(OperationData od, IMonitor monitor) throws Exception {
-			return od;
 		}
 
 		@Override

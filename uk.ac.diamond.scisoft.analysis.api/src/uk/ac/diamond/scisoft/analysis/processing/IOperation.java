@@ -67,6 +67,7 @@ public interface IOperation {
 	 * @throws IllegalArgumentException if the operation does not support this count or type of data.
 	 */
 	public void setDataset(IRichDataset... data) throws IllegalArgumentException;
+	// TODO FIXME IRichDataset should be removed!
 		
 	/**
 	 * The execute method operates on the data set last send via setDataset() and the
@@ -90,7 +91,7 @@ public interface IOperation {
 	 * @param parameters
 	 * @throws IllegalArgumentException if the parameters are not those required by the operation.
 	 */
-	public void setParameters(Serializable... parameters) throws IllegalArgumentException;
+	public void setModel(IOperationModel parameters) throws Exception;
 
 	/**
 	 * Gets the rank of input data for the operations algorithm. You might be iterating

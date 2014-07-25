@@ -22,6 +22,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
@@ -58,7 +59,12 @@ public class FunctionsTest {
 		
 		// y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		functionOp.setParameters(poly);
+		functionOp.setModel(new AbstractOperationModel() {
+			@SuppressWarnings("unused")
+			public IFunction getFunction() {
+				return poly;
+			}
+		});
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
@@ -118,7 +124,7 @@ public class FunctionsTest {
 		
 		fittingOp.setDataset(rich);
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
-		fittingOp.setParameters(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated);      
+		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
 		count = 0;
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
@@ -165,7 +171,7 @@ public class FunctionsTest {
 		fittingOp.setDataset(rich);
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
-		fittingOp.setParameters(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated);      
+		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
 		count = 0;
 		try {
@@ -225,6 +231,126 @@ public class FunctionsTest {
 		CompositeFunction comp = new CompositeFunction();
 		comp.addFunction(new Gaussian(-10, 10, dataRange / 4, dataRange / 2));
 		return comp.calculateValues(DoubleDataset.createRange(dataRange));
+	}
+
+	
+	
+	/**
+	 * Hacky temp model for fitting.
+	 * 
+	 * @author fcp94556
+	 *
+	 */
+	public class FittingModel extends AbstractOperationModel {
+
+		private IDataset xAxis;
+		public IDataset getxAxis() {
+			return xAxis;
+		}
+
+		public void setxAxis(IDataset xAxis) {
+			this.xAxis = xAxis;
+		}
+
+		public Class<PseudoVoigt> getPeak() {
+			return peak;
+		}
+
+		public void setPeak(Class<PseudoVoigt> peak) {
+			this.peak = peak;
+		}
+
+		public Class<GeneticAlg> getOptimizer() {
+			return optimizer;
+		}
+
+		public void setOptimizer(Class<GeneticAlg> optimizer) {
+			this.optimizer = optimizer;
+		}
+
+		public double getQuality() {
+			return quality;
+		}
+
+		public void setQuality(double quality) {
+			this.quality = quality;
+		}
+
+		public long getSeed() {
+			return seed;
+		}
+
+		public void setSeed(long seed) {
+			this.seed = seed;
+		}
+
+		public int getSmoothing() {
+			return smoothing;
+		}
+
+		public void setSmoothing(int smoothing) {
+			this.smoothing = smoothing;
+		}
+
+		public int getNumberOfPeaks() {
+			return numberOfPeaks;
+		}
+
+		public void setNumberOfPeaks(int numberOfPeaks) {
+			this.numberOfPeaks = numberOfPeaks;
+		}
+
+		public double getThreshold() {
+			return threshold;
+		}
+
+		public void setThreshold(double threshold) {
+			this.threshold = threshold;
+		}
+
+		public boolean isAutostopping() {
+			return autostopping;
+		}
+
+		public void setAutostopping(boolean autostopping) {
+			this.autostopping = autostopping;
+		}
+
+		public boolean isBackgrounddominated() {
+			return backgrounddominated;
+		}
+
+		public void setBackgrounddominated(boolean backgrounddominated) {
+			this.backgrounddominated = backgrounddominated;
+		}
+
+		private Class<PseudoVoigt> peak;
+		private Class<GeneticAlg> optimizer;
+		private double quality;
+		private long seed;
+		private int smoothing;
+		private int numberOfPeaks;
+		private double threshold;
+		private boolean autostopping;
+		private boolean backgrounddominated;
+
+		public FittingModel(IDataset xaxis, Class<PseudoVoigt> class1,
+				Class<GeneticAlg> class2, double d, long seed, int smoothing,
+				int numpeaks, double threshold, boolean autostopping,
+				boolean backgrounddominated) {
+			
+			this.xAxis = xaxis;
+		    this.peak  = class1;
+		    this.optimizer = class2;
+		    this.quality = d;
+		    this.seed = seed;
+		    this.smoothing = smoothing;
+		    this.numberOfPeaks = numpeaks;
+		    this.threshold = threshold;
+		    this.autostopping = autostopping;
+		    this.backgrounddominated = backgrounddominated;
+		}
+
 	}
 
 }

@@ -35,7 +35,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -230,9 +229,6 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 						d.setShape(newShape); // squeeze shape back
 					} else {
 						d = loadData(mon, filename, pos, dsize, dtype, trueShape, lstart, newShape, lstep);
-					}
-					if (d != null) {
-						d.setName(STACK_NAME + "[" + Slice.createString(shape, start, stop, step) + "]");
 					}
 				} catch (Exception e) {
 					throw new ScanFileHolderException("Problem with HDF library", e);

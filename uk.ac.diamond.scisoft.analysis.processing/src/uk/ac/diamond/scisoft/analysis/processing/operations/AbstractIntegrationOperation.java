@@ -1,8 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
-
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
@@ -23,9 +22,8 @@ public abstract class AbstractIntegrationOperation implements IOperation {
 	}
 
 	@Override
-	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
-		if (parameters.length!=1) throw new IllegalArgumentException("You may optionally set the region to use with an integration operation, one region only!");
-		this.region = (IROI)parameters[0];
+	public void setModel(IOperationModel model) throws Exception {
+		this.region = (IROI)model.get("region");
 	}
 	
 	protected IROI getRegion() {

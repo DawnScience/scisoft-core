@@ -1,12 +1,11 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
-
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -63,9 +62,8 @@ public abstract class AbstractMathsOperation implements IOperation {
 	protected abstract IDataset operation(OperationData a, Object value);
 
 	@Override
-	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
-		if (parameters.length!=1) throw new IllegalArgumentException("You can only set one value to subtract "+getClass().getSimpleName());
-		this.value = (Number)parameters[0];
+	public void setModel(IOperationModel model) throws Exception {
+		this.value = (Number)model.get("Value");
 	}
 
 	

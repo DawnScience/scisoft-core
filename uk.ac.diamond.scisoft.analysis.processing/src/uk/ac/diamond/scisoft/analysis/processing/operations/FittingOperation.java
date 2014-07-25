@@ -11,6 +11,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -70,26 +71,20 @@ public class FittingOperation implements IOperation {
 	}
 
 	@Override
-	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
+	public void setModel(IOperationModel model) throws Exception {
 
-		// TODO FIXME In order to drive the fitting we have to have all these arguments. 
-		// Bit funny at moment and probably other IOptimizer do not have two argument constructors.
-		// However the fitting must have new IOptimizers and not reuse the same one because
-		// otherwise the parallel execution does not work.
-		if (parameters.length!=10) throw new IllegalArgumentException("The parameters accepted must be the same as the Generic1DFitter.fitPeakFunctions(...) [without the data to fit] !");
-
-
-		this.xAxis      = (IDataset)parameters[0];
-		this.peakClass  = (Class<? extends APeak>)parameters[1];
-		this.optimClass = (Class<? extends IOptimizer>)parameters[2];
-		this.quality    = (Double)parameters[3];
-		this.seed       = (Long)parameters[4];
+		// TODO FIXME - maybe just store the model and use the values when needed...
+		this.xAxis      = (IDataset)model.get("xaxis");
+		this.peakClass  = (Class<? extends APeak>)model.get("peak");
+		this.optimClass = (Class<? extends IOptimizer>)model.get("optimizer");
+		this.quality    = (Double)model.get("quality");
+		this.seed       = (Long)model.get("seed");
 		
-		this.smoothing  = (Integer)parameters[5];
-		this.numPeaks   = (Integer)parameters[6];
-		this.threshold  = (Double)parameters[7];
-		this.autoStopping        = (Boolean)parameters[8];
-		this.backgroundDominated = (Boolean)parameters[9];
+		this.smoothing  = (Integer)model.get("smoothing");
+		this.numPeaks   = (Integer)model.get("numberOfPeaks");
+		this.threshold  = (Double)model.get("threshold");
+		this.autoStopping        = (Boolean)model.get("autoStopping");
+		this.backgroundDominated = (Boolean)model.get("backgroundDominated");
 	}
 
 	

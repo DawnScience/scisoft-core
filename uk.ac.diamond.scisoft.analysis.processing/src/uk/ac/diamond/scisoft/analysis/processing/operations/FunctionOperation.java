@@ -1,10 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
-
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -38,11 +37,9 @@ public class FunctionOperation implements IOperation {
 	}
 
 	@Override
-	public void setParameters(Serializable... parameters) throws IllegalArgumentException {
-		
-		if (parameters.length!=1) throw new IllegalArgumentException("The parameters accepted must a single function!");
-		
-		this.function = (IFunction)parameters[0];
+	public void setModel(IOperationModel model) throws Exception {
+				
+		this.function = (IFunction)model.get("function");
 	}
 	
 	public OperationRank getInputRank() {

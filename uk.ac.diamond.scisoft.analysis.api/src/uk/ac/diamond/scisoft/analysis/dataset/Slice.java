@@ -9,13 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-
 /**
  * Class to represent a slice through a single dimension of a multi-dimensional dataset. A slice
  * comprises a starting position, a stopping position (not included) and a stepping size.

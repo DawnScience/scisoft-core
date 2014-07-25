@@ -29,6 +29,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 
 /**
  * This class is to marshal all the data for the purpose of loading from or saving to a file
@@ -143,6 +144,19 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	@Override
 	public IMetaData getMetadata() {
 		return metadata;
+	}
+	
+	@Override
+	public List<? extends MetadataType> getMetadata(
+			Class<? extends MetadataType> clazz) throws Exception {
+		if (IMetaData.class.isAssignableFrom(clazz)) {
+			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
+			result.add(getMetadata());
+			return result;
+		}
+		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
+		// If it should only support this, simply return null here, otherwise implement the method fully
+		//return null;
 	}
 
 	/**

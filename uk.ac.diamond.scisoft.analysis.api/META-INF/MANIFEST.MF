@@ -15,10 +15,12 @@ Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.fitting.functions,
  uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.message,
+ uk.ac.diamond.scisoft.analysis.metadata,
  uk.ac.diamond.scisoft.analysis.monitor,
  uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.roi
-Import-Package: javax.vecmath,
+Import-Package: javax.measure.unit;version="4.3.1",
+ javax.vecmath,
  org.slf4j;version="[1.7.6,1.7.7)"
 Require-Bundle: org.apache.commons.lang;bundle-version="[2.6.0,2.7.0)",
  org.apache.commons.math3;bundle-version="3.2.0"

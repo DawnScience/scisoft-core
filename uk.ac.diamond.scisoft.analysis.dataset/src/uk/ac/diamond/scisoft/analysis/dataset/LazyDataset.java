@@ -17,13 +17,16 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -468,6 +471,19 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	@Override
 	public IMetaData getMetadata() {
 		return metadata;
+	}
+	
+	@Override
+	public List<? extends MetadataType> getMetadata(
+			Class<? extends MetadataType> clazz) throws Exception {
+		if (IMetaData.class.isAssignableFrom(clazz)) {
+			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
+			result.add(getMetadata());
+			return result;
+		}
+		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
+		// If it should only support this, simply return null here, otherwise implement the method fully
+		//return null;
 	}
 
 	@Override

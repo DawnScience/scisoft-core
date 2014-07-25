@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -374,6 +375,12 @@ public class AggregateDataset implements ILazyDataset {
 
 	@Override
 	public IMetaData getMetadata() throws Exception {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+	
+	@Override
+	public List<? extends MetadataType> getMetadata(
+			Class<? extends MetadataType> clazz) throws Exception {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

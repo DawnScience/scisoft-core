@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
+
 /**
  * This interface describes the minimal metadata information that should be 
  * associated with an AbstractDataset or DataHolder. It is intended that
@@ -21,7 +23,7 @@ import java.util.Map;
  * <p>
  * All returned collections and maps are <b>unmodifiable</b>.
  */
-public interface IMetaData extends IDataAnalysisObject, Serializable {
+public interface IMetaData extends IDataAnalysisObject, MetadataType, Serializable {
 	/**
 	 * Update this when there are any serious changes to API
 	 */

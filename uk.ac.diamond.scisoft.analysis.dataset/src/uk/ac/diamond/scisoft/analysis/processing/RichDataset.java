@@ -16,12 +16,14 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
@@ -54,6 +56,19 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	@Override
 	public IMetaData getMetadata() throws Exception {
 		return getMeta();
+	}
+	
+	@Override
+	public List<? extends MetadataType> getMetadata(
+			Class<? extends MetadataType> clazz) throws Exception {
+		if (IMetaData.class.isAssignableFrom(clazz)) {
+			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
+			result.add(getMetadata());
+			return result;
+		}
+		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
+		// If it should only support this, simply return null here, otherwise implement the method fully
+		//return null;
 	}
 	
 	/**

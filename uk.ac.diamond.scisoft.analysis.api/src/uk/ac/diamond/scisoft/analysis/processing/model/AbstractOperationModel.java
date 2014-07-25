@@ -22,8 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-import uk.ac.diamond.scisoft.analysis.processing.NXCite;
-
 /**
  * Extend this class for your model to avoid having to implement the get and set manually.
  * Do not put non-pojo methods in your models, keep them vanilla.

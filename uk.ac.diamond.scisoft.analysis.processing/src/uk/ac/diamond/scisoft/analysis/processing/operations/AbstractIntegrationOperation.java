@@ -1,9 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 public abstract class AbstractIntegrationOperation implements IOperation {

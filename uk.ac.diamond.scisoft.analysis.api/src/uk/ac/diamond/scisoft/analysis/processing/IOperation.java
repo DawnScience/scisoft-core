@@ -19,6 +19,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 /**
  * Interface to encapsulate processing operations on an IRichDataset

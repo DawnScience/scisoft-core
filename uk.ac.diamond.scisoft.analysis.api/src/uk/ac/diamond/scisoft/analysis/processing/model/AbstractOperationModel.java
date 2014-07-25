@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.processing;
+package uk.ac.diamond.scisoft.analysis.processing.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
+
+import uk.ac.diamond.scisoft.analysis.processing.NXCite;
 
 /**
  * Extend this class for your model to avoid having to implement the get and set manually.

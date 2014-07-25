@@ -11,7 +11,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
@@ -21,6 +20,7 @@ import uk.ac.diamond.scisoft.analysis.processing.InvalidRankException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 

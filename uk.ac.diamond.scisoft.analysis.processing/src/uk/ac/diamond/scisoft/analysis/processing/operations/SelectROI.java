@@ -4,11 +4,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 public class SelectROI implements IOperation {

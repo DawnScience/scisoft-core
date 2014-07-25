@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.processing.model;
 
 /**
  * A model to use with operations. Do not put JSON stuff in here.
- * This model is designed to be the pojo and should be separate
+ * This model is designed to be the POJO and should be separate
  * from the serialization methods such as XML or JSON.
  * 
  * OperationModel objects must be POJOs! Do not put unexepected methods

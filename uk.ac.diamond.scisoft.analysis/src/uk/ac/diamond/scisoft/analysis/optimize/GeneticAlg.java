@@ -33,8 +33,8 @@ public class GeneticAlg extends AbstractOptimizer {
 	
 	transient protected static final Logger GAlogger = LoggerFactory.getLogger(GeneticAlg.class);
 	
-	private final static RandomGenerator generator = new MersenneTwister();
-	private final static RandomDataGenerator prng = new RandomDataGenerator(generator);
+	private final RandomGenerator generator = new MersenneTwister();
+	private final RandomDataGenerator prng = new RandomDataGenerator(generator);
 
 	private static final int MaxNumberOfStaticBestValue = 50;
 

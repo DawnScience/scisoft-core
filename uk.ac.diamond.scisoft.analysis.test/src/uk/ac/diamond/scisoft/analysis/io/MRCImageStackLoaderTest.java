@@ -49,7 +49,7 @@ public class MRCImageStackLoaderTest {
 		IDataHolder dh = LoaderFactory.getData(testfile, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
         		
-		assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
+		assertTrue(dh.getName(0).contains(AbstractFileLoader.STACK_NAME));
 
 		ILazyDataset image = dh.getLazyDataset(0);
 		checkImage(image);

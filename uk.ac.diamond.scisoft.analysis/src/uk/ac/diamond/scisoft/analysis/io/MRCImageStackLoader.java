@@ -91,11 +91,11 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 		}
 
 		int mode = getInteger(BinaryKey.MODE);
-		if (mode != 1) {
+		if (mode != 1) { // TODO support other modes
 			throw new ScanFileHolderException("Only mode 1 (signed 16-bit integers) is currently supported");
 		}
 		DataHolder result = new DataHolder();
-		result.addDataset(DEF_IMAGE_NAME, createDataset(pos, mode, getInteger(BinaryKey.WIDTH),
+		result.addDataset(STACK_NAME, createDataset(pos, mode, getInteger(BinaryKey.WIDTH),
 				getInteger(BinaryKey.HEIGHT), getInteger(BinaryKey.DEPTH)));
 
 		if (loadMetadata) {
@@ -232,7 +232,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 						d = loadData(mon, filename, pos, dsize, dtype, trueShape, lstart, newShape, lstep);
 					}
 					if (d != null) {
-						d.setName(DEF_IMAGE_NAME + "[" + Slice.createString(shape, start, stop, step) + "]");
+						d.setName(STACK_NAME + "[" + Slice.createString(shape, start, stop, step) + "]");
 					}
 				} catch (Exception e) {
 					throw new ScanFileHolderException("Problem with HDF library", e);
@@ -242,7 +242,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 
 		};
 
-		return new LazyDataset(filename, LABEL_LENGTH, 1, trueShape.clone(), l);
+		return new LazyDataset(STACK_NAME, dtype, 1, trueShape.clone(), l);
 	}
 
 	private static Dataset loadData(IMonitor mon, String filename, long pos, int dsize, int dtype, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
@@ -270,16 +270,17 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 			pos += dataStart[0] * imageSize;
 			bi.skip(pos);
 			pos = (step[0] - 1) * imageSize;
-			do {
+			do { // TODO maybe read smaller chunk of image...
 				Utils.readLeShort(bi, image, 0, true);
+				dataStop[0] = dataStart[0] + 1;
 				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
 				if (mon != null) {
 					mon.worked(1);
 				}
-				dataStart[0] += step[0];
 				if (pos > 0)
 					bi.skip(pos);
-			} while (dataStart[0] < dataStop[0]);
+				dataStart[0]++;
+			} while (dataStart[0] < count[0]);
 		} catch (Exception e) {
 			logger.error("Problem with file", e);
 			throw new ScanFileHolderException("Problem with file", e);
@@ -375,7 +376,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 		}
 	}
 
-	private static final Map<Integer, Integer> modeToDtype = new HashMap<>(); // destination dtype
+	private static final Map<Integer, Integer> modeToDtype = new HashMap<>(); // destination dataset type
 	private static final Map<Integer, Integer> modeToDsize = new HashMap<>(); // source data size
 	static {
 		modeToDtype.put(0, Dataset.INT8);

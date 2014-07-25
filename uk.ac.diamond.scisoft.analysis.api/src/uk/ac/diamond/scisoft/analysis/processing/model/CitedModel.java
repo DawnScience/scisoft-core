@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.processing.model;
 
 import uk.ac.diamond.scisoft.analysis.processing.NXCite;
 
-public class CitableModel extends AbstractOperationModel {
+public class CitedModel extends AbstractOperationModel {
 
 	@OperationModelField(editable=false, visible=true) // They can see it not change it in the UI
     private NXCite citation;
@@ -47,7 +47,7 @@ public class CitableModel extends AbstractOperationModel {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CitableModel other = (CitableModel) obj;
+		CitedModel other = (CitedModel) obj;
 		if (citation == null) {
 			if (other.citation != null)
 				return false;

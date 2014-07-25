@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -126,7 +127,7 @@ public class ADSCImageTest {
 
 	@Test
 	public void testLoadWithMissingMetadata() throws Exception {
-		DataHolder loader = new ADSCImageLoader(TestFileFolder + "ADSCImageTest/F6-invalidmd.img").loadFile();
+		DataHolder loader = new ADSCImageLoader(TestFileFolder + File.separator + "ADSCImageTest"+File.separator+"F6-invalidmd.img").loadFile();
 		Assert.assertEquals("Metadata", null, loader.getMetadata());
 		AbstractDataset data = loader.getDataset(0);
 		Assert.assertEquals("Data", 3072, data.getShapeRef()[0]);

@@ -37,7 +37,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -264,9 +263,6 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 						d.setShape(newShape); // squeeze shape back
 					} else {
 						d = loadData(mon, fileName, asGrey, keepBitWidth, dtype, lstart, newShape, lstep);
-					}
-					if (d != null) {
-						d.setName(STACK_NAME + "[" + Slice.createString(shape, start, stop, step) + "]");
 					}
 				} catch (Exception e) {
 					throw new ScanFileHolderException("Problem with TIFF loading", e);

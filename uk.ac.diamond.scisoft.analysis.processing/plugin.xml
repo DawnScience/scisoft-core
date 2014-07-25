@@ -30,6 +30,11 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
             name="Box Integration">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SelectROI"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.selectROI"
+            name="Select Region of Interest">
+      </operation>
    </extension>
 
 </plugin>

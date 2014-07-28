@@ -1,6 +1,5 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

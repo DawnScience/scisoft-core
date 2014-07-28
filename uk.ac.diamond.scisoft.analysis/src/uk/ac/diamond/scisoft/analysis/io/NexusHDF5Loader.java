@@ -67,6 +67,15 @@ public class NexusHDF5Loader extends HDF5Loader {
 			if (error != null)
 				data.setLazyErrors(error);
 		}
+		
+		// Add ARPES specific metadata where required.
+		if(dh.contains("/entry1/instrument/analyser/data")) {
+			ILazyDataset data = dh.getLazyDataset("/entry1/instrument/analyser/data");
+			data.setMetadata(new Metadata());
+			// This should be done properly to add arpes metadata.
+			
+		}
+		
 		return dh;
 	}
 

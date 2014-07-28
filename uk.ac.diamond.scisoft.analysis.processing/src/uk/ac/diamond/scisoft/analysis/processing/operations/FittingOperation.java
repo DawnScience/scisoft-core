@@ -26,6 +26,12 @@ public class FittingOperation implements IOperation {
 	public String getOperationDescription() {
 		return "An operation able to run a fit on datasets.";
 	}
+		
+	@Override
+    public String getName() {
+		return "Peak fit";
+	}
+
 
 	@Override
 	public String getId() {

@@ -12,7 +12,7 @@ public abstract class AbstractIntegrationOperation implements IOperation {
 	private IROI region;
 	@Override
 	public String getOperationDescription() {
-		return getClass().getSimpleName();
+		return "A type of integration which selects data using a region and displays the sum of it in specific directions.";
 	}
 
 	@Override

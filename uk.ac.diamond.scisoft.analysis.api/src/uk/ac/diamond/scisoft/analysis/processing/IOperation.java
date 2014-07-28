@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import java.io.Serializable;
-
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
@@ -39,7 +37,12 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 public interface IOperation {
 	
 	/**
-	 * The operation name. The operation service allows operations to be 
+	 * The human readable name of the operation.
+	 * @return The human readable name of the operation.
+	 */
+	public String getName();
+	/**
+	 * The operation description. The operation service allows operations to be 
 	 * found by name which can be used to determine available operations.
 	 * 
 	 * @return OperationType

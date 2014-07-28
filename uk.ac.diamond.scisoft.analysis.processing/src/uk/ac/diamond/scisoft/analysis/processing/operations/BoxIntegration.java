@@ -15,6 +15,12 @@ public class BoxIntegration extends AbstractIntegrationOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration";
 	}
 
+	
+	@Override
+    public String getName() {
+		return "Box Integration";
+	}
+	
 	@Override
 	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
 		

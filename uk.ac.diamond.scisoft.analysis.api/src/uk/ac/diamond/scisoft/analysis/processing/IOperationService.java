@@ -28,6 +28,20 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 public interface IOperationService {
 	
 	/**
+	 * Get the name of the operation with this id
+	 * @param id
+	 * @return name
+	 */
+	public String getName(String id) throws Exception;
+	
+	/**
+	 * Get the description of the operation with this id
+	 * @param id
+	 * @return description
+	 */
+	public String getDescription(String id) throws Exception;
+
+	/**
 	 * Finds all operations by doing a search
 	 * using the regex passed in. All operations whose descriptions/ids
 	 * match the regex are returned. For instance:

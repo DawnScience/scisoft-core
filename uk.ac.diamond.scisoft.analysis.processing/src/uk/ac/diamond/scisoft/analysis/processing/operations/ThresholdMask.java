@@ -19,6 +19,11 @@ public class ThresholdMask implements IOperation {
 
 	@Override
 	public String getOperationDescription() {
+		return "Threshold Mask. A mask which removes pixels below a lower and above an upper intensity value.";
+	}
+
+	@Override
+    public String getName() {
 		return "Threshold Mask";
 	}
 

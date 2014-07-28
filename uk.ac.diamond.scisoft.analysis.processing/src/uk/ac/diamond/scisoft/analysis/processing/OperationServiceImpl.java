@@ -303,4 +303,16 @@ public class OperationServiceImpl implements IOperationService {
 			}
 		}
 	}
+
+	@Override
+	public String getName(String id) throws Exception{
+		checkOperations();
+		return operations.get(id).getName();
+	}
+
+	@Override
+	public String getDescription(String id) throws Exception {
+		checkOperations();
+		return operations.get(id).getOperationDescription();
+	}
  }

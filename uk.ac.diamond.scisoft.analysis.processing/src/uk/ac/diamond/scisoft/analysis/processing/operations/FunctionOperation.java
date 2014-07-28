@@ -23,6 +23,12 @@ public class FunctionOperation implements IOperation {
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation";
 	}
+	
+	@Override
+    public String getName() {
+		return "Function";
+	}
+
 
 	@Override
 	public void setDataset(IRichDataset... data) throws IllegalArgumentException {

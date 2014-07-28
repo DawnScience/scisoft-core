@@ -23,6 +23,11 @@ public class SelectROI implements IOperation {
 	public String getOperationDescription() {
 		return "Passes on only the selected region of interest down the pipeline";
 	}
+	
+	@Override
+    public String getName() {
+		return "Select Region";
+	}
 
 	@Override
 	public String getId() {

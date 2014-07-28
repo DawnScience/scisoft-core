@@ -39,7 +39,7 @@ public class Activator implements BundleActivator {
 	}
 	
 	public static Object getService(final Class<?> serviceClass) {
-		if (context == null) return null;
+		// Important that NPE is thrown if context is null. We must have a context to get other services.
 		ServiceReference<?> ref = context.getServiceReference(serviceClass);
 		if (ref==null) return null;
 		return context.getService(ref);

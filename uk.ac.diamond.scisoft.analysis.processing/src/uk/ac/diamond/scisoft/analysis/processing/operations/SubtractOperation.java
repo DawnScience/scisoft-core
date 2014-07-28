@@ -19,5 +19,8 @@ public class SubtractOperation extends AbstractMathsOperation {
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.subtractOperation";
 	}
-
+	@Override
+    public String getName() {
+		return "Subtract datasets";
+	}
 }

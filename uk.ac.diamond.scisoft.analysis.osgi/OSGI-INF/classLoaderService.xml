@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="Class Loader Service">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="Class Loader Service">
    <implementation class="uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl"/>
    <service>
       <provide interface="py4j.ClassLoaderService"/>

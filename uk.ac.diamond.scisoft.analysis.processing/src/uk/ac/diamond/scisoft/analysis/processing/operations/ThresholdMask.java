@@ -1,6 +1,5 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +7,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class ThresholdMask implements IOperation {
 
@@ -20,6 +19,11 @@ public class ThresholdMask implements IOperation {
 
 	@Override
 	public String getOperationDescription() {
+		return "Threshold Mask. A mask which removes pixels below a lower and above an upper intensity value.";
+	}
+
+	@Override
+    public String getName() {
 		return "Threshold Mask";
 	}
 

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.processing;
+package uk.ac.diamond.scisoft.analysis.processing.model;
 
 /**
  * A model to use with operations. Do not put JSON stuff in here.
- * This model is designed to be the pojo and should be separate
- * from the serialization methods such as XML or JSON.
  * 
- * OperationModel objects must be POJOs! Do not put unexepected methods
+ * This model is designed to be the POJO and should be separate
+ * from the serialization methods such as XML or JSON. It should not contain
+ * mathematical methods or non-data operations.
+ * 
+ * OperationModel objects must be POJOs! Do not put unexpected methods
  * not involved with setting and getting the data. Put only model things
- * here or the reflection risks doing the wrong thing.
+ * here or the reflection risks doing the wrong thing or perhaps unintended 
+ * dependencies will be created.
  * 
  */
 public interface IOperationModel {

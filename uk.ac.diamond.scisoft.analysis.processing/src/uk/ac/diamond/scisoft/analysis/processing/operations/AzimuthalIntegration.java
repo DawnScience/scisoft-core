@@ -14,6 +14,12 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration";
 	}
+	
+	@Override
+    public String getName() {
+		return "Azimuthal Integration";
+	}
+
 
 	@Override
 	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {

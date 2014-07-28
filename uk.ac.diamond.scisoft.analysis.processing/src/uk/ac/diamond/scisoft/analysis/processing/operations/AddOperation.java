@@ -20,4 +20,8 @@ public class AddOperation extends AbstractMathsOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.addOperation";
 	}
 
+	@Override
+    public String getName() {
+		return "Add datasets";
+	}
 }

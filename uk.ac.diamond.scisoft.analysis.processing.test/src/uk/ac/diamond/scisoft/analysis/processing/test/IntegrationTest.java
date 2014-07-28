@@ -1,15 +1,12 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
@@ -19,6 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
+import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
@@ -81,6 +79,15 @@ public class IntegrationTest {
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
+		thresh.setModel(new AbstractOperationModel() {
+			public double getUpper() {
+				return 750d;
+			}
+			public double getLower() {
+				return 250d;
+			}
+		});
+		
 		final IOperation azi    = service.findFirst("azimuthal");
 		
 		count = 0;
@@ -113,6 +120,14 @@ public class IntegrationTest {
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
+		thresh.setModel(new AbstractOperationModel() {
+			public double getUpper() {
+				return 750d;
+			}
+			public double getLower() {
+				return 250d;
+			}
+		});
 		final IOperation azi    = service.findFirst("azimuthal");
 		
 		count = 0;

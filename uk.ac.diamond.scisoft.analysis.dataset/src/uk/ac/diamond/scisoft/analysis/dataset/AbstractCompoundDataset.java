@@ -953,7 +953,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		}
 
 		if (errorData instanceof CompoundDoubleDataset) {
-			return (CompoundDoubleDataset) Maths.sqrt((Dataset) errorData);
+			return (CompoundDoubleDataset) Maths.sqrt(errorData);
 		}
 
 		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);

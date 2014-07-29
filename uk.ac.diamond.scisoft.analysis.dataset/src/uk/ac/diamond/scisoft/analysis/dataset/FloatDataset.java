@@ -962,7 +962,7 @@ public class FloatDataset extends AbstractDataset {
 		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		while (it.hasNext()) {
-			// if (it.bValue == 0) { // INT_ZEROTEST
+			// if (it.bDouble == 0) { // INT_ZEROTEST
 			// 	data[it.aIndex] = 0; // INT_ZEROTEST
 			// } else { // INT_ZEROTEST
 			data[it.aIndex] /= (float) it.bDouble; // ADD_CAST

@@ -35,6 +35,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * 
  */
 public abstract class AbstractCompoundDataset extends AbstractDataset implements CompoundDataset {
+	// pin UID to base class
 	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
 
 	protected int isize; // number of elements per item
@@ -952,7 +953,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		}
 
 		if (errorData instanceof CompoundDoubleDataset) {
-			return (CompoundDoubleDataset) Maths.sqrt((Dataset) errorData);
+			return (CompoundDoubleDataset) Maths.sqrt(errorData);
 		}
 
 		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);

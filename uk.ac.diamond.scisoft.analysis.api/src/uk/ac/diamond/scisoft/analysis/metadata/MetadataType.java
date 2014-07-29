@@ -9,9 +9,16 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
+import java.io.Serializable;
+
 /**
  * This is a marker interface for all metadata items which can be associated with a dataset.
  */
-public interface MetadataType {
+public interface MetadataType extends Serializable, Cloneable {
 
+	/**
+	 * Make a deep copy of metadata
+	 * @return clone
+	 */
+	public MetadataType clone();
 }

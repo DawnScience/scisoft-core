@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.io.Serializable;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -155,6 +156,13 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * @return The sliced view of a lazy dataset 
 	 */
 	public ILazyDataset getSliceView(final Slice... slice);
+
+	/**
+	 * Add metadata to the dataset
+	 * 
+	 * @param metadata
+	 */
+	public void addMetadata(final MetadataType metadata);
 
 	/**
 	 * Set metadata on the dataset

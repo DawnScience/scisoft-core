@@ -11,8 +11,14 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 
 import javax.measure.unit.Unit;
 
-public interface UnitMetadata {
+/**
+ * This metadata describes the unit associated with the quantity stored in a dataset
+ */
+public interface UnitMetadata extends MetadataType {
 
+	/**
+	 * Get unit
+	 * @return unit of dataset
+	 */
 	public Unit<?> getUnit();
-	
 }

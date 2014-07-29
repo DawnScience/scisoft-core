@@ -234,7 +234,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 		view.size = size;
 		view.shape = shape.clone();
 		view.odata = view.data = data;
-		view.metadataStructure = metadataStructure;
+		view.metadata = metadata;
 
 		return view;
 	}

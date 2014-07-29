@@ -11,8 +11,14 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
-public interface MaskMetadata {
+/**
+ * This metadata describes masking information associated with a dataset
+ */
+public interface MaskMetadata extends MetadataType {
 
+	/**
+	 * Get mask
+	 * @return mask
+	 */
 	public ILazyDataset getMask();
-	
 }

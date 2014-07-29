@@ -1,20 +1,17 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
-public abstract class AbstractIntegrationOperation implements IOperation {
+public abstract class AbstractIntegrationOperation extends AbstractOperation {
 
 	protected IRichDataset data;
 	private IROI region;
-	@Override
-	public String getOperationDescription() {
-		return "A type of integration which selects data using a region and displays the sum of it in specific directions.";
-	}
 
+	
 	@Override
 	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
 		if (data.length!=1) throw new IllegalArgumentException("You can only set one or one datasets for "+getClass().getSimpleName());

@@ -65,7 +65,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":uk.ac.diamond.scisoft.analysis.processing.IOperation"/>
+                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.processing.AbstractOperation:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -90,6 +90,13 @@
             <annotation>
                <documentation>
                   Sets wether this operation is visible to users in the user interface. Invisible operations are available to the programmer but not choosable in the GUI, perhaps because they are not applicable or require configuration options which do not exist in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

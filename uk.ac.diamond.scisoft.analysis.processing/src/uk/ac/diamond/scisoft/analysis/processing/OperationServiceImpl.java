@@ -84,7 +84,7 @@ public class OperationServiceImpl implements IOperationService {
 			SliceVisitor sv = new SliceVisitor() {
 				
 				@Override
-				public void visit(IDataset slice, Slice... slices) throws Exception {
+				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 			        
 					boolean required = visitor.isRequired(slice, series);
 					if (!required) return;

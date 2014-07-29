@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -189,9 +188,13 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
+	public void addMetadata(MetadataType metadata) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
 	public void setMetadata(IMetaData metdada) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
-		
 	}
 
 	@Override
@@ -200,8 +203,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 	

@@ -29,10 +29,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -44,7 +41,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * <p/>
  * Data items can be boolean, integer, float, complex float, vector float, etc
  */
-public abstract class AbstractDataset implements Dataset {
+public abstract class AbstractDataset extends LazyDatasetBase implements Dataset {
 
 	/**
 	 * Boolean
@@ -155,11 +152,6 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	protected static final long serialVersionUID = -6891075135217265625L;
 
-	/**
-	 * Setup the logging facilities
-	 */
-	protected static final Logger logger = LoggerFactory.getLogger(AbstractDataset.class);
-
 	protected static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
 	}
@@ -174,10 +166,6 @@ public abstract class AbstractDataset implements Dataset {
 	 */
 	private static final int MAX_SUBBLOCKS = 6;
 
-	/**
-	 * The shape or dimensions of the dataset
-	 */
-	protected int[] shape;
 	protected int size; // number of items
 
 	transient protected AbstractDataset base; // is null when not a view
@@ -194,8 +182,6 @@ public abstract class AbstractDataset implements Dataset {
 	 * Set aliased data as base data
 	 */
 	abstract protected void setData();
-
-	protected String name = "";
 
 	/**
 	 * These members hold cached values. If their values are null, then recalculate, otherwise just use the values
@@ -321,12 +307,7 @@ public abstract class AbstractDataset implements Dataset {
 			view.stride = orig instanceof AbstractDataset ? ((AbstractDataset) orig).stride : null;
 		}
 
-		IMetaData metadata = orig.getMetadata();
-		if (cloneMetadata) {
-			view.metadataStructure = metadata == null ? null : metadata.clone();
-		} else {
-			view.metadataStructure = metadata;
-		}
+		view.metadata = getMetadataMap(orig, cloneMetadata);
 		int odtype = orig.getDtype();
 		int vdtype = view.getDtype();
 		if (getBestDType(odtype, vdtype) != vdtype) {
@@ -336,6 +317,37 @@ public abstract class AbstractDataset implements Dataset {
 			view.storedValues.remove(STORE_SHAPELESS_HASH);
 			view.storedValues.remove(STORE_HASH);
 		}
+	}
+
+	protected static Map<Class<? extends MetadataType>, List<MetadataType>> getMetadataMap(Dataset a, boolean clone) {
+		if (a == null)
+			return null;
+
+		List<MetadataType> all = null;
+		try {
+			all = a.getMetadata(null);
+		} catch (Exception e) {
+		}
+		if (all == null)
+			return null;
+
+		HashMap<Class<? extends MetadataType>, List<MetadataType>> map = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
+
+		for (MetadataType m : all) {
+			if (m == null) {
+				continue;
+			}
+			Class<? extends MetadataType> c = m.getClass();
+			List<MetadataType> l = map.get(c);
+			if (l == null) {
+				l = new ArrayList<MetadataType>();
+				map.put(c, l);
+			}
+			if (clone)
+				m = m.clone();
+			l.add(m);
+		}
+		return null;
 	}
 
 	/**
@@ -2408,7 +2420,7 @@ public abstract class AbstractDataset implements Dataset {
 	 * @param bshape
 	 * @return true if they are compatible
 	 */
-	protected static boolean areShapesCompatible(final int[] ashape, final int[] bshape) {
+	public static boolean areShapesCompatible(final int[] ashape, final int[] bshape) {
 
 		List<Integer> alist = new ArrayList<Integer>();
 
@@ -4133,30 +4145,5 @@ public abstract class AbstractDataset implements Dataset {
 		} else {
 			throw new IllegalArgumentException("Type of error buffer could not be handled");
 		}
-	}
-
-	protected IMetaData metadataStructure = null;
-
-	@Override
-	public void setMetadata(IMetaData metadata) {
-		metadataStructure = metadata;
-	}
-
-	@Override
-	public IMetaData getMetadata() {
-		return metadataStructure;
-	}
-	
-	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
-			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
-			result.add(getMetadata());
-			return result;
-		}
-		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
-		// If it should only support this, simply return null here, otherwise implement the method fully
-		//return null;
 	}
 }

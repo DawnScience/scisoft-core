@@ -30,15 +30,17 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * Class to aggregate a set of lazy datasets and present them as a single lazy dataset where
  * the first position value accesses the aggregation
  */
-public class AggregateDataset implements ILazyDataset {
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
+
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	private static final long serialVersionUID = -5523566223386837581L;
 
 	private ILazyDataset[] data = null; // array of lazy datasets
 	private int[] map = null;    // map first dimension to index of dataset
 	private int[] offset = null; // cumulative first dimension lengths used as slice offsets
-	private int[] shape;
 	private int size;
-	private String name;
 	private int dtype = -1;
 	private int isize; // number of elements per item
 	protected AggregateDataset base = null;
@@ -198,13 +200,8 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
+	public int getDtype() {
+		return dtype;
 	}
 
 	@Override
@@ -213,18 +210,8 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public int[] getShape() {
-		return shape.clone();
-	}
-
-	@Override
 	public void setShape(int... shape) {
 		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public int getRank() {
-		return shape.length;
 	}
 
 	@Override
@@ -374,18 +361,22 @@ public class AggregateDataset implements ILazyDataset {
 	}
 
 	@Override
-	public IMetaData getMetadata() throws Exception {
+	public IMetaData getMetadata() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-	
+
 	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public void setMetadata(IMetaData metadata) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void addMetadata(MetadataType metadata) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

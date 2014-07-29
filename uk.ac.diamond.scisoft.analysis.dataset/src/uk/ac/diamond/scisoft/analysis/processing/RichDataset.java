@@ -57,20 +57,23 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	public IMetaData getMetadata() throws Exception {
 		return getMeta();
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
 		if (IMetaData.class.isAssignableFrom(clazz)) {
-			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
-			result.add(getMetadata());
+			List<T> result = new ArrayList<T>();
+			result.add((T) getMetadata());
 			return result;
 		}
 		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
 		// If it should only support this, simply return null here, otherwise implement the method fully
-		//return null;
 	}
-	
+
+	@Override
+	public void addMetadata(MetadataType metadata) {
+	}
+
 	/**
 	 * Clones the underlying data but not the mask and axes.
 	 */

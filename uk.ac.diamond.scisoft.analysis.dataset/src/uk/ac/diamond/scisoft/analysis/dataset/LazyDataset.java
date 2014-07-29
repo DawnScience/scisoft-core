@@ -16,30 +16,23 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Class that implements lazy dataset interface
  */
-public class LazyDataset implements ILazyDataset, Cloneable {
-	
-	
-	private static final long serialVersionUID = -903717887381144620L;
-	transient protected static final Logger logger = LoggerFactory.getLogger(LazyDataset.class);
+public class LazyDataset extends LazyDatasetBase implements ILazyDataset, Cloneable, Serializable {
 
-	protected String     name;
-	protected int[]      shape;
+	/**
+	 * Update this when there are any serious changes to API
+	 */
+	protected static final long serialVersionUID = -2729953855285411120L;
+
 	private int[]        oShape; // original shape
 	protected long       size;   // number of items
 	protected ILazyLoader loader;
@@ -47,7 +40,6 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	private int          isize; // number of elements per item
 	private int          oOffset; // original shape offset (first non-unit dimension)
 	private int          nOffset; // current shape offset
-	private IMetaData    metadata = null;
 	protected LazyDataset base = null;
 	private int[] sliceStart = null;
 	private int[] sliceStep  = null;
@@ -106,35 +98,20 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	}
 
 	@Override
-	public Class<?> elementClass() {
-		return AbstractDataset.elementClass(dtype);
-	}
-
-	@Override
 	public int getElementsPerItem() {
 		return isize;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (!getClass().equals(obj.getClass())) {
-			return false;
-		}
 
 		LazyDataset other = (LazyDataset) obj;
 		if (dtype != other.dtype) {
 			return false;
 		}
 		if (isize != other.isize) {
-			return false;
-		}
-		if (!Arrays.equals(shape, other.shape)) {
 			return false;
 		}
 		if (!Arrays.equals(sliceStart, other.sliceStart)) {
@@ -147,45 +124,13 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 	}
 
 	@Override
-	public int hashCode() {
-		int hash = dtype * 17 + isize;
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		return hash;
-	}
-
-	/**
-	 * @return type of dataset item
-	 */
-	public int getDtype() {
-		return dtype;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
 	public int getSize() {
 		return (int) size;
 	}
 
 	@Override
-	public int[] getShape() {
-		return shape.clone();
-	}
-
-	@Override
-	public int getRank() {
-		return shape.length;
+	public int getDtype() {
+		return dtype;
 	}
 
 	@Override
@@ -461,29 +406,6 @@ public class LazyDataset implements ILazyDataset, Cloneable {
 		lazy.base = base == null ? this : base;
 		lazy.metadata = metadata;
 		return lazy;
-	}
-
-	@Override
-	public void setMetadata(IMetaData metadata) {
-		this.metadata = metadata;
-	}
-
-	@Override
-	public IMetaData getMetadata() {
-		return metadata;
-	}
-	
-	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
-			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
-			result.add(getMetadata());
-			return result;
-		}
-		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
-		// If it should only support this, simply return null here, otherwise implement the method fully
-		//return null;
 	}
 
 	@Override

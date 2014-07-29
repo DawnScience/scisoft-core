@@ -4,7 +4,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -19,15 +19,10 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
  * @author fcp94556
  *
  */
-public abstract class AbstractMathsOperation implements IOperation {
+public abstract class AbstractMathsOperation extends AbstractOperation {
 
 	private IRichDataset[] data;
 	private Number         value;
-
-	@Override
-	public String getOperationDescription() {
-		return "Dataset mathematics operation "+getClass().getSimpleName();
-	}
 
 	@Override
 	public void setDataset(IRichDataset... data) throws IllegalArgumentException {

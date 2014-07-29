@@ -139,7 +139,7 @@ public class OperationServiceImpl implements IOperationService {
         }
         if (series[0].getInputRank().isDiscrete()) {
 	        if (firstSlice.getRank() != series[0].getInputRank().getRank()) {
-	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getOperationDescription()+"' is "+series[0].getInputRank().getRank());
+	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
         }
@@ -154,7 +154,7 @@ public class OperationServiceImpl implements IOperationService {
 	        	OperationRank input = series[i].getInputRank();
 	        	if (input == OperationRank.ANY)  input = OperationRank.get(firstSlice.getRank());
 	        	if (!input.isCompatibleWith(output)) {
-	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getOperationDescription()+"' is not compatible with the input of '"+series[i].getOperationDescription()+"'.");
+	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getDescription()+"' is not compatible with the input of '"+series[i].getDescription()+"'.");
 	        	}
 	        	output = series[i].getOutputRank();
 	        	if (output == OperationRank.SAME) output = input;
@@ -214,6 +214,14 @@ public class OperationServiceImpl implements IOperationService {
 			final String     id = e.getAttribute("id");
 			final IOperation op = (IOperation)e.createExecutableExtension("class");
 			operations.put(id, op);
+			
+			if (op instanceof AbstractOperation) {
+				final String name = e.getAttribute("name");
+				((AbstractOperation)op).setName(name);
+				
+				final String desc = e.getAttribute("description");
+				if (desc!=null) ((AbstractOperation)op).setDescription(desc);
+			}
 		}
 	}
 
@@ -268,7 +276,7 @@ public class OperationServiceImpl implements IOperationService {
 	 */
 	private boolean matches(String id, IOperation operation, String regex) {
 		if (id.matches(regex)) return true;
-		final String description = operation.getOperationDescription();
+		final String description = operation.getDescription();
 		if (description.matches(regex)) return true;
 		if (id.indexOf(regex)>0) return true;
 		if (description.indexOf(regex)>0) return true;
@@ -313,6 +321,6 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public String getDescription(String id) throws Exception {
 		checkOperations();
-		return operations.get(id).getOperationDescription();
+		return operations.get(id).getDescription();
 	}
  }

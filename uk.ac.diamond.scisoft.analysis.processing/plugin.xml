@@ -5,35 +5,48 @@
          point="uk.ac.diamond.scisoft.analysis.api.operation">
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractOperation"
+            description="Subtract one dataset from another or subtract a scalar value."
             id="uk.ac.diamond.scisoft.analysis.processing.subtractOperation"
             name="Subtract"
             visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AddOperation"
+            description="Add one dataset to another or add a scalar value."
             id="uk.ac.diamond.scisoft.analysis.processing.addOperation"
             name="Add"
             visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AzimuthalIntegration"
+            description="Azimithal integration on an image using a sector region."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
             name="Azimithal Integration">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"
+            description="Run an arbitrary function on the data to transform it."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
             name="Function Operation">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegration"
+            description="Using a box region, select a portion of the data to integrate in X and Y."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
             name="Box Integration">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.SelectROI"
+            description="Define a region of interest to be used in the rest of the processing pipeline."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.selectROI"
             name="Select Region of Interest">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"
+            description="Fit a peak to 1D data"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation"
+            name="Peak Fit"
+            visible="true">
       </operation>
    </extension>
 

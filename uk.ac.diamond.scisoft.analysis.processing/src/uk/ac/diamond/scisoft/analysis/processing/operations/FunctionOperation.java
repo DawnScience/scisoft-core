@@ -2,22 +2,17 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class FunctionOperation implements IOperation {
+public class FunctionOperation extends AbstractOperation {
 
     private IRichDataset   dataset;
 	private IFunction      function;
-
-	@Override
-	public String getOperationDescription() {
-		return "An operation able to run different functions on datasets.";
-	}
 
 	@Override
 	public String getId() {

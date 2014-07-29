@@ -4,33 +4,21 @@ import java.io.Serializable;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class FittingOperation implements IOperation {
+public class FittingOperation extends AbstractOperation {
 
 	private IRichDataset   dataset;
 	private FittingModel model;
 
-	@Override
-	public String getOperationDescription() {
-		return "An operation able to run a fit on datasets.";
-	}
-		
-	@Override
-    public String getName() {
-		return "Peak fit";
-	}
 
 
 	@Override

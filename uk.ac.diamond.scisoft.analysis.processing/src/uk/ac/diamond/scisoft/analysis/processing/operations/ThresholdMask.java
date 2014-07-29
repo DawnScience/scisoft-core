@@ -6,21 +6,16 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
+import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class ThresholdMask implements IOperation {
+public class ThresholdMask extends AbstractOperation {
 
 	private IOperationModel model;
-
-	@Override
-	public String getOperationDescription() {
-		return "Threshold Mask. A mask which removes pixels below a lower and above an upper intensity value.";
-	}
 
 	@Override
     public String getName() {

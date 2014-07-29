@@ -50,7 +50,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"
             description="Fit a peak to 1D data"
-            icon="icons/plot-tool-peak-fit.png"
+            icon="icons/fit.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation"
             name="Peak Fit"
             visible="true">

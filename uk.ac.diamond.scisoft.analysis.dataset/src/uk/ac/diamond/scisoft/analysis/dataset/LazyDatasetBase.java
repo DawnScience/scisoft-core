@@ -19,7 +19,10 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	 */
 	protected int[] shape;
 
-	protected IMetaData metadata = null;
+	protected Map<Class<? extends MetadataType>, List<MetadataType>> metadata = null;
 
 	/**
 	 * @return type of dataset item
@@ -111,23 +114,47 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 
 	@Override
 	public void setMetadata(IMetaData metadata) {
-		this.metadata = metadata;
+		addMetadata(metadata);
 	}
 
 	@Override
 	public IMetaData getMetadata() {
-		return metadata;
+		List<IMetaData> ml = null;
+		try {
+			ml = getMetadata(IMetaData.class);
+		} catch (Exception e) {
+		}
+		if (ml == null)
+			return null;
+		return ml.get(0);
 	}
 
 	@Override
-	public List<? extends MetadataType> getMetadata(Class<? extends MetadataType> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
-			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
-			result.add(getMetadata());
-			return result;
+	public void addMetadata(MetadataType metadata) {
+		if (this.metadata == null) {
+			this.metadata = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
 		}
-		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
-		// If it should only support this, simply return null here, otherwise implement the method fully
-		//return null;
+		Class<? extends MetadataType> clazz = metadata.getClass();
+		if (!this.metadata.containsKey(clazz)) {
+			this.metadata.put(clazz, new ArrayList<MetadataType>());
+		}
+		this.metadata.get(clazz).add(metadata);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
+		if (clazz == null) {
+			List<T> all = new ArrayList<T>();
+			for (Class<? extends MetadataType> c : metadata.keySet()) {
+				all.addAll((Collection<? extends T>) metadata.get(c));
+			}
+			return all;
+		}
+
+		if (!metadata.containsKey(clazz))
+			return null;
+
+		return (List<T>) metadata.get(clazz);
 	}
 }

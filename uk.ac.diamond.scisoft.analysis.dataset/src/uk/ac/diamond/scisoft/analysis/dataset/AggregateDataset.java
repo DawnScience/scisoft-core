@@ -364,14 +364,19 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 	public IMetaData getMetadata() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-	
+
 	@Override
-	public List<? extends MetadataType> getMetadata(Class<? extends MetadataType> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public void setMetadata(IMetaData metadata) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void addMetadata(MetadataType metadata) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

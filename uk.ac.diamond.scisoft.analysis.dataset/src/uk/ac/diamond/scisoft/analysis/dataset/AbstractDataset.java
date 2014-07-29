@@ -30,7 +30,6 @@ import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -308,12 +307,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			view.stride = orig instanceof AbstractDataset ? ((AbstractDataset) orig).stride : null;
 		}
 
-		IMetaData metadata = orig.getMetadata();
-		if (cloneMetadata) {
-			view.metadataStructure = metadata == null ? null : metadata.clone();
-		} else {
-			view.metadataStructure = metadata;
-		}
+		view.metadata = getMetadataMap(orig, cloneMetadata);
 		int odtype = orig.getDtype();
 		int vdtype = view.getDtype();
 		if (getBestDType(odtype, vdtype) != vdtype) {
@@ -323,6 +317,37 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			view.storedValues.remove(STORE_SHAPELESS_HASH);
 			view.storedValues.remove(STORE_HASH);
 		}
+	}
+
+	protected static Map<Class<? extends MetadataType>, List<MetadataType>> getMetadataMap(Dataset a, boolean clone) {
+		if (a == null)
+			return null;
+
+		List<MetadataType> all = null;
+		try {
+			all = a.getMetadata(null);
+		} catch (Exception e) {
+		}
+		if (all == null)
+			return null;
+
+		HashMap<Class<? extends MetadataType>, List<MetadataType>> map = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
+
+		for (MetadataType m : all) {
+			if (m == null) {
+				continue;
+			}
+			Class<? extends MetadataType> c = m.getClass();
+			List<MetadataType> l = map.get(c);
+			if (l == null) {
+				l = new ArrayList<MetadataType>();
+				map.put(c, l);
+			}
+			if (clone)
+				m = m.clone();
+			l.add(m);
+		}
+		return null;
 	}
 
 	/**
@@ -4120,30 +4145,5 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		} else {
 			throw new IllegalArgumentException("Type of error buffer could not be handled");
 		}
-	}
-
-	protected IMetaData metadataStructure = null;
-
-	@Override
-	public void setMetadata(IMetaData metadata) {
-		metadataStructure = metadata;
-	}
-
-	@Override
-	public IMetaData getMetadata() {
-		return metadataStructure;
-	}
-	
-	@Override
-	public List<? extends MetadataType> getMetadata(
-			Class<? extends MetadataType> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
-			ArrayList<IMetaData> result = new ArrayList<IMetaData>();
-			result.add(getMetadata());
-			return result;
-		}
-		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
-		// If it should only support this, simply return null here, otherwise implement the method fully
-		//return null;
 	}
 }

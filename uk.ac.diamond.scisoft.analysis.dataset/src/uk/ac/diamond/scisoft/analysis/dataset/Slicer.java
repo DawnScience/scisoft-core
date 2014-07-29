@@ -95,9 +95,6 @@ public class Slicer {
 		sb.deleteCharAt(sb.length()-1);
 		Slice[] slices = Slice.convertFromString(sb.toString());
 		
-		//TODO all this horrible-ness could probably be reduced by taking an initial slice
-		//view from the original lazy dataset
-		
 		//create array of ignored axes values
 		Set<Integer> axesSet = new HashSet<Integer>();
 		for (int i = 0; i < fullDims.length; i++) axesSet.add(i);
@@ -107,15 +104,13 @@ public class Slicer {
 		Iterator<Integer> iter = axesSet.iterator();
 		while (iter.hasNext()) axes[count++] = iter.next(); 
 
-		//determine shape of sliced dataset
-		int[] slicedShape = lz.getShape().clone();
-		for (int i = 0; i < slices.length; i++) {
-			if (slices[i].getStop() == null && slices[i].getLength() ==-1) continue;
-			slicedShape[i] = slices[i].getNumSteps();
-		}
+		//Take view of original lazy dataset removing start/stop/step
+		//Makes the iteration simpler
+		ILazyDataset lzView = lz.getSliceView(slices);
 
-		PositionIterator pi = new PositionIterator(lz.getShape(), slices, axes);
+		PositionIterator pi = new PositionIterator(lzView.getShape(), axes);
 		int[] pos = pi.getPos();
+		final int[] viewDims = lzView.getShape();
 
 		while (pi.hasNext()) {
 
@@ -125,7 +120,7 @@ public class Slicer {
 			}
 
 			for (int i = 0; i < axes.length; i++){
-				end[axes[i]] = fullDims[axes[i]];
+				end[axes[i]] = viewDims[axes[i]];
 			}
 
 			int[] st = pos.clone();
@@ -134,22 +129,11 @@ public class Slicer {
 			Slice[] slice = Slice.convertToSlice(pos, end, st);
 			String sliceName = Slice.createString(slice);
 
-			Slice[] outSlice = new Slice[slices.length];
-			for (int i = 0; i < slices.length; i++) {
-				if (slice[i].getStop() == null && slice[i].getLength() ==-1) {
-					outSlice[i] = new Slice();
-				} else {
-					int nSteps = slice[i].getNumSteps();
-					int offset = (slice[i].getStart()-slices[i].getStart())/slices[i].getStep();
-					outSlice[i] = new Slice(offset,offset+nSteps);
-				}
-			}
-
-			IDataset data = lz.getSlice(slice);
+			IDataset data = lzView.getSlice(slice);
 			data = data.squeeze();
 			data.setName((nameFragment!=null ? nameFragment : "") + " ("+ sliceName+")");
 			if (visitor!=null) {
-			    visitor.visit(data, outSlice);
+			    visitor.visit(data, slice, lzView.getShape());
 			} else {
 				return data;
 			}
@@ -198,14 +182,14 @@ public class Slicer {
 		final SliceVisitor parallel = new SliceVisitor() {
 
 			@Override
-			public void visit(final IDataset slice, final Slice... slices) throws Exception {
+			public void visit(final IDataset slice, final Slice[] slices, final int[] shape) throws Exception {
 				
 				pool.execute(new Runnable() {
 					
 					@Override
 					public void run() {
 						try {
-						    visitor.visit(slice, slices);
+						    visitor.visit(slice, slices, shape);
 						} catch (Throwable ne) {
 							ne.printStackTrace();
 							// TODO Fix me - should runtime exception really be thrown back to Fork/Join?

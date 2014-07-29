@@ -11,8 +11,14 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
-public interface ErrorMetadata {
+/**
+ * This metadata describes any error associated with a dataset
+ */
+public interface ErrorMetadata extends MetadataType {
 
+	/**
+	 * Get error dataset
+	 * @return error dataset
+	 */
 	public ILazyDataset getError();
-	
 }

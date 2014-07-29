@@ -12,12 +12,20 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
- * This metadata describes if a dataset has axis information associated with it
+ * This metadata describes any axis information associated with a dataset
  */
 public interface AxesMetadata extends MetadataType {
 
+	/**
+	 * Get axis datasets
+	 * @return all axis datasets, any nulls represent default integer indexes
+	 */
 	public ILazyDataset[] getAxes();
-	
+
+	/**
+	 * Get axis dataset for the given dimension
+	 * @param axisDim dimension
+	 * @return axis dataset, null represent default integer indexes
+	 */
 	public ILazyDataset getAxis(int axisDim);
-	
 }

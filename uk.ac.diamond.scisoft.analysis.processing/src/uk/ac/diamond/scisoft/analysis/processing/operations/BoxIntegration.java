@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -24,12 +25,11 @@ public class BoxIntegration extends AbstractIntegrationOperation {
 	}
 	
 	@Override
-	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		Dataset slice    = (Dataset)islice.getData();
 		Dataset mask = null;
 		try {
-			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
+			MaskMetadata maskMetadata = ((MaskMetadata)slice.getMetadata(MaskMetadata.class));
 			mask = (Dataset)maskMetadata.getMask().getSlice((Slice[])null);
 		} catch (Exception e) {
 			throw new OperationException(this, e);
@@ -37,7 +37,7 @@ public class BoxIntegration extends AbstractIntegrationOperation {
 		RectangularROI rect = (RectangularROI)getRegion();
 		
 		
-		final AbstractDataset[] profile = ROIProfile.box(slice, mask, rect);
+		final AbstractDataset[] profile = ROIProfile.box((Dataset)slice, mask, rect);
 		
 		AbstractDataset x = profile[0];
 		x.setName("Box X Profile "+rect.getName());

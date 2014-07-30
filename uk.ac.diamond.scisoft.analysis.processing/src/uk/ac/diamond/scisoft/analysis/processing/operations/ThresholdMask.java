@@ -3,7 +3,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
@@ -11,7 +10,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
@@ -32,15 +30,9 @@ public class ThresholdMask extends AbstractOperation {
 	}
 
 	@Override
-	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException {
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		Dataset data = (Dataset)slice.getData();
+		Dataset data = (Dataset)slice;
 		IDataset mask = null;
 		try {
 			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
@@ -49,7 +41,7 @@ public class ThresholdMask extends AbstractOperation {
 			throw new OperationException(this, e);
 		}
 		
-		if (!isCompatible(slice.getData().getShape(), mask.getShape())) {
+		if (!isCompatible(slice.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
 		
@@ -62,13 +54,13 @@ public class ThresholdMask extends AbstractOperation {
 			while (it.hasNext()) {
 								
 				int[] pos = it.getPos();
-				if (slice.getData().getDouble(pos)>upper || slice.getData().getDouble(pos)<lower) {
+				if (slice.getDouble(pos)>upper || slice.getDouble(pos)<lower) {
 					mask.set(false, pos);
 				}
 			}
 			monitor.worked(1);
 			
-			return slice;
+			return new OperationData(data);
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}

@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
@@ -64,23 +65,6 @@ public interface IOperation {
 	 */
 	public String getId();
 
-
-	/**
-	 * Provide the data required for this operation, generally one IRichDataset.
-	 * 
-	 * You may provide more than one IRichDataset for some operations but an exception
-	 * can be thrown if the operation does not support the data passed into it.
-	 * 
-	 * An operation supports multiple setData and execute calls. Therefore the operation
-	 * data can change, after setData(..) is called. If implementing an operation the programmer
-	 * should be aware that data should not be cached, or at the least cleared if setData(...)
-	 * is called.
-	 * 
-	 * @param data
-	 * @throws IllegalArgumentException if the operation does not support this count or type of data.
-	 */
-	public void setDataset(IRichDataset... data) throws IllegalArgumentException;
-	// TODO FIXME IRichDataset should be removed!
 		
 	/**
 	 * The execute method operates on the data set last send via setDataset() and the
@@ -93,7 +77,7 @@ public interface IOperation {
 	 * 
 	 * @return dataset which is the result of this operation.
 	 */
-	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException;
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException;
 	
 	
 	/**

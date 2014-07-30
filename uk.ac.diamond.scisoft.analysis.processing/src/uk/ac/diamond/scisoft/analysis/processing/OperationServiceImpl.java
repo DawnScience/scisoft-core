@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,10 +76,6 @@ public class OperationServiceImpl implements IOperationService {
 		try {
 			// We check the pipeline ranks are ok
 			checkPipeline(dataset, slicing, series);
-			
-			// We provide the series with the rich dataset which in the data context on 
-			// which we are operating.
-			for (IOperation iOperation : series) iOperation.setDataset(dataset);
 
 			// Create the slice visitor
 			SliceVisitor sv = new SliceVisitor() {
@@ -89,10 +86,10 @@ public class OperationServiceImpl implements IOperationService {
 					boolean required = visitor.isRequired(slice, series);
 					if (!required) return;
 					
-					OperationData  data = new OperationData(slice, slices);
+					OperationData  data = new OperationData(slice, (Serializable[])null);
 										
 					for (IOperation i : series) {
-						data = i.execute(data, monitor);
+						data = i.execute(data.getData(), monitor);
 						visitor.notify(i, data); // Optionally send intermeadiate result
 					}
 					

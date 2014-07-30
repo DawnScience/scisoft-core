@@ -1,11 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
@@ -21,20 +18,13 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
  */
 public abstract class AbstractMathsOperation extends AbstractOperation {
 
-	private IRichDataset[] data;
 	private Number         value;
-
-	@Override
-	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
-		if (data.length<1 || data.length>2) throw new IllegalArgumentException("You can only set one or two datasets for "+getClass().getSimpleName());
-	    this.data = data;
-	}
-
+	
 	/**
 	 * TODO This operation is only an example.
 	 */
 	@Override
-	public OperationData execute(OperationData a, IMonitor monitor) throws OperationException {
+	public OperationData execute(IDataset a, IMonitor monitor) throws OperationException {
 		
 		try {
 			IDataset result;
@@ -42,7 +32,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 				// TODO FIXME We simply get all data out of the lazy and return it
 			    result = operation(a, value);
 			} else {
-				final Dataset b = (Dataset)data[1].getData().getSlice((Slice)null);
+				final IDataset b = a;
 				result = operation(a, b);
 
 			}
@@ -54,7 +44,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 		}
 	}
 	
-	protected abstract IDataset operation(OperationData a, Object value);
+	protected abstract IDataset operation(IDataset a, Object value);
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {

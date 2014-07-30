@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 
 /**
  * Subtracts either one dataset from another or a scalar value from all values of a dataset.
@@ -11,8 +10,8 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationData;
  */
 public class SubtractOperation extends AbstractMathsOperation {
 
-	protected IDataset operation(OperationData a, Object value) {
-		return ((Dataset)a.getData()).isubtract(value);
+	protected IDataset operation(IDataset a, Object value) {
+		return ((Dataset)a).isubtract(value);
 	}
 
 	@Override

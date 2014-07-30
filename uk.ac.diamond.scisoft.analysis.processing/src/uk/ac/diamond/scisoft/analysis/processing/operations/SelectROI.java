@@ -1,10 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
@@ -30,19 +30,12 @@ public class SelectROI extends AbstractOperation {
 	}
 
 	@Override
-	public void setDataset(IRichDataset... data)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public OperationData execute(OperationData slice, IMonitor monitor)
+	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
 		
 		// Get the data ROI
 		MapToRotatedCartesian map = new MapToRotatedCartesian(roi);
-		AbstractDataset dataRegion = map.value(slice.getData()).get(0);
+		AbstractDataset dataRegion = map.value(slice).get(0);
 		
 		OperationData result = new OperationData(dataRegion);
 		

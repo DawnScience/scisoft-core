@@ -1,9 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
@@ -11,7 +11,6 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class FunctionOperation extends AbstractOperation {
 
-    private IRichDataset   dataset;
 	private IFunction      function;
 
 	@Override
@@ -26,15 +25,8 @@ public class FunctionOperation extends AbstractOperation {
 
 
 	@Override
-	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
-		
-		if (data.length!=1) throw new IllegalArgumentException("The function operation can only operate on one dataset at a time!");
-		this.dataset = data[0];
-	}
-
-	@Override
-	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException {
-		return new OperationData(function.calculateValues(slice.getData()));
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
+		return new OperationData(function.calculateValues(slice));
 	}
 
 	@Override

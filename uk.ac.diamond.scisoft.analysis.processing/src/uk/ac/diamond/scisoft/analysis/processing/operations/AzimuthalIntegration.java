@@ -25,12 +25,11 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 
 
 	@Override
-	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		Dataset slice    = (Dataset)islice.getData();
 		Dataset mask = null;
 		try {
-			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
+			MaskMetadata maskMetadata = ((MaskMetadata)slice.getMetadata(MaskMetadata.class));
 			mask = (Dataset)maskMetadata.getMask().getSlice((Slice[])null);
 		} catch (Exception e) {
 			throw new OperationException(this, e);
@@ -38,7 +37,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 		SectorROI sector = (SectorROI)getRegion();
 		
 		
-		final AbstractDataset[] profile = ROIProfile.sector(slice, mask, sector, false, true, false);
+		final AbstractDataset[] profile = ROIProfile.sector((Dataset)slice, mask, sector, false, true, false);
 		
 		AbstractDataset integral = profile[1];
 		integral.setName("Azimuthal Profile "+sector.getName());

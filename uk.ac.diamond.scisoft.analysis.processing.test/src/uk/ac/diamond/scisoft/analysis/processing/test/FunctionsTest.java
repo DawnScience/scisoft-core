@@ -123,7 +123,6 @@ public class FunctionsTest {
 		final IRichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");
 		
-		fittingOp.setDataset(rich);
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
@@ -168,8 +167,6 @@ public class FunctionsTest {
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
 		final IRichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");
-		
-		fittingOp.setDataset(rich);
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      

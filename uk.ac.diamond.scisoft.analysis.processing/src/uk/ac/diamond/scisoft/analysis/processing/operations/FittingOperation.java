@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
@@ -16,7 +16,6 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class FittingOperation extends AbstractOperation {
 
-	private IRichDataset   dataset;
 	private FittingModel model;
 
 
@@ -26,26 +25,20 @@ public class FittingOperation extends AbstractOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation";
 	}
 
-	@Override
-	public void setDataset(IRichDataset... data) throws IllegalArgumentException {
-
-		if (data.length!=1) throw new IllegalArgumentException("The function operation can only operate on one dataset at a time!");
-		this.dataset = data[0];
-	}
 
 	@Override
-	public OperationData execute(OperationData data, IMonitor monitor) throws OperationException {
+	public OperationData execute(IDataset data, IMonitor monitor) throws OperationException {
 		
 		try {
 			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)model.getxAxis(), 
-					                                                                  (AbstractDataset)data.getData(), 
+					                                                                  (AbstractDataset)data, 
 					                                                                  model.getPeak(), model.createOptimizer(),
 					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
 					                                                                  model.getThreshold(), 
 					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);
 			
 	        // Same original data but with some fitted peaks added to auxillary data.
-			return new OperationData(data.getData(), (Serializable)fittedPeakList);
+			return new OperationData(data, (Serializable)fittedPeakList);
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}

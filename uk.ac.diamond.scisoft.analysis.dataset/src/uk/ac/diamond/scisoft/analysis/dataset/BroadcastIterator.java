@@ -402,6 +402,9 @@ public class BroadcastIterator extends IndexIterator {
 			oIndex = bIndex;
 		}
 
+		if (aIndex == aMax || bIndex == bMax)
+			return false;
+
 		if (oldA != aIndex) {
 			if (asDouble) {
 				aDouble = aDataset.getElementDoubleAbs(aIndex);
@@ -417,7 +420,7 @@ public class BroadcastIterator extends IndexIterator {
 			}
 		}
 
-		return aIndex != aMax && bIndex != bMax;
+		return true;
 	}
 
 	/**

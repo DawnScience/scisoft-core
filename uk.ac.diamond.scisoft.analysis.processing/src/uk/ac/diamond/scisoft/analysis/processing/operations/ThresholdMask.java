@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
@@ -36,8 +40,18 @@ public class ThresholdMask extends AbstractOperation {
 	@Override
 	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException {
 		
-		BooleanDataset mask = (BooleanDataset)slice.getMask();
-		if (mask==null) mask = BooleanDataset.ones(slice.getData().getShape());
+		Dataset data = (Dataset)slice.getData();
+		IDataset mask = null;
+		try {
+			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
+			mask = maskMetadata!=null
+				 ? maskMetadata.getMask().getSlice((Slice[])null)
+				 : BooleanDataset.ones(slice.getData().getShape());
+				 
+		} catch (Exception e) {
+			throw new OperationException(this, e);
+		}
+		
 		if (!isCompatible(slice.getData().getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
@@ -46,7 +60,7 @@ public class ThresholdMask extends AbstractOperation {
 			Double upper  = (Double)model.get("Upper");
 			Double lower  = (Double)model.get("Lower");
 			
-			// Apply a threshold
+			// TODO A fork/join or Java8 lambda would do this operation faster...
 			PositionIterator it = new PositionIterator(mask.getShape());
 			while (it.hasNext()) {
 								
@@ -58,6 +72,7 @@ public class ThresholdMask extends AbstractOperation {
 			monitor.worked(1);
 			
 			return slice;
+			
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}

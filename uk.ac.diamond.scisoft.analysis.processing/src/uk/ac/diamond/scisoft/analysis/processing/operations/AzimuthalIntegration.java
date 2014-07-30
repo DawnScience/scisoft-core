@@ -2,6 +2,9 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
@@ -25,7 +28,13 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	public OperationData execute(OperationData islice, IMonitor monitor) throws OperationException {
 		
 		Dataset slice    = (Dataset)islice.getData();
-		Dataset mask     = (Dataset)islice.getMask();
+		Dataset mask = null;
+		try {
+			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
+			mask = (Dataset)maskMetadata.getMask().getSlice((Slice[])null);
+		} catch (Exception e) {
+			throw new OperationException(this, e);
+		}
 		SectorROI sector = (SectorROI)getRegion();
 		
 		

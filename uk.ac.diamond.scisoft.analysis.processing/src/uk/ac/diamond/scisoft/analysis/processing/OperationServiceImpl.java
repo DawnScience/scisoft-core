@@ -89,11 +89,7 @@ public class OperationServiceImpl implements IOperationService {
 					boolean required = visitor.isRequired(slice, series);
 					if (!required) return;
 					
-					IDataset mask = getMask(dataset, slice, slices);
-					if (mask!=null) mask = mask.squeeze();
-					
 					OperationData  data = new OperationData(slice, slices);
-					data.setMask(mask);
 										
 					for (IOperation i : series) {
 						data = i.execute(data, monitor);

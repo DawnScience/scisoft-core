@@ -17,85 +17,40 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
- * Object to hold data and parameters for execution of operations in
- * a pipeline.
- * 
- * TODO - should this just be a DataMessageComponent?
- * 
+ * Object to hold return data from an IOperation.
  */
 public class OperationData {
 
-	private IDataset[]      data;
-	private IDataset        mask;
-	private Serializable[]  auxData;
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(auxData);
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		result = prime * result + ((mask == null) ? 0 : mask.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OperationData other = (OperationData) obj;
-		if (!Arrays.equals(auxData, other.auxData))
-			return false;
-		if (data == null) {
-			if (other.data != null)
-				return false;
-		} else if (!data.equals(other.data))
-			return false;
-		if (mask == null) {
-			if (other.mask != null)
-				return false;
-		} else if (!mask.equals(other.mask))
-			return false;
-		return true;
-	}
+	private IDataset data;
+	private Serializable[] auxData;
+
 	public IDataset getData() {
-		return getData(0);
+		return data;
 	}
-	public IDataset getData(int index) {
-		return data[index];
+
+	public OperationData(IDataset data) {
+		this(data, (Serializable) null);
 	}
-	public void setData(IDataset... data) {
+
+	public OperationData(IDataset data, Serializable... aux) {
+		this.data = data;
+		this.auxData = aux;
+	}
+
+	public void setData(IDataset data) {
 		this.data = data;
 	}
+
 	public Serializable[] getAuxData() {
 		return auxData;
 	}
+
 	public void setAuxData(Serializable... auxData) {
 		this.auxData = auxData;
-	}
-	public OperationData(IDataset data) {
-		this(data, (Serializable)null);
-	}
-	public OperationData(IDataset... data) {
-		this.data = data;
-	}
-	public OperationData(IDataset data, Serializable... aux) {
-		this.data    = new IDataset[]{data};
-		this.auxData = aux;
-	}
-	public IDataset getMask() {
-		return mask;
-	}
-	public void setMask(IDataset mask) {
-		this.mask = mask;
 	}
 
 }

@@ -122,18 +122,13 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 
 	@Override
 	public IMetaData getMetadata() {
-		if (metadata == null)
-			return null;
-
-		List<MetadataType> ml = null;
-		for (Class<? extends MetadataType> c : metadata.keySet()) {
-			if (IMetaData.class.isAssignableFrom(c)) {
-				ml = metadata.get(c);
-			}
+		List<IMetaData> ml = null;
+		try {
+			ml = getMetadata(IMetaData.class);
+		} catch (Exception e) {
 		}
-		if (ml == null)
-			return null;
-		return (IMetaData) ml.get(0);
+
+		return ml == null ? null : ml.get(0);
 	}
 
 	@Override
@@ -144,11 +139,29 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		if (this.metadata == null) {
 			this.metadata = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
 		}
+
 		Class<? extends MetadataType> clazz = metadata.getClass();
-		if (!this.metadata.containsKey(clazz)) {
-			this.metadata.put(clazz, new ArrayList<MetadataType>());
+		if (IMetaData.class.isAssignableFrom(clazz)) {
+			// special class for old behaviour
+			if (!this.metadata.containsKey(IMetaData.class)) {
+				this.metadata.put(IMetaData.class, new ArrayList<MetadataType>());
+			}
+			// place metadata in order of lower classes first
+			List<MetadataType> ml = this.metadata.get(IMetaData.class);
+			int i = 0;
+			for (int imax = ml.size(); i < imax; i++) {
+				MetadataType m = ml.get(i);
+				if (!clazz.isAssignableFrom(m.getClass())) {
+					break;
+				}
+			}
+			ml.add(i, metadata);
+		} else {
+			if (!this.metadata.containsKey(clazz)) {
+				this.metadata.put(clazz, new ArrayList<MetadataType>());
+			}
+			this.metadata.get(clazz).add(metadata);
 		}
-		this.metadata.get(clazz).add(metadata);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,9 +177,6 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 			}
 			return all;
 		}
-
-		if (!metadata.containsKey(clazz))
-			return null;
 
 		return (List<T>) metadata.get(clazz);
 	}

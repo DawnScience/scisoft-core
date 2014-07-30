@@ -27,7 +27,7 @@ public interface IMetadataProvider {
 
 	/**
 	 * @param clazz if null return everything
-	 * @return metadata
+	 * @return list of metadata with given class
 	 * @throws Exception
 	 */
 	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception;

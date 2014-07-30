@@ -37,6 +37,13 @@ public enum OperationRank {
 		return rank;
 	}
 	
+	public String getLabel() {
+		if (this==ANY)  return "Any";
+		if (this==SAME) return "Same as input";
+		if (this==NONE) return "None";
+		return String.valueOf(rank);
+	}
+
 	public static OperationRank get(int rank) {
 		for (OperationRank or : values()) {
 			if (or.rank == rank) return or;
@@ -60,4 +67,5 @@ public enum OperationRank {
 		
 		return false;
 	}
+
 }

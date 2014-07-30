@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
 import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
@@ -75,7 +76,8 @@ public class OperationServiceImpl implements IOperationService {
 			
 		try {
 			// We check the pipeline ranks are ok
-			checkPipeline(dataset, slicing, series);
+	        final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
+			validate(firstSlice, series);
 
 			// Create the slice visitor
 			SliceVisitor sv = new SliceVisitor() {
@@ -119,14 +121,12 @@ public class OperationServiceImpl implements IOperationService {
 	/**
 	 * Checks that the pipeline passed in has a reasonable rank (for instance)
 	 * 
-	 * @param dataset
-	 * @param slicing
+	 * @param firstSlice - may be null, image assumed if it is
 	 * @param series
 	 */
-	private void checkPipeline(IRichDataset dataset, Map<Integer, String> slicing, IOperation... series) throws Exception {
-		
-        final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
-        
+	public void validate(IDataset firstSlice, IOperation... series) throws OperationException {
+		       
+		if (firstSlice==null) firstSlice = Random.rand(new int[]{1024, 1024});
         if (series[0].getInputRank()==OperationRank.SAME) {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }

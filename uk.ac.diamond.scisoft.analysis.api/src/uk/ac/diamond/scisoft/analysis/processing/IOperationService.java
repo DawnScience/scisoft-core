@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.Collection;
 
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -134,6 +135,15 @@ public interface IOperationService {
 	 * @throws OperationException
 	 */
 	public void executeParallelSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+
+	/**
+	 * Method to validate a pipeline, throwing an exception if the pipeline is not valid.
+	 * 
+	 * @param firstSlice
+	 * @param series
+	 * @throws InvalidRankException
+	 */
+	public void validate(IDataset firstSlice, IOperation... series) throws InvalidRankException, OperationException;
 
 	/**
 	 * Optionally configure the parallel timeout of this service.

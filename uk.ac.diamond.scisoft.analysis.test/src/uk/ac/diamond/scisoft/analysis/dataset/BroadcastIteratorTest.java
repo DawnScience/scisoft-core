@@ -139,6 +139,16 @@ public class BroadcastIteratorTest {
 			Assert.assertEquals(c.getDouble(j), (j + 2.0), 1e-15);
 		}
 
+		b = DatasetFactory.createFromObject(2);
+		it = new BroadcastIterator(a, b);
+		Assert.assertArrayEquals("Broadcast shape", new int[] {}, it.getShape());
+		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
+		Assert.assertTrue(it.hasNext());
+		c.set(it.aDouble * it.bDouble);
+		Assert.assertEquals(a.getDouble(), it.aDouble, 1e-15);
+		Assert.assertEquals(b.getDouble(), it.bDouble, 1e-15);
+		Assert.assertEquals(c.getDouble(), 2.0, 1e-15);
+
 		// also sliced views
 		a = DatasetFactory.createRange(5, Dataset.FLOAT64).reshape(5, 1);
 		b = DatasetFactory.createRange(2, 8, 1, Dataset.FLOAT64).getSliceView(new Slice(null, null, 2));

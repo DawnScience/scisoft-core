@@ -147,7 +147,7 @@ public class OperationServiceImpl implements IOperationService {
 	        	OperationRank input = series[i].getInputRank();
 	        	if (input == OperationRank.ANY)  input = OperationRank.get(firstSlice.getRank());
 	        	if (!input.isCompatibleWith(output)) {
-	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getDescription()+"' is not compatible with the input of '"+series[i].getDescription()+"'.");
+	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getName()+"' is not compatible with the input of '"+series[i].getName()+"'.");
 	        	}
 	        	output = series[i].getOutputRank();
 	        	if (output == OperationRank.SAME) output = input;

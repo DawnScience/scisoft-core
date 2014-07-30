@@ -30,6 +30,9 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 
+/**
+ * Common base for both lazy and normal dataset implementations
+ */
 public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 
 	protected static final Logger logger = LoggerFactory.getLogger(LazyDatasetBase.class);
@@ -119,18 +122,25 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 
 	@Override
 	public IMetaData getMetadata() {
-		List<IMetaData> ml = null;
-		try {
-			ml = getMetadata(IMetaData.class);
-		} catch (Exception e) {
+		if (metadata == null)
+			return null;
+
+		List<MetadataType> ml = null;
+		for (Class<? extends MetadataType> c : metadata.keySet()) {
+			if (IMetaData.class.isAssignableFrom(c)) {
+				ml = metadata.get(c);
+			}
 		}
 		if (ml == null)
 			return null;
-		return ml.get(0);
+		return (IMetaData) ml.get(0);
 	}
 
 	@Override
 	public void addMetadata(MetadataType metadata) {
+		if (metadata == null)
+			return;
+
 		if (this.metadata == null) {
 			this.metadata = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
 		}
@@ -144,6 +154,9 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
+		if (metadata == null)
+			return null;
+
 		if (clazz == null) {
 			List<T> all = new ArrayList<T>();
 			for (Class<? extends MetadataType> c : metadata.keySet()) {

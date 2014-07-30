@@ -285,7 +285,13 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public IOperation create(String operationId) throws Exception {
 		checkOperations();
-		return operations.get(operationId).getClass().newInstance();
+		IOperation op = operations.get(operationId).getClass().newInstance();
+		if (op instanceof AbstractOperation) {
+			AbstractOperation aop = (AbstractOperation)op;
+			aop.setName(operations.get(operationId).getName());
+			aop.setDescription(operations.get(operationId).getDescription());
+		}
+		return op;
 	}
 
 	@Override

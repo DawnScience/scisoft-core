@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
@@ -36,7 +37,10 @@ public class ThresholdMask extends AbstractOperation {
 		IDataset mask = null;
 		try {
 			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
-			mask = maskMetadata.getMask().getSlice((Slice[])null);
+			mask = maskMetadata!=null
+				 ? maskMetadata.getMask().getSlice((Slice[])null)
+				 : BooleanDataset.ones(slice.getShape());
+				 
 		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}
@@ -49,7 +53,7 @@ public class ThresholdMask extends AbstractOperation {
 			Double upper  = (Double)model.get("Upper");
 			Double lower  = (Double)model.get("Lower");
 			
-			// Apply a threshold
+			// TODO A fork/join or Java8 lambda would do this operation faster...
 			PositionIterator it = new PositionIterator(mask.getShape());
 			while (it.hasNext()) {
 								
@@ -61,6 +65,7 @@ public class ThresholdMask extends AbstractOperation {
 			monitor.worked(1);
 			
 			return new OperationData(data);
+
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}

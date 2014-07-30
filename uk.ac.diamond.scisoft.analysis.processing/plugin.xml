@@ -55,6 +55,14 @@
             name="Peak Fit"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdMask"
+            description="Create a mask with intensity values below a lower bound and above an upper bound masked."
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask"
+            name="Threshold Mask"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

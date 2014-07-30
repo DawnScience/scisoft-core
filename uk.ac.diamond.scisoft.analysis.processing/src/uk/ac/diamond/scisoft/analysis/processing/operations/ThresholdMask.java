@@ -36,7 +36,8 @@ public class ThresholdMask extends AbstractOperation {
 	@Override
 	public OperationData execute(OperationData slice, IMonitor monitor) throws OperationException {
 		
-		final BooleanDataset mask = (BooleanDataset)slice.getMask();
+		BooleanDataset mask = (BooleanDataset)slice.getMask();
+		if (mask==null) mask = BooleanDataset.ones(slice.getData().getShape());
 		if (!isCompatible(slice.getData().getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}

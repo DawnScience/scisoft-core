@@ -100,6 +100,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="model" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

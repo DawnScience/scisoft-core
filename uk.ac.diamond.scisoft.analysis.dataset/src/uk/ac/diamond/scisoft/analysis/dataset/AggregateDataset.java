@@ -371,7 +371,7 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 	}
 
 	@Override
-	public void setMetadata(IMetaData metadata) {
+	public void setMetadata(MetadataType metadata) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

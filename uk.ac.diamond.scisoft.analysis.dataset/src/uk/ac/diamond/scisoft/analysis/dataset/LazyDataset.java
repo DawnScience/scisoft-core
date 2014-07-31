@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 /**
  * Class that implements lazy dataset interface
  */
-public class LazyDataset extends LazyDatasetBase implements ILazyDataset, Cloneable, Serializable {
+public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializable {
 
 	/**
 	 * Update this when there are any serious changes to API

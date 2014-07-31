@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -162,14 +161,14 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	 * 
 	 * @param metadata
 	 */
-	public void addMetadata(final MetadataType metadata);
+	public <T extends MetadataType> void addMetadata(final T metadata);
 
 	/**
 	 * Set metadata on the dataset
 	 * 
 	 * @param metadata
 	 */
-	public void setMetadata(final IMetaData metadata);
+	public <T extends MetadataType> void setMetadata(T metadata);
 
 	/**
 	 * Clone dataset

@@ -69,6 +69,15 @@
             name="Threshold Mask"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
+            description="Import detector geometry and x-ray energy"
+            icon="icons/CalibrationRun.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel"
+            name="Import Diffraction Metadata"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

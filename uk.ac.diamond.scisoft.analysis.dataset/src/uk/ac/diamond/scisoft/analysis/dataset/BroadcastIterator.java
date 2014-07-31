@@ -72,7 +72,7 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param b
 	 */
 	public BroadcastIterator(Dataset a, Dataset b) {
-		this(a, b, null);
+		this(a, b, null, false);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param createIfNull
 	 */
 	public BroadcastIterator(Dataset a, Dataset b, Dataset o, boolean createIfNull) {
-		List<int[]> fullShapes = setupShapes(a.getShapeRef(), b.getShapeRef(), o == null ? null : o.getShapeRef());
+		List<int[]> fullShapes = broadcastShapes(a.getShapeRef(), b.getShapeRef(), o == null ? null : o.getShapeRef());
 
 		checkItemSize(a, b, o);
 
@@ -322,7 +322,12 @@ public class BroadcastIterator extends IndexIterator {
 		return null;
 	}
 
-	static List<int[]> setupShapes(int[]... shapes) {
+	/**
+	 * Take in shapes and broadcast them to same rank
+	 * @param shapes
+	 * @return list of broadcasted shapes plus the first entry is the maximum shape
+	 */
+	static public List<int[]> broadcastShapes(int[]... shapes) {
 		int maxRank = -1;
 		for (int[] s : shapes) {
 			if (s == null)
@@ -402,6 +407,9 @@ public class BroadcastIterator extends IndexIterator {
 			oIndex = bIndex;
 		}
 
+		if (aIndex == aMax || bIndex == bMax)
+			return false;
+
 		if (oldA != aIndex) {
 			if (asDouble) {
 				aDouble = aDataset.getElementDoubleAbs(aIndex);
@@ -417,7 +425,7 @@ public class BroadcastIterator extends IndexIterator {
 			}
 		}
 
-		return aIndex != aMax && bIndex != bMax;
+		return true;
 	}
 
 	/**

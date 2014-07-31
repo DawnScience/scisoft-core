@@ -18,7 +18,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
  */
 public abstract class AbstractMathsOperation extends AbstractOperation {
 
-	private Number         value;
+	private Object         value;
 	
 	/**
 	 * TODO This operation is only an example.
@@ -27,15 +27,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 	public OperationData execute(IDataset a, IMonitor monitor) throws OperationException {
 		
 		try {
-			IDataset result;
-			if (value!=null) {
-				// TODO FIXME We simply get all data out of the lazy and return it
-			    result = operation(a, value);
-			} else {
-				final IDataset b = a;
-				result = operation(a, b);
-
-			}
+			IDataset result= operation(a, value);
 			// TODO Need to set up axes and meta correctly.
 			return new OperationData(result);
 			
@@ -48,7 +40,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
-		this.value = (Number)model.get("Value");
+		this.value = model.get("Value");
 	}
 
 	

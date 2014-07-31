@@ -172,8 +172,9 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	}
 
 	@Override
-	public void setMetadata(IMetaData metadata) {
-		meta = metadata;
+	public void setMetadata(MetadataType metadata) {
+		if (metadata instanceof IMetaData)
+			meta = (IMetaData) metadata;
 	}
 
 	@Override

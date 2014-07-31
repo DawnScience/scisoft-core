@@ -24,6 +24,7 @@
             description="Azimithal integration on an image using a sector region."
             icon="icons/sector.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel"
             name="Azimithal Integration">
       </operation>
       <operation
@@ -31,6 +32,7 @@
             description="Run an arbitrary function on the data to transform it."
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel"
             name="Function Operation">
       </operation>
       <operation
@@ -38,20 +40,23 @@
             description="Using a box region, select a portion of the data to integrate in X and Y."
             icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel"
             name="Box Integration">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.SelectROI"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox"
             description="Define a region of interest to be used in the rest of the processing pipeline."
             icon="icons/region.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.selectROI"
-            name="Select Region of Interest">
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel"
+            name="Cut Rotated Cartesian Box">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"
             description="Fit a peak to 1D data"
             icon="icons/fit.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel"
             name="Peak Fit"
             visible="true">
       </operation>
@@ -60,7 +65,26 @@
             description="Create a mask with intensity values below a lower bound and above an upper bound masked."
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdMaskModel"
             name="Threshold Mask"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
+            description="Import detector geometry and x-ray energy"
+            icon="icons/CalibrationRun.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel"
+            name="Import Diffraction Metadata"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation"
+            description="Integrate a 2D powder image"
+            icon="icons/PowderIntegration.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel"
+            name="Pixel Integration of 2D powder image"
             visible="true">
       </operation>
    </extension>

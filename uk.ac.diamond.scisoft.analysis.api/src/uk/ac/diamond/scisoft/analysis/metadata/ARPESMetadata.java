@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
- * This metadata describes if a dataset has axis information associated with it
+ * This metadata describes ARPES-related information
  */
 public interface ARPESMetadata extends MetadataType {
 
@@ -25,14 +25,14 @@ public interface ARPESMetadata extends MetadataType {
 	public ILazyDataset getAnalyserAngles();
 	
 	// Axis associated with the scan direction of the data
-	public ILazyDataset getPloarAngles();
+	public ILazyDataset getPolarAngles();
 	public ILazyDataset getTiltAngles();
 	public ILazyDataset getAzimuthalAngles();
 
-	// Calibration Information
+	// Calibration information
 	public ILazyDataset getEnergyAxisOffset();
 	
-	// calculated axis accociated with frames
+	// calculated axis associated with frames
 	public ILazyDataset getBindingEnergies();
 	public ILazyDataset getPhotoelectronMomentum();
 	

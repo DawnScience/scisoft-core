@@ -1,5 +1,5 @@
 /*-
- * Copyright 2013 Diamond Light Source Ltd.
+ * Copyright 2014 Diamond Light Source Ltd.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.util.ArrayList;
+
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -76,6 +80,59 @@ public class NexusHDF5Loader extends HDF5Loader {
 			
 		}
 		
+		//TODO Add in unit metadata information
+		
+		// Augment data as required
+		// get all data with signal attribute
+		try {
+			for (String metaKey : dh.getMetadata().getMetaNames()) {
+				if (metaKey.contains("@signal")) {
+					// find the data
+					String key = metaKey.replace("@signal", "");
+					ILazyDataset data = dh.getLazyDataset(key);
+					
+					// repass all metadata to see accociated metadata
+					ArrayList<String> additionalMetadata = new ArrayList<String>(0);
+					String[] result = key.split("/");
+					String parentKey = "";
+					for(int i = 0; i < result.length-1; i++) {
+						if(result[i].length() > 0) {
+							parentKey += "/" + result[i];
+						}
+					}
+					for (String repassKey : dh.getMetadata().getMetaNames()) {
+						if (repassKey.startsWith(parentKey)) {
+							System.out.println(repassKey);
+							additionalMetadata.add(repassKey);
+						} 
+					}
+					
+					// get exisiting axis metadata
+					AxesMetadataImpl axesMetadata = (AxesMetadataImpl) data.getMetadata(AxesMetadata.class);
+					if (axesMetadata == null) {
+						axesMetadata = new AxesMetadataImpl(data.getShape().length);
+						data.addMetadata(axesMetadata);
+					}
+					
+					
+					// look through the additional metadata for axis information
+					//TODO Shoud take @primary into account when adding axes.
+					for (String goodKey : additionalMetadata) {
+						if (goodKey.endsWith("@axis")) {
+							String axisName = goodKey.replace("@axis", "");
+							ILazyDataset axisData = dh.getLazyDataset(axisName);
+							int axisDim = Integer.parseInt((String)dh.getMetadata().getMetaValue(goodKey));
+							axesMetadata.addAxis(axisData, axisDim);
+							System.out.println("");
+						}
+					}
+					
+					data.setMetadata(null);
+				}
+			}
+		} catch (Exception e) {
+			throw new ScanFileHolderException("Failed to augment data with metadata", e);
+		}
 		
 		return dh;
 	}

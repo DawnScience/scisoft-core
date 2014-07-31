@@ -37,6 +37,8 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class PixelIntegrationUtils {
 	
+	public enum IntegrationMode{NONSPLITTING,SPLITTING,SPLITTING2D,NONSPLITTING2D}
+	
 	public static AbstractDataset generate2ThetaArrayRadians(IDiffractionMetadata md) {
 		return generate2ThetaArrayRadians(getShape(md), md);
 	}

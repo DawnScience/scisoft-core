@@ -130,6 +130,7 @@ public abstract class AbstractPixelIntegration {
 	}
 	
 	public void setAxisType(ROIProfile.XAxis axis) {
+		if (this.xAxis == axis) return;
 		this.xAxis = axis;
 		radialArray = null;
 		binEdges = null;

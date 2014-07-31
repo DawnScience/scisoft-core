@@ -41,11 +41,11 @@
             name="Box Integration">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.SelectROI"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox"
             description="Define a region of interest to be used in the rest of the processing pipeline."
             icon="icons/region.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.selectROI"
-            name="Select Region of Interest">
+            name="Cut Rotated Cartesian Box">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"

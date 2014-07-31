@@ -32,6 +32,7 @@
             description="Run an arbitrary function on the data to transform it."
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel"
             name="Function Operation">
       </operation>
       <operation

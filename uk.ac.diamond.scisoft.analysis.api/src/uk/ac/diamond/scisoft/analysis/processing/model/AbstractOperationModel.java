@@ -18,9 +18,9 @@ package uk.ac.diamond.scisoft.analysis.processing.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -69,6 +69,35 @@ public abstract class AbstractOperationModel implements IOperationModel {
 		return null;
 	}
 	
+	@Override
+	public boolean isModelField(String name) throws NoSuchFieldException, SecurityException {
+		
+		final Field field = getClass().getDeclaredField(name);
+		OperationModelField omf = (OperationModelField)field.getAnnotation(OperationModelField.class);
+
+		
+		final String getter = getGetterName(name).toLowerCase();
+		Method[] methods = getClass().getMethods();
+		for (Method method : methods) {
+			if (method.getName().toLowerCase().equals(getter)) {
+				if (method.getParameterTypes().length<1) {
+					return true;
+				}
+			}
+		}
+		
+		final String isser  = getIsserName(name).toLowerCase();
+		for (Method method : methods) {
+			if (method.getName().toLowerCase().equals(isser)) {
+				if (method.getParameterTypes().length<1) {
+					return true;
+				}
+			}
+		}
+
+	    return false;
+	}
+
 	/**
 	 * Set a field by name using reflection.
 	 * @param name

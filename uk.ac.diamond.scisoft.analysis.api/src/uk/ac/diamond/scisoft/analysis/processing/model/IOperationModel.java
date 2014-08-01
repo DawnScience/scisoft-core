@@ -46,4 +46,11 @@ public interface IOperationModel {
 	 */
 	public Object set(String name, Object value) throws Exception;
 
+	/**
+	 * 
+	 * @param name
+	 * @return true if the given field in in the model and does not have an annotation making it invisible.
+	 */
+	public boolean isModelField(String name) throws Exception;
+
 }

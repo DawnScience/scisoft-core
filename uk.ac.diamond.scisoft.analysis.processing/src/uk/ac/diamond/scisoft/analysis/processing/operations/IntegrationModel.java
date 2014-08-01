@@ -5,7 +5,7 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 public class IntegrationModel extends AbstractOperationModel {
 
-	private IROI region;
+	protected IROI region;
 
 	public IROI getRegion() {
 		return region;

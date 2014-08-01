@@ -45,8 +45,17 @@ public abstract class AbstractOperationModel implements IOperationModel {
 	@Override
 	public Object get(String name) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
+		Object val = get(getClass(), name);
+		if (val==null) val = get(getClass().getSuperclass(), name);
+		return val;
+	}
+	
+	private Object get(Class<?> clazz, String name) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		
+		if (clazz==null || clazz.equals(Object.class)) return null;
+		
 		final String getter = getGetterName(name).toLowerCase();
-		Method[] methods = getClass().getMethods();
+		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {
 			if (method.getName().toLowerCase().equals(getter)) {
 				if (method.getParameterTypes().length<1) {
@@ -65,14 +74,18 @@ public abstract class AbstractOperationModel implements IOperationModel {
 				}
 			}
 		}
-
 		return null;
 	}
-	
+
 	@Override
 	public boolean isModelField(String name) throws NoSuchFieldException, SecurityException {
 		
-		final Field field = getClass().getDeclaredField(name);
+		Field field = null;
+		try {
+		    field = getClass().getDeclaredField(name);
+		} catch (Exception ne) {
+			field = getClass().getSuperclass().getDeclaredField(name);
+		}
 		OperationModelField omf = (OperationModelField)field.getAnnotation(OperationModelField.class);
 
 		

@@ -24,7 +24,7 @@
             description="Azimithal integration on an image using a sector region."
             icon="icons/sector.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel"
             name="Azimithal Integration">
       </operation>
       <operation
@@ -40,7 +40,7 @@
             description="Using a box region, select a portion of the data to integrate in X and Y."
             icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegrationModel"
             name="Box Integration">
       </operation>
       <operation

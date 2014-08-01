@@ -110,13 +110,13 @@ public class NexusHDF5Loader extends HDF5Loader {
 					
 					// get existing axis metadata
 					List<AxesMetadata> list = data.getMetadata(AxesMetadata.class);
+					AxesMetadataImpl axesMetadata;
 					if (list == null || list.size() == 0) {
-						continue;
+						axesMetadata = new AxesMetadataImpl(data.getRank());
+						data.addMetadata(axesMetadata);
+					} else {
+						axesMetadata = (AxesMetadataImpl) list.get(0);
 					}
-
-					AxesMetadataImpl axesMetadata = (AxesMetadataImpl) list.get(0);
-					axesMetadata = new AxesMetadataImpl(data.getShape().length);
-					data.addMetadata(axesMetadata);
 					
 					// look through the additional metadata for axis information
 					//TODO Should take @primary into account when adding axes.

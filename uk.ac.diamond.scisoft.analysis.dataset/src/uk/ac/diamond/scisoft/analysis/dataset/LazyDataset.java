@@ -412,7 +412,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		lazy.sliceStart = lstart.clone();
 		lazy.sliceStep  = lstep.clone();
 		lazy.base = base == null ? this : base;
-		lazy.metadata = metadata;
+		lazy.metadata = copyMetadata();
+		lazy.sliceMetadata(lstart, lstop, lstep);
 		return lazy;
 	}
 

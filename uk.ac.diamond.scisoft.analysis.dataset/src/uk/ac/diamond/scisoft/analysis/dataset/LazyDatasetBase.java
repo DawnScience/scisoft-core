@@ -17,10 +17,13 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
+import uk.ac.diamond.scisoft.analysis.metadata.Sliceable;
 
 /**
  * Common base for both lazy and normal dataset implementations
@@ -195,5 +199,106 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		}
 
 		return (List<T>) metadata.get(findMetadataTypeSubInterfaces(clazz));
+	}
+
+	protected Map<Class<? extends MetadataType>, List<MetadataType>> copyMetadata() {
+		if (metadata == null)
+			return null;
+
+		HashMap<Class<? extends MetadataType>, List<MetadataType>> map = new HashMap<Class<? extends MetadataType>, List<MetadataType>>();
+
+		for (Class<? extends MetadataType> c : metadata.keySet()) {
+			List<MetadataType> l = metadata.get(c);
+			List<MetadataType> nl = new ArrayList<MetadataType>(l.size());
+			map.put(c, nl);
+			for (MetadataType m : l) {
+				nl.add(m.clone());
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * Slice all datasets in metadata that are annotated by @Sliceable. Call this on the new sliced
+	 * dataset after cloning the metadata
+	 * 
+	 * @param start
+	 * @param stop
+	 * @param step
+	 */
+	protected void sliceMetadata(int[] start, int[] stop, int[] step) {
+		if (metadata == null)
+			return;
+
+		for (Class<? extends MetadataType> c : metadata.keySet()) {
+			for (MetadataType m : metadata.get(c)) {
+				Class<? extends MetadataType> mc = m.getClass();
+				Sliceable sa = mc.getAnnotation(Sliceable.class);
+				if (sa != null) {
+					System.err.println(Arrays.toString(sa.fieldNames()));
+					for (String fn : sa.fieldNames()) {
+						try {
+							Field f = mc.getDeclaredField(fn);
+							f.setAccessible(true);
+							Object o = f.get(m);
+							Object r = null;
+							if (o instanceof ILazyDataset) {
+								r = ((ILazyDataset) o).getSliceView(start, stop, step);
+								if (r != null) {
+									f.set(m, r);
+								}
+							} else if (o.getClass().isArray()) {
+								int l = Array.getLength(o);
+								if (l > 0) {
+									r = Array.get(o, 0);
+									if (r instanceof ILazyDataset) {
+										for (int i = 0; i < l; i++) {
+											ILazyDataset ld = (ILazyDataset) Array.get(o, i);
+											Array.set(o, i, ld.getSliceView(start, stop, step));
+										}
+									}
+								}
+							} else if (o instanceof List<?>) {
+								List<?> list = (List<?>) o;
+								int l = list.size();
+								if (l > 0) {
+									r = list.get(0);
+									if (r instanceof ILazyDataset) {
+										@SuppressWarnings("unchecked")
+										List<ILazyDataset> ldList = (List<ILazyDataset>) list;
+										for (int i = 0; i < l; i++) {
+											ldList.set(i, ldList.get(i).getSliceView(start, stop, step));
+										}
+									}
+								}
+							} else if (o instanceof Map<?,?>) {
+								Map<?, ?> map = (Map<?, ?>) o;
+								int l = map.size();
+								if (l > 0) {
+									Iterator<?> kit = map.keySet().iterator();
+									Object k = kit.next();
+									r = map.get(k);
+									if (r instanceof ILazyDataset) {
+										@SuppressWarnings("unchecked")
+										Map<Object, ILazyDataset> ldMap = (Map<Object, ILazyDataset>) map; 
+										ILazyDataset ld = (ILazyDataset) r;
+										ldMap.put(k, ld.getSliceView(start, stop, step));
+										while (kit.hasNext()) {
+											k = kit.next();
+											ld = ldMap.get(k);
+											ldMap.put(k, ld.getSliceView(start, stop, step));
+										}
+									}
+								}
+							}
+						} catch (IllegalArgumentException e) {
+						} catch (IllegalAccessException e) {
+						} catch (NoSuchFieldException e) {
+						} catch (SecurityException e) {
+						}
+					}
+				}
+			}
+		}
 	}
 }

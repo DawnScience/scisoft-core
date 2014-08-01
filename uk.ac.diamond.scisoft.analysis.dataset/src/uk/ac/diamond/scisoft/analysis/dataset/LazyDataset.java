@@ -226,15 +226,13 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 
 	@Override
 	public IDataset getSlice(Slice... slice) {
-		final int rank = shape.length;
-		if (slice == null || slice.length == 0) {
-			return getSlice((int[]) null, null, null);
+		try {
+			return getSlice(null, slice);
+		} catch (Exception e) {
+			// do nothing
 		}
-		final int[] start = new int[rank];
-		final int[] stop = new int[rank];
-		final int[] step = new int[rank];
-		Slice.convertFromSlice(slice, shape, start, stop, step);
-		return getSlice(start, stop, step);
+
+		return null;
 	}
 
 	@Override
@@ -321,8 +319,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 
 		if (base != null) {
 			for (int i = 0; i < r; i++) {
-				nstart[i] = sliceStart[i] + nstart[i];
-				nstop[i]  = nstart[i] + sliceStep[i] * nshape[i];
+				nstart[i] = sliceStart[i] + nstart[i] * sliceStep[i];
+				nstop[i]  = sliceStart[i] + nstop[i] * sliceStep[i];
 				nstep[i]  = sliceStep[i] * nstep[i];
 			}
 			return base.getSlice(monitor, nstart, nstop, nstep);

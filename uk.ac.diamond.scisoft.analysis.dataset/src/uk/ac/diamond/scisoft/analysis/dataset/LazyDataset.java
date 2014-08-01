@@ -284,44 +284,50 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 			lstop = stop;
 		}
 
-		int[] nshape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+		int[] lshape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 		int[] nstart;
 		int[] nstop;
 		int[] nstep;
+		int[] nshape;
 
 		int r = oShape.length;
 		if (r != shape.length || oOffset != nOffset) {
 			nstart = new int[r];
 			nstop = new int[r];
 			nstep = new int[r];
+			nshape = new int[r];
 			int i = 0;
 			for (; i < oOffset; i++) {
 				nstart[i] = 0;
 				nstop[i]  = 1;
 				nstep[i]  = 1;
+				nshape[i] = 1;
 			}
 			int j = nOffset;
 			for (; i < r && j < shape.length; i++, j++) {
 				nstart[i] = lstart[j];
 				nstop[i]  = lstop[j];
 				nstep[i]  = lstep[j];
+				nshape[i] = 1;
 			}
 			for (; i < r; i++) {
 				nstart[i] = 0;
 				nstop[i]  = 1;
 				nstep[i]  = 1;
+				nshape[i] = 1;
 			}
 		} else {
 			nstart = lstart;
 			nstop  = lstop;
 			nstep  = lstep;
+			nshape = lshape;
 		}
 
 		if (base != null) {
 			for (int i = 0; i < r; i++) {
 				nstart[i] = sliceStart[i] + nstart[i] * sliceStep[i];
-				nstop[i]  = sliceStart[i] + nstop[i] * sliceStep[i];
-				nstep[i]  = sliceStep[i] * nstep[i];
+				nstop[i]  = sliceStart[i] + (nshape[i] - 1) * sliceStep[i] + 1;
+				nstep[i]  = nstep[i] * sliceStep[i];
 			}
 			return base.getSlice(monitor, nstart, nstop, nstep);
 		}

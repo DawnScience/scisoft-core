@@ -130,8 +130,9 @@ public class LazyDatasetTest {
 
 	@Test
 	public void testGetSliceView() {
-		final Dataset d = Random.randn(new int[] {1, 2, 3, 4});
-		LazyDataset ld = new LazyDataset("", Dataset.INT, new int[] {1, 2, 3, 4}, new ILazyLoader() {
+		final int[] shape = new int[] {6, 2, 3, 4};
+		final Dataset d = Random.randn(shape);
+		LazyDataset ld = new LazyDataset("", Dataset.INT, shape, new ILazyLoader() {
 			@Override
 			public boolean isFileReadable() {
 				return true;
@@ -145,8 +146,16 @@ public class LazyDatasetTest {
 		});
 
 		Slice[] slice;
-		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3)};
-		ILazyDataset l = ld.getSliceView();
+		slice = new Slice[]{new Slice(1, null, 2), new Slice(1), null, new Slice(1, 3)};
+		ILazyDataset l = ld.getSliceView(null, shape, null);
+		System.out.println(l);
+//		Assert.assertEquals("Full slice", d, l);
+		Assert.assertEquals("Full slice", d, l.getSlice());
+		l = ld.getSliceView(slice);
+		System.out.println(l);
+		Assert.assertEquals("Part slice", d.getSlice(slice), l.getSlice());
+
+		l = ld.getSliceView();
 		System.out.println(l);
 		Assert.assertEquals("Full slice", d, l);
 		Assert.assertEquals("Full slice", d, l.getSlice());

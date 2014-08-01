@@ -26,12 +26,15 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 
-@Sliceable(fields = {"ds", "dds", "lds", "mds"})
 public class SliceableTestMetadata implements MetadataType {
 
+	@Sliceable
 	private ILazyDataset ds;
+	@Sliceable
 	private DoubleDataset[] dds;
+	@Sliceable
 	private List<ShortDataset> lds;
+	@Sliceable
 	private Map<String, BooleanDataset> mds;
 
 	public SliceableTestMetadata(ILazyDataset la, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map) {

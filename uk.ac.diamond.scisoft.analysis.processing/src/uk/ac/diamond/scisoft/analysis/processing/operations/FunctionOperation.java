@@ -15,7 +15,7 @@ public class FunctionOperation extends AbstractOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation";
 	}
 	
 	@Override

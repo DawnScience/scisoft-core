@@ -1,7 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import java.util.List;
+
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
@@ -29,8 +32,10 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 		
 		Dataset mask = null;
 		try {
-			MaskMetadata maskMetadata = ((MaskMetadata)slice.getMetadata(MaskMetadata.class));
-			mask = (Dataset)maskMetadata.getMask().getSlice((Slice[])null);
+			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
+			if (maskMetadata != null && !maskMetadata.isEmpty()) {
+				mask = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
+			}
 		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}

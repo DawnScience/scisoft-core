@@ -48,7 +48,7 @@ public class RankTest {
 	public void testAnyRank() throws Exception {
 		
 		System.out.println("Testing function which can run with any rank of data");
-		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation");
+		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
 		function.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -128,6 +128,13 @@ public class RankTest {
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi = service.findFirst("azimuthal");
+		azi.setModel(new AbstractOperationModel() {
+			
+			public IROI getRegion() {
+				return sector;
+			}
+			
+		});
 		final IOperation box = service.findFirst("box");
 		final IOperation add = service.findFirst("add");
 		add.setModel(new AbstractOperationModel() {
@@ -172,9 +179,16 @@ public class RankTest {
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi      = service.findFirst("azimuthal");
+		azi.setModel(new AbstractOperationModel() {
+			
+			public IROI getRegion() {
+				return sector;
+			}
+			
+		});
 		final IOperation add      = service.findFirst("add");
 		final IOperation sub      = service.findFirst("subtract");
-		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.fuctionOperation");
+		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
 		final IOperation box      = service.findFirst("box");
 		
 		// Parameters

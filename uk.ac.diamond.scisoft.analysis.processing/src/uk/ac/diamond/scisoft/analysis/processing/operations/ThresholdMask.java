@@ -5,6 +5,8 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -34,14 +36,16 @@ public class ThresholdMask extends AbstractOperation {
 		Dataset data = (Dataset)slice;
 		IDataset mask = null;
 		try {
-			MaskMetadata maskMetadata = ((MaskMetadata)data.getMetadata(MaskMetadata.class));
-			mask = maskMetadata!=null
-				 ? maskMetadata.getMask().getSlice((Slice[])null)
-				 : BooleanDataset.ones(slice.getShape());
+			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
+			if (maskMetadata != null && !maskMetadata.isEmpty()) {
+				mask = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
+			}
 				 
 		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}
+		
+		if (mask == null) mask = BooleanDataset.ones(slice.getShape());
 		
 		if (!isCompatible(slice.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");

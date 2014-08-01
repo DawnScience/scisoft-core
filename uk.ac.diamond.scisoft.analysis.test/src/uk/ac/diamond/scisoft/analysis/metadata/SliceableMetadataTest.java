@@ -80,7 +80,7 @@ public class SliceableMetadataTest {
 			assertEquals(2, tmd.getList().size());
 			assertEquals(2, tmd.getMap().size());
 		} catch (Exception e) {
-			fail("Should not fail");
+			fail("Should not fail: " + e);
 		}
 
 		Slice[] slice = new Slice[] {null, new Slice(1), null, new Slice(null, null, 2)};
@@ -97,8 +97,38 @@ public class SliceableMetadataTest {
 			assertArrayEquals(sliced.getShape(), tmd.getList().get(0).getShape());
 			assertArrayEquals(sliced.getShape(), tmd.getMap().get("1").getShape());
 		} catch (Exception e) {
-			fail("Should not fail");
+			fail("Should not fail: " + e);
 		}
+
+		SubMetadata smd = new SubMetadata(ld, dda, sdl, bdm);
+		dataset.setMetadata(smd);
+		sliced = dataset.getSliceView(slice);
+
+		try {
+			SubMetadata tmd = dataset.getMetadata(SubMetadata.class).get(0);
+			assertEquals(smd, tmd);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		assertArrayEquals(new int[] {1, 1, 3, 2}, sliced.getShape());
+		try {
+			SubMetadata tmd = sliced.getMetadata(SubMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(sliced.getShape(), tmd.getLazyDataset().getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getArray()[0].getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getList().get(0).getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getMap().get("1").getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getLazyDataset2().getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
 	}
 
 }

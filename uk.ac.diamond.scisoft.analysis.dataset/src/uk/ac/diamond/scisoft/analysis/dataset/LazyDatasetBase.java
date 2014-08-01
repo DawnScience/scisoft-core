@@ -173,6 +173,10 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	static Class<? extends MetadataType> findMetadataTypeSubInterfaces(Class<? extends MetadataType> clazz) {
+		Class<?> sclazz = clazz.getSuperclass();
+		if (sclazz != null && !sclazz.equals(Object.class)) // recurse up class hierarchy
+			return findMetadataTypeSubInterfaces((Class<? extends MetadataType>) sclazz);
+
 		for (Class<?> c : clazz.getInterfaces()) {
 			if (c.equals(MetadataType.class))
 				return clazz;
@@ -226,75 +230,86 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	 * @param stop
 	 * @param step
 	 */
-	protected void sliceMetadata(int[] start, int[] stop, int[] step) {
+	@SuppressWarnings("unchecked")
+	protected void sliceMetadata(final int[] start, final int[] stop, final int[] step) {
 		if (metadata == null)
 			return;
 
 		for (Class<? extends MetadataType> c : metadata.keySet()) {
 			for (MetadataType m : metadata.get(c)) {
 				Class<? extends MetadataType> mc = m.getClass();
-				for (Field f : mc.getDeclaredFields()) {
-					if (!f.isAnnotationPresent(Sliceable.class))
-						continue;
+				do { // iterate over super-classes
+					processClass(start, stop, step, m, mc);
+					Class<?> sclazz = mc.getSuperclass();
+					if (!MetadataType.class.isAssignableFrom(sclazz))
+						break;
+					mc = (Class<? extends MetadataType>) sclazz;
+				} while (true);
+			}
+		}
+	}
 
-					try {
-						f.setAccessible(true);
-						Object o = f.get(m);
-						Object r = null;
-						if (o instanceof ILazyDataset) {
-							r = ((ILazyDataset) o).getSliceView(start, stop, step);
-							if (r != null) {
-								f.set(m, r);
-							}
-						} else if (o.getClass().isArray()) {
-							int l = Array.getLength(o);
-							if (l > 0) {
-								r = Array.get(o, 0);
-								if (r instanceof ILazyDataset) {
-									for (int i = 0; i < l; i++) {
-										ILazyDataset ld = (ILazyDataset) Array.get(o, i);
-										Array.set(o, i, ld.getSliceView(start, stop, step));
-									}
-								}
-							}
-						} else if (o instanceof List<?>) {
-							List<?> list = (List<?>) o;
-							int l = list.size();
-							if (l > 0) {
-								r = list.get(0);
-								if (r instanceof ILazyDataset) {
-									@SuppressWarnings("unchecked")
-									List<ILazyDataset> ldList = (List<ILazyDataset>) list;
-									for (int i = 0; i < l; i++) {
-										ldList.set(i, ldList.get(i).getSliceView(start, stop, step));
-									}
-								}
-							}
-						} else if (o instanceof Map<?,?>) {
-							Map<?, ?> map = (Map<?, ?>) o;
-							int l = map.size();
-							if (l > 0) {
-								Iterator<?> kit = map.keySet().iterator();
-								Object k = kit.next();
-								r = map.get(k);
-								if (r instanceof ILazyDataset) {
-									@SuppressWarnings("unchecked")
-									Map<Object, ILazyDataset> ldMap = (Map<Object, ILazyDataset>) map; 
-									ILazyDataset ld = (ILazyDataset) r;
-									ldMap.put(k, ld.getSliceView(start, stop, step));
-									while (kit.hasNext()) {
-										k = kit.next();
-										ld = ldMap.get(k);
-										ldMap.put(k, ld.getSliceView(start, stop, step));
-									}
-								}
+	private static void processClass(final int[] start, final int[] stop, final int[] step, MetadataType m, Class<? extends MetadataType> mc) {
+		for (Field f : mc.getDeclaredFields()) {
+			if (!f.isAnnotationPresent(Sliceable.class))
+				continue;
+
+			try {
+				f.setAccessible(true);
+				Object o = f.get(m);
+				Object r = null;
+				if (o instanceof ILazyDataset) {
+					r = ((ILazyDataset) o).getSliceView(start, stop, step);
+					if (r != null) {
+						f.set(m, r);
+					}
+				} else if (o.getClass().isArray()) {
+					int l = Array.getLength(o);
+					if (l > 0) {
+						r = Array.get(o, 0);
+						if (r instanceof ILazyDataset) {
+							for (int i = 0; i < l; i++) {
+								ILazyDataset ld = (ILazyDataset) Array.get(o, i);
+								Array.set(o, i, ld.getSliceView(start, stop, step));
 							}
 						}
-					} catch (IllegalArgumentException e) {
-					} catch (IllegalAccessException e) {
-					} catch (SecurityException e) {
+					}
+				} else if (o instanceof List<?>) {
+					List<?> list = (List<?>) o;
+					int l = list.size();
+					if (l > 0) {
+						r = list.get(0);
+						if (r instanceof ILazyDataset) {
+							@SuppressWarnings("unchecked")
+							List<ILazyDataset> ldList = (List<ILazyDataset>) list;
+							for (int i = 0; i < l; i++) {
+								ldList.set(i, ldList.get(i).getSliceView(start, stop, step));
+							}
+						}
+					}
+				} else if (o instanceof Map<?,?>) {
+					Map<?, ?> map = (Map<?, ?>) o;
+					int l = map.size();
+					if (l > 0) {
+						Iterator<?> kit = map.keySet().iterator();
+						Object k = kit.next();
+						r = map.get(k);
+						if (r instanceof ILazyDataset) {
+							@SuppressWarnings("unchecked")
+							Map<Object, ILazyDataset> ldMap = (Map<Object, ILazyDataset>) map; 
+							ILazyDataset ld = (ILazyDataset) r;
+							ldMap.put(k, ld.getSliceView(start, stop, step));
+							while (kit.hasNext()) {
+								k = kit.next();
+								ld = ldMap.get(k);
+								ldMap.put(k, ld.getSliceView(start, stop, step));
+							}
+						}
 					}
 				}
+			} catch (IllegalArgumentException e) {
+			} catch (IllegalAccessException e) {
+			} catch (SecurityException e) {
 			}
 		}
 	}

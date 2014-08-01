@@ -16,8 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,40 +24,23 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 
-public class SliceableTestMetadata implements MetadataType {
+public class SubMetadata extends SliceableTestMetadata {
+	@Sliceable
+	ILazyDataset ldb;
 
-	@Sliceable
-	private ILazyDataset ds;
-	@Sliceable
-	private DoubleDataset[] dds;
-	@Sliceable
-	private List<ShortDataset> lds;
-	@Sliceable
-	private Map<String, BooleanDataset> mds;
+	public SubMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map) {
+		super(ld, array, list, map);
+		ldb = new DoubleDataset(ld.getShape());
+	}
 
-	public SliceableTestMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map) {
-		ds = ld;
-		dds = array;
-		lds = list;
-		mds = map;
+	public ILazyDataset getLazyDataset2() {
+		return ldb;
 	}
 
 	@Override
 	public MetadataType clone() {
-		return new SliceableTestMetadata(ds, dds.clone(), new ArrayList<ShortDataset>(lds), new HashMap<String, BooleanDataset>(mds));
-	}
-
-	public ILazyDataset getLazyDataset() {
-		return ds;
-	}
-
-	public DoubleDataset[] getArray() {
-		return dds;
-	}
-	public List<ShortDataset> getList() {
-		return lds;
-	}
-	public Map<String, BooleanDataset> getMap() {
-		return mds;
+		SubMetadata c = new SubMetadata(ldb, getArray(), getList(), getMap());
+		c.ldb = ldb;
+		return c;
 	}
 }

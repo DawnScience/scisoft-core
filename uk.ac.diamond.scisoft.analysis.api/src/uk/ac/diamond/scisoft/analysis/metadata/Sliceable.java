@@ -26,12 +26,6 @@ import java.lang.annotation.Target;
  * arrays and lists of lazy datasets, and maps where the values are lazy datasets.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.TYPE)
+@Target(value = ElementType.FIELD)
 public @interface Sliceable {
-	/**
-	 * 
-	 * @return array of names of a metadata type class's fields that need to be
-	 * sliced along with the enclosing dataset
-	 */
-	String[] fields();
 }

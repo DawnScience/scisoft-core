@@ -18,14 +18,15 @@ public interface AxesMetadata extends MetadataType {
 
 	/**
 	 * Get axis datasets
-	 * @return all axis datasets, any nulls represent default integer indexes
+	 * @return all axis datasets, any nulls represent default integer indexes, 
+	 * each axis is the main specified axis. i.e the result of getAxis(n)[0]
 	 */
 	public ILazyDataset[] getAxes();
 
 	/**
-	 * Get axis dataset for the given dimension
+	 * Get all axis datasets for the given dimension
 	 * @param axisDim dimension
-	 * @return axis dataset, null represent default integer indexes
+	 * @return axis datasets, null represent default integer indexes, the order is in inverse importance.
 	 */
-	public ILazyDataset getAxis(int axisDim);
+	public ILazyDataset[] getAxis(int axisDim);
 }

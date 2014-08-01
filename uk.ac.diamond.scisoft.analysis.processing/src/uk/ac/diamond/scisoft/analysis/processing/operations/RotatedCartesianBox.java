@@ -17,11 +17,6 @@ import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 public class RotatedCartesianBox extends AbstractOperation {
 	
 	@Override
-    public String getName() {
-		return "Select Region";
-	}
-
-	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.selectROI";
 	}

@@ -17,24 +17,22 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
-	Map<Integer, List<ILazyDataset>> axesMap = new HashMap<Integer, List<ILazyDataset>>(0);
-	int dims;
+	List<ILazyDataset>[] allAxes;
 
-	public AxesMetadataImpl(int axisDimensions) {
-		dims = axisDimensions;
+	@SuppressWarnings("unchecked")
+	public AxesMetadataImpl(int rank) {
+		allAxes = new List[rank];
 	}
 
 	public AxesMetadataImpl(AxesMetadataImpl axesMetadataImpl) {
-		axesMap.putAll(axesMetadataImpl.axesMap);
-		dims = axesMetadataImpl.dims;
+		allAxes = Arrays.copyOf(axesMetadataImpl.allAxes, axesMetadataImpl.allAxes.length);
 	}
 
 	public void setAxis(int axisDim, ILazyDataset[] axisData) {
@@ -42,13 +40,13 @@ public class AxesMetadataImpl implements AxesMetadata {
 		for (int i = 0; i < axisData.length; i++) {
 			axisList.add(axisData[i]);
 		}
-		axesMap.put(axisDim, axisList);
+		allAxes[axisDim] = axisList;
 	}
 
 	@Override
 	public ILazyDataset[] getAxes() {
-		ILazyDataset[] result = new ILazyDataset[dims];
-		for (int i = 0; i < dims; i++) {
+		ILazyDataset[] result = new ILazyDataset[allAxes.length];
+		for (int i = 0; i < result.length; i++) {
 			result[i] = getAxis(i)[0];
 		}
 		return null;
@@ -56,7 +54,9 @@ public class AxesMetadataImpl implements AxesMetadata {
 
 	@Override
 	public ILazyDataset[] getAxis(int axisDim) {
-		return axesMap.get(axisDim).toArray(new ILazyDataset[0]);
+		if (allAxes[axisDim] == null)
+			return null;
+		return allAxes[axisDim].toArray(new ILazyDataset[0]);
 	}
 
 	@Override
@@ -64,12 +64,11 @@ public class AxesMetadataImpl implements AxesMetadata {
 		return new AxesMetadataImpl(this);
 	}
 
-	public void addAxis(ILazyDataset axisData, Integer axisDim) {
-		if (!axesMap.containsKey(axisDim)) {
-			ArrayList<ILazyDataset> axisList = new ArrayList<ILazyDataset>(0);
-			axesMap.put(axisDim, axisList);
+	public void addAxis(ILazyDataset axisData, int axisDim) {
+		if (allAxes[axisDim] == null) {
+			allAxes[axisDim] = new ArrayList<ILazyDataset>();
 		}
-		axesMap.get(axisDim).add(axisData);
+		allAxes[axisDim].add(axisData);
 	}
 
 }

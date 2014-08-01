@@ -2,10 +2,15 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
+import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 public class RotatedCartesianBoxModel extends AbstractOperationModel {
 
 	private IRectangularROI roi;
+	
+	public RotatedCartesianBoxModel() {
+		roi = new RectangularROI(0,0,10,10,0);
+	}
 
 	public IRectangularROI getRoi() {
 		return roi;

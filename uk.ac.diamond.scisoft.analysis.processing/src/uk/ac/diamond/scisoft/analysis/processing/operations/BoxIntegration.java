@@ -13,6 +13,7 @@ import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 public class BoxIntegration extends AbstractIntegrationOperation {
 
+
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration";

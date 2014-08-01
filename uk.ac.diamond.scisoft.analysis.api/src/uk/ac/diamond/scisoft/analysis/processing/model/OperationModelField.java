@@ -42,4 +42,8 @@ public @interface OperationModelField {
 	 */
 	public boolean editable() default true;
 
+	/**
+	 * The label attribute. If unset, uses the name of the field for the label.
+	 */
+	public String label() default "";
 }

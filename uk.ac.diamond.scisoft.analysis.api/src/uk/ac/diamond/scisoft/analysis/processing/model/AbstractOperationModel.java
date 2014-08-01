@@ -31,6 +31,13 @@ import java.util.Locale;
  * 
  * This class MUST define a no argument constructor with getters and setters.
  * 
+ * NOTE You can currently have only two level of inheritence below this class so
+ * 
+ * class B extends A ...
+ * class A extends AbstractOperationModel 
+ * 
+ * Would be ok; BUT class C extends B ...  IS NOT OK - TWO LEVELS ONLY ARE ALLOWED! :)
+ * 
  */
 public abstract class AbstractOperationModel implements IOperationModel {
 	

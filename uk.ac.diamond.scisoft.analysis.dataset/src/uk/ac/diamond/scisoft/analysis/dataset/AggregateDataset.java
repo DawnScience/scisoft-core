@@ -249,8 +249,8 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		if (base != null) {
 			for (int i = 0; i < shape.length; i++) {
 				start[i] = sliceStart[i] + start[i] * sliceStep[i];
-				stop[i]  = sliceStart[i] + stop[i] * sliceStep[i];
-				step[i]  = sliceStep[i] * step[i];
+				stop[i]  = sliceStart[i] + (stop[i] - 1) * sliceStep[i] + 1;
+				step[i]  = step[i] * sliceStep[i];
 			}
 			return base.getSlice(monitor, start, stop, step);
 		}

@@ -64,9 +64,9 @@ public class PixelIntegrationOperation extends AbstractOperation {
 		data.addMetadata(new AxesMetadata() {
 			
 			@Override
-			public ILazyDataset getAxis(int axisDim) {
+			public ILazyDataset[] getAxis(int axisDim) {
 				// TODO Auto-generated method stub
-				return out.get(axisDim);
+				return new ILazyDataset[] {out.get(axisDim)};
 			}
 			
 			@Override

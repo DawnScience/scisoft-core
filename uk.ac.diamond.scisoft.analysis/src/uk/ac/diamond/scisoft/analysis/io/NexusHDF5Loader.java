@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
@@ -76,7 +77,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 		if(dh.contains("/entry1/instrument/analyser/data")) {
 			ILazyDataset data = dh.getLazyDataset("/entry1/instrument/analyser/data");
 			data.setMetadata(new Metadata());
-			// This should be done properly to add arpes metadata.
+			// This should be done properly to add ARPES metadata.
 			
 		}
 		
@@ -91,7 +92,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 					String key = metaKey.replace("@signal", "");
 					ILazyDataset data = dh.getLazyDataset(key);
 					
-					// repass all metadata to see accociated metadata
+					// reparse all metadata to see associated metadata
 					ArrayList<String> additionalMetadata = new ArrayList<String>(0);
 					String[] result = key.split("/");
 					String parentKey = "";
@@ -107,16 +108,18 @@ public class NexusHDF5Loader extends HDF5Loader {
 						} 
 					}
 					
-					// get exisiting axis metadata
-					AxesMetadataImpl axesMetadata = (AxesMetadataImpl) data.getMetadata(AxesMetadata.class);
-					if (axesMetadata == null) {
-						axesMetadata = new AxesMetadataImpl(data.getShape().length);
-						data.addMetadata(axesMetadata);
+					// get existing axis metadata
+					List<AxesMetadata> list = data.getMetadata(AxesMetadata.class);
+					if (list == null || list.size() == 0) {
+						continue;
 					}
-					
+
+					AxesMetadataImpl axesMetadata = (AxesMetadataImpl) list.get(0);
+					axesMetadata = new AxesMetadataImpl(data.getShape().length);
+					data.addMetadata(axesMetadata);
 					
 					// look through the additional metadata for axis information
-					//TODO Shoud take @primary into account when adding axes.
+					//TODO Should take @primary into account when adding axes.
 					for (String goodKey : additionalMetadata) {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");

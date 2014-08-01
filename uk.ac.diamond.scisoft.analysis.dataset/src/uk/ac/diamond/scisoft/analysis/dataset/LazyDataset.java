@@ -308,7 +308,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 				nstart[i] = lstart[j];
 				nstop[i]  = lstop[j];
 				nstep[i]  = lstep[j];
-				nshape[i] = 1;
+				nshape[i] = lshape[j];
 			}
 			for (; i < r; i++) {
 				nstart[i] = 0;
@@ -335,7 +335,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		IDataset a;
 		try {
 			a = loader.getDataset(monitor, oShape, nstart, nstop, nstep);
-			a.setShape(nshape);
+			a.setShape(lshape);
 		} catch (Exception e) {
 			// return a fake dataset to show that this has not worked, should not be used in general though.
 			logger.debug("Problem getting {}: {}", String.format("slice %s %s %s", Arrays.toString(start), Arrays.toString(stop),

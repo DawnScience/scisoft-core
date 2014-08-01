@@ -28,5 +28,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = ElementType.TYPE)
 public @interface Sliceable {
-	String[] fieldNames();
+	/**
+	 * 
+	 * @return array of names of a metadata type class's fields that need to be
+	 * sliced along with the enclosing dataset
+	 */
+	String[] fields();
 }

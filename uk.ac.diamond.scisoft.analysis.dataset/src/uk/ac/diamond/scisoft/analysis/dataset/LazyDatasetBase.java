@@ -235,8 +235,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				Class<? extends MetadataType> mc = m.getClass();
 				Sliceable sa = mc.getAnnotation(Sliceable.class);
 				if (sa != null) {
-					System.err.println(Arrays.toString(sa.fieldNames()));
-					for (String fn : sa.fieldNames()) {
+					for (String fn : sa.fields()) {
 						try {
 							Field f = mc.getDeclaredField(fn);
 							f.setAccessible(true);

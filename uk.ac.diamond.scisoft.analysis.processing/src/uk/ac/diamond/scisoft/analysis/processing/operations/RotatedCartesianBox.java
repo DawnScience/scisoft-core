@@ -15,8 +15,6 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 
 public class RotatedCartesianBox extends AbstractOperation {
-
-	private AbstractOperationModel model;
 	
 	@Override
     public String getName() {
@@ -35,7 +33,7 @@ public class RotatedCartesianBox extends AbstractOperation {
 		IRectangularROI roi;
 		try {
 			roi = (IRectangularROI)model.get("roi");
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}
 		MapToRotatedCartesian map = new MapToRotatedCartesian(roi);
@@ -44,11 +42,6 @@ public class RotatedCartesianBox extends AbstractOperation {
 		OperationData result = new OperationData(dataRegion);
 		
 		return result;
-	}
-
-	@Override
-	public void setModel(IOperationModel model) {
-		this.model = (AbstractOperationModel)model;
 	}
 
 	@Override

@@ -40,6 +40,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
+		super.setModel(model);
 		this.value = model.get("Value");
 	}
 

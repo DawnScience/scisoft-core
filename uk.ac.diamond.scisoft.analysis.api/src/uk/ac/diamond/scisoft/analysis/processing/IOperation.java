@@ -89,6 +89,13 @@ public interface IOperation {
 	 * @throws IllegalArgumentException if the parameters are not those required by the operation.
 	 */
 	public void setModel(IOperationModel parameters) throws Exception;
+	
+	/**
+	 * 
+	 * @return the model which is to be used or null if no model has been set.
+	 */
+	public IOperationModel getModel();
+
 
 	/**
 	 * Gets the rank of input data for the operations algorithm. You might be iterating
@@ -108,5 +115,6 @@ public interface IOperation {
 	 * @return rank of output data which we return. For instance for integration we input 2(image) and output 1(integration)
 	 */
 	public OperationRank getOutputRank();
+
 
 }

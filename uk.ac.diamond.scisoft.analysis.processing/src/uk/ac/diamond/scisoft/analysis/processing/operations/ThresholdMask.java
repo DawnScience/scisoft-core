@@ -18,8 +18,6 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class ThresholdMask extends AbstractOperation {
 
-	private IOperationModel model;
-
 	@Override
     public String getName() {
 		return "Threshold Mask";
@@ -89,11 +87,6 @@ public class ThresholdMask extends AbstractOperation {
 		}
 
 		return i == imax;
-	}
-
-	@Override
-	public void setModel(IOperationModel model) throws IllegalArgumentException {
-		this.model = model;
 	}
 
 	@Override

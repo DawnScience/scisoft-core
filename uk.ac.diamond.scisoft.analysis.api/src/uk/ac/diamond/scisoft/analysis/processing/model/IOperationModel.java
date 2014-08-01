@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.model;
 
+
 /**
  * A model to use with operations. Do not put JSON stuff in here.
  * 

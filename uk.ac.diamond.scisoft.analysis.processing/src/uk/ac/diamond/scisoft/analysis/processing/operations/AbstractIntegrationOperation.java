@@ -12,6 +12,7 @@ public abstract class AbstractIntegrationOperation extends AbstractOperation {
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
+		super.setModel(model);
 		this.region = (IROI)model.get("region");
 	}
 	

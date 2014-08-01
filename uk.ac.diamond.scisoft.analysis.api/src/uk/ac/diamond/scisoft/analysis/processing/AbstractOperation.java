@@ -16,17 +16,23 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
+
 
 public abstract class AbstractOperation implements IOperation {
 
+	protected IOperationModel model;
+	
     private String name;
     private String description;
+	@Override
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	@Override
 	public String getDescription() {
 		if (description==null) return getId();
 		return description;
@@ -66,5 +72,14 @@ public abstract class AbstractOperation implements IOperation {
 	@Override
 	public String toString() {
 		return "AbstractOperation [name=" + name + "]";
+	}
+	
+	@Override
+	public IOperationModel getModel() {
+		return model;
+	}
+	@Override
+	public void setModel(IOperationModel model) throws Exception {
+		this.model = model;
 	}
 }

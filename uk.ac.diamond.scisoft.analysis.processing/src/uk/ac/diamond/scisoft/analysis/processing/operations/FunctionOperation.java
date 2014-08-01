@@ -31,7 +31,7 @@ public class FunctionOperation extends AbstractOperation {
 
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
-				
+		super.setModel(model);
 		this.function = (IFunction)model.get("function");
 	}
 	

@@ -24,6 +24,10 @@ public class FittingModel extends AbstractOperationModel {
 	private boolean autostopping;
 	private boolean backgrounddominated;
 
+	public FittingModel() {
+		
+	}
+	
 	public FittingModel(IDataset xaxis, Class<? extends APeak> class1,
 			Class<? extends IOptimizer> class2, double d, long seed, int smoothing,
 			int numpeaks, double threshold, boolean autostopping,

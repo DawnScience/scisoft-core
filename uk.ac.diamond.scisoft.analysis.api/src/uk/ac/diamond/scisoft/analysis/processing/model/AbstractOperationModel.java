@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -27,6 +28,8 @@ import java.util.Locale;
  * Do not put non-pojo methods in your models, keep them vanilla.
  * 
  * BE WARNED the get and set are not especially fast - do not call them from big loops!
+ * 
+ * This class MUST define a no argument constructor with getters and setters.
  * 
  */
 public abstract class AbstractOperationModel implements IOperationModel {

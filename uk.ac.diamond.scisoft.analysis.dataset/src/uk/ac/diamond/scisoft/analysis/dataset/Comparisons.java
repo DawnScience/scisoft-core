@@ -33,51 +33,67 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a == b
 	 */
-	public static BooleanDataset equalTo(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset equalTo(Object a, Object b) {
+		return equalTo(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is equal b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are equal. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a == b
+	 */
+	public static BooleanDataset equalTo(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				for (int j = 0; br && j < as; j++) {
-					br &= a.getElementDoubleAbs(ita.index + j) == db;
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementDoubleAbs(it.aIndex + j) == bd;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				for (int j = 0; br && j < bs; j++) {
-					br &= da == b.getElementDoubleAbs(itb.index + j);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ad == db.getElementDoubleAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementDoubleAbs(ita.index) == b.getElementDoubleAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, it.aDouble == it.bDouble);
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementDoubleAbs(ita.index + j) == b.getElementDoubleAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) == db.getElementDoubleAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
+
 		return r;
 	}
 
@@ -89,213 +105,81 @@ public class Comparisons {
 	 * of the dataset with smaller items is used for comparison.
 	 * @param a
 	 * @param b
-	 * @return dataset where item is true if a == b
-	 */
-	public static BooleanDataset equalTo(Object a, Object b) {
-		BooleanDataset r = null;
-
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(ad, bd);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
-
-				final IndexIterator ita = ad.getIterator();
-
-				final int as = ad.getElementsPerItem();
-
-				int i = 0;
-				if (as == 1) {
-					final double br = AbstractDataset.toReal(b);
-					final double bi = AbstractDataset.toImag(b);
-					if (bi != 0) {
-						return r;
-					}
-					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) == br);
-					}
-				} else {
-					if (ad instanceof ComplexFloatDataset || ad instanceof ComplexDoubleDataset) {
-						final double br = AbstractDataset.toReal(b);
-						final double bi = AbstractDataset.toImag(b);
-
-						while (ita.hasNext()) {
-							boolean bb = ad.getElementDoubleAbs(ita.index) == br;
-							if (bb)
-								bb &= ad.getElementDoubleAbs(ita.index + 1) == bi;
-							r.setAbs(i++, bb);
-						}
-						
-					} else {
-						final double[] bv = AbstractCompoundDataset.toDoubleArray(b, as);
-						while (ita.hasNext()) {
-							boolean br = true;
-							for (int j = 0; br && j < as; j++) {
-								br &= ad.getElementDoubleAbs(ita.index + j) == bv[j];
-							}
-							r.setAbs(i++, br);
-						}
-					}
-				}
-			}
-		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(bd, a);
-			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
-			}
-		}
-
-		return r;
-	}
-
-	/**
-	 * Compare item-wise for whether a's element is almost equal to b's
-	 * <p>
-	 * For multi-element items, comparison is true if all elements in an item
-	 * are equal up to a tolerance. Where the datasets have mismatched item sizes, the first element
-	 * of the dataset with smaller items is used for comparison.
-	 * @param a
-	 * @param b
-	 * @param relTolerance
-	 * @param absTolerance
-	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
-	 */
-	public static BooleanDataset almostEqualTo(Dataset a, Dataset b, double relTolerance, double absTolerance) {
-		a.checkCompatibility(b);
-
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
-
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
-
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
-
-		int i = 0;
-		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				final double adb = Math.abs(db);
-				for (int j = 0; br && j < as; j++) {
-					final double da = a.getElementDoubleAbs(ita.index + j);
-					br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), adb);
-				}
-				r.setAbs(i++, br);
-			}			
-		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				final double ada = Math.abs(da);
-				for (int j = 0; br && j < bs; j++) {
-					final double db = b.getElementDoubleAbs(itb.index + j);
-					br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(ada, Math.abs(db));
-				}
-				r.setAbs(i++, br);
-			}
-		} else {
-			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					final double da = a.getElementDoubleAbs(ita.index);
-					final double db = b.getElementDoubleAbs(itb.index);
-					r.setAbs(i++, Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db)));
-				}
-			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						final double da = a.getElementDoubleAbs(ita.index + j);
-						final double db = b.getElementDoubleAbs(itb.index + j);
-						br &= Math.abs(da - db) <= absTolerance + relTolerance*Math.max(Math.abs(da), Math.abs(db));
-					}
-					r.setAbs(i++, br);
-				}
-			}
-		}
-		return r;
-	}
-
-	/**
-	 * Compare item-wise for whether a's element is almost equal to b's
-	 * <p>
-	 * For multi-element items, comparison is true if all elements in an item
-	 * are equal up to a tolerance. Where the datasets have mismatched item sizes, the first element
-	 * of the dataset with smaller items is used for comparison.
-	 * @param a
-	 * @param b
 	 * @param relTolerance
 	 * @param absTolerance
 	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
 	public static BooleanDataset almostEqualTo(Object a, Object b, double relTolerance, double absTolerance) {
-		BooleanDataset r = null;
+		return almostEqualTo(a, b, null, relTolerance, absTolerance);
+	}
 
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = almostEqualTo(ad, bd, relTolerance, absTolerance);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is equal b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are equal. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @param relTolerance
+	 * @param absTolerance
+	 * @return dataset where item is true if abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
+	 */
+	public static BooleanDataset almostEqualTo(Object a, Object b, BooleanDataset o, double relTolerance, double absTolerance) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-				final IndexIterator ita = ad.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-				final int as = ad.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-				int i = 0;
-				if (as == 1) {
-					final double bv = AbstractDataset.toReal(b);
-					while (ita.hasNext()) {
-						final double av = ad.getElementDoubleAbs(ita.index);
-						r.setAbs(i++, Math.abs(av - bv) <= absTolerance + relTolerance*Math.max(Math.abs(av), Math.abs(bv)));
-					}
-				} else {
-					if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-						final double bv = AbstractDataset.toReal(b);
-						final double abv = Math.abs(bv);
-						final double bi = AbstractDataset.toImag(b);
-						final double abi = Math.abs(bi);
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
 
-						while (ita.hasNext()) {
-							double av = ad.getElementDoubleAbs(ita.index);
-							boolean br = Math.abs(av - bv) <= absTolerance + relTolerance*Math.max(Math.abs(av), abv);
-							if (br) {
-								av = ad.getElementDoubleAbs(ita.index + 1);
-								br &= Math.abs(av - bi) <= absTolerance + relTolerance*Math.max(Math.abs(av), abi);
-							}
-							r.setAbs(i++, br);
-						}
-					} else {
-						final double[] bv = AbstractCompoundDataset.toDoubleArray(b, as);
-						final double[] abv = new double[as];
-						for (int j = 0; j < as; j++) {
-							abv[j] = Math.abs(bv[j]);
-						}
-						while (ita.hasNext()) {
-							boolean br = true;
-							for (int j = 0; br && j < as; j++) {
-								double av = ad.getElementDoubleAbs(ita.index + j);
-								br &= Math.abs(av - bv[j]) <= absTolerance + relTolerance*Math.max(Math.abs(av), abv[j]);
-							}
-							r.setAbs(i++, br);
-						}
-					}
+		if (as > bs) {
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				final double abd = Math.abs(bd);
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					final double ad = da.getElementDoubleAbs(it.aIndex + j);
+					rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), abd);
 				}
+				r.setAbs(it.oIndex, rb);
+			}
+		} else if (as < bs) {
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				final double aad = Math.abs(ad);
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					final double bd = db.getElementDoubleAbs(it.bIndex + j);
+					rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(aad, Math.abs(bd));
+				}
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = almostEqualTo(bd, a, relTolerance, absTolerance);
+			if (as == 1) {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double bd = it.bDouble;
+					r.setAbs(it.oIndex, Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), Math.abs(bd)));
+				}
 			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						final double ad = da.getElementDoubleAbs(it.aIndex + j);
+						final double bd = db.getElementDoubleAbs(it.bIndex + j);
+						rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), Math.abs(bd));
+					}
+					r.setAbs(it.oIndex, rb);
+				}
 			}
 		}
-
+		
 		return r;
 	}
 
@@ -309,91 +193,64 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a > b
 	 */
-	public static BooleanDataset greaterThan(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset greaterThan(Object a, Object b) {
+		return greaterThan(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is greater than b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are greater. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a > b
+	 */
+	public static BooleanDataset greaterThan(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				for (int j = 0; br && j < as; j++) {
-					br &= a.getElementDoubleAbs(ita.index + j) > db;
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementDoubleAbs(it.aIndex + j) > bd;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				for (int j = 0; br && j < bs; j++) {
-					br &= da > b.getElementDoubleAbs(itb.index + j);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ad > db.getElementDoubleAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementDoubleAbs(ita.index) > b.getElementDoubleAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, it.aDouble > it.bDouble);
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementDoubleAbs(ita.index + j) > b.getElementDoubleAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) > db.getElementDoubleAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
-			}
-		}
-		return r;
-	}
-
-	public static BooleanDataset greaterThan(Object a, Object b) {
-		BooleanDataset r = null;
-
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(ad, bd);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
-
-				final IndexIterator ita = ad.getIterator();
-
-				final int as = ad.getElementsPerItem();
-				final double bv = AbstractDataset.toReal(b);
-
-				int i = 0;
-				if (as == 1) {
-					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) > bv);
-					}
-				} else {
-					boolean br = true;
-					while (ita.hasNext()) {
-						for (int j = 0; br && j < as; j++) {
-							br &= ad.getElementDoubleAbs(ita.index + j) > bv;
-						}
-						r.setAbs(i++, br);
-					}
-				}
-			}
-		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = lessThan(bd, a);
-			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 		}
 
@@ -410,91 +267,64 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a >= b
 	 */
-	public static BooleanDataset greaterThanOrEqualTo(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset greaterThanOrEqualTo(Object a, Object b) {
+		return greaterThanOrEqualTo(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is greater than or equal to b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are greater or equal. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a >= b
+	 */
+	public static BooleanDataset greaterThanOrEqualTo(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				for (int j = 0; br && j < as; j++) {
-					br &= a.getElementDoubleAbs(ita.index + j) >= db;
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementDoubleAbs(it.aIndex + j) >= bd;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				for (int j = 0; br && j < bs; j++) {
-					br &= da >= b.getElementDoubleAbs(itb.index + j);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ad >= db.getElementDoubleAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementDoubleAbs(ita.index) >= b.getElementDoubleAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, it.aDouble >= it.bDouble);
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementDoubleAbs(ita.index + j) >= b.getElementDoubleAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) >= db.getElementDoubleAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
-			}
-		}
-		return r;
-	}
-
-	public static BooleanDataset greaterThanOrEqualTo(Object a, Object b) {
-		BooleanDataset r = null;
-
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(ad, bd);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
-
-				final IndexIterator ita = ad.getIterator();
-
-				final int as = ad.getElementsPerItem();
-				final double bv = AbstractDataset.toReal(b);
-
-				int i = 0;
-				if (as == 1) {
-					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) >= bv);
-					}
-				} else {
-					boolean br = true;
-					while (ita.hasNext()) {
-						for (int j = 0; br && j < as; j++) {
-							br &= ad.getElementDoubleAbs(ita.index + j) >= bv;
-						}
-						r.setAbs(i++, br);
-					}
-				}
-			}
-		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = lessThanOrEqualTo(bd, a);
-			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 		}
 
@@ -511,91 +341,64 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a < b
 	 */
-	public static BooleanDataset lessThan(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset lessThan(Object a, Object b) {
+		return lessThan(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is less than b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are lesser. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a < b
+	 */
+	public static BooleanDataset lessThan(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				for (int j = 0; br && j < as; j++) {
-					br &= a.getElementDoubleAbs(ita.index + j) < db;
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementDoubleAbs(it.aIndex + j) < bd;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				for (int j = 0; br && j < bs; j++) {
-					br &= da < b.getElementDoubleAbs(itb.index + j);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ad < db.getElementDoubleAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementDoubleAbs(ita.index) < b.getElementDoubleAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, it.aDouble < it.bDouble);
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementDoubleAbs(ita.index + j) < b.getElementDoubleAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) < db.getElementDoubleAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
-			}
-		}
-		return r;
-	}
-
-	public static BooleanDataset lessThan(Object a, Object b) {
-		BooleanDataset r = null;
-
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(ad, bd);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
-
-				final IndexIterator ita = ad.getIterator();
-
-				final int as = ad.getElementsPerItem();
-				final double bv = AbstractDataset.toReal(b);
-
-				int i = 0;
-				if (as == 1) {
-					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) < bv);
-					}
-				} else {
-					boolean br = true;
-					while (ita.hasNext()) {
-						for (int j = 0; br && j < as; j++) {
-							br &= ad.getElementDoubleAbs(ita.index + j) < bv;
-						}
-						r.setAbs(i++, br);
-					}
-				}
-			}
-		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = greaterThan(bd, a);
-			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 		}
 
@@ -612,91 +415,64 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a <= b
 	 */
-	public static BooleanDataset lessThanOrEqualTo(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset lessThanOrEqualTo(Object a, Object b) {
+		return lessThanOrEqualTo(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's element is less than or equal to b's
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in an item
+	 * are lesser or equal. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a <= b
+	 */
+	public static BooleanDataset lessThanOrEqualTo(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				for (int j = 0; br && j < as; j++) {
-					br &= a.getElementDoubleAbs(ita.index + j) <= db;
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementDoubleAbs(it.aIndex + j) <= bd;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				for (int j = 0; br && j < bs; j++) {
-					br &= da <= b.getElementDoubleAbs(itb.index + j);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ad <= db.getElementDoubleAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementDoubleAbs(ita.index) <= b.getElementDoubleAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, it.aDouble <= it.bDouble);
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementDoubleAbs(ita.index + j) <= b.getElementDoubleAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) <= db.getElementDoubleAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
-			}
-		}
-		return r;
-	}
-
-	public static BooleanDataset lessThanOrEqualTo(Object a, Object b) {
-		BooleanDataset r = null;
-
-		if (a instanceof Dataset) {
-			Dataset ad = (Dataset) a;
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = equalTo(ad, bd);
-			} else {
-				r = new BooleanDataset(ad.getShapeRef());
-
-				final IndexIterator ita = ad.getIterator();
-
-				final int as = ad.getElementsPerItem();
-				final double bv = AbstractDataset.toReal(b);
-
-				int i = 0;
-				if (as == 1) {
-					while (ita.hasNext()) {
-						r.setAbs(i++, ad.getElementDoubleAbs(ita.index) <= bv);
-					}
-				} else {
-					boolean br = true;
-					while (ita.hasNext()) {
-						for (int j = 0; br && j < as; j++) {
-							br &= ad.getElementDoubleAbs(ita.index + j) <= bv;
-						}
-						r.setAbs(i++, br);
-					}
-				}
-			}
-		} else {
-			if (b instanceof Dataset) {
-				Dataset bd = (Dataset) b;
-				r = greaterThanOrEqualTo(bd, a);
-			} else {
-				throw new IllegalArgumentException("Both arguments are not datasets");
 			}
 		}
 
@@ -704,43 +480,48 @@ public class Comparisons {
 	}
 
 	/**
-	 * 
 	 * @param a
 	 * @param lo lower bound
 	 * @param hi upper bound
 	 * @return dataset where item is true if l <= a <= h
 	 */
-	public static BooleanDataset withinRange(Dataset a, double lo, double hi) {
-		if (lo >= hi) {
-			throw new IllegalArgumentException("Lower bound must be less than upper bound");
-		}
+	public static BooleanDataset withinRange(Object a, double lo, double hi) {
+		return withinRange(a, null, lo, hi);
+	}
 
-		BooleanDataset r = null;
+	/**
+	 * @param a
+	 * @param lo lower bound
+	 * @param hi upper bound
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if l <= a <= h
+	 */
+	public static BooleanDataset withinRange(Object a, BooleanDataset o, double lo, double hi) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		r = new BooleanDataset(a.getShapeRef());
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final IndexIterator ita = a.getIterator();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		final int as = a.getElementsPerItem();
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
 
-		int i = 0;
 		if (as == 1) {
-			while (ita.hasNext()) {
-				double x = a.getElementDoubleAbs(ita.index);
-				r.setAbs(i++, x >= lo && x <= hi);
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				r.setAbs(it.oIndex, ad >= lo && ad <= hi);
 			}
 		} else {
-			boolean br = true;
-			while (ita.hasNext()) {
-				for (int j = 0; br && j < as; j++) {
-					double x = a.getElementDoubleAbs(ita.index + j);
-					br &= x >= lo && x <= hi;
-					if (!br) // shortcut
-						break;
+			while (it.hasNext()) {
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					final double ad = da.getElementDoubleAbs(it.aIndex);
+					rb &= ad >= lo && ad <= hi;
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		}
+
 		return r;
 	}
 
@@ -756,57 +537,54 @@ public class Comparisons {
 	 * @param absTolerance
 	 * @return true if all items satisfy abs(a - b) <= absTol + relTol*max(abs(a),abs(b))
 	 */
-	public static boolean allCloseTo(Dataset a, Dataset b, double relTolerance, double absTolerance) {
-		a.checkCompatibility(b);
-	
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
-	
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
-	
+	public static boolean allCloseTo(Object a, Object b, double relTolerance, double absTolerance) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
+
+		final BroadcastIterator it = new BroadcastIterator(da, db);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double db = b.getElementDoubleAbs(itb.index);
-				final double adb = Math.abs(db);
-				for (int j = 0; br && j < as; j++) {
-					final double da = a.getElementDoubleAbs(ita.index + j);
-					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), adb)))
+			while (it.hasNext()) {
+				final double bd = it.bDouble;
+				final double abd = Math.abs(bd);
+				for (int j = 0; j < as; j++) {
+					final double ad = da.getElementDoubleAbs(it.aIndex + j);
+					if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(Math.abs(ad), abd))
 						return false;
 				}
-			}			
+			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = true;
-				final double da = a.getElementDoubleAbs(ita.index);
-				final double ada = Math.abs(da);
-				for (int j = 0; br && j < bs; j++) {
-					final double db = b.getElementDoubleAbs(itb.index + j);
-					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(ada, Math.abs(db))))
+			while (it.hasNext()) {
+				final double ad = it.aDouble;
+				final double aad = Math.abs(ad);
+				for (int j = 0; j < bs; j++) {
+					final double bd = db.getElementDoubleAbs(it.bIndex + j);
+					if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(aad, Math.abs(bd)))
 						return false;
 				}
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					final double da = a.getElementDoubleAbs(ita.index);
-					final double db = b.getElementDoubleAbs(itb.index);
-					if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), Math.abs(db))))
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double bd = it.bDouble;
+					if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(Math.abs(ad), Math.abs(bd)))
 						return false;
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						final double da = a.getElementDoubleAbs(ita.index + j);
-						final double db = b.getElementDoubleAbs(itb.index + j);
-						if (Math.abs(da - db) > Math.max(absTolerance, relTolerance*Math.max(Math.abs(da), Math.abs(db))))
+				while (it.hasNext()) {
+					for (int j = 0; j < bs; j++) {
+						final double ad = da.getElementDoubleAbs(it.aIndex + j);
+						final double bd = db.getElementDoubleAbs(it.bIndex + j);
+						if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(Math.abs(ad), Math.abs(bd)))
 							return false;
 					}
 				}
 			}
 		}
+		
 		return true;
 	}
 
@@ -814,19 +592,20 @@ public class Comparisons {
 	 * @param a
 	 * @return true if all elements are true
 	 */
-	public static boolean allTrue(Dataset a) {
-		final IndexIterator it = a.getIterator();
-		final int as = a.getElementsPerItem();
+	public static boolean allTrue(Object a) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final IndexIterator it = da.getIterator();
+		final int as = da.getElementsPerItem();
 
 		if (as == 1) {
 			while (it.hasNext()) {
-				if (!a.getElementBooleanAbs(it.index))
+				if (!da.getElementBooleanAbs(it.index))
 					return false;
 			}
 		} else {
 			while (it.hasNext()) {
 				for (int j = 0; j < as; j++) {
-					if (!a.getElementBooleanAbs(it.index + j))
+					if (!da.getElementBooleanAbs(it.index + j))
 						return false;
 				}
 			}
@@ -878,19 +657,20 @@ public class Comparisons {
 	 * @param a
 	 * @return true if any element is true
 	 */
-	public static boolean anyTrue(Dataset a) {
-		final IndexIterator it = a.getIterator();
-		final int as = a.getElementsPerItem();
+	public static boolean anyTrue(Object a) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final IndexIterator it = da.getIterator();
+		final int as = da.getElementsPerItem();
 
 		if (as == 1) {
 			while (it.hasNext()) {
-				if (a.getElementBooleanAbs(it.index))
+				if (da.getElementBooleanAbs(it.index))
 					return true;
 			}
 		} else {
 			while (it.hasNext()) {
 				for (int j = 0; j < as; j++) {
-					if (a.getElementBooleanAbs(it.index + j))
+					if (da.getElementBooleanAbs(it.index + j))
 						return true;
 				}
 			}
@@ -946,25 +726,40 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true when a is false
 	 */
-	public static BooleanDataset logicalNot(Dataset a) {
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	public static BooleanDataset logicalNot(Object a) {
+		return logicalNot(a, null);
+	}
 
-		final IndexIterator ita = a.getIterator();
+	/**
+	 * Negate item-wise
+	 * <p>
+	 * For multi-element items, negation is false if all elements in a pair of items
+	 * are true.
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true when a is false
+	 */
+	public static BooleanDataset logicalNot(Object a, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		final int as = a.getElementsPerItem();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		int i = 0;
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
+
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
+
 		if (as == 1) {
-			while (ita.hasNext()) {
-				r.setAbs(i++, !a.getElementBooleanAbs(ita.index));
+			while (it.hasNext()) {
+				r.setAbs(it.oIndex, !da.getElementBooleanAbs(it.aIndex));
 			}
 		} else {
 			boolean br = true;
-			while (ita.hasNext()) {
+			while (it.hasNext()) {
 				for (int j = 0; j < as; j++) {
-					br &= a.getElementBooleanAbs(ita.index + j);
+					br &= da.getElementBooleanAbs(it.aIndex + j);
 				}
-				r.setAbs(i++, !br);
+				r.setAbs(it.oIndex, !br);
 			}
 		}
 		return r;
@@ -980,49 +775,67 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a && b is true
 	 */
-	public static BooleanDataset logicalAnd(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset logicalAnd(Object a, Object b) {
+		return logicalAnd(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's item is true and b's true too.
+	 * <p>
+	 * For multi-element items, comparison is true if all elements in a pair of items
+	 * are true. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a && b is true
+	 */
+	public static BooleanDataset logicalAnd(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = b.getElementBooleanAbs(itb.index);
-				for (int j = 0; j < as; j++) {
-					br &= a.getElementBooleanAbs(ita.index + j);
+			while (it.hasNext()) {
+				final boolean bb = db.getElementBooleanAbs(it.bIndex);
+				boolean rb = true;
+				for (int j = 0; rb && j < as; j++) {
+					rb &= da.getElementBooleanAbs(it.aIndex + j) && bb;
 				}
-				r.setAbs(i++, br);
-			}			
+				r.setAbs(it.oIndex, rb);
+			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = a.getElementBooleanAbs(ita.index);
-				for (int j = 0; j < as; j++) {
-					br &= b.getElementBooleanAbs(ita.index + j);
+			while (it.hasNext()) {
+				final boolean ab = da.getElementBooleanAbs(it.aIndex);
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb &= ab && db.getElementBooleanAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementBooleanAbs(ita.index) && b.getElementBooleanAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, da.getElementBooleanAbs(it.aIndex) && db.getElementBooleanAbs(it.bIndex));
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br &= a.getElementBooleanAbs(ita.index + j) && b.getElementBooleanAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementBooleanAbs(it.aIndex + j) && db.getElementBooleanAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
+
 		return r;
 	}
 
@@ -1036,49 +849,67 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a || b is true
 	 */
-	public static BooleanDataset logicalOr(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset logicalOr(Object a, Object b) {
+		return logicalOr(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's item is true or b's true.
+	 * <p>
+	 * For multi-element items, comparison is true if any elements in a pair of items
+	 * are true. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a || b is true
+	 */
+	public static BooleanDataset logicalOr(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = b.getElementBooleanAbs(itb.index);
+			while (it.hasNext()) {
+				final boolean bb = db.getElementBooleanAbs(it.bIndex);
+				boolean rb = true;
 				for (int j = 0; j < as; j++) {
-					br |= a.getElementBooleanAbs(ita.index + j);
+					rb |= da.getElementBooleanAbs(it.aIndex + j) || bb;
 				}
-				r.setAbs(i++, br);
-			}			
+				r.setAbs(it.oIndex, rb);
+			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = a.getElementBooleanAbs(ita.index);
-				for (int j = 0; j < as; j++) {
-					br |= b.getElementBooleanAbs(ita.index + j);
+			while (it.hasNext()) {
+				final boolean ab = da.getElementBooleanAbs(it.aIndex);
+				boolean rb = true;
+				for (int j = 0; rb && j < bs; j++) {
+					rb |= ab || db.getElementBooleanAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementBooleanAbs(ita.index) || b.getElementBooleanAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, da.getElementBooleanAbs(it.aIndex) || db.getElementBooleanAbs(it.bIndex));
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br |= a.getElementBooleanAbs(ita.index + j) || b.getElementBooleanAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementBooleanAbs(it.aIndex + j) || db.getElementBooleanAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
+
 		return r;
 	}
 
@@ -1092,49 +923,65 @@ public class Comparisons {
 	 * @param b
 	 * @return dataset where item is true if a ^ b is true
 	 */
-	public static BooleanDataset logicalXor(Dataset a, Dataset b) {
-		a.checkCompatibility(b);
+	public static BooleanDataset logicalXor(Object a, Object b) {
+		return logicalXor(a, b, null);
+	}
 
-		final BooleanDataset r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Compare item-wise for whether a's item is true or b's true exclusively.
+	 * <p>
+	 * For multi-element items, comparison is true if one element in a pair of items
+	 * is true. Where the datasets have mismatched item sizes, the first element
+	 * of the dataset with smaller items is used for comparison.
+	 * @param a
+	 * @param b
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if a ^ b is true
+	 */
+	public static BooleanDataset logicalXor(Object a, Object b, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
+		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
-		final IndexIterator ita = a.getIterator();
-		final IndexIterator itb = b.getIterator();
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), db.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		final int as = a.getElementsPerItem();
-		final int bs = b.getElementsPerItem();
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
 
-		int i = 0;
+		final BroadcastIterator it = new BroadcastIterator(da, db, r);
+		final int as = da.getElementsPerItem();
+		final int bs = db.getElementsPerItem();
+
 		if (as > bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = b.getElementBooleanAbs(itb.index);
+			while (it.hasNext()) {
+				boolean rb = db.getElementBooleanAbs(it.bIndex);
 				for (int j = 0; j < as; j++) {
-					br ^= a.getElementBooleanAbs(ita.index + j);
+					rb ^= da.getElementBooleanAbs(it.aIndex + j);
 				}
-				r.setAbs(i++, br);
-			}			
+				r.setAbs(it.oIndex, rb);
+			}
 		} else if (as < bs) {
-			while (ita.hasNext() && itb.hasNext()) {
-				boolean br = a.getElementBooleanAbs(ita.index);
-				for (int j = 0; j < as; j++) {
-					br ^= b.getElementBooleanAbs(ita.index + j);
+			while (it.hasNext()) {
+				boolean rb = da.getElementBooleanAbs(it.aIndex);
+				for (int j = 0; rb && j < bs; j++) {
+					rb ^= db.getElementBooleanAbs(it.bIndex + j);
 				}
-				r.setAbs(i++, br);
+				r.setAbs(it.oIndex, rb);
 			}
 		} else {
 			if (as == 1) {
-				while (ita.hasNext() && itb.hasNext()) {
-					r.setAbs(i++, a.getElementBooleanAbs(ita.index) ^ b.getElementBooleanAbs(itb.index));
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, da.getElementBooleanAbs(it.aIndex) ^ db.getElementBooleanAbs(it.bIndex));
 				}
 			} else {
-				boolean br = true;
-				while (ita.hasNext() && itb.hasNext()) {
-					for (int j = 0; br && j < bs; j++) {
-						br ^= a.getElementBooleanAbs(ita.index + j) ^ b.getElementBooleanAbs(itb.index + j);
+				while (it.hasNext()) {
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= da.getElementBooleanAbs(it.aIndex + j) ^ db.getElementBooleanAbs(it.bIndex + j);
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
+
 		return r;
 	}
 
@@ -1182,43 +1029,54 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are NaNs
 	 */
-	public static BooleanDataset isNaN(Dataset a) {
-		BooleanDataset r = null;
+	public static BooleanDataset isNaN(Object a) {
+		return isNaN(a, null);
+	}
 
-		r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Check item-wise for whether any a's elements are Not-a-Numbers
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is Not-a-Number.
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if any of its elements are NaNs
+	 */
+	public static BooleanDataset isNaN(Object a, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		if (!a.hasFloatingPointElements()) {
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
+
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
+
+		if (!da.hasFloatingPointElements()) {
+			if (r == o) {
+				r.fill(false);
+			}
 			return r;
 		}
 
-		final IndexIterator ita = a.getIterator();
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
 
-		final int as = a.getElementsPerItem();
-
-		int i = 0;
 		if (as == 1) {
-			while (ita.hasNext()) {
-				r.setAbs(i++, Double.isNaN(a.getElementDoubleAbs(ita.index)));
+			while (it.hasNext()) {
+				r.setAbs(it.oIndex, Double.isNaN(it.aDouble));
 			}
 		} else {
-			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-				while (ita.hasNext()) {
-					r.setAbs(i++, Double.isNaN(a.getElementDoubleAbs(ita.index)) || Double.isNaN(a.getElementDoubleAbs(ita.index + 1)));
+			if (da instanceof ComplexFloatDataset || da instanceof ComplexDoubleDataset) {
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, Double.isNaN(it.aDouble) || Double.isNaN(da.getElementDoubleAbs(it.aIndex + 1)));
 				}
 			} else {
-				while (ita.hasNext()) {
-					boolean br = false;
-					for (int j = 0; j < as; j++) {
-						if (Double.isNaN(a.getElementDoubleAbs(ita.index + j))) {
-							br = true;
-							break;
-						}
+				while (it.hasNext()) {
+					boolean rb = false;
+					for (int j = 0; !rb && j < as; j++) {
+						rb &= Double.isNaN(da.getElementDoubleAbs(it.aIndex + j));
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -1229,43 +1087,54 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are infinite
 	 */
-	public static BooleanDataset isInfinite(Dataset a) {
-		BooleanDataset r = null;
+	public static BooleanDataset isInfinite(Object a) {
+		return isInfinite(a, null);
+	}
 
-		r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Check item-wise for whether any a's elements are infinite
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is infinite
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if any of its elements are infinite
+	 */
+	public static BooleanDataset isInfinite(Object a, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		if (!a.hasFloatingPointElements()) {
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
+
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
+
+		if (!da.hasFloatingPointElements()) {
+			if (r == o) {
+				r.fill(false);
+			}
 			return r;
 		}
 
-		final IndexIterator ita = a.getIterator();
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
 
-		final int as = a.getElementsPerItem();
-
-		int i = 0;
 		if (as == 1) {
-			while (ita.hasNext()) {
-				r.setAbs(i++, Double.isInfinite(a.getElementDoubleAbs(ita.index)));
+			while (it.hasNext()) {
+				r.setAbs(it.oIndex, Double.isInfinite(it.aDouble));
 			}
 		} else {
-			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-				while (ita.hasNext()) {
-					r.setAbs(i++, Double.isInfinite(a.getElementDoubleAbs(ita.index)) || Double.isInfinite(a.getElementDoubleAbs(ita.index + 1)));
+			if (da instanceof ComplexFloatDataset || da instanceof ComplexDoubleDataset) {
+				while (it.hasNext()) {
+					r.setAbs(it.oIndex, Double.isInfinite(it.aDouble) || Double.isInfinite(da.getElementDoubleAbs(it.aIndex + 1)));
 				}
 			} else {
-				while (ita.hasNext()) {
-					boolean br = false;
-					for (int j = 0; j < as; j++) {
-						if (Double.isInfinite(a.getElementDoubleAbs(ita.index + j))) {
-							br = true;
-							break;
-						}
+				while (it.hasNext()) {
+					boolean rb = false;
+					for (int j = 0; !rb && j < as; j++) {
+						rb &= Double.isInfinite(da.getElementDoubleAbs(it.aIndex + j));
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -1276,8 +1145,20 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where items are true if any of its elements are positive infinite
 	 */
-	public static BooleanDataset isPositiveInfinite(Dataset a) {
-		return isEqual(a, Double.POSITIVE_INFINITY);
+	public static BooleanDataset isPositiveInfinite(Object a) {
+		return isEqual(a, null, Double.POSITIVE_INFINITY);
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are positive infinite
+	 * <p>
+	 * For multi-element items, the check is true if any elements in an item is positive infinite
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where items are true if any of its elements are positive infinite
+	 */
+	public static BooleanDataset isPositiveInfinite(Object a, BooleanDataset o) {
+		return isEqual(a, o, Double.POSITIVE_INFINITY);
 	}
 
 	/**
@@ -1287,8 +1168,20 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where items are true if any of its elements are negative infinite
 	 */
-	public static BooleanDataset isNegativeInfinite(Dataset a) {
-		return isEqual(a, Double.NEGATIVE_INFINITY);
+	public static BooleanDataset isNegativeInfinite(Object a) {
+		return isEqual(a, null, Double.NEGATIVE_INFINITY);
+	}
+
+	/**
+	 * Check item-wise for whether any a's elements are negative infinite
+	 * <p>
+	 * For multi-element items, the check is true if any elements in an item is negative infinite
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where items are true if any of its elements are negative infinite
+	 */
+	public static BooleanDataset isNegativeInfinite(Object a, BooleanDataset o) {
+		return isEqual(a, o, Double.NEGATIVE_INFINITY);
 	}
 
 	/**
@@ -1296,50 +1189,48 @@ public class Comparisons {
 	 * <p>
 	 * For multi-element items, the check is true if any elements in an item matches
 	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
 	 * @param match
 	 * @return dataset where items are true if any of its elements match
 	 */
-	private static BooleanDataset isEqual(Dataset a, final double match) {
-		BooleanDataset r = null;
+	private static BooleanDataset isEqual(Object a, BooleanDataset o, final double match) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		r = new BooleanDataset(a.getShapeRef());
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
 
-		if (!a.hasFloatingPointElements()) {
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
+
+		if (!da.hasFloatingPointElements()) {
+			if (r == o) {
+				r.fill(false);
+			}
 			return r;
 		}
 
-		final IndexIterator ita = a.getIterator();
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
 
-		final int as = a.getElementsPerItem();
-
-		int i = 0;
 		if (as == 1) {
-			while (ita.hasNext()) {
-				final double rv = a.getElementDoubleAbs(ita.index);
-				r.setAbs(i++, rv == match);
+			while (it.hasNext()) {
+				r.setAbs(it.oIndex, it.aDouble == match);
 			}
 		} else {
-			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-				while (ita.hasNext()) {
-					final double rv = a.getElementDoubleAbs(ita.index);
-					final double iv = a.getElementDoubleAbs(ita.index + 1);
-					r.setAbs(i++, (rv == match) || (iv == match));
+			if (da instanceof ComplexFloatDataset || da instanceof ComplexDoubleDataset) {
+				while (it.hasNext()) {
+					final double rv = it.aDouble;
+					final double iv = da.getElementDoubleAbs(it.aIndex + 1);
+					r.setAbs(it.oIndex, (rv == match) || (iv == match));
 				}
 			} else {
-				while (ita.hasNext()) {
-					boolean br = false;
-					for (int j = 0; j < as; j++) {
-						final double rv = a.getElementDoubleAbs(ita.index + j);
-						if (rv == match) {
-							br = true;
-							break;
-						}
+				while (it.hasNext()) {
+					boolean rb = false;
+					for (int j = 0; !rb && j < as; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) == match;
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -1350,48 +1241,56 @@ public class Comparisons {
 	 * @param a
 	 * @return dataset where item is true if any of its elements are finite
 	 */
-	public static BooleanDataset isFinite(Dataset a) {
-		BooleanDataset r = null;
+	public static BooleanDataset isFinite(Object a) {
+		return isFinite(a, null);
+	}
 
-		r = new BooleanDataset(a.getShapeRef());
+	/**
+	 * Check item-wise for whether any a's elements are finite (or not infinite and not Not-a-Number)
+	 * <p>
+	 * For multi-element items, check is true if any elements in an item is finite
+	 * @param a
+	 * @param o output can be null - in which case, a new dataset is created
+	 * @return dataset where item is true if any of its elements are finite
+	 */
+	public static BooleanDataset isFinite(Object a, BooleanDataset o) {
+		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
-		if (!a.hasFloatingPointElements()) {
+		List<int[]> sl = BroadcastIterator.broadcastShapes(da.getShapeRef(), o == null ? null : o.getShapeRef());
+
+		final BooleanDataset r = o == null ? new BooleanDataset(sl.get(0)) : o;
+
+		if (!da.hasFloatingPointElements()) {
 			r.fill(true);
 			return r;
 		}
 
-		final IndexIterator ita = a.getIterator();
+		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, r);
+		final int as = da.getElementsPerItem();
 
-		final int as = a.getElementsPerItem();
-
-		int i = 0;
 		if (as == 1) {
-			while (ita.hasNext()) {
-				final double rv = a.getElementDoubleAbs(ita.index);
-				r.setAbs(i++, !(Double.isInfinite(rv) || Double.isNaN(rv)));
+			while (it.hasNext()) {
+				final double rv = it.aDouble;
+				r.setAbs(it.oIndex, !(Double.isInfinite(rv) || Double.isNaN(rv)));
 			}
 		} else {
-			if (a instanceof ComplexFloatDataset || a instanceof ComplexDoubleDataset) {
-				while (ita.hasNext()) {
-					final double rv = a.getElementDoubleAbs(ita.index);
-					final double iv = a.getElementDoubleAbs(ita.index + 1);
-					r.setAbs(i++, !(Double.isInfinite(rv) || Double.isNaN(rv) || Double.isInfinite(iv) || Double.isNaN(iv)));
+			if (da instanceof ComplexFloatDataset || da instanceof ComplexDoubleDataset) {
+				while (it.hasNext()) {
+					final double rv = it.aDouble;
+					final double iv = da.getElementDoubleAbs(it.aIndex + 1);
+					r.setAbs(it.oIndex, !(Double.isInfinite(rv) || Double.isNaN(rv) || Double.isInfinite(iv) || Double.isNaN(iv)));
 				}
 			} else {
-				while (ita.hasNext()) {
-					boolean br = false;
-					for (int j = 0; j < as; j++) {
-						final double rv = a.getElementDoubleAbs(ita.index + j);
-						if (!(Double.isInfinite(rv) || Double.isNaN(rv))) {
-							br = true;
-							break;
-						}
+				while (it.hasNext()) {
+					boolean rb = false;
+					for (int j = 0; !rb && j < as; j++) {
+						final double rv = it.aDouble;
+						rb &= !(Double.isInfinite(rv) || Double.isNaN(rv));
 					}
-					r.setAbs(i++, br);
+					r.setAbs(it.oIndex, rb);
 				}
 			}
 		}
-
 		return r;
 	}
 }

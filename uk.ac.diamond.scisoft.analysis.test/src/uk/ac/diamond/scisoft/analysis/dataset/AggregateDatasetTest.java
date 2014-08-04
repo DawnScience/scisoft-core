@@ -114,10 +114,10 @@ public class AggregateDatasetTest {
 		assertArrayEquals("Incorrect shape", new int[] {1, 2, 1}, s.getShape());
 
 		ILazyDataset l;
-		l = a.getSliceView(new int[] {0, 0, 1}, new int[] {2,2,6}, new int[] {1,1,2});
+		l = a.getSliceView(new int[] {0, 0, 1}, new int[] {2,2,6}, new int[] {1,1,3});
 		s = DatasetUtils.convertToDataset(l.getSlice());
 		System.out.println("View is " + l + "; slice is " + s);
-		assertArrayEquals("Incorrect shape", new int[] {2, 2, 3}, s.getShape());
+		assertArrayEquals("Incorrect shape", new int[] {2, 2, 2}, s.getShape());
 	}
 
 	@Test

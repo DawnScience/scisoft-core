@@ -92,10 +92,10 @@ public class OperationServiceImpl implements IOperationService {
 										
 					for (IOperation i : series) {
 						data = i.execute(data.getData(), monitor);
-						visitor.notify(i, data); // Optionally send intermeadiate result
+						visitor.notify(i, data, slices, shape); // Optionally send intermeadiate result
 					}
 					
-					visitor.executed(data, monitor); // Send result.
+					visitor.executed(data, monitor, slices, shape); // Send result.
 				}
 			};
 			

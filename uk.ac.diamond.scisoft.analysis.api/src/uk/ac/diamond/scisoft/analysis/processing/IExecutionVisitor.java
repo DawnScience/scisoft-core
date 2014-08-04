@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -43,13 +44,13 @@ public interface IExecutionVisitor {
      * @param intermeadiateData
      * @param data
      */
-	public void notify(IOperation intermeadiateData, OperationData data);
+	public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape);
 	
 	/**
 	 * Called when the series of operations has been done, with the 
 	 * @param result
 	 */
-	public void executed(OperationData result, IMonitor monitor) throws Exception;
+	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception;
 	
 	
 	public class Stub implements IExecutionVisitor {
@@ -61,13 +62,13 @@ public interface IExecutionVisitor {
 		}
 
 		@Override
-		public void executed(OperationData result, IMonitor monitor) throws Exception {
+		public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void notify(IOperation intermeadiateData, OperationData data) {
+		public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape) {
 			// TODO Auto-generated method stub
 			
 		}

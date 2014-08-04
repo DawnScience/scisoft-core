@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
@@ -63,7 +64,7 @@ private static IOperationService service;
 		
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=1000) {

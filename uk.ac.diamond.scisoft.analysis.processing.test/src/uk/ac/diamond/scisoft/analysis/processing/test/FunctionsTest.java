@@ -16,6 +16,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
@@ -71,7 +72,7 @@ public class FunctionsTest {
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -131,7 +132,7 @@ public class FunctionsTest {
 		count = 0;
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
+			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				
@@ -178,7 +179,7 @@ public class FunctionsTest {
 			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 
 					System.out.println(result.getData().getName());
 

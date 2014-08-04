@@ -9,6 +9,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
@@ -69,7 +70,7 @@ public class IntegrationTest {
 		count = 0;
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
@@ -118,7 +119,7 @@ public class IntegrationTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			
 			@Override
-			public void executed(OperationData result, IMonitor monitor) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
@@ -170,7 +171,7 @@ public class IntegrationTest {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				
 				@Override
-				public void executed(OperationData result, IMonitor monitor) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
 	
 					final IDataset integrated = result.getData();
 					if (integrated.getSize()!=472) {

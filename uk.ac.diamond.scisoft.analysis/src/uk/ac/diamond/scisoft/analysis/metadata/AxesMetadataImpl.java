@@ -64,6 +64,11 @@ public class AxesMetadataImpl implements AxesMetadata {
 		return new AxesMetadataImpl(this);
 	}
 
+	/**
+	 * Add axis data to given dimension
+	 * @param axisData dataset for axis
+	 * @param axisDim dimension (n.b. this is zero-based)
+	 */
 	public void addAxis(ILazyDataset axisData, int axisDim) {
 		if (allAxes[axisDim] == null) {
 			allAxes[axisDim] = new ArrayList<ILazyDataset>();

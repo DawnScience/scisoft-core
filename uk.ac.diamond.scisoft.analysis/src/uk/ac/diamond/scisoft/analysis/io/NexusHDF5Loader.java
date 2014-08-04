@@ -124,7 +124,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");
 							ILazyDataset axisData = dh.getLazyDataset(axisName);
-							int axisDim = Integer.parseInt((String)dh.getMetadata().getMetaValue(goodKey));
+							int axisDim = Integer.parseInt((String)dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
 							axesMetadata.addAxis(axisData, axisDim);
 							System.out.println("");
 						}

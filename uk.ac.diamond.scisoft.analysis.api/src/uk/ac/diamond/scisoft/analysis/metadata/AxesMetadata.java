@@ -12,7 +12,9 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 /**
- * This metadata describes any axis information associated with a dataset
+ * This metadata describes any axis information associated with a dataset.
+ * Dimension numbers are zero-based, i.e. the first dimension is numbered
+ * zero.
  */
 public interface AxesMetadata extends MetadataType {
 
@@ -25,7 +27,7 @@ public interface AxesMetadata extends MetadataType {
 
 	/**
 	 * Get all axis datasets for the given dimension
-	 * @param axisDim dimension
+	 * @param axisDim dimension (n.b. this is zero-based)
 	 * @return axis datasets, null represent default integer indexes, the order is in inverse importance.
 	 */
 	public ILazyDataset[] getAxis(int axisDim);

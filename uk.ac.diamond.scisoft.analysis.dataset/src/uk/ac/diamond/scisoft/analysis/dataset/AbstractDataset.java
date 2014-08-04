@@ -2756,7 +2756,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		if (obj instanceof Dataset) {
 			ds = (Dataset) obj;
 		} else if (!(obj instanceof IDataset)) {
-			ds = DatasetFactory.createFromObject(obj, FLOAT64);
+			ds = DatasetFactory.createFromObject(obj, isComplex() || getElementsPerItem() == 1 ? FLOAT64 : ARRAYFLOAT64);
 		} else {
 			ds = DatasetUtils.convertToDataset((ILazyDataset) obj);
 		}

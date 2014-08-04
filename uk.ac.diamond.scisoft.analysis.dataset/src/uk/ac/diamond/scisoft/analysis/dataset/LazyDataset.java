@@ -326,7 +326,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		if (base != null) {
 			for (int i = 0; i < r; i++) {
 				nstart[i] = sliceStart[i] + nstart[i] * sliceStep[i];
-				nstop[i]  = sliceStart[i] + (nshape[i] - 1) * sliceStep[i] + 1;
+				nstop[i]  = sliceStart[i] + nstop[i] * sliceStep[i];
 				nstep[i]  = nstep[i] * sliceStep[i];
 			}
 			return base.getSlice(monitor, nstart, nstop, nstep);

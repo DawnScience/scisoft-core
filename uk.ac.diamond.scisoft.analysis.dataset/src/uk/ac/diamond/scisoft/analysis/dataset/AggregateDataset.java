@@ -229,8 +229,9 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		try {
 			return getSlice(null, start, stop, step);
 		} catch (Exception e) {
-			return null;
+			logger.error("Problem slicing aggregate dataset", e);
 		}
+		return null;
 	}
 
 	@Override
@@ -260,7 +261,7 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		int fe = stop[0];
 		int fs = step[0];
 
-		List<AbstractDataset> sliced = new ArrayList<AbstractDataset>();
+		List<Dataset> sliced = new ArrayList<Dataset>();
 		int op = fb;
 		int p = op;
 		ILazyDataset od = data[map[op]];
@@ -270,7 +271,7 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 			if (nd != od) {
 				start[0] = op - offset[map[op]];
 				stop[0] = p - offset[map[op]];
-				AbstractDataset a = DatasetUtils.convertToAbstractDataset(od.getSlice(monitor, start, stop, step));
+				Dataset a = DatasetUtils.convertToDataset(od.getSlice(monitor, start, stop, step));
 				sliced.add(a.cast(dtype));
 
 				od = nd;
@@ -280,7 +281,7 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		}
 		start[0] = op - offset[map[op]];
 		stop[0] = p - offset[map[op]];
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(od.getSlice(monitor, start, stop, step));
+		Dataset a = DatasetUtils.convertToDataset(od.getSlice(monitor, start, stop, step));
 		sliced.add(a.cast(dtype));
 
 		IDataset d = DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
@@ -293,8 +294,9 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		try {
 			return getSlice(null, slice);
 		} catch (Exception e) {
-			return null;
+			logger.error("Problem slicing aggregate dataset", e);
 		}
+		return null;
 	}
 
 	@Override

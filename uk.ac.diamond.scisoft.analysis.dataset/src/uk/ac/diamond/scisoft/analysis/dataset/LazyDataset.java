@@ -229,9 +229,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		try {
 			return getSlice(null, slice);
 		} catch (Exception e) {
-			// do nothing
+			logger.error("Problem slicing lazy dataset", e);
 		}
-
 		return null;
 	}
 
@@ -240,9 +239,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		try {
 			return getSlice(null, start, stop, step);
 		} catch (Exception e) {
-			// do nothing
+			logger.error("Problem slicing lazy dataset", e);
 		}
-
 		return null;
 	}
 

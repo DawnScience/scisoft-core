@@ -129,6 +129,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		try {
 			ml = (List<T>) getMetadata(metadata.getClass());
 		} catch (Exception e) {
+			logger.error("Problem retreiving metadata of class {}: {}", metadata.getClass().getCanonicalName(), e);
 		}
 
 		if (ml == null) {
@@ -145,6 +146,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		try {
 			ml = getMetadata(IMetaData.class);
 		} catch (Exception e) {
+			logger.error("Problem retreiving metadata of class {}: {}", IMetaData.class.getCanonicalName(), e);
 		}
 
 		return ml == null ? null : ml.get(0);
@@ -185,6 +187,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 			}
 		}
 		assert false; // should not be able to get here!!!
+		logger.error("Somehow the search for metadata type interface ended in a bad place");
 		return null;
 	}
 
@@ -307,9 +310,8 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 						}
 					}
 				}
-			} catch (IllegalArgumentException e) {
-			} catch (IllegalAccessException e) {
-			} catch (SecurityException e) {
+			} catch (Exception e) {
+				logger.error("Problem occurred when slicing metadata of class {}: {}", mc.getCanonicalName(), e);
 			}
 		}
 	}

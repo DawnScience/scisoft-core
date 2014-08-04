@@ -130,5 +130,118 @@ public class SliceableMetadataTest {
 		}
 
 	}
+	
+	@Test
+	public void testSlicingSameRankDifferentShapeMetadata() {
+		
+		final int[] result1 = new int[] {1, 1, 1, 1};
+		final int[] result2 = new int[] {1, 1, 3, 1};
+		
+		final int[] shape = new int[] {1, 2, 3, 4};
+		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+
+		final int [] partial1 = new int[] {1, 1, 1, 4};
+		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
+
+		final int [] partial2 = new int[] {1, 1, 3, 1};
+		List<ShortDataset> sdl = new ArrayList<>();
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+
+		final int [] partial3 = new int[] {1, 2, 1, 1};
+		Map<String, BooleanDataset> bdm = new HashMap<String, BooleanDataset>();
+		bdm.put("1", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+		bdm.put("2", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+
+		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm);
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(md);
+		
+		try {
+			SliceableTestMetadata tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(md, tmd);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		Slice[] slice = new Slice[] {null, new Slice(1), null, new Slice(1)};
+		ILazyDataset sliced = dataset.getSliceView(slice);
+
+		assertArrayEquals(new int[] {1, 1, 3, 1}, sliced.getShape());
+		try {
+			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(result2, tmd.getLazyDataset().getShape());
+			assertArrayEquals(result1, tmd.getArray()[0].getShape());
+			assertArrayEquals(result2, tmd.getList().get(0).getShape());
+			assertArrayEquals(result1, tmd.getMap().get("1").getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+	}
+	
+	@Test
+	public void testSlicingSameRankDifferentShapeMetadataFail() {
+		
+		final int[] result1 = new int[] {1, 1, 1, 2};
+		final int[] result2 = new int[] {1, 1, 3, 2};
+		
+		final int[] shape = new int[] {1, 2, 3, 4};
+		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+
+		final int [] partial1 = new int[] {1, 1, 1, 4};
+		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
+
+		final int [] partial2 = new int[] {1, 1, 3, 4};
+		List<ShortDataset> sdl = new ArrayList<>();
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+
+		final int [] partial3 = new int[] {1, 5, 1, 1};
+		Map<String, BooleanDataset> bdm = new HashMap<String, BooleanDataset>();
+		bdm.put("1", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+		bdm.put("2", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+
+		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm);
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(md);
+		
+		try {
+			SliceableTestMetadata tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(md, tmd);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		Slice[] slice = new Slice[] {null, new Slice(1), null, new Slice(0,2)};
+		ILazyDataset sliced = dataset.getSliceView(slice);
+
+		assertArrayEquals(new int[] {1, 1, 3, 2}, sliced.getShape());
+		try {
+			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(new int[] {1, 1, 3, 2}, tmd.getLazyDataset().getShape());
+			assertArrayEquals(result1, tmd.getArray()[0].getShape());
+			assertArrayEquals(result2, tmd.getList().get(0).getShape());
+			//not sliced, shape not compatible
+			assertArrayEquals(partial3, tmd.getMap().get("1").getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+	}
 
 }

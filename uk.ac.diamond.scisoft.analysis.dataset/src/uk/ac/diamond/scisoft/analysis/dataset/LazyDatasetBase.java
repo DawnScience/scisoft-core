@@ -234,7 +234,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	 * @param step
 	 */
 	@SuppressWarnings("unchecked")
-	protected void sliceMetadata(final int[] start, final int[] stop, final int[] step) {
+	protected void sliceMetadata(final int[] start, final int[] stop, final int[] step, final int[] oShape) {
 		if (metadata == null)
 			return;
 
@@ -242,7 +242,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 			for (MetadataType m : metadata.get(c)) {
 				Class<? extends MetadataType> mc = m.getClass();
 				do { // iterate over super-classes
-					processClass(start, stop, step, m, mc);
+					processClass(start, stop, step, oShape, m, mc);
 					Class<?> sclazz = mc.getSuperclass();
 					if (!MetadataType.class.isAssignableFrom(sclazz))
 						break;
@@ -252,7 +252,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		}
 	}
 
-	private static void processClass(final int[] start, final int[] stop, final int[] step, MetadataType m, Class<? extends MetadataType> mc) {
+	private static void processClass(final int[] start, final int[] stop, final int[] step, final int[] oShape, MetadataType m, Class<? extends MetadataType> mc) {
 		for (Field f : mc.getDeclaredFields()) {
 			if (!f.isAnnotationPresent(Sliceable.class))
 				continue;
@@ -262,7 +262,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				Object o = f.get(m);
 				Object r = null;
 				if (o instanceof ILazyDataset) {
-					r = ((ILazyDataset) o).getSliceView(start, stop, step);
+					r = processLazy((ILazyDataset)o,start, stop, step, oShape);
 					if (r != null) {
 						f.set(m, r);
 					}
@@ -273,7 +273,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 						if (r instanceof ILazyDataset) {
 							for (int i = 0; i < l; i++) {
 								ILazyDataset ld = (ILazyDataset) Array.get(o, i);
-								Array.set(o, i, ld.getSliceView(start, stop, step));
+								Array.set(o, i, processLazy(ld,start, stop, step, oShape));
 							}
 						}
 					}
@@ -286,7 +286,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 							@SuppressWarnings("unchecked")
 							List<ILazyDataset> ldList = (List<ILazyDataset>) list;
 							for (int i = 0; i < l; i++) {
-								ldList.set(i, ldList.get(i).getSliceView(start, stop, step));
+								ldList.set(i, processLazy(ldList.get(i),start, stop, step, oShape));
 							}
 						}
 					}
@@ -301,11 +301,11 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 							@SuppressWarnings("unchecked")
 							Map<Object, ILazyDataset> ldMap = (Map<Object, ILazyDataset>) map; 
 							ILazyDataset ld = (ILazyDataset) r;
-							ldMap.put(k, ld.getSliceView(start, stop, step));
+							ldMap.put(k, processLazy(ld,start, stop, step, oShape));
 							while (kit.hasNext()) {
 								k = kit.next();
 								ld = ldMap.get(k);
-								ldMap.put(k, ld.getSliceView(start, stop, step));
+								ldMap.put(k, processLazy(ld,start, stop, step, oShape));
 							}
 						}
 					}
@@ -314,5 +314,31 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				logger.error("Problem occurred when slicing metadata of class {}: {}", mc.getCanonicalName(), e);
 			}
 		}
+	}
+	
+	private static ILazyDataset processLazy(ILazyDataset lz, final int[] start, final int[] stop, final int[] step, final int[] oShape) {
+		
+		//assuming start, stop, step != null by this point
+		
+		if (start.length != lz.getRank()) throw new IllegalArgumentException("Slice dimensions do not match dataset!");
+		
+		int[] stt = start.clone();
+		int[] stp = stop.clone();
+		int[] ste = step.clone();
+		
+		int rank = lz.getRank();
+		int[] shape = lz.getShape();
+		
+		for (int i = 0; i < rank; i++) {
+			if (shape[i] == oShape[i]) continue;
+			if (shape[i] == 1) {
+				stt[i] = 0;
+				stp[i] = 1;
+				ste[1] = 1;
+			}
+			if (shape[i] != oShape[i] && shape[i] != 1) throw new IllegalArgumentException("Sliceable dataset has invalid size!");
+		}
+		
+		return lz.getSliceView(stt,stp,ste);
 	}
 }

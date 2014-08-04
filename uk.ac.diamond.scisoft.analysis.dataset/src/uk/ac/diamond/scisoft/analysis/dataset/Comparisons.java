@@ -61,22 +61,38 @@ public class Comparisons {
 		final int bs = db.getElementsPerItem();
 
 		if (as > bs) {
-			while (it.hasNext()) {
-				final double bd = it.bDouble;
-				boolean rb = true;
-				for (int j = 0; rb && j < as; j++) {
-					rb &= da.getElementDoubleAbs(it.aIndex + j) == bd;
+			if (da.isComplex()) {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					boolean rb = it.aDouble == bd && da.getElementDoubleAbs(it.aIndex + 1) == 0;
+					r.setAbs(it.oIndex, rb);
 				}
-				r.setAbs(it.oIndex, rb);
+			} else {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					boolean rb = true;
+					for (int j = 0; rb && j < as; j++) {
+						rb &= da.getElementDoubleAbs(it.aIndex + j) == bd;
+					}
+					r.setAbs(it.oIndex, rb);
+				}
 			}
 		} else if (as < bs) {
-			while (it.hasNext()) {
-				final double ad = it.aDouble;
-				boolean rb = true;
-				for (int j = 0; rb && j < bs; j++) {
-					rb &= ad == db.getElementDoubleAbs(it.bIndex + j);
+			if (db.isComplex()) {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					boolean rb = ad == it.bDouble && 0 == db.getElementDoubleAbs(it.bIndex + 1);
+					r.setAbs(it.oIndex, rb);
 				}
-				r.setAbs(it.oIndex, rb);
+			} else {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						rb &= ad == db.getElementDoubleAbs(it.bIndex + j);
+					}
+					r.setAbs(it.oIndex, rb);
+				}
 			}
 		} else {
 			if (as == 1) {
@@ -139,26 +155,55 @@ public class Comparisons {
 		final int bs = db.getElementsPerItem();
 
 		if (as > bs) {
-			while (it.hasNext()) {
-				final double bd = it.bDouble;
-				final double abd = Math.abs(bd);
-				boolean rb = true;
-				for (int j = 0; rb && j < as; j++) {
-					final double ad = da.getElementDoubleAbs(it.aIndex + j);
-					rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), abd);
+			if (da.isComplex()) {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					final double abd = Math.abs(bd);
+					final double ad = it.aDouble;
+					boolean rb = Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), abd);
+					if (rb) {
+						final double aad = Math.abs(da.getElementDoubleAbs(it.aIndex + 1));
+						rb = aad <= absTolerance + relTolerance*aad;
+					}
+					r.setAbs(it.oIndex, rb);
 				}
-				r.setAbs(it.oIndex, rb);
+			} else {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					final double abd = Math.abs(bd);
+					boolean rb = true;
+					for (int j = 0; rb && j < as; j++) {
+						final double ad = da.getElementDoubleAbs(it.aIndex + j);
+						rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(Math.abs(ad), abd);
+					}
+					r.setAbs(it.oIndex, rb);
+				}
 			}
 		} else if (as < bs) {
-			while (it.hasNext()) {
-				final double ad = it.aDouble;
-				final double aad = Math.abs(ad);
-				boolean rb = true;
-				for (int j = 0; rb && j < bs; j++) {
-					final double bd = db.getElementDoubleAbs(it.bIndex + j);
-					rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(aad, Math.abs(bd));
+			if (db.isComplex()) {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double aad = Math.abs(ad);
+					final double bd = it.bDouble;
+
+					boolean rb = Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(aad, Math.abs(bd));
+					if (rb) {
+						final double abd = Math.abs(db.getElementDoubleAbs(it.bIndex + 1));
+						rb = abd <= absTolerance + relTolerance*abd;
+					}
+					r.setAbs(it.oIndex, rb);
 				}
-				r.setAbs(it.oIndex, rb);
+			} else {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double aad = Math.abs(ad);
+					boolean rb = true;
+					for (int j = 0; rb && j < bs; j++) {
+						final double bd = db.getElementDoubleAbs(it.bIndex + j);
+						rb &= Math.abs(ad - bd) <= absTolerance + relTolerance*Math.max(aad, Math.abs(bd));
+					}
+					r.setAbs(it.oIndex, rb);
+				}
 			}
 		} else {
 			if (as == 1) {
@@ -546,23 +591,50 @@ public class Comparisons {
 		final int bs = db.getElementsPerItem();
 
 		if (as > bs) {
-			while (it.hasNext()) {
-				final double bd = it.bDouble;
-				final double abd = Math.abs(bd);
-				for (int j = 0; j < as; j++) {
-					final double ad = da.getElementDoubleAbs(it.aIndex + j);
+			if (da.isComplex()) {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					final double abd = Math.abs(bd);
+					final double ad = it.aDouble;
 					if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(Math.abs(ad), abd))
 						return false;
+					final double aad = Math.abs(da.getElementDoubleAbs(it.aIndex + 1));
+					if (aad > absTolerance + relTolerance*aad)
+						return false;
+				}
+			} else {
+				while (it.hasNext()) {
+					final double bd = it.bDouble;
+					final double abd = Math.abs(bd);
+					for (int j = 0; j < as; j++) {
+						final double ad = da.getElementDoubleAbs(it.aIndex + j);
+						if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(Math.abs(ad), abd))
+							return false;
+					}
 				}
 			}
 		} else if (as < bs) {
-			while (it.hasNext()) {
-				final double ad = it.aDouble;
-				final double aad = Math.abs(ad);
-				for (int j = 0; j < bs; j++) {
-					final double bd = db.getElementDoubleAbs(it.bIndex + j);
+			if (db.isComplex()) {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double aad = Math.abs(ad);
+					final double bd = it.bDouble;
+
 					if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(aad, Math.abs(bd)))
 						return false;
+					final double abd = Math.abs(db.getElementDoubleAbs(it.bIndex + 1));
+					if (abd > absTolerance + relTolerance*abd)
+						return false;
+				}
+			} else {
+				while (it.hasNext()) {
+					final double ad = it.aDouble;
+					final double aad = Math.abs(ad);
+					for (int j = 0; j < bs; j++) {
+						final double bd = db.getElementDoubleAbs(it.bIndex + j);
+						if (Math.abs(ad - bd) > absTolerance + relTolerance*Math.max(aad, Math.abs(bd)))
+							return false;
+					}
 				}
 			}
 		} else {

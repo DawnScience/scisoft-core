@@ -23,12 +23,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ComparisonsTest {
-	AbstractDataset a, b;
+	Dataset a, b, z;
 
 	@Before
 	public void setUpClass() {
 		a = new DoubleDataset(new double[] { 0, 1, 3, 5, -7, -9 });
 		b = new DoubleDataset(new double[] { 0.01, 1.2, 2.9, 5, -7.1, -9 });
+		z = new ComplexDoubleDataset(new double[] { 0.01, 1.2, 2.5, 5, -7.1, -9, 2.5, 0 });
 	}
 
 	@Test
@@ -60,6 +61,11 @@ public class ComparisonsTest {
 		AbstractDatasetTest.checkDatasets(c, new BooleanDataset(new boolean[] {false, false, true, false, false, false}));
 		c = Comparisons.equalTo(3, a);
 		AbstractDatasetTest.checkDatasets(c, new BooleanDataset(new boolean[] {false, false, true, false, false, false}));
+
+		c = Comparisons.equalTo(z, 2.5);
+		AbstractDatasetTest.checkDatasets(c, new BooleanDataset(new boolean[] {false, false, false, true}));
+		c = Comparisons.equalTo(2.5, z);
+		AbstractDatasetTest.checkDatasets(c, new BooleanDataset(new boolean[] {false, false, false, true}));
 	}
 
 	@Test
@@ -72,6 +78,10 @@ public class ComparisonsTest {
 				new boolean[] {false, false, true, false, false, false}));
 		AbstractDatasetTest.checkDatasets(Comparisons.almostEqualTo(3, a, 0.1, 1e-3), new BooleanDataset(
 				new boolean[] {false, false, true, false, false, false}));
+
+		c = Comparisons.almostEqualTo(z, 2.5, 0.1, 1e-3);
+		AbstractDatasetTest.checkDatasets(c, new BooleanDataset(new boolean[] {false, false, false, true}));
+		c = Comparisons.almostEqualTo(2.5, z, 0.1, 1e-3);
 	}
 
 	@Test
@@ -79,6 +89,9 @@ public class ComparisonsTest {
 		Assert.assertFalse(Comparisons.allCloseTo(a, b, 0.1, 1e-3));
 
 		Assert.assertTrue(Comparisons.allCloseTo(a, b, 0.1, 2e-1));
+
+		Assert.assertFalse(Comparisons.allCloseTo(z, 2.5, 0.1, 1e-3));
+		Assert.assertFalse(Comparisons.allCloseTo(2.5, z, 0.1, 1e-3));
 	}
 
 	@Test
@@ -140,9 +153,9 @@ public class ComparisonsTest {
 	public void testAllTrue() {
 		Assert.assertFalse(Comparisons.allTrue(a));
 		Assert.assertTrue(Comparisons.allTrue(b));
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		AbstractDatasetTest.checkDatasets(Comparisons.allTrue(c, 0), new BooleanDataset(new boolean[] {false, true, true}));
-		AbstractDataset d = b.clone().reshape(2, 3);
+		Dataset d = b.clone().reshape(2, 3);
 		AbstractDatasetTest.checkDatasets(Comparisons.allTrue(d, 1), new BooleanDataset(new boolean[] {true, true}));
 	}
 
@@ -151,9 +164,9 @@ public class ComparisonsTest {
 		Assert.assertTrue(Comparisons.anyTrue(a));
 		Assert.assertTrue(Comparisons.anyTrue(b));
 		Assert.assertFalse(Comparisons.anyTrue(new DoubleDataset(new double[] {0, 0})));
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		AbstractDatasetTest.checkDatasets(Comparisons.anyTrue(c, 0), new BooleanDataset(new boolean[] {true, true, true}));
-		AbstractDataset d = b.clone().reshape(2, 3);
+		Dataset d = b.clone().reshape(2, 3);
 		AbstractDatasetTest.checkDatasets(Comparisons.anyTrue(d, 1), new BooleanDataset(new boolean[] {true, true}));
 		AbstractDatasetTest.checkDatasets(Comparisons.anyTrue(new DoubleDataset(new double[] {0, 0, 0, 1}).reshape(2,2), 1),
 				new BooleanDataset(new boolean[] {false, true}));
@@ -190,7 +203,7 @@ public class ComparisonsTest {
 
 	@Test
 	public void testNonZero() {
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		List<IntegerDataset> e = Comparisons.nonZero(c);
 		AbstractDatasetTest.checkDatasets(e.get(0), new IntegerDataset(new int[] {0, 0, 1, 1, 1}, null));
 		AbstractDatasetTest.checkDatasets(e.get(1), new IntegerDataset(new int[] {1, 2, 0, 1, 2}, null));
@@ -198,9 +211,9 @@ public class ComparisonsTest {
 
 	@Test
 	public void testFlags() {
-		AbstractDataset c;
+		Dataset c;
 
-		c = AbstractDataset.array(new int[] {0, -1, 1});
+		c = DatasetFactory.createFromObject(new int[] {0, -1, 1});
 		AbstractDatasetTest.checkDatasets(Comparisons.isFinite(c), new BooleanDataset(new boolean[] {true, true, true}));
 		AbstractDatasetTest.checkDatasets(Comparisons.isInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));
 		AbstractDatasetTest.checkDatasets(Comparisons.isPositiveInfinite(c), new BooleanDataset(new boolean[] {false, false, false}));

@@ -979,7 +979,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.__dataset.createRedDataset(dtype.value)
+        return self._jdataset().createRedDataset(dtype.value)
 
     @_wrapout
     def get_green(self, dtype=None):
@@ -987,7 +987,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.__dataset.createGreenDataset(dtype.value)
+        return self._jdataset().createGreenDataset(dtype.value)
 
     @_wrapout
     def get_blue(self, dtype=None):
@@ -995,7 +995,7 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self.__dataset.createBlueDataset(dtype.value)
+        return self._jdataset().createBlueDataset(dtype.value)
 
     @_wrapout
     def get_grey(self, cweights=None, dtype=None):
@@ -1013,8 +1013,8 @@ class ndarrayRGB(ndarray):
             if len(cweights) != 3:
                 raise ValueError, "three colour channel weights needed"
             csum = float(sum(cweights))
-            return self.__dataset.createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
-        return self.__dataset.createGreyDataset(dtype.value)
+            return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
+        return self._jdataset().createGreyDataset(dtype.value)
 
     red = property(get_red)
     green = property(get_green)

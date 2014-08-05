@@ -13,13 +13,12 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegr
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration2D;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.processing.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class PixelIntegrationOperation extends AbstractOperation {
@@ -30,7 +29,6 @@ public class PixelIntegrationOperation extends AbstractOperation {
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation";
 	}
 
@@ -39,17 +37,7 @@ public class PixelIntegrationOperation extends AbstractOperation {
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
 		
-		List<IMetaData> metaList;
-		try {
-			metaList = slice.getMetadata(IMetaData.class);
-			if (metaList == null || metaList.isEmpty()) throw new OperationException(this, "No diffraction metadata");
-		} catch (Exception e) {
-			throw new OperationException(this, "No diffraction metadata");
-		}
-		
-		IDiffractionMetadata md = null;
-		
-		for (IMetaData meta : metaList) if (meta instanceof IDiffractionMetadata) md = (IDiffractionMetadata)meta;
+		IDiffractionMetadata md = getFirstDiffractionMetadata(slice);
 		
 		if (metadata == null || !metadata.equals(md)) {
 			metadata = md;
@@ -58,30 +46,16 @@ public class PixelIntegrationOperation extends AbstractOperation {
 		
 		if (integrator == null) integrator = createIntegrator(model, metadata);
 		
+		ILazyDataset mask = getFirstMask(slice);
+		if (mask != null) {
+			IDataset m = mask.getSlice().squeeze();
+			integrator.setMask((AbstractDataset)m);
+		}
+		
 		final List<AbstractDataset> out = integrator.integrate(slice);
 		
 		AbstractDataset data = out.remove(1);
-		data.addMetadata(new AxesMetadata() {
-			
-			@Override
-			public ILazyDataset[] getAxis(int axisDim) {
-				// TODO Auto-generated method stub
-				return new ILazyDataset[] {out.get(axisDim)};
-			}
-			
-			@Override
-			public ILazyDataset[] getAxes() {
-				ILazyDataset[] axes = new ILazyDataset[out.size()];;
-				for (int i = 0; i < out.size(); i++) axes[i] = out.get(i);
-				
-				return axes;
-			}
-			
-			@Override
-			public AxesMetadata clone() {
-				return null;
-			}
-		});
+		data.addMetadata(new AxesMetadataImpl(out.toArray(new ILazyDataset[out.size()])));
 		
 		return new OperationData(data);
 	}
@@ -136,13 +110,11 @@ public class PixelIntegrationOperation extends AbstractOperation {
 
 	@Override
 	public OperationRank getInputRank() {
-		// TODO Auto-generated method stub
 		return OperationRank.TWO;
 	}
 
 	@Override
 	public OperationRank getOutputRank() {
-		// TODO Auto-generated method stub
 		return OperationRank.ONE;
 	}
 

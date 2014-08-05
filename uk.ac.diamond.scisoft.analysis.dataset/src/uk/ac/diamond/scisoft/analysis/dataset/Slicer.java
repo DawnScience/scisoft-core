@@ -128,9 +128,11 @@ public class Slicer {
 
 			Slice[] slice = Slice.convertToSlice(pos, end, st);
 			String sliceName = Slice.createString(slice);
-
-			IDataset data = lzView.getSlice(slice);
-			data = data.squeeze();
+			
+			//Get view before final slice so sliceable annotation can do its magic 
+			ILazyDataset endView = lzView.getSliceView(slice);
+			IDataset data = endView.getSlice().squeeze();
+			
 			data.setName((nameFragment!=null ? nameFragment : "") + " ("+ sliceName+")");
 			if (visitor!=null) {
 			    visitor.visit(data, slice, lzView.getShape());

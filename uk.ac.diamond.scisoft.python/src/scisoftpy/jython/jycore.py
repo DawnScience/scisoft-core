@@ -493,13 +493,15 @@ class ndarray(object):
                 if rank > 1:
                     raise ValueError, "incorrect number of indices"
             elif index:
-                raise ValueError, "index out of bounds"
+                if args:
+                    raise ValueError, "incorrect number of indices"
+                raise IndexError, "index out of bounds"
             if args:
                 if (len(args) + 1) > rank:
                     raise ValueError, "incorrect number of indices"
                 for a in args:
                     if a:
-                        raise ValueError, "index out of bounds"
+                        raise IndexError, "index out of bounds"
             r = self.__dataset.getObject([])
         else:
             if index is None:
@@ -509,8 +511,10 @@ class ndarray(object):
                     r = self.__dataset.getObject(index, *args)
                 else:
                     r = self.__dataset.getObjectAbs(index)
-            except (_jarrayindex_exception, _jillegalargument_exception):
-                raise ValueError
+            except _jarrayindex_exception:
+                raise IndexError, "index out of bounds"
+            except _jillegalargument_exception:
+                raise ValueError, "incorrect number of indices"
 
         if isinstance(r, _jcomplex):
             return complex(r.getReal(), r.getImaginary())

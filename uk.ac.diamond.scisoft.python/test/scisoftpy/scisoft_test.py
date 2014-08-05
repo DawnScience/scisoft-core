@@ -319,23 +319,23 @@ class Test(unittest.TestCase):
         a = np.array(10)
         self.assertEquals(10, a.item())
         self.assertEquals(10, a.item(0))
-        self.assertRaises(ValueError, a.item, 1)
+        self.assertRaises(IndexError, a.item, 1)
         self.assertRaises(ValueError, a.item, 1, 1)
         a = np.array([10.])
         self.assertEquals(10, a.item())
         self.assertEquals(10, a.item(0))
-        self.assertRaises(ValueError, a.item, 1)
+        self.assertRaises(IndexError, a.item, 1)
         self.assertRaises(ValueError, a.item, 1, 1)
 
         a = np.arange(10.)
         self.assertEquals(4, a.item(4))
-        self.assertRaises(ValueError, a.item, 11)
+        self.assertRaises(IndexError, a.item, 11)
         self.assertRaises(ValueError, a.item, 1, 1)
         a.shape = (2,5)
         self.assertEquals(4, a.item(4))
         self.assertEquals(4, a.item(0,4))
-        self.assertRaises(ValueError, a.item, 11)
-        self.assertRaises(ValueError, a.item, 2, 1)
+        self.assertRaises(IndexError, a.item, 11)
+        self.assertRaises(IndexError, a.item, 2, 1)
 
     def testZeroRank(self):
         print 'Zero rank arrays testing'

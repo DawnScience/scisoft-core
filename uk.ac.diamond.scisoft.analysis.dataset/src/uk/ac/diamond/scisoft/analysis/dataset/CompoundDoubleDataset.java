@@ -1289,13 +1289,15 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 			while (it.hasNext()) {
 				data[it.aIndex] -= it.bDouble;
 				for (int i = 1; i < isize; i++)
-					data[it.aIndex + i] -= it.bDouble; // ADD_CAST
+					data[it.aIndex + i] -= it.bDouble; // INT_OMIT // ADD_CAST
+					// data[it.aIndex + i] = (it.aDouble - it.bDouble); // INT_USE // ADD_CAST
 			}
 		} else {
 			while (it.hasNext()) {
 				data[it.aIndex] -= it.bDouble;
 				for (int i = 1; i < isize; i++)
-					data[it.aIndex + i] -= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT_WITH_CAST
+					data[it.aIndex + i] -= bds.getElementDoubleAbs(it.bIndex + i); // INT_OMIT // GET_ELEMENT_WITH_CAST
+					// data[it.aIndex + i] = (data[it.aIndex + i] - bds.getElementDoubleAbs(it.bIndex + i)); // INT_USE // ADD_CAST
 			}
 		}
 		setDirty();
@@ -1329,19 +1331,26 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		if (bds.getElementsPerItem() == 1) {
 			while (it.hasNext()) {
-				final double db = it.bDouble; // PRIM_TYPE // ADD_CAST
-				// if (db == 0) { // INT_ZEROTEST
-				// for (int i = 0; i < isize; i++) // INT_ZEROTEST
-				// 	data[it.aIndex + i] = 0; // INT_ZEROTEST
-				// } else { // INT_ZEROTEST
+				final double db = it.bDouble;
+				// if (db == 0) { // INT_USE
+				// 	for (int i = 0; i < isize; i++) // INT_USE
+				// 		data[it.aIndex + i] = 0; // INT_USE
+				// } else { // INT_USE
 				for (int i = 0; i < isize; i++)
-					data[it.aIndex + i] /= db;
-				// } // INT_ZEROTEST
+					data[it.aIndex + i] /= db; // INT_OMIT
+				// 	data[it.aIndex + i] = (data[it.aIndex + i] / db); // INT_USE // ADD_CAST
+				// } // INT_USE
 			}
 		} else {
 			while (it.hasNext()) {
 				for (int i = 0; i < isize; i++) {
-					data[it.aIndex + i] /= bds.getElementDoubleAbs(it.bIndex + i); // GET_ELEMENT // INT_EXCEPTION
+					final double db = bds.getElementDoubleAbs(it.bIndex + i);
+					data[it.aIndex + i] /= db; // INT_OMIT
+					// try { // INT_USE
+					// 	data[it.aIndex + i] = (data[it.aIndex + i] / db); // INT_USE // ADD_CAST
+					// } catch (ArithmeticException e) { // INT_USE
+					// 	data[it.aIndex + i] = 0; // INT_USE
+					// } // INT_USE
 				}
 			}
 		}

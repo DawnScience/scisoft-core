@@ -117,6 +117,8 @@ class transmutate(object):
             ("// BOOLEAN_ZERO", self.boolzero),
             ("// NAN_OMIT", self.nanomit),
             ("// FORMAT_STRING", self.string),
+            ("// INT_OMIT", self.intomit),
+            ("// INT_USE", self.intuse),
             ("// INT_EXCEPTION", self.intexception),
             ("// INT_ZEROTEST", self.intzerotest),
             ("// OMIT_SAME_CAST", self.omitcast),
@@ -299,6 +301,17 @@ class transmutate(object):
             e = line.find(';', s)
             return line[:b] + line[s+len(self.sform) + 2:(e-1)] + line[e:]
         return line.replace(self.sform, self.dform)
+
+    def intomit(self, line):
+        if not self.isreal:
+            return None
+        return line.replace(" // INT_OMIT", "")
+
+    def intuse(self, line):
+        if not self.isreal: # uncomment line
+            s = line.find("// ")
+            return line[:s] + line[s+3:]
+        return line
 
     def intexception(self, line):
         if self.ddtype.startswith("INT"):

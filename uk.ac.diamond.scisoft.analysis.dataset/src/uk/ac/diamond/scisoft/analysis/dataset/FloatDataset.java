@@ -941,6 +941,7 @@ public class FloatDataset extends AbstractDataset {
 		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		while (it.hasNext()) {
 			data[it.aIndex] -= (float) it.bDouble; // ADD_CAST
+			// data[it.aIndex] = (float) (it.aDouble - it.bDouble); // INT_USE // ADD_CAST
 		}
 		setDirty();
 		return this;
@@ -962,11 +963,12 @@ public class FloatDataset extends AbstractDataset {
 		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(this, bds);
 		while (it.hasNext()) {
-			// if (it.bDouble == 0) { // INT_ZEROTEST
-			// 	data[it.aIndex] = 0; // INT_ZEROTEST
-			// } else { // INT_ZEROTEST
 			data[it.aIndex] /= (float) it.bDouble; // ADD_CAST
-			// } // INT_ZEROTEST
+			// if (it.bDouble == 0) { // INT_USE
+			// 	data[it.aIndex] = 0; // INT_USE
+			// } else { // INT_USE
+			// 	data[it.aIndex] = (float) (it.aDouble / it.bDouble); // INT_USE // ADD_CAST
+			// } // INT_USE
 		}
 		setDirty();
 		return this;

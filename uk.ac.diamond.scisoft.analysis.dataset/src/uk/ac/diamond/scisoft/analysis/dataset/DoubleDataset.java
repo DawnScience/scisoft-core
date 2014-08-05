@@ -940,7 +940,8 @@ public class DoubleDataset extends AbstractDataset {
 		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b); // NAN_OMIT
 		final BroadcastIterator it = new BroadcastIterator(this, bds); // NAN_OMIT
 		while (it.hasNext()) { // NAN_OMIT
-			data[it.aIndex] -= it.bDouble; // ADD_CAST // NAN_OMIT
+			data[it.aIndex] -= it.bDouble; // INT_OMIT // ADD_CAST // NAN_OMIT
+			// data[it.aIndex] = (it.aDouble - it.bDouble); // INT_USE // ADD_CAST // NAN_OMIT
 		} // NAN_OMIT
 		setDirty(); // NAN_OMIT
 		return this;
@@ -962,11 +963,12 @@ public class DoubleDataset extends AbstractDataset {
 		Dataset bds = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b); // NAN_OMIT
 		final BroadcastIterator it = new BroadcastIterator(this, bds); // NAN_OMIT
 		while (it.hasNext()) { // NAN_OMIT
-			// if (it.bDouble == 0) { // INT_ZEROTEST // NAN_OMIT
-			// 	data[it.aIndex] = 0; // INT_ZEROTEST // NAN_OMIT
-			// } else { // INT_ZEROTEST // NAN_OMIT
-			data[it.aIndex] /= it.bDouble; // ADD_CAST // NAN_OMIT
-			// } // INT_ZEROTEST // NAN_OMIT
+			data[it.aIndex] /= it.bDouble; // INT_OMIT // ADD_CAST // NAN_OMIT
+			// if (it.bDouble == 0) { // INT_USE // NAN_OMIT
+			// 	data[it.aIndex] = 0; // INT_USE // NAN_OMIT
+			// } else { // INT_USE // NAN_OMIT
+			// 	data[it.aIndex] = (it.aDouble / it.bDouble); // INT_USE // ADD_CAST // NAN_OMIT
+			// } // INT_USE // NAN_OMIT
 		} // NAN_OMIT
 		setDirty(); // NAN_OMIT
 		return this;

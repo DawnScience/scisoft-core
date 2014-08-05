@@ -195,7 +195,7 @@ public class BroadcastIterator extends IndexIterator {
 				throw new IllegalArgumentException("Can not broadcast where number of elements per item mismatch and one does not equal another");
 			}
 		}
-		if (o != null) {
+		if (o != null && o.getDtype() != Dataset.BOOL) {
 			final int ism = Math.max(isa, isb);
 			final int iso = o.getElementsPerItem();
 			if (iso != ism && ism != 1) {

@@ -376,7 +376,7 @@ def _key2slice(key, shape):
     '''
     key = asIterable(key)
     rank = len(shape)
-    if rank < len(key):
+    if rank < len(key) and key[0] is not Ellipsis:
         raise IndexError, "too many indices"
 
     hasEllipsis = False

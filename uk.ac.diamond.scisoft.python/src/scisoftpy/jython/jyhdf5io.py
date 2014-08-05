@@ -95,7 +95,7 @@ class SDS(_hdataset):
                 v = _getslice(data, key)
             return v
 
-        return data[key]
+        return asarray(data)[key]
 
 class HDF5Loader(object):
     def __init__(self, name):

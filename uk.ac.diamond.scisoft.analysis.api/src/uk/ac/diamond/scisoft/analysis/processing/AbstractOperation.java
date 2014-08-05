@@ -16,6 +16,14 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import java.util.List;
+
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 
@@ -81,5 +89,52 @@ public abstract class AbstractOperation implements IOperation {
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
 		this.model = model;
+	}
+	
+	public ILazyDataset[] getFirstAxes(IDataset slice) {
+		List<AxesMetadata> metaList = null;
+		
+		try {
+			metaList = slice.getMetadata(AxesMetadata.class);
+			if (metaList == null || metaList.isEmpty()) return null;
+		} catch (Exception e) {
+			return null;
+		}
+		
+		AxesMetadata am = metaList.get(0);
+		
+		return am.getAxes();
+	}
+	
+	public ILazyDataset getFirstMask(IDataset slice) {
+		
+		List<MaskMetadata> metaList = null;
+		
+		try {
+			metaList = slice.getMetadata(MaskMetadata.class);
+			if (metaList == null || metaList.isEmpty()) return null;
+		} catch (Exception e) {
+			return null;
+		}
+		
+		MaskMetadata mm = metaList.get(0);
+		
+		return mm.getMask();
+	}
+	
+	public IDiffractionMetadata getFirstDiffractionMetadata(IDataset slice) {
+		
+		List<IMetaData> metaList;
+		
+		try {
+			metaList = slice.getMetadata(IMetaData.class);
+			if (metaList == null || metaList.isEmpty()) return null;
+		} catch (Exception e) {
+			return null;
+		}
+		
+		for (IMetaData meta : metaList) if (meta instanceof IDiffractionMetadata) return (IDiffractionMetadata)meta;
+		
+		return null;
 	}
 }

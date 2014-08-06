@@ -28,8 +28,8 @@ public class SubMetadata extends SliceableTestMetadata {
 	@Sliceable
 	ILazyDataset ldb;
 
-	public SubMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map) {
-		super(ld, array, list, map);
+	public SubMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map, List<DoubleDataset[]> l2) {
+		super(ld, array, list, map, l2);
 		ldb = new DoubleDataset(ld.getShape());
 	}
 
@@ -39,7 +39,7 @@ public class SubMetadata extends SliceableTestMetadata {
 
 	@Override
 	public MetadataType clone() {
-		SubMetadata c = new SubMetadata(ldb, getArray(), getList(), getMap());
+		SubMetadata c = new SubMetadata(ldb, getArray(), getList(), getMap(), getListOfArrays());
 		c.ldb = ldb;
 		return c;
 	}

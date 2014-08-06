@@ -36,17 +36,20 @@ public class SliceableTestMetadata implements MetadataType {
 	private List<ShortDataset> lds;
 	@Sliceable
 	private Map<String, BooleanDataset> mds;
+	@Sliceable
+	private List<DoubleDataset[]> l2deep;
 
-	public SliceableTestMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map) {
+	public SliceableTestMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map, List<DoubleDataset[]> l2) {
 		ds = ld;
 		dds = array;
 		lds = list;
 		mds = map;
+		l2deep = l2;
 	}
 
 	@Override
 	public MetadataType clone() {
-		return new SliceableTestMetadata(ds, dds.clone(), new ArrayList<ShortDataset>(lds), new HashMap<String, BooleanDataset>(mds));
+		return new SliceableTestMetadata(ds, dds.clone(), new ArrayList<ShortDataset>(lds), new HashMap<String, BooleanDataset>(mds), new ArrayList<DoubleDataset[]>(l2deep));
 	}
 
 	public ILazyDataset getLazyDataset() {
@@ -61,5 +64,9 @@ public class SliceableTestMetadata implements MetadataType {
 	}
 	public Map<String, BooleanDataset> getMap() {
 		return mds;
+	}
+	
+	public List<DoubleDataset[]> getListOfArrays() {
+		return l2deep;
 	}
 }

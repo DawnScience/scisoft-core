@@ -15,7 +15,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 /**
  * Defines the origin of a dataset which is a slice of a parent dataset
  */
-public interface OriginMetadata extends MetadataType {
+public interface OriginMetadata extends DimensionMetadata {
 
 	public ILazyDataset getParent();
 	

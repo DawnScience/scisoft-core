@@ -1,7 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
@@ -32,8 +35,9 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationMod
 
 public class PixelIntegrationTest {
 
-private static IOperationService service;
-	
+	private static IOperationService service;
+	private int count = 0;
+
 	/**
 	 * Manually creates the service so that no extension points have to be read.
 	 * 
@@ -84,10 +88,10 @@ private static IOperationService service;
 		final IDataset axDataset1 = DatasetFactory.createRange(24,AbstractDataset.INT16);
 		axDataset1.setShape(new int[] {24,1,1});
 		
-		final IDataset axDataset2 = DatasetFactory.createRange(1000,AbstractDataset.INT16);
+		final IDataset axDataset2 = DatasetFactory.createRange(1000,AbstractDataset.INT32);
 		axDataset2.setShape(new int[] {1,1000,1});
 		
-		final IDataset axDataset3 = DatasetFactory.createRange(1000,AbstractDataset.INT16);
+		final IDataset axDataset3 = DatasetFactory.createRange(1000,AbstractDataset.INT32);
 		axDataset3.setShape(new int[] {1,1,1000});
 		
 		AxesMetadataImpl am = new AxesMetadataImpl(3);
@@ -114,6 +118,7 @@ private static IOperationService service;
 		final IOperation azi = service.findFirst("Pixel");
 		azi.setModel(new PowderIntegrationModel());
 		
+		
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
@@ -123,6 +128,14 @@ private static IOperationService service;
 					throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 				}
 				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 2);
+				IDataset t = ax[0].getSlice();
+				t.squeeze();
+				assertEquals(t.getShort(), count++);
+				assertEquals(integrated.getSize(), ax[1].getSlice().getSize());
 			}
 		}, di,azi);
 		

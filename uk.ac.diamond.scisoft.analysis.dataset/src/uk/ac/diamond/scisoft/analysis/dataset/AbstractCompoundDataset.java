@@ -544,11 +544,6 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		return getFirstValue(pos);
 	}
 
-	/**
-	 * Get an item as a double array
-	 * @param darray double array must be allocated and have sufficient length
-	 * @param pos
-	 */
 	@Override
 	public void getDoubleArray(final double[] darray, final int... pos) {
 		getDoubleArrayAbs(get1DIndex(pos), darray);
@@ -859,10 +854,6 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		return null;
 	}
 
-	/**
-	 * @param dtype
-	 * @return sum over all items in dataset as array of primitives or a complex number
-	 */
 	@Override
 	public Object typedSum(int dtype) {
 		return fromDoublesToBiggestPrimitives((double[]) sum(), dtype);

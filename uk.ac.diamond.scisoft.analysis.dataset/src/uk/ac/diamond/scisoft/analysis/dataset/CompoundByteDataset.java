@@ -361,10 +361,6 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 		return result;
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public CompoundByteDataset fill(final Object obj) {
 		if (obj instanceof IDataset) {
@@ -1217,17 +1213,11 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 		setDirty();
 	}
 
-	/**
-	 * @return true if dataset contains any NaNs
-	 */
 	@Override
 	public boolean containsNans() {
 		return false;
 	}
 
-	/**
-	 * @return true if dataset contains any Infs
-	 */
 	@Override
 	public boolean containsInfs() {
 		return false;

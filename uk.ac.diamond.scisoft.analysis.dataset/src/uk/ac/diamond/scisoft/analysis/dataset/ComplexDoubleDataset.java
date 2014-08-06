@@ -216,10 +216,6 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		return new ComplexDoubleDataset(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public ComplexDoubleDataset fill(final Object obj) {
 		if (obj instanceof IDataset) {

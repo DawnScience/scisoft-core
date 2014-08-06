@@ -239,10 +239,6 @@ public class IntegerDataset extends AbstractDataset {
 		return new IntegerDataset(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public IntegerDataset fill(final Object obj) {
 		if (obj instanceof IDataset) {
@@ -598,13 +594,6 @@ public class IntegerDataset extends AbstractDataset {
 		base = null;
 	}
 
-	/**
-	 * In-place sort of dataset
-	 *
-	 * @param axis
-	 *            to sort along
-	 * @return sorted dataset
-	 */
 	@Override
 	public IntegerDataset sort(Integer axis) {
 		if (axis == null) {

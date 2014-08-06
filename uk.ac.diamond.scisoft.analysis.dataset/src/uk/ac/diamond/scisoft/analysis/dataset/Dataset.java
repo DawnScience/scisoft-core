@@ -515,7 +515,7 @@ public interface Dataset extends IErrorDataset {
 	public Dataset setByIndexes(Object obj, Object... indexes);
 
 	/**
-	 * Fill dataset with number represented by given object
+	 * Fill dataset with given object
 	 * 
 	 * @param obj
 	 * @return filled dataset

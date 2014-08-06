@@ -191,10 +191,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 		return new ObjectDatasetBase(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public ObjectDatasetBase fill(final Object obj) {
 		if (obj instanceof IDataset) {
@@ -550,13 +546,6 @@ public class ObjectDatasetBase extends AbstractDataset {
 		base = null;
 	}
 
-	/**
-	 * In-place sort of dataset
-	 *
-	 * @param axis
-	 *            to sort along
-	 * @return sorted dataset
-	 */
 	@Override
 	public ObjectDatasetBase sort(Integer axis) {
 		if (axis == null) {

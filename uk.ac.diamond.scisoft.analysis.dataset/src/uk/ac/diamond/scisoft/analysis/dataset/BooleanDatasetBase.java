@@ -191,10 +191,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 		return new BooleanDatasetBase(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public BooleanDatasetBase fill(final Object obj) {
 		if (obj instanceof IDataset) {
@@ -550,13 +546,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 		base = null;
 	}
 
-	/**
-	 * In-place sort of dataset
-	 *
-	 * @param axis
-	 *            to sort along
-	 * @return sorted dataset
-	 */
 	@Override
 	public BooleanDatasetBase sort(Integer axis) {
 		throw new UnsupportedOperationException("Cannot sort dataset"); // BOOLEAN_USE

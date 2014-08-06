@@ -3404,11 +3404,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return obj;
 	}
 
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return maximum
-	 */
 	@Override
 	public Number max(boolean... ignoreInvalids) {
 		boolean igNan = ignoreInvalids!=null && ignoreInvalids.length>0 ? ignoreInvalids[0] : false;
@@ -3416,51 +3411,26 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return (Number) getMaxMin(igNan, igInf, STORE_MAX);
 	}
 
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return minimum positive value (or infinity if there are no positive values)
-	 */
 	@Override
 	public Number positiveMax(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MAX);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return maximum positive value (or Double.MIN_VALUE=2^-1024 if there are no positive values)
-	 */
 	@Override
 	public Number positiveMax(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MAX);
 	}
 
-	/**
-	 * See {@link #max(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * @param axis
-	 * @return maxima along axis in dataset
-	 */
 	@Override
 	public AbstractDataset max(int axis) {
 		return max(false, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param axis
-	 * @return maxima along axis in dataset
-	 */
 	@Override
 	public AbstractDataset max(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
 	}
 
-
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return minimum
-	 */
 	@Override
 	public Number min(boolean... ignoreInvalids) {
 		boolean igNan = ignoreInvalids!=null && ignoreInvalids.length>0 ? ignoreInvalids[0] : false;
@@ -3468,356 +3438,172 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return (Number) getMaxMin(igNan, igInf, STORE_MIN);
 	}
 
-	/**
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return minimum positive value (or infinity if there are no positive values)
-	 */
 	@Override
 	public Number positiveMin(boolean ignoreInvalids) {
 		return (Number) getMaxMin(ignoreInvalids, ignoreInvalids, STORE_POS_MIN);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param ignoreInfs if true, ignore infinities
-	 * @return minimum positive value (or infinity if there are no positive values)
-	 */
 	@Override
 	public Number positiveMin(boolean ignoreNaNs, boolean ignoreInfs) {
 		return (Number) getMaxMin(ignoreNaNs, ignoreInfs, STORE_POS_MIN);
 	}
 
-	/**
-	 * See {@link #min(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * @param axis
-	 * @return minima along axis in dataset
-	 */
 	@Override
 	public AbstractDataset min(int axis) {
 		return min(false, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param axis
-	 * @return minima along axis in dataset
-	 */
 	@Override
 	public AbstractDataset min(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + "-" + axis);
 	}
 
-	/**
-	 * Find absolute index of maximum value (in a flattened view)
-	 * See {@link #argMax(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * 
-	 * @return absolute index
-	 */
 	@Override
 	public int argMax() {
 		return argMax(false);
 	}
 
-	/**
-	 * Find absolute index of maximum value (in a flattened view)
-	 * 
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return absolute index
-	 */
 	@Override
 	public int argMax(boolean ignoreInvalids) {
 		return getFlat1DIndex(maxPos(ignoreInvalids));
 	}
 
-	/**
-	 * Find indices of maximum values along given axis.
-	 * See {@link #argMax(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * 
-	 * @param axis
-	 * @return index dataset
-	 */
 	@Override
 	public IntegerDataset argMax(int axis) {
 		return argMax(false, axis);
 	}
 
-	/**
-	 * Find indices of maximum values along given axis
-	 * 
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param axis
-	 * @return index dataset
-	 */
 	@Override
 	public IntegerDataset argMax(boolean ignoreNaNs, int axis) {
 		return (IntegerDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + STORE_INDEX + "-" + axis);
 	}
 
-	/**
-	 * Find absolute index of minimum value (in a flattened view)
-	 * See {@link #argMin(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * 
-	 * @return absolute index
-	 */
 	@Override
 	public int argMin() {
 		return argMin(false);
 	}
 
-	/**
-	 * Find absolute index of minimum value (in a flattened view)
-	 * 
-	 * @param ignoreInvalids if true, ignore NaNs and infinities
-	 * @return absolute index
-	 */
 	@Override
 	public int argMin(boolean ignoreInvalids) {
 		return getFlat1DIndex(minPos(ignoreInvalids));
 	}
 
-	/**
-	 * Find indices of minimum values along given axis.
-	 * See {@link #argMin(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * 
-	 * @param axis
-	 * @return index dataset
-	 */
 	@Override
 	public IntegerDataset argMin(int axis) {
 		return argMin(false, axis);
 	}
 
-	/**
-	 * Find indices of minimum values along given axis
-	 * 
-	 * @param ignoreNaNs if true, ignore NaNs
-	 * @param axis
-	 * @return index dataset
-	 */
 	@Override
 	public IntegerDataset argMin(boolean ignoreNaNs, int axis) {
 		return (IntegerDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + STORE_INDEX + "-" + axis);
 	}
 
-	/**
-	 * @return peak-to-peak value, the difference of maximum and minimum of dataset
-	 */
 	@Override
 	public Number peakToPeak() {
 		return fromDoubleToNumber(max().doubleValue() - min().doubleValue());
 	}
 
-	/**
-	 * @param axis
-	 * @return peak-to-peak dataset, the difference of maxima and minima of dataset along axis
-	 */
 	@Override
 	public AbstractDataset peakToPeak(int axis) {
 		return Maths.subtract(max(axis), min(axis));
 	}
 
-	/**
-	 * See {@link #count(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * @return number of items in dataset
-	 */
 	@Override
 	public long count() {
 		return count(false);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
-	 * @return number of items in dataset
-	 */
 	@Override
 	public long count(boolean ignoreNaNs) {
 		return getStatistics(ignoreNaNs).getN();
 	}
 
-	/**
-	 * See {@link #count(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * @param axis
-	 * @return number of items along axis in dataset
-	 */
 	@Override
 	public AbstractDataset count(int axis) {
 		return count(false, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
-	 * @param axis
-	 * @return number of items along axis in dataset
-	 */
 	@Override
 	public AbstractDataset count(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_COUNT + "-" + axis);
 	}
 
-	/**
-	 * See {@link #sum(boolean ignoreNaNs)} with ignoreNaNs = false
-	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
-	 */
 	@Override
 	public Object sum() {
 		return sum(false);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
-	 * @return sum over all items in dataset as a Double, array of doubles or a complex number
-	 */
 	@Override
 	public Object sum(boolean ignoreNaNs) {
 		return getStatistics(ignoreNaNs).getSum();
 	}
 
-	/**
-	 * See {@link #sum(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * @param axis
-	 * @return sum along axis in dataset
-	 */
 	@Override
 	public AbstractDataset sum(int axis) {
 		return sum(false, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, ignore NaNs (treat as zeros)
-	 * @param axis
-	 * @return sum along axis in dataset
-	 */
 	@Override
 	public AbstractDataset sum(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_SUM + "-" + axis);
 	}
 
-	/**
-	 * @return sum over all items in dataset as appropriate to dataset type
-	 * (integers for boolean, byte, short and integer; longs for long; floats for float; doubles for double)
-	 */
 	@Override
 	public Object typedSum() {
 		return typedSum(getDtype());
 	}
 
-	/**
-	 * @param dtype
-	 * @return sum over all items in dataset as appropriate to given dataset type
-	 */
 	@Override
 	public Object typedSum(int dtype) {
 		return fromDoubleToBiggestNumber(getStatistics(false).getSum(), dtype);
 	}
 
-	/**
-	 * @param dtype
-	 * @param axis
-	 * @return sum along axis in dataset
-	 */
 	@Override
 	public AbstractDataset typedSum(int dtype, int axis) {
 		return DatasetUtils.cast(sum(axis), dtype);
 	}
 
-	/**
-	 * @return product over all items in dataset
-	 */
 	@Override
 	public Object product() {
 		return Stats.product(this);
 	}
 
-	/**
-	 * @param axis
-	 * @return product along axis in dataset
-	 */
 	@Override
 	public AbstractDataset product(int axis) {
 		return Stats.product(this, axis);
 	}
 
-	/**
-	 * @param dtype
-	 * @return product over all items in dataset
-	 */
 	@Override
 	public Object typedProduct(int dtype) {
 		return Stats.typedProduct(this, dtype);
 	}
 
-	/**
-	 * @param dtype
-	 * @param axis
-	 * @return product along axis in dataset
-	 */
 	@Override
 	public AbstractDataset typedProduct(int dtype, int axis) {
 		return Stats.typedProduct(this, dtype, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, skip NaNs
-	 * @return mean of all items in dataset as a double, array of doubles or a complex number
-	 */
 	@Override
 	public Object mean(boolean... ignoreNaNs) {
 		boolean ig = ignoreNaNs!=null && ignoreNaNs.length>0 ? ignoreNaNs[0] : false;
 		return getStatistics(ig).getMean();
 	}
 
-	/**
-	 * See {@link #mean(boolean ignoreNaNs, int axis)} with ignoreNaNs = false
-	 * @param axis
-	 * @return mean along axis in dataset
-	 */
 	@Override
 	public AbstractDataset mean(int axis) {
 		return mean(false, axis);
 	}
 
-	/**
-	 * @param ignoreNaNs if true, skip NaNs
-	 * @param axis
-	 * @return mean along axis in dataset
-	 */
 	@Override
 	public AbstractDataset mean(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MEAN + "-" + axis);
 	}
 
-	/**
-	 * @return sample variance of whole dataset
-	 * @see #variance(boolean)
-	 */
 	@Override
 	public Number variance() {
 		return variance(false);
 	}
 
-	/**
-	 * The sample variance can be calculated in two ways: if the dataset is considered as the entire population then the
-	 * sample variance is simply the second central moment:
-	 * 
-	 * <pre>
-	 *    sum((x_i - m)^2)/N
-	 * where {x_i} are set of N population values and m is the mean
-	 *    m = sum(x_i)/N
-	 * </pre>
-	 * 
-	 * Otherwise, if the dataset is a set of samples (with replacement) from the population then
-	 * 
-	 * <pre>
-	 *    sum((x_i - m)^2)/(N-1)
-	 * where {x_i} are set of N sample values and m is the unbiased estimate of the mean
-	 *    m = sum(x_i)/N
-	 * </pre>
-	 * 
-	 * Note that the second definition is also the unbiased estimator of population variance.
-	 * 
-	 * @param isDatasetWholePopulation
-	 * @return sample variance
-	 */
 	@Override
 	public Number variance(boolean isDatasetWholePopulation) {
 		SummaryStatistics stats = getStatistics(false);
@@ -3832,52 +3618,27 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return stats.getVariance();
 	}
 
-	/**
-	 * @param axis
-	 * @return sample variance along axis in dataset
-	 * @see #variance(boolean)
-	 */
 	@Override
 	public AbstractDataset variance(int axis) {
 		return (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 	}
 
-	/**
-	 * Standard deviation is square root of the variance
-	 * 
-	 * @return sample standard deviation of all items in dataset
-	 * @see #variance()
-	 */
 	@Override
 	public Number stdDeviation() {
 		return Math.sqrt(variance().doubleValue());
 	}
 
-	/**
-	 * Standard deviation is square root of the variance
-	 * 
-	 * @param isDatasetWholePopulation
-	 * @return sample standard deviation of all items in dataset
-	 * @see #variance(boolean)
-	 */
 	@Override
 	public Number stdDeviation(boolean isDatasetWholePopulation) {
 		return Math.sqrt(variance(isDatasetWholePopulation).doubleValue());
 	}
 
-	/**
-	 * @param axis
-	 * @return standard deviation along axis in dataset
-	 */
 	@Override
 	public AbstractDataset stdDeviation(int axis) {
 		final Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		return Maths.sqrt(v);
 	}
 
-	/**
-	 * @return root mean square
-	 */
 	@Override
 	public Number rootMeanSquare() {
 		final SummaryStatistics stats = getStatistics(false);
@@ -3885,10 +3646,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return Math.sqrt(stats.getVariance() + mean * mean);
 	}
 
-	/**
-	 * @param axis
-	 * @return root mean square along axis in dataset
-	 */
 	@Override
 	public AbstractDataset rootMeanSquare(int axis) {
 		Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
@@ -3897,17 +3654,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return Maths.sqrt(result.iadd(v));
 	}
 
-	/**
-	 * @see DatasetUtils#put(Dataset, int[], Object[])
-	 */
 	@Override
 	public AbstractDataset put(final int[] indices, Object[] values) {
 		return DatasetUtils.put(this, indices, values);
 	}
 
-	/**
-	 * @see DatasetUtils#take(Dataset, int[], Integer)
-	 */
 	@Override
 	public AbstractDataset take(final int[] indices, final Integer axis) {
 		return DatasetUtils.take(this, indices, axis);
@@ -3990,13 +3741,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 	}
 
-	/**
-	 * In the case where errorData is defined this is faster than
-	 * calling getError() to determine if there is error data. For instance
-	 * in plotting it is required to know for every point if there is an error.
-	 * 
-	 * @return if there is an error.
-	 */
 	@Override
 	public boolean hasErrors() {
 		if (errorData != null) {
@@ -4008,11 +3752,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return false;
 	}
 
-	/**
-	 * Get the error array from the dataset, or creates an error array if all 
-	 * values are the same
-	 * @return the dataset which contains the error information (can be null)
-	 */
 	@Override
 	public AbstractDataset getError() {
 		if (errorData == null) {

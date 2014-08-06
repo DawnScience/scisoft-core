@@ -216,10 +216,6 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		return new ComplexFloatDataset(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public ComplexFloatDataset fill(final Object obj) {
 		if (obj instanceof IDataset) {

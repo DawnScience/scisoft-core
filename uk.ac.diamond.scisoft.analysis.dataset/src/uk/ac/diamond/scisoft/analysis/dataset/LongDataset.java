@@ -239,10 +239,6 @@ public class LongDataset extends AbstractDataset {
 		return new LongDataset(shape).fill(1);
 	}
 
-	/**
-	 * @param obj
-	 * @return dataset filled with given object
-	 */
 	@Override
 	public LongDataset fill(final Object obj) {
 		if (obj instanceof IDataset) {
@@ -598,13 +594,6 @@ public class LongDataset extends AbstractDataset {
 		base = null;
 	}
 
-	/**
-	 * In-place sort of dataset
-	 *
-	 * @param axis
-	 *            to sort along
-	 * @return sorted dataset
-	 */
 	@Override
 	public LongDataset sort(Integer axis) {
 		if (axis == null) {

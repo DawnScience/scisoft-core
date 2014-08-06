@@ -52,11 +52,11 @@ public interface IErrorDataset extends IDataset {
 	public double[] getErrorArray(int... pos);
 
 	/**
-	 * Set the error, may be a single double or a whole dataset.
+	 * Set the error, may be a single double, a double array or a whole dataset.
 	 * @param error
 	 */
 	public void setError(Serializable error);
-	
+
 	/**
 	 * Call to clear the error on a dataset. setError(null) cannot be
 	 * relied upon.

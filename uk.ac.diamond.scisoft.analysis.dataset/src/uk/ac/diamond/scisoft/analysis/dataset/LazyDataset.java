@@ -349,6 +349,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 						a.addMetadata(m);
 				}
 			}
+			if (a instanceof LazyDatasetBase)
+				((LazyDatasetBase) a).sliceMetadata(nstart, nstop, nstep, oShape);
 		}
 		
 		if (a instanceof IErrorDataset) {

@@ -380,6 +380,40 @@ public class AbstractCompoundDatasetTest {
 	}
 
 	@Test
+	public void testTake() {
+		Dataset a = DatasetFactory.createRange(12, Dataset.COMPLEX128);
+		Dataset t;
+		System.out.println(a);
+
+		t = DatasetUtils.take(a, new int[] {0, 2, 4}, 0);
+		System.out.println(t);
+
+		a.setShape(new int[] {3,4});
+		System.out.println(a);
+
+		t = DatasetUtils.take(a, new int[] {0}, 0);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {1}, 0);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {2}, 0);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {0}, 1);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {1}, 1);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {2}, 1);
+		System.out.println(t);
+
+		t = DatasetUtils.take(a, new int[] {3}, 1);
+		System.out.println(t);
+	}
+
+	@Test
 	public void test1DErrors() {
 	
 		// test 1D errors for single value
@@ -464,7 +498,7 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(10.0, error2.getElements(4).getDouble(99), 0.001);
 		
 		
-		// finaly check the array setting
+		// finally check the array setting
 		
 		a.setError(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
 		

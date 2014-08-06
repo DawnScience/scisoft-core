@@ -55,40 +55,4 @@ public class ComplexFloatDatasetTest {
 		b.hashCode();
 		aa.hashCode();
 	}
-
-	@Test
-	public void testTake() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX64);
-		AbstractDataset t;
-		System.out.println(a);
-
-		t = a.take(new int[] {0, 2, 4}, 0);
-		System.out.println(t);
-
-		a.setShape(new int[] {3,4});
-		System.out.println(a);
-
-		t = a.take(new int[] {0}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {1}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {2}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {0}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {1}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {2}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {3}, 1);
-		System.out.println(t);
-
-	}
-
 }

@@ -653,7 +653,7 @@ public class FFT {
 					indices[j] = j - n + p;
 			}
 
-			result = result.take(indices, axis);
+			result = DatasetUtils.take(result, indices, axis);
 		}
 
 		return (AbstractDataset) result;
@@ -693,7 +693,7 @@ public class FFT {
 					indices[j] = j - n + p;
 			}
 
-			result = result.take(indices, axis);
+			result = DatasetUtils.take(result, indices, axis);
 		}
 
 		return (AbstractDataset) result;

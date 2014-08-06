@@ -100,41 +100,6 @@ public class ComplexDoubleDatasetTest {
 	}
 
 	@Test
-	public void testTake() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX128);
-		AbstractDataset t;
-		System.out.println(a);
-
-		t = a.take(new int[] {0, 2, 4}, 0);
-		System.out.println(t);
-
-		a.setShape(new int[] {3,4});
-		System.out.println(a);
-
-		t = a.take(new int[] {0}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {1}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {2}, 0);
-		System.out.println(t);
-
-		t = a.take(new int[] {0}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {1}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {2}, 1);
-		System.out.println(t);
-
-		t = a.take(new int[] {3}, 1);
-		System.out.println(t);
-
-	}
-
-	@Test
 	public void testStats() {
 		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX128);
 		assertEquals(5.5, ((Complex) a.mean()).getReal(), 1e-6);

@@ -365,7 +365,7 @@ public class DCT {
 	 * @param axes for DCT (default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct2(final AbstractDataset a, int[] s, int[] axes) {
+	public static AbstractDataset idct2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -646,7 +646,7 @@ public class DCT {
 					indices[j] = j - n + p;
 			}
 
-			result = result.take(indices, axis);
+			result = DatasetUtils.take(result, indices, axis);
 		}
 
 		return (AbstractDataset) result;
@@ -686,7 +686,7 @@ public class DCT {
 					indices[j] = j - n + p;
 			}
 
-			result = result.take(indices, axis);
+			result = DatasetUtils.take(result, indices, axis);
 		}
 
 		return (AbstractDataset) result;

@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -32,8 +31,13 @@ public class AxesMetadataImpl implements AxesMetadata {
 		allAxes = new List[rank];
 	}
 
+	@SuppressWarnings("unchecked")
 	public AxesMetadataImpl(AxesMetadataImpl axesMetadataImpl) {
-		allAxes = Arrays.copyOf(axesMetadataImpl.allAxes, axesMetadataImpl.allAxes.length);
+		int r = axesMetadataImpl.allAxes.length;
+		allAxes = new List[r];
+		for (int i = 0; i < r; i++) {
+			allAxes[i] = new ArrayList<ILazyDataset>(axesMetadataImpl.allAxes[i]);
+		}
 	}
 
 	public void setAxis(int axisDim, ILazyDataset[] axisData) {

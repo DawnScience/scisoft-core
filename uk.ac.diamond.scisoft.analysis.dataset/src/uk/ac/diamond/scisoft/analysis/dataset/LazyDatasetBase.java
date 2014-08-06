@@ -292,13 +292,19 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 					Array.set(o, i, processLazy(ld,start, stop, step, oShape));
 				}
 			} else if (r.getClass().isArray()) {
-				processArray(start, stop, step, oShape, r);
+				for (int i = 0; i < l; i++) {
+					processArray(start, stop, step, oShape, Array.get(o, i));
+				}
 			} else if (r instanceof List<?>) {
-				List<?> list = (List<?>) r;
-				processList(start, stop, step, oShape, list);
+				for (int i = 0; i < l; i++) {
+					List<?> list = (List<?>) Array.get(o, i);
+					processList(start, stop, step, oShape, list);
+				}
 			} else if (r instanceof Map<?,?>) {
-				Map<?, ?> map = (Map<?, ?>) r;
-				processMap(start, stop, step, oShape, map);
+				for (int i = 0; i < l; i++) {
+					Map<?, ?> map = (Map<?, ?>) Array.get(o, i);
+					processMap(start, stop, step, oShape, map);
+				}
 			}
 		}
 	}
@@ -315,13 +321,19 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 					ldList.set(i, processLazy(ldList.get(i),start, stop, step, oShape));
 				}
 			}else if (r.getClass().isArray()) {
-				processArray(start, stop, step, oShape, r);
+				for (int i = 0; i < l; i++) {
+					processArray(start, stop, step, oShape, list.get(i));
+				}
 			} else if (r instanceof List<?>) {
-				List<?> l2 = (List<?>) r;
-				processList(start, stop, step, oShape, l2);
+				for (int i = 0; i < l; i++) {
+					List<?> l2 = (List<?>) list.get(i);
+					processList(start, stop, step, oShape, l2);
+				}
 			} else if (r instanceof Map<?,?>) {
-				Map<?, ?> map = (Map<?, ?>) r;
-				processMap(start, stop, step, oShape, map);
+				for (int i = 0; i < l; i++) {
+					Map<?, ?> map = (Map<?, ?>) list.get(i);
+					processMap(start, stop, step, oShape, map);
+				}
 			}
 		}
 	}
@@ -344,13 +356,27 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 					ldMap.put(k, processLazy(ld,start, stop, step, oShape));
 				}
 			} else if (r.getClass().isArray()) {
-				processArray(start, stop, step, oShape, r);
+				processArray(start, stop, step, oShape, map.get(k));
+				while (kit.hasNext()) {
+					k = kit.next();
+					processArray(start, stop, step, oShape, map.get(k));
+				}
 			} else if (r instanceof List<?>) {
 				List<?> list = (List<?>) r;
 				processList(start, stop, step, oShape, list);
+				while (kit.hasNext()) {
+					k = kit.next();
+					list = (List<?>)map.get(k);
+					processList(start, stop, step, oShape,list );
+				}
 			} else if (r instanceof Map<?,?>) {
 				Map<?, ?> m2 = (Map<?, ?>) r;
 				processMap(start, stop, step, oShape, m2);
+				while (kit.hasNext()) {
+					k = kit.next();
+					m2 = (Map<?, ?>)map.get(k);
+					processMap(start, stop, step, oShape,m2 );
+				}
 			}
 		}
 	}

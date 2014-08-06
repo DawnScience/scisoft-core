@@ -19,10 +19,8 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
-import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -341,18 +339,11 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 			a = new DoubleDataset(1);
 		}
 		a.setName(name + AbstractDataset.BLOCK_OPEN + Slice.createString(oShape, nstart, nstop, nstep) + AbstractDataset.BLOCK_CLOSE);
-		if (metadata != null) {
-			for (Class<? extends MetadataType> c : metadata.keySet()) {
-				List<MetadataType> l = metadata.get(c);
-				if (l != null) {
-					for (MetadataType m : l)
-						a.addMetadata(m);
-				}
-			}
-			if (a instanceof LazyDatasetBase)
-				((LazyDatasetBase) a).sliceMetadata(nstart, nstop, nstep, oShape);
+		if (metadata != null && a instanceof LazyDatasetBase) {
+			((LazyDatasetBase) a).metadata = copyMetadata();
+			((LazyDatasetBase) a).sliceMetadata(nstart, nstop, nstep, oShape);
 		}
-		
+
 		if (a instanceof IErrorDataset) {
 			IErrorDataset ea = (IErrorDataset)a;
 			if (lazyErrorDelegate!=null) {

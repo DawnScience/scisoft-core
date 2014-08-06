@@ -26,6 +26,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
@@ -103,6 +104,39 @@ public class SliceableMetadataTest {
 			assertArrayEquals(sliced.getShape(), tmd.getList().get(0).getShape());
 			assertArrayEquals(sliced.getShape(), tmd.getMap().get("1").getShape());
 			assertArrayEquals(sliced.getShape(), tmd.getListOfArrays().get(0)[0].getShape());
+			
+			//test original unchanged
+			tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(shape, tmd.getLazyDataset().getShape());
+			assertArrayEquals(shape, tmd.getArray()[0].getShape());
+			assertArrayEquals(shape, tmd.getList().get(0).getShape());
+			assertArrayEquals(shape, tmd.getMap().get("1").getShape());
+			assertArrayEquals(shape, tmd.getListOfArrays().get(0)[0].getShape());
+			
+			IDataset slice2 = sliced.getSlice();
+			tmd = slice2.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(sliced.getShape(), tmd.getLazyDataset().getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getArray()[0].getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getList().get(0).getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getMap().get("1").getShape());
+			assertArrayEquals(sliced.getShape(), tmd.getListOfArrays().get(0)[0].getShape());
+			
+			//test original unchanged
+			tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(shape, tmd.getLazyDataset().getShape());
+			assertArrayEquals(shape, tmd.getArray()[0].getShape());
+			assertArrayEquals(shape, tmd.getList().get(0).getShape());
+			assertArrayEquals(shape, tmd.getMap().get("1").getShape());
+			assertArrayEquals(shape, tmd.getListOfArrays().get(0)[0].getShape());
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
@@ -196,9 +230,45 @@ public class SliceableMetadataTest {
 			assertArrayEquals(result2, tmd.getList().get(0).getShape());
 			assertArrayEquals(result1, tmd.getMap().get("1").getShape());
 			assertArrayEquals(result1, tmd.getListOfArrays().get(0)[0].getShape());
+			
+			//test original unchanged
+			tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(shape, tmd.getLazyDataset().getShape());
+			assertArrayEquals(partial1, tmd.getArray()[0].getShape());
+			assertArrayEquals(partial2, tmd.getList().get(0).getShape());
+			assertArrayEquals(partial3, tmd.getMap().get("1").getShape());
+			assertArrayEquals(partial1, tmd.getListOfArrays().get(0)[0].getShape());
+			
+			IDataset slice2 = sliced.getSlice();
+			tmd = slice2.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(result2, tmd.getLazyDataset().getShape());
+			assertArrayEquals(result1, tmd.getArray()[0].getShape());
+			assertArrayEquals(result2, tmd.getList().get(0).getShape());
+			assertArrayEquals(result1, tmd.getMap().get("1").getShape());
+			assertArrayEquals(result1, tmd.getListOfArrays().get(0)[0].getShape());
+			
+			//test original unchanged
+			tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertArrayEquals(shape, tmd.getLazyDataset().getShape());
+			assertArrayEquals(partial1, tmd.getArray()[0].getShape());
+			assertArrayEquals(partial2, tmd.getList().get(0).getShape());
+			assertArrayEquals(partial3, tmd.getMap().get("1").getShape());
+			assertArrayEquals(partial1, tmd.getListOfArrays().get(0)[0].getShape());
+			
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
+		
+		
 
 	}
 	

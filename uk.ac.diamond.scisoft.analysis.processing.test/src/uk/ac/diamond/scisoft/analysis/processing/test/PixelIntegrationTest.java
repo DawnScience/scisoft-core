@@ -18,6 +18,7 @@ import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
@@ -26,7 +27,6 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
-import uk.ac.diamond.scisoft.analysis.processing.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel;
 

@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -28,23 +27,15 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  * then letting the data go out of scope.
  */
 public interface IExecutionVisitor {
-
-	/**
-	 * Called before the execution happens
-	 * @param slice
-	 * @param operations
-	 * @return false to ignore this slice
-	 */
-	public boolean isRequired(IDataset slice, IOperation... operations);
 	
     /**
      * Called when an execution in the pipeline has run, before the end	but after a given operation.
      * Provides the option of saving the steps information to a file if required.
      * 
-     * @param intermeadiateData
+     * @param intermediateData
      * @param data
      */
-	public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape);
+	public void notify(IOperation intermediateData, OperationData data, Slice[] slices, int[] shape);
 	
 	/**
 	 * Called when the series of operations has been done, with the 
@@ -52,14 +43,20 @@ public interface IExecutionVisitor {
 	 */
 	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception;
 	
+	/**
+	 * List of operations for which should not modify the data passing though the pipe
+	 * @param operations
+	 */
+	public void passDataThroughUnmodified(IOperation... operations);
+	
+	/**
+	 * check if operation should modify the data passing though the pipe
+	 * @param operation
+	 */
+	public boolean isRequiredToModifyData(IOperation operation);
+	
 	
 	public class Stub implements IExecutionVisitor {
-
-		@Override
-		public boolean isRequired(IDataset slice, IOperation... operations) {
-			return true; // TODO Auto-generated method stub
-			
-		}
 
 		@Override
 		public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
@@ -71,6 +68,18 @@ public interface IExecutionVisitor {
 		public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape) {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void passDataThroughUnmodified(IOperation... operations) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean isRequiredToModifyData(IOperation operation) {
+			// TODO Auto-generated method stub
+			return true;
 		}
 		
 	}

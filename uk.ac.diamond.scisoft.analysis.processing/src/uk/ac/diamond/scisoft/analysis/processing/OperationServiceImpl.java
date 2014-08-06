@@ -84,15 +84,13 @@ public class OperationServiceImpl implements IOperationService {
 				
 				@Override
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
-			        
-					boolean required = visitor.isRequired(slice, series);
-					if (!required) return;
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 										
 					for (IOperation i : series) {
-						data = i.execute(data.getData(), monitor);
-						visitor.notify(i, data, slices, shape); // Optionally send intermeadiate result
+						OperationData tmp = i.execute(data.getData(), monitor);
+						data = visitor.isRequiredToModifyData(i) ? tmp : data;
+						visitor.notify(i, data, slices, shape); // Optionally send intermediate result
 					}
 					
 					visitor.executed(data, monitor, slices, shape); // Send result.

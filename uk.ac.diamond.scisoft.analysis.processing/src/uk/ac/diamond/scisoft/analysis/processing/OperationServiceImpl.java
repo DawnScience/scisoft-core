@@ -20,6 +20,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
 import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
+import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -73,6 +74,9 @@ public class OperationServiceImpl implements IOperationService {
 			Integer dim = iterator.next();
 			if ("".equals(slicing.get(dim))) iterator.remove();
 		}
+		
+		//detemine data axes to populate origin metadata
+		final int[] dataDims = Slicer.getDataDimensions(dataset.getShape(), slicing);
 			
 		try {
 			// We check the pipeline ranks are ok
@@ -84,6 +88,8 @@ public class OperationServiceImpl implements IOperationService {
 				
 				@Override
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
+					
+					slice.addMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims));
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 										

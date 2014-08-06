@@ -45,34 +45,34 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 from jycore import _wrap
 
 @_wrap
-def add(a, b):
+def add(a, b, out=None):
     '''Add two array-like objects together'''
-    return _maths.add(a, b)
+    return _maths.add(a, b, out)
 
 @_wrap
-def subtract(a, b):
+def subtract(a, b, out=None):
     '''Subtract one array-like object from another'''
-    return _maths.subtract(a, b)
+    return _maths.subtract(a, b, out)
 
 @_wrap
-def multiply(a, b):
+def multiply(a, b, out=None):
     '''Multiply two array-like objects together'''
-    return _maths.multiply(a, b)
+    return _maths.multiply(a, b, out)
 
 @_wrap
-def divide(a, b):
+def divide(a, b, out=None):
     '''Divide one array-like object by another'''
-    return _maths.divide(a, b)
+    return _maths.divide(a, b, out)
 
 @_wrap
-def floor_divide(a, b):
+def floor_divide(a, b, out=None):
     '''Calculate largest integers smaller or equal to division'''
-    return _maths.floorDivide(a, b)
+    return _maths.floorDivide(a, b, out)
 
 @_wrap
-def remainder(a, b):
+def remainder(a, b, out=None):
     '''Return remainder of division of inputs'''
-    return _maths.remainder(a, b)
+    return _maths.remainder(a, b, out)
 #>>> np.floor_divide(7,3)
 #2
 #>>> np.floor_divide([1., 2., 3., 4.], 2.5)
@@ -101,14 +101,14 @@ fmod = remainder
 mod = remainder
 
 @_wrap
-def reciprocal(a):
+def reciprocal(a, out=None):
     '''Calculate reciprocal of input'''
-    return _maths.reciprocal(a)
+    return _maths.reciprocal(a, out)
 
 @_wrap
-def abs(a): #@ReservedAssignment
+def abs(a, out=None): #@ReservedAssignment
     '''Absolute value of input'''
-    return _maths.abs(a)
+    return _maths.abs(a, out)
 
 absolute = abs
 
@@ -120,169 +120,169 @@ def angle(a):
     return _maths.angle(a)
 
 @_wrap
-def conjugate(a):
+def conjugate(a, out=None):
     '''Complex conjugate of input'''
-    return _maths.conjugate(a)
+    return _maths.conjugate(a, out)
 
 conj = conjugate
 
 @_wrap
-def sin(a):
+def sin(a, out=None):
     '''Sine of input'''
-    return _maths.sin(a)
+    return _maths.sin(a, out)
 
 @_wrap
-def cos(a):
+def cos(a, out=None):
     '''Cosine of input'''
-    return _maths.cos(a)
+    return _maths.cos(a, out)
 
 @_wrap
-def tan(a):
+def tan(a, out=None):
     '''Tangent of input'''
-    return _maths.tan(a)
+    return _maths.tan(a, out)
 
 @_wrap
-def arcsin(a):
+def arcsin(a, out=None):
     '''Inverse sine of input'''
-    return _maths.arcsin(a)
+    return _maths.arcsin(a, out)
 
 @_wrap
-def arccos(a):
+def arccos(a, out=None):
     '''Inverse cosine of input'''
-    return _maths.arccos(a)
+    return _maths.arccos(a, out)
 
 @_wrap
-def arctan(a):
+def arctan(a, out=None):
     '''Inverse tangent of input'''
-    return _maths.arctan(a)
+    return _maths.arctan(a, out)
 
 @_wrap
-def arctan2(a, b):
+def arctan2(a, b, out=None):
     '''Inverse tangent of a/b with correct choice of quadrant'''
-    return _maths.arctan2(a, b)
+    return _maths.arctan2(a, b, out)
 
 @_wrap
-def hypot(a, b):
+def hypot(a, b, out=None):
     '''Hypotenuse of triangle of given sides'''
-    return _maths.hypot(a, b)
+    return _maths.hypot(a, b, out)
 
 @_wrap
-def sinh(a):
+def sinh(a, out=None):
     '''Hyperbolic sine of input'''
-    return _maths.sinh(a)
+    return _maths.sinh(a, out)
 
 @_wrap
-def cosh(a):
+def cosh(a, out=None):
     '''Hyperbolic cosine of input'''
-    return _maths.cosh(a)
+    return _maths.cosh(a, out)
 
 @_wrap
-def tanh(a):
+def tanh(a, out=None):
     '''Hyperbolic tangent of input'''
-    return _maths.tanh(a)
+    return _maths.tanh(a, out)
 
 @_wrap
-def arcsinh(a):
+def arcsinh(a, out=None):
     '''Inverse hyperbolic sine of input'''
-    return _maths.arcsinh(a)
+    return _maths.arcsinh(a, out)
 
 @_wrap
-def arccosh(a):
+def arccosh(a, out=None):
     '''Inverse hyperbolic cosine of input'''
-    return _maths.arccosh(a)
+    return _maths.arccosh(a, out)
 
 @_wrap
-def arctanh(a):
+def arctanh(a, out=None):
     '''Inverse hyperbolic tangent of input'''
-    return _maths.arctanh(a)
+    return _maths.arctanh(a, out)
 
 @_wrap
-def log(a):
+def log(a, out=None):
     '''Natural logarithm of input'''
-    return _maths.log(a)
+    return _maths.log(a, out)
 
 @_wrap
-def log2(a):
+def log2(a, out=None):
     '''Logarithm of input to base 2'''
-    return _maths.log2(a)
+    return _maths.log2(a, out)
 
 @_wrap
-def log10(a):
+def log10(a, out=None):
     '''Logarithm of input to base 10'''
-    return _maths.log10(a)
+    return _maths.log10(a, out)
 
 @_wrap
-def log1p(x):
+def log1p(x, out=None):
     '''Natural logarithm of (x+1)'''
-    return _maths.log1p(x)
+    return _maths.log1p(x, out)
 
 @_wrap
-def exp(a):
+def exp(a, out=None):
     '''Exponential of input'''
-    return _maths.exp(a)
+    return _maths.exp(a, out)
 
 @_wrap
-def expm1(x):
+def expm1(x, out=None):
     '''Exponential of (x-1)'''
-    return _maths.expm1(x)
+    return _maths.expm1(x, out)
 
 @_wrap
-def sqrt(a):
+def sqrt(a, out=None):
     '''Square root of input'''
-    return _maths.sqrt(a)
+    return _maths.sqrt(a, out)
 
 @_wrap
-def square(a):
+def square(a, out=None):
     '''Square of input'''
-    return _maths.square(a)
+    return _maths.square(a, out)
 
 @_wrap
-def power(a, p):
+def power(a, p, out=None):
     '''Input raised to given power'''
-    return _maths.power(a, p)
+    return _maths.power(a, p, out)
 
 @_wrap
-def floor(a):
+def floor(a, out=None):
     '''Largest integer smaller or equal to input'''
-    return _maths.floor(a)
+    return _maths.floor(a, out)
 
 @_wrap
-def ceil(a):
+def ceil(a, out=None):
     '''Smallest integer greater or equal to input'''
-    return _maths.ceil(a)
+    return _maths.ceil(a, out)
 
 @_wrap
-def rint(a):
+def rint(a, out=None):
     '''Round elements of input to nearest integers'''
-    return _maths.rint(a)
+    return _maths.rint(a, out)
 
 @_wrap
-def rad2deg(a):
+def rad2deg(a, out=None):
     '''Convert from radian to degree'''
-    return _maths.toDegrees(a)
+    return _maths.toDegrees(a, out)
 
 @_wrap
-def deg2rad(a):
+def deg2rad(a, out=None):
     '''Convert from degree to radian'''
-    return _maths.toRadians(a)
+    return _maths.toRadians(a, out)
 
 degrees = rad2deg
 radians = deg2rad
 
 @_wrap
-def sign(a):
+def sign(a, out=None):
     '''Sign of input, indicated by -1 for negative, +1 for positive and 0 for zero'''
-    return _maths.signum(a)
+    return _maths.signum(a, out)
 
 @_wrap
-def negative(a):
+def negative(a, out=None):
     '''Negate input'''
-    return _maths.negative(a)
+    return _maths.negative(a, out)
 
 @_wrap
-def clip(a, a_min, a_max):
+def clip(a, a_min, a_max, out=None):
     '''Clip input to given bounds (replace NaNs with midpoint of bounds)'''
-    return _maths.clip(a, a_min, a_max)
+    return _maths.clip(a, a_min, a_max, out)
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):

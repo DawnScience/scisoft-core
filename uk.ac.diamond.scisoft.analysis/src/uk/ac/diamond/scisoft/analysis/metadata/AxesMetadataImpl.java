@@ -24,6 +24,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
+	@Sliceable
 	List<ILazyDataset>[] allAxes;
 
 	@SuppressWarnings("unchecked")
@@ -49,7 +50,7 @@ public class AxesMetadataImpl implements AxesMetadata {
 		for (int i = 0; i < result.length; i++) {
 			result[i] = getAxis(i)[0];
 		}
-		return null;
+		return result;
 	}
 
 	@Override

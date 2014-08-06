@@ -13,12 +13,12 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegr
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration2D;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class PixelIntegrationOperation extends AbstractOperation {
@@ -52,10 +52,17 @@ public class PixelIntegrationOperation extends AbstractOperation {
 			integrator.setMask((AbstractDataset)m);
 		}
 		
+		ILazyDataset[] axes = getFirstAxes(slice);
+		
 		final List<AbstractDataset> out = integrator.integrate(slice);
 		
 		AbstractDataset data = out.remove(1);
-		data.addMetadata(new AxesMetadataImpl(out.toArray(new ILazyDataset[out.size()])));
+		
+		AxesMetadataImpl amd = new AxesMetadataImpl(out.size());
+		
+		for (int i = 0 ; i < out.size();  i ++) amd.addAxis(out.get(i), i);
+		
+		data.addMetadata(amd);
 		
 		return new OperationData(data);
 	}

@@ -96,13 +96,7 @@ public class Slicer {
 		Slice[] slices = Slice.convertFromString(sb.toString());
 		
 		//create array of ignored axes values
-		Set<Integer> axesSet = new HashSet<Integer>();
-		for (int i = 0; i < fullDims.length; i++) axesSet.add(i);
-		axesSet.removeAll(sliceDimensions.keySet());
-		int[] axes = new int[axesSet.size()];
-		int count = 0;
-		Iterator<Integer> iter = axesSet.iterator();
-		while (iter.hasNext()) axes[count++] = iter.next(); 
+		int[] axes = getDataDimensions(fullDims, sliceDimensions);
 
 		//Take view of original lazy dataset removing start/stop/step
 		//Makes the iteration simpler
@@ -127,11 +121,11 @@ public class Slicer {
 			for (int i = 0; i < st.length;i++) st[i] = 1;
 
 			Slice[] slice = Slice.convertToSlice(pos, end, st);
+			
+			//TODO dont convert to slices just to create string - use create string on start stop step
 			String sliceName = Slice.createString(slice);
 			
-			//Get view before final slice so sliceable annotation can do its magic 
-			ILazyDataset endView = lzView.getSliceView(slice);
-			IDataset data = endView.getSlice().squeeze();
+			IDataset data = lzView.getSlice(slice).squeeze();
 			
 			data.setName((nameFragment!=null ? nameFragment : "") + " ("+ sliceName+")");
 			if (visitor!=null) {
@@ -208,5 +202,20 @@ public class Slicer {
 		
 		boolean allDone = pool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
 		if (!allDone) throw new TimeoutException("The timeout of "+timeout+" was exceeded for parallel run, please increase it!");
+	}
+	
+	public static int[] getDataDimensions(int[] shape, Map<Integer, String> sliceDimensions) {
+
+		//create array of ignored axes values
+		Set<Integer> axesSet = new HashSet<Integer>();
+		for (int i = 0; i < shape.length; i++) axesSet.add(i);
+		axesSet.removeAll(sliceDimensions.keySet());
+		int[] axes = new int[axesSet.size()];
+		int count = 0;
+		Iterator<Integer> iter = axesSet.iterator();
+		while (iter.hasNext()) axes[count++] = iter.next();
+
+		return axes;
+
 	}
 }

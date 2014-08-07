@@ -105,7 +105,7 @@ public class FloatDataset extends AbstractDataset {
 	 */
 	public FloatDataset(final FloatDataset dataset) {
 		copyToView(dataset, this, true, true);
-		if (dataset.stride == null || dataset.size == dataset.base.size) {
+		if (dataset.stride == null) {
 			odata = data = dataset.data.clone();
 		} else {
 			offset = 0;

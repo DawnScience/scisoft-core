@@ -105,7 +105,7 @@ public class ShortDataset extends AbstractDataset {
 	 */
 	public ShortDataset(final ShortDataset dataset) {
 		copyToView(dataset, this, true, true);
-		if (dataset.stride == null || dataset.size == dataset.base.size) {
+		if (dataset.stride == null) {
 			odata = data = dataset.data.clone();
 		} else {
 			offset = 0;

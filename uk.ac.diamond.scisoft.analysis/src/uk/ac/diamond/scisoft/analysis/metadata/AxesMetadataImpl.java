@@ -36,7 +36,8 @@ public class AxesMetadataImpl implements AxesMetadata {
 		int r = axesMetadataImpl.allAxes.length;
 		allAxes = new List[r];
 		for (int i = 0; i < r; i++) {
-			allAxes[i] = new ArrayList<ILazyDataset>(axesMetadataImpl.allAxes[i]);
+			List<ILazyDataset> list = axesMetadataImpl.allAxes[i];
+			if (list != null) allAxes[i] = new ArrayList<ILazyDataset>(list);
 		}
 	}
 

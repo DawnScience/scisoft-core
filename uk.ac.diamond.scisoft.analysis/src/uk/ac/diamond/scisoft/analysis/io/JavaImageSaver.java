@@ -162,13 +162,15 @@ public class JavaImageSaver implements IFileSaver {
 			}
 
 			IMetaData meta = dh.getMetadata();
-			final Collection<String> dNames = meta.getMetaNames();
-			if (dNames!=null) for (String name : dNames) {
-				pi.setProperty(name, meta.getMetaValue(name));
+			if (meta != null) {
+				Collection<String> dNames = meta.getMetaNames();
+				if (dNames!=null) for (String name : dNames) {
+					pi.setProperty(name, meta.getMetaValue(name));
+				}
 			}
 		}
 		// Separate method added as may add file locking option.
-        return ImageIO.write(image, fileType, f);
+		return ImageIO.write(image, fileType, f);
 	}
 
 }

@@ -320,36 +320,35 @@ public class AbstractDatasetTest {
 		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		Dataset t;
 
-		t = a.take(new int[] {0, 2, 4}, null);
+		t = DatasetUtils.take(a, new int[] {0, 2, 4}, null);
 		System.out.println(t);
 
-		t = a.take(new int[] {0, 2, 4}, 0);
+		t = DatasetUtils.take(a, new int[] {0, 2, 4}, 0);
 		System.out.println(t);
 
 		a.setShape(new int[] {3,4});
 		System.out.println(a);
 
-		t = a.take(new int[] {0}, 0);
+		t = DatasetUtils.take(a, new int[] {0}, 0);
 		System.out.println(t);
 
-		t = a.take(new int[] {1}, 0);
+		t = DatasetUtils.take(a, new int[] {1}, 0);
 		System.out.println(t);
 
-		t = a.take(new int[] {2}, 0);
+		t = DatasetUtils.take(a, new int[] {2}, 0);
 		System.out.println(t);
 
-		t = a.take(new int[] {0}, 1);
+		t = DatasetUtils.take(a, new int[] {0}, 1);
 		System.out.println(t);
 
-		t = a.take(new int[] {1}, 1);
+		t = DatasetUtils.take(a, new int[] {1}, 1);
 		System.out.println(t);
 
-		t = a.take(new int[] {2}, 1);
+		t = DatasetUtils.take(a, new int[] {2}, 1);
 		System.out.println(t);
 
-		t = a.take(new int[] {3}, 1);
+		t = DatasetUtils.take(a, new int[] {3}, 1);
 		System.out.println(t);
-
 	}
 
 	/**

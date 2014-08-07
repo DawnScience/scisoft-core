@@ -54,7 +54,7 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 	}
 
 	@Override
-	public IDataset convertToAbstractDataset(IDataset data) {
+	public IDataset convertToDataset(IDataset data) {
 		return DatasetUtils.convertToDataset(data);
 	}
 

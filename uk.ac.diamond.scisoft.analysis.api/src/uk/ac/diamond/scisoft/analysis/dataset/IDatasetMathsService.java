@@ -94,11 +94,11 @@ public interface IDatasetMathsService {
 	public IDataset createDoubleDataset(double[] raw, int... shape);
 
 	/**
-	 * Ensures that the dataset has been converted to an AbstractDataset (ie loaded data)
+	 * Ensures that the dataset has been converted to a Dataset (ie loaded data)
 	 * @param data
 	 * @return the set
 	 */
-	public IDataset convertToAbstractDataset(IDataset data);
+	public IDataset convertToDataset(IDataset data);
 
 	/**
 	 * 

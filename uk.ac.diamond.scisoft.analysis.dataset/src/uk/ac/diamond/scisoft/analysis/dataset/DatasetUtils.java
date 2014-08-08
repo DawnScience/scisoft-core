@@ -94,19 +94,51 @@ public class DatasetUtils {
 	/**
 	 * Changes specific items of dataset by replacing them with other array
 	 * @param a
+	 * @param indices dataset interpreted as integers
+	 * @param values
+	 * @return changed dataset
+	 */
+	public static AbstractDataset put(final Dataset a, final Dataset indices, Object values) {
+		IndexIterator it = indices.getIterator();
+		Dataset vd = DatasetFactory.createFromObject(values).flatten();
+		int vlen = vd.getSize();
+		int v = 0;
+		while (it.hasNext()) {
+			if (v >= vlen) v -= vlen;
+
+			a.setObjectAbs((int) indices.getElementLongAbs(it.index), vd.getObjectAbs(v++));
+		}
+		return (AbstractDataset) a;
+	}
+
+	/**
+	 * Changes specific items of dataset by replacing them with other array
+	 * @param a
 	 * @param indices
 	 * @param values
 	 * @return changed dataset
 	 */
-	public static AbstractDataset put(final Dataset a, final int[] indices, Object[] values) {
+	public static AbstractDataset put(final Dataset a, final int[] indices, Object values) {
 		int ilen = indices.length;
-		int vlen = values.length;
-		for (int i = 0, v= 0; i < ilen; i++, v++) {
+		Dataset vd = DatasetFactory.createFromObject(values).flatten();
+		int vlen = vd.getSize();
+		for (int i = 0, v= 0; i < ilen; i++) {
 			if (v >= vlen) v -= vlen;
 
-			a.setObjectAbs(indices[i], values[v]);
+			a.setObjectAbs(indices[i], vd.getObjectAbs(v++));
 		}
 		return (AbstractDataset) a;
+	}
+
+	/**
+	 * Take items from dataset along an axis
+	 * @param indices dataset interpreted as integers
+	 * @param axis if null, then use flattened view
+	 * @return a sub-array
+	 */
+	public static AbstractDataset take(final Dataset a, final Dataset indices, Integer axis) {
+		IntegerDataset indexes = (IntegerDataset) indices.flatten().cast(Dataset.INT32);
+		return take(a, indexes.getData(), axis);
 	}
 
 	/**

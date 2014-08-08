@@ -316,6 +316,24 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testPut() {
+		Dataset d1 = DatasetFactory.createRange(6, Dataset.FLOAT64);
+		
+		DatasetUtils.put(d1, new int[] {2, 5}, DatasetFactory.createFromObject(new double[] {-2, -5.5}));
+		checkDatasets(d1, DatasetFactory.createFromObject(new double[] {0, 1, -2, 3, 4, -5.5}));
+	
+		DatasetUtils.put(d1, DatasetFactory.createFromObject(new int[] {0, 4}), DatasetFactory.createFromObject(new double[] {-2, -5.5}));
+		checkDatasets(d1, DatasetFactory.createFromObject(new double[] {-2, 1, -2, 3, -5.5, -5.5}));
+	
+		d1 = DatasetFactory.createRange(6, Dataset.FLOAT64).reshape(2, 3);
+		DatasetUtils.put(d1, new int[] {2, 5}, DatasetFactory.createFromObject(new double[] {-2, -5.5}));
+		checkDatasets(d1, DatasetFactory.createFromObject(new double[] {0, 1, -2, 3, 4, -5.5}).reshape(2, 3));
+	
+		DatasetUtils.put(d1, DatasetFactory.createFromObject(new int[] {0, 4}), DatasetFactory.createFromObject(new double[] {-2, -5.5}));
+		checkDatasets(d1, DatasetFactory.createFromObject(new double[] {-2, 1, -2, 3, -5.5, -5.5}).reshape(2, 3));
+	}
+
+	@Test
 	public void testTake() {
 		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		Dataset t;

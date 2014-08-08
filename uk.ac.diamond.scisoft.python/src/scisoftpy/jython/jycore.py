@@ -590,10 +590,20 @@ class ndarray(object):
     #  item selection and manipulation
     @_wrapout
     def take(self, indices, axis=None):
-        return self.__dataset.take(asIterable(indices), axis)
+        if isinstance(indices, ndarray):
+            return _dsutils.take(self.__dataset, indices._jdataset(), axis)
+        return _dsutils.take(self.__dataset, asIterable(indices), axis)
 
     def put(self, indices, values):
-        self.__dataset.put(asIterable(indices), asIterable(values))
+        if isinstance(indices, ndarray):
+            inds = indices._jdataset()
+        else:
+            inds = asIterable(indices)
+        if isinstance(values, ndarray):
+            vals = values._jdataset()
+        else:
+            vals = asIterable(values)
+        _dsutils.put(self.__dataset, inds, vals)
 
     def repeat(self, repeats, axis=None):
         if axis is None:

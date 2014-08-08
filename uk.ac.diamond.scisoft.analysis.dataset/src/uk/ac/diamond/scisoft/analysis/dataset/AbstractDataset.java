@@ -3654,16 +3654,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return Maths.sqrt(result.iadd(v));
 	}
 
-	@Override
-	public AbstractDataset put(final int[] indices, Object[] values) {
-		return DatasetUtils.put(this, indices, values);
-	}
-
-	@Override
-	public AbstractDataset take(final int[] indices, final Integer axis) {
-		return DatasetUtils.take(this, indices, axis);
-	}
-
 	/**
 	 * Set item from compatible dataset in a direct and speedy way. Remember to setDirty afterwards.
 	 * 

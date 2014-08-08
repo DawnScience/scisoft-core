@@ -620,6 +620,29 @@ class Test(unittest.TestCase):
         print s
         self.assertEquals(s, (2,3,5))
 
+    def testTake(self):
+        print 'test take'
+        ds = np.arange(16)
+        self.checkitems([2, 5], ds.take([2, 5]))
+        self.checkitems([2, 5], ds.take(np.array([2, 5])))
+        ds = np.arange(16).reshape(4,4)
+        self.checkitems([2, 5], ds.take([2, 5]))
+        self.checkitems([[4, 5, 6, 7], [12, 13, 14, 15]], ds.take([1, 3], 0))
+        self.checkitems([[1, 3], [5, 7], [9, 11], [13, 15]], ds.take([1, 3], 1))
+
+    def testPut(self):
+        print 'test put'
+        ds = np.arange(6.)
+        ds.put([2, 5], [-2, -5.5])
+        self.checkitems([0, 1, -2, 3, 4, -5.5], ds)
+        ds.put(np.array([0, 4]), [-2, -5.5])
+        self.checkitems([-2, 1, -2, 3, -5.5, -5.5], ds)
+        ds = np.arange(6.).reshape(2,3)
+        ds.put([2, 5], [-2, -5.5])
+        self.checkitems([[0, 1, -2], [3, 4, -5.5]], ds)
+        ds.put(np.array([0, 4]), [-2, -5.5])
+        self.checkitems([[-2, 1, -2], [3, -5.5, -5.5]], ds)
+
     def testArgs(self):
         print 'test arg maxs'
         ds = np.array([[[1., 0., 3.], [.5, 2.5, 2.]], [[0., 3., 1.], [1.5, 2.5, 2.]]])

@@ -16,25 +16,28 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math.optimization.fitting.PolynomialFitter;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
+import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math3.fitting.PolynomialFitter;
+import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
+
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 public class ApachePolynomial {
-	
-	public static double[] polynomialFit(AbstractDataset x, AbstractDataset y, int polyOrder) throws Exception {
-		
-		PolynomialFitter fitter = new PolynomialFitter(polyOrder, new LevenbergMarquardtOptimizer());
-		
+
+	@SuppressWarnings("unused")
+	public static double[] polynomialFit(Dataset x, Dataset y, int polyOrder) throws Exception {
+		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
+
 		for (int i = 0; i < y.getSize(); i++) {
 			fitter.addObservedPoint(1,x.getDouble(i),y.getDouble(i));
 		}
-		
-		PolynomialFunction fitted = fitter.fit();
-		return fitted.getCoefficients();
-		
+
+		double[] guess = new double[polyOrder+1];
+		Arrays.fill(guess, 1);
+		return fitter.fit(guess);
 	}
 	
 	/**
@@ -47,40 +50,42 @@ public class ApachePolynomial {
 	 * @return result The smoothed data set
 	 * @throws Exception 
 	 */
-	public static AbstractDataset getPolynomialSmoothed(final AbstractDataset x, final AbstractDataset y,int windowSize, int polyOrder) throws Exception{
-		//Could probably do with more sanity check on relative size of window vs polynomial but doesnt seem to trip up
+	public static Dataset getPolynomialSmoothed(final Dataset x, final Dataset y,
+			int windowSize, int polyOrder) throws Exception {
+		// Could probably do with more sanity check on relative size of
+		// window vs polynomial but doesn't seem to trip up
 		// So we'll see how it goes...
 		
-		//integer divide window size so window is symmetric around point
+		// integer divide window size so window is symmetric around point
 		int window = windowSize/2;
 		
-		PolynomialFitter fitter = new PolynomialFitter(polyOrder, new LevenbergMarquardtOptimizer());
+		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
 		double dx = x.getDouble(1) - x.getDouble(0); //change in x for edge extrapolation
 		int xs =  x.getSize();
-		AbstractDataset result = AbstractDataset.zeros(y);
-		
-		for (int idx = 0; idx < xs; idx++){
-			
+		Dataset result = DatasetFactory.zeros(y);
+		double[] guess = new double[polyOrder+1];
+		Arrays.fill(guess, 1);
+
+		for (int idx = 0; idx < xs; idx++) {
 			fitter.clearObservations();
 			
-			//Deal with edge cases:
-			//In both cases extend x edge by dx required for window size
-			//Pad y with first or last value
+			// Deal with edge cases:
+			// In both cases extend x edge by dx required for window size
+			// Pad y with first or last value
 			for (int idw = -window; idw < window+1; idw++) {
-				if (idx+idw < 0)
+				if (idx+idw < 0) {
 					fitter.addObservedPoint(1,x.getDouble(0)+(dx*(idx+idw)), y.getDouble(0));
-				else if ((idx + idw) > (x.getSize()-1))
+				} else if ((idx + idw) > (xs-1)) {
 					fitter.addObservedPoint(1,x.getDouble(xs-1) + dx*(idx + idw -(xs-1)), y.getDouble(xs-1));
-				else
+				} else {
 					fitter.addObservedPoint(1,x.getDouble(idx+idw), y.getDouble(idx+idw));
-				
+				}
 			}
-			
-			PolynomialFunction fitted = new PolynomialFunction(fitter.fit().getCoefficients());
-			result.set(fitted.value(x.getDouble(idx)),idx);	
+
+			PolynomialFunction fitted = new PolynomialFunction(fitter.fit(guess));
+			result.set(fitted.value(x.getDouble(idx)), idx);	
 		}
 		
 		return result;
-		
 	}
 }

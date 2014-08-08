@@ -55,9 +55,9 @@ public class MapTo2DUtils {
 		IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber}, Dataset.INT32);
 		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
 
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(xO);
-		AbstractDataset b = DatasetUtils.convertToAbstractDataset(original);
-		AbstractDataset c = DatasetUtils.convertToAbstractDataset(yO);
+		Dataset a = DatasetUtils.convertToDataset(xO);
+		Dataset b = DatasetUtils.convertToDataset(original);
+		Dataset c = DatasetUtils.convertToDataset(yO);
 		
 		IndexIterator iter = a.getIterator();
 		
@@ -115,7 +115,7 @@ public class MapTo2DUtils {
 
 		Dataset[] radialArray = getPixelRange(xO);
 		Dataset[] azimuthalArray = getPixelRange(yO);
-		AbstractDataset b = DatasetUtils.convertToAbstractDataset(original);
+		Dataset b = DatasetUtils.convertToDataset(original);
 
 		IndexIterator iter = b.getIterator();
 		
@@ -123,8 +123,8 @@ public class MapTo2DUtils {
 
 //			posStop[0] = pos[0]+2;
 //			posStop[1] = pos[1]+2;
-//			AbstractDataset qrange = a.getSlice(pos, posStop, null);
-//			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
+//			Dataset qrange = a.getSlice(pos, posStop, null);
+//			Dataset chirange = azimuthalArray.getSlice(pos, posStop, null);
 			final double qMax = radialArray[1].getElementDoubleAbs(iter.index);
 			final double qMin = radialArray[0].getElementDoubleAbs(iter.index);
 			final double chiMax = azimuthalArray[1].getElementDoubleAbs(iter.index);
@@ -203,7 +203,7 @@ public class MapTo2DUtils {
 		IDataset d0 = d.getSlice(null, sli, null);
 		
 		((Dataset)dd).isubtract(d0);
-		dd = Maths.abs((Dataset)dd);
+		dd = Maths.abs(dd);
 		
 		for (int i = 0; i < d.getRank()-1; i++) {
 			
@@ -218,7 +218,7 @@ public class MapTo2DUtils {
 		
 
 		
-		return new Dataset[]{Maths.subtract(d, dd), Maths.add((Dataset)d, dd)};
+		return new Dataset[]{Maths.subtract(d, dd), Maths.add(d, dd)};
 	}
 	
 	

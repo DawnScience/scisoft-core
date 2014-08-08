@@ -18,8 +18,8 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import junit.framework.TestCase;
@@ -35,7 +35,7 @@ public class HistogramTest extends TestCase {
 	 */
 	@Override
 	public void setUp() {
-		d = (DoubleDataset) AbstractDataset.arange(1.0, 2048.0, 1.0, Dataset.FLOAT64);
+		d = (DoubleDataset) DatasetFactory.createRange(1.0, 2048.0, 1.0, Dataset.FLOAT64);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram() {
 		Histogram histo = new Histogram(2048);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(2048, pd.getSize());
 		assertEquals(1, pd.getInt(1));
@@ -57,7 +57,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram2() {
 		Histogram histo = new Histogram(1024);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(1024, pd.getSize());
 		assertEquals(2, pd.getInt(1));
@@ -70,7 +70,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram3() {
 		Histogram histo = new Histogram(256);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(256, pd.getSize());
 		assertEquals(8, pd.getInt(1));
@@ -83,7 +83,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram4() {
 		Histogram histo = new Histogram(205);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(205, pd.getSize());
 		assertEquals(10, pd.getInt(1));
@@ -97,7 +97,7 @@ public class HistogramTest extends TestCase {
 	public void testHistogram5() {
 		Histogram histo = new Histogram(1024, 1.0, 1024.0);
 		histo.setIgnoreOutliers(false);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(1024, pd.getSize());
 		assertEquals(1, pd.getInt(1));
@@ -112,7 +112,7 @@ public class HistogramTest extends TestCase {
 	public void testHistogram6() {
 		Histogram histo = new Histogram(1024, 2.0, 1024.0);
 		histo.setIgnoreOutliers(false);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(1024, pd.getSize());
 		assertEquals(2, pd.getInt(0));
@@ -126,7 +126,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram7() {
 		Histogram histo = new Histogram(1024, 2.0, 1024.0, true);
-		AbstractDataset pd = histo.value(d).get(0);
+		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(1024, pd.getSize());
 		assertEquals(1, pd.getInt(0));
@@ -140,7 +140,7 @@ public class HistogramTest extends TestCase {
 	@Test
 	public void testHistogram8() {
 		Histogram histo = new Histogram(50);
-		AbstractDataset pd = histo.value(DatasetUtils.linSpace(0, 100, 101, Dataset.INT32)).get(0);
+		Dataset pd = histo.value(DatasetUtils.linSpace(0, 100, 101, Dataset.INT32)).get(0);
 
 		assertEquals(50, pd.getSize());
 		assertEquals(2, pd.getInt(0));
@@ -156,9 +156,9 @@ public class HistogramTest extends TestCase {
 		long start = 0;
 
 		Histogram h = new Histogram(50);
-		AbstractDataset d = DatasetUtils.linSpace(0, 100, 500000, Dataset.FLOAT64);
+		Dataset d = DatasetUtils.linSpace(0, 100, 500000, Dataset.FLOAT64);
 		
-		AbstractDataset a  = null;
+		Dataset a  = null;
 
 //		for (int i = 0; i < 4; i++)
 			a = h.value(d).get(0);

@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 public class MedianTest extends TestCase {
@@ -29,10 +29,10 @@ public class MedianTest extends TestCase {
 	public void testExecute() {
 		double[] x = {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.};
 		
-		AbstractDataset d = new DoubleDataset(x);
+		Dataset d = new DoubleDataset(x);
 		//Test for single dataset
 		Median m = new Median(5);
-		AbstractDataset filterResults = m.value(d).get(0);
+		Dataset filterResults = m.value(d).get(0);
 		//assuming edge cases use smaller, asymmetric window
 		assertEquals(filterResults.getDouble(0),2, 1e-8);
 		//clear of edge effects

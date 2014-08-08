@@ -22,14 +22,14 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 
 /**
  *
  */
 public class CentroidTest extends TestCase {
-	AbstractDataset d;
+	Dataset d;
 
 	@Override
 	public void setUp() {

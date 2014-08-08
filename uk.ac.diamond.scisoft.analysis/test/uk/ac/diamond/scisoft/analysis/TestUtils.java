@@ -222,7 +222,7 @@ public class TestUtils {
 			for (int j = 0; j < is; j++) {
 				double bv = calc.getElementDoubleAbs(at.index + j);
 				double av = expected.getElementDoubleAbs(bt.index + j);
-				
+
 				Assert.assertEquals("Value does not match at " + Arrays.toString(at.getPos()) + "; " + j +
 						": ", av, bv, absTolerance + relTolerance*Math.abs(av));
 			}

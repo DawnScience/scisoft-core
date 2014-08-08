@@ -34,7 +34,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
@@ -328,8 +329,8 @@ abstract public class FlatteningTestAbstract {
 		// class unflatten as an array of that super type. But when each element is the same implementation
 		// still unflatten to that implementation
 		// IDataset[]
-		IntegerDataset intDataset = (IntegerDataset) AbstractDataset.arange(10, AbstractDataset.INT);
-		DoubleDataset fltDataset = (DoubleDataset) AbstractDataset.arange(10, AbstractDataset.FLOAT);
+		IntegerDataset intDataset = (IntegerDataset) DatasetFactory.createRange(10, Dataset.INT);
+		DoubleDataset fltDataset = (DoubleDataset) DatasetFactory.createRange(10, Dataset.FLOAT);
 		flattenAndUnflatten(new IDataset[] { intDataset, fltDataset });
 		flattenAndUnflatten(new IntegerDataset[] { intDataset, intDataset });
 		// IROI[]
@@ -413,9 +414,9 @@ abstract public class FlatteningTestAbstract {
 	@Test
 	public void testDataBean() throws DataBeanException {
 		DataBean dataBean = new DataBean();
-		dataBean.addAxis(AxisMapBean.XAXIS, AbstractDataset.arange(100, AbstractDataset.INT));
-		dataBean.addAxis(AxisMapBean.XAXIS2, AbstractDataset.arange(100, AbstractDataset.FLOAT64));
-		dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100, AbstractDataset.INT)));
+		dataBean.addAxis(AxisMapBean.XAXIS, DatasetFactory.createRange(100, Dataset.INT));
+		dataBean.addAxis(AxisMapBean.XAXIS2, DatasetFactory.createRange(100, Dataset.FLOAT64));
+		dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT)));
 		flattenAndUnflatten(dataBean);
 
 		// Test that nexus tree data is removed
@@ -429,10 +430,10 @@ abstract public class FlatteningTestAbstract {
 	@Test
 	public void testAbstractDataset() throws Exception {
 		// flatten to an npy file implicitly
-		flattenAndUnflatten(AbstractDataset.arange(100, AbstractDataset.INT));
+		flattenAndUnflatten(DatasetFactory.createRange(100, Dataset.INT));
 
 		// flatten a descriptor of an AbstractDataset that unflattens to an abstract data set
-		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT);
+		Dataset ds = DatasetFactory.createRange(100, Dataset.INT);
 		DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		File tempFile = File.createTempFile("scisofttmp-", ".npy");
@@ -567,20 +568,17 @@ abstract public class FlatteningTestAbstract {
 
 	@Test
 	public void testDataSetWithAxisInformation() {
-		DataSetWithAxisInformation ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
-				AbstractDataset.INT));
+		DataSetWithAxisInformation ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100,
+				Dataset.INT));
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
-				AbstractDataset.INT), "Hello");
+		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello");
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
-				AbstractDataset.INT), "Hello", "Goodbye");
+		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", "Goodbye");
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(AbstractDataset.arange(100,
-				AbstractDataset.INT), "Hello", null);
+		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", null);
 		flattenAndUnflatten(ds);
 	}
 

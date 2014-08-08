@@ -22,7 +22,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
@@ -108,7 +108,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		NonPixelSplittingIntegration2D npsi = new NonPixelSplittingIntegration2D(meta, 1592,1592);
 		//2theta
 		npsi.setAxisType(XAxis.ANGLE);
-		List<AbstractDataset> out = npsi.integrate(data);
+		List<Dataset> out = npsi.integrate(data);
 		Assert.assertEquals(41.25306201329643, out.get(0).getDouble(1591),0.00001);
 		npsi.setRadialRange(new double[]{10,30});
 		out = npsi.integrate(data);
@@ -144,7 +144,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	private double testWholeImage(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting 2D (full) in "+(after-before));
 		
@@ -170,7 +170,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	private double testSectionImageAzimuthal(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting 2D (section) in "+(after-before));
 		
@@ -196,7 +196,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	private double testSectionLimitedImageAzimuthal(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting 2D (section, limited q) in "+(after-before));
 		
@@ -221,7 +221,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	private double testDifferentSizeAxis(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting (different axis) in "+(after-before));
 		
@@ -246,7 +246,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	private double testWholeImage1000Bins(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting (1000 bins) in "+(after-before));
 		

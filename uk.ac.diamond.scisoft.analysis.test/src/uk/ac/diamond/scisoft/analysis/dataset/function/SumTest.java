@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
@@ -37,7 +37,7 @@ public class SumTest extends TestCase {
 	@Test
 	public void testExecute() {
 		double[] x = {1., 2., 3., 4., 5.};
-		AbstractDataset d = new DoubleDataset(x);
+		Dataset d = new DoubleDataset(x);
 		Sum s = new Sum();
 		List<Number> dsets = s.value(d);
 

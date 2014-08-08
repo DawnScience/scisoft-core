@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
@@ -55,9 +56,9 @@ public class PixelIntegrationOperation extends AbstractOperation {
 		ILazyDataset[] axes = getFirstAxes(slice);
 		int[] dataDims = getOriginalDataDimensions(slice);
 		
-		final List<AbstractDataset> out = integrator.integrate(slice);
+		final List<Dataset> out = integrator.integrate(slice);
 		
-		AbstractDataset data = out.remove(1);
+		Dataset data = out.remove(1);
 		
 		//assuming 2D to 1D
 		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length-1);

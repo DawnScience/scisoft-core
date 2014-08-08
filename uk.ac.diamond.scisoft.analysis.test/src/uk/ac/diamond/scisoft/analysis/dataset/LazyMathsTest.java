@@ -22,7 +22,7 @@ public class LazyMathsTest {
 
 	@Test
 	public void testSum() {
-		AbstractDataset a = AbstractDataset.arange(100, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(100, Dataset.FLOAT64);
 
 		AbstractDatasetTest.checkDatasets(a.sum(0), LazyMaths.sum(a, 0), 1e-9, 1e-15);
 
@@ -44,7 +44,7 @@ public class LazyMathsTest {
 
 	@Test
 	public void testProduct() {
-		AbstractDataset a = AbstractDataset.arange(100, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(100, Dataset.FLOAT64);
 		a.iadd(1.);
 		a.idivide(100.);
 

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -59,7 +60,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
-	public List<AbstractDataset> integrate(IDataset dataset) {
+	public List<Dataset> integrate(IDataset dataset) {
 		//Generate radial and azimuthal look-up arrays as required
 		//TODO test shape of axis array
 		if (radialArray == null && (radialRange != null || isAzimuthalIntegration())) {
@@ -70,10 +71,10 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 			generateAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(), dataset.getShape());
 		}
 		
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		//check mask and roi
-		AbstractDataset mt = mask;
+		Dataset mt = mask;
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 
 		if (roi != null) {
@@ -82,9 +83,9 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 			mt = maskRoiCached;
 		}
 		
-		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
-		AbstractDataset a = radialArray != null ? radialArray[0] : null;
-		AbstractDataset r = azimuthalArray != null ? azimuthalArray[0] : null;
+		Dataset d = DatasetUtils.convertToDataset(dataset);
+		Dataset a = radialArray != null ? radialArray[0] : null;
+		Dataset r = azimuthalArray != null ? azimuthalArray[0] : null;
 		double[] integrationRange = azimuthalRange;
 		double[] binRange = radialRange;
 		
@@ -96,7 +97,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 		
 		if (binEdges == null) {
-			binEdges = calculateBins(new AbstractDataset[] {a},mt,binRange, nbins);
+			binEdges = calculateBins(new Dataset[] {a},mt,binRange, nbins);
 		}
 
 		

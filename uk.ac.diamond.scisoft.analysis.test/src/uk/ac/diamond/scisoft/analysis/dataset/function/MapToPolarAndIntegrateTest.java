@@ -24,14 +24,15 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  *
  */
 public class MapToPolarAndIntegrateTest extends TestCase {
 	int[] shape = new int[] {500,500}; 
-	AbstractDataset d = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
-	AbstractDataset a = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
+	Dataset d = DatasetFactory.ones(shape, Dataset.FLOAT32);
+	Dataset a = DatasetFactory.ones(shape, Dataset.FLOAT32);
 	
 	double racc = 1e-3; // set relative accuracy within 0.1%
 	double dpp = 10.;
@@ -48,7 +49,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);
@@ -70,7 +71,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		AbstractDataset dc = d.clone();
+		Dataset dc = d.clone();
 		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
@@ -102,7 +103,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		double sphi = 45.;
 		double ephi = 90.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		AbstractDataset dc = d.clone();
+		Dataset dc = d.clone();
 		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
@@ -129,7 +130,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndIntegrate2() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(360,360,50.,0.,200.,45., dpp, true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);
@@ -145,7 +146,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndIntegrate3() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(250,250,50.,22.5,200.,-22.5, dpp, true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
 		List<AbstractDataset> dsets = mp.value(d);

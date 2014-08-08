@@ -54,7 +54,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
-	public List<AbstractDataset> integrate(IDataset dataset) {
+	public List<Dataset> integrate(IDataset dataset) {
 		
 		if (radialArray == null) {
 			
@@ -62,7 +62,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 			
 		}
 		
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		if (binEdges == null) {
 			binEdges = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 		}
@@ -81,8 +81,8 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 			return result;
 		}
 
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
-		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
+		Dataset a = DatasetUtils.convertToDataset(radialArray[0]);
+		Dataset b = DatasetUtils.convertToDataset(dataset);
 
 		Range range = Range.create(a.getSize()); 
 

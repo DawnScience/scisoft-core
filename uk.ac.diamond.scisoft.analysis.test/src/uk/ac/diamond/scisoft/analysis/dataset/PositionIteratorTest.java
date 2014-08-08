@@ -22,9 +22,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-
 /**
  *
  */
@@ -49,7 +46,7 @@ public class PositionIteratorTest {
 		int size = 3 * 3 * 1024 * 1024;
 		int type = Dataset.FLOAT64;
 		
-		AbstractDataset ta = AbstractDataset.arange(0, size, 1, type).reshape(3, 3, 1024, 1024);
+		Dataset ta = DatasetFactory.createRange(0, size, 1, type).reshape(3, 3, 1024, 1024);
 		
 		int[] start = new int[] {1,1,0,0};
 		int[] stop = new int[] {3,3,1024,1024};
@@ -59,29 +56,29 @@ public class PositionIteratorTest {
 	}
 
 	private void testIterationND(int size, int type) {
-		AbstractDataset ta;
+		Dataset ta;
 
 		System.out.println("Size: " + size);
 
 		// 1D
-		ta = AbstractDataset.arange(0, size, 1, type);
+		ta = DatasetFactory.createRange(0, size, 1, type);
 		testDataset(ta);
 
 		// 2D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, size / 16);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, size / 16);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 		testDatasetAxes(ta, new int[] {0});
 		testDatasetAxes(ta, new int[] {1});
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 32, 32);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 32, 32);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 		testDatasetAxes(ta, new int[] {0});
 		testDatasetAxes(ta, new int[] {1});
 
 		// 3D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 		testDatasetAxes(ta, new int[] {0});
@@ -89,7 +86,7 @@ public class PositionIteratorTest {
 		testDatasetAxes(ta, new int[] {0,1});
 		testDatasetAxes(ta, new int[] {0,2});
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 		testDatasetAxes(ta, new int[] {0});
@@ -99,7 +96,7 @@ public class PositionIteratorTest {
 
 	}
 
-	private void testDataset(AbstractDataset ta) {
+	private void testDataset(Dataset ta) {
 		PositionIterator iter = ta.getPositionIterator();
 		int[] pos = iter.getPos();
 
@@ -108,8 +105,8 @@ public class PositionIteratorTest {
 		}
 	}
 
-	private void testDatasetAxes(AbstractDataset ta, int[] axes) {
-		int[] shape = ta.shape;
+	private void testDatasetAxes(Dataset ta, int[] axes) {
+		int[] shape = ta.getShapeRef();
 		int rank = shape.length;
 		int[] step = new int[rank];
 		Arrays.fill(step, 1);
@@ -118,8 +115,8 @@ public class PositionIteratorTest {
 		testDatasetAxes(ta, axes, start , stop, step);
 	}
 
-	private void testDatasetAxes(AbstractDataset ta, int[] axes, int[] start, int[] stop, int[] step) {
-		int[] shape = ta.shape;
+	private void testDatasetAxes(Dataset ta, int[] axes, int[] start, int[] stop, int[] step) {
+		int[] shape = ta.getShapeRef();
 		PositionIterator iter = new PositionIterator(shape, start, stop, step, axes);
 		int[] pos = iter.getPos();
 		int endrank = shape.length - 1;

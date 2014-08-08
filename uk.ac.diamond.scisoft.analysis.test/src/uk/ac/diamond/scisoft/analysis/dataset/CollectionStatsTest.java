@@ -52,13 +52,13 @@ public class CollectionStatsTest {
    @Test
    public void test2D() throws Exception {
 	   
-	   final AbstractDataset median = CollectionStats.median(SETS2D);
+	   final Dataset median = CollectionStats.median(SETS2D);
 	   if (median.getDouble(0,0)!=1) throw new Exception("Median not calculated correctly!");
 	   if (median.getDouble(1,1)!=4) throw new Exception("Median not calculated correctly!");
 	   if (median.getShape()[0]!=2) throw new Exception("Median shape not correct!");
 	   if (median.getShape()[1]!=2) throw new Exception("Median shape not correct!");
 	   
-	   final AbstractDataset mean = CollectionStats.mean(SETS2D);
+	   final Dataset mean = CollectionStats.mean(SETS2D);
 	   if (!DoubleUtils.equalsWithinTolerance(mean.getDouble(0,0), 100.8d, 0.01)) throw new Exception("Mean not calculated correctly!");
 	   if (!DoubleUtils.equalsWithinTolerance(mean.getDouble(1,1), 103.2d, 0.01)) throw new Exception("Mean not calculated correctly!");  
    }
@@ -66,11 +66,11 @@ public class CollectionStatsTest {
    @Test
    public void test1D() throws Exception {
 	   
-	   final AbstractDataset median = CollectionStats.median(SETS1D);
+	   final Dataset median = CollectionStats.median(SETS1D);
 	   if (median.getDouble(0)!=1) throw new Exception("Median not calculated correctly!");
 	   if (median.getDouble(4)!=5) throw new Exception("Median not calculated correctly!");
 	   
-	   final AbstractDataset mean = CollectionStats.mean(SETS1D);
+	   final Dataset mean = CollectionStats.mean(SETS1D);
 	   if (!DoubleUtils.equalsWithinTolerance(mean.getDouble(0), 100.8, 0.0001)) throw new Exception("Mean not calculated correctly!");
 	   if (!DoubleUtils.equalsWithinTolerance(mean.getDouble(4), 104, 0.0001)) throw new Exception("Mean not calculated correctly!");  
     }
@@ -89,14 +89,14 @@ public class CollectionStatsTest {
 		   }
 	   }
 	   
-	   final AbstractDataset median = CollectionStats.median(images);
+	   final Dataset median = CollectionStats.median(images);
 	   final long end = System.currentTimeMillis();
 	   if (median.getShape()[0] != 2048) throw new Exception("Median has wrong size!");
 	   if (median.getShape()[1] != 2048) throw new Exception("Median has wrong size!");
 	   
 	   System.out.println("Did median of ten images 2048x2048 in "+((end-start)/1000d)+"s");
 	   
-	   final AbstractDataset mean = CollectionStats.median(images);
+	   final Dataset mean = CollectionStats.median(images);
 	   final long end1 = System.currentTimeMillis();
 	   if (mean.getShape()[0] != 2048) throw new Exception("Mean has wrong size!");
 	   if (mean.getShape()[1] != 2048) throw new Exception("Mean has wrong size!");

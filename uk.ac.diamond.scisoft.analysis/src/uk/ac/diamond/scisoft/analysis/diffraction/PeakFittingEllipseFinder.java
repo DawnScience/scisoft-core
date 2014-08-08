@@ -27,6 +27,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
@@ -54,7 +55,7 @@ public class PeakFittingEllipseFinder {
 	 * @param inOut array of elliptical ROIs giving search range
 	 * @return polyline ROI
 	 */
-	public static PolylineROI findPointsOnConic(AbstractDataset image, BooleanDataset mask, IParametricROI ellipse,
+	public static PolylineROI findPointsOnConic(Dataset image, BooleanDataset mask, IParametricROI ellipse,
 			IParametricROI[] inOut, int nPoints, IMonitor mon) {
 		
 		if (image.getRank() != 2) {
@@ -113,7 +114,7 @@ public class PeakFittingEllipseFinder {
 		return polyline;
 	}
 	
-	private static PolylineROI findNumberOfPointsOnEllipse(AbstractDataset image, PolylineROI polyline,
+	private static PolylineROI findNumberOfPointsOnEllipse(Dataset image, PolylineROI polyline,
 			IParametricROI[] inOut, double[] startStop, int nPoints, IMonitor mon) {
 		
 		final int[] shape = image.getShape();
@@ -132,7 +133,7 @@ public class PeakFittingEllipseFinder {
 			if (end[0] > h || end[0] < 0 || end[1] > w || end[1] < 0) continue;
 			
 			LinearROI line = new LinearROI(beg, end);
-			AbstractDataset sub = ROIProfile.line(image, line, 1)[0];
+			Dataset sub = ROIProfile.line(image, line, 1)[0];
 
 			BooleanDataset badVals = Comparisons.lessThan(sub, 0);
 			
@@ -146,7 +147,7 @@ public class PeakFittingEllipseFinder {
 			double min = sub.min(true).doubleValue();
 			sub = sub.setByBoolean(min, badVals);
 			
-			AbstractDataset xAx = AbstractDataset.arange(sub.getSize(), Dataset.INT32);
+			Dataset xAx = DatasetFactory.createRange(sub.getSize(), Dataset.INT32);
 			
 			sub.isubtract(min);
 			
@@ -156,7 +157,7 @@ public class PeakFittingEllipseFinder {
 			double m = (s-en)/(0-sub.getSize()-1);
 			double c = s;
 			
-			AbstractDataset base = Maths.multiply(xAx, m);
+			Dataset base = Maths.multiply(xAx, m);
 			base.iadd(c);
 			
 			sub.isubtract(base);
@@ -169,7 +170,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, sub, g,1000);
+				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, (AbstractDataset) sub, g,1000);
 				
 			} catch (Exception e) {
 				logger.debug(e.getMessage());

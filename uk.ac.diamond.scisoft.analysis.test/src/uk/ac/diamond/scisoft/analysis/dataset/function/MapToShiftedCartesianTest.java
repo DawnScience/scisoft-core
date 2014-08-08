@@ -23,13 +23,14 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  *
  */
 public class MapToShiftedCartesianTest extends TestCase {
-	AbstractDataset d = AbstractDataset.zeros(new int[] {10, 20}, AbstractDataset.FLOAT64);
+	Dataset d = DatasetFactory.zeros(new int[] {10, 20}, Dataset.FLOAT64);
 
 	/**
 	 */
@@ -44,7 +45,7 @@ public class MapToShiftedCartesianTest extends TestCase {
 	@Test
 	public void testMapToShiftedCartesian() {
 		MapToShiftedCartesian mp = new MapToShiftedCartesian(5.3,7.6);
-		AbstractDataset pd = mp.value(d).get(0);
+		Dataset pd = mp.value(d).get(0);
 
 		Sum s = new Sum();
 		List<Number> dsets = s.value(pd);

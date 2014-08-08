@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -39,7 +38,7 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 	}
 
 	@Override
-	public List<AbstractDataset> integrate(IDataset dataset) {
+	public List<Dataset> integrate(IDataset dataset) {
 
 		//Generate radial and azimuthal look-up arrays as required
 		//TODO test shape of axis array
@@ -51,11 +50,11 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 			generateMinMaxAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(),dataset.getShape());
 		}
 
-		AbstractDataset mt = mask;
+		Dataset mt = mask;
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 		
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		if (binEdges == null) {
 			binEdges = calculateBins(radialArray,mt,radialRange, nbins);
 			binsChi = calculateBins(azimuthalArray,mt,azimuthalRange, nBinsChi);
@@ -71,8 +70,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 		final double hiChi = edgesChi[nBinsChi];
 		final double spanChi = (hiChi - loChi)/nBinsChi;
 
-		FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins}, Dataset.FLOAT32);
-		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{nBinsChi,nbins},Dataset.FLOAT32);
+		FloatDataset histo = new FloatDataset(nBinsChi, nbins);
+		FloatDataset intensity = new FloatDataset(nBinsChi, nbins);
 		//			final double[] h = histo.getData();
 		//			final double[] in = intensity.getData();
 		//			if (spanQ <= 0) {
@@ -82,8 +81,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 		//				continue;
 		//			}
 
-		AbstractDataset a = DatasetUtils.convertToAbstractDataset(radialArray[0]);
-		AbstractDataset b = DatasetUtils.convertToAbstractDataset(dataset);
+		Dataset a = DatasetUtils.convertToDataset(radialArray[0]);
+		Dataset b = DatasetUtils.convertToDataset(dataset);
 //		PositionIterator iter = b.getPositionIterator();
 //
 //		int[] pos = iter.getPos();
@@ -95,8 +94,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
 //			posStop[0] = pos[0]+2;
 //			posStop[1] = pos[1]+2;
-//			AbstractDataset qrange = a.getSlice(pos, posStop, null);
-//			AbstractDataset chirange = azimuthalArray.getSlice(pos, posStop, null);
+//			Dataset qrange = a.getSlice(pos, posStop, null);
+//			Dataset chirange = azimuthalArray.getSlice(pos, posStop, null);
 			if (mt != null && !mt.getElementBooleanAbs(iter.index)) continue;
 			final double qMax = radialArray[1].getElementDoubleAbs(iter.index);
 			final double qMin = radialArray[0].getElementDoubleAbs(iter.index);

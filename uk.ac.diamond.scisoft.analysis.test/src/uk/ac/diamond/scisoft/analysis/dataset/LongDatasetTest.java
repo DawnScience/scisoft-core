@@ -20,9 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.LongDataset;
-
 public class LongDatasetTest {
 
 	@Test
@@ -61,8 +58,8 @@ public class LongDatasetTest {
 			assertEquals(r, a.getLong(-(i + 1)));
 		}
 
-		AbstractDataset sv = a.getSliceView(new Slice(2,7));
-		AbstractDataset sc = a.getSlice(new Slice(2,7));
+		Dataset sv = a.getSliceView(new Slice(2,7));
+		Dataset sc = a.getSlice(new Slice(2,7));
 		l = sc.getSize();
 		for (int i = 0; i < l; i++) {
 			long r = sc.getLong(-(i + 1));
@@ -72,7 +69,7 @@ public class LongDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.INT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.INT64);
 		assertEquals(11., a.max().doubleValue(), 1e-6);
 		assertEquals(0., a.min().doubleValue(), 1e-6);
 		assertEquals(5.5, ((Number) a.mean()).doubleValue(), 1e-6);

@@ -19,8 +19,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
@@ -78,7 +78,7 @@ public class AbstractPixelIntegrationTestBase {
 		
 	}
 	
-	protected AbstractDataset getMask(int[] shape){
+	protected Dataset getMask(int[] shape){
 		BooleanDataset mask = new BooleanDataset(shape);
 		
 		for (int i = 100; i < 1000; i++) 

@@ -20,14 +20,15 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  *
  */
 public class MapToRotatedCartesianAndIntegrateTest extends TestCase {
-	AbstractDataset d = AbstractDataset.zeros(new int[] {500, 500}, AbstractDataset.FLOAT64);
+	Dataset d = DatasetFactory.zeros(new int[] {500, 500}, Dataset.FLOAT64);
 
 	/**
 	 */
@@ -42,7 +43,7 @@ public class MapToRotatedCartesianAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToRotatedCartesianAndIntegrate() {
 		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(100,70,50,30,45.);
-		AbstractDataset pd = mp.value(d).get(0);
+		Dataset pd = mp.value(d).get(0);
 
 		double answer = 50.*30;
 		assertEquals(answer, ((Number) pd.sum()).doubleValue(), answer*1e-4); // within 0.01% accuracy
@@ -54,10 +55,10 @@ public class MapToRotatedCartesianAndIntegrateTest extends TestCase {
 	@Test
 	public void testMapToRotatedCartesianAndIntegrateMasked() {
 		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(100,70,50,30,45.);
-		AbstractDataset m = new BooleanDataset(d.getShape());
+		BooleanDataset m = new BooleanDataset(d.getShape());
 		m.fill(true);
 		mp.setMask(m);
-		AbstractDataset pd = mp.value(d).get(0);
+		Dataset pd = mp.value(d).get(0);
 
 		double answer = 50.*30;
 		assertEquals(answer, ((Number) pd.sum()).doubleValue(), answer*1e-4); // within 0.01% accuracy

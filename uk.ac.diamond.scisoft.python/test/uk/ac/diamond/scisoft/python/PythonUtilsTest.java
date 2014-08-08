@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.python;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +27,8 @@ import org.python.core.PySlice;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class PythonUtilsTest {
@@ -38,11 +39,11 @@ public class PythonUtilsTest {
 
 	@Test
 	public void testGetSlice() {
-		AbstractDataset a;
+		Dataset a;
 		IDataset b;
 		int[] shape;
 
-		a = AbstractDataset.arange(12, AbstractDataset.FLOAT64).reshape(2, 6);
+		a = DatasetFactory.createRange(12, Dataset.FLOAT64).reshape(2, 6);
 		b = PythonUtils.getSlice(a, new PyInteger(-1));
 		shape = b.getShape();
 		assertEquals(1, shape.length);
@@ -53,7 +54,7 @@ public class PythonUtilsTest {
 		assertEquals(1, shape.length);
 		assertEquals(6, shape[0]);
 
-		a = AbstractDataset.arange(60, AbstractDataset.FLOAT64).reshape(2, 5, 3, 2);
+		a = DatasetFactory.createRange(60, Dataset.FLOAT64).reshape(2, 5, 3, 2);
 		b = PythonUtils.getSlice(a, new PyTuple(new PyInteger(-1)));
 		assertArrayEquals(new int[] {5, 3, 2}, b.getShape());
 
@@ -96,7 +97,7 @@ public class PythonUtilsTest {
 		b = PythonUtils.getSlice(a, new PyTuple(new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1), Py.None));
 		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
 
-		a = AbstractDataset.array(1);
+		a = DatasetFactory.createFromObject(1);
 		b = PythonUtils.getSlice(a, new PyTuple(Py.Ellipsis));
 		shape = b.getShape();
 		assertArrayEquals(new int[0], shape);

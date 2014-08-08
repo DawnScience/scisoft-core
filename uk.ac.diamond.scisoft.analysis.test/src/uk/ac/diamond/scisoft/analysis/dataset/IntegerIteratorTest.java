@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class IntegerIteratorTest {
-	AbstractDataset a, b;
+	Dataset a, b;
 
 	@Before
 	public void setUpClass() {
@@ -35,12 +35,12 @@ public class IntegerIteratorTest {
 
 	@Test
 	public void testEqualTo() {
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		IntegerDataset s = new IntegerDataset(new int[] {0, 3, 4}, null);
 
 		List<Integer> inds = new ArrayList<Integer>();
 
-		IntegerIterator iter = new IntegerIterator(s, c.size);
+		IntegerIterator iter = new IntegerIterator(s, c.getSize());
 		while (iter.hasNext())
 			inds.add((int) c.getElementLongAbs(iter.index));
 

@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexFloatDataset;
 
 public class ComplexFloatDatasetTest {
@@ -45,7 +44,7 @@ public class ComplexFloatDatasetTest {
 			assertEquals(i*2, b.getElementDoubleAbs(it.index), 1e-5*i);
 		}
 
-		AbstractDataset aa = Maths.abs(a);
+		Dataset aa = Maths.abs(a);
 		assertEquals(Dataset.FLOAT32, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
 		assertEquals(4, aa.getItemsize());		

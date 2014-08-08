@@ -23,13 +23,15 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 /**
  *
  */
 public class MapToPolarTest extends TestCase {
-	AbstractDataset d = AbstractDataset.zeros(new int[] {500,500}, AbstractDataset.FLOAT32);
+	Dataset d = DatasetFactory.zeros(new int[] {500,500}, Dataset.FLOAT32);
 
 	/**
 	 */
@@ -44,7 +46,7 @@ public class MapToPolarTest extends TestCase {
 	@Test
 	public void testMapToPolar() {
 		MapToPolar mp = new MapToPolar(250,250,50.,0.,200.,45.); // eighth of annulus
-		AbstractDataset pd = mp.value(d).get(0);
+		Dataset pd = mp.value(d).get(0);
 		
 		Sum s = new Sum();
 		List<Number> dsets = s.value(pd);
@@ -59,13 +61,13 @@ public class MapToPolarTest extends TestCase {
 	public void testMapToPolar2() {
 		MapToPolar mp = new MapToPolar(360,360,50.,0.,200.,45.); // eighth of annulus
 		List<AbstractDataset> dsets = mp.value(d);
-		AbstractDataset pd = dsets.get(0);
-		AbstractDataset upd = dsets.get(1); // new return with unit array
+		Dataset pd = dsets.get(0);
+		Dataset upd = dsets.get(1); // new return with unit array
 
 		Integrate2D int2d = new Integrate2D();
 		dsets = int2d.value(pd);
-		AbstractDataset intp = dsets.get(0);
-		AbstractDataset intr = dsets.get(1);
+		Dataset intp = dsets.get(0);
+		Dataset intr = dsets.get(1);
 
 		dsets = int2d.value(upd);
 		intp = Maths.divide(intp, dsets.get(0));
@@ -83,7 +85,7 @@ public class MapToPolarTest extends TestCase {
 	@Test
 	public void testMapToPolar3() {
 		MapToPolar mp = new MapToPolar(250,250,50.,22.5,200.,-22.5); // eighth of annulus
-		AbstractDataset pd = mp.value(d).get(0);
+		Dataset pd = mp.value(d).get(0);
 		
 		Sum s = new Sum();
 		List<Number> dsets = s.value(pd);

@@ -23,9 +23,10 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
@@ -33,7 +34,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
  */
 public class Integrate2DTest extends TestCase {
 
-	private void check1DArray(final AbstractDataset a, final double[] d) {
+	private void check1DArray(final Dataset a, final double[] d) {
 		assertEquals(1, a.getRank());
 		final int size = a.getSize();
 		final int is = a.getElementsPerItem();
@@ -47,7 +48,7 @@ public class Integrate2DTest extends TestCase {
 			int n = 0;
 			double[] ad = new double[is];
 			for (int i = 0; i < size; i++) {
-				((AbstractCompoundDataset) a).getDoubleArray(ad, i);
+				((CompoundDataset) a).getDoubleArray(ad, i);
 				for (int j = 0; j < is; j++) {
 					assertEquals(d[n++], ad[j], 1e-8);
 				}
@@ -61,7 +62,7 @@ public class Integrate2DTest extends TestCase {
 	@Test
 	public void testSimple() {
 		double[] dd = {0., 1., 2., 3., 4., 5.};
-		AbstractDataset d = new DoubleDataset(dd).reshape(2,3);
+		Dataset d = new DoubleDataset(dd).reshape(2,3);
 		Integrate2D int2d = new Integrate2D();
 		List<AbstractDataset> dsets = int2d.value(d);
 
@@ -79,7 +80,7 @@ public class Integrate2DTest extends TestCase {
 	@Test
 	public void testCompound() {
 		double[] dd = {0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.};
-		AbstractDataset d = new CompoundDoubleDataset(2, dd, new int[] {2,3});
+		Dataset d = new CompoundDoubleDataset(2, dd, new int[] {2,3});
 		Integrate2D int2d = new Integrate2D();
 		List<AbstractDataset> dsets = int2d.value(d);
 

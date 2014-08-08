@@ -59,8 +59,8 @@ public class DoubleDatasetTest {
 			assertEquals(r, a.getDouble(-(i + 1)), 1e-5 * r);
 		}
 
-		AbstractDataset sv = a.getSliceView(new Slice(2, 7));
-		AbstractDataset sc = a.getSlice(new Slice(2, 7));
+		Dataset sv = a.getSliceView(new Slice(2, 7));
+		Dataset sc = a.getSlice(new Slice(2, 7));
 		l = sc.getSize();
 		for (int i = 0; i < l; i++) {
 			double r = sc.getDouble(-(i + 1));
@@ -128,7 +128,7 @@ public class DoubleDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		assertEquals(11., a.max().doubleValue(), 1e-6);
 		assertEquals(0., a.min().doubleValue(), 1e-6);
 		assertEquals(5.5, ((Number) a.mean()).doubleValue(), 1e-6);
@@ -136,7 +136,7 @@ public class DoubleDatasetTest {
 		assertEquals(13., a.variance().doubleValue(), 1e-6);
 
 		a.setShape(3, 1, 4);
-		AbstractDataset b = a.sum(0);
+		Dataset b = a.sum(0);
 		assertEquals(2, b.getRank());
 		assertArrayEquals(new int[] { 1, 4 }, b.getShape());
 		assertEquals(12., b.getDouble(0, 0), 1e-6);
@@ -163,7 +163,7 @@ public class DoubleDatasetTest {
 		double[] da = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 		DoubleDataset a = new DoubleDataset(da);
 
-		AbstractDataset r = Maths.add(a, a);
+		Dataset r = Maths.add(a, a);
 		IndexIterator it = r.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(2. * i, r.getElementDoubleAbs(it.index), 1e-5 * i);

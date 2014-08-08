@@ -23,7 +23,7 @@ public class BroadcastIteratorTest {
 
 	@Test
 	public void testBroadcastShape() {
-		AbstractDataset a;
+		Dataset a;
 		a = DoubleDataset.ones();
 		checkBroadcastShape(a, "scalar as scalar", new int[0], new int[0]);
 		checkBroadcastShape(a, "scalar as [1]", new int[] {1}, new int[] {1}, 1);

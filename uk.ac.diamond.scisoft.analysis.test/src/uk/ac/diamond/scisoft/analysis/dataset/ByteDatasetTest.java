@@ -20,9 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
-
 public class ByteDatasetTest {
 
 	@Test
@@ -49,7 +46,7 @@ public class ByteDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.INT8);
+		Dataset a = DatasetFactory.createRange(12, Dataset.INT8);
 		assertEquals(11., a.max().doubleValue(), 1e-6);
 		assertEquals(0., a.min().doubleValue(), 1e-6);
 		assertEquals(5.5, ((Number) a.mean()).doubleValue(), 1e-6);

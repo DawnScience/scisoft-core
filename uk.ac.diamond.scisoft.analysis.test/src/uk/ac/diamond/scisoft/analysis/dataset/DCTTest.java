@@ -20,9 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DCT;
-
 //TODO truncate tests
 
 /**
@@ -53,10 +50,10 @@ public class DCTTest {
 		double[] or = { 19.05255888, -11.87866427, 0.0, -1.287746576, 0.0, -0.4369852500, 0.0, -0.1974277508, 0.0,
 				-0.09151733141, 0.0, -0.02710534351 };
 		int i;
-		AbstractDataset a, f, g;
+		Dataset a, f, g;
 		IndexIterator it;
 
-		a = AbstractDataset.arange(12, dtype);
+		a = DatasetFactory.createRange(12, dtype);
 		f = DCT.dct(a);
 		i = 0;
 		it = f.getIterator();
@@ -204,12 +201,12 @@ public class DCTTest {
 		}
 
 		int i;
-		AbstractDataset a, f, g;
+		Dataset a, f, g;
 		IndexIterator it;
 
 		double[] ar = { 1.905255888e+01,  -3.863239729e+00,   0.000000000e+00,  -2.745519942e-01, -1.131370850e+01,
 				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-		a = AbstractDataset.arange(12, dtype);
+		a = DatasetFactory.createRange(12, dtype);
 		a.setShape(3, 4);
 		f = DCT.dct2(a, null, null);
 		assertEquals("2D double: rank", 2, f.getRank());
@@ -238,7 +235,7 @@ public class DCTTest {
 				-12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0., 0., 10., 0., -10., 55.05527682, 0., 0., 0.,
 				12.99678785, 0., 0., 0., -12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0. };
 
-		a = AbstractDataset.arange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = DCT.dct2(a, null, null);
 		assertEquals("2D double: rank", 3, f.getRank());
@@ -381,7 +378,7 @@ public class DCTTest {
 		}
 
 		int i;
-		AbstractDataset a, f, g;
+		Dataset a, f, g;
 		IndexIterator it;
 
 		double[] ar = { 1.77000000e+03, -3.00000000e+01, -3.00000000e+01, -3.00000000e+01, -1.20000000e+02,
@@ -407,7 +404,7 @@ public class DCTTest {
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
 
-		a = AbstractDataset.arange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
 		a.setShape(3, 5, 4);
 		f = DCT.dctn(a, null, null);
 		assertEquals("3D double: rank", 3, f.getRank());
@@ -543,7 +540,7 @@ public class DCTTest {
 				0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14,
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
-		AbstractDataset b = AbstractDataset.arange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
+		Dataset b = DatasetFactory.createRange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
 		f = DCT.dctn(b, null, new int[] { -3, -2, -1 });
 		assertEquals("3D double: rank", 4, f.getRank());
 		assertEquals("3D double: shape", 2, f.getShape()[0]);
@@ -757,8 +754,8 @@ public class DCTTest {
 
 	@Test
 	public void testShift() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.FLOAT64);
-		AbstractDataset t;
+		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
+		Dataset t;
 
 		t = DCT.dctshift(a, null);
 		System.out.println(t);

@@ -19,9 +19,6 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.vecmath.Vector3d;
-
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -45,10 +42,10 @@ public abstract class AbstractPixelIntegration {
 	
 	DoubleDataset binEdges = null;
 	
-	AbstractDataset[] radialArray;
-	AbstractDataset[] azimuthalArray;
-	AbstractDataset mask;
-	AbstractDataset maskRoiCached;
+	Dataset[] radialArray;
+	Dataset[] azimuthalArray;
+	Dataset mask;
+	Dataset maskRoiCached;
 	
 	QSpace qSpace = null;
 	ROIProfile.XAxis xAxis = XAxis.Q;
@@ -70,7 +67,7 @@ public abstract class AbstractPixelIntegration {
 		this.nbins = numBins;
 	}
 	
-	public abstract List<AbstractDataset> integrate(IDataset dataset);
+	public abstract List<Dataset> integrate(IDataset dataset);
 	
 	/**
 	 * Set minimum and maximum of radial range
@@ -141,13 +138,13 @@ public abstract class AbstractPixelIntegration {
 		if (qSpace == null) return;
 		XAxis x = xAxis == XAxis.RESOLUTION ? XAxis.Q : xAxis;
 		
-		if (centre) radialArray = new AbstractDataset[]{PixelIntegrationUtils.generateRadialArray(shape, qSpace, x)};
+		if (centre) radialArray = new Dataset[]{PixelIntegrationUtils.generateRadialArray(shape, qSpace, x)};
 		else radialArray = PixelIntegrationUtils.generateMinMaxRadialArray(shape, qSpace, x);
 		
 	}
 	
 	protected void generateAzimuthalArray(double[] beamCentre, int[] shape) {
-		azimuthalArray = new AbstractDataset[]{PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, false)};
+		azimuthalArray = new Dataset[]{PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, false)};
 	}
 	
 	protected void generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape) {
@@ -178,10 +175,10 @@ public abstract class AbstractPixelIntegration {
 		return null;
 	}
 	
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
+	protected void processAndAddToResult(Dataset intensity, Dataset histo, List<Dataset> result,
 			 double[] binRange, String name) {
 		
-		AbstractDataset axis = null;
+		Dataset axis = null;
 		
 		if (binRange == null) {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
@@ -214,7 +211,7 @@ public abstract class AbstractPixelIntegration {
 		result.add(intensity);
 	}
 
-	public void setMask(AbstractDataset mask) {
+	public void setMask(Dataset mask) {
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
@@ -247,9 +244,9 @@ public abstract class AbstractPixelIntegration {
 		}
 	}
 	
-	protected AbstractDataset mergeMaskAndRoi(int[] shape) {
+	protected Dataset mergeMaskAndRoi(int[] shape) {
 		
-		AbstractDataset out;
+		Dataset out;
 		if (mask == null) out = new BooleanDataset(shape);
 		else out = mask.clone();
 		
@@ -268,7 +265,7 @@ public abstract class AbstractPixelIntegration {
 		return out;
 	}
 	
-	protected DoubleDataset calculateBins(AbstractDataset[] arrays, AbstractDataset mask, double[] binRange, int numBins) {
+	protected DoubleDataset calculateBins(Dataset[] arrays, Dataset mask, double[] binRange, int numBins) {
 		
 		if (binRange != null) {
 			//range corresponds to bin centres
@@ -280,9 +277,9 @@ public abstract class AbstractPixelIntegration {
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 
-		for (AbstractDataset a : arrays) {
+		for (Dataset a : arrays) {
 
-			AbstractDataset data = a;
+			Dataset data = a;
 			
 			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(mask,Dataset.BOOL)}, new Object[]{a}, Double.NaN);
 

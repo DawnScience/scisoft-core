@@ -25,14 +25,14 @@ public class InterpolatorUtilsTest {
 	@Test
 	public void test() {
 		
-		AbstractDataset im = AbstractDataset.arange(0.0,10000.0,1.0, Dataset.FLOAT32);
+		Dataset im = DatasetFactory.createRange(0.0,10000.0,1.0, Dataset.FLOAT32);
 		im = im.reshape(100,100);
-		AbstractDataset off = Maths.sin(AbstractDataset.arange(0.0, 10.0, 0.1,Dataset.FLOAT32));
-		AbstractDataset axis = AbstractDataset.arange(-5.0, 5.0, 0.1, Dataset.FLOAT32);
+		Dataset off = Maths.sin(DatasetFactory.createRange(0.0, 10.0, 0.1,Dataset.FLOAT32));
+		Dataset axis = DatasetFactory.createRange(-5.0, 5.0, 0.1, Dataset.FLOAT32);
 		
-		AbstractDataset newaxis = AbstractDataset.arange(-10.0, 10.0, 0.1, Dataset.FLOAT32);
+		Dataset newaxis = DatasetFactory.createRange(-10.0, 10.0, 0.1, Dataset.FLOAT32);
 		
-		AbstractDataset output = InterpolatorUtils.remapOneAxis(im, 0, off, axis, newaxis);
+		Dataset output = InterpolatorUtils.remapOneAxis(im, 0, off, axis, newaxis);
 		
 		// check that some values are correct
 		assertEquals("Coordinate incorrect", 1468.249, output.getDouble(62,29), 0.1);

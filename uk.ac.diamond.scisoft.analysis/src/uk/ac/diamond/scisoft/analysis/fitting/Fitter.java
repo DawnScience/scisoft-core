@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
@@ -40,11 +40,11 @@ public class Fitter {
 	public static double quality = 1e-4; 
 	public static Long seed = null; 
 
-	public static void simplexFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void simplexFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		simplexFit(simplexQuality, coords, yAxis, function);
 	}
 	
-	public static void simplexFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void simplexFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		NelderMead nm = new NelderMead(quality);
 		nm.optimize(coords, yAxis, function);	
 	}
@@ -57,7 +57,7 @@ public class Fitter {
 	 * @param maxEvals
 	 * @throws Exception
 	 */
-	public static void ApacheNelderMeadFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function, int maxEvals) throws Exception {
+	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final IFunction function, int maxEvals) throws Exception {
 		ApacheNelderMead anm = new ApacheNelderMead();
 		anm.optimize(coords, yAxis, function, maxEvals);	
 	}
@@ -69,28 +69,28 @@ public class Fitter {
 	 * @param function
 	 * @throws Exception
 	 */
-	public static void ApacheNelderMeadFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		IOptimizer anm = new ApacheNelderMead();
 		anm.optimize(coords, yAxis, function);	
 	}	
 	
-	public static void ApacheMultiDirectionFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void ApacheMultiDirectionFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 //		IOptimizer amd = new ApacheOptimizer(Optimizer.SIMPLEX_MD);
 		IOptimizer amd = new ApacheMultiDirectional();
 		amd.optimize(coords, yAxis, function);	
 	}
 		
-	public static void ApacheConjugateGradientFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void ApacheConjugateGradientFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 //		IOptimizer acg = new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
 		IOptimizer acg = new ApacheConjugateGradient();
 		acg.optimize(coords, yAxis, function);	
 	}
 
-	public static void GDFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void GDFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		GDFit(quality, coords, yAxis, function);
 	}
 	
-	public static void GDFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void GDFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		IOptimizer gd = new GradientDescent(quality);
 		gd.optimize(coords, yAxis, function);	
 	}
@@ -103,7 +103,7 @@ public class Fitter {
 	 * @param function
 	 * @throws Exception 
 	 */
-	public static void geneticFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void geneticFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		geneticFit(quality, coords, yAxis, function);
 	}
 
@@ -115,7 +115,7 @@ public class Fitter {
 	 * @param function
 	 * @throws Exception 
 	 */
-	public static void geneticFit(final double quality, final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void geneticFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		IOptimizer ga = new GeneticAlg(quality, seed); 
 
 		ga.optimize(coords, yAxis, function);
@@ -128,7 +128,7 @@ public class Fitter {
 	 * @param function
 	 * @throws Exception 
 	 */
-	public static void llsqFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final IFunction function) throws Exception {
+	public static void llsqFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		IOptimizer lsq = new LeastSquares(0); 
 
 		lsq.optimize(coords, yAxis, function);
@@ -142,7 +142,7 @@ public class Fitter {
 	 * @param degree of polynomial
 	 * @throws Exception 
 	 */
-	public static Polynomial polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, final double rcond, final int degree) throws Exception {
+	public static Polynomial polyFit(final Dataset[] coords, final Dataset yAxis, final double rcond, final int degree) throws Exception {
 		Polynomial polynomial = new Polynomial(degree);
 		polyFit(coords, yAxis, rcond, polynomial);
 		return polynomial;
@@ -156,7 +156,7 @@ public class Fitter {
 	 * @param polynomial
 	 * @throws Exception 
 	 */
-	public static void polyFit(final AbstractDataset[] coords, final AbstractDataset yAxis, @SuppressWarnings("unused") final double rcond, final Polynomial polynomial) throws Exception {
+	public static void polyFit(final Dataset[] coords, final Dataset yAxis, @SuppressWarnings("unused") final double rcond, final Polynomial polynomial) throws Exception {
 		//determine polynomial order from number of parameters in polynomial
 		int polyOrder = polynomial.getNoOfParameters()-1;
 		
@@ -201,7 +201,7 @@ public class Fitter {
 		return comp;
 	}
 	
-	public static AFunction GaussianFit(AbstractDataset data, AbstractDataset axis) {
+	public static AFunction GaussianFit(Dataset data, Dataset axis) {
 		
 		Gaussian gauss = new Gaussian(axis.min().doubleValue(), 
 				axis.max().doubleValue(), 
@@ -213,13 +213,13 @@ public class Fitter {
 		comp.addFunction(offset);
 		
 		try {
-			geneticFit(new AbstractDataset[] {axis}, data, comp);
+			geneticFit(new Dataset[] {axis}, data, comp);
 		} catch (Exception e) {
 		}
 		return comp;
 	}
 	
-	public static NDGaussianFitResult NDGaussianSimpleFit(AbstractDataset data, AbstractDataset... axis) {
+	public static NDGaussianFitResult NDGaussianSimpleFit(Dataset data, Dataset... axis) {
 		if (data.getRank() != axis.length) {
 			//TODO make this better
 			throw new IllegalArgumentException("Incorrect number of Axis");
@@ -229,7 +229,7 @@ public class Fitter {
 		// first resolve the problem into n 1D problems
 		AFunction[] results = new AFunction[dims];
 		for (int i = 0; i < dims; i++) {
-			AbstractDataset flattened = data;
+			Dataset flattened = data;
 			for (int j = 0; j < dims-1; j++) {
 				if (j < i) {
 					flattened = flattened.sum(0);

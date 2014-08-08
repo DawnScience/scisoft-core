@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
@@ -33,11 +34,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
  * Test down-sampling class
  */
 public class DownsampleTest extends TestCase {
-	AbstractDataset d;
+	Dataset d;
 
 	@Override
 	public void setUp() {
-		d = AbstractDataset.arange(24, Dataset.FLOAT32);
+		d = DatasetFactory.createRange(24, Dataset.FLOAT32);
 		d.setShape(new int[] {4, 6});
 	}
 
@@ -48,7 +49,7 @@ public class DownsampleTest extends TestCase {
 		List<AbstractDataset> dsets = ds.value(d);
 		double[] answers = new double[] {0, 3, 12, 15};
 
-		AbstractDataset a = dsets.get(0);
+		Dataset a = dsets.get(0);
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(answers[i], a.getElementDoubleAbs(it.index), 1e-6);
@@ -62,7 +63,7 @@ public class DownsampleTest extends TestCase {
 		List<AbstractDataset> dsets = ds.value(d);
 		double[] answers = new double[] {4, 7, 16, 19};
 
-		AbstractDataset a = dsets.get(0);
+		Dataset a = dsets.get(0);
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(answers[i], a.getElementDoubleAbs(it.index), 1e-6);
@@ -76,7 +77,7 @@ public class DownsampleTest extends TestCase {
 		List<AbstractDataset> dsets = ds.value(d);
 		double[] answers = new double[] {8, 11, 20, 23};
 
-		AbstractDataset a = dsets.get(0);
+		Dataset a = dsets.get(0);
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(answers[i], a.getElementDoubleAbs(it.index), 1e-6);
@@ -90,7 +91,7 @@ public class DownsampleTest extends TestCase {
 		List<AbstractDataset> dsets = ds.value(d);
 		double[] answers = new double[] {0, 3, 12, 15};
 
-		AbstractDataset a = dsets.get(0);
+		Dataset a = dsets.get(0);
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(answers[i], a.getElementDoubleAbs(it.index), 1e-6);
@@ -104,7 +105,7 @@ public class DownsampleTest extends TestCase {
 		List<AbstractDataset> dsets = ds.value(d);
 		double[] answers = new double[] {11.5};
 
-		AbstractDataset a = dsets.get(0);
+		Dataset a = dsets.get(0);
 		IndexIterator it = a.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
 			assertEquals(answers[i], a.getElementDoubleAbs(it.index), 1e-6);

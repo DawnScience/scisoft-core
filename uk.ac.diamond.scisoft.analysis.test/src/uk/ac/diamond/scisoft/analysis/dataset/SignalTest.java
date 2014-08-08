@@ -29,15 +29,15 @@ public class SignalTest {
 	 */
 	@Test
 	public void testSimpleConvolveFilters() {
-		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
+		Dataset f = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		Dataset g = DatasetFactory.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
 		
 		
 		// test against a null filter
 		f.iadd(2);
 		g.set(1, 1, 1);
 		
-		AbstractDataset result = Signal.convolve(f, g, null);
+		Dataset result = Signal.convolve(f, g, null);
 		
 		assertEquals("Arrays are not equal area",  (Double) f.sum(), (Double) result.sum(), 0.1); 
 		
@@ -61,8 +61,8 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolveFilters() {
-		AbstractDataset f = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		AbstractDataset g = AbstractDataset.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
+		Dataset f = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		Dataset g = DatasetFactory.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
 		
 		// test against a null filter
 		f.iadd(1);
@@ -72,7 +72,7 @@ public class SignalTest {
 		g.set(1, 1, 0);
 		g.set(1, 1, 2);
 		
-		AbstractDataset result = Signal.convolve(f, g, null);
+		Dataset result = Signal.convolve(f, g, null);
 		
 		assertEquals("Element (0,0) is not correct",  0, result.getDouble(0,0), 0.1); 
 		assertEquals("Element (1,1) is not correct",  3, result.getDouble(1,1), 0.1); 
@@ -86,9 +86,9 @@ public class SignalTest {
 
 	@Test
 	public void testConvolutionFilter() {
-		AbstractDataset ds = DoubleDataset.createRange(1000);
-		AbstractDataset kernel = DoubleDataset.ones(27);
-		AbstractDataset result = Signal.convolveToSameShape(ds, kernel, null);
+		Dataset ds = DoubleDataset.createRange(1000);
+		Dataset kernel = DoubleDataset.ones(27);
+		Dataset result = Signal.convolveToSameShape(ds, kernel, null);
 		assertEquals(120, result.getDouble(2), 0.001);
 		
 		ds = ds.reshape(new int[] {10,100});
@@ -107,12 +107,12 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolve() {
-		AbstractDataset one_d = AbstractDataset.zeros(new int[] {10}, Dataset.ARRAYFLOAT64);
-		AbstractDataset two_d = AbstractDataset.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		AbstractDataset three_d = AbstractDataset.zeros(new int[] {10,10,10}, Dataset.ARRAYFLOAT64);
+		Dataset one_d = DatasetFactory.zeros(new int[] {10}, Dataset.ARRAYFLOAT64);
+		Dataset two_d = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
+		Dataset three_d = DatasetFactory.zeros(new int[] {10,10,10}, Dataset.ARRAYFLOAT64);
 		
 		@SuppressWarnings("unused")
-		AbstractDataset result;
+		Dataset result;
 		
 		try {
 			result = Signal.convolve(one_d, one_d, null);
@@ -174,11 +174,11 @@ public class SignalTest {
 
 	@Test
 	public void testConvolveAll() {
-		AbstractDataset d = AbstractDataset.arange(20, Dataset.FLOAT64);
-		AbstractDataset k = AbstractDataset.ones(new int[] {5}, Dataset.FLOAT64);
-		AbstractDataset c;
+		Dataset d = DatasetFactory.createRange(20, Dataset.FLOAT64);
+		Dataset k = DatasetFactory.ones(new int[] {5}, Dataset.FLOAT64);
+		Dataset c;
 
-		AbstractDataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
+		Dataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 70, 54, 37, 19});
 
 		c = Signal.convolve(d, k, null);
@@ -196,7 +196,7 @@ public class SignalTest {
 		c = Signal.convolveForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
 
-		d = AbstractDataset.arange(19, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(19, Dataset.FLOAT64);
 		e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 
@@ -218,11 +218,11 @@ public class SignalTest {
 
 	@Test
 	public void testCorrelateAll() {
-		AbstractDataset d = AbstractDataset.arange(20, Dataset.FLOAT64);
-		AbstractDataset k = AbstractDataset.ones(new int[] {5}, Dataset.FLOAT64);
-		AbstractDataset c;
+		Dataset d = DatasetFactory.createRange(20, Dataset.FLOAT64);
+		Dataset k = DatasetFactory.ones(new int[] {5}, Dataset.FLOAT64);
+		Dataset c;
 
-		AbstractDataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20, 25,
+		Dataset e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20, 25,
 				30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 70, 54, 37, 19});
 
 		c = Signal.correlate(d, k, null);
@@ -243,7 +243,7 @@ public class SignalTest {
 		c = Signal.correlateForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(19, 3, -1)), c, 1e-7, 1e-9);
 		
-		d = AbstractDataset.arange(19, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(19, Dataset.FLOAT64);
 		e = new DoubleDataset(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 
@@ -268,7 +268,7 @@ public class SignalTest {
 
 	@Test
 	public void testWindows() {
-		AbstractDataset w;
+		Dataset w;
 		w = Signal.hammingWindow(10);
 		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] { 0.080000, 0.187620, 0.460122, 0.770000,
 				0.972259, 0.972259, 0.770000, 0.460122, 0.187620, 0.080000 }), w, 1e-5, 1e-6);

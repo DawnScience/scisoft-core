@@ -25,6 +25,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -39,11 +40,11 @@ public class PixelIntegrationUtils {
 	
 	public enum IntegrationMode{NONSPLITTING,SPLITTING,SPLITTING2D,NONSPLITTING2D}
 	
-	public static AbstractDataset generate2ThetaArrayRadians(IDiffractionMetadata md) {
+	public static Dataset generate2ThetaArrayRadians(IDiffractionMetadata md) {
 		return generate2ThetaArrayRadians(getShape(md), md);
 	}
 	
-	public static AbstractDataset generate2ThetaArrayRadians(int[] shape, IDiffractionMetadata md) {
+	public static Dataset generate2ThetaArrayRadians(int[] shape, IDiffractionMetadata md) {
 		
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
 		return generateRadialArray(shape, qSpace, XAxis.ANGLE, true);
@@ -70,7 +71,7 @@ public class PixelIntegrationUtils {
 	
 	public static AbstractDataset generateAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
-		AbstractDataset out = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		AbstractDataset out = (AbstractDataset) DatasetFactory.zeros(shape, Dataset.FLOAT64);
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
@@ -85,10 +86,10 @@ public class PixelIntegrationUtils {
 		return out;
 	}
 	
-	public static AbstractDataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
+	public static Dataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
-		AbstractDataset aMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-		AbstractDataset aMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		Dataset aMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset aMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = aMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -127,17 +128,17 @@ public class PixelIntegrationUtils {
 			}
 		}
 		
-		return new AbstractDataset[]{aMin,aMax};
+		return new Dataset[]{aMin,aMax};
 	}
 	
-	public static  AbstractDataset[] generateMinMaxRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
+	public static  Dataset[] generateMinMaxRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
 		
 		if (qSpace == null) return null;
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		AbstractDataset radialArrayMax = AbstractDataset.zeros(shape, Dataset.FLOAT64);
-		AbstractDataset radialArrayMin = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		Dataset radialArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset radialArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = radialArrayMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -179,7 +180,7 @@ public class PixelIntegrationUtils {
 				break;
 			}
 		}
-		return  new AbstractDataset[]{radialArrayMin,radialArrayMax};
+		return new Dataset[]{radialArrayMin,radialArrayMax};
 	}
 	
 	public static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
@@ -192,7 +193,7 @@ public class PixelIntegrationUtils {
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		AbstractDataset ra = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		AbstractDataset ra = (AbstractDataset) DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = ra.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -230,18 +231,18 @@ public class PixelIntegrationUtils {
 		return new int[]{metadata.getDetector2DProperties().getPy(), metadata.getDetector2DProperties().getPx()};
 	}
 	
-	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, AbstractDataset array2Dx) {
+	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, Dataset array2Dx) {
 		
 		DoubleDataset[] inXy1D = new DoubleDataset[2];
 		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], Dataset.FLOAT64);
-		inXy1D[1] = (DoubleDataset)DatasetUtils.cast(xy1d[1], Dataset.FLOAT64);
+		inXy1D[1] = (DoubleDataset) DatasetUtils.cast(xy1d[1], Dataset.FLOAT64);
 		
 		double min = inXy1D[0].min().doubleValue();
 		double max = inXy1D[0].max().doubleValue();
 		
 		SplineInterpolator si = new SplineInterpolator();
 		PolynomialSplineFunction poly = si.interpolate(inXy1D[0].getData(),inXy1D[1].getData());
-		AbstractDataset image = AbstractDataset.zeros(array2Dx.getShape(),Dataset.FLOAT64);
+		Dataset image = DatasetFactory.zeros(array2Dx.getShape(),Dataset.FLOAT64);
 		double[] buf = (double[])image.getBuffer();
 		
 		IndexIterator iterator = array2Dx.getIterator();
@@ -252,38 +253,38 @@ public class PixelIntegrationUtils {
 			
 		}
 		
-		return image;
+		return (AbstractDataset) image;
 	}
 	
-	public static void solidAngleCorrection(AbstractDataset correctionArray, AbstractDataset tth) {
+	public static void solidAngleCorrection(Dataset correctionArray, Dataset tth) {
 		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
 		AbstractDataset cor = Maths.cos(tth);
 		cor.ipower(3);
 		correctionArray.idivide(cor);
 	}
 	
-	public static void polarisationCorrection(AbstractDataset correctionArray, AbstractDataset tth, AbstractDataset angle, double factor) {
+	public static void polarisationCorrection(Dataset correctionArray, Dataset tth, Dataset angle, double factor) {
 		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
 		//pol(th) = 1/2[1+cos2(tth) - f*cos(azimuthal)sin2(tth)
 		
-		AbstractDataset cosSq = Maths.cos(tth);
+		Dataset cosSq = Maths.cos(tth);
 		cosSq.ipower(2);
 		
 		//use 1-cos2(tth) instead of sin2(tth)
-		AbstractDataset sub = Maths.subtract(1, cosSq);
+		Dataset sub = Maths.subtract(1, cosSq);
 		sub.imultiply(Maths.cos(angle));
 		sub.imultiply(factor);
 		
-		AbstractDataset cor = Maths.add(cosSq, 1);
+		Dataset cor = Maths.add(cosSq, 1);
 		cor.isubtract(sub);
 		cor.idivide(2);
 		correctionArray.idivide(cor);
 	}
 	
-	public static void detectorTranmissionCorrection(AbstractDataset correctionArray, AbstractDataset tth, double transmissionFactor) {
+	public static void detectorTranmissionCorrection(Dataset correctionArray, Dataset tth, double transmissionFactor) {
 		//J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304
 		//K = [1 - exp(lnT/cos(a))]/(1-T)
-		AbstractDataset cor = Maths.cos(tth);
+		Dataset cor = Maths.cos(tth);
 		cor = Maths.divide(Math.log(transmissionFactor), cor);
 		cor = Maths.exp(cor);
 		cor = Maths.subtract(1, cor);
@@ -291,11 +292,11 @@ public class PixelIntegrationUtils {
 		correctionArray.idivide(cor);
 	}
 	
-	public static void lorentzCorrection(AbstractDataset correctionArray, AbstractDataset tth) {
+	public static void lorentzCorrection(Dataset correctionArray, Dataset tth) {
 		//Norby J. Appl. Cryst. (1997). 30, 21-30
 		//1/sin2(theta)cos(theta)
-		AbstractDataset th = Maths.divide(tth, 2);
-		AbstractDataset s2 = Maths.sin(th);
+		Dataset th = Maths.divide(tth, 2);
+		Dataset s2 = Maths.sin(th);
 		s2.ipower(2);
 		th = Maths.cos(th);
 		s2.imultiply(th);

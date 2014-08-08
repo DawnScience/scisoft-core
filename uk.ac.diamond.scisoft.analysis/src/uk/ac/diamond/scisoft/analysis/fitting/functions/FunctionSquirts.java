@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
@@ -58,8 +58,8 @@ public class FunctionSquirts implements Serializable {
 		private IROI           bounds;
 		private AFunction         function;
 		private String            name;
-		private AbstractDataset   x,y;
-		private AbstractDataset[] peakFunctions;
+		private Dataset   x,y;
+		private Dataset[] peakFunctions;
 		private List<IROI>     regions;
 		@Override
 		public int hashCode() {
@@ -135,22 +135,22 @@ public class FunctionSquirts implements Serializable {
 		public void setName(String name) {
 			this.name = name;
 		}
-		public AbstractDataset getX() {
+		public Dataset getX() {
 			return x;
 		}
-		public void setX(AbstractDataset x) {
+		public void setX(Dataset x) {
 			this.x = x;
 		}
-		public AbstractDataset getY() {
+		public Dataset getY() {
 			return y;
 		}
-		public void setY(AbstractDataset y) {
+		public void setY(Dataset y) {
 			this.y = y;
 		}
-		public AbstractDataset[] getPeakFunctions() {
+		public Dataset[] getPeakFunctions() {
 			return peakFunctions;
 		}
-		public void setPeakFunctions(AbstractDataset[] peakFunctions) {
+		public void setPeakFunctions(Dataset[] peakFunctions) {
 			this.peakFunctions = peakFunctions;
 		}
 		public List<IROI> getRegions() {

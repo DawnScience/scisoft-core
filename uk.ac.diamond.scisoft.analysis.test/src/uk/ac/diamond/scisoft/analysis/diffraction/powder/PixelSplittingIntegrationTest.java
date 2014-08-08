@@ -22,7 +22,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
@@ -75,7 +75,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//probably should take a similar time
 		npsi.setRadialRange(null);
 		npsi.setAzimuthalRange(null);
-		AbstractDataset mask = getMask(data.getShape());
+		Dataset mask = getMask(data.getShape());
 		npsi.setMask(mask);
 		
 		firstTime =testMask(data,npsi);
@@ -153,7 +153,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 1592);
 		//2theta
 		npsi.setAxisType(XAxis.ANGLE);
-		List<AbstractDataset> out = npsi.integrate(data);
+		List<Dataset> out = npsi.integrate(data);
 		npsi.setRadialRange(new double[]{10,30});
 		out = npsi.integrate(data);
 		Assert.assertEquals(30, out.get(0).getDouble(1591),0.00001);
@@ -188,7 +188,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testWholeImageAzimuthal(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (full) in "+(after-before));
 		
@@ -210,7 +210,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testSectionImageAzimuthal(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (section) in "+(after-before));
 		
@@ -230,7 +230,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testSectionLimitedImageAzimuthal(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (section, limited q) in "+(after-before));
 		
@@ -250,7 +250,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testWholeImageRadial(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (radial full) in "+(after-before));
 		
@@ -272,7 +272,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testLimitedRadial(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (radial limited) in "+(after-before));
 		
@@ -294,7 +294,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testSectorLimitedRadial(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("pixel splitting (radial limited sector) in "+(after-before));
 		
@@ -316,7 +316,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testMask(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting (radial limited sector) in "+(after-before));
 		
@@ -338,7 +338,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 	
 	private double testWholeImageAzimuthal1000Bins(IDataset data, AbstractPixelIntegration integrator) {
 		long before = System.currentTimeMillis();
-		List<AbstractDataset> out = integrator.integrate(data);
+		List<Dataset> out = integrator.integrate(data);
 		long after = System.currentTimeMillis();
 		System.out.println("Non pixel splitting (1000 bins) in "+(after-before));
 		

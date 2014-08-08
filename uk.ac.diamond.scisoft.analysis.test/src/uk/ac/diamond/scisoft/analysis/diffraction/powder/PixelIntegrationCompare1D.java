@@ -18,10 +18,11 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
-import junit.framework.Assert;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
@@ -47,7 +48,7 @@ public class PixelIntegrationCompare1D extends AbstractPixelIntegrationTestBase 
 		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta, 2000);
 		npsi.setAxisType(XAxis.ANGLE);
 		
-		List<AbstractDataset> out = npsi.integrate(data);
+		List<Dataset> out = npsi.integrate(data);
 		
 		IDataHolder dh;
 		try {
@@ -61,8 +62,8 @@ public class PixelIntegrationCompare1D extends AbstractPixelIntegrationTestBase 
 		IDataset x = dh.getDataset("Column_1");
 		IDataset y = dh.getDataset("Column_2");
 		
-		AbstractDataset difx = Maths.subtract(x, out.get(0));
-		AbstractDataset dify = Maths.subtract(y, out.get(1));
+		Dataset difx = Maths.subtract(x, out.get(0));
+		Dataset dify = Maths.subtract(y, out.get(1));
 		
 		double xm = difx.max().doubleValue();
 		double ym = dify.max().doubleValue();
@@ -85,7 +86,7 @@ public class PixelIntegrationCompare1D extends AbstractPixelIntegrationTestBase 
 		PixelSplittingIntegration npsi = new PixelSplittingIntegration(meta, 2000);
 
 		
-		List<AbstractDataset> out = npsi.integrate(data);
+		List<Dataset> out = npsi.integrate(data);
 		
 		IDataHolder dh;
 		try {
@@ -99,8 +100,8 @@ public class PixelIntegrationCompare1D extends AbstractPixelIntegrationTestBase 
 		IDataset x = dh.getDataset("Column_1");
 		IDataset y = dh.getDataset("Column_2");
 		
-		AbstractDataset difx = Maths.subtract(x, out.get(0));
-		AbstractDataset dify = Maths.subtract(y, out.get(1));
+		Dataset difx = Maths.subtract(x, out.get(0));
+		Dataset dify = Maths.subtract(y, out.get(1));
 		
 		double xm = difx.max().doubleValue();
 		double ym = dify.max().doubleValue();

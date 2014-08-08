@@ -24,14 +24,15 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  *
  */
 public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	int[] shape = new int[] {500,500}; 
-	AbstractDataset d = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
-	AbstractDataset a = AbstractDataset.ones(shape, AbstractDataset.FLOAT32);
+	Dataset d = DatasetFactory.ones(shape, Dataset.FLOAT32);
+	Dataset a = DatasetFactory.ones(shape, Dataset.FLOAT32);
 	
 	boolean interpolate = false; // use simple integration algorithm
 	double racc = 5e-3; // set relative accuracy within 1.0%
@@ -48,7 +49,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,1.,true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);
@@ -73,7 +74,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,1.,true); // eighth of annulus
 		
-		AbstractDataset dc = d.clone();
+		Dataset dc = d.clone();
 		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				int dx = i - xcentre;
@@ -133,7 +134,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndSimpleIntegrate2() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(360,360,50.,0.,200.,45., 1., true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);
@@ -151,7 +152,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 	@Test
 	public void testMapToPolarAndSimpleIntegrate3() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(250,250,50.,22.5,200.,-22.5, 1., true); // eighth of annulus
-		AbstractDataset mask = AbstractDataset.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
 		mp.setClip(true);

@@ -58,7 +58,7 @@ public class ComplexDoubleDatasetTest {
 		assertEquals(0.5, z.getComplex(0).getReal(), 1e-6);
 		assertEquals(1.0, z.getComplex(0).getImaginary(), 1e-6);
 
-		AbstractDataset aa = Maths.abs(a);
+		Dataset aa = Maths.abs(a);
 		assertEquals(Dataset.FLOAT64, aa.getDtype());
 		assertEquals(1, aa.getElementsPerItem());
 		assertEquals(8, aa.getItemsize());
@@ -101,7 +101,7 @@ public class ComplexDoubleDatasetTest {
 
 	@Test
 	public void testStats() {
-		AbstractDataset a = AbstractDataset.arange(12, Dataset.COMPLEX128);
+		Dataset a = DatasetFactory.createRange(12, Dataset.COMPLEX128);
 		assertEquals(5.5, ((Complex) a.mean()).getReal(), 1e-6);
 		assertEquals(0., ((Complex) a.mean()).getImaginary(), 1e-6);
 		assertEquals(13., a.variance().doubleValue(), 1e-6);

@@ -60,8 +60,8 @@ public class BooleanDatasetTest {
 			assertEquals(r, a.getBoolean(-(i + 1)));
 		}
 
-		AbstractDataset sv = a.getSliceView(new Slice(2,7));
-		AbstractDataset sc = a.getSlice(new Slice(2,7));
+		Dataset sv = a.getSliceView(new Slice(2,7));
+		Dataset sc = a.getSlice(new Slice(2,7));
 		l = sc.getSize();
 		for (int i = 0; i < l; i++) {
 			boolean r = sc.getBoolean(-(i + 1));

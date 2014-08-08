@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import Jama.Matrix;
 
@@ -43,7 +43,7 @@ public class LeastSquares extends AbstractOptimizer {
 	}
 
 	private double alpha(int k, int l) {
-		AbstractDataset value = DatasetUtils.convertToAbstractDataset(function.calculatePartialDerivativeValues(params.get(k), coords[0]));
+		Dataset value = DatasetUtils.convertToDataset(function.calculatePartialDerivativeValues(params.get(k), coords[0]));
 		if (k == l) {
 			value.imultiply(value);
 		} else {

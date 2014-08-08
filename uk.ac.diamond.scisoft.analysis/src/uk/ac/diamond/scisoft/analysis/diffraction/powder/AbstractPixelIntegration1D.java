@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -45,7 +44,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 	}
 	
 	@Override
-	protected void processAndAddToResult(AbstractDataset intensity, AbstractDataset histo, List<AbstractDataset> result,
+	protected void processAndAddToResult(Dataset intensity, Dataset histo, List<Dataset> result,
 			 double[] binRange, String name) {
 		
 		if (isAzimuthalIntegration) {
@@ -53,7 +52,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 			return;
 		} 
 		
-		AbstractDataset axis = null;
+		Dataset axis = null;
 		
 		if (binRange == null) {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));

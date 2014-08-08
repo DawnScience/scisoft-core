@@ -35,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
@@ -87,7 +88,7 @@ public class PowderRingsUtilsTest {
 
 	@Test
 	public void findEllipse() {
-		AbstractDataset image = null;
+		Dataset image = null;
 		try {
 			image = new ADSCImageLoader(TestFileFolder + "/ADSCImageTest/Si_200_1_0001.img").loadFile().getDataset(0);
 		} catch (Exception e) {

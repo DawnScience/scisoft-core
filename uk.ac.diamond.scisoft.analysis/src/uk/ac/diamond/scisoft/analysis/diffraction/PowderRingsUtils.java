@@ -52,6 +52,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Stats;
@@ -89,16 +90,16 @@ public class PowderRingsUtils {
 
 	public static Long seed = null;
 
-	public static PolylineROI findPOIsNearCircle(IMonitor mon, AbstractDataset image, BooleanDataset mask, CircularROI circle) {
+	public static PolylineROI findPOIsNearCircle(IMonitor mon, Dataset image, BooleanDataset mask, CircularROI circle) {
 		return findPOIsNearCircle(mon, image, mask, circle, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
-	public static PolylineROI findPOIsNearCircle(IMonitor mon, AbstractDataset image, BooleanDataset mask, CircularROI circle,
+	public static PolylineROI findPOIsNearCircle(IMonitor mon, Dataset image, BooleanDataset mask, CircularROI circle,
 			double arcLength, double radialDelta, int maxPoints) {
 		return findPOIsNearEllipse(mon, image, mask, new EllipticalROI(circle), arcLength, radialDelta, maxPoints);
 	}
 
-	public static PolylineROI findPOIsNearEllipse(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse) {
+	public static PolylineROI findPOIsNearEllipse(IMonitor mon, Dataset image, BooleanDataset mask, EllipticalROI ellipse) {
 		return findPOIsNearEllipse(mon, image, mask, ellipse, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
 
@@ -116,7 +117,7 @@ public class PowderRingsUtils {
 	 * @param maxPoints maximum number of points to return
 	 * @return polyline ROI
 	 */
-	public static PolylineROI findPOIsNearEllipse(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI ellipse,
+	public static PolylineROI findPOIsNearEllipse(IMonitor mon, Dataset image, BooleanDataset mask, EllipticalROI ellipse,
 			double arcLength, double radialDelta, int maxPoints) {
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
@@ -169,7 +170,7 @@ public class PowderRingsUtils {
 			double p = i * pdelta;
 			double cp = Math.cos(p);
 			double sp = Math.sin(p);
-			AbstractDataset sub;
+			Dataset sub;
 			final int[] beg = new int[] { (int) (yc + rsj * sa * cp + rsn * ca * sp),
 					(int) (xc + rsj * ca * cp - rsn * sa * sp) };
 			final int[] end = new int[] { (int) (yc + rej * sa * cp + ren * ca * sp),
@@ -217,7 +218,7 @@ public class PowderRingsUtils {
 
 			if (mask != null) {
 				if (mask.get(pos)) {
-					AbstractDataset sorted = DatasetUtils.sort(sub.flatten(), null);
+					Dataset sorted = DatasetUtils.sort(sub.flatten(), null);
 					int l = sorted.getSize() - 1;
 					do {
 						double x = sorted.getElementDoubleAbs(l);
@@ -318,7 +319,7 @@ public class PowderRingsUtils {
 			IConicSectionFitter f = efroi.getFitter();
 			IConicSectionFitFunction fn = f.getFitFunction(null, null);
 
-			AbstractDataset d = (AbstractDataset)fn.calcDistanceSquared(f.getParameters());
+			Dataset d = (Dataset) fn.calcDistanceSquared(f.getParameters());
 
 			// find outliers
 			double h = trimDelta * trimDelta;
@@ -359,7 +360,7 @@ public class PowderRingsUtils {
 	 * @param roi initial ellipse
 	 * @return list of ellipses
 	 */
-	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI roi) {
+	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, Dataset image, BooleanDataset mask, EllipticalROI roi) {
 		return findOtherEllipses(mon, image, mask, roi, roi.getSemiAxis(1), RADIAL_DELTA, ARC_LENGTH, 0.3*RADIAL_DELTA, MAX_POINTS);
 	}
 
@@ -379,7 +380,7 @@ public class PowderRingsUtils {
 	 * @param maxPoints
 	 * @return list of ellipses
 	 */
-	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, AbstractDataset image, BooleanDataset mask, EllipticalROI roi,
+	public static List<EllipticalROI> findOtherEllipses(IMonitor mon, Dataset image, BooleanDataset mask, EllipticalROI roi,
 			double radialMin, double radialDelta, double arcLength, double trimDelta, int maxPoints) {
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
@@ -480,16 +481,16 @@ public class PowderRingsUtils {
 	 * @param dx
 	 * @param dy
 	 */
-	private static void findMajorAxes(IMonitor mon, TreeSet<Double> axes, AbstractDataset image, AbstractDataset mask, EllipticalROI roi, double offset, double width, double[] centre, double dx, double dy) {
+	private static void findMajorAxes(IMonitor mon, TreeSet<Double> axes, Dataset image, Dataset mask, EllipticalROI roi, double offset, double width, double[] centre, double dx, double dy) {
 		RectangularROI rroi = new RectangularROI();
 		rroi.setPoint(centre);
 		rroi.setAngle(Math.atan2(dy, dx));
 		rroi.setLengths(Math.hypot(dx, dy), width);
 		rroi.translate(0, -0.5);
 		rroi.setClippingCompensation(true);
-		AbstractDataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
+		Dataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
 
-		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(AbstractDataset.arange(profile.getSize(), Dataset.INT), profile, PEAK_SMOOTHING);
+		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(DatasetFactory.createRange(profile.getSize(), Dataset.INT), profile, PEAK_SMOOTHING);
 		if (mon != null)
 			mon.worked(profile.getSize());
 

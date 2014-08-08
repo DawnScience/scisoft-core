@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class BooleanIteratorTest {
-	AbstractDataset a, b;
+	Dataset a, b;
 
 	@Before
 	public void setUpClass() {
@@ -35,7 +35,7 @@ public class BooleanIteratorTest {
 
 	@Test
 	public void testEqualTo() {
-		AbstractDataset c = a.clone().reshape(2, 3);
+		Dataset c = a.clone().reshape(2, 3);
 		BooleanDataset s = new BooleanDataset(new boolean[] {false, true, false, true, false, true});
 
 		List<Integer> inds = new ArrayList<Integer>();

@@ -22,9 +22,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.SliceIterator;
-
 /**
  *
  */
@@ -45,18 +42,18 @@ public class SliceIteratorTest {
 	}
 
 	private void testIterationsND(int size, int type) {
-		AbstractDataset ta;
+		Dataset ta;
 
 		System.out.println("Size: " + size);
 
 		// 0D
-		ta = AbstractDataset.zeros(new int[] {}, type);
+		ta = DatasetFactory.zeros(new int[] {}, type);
 		testDataset(ta);
 		testDatasetSteps(ta, new int[] {});
 		testDatasetAxes(ta, new boolean[] {});
 
 		// 1D
-		ta = AbstractDataset.arange(0, size, 1, type);
+		ta = DatasetFactory.createRange(0, size, 1, type);
 		testDataset(ta);
 		testDatasetSteps(ta, new int[] {2});
 		testDatasetSteps(ta, new int[] {-3});
@@ -118,7 +115,7 @@ public class SliceIteratorTest {
 
 	}
 
-	private void testDataset(AbstractDataset ta) {
+	private void testDataset(Dataset ta) {
 		SliceIterator iter = (SliceIterator) ta.getSliceIterator(null, null, null);
 		int[] pos = iter.getPos();
 
@@ -127,10 +124,10 @@ public class SliceIteratorTest {
 		}
 	}
 
-	private void testDatasetSteps(AbstractDataset ta, int[] step) {
+	private void testDatasetSteps(Dataset ta, int[] step) {
 		SliceIterator iter = (SliceIterator) ta.getSliceIterator(null, null, step);
 		int[] pos = iter.getPos();
-		int[] shape = ta.shape;
+		int[] shape = ta.getShapeRef();
 		int endrank = shape.length - 1;
 		int[] tpos = new int[shape.length];
 
@@ -168,10 +165,10 @@ public class SliceIteratorTest {
 		}
 	}
 
-	private void testDatasetAxes(AbstractDataset ta, boolean[] axes) {
+	private void testDatasetAxes(Dataset ta, boolean[] axes) {
 		SliceIterator iter = ta.getSliceIteratorFromAxes(null, axes);
 		int[] pos = iter.getPos();
-		int[] shape = ta.shape;
+		int[] shape = ta.getShapeRef();
 		int endrank = shape.length - 1;
 		int[] tpos = new int[shape.length];
 

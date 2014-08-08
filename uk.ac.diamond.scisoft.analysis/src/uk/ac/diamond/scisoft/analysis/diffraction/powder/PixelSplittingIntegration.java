@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -26,7 +26,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 	}
 
 	@Override
-	public List<AbstractDataset> integrate (IDataset dataset) {
+	public List<Dataset> integrate (IDataset dataset) {
 		
 		int[] shape = dataset.getShape();
 		
@@ -40,14 +40,14 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 			generateMinMaxAzimuthalArray(qSpace.getDetectorProperties().getBeamCentreCoords(),shape);
 		}
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
-//		AbstractDataset mt = mask;
-//		AbstractDataset dst = DatasetUtils.convertToAbstractDataset(dataset);
-//		AbstractDataset axt = radialArray;
+//		Dataset mt = mask;
+//		Dataset dst = DatasetUtils.convertToAbstractDataset(dataset);
+//		Dataset axt = radialArray;
 
 		//check mask and roi
-		AbstractDataset mt = mask;
+		Dataset mt = mask;
 		if (mask != null && !Arrays.equals(mask.getShape(),dataset.getShape())) throw new IllegalArgumentException("Mask shape does not match dataset shape");
 
 
@@ -58,9 +58,9 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 
 
-		AbstractDataset d = DatasetUtils.convertToAbstractDataset(dataset);
-		AbstractDataset[] a = radialArray;
-		AbstractDataset[] r = azimuthalArray;
+		Dataset d = DatasetUtils.convertToDataset(dataset);
+		Dataset[] a = radialArray;
+		Dataset[] r = azimuthalArray;
 		double[] integrationRange = azimuthalRange;
 		double[] binRange = radialRange;
 		

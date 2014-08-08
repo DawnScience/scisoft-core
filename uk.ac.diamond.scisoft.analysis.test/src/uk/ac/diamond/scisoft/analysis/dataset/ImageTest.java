@@ -27,27 +27,27 @@ public class ImageTest {
 	// TODO not really a test as such, but checks to make sure there are no execution errors
 	public void testregrid() {
 		
-		AbstractDataset ds = Random.rand(new int[] {100,100});
-		AbstractDataset pow = DoubleDataset.createRange(100);
+		Dataset ds = Random.rand(new int[] {100,100});
+		Dataset pow = DoubleDataset.createRange(100);
 		pow.ipower(2);
 		
-		AbstractDataset tile = pow.reshape(pow.getShape()[0],1);
-		AbstractDataset x = DatasetUtils.tile(tile, 100);
+		Dataset tile = pow.reshape(pow.getShape()[0],1);
+		Dataset x = DatasetUtils.tile(tile, 100);
 		
-		AbstractDataset y = DatasetUtils.transpose(x);
+		Dataset y = DatasetUtils.transpose(x);
 		
-		AbstractDataset lin = DoubleDataset.createRange(-100,900,10);
+		Dataset lin = DoubleDataset.createRange(-100,900,10);
 		
 		// now apply the Transform
 		@SuppressWarnings("unused")
-		AbstractDataset result = Image.regrid(ds, x, y, lin, lin);
+		Dataset result = Image.regrid(ds, x, y, lin, lin);
 		
 	}
 	
 	@Test
 	public void testMedianFilter() {
-		AbstractDataset ds = DoubleDataset.createRange(1000);
-		AbstractDataset result = Image.medianFilter(ds, new int[] {3});
+		Dataset ds = DoubleDataset.createRange(1000);
+		Dataset result = Image.medianFilter(ds, new int[] {3});
 		assertEquals(result.getDouble(2), ds.getDouble(2), 0.001);
 		
 		ds = ds.reshape(new int[] {10,100});
@@ -73,9 +73,9 @@ public class ImageTest {
 	
 	@Test
 	public void testConvolutionFilter() {
-		AbstractDataset ds = DoubleDataset.createRange(1000);
-		AbstractDataset kernel = DoubleDataset.ones(27);
-		AbstractDataset result = Image.convolutionFilter(ds, kernel);
+		Dataset ds = DoubleDataset.createRange(1000);
+		Dataset kernel = DoubleDataset.ones(27);
+		Dataset result = Image.convolutionFilter(ds, kernel);
 		assertEquals(120, result.getDouble(2), 0.001);
 		
 		ds = ds.reshape(new int[] {10,100});
@@ -93,7 +93,7 @@ public class ImageTest {
 	
 	@Test
 	public void testSobelFilter() {
-		AbstractDataset ds = Random.rand(new int[] {100,100});
+		Dataset ds = Random.rand(new int[] {100,100});
 		Image.sobelFilter(ds);
 	}
 }

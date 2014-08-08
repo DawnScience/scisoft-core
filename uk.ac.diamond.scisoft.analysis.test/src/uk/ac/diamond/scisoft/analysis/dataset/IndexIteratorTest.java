@@ -46,40 +46,40 @@ public class IndexIteratorTest {
 	}
 
 	private void testIterationsND(int size, int type) {
-		AbstractDataset ta;
+		Dataset ta;
 
 
 		System.out.println("Size: " + size);
 
 		// 0D
-		ta = AbstractDataset.zeros(new int[] {}, type);
+		ta = DatasetFactory.zeros(new int[] {}, type);
 		testDataset(ta);
 
 		// 1D
-		ta = AbstractDataset.arange(0, size, 1, type);
+		ta = DatasetFactory.createRange(0, size, 1, type);
 		testDataset(ta);
 
 		// 2D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, size / 16);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, size / 16);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 32, 32);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 32, 32);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 
 		// 3D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testDataset(ta);
 
 	}
 
-	private void testDataset(AbstractDataset ta) {
+	private void testDataset(Dataset ta) {
 		IndexIterator iter = ta.getIterator();
 		double[] data = (double[]) ta.getBuffer();
 
@@ -104,12 +104,12 @@ public class IndexIteratorTest {
 		}
 	}
 
-	private AbstractDataset oldSlice(AbstractDataset t, SliceIterator siter) {
+	private Dataset oldSlice(Dataset t, SliceIterator siter) {
 		int[] shape = siter.getShape();
 		int rank = shape.length;
 		int[] lstart = siter.getStart();
 		int[] lstep = siter.getStep();
-		AbstractDataset result = AbstractDataset.zeros(shape, Dataset.FLOAT64);
+		Dataset result = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
 		// set up the vectors needed to do this
 		int relative[] = new int[rank];
@@ -145,7 +145,7 @@ public class IndexIteratorTest {
 	}
 
 	@SuppressWarnings({ "null" })
-	private void testSlicedDataset(AbstractDataset t, int start, int startaxis, int step, int stepaxis) {
+	private void testSlicedDataset(Dataset t, int start, int startaxis, int step, int stepaxis) {
 		int rank = t.getRank();
 		int[] steps = new int[rank];
 		int[] starts = new int[rank];
@@ -172,7 +172,7 @@ public class IndexIteratorTest {
 		long stime;
 		List<Long> elapsed = new ArrayList<Long>();
 
-		AbstractDataset sliced = null;
+		Dataset sliced = null;
 		SliceIterator siter = (SliceIterator) t.getSliceIterator(starts, null, steps);
 
 		elapsed.clear();
@@ -187,7 +187,7 @@ public class IndexIteratorTest {
 
 		double[] sdata = (double[]) sliced.getBuffer();
 
-		AbstractDataset nsliced = null;
+		Dataset nsliced = null;
 
 		elapsed.clear();
 		for (int i = 0; i < nloop; i++) {
@@ -221,19 +221,19 @@ public class IndexIteratorTest {
 	}
 
 	private void testSliceIterationND(int size, int type) {
-		AbstractDataset ta;
+		Dataset ta;
 
 		System.out.println(" Size: " + size);
 
 		// 1D
-		ta = AbstractDataset.arange(0, size, 1, type);
+		ta = DatasetFactory.createRange(0, size, 1, type);
 		testSlicedDataset(ta, 0, 0, 3, 0);
 		testSlicedDataset(ta, 0, 0, 62, 0);
 		testSlicedDataset(ta, 23, 0, 3, 0);
 		testSlicedDataset(ta, 23, 0, 62, 0);
 
 		// 2D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 15, 15);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 15, 15);
 //		ta.reshape(15, size / 15);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta, 0, 0, 3, 0);
@@ -272,7 +272,7 @@ public class IndexIteratorTest {
 		testSlicedDataset(ta, 3, 1, -3, 1);
 
 		// 3D
-		ta = AbstractDataset.arange(0, size, 1, type).reshape(size / 10, 2, 5);
+		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 10, 2, 5);
 //		ta.reshape(5, size / 10, 2);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 

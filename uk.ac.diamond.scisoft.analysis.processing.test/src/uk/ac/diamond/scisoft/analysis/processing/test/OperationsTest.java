@@ -67,7 +67,7 @@ public class OperationsTest {
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
@@ -100,7 +100,7 @@ public class OperationsTest {
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+result.getData().getDouble(i,j));
@@ -137,7 +137,7 @@ public class OperationsTest {
 		counter = 0;
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				counter++;
@@ -180,7 +180,7 @@ public class OperationsTest {
 	
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -232,7 +232,7 @@ public class OperationsTest {
 		try {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -285,7 +285,7 @@ public class OperationsTest {
 			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 	
 					try {
 						// This sleep simply introduces some random behaviour

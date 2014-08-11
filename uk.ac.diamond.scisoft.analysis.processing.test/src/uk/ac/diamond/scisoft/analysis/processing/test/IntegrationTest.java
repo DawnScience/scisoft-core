@@ -70,7 +70,7 @@ public class IntegrationTest {
 		count = 0;
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
@@ -119,7 +119,7 @@ public class IntegrationTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
@@ -171,7 +171,7 @@ public class IntegrationTest {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 	
 					final IDataset integrated = result.getData();
 					if (integrated.getSize()!=472) {

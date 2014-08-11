@@ -24,6 +24,7 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
@@ -154,5 +155,18 @@ public abstract class AbstractOperation implements IOperation {
 		
 		return om.getDataDimensions();
 		
+	}
+	
+	public void copyMetadata(IDataset original, IDataset out) {
+		try {
+			List<MetadataType> metadata = original.getMetadata(null);
+			
+			for (MetadataType m : metadata) {
+				out.addMetadata(m);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

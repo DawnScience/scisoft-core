@@ -4,6 +4,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 /**
  * Hacky temp model for fitting.
@@ -18,7 +19,10 @@ public class FittingModel extends AbstractOperationModel {
 	private Class<? extends IOptimizer> optimizerClass;
 	private double quality;
 	private long seed;
+	
+	@OperationModelField(max=10, min=0)
 	private int smoothing;
+	
 	private int numberOfPeaks;
 	private double threshold;
 	private boolean autostopping;

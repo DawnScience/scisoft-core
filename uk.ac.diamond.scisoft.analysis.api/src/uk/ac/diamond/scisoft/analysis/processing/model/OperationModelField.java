@@ -46,4 +46,22 @@ public @interface OperationModelField {
 	 * The label attribute. If unset, uses the name of the field for the label.
 	 */
 	public String label() default "";
+	
+	/**
+	 * 
+	 * @return maximum allowed legal value for field
+	 */
+	public double max() default 1000d;
+	
+	/**
+	 * 
+	 * @return minimum allowed legal value for field
+	 */
+	public double min() default 0d;
+
+	/**
+	 * 
+	 * @return the unit that the fields value should be in.
+	 */
+	public String unit() default "";
 }

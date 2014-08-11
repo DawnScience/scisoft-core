@@ -4,7 +4,6 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -59,7 +58,6 @@ public class FunctionsTest {
 		final IRichDataset   rich    = new RichDataset(indices, null);
 
 		final IOperation functionOp = service.findFirst("function");
-		Collection<String> registeredOperations = service.getRegisteredOperations();
 		
 		// y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
@@ -72,7 +70,7 @@ public class FunctionsTest {
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -132,7 +130,7 @@ public class FunctionsTest {
 		count = 0;
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				
@@ -179,7 +177,7 @@ public class FunctionsTest {
 			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 
 					System.out.println(result.getData().getName());
 

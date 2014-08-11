@@ -34,14 +34,16 @@ public interface IExecutionVisitor {
      * 
      * @param intermediateData
      * @param data
+     * @param dataDims TODO
      */
-	public void notify(IOperation intermediateData, OperationData data, Slice[] slices, int[] shape);
+	public void notify(IOperation intermediateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims);
 	
 	/**
 	 * Called when the series of operations has been done, with the 
 	 * @param result
+	 * @param dataDims TODO
 	 */
-	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception;
+	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception;
 	
 	/**
 	 * List of operations for which should not modify the data passing though the pipe
@@ -59,13 +61,13 @@ public interface IExecutionVisitor {
 	public class Stub implements IExecutionVisitor {
 
 		@Override
-		public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+		public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape) {
+		public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
 			// TODO Auto-generated method stub
 			
 		}

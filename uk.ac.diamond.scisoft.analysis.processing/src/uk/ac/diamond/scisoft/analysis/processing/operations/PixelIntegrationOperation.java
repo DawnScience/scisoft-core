@@ -60,11 +60,13 @@ public class PixelIntegrationOperation extends AbstractOperation {
 		
 		Dataset data = out.remove(1);
 		
-		//assuming 2D to 1D
-		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length-1);
+		int length = 2;
+		if (axes!=null) length = axes.length-1;
+		
+		AxesMetadataImpl amd = new AxesMetadataImpl(length);
 		
 		boolean first = true;
-		for (int i = 0; i < axes.length; i++) {
+		for (int i = 0; i < length; i++) {
 			boolean contained = false;
 			for (int j : dataDims) {
 				if (i == j){
@@ -78,7 +80,7 @@ public class PixelIntegrationOperation extends AbstractOperation {
 				
 			}
 			if (!contained) {
-				amd.setAxis(i, new ILazyDataset[] {axes[i]});
+				amd.setAxis(i, new ILazyDataset[] {axes!= null ? axes[i] : null});
 			}
 		}
 		

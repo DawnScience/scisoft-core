@@ -64,7 +64,7 @@ public class RankTest {
 		count=0;
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=2) throw new Exception("Unexpcected rank found!");
 				count++;
 			}			
@@ -75,7 +75,7 @@ public class RankTest {
 		rand.setSlicing("all", "500");
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Unexpcected rank found!");
 				count++;
 			}			
@@ -87,7 +87,7 @@ public class RankTest {
 		rand.setSlicing("8", "500", "500");
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=0) throw new Exception("Unexpcected rank found!");
 				count++;
 			}			
@@ -107,7 +107,7 @@ public class RankTest {
 					
 			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			}, box);
@@ -148,7 +148,7 @@ public class RankTest {
 		// This order is ok
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
 			}			
 		}, add, azi);
@@ -157,7 +157,7 @@ public class RankTest {
 		try {
 			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			}, azi, box);
@@ -215,7 +215,7 @@ public class RankTest {
 
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
 		}, add, sub, function, azi);
@@ -224,7 +224,7 @@ public class RankTest {
 		try {
 			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			}, add, sub, function, azi, box);
@@ -271,7 +271,7 @@ public class RankTest {
 		try {
 			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			}, add, fitting);

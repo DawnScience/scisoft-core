@@ -53,7 +53,10 @@ public class ThresholdMask extends AbstractOperation {
 		
 		try {
 			Double upper  = (Double)model.get("Upper");
+			if (upper==null) upper = Double.MAX_VALUE;
+			
 			Double lower  = (Double)model.get("Lower");
+			if (lower==null) lower = -Double.MAX_VALUE;
 			
 			// TODO A fork/join or Java8 lambda would do this operation faster...
 			PositionIterator it = new PositionIterator(mask.getShape());

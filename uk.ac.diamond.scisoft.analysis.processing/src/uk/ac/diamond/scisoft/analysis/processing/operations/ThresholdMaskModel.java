@@ -1,13 +1,19 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 public class ThresholdMaskModel extends AbstractOperationModel {
 
-	private double upper, lower;
+	@OperationModelField(min=0, max=65000, hint="The upper intensity, above which the mask will mask out the value.\n\nIf you delete the value no upper intensity will be used for the mask.")
+	private Double upper;
+	
+	@OperationModelField(min=0, max=65000, hint="The lower intensity, below which the mask will mask out the value.\n\nIf you delete the value no lower intensity will be used for the mask.")
+	private Double lower;
 
 	public ThresholdMaskModel() {
-		
+		this.upper = null;
+		this.lower = null;
 	}
 	public ThresholdMaskModel(double upper, double lower) {
 		this();
@@ -15,19 +21,19 @@ public class ThresholdMaskModel extends AbstractOperationModel {
 		this.lower = lower;
 	}
 
-	public double getUpper() {
+	public Double getUpper() {
 		return upper;
 	}
 
-	public void setUpper(double upper) {
+	public void setUpper(Double upper) {
 		this.upper = upper;
 	}
 
-	public double getLower() {
+	public Double getLower() {
 		return lower;
 	}
 
-	public void setLower(double lower) {
+	public void setLower(Double lower) {
 		this.lower = lower;
 	}
 
@@ -35,11 +41,8 @@ public class ThresholdMaskModel extends AbstractOperationModel {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(lower);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(upper);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((lower == null) ? 0 : lower.hashCode());
+		result = prime * result + ((upper == null) ? 0 : upper.hashCode());
 		return result;
 	}
 
@@ -52,11 +55,15 @@ public class ThresholdMaskModel extends AbstractOperationModel {
 		if (getClass() != obj.getClass())
 			return false;
 		ThresholdMaskModel other = (ThresholdMaskModel) obj;
-		if (Double.doubleToLongBits(lower) != Double
-				.doubleToLongBits(other.lower))
+		if (lower == null) {
+			if (other.lower != null)
+				return false;
+		} else if (!lower.equals(other.lower))
 			return false;
-		if (Double.doubleToLongBits(upper) != Double
-				.doubleToLongBits(other.upper))
+		if (upper == null) {
+			if (other.upper != null)
+				return false;
+		} else if (!upper.equals(other.upper))
 			return false;
 		return true;
 	}

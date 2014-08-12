@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1079,55 +1078,15 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public void setError(Serializable error) {		
-		double[] errors = toDoubleArray(error, isize);
-
-		if (errors == null) {
-			super.setError(error);
-		} else {
-			for (int i = 0; i < isize; i++) {
-				double x = errors[i];
-				errors[i] = x*x;
-			}
-			
-			errorData = errors;
-		}
-	}
-
-	@Override
 	public AbstractCompoundDataset getError() {
 		if (errorData == null) {
 			return null;
 		}
-
-		double[] e = toDoubleArray(errorData, isize);
-		if (e != null) {
-			if (e == errorData) {
-				e = e.clone();
-			}
+		if (errorData.getSize() != getSize()) {
 			CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-			for (int i = 0; i < isize; i++) {
-				e[i] = Math.sqrt(e[i]);
-			}
-			errors.fill(e);
-			return errors;
+			return (AbstractCompoundDataset) Maths.sqrt(errorData, errors);
 		}
-
-		if (errorData instanceof CompoundDoubleDataset) {
-			return (CompoundDoubleDataset) Maths.sqrt(errorData);
-		}
-
-		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-		Dataset err = (Dataset) errorData;
-		IndexIterator it = err.getIterator();
-		int i = 0;
-		e = new double[isize];
-		while (it.hasNext()) {
-			Arrays.fill(e, Math.sqrt(err.getElementDoubleAbs(it.index)));
-			errors.setAbs(i, e);
-			i += isize;
-		}
-		return errors;
+		return (AbstractCompoundDataset) Maths.sqrt(errorData);
 	}
 
 	@Override
@@ -1187,17 +1146,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}
@@ -1207,17 +1170,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i, j);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}
@@ -1227,17 +1194,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(pos);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}

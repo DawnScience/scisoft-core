@@ -552,15 +552,17 @@ public class AbstractCompoundDatasetTest {
 		a.setError(new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0});
 		
 		// should be squared
-		assertEquals(1.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[0], 0.001);
-		assertEquals(4.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[1], 0.001);
-		assertEquals(9.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[2], 0.001);
-		assertEquals(16.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[3], 0.001);
-		assertEquals(25.0, AbstractCompoundDataset.toDoubleArray(a.getErrorBuffer(),5)[4], 0.001);
+		CompoundDataset e = (CompoundDataset) a.getErrorBuffer();
+		double[] ea = e.getDoubleArray();
+		assertEquals(1.0, ea[0], 0.001);
+		assertEquals(4.0, ea[1], 0.001);
+		assertEquals(9.0, ea[2], 0.001);
+		assertEquals(16.0, ea[3], 0.001);
+		assertEquals(25.0, ea[4], 0.001);
 		
 		// now for pulling out the full error array
 		CompoundDataset error = a.getError();
-	
+
 		a.setError(error);
 		
 		// should also be squared

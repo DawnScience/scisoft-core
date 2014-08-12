@@ -280,16 +280,16 @@ public interface Dataset extends IErrorDataset {
 	public Dataset getError();
 
 	/**
-	 * Get the buffer that backs the error data
+	 * Get the (un-broadcasted) dataset that backs the (squared) error data
 	 *
-	 * @return the buffer which contains the error information (can be null)
+	 * @return the dataset which contains the (squared) error information (can be null)
 	 */
-	public Serializable getErrorBuffer();
+	public Dataset getErrorBuffer();
 
 	/**
-	 * Set the buffer that backs the error data
+	 * Set the buffer that backs the (squared) error data
 	 *
-	 * @buffer the buffer which contains the error information (can be null)
+	 * @buffer the buffer which contains the (squared) error information (can be null)
 	 */
 	public void setErrorBuffer(Serializable buffer);
 

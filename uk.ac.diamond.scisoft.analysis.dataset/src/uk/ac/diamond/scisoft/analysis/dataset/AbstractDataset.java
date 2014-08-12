@@ -290,11 +290,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		view.offset = orig.getOffset();
 		view.base = orig instanceof AbstractDataset ? ((AbstractDataset) orig).base : null;
 
-		Serializable error = orig.getErrorBuffer();
-		if (error != null && error instanceof Dataset)
-			view.errorData = ((Dataset) error).getView();
-		else
-			view.errorData = error;
+		Dataset error = orig.getErrorBuffer();
+		if (error != null)
+			view.errorData = error.getView();
 
 		if (clone) {
 			view.shape = orig.getShape();
@@ -1663,8 +1661,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 		this.shape = nshape;
 
-		if (errorData != null && errorData instanceof Dataset) {
-			((Dataset) errorData).setShape(nshape);
+		if (errorData != null) {
+			errorData.setShape(nshape);
 		}
 
 		if (storedValues != null)
@@ -2372,8 +2370,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 				stride = tstride;
 			}
 		}
-		if (errorData!=null && errorData instanceof IDataset) {
-			((IDataset)errorData).squeeze(onlyFromEnds);
+		if (errorData != null) {
+			errorData.squeeze(onlyFromEnds);
 		}
 		return this;
 	}
@@ -3726,9 +3724,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * Note that all error values are stored internally already squared to 
 	 * ease calculation time on error propagation.
 	 * 
-	 * It must be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset
+	 * It must be null, DoubleDataset or CompoundDoubleDataset
 	 */
-	protected Serializable errorData = 0;
+	protected Dataset errorData = null;
 
 	/**
 	 * Set error for all points in the dataset
@@ -3736,68 +3734,33 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	@Override
 	public void setError(Serializable error) {
-		final int is = getElementsPerItem();
-		double[] e = null;
-		if (is > 1) {
-			e = AbstractCompoundDataset.toDoubleArray(error, is);
-			if (e != null) {
-				if (e == error) {
-					e = e.clone();
-				}
-				for (int i = 0; i < is; i++) {
-					double x = e[i];
-					e[i] = x*x;
-				}
-				errorData = e;
-			} else if (error instanceof IDataset) {
-				AbstractDataset x = DatasetUtils.convertToAbstractDataset((IDataset) error);
-				if (!isCompatibleWith(x)) {
-					throw new IllegalArgumentException("Error dataset is incompatible with this dataset");
-				}
-				if (x instanceof AbstractCompoundDataset) {
-					int isize = x.getElementsPerItem();
-					if (isize != is && isize != 1) {
-						throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
-					}
-					x = x.cast(ARRAYFLOAT64);
-				} else {
-					x = x.cast(FLOAT64);
-				}
-				errorData = Maths.square(x);
-			} else {
-				throw new IllegalArgumentException("Type of error could not be handled");
+		if (error == null)
+			return;
+
+		if (error instanceof IDataset) {
+			Dataset ed = DatasetUtils.convertToDataset((IDataset) error);
+			BroadcastIterator.broadcastShapes(shape, ed.getShapeRef());
+			int is = ed.getElementsPerItem();
+			if (is != 1 && is != getElementsPerItem()) {
+				throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
 			}
-		} else if (error instanceof Number) {
-			double x = ((Number) error).doubleValue();
-			errorData = x*x;
-		} else if (error instanceof IDataset) {
-			AbstractDataset x = DatasetUtils.convertToAbstractDataset((IDataset) error);
-			if (!isCompatibleWith(x)) {
-				throw new IllegalArgumentException("Error dataset is incompatible with this dataset");
-			}
-			if (x instanceof AbstractCompoundDataset) {
-				if (x.getElementsPerItem() != 1) {
-					throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
-				}
-				x = x.cast(ARRAYFLOAT64);
-			} else {
-				x = x.cast(FLOAT64);
-			}
-			errorData = Maths.square(x);
+			errorData = ed.cast(is == 1 ? FLOAT64 : ARRAYFLOAT64);
 		} else {
-			throw new IllegalArgumentException("Type of error could not be handled");
+			final int is = getElementsPerItem();
+			errorData = DatasetFactory.createFromObject(error, is == 1 ? FLOAT64 : ARRAYFLOAT64);
 		}
+		errorData = Maths.square(errorData);
 	}
 
 	@Override
 	public boolean hasErrors() {
-		if (errorData != null) {
-			if (errorData instanceof Number) {
-				return ((Number) errorData).intValue() != 0;
-			}
-			return true;
+		if (errorData == null) {
+			return false;
 		}
-		return false;
+		if (errorData.getSize() == 1) {
+			return errorData.getElementDoubleAbs(0) != 0;
+		}
+		return true;
 	}
 
 	@Override
@@ -3805,17 +3768,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		if (errorData == null) {
 			return null;
 		}
-
-		if (errorData instanceof Dataset) {
-			return Maths.sqrt(errorData);
-		} else if (errorData instanceof ILazyDataset) {
-			errorData = DatasetUtils.convertToDataset((ILazyDataset) errorData);
-			return Maths.sqrt(errorData);
+		if (errorData.getSize() != getSize()) {
+			DoubleDataset errors = new DoubleDataset(shape);
+			return Maths.sqrt(errorData, errors);
 		}
-
-		DoubleDataset errors = new DoubleDataset(shape);
-		errors.fill(Math.sqrt(toReal(errorData)));
-		return errors;
+		return Maths.sqrt(errorData);
 	}
 
 	@Override
@@ -3823,10 +3780,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		if (errorData == null) {
 			return 0;
 		}
-		if (errorData instanceof IDataset) {
-			return Math.sqrt(((IDataset) errorData).getDouble(i));
-		}
-		return Math.sqrt(toReal(errorData));
+		if (errorData.getSize() > 1) 
+			return Math.sqrt(errorData.getDouble(i));
+		return Math.sqrt(errorData.getElementDoubleAbs(0));
 	}
 
 	@Override
@@ -3834,10 +3790,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		if (errorData == null) {
 			return 0;
 		}
-		if (errorData instanceof IDataset) {
-			return Math.sqrt(((IDataset) errorData).getDouble(i, j));
-		}
-		return Math.sqrt(toReal(errorData));
+		if (errorData.getSize() > 1) 
+			return Math.sqrt(errorData.getDouble(i, j));
+		return Math.sqrt(errorData.getElementDoubleAbs(0));
 	}
 
 	@Override
@@ -3845,10 +3800,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		if (errorData == null) {
 			return 0;
 		}
-		if (errorData instanceof IDataset) {
-			return Math.sqrt(((IDataset) errorData).getDouble(pos));
-		}
-		return Math.sqrt(toReal(errorData));
+		if (errorData.getSize() > 1) 
+			return Math.sqrt(errorData.getDouble(pos));
+		return Math.sqrt(errorData.getElementDoubleAbs(0));
 	}
 
 	@Override
@@ -3876,7 +3830,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public Serializable getErrorBuffer() {
+	public Dataset getErrorBuffer() {
 		return errorData;
 	}
 
@@ -3885,10 +3839,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		errorData = null;
 	}
 	
-	
 	@Override
 	public void setLazyErrors(final ILazyDataset errors) {
-		if (errors==null) {
+		if (errors == null) {
 			clearError();
 			return;
 		}
@@ -3898,39 +3851,47 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 		throw new RuntimeException("setLazyErrors is unimplemented for "+getClass().getSimpleName()+" with an ILazyDataset. Please use setErrors(IDataset) instead!");
 	}
-	
+
 	@Override
 	public ILazyDataset getLazyErrors() {
 		return getError();
 	}
 
 	/**
-	 * Set the buffer that backs the error data
-	 * @param buffer can be null, a Double, a double array, DoubleDataset or CompoundDoubleDataset
+	 * Set a copy of the buffer that backs the (squared) error data
+	 * @param buffer can be null, anything that can be used to create a DoubleDataset or CompoundDoubleDataset
 	 */
 	@Override
 	public void setErrorBuffer(Serializable buffer) {
 		if (buffer == null) {
 			errorData = null;
-		} else if (buffer instanceof Double) {
-			errorData = new Double((Double) buffer);
-		} else if (buffer instanceof double[]) {
-			if (((double[]) buffer).length != getSize()) {
-				throw new IllegalArgumentException("Error buffer size does not match array size");
+		} else if (buffer instanceof IDataset) {
+			IDataset id = (IDataset) buffer;
+
+			int is = id.getElementsPerItem();
+			if (is > 1 && is != getElementsPerItem()) {
+				throw new IllegalArgumentException("Error buffer is a dataset that has an incompatible number of elements with this dataset");
 			}
-			errorData = new DoubleDataset((double[]) buffer, getShape());
-		} else if (buffer instanceof DoubleDataset) {
-			if (!ArrayUtils.isEquals(((DoubleDataset) buffer).getShape(), getShape())) {
-				throw new IllegalArgumentException("Error buffer shape does not match array shape");
+			int dtype = is == 1 ? FLOAT64 : ARRAYFLOAT64;
+			if (id instanceof Dataset) {
+				Dataset dd = (Dataset) id;
+				BroadcastIterator.broadcastShapes(shape, dd.getShapeRef());
+				if (dd.elementClass().equals(Double.class)) {
+					errorData = dd.clone(); // ensure it is a copy
+				} else {
+					errorData = dd.cast(dtype);
+				}
+			} else {
+				BroadcastIterator.broadcastShapes(shape, id.getShape());
+				errorData = DatasetUtils.cast(id, dtype);
 			}
-			errorData = new DoubleDataset((DoubleDataset) buffer);
-		} else if (buffer instanceof CompoundDoubleDataset) {
-			if (!ArrayUtils.isEquals(((CompoundDoubleDataset) buffer).getShape(), getShape())) {
-				throw new IllegalArgumentException("Error compound buffer shape does not match array shape");
-			}
-			errorData = new CompoundDoubleDataset((CompoundDoubleDataset) buffer);
 		} else {
-			throw new IllegalArgumentException("Type of error buffer could not be handled");
+			Dataset ed = DatasetFactory.createFromObject(buffer,
+					getElementsPerItem() == 1 ? FLOAT64 : ARRAYFLOAT64);
+			if (ed.getSize() == size) {
+				ed.setShape(shape);
+			}
+			errorData = ed;
 		}
 	}
 }

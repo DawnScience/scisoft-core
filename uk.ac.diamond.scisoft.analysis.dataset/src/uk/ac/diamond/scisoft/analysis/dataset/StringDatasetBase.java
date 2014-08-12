@@ -193,32 +193,6 @@ public class StringDatasetBase extends AbstractDataset {
 
 	@Override
 	public StringDatasetBase fill(final Object obj) {
-		if (obj instanceof IDataset) {
-			IDataset ds = (IDataset) obj;
-			if (!isCompatibleWith(ds)) {
-				logger.error("Tried to fill with dataset of incompatible shape");
-				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
-			}
-			if (ds instanceof Dataset) {
-				Dataset ads = (Dataset) ds;
-				IndexIterator itd = ads.getIterator();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					data[iter.index] = ads.getStringAbs(itd.index); // GET_ELEMENT_WITH_CAST
-				}
-			} else {
-				IndexIterator itd = new PositionIterator(ds.getShape());
-				int[] pos = itd.getPos();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					data[iter.index] = ds.getString(pos); // PRIM_TYPE
-				}
-			}
-
-			setDirty();
-			return this;
-		}
-
 		String dv = obj.toString(); // PRIM_TYPE // FROM_OBJECT
 		IndexIterator iter = getIterator();
 		while (iter.hasNext()) {

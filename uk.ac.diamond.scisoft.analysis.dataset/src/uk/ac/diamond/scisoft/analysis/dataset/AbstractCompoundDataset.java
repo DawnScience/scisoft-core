@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -162,7 +161,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		double[] result = null;
 
 		// ensure array is of given length
-		if (b instanceof double[]) {
+		if (b instanceof Number) {
+			result = new double[itemSize];
+			double val = ((Number) b).doubleValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof double[]) {
 			result = (double[]) b;
 			if (result.length < itemSize) {
 				result = new double[itemSize];
@@ -197,22 +201,32 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 				logger.error("Complex number will not fit in compound dataset");
 				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
 			}
+			Complex cb = (Complex) b;
 			switch (itemSize) {
 			default:
 			case 0:
 				break;
 			case 1:
-				result = new double[] {((Complex) b).getReal()};
+				result = new double[] {cb.getReal()};
 				break;
 			case 2:
-				result = new double[] {((Complex) b).getReal(), ((Complex) b).getImaginary()};
+				result = new double[] {cb.getReal(), cb.getImaginary()};
 				break;
 			}
-		} else if (b instanceof Number) {
-			result = new double[itemSize];
-			double val = ((Number) b).doubleValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toDoubleArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toDoubleArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -221,7 +235,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	protected static float[] toFloatArray(final Object b, final int itemSize) {
 		float[] result = null;
 
-		if (b instanceof float[]) {
+		if (b instanceof Number) {
+			result = new float[itemSize];
+			float val = ((Number) b).floatValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof float[]) {
 			result = (float[]) b;
 			if (result.length < itemSize) {
 				result = new float[itemSize];
@@ -251,11 +270,37 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			ilen = Math.min(itemSize, ilen);
 			for (int i = 0; i < ilen; i++)
 				result[i] = ((Number) Array.get(b, i)).floatValue();
-		} else if (b instanceof Number) {
-			result = new float[itemSize];
-			float val = ((Number) b).floatValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Complex) {
+			if (itemSize > 2) {
+				logger.error("Complex number will not fit in compound dataset");
+				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
+			}
+			Complex cb = (Complex) b;
+			switch (itemSize) {
+			default:
+			case 0:
+				break;
+			case 1:
+				result = new float[] {(float) cb.getReal()};
+				break;
+			case 2:
+				result = new float[] {(float) cb.getReal(), (float) cb.getImaginary()};
+				break;
+			}
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toFloatArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toFloatArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -264,7 +309,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	protected static long[] toLongArray(final Object b, final int itemSize) {
 		long[] result = null;
 
-		if (b instanceof long[]) {
+		if (b instanceof Number) {
+			result = new long[itemSize];
+			long val = ((Number) b).longValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof long[]) {
 			result = (long[]) b;
 			if (result.length < itemSize) {
 				result = new long[itemSize];
@@ -294,11 +344,37 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			ilen = Math.min(itemSize, ilen);
 			for (int i = 0; i < ilen; i++)
 				result[i] = ((Number) Array.get(b, i)).longValue();
-		} else if (b instanceof Number) {
-			result = new long[itemSize];
-			long val = ((Number) b).longValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Complex) {
+			if (itemSize > 2) {
+				logger.error("Complex number will not fit in compound dataset");
+				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
+			}
+			Complex cb = (Complex) b;
+			switch (itemSize) {
+			default:
+			case 0:
+				break;
+			case 1:
+				result = new long[] {(long) cb.getReal()};
+				break;
+			case 2:
+				result = new long[] {(long) cb.getReal(), (long) cb.getImaginary()};
+				break;
+			}
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toLongArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toLongArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -307,7 +383,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	protected static int[] toIntegerArray(final Object b, final int itemSize) {
 		int[] result = null;
 
-		if (b instanceof int[]) {
+		if (b instanceof Number) {
+			result = new int[itemSize];
+			int val = ((Number) b).intValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof int[]) {
 			result = (int[]) b;
 			if (result.length < itemSize) {
 				result = new int[itemSize];
@@ -337,11 +418,37 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			ilen = Math.min(itemSize, ilen);
 			for (int i = 0; i < ilen; i++)
 				result[i] = (int) ((Number) Array.get(b, i)).longValue();
-		} else if (b instanceof Number) {
-			result = new int[itemSize];
-			int val = ((Number) b).intValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Complex) {
+			if (itemSize > 2) {
+				logger.error("Complex number will not fit in compound dataset");
+				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
+			}
+			Complex cb = (Complex) b;
+			switch (itemSize) {
+			default:
+			case 0:
+				break;
+			case 1:
+				result = new int[] {(int) cb.getReal()};
+				break;
+			case 2:
+				result = new int[] {(int) cb.getReal(), (int) cb.getImaginary()};
+				break;
+			}
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toIntegerArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toIntegerArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -350,7 +457,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	protected static short[] toShortArray(final Object b, final int itemSize) {
 		short[] result = null;
 
-		if (b instanceof short[]) {
+		if (b instanceof Number) {
+			result = new short[itemSize];
+			short val = ((Number) b).shortValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof short[]) {
 			result = (short[]) b;
 			if (result.length < itemSize) {
 				result = new short[itemSize];
@@ -380,11 +492,37 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			ilen = Math.min(itemSize, ilen);
 			for (int i = 0; i < ilen; i++)
 				result[i] = (short) ((Number) Array.get(b, i)).longValue();
-		} else if (b instanceof Number) {
-			result = new short[itemSize];
-			short val = ((Number) b).shortValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Complex) {
+			if (itemSize > 2) {
+				logger.error("Complex number will not fit in compound dataset");
+				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
+			}
+			Complex cb = (Complex) b;
+			switch (itemSize) {
+			default:
+			case 0:
+				break;
+			case 1:
+				result = new short[] {(short) cb.getReal()};
+				break;
+			case 2:
+				result = new short[] {(short) cb.getReal(), (short) cb.getImaginary()};
+				break;
+			}
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toShortArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toShortArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -393,7 +531,12 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	protected static byte[] toByteArray(final Object b, final int itemSize) {
 		byte[] result = null;
 
-		if (b instanceof byte[]) {
+		if (b instanceof Number) {
+			result = new byte[itemSize];
+			final byte val = ((Number) b).byteValue();
+			for (int i = 0; i < itemSize; i++)
+				result[i] = val;
+		} else if (b instanceof byte[]) {
 			result = (byte[]) b;
 			if (result.length < itemSize) {
 				result = new byte[itemSize];
@@ -423,11 +566,37 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			ilen = Math.min(itemSize, ilen);
 			for (int i = 0; i < ilen; i++)
 				result[i] = (byte) ((Number) Array.get(b, i)).longValue();
-		} else if (b instanceof Number) {
-			result = new byte[itemSize];
-			final byte val = ((Number) b).byteValue();
-			for (int i = 0; i < itemSize; i++)
-				result[i] = val;
+		} else if (b instanceof Complex) {
+			if (itemSize > 2) {
+				logger.error("Complex number will not fit in compound dataset");
+				throw new IllegalArgumentException("Complex number will not fit in compound dataset");
+			}
+			Complex cb = (Complex) b;
+			switch (itemSize) {
+			default:
+			case 0:
+				break;
+			case 1:
+				result = new byte[] {(byte) cb.getReal()};
+				break;
+			case 2:
+				result = new byte[] {(byte) cb.getReal(), (byte) cb.getImaginary()};
+				break;
+			}
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toByteArray(db.getObjectAbs(0), itemSize);
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toByteArray(db.getObject(new int[db.getRank()]), itemSize);
 		}
 
 		return result;
@@ -909,55 +1078,15 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public void setError(Serializable error) {		
-		double[] errors = toDoubleArray(error, isize);
-
-		if (errors == null) {
-			super.setError(error);
-		} else {
-			for (int i = 0; i < isize; i++) {
-				double x = errors[i];
-				errors[i] = x*x;
-			}
-			
-			errorData = errors;
-		}
-	}
-
-	@Override
 	public AbstractCompoundDataset getError() {
 		if (errorData == null) {
 			return null;
 		}
-
-		double[] e = toDoubleArray(errorData, isize);
-		if (e != null) {
-			if (e == errorData) {
-				e = e.clone();
-			}
+		if (errorData.getSize() != getSize()) {
 			CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-			for (int i = 0; i < isize; i++) {
-				e[i] = Math.sqrt(e[i]);
-			}
-			errors.fill(e);
-			return errors;
+			return (AbstractCompoundDataset) Maths.sqrt(errorData, errors);
 		}
-
-		if (errorData instanceof CompoundDoubleDataset) {
-			return (CompoundDoubleDataset) Maths.sqrt(errorData);
-		}
-
-		CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-		Dataset err = (Dataset) errorData;
-		IndexIterator it = err.getIterator();
-		int i = 0;
-		e = new double[isize];
-		while (it.hasNext()) {
-			Arrays.fill(e, Math.sqrt(err.getElementDoubleAbs(it.index)));
-			errors.setAbs(i, e);
-			i += isize;
-		}
-		return errors;
+		return (AbstractCompoundDataset) Maths.sqrt(errorData);
 	}
 
 	@Override
@@ -1017,17 +1146,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}
@@ -1037,17 +1170,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i, j);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}
@@ -1057,17 +1194,21 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 			return null;
 		}
 
-		double[] es = toDoubleArray(errorData, isize);
-		if (es == null) {
-			if (errorData instanceof CompoundDoubleDataset) {
+		double[] es = null;
+		if (errorData instanceof CompoundDoubleDataset) {
+			if (errorData.getSize() > 1) { 
 				es = ((CompoundDoubleDataset) errorData).getDoubleArray(pos);
 			} else {
 				es = new double[isize];
-				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
+				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
 			}
-		}
-		if (es == errorData) {
-			es = es.clone();
+		} else {
+			es = new double[isize];
+			if (errorData.getSize() > 1) { 
+				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
+			} else {
+				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
+			}
 		}
 		return es;
 	}

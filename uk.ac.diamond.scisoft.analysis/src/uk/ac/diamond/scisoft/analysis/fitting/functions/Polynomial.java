@@ -205,13 +205,13 @@ public class Polynomial extends AFunction {
 			data.fill(1);
 			break;
 		case 1:
-			data.fill(pos);
+			data.setSlice(pos);
 			break;
 		case 2:
-			data.fill(Maths.square(pos));
+			Maths.square(pos, data);
 			break;
 		default:
-			data.fill(Maths.power(pos, n));
+			Maths.power(pos, n, data);
 			break;
 		}
 	}

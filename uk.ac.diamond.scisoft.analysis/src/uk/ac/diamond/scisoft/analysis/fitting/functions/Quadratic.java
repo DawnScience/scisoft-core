@@ -161,10 +161,10 @@ public class Quadratic extends AFunction {
 		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
 		switch (i) {
 		case 0:
-			data.fill(Maths.square(pos));
+			Maths.square(pos, data);
 			break;
 		case 1:
-			data.fill(pos);
+			data.setSlice(pos);
 			break;
 		case 2:
 			data.fill(1);

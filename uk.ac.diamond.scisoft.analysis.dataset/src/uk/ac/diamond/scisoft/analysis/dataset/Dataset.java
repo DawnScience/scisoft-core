@@ -280,16 +280,16 @@ public interface Dataset extends IErrorDataset {
 	public Dataset getError();
 
 	/**
-	 * Get the buffer that backs the error data
+	 * Get the (un-broadcasted) dataset that backs the (squared) error data
 	 *
-	 * @return the buffer which contains the error information (can be null)
+	 * @return the dataset which contains the (squared) error information (can be null)
 	 */
-	public Serializable getErrorBuffer();
+	public Dataset getErrorBuffer();
 
 	/**
-	 * Set the buffer that backs the error data
+	 * Set the buffer that backs the (squared) error data
 	 *
-	 * @buffer the buffer which contains the error information (can be null)
+	 * @buffer the buffer which contains the (squared) error information (can be null)
 	 */
 	public void setErrorBuffer(Serializable buffer);
 
@@ -360,15 +360,6 @@ public interface Dataset extends IErrorDataset {
 	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy
 	 */
 	public Dataset flatten();
-
-	/**
-	 * Fill dataset from object at depth dimension
-	 *
-	 * @param obj
-	 * @param depth
-	 * @param pos position
-	 */
-	public void fillData(Object obj, int depth, int[] pos);
 
 	/**
 	 * @param withPosition
@@ -518,7 +509,7 @@ public interface Dataset extends IErrorDataset {
 	 * Fill dataset with given object
 	 * 
 	 * @param obj
-	 * @return filled dataset
+	 * @return filled dataset with each item being equal to the given object
 	 */
 	public Dataset fill(Object obj);
 
@@ -819,13 +810,13 @@ public interface Dataset extends IErrorDataset {
 	public Dataset setSlice(Object obj, IndexIterator iterator);
 
 	/**
-	 * Populate a dataset with part of current dataset
+	 * Populate another dataset with part of current dataset
 	 * 
-	 * @param result
+	 * @param other
 	 * @param iter
 	 *            over current dataset
 	 */
-	public void fillDataset(Dataset result, IndexIterator iter);
+	public void fillDataset(Dataset other, IndexIterator iter);
 
 	/**
 	 * Test if all items are true

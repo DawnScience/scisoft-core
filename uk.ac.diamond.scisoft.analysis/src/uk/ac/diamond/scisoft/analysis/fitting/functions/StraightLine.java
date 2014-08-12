@@ -138,7 +138,7 @@ public class StraightLine extends AFunction {
 		int i = indexOfParameter(parameter);
 		switch (i) {
 		case 0:
-			data.fill(it.getValues()[0]);
+			data.setSlice(it.getValues()[0]);
 			break;
 		case 1:
 			data.fill(1);

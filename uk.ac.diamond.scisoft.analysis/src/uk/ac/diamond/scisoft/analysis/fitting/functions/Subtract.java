@@ -48,7 +48,7 @@ public class Subtract extends ABinaryOperator implements IOperator {
 			if (fa instanceof AFunction) {
 				((AFunction) fa).fillWithValues(data, it);
 			} else {
-				data.fill(fa.calculateValues(it.getValues()));
+				data.setSlice(fa.calculateValues(it.getValues()));
 			}
 		} else {
 			data.fill(0);
@@ -83,7 +83,7 @@ public class Subtract extends ABinaryOperator implements IOperator {
 			if (fa instanceof AFunction) {
 				((AFunction) fa).fillWithPartialDerivativeValues(param, data, it);
 			} else {
-				data.fill(fa.calculatePartialDerivativeValues(param, it.getValues()));
+				data.setSlice(fa.calculatePartialDerivativeValues(param, it.getValues()));
 			}
 		} else {
 			data.fill(0);

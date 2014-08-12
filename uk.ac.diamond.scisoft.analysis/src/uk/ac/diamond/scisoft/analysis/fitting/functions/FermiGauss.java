@@ -151,7 +151,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		AbstractDataset fermiDS = getFermiDS(xAxis);
 
 		if (fwhm == 0.0) {
-			data.fill(fermiDS);
+			data.setSlice(fermiDS);
 			return;
 		}
 
@@ -164,7 +164,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		s1.setSlice(fermiDS, new int[] {length/2}, new int[] {length*3/2}, new int[] {1});
 		s1.setSlice(fermiDS.getDouble(length-1), new int[] {length*3/2}, new int[] {length*2-1}, new int[] {1});
 
-		data.fill(Signal.convolveForOverlap(s1, gaussDS, null));
+		data.setSlice(Signal.convolveForOverlap(s1, gaussDS, null));
 	}
 
 	public AbstractDataset getFermiDS(IDataset xAxis) {

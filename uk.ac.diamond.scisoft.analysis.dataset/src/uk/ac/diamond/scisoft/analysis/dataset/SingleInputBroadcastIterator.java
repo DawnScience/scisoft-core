@@ -163,7 +163,10 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 	 * @param asDouble
 	 */
 	public void setDoubleOutput(boolean asDouble) {
-		this.asDouble = asDouble;
+		if (this.asDouble != asDouble) {
+			this.asDouble = asDouble;
+			storeCurrentValues();
+		}
 	}
 
 	private static void checkItemSize(Dataset a, Dataset o) {
@@ -212,6 +215,9 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 			oIndex = aIndex;
 		}
 
+		if (aIndex == aMax)
+			return false;
+
 		if (oldA != aIndex) {
 			if (asDouble) {
 				aDouble = aDataset.getElementDoubleAbs(aIndex);
@@ -220,7 +226,7 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 			}
 		}
 
-		return aIndex != aMax;
+		return true;
 	}
 
 	/**
@@ -251,9 +257,19 @@ public class SingleInputBroadcastIterator extends IndexIterator {
 
 		// for zero-ranked datasets
 		if (aIndex == 0) {
-			aDouble = aDataset.getElementDoubleAbs(aIndex);
+			storeCurrentValues();
 			if (aMax == aIndex)
 				aMax++;
+		}
+	}
+
+	private void storeCurrentValues() {
+		if (aIndex >= 0) {
+			if (asDouble) {
+				aDouble = aDataset.getElementDoubleAbs(aIndex);
+			} else {
+				aLong = aDataset.getElementLongAbs(aIndex);
+			}
 		}
 	}
 }

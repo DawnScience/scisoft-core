@@ -1974,38 +1974,29 @@ public class AbstractDatasetTest {
 		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 
 		Dataset b = DatasetFactory.zeros(a);
-		a.fill(b);
+		a.fill(0);
 		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = DatasetFactory.zeros(a, Dataset.INT16);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
-
-		b = DatasetFactory.zeros(a, Dataset.COMPLEX64);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
-
-		b = DatasetFactory.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
-
-		a = DatasetFactory.createRange(12, Dataset.COMPLEX128);
-
-		b = DatasetFactory.zeros(a);
-		a.fill(b);
+		a.fill(0.);
 		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = DatasetFactory.zeros(a, Dataset.INT16);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
+		a.fill(0L);
+		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = DatasetFactory.zeros(a, Dataset.COMPLEX64);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
+		a.fill(new Complex(0));
+		checkDatasets(a, b, 1e-15, 1e-20);
 
-		b = DatasetFactory.zeros(3, a.getShapeRef(), Dataset.ARRAYFLOAT32);
-		a.fill(b);
-		checkDatasets(a, b, true, 1e-15, 1e-20);
+		a.fill(DatasetFactory.createFromObject(0));
+		checkDatasets(a, b, 1e-15, 1e-20);
+
+		a.fill(DatasetFactory.createFromObject(new int[] {0}));
+		checkDatasets(a, b, 1e-15, 1e-20);
+
+		try {
+			a.fill(DatasetFactory.createFromObject(new int[] {0, 1}));
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 	}
 
 	@Test

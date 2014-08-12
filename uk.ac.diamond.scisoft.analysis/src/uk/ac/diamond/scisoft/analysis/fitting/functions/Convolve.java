@@ -52,7 +52,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 		IDataset[] values = it.getValues();
 		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
 		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
-		data.fill(calcConvolution(da, db));
+		data.setSlice(calcConvolution(da, db));
 	}
 
 	private static AbstractDataset calcConvolution(DoubleDataset signal, AbstractDataset kernel) {
@@ -77,7 +77,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
 		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
 
-		data.fill(calcConvolution(da, db));
+		data.setSlice(calcConvolution(da, db));
 
 		da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
 		db = DatasetUtils.cast(fb.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);

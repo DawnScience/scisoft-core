@@ -327,7 +327,7 @@ public class BroadcastIterator extends IndexIterator {
 	 * @param shapes
 	 * @return list of broadcasted shapes plus the first entry is the maximum shape
 	 */
-	static public List<int[]> broadcastShapes(int[]... shapes) {
+	public static List<int[]> broadcastShapes(int[]... shapes) {
 		int maxRank = -1;
 		for (int[] s : shapes) {
 			if (s == null)

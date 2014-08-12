@@ -363,40 +363,8 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundFloatDataset fill(final Object obj) {
-		if (obj instanceof IDataset) {
-			IDataset ds = (IDataset) obj;
-			if (!isCompatibleWith(ds)) {
-				logger.error("Tried to fill with dataset of incompatible shape");
-				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
-			}
-			if (ds instanceof Dataset) {
-				Dataset ads = (Dataset) ds;
-				IndexIterator itd = ads.getIterator();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					float[] vr = toFloatArray(ads.getObjectAbs(itd.index), isize); // PRIM_TYPE // CLASS_TYPE
-					for (int i = 0; i < isize; i++) {
-						data[iter.index + i] = vr[i]; // PRIM_TYPE
-					}
-				}
-			} else {
-				IndexIterator itd = new PositionIterator(ds.getShape());
-				int[] pos = itd.getPos();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					float[] vr = toFloatArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
-					for (int i = 0; i < isize; i++) {
-						data[iter.index + i] = vr[i]; // PRIM_TYPE
-					}
-				}
-			}
-
-			setDirty();
-			return this;
-		}
-
-		IndexIterator iter = getIterator();
 		float[] vr = toFloatArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
+		IndexIterator iter = getIterator();
 
 		while (iter.hasNext()) {
 			for (int i = 0; i < isize; i++)
@@ -1083,9 +1051,10 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 		if (is > 1) {
 			if (d.getElementsPerItem() == 1) {
 				while (it.hasNext()) {
-					data[it.aIndex] = (float) it.bDouble; // ADD_CAST
+					final float bv = (float) it.bDouble; // PRIM_TYPE // ADD_CAST
+					data[it.aIndex] = bv;
 					for (int j = 1; j < is; j++) {
-						data[it.aIndex + j] = 0;
+						data[it.aIndex + j] = bv;
 					}
 				}
 			} else {

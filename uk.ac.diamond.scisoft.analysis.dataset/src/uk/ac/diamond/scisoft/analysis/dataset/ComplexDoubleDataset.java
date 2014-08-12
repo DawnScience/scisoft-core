@@ -543,14 +543,17 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 
 	@Override
 	ComplexDoubleDataset setSlicedView(Dataset view, Dataset d) {
-		if (!(d instanceof ComplexFloatDataset || d instanceof ComplexDoubleDataset)) {
-			super.setSlicedView(view, d);
-		} else {
-			BroadcastIterator it = new BroadcastIterator(view, d);
+		BroadcastIterator it = new BroadcastIterator(view, d);
 
+		if (d instanceof ComplexFloatDataset || d instanceof ComplexDoubleDataset) {
 			while (it.hasNext()) {
 				data[it.aIndex] = it.bDouble; // ADD_CAST
 				data[it.aIndex + 1] = d.getElementDoubleAbs(it.bIndex + 1); // GET_ELEMENT_WITH_CAST
+			}
+		} else {
+			while (it.hasNext()) {
+				data[it.aIndex] = it.bDouble; // ADD_CAST
+				data[it.aIndex + 1] = 0;
 			}
 		}
 		return this;

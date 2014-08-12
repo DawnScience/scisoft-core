@@ -1051,9 +1051,10 @@ public class CompoundFloatDataset extends AbstractCompoundDataset {
 		if (is > 1) {
 			if (d.getElementsPerItem() == 1) {
 				while (it.hasNext()) {
-					data[it.aIndex] = (float) it.bDouble; // ADD_CAST
+					final float bv = (float) it.bDouble; // PRIM_TYPE // ADD_CAST
+					data[it.aIndex] = bv;
 					for (int j = 1; j < is; j++) {
-						data[it.aIndex + j] = 0;
+						data[it.aIndex + j] = bv;
 					}
 				}
 			} else {

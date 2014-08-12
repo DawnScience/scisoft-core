@@ -93,6 +93,42 @@ integer:
 real:
   ox = iax % ibx;
 
+biop:
+  maximum - return maximum of a and b
+integer_with_reals:
+  ox = Math.max(iax, ibx);
+real:
+  ox = Math.max(iax, ibx);
+complex:
+  if (Double.isNaN(iax) || Double.isNaN(iay)) {
+  	ox = iax;
+  	oy = iay;
+  } else if (Double.isNaN(ibx) || Double.isNaN(iby)) {
+  	ox = ibx;
+  	oy = iby;
+  } else {
+  	ox = Math.max(iax, ibx);
+  	oy = Math.max(iay, iby);
+  }
+
+biop:
+  minimum - return minimum of a and b
+integer_with_reals:
+  ox = Math.min(iax, ibx);
+real:
+  ox = Math.min(iax, ibx);
+complex:
+  if (Double.isNaN(iax) || Double.isNaN(iay)) {
+  	ox = iax;
+  	oy = iay;
+  } else if (Double.isNaN(ibx) || Double.isNaN(iby)) {
+  	ox = ibx;
+  	oy = iby;
+  } else {
+  	ox = Math.min(iax, ibx);
+  	oy = Math.min(iay, iby);
+  }
+
 func:
   sin - evaluate the sine function on each element of the dataset
 real:

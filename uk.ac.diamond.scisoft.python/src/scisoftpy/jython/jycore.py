@@ -1315,14 +1315,6 @@ def nanargmax(a, axis=None):
 def nanargmin(a, axis=None):
     return a.argmin(axis, True)
 
-@_wrap
-def maximum(a, b):
-    return _dsutils.maximum(a, b)
-
-@_wrap
-def minimum(a, b):
-    return _dsutils.minimum(a, b)
-
 def meshgrid(*a):
     axes = [ asDataset(x) for x in reversed(a) ]
     coords = _dsutils.meshGrid(axes)

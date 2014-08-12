@@ -318,6 +318,16 @@ def amin(a, axis=None):
     return a.min(axis)
 
 @_wrap
+def maximum(a, b, out=None):
+    '''Item-wise maximum'''
+    return _maths.maximum(a, b)
+
+@_wrap
+def minimum(a, b, out=None):
+    '''Item-wise minimum'''
+    return _maths.minimum(a, b)
+
+@_wrap
 def median(a, axis=None):
     '''Median of input'''
     if axis is None:

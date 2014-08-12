@@ -362,15 +362,6 @@ public interface Dataset extends IErrorDataset {
 	public Dataset flatten();
 
 	/**
-	 * Fill dataset from object at depth dimension
-	 *
-	 * @param obj
-	 * @param depth
-	 * @param pos position
-	 */
-	public void fillData(Object obj, int depth, int[] pos);
-
-	/**
 	 * @param withPosition
 	 *            set true if position is needed
 	 * @return an IndexIterator tailored for this dataset

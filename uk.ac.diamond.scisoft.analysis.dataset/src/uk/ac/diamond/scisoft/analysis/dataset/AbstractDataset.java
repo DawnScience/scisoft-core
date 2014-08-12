@@ -827,8 +827,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param depth
 	 * @param pos position
 	 */
-	@Override
-	public void fillData(Object obj, final int depth, final int[] pos) {
+	protected void fillData(Object obj, final int depth, final int[] pos) {
 		if (obj == null) {
 			int dtype = getDtype();
 			if (dtype == FLOAT32)

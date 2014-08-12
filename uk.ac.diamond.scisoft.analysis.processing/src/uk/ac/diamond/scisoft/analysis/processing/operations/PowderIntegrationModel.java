@@ -12,7 +12,7 @@ public class PowderIntegrationModel extends AbstractOperationModel {
 	int numberOfSecondaryBins = 1000;;
 	double[] radialRange = null;
 	
-	@OperationModelField(min=0, max=360, unit="°")
+	@OperationModelField(min=0, max=360, unit="°", hint="Please set two values, start and end angle.\nThe value of the angles should be in degrees.\n\nIf you delete the text, the range is cleared and the whole image used.")
 	double[] azimuthalRange = null;
 	
 	IntegrationMode integrationMode = IntegrationMode.NONSPLITTING;

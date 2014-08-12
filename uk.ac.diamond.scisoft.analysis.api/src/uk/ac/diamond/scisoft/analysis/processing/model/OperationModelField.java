@@ -64,4 +64,11 @@ public @interface OperationModelField {
 	 * @return the unit that the fields value should be in.
 	 */
 	public String unit() default "";
+	
+	/**
+	 * 
+	 * @return the string hint which is shown to the user when they first edit the value.
+	 */
+	public String hint() default "";
+	
 }

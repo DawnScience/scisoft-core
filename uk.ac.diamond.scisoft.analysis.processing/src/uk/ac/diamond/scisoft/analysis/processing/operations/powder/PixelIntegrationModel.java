@@ -1,12 +1,15 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 public abstract class PixelIntegrationModel extends AbstractOperationModel {
 
 	boolean isPixelSplitting = false;
 	int numberOfBins = 1000;
 	double[] radialRange = null;
+	
+	@OperationModelField(min=0, max=360, unit="°")
 	double[] azimuthalRange = null;
 
 	public PixelIntegrationModel() {

@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils.IntegrationMode;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class PowderIntegrationModel extends AbstractOperationModel {
@@ -10,7 +11,10 @@ public class PowderIntegrationModel extends AbstractOperationModel {
 	int numberOfPrimaryBins = 1000;
 	int numberOfSecondaryBins = 1000;;
 	double[] radialRange = null;
+	
+	@OperationModelField(min=0, max=360, unit="°")
 	double[] azimuthalRange = null;
+	
 	IntegrationMode integrationMode = IntegrationMode.NONSPLITTING;
 	XAxis axisType = XAxis.Q;
 	

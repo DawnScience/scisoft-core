@@ -450,7 +450,7 @@ public abstract class AFunction implements IFunction, Serializable {
 			logger.warn("Numerical derivative did not converge!");
 		}
 
-		data.fill(current);
+		data.setSlice(current);
 	}
 
 	/**

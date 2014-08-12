@@ -161,13 +161,13 @@ public class Cubic extends AFunction {
 		int i = indexOfParameter(parameter);
 		switch (i) {
 		case 0:
-			data.fill(Maths.power(pos, 3));
+			Maths.power(pos, 3, data);
 			break;
 		case 1:
-			data.fill(Maths.square(pos));
+			Maths.square(pos, data);
 			break;
 		case 2:
-			data.fill(pos);
+			data.setSlice(pos);
 			break;
 		case 3:
 			data.fill(1);

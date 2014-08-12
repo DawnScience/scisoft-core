@@ -509,7 +509,7 @@ public interface Dataset extends IErrorDataset {
 	 * Fill dataset with given object
 	 * 
 	 * @param obj
-	 * @return filled dataset
+	 * @return filled dataset with each item being equal to the given object
 	 */
 	public Dataset fill(Object obj);
 
@@ -810,13 +810,13 @@ public interface Dataset extends IErrorDataset {
 	public Dataset setSlice(Object obj, IndexIterator iterator);
 
 	/**
-	 * Populate a dataset with part of current dataset
+	 * Populate another dataset with part of current dataset
 	 * 
-	 * @param result
+	 * @param other
 	 * @param iter
 	 *            over current dataset
 	 */
-	public void fillDataset(Dataset result, IndexIterator iter);
+	public void fillDataset(Dataset other, IndexIterator iter);
 
 	/**
 	 * Test if all items are true

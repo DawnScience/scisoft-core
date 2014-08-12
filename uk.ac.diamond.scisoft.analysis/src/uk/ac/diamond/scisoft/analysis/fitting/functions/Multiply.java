@@ -59,7 +59,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
-				data.fill(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
 			}
 		} else {
 			data.fill(1);
@@ -119,7 +119,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithPartialDerivativeValues(param, data, it);
 			} else {
-				data.fill(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
 			}
 		} else {
 			data.fill(0);
@@ -135,7 +135,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
-				data.fill(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
 			}
 			if (hasParam) {
 				dif.idivide(data);

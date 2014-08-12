@@ -49,7 +49,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 			if (fa instanceof AFunction) {
 				((AFunction) fa).fillWithValues(data, it);
 			} else {
-				data.fill(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
 			}
 		} else {
 			data.fill(1);
@@ -99,7 +99,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 				}
 			} else {
 				if (indexOfParameter(fa, param) >= 0) { 
-					data.fill(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
+					data.setSlice(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
 				}
 			}
 		}

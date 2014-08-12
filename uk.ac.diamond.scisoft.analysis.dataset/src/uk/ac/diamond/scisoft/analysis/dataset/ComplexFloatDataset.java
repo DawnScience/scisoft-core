@@ -218,43 +218,9 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 
 	@Override
 	public ComplexFloatDataset fill(final Object obj) {
-		if (obj instanceof IDataset) {
-			IDataset ds = (IDataset) obj;
-			if (!isCompatibleWith(ds)) {
-				logger.error("Tried to fill with dataset of incompatible shape");
-				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
-			}
-			if (ds instanceof Dataset) {
-				Dataset ads = (Dataset) ds;
-				IndexIterator itd = ads.getIterator();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					Object o = ads.getObjectAbs(itd.index);
-					float vr = (float) toReal(o); // PRIM_TYPE // ADD_CAST
-					float vi = (float) toImag(o); // PRIM_TYPE // ADD_CAST
-					data[iter.index] = vr;
-					data[iter.index+1] = vi;
-				}
-			} else {
-				IndexIterator itd = new PositionIterator(ds.getShape());
-				int[] pos = itd.getPos();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					Object o = ds.getObject(pos);
-					float vr = (float) toReal(o); // PRIM_TYPE // ADD_CAST
-					float vi = (float) toImag(o); // PRIM_TYPE // ADD_CAST
-					data[iter.index] = vr;
-					data[iter.index+1] = vi;
-				}
-			}
-
-			setDirty();
-			return this;
-		}
-
-		IndexIterator iter = getIterator();
 		float vr = (float) toReal(obj); // PRIM_TYPE // ADD_CAST
 		float vi = (float) toImag(obj); // PRIM_TYPE // ADD_CAST
+		IndexIterator iter = getIterator();
 
 		while (iter.hasNext()) {
 			data[iter.index] = vr;

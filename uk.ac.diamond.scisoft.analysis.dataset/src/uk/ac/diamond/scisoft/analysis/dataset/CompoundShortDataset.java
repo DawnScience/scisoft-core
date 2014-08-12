@@ -363,40 +363,8 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 
 	@Override
 	public CompoundShortDataset fill(final Object obj) {
-		if (obj instanceof IDataset) {
-			IDataset ds = (IDataset) obj;
-			if (!isCompatibleWith(ds)) {
-				logger.error("Tried to fill with dataset of incompatible shape");
-				throw new IllegalArgumentException("Tried to fill with dataset of incompatible shape");
-			}
-			if (ds instanceof Dataset) {
-				Dataset ads = (Dataset) ds;
-				IndexIterator itd = ads.getIterator();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					short[] vr = toShortArray(ads.getObjectAbs(itd.index), isize); // PRIM_TYPE // CLASS_TYPE
-					for (int i = 0; i < isize; i++) {
-						data[iter.index + i] = vr[i]; // PRIM_TYPE
-					}
-				}
-			} else {
-				IndexIterator itd = new PositionIterator(ds.getShape());
-				int[] pos = itd.getPos();
-				IndexIterator iter = getIterator();
-				while (iter.hasNext() && itd.hasNext()) {
-					short[] vr = toShortArray(ds.getObject(pos), isize); // PRIM_TYPE // CLASS_TYPE
-					for (int i = 0; i < isize; i++) {
-						data[iter.index + i] = vr[i]; // PRIM_TYPE
-					}
-				}
-			}
-
-			setDirty();
-			return this;
-		}
-
-		IndexIterator iter = getIterator();
 		short[] vr = toShortArray(obj, isize); // PRIM_TYPE // CLASS_TYPE
+		IndexIterator iter = getIterator();
 
 		while (iter.hasNext()) {
 			for (int i = 0; i < isize; i++)

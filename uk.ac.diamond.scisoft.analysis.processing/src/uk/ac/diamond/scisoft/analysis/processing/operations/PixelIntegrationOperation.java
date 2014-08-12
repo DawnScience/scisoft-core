@@ -133,6 +133,7 @@ public class PixelIntegrationOperation extends AbstractOperation {
 			throw new IllegalArgumentException("Incorrect model");
 		}
 		
+		super.setModel(parameters);
 		model = (PowderIntegrationModel) parameters;
 
 	}

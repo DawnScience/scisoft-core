@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -871,7 +870,22 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			return ((Boolean) b).booleanValue();
 		} else if (b instanceof Complex) {
 			return ((Complex) b).getReal() != 0;
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toBoolean(db.getObjectAbs(0));
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toBoolean(db.getObject(new int[db.getRank()]));
 		} else {
+			logger.error("Argument is of unsupported class");
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
 	}
@@ -887,7 +901,22 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			return ((Boolean) b).booleanValue() ? 1 : 0;
 		} else if (b instanceof Complex) {
 			return (long) ((Complex) b).getReal();
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toLong(db.getObjectAbs(0));
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toLong(db.getObject(new int[db.getRank()]));
 		} else {
+			logger.error("Argument is of unsupported class");
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
 	}
@@ -903,7 +932,22 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			if (Array.getLength(b) == 0)
 				return 0;
 			return toReal(Array.get(b, 0));
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toReal(db.getObjectAbs(0));
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toReal(db.getObject(new int[db.getRank()]));
 		} else {
+			logger.error("Argument is of unsupported class");
 			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
 	}
@@ -919,8 +963,23 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			if (Array.getLength(b) < 2)
 				return 0;
 			return toReal(Array.get(b, 1));
+		} else if (b instanceof Dataset) {
+			Dataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toImag(db.getObjectAbs(0));
+		} else if (b instanceof IDataset) {
+			IDataset db = (Dataset) b;
+			if (db.getSize() != 1) {
+				logger.error("Given dataset must have only one item");
+				throw new IllegalArgumentException("Given dataset must have only one item");
+			}
+			return toImag(db.getObject(new int[db.getRank()]));
 		} else {
-			throw new IllegalArgumentException("Argument is not a number");
+			logger.error("Argument is of unsupported class");
+			throw new IllegalArgumentException("Argument is of unsupported class");
 		}
 	}
 

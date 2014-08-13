@@ -1,6 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -57,7 +57,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 	
 	private Dataset calculateCorrectionArray(IDataset data, IDiffractionMetadata md) {
 
-		Dataset cor = DatasetFactory.ones(data.getShape(), AbstractDataset.FLOAT64);
+		Dataset cor = DatasetFactory.ones(data.getShape(), Dataset.FLOAT64);
 
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(data.getShape(), md);
 
@@ -66,7 +66,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		}
 
 		if (model.isApplyPolarisationCorrection()) {
-			AbstractDataset az = PixelIntegrationUtils.generateAzimuthalArray(data.getShape(), md, true);
+			Dataset az = PixelIntegrationUtils.generateAzimuthalArray(data.getShape(), md, true);
 			az.iadd(Math.toRadians(model.getPolarisationAngularOffset()));
 			PixelIntegrationUtils.polarisationCorrection(cor, tth, az, model.getPolarisationFactor());
 		}

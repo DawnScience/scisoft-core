@@ -1,41 +1,27 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.hdf5.H5Utils;
-import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
-import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
-import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
-import uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.visitors.HierarchicalFileExecutionVisitor;
@@ -93,15 +79,15 @@ private static IOperationService service;
 		
 		rand.setSlicing(slMap);
 		
-		final IDataset axDataset1 = DatasetFactory.createRange(24,AbstractDataset.INT16);
+		final IDataset axDataset1 = DatasetFactory.createRange(24,Dataset.INT16);
 		axDataset1.setShape(new int[] {24,1,1});
 		axDataset1.setName("z");
 		
-		final IDataset axDataset2 = DatasetFactory.createRange(1000,AbstractDataset.INT32);
+		final IDataset axDataset2 = DatasetFactory.createRange(1000,Dataset.INT32);
 		axDataset2.setShape(new int[] {1,1000,1});
 		axDataset2.setName("y");
 		
-		final IDataset axDataset3 = DatasetFactory.createRange(1000,AbstractDataset.INT32);
+		final IDataset axDataset3 = DatasetFactory.createRange(1000,Dataset.INT32);
 		axDataset3.setShape(new int[] {1,1,1000});
 		axDataset3.setName("x");
 		

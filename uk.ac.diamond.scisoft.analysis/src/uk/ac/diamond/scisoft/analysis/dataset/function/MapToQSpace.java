@@ -24,6 +24,8 @@ import java.util.List;
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -88,7 +90,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 		if (datasets.length == 0)
 			return null;
 
-		AbstractDataset inDS = DatasetUtils.convertToAbstractDataset(datasets[0]);
+		Dataset inDS = DatasetUtils.convertToDataset(datasets[0]);
 		// check if input is 2D
 		int[] s = inDS.getShape();
 		if (s.length != 2)
@@ -96,7 +98,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 
 		int[] os = new int[] {qlen, qlen, qlen};
 
-		AbstractDataset newmap = AbstractDataset.zeros(os, inDS.getDtype());
+		Dataset newmap = DatasetFactory.zeros(os, inDS.getDtype());
 
 		// how does voxel size map to pixel size?
 		// q = -qmax, -qmax+qdel, ..., qmax-qdel, qmax
@@ -145,7 +147,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 		}
 
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		result.add(newmap);
+		result.add((AbstractDataset) newmap);
 		return result;
 	}
 

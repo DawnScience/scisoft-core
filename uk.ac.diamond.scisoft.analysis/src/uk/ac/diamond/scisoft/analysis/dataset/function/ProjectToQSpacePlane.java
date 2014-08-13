@@ -23,6 +23,7 @@ import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -43,8 +44,8 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 	private int roff; // row offset
 	private int coff; // column offset
 	private int[] pshape; // shape of projected dataset
-	private AbstractDataset image; // projected dataset
-	private AbstractDataset count; // tally dataset - counts number of datasets have added pixels
+	private Dataset image; // projected dataset
+	private Dataset count; // tally dataset - counts number of datasets have added pixels
 
 	/**
 	 * Set up projection to plane in q-space
@@ -74,8 +75,8 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 	 * 
 	 */
 	public void createDataset(int dType) {
-		image = AbstractDataset.zeros(pshape, dType);
-		count = AbstractDataset.zeros(pshape, Dataset.INT16);
+		image = DatasetFactory.zeros(pshape, dType);
+		count = DatasetFactory.zeros(pshape, Dataset.INT16);
 	}
 
 	/**
@@ -152,8 +153,8 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add(image);
-			result.add(count);
+			result.add((AbstractDataset) image);
+			result.add((AbstractDataset) count);
 		}
 		return result;
 	}

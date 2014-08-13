@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
@@ -112,9 +114,9 @@ public class MapToPolar implements DatasetToDatasetFunction {
 			if (np == 0)
 				np = 1;
 
-			AbstractDataset polarmap = AbstractDataset.zeros(new int[] { nr, np },
+			Dataset polarmap = DatasetFactory.zeros(new int[] { nr, np },
 					AbstractDataset.getBestFloatDType(ids.elementClass()));
-			AbstractDataset unitpolarmap = AbstractDataset.zeros(polarmap); // unclipped polar of unit field
+			Dataset unitpolarmap = DatasetFactory.zeros(polarmap); // unclipped polar of unit field
 
 			double rad, phi;
 			double x, y;
@@ -129,8 +131,8 @@ public class MapToPolar implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add(polarmap);
-			result.add(unitpolarmap);
+			result.add((AbstractDataset) polarmap);
+			result.add((AbstractDataset) unitpolarmap);
 		}
 		return result;
 	}

@@ -29,8 +29,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 
 /**
@@ -64,7 +64,7 @@ public class NumPyNanTest {
 		script.append("numpy.save(r'" + loc.toString() + "', exp);");
 		PythonHelper.runPythonScript(script.toString(), true);
 
-		AbstractDataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
+		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		Assert.assertTrue(ArrayUtils.isEquals(new int[] {2}, loadedFile.getShape()));
 		Assert.assertEquals(dtype, loadedFile.getDtype());
 		Assert.assertTrue(Double.isNaN(loadedFile.getDouble(0)));
@@ -73,7 +73,7 @@ public class NumPyNanTest {
 
 	@Test
 	public void testSave() throws Exception {
-		AbstractDataset ds = AbstractDataset.array(new double[] {Double.NaN, Double.NaN}, dtype);
+		Dataset ds = DatasetFactory.createFromObject(new double[] {Double.NaN, Double.NaN}, dtype);
 		File loc = NumPyTest.getTempFile();
 		NumPyTest.saveNumPyFile(ds, loc, false);
 		StringBuilder script = new StringBuilder();

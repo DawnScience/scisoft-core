@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
@@ -39,13 +39,13 @@ public class NumPySpecialsTest {
 		for (int i = 0; i < shape.length; i++) {
 			shape[i] = 1;
 		}
-		AbstractDataset ds = AbstractDataset.ones(shape, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(shape, Dataset.FLOAT64);
 		NumPyTest.saveNumPyFile(ds, NumPyTest.getTempFile(), false);
 	}
 
 	@Test(expected = ScanFileHolderException.class)
 	public void testExceptionOnEmptyFile() throws Exception {
-		AbstractDataset ds = AbstractDataset.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		new NumPyFileSaver("").saveFile(dh);
@@ -53,7 +53,7 @@ public class NumPySpecialsTest {
 
 	@Test(expected = ScanFileHolderException.class)
 	public void testExceptionOnNullFile() throws Exception {
-		AbstractDataset ds = AbstractDataset.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		new NumPyFileSaver(null).saveFile(dh);
@@ -61,8 +61,8 @@ public class NumPySpecialsTest {
 
 	@Test
 	public void testSaveMultipleFiles() throws Exception {
-		AbstractDataset ds1 = AbstractDataset.zeros(new int[] { 20 }, Dataset.FLOAT64);
-		AbstractDataset ds2 = AbstractDataset.ones(new int[] { 20 }, Dataset.FLOAT64);
+		Dataset ds1 = DatasetFactory.zeros(new int[] { 20 }, Dataset.FLOAT64);
+		Dataset ds2 = DatasetFactory.ones(new int[] { 20 }, Dataset.FLOAT64);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("a", ds1);
 		dh.addDataset("b", ds2);

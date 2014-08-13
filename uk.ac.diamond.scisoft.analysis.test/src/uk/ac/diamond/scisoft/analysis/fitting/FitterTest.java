@@ -20,8 +20,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -86,7 +86,7 @@ public class FitterTest {
 		DoubleDataset yAxis = DoubleDataset.createRange(-20.0,20.0,yAxisStep);
 		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
-		DoubleDataset ds = (DoubleDataset) AbstractDataset.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);
+		DoubleDataset ds = (DoubleDataset) DatasetFactory.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);
 		
 		IndexIterator iter = ds.getIterator(true);
 		int[] pos;
@@ -114,7 +114,7 @@ public class FitterTest {
 
 		Quadratic q = new Quadratic(new double[] {0, 1, 0});
 		try {
-			Fitter.llsqFit(new AbstractDataset[] {x}, y, q);
+			Fitter.llsqFit(new Dataset[] {x}, y, q);
 
 			DoubleDataset z = q.calculateValues(x);
 			Assert.assertEquals(y.getDouble(0), z.getDouble(0), 0.1);
@@ -131,7 +131,7 @@ public class FitterTest {
 		DoubleDataset y = new DoubleDataset(new double[] {102.1,134.2,156.3});
 
 		try {
-			Polynomial fit = Fitter.polyFit(new AbstractDataset[] {x}, y, 1e-6, 2);
+			Polynomial fit = Fitter.polyFit(new Dataset[] {x}, y, 1e-6, 2);
 
 			DoubleDataset z = fit.calculateValues(x);
 

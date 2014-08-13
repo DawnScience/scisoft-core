@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -67,7 +69,7 @@ public class Downsample implements DatasetToDatasetFunction {
 		int brank = bshape.length;
 
 		for (IDataset idataset : datasets) {
-			AbstractDataset dataset = DatasetUtils.convertToAbstractDataset(idataset);
+			Dataset dataset = DatasetUtils.convertToDataset(idataset);
 			final int[] dshape = dataset.getShape();
 			final int drank = dshape.length;
 			final int[] lbshape = new int[drank];
@@ -79,13 +81,13 @@ public class Downsample implements DatasetToDatasetFunction {
 				shape[i] = (dshape[i] + bshape[i] - 1)/bshape[i];
 			}
 
-			final AbstractDataset binned;
+			final Dataset binned;
 			if (dataset instanceof RGBDataset) {
 				binned = new RGBDataset(shape);
 				// set the mode to point whenever RGB datasets are involved for the moment.
 				mode = DownsampleMode.POINT;
 			} else {
-				binned = AbstractDataset.zeros(dataset.getElementsPerItem(), shape, dataset.getDtype());
+				binned = DatasetFactory.zeros(dataset.getElementsPerItem(), shape, dataset.getDtype());
 			}
 
 			final IndexIterator biter = binned.getIterator(true);
@@ -250,7 +252,7 @@ public class Downsample implements DatasetToDatasetFunction {
 				}
 				break;
 			}
-			result.add(binned);
+			result.add((AbstractDataset) binned);
 		}
 		return result;
 	}

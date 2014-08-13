@@ -23,7 +23,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 
 public class MerlinLoader extends AbstractFileLoader {
@@ -53,7 +54,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		
 		public void addToDataHolder(DataHolder holder) {
 			if (dataList.get(0) instanceof Number) {
-				AbstractDataset data = AbstractDataset.createFromList(dataList);
+				Dataset data = DatasetFactory.createFromList(dataList);
 				holder.addDataset(name, data);
 			}
 		}
@@ -68,7 +69,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		File f = null;
 		FileInputStream fi = null;
 		BufferedReader br = null;
-		ArrayList<AbstractDataset> dataList = new ArrayList<AbstractDataset>();
+		ArrayList<Dataset> dataList = new ArrayList<Dataset>();
 		
 		ArrayList<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
 		

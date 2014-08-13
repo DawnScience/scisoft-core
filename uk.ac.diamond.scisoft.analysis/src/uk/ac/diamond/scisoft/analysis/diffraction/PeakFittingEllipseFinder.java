@@ -23,7 +23,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
@@ -170,7 +169,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new AbstractDataset[]{xData}, (AbstractDataset) sub, g,1000);
+				Fitter.ApacheNelderMeadFit(new Dataset[]{xData}, (Dataset) sub, g,1000);
 				
 			} catch (Exception e) {
 				logger.debug(e.getMessage());
@@ -192,8 +191,8 @@ public class PeakFittingEllipseFinder {
 			}
 		}
 		
-		AbstractDataset heights = AbstractDataset.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
-		AbstractDataset widths = AbstractDataset.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
+		Dataset heights = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
+		Dataset widths = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
 			heights.set(gaussianList.get(i).getHeight(), i);

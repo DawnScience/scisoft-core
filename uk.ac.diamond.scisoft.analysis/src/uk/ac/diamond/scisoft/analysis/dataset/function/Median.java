@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
@@ -51,7 +53,7 @@ public class Median implements DatasetToDatasetFunction {
 		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
 		
 		for (IDataset idataset : datasets) {
-			AbstractDataset dataset = DatasetUtils.convertToAbstractDataset(idataset);
+			Dataset dataset = DatasetUtils.convertToDataset(idataset);
 			final int dt = dataset.getDtype();
 			final int is = dataset.getElementsPerItem();
 			final int[] ishape = dataset.getShape();
@@ -59,7 +61,7 @@ public class Median implements DatasetToDatasetFunction {
 			if (ishape.length > 1)
 				throw new IllegalArgumentException("Only 1D input datasets are supported");
 			
-			AbstractDataset filtered = AbstractDataset.zeros(is , ishape, dt);
+			Dataset filtered = DatasetFactory.zeros(is , ishape, dt);
 			
 			final PositionIterator iterPos = filtered.getPositionIterator();
 			final int[] pos = iterPos.getPos();
@@ -75,7 +77,7 @@ public class Median implements DatasetToDatasetFunction {
 				filtered.set(Stats.median(dataset.getSlice(start, stop, step)), pos);
 			}
 			
-			result.add(filtered);
+			result.add((AbstractDataset) filtered);
 		}
 		return result;
 	}

@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
@@ -69,7 +68,7 @@ public class ImageStackLoaderExTest {
 	}
 
 	private void makeFile(String filePath, Object multiplier) throws ScanFileHolderException {
-		AbstractDataset data;
+		Dataset data;
 		DataHolder dha = new DataHolder();
 		data = DatasetUtils.eye(sizex, sizey, 0, Dataset.INT16);
 		data.setShape(sizex, sizey);
@@ -98,7 +97,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { i+1, sizex, sizey };
 			int[] start = new int[] { i, sizex-1, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] { 1, 1, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, 0,sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -110,7 +109,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { i+1, sizex, sizey };
 			int[] start = new int[] { i, sizex-1, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] { 1, 1, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, 0,sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -137,7 +136,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(stop, dataset.getShape());
 			int int2 = dataset.getInt( 0,sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -150,7 +149,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 1, 2 };
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] {multipliers.length, sizex, sizey/2 }, dataset.getShape());
 			int int2 = dataset.getInt( 0,sizex-2, (sizex-1)/2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -163,7 +162,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 2, 1 };
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] {multipliers.length, sizex/2, sizey }, dataset.getShape());
 			int int2 = dataset.getInt( 0,sizex/2-1, sizex-2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -176,7 +175,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { multipliers.length, sizex, sizex };
 			int[] start = new int[] { 0, sizex-1, sizex-1 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] {multipliers.length, 1, 1 }, dataset.getShape());
 			for( int i=0; i< multipliers.length;i++){
 				int int2 = dataset.getInt( i,0, 0); //eye sets data along diagonal
@@ -215,7 +214,7 @@ public class ImageStackLoaderExTest {
 				int[] step = null;
 				int[] stop = new int[] { i+1, j+1, sizex, sizey };
 				int[] start = new int[] { i, j, 0, 0 };
-				AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+				Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 				assertArrayEquals(new int[] { 1, 1, sizex, sizey }, dataset.getShape());
 				int int2 = dataset.getInt(0, 0,sizex-1, sizex-1); //eye sets data along diagonal
 				assertEquals("Check value for image i:" + i + " j:" +j,multipliers[i*3+j], int2);
@@ -230,7 +229,7 @@ public class ImageStackLoaderExTest {
 				int[] step = null;
 				int[] stop = new int[] { i+1, j+1, sizex, sizey };
 				int[] start = new int[] { i, j, sizex-1, 0 };
-				AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+				Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 				assertArrayEquals(new int[] { 1, 1, 1, sizey }, dataset.getShape());
 				int int2 = dataset.getInt(0, 0, 0, sizex-1); //eye sets data along diagonal
 				assertEquals("Check value for image i:" + i + " j:" +j,multipliers[i*3+j], int2);
@@ -242,7 +241,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { firstDim, secondDim, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(stop, dataset.getShape());
 			int int2 = dataset.getInt( 0, 0,sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -255,7 +254,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 1, 1, 2 };
 			int[] stop = new int[] { firstDim, secondDim, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0, 0 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] { firstDim, secondDim, sizex, sizey/2 }, dataset.getShape());
 			int int2 = dataset.getInt( 0, 0,sizex-2, (sizex-1)/2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -270,7 +269,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] {firstDim, secondDim, sizex, sizex };
 			int[] start = new int[] { 0,0, sizex-1, sizex-1 };
-			AbstractDataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
+			Dataset dataset = loaderEx.getDataset(null, shape, start, stop, step);
 			assertArrayEquals(new int[] {firstDim, secondDim, 1, 1 }, dataset.getShape());
 			for( int i=0; i< firstDim; i++)
 			{

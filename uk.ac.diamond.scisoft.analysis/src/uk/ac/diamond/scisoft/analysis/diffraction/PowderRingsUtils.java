@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import org.uncommons.maths.combinatorics.CombinationGenerator;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
@@ -873,7 +872,7 @@ public class PowderRingsUtils {
 
 		Polynomial p;
 		try {
-			p = Fitter.polyFit(new AbstractDataset[] {AbstractDataset.createFromList(odist)}, AbstractDataset.createFromList(ndist), 1e-15, 1);
+			p = Fitter.polyFit(new Dataset[] {DatasetFactory.createFromList(odist)}, DatasetFactory.createFromList(ndist), 1e-15, 1);
 		} catch (Exception e) {
 			logger.error("Problem with fit", e);
 			return qs;

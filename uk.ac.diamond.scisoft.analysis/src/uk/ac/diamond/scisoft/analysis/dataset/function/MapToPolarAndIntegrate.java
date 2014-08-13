@@ -33,6 +33,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -232,8 +233,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final double rdphi = dphi * erad;
 			
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-			AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
-			AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
+			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
+			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 			
 			double csum;			
 			
@@ -290,8 +291,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 			
-			result.add(sumr);
-			result.add(sump);
+			result.add((AbstractDataset) sumr);
+			result.add((AbstractDataset) sump);
 		}
 		return result;
 	}
@@ -805,10 +806,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 				
 				final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-				AbstractDataset sump = AbstractDataset.zeros(new int[] { nr }, dtype);
-				AbstractDataset sumr = AbstractDataset.zeros(new int[] { np }, dtype);
-				AbstractDataset errsump = AbstractDataset.zeros(new int[] { nr }, Dataset.FLOAT64);
-				AbstractDataset errsumr = AbstractDataset.zeros(new int[] { np }, Dataset.FLOAT64);
+				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
+				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
+				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);
+				Dataset errsumr = DatasetFactory.zeros(new int[] { np }, Dataset.FLOAT64);
 				
 				Map<Point2i, Map<Integer, Double>> pvarmap = new HashMap<Point2i, Map<Integer,Double>>();
 				
@@ -914,8 +915,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					sumr.setErrorBuffer(errsumr);
 					sump.setErrorBuffer(errsump);
 				}
-				result.add(sumr);
-				result.add(sump);
+				result.add((AbstractDataset) sumr);
+				result.add((AbstractDataset) sump);
 			}
 			
 			return result;

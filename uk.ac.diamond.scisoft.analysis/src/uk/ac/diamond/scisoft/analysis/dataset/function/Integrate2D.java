@@ -23,6 +23,8 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
@@ -106,8 +108,8 @@ public class Integrate2D implements DatasetToDatasetFunction {
 
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
 			final int is = ids.getElementsPerItem();
-			AbstractDataset sumy = AbstractDataset.zeros(is, new int[] { nx }, dtype);
-			AbstractDataset sumx = AbstractDataset.zeros(is, new int[] { ny }, dtype);
+			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
+			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);
 
 			if (is == 1) {
 				double csum;
@@ -139,8 +141,8 @@ public class Integrate2D implements DatasetToDatasetFunction {
 					sumx.set(csums, b);
 				}
 			}
-			result.add(sumx);
-			result.add(sumy);
+			result.add((AbstractDataset) sumx);
+			result.add((AbstractDataset) sumy);
 		}
 		return result;
 	}

@@ -41,7 +41,6 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.object.Attribute;
-import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
@@ -55,7 +54,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -805,7 +806,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		final Long oid = oo.getOID()[0] + file.getFilename().hashCode()*17; // include file name in ID
 
-		if (oo instanceof Dataset) {
+		if (oo instanceof ncsa.hdf.object.Dataset) {
 			if (pool != null && pool.containsKey(oid)) {
 				HDF5Node p = pool.get(oid);
 				if (!(p instanceof HDF5Dataset)) {
@@ -820,7 +821,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
 			}
 
-			final Datatype type = ((Dataset) oo).getDatatype();
+			final Datatype type = ((ncsa.hdf.object.Dataset) oo).getDatatype();
 			final int dclass = type.getDatatypeClass();
 
 			if (dclass == Datatype.CLASS_COMPOUND) { // special case for compound data types
@@ -1023,9 +1024,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param extend true dataset for unsigned types 
 	 * @return dataset
 	 */
-	public static AbstractDataset createDataset(final Object data, final int[] shape, final int dtype,
+	public static Dataset createDataset(final Object data, final int[] shape, final int dtype,
 			final boolean extend) {
-		AbstractDataset ds = null;
+		Dataset ds = null;
 		switch (dtype) {
 		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT32:
 			float[] fData = (float[]) data;
@@ -1233,7 +1234,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		if (trueShape.length == 1 && trueShape[0] == 1) { // special case for single values
-			final AbstractDataset d = AbstractDataset.array(osd.read());
+			final Dataset d = DatasetFactory.createFromObject(osd.read());
 			d.setName(osd.getName());
 			return d;
 		}
@@ -1263,7 +1264,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			@Override
-			public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 					throws ScanFileHolderException {
 				final int rank = shape.length;
 				int[] lstart, lstop, lstep;
@@ -1291,7 +1292,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 				int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 
-				AbstractDataset d = null;
+				Dataset d = null;
 				try {
 					if (!Arrays.equals(trueShape, shape)) {
 						final int trank = trueShape.length;
@@ -1478,12 +1479,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 
 					if (isText) {
-						data = Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
+						data = ncsa.hdf.object.Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
 					} else if (isREF) {
 						data = HDFNativeData.byteToLong((byte[]) data);
 					}
 				}
-				final AbstractDataset d = AbstractDataset.array(data);
+				final Dataset d = DatasetFactory.createFromObject(data);
 				d.setName(name);
 				dataset.setDataset(d);
 				return true;
@@ -1556,7 +1557,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			@Override
-			public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 					throws ScanFileHolderException {
 				final int rank = shape.length;
 				int[] lstart, lstop, lstep;
@@ -1584,7 +1585,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 				int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 
-				AbstractDataset d = null;
+				Dataset d = null;
 				try {
 					if (!Arrays.equals(trueShape, shape)) {
 						final int trank = trueShape.length;
@@ -1700,7 +1701,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			H5.H5DreadVL(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 		} else {
 			H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
-			data = Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
+			data = ncsa.hdf.object.Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
 		}
 
 		return new StringDataset((String[]) data, AbstractDataset.squeezeShape(shape, false));
@@ -1746,17 +1747,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return ef;
 	}
 
-	protected static AbstractDataset loadData(final String fileName, final String node,
+	protected static Dataset loadData(final String fileName, final String node,
 			final int[] start, final int[] count, final int[] step,
 			final int dtype, final boolean extend) throws Exception {
 		return loadData(fileName, node, start, count, step, dtype, 1, extend);
 	}
 
-	protected static AbstractDataset loadData(final String fileName, final String node,
+	protected static Dataset loadData(final String fileName, final String node,
 			final int[] start, final int[] count, final int[] step,
 			final int dtype, final int isize, final boolean extend)
 			throws Exception {
-		AbstractDataset data = null;
+		Dataset data = null;
 
 		final String cPath;
 		try {
@@ -1880,7 +1881,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 						int msid = H5.H5Screate_simple(1, new long[] {length}, null);
 						H5.H5Sselect_all(msid);
-						data = AbstractDataset.zeros(isize, count, ldtype);
+						data = DatasetFactory.zeros(isize, count, ldtype);
 						Object odata = data.getBuffer();
 
 						boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
@@ -1894,7 +1895,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 								Object idata = null;
 								byte[] bdata = (byte[]) odata;
 								if (isText) {
-									idata = Dataset.byteToString(bdata, H5.H5Tget_size(tid));
+									idata = ncsa.hdf.object.Dataset.byteToString(bdata, H5.H5Tget_size(tid));
 								} else if (isREF) {
 									idata = HDFNativeData.byteToLong(bdata);
 								}
@@ -1938,7 +1939,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						for (int i = 0; i < axes.length; i++) {
 							axes[i] = notSplit.get(i);
 						}
-						data = AbstractDataset.zeros(count, ldtype);
+						data = DatasetFactory.zeros(count, ldtype);
 						Object odata;
 						try {
 							odata = H5Datatype.allocateArray(tid, length);
@@ -1965,7 +1966,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 									// TODO check if this is actually used
 									byte[] bdata = (byte[]) odata;
 									if (isText) {
-										idata = Dataset.byteToString(bdata, H5.H5Tget_size(tid));
+										idata = ncsa.hdf.object.Dataset.byteToString(bdata, H5.H5Tget_size(tid));
 									} else if (isREF) {
 										idata = HDFNativeData.byteToLong(bdata);
 									} else {
@@ -2145,8 +2146,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					HDF5Dataset d = (HDF5Dataset) l.getDestination();
 					ILazyDataset dataset = d.getDataset();
 					lMap.put(l.getFullName(), dataset);
-					if (aMap != null && dataset instanceof AbstractDataset) { // zero-rank dataset
-						AbstractDataset a = (AbstractDataset) dataset;
+					if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
+						Dataset a = (Dataset) dataset;
 						aMap.put(l.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
 					}
 				}
@@ -2314,7 +2315,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 	
-	protected AbstractDataset slice(SliceObject object, @SuppressWarnings("unused") IMonitor mon) throws Exception {
+	protected Dataset slice(SliceObject object, @SuppressWarnings("unused") IMonitor mon) throws Exception {
 		final int[] start = object.getSliceStart();
 		final int[] stop = object.getSliceStop();
 		final int[] step = object.getSliceStep();

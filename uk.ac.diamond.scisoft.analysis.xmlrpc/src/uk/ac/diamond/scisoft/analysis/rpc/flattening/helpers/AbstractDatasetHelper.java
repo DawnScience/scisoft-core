@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 import java.io.File;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
@@ -30,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 	/** Value to assign in {@link IFlattener#TYPE_KEY} */
-	public static final String TYPE_NAME = AbstractDataset.class.getCanonicalName();
+	public static final String TYPE_NAME = Dataset.class.getCanonicalName();
 	/** File to load/save */
 	public static final String FILENAME = "filename";
 	/**
@@ -81,13 +81,13 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 
 	@Override
 	public boolean canFlatten(Object obj) {
-		return obj instanceof AbstractDataset;
+		return obj instanceof Dataset;
 	}
 
 	@Override
 	public Object flatten(Object obj, IRootFlattener rootFlattener) {
 		final DataHolder dh = new DataHolder();
-		final AbstractDataset data = (AbstractDataset) obj;
+		final Dataset data = (Dataset) obj;
 		dh.addDataset("", data);
 		final File tempFile;
 		try {

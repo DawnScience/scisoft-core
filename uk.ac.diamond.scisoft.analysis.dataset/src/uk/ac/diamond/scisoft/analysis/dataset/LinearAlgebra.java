@@ -76,7 +76,7 @@ public class LinearAlgebra {
 				dshape[d++] = bshape[i];
 		}
 		int dtype = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
-		Dataset data = AbstractDataset.zeros(dshape, dtype);
+		Dataset data = DatasetFactory.zeros(dshape, dtype);
 
 		SliceIterator ita = a.getSliceIteratorFromAxes(null, achoice);
 		int l = 0;
@@ -161,7 +161,7 @@ public class LinearAlgebra {
 				dshape[d++] = bshape[i];
 		}
 		int dtype = AbstractDataset.getBestDType(a.getDtype(), b.getDtype());
-		Dataset data = AbstractDataset.zeros(dshape, dtype);
+		Dataset data = DatasetFactory.zeros(dshape, dtype);
 
 		SliceIterator ita = a.getSliceIteratorFromAxes(null, achoice);
 		int l = 0;

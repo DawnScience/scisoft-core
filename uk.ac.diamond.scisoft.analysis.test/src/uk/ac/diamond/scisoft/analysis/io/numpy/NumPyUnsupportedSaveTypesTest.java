@@ -26,8 +26,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
@@ -58,6 +58,6 @@ public class NumPyUnsupportedSaveTypesTest {
 	@Test(expected = ScanFileHolderException.class)
 	public void testUnsupportedDataTypes() throws ScanFileHolderException, IOException {
 		// We use 3 as the itemSize so that RGB data sets can be created
-		NumPyTest.saveNumPyFile(AbstractDataset.zeros(3, new int[] { 1, 2, 3 }, dtype), NumPyTest.getTempFile(), false);
+		NumPyTest.saveNumPyFile(DatasetFactory.zeros(3, new int[] { 1, 2, 3 }, dtype), NumPyTest.getTempFile(), false);
 	}
 }

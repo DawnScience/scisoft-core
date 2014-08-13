@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
@@ -202,6 +202,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				}
 			}
 		}
+		// TODO check quote is null
 		datasetNames.clear();
 		datasetNames.addAll(names);
 		dataShapes.clear();
@@ -263,7 +264,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		for (int i = 0, imax = names.size(); i < imax; i++) {
 			if (columns[i] != null) {
 				String name = names.get(i);
-				final AbstractDataset ds = AbstractDataset.array(columns[i]);
+				final Dataset ds = DatasetFactory.createFromObject(columns[i]);
 				ds.setName(name);
 				if (ds.getDtype() == Dataset.STRING) {
 					StringDataset sds = (StringDataset) ds;
@@ -447,9 +448,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 			// now write out all of the data
 			int rows = dh.getDataset(0).getSize();
-			AbstractDataset[] datasets = new AbstractDataset[imax];
+			Dataset[] datasets = new Dataset[imax];
 			for (int i = 0; i < imax; i++) {
-				datasets[i] = DatasetUtils.convertToAbstractDataset(dh.getDataset(i));
+				datasets[i] = DatasetUtils.convertToDataset(dh.getDataset(i));
 			}
 
 			for (int j = 0; j < rows; j++) {

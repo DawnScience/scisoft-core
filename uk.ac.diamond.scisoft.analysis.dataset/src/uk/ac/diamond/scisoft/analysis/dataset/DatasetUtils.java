@@ -1449,7 +1449,7 @@ public class DatasetUtils {
 	 * This defaults to the mid-point of indices
 	 * @return a double array containing the centroid for each dimension
 	 */
-	public static double[] centroid(AbstractDataset a, AbstractDataset... bases) {
+	public static double[] centroid(Dataset a, Dataset... bases) {
 		List<Double> d = new Centroid(bases).value(a);
 		double[] dc = new double[d.size()];
 		for (int i = 0; i < dc.length; i++)
@@ -1825,7 +1825,7 @@ public class DatasetUtils {
 	 * @return rolled dataset
 	 */
 	public static AbstractDataset roll(final Dataset a, final int shift, final Integer axis) {
-		AbstractDataset r = AbstractDataset.zeros(a);
+		Dataset r = DatasetFactory.zeros(a);
 		int is = a.getElementsPerItem();
 		if (axis == null) {
 			IndexIterator it = a.getIterator();
@@ -1862,7 +1862,7 @@ public class DatasetUtils {
 				r.setItemsOnAxes(pos, hit, v.getBuffer());
 			}
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**

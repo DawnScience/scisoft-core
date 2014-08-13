@@ -44,14 +44,14 @@ public class BooleanIteratorTest {
 		while (iter.hasNext())
 			inds.add((int) c.getElementLongAbs(iter.index));
 
-		checkDatasets((IntegerDataset) AbstractDataset.createFromList(inds), new IntegerDataset(new int[] {1,5,-9}, null));
+		checkDatasets((IntegerDataset) DatasetFactory.createFromList(inds), new IntegerDataset(new int[] {1,5,-9}, null));
 
 		iter = c.getBooleanIterator(s, false);
 		inds.clear();
 		while (iter.hasNext())
 			inds.add((int) c.getElementLongAbs(iter.index));
 
-		checkDatasets((IntegerDataset) AbstractDataset.createFromList(inds), new IntegerDataset(new int[] {0, 3,-7}, null));
+		checkDatasets((IntegerDataset) DatasetFactory.createFromList(inds), new IntegerDataset(new int[] {0, 3,-7}, null));
 	}
 
 	public void checkDatasets(IntegerDataset calc, IntegerDataset expected) {

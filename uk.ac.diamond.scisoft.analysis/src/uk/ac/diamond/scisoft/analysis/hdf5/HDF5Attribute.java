@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.hdf5;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 
 /**
@@ -29,7 +30,7 @@ public class HDF5Attribute implements Serializable {
 	private String node;
 	private String name;
 	private String type;
-	private AbstractDataset value;
+	private Dataset value;
 
 	/**
 	 * Create an attribute with file, node, name, value and sign
@@ -43,7 +44,7 @@ public class HDF5Attribute implements Serializable {
 		file = hdf5File;
 		node = nodeName;
 		name = attrName;
-		value = AbstractDataset.array(attrValue, isUnsigned);
+		value = DatasetFactory.createFromObject(attrValue, isUnsigned);
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class HDF5Attribute implements Serializable {
 	 * Get dataset holding value(s) of attribute
 	 * @return dataset
 	 */
-	public AbstractDataset getValue() {
+	public Dataset getValue() {
 		return value;
 	}
 
@@ -115,7 +116,7 @@ public class HDF5Attribute implements Serializable {
 	 *            if true, interpret integer values as unsigned by increasing element bit width
 	 */
 	public void setValue(Object obj, boolean isUnsigned) {
-		value = AbstractDataset.array(obj, isUnsigned);
+		value = DatasetFactory.createFromObject(obj, isUnsigned);
 	}
 
 	/**

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -89,11 +89,11 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	/**
 	 * @param data
 	 */
-	public AxisValues(AbstractDataset data) {
+	public AxisValues(Dataset data) {
 		setValues(data);
 	}
 
-	public AxisValues(String name, AbstractDataset data) {
+	public AxisValues(String name, Dataset data) {
 		this.name=name;
 		if (data!=null) setValues(data);
 	}
@@ -132,7 +132,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 *            The values to set.
 	 */
 	public void setValues(List<Double> v) {
-		values = (DoubleDataset) AbstractDataset.createFromList(v);
+		values = (DoubleDataset) DatasetFactory.createFromList(v);
 		isDirty = true;
 	}
 
@@ -149,7 +149,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 * 
 	 * @param data
 	 */
-	public void setValues(AbstractDataset data) {
+	public void setValues(Dataset data) {
 		values = (DoubleDataset) DatasetUtils.cast(data, Dataset.FLOAT64);
 		isDirty = true;
 	}

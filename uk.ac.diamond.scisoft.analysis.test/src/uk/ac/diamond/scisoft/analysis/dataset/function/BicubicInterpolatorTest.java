@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 public class BicubicInterpolatorTest {
@@ -71,7 +71,7 @@ public class BicubicInterpolatorTest {
 		ds = (DoubleDataset) ds.reshape(3, 3);
 
 		BicubicInterpolator bicube = new BicubicInterpolator(new int[] { 5, 5 });
-		List<AbstractDataset> ds2 = bicube.value(ds);
+		List<? extends Dataset> ds2 = bicube.value(ds);
 
 		ds2.get(0).peakToPeak();
 	}

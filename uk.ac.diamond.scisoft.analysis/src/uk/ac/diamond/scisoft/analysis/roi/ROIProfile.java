@@ -76,12 +76,12 @@ public class ROIProfile {
 			}
 		}
 
-		List<AbstractDataset> dsets = ls.value(data);
+		List<? extends Dataset> dsets = ls.value(data);
 
 		if (dsets == null)
 			return null;
 
-		profiles[0] = dsets.get(0);
+		profiles[0] = (AbstractDataset) dsets.get(0);
 
 		if (lroi.isCrossHair()) {
 			spt = lroi.getPerpendicularBisectorPoint(0.0);
@@ -92,7 +92,7 @@ public class ROIProfile {
 			dsets = bls.value(data);
 
 			if (dsets != null)
-				profiles[1] = dsets.get(0);
+				profiles[1] = (AbstractDataset) dsets.get(0);
 		}
 
 		return profiles;
@@ -633,7 +633,7 @@ public class ROIProfile {
 		double dpp = sroi.getDpp();
 
 		AbstractDataset[] profiles = new AbstractDataset[8];
-		AbstractDataset[] errors = new AbstractDataset[8];
+		Dataset[] errors = new AbstractDataset[8];
 
 		if (Math.abs(rad[0] - rad[1]) < 1) {
 			return null;
@@ -651,7 +651,7 @@ public class ROIProfile {
 			pmapfint.setDoAzimuthal(doAzimuthal);
 			pmapfint.setQSpace(qSpace, axisType);
 			pmapfint.setDoErrors(doErrors);
-			List<AbstractDataset> dsetsf = pmapfint.value(data);
+			List<? extends Dataset> dsetsf = pmapfint.value(data);
 			if (dsetsf == null) {
 				return null;
 			}
@@ -670,12 +670,12 @@ public class ROIProfile {
 					profiles[1].setErrorBuffer(errors[1]);
 				}
 			} else {
-				profiles[0] = dsetsf.get(1);
-				profiles[1] = dsetsf.get(0);
+				profiles[0] = (AbstractDataset) dsetsf.get(1);
+				profiles[1] = (AbstractDataset) dsetsf.get(0);
 			}
 			if (dsetsf.size() >= 6) {
-				profiles[4] = dsetsf.get(5);
-				profiles[5] = dsetsf.get(4);
+				profiles[4] = (AbstractDataset) dsetsf.get(5);
+				profiles[5] = (AbstractDataset) dsetsf.get(4);
 			}
 			return profiles;
 		}
@@ -703,8 +703,8 @@ public class ROIProfile {
 		profiles[0] = dsets.get(1);
 		profiles[1] = dsets.get(0);
 		if (doErrors) { // TODO check if errors are datasets
-			errors[0] = (AbstractDataset) profiles[0].getErrorBuffer();
-			errors[1] = (AbstractDataset) profiles[1].getErrorBuffer();
+			errors[0] = profiles[0].getErrorBuffer();
+			errors[1] = profiles[1].getErrorBuffer();
 		}
 		if (dsets.size() >= 6) {
 			profiles[4] = dsets.get(5);
@@ -738,8 +738,8 @@ public class ROIProfile {
 					profiles[2] = dsetss.get(1);
 					profiles[3] = dsetss.get(0);
 					if (doErrors) { // TODO check if errors are datasets
-						errors[2] = (AbstractDataset) profiles[2].getErrorBuffer();
-						errors[3] = (AbstractDataset) profiles[3].getErrorBuffer();
+						errors[2] = profiles[2].getErrorBuffer();
+						errors[3] = profiles[3].getErrorBuffer();
 					}
 					if (dsetss.size() >= 6) {
 						profiles[6] = dsetss.get(5);

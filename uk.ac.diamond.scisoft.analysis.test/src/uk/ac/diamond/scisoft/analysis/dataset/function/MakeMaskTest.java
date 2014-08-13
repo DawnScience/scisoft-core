@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 
@@ -40,7 +39,7 @@ public class MakeMaskTest extends TestCase {
 		double[] y = {0, 1, 1, 0, 0};
 		Dataset d = new FloatDataset(x, null);
 		MakeMask m = new MakeMask(1.2, 3.5);
-		List<AbstractDataset> dsets = m.value(d);
+		List<? extends Dataset> dsets = m.value(d);
 
 		for (int i = 0; i < y.length; i++) {
 			assertEquals(y[i], dsets.get(0).getDouble(i), 1e-8);

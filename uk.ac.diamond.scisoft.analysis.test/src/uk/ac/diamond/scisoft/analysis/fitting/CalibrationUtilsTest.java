@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 
@@ -45,7 +45,7 @@ public class CalibrationUtilsTest {
 			peaks.add(new Gaussian(i,1,1));
 		}
 		
-		AbstractDataset result = CalibrationUtils.getPeakList(peaks);
+		Dataset result = CalibrationUtils.getPeakList(peaks);
 		
 		for (int i = 0; i < 20; i++) {
 			Assert.assertEquals(result.getDouble(i), i, 0.001);
@@ -55,9 +55,9 @@ public class CalibrationUtilsTest {
 	@Test
 	public void selectSpecifiedPeaks() {
 		
-		AbstractDataset testpoints = AbstractDataset.arange(0, 19, 2.2, Dataset.FLOAT64);
+		Dataset testpoints = DatasetFactory.createRange(0, 19, 2.2, Dataset.FLOAT64);
 		
-		AbstractDataset calibPoints = CalibrationUtils.selectSpecifiedPeaks(testpoints, peaks);
+		Dataset calibPoints = CalibrationUtils.selectSpecifiedPeaks(testpoints, peaks);
 		
 		for (int i = 0; i < testpoints.getShape()[0]; i++) {
 			Assert.assertEquals(Math.round(testpoints.getDouble(i)), calibPoints.getDouble(i), 0.001);

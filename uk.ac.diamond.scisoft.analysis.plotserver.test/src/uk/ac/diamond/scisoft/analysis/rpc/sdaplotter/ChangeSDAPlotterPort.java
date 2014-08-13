@@ -23,7 +23,8 @@ import uk.ac.diamond.scisoft.analysis.AnalysisRpcServerProvider;
 import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
@@ -72,7 +73,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
 				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
@@ -83,7 +84,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure we arrive at the alternate handler
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
 				null, null, null);
 		Assert.assertFalse(receivedAtDefaultHandler[0]);
 		Assert.assertTrue(receivedAtAlternatePortHandler[0]);
@@ -94,7 +95,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {AbstractDataset.arange(100, AbstractDataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
 				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);

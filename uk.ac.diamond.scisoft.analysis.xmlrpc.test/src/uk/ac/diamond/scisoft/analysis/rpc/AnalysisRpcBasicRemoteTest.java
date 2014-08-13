@@ -21,7 +21,8 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
 /**
@@ -45,9 +46,9 @@ public class AnalysisRpcBasicRemoteTest {
 			Thread.sleep(500); // add delay to ensure client is receiving
 
 			// Set up arguments to pass
-			AbstractDataset cosInput = AbstractDataset.arange(100, AbstractDataset.INT32);
+			Dataset cosInput = DatasetFactory.createRange(100, Dataset.INT32);
 			// make the remote call
-			AbstractDataset cosOutput = (AbstractDataset) analysisRpcClient.request(COS, new Object[] {cosInput});
+			Dataset cosOutput = (Dataset) analysisRpcClient.request(COS, new Object[] {cosInput});
 
 
 			double[] cosOutputRaw = (double[])cosOutput.getBuffer();

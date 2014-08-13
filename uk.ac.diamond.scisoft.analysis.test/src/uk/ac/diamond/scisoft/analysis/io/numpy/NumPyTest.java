@@ -30,8 +30,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
@@ -63,7 +63,7 @@ public class NumPyTest {
 	 *            to save to
 	 * @throws ScanFileHolderException
 	 */
-	protected static void saveNumPyFile(AbstractDataset ds, File loc, boolean unsigned) throws ScanFileHolderException {
+	protected static void saveNumPyFile(Dataset ds, File loc, boolean unsigned) throws ScanFileHolderException {
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		new NumPyFileSaver(loc.toString(), unsigned).saveFile(dh);
@@ -127,10 +127,10 @@ public class NumPyTest {
 				abstractDatasetDataType, len, ArrayUtils.toString(shape));
 	}
 
-	private AbstractDataset createDataset() {
-		final AbstractDataset ds;
+	private Dataset createDataset() {
+		final Dataset ds;
 		if (abstractDatasetDataType != Dataset.BOOL) {
-			ds = AbstractDataset.arange(len, abstractDatasetDataType);
+			ds = DatasetFactory.createRange(len, abstractDatasetDataType);
 		} else {
 			// creates an array of all False, so make two entries True if the array is big enough
 			boolean[] boolarr = new boolean[len];
@@ -138,7 +138,7 @@ public class NumPyTest {
 				boolarr[0] = true;
 			if (len > 100)
 				boolarr[100] = true;
-			ds = AbstractDataset.array(boolarr, abstractDatasetDataType);
+			ds = DatasetFactory.createFromObject(boolarr, abstractDatasetDataType);
 		}
 		if (addInf && len > 3) {
 			ds.set(Double.POSITIVE_INFINITY, 2);
@@ -176,10 +176,10 @@ public class NumPyTest {
 		File loc = getTempFile();
 		String script = createNumPyArray(" numpy.save(r'" + loc.toString() + "', exp)");
 		PythonHelper.runPythonScript(script, true);
-		AbstractDataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
-		AbstractDataset ds = createDataset();
+		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
+		Dataset ds = createDataset();
 		if (unsigned)
-			ds = AbstractDataset.array(ds, unsigned);
+			ds = DatasetFactory.createFromObject(ds, unsigned);
 		Assert.assertEquals(toString(), ds, loadedFile);
 	}
 
@@ -187,7 +187,7 @@ public class NumPyTest {
 	// to load it and check it is as expected
 	@Test
 	public void testSave() throws Exception {
-		AbstractDataset ds = createDataset();
+		Dataset ds = createDataset();
 		File loc = getTempFile();
 		saveNumPyFile(ds, loc, unsigned);
 
@@ -199,14 +199,14 @@ public class NumPyTest {
 	// Test we can load what we just saved
 	@Test
 	public void testSaveAndLoad() throws Exception {
-		AbstractDataset exp = createDataset();
+		Dataset exp = createDataset();
 		File loc = getTempFile();
 		saveNumPyFile(exp, loc, unsigned);
 
-		AbstractDataset act = NumPyFileLoader.loadFileHelper(loc.toString());
+		Dataset act = NumPyFileLoader.loadFileHelper(loc.toString());
 
 		if (unsigned)
-			exp = AbstractDataset.array(exp, unsigned);
+			exp = DatasetFactory.createFromObject(exp, unsigned);
 		Assert.assertEquals(toString(), exp, act);
 	}
 

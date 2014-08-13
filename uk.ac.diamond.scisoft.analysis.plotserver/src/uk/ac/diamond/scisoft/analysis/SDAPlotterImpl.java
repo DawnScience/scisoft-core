@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
@@ -108,7 +107,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						max = s;
 				}
 			}
-			return new IDataset[] { DatasetFactory.createRange(max, AbstractDataset.INT32) };
+			return new IDataset[] { DatasetFactory.createRange(max, Dataset.INT32) };
 		}
 
 		return new IDataset[] { xValues };

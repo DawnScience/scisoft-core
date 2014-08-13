@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
@@ -46,18 +46,18 @@ public class CalibrationUtils {
 	 * @return The new Axis with the same dimensionality as the original data
 	 * @throws Exception 
 	 */
-	public static AbstractDataset mapAxis(AbstractDataset data, AbstractDataset originalAxis,
-			AbstractDataset originalAxisApproximatePeakPositions, AbstractDataset newAxisExactPeakPositions, Class<? extends APeak> peakClass,
+	public static Dataset mapAxis(Dataset data, Dataset originalAxis,
+			Dataset originalAxisApproximatePeakPositions, Dataset newAxisExactPeakPositions, Class<? extends APeak> peakClass,
 			int polynomialOrder) throws Exception {
 
-		AbstractDataset peakPositions = refinePeakPositions(data, originalAxis, originalAxisApproximatePeakPositions,
+		Dataset peakPositions = refinePeakPositions(data, originalAxis, originalAxisApproximatePeakPositions,
 				peakClass);
 
 		// fit the data with a polynomial
-		Polynomial fitResult = Fitter.polyFit(new AbstractDataset[] {peakPositions} ,newAxisExactPeakPositions, 1e-15, polynomialOrder);
+		Polynomial fitResult = Fitter.polyFit(new Dataset[] {peakPositions} ,newAxisExactPeakPositions, 1e-15, polynomialOrder);
 		
 		// convert the dataset
-		AbstractDataset newAxis = fitResult.calculateValues(originalAxis);
+		Dataset newAxis = fitResult.calculateValues(originalAxis);
 		
 		return newAxis;
 	}
@@ -74,14 +74,14 @@ public class CalibrationUtils {
 	 *            The class with which to fit the individual peaks
 	 * @return val
 	 */
-	public static AbstractDataset refinePeakPositions(AbstractDataset data, AbstractDataset originalAxis,
-			AbstractDataset originalAxisApproximatePeakPositions, Class<? extends APeak> peakClass) {
+	public static Dataset refinePeakPositions(Dataset data, Dataset originalAxis,
+			Dataset originalAxisApproximatePeakPositions, Class<? extends APeak> peakClass) {
 		
 		int numPeaks = originalAxisApproximatePeakPositions.getSize();
 		
 		List<APeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakClass, numPeaks );
 		
-		AbstractDataset refinedPositions = selectSpecifiedPeaks(originalAxisApproximatePeakPositions, fitResult);
+		Dataset refinedPositions = selectSpecifiedPeaks(originalAxisApproximatePeakPositions, fitResult);
 		
 		return refinedPositions;
 	}
@@ -92,14 +92,14 @@ public class CalibrationUtils {
 	 * @param peakList the list of APeaks containing all the peaks to try to match
 	 * @return the closest real peak position matches to the original positions.
 	 */
-	public static AbstractDataset selectSpecifiedPeaks(AbstractDataset originalAxisApproximatePeakPositions,
+	public static Dataset selectSpecifiedPeaks(Dataset originalAxisApproximatePeakPositions,
 			List<APeak> peakList) {
 		
-		AbstractDataset peakPositions = getPeakList(peakList);
-		AbstractDataset resultPositions = new DoubleDataset(originalAxisApproximatePeakPositions.getShape());
+		Dataset peakPositions = getPeakList(peakList);
+		Dataset resultPositions = new DoubleDataset(originalAxisApproximatePeakPositions.getShape());
 		
 		for (int i = 0; i < originalAxisApproximatePeakPositions.getSize(); i++) {
-			AbstractDataset compare = Maths.subtract(peakPositions, originalAxisApproximatePeakPositions.getDouble(i));
+			Dataset compare = Maths.subtract(peakPositions, originalAxisApproximatePeakPositions.getDouble(i));
 			compare = Maths.abs(compare);
 			resultPositions.set(peakPositions.getDouble(compare.minPos()),i);
 		}
@@ -112,9 +112,9 @@ public class CalibrationUtils {
 	 * @param peakList a list of APeak functions
 	 * @return the dataset of peak positions.
 	 */
-	public static AbstractDataset getPeakList(List<APeak> peakList) {
+	public static Dataset getPeakList(List<APeak> peakList) {
 		int n = peakList.size();
-		AbstractDataset peakPositons = new DoubleDataset(n);
+		Dataset peakPositons = new DoubleDataset(n);
 		for (int i = 0; i < n; i++) {
 			peakPositons.set(peakList.get(i).getPosition(), i);
 		}

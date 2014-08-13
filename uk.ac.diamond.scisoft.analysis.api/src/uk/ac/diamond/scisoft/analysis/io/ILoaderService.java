@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 public interface ILoaderService {
 	
 	/**
-	 * Reads a dataset and returns it as an AbstractDataset
+	 * Reads a dataset and returns it as a Dataset
 	 * @param filePath
 	 * @return IDataHolder
 	 * @throws Throwable
@@ -35,7 +35,7 @@ public interface ILoaderService {
 
 
 	/**
-	 * Reads a dataset and returns it as an AbstractDataset, with progress
+	 * Reads a dataset and returns it as a Dataset, with progress
 	 * @param filePath
 	 * @return IDataHolder
 	 * @throws Throwable
@@ -43,7 +43,7 @@ public interface ILoaderService {
     public IDataset getDataset(String filePath, final IMonitor monitor) throws Throwable;
     
 	/**
-	 * Reads a dataset and returns it as an AbstractDataset, with progress
+	 * Reads a dataset and returns it as a Dataset, with progress
 	 * @param filePath
 	 * @param datasetPath for instance nexus path, may be null.
 	 * @return IDataHolder

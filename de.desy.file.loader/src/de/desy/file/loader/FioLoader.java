@@ -35,8 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+
 // lots of below added
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
@@ -198,7 +200,7 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 			
 
 			for (String n : columns.keySet()) {
-				final AbstractDataset set =  AbstractDataset.createFromList(columns.get(n));
+				final Dataset set =  DatasetFactory.createFromList(columns.get(n));
 				set.setName(n);
 				result.addDataset(n, set);
 			}		

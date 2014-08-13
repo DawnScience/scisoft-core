@@ -32,6 +32,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -252,7 +253,7 @@ public class SRSLoaderTest {
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder dh = new SRSLoader("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat").loadFile();
-		AbstractDataset data = dh.getDataset(0);
+		Dataset data = dh.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 	}
 
@@ -260,8 +261,8 @@ public class SRSLoaderTest {
 	public void testSpacesInNames() throws Exception {
 		DataHolder dh = new DataHolder();
 		String fileName = "quoted.dat";
-		AbstractDataset data1 = AbstractDataset.arange(20, Dataset.INT32);
-		AbstractDataset data2 = DatasetUtils.linSpace(0, 576000, 20, Dataset.FLOAT64);
+		Dataset data1 = DatasetFactory.createRange(20, Dataset.INT32);
+		Dataset data2 = DatasetUtils.linSpace(0, 576000, 20, Dataset.FLOAT64);
 		try {
 			dh.addDataset("col1", data1);
 			dh.addDataset("testing data", data2);

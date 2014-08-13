@@ -21,7 +21,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
@@ -71,12 +72,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// create some data sets and other objects to use, this test does not use
 		// the contents of the data set, except they are flattened
 		// and unflattened. The type of the object is more important
-		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = AbstractDataset.arange(10, AbstractDataset.INT);
-		data = image = AbstractDataset.arange(100, AbstractDataset.INT).reshape(10, 10);
-		xAxes = yAxes = new IDataset[] { xAxis, AbstractDataset.arange(10, AbstractDataset.FLOAT) };
-		images = new IDataset[] { image, AbstractDataset.arange(100, AbstractDataset.FLOAT) };
+		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = DatasetFactory.createRange(10, Dataset.INT);
+		data = image = DatasetFactory.createRange(100, Dataset.INT).reshape(10, 10);
+		xAxes = yAxes = new IDataset[] { xAxis, DatasetFactory.createRange(10, Dataset.FLOAT) };
+		images = new IDataset[] { image, DatasetFactory.createRange(100, Dataset.FLOAT) };
 		plotName = "Plot 1";
-		sizes = AbstractDataset.arange(100, AbstractDataset.INT);
+		sizes = DatasetFactory.createRange(100, Dataset.INT);
 		bean = new GuiBean();
 		dataBean = new DataBean();
 		guiNames = new String[] { "Plot 1", "Plot 2" };

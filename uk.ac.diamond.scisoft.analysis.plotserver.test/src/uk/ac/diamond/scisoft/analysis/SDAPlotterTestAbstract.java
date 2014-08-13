@@ -20,7 +20,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
 
@@ -36,7 +37,7 @@ abstract public class SDAPlotterTestAbstract {
 	
 	@Test
 	public void testLinePlot() throws Exception {
-		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
+		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
 
 		sdaPlotterImplUnderTest.plot("MyTest Line", null, null, new IDataset[] {ds}, null, null, null);
 	
@@ -47,7 +48,7 @@ abstract public class SDAPlotterTestAbstract {
 
 	@Test
 	public void testImagePlot() throws Exception {
-		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
+		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
 		ds.setShape(10, 10);
 
 		sdaPlotterImplUnderTest.imagePlot("MyTest Image", null, null, ds, null, null);
@@ -59,7 +60,7 @@ abstract public class SDAPlotterTestAbstract {
 
 	@Test
 	public void testImagesPlot() throws Exception {
-		AbstractDataset ds = AbstractDataset.arange(100, AbstractDataset.INT64);
+		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
 		ds.setShape(10, 10);
 
 		sdaPlotterImplUnderTest.imagesPlot("MyTest Images", null, null, new IDataset[] {ds, ds});

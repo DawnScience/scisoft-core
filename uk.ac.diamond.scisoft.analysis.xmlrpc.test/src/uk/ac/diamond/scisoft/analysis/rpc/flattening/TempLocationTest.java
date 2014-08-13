@@ -23,7 +23,8 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelper;
 
 /**
@@ -61,7 +62,7 @@ public class TempLocationTest {
 	 * Flatten a dataset and return the directory it was flattened to
 	 */
 	private File flattenDataSetAndReturnContainingFolder(IRootFlattener root) throws IOException {
-		Object flatten = root.flatten(AbstractDataset.arange(100, AbstractDataset.INT));
+		Object flatten = root.flatten(DatasetFactory.createRange(100, Dataset.INT));
 		// check the internal form of AbstractDataset to see where the file is
 		@SuppressWarnings("unchecked")
 		Map<String, Object> flatAD = (Map<String, Object>) flatten;

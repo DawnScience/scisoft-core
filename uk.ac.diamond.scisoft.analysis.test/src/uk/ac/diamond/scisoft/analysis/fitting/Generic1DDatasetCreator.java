@@ -16,7 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
@@ -44,7 +45,7 @@ public class Generic1DDatasetCreator {
 	
 	static final double accuracy = 0.0001;
 	
-	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, AbstractDataset.FLOAT64);
+	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(0, dataRange, 1, Dataset.FLOAT64);
 
 	private static DoubleDataset createDataset(IFunction f) {
 		CompositeFunction comp = new CompositeFunction();

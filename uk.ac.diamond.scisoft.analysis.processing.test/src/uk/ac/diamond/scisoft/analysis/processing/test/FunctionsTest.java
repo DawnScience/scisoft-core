@@ -9,9 +9,9 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AggregateDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -54,7 +54,7 @@ public class FunctionsTest {
 	@Test
 	public void testPolynomial() throws Exception {
 		
-		final IDataset       indices = AbstractDataset.arange(1000, AbstractDataset.INT);
+		final IDataset       indices = DatasetFactory.createRange(1000, Dataset.INT);
 		final IRichDataset   rich    = new RichDataset(indices, null);
 
 		final IOperation functionOp = service.findFirst("function");
@@ -103,7 +103,7 @@ public class FunctionsTest {
 	static final int defaultFWHM = 20;
 	static final int defaultArea = 50;
 	static final int dataRange = 550;
-	static final DoubleDataset xAxis = (DoubleDataset) AbstractDataset.arange(0, dataRange, 1, Dataset.FLOAT64);
+	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(0, dataRange, 1, Dataset.FLOAT64);
 	static final boolean backgroundDominated = true;
 	static final boolean autoStopping = true;
 	static final double threshold = 0.10;
@@ -119,7 +119,7 @@ public class FunctionsTest {
 		final IOperation fittingOp = service.findFirst("fitting");
 		
 		// We do 10 Peak fits
-		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
+		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
 		final RichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");
@@ -164,7 +164,7 @@ public class FunctionsTest {
 		final IOperation fittingOp = service.findFirst("fitting");
 		
 		// We do 10 Peak fits
-		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
+		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
 		final RichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");

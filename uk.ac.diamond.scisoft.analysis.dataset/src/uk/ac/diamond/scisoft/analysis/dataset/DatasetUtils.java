@@ -785,7 +785,7 @@ public class DatasetUtils {
 	 * @param a
 	 *            The datasets to be cast.
 	 */
-	public static AbstractCompoundDataset cast(final Dataset[] a, final int dtype) {
+	public static CompoundDataset cast(final Dataset[] a, final int dtype) {
 		CompoundDataset c = null;
 
 		switch (dtype) {
@@ -830,7 +830,7 @@ public class DatasetUtils {
 			break;
 		}
 
-		return (AbstractCompoundDataset) c;
+		return c;
 	}
 
 	/**
@@ -1296,7 +1296,7 @@ public class DatasetUtils {
 	 * @param overAllElements if true, then normalise over all elements in each item
 	 * @return normalised dataset
 	 */
-	public static AbstractCompoundDataset norm(CompoundDataset a, boolean overAllElements) {
+	public static CompoundDataset norm(CompoundDataset a, boolean overAllElements) {
 		double[] amin = a.minItem();
 		double[] amax = a.maxItem();
 		final int is = a.getElementsPerItem();
@@ -1318,7 +1318,7 @@ public class DatasetUtils {
 			result = Maths.subtract(a, amin);
 			result.idivide(aptp);
 		}
-		return (AbstractCompoundDataset) result;
+		return (CompoundDataset) result;
 	}
 
 	/**
@@ -1583,7 +1583,7 @@ public class DatasetUtils {
 	 */
 	public static Object createJavaArray(Dataset a) {
 		if (a.getElementsPerItem() > 1) {
-			a = createDatasetFromCompoundDataset((AbstractCompoundDataset) a, true);
+			a = createDatasetFromCompoundDataset((CompoundDataset) a, true);
 		}
 		Object matrix;
 

@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractCompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -130,8 +130,8 @@ public class Integrate2D implements DatasetToDatasetFunction {
 				for (int b = 0; b < ny; b++) {
 					Arrays.fill(csums, 0.);
 					for (int a = 0; a < nx; a++) {
-						((AbstractCompoundDataset) ids).getDoubleArray(xvalues, b + sy, a + sx);
-						((AbstractCompoundDataset) sumy).getDoubleArray(yvalues, a);
+						((CompoundDataset) ids).getDoubleArray(xvalues, b + sy, a + sx);
+						((CompoundDataset) sumy).getDoubleArray(yvalues, a);
 						for (int j = 0; j < is; j++) {
 							csums[j] += xvalues[j];
 							yvalues[j] += xvalues[j];

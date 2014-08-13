@@ -19,17 +19,16 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
- * 
- * This class is a HDF5Loader with extra things associated by
- * the nexus standard. Primarily if an ILazyDataset is loaded,
- * it will attempt to load the errors associated with the dataset.
- *  
+ * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is
+ * loaded, it will attempt to load the errors associated with the dataset.
  */
 public class NexusHDF5Loader extends HDF5Loader {
 
@@ -47,17 +46,28 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 	public static final String DATA = "data";
 
+	private static final String NX_ARPES_MANIPULATOR_SAAZIMUTHAL = "/entry1/instrument/manipulator/saazimuthal";
+	private static final String NX_ARPES_MANIPULATOR_SATILT = "/entry1/instrument/manipulator/satilt";
+	private static final String NX_ARPES_MANIPULATOR_SAPOLAR = "/entry1/instrument/manipulator/sapolar";
+	private static final String NX_ARPES_ANALYSER_ENERGIES = "/entry1/instrument/analyser/energies";
+	private static final String NX_ARPES_ANALYSER_ANGLES = "/entry1/instrument/analyser/angles";
+	private static final String NX_ARPES_SAMPLE_TEMPERATURE = "/entry1/sample/temperature";
+	private static final String NX_ARPES_MONOCHROMATOR_ENERGY = "/entry1/instrument/monochromator/energy";
+	private static final String NX_ARPES_ANALYSER_PASS_ENERGY = "/entry1/instrument/analyser/pass_energy";
+	private static final String NX_ARPES_ANALYSER_DATA = "/entry1/instrument/analyser/data";
+	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		
+
 		DataHolder dh = super.loadFile(mon);
-		if (dh==null) return null;
-		
+		if (dh == null)
+			return null;
+
 		// We assign errors in ILazyDatasets read by nexus error
 		// "standard"
 		// TODO FIXME Also there is the attribute way of specifying and error.
 		for (String name : dh.getNames()) {
-			ILazyDataset data  = dh.getLazyDataset(name);
+			ILazyDataset data = dh.getLazyDataset(name);
 			if (data == null)
 				continue;
 
@@ -72,17 +82,9 @@ public class NexusHDF5Loader extends HDF5Loader {
 			if (error != null)
 				data.setLazyErrors(error);
 		}
-		
-		// Add ARPES specific metadata where required.
-		if(dh.contains("/entry1/instrument/analyser/data")) {
-			ILazyDataset data = dh.getLazyDataset("/entry1/instrument/analyser/data");
-			data.setMetadata(new Metadata());
-			// This should be done properly to add ARPES metadata.
-			
-		}
-		
-		//TODO Add in unit metadata information
-		
+
+		// TODO Add in unit metadata information
+
 		// Augment data as required
 		// get all data with signal attribute
 		try {
@@ -91,23 +93,22 @@ public class NexusHDF5Loader extends HDF5Loader {
 					// find the data
 					String key = metaKey.replace("@signal", "");
 					ILazyDataset data = dh.getLazyDataset(key);
-					
+
 					// reparse all metadata to see associated metadata
 					ArrayList<String> additionalMetadata = new ArrayList<String>(0);
 					String[] result = key.split("/");
 					String parentKey = "";
-					for(int i = 0; i < result.length-1; i++) {
-						if(result[i].length() > 0) {
+					for (int i = 0; i < result.length - 1; i++) {
+						if (result[i].length() > 0) {
 							parentKey += "/" + result[i];
 						}
 					}
 					for (String repassKey : dh.getMetadata().getMetaNames()) {
 						if (repassKey.startsWith(parentKey)) {
-							System.out.println(repassKey);
 							additionalMetadata.add(repassKey);
-						} 
+						}
 					}
-					
+
 					// get existing axis metadata
 					List<AxesMetadata> list = data.getMetadata(AxesMetadata.class);
 					AxesMetadataImpl axesMetadata;
@@ -117,26 +118,80 @@ public class NexusHDF5Loader extends HDF5Loader {
 					} else {
 						axesMetadata = (AxesMetadataImpl) list.get(0);
 					}
-					
+
 					// look through the additional metadata for axis information
-					//TODO Should take @primary into account when adding axes.
+					// TODO Should take @primary into account when adding axes.
 					for (String goodKey : additionalMetadata) {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");
 							ILazyDataset axisData = dh.getLazyDataset(axisName);
-							int axisDim = Integer.parseInt((String)dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
+							int axisDim = Integer.parseInt((String) dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
 							axesMetadata.addAxis(axisData, axisDim);
-							System.out.println("");
 						}
 					}
-					
+
 					data.setMetadata(null);
 				}
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Failed to augment data with metadata", e);
 		}
+
+		// Add ARPES specific metadata where required.
+		if (dh.contains(NX_ARPES_ANALYSER_DATA)) {
+			ILazyDataset data = dh.getLazyDataset(NX_ARPES_ANALYSER_DATA);
+			ARPESMetadataImpl arpesMetadata = new ARPESMetadataImpl();
+			try {
+				arpesMetadata.setPassEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_ANALYSER_PASS_ENERGY)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			try {
+				arpesMetadata.setPhotonEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_MONOCHROMATOR_ENERGY)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			try {
+				arpesMetadata.setTemperature(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_SAMPLE_TEMPERATURE)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			
+			if (dh.contains(NX_ARPES_ANALYSER_ANGLES)) {
+				arpesMetadata.setAnalyserAngles(dh.getLazyDataset(NX_ARPES_ANALYSER_ANGLES));
+			} else {
+				arpesMetadata.setAnalyserAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_ANALYSER_ENERGIES)) {
+				arpesMetadata.setKineticEnergies(dh.getLazyDataset(NX_ARPES_ANALYSER_ENERGIES));
+			} else {
+				arpesMetadata.setKineticEnergies(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_MANIPULATOR_SAPOLAR)) {
+				arpesMetadata.setPolarAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAPOLAR));
+			} else {
+				arpesMetadata.setPolarAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_MANIPULATOR_SATILT)) {
+				arpesMetadata.setTiltAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SATILT));
+			} else {
+				arpesMetadata.setTiltAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
 		
+			if (dh.contains(NX_ARPES_MANIPULATOR_SAAZIMUTHAL)) {
+				arpesMetadata.setAzimuthalAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAAZIMUTHAL));
+			} else {
+				arpesMetadata.setAzimuthalAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			data.setMetadata(arpesMetadata);
+		}
+
 		return dh;
 	}
 

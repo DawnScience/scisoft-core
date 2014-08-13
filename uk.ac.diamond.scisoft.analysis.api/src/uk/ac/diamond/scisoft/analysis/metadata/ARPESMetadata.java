@@ -19,6 +19,8 @@ public interface ARPESMetadata extends MetadataType {
 	// Constants for the scan
 	public double getPhotonEnergy();
 	public double getWorkFunction();
+	public double getPassEnergy();
+	public double getTemperature();
 	
 	// Axis associated with detector images
 	public ILazyDataset getKineticEnergies();
@@ -30,7 +32,10 @@ public interface ARPESMetadata extends MetadataType {
 	public ILazyDataset getAzimuthalAngles();
 
 	// Calibration information
+	public double getEnergyAxisGlobalOffset();
+	public double getAngleAxisGlobalOffset();
 	public ILazyDataset getEnergyAxisOffset();
+	
 	
 	// calculated axis associated with frames
 	public ILazyDataset getBindingEnergies();

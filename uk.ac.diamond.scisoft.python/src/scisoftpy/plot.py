@@ -419,11 +419,12 @@ def _checkimagearg(x, y, im, name):
         if y is not None and y.shape[0] != im.shape[0]:
             raise AttributeError("Height of image does not match the length of y" )
 
-def _process_image(x, y, im, name):
+def _process_image(x, y, im, name, resetaxes):
     _checkimagearg(x, y, im, name)
 
-    _plot_clear(name)
-    _clear_axis(name)
+    if resetaxes is True:
+        _plot_clear(name)
+        _clear_axis(name)
 
     if x is not None:
         ax = _setup_axes([x], 'x', name)[0]
@@ -442,7 +443,7 @@ def _process_image(x, y, im, name):
 
     _plot_image(name, x, y, im, ax, ay)
 
-def image(im, x=None, y=None, name=None):
+def image(im, x=None, y=None, name=None, resetaxes=True):
     '''Plot a 2D dataset as an image in the named view with optional x and y axes
 
     Arguments:
@@ -450,11 +451,12 @@ def image(im, x=None, y=None, name=None):
     x -- optional dataset or single-item dict for x-axis
     y -- optional dataset or single-item dict for y-axis
     name -- name of plot view to use (if None, use default name)
+    resetaxes -- reset axes (True/False: if not defined, axes are reset)
     '''
     if name is None:
         name = _PVNAME
 
-    _process_image(x, y, im, name)
+    _process_image(x, y, im, name, resetaxes)
 
 def images(im, x=None, y=None, name=None):
     '''Plot 2D datasets as an image in the named view with optional x and y axes

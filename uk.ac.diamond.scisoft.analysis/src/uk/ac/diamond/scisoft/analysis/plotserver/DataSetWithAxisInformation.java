@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.plotserver;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -29,13 +29,13 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
  */
 public class DataSetWithAxisInformation implements Serializable {
 
-	private AbstractDataset data;
+	private Dataset data;
 	private AxisMapBean axisMap;
 
 	/**
 	 * @return Returns the data.
 	 */
-	public AbstractDataset getData() {
+	public Dataset getData() {
 		return data;
 	}
 
@@ -44,7 +44,7 @@ public class DataSetWithAxisInformation implements Serializable {
 	 *            The data to set.
 	 */
 	public void setData(IDataset data) {
-		this.data = DatasetUtils.convertToAbstractDataset(data);
+		this.data = DatasetUtils.convertToDataset(data);
 	}
 
 	/**

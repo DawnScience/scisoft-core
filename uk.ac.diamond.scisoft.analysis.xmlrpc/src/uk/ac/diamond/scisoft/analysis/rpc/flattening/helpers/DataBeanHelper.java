@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
@@ -48,9 +48,9 @@ public class DataBeanHelper extends MapFlatteningHelper<DataBean> {
 			data.add((DataSetWithAxisInformation) object);
 		}
 
-		Map<String, AbstractDataset> axisData = new HashMap<String, AbstractDataset>();
+		Map<String, Dataset> axisData = new HashMap<String, Dataset>();
 		for (Entry<Object, Object> entry : axisDataGeneric.entrySet()) {
-			axisData.put((String) entry.getKey(), (AbstractDataset) entry.getValue());
+			axisData.put((String) entry.getKey(), (Dataset) entry.getValue());
 		}
 
 		outBean.setData(data);

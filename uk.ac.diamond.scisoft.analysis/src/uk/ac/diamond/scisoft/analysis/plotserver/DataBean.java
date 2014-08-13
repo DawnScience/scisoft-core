@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
@@ -37,7 +37,7 @@ public class DataBean implements Serializable {
 
 	protected List<DataSetWithAxisInformation> data;
 
-	protected Map<String, AbstractDataset> axisData;
+	protected Map<String, Dataset> axisData;
 
 	protected List<HDF5File> hdf5Trees;
 	
@@ -51,14 +51,14 @@ public class DataBean implements Serializable {
 	public DataBean(GuiPlotMode plotMode) {
 		guiPlotMode = plotMode;
 		data = new ArrayList<DataSetWithAxisInformation>();
-		axisData = new HashMap<String, AbstractDataset>();
+		axisData = new HashMap<String, Dataset>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
 	
 	public DataBean() {
 		guiPlotMode = null;
 		data = new ArrayList<DataSetWithAxisInformation>();
-		axisData = new HashMap<String, AbstractDataset>();
+		axisData = new HashMap<String, Dataset>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
 	
@@ -103,7 +103,7 @@ public class DataBean implements Serializable {
 	 * @param axisDataset
 	 */
 	public void addAxis(String axisID, IDataset axisDataset) {
-		axisData.put(axisID, DatasetUtils.convertToAbstractDataset(axisDataset));
+		axisData.put(axisID, DatasetUtils.convertToDataset(axisDataset));
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class DataBean implements Serializable {
 	 * @param axisID
 	 * @return the axis dataset
 	 */
-	public AbstractDataset getAxis(String axisID) {
+	public Dataset getAxis(String axisID) {
 		return axisData.get(axisID);
 	}
 
@@ -150,11 +150,11 @@ public class DataBean implements Serializable {
 	 * @param bean
 	 */
 	public void addData(DataBean bean) {
-		Map<String, AbstractDataset> nmap = bean.getAxisData();
+		Map<String, Dataset> nmap = bean.getAxisData();
 		List<DataSetWithAxisInformation> ndata = bean.getData();
 		for (String s : nmap.keySet()) {
-			AbstractDataset nd = nmap.get(s);
-			AbstractDataset od = axisData.get(s);
+			Dataset nd = nmap.get(s);
+			Dataset od = axisData.get(s);
 			if (od != null && !od.equals(nd)) { // a clash so need to rename
 				String n = nd.getName();
 				if (n != null && n.trim().length() > 0) {
@@ -209,7 +209,7 @@ public class DataBean implements Serializable {
 	/**
 	 * @return map of names to axis datasets
 	 */
-	public Map<String, AbstractDataset> getAxisData() {
+	public Map<String, Dataset> getAxisData() {
 		return axisData;
 	}
 
@@ -217,7 +217,7 @@ public class DataBean implements Serializable {
 	 * Set map of names to axis datasets
 	 * @param axisData
 	 */
-	public void setAxisData(Map<String, AbstractDataset> axisData) {
+	public void setAxisData(Map<String, Dataset> axisData) {
 		this.axisData = axisData;
 	}
 

@@ -75,7 +75,7 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 
 			return data;
 		} catch (Exception e) {
-			throw new UnsupportedOperationException("Failed to load AbstractDataset from " + thisMap, e);
+			throw new UnsupportedOperationException("Failed to load Dataset from " + thisMap, e);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 			tempFile = File.createTempFile("scisofttmp-", ".npy", rootFlattener.getTempLocation());
 			new NumPyFileSaver(tempFile.toString()).saveFile(dh);
 		} catch (Exception e) {
-			throw new UnsupportedOperationException("Unable to save AbstractDataset", e);
+			throw new UnsupportedOperationException("Unable to save Dataset", e);
 		}
 
 		Map<String, Object> outMap = createMap(TYPE_NAME);

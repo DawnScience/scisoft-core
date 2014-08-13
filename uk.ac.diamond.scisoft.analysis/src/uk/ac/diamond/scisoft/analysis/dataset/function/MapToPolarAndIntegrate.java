@@ -759,12 +759,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		        List<AbstractDataset> mrmpResult = mrmp.compute();
 		        List<AbstractDataset> srspResult = srsp.join();
 		        for (int i = 0; i < srspResult.size(); i++) {
-		        	AbstractDataset sd = srspResult.get(i);
-		        	AbstractDataset md = mrmpResult.get(i);
+		        	Dataset sd = srspResult.get(i);
+		        	Dataset md = mrmpResult.get(i);
 		        	AbstractDataset res = DatasetUtils.append(sd, md, 0);
 		        	if (sd.hasErrors() && md.hasErrors()) {
-		        		DoubleDataset se = (DoubleDataset) sd.getErrorBuffer();
-		        		DoubleDataset me = (DoubleDataset) md.getErrorBuffer();
+		        		Dataset se = sd.getErrorBuffer();
+		        		Dataset me = md.getErrorBuffer();
 		        		res.setErrorBuffer(DatasetUtils.append(se, me, 0));
 		        	}
 		        	result.add(res);

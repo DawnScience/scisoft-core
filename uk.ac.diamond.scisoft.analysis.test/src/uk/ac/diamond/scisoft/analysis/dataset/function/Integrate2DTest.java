@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
@@ -64,7 +63,7 @@ public class Integrate2DTest extends TestCase {
 		double[] dd = {0., 1., 2., 3., 4., 5.};
 		Dataset d = new DoubleDataset(dd).reshape(2,3);
 		Integrate2D int2d = new Integrate2D();
-		List<AbstractDataset> dsets = int2d.value(d);
+		List<? extends Dataset> dsets = int2d.value(d);
 
 		check1DArray(dsets.get(0), new double[] {3., 12.});
 		check1DArray(d.sum(1), new double[] {3., 12.});
@@ -82,7 +81,7 @@ public class Integrate2DTest extends TestCase {
 		double[] dd = {0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.};
 		Dataset d = new CompoundDoubleDataset(2, dd, new int[] {2,3});
 		Integrate2D int2d = new Integrate2D();
-		List<AbstractDataset> dsets = int2d.value(d);
+		List<? extends Dataset> dsets = int2d.value(d);
 
 		check1DArray(dsets.get(0), new double[] {6., 9., 24., 27.});
 		check1DArray(d.sum(1), new double[] {6., 9., 24., 27.});

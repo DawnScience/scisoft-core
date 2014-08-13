@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
@@ -52,7 +51,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
         
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
@@ -82,8 +81,8 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		}
 		mp.setMask(null);
 		mp.setClip(false);
-		List<AbstractDataset> dsets = mp.value(dc);
-		List<AbstractDataset> asets = mp.value(a);
+		List<? extends Dataset> dsets = mp.value(dc);
+		List<? extends Dataset> asets = mp.value(a);
 		for (int i = 0, imax = dsets.get(1).getSize(); i < imax; i++) {
 			double answer = rmin + i/dpp; 
 			double val = dsets.get(1).getDouble(i) / asets.get(1).getDouble(i);
@@ -114,8 +113,8 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		}
 		mp.setMask(null);
 		mp.setClip(true);
-		List<AbstractDataset> dsets = mp.value(dc);
-		List<AbstractDataset> asets = mp.value(a);
+		List<? extends Dataset> dsets = mp.value(dc);
+		List<? extends Dataset> asets = mp.value(a);
 		double dphi = Math.toDegrees(1./(rmax*dpp));
 		for (int i = 0, imax = dsets.get(0).getSize(); i < imax; i++) {
 			double answer = sphi + dphi*i; 
@@ -133,7 +132,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
 
 		double answer = 140.*140./2. - Math.PI*(50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc*10);
@@ -149,7 +148,7 @@ public class MapToPolarAndIntegrateTest extends TestCase {
 		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
 
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);

@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
@@ -54,7 +53,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setMask(mask);
 		mp.setClip(true);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
         
 		double answer = Math.PI*(200.*200. - 50.*50.)/8.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
@@ -86,8 +85,8 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setMask(null);
 		mp.setClip(false);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(dc);
-		List<AbstractDataset> asets = mp.value(a);
+		List<? extends Dataset> dsets = mp.value(dc);
+		List<? extends Dataset> asets = mp.value(a);
 		for (int i = 0, imax = dsets.get(1).getSize(); i < imax; i++) {
 			double answer = rmin + i; 
 			double val = dsets.get(1).getDouble(i) / asets.get(1).getDouble(i);
@@ -117,8 +116,8 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setMask(null);
 		mp.setClip(true);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(d);
-		List<AbstractDataset> asets = mp.value(a);
+		List<? extends Dataset> dsets = mp.value(d);
+		List<? extends Dataset> asets = mp.value(a);
 		double dphi = Math.toDegrees(1./rmax);
 		for (int i = 0; i < dsets.get(0).getShape()[0]; i++) {
 			double answer = sphi + dphi*i; 
@@ -139,7 +138,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setMask(mask);
 		mp.setClip(true);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
 
 		double answer = 140.*140./2. - Math.PI*(50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
@@ -157,7 +156,7 @@ public class MapToPolarAndSimpleIntegrateTest extends TestCase {
 		mp.setMask(mask);
 		mp.setClip(true);
 		mp.setInterpolate(interpolate);
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
 
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);

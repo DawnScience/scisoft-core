@@ -23,12 +23,9 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 /**
  * Test down-sampling class
@@ -46,7 +43,7 @@ public class DownsampleTest extends TestCase {
 	public void testDownsamplePoint() {
 		Downsample ds = new Downsample(DownsampleMode.POINT, new int[] {2, 3});
 
-		List<AbstractDataset> dsets = ds.value(d);
+		List<? extends Dataset> dsets = ds.value(d);
 		double[] answers = new double[] {0, 3, 12, 15};
 
 		Dataset a = dsets.get(0);
@@ -60,7 +57,7 @@ public class DownsampleTest extends TestCase {
 	public void testDownsampleMean() {
 		Downsample ds = new Downsample(DownsampleMode.MEAN, new int[] {2, 3});
 
-		List<AbstractDataset> dsets = ds.value(d);
+		List<? extends Dataset> dsets = ds.value(d);
 		double[] answers = new double[] {4, 7, 16, 19};
 
 		Dataset a = dsets.get(0);
@@ -74,7 +71,7 @@ public class DownsampleTest extends TestCase {
 	public void testDownsampleMax() {
 		Downsample ds = new Downsample(DownsampleMode.MAXIMUM, new int[] {2, 3});
 
-		List<AbstractDataset> dsets = ds.value(d);
+		List<? extends Dataset> dsets = ds.value(d);
 		double[] answers = new double[] {8, 11, 20, 23};
 
 		Dataset a = dsets.get(0);
@@ -88,7 +85,7 @@ public class DownsampleTest extends TestCase {
 	public void testDownsampleMin() {
 		Downsample ds = new Downsample(DownsampleMode.MINIMUM, new int[] {2, 3});
 
-		List<AbstractDataset> dsets = ds.value(d);
+		List<? extends Dataset> dsets = ds.value(d);
 		double[] answers = new double[] {0, 3, 12, 15};
 
 		Dataset a = dsets.get(0);
@@ -102,7 +99,7 @@ public class DownsampleTest extends TestCase {
 	public void testBreak() {
 		Downsample ds = new Downsample(DownsampleMode.MEAN, new int[] {5, 7, 2});
 
-		List<AbstractDataset> dsets = ds.value(d);
+		List<? extends Dataset> dsets = ds.value(d);
 		double[] answers = new double[] {11.5};
 
 		Dataset a = dsets.get(0);

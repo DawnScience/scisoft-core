@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -60,7 +59,7 @@ public class MapToPolarTest extends TestCase {
 	@Test
 	public void testMapToPolar2() {
 		MapToPolar mp = new MapToPolar(360,360,50.,0.,200.,45.); // eighth of annulus
-		List<AbstractDataset> dsets = mp.value(d);
+		List<? extends Dataset> dsets = mp.value(d);
 		Dataset pd = dsets.get(0);
 		Dataset upd = dsets.get(1); // new return with unit array
 

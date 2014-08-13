@@ -1582,7 +1582,7 @@ public class AbstractDatasetTest {
 		a.setError(5);
 		
 		// should be squared
-		Number ne = (Number) a.getErrorBuffer();
+		Number ne = (Number) a.getErrorBuffer().getObjectAbs(0);
 		assertEquals(25.0, ne.doubleValue(), 0.001);
 		
 		// now for pulling out the full error array
@@ -1591,7 +1591,7 @@ public class AbstractDatasetTest {
 		a.setError(Maths.multiply(error, 2));
 		
 		// should also be squared
-		Dataset ae = (Dataset) a.getErrorBuffer();
+		Dataset ae = a.getErrorBuffer();
 		assertEquals(100.0, ae.getDouble(0), 0.001);
 		assertEquals(100.0, ae.getDouble(50), 0.001);
 		assertEquals(100.0, ae.getDouble(99), 0.001);	

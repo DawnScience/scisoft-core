@@ -137,6 +137,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 			throw new ScanFileHolderException("Failed to augment data with metadata", e);
 		}
 
+		// TODO this should probably be done with an extention point, but possibly wait until an osgi gda server and jython.
 		// Add ARPES specific metadata where required.
 		if (dh.contains(NX_ARPES_ANALYSER_DATA)) {
 			ILazyDataset data = dh.getLazyDataset(NX_ARPES_ANALYSER_DATA);

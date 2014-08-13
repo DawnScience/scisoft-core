@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
@@ -13,6 +14,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 public class DiffractionMetadataImportOperation extends AbstractOperation {
 
 	DiffractionMetadataImportModel model;
+	IDiffractionMetadata metadata;
 	
 	@Override
 	public String getId() {
@@ -22,7 +24,15 @@ public class DiffractionMetadataImportOperation extends AbstractOperation {
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
-		slice.addMetadata((IDiffractionMetadata)model.getMetadata());
+		
+		if (metadata == null) {
+			NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(model.getFilePath());
+			IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(null);
+			if (!reader.isPartialRead()) throw new OperationException(this, "File does not contain metadata");
+			metadata = md;
+		}
+		
+		slice.addMetadata(metadata);
 		return new OperationData(slice);
 	}
 
@@ -36,14 +46,12 @@ public class DiffractionMetadataImportOperation extends AbstractOperation {
 
 	@Override
 	public OperationRank getInputRank() {
-		// TODO Auto-generated method stub
-		return OperationRank.ANY;
+		return OperationRank.TWO;
 	}
 
 	@Override
 	public OperationRank getOutputRank() {
-		// TODO Auto-generated method stub
-		return OperationRank.ANY;
+		return OperationRank.TWO;
 	}
 
 }

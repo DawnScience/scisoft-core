@@ -121,7 +121,7 @@ public class FunctionsTest {
 		// We do 10 Peak fits
 		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
-		final IRichDataset   rich = new RichDataset(aggy, null);
+		final RichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
@@ -166,7 +166,7 @@ public class FunctionsTest {
 		// We do 10 Peak fits
 		final AbstractDataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
-		final IRichDataset   rich = new RichDataset(aggy, null);
+		final RichDataset   rich = new RichDataset(aggy, null);
 		rich.setSlicing("all", "");
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.

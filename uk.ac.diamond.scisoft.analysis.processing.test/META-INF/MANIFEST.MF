@@ -7,7 +7,10 @@ Bundle-Vendor: Diamond Light Source
 Fragment-Host: uk.ac.diamond.scisoft.analysis.processing
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.dawnsci.hdf5,
+Import-Package: org.dawb.common.services,
+ org.dawb.common.services.conversion,
+ org.dawnsci.conversion,
+ org.eclipse.dawnsci.hdf5,
  org.slf4j;version="1.7.6",
  uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.metadata

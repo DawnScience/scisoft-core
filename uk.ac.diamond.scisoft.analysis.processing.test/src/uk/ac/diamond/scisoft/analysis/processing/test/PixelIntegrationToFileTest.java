@@ -84,7 +84,7 @@ private static IOperationService service;
 				return innerDS.getSlice(mon, start, stop, step);
 			}
 		});
-		final IRichDataset   rand = new RichDataset(lz, null, null, null, null);
+		final RichDataset   rand = new RichDataset(lz, null, null, null, null);
 		Map<Integer, String> slMap = new HashMap<Integer, String>();
 		slMap.put(0, "all");
 ////		slMap.put(1, "all");
@@ -112,12 +112,7 @@ private static IOperationService service;
 		
 		lz.addMetadata(am);
 		
-		
-		//Import metadata
-		final IOperation di = service.findFirst("Diffraction");
-		DiffractionMetadataImportModel model = new DiffractionMetadataImportModel();
-		model.setMetadata(new DiffractionMetadata("", dp, ce));
-		di.setModel(model);
+		final IOperation di = new DiffractionMetadataTestImportOperation();
 		
 		//pixel integration
 		final IOperation azi = new PixelIntegrationOperation();
@@ -129,11 +124,10 @@ private static IOperationService service;
 			final File tmp = File.createTempFile("Test", ".h5");
 			tmp.deleteOnExit();
 			tmp.createNewFile();
-			final IHierarchicalDataFile file = HierarchicalDataFactory.getWriter(tmp.getAbsolutePath());
 			
 			long time =  System.currentTimeMillis();
 			
-			service.executeSeries(rand, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(file), di,azi);
+			service.executeSeries(rand, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), di,azi);
 			
 			System.out.println( System.currentTimeMillis()  - time);
 		} catch (Exception e) {

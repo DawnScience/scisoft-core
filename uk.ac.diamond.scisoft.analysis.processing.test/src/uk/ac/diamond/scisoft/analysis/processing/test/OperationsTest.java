@@ -118,7 +118,7 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
@@ -158,7 +158,7 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
@@ -213,7 +213,7 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
@@ -263,7 +263,7 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {

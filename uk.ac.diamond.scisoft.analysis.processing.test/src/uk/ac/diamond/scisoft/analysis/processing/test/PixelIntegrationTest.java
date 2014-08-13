@@ -56,9 +56,6 @@ public class PixelIntegrationTest {
 	@Test
 	public void testIntegration() throws Exception {
 		
-		DetectorProperties dp = DetectorProperties.getDefaultDetectorProperties(1000,1000);
-		DiffractionCrystalEnvironment ce = new DiffractionCrystalEnvironment(1);
-		
 		int[] dsShape = new int[]{24, 1000, 1000};
 		
 		final IDataset innerDS = Random.rand(0.0, 1000.0, 24, 1000, 1000);
@@ -83,7 +80,7 @@ public class PixelIntegrationTest {
 			}
 		});
 		
-		final IRichDataset   rand = new RichDataset(lz, null, null, null, null);
+		final RichDataset   rand = new RichDataset(lz, null, null, null, null);
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IDataset axDataset1 = DatasetFactory.createRange(24,AbstractDataset.INT16);
@@ -110,10 +107,7 @@ public class PixelIntegrationTest {
 		lz.addMetadata(new MaskMetadataImpl(masDataset));
 		
 		//Import metadata
-		final IOperation di = service.findFirst("Diffraction");
-		DiffractionMetadataImportModel model = new DiffractionMetadataImportModel();
-		model.setMetadata(new DiffractionMetadata("", dp, ce));
-		di.setModel(model);
+		final IOperation di = new DiffractionMetadataTestImportOperation();
 		
 		//pixel integration
 		final IOperation azi = new PixelIntegrationOperation();

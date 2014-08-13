@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.dawnsci.hdf5.H5Utils;
+import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -31,10 +32,16 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private Map<Integer, String> axesNames = new HashMap<Integer,String>();
 	
 	private int count = 0;
+	private String filePath;
 	IHierarchicalDataFile file;
 	
-	public HierarchicalFileExecutionVisitor(IHierarchicalDataFile file) {
-		this.file = file;
+	public HierarchicalFileExecutionVisitor(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	@Override
+	public void init() throws Exception {
+		file = HierarchicalDataFactory.getWriter(filePath);
 	}
 	
 	private void initGroups() throws Exception {

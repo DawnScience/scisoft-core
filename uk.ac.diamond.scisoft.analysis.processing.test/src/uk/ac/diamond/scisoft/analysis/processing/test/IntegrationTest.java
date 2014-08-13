@@ -53,7 +53,7 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation maskOp = getMaskOperation(mask);
@@ -90,7 +90,7 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
 				
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
@@ -140,7 +140,7 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
 				
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		

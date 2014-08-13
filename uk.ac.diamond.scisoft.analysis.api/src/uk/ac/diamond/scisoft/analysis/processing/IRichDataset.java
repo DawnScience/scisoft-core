@@ -16,13 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import java.util.List;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
  * This dataset holds several bits of information about scientific data.
@@ -30,42 +26,14 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
  * The class contains methods for getting/setting the data components and
  * operating on the rich dataset.
  */
-public interface IRichDataset extends ILazyDataset {
+public interface IRichDataset {
 
-	// TODO add methods operating on the rich data for instance:
-	// 
-	// o get values taking mask into consideration
-	// o process mask over all data or return an ILaztDataset implementation which will mask on the fly
-	// o get value from axis location (axis lookup followed by using those indices with real data)
-	// etc.
-	
-	
+	// TODO much of what rich dataset performed is now handled by the metadatatype classes,
+	// should probably remove it
 	
 	// Boiler plate getters and setters for data
 	public ILazyDataset getData();
 
-	public void setData(ILazyDataset data);
-
-	public List<IDataset> getAxes();
-
-	public void setAxes(List<IDataset> axes);
-	
-	public List<IROI> getRegions();
-
-	public void setRegions(List<IROI> rois);
-
-	public ILazyDataset getMask();
-
-	public void setMask(ILazyDataset mask);
-
-	public IMetaData getMeta()  throws Exception;
-
-	public void setMeta(IMetaData meta);
-
 	public Map<Integer, String> getSlicing();
-
-	public void setSlicing(Map<Integer, String> slicing);
-
-	public void setSlicing(String... slicing);
 
 }

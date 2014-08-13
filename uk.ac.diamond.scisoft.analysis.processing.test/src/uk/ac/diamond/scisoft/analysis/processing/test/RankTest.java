@@ -58,7 +58,7 @@ public class RankTest {
 			}
 		});
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
 		rand.setSlicing("all");
 		
 		count=0;
@@ -102,7 +102,7 @@ public class RankTest {
 		try {
 			final IOperation box      = service.findFirst("box");
 
-			final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
+			final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
 			rand.setSlicing("all", "500");
 					
 			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
@@ -125,7 +125,7 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi = service.findFirst("azimuthal");
@@ -176,7 +176,7 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi      = service.findFirst("azimuthal");
@@ -261,7 +261,7 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
+		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation add      = service.findFirst("add");

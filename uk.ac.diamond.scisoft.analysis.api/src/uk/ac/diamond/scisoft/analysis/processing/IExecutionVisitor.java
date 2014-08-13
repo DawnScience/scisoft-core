@@ -28,6 +28,8 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  */
 public interface IExecutionVisitor {
 	
+	public void init() throws Exception;
+	
     /**
      * Called when an execution in the pipeline has run, before the end	but after a given operation.
      * Provides the option of saving the steps information to a file if required.
@@ -82,6 +84,12 @@ public interface IExecutionVisitor {
 		public boolean isRequiredToModifyData(IOperation operation) {
 			// TODO Auto-generated method stub
 			return true;
+		}
+
+		@Override
+		public void init() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

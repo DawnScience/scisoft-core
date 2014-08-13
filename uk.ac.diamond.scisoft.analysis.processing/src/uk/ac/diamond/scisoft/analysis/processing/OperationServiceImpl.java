@@ -76,7 +76,7 @@ public class OperationServiceImpl implements IOperationService {
 		}
 		
 		//detemine data axes to populate origin metadata
-		final int[] dataDims = Slicer.getDataDimensions(dataset.getShape(), slicing);
+		final int[] dataDims = Slicer.getDataDimensions(dataset.getData().getShape(), slicing);
 			
 		try {
 			// We check the pipeline ranks are ok
@@ -102,6 +102,8 @@ public class OperationServiceImpl implements IOperationService {
 					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
 				}
 			};
+			
+			visitor.init();
 			
 			// Jakes slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {
@@ -159,19 +161,19 @@ public class OperationServiceImpl implements IOperationService {
         }
 	}
 
-	protected IDataset getMask(IRichDataset dataset, IDataset currentSlice, Slice[] slices) {
-		
-		ILazyDataset lmask = dataset.getMask();
-		if (lmask==null) return null;
-		
-		ILazyDataset fullData = dataset.getData();
-		if (isCompatible(fullData.getShape(), lmask.getShape())) {
-			return lmask.getSlice(slices);
-		} else if (isCompatible(currentSlice.getShape(), lmask.getShape())) {
-			return lmask.getSlice((Slice)null);
-		}
-		throw new OperationException(null, "The mask is neither the shape of the full data or the shape of the requested slice!");
-	}
+//	protected IDataset getMask(IRichDataset dataset, IDataset currentSlice, Slice[] slices) {
+//		
+//		ILazyDataset lmask = dataset.getMask();
+//		if (lmask==null) return null;
+//		
+//		ILazyDataset fullData = dataset.getData();
+//		if (isCompatible(fullData.getShape(), lmask.getShape())) {
+//			return lmask.getSlice(slices);
+//		} else if (isCompatible(currentSlice.getShape(), lmask.getShape())) {
+//			return lmask.getSlice((Slice)null);
+//		}
+//		throw new OperationException(null, "The mask is neither the shape of the full data or the shape of the requested slice!");
+//	}
 	
 	protected static boolean isCompatible(final int[] ashape, final int[] bshape) {
 

@@ -26,7 +26,7 @@ import org.nexusformat.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
@@ -76,7 +76,7 @@ public class SimpleNexusSaver implements IFileSaver {
 				if (duplicate) {
 					logger.warn("Duplicate headings found - only writing the first one.");
 				} else {
-					AbstractDataset data = DatasetUtils.convertToAbstractDataset(dh.getDataset(headings[i]));
+					Dataset data = DatasetUtils.convertToDataset(dh.getDataset(headings[i]));
 					int[] shape = data.getShape();
 					file.makedata(headings[i], Nexus.getGroupDataType(data.getDtype()), shape.length, shape);
 					file.opendata(headings[i]);

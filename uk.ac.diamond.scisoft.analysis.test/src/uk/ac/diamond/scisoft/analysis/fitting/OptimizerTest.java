@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
@@ -54,8 +54,8 @@ public class OptimizerTest  {
 		int[] start = { iniPeak .getIndexOfDatasetAtMinPos() };
 		int[] stop = { iniPeak.getIndexOfDatasetAtMaxPos() + 1 };
 		int[] step = { 1 };
-		AbstractDataset y = gaussian.getSlice(start, stop, step);
-		AbstractDataset x = Generic1DDatasetCreator.xAxis.getSlice(start, stop, step);
+		Dataset y = gaussian.getSlice(start, stop, step);
+		Dataset x = Generic1DDatasetCreator.xAxis.getSlice(start, stop, step);
 		double lowOffset = y.min().doubleValue();
 		double highOffset = (Double) y.mean();
 		Offset baseline = new Offset(lowOffset, highOffset);

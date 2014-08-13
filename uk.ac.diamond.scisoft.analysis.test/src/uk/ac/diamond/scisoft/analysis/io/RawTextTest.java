@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
@@ -32,7 +32,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 public class RawTextTest {
 	final static String testFileFolder = "testfiles/images/";
 	static String testScratchDirectoryName = null;
-	AbstractDataset data;
+	Dataset data;
 	int sizex = 240, sizey = 240, range = sizex * sizey;
 	String filePath = "TestData.dat";
 
@@ -73,7 +73,7 @@ public class RawTextTest {
 	@Test
 	public void testLoadFile() throws ScanFileHolderException {
 		DataHolder dh = new PNGLoader(testFileFolder + "test.png").loadFile();
-		AbstractDataset a = dh.getDataset(0);
+		Dataset a = dh.getDataset(0);
 		try {
 			new RawTextSaver(testScratchDirectoryName + "test.txt").saveFile(dh);
 		} catch (Exception e) {

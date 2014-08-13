@@ -1,8 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.lang.reflect.InvocationTargetException;
-
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesian;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -10,8 +8,6 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 
 public class RotatedCartesianBox extends AbstractOperation {
@@ -32,7 +28,7 @@ public class RotatedCartesianBox extends AbstractOperation {
 			throw new OperationException(this, e);
 		}
 		MapToRotatedCartesian map = new MapToRotatedCartesian(roi);
-		AbstractDataset dataRegion = map.value(slice).get(0);
+		Dataset dataRegion = map.value(slice).get(0);
 		
 		OperationData result = new OperationData(dataRegion);
 		

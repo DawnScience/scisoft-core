@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -41,7 +40,7 @@ public abstract class AbstractPixelIntegrationOperation extends
 		ILazyDataset mask = getFirstMask(slice);
 		if (mask != null) {
 			IDataset m = mask.getSlice().squeeze();
-			integrator.setMask((AbstractDataset)m);
+			integrator.setMask((Dataset)m);
 		}
 		
 		ILazyDataset[] axes = getFirstAxes(slice);

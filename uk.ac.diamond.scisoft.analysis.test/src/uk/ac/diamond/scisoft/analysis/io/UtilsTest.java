@@ -28,7 +28,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 
 /**
@@ -212,7 +212,7 @@ public class UtilsTest {
 	@Test
 	public void testParsingTiming() {
 
-		AbstractDataset a;
+		Dataset a;
 		Random.seed(12371);
 		int LENGTH = 10240;
 		a = Random.randint(-2000000000, 2000000000, new int[] {LENGTH});

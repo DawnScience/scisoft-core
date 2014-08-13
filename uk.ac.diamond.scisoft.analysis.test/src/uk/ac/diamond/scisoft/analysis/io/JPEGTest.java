@@ -24,7 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -35,7 +35,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
  */
 public class JPEGTest {
 	static String testScratchDirectoryName = null;
-	AbstractDataset data;
+	Dataset data;
 	DataHolder dh = new DataHolder();
 	DataHolder dhLoad = new DataHolder();
 	int sizex = 500, sizey = 500, range = sizex * sizey;
@@ -74,7 +74,7 @@ public class JPEGTest {
 
 		DataHolder dhb = new JPEGLoader(testScratchDirectoryName + filePath).loadFile();
 
-		AbstractDataset x = dhb.getDataset(0);
+		Dataset x = dhb.getDataset(0);
 		Number min = x.min();
 		Number ptp = x.peakToPeak();
 		x = Maths.multiply(Maths.subtract(x, min), data.max().doubleValue()/ptp.doubleValue());
@@ -150,7 +150,7 @@ public class JPEGTest {
 		new JPEGSaver(testScratchDirectoryName + filePath).saveFile(dha);
 		DataHolder dhb = new JPEGLoader(testScratchDirectoryName + filePath).loadFile();
 
-		AbstractDataset x = dhb.getDataset(0);
+		Dataset x = dhb.getDataset(0);
 		Number min = x.min();
 		Number ptp = x.peakToPeak();
 		x = Maths.multiply(Maths.subtract(x, min), data.max().doubleValue()/ptp.doubleValue());
@@ -173,7 +173,7 @@ public class JPEGTest {
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
 		DataHolder dhb = new JPEGLoader(testScratchDirectoryName + filePath).loadFile();
 
-		AbstractDataset x = DatasetUtils.norm(data);
+		Dataset x = DatasetUtils.norm(data);
 		x.imultiply(255);
 
 		assertTrue("Saved and loaded datasets are not equal", Comparisons.allTrue(Comparisons.almostEqualTo(x, dhb.getDataset(0), 1e-5, 2)));

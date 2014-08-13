@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.roi.GridROI;
 import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
@@ -38,7 +38,7 @@ public class ROIProfileTest {
 	public void testLine() {
 		DoubleDataset input = new DoubleDataset(new double[] { 1.0, 2.0, 3.0, 4.0 }, 2, 2);
 		LinearROI roi = new LinearROI(new double[] {0.0, 0.0}, new double[] {0.0, 1.0});
-		AbstractDataset[] sets = ROIProfile.line(input, roi, 1.0);
+		Dataset[] sets = ROIProfile.line(input, roi, 1.0);
 		for (int i = 0; i < sets.length; i++) {
 			DoubleDataset s = (DoubleDataset) sets[i];
 			if (s != null) {
@@ -55,7 +55,7 @@ public class ROIProfileTest {
 	public void testBox() {
 		DoubleDataset input = new DoubleDataset(new double[] { 0.0, 1.0, 2.0, 3.0 }, 2, 2);
 		RectangularROI roi = new RectangularROI(0, 0, 1, 1, 0);
-		AbstractDataset[] sets = ROIProfile.box(input, roi);
+		Dataset[] sets = ROIProfile.box(input, roi);
 		for (int i = 0; i < sets.length; i++) {
 			DoubleDataset s = (DoubleDataset) sets[i];
 			if (s != null) {
@@ -71,7 +71,7 @@ public class ROIProfileTest {
 	public void testSector() {
 		DoubleDataset input = new DoubleDataset(new double[] { 0.0, 1.0, 1.0, 1.0 }, 2, 2);
 		SectorROI roi = new SectorROI(0, 0, 0, 3, 0, 2*Math.PI);
-		AbstractDataset[] sets = ROIProfile.sector(input, roi);
+		Dataset[] sets = ROIProfile.sector(input, roi);
 		for (int i = 0; i < sets.length; i++) {
 			DoubleDataset s = (DoubleDataset) sets[i];
 			if (s != null) {
@@ -87,7 +87,7 @@ public class ROIProfileTest {
 	public void testGrid() {
 		DoubleDataset input = new DoubleDataset(new double[] { 0.0, 1.0, 2.0, 3.0 }, 2, 2);
 		RectangularROI roi = new GridROI(0, 0, 1, 1, 0, 10, 10, false, false, new GridPreferences());
-		AbstractDataset[] sets = ROIProfile.box(input, roi);
+		Dataset[] sets = ROIProfile.box(input, roi);
 		for (int i = 0; i < sets.length; i++) {
 			DoubleDataset s = (DoubleDataset) sets[i];
 			if (s != null) {

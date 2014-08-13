@@ -123,8 +123,8 @@ public class Nexus {
 	 * @param keepBitWidth if true, does not promoted unsigned types to wider (signed) Java primitive type 
 	 * @return dataset
 	 */
-	static public AbstractDataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
-		AbstractDataset ds = null;
+	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
+		Dataset ds = null;
 		switch (groupData.type) {
 		case NexusFile.NX_FLOAT64:
 			double[] dData = (double[]) groupData.getBuffer();
@@ -183,7 +183,7 @@ public class Nexus {
 	 * @return group data
 	 */
 	public static NexusGroupData createNexusGroupData(IDataset data) {
-		AbstractDataset ad = DatasetUtils.convertToAbstractDataset(data);
+		Dataset ad = DatasetUtils.convertToDataset(data);
 		return new NexusGroupData(ad.getShape(), getGroupDataType(ad.getDtype()), ad.getBuffer());
 	}
 
@@ -234,7 +234,7 @@ public class Nexus {
 				}
 
 				@Override
-				public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+				public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 					final int rank = shape.length;
 					int[] lstart, lstop, lstep;
 
@@ -291,7 +291,7 @@ public class Nexus {
 						size = newShape;
 					}
 
-					AbstractDataset d = null;
+					Dataset d = null;
 					try {
 						NexusGroupData ngd = null;
 						if (!Arrays.equals(trueShape, shape)) { // if shape was squeezed then need to translate to true slice
@@ -333,7 +333,7 @@ public class Nexus {
 
 			groupDataset = new LazyDataset(name, getDType(groupData.type), trueShape.clone(), l);
 		} else {
-			AbstractDataset dataset = createDataset(groupData, false);
+			Dataset dataset = createDataset(groupData, false);
 			dataset.setName(name);
 			groupDataset = dataset;
 		}

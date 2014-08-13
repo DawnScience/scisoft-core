@@ -63,7 +63,7 @@ public class TempLocationTest {
 	 */
 	private File flattenDataSetAndReturnContainingFolder(IRootFlattener root) throws IOException {
 		Object flatten = root.flatten(DatasetFactory.createRange(100, Dataset.INT));
-		// check the internal form of AbstractDataset to see where the file is
+		// check the internal form of Dataset to see where the file is
 		@SuppressWarnings("unchecked")
 		Map<String, Object> flatAD = (Map<String, Object>) flatten;
 		File loc = new File((String) flatAD.get(AbstractDatasetHelper.FILENAME));

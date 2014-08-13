@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -37,7 +37,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 public class PNGTest {
 	final static String TestFileFolder = "testfiles/images/";
 	static String testScratchDirectoryName = null;
-	AbstractDataset data;
+	Dataset data;
 	DataHolder dh = new DataHolder();
 	int sizex = 500, sizey = 500, range = sizex * sizey;
 
@@ -67,7 +67,7 @@ public class PNGTest {
 	public void testSaveFile() throws Exception {
 		String filePath = "testSaveFile.png";
 		DataHolder dha = new DataHolder();
-		AbstractDataset loadData;
+		Dataset loadData;
 		data = DatasetUtils.linSpace(0, 32000, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
@@ -155,7 +155,7 @@ public class PNGTest {
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
 		DataHolder dhb = new PNGLoader(testScratchDirectoryName + filePath, false, true).loadFile();
 
-		AbstractDataset loadData = dhb.getDataset(0);
+		Dataset loadData = dhb.getDataset(0);
 
 		assertTrue("Saved and loaded datasets are not equal", Comparisons.allTrue(Comparisons.equalTo(loadData, data)));
 	}
@@ -175,7 +175,7 @@ public class PNGTest {
 		new PNGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
 		DataHolder dhb = new PNGLoader(testScratchDirectoryName + filePath, false, false).loadFile();
 
-		AbstractDataset x = dhb.getDataset(0);
+		Dataset x = dhb.getDataset(0);
 		Number min = x.min();
 		Number ptp = x.peakToPeak();
 		x = Maths.multiply(Maths.subtract(x, min), data.max().doubleValue()/ptp.doubleValue());

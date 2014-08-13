@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  * RubyLoaderTest Class
@@ -62,7 +62,7 @@ public class CrysalisLoaderTest {
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder loader = new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 	}
 }

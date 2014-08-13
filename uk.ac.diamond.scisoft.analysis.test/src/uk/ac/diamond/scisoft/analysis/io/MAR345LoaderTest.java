@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
@@ -66,7 +66,7 @@ public class MAR345LoaderTest {
 	public void testLoadFile() throws Exception {
 		DataHolder dh = new MAR345Loader(testfile).loadFile();
 
-		AbstractDataset image = dh.getDataset(0);
+		Dataset image = dh.getDataset(0);
 		checkImage(image);
 	}
 

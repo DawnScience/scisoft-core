@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 
@@ -51,7 +51,7 @@ public class PilatusEdfLoaderTest {
 		IDataHolder dataHolder = LoaderFactory.getData(filePath, null);		 		
 	    if (dataHolder.toLazyMap().size()!=1) throw new Exception("Should only be one data set");
 
-	    final AbstractDataset set = (AbstractDataset)dataHolder.toLazyMap().values().iterator().next();
+	    final Dataset set = (Dataset)dataHolder.toLazyMap().values().iterator().next();
 	    final int[] shape = set.getShape();
 	    if (shape[0]!=2048) throw new Exception("Wrong size of dimension 0, should be 2048!");
 	    if (shape[1]!=2048) throw new Exception("Wrong size of dimension 1, should be 2048!");
@@ -128,7 +128,7 @@ public class PilatusEdfLoaderTest {
 		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "ESPIA FRELON Image 6105");			
 		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "6105");
 		
-		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
+		Dataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0),      98.0, 0.0);
 		assertEquals(data.getDouble(2047, 2047),199.0, 0.0);
 	}
@@ -151,7 +151,7 @@ public class PilatusEdfLoaderTest {
 		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "# Pixel_size 172e-6 m x 172e-6 m");			
 		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "0");
 
-		AbstractDataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
+		Dataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		// Check the first 5 data points
 		assertEquals(data.getDouble(0, 0), 38.0, 0.0);
 		assertEquals(data.getDouble(0, 1), 38.0, 0.0);

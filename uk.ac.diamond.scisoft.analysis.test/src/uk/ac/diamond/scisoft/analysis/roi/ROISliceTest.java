@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -79,7 +78,7 @@ public class ROISliceTest {
 		
 		Dataset out0 = (Dataset) ROISliceUtils.getAxisDatasetTrapzSum(input, axis3,roi, slices, order[0], 1);
 		
-		//Dataset out0 = (AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum(axis0, input, roi, 0);
+		//Dataset out0 = (Dataset)ROISliceUtils.getAxisDatasetTrapzSum(axis0, input, roi, 0);
 		Assert.assertArrayEquals(new int[]{20, 30},out0.getShape());
 		Assert.assertEquals(5.0, out0.getDouble(0, 0),0);
 		

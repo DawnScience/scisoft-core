@@ -41,10 +41,10 @@ class typednone(object):
 
 class abstractdatasetdescriptor(object):
     '''
-    Use this class to describe an AbstractDataset or ndarray that already resides on disk and can be loaded 
+    Use this class to describe a Dataset or ndarray that already resides on disk and can be loaded 
     using the file loaders. This object is flattened to a flattened representation that is unflattened 
     by AbstractDatasetHelper.
-    The unflattened form of this type is an AbstractDataset
+    The unflattened form of this type is a Dataset
     '''
     def __init__(self, filename=None, deleteAfterLoad=False, index=None, name=None):
         '''

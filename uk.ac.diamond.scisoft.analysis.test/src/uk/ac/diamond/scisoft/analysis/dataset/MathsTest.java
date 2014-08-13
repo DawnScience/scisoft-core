@@ -1725,7 +1725,7 @@ public class MathsTest {
 		
 		data = new double[] {1, 2, 6, 3, 4, 5};
 		a = new DoubleDataset(data, 2, 3);
-		List<AbstractDataset> l = Maths.gradient(a);
+		List<? extends Dataset> l = Maths.gradient(a);
 		tdata = new double[] { 2., 2., -1., 2., 2., -1.};
 		ta = new DoubleDataset(tdata, 2, 3);
 		checkDatasets(null, null, l.get(0), ta);

@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  * Tests the ADSC image loader with file in TestFiles
@@ -75,7 +75,7 @@ public class ADSCImageTest {
 	@Test
 	public void testMetaDataDate() throws Exception{
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		IExtendedMetadata metadata = (IExtendedMetadata) data.getMetadata();
 		Date date = metadata.getCreation();
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
@@ -98,7 +98,7 @@ public class ADSCImageTest {
 	@Test
 	public void testFileParsedMetaData() throws Exception{
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		IExtendedMetadata metadata = (IExtendedMetadata) data.getMetadata();
 		System.out.println("File path is "+metadata.getFullPath());
 		System.out.println("File size is "+metadata.getFileSize()+ " in bytes");
@@ -109,7 +109,7 @@ public class ADSCImageTest {
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
-		AbstractDataset data;
+		Dataset data;
 		IDiffractionMetadata md, cmd;
 		data = loader.getDataset(0);
 		md = (IDiffractionMetadata) data.getMetadata();
@@ -129,7 +129,7 @@ public class ADSCImageTest {
 	public void testLoadWithMissingMetadata() throws Exception {
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + File.separator + "ADSCImageTest"+File.separator+"F6-invalidmd.img").loadFile();
 		Assert.assertEquals("Metadata", null, loader.getMetadata());
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		Assert.assertEquals("Data", 3072, data.getShapeRef()[0]);
 		Assert.assertEquals("Data", 3072, data.getShapeRef()[1]);
 	}

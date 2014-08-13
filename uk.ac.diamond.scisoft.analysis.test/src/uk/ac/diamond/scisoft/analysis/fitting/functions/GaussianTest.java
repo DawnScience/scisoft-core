@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
@@ -44,8 +43,8 @@ public class GaussianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		AbstractDataset x = DatasetUtils.linSpace(0, 46, 200, Dataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
+		Dataset x = DatasetUtils.linSpace(0, 46, 200, Dataset.FLOAT64);
+		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 
 		DoubleDataset xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 2});

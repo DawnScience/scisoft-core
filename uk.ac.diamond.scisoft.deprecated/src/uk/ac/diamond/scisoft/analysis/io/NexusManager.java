@@ -23,7 +23,7 @@ import gda.data.nexus.tree.NexusTreeTopNode;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
 /**
@@ -46,8 +46,8 @@ public class NexusManager {
 	 * @param name
 	 * @return list of datasets (can be empty)
 	 */
-	public List<AbstractDataset> getDatasets(String name) {
-		List<AbstractDataset> datasets = new ArrayList<AbstractDataset>();
+	public List<Dataset> getDatasets(String name) {
+		List<Dataset> datasets = new ArrayList<Dataset>();
 
 		getDatasets(name, nexusTreeTopNode, datasets);
 
@@ -67,7 +67,7 @@ public class NexusManager {
 	 * @param datasets
 	 *            The list to which the dataset shall be added
 	 */
-	private void getDatasets(String name, INexusTree node, List<AbstractDataset> datasets) {
+	private void getDatasets(String name, INexusTree node, List<Dataset> datasets) {
 
 		for (int i = 0; i < node.getNumberOfChildNodes(); i++) {
 			// if the node has the name we are looking for, then try to get the data out of it

@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.nexusformat.NexusException;
 import org.xml.sax.InputSource;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 public class NexusLoaderTests {
 	final static String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
@@ -65,9 +65,9 @@ public class NexusLoaderTests {
 		wanted.add("Energy");
 		NexusLoader nl = new NexusLoader(TestFileFolder + "FeKedge_1_103.nxs", wanted);
 		DataHolder dh = nl.loadFile();
-		AbstractDataset energyDs = dh.getDataset("Energy");
+		Dataset energyDs = dh.getDataset("Energy");
 		Assert.assertEquals(561, energyDs.getSize());
-		AbstractDataset ds2 = dh.getDataset("xspress2system_element_9.data");
+		Dataset ds2 = dh.getDataset("xspress2system_element_9.data");
 		Assert.assertEquals(5, ds2.getShape().length);
 
 		Map<String, INexusTree> trees = NexusLoader.getDatasetNexusTrees(TestFileFolder + "FeKedge_1_103.nxs", null, false, null);

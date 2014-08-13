@@ -191,7 +191,7 @@ class passThroughHelper(object):
         return self.canflatten(obj)
 
 class ndArrayHelper(flatteningHelper):
-    TYPE_NAME = "uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset"
+    TYPE_NAME = "uk.ac.diamond.scisoft.analysis.dataset.Dataset"
     FILENAME = "filename"
     DELETEFILEAFTERLOAD = "deletefile"
     INDEX = "index"

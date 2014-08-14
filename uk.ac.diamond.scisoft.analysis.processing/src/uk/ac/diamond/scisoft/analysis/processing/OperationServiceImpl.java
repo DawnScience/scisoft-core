@@ -121,6 +121,14 @@ public class OperationServiceImpl implements IOperationService {
 			throw o;
 		} catch (Exception e) {
 			throw new OperationException(null, e);
+		} finally {
+			if (visitor != null)
+				try {
+					visitor.close();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 	}
 

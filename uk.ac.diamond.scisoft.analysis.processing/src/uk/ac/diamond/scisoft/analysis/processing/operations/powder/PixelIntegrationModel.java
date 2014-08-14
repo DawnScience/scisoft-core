@@ -7,6 +7,8 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 
 	boolean isPixelSplitting = false;
 	int numberOfBins = 1000;
+	
+	@OperationModelField(hint="Please set two values, start and end.\nThe values should match the axis selected (i.e. q, 2 theta, pixel).\n\nIf you delete the text, the range is cleared and the whole image used.")
 	double[] radialRange = null;
 	
 	@OperationModelField(min=0, max=360, unit="°")

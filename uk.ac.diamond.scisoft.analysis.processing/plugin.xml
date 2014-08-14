@@ -79,12 +79,21 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation"
-            description="Integrate a 2D powder image"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
+            description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern"
             icon="icons/PowderIntegration.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel"
-            name="Pixel Integration of 2D powder image"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="Azimuthal Integration (Full Image)"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
+            description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle"
+            icon="icons/PowderIntegration.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="Radial Integration (Full Image)"
             visible="true">
       </operation>
    </extension>

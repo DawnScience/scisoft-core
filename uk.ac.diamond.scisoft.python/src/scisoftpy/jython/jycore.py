@@ -84,7 +84,7 @@ cfloat32 = lambda e : _dtype(_ds.ARRAYFLOAT32, e, 'cfloat32')
 cfloat64 = lambda e : _dtype(_ds.ARRAYFLOAT64, e, 'cfloat64')
 complex64 = _dtype(_ds.COMPLEX64, name='complex64')
 complex128 = _dtype(_ds.COMPLEX128, name='complex128')
-
+string = _dtype(_ds.STRING, name='S')
 rgb = _dtype(_ds.RGB, 3, 'rgb')
 
 # tuple of floating point types
@@ -95,7 +95,7 @@ __jdtype2jytype = { _ds.BOOL : bool, _ds.INT8 : int8, _ds.INT16 : int16,
                     _ds.INT32 : int32, _ds.INT64 : int64,
                     _ds.FLOAT32 : float32, _ds.FLOAT64 : float64,
                     _ds.COMPLEX64 : complex64, _ds.COMPLEX128 : complex128,
-                    _ds.RGB : rgb }
+                    _ds.STRING : string, _ds.RGB : rgb }
 
 __jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
                     _ds.ARRAYINT32 : cint32, _ds.ARRAYINT64 : cint64,

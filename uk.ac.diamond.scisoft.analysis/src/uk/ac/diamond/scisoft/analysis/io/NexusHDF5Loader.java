@@ -121,12 +121,24 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 					// look through the additional metadata for axis information
 					// TODO Should take @primary into account when adding axes.
+					// TODO also this only deals with 1D axis at the moment.
 					for (String goodKey : additionalMetadata) {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");
 							ILazyDataset axisData = dh.getLazyDataset(axisName);
 							int axisDim = Integer.parseInt((String) dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
-							axesMetadata.addAxis(axisData, axisDim);
+							ILazyDataset axisDataset = axisData.clone();
+
+							int[] shape = new int[data.getShape().length];
+							for (int i = 0; i < shape.length ; i++) {
+								if (i == axisDim) {
+									shape[i] = axisData.getShape()[0];
+								} else {
+									shape[i] = 1;
+								}
+							}
+							axisDataset.setShape(shape);
+							axesMetadata.addAxis(axisDataset, axisDim);
 						}
 					}
 

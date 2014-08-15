@@ -288,16 +288,6 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		processAnnotatedMetadata(new MdsSlice(start, stop, step, oShape));
 	}
 
-	/**
-	 * Reshape all datasets in metadata that are annotated by @Reshapeable. Call this on the new sliced
-	 * dataset after cloning the metadata
-	 * 
-	 * @param newShape
-	 */
-	protected void reshapeMetadata(final int[] newShape) {
-		processAnnotatedMetadata(new MdsReshape(newShape));
-	}
-
 	@SuppressWarnings("unchecked")
 	private void processAnnotatedMetadata(MetadatasetAnnotationOperation op) {
 		if (metadata == null)

@@ -33,6 +33,13 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 	@Override
 	protected void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims, List<Dataset> out) {
 
+		if (axes == null) {
+			AxesMetadataImpl amd = new AxesMetadataImpl(dataDims[0]+1);
+			amd.setAxis(dataDims[0], new ILazyDataset[] {out.get(0)});
+			data.setMetadata(amd);
+			return;
+		}
+		
 		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length-1);
 
 		boolean first = true;
@@ -54,6 +61,8 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 			}
 		}
 
+		data.setMetadata(amd);
+		
 	}
 
 	@Override

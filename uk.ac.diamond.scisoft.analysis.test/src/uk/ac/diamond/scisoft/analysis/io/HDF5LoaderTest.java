@@ -30,7 +30,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -245,7 +245,7 @@ public class HDF5LoaderTest {
 		assertTrue("Dataset node", nd instanceof HDF5Dataset);
 		HDF5Dataset dn = (HDF5Dataset) nd;
 		assertTrue("String dataset", dn.isString());
-		AbstractDataset a = (AbstractDataset) dn.getDataset();
+		Dataset a = (Dataset) dn.getDataset();
 		assertEquals("Username", "rjw82", a.getString(0));
 	}
 
@@ -281,48 +281,48 @@ public class HDF5LoaderTest {
 		assertTrue("Dataset node", nd instanceof HDF5Dataset);
 		HDF5Dataset dn = (HDF5Dataset) nd;
 
-		AbstractDataset ad;
+		Dataset ad;
 		double x;
 
 		// slice with chunks
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(1), null);
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(1), new Slice(1), null);
 		checkDataset("data", ad, new int[] { 1, 1, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 164.12514, x, x * 1e-5);
 
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), null);
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), null);
 		checkDataset("data", ad, new int[] { 1, 75, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 40271.562, x, x * 1e-5);
 
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), new Slice(2));
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(1), new Slice(null, null, 3), new Slice(2));
 		checkDataset("data", ad, new int[] { 1, 75, 2 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 3.7149904, x, x * 1e-5);
 
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(1), null);
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(1), null);
 		checkDataset("data", ad, new int[] { 31, 1, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 10522.864, x, x * 1e-5);
 
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), null);
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), null);
 		checkDataset("data", ad, new int[] { 31, 75, 1481 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 1640010.1, x, x * 1e-3);
 
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(2));
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(2));
 		checkDataset("data", ad, new int[] { 31, 75, 2 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);
 		assertEquals("Value of sum", 137.25012, x, x * 1e-5);
 
 		// slice across chunks
-		ad = (AbstractDataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(1, 2));
+		ad = (Dataset) dn.getDataset().getSlice(new Slice(null, null, 2), new Slice(null, null, 3), new Slice(1, 2));
 		checkDataset("data", ad, new int[] { 31, 75, 1 });
 		x = ((Number) ad.sum()).doubleValue();
 		System.err.println(x);

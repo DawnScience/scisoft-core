@@ -18,8 +18,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.Arrays;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -52,8 +52,8 @@ public class MapTo2DUtils {
 		final double hiChi = edgesChi[yNumber];
 		final double spanChi = (hiChi - loChi)/yNumber;
 		
-		IntegerDataset histo = (IntegerDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber}, Dataset.INT32);
-		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
+		IntegerDataset histo = (IntegerDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber}, Dataset.INT32);
+		FloatDataset intensity = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
 
 		Dataset a = DatasetUtils.convertToDataset(xO);
 		Dataset b = DatasetUtils.convertToDataset(original);
@@ -110,8 +110,8 @@ public class MapTo2DUtils {
 		final double hiChi = edgesChi[yNumber];
 		final double spanChi = (hiChi - loChi)/yNumber;
 		
-		FloatDataset histo = (FloatDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber}, Dataset.FLOAT32);
-		FloatDataset intensity = (FloatDataset)AbstractDataset.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
+		FloatDataset histo = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber}, Dataset.FLOAT32);
+		FloatDataset intensity = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
 
 		Dataset[] radialArray = getPixelRange(xO);
 		Dataset[] azimuthalArray = getPixelRange(yO);

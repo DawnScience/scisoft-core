@@ -21,8 +21,8 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
@@ -49,7 +49,7 @@ public class ImageThumbnailLoader {
 	 * 
 	 * @param filename
 	 * @param createThumbnail
-	 * @return AbstractDataset
+	 * @return Dataset
 	 */
 	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData) {
 		return loadImage(filename, createThumbnail, loadMetaData, null);
@@ -64,7 +64,7 @@ public class ImageThumbnailLoader {
 	 * 
 	 * @param filename
 	 * @param createThumbnail
-	 * @return AbstractDataset
+	 * @return Dataset
 	 */
 	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData, IMonitor monitor) {
 		
@@ -120,14 +120,14 @@ public class ImageThumbnailLoader {
 					step = Math.max(1, (width > height ? width : height)/ DOWNSAMPLE_SIZE_IN_PIXELS);
 					int[] stepping = new int[] {step, step};
 					Downsample down = new Downsample(DownsampleMode.POINT, stepping);
-					AbstractDataset ds_downsampled = down.value(ds).get(0);
+					Dataset ds_downsampled = down.value(ds).get(0);
 					ds_downsampled.setName(new String(path));
 					return ds_downsampled;
 				}
 				return ds;
 			}
 		}
-		AbstractDataset ds_null = AbstractDataset.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
+		Dataset ds_null = DatasetFactory.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
 		ds_null.setName("Invalid Image");
 		return ds_null;
 	}

@@ -41,11 +41,11 @@ class SDS(_hdataset):
     def __init__(self, dataset, attrs, parent):
         if isinstance(dataset, _jdataset):
             if dataset.isString() or not dataset.isSupported():
-                dtype = 'String'
-                dataset = dataset.getString()
-                shape = len(dataset)
-                maxshape = shape
-                self.rank = 1
+                dataset = asarray(dataset.getString())
+                shape = None
+                dtype = None
+                maxshape = None
+                self.rank = dataset.ndim
             else:
                 maxshape = tuple(dataset.getMaxShape())
                 dataset = dataset.getDataset()

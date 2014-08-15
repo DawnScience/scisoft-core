@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
@@ -114,8 +116,8 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 
 			// work out cosine and sine
 
-			AbstractDataset newmap = AbstractDataset.zeros(os, AbstractDataset.getBestFloatDType(ids.elementClass()));
-			AbstractDataset unitmap = AbstractDataset.zeros(newmap);
+			Dataset newmap = DatasetFactory.zeros(os, AbstractDataset.getBestFloatDType(ids.elementClass()));
+			Dataset unitmap = DatasetFactory.zeros(newmap);
 
 			double cx, cy;
 			for (int y = 0; y < h; y++) {
@@ -129,8 +131,8 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add(newmap);
-			result.add(unitmap);
+			result.add((AbstractDataset) newmap);
+			result.add((AbstractDataset) unitmap);
 		}
 		return result;
 	}

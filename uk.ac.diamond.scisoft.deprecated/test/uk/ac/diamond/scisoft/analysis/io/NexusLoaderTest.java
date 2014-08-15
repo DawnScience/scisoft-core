@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.gda.util.OSUtils;
 
@@ -229,8 +229,8 @@ public class NexusLoaderTest {
 		dataSetNames.add("datasets.heading1");
 		dataSetNames.add("datasets.heading2");
 		DataHolder dh = new NexusLoader(testScratchDirectoryName + "/testScanFileHolderUsage.nxs", dataSetNames).loadFile();
-		AbstractDataset ds1 = dh.getDataset("datasets.heading1");
-		AbstractDataset ds2 = dh.getDataset("datasets.heading2");
+		Dataset ds1 = dh.getDataset("datasets.heading1");
+		Dataset ds2 = dh.getDataset("datasets.heading2");
 		Assert.assertEquals("datasets.heading1", ds1.getName());
 		Assert.assertEquals(0.0, ds1.getDouble(0), 0.0001);
 		Assert.assertEquals(49.0, ds1.getDouble(4, 9), 0.0001);

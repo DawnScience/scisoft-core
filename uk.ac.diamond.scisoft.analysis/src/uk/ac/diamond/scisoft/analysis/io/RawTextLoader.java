@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  * Class that loads 1D or 2D data by reading files as tab-delimited ACSII input
@@ -73,7 +74,7 @@ public class RawTextLoader extends AbstractFileLoader {
 				l = br.readLine();
 			}
 
-			final AbstractDataset ds = AbstractDataset.array(rows);
+			final Dataset ds = DatasetFactory.createFromObject(rows);
 			ds.squeeze(); // convert Nx1 to 1D dataset
 			DataHolder dh = new DataHolder();
 			dh.addDataset(DEF_IMAGE_NAME, ds);

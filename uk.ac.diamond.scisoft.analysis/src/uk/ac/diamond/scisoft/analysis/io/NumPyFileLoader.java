@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 
 /**
  * Reads files in npy format as defined here; http://svn.scipy.org/svn/numpy/trunk/doc/neps/npy-format.txt
@@ -90,7 +91,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 				fBuffer = fc.map(MapMode.READ_ONLY, 0, fc.size());
 			}
 
-			AbstractDataset data = loadDataset(fBuffer);
+			Dataset data = loadDataset(fBuffer);
 
 			if (fc != null)
 				fc.close();
@@ -112,7 +113,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		return output;
 	}
 
-	public static AbstractDataset loadDataset(ByteBuffer fBuffer) throws ScanFileHolderException {
+	public static Dataset loadDataset(ByteBuffer fBuffer) throws ScanFileHolderException {
 		fBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
 		for (int i = 0; i < NumPyFile.magic.length; i++) {
@@ -179,9 +180,9 @@ public class NumPyFileLoader extends AbstractFileLoader {
 			tSize *= shape[j];
 		}
 
-		AbstractDataset data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+		Dataset data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
 		if (unsigned)
-			data = AbstractDataset.array(data, unsigned);
+			data = DatasetFactory.createFromObject(data, unsigned);
 
 		return data;
 	}
@@ -196,10 +197,10 @@ public class NumPyFileLoader extends AbstractFileLoader {
 	 * @throws ScanFileHolderException
 	 *             if the file failed to load as a NumPy file
 	 */
-	public static AbstractDataset loadFileHelper(String fileName) throws ScanFileHolderException {
+	public static Dataset loadFileHelper(String fileName) throws ScanFileHolderException {
 		NumPyFileLoader fileLoader = new NumPyFileLoader(fileName);
 		DataHolder dataHolder = fileLoader.loadFile();
-		AbstractDataset dataset = dataHolder.getDataset(0);
+		Dataset dataset = dataHolder.getDataset(0);
 		return dataset;
 	}
 

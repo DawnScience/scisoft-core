@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 
@@ -49,7 +49,7 @@ public class PgmLoaderTest {
 		assertEquals(pgmLoader.getHeaderValue("Height"), "1024");			
 		assertEquals(pgmLoader.getHeaderValue("Maxval"), "65535");			
 
-		AbstractDataset data = dataHolder.getDataset("Portable Grey Map");
+		Dataset data = dataHolder.getDataset("Portable Grey Map");
 		// Check the first data point
 		assertEquals(data.getDouble(0, 0), 0.0, 0.0);
 		// Check the middle data point

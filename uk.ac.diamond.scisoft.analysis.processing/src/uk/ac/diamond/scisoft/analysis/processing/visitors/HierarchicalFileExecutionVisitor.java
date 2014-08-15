@@ -170,4 +170,10 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		return true;
 	}
 
+	@Override
+	public void close() throws Exception {
+		if (file != null) file.close();
+		
+	}
+
 }

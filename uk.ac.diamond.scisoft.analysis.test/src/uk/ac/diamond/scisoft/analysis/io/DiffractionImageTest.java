@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
@@ -127,7 +127,7 @@ public class DiffractionImageTest {
 
 	@Test
 	public void testSerializability() throws Exception {
-		AbstractDataset data;
+		Dataset data;
 		data = new ADSCImageLoader(testfile1).loadFile().getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 

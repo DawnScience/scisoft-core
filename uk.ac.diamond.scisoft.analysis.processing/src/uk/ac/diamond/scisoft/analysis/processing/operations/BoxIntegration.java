@@ -1,6 +1,5 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -38,12 +37,12 @@ public class BoxIntegration extends AbstractIntegrationOperation {
 		RectangularROI rect = (RectangularROI)getRegion();
 		
 		
-		final AbstractDataset[] profile = ROIProfile.box((Dataset)slice, mask, rect);
+		final Dataset[] profile = ROIProfile.box((Dataset)slice, mask, rect);
 		
-		AbstractDataset x = profile[0];
+		Dataset x = profile[0];
 		x.setName("Box X Profile "+rect.getName());
 		
-		AbstractDataset y = profile[1];
+		Dataset y = profile[1];
 		y.setName("Box Y Profile "+rect.getName());
 		
 

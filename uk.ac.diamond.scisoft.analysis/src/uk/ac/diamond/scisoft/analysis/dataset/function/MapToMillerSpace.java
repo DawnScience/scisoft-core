@@ -25,6 +25,8 @@ import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -39,7 +41,7 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 	private int mlen;    // number of voxel sides in cube
 	private MillerSpace mspace;
 	private QSpace qspace;
-	private AbstractDataset newmap;
+	private Dataset newmap;
 	private int[] mshape;
 
 	/**
@@ -63,7 +65,7 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 	 * 
 	 */
 	public void createDataset(int dType) {
-		newmap = AbstractDataset.zeros(mshape, dType);
+		newmap = DatasetFactory.zeros(mshape, dType);
 	}
 
 	/**
@@ -135,7 +137,7 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 				}
 			}
 		}
-		result.add(newmap);
+		result.add((AbstractDataset) newmap);
 		return result;
 	}
 

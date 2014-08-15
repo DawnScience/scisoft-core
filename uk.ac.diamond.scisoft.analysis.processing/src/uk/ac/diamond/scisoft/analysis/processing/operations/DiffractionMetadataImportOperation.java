@@ -13,7 +13,6 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class DiffractionMetadataImportOperation extends AbstractOperation {
 
-	DiffractionMetadataImportModel model;
 	IDiffractionMetadata metadata;
 	
 	@Override
@@ -26,7 +25,7 @@ public class DiffractionMetadataImportOperation extends AbstractOperation {
 			throws OperationException {
 		
 		if (metadata == null) {
-			NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(model.getFilePath());
+			NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(((DiffractionMetadataImportModel)model).getFilePath());
 			IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(null);
 			if (!reader.isPartialRead()) throw new OperationException(this, "File does not contain metadata");
 			metadata = md;
@@ -40,7 +39,7 @@ public class DiffractionMetadataImportOperation extends AbstractOperation {
 	public void setModel(IOperationModel parameters) throws Exception {
 		if (!(parameters instanceof DiffractionMetadataImportModel)) throw new IllegalArgumentException("incorrect model");
 		
-		model = (DiffractionMetadataImportModel)parameters;
+		model = parameters;
 
 	}
 

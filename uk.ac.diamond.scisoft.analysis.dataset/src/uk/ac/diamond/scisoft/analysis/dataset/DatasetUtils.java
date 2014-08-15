@@ -785,7 +785,7 @@ public class DatasetUtils {
 	 * @param a
 	 *            The datasets to be cast.
 	 */
-	public static AbstractCompoundDataset cast(final Dataset[] a, final int dtype) {
+	public static CompoundDataset cast(final Dataset[] a, final int dtype) {
 		CompoundDataset c = null;
 
 		switch (dtype) {
@@ -830,7 +830,7 @@ public class DatasetUtils {
 			break;
 		}
 
-		return (AbstractCompoundDataset) c;
+		return c;
 	}
 
 	/**
@@ -1296,7 +1296,7 @@ public class DatasetUtils {
 	 * @param overAllElements if true, then normalise over all elements in each item
 	 * @return normalised dataset
 	 */
-	public static AbstractCompoundDataset norm(CompoundDataset a, boolean overAllElements) {
+	public static CompoundDataset norm(CompoundDataset a, boolean overAllElements) {
 		double[] amin = a.minItem();
 		double[] amax = a.maxItem();
 		final int is = a.getElementsPerItem();
@@ -1318,7 +1318,7 @@ public class DatasetUtils {
 			result = Maths.subtract(a, amin);
 			result.idivide(aptp);
 		}
-		return (AbstractCompoundDataset) result;
+		return (CompoundDataset) result;
 	}
 
 	/**
@@ -1449,7 +1449,7 @@ public class DatasetUtils {
 	 * This defaults to the mid-point of indices
 	 * @return a double array containing the centroid for each dimension
 	 */
-	public static double[] centroid(AbstractDataset a, AbstractDataset... bases) {
+	public static double[] centroid(Dataset a, Dataset... bases) {
 		List<Double> d = new Centroid(bases).value(a);
 		double[] dc = new double[d.size()];
 		for (int i = 0; i < dc.length; i++)
@@ -1583,7 +1583,7 @@ public class DatasetUtils {
 	 */
 	public static Object createJavaArray(Dataset a) {
 		if (a.getElementsPerItem() > 1) {
-			a = createDatasetFromCompoundDataset((AbstractCompoundDataset) a, true);
+			a = createDatasetFromCompoundDataset((CompoundDataset) a, true);
 		}
 		Object matrix;
 
@@ -1825,7 +1825,7 @@ public class DatasetUtils {
 	 * @return rolled dataset
 	 */
 	public static AbstractDataset roll(final Dataset a, final int shift, final Integer axis) {
-		AbstractDataset r = AbstractDataset.zeros(a);
+		Dataset r = DatasetFactory.zeros(a);
 		int is = a.getElementsPerItem();
 		if (axis == null) {
 			IndexIterator it = a.getIterator();
@@ -1862,7 +1862,7 @@ public class DatasetUtils {
 				r.setItemsOnAxes(pos, hit, v.getBuffer());
 			}
 		}
-		return r;
+		return (AbstractDataset) r;
 	}
 
 	/**

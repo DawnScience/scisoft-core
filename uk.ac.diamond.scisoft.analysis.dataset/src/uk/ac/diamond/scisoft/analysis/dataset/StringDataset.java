@@ -83,7 +83,10 @@ public class StringDataset extends StringDatasetBase {
 	 */
 	public static StringDataset createFromObject(final Object obj) {
 		StringDatasetBase result = StringDatasetBase.createFromObject(obj);
-		return new StringDataset(result.data, result.shape);
+		StringDataset ds = new StringDataset(result.data, result.shape);
+		if (result.shape.length == 0)
+			ds.setShape(result.shape); // special case of single item 
+		return ds;
 	}
 
 	/**

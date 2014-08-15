@@ -141,8 +141,8 @@ public class EllipseFitterTest {
 		String fileName = "testfiles/points.dat";
 
 		IDataHolder dh = LoaderFactory.getData(fileName);
-		Dataset	x = DatasetUtils.convertToAbstractDataset(dh.getDataset(0));
-		Dataset y = DatasetUtils.convertToAbstractDataset(dh.getDataset(1));
+		Dataset	x = DatasetUtils.convertToDataset(dh.getDataset(0));
+		Dataset y = DatasetUtils.convertToDataset(dh.getDataset(1));
 
 		if (x == null || y == null) {
 			Assert.fail("Could not load data from " + fileName);

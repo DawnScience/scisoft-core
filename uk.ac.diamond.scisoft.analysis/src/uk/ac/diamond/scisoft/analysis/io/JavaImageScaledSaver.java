@@ -16,7 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -60,12 +61,12 @@ public class JavaImageScaledSaver extends JavaImageSaver {
 		DataHolder dhNew = new DataHolder();
 		for (int i = 0, imax = dh.size(); i < imax; i++) {
 			IDataset idata = dh.getDataset(i);
-			AbstractDataset data = DatasetUtils.convertToAbstractDataset(idata);
+			Dataset data = DatasetUtils.convertToDataset(idata);
 			if (Double.isNaN(gmin)) {
 				double min = data.min().doubleValue();
 				double max = data.max().doubleValue();
 				if (min == max) {
-					data = AbstractDataset.zeros(data); // if user saves an image with same value for all pixels
+					data = DatasetFactory.zeros(data); // if user saves an image with same value for all pixels
 				} else {
 					if (unsigned && min >= -maxVal / 2) {
 						data = Maths.multiply(data, maxVal / max);

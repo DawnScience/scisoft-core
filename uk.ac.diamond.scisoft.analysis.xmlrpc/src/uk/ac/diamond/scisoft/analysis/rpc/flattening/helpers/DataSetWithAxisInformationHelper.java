@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
@@ -35,7 +35,7 @@ public class DataSetWithAxisInformationHelper extends MapFlatteningHelper<DataSe
 	@Override
 	public DataSetWithAxisInformation unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
 		DataSetWithAxisInformation out = new DataSetWithAxisInformation();
-		AbstractDataset data = (AbstractDataset) rootFlattener.unflatten(thisMap.get(DATA));
+		Dataset data = (Dataset) rootFlattener.unflatten(thisMap.get(DATA));
 		AxisMapBean axisMap = (AxisMapBean) rootFlattener.unflatten(thisMap.get(AXISMAP));
 
 		out.setData(data);

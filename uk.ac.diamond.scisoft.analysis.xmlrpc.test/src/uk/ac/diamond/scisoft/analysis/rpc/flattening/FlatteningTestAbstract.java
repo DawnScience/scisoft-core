@@ -432,7 +432,7 @@ abstract public class FlatteningTestAbstract {
 		// flatten to an npy file implicitly
 		flattenAndUnflatten(DatasetFactory.createRange(100, Dataset.INT));
 
-		// flatten a descriptor of an AbstractDataset that unflattens to an abstract data set
+		// flatten a descriptor of a Dataset that unflattens to an abstract data set
 		Dataset ds = DatasetFactory.createRange(100, Dataset.INT);
 		DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
@@ -132,10 +134,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-			AbstractDataset sumx = AbstractDataset.zeros(new int[] { h }, dtype);
-			AbstractDataset sumy = AbstractDataset.zeros(new int[] { w }, dtype);
-			AbstractDataset usumx = AbstractDataset.zeros(new int[] { h }, dtype);
-			AbstractDataset usumy = AbstractDataset.zeros(new int[] { w }, dtype);
+			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
+			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
+			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
+			Dataset usumy = DatasetFactory.zeros(new int[] { w }, dtype);
 
 			double cx, cy;
 			double csum;
@@ -160,10 +162,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				usumx.set(cusumx, y);
 			}
 
-			result.add(sumx);
-			result.add(sumy);
-			result.add(usumx);
-			result.add(usumy);
+			result.add((AbstractDataset) sumx);
+			result.add((AbstractDataset) sumy);
+			result.add((AbstractDataset) usumx);
+			result.add((AbstractDataset) usumy);
 		}
 		return result;
 	}

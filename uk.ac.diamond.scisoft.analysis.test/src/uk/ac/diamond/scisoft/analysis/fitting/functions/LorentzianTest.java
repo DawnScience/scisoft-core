@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 
@@ -40,8 +39,8 @@ public class LorentzianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		AbstractDataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
-		AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(x));
+		Dataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
+		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-2);
 	}

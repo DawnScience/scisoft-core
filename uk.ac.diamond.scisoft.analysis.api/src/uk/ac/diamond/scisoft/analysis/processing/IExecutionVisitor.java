@@ -30,6 +30,8 @@ public interface IExecutionVisitor {
 	
 	public void init() throws Exception;
 	
+	public void close() throws Exception;
+	
     /**
      * Called when an execution in the pipeline has run, before the end	but after a given operation.
      * Provides the option of saving the steps information to a file if required.
@@ -88,6 +90,12 @@ public interface IExecutionVisitor {
 
 		@Override
 		public void init() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void close() throws Exception {
 			// TODO Auto-generated method stub
 			
 		}

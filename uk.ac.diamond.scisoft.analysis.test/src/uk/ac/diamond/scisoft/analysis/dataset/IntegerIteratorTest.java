@@ -44,7 +44,7 @@ public class IntegerIteratorTest {
 		while (iter.hasNext())
 			inds.add((int) c.getElementLongAbs(iter.index));
 
-		checkDatasets((IntegerDataset) AbstractDataset.createFromList(inds),
+		checkDatasets((IntegerDataset) DatasetFactory.createFromList(inds),
 				new IntegerDataset(new int[] {0,5,-7}, null));
 	}
 

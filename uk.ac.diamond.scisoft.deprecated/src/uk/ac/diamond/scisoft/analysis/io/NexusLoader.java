@@ -38,7 +38,7 @@ import org.nexusformat.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
@@ -378,7 +378,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 		if (dataSetNames == null || dataSetNames.contains(name)) {
 			NexusGroupData data = dataNode.getData();
 			if (data != null && data.getBuffer() != null && data.type != NexusFile.NX_CHAR) {
-				AbstractDataset ds = Nexus.createDataset(data, keepBitWidth);
+				Dataset ds = Nexus.createDataset(data, keepBitWidth);
 				if (ds == null) {
 					logger.error("NexusLoader cannot handle data of type {}", data.type);
 				} else {
@@ -464,7 +464,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 	
 	
-	public AbstractDataset loadSet(String path, String name, IMonitor mon) throws Exception {
+	public Dataset loadSet(String path, String name, IMonitor mon) throws Exception {
 		
 		final List<String> origNames    =  dataSetNames;
 		final String       origFileName =  filename;
@@ -507,7 +507,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	 * @return set
 	 * @throws Exception
 	 */
-	protected AbstractDataset slice(final SliceObject object, IMonitor mon) throws Exception {
+	protected Dataset slice(final SliceObject object, IMonitor mon) throws Exception {
 
 		final List<String> origNames    =  dataSetNames;
 		final String       origFileName =  filename;
@@ -525,7 +525,7 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 			final ILazyDataset nSet = Nexus.createLazyDataset(node);
 			if (mon!=null&&mon.isCancelled()) return null;
 			
-			AbstractDataset slicedData = DatasetUtils.convertToAbstractDataset(
+			Dataset slicedData = DatasetUtils.convertToDataset(
 					nSet.getSlice(object.getSliceStart(), object.getSliceStop(), object.getSliceStep()));
             return slicedData;
 

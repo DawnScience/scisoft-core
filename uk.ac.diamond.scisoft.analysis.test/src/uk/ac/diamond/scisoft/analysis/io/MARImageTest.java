@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
@@ -116,7 +116,7 @@ public class MARImageTest {
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder loader = new MARLoader(testfile2).loadFile();
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 	}
 }

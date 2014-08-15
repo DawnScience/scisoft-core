@@ -35,7 +35,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -209,7 +210,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			for (String n : vals.keySet()) {
-				final AbstractDataset set =  AbstractDataset.createFromList(vals.get(n));
+				final Dataset set =  DatasetFactory.createFromList(vals.get(n));
 				set.setName(n);
 				result.addDataset(n, set);
 			}		
@@ -240,7 +241,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		return "\\s+";
 	}
 
-	public AbstractDataset loadSet(final String path, final String name, final IMonitor mon) throws Exception {
+	public Dataset loadSet(final String path, final String name, final IMonitor mon) throws Exception {
 		
 		setFile(path);
 		/**

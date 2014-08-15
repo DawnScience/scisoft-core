@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -47,7 +49,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	int dtype;
 	int [] dimensions;
 	private int[] data_shapes;
-	AbstractDatasetRecord cache;
+	DatasetRecord cache;
 	String parent;
 	private Class<? extends IFileLoader> loaderClass;
 	
@@ -84,8 +86,8 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		int [] location = new int[dimensions.length];
 		Arrays.fill(location, 0);
 		IDataset dataSetFromFile = getDataSetFromFile(location, null);
-		dtype = dataSetFromFile instanceof AbstractDataset ? ((AbstractDataset) dataSetFromFile).getDtype() : 
-				AbstractDataset.getDTypeFromClass(dataSetFromFile.elementClass());
+		dtype = dataSetFromFile instanceof Dataset ? ((Dataset) dataSetFromFile).getDtype() : 
+			AbstractDataset.getDTypeFromClass(dataSetFromFile.elementClass());
 		data_shapes = dataSetFromFile.getShape();
 		shape = Arrays.copyOf(dimensions, dimensions.length + data_shapes.length);
 		int offset = dimensions.length;
@@ -137,7 +139,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 			IDataset abstractDataset = data.getDataset(0);
 			abstractDataset.setName(filename);
 
-			cache = new AbstractDatasetRecord(abstractDataset, location);
+			cache = new DatasetRecord(abstractDataset, location);
 		}
 		return cache.dataset;
 	}
@@ -148,7 +150,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	}
 
 	@Override
-	public AbstractDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
+	public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 		int rank = shape.length;
 		int[] lstart, lstop, lstep;
 
@@ -175,7 +177,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		final int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
 
 		// dataset we will return
-		AbstractDataset result = AbstractDataset.zeros(newShape, dtype);
+		Dataset result = DatasetFactory.zeros(newShape, dtype);
 
 		int [] resultStart = new int[newShape.length];
 
@@ -242,11 +244,11 @@ public class ImageStackLoaderEx implements ILazyLoader {
 
 }
 
-class AbstractDatasetRecord {
+class DatasetRecord {
 	IDataset dataset;
 	int[] location;
 
-	public AbstractDatasetRecord(IDataset dataset, int[] location) {
+	public DatasetRecord(IDataset dataset, int[] location) {
 		super();
 		this.dataset = dataset;
 		// need to make copy rather than take reference to prevent value being

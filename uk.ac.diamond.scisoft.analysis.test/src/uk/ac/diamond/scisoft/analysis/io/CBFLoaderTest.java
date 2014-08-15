@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  *
@@ -174,7 +174,7 @@ public class CBFLoaderTest {
 	@Test
 	public void testSerializability() throws Exception {
 		DataHolder loader = new CBFLoader(testpath + "xtal5e_1_0010.cbf").loadFile();
-		AbstractDataset data = loader.getDataset(0);
+		Dataset data = loader.getDataset(0);
 		SerializationUtils.serialize(data.getMetadata());
 	}
 

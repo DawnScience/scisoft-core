@@ -57,7 +57,7 @@ public class Stats {
 			a.setStoredValue(STORE_QUARTILE1, new double[is]);
 			a.setStoredValue(STORE_QUARTILE3, new double[is]);
 			for (int j = 0; j < is; j++) {
-				((AbstractCompoundDataset) a).copyElements(w, j);
+				((CompoundDataset) a).copyElements(w, j);
 				w.sort(null);
 
 				double[] store;
@@ -98,7 +98,7 @@ public class Stats {
 			} else {
 				Dataset w = DatasetFactory.zeros(a.getShapeRef(), a.getDtype());
 				for (int j = 0; j < is; j++) {
-					((AbstractCompoundDataset) a).copyElements(w, j);
+					((CompoundDataset) a).copyElements(w, j);
 					w.sort(axis);
 
 					CompoundDoubleDataset s;
@@ -258,7 +258,7 @@ public class Stats {
 		} else {
 			Dataset w = DatasetFactory.zeros(a.getShapeRef(), a.getDtype());
 			for (int j = 0; j < is; j++) {
-				((AbstractCompoundDataset) a).copyElements(w, j);
+				((CompoundDataset) a).copyElements(w, j);
 				w.sort(axis);
 
 				for (int i = 0; i < points.length; i++) {

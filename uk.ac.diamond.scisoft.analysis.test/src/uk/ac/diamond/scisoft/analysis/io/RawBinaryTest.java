@@ -24,6 +24,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -35,7 +36,7 @@ public class RawBinaryTest {
 	static String testScratchDirectoryName = null;
 	static String testpath = null;
 	static double testValue1, testValue2;
-	AbstractDataset data;
+	Dataset data;
 	int sizex = 240, sizey = 240, range = sizex * sizey;
 	
 	/**
@@ -75,7 +76,7 @@ public class RawBinaryTest {
 
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath2D).loadFile();
-			AbstractDataset data = dh.getDataset(0);
+			Dataset data = dh.getDataset(0);
 			assertEquals(data.getDtype(), Dataset.FLOAT64);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 2D");
@@ -110,7 +111,7 @@ public class RawBinaryTest {
 
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath1D).loadFile();
-			AbstractDataset data = dh.getDataset(0);
+			Dataset data = dh.getDataset(0);
 			assertEquals(data.getDtype(), Dataset.FLOAT32);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 1D");

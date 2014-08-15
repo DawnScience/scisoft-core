@@ -23,7 +23,7 @@ import java.util.Arrays;
  * <p>Class to provide iteration through a dataset</p>
  * <p>Instantiate an iterator and use it in a while loop:
  * <pre>
- * AbstractDataset ds = DatasetUtils.linSpace(0,10,0.25, AbstractDataset.FLOAT64);
+ * Dataset ds = DatasetUtils.linSpace(0,10,0.25, AbstractDataset.FLOAT64);
  * PositionIterator iter = ds.getPositionIterator();
  * int[] pos = iter.getPos()
  *

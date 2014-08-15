@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelp
  * Use this class to describe a data set that already resides on disk and can be loaded using the file loaders. This
  * object is flattened to a flattened representation that is unflattened by {@link AbstractDatasetHelper}.
  * <p>
- * The unflattened form of this type is an {@link AbstractDataset} in Java or an Numpy.ndarray in Python.
+ * The unflattened form of this type is an {@link Dataset} in Java or an Numpy.ndarray in Python.
  * <p>
  * When unflattended in Java the filename can be any file that Analysis understands with its file loaders as the
  * filename is passed to {@link LoaderFactory}.
@@ -53,7 +53,7 @@ public class AbstractDatasetDescriptor implements IFlattens {
 	}
 
 	/**
-	 * Return whether to delete the file when this object is unflattened to an AbstractDataset
+	 * Return whether to delete the file when this object is unflattened to a Dataset
 	 * 
 	 * @return whether to delete
 	 */

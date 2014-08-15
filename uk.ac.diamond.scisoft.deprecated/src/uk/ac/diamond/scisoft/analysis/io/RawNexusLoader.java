@@ -22,7 +22,8 @@ import java.util.Enumeration;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
 /**
@@ -114,7 +115,7 @@ public class RawNexusLoader extends AbstractFileLoader {
 								final int rank = iStart[0];
 								int[] shape = Arrays.copyOf(iDim, rank);
 								final int dtype = Nexus.getDType(iStart[1]);
-								AbstractDataset ds = AbstractDataset.zeros(shape, dtype);
+								Dataset ds = DatasetFactory.zeros(shape, dtype);
 								file.getdata(ds.getBuffer());
 								ds.setName(dataName);
 								dataHolder.addDataset(dataName, ds);

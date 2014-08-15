@@ -3,7 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import java.io.Serializable;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
@@ -30,8 +30,8 @@ public class FittingOperation extends AbstractOperation {
 	public OperationData execute(IDataset data, IMonitor monitor) throws OperationException {
 		
 		try {
-			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((AbstractDataset)model.getxAxis(), 
-					                                                                  (AbstractDataset)data, 
+			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((Dataset)model.getxAxis(), 
+					                                                                  (Dataset)data, 
 					                                                                  model.getPeak(), model.createOptimizer(),
 					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
 					                                                                  model.getThreshold(), 

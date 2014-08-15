@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 
@@ -88,7 +90,7 @@ public class LineSample implements DatasetToDatasetFunction {
 
 			int nr = ((int) Math.floor(rad / step)) + 1;
 
-			AbstractDataset linsample = AbstractDataset.zeros(new int[] { nr },
+			Dataset linsample = DatasetFactory.zeros(new int[] { nr },
 					AbstractDataset.getBestFloatDType(ids.elementClass()));
 
 			double x, y;
@@ -99,7 +101,7 @@ public class LineSample implements DatasetToDatasetFunction {
 				linsample.setObjectAbs(i, Maths.interpolate(ids, y, x));
 			}
 
-			result.add(linsample);
+			result.add((AbstractDataset) linsample);
 		}
 		return result;
 	}

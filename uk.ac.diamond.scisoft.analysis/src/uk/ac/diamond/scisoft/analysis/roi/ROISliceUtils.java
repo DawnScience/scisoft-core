@@ -16,15 +16,14 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.dataset.function.LineSample;
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * Class with utils methods for slicing 3D datasets with ROIs
@@ -137,15 +136,15 @@ public class ROISliceUtils {
 		int start = sl[dim].getStart();
 		int end = sl[dim].getEnd();
 
-		AbstractDataset dataBlock = (AbstractDataset)lz.getSlice(sl);
+		Dataset dataBlock = (Dataset)lz.getSlice(sl);
 		
 		sl = new Slice[lz.getRank()];
 		
 		sl[dim] = new Slice(0,1);
 
-		AbstractDataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl),Dataset.FLOAT32);
-		AbstractDataset result = AbstractDataset.zeros(datasetStart, Dataset.FLOAT32);
-		AbstractDataset datasetEnd = AbstractDataset.zeros(datasetStart);
+		Dataset datasetStart = DatasetUtils.cast(dataBlock.getSlice(sl),Dataset.FLOAT32);
+		Dataset result = DatasetFactory.zeros(datasetStart, Dataset.FLOAT32);
+		Dataset datasetEnd = DatasetFactory.zeros(datasetStart);
 
 		for (int i = 1; i < (end-start+1); i++) {
 			sl[dim].setStart(i);
@@ -184,7 +183,7 @@ public class ROISliceUtils {
 		
 		sl[dim].setStop(start+1);
 		
-		AbstractDataset dataStart = DatasetUtils.cast(lz.getSlice(sl),Dataset.FLOAT32);
+		Dataset dataStart = DatasetUtils.cast(lz.getSlice(sl),Dataset.FLOAT32);
 		sl[dim].setStart(end);
 		sl[dim].setStop(end+1);
 		dataStart.iadd(DatasetUtils.cast(lz.getSlice(sl),Dataset.FLOAT32));
@@ -208,7 +207,7 @@ public class ROISliceUtils {
 	 */
 	public static IDataset getAxisDatasetTrapzSumBaselined(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step,boolean baseline) {
 
-		final AbstractDataset output = ((AbstractDataset)ROISliceUtils.getAxisDatasetTrapzSum( lz,  axis,  roi,  slices,  dim,  step));
+		final Dataset output = ((Dataset)ROISliceUtils.getAxisDatasetTrapzSum( lz,  axis,  roi,  slices,  dim,  step));
 
 		if (baseline) {
 			final IDataset datasetBasline = ROISliceUtils.getTrapiziumArea( lz,  axis,  roi,  slices,  dim,  step);
@@ -267,7 +266,7 @@ public class ROISliceUtils {
 		
 		sl[dim] = xSlice;
 		
-		AbstractDataset out = (AbstractDataset)lz.getSlice(sl);
+		Dataset out = (Dataset)lz.getSlice(sl);
 		
 		out = out.mean(dim);
 		

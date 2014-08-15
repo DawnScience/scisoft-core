@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
@@ -12,13 +11,13 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public abstract class AbstractPixelIntegrationOperation extends
 		AbstractOperation {
 
 	AbstractPixelIntegration integrator;
 	IDiffractionMetadata metadata;
-	PixelIntegrationModel model;
 	
 	@Override
 	public String getId() {
@@ -36,12 +35,12 @@ public abstract class AbstractPixelIntegrationOperation extends
 			integrator = null;
 		}
 		
-		if (integrator == null) integrator = createIntegrator(model, metadata);
+		if (integrator == null) integrator = createIntegrator((PixelIntegrationModel)model, metadata);
 		
 		ILazyDataset mask = getFirstMask(slice);
 		if (mask != null) {
 			IDataset m = mask.getSlice().squeeze();
-			integrator.setMask((AbstractDataset)m);
+			integrator.setMask((Dataset)m);
 		}
 		
 		ILazyDataset[] axes = getFirstAxes(slice);
@@ -55,6 +54,13 @@ public abstract class AbstractPixelIntegrationOperation extends
 		
 		return new OperationData(data);
 	}
+	
+	@Override
+	public void setModel(IOperationModel model) throws Exception {
+		if (!(model instanceof PixelIntegrationModel)) throw new IllegalArgumentException("Incorrect model type");
+		this.model = model;
+	}
+	
 
 	protected abstract void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims, List<Dataset> out);
 	

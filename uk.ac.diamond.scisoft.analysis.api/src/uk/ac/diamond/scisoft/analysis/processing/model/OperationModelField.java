@@ -71,4 +71,14 @@ public @interface OperationModelField {
 	 */
 	public String hint() default "";
 	
+	/**
+	 * If the field is a String, java.io.File, java.nio.file.Path or IResource
+	 * you may use this annotation to define the type of checking which will be done.
+	 * 
+	 * If this field is not used and your field is a File for instance, the NEW_FILE
+	 * option will be the default, rather than NONE
+	 * 
+	 * @return the file type.
+	 */
+	public FileType file() default FileType.NONE;
 }

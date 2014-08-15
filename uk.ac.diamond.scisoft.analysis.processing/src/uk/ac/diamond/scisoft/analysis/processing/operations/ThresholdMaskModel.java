@@ -67,4 +67,5 @@ public class ThresholdMaskModel extends AbstractOperationModel {
 			return false;
 		return true;
 	}
+
 }

@@ -27,6 +27,10 @@
 				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
 				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/jars/*" />
 				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.dataset/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-eclipse.git/org.eclipse.dawnsci.hdf5/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-third.git/ncsa.hdf/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.services/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawnsci.conversion/bin" />
 				<path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
 				<path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
 				<pathelement location="${workspace.loc}/tp/plugins/*" />

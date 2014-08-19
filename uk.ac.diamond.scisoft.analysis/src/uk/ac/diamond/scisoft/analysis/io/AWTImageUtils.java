@@ -61,11 +61,11 @@ public class AWTImageUtils {
 	 * @param dbtype data buffer type
 	 * @param keepBitWidth if true, then use signed primitives of same bit width for possibly unsigned data
 	 */
-	static public void createDatasets(Raster r, AbstractDataset[] data, final int dbtype, boolean keepBitWidth) {
+	static public void createDatasets(Raster r, Dataset[] data, final int dbtype, boolean keepBitWidth) {
 		final int bands = data.length;
 		final int height = r.getHeight();
 		final int width = r.getWidth();
-		AbstractDataset tmp;
+		Dataset tmp;
 
 		for (int i = 0; i < bands; i++) {
 			switch (dbtype) {
@@ -147,7 +147,7 @@ public class AWTImageUtils {
 	 * @param bits number of bits (<=16 for non-RGB datasets)
 	 * @return buffered image
 	 */
-	static public BufferedImage makeBufferedImage(final AbstractDataset data, final int bits) {
+	static public BufferedImage makeBufferedImage(final Dataset data, final int bits) {
 		final int[] shape = data.getShape();
 		final int height = shape[0];
 		final int width = shape.length == 1 ? 1 : shape[1]; // allow 1D datasets to be saved
@@ -222,7 +222,7 @@ public class AWTImageUtils {
 	 * @param bits number of bits (> 32 for float image)
 	 * @return tiled image
 	 */
-	static public TiledImage makeTiledImage(final AbstractDataset data, final int bits) {
+	static public TiledImage makeTiledImage(final Dataset data, final int bits) {
 		final int[] shape = data.getShape();
 		int height = shape[0];
 		int width = shape.length == 1 ? 1 : shape[1]; // allow 1D datasets to be saved

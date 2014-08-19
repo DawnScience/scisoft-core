@@ -267,7 +267,7 @@ public class DatasetUtils {
 				}
 			}
 			
-			AbstractDataset aa = convertToAbstractDataset(a);
+			Dataset aa = convertToDataset(a);
 			IndexIterator ita = aa.getIterator(true);
 			final int[] pos = ita.getPos();
 

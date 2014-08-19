@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
@@ -49,7 +49,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 			if (fa instanceof AFunction) {
 				((AFunction) fa).fillWithValues(data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(fa.calculateValues(it.getValues())));
 			}
 		} else {
 			data.fill(1);
@@ -61,7 +61,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 				((AFunction) fb).fillWithValues(temp, it);
 				data.idivide(temp);
 			} else {
-				data.idivide(DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues())));
+				data.idivide(DatasetUtils.convertToDataset(fb.calculateValues(it.getValues())));
 			}
 		}
 	}
@@ -99,25 +99,25 @@ public class Divide extends ABinaryOperator implements IOperator {
 				}
 			} else {
 				if (indexOfParameter(fa, param) >= 0) { 
-					data.setSlice(DatasetUtils.convertToAbstractDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
+					data.setSlice(DatasetUtils.convertToDataset(fa.calculatePartialDerivativeValues(param, it.getValues())));
 				}
 			}
 		}
 
 		if (fb != null) {
-			AbstractDataset b = DatasetUtils.convertToAbstractDataset(fb.calculateValues(it.getValues()));
+			Dataset b = DatasetUtils.convertToDataset(fb.calculateValues(it.getValues()));
 			data.imultiply(b);
 			b.imultiply(b);
-			AbstractDataset a;
+			Dataset a;
 			if (fa instanceof AFunction) {
 				a = new DoubleDataset(it.getShape());
 				((AFunction) fa).fillWithValues((DoubleDataset) a, it);
 			} else {
-				a = DatasetUtils.convertToAbstractDataset(fa.calculateValues(it.getValues()));
+				a = DatasetUtils.convertToDataset(fa.calculateValues(it.getValues()));
 			}
 
 			if (indexOfParameter(fb, param) >= 0) { 
-				a.imultiply(DatasetUtils.convertToAbstractDataset(fb.calculatePartialDerivativeValues(param, it.getValues())));
+				a.imultiply(DatasetUtils.convertToDataset(fb.calculatePartialDerivativeValues(param, it.getValues())));
 				data.isubtract(a);
 			}
 			data.idivide(b);

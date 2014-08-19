@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -158,7 +158,7 @@ public class Quadratic extends AFunction {
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
 		int i = indexOfParameter(parameter);
 
-		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
+		Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
 		switch (i) {
 		case 0:
 			Maths.square(pos, data);

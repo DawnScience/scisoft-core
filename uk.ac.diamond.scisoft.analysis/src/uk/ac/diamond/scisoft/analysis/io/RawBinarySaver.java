@@ -30,7 +30,6 @@ import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset;
@@ -109,7 +108,7 @@ public class RawBinarySaver implements IFileSaver {
 				throw new ScanFileHolderException("Error saving file '" + filename + "'", e);
 			}
 
-			AbstractDataset sdata = DatasetUtils.convertToAbstractDataset(dh.getDataset(i));
+			Dataset sdata = DatasetUtils.convertToDataset(dh.getDataset(i));
 			int dtype = sdata.getDtype();
 			switch (dtype) {
 			case Dataset.ARRAYINT8:
@@ -194,11 +193,11 @@ public class RawBinarySaver implements IFileSaver {
 	/**
 	 * Saves the dataset to the ByteBuffer provided in a raw format, ie no headers
 	 * @param sdata Dataset to save
-	 * @param dtype Dataset datatype for save purpose
+	 * @param dtype Dataset type for save purpose
 	 * @param isize Each entry item size
 	 * @return the allocated ByteBuffer where the data is saved
 	 */
-	public static ByteBuffer saveRawDataset(AbstractDataset sdata, int dtype, byte isize) {
+	public static ByteBuffer saveRawDataset(Dataset sdata, int dtype, byte isize) {
 		ByteBuffer dbBuffer = ByteBuffer.allocateDirect(sdata.getNbytes());
 		dbBuffer.order(ByteOrder.LITTLE_ENDIAN);
 

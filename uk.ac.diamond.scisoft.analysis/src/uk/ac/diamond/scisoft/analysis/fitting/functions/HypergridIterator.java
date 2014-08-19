@@ -41,7 +41,7 @@ public class HypergridIterator extends CoordinatesIterator {
 			int size = v.getSize();
 			shape[i] = size;
 			if (v.getRank() != 1) {
-				this.values[i] = DatasetUtils.convertToAbstractDataset(v).reshape(size);
+				this.values[i] = DatasetUtils.convertToDataset(v).reshape(size);
 			} else {
 				this.values[i] = values[i];
 			}

@@ -2609,7 +2609,7 @@ public class Maths {
 		nshape[axis] -= n;
 		ds = DatasetFactory.zeros(is, nshape, dt);
 		if (rank == 1) {
-			difference(DatasetUtils.convertToAbstractDataset(a), ds, n);
+			difference(DatasetUtils.convertToDataset(a), ds, n);
 		} else {
 			final Dataset src = DatasetFactory.zeros(is, new int[] { a.getShapeRef()[axis] }, dt);
 			final Dataset dest = DatasetFactory.zeros(is, new int[] { nshape[axis] }, dt);

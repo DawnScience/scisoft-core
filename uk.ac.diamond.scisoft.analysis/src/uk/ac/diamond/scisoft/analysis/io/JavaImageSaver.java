@@ -28,6 +28,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -107,7 +108,7 @@ public class JavaImageSaver implements IFileSaver {
 				f = new File(name);
 
 				IDataset idata = dh.getDataset(i);
-				AbstractDataset data = DatasetUtils.convertToAbstractDataset(idata);
+				Dataset data = DatasetUtils.convertToDataset(idata);
 
 				if (numBits <= 16) {
 					// test to see if the values of the data are within the

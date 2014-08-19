@@ -16,7 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
@@ -59,7 +59,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(f.calculateValues(it.getValues())));
 			}
 		} else {
 			data.fill(1);
@@ -78,7 +78,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 				((AFunction) f).fillWithValues(temp, it);
 				data.imultiply(temp);
 			} else {
-				data.imultiply(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.imultiply(DatasetUtils.convertToDataset(f.calculateValues(it.getValues())));
 			}
 		}
 	}
@@ -119,7 +119,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithPartialDerivativeValues(param, data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
 			}
 		} else {
 			data.fill(0);
@@ -135,7 +135,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(f.calculateValues(it.getValues())));
 			}
 			if (hasParam) {
 				dif.idivide(data);
@@ -161,11 +161,11 @@ public class Multiply extends ANaryOperator implements IOperator {
 					sum.iadd(dif);
 				}
 			} else {
-				AbstractDataset v = DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues()));
+				Dataset v = DatasetUtils.convertToDataset(f.calculateValues(it.getValues()));
 				data.imultiply(v);
 
 				if (hasParam) {
-					AbstractDataset d = DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues()));
+					Dataset d = DatasetUtils.convertToDataset(f.calculatePartialDerivativeValues(param, it.getValues()));
 	
 					d.idivide(v);
 					sum.iadd(d);

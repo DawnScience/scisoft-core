@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.text.DecimalFormat;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -197,7 +197,7 @@ public class Polynomial extends AFunction {
 
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-		AbstractDataset pos = DatasetUtils.convertToAbstractDataset(it.getValues()[0]);
+		Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
 
 		final int n = nparams - 1 - indexOfParameter(parameter);
 		switch (n) {
@@ -223,7 +223,7 @@ public class Polynomial extends AFunction {
 	 * @param coords
 	 * @return matrix
 	 */
-	public DoubleDataset makeMatrix(AbstractDataset coords) {
+	public DoubleDataset makeMatrix(Dataset coords) {
 		final int rows = coords.getSize();
 		DoubleDataset matrix = new DoubleDataset(rows, nparams);
 

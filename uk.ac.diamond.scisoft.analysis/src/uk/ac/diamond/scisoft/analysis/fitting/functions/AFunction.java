@@ -494,8 +494,8 @@ public abstract class AFunction implements IFunction, Serializable {
 	public double residual(boolean allValues, IDataset data, IDataset weight, IDataset... coords) {
 		double residual = 0;
 		if (allValues) {
-			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(Dataset.FLOAT64);
-			residual = ddata.residual(calculateValues(coords), DatasetUtils.convertToAbstractDataset(weight), false);
+			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToDataset(data).cast(Dataset.FLOAT64);
+			residual = ddata.residual(calculateValues(coords), DatasetUtils.convertToDataset(weight), false);
 		} else {
 			// stochastic sampling of coords;
 //			int NUMBER_OF_SAMPLES = 100;

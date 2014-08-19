@@ -60,7 +60,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(f.calculateValues(it.getValues())));
 			}
 		}
 
@@ -77,7 +77,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 				((AFunction) f).fillWithValues(temp, it);
 				data.iadd(temp);
 			} else {
-				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculateValues(it.getValues())));
+				data.iadd(DatasetUtils.convertToDataset(f.calculateValues(it.getValues())));
 			}
 		}
 	}
@@ -107,7 +107,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithPartialDerivativeValues(param, data, it);
 			} else {
-				data.setSlice(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+				data.setSlice(DatasetUtils.convertToDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
 			}
 		} else {
 			data.fill(0);
@@ -126,7 +126,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 				((AFunction) f).fillWithPartialDerivativeValues(param, temp, it);
 				data.iadd(temp);
 			} else {
-				data.iadd(DatasetUtils.convertToAbstractDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
+				data.iadd(DatasetUtils.convertToDataset(f.calculatePartialDerivativeValues(param, it.getValues())));
 			}
 		}
 	}

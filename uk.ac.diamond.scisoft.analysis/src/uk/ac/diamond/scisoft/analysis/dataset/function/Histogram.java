@@ -104,7 +104,7 @@ public class Histogram implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Bin edges should be given as 1D dataset");
 		}
 
-		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToAbstractDataset(edges), Dataset.FLOAT64);
+		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToDataset(edges), Dataset.FLOAT64);
 
 		// check for increasing order
 		AbstractDataset sorted = DatasetUtils.sort(bins, null);

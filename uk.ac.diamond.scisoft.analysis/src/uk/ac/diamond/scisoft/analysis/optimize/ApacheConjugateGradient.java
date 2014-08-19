@@ -45,10 +45,10 @@ public class ApacheConjugateGradient implements IOptimizer {
 		final int numCoords = coords.length;
 		final DoubleDataset[] newCoords = new DoubleDataset[numCoords];
 		for (int i = 0; i < numCoords; i++) {
-			newCoords[i] = (DoubleDataset) DatasetUtils.convertToAbstractDataset(coords[i]).cast(Dataset.FLOAT64);
+			newCoords[i] = (DoubleDataset) DatasetUtils.convertToDataset(coords[i]).cast(Dataset.FLOAT64);
 		}
 
-		final DoubleDataset values = (DoubleDataset) DatasetUtils.convertToAbstractDataset(data).cast(Dataset.FLOAT64);
+		final DoubleDataset values = (DoubleDataset) DatasetUtils.convertToDataset(data).cast(Dataset.FLOAT64);
 
 		NonLinearConjugateGradientOptimizer cg = new NonLinearConjugateGradientOptimizer(ConjugateGradientFormula.POLAK_RIBIERE);
 
@@ -69,6 +69,7 @@ public class ApacheConjugateGradient implements IOptimizer {
 					
 					@Override
 					public double value(double[] parameters) throws FunctionEvaluationException, IllegalArgumentException {
+// FIXME!!! 
 						double step = 0.1;
 						parameters[parameter] -= step;
 						function.setParameterValues(parameters);

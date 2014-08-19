@@ -755,9 +755,9 @@ public class ROIProfile {
 					areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
-					profiles[i] = Maths.dividez(profiles[i], areas[i]);
+					Maths.dividez(profiles[i], areas[i], profiles[i]);
 					if (doErrors) {
-						errors[i] = Maths.dividez(errors[i], areas[i].ipower(2)).cast(errors[i].getDtype());
+						Maths.dividez(errors[i], areas[i].ipower(2), errors[i]);
 						profiles[i].setErrorBuffer(errors[i]);
 					}
 				}

@@ -468,7 +468,7 @@ class TIFFfileLoader(PythonLoader):
                 if not self.ascolour:
                     d = d.get_grey()
 
-            data.append(("image%d" % i, d))
+            data.append(("image-%02d" % (i+1,), d))
             if self.load_metadata:
                 for k,v in p.tags.items():
                     metadata[k] = v.value

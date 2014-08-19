@@ -1142,7 +1142,6 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		Dataset sed = squared ? getInternalSquaredError() : getInternalError();
 		if (sed == null)
 			return null;
-		}
 
 		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
 		int n = bs.get1DIndex(i);

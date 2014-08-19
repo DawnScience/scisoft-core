@@ -346,7 +346,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 	public ILazyDataset getSliceView(Slice... slice) {
 		final int rank = shape.length;
 		if (slice == null || slice.length == 0) {
-			return getSlice((int[]) null, null, null);
+			return getSliceView((int[]) null, null, null);
 		}
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];

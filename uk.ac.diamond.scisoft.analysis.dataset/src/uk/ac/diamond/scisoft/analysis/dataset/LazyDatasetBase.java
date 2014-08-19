@@ -399,8 +399,10 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		int l = Array.getLength(o);
 		if (l > 0) {
 			int j = 0;
-			for (; r == null && j < l; j++) {
+			for (; j < l; j++) {
 				r = Array.get(o, j);
+				if (r != null)
+					break;
 			}
 			if (r == null)
 				return;
@@ -435,8 +437,11 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		Object r = null;
 		int l = list.size();
 		if (l > 0) {
-			for (int j = 0; r == null && j < l; j++) {
+			int j = 0;
+			for (; j < l; j++) {
 				r = list.get(j);
+				if (r != null)
+					break;
 			}
 			if (r == null)
 				return;
@@ -444,20 +449,20 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 			if (r instanceof ILazyDataset) {
 				@SuppressWarnings("unchecked")
 				List<ILazyDataset> ldList = (List<ILazyDataset>) list;
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					ldList.set(i, op.run(ldList.get(i)));
 				}
 			}else if (r.getClass().isArray()) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					processArray(op, list.get(i));
 				}
 			} else if (r instanceof List<?>) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					List<?> l2 = (List<?>) list.get(i);
 					processList(op, l2);
 				}
 			} else if (r instanceof Map<?,?>) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					Map<?, ?> map = (Map<?, ?>) list.get(i);
 					processMap(op, map);
 				}

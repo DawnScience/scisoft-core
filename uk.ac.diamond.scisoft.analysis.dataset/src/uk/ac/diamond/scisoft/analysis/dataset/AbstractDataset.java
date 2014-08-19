@@ -292,10 +292,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		view.offset = orig.getOffset();
 		view.base = orig instanceof AbstractDataset ? ((AbstractDataset) orig).base : null;
 
-		Dataset error = orig.getErrorBuffer();
-		if (error != null)
-			view.setErrorBuffer(error.getView());
-
 		if (clone) {
 			view.shape = orig.getShape();
 			copyStoredValues(orig, view, false);
@@ -346,7 +342,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 				m = m.clone();
 			l.add(m);
 		}
-		return null;
+		return map;
 	}
 
 	/**

@@ -495,7 +495,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	@Override
 	public Object sum() {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (storedValues == null || storedValues.isEmpty()) {
 			calculateSummaryStats(false, false, n);
 		}
 
@@ -507,7 +507,7 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 	@Override
 	public Object mean(boolean... switches) {
 		final String n = storeName(false, STORE_STATS_ITEM_NAME);
-		if (storedValues == null) {
+		if (storedValues == null || storedValues.isEmpty()) {
 			calculateSummaryStats(false, false, n);
 		}
 

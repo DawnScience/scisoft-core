@@ -805,7 +805,7 @@ public class LongDataset extends AbstractDataset {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public int[] maxPos(boolean ignoreInvalids) {
-		if (storedValues == null) {
+		if (storedValues == null || storedValues.isEmpty()) {
 			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
 		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MAX_POS);
@@ -829,7 +829,7 @@ public class LongDataset extends AbstractDataset {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public int[] minPos(boolean ignoreInvalids) {
-		if (storedValues == null) {
+		if (storedValues == null || storedValues.isEmpty()) {
 			calculateMaxMin(ignoreInvalids, ignoreInvalids);
 		}
 		String n = storeName(ignoreInvalids, ignoreInvalids, STORE_MIN_POS);

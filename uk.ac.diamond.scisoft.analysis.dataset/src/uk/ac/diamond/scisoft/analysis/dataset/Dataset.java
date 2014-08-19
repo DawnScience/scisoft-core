@@ -272,7 +272,8 @@ public interface Dataset extends IErrorDataset {
 
 
 	/**
-	 * Get the error array from the dataset, or creates an error array if all values are the same
+	 * Get the error array from the dataset of same shape. This will create a new dataset
+	 * if the error set was of lower rank
 	 *
 	 * @return the dataset which contains the error information (can be null)
 	 */
@@ -761,14 +762,6 @@ public interface Dataset extends IErrorDataset {
 
 	@Override
 	public Dataset getSlice(IMonitor mon, Slice... slice);
-
-	/**
-	 * Get a slice of the dataset. The returned dataset is a copied selection of items
-	 * 
-	 * @param iterator Slice iterator
-	 * @return The dataset of the sliced data
-	 */
-	public Dataset getSlice(SliceIterator iterator);
 
 	@Override
 	public Dataset getSliceView(int[] start, int[] stop, int[] step);

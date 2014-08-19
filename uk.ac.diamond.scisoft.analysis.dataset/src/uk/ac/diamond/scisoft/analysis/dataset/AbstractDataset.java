@@ -29,6 +29,8 @@ import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
+import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -292,7 +294,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 		Dataset error = orig.getErrorBuffer();
 		if (error != null)
-			view.errorData = error.getView();
+			view.setErrorBuffer(error.getView());
 
 		if (clone) {
 			view.shape = orig.getShape();
@@ -1661,9 +1663,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 		this.shape = nshape;
 
-		if (errorData != null) {
-			errorData.setShape(nshape);
-		}
+		reshapeMetadata(nshape);
 
 		if (storedValues != null)
 			filterStoredValues(storedValues); // as it is dependent on shape
@@ -1836,7 +1836,10 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		s.stride = sStride;
 		s.offset = sOffset[0];
 		s.base = base == null ? this : base;
-	
+
+		s.metadata = copyMetadata();
+		s.sliceMetadata(true, start, stop, step, shape);
+
 		if (Arrays.equals(shape, s.shape)) {
 			s.setName(name);
 		} else {
@@ -1941,7 +1944,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 		return stride == null ? i : i*stride[0] + offset;
 	}
-	
+
 	/**
 	 * @param i
 	 * @param j
@@ -1995,6 +1998,10 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	private int get1DIndexFromStrides(final int... n) {
+		return get1DIndexFromStrides(shape, stride, offset, n);
+	}
+
+	private static int get1DIndexFromStrides(final int[] shape, final int[] stride, final int offset, final int... n) {
 		final int rank = shape.length;
 		if (rank != n.length) {
 			throw new IllegalArgumentException("Number of position indexes must be equal to rank");
@@ -2323,7 +2330,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	@Override
 	public void setDirty() {
-		storedValues = null;
+		if (storedValues != null)
+			storedValues.clear();
 	}
 
 	/**
@@ -2370,9 +2378,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 				stride = tstride;
 			}
 		}
-		if (errorData != null) {
-			errorData.squeeze(onlyFromEnds);
-		}
+
+		reshapeMetadata(shape);
 		return this;
 	}
 
@@ -2759,10 +2766,18 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 	@Override
 	public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step) {
-		return getSlice((SliceIterator) getSliceIterator(start, stop, step));
+		AbstractDataset s = getSlice((SliceIterator) getSliceIterator(start, stop, step));
+		s.metadata = copyMetadata();
+		s.sliceMetadata(true, start, stop, step, shape);
+		return s;
 	}
 
-	@Override
+	/**
+	 * Get a slice of the dataset. The returned dataset is a copied selection of items
+	 * 
+	 * @param iterator Slice iterator
+	 * @return The dataset of the sliced data
+	 */
 	abstract public AbstractDataset getSlice(final SliceIterator iterator);
 
 	@Override
@@ -2774,13 +2789,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 
-		AbstractDataset s = getSlice(start, stop, step);
-		if (Arrays.equals(shape, s.shape)) {
-			s.setName(name);
-		} else {
-			s.setName(name + BLOCK_OPEN + Slice.createString(slice) + BLOCK_CLOSE);
-		}
-		return s;
+		return getSlice(start, stop, step);
 	}
 
 	@Override
@@ -3001,7 +3010,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	private static final String STORE_POS_MIN = "+min";
 	protected static final String STORE_COUNT = "count";
 	private static final String STORE_INDEX = "Index";
-
+	protected static final String STORE_BROADCAST = "Broadcast";
 
 	/**
 	 * Get value from store
@@ -3720,141 +3729,191 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	protected abstract void setItemDirect(final int dindex, final int sindex, final Object src);
 
-	/*
-	 * Note that all error values are stored internally already squared to 
-	 * ease calculation time on error propagation.
-	 * 
-	 * It must be null, DoubleDataset or CompoundDoubleDataset
-	 */
-	protected Dataset errorData = null;
-
-	/**
-	 * Set error for all points in the dataset
-	 * @param error can be a Number, a Complex, an array, a List or a dataset
-	 */
-	@Override
-	public void setError(Serializable error) {
-		if (error == null)
-			return;
-
-		if (error instanceof IDataset) {
-			Dataset ed = DatasetUtils.convertToDataset((IDataset) error);
-			BroadcastIterator.broadcastShapes(shape, ed.getShapeRef());
-			int is = ed.getElementsPerItem();
-			if (is != 1 && is != getElementsPerItem()) {
-				throw new IllegalArgumentException("Error dataset has incompatible number of elements with this dataset");
-			}
-			errorData = ed.cast(is == 1 ? FLOAT64 : ARRAYFLOAT64);
-		} else {
-			final int is = getElementsPerItem();
-			errorData = DatasetFactory.createFromObject(error, is == 1 ? FLOAT64 : ARRAYFLOAT64);
-		}
-		errorData = Maths.square(errorData);
-	}
-
 	@Override
 	public boolean hasErrors() {
-		if (errorData == null) {
-			return false;
+		return super.getError() != null;
+	}
+
+	protected Dataset getInternalError() {
+		ILazyDataset led = super.getError();
+		if (led == null)
+			return null;
+
+		Dataset ed = null;
+		if (led instanceof IDataset) {
+			ed = DatasetUtils.convertToDataset(led);
+			if (!(led instanceof Dataset)) {
+				setError(ed); // set back
+			}
+		} else {
+			logger.error("Somehow the error dataset is still a lazy one");
+			throw new IllegalStateException("Somehow the error dataset is still a lazy one");
 		}
-		if (errorData.getSize() == 1) {
-			return errorData.getElementDoubleAbs(0) != 0;
+
+		// check for broadcast strides
+		Object bs = getStoredValue(STORE_BROADCAST);
+		if (bs == null) {
+			bs = new BroadcastStride(ed, shape);
+			setStoredValue(STORE_BROADCAST, bs);
 		}
-		return true;
+		return ed;
+	}
+
+	class BroadcastStride {
+		private int[] bStride;
+		private int[] nShape;
+		private int bOffset;
+
+		public BroadcastStride(Dataset d, final int[] newShape) {
+			d.setShape(BroadcastIterator.padShape(d.getShapeRef(), newShape.length - d.getRank())); // set to padded shape
+			bStride = createBroadcastStrides(d, newShape);
+			nShape = newShape.clone();
+			bOffset = d.getOffset();
+		}
+
+		public int get1DIndex(int i) {
+			if (i < 0) {
+				i += nShape[0];
+			}
+			if (i < 0 || i >= nShape[0]) {
+				throwAIOOBException(i, nShape[0], 0);
+			}
+			return i*bStride[0] + bOffset;
+		}
+
+		protected int get1DIndex(int i, int j) {
+			if (i < 0) {
+				i += nShape[0];
+			}
+			if (i < 0 || i >= nShape[0]) {
+				throwAIOOBException(i, nShape[0], 0);
+			}
+			if (j < 0) {
+				j += nShape[1];
+			}
+			if (j < 0 || j >= nShape[1]) {
+				throwAIOOBException(i, nShape[1], 1);
+			}
+			return i*bStride[0] + j*bStride[1] + bOffset;
+		}
+
+		protected int get1DIndex(int... n) {
+			return get1DIndexFromStrides(nShape, bStride, bOffset, n);
+		}
 	}
 
 	@Override
-	public AbstractDataset getError() {
-		if (errorData == null) {
+	public Dataset getError() {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return null;
-		}
-		if (errorData.getSize() != getSize()) {
+
+		if (ed.getSize() != getSize()) {
 			DoubleDataset errors = new DoubleDataset(shape);
-			return Maths.sqrt(errorData, errors);
+			errors.setSlice(ed);
+			return errors;
 		}
-		return Maths.sqrt(errorData);
+		return ed;
 	}
 
 	@Override
 	public double getError(final int i) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return 0;
-		}
-		if (errorData.getSize() > 1) 
-			return Math.sqrt(errorData.getDouble(i));
-		return Math.sqrt(errorData.getElementDoubleAbs(0));
+
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		return ed.getElementDoubleAbs(bs.get1DIndex(i));
 	}
 
 	@Override
 	public double getError(final int i, final int j) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return 0;
-		}
-		if (errorData.getSize() > 1) 
-			return Math.sqrt(errorData.getDouble(i, j));
-		return Math.sqrt(errorData.getElementDoubleAbs(0));
+
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		return ed.getElementDoubleAbs(bs.get1DIndex(i, j));
 	}
 
 	@Override
 	public double getError(int... pos) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return 0;
-		}
-		if (errorData.getSize() > 1) 
-			return Math.sqrt(errorData.getDouble(pos));
-		return Math.sqrt(errorData.getElementDoubleAbs(0));
+
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		return ed.getElementDoubleAbs(bs.get1DIndex(pos));
 	}
 
 	@Override
 	public double[] getErrorArray(final int i) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return null;
-		}
+
 		return new double[] {getError(i)};
 	}
 
 	@Override
 	public double[] getErrorArray(final int i, final int j) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return null;
-		}
+
 		return new double[] {getError(i, j)};
 	}
 
 	@Override
 	public double[] getErrorArray(int... pos) {
-		if (errorData == null) {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return null;
-		}
+
 		return new double[] {getError(pos)};
+	}
+
+	protected Dataset getInternalSquaredError() {
+		Dataset sed = getErrorBuffer();
+		// check for broadcast strides
+		Object bs = getStoredValue(STORE_BROADCAST);
+		if (bs == null) {
+			bs = new BroadcastStride(sed, shape);
+			setStoredValue(STORE_BROADCAST, bs);
+		}
+		return sed;
 	}
 
 	@Override
 	public Dataset getErrorBuffer() {
-		return errorData;
+		ErrorMetadata emd = getErrorMetadata();
+		if (emd == null)
+			return null;
+
+		if (!(emd instanceof ErrorMetadataImpl)) {
+			ILazyDataset led = emd.getError();
+			Dataset ed = null;
+			if (led instanceof IDataset) {
+				ed = (Dataset) led;
+			} else {
+				logger.error("Somehow the error dataset is still a lazy one");
+				throw new IllegalStateException("Somehow the error dataset is still a lazy one");
+			}
+			emd  = new ErrorMetadataImpl();
+			setMetadata(emd);
+			((ErrorMetadataImpl) emd).setError(ed);
+		}
+
+		return ((ErrorMetadataImpl) emd).getSquaredError();
 	}
 
 	@Override
-	public void clearError() {
-		errorData = null;
-	}
-	
-	@Override
-	public void setLazyErrors(final ILazyDataset errors) {
-		if (errors == null) {
-			clearError();
-			return;
+	public void setError(Serializable errors) {
+		super.setError(errors);
+		Object bs = getStoredValue(STORE_BROADCAST);
+		if (bs != null) {
+			setStoredValue(STORE_BROADCAST, null);
 		}
-		if (errors instanceof IDataset) {
-			setError(errors);
-			return;
-		}
-		throw new RuntimeException("setLazyErrors is unimplemented for "+getClass().getSimpleName()+" with an ILazyDataset. Please use setErrors(IDataset) instead!");
-	}
-
-	@Override
-	public ILazyDataset getLazyErrors() {
-		return getError();
 	}
 
 	/**
@@ -3863,35 +3922,22 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	@Override
 	public void setErrorBuffer(Serializable buffer) {
-		if (buffer == null) {
-			errorData = null;
-		} else if (buffer instanceof IDataset) {
-			IDataset id = (IDataset) buffer;
-
-			int is = id.getElementsPerItem();
-			if (is > 1 && is != getElementsPerItem()) {
-				throw new IllegalArgumentException("Error buffer is a dataset that has an incompatible number of elements with this dataset");
-			}
-			int dtype = is == 1 ? FLOAT64 : ARRAYFLOAT64;
-			if (id instanceof Dataset) {
-				Dataset dd = (Dataset) id;
-				BroadcastIterator.broadcastShapes(shape, dd.getShapeRef());
-				if (dd.elementClass().equals(Double.class)) {
-					errorData = dd.clone(); // ensure it is a copy
-				} else {
-					errorData = dd.cast(dtype);
-				}
-			} else {
-				BroadcastIterator.broadcastShapes(shape, id.getShape());
-				errorData = DatasetUtils.cast(id, dtype);
-			}
-		} else {
-			Dataset ed = DatasetFactory.createFromObject(buffer,
-					getElementsPerItem() == 1 ? FLOAT64 : ARRAYFLOAT64);
-			if (ed.getSize() == size) {
-				ed.setShape(shape);
-			}
-			errorData = ed;
+		Object bs = getStoredValue(STORE_BROADCAST);
+		if (bs != null) {
+			setStoredValue(STORE_BROADCAST, null);
 		}
+
+		if (buffer == null) {
+			clearMetadata(ErrorMetadata.class);
+			return;
+		}
+
+		IDataset d = (IDataset) createFromSerializable(buffer, false);
+		ErrorMetadata emd = getErrorMetadata();
+		if (!(emd instanceof ErrorMetadataImpl)) {
+			emd = new ErrorMetadataImpl();
+			setMetadata(emd);
+		}
+		((ErrorMetadataImpl) emd).setSquaredError(d);
 	}
 }

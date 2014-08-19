@@ -171,24 +171,28 @@ public interface ILazyDataset extends Serializable, IMetadataProvider {
 	public <T extends MetadataType> void setMetadata(T metadata);
 
 	/**
+	 * Remove metadata of given class 
+	 * @param clazz if null remove everything
+	 */
+	public <T extends MetadataType> void clearMetadata(Class<T> clazz);
+
+	/**
 	 * Clone dataset
 	 * @return a (shallow) copy of dataset
 	 */
 	public ILazyDataset clone();
 
 	/**
-	 * Set the errors. These must be the same shape as the data.
-	 * They will be sliced along with this dataset and set as errors on the
-	 * resulting loaded data.
+	 * Set the errors. These must be in a shape that can broadcast to the dataset
 	 * 
-	 * @param errors - may be null to remove the error set.
-	 * @throws RuntimeException if the rank or shape are incorrect.
+	 * @param errors - may be null to remove the error set
+	 * @throws RuntimeException if the rank or shape are incorrect
 	 */
-	public void setLazyErrors(ILazyDataset errors);
+	public void setError(Serializable errors);
 
 	/**
-	 * Get the errors, if any. These will be the same shape as the data.
+	 * Get the errors, if any. These will in a shape that can broadcast to the dataset
 	 */
-	public ILazyDataset getLazyErrors();
+	public ILazyDataset getError();
 
 }

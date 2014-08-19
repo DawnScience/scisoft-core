@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,14 +179,17 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 	}
 
 	@Override
-	public void setLazyErrors(ILazyDataset errors) {
-		data.setLazyErrors(errors);
+	public void setError(Serializable errors) {
+		data.setError(errors);
 	}
 
 	@Override
-	public ILazyDataset getLazyErrors() {
-		return data.getLazyErrors();
+	public ILazyDataset getError() {
+		return data.getError();
 	}
 	
-
+	@Override
+	public <T extends MetadataType> void clearMetadata(Class<T> clazz) {
+		data.clearMetadata(clazz);
+	}
 }

@@ -18,6 +18,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -410,12 +411,12 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 	}
 	
 	@Override
-	public void setLazyErrors(ILazyDataset errors) {
+	public void setError(Serializable errors) {
 		throw new RuntimeException("setLazyErrors is unimplemented for "+getClass().getSimpleName());
 	}
 	
 	@Override
-	public ILazyDataset getLazyErrors() {
+	public ILazyDataset getError() {
 		return null;
 	}
 

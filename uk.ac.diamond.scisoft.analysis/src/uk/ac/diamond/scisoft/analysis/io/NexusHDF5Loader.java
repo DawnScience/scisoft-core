@@ -80,7 +80,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 				error = dh.getLazyDataset(ep);
 			}
 			if (error != null)
-				data.setLazyErrors(error);
+				data.setError(error);
 		}
 
 		// TODO Add in unit metadata information

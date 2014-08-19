@@ -35,6 +35,7 @@ public interface IErrorDataset extends IDataset {
 	 * 
 	 * @return the error dataset, constructing one if necessary
 	 */
+	@Override
 	public IDataset getError();
 
 	/**
@@ -52,15 +53,10 @@ public interface IErrorDataset extends IDataset {
 	public double[] getErrorArray(int... pos);
 
 	/**
-	 * Set the error, may be a single double, a double array or a whole dataset.
-	 * @param error
+	 * Set the error, may be a single double, a double array or a whole dataset
+	 * that can broadcast to the dataset
+	 * @param error (null clears any errors)
 	 */
+	@Override
 	public void setError(Serializable error);
-
-	/**
-	 * Call to clear the error on a dataset. setError(null) cannot be
-	 * relied upon.
-	 */
-	public void clearError();
-
 }

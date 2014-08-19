@@ -32,7 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
+import uk.ac.diamond.scisoft.analysis.metadata.Reshapeable;
 import uk.ac.diamond.scisoft.analysis.metadata.Sliceable;
 
 /**
@@ -209,6 +212,18 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		return (List<T>) metadata.get(findMetadataTypeSubInterfaces(clazz));
 	}
 
+	@Override
+	public <T extends MetadataType> void clearMetadata(Class<T> clazz) {
+		if (metadata == null)
+			return;
+
+		if (clazz == null) {
+			metadata.clear();
+		}
+
+		metadata.get(findMetadataTypeSubInterfaces(clazz)).clear();
+	}
+
 	protected Map<Class<? extends MetadataType>, List<MetadataType>> copyMetadata() {
 		if (metadata == null)
 			return null;
@@ -232,13 +247,15 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	}
 
 	class MdsSlice implements MetadatasetAnnotationOperation {
+		private boolean asView;
 		private int[] start;
 		private int[] stop;
 		private int[] step;
 		private int[] oShape;
 
-		public MdsSlice(final int[] start, final int[] stop, final int[] step, final int[] oShape) {
-			this.start = start;
+		public MdsSlice(boolean asView, final int[] start, final int[] stop, final int[] step, final int[] oShape) {
+			this.asView = asView;
+ 			this.start = start;
 			this.stop = stop;
 			this.step = step;
 			this.oShape = oShape;
@@ -251,15 +268,21 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 
 		@Override
 		public ILazyDataset run(ILazyDataset lz) {
-			if (start.length != lz.getRank()) throw new IllegalArgumentException("Slice dimensions do not match dataset!");
-			
-			int[] stt = start.clone();
-			int[] stp = stop.clone();
-			int[] ste = step.clone();
-			
 			int rank = lz.getRank();
+			if (start.length != rank)
+				throw new IllegalArgumentException("Slice dimensions do not match dataset!");
+
 			int[] shape = lz.getShape();
-			
+			int[] stt = start == null ? new int[rank] : start.clone();
+			int[] stp = stop == null ? shape.clone() : stop.clone();
+			int[] ste;
+			if (step == null) {
+				ste = new int[rank];
+				Arrays.fill(ste, 1);
+			} else {
+				ste = step.clone();
+			}
+
 			for (int i = 0; i < rank; i++) {
 				if (shape[i] == oShape[i]) continue;
 				if (shape[i] == 1) {
@@ -269,23 +292,53 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				}
 				if (shape[i] != oShape[i] && shape[i] != 1) throw new IllegalArgumentException("Sliceable dataset has invalid size!");
 			}
-			
-			return lz.getSliceView(stt,stp,ste);
-			
+
+			if (asView || (lz instanceof IDataset))
+				return lz.getSliceView(stt, stp, ste);
+			return lz.getSlice(stt, stp, ste);
+		}
+	}
+
+	class MdsReshape implements MetadatasetAnnotationOperation {
+		private int[] newShape;
+
+		public MdsReshape(int[] newShape) {
+			this.newShape = newShape;
+		}
+
+		@Override
+		public Class<? extends Annotation> getAnnClass() {
+			return Reshapeable.class;
+		}	
+
+		@Override
+		public ILazyDataset run(ILazyDataset lz) {
+			lz.setShape(newShape);
+			return lz;
 		}
 	}
 
 	/**
 	 * Slice all datasets in metadata that are annotated by @Sliceable. Call this on the new sliced
 	 * dataset after cloning the metadata
-	 * 
+	 * @param asView if true then just a view
 	 * @param start
 	 * @param stop
 	 * @param step
 	 * @param oShape
 	 */
-	protected void sliceMetadata(final int[] start, final int[] stop, final int[] step, final int[] oShape) {
-		processAnnotatedMetadata(new MdsSlice(start, stop, step, oShape));
+	protected void sliceMetadata(boolean asView, final int[] start, final int[] stop, final int[] step, final int[] oShape) {
+		processAnnotatedMetadata(new MdsSlice(asView, start, stop, step, oShape));
+	}
+
+	/**
+	 * Reshape all datasets in metadata that are annotated by @Reshapeable. Call this when squeezing
+	 * or setting the shape
+	 * 
+	 * @param newShape
+	 */
+	protected void reshapeMetadata(final int[] newShape) {
+		processAnnotatedMetadata(new MdsReshape(newShape));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -452,5 +505,66 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				}
 			}
 		}
+	}
+
+	protected ILazyDataset createFromSerializable(Serializable blob, boolean keepLazy) {
+		ILazyDataset d = null;
+		if (blob instanceof ILazyDataset) {
+			d = (ILazyDataset) blob;
+			BroadcastIterator.broadcastShapes(shape, d.getShape());
+			if (d instanceof IDataset) {
+				Dataset ed = DatasetUtils.convertToDataset(d);
+				int is = ed.getElementsPerItem();
+				if (is != 1 && is != getElementsPerItem()) {
+					throw new IllegalArgumentException("Dataset has incompatible number of elements with this dataset");
+				}
+				d = ed.cast(is == 1 ? Dataset.FLOAT64 : Dataset.ARRAYFLOAT64);
+			} else if (!keepLazy) {
+				final int is = getElementsPerItem();
+				d = DatasetUtils.cast(d.getSlice(), is == 1 ? Dataset.FLOAT64 : Dataset.ARRAYFLOAT64);
+			}
+		} else {
+			final int is = getElementsPerItem();
+			d = DatasetFactory.createFromObject(blob, is == 1 ? Dataset.FLOAT64 : Dataset.ARRAYFLOAT64);
+			if (d.getSize() == getSize() && !Arrays.equals(d.getShape(), shape)) {
+				d.setShape(shape.clone());
+			}
+		}
+
+		return d;
+	}
+
+	@Override
+	public void setError(Serializable errors) {
+		if (errors == null) {
+			clearMetadata(ErrorMetadata.class);
+			return;
+		}
+
+		ILazyDataset errorData = createFromSerializable(errors, true);
+
+		ErrorMetadata emd = getErrorMetadata();
+		if (emd == null || !(emd instanceof ErrorMetadataImpl)) {
+			emd = new ErrorMetadataImpl();
+			setMetadata(emd);
+		}
+		((ErrorMetadataImpl) emd).setError(errorData);
+	}
+
+	protected ErrorMetadata getErrorMetadata() {
+		try {
+			List<ErrorMetadata> el = getMetadata(ErrorMetadata.class);
+			if (el != null && !el.isEmpty()) {
+				 return el.get(0);
+			}
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+	@Override
+	public ILazyDataset getError() {
+		ErrorMetadata emd = getErrorMetadata();
+		return emd == null ? null : emd.getError();
 	}
 }

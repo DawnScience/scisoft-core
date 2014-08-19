@@ -17,7 +17,6 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import uk.ac.diamond.scisoft.analysis.io.ILazyLoader;
@@ -43,7 +42,6 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 	protected LazyDataset base = null;
 	private int[] sliceStart = null;
 	private int[] sliceStep  = null;
-	protected ILazyDataset lazyErrorDelegate;
 
 	/**
 	 * Create a lazy dataset
@@ -93,7 +91,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 			ret.sliceStart = sliceStart.clone();
 			ret.sliceStep = sliceStep.clone();
 		}
-		ret.lazyErrorDelegate = lazyErrorDelegate;
+		ret.metadata = copyMetadata();
 		return ret;
 	}
 
@@ -136,9 +134,6 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 	@Override
 	public void setShape(int... shape) {
 		setShapeInternal(shape);
-		if (lazyErrorDelegate!=null) {
-			lazyErrorDelegate.setShape(shape);
-		}
 	}
 
 	private void setShapeInternal(int... shape) {
@@ -184,6 +179,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		}
 		nOffset = off;
 		this.shape = shape.clone();
+		reshapeMetadata(shape);
 	}
 
 	@Override
@@ -194,7 +190,6 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 	@Override
 	public ILazyDataset squeeze(boolean onlyFromEnd) {
 		setShapeInternal(AbstractDataset.squeezeShape(shape, onlyFromEnd));
-		if (lazyErrorDelegate!=null) lazyErrorDelegate = lazyErrorDelegate.squeeze(onlyFromEnd);
 		return this;
 	}
 
@@ -341,18 +336,9 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		a.setName(name + AbstractDataset.BLOCK_OPEN + Slice.createString(oShape, nstart, nstop, nstep) + AbstractDataset.BLOCK_CLOSE);
 		if (metadata != null && a instanceof LazyDatasetBase) {
 			((LazyDatasetBase) a).metadata = copyMetadata();
-			((LazyDatasetBase) a).sliceMetadata(nstart, nstop, nstep, oShape);
+			((LazyDatasetBase) a).sliceMetadata(false, nstart, nstop, nstep, oShape);
 		}
 
-		if (a instanceof IErrorDataset) {
-			IErrorDataset ea = (IErrorDataset)a;
-			if (lazyErrorDelegate!=null) {
-				IDataset lazySlice = lazyErrorDelegate.getSlice(monitor, start, stop, step);
-				ea.setError(lazySlice);
-			} else {
-				ea.clearError();
-			}
-		}
 		return a;
 	}
 
@@ -367,10 +353,6 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		final int[] step = new int[rank];
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 		ILazyDataset sliceView = getSliceView(start, stop, step);
-		if (lazyErrorDelegate!=null) {
-			ILazyDataset errorView = lazyErrorDelegate.getSliceView(start, stop, step);
-			sliceView.setLazyErrors(errorView);
-		}
 		return sliceView;
 	}
 
@@ -410,27 +392,8 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		lazy.sliceStep  = lstep.clone();
 		lazy.base = base == null ? this : base;
 		lazy.metadata = copyMetadata();
-		lazy.sliceMetadata(lstart, lstop, lstep, shape);
+		lazy.sliceMetadata(true, lstart, lstop, lstep, shape);
 		return lazy;
-	}
-
-	@Override
-	public void setLazyErrors(ILazyDataset errors) {
-		if (this==errors) return;
-		if (errors==null) {
-			lazyErrorDelegate = null;
-			return;
-		}
-		if (errors.getRank()!=getRank()) throw new RuntimeException("Rank of errors not correct. Should be "+getRank());
-		if (!Arrays.equals(getShape(), errors.getShape())) {
-			throw new RuntimeException("Shape of errors not correct. Should be "+Arrays.toString(getShape()));
-		}
-		this.lazyErrorDelegate = errors;
-	}
-
-	@Override
-	public ILazyDataset getLazyErrors() {
-		return lazyErrorDelegate;
 	}
 
 	/**
@@ -449,23 +412,23 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 	 * @return maximum size of dimension that can be sliced.
 	 */
 	public static int getMaxSliceLength(ILazyDataset lazySet, int dimension) {
+		// size in bytes of each item
+		final double size = AbstractDataset.getItemsize(AbstractDataset.getDTypeFromClass(lazySet.elementClass()), lazySet.getElementsPerItem());
 		
-		final double size = getSize(lazySet.elementClass()) * lazySet.getElementsPerItem();
-		
-		// Max takes into account our minimum requirement.
+		// Max in bytes takes into account our minimum requirement
 		final double max  = Math.max(Runtime.getRuntime().totalMemory(), Runtime.getRuntime().maxMemory());
 		
-        // Firstly if the whole dataset it likely to fit in memory, then we
-		// allow it.
+        // Firstly if the whole dataset it likely to fit in memory, then we allow it.
+		// Space specified in bytes per item available
 		final double space = max/lazySet.getSize();
-		
+
 		// If we have room for this whole dataset, then fine
 		int[] shape = lazySet.getShape();
 		if (space >= size)
 			return shape[dimension];
 		
-		// Otherwise estimate what we can fit in, conservatively
-		// First get size of one slice, see it that fits, if not, still return 1.
+		// Otherwise estimate what we can fit in, conservatively.
+		// First get size of one slice, see it that fits, if not, still return 1
 		double sizeOneSlice = size; // in bytes
 		for (int dim = 0; dim < shape.length; dim++) {
 			if (dim == dimension)
@@ -479,21 +442,4 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		// We fudge this to leave some room
 		return (int) Math.floor(avail/4d);
 	}
-
-	/**
-	 * Size in bytes of 1 of given type
-	 * @param elementClass
-	 * @return size
-	 */
-	private static int getSize(Class<?> elementClass) {
-		// If Number will usually have the SIZE attribute
-		try {
-			Field size = elementClass.getField("SIZE");
-			if (size!=null) return size.getInt(null) / 8; // static
-		} catch (Throwable ne) {
-			// Ignored
-		}
-		return 8;
-	}
-
 }

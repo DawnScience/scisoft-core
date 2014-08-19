@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
+import java.io.Serializable;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -223,13 +224,17 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public void setLazyErrors(ILazyDataset errors) {
+	public ILazyDataset getError() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public ILazyDataset getLazyErrors() {
+	public void setError(Serializable errors) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
+	@Override
+	public <T extends MetadataType> void clearMetadata(Class<T> clazz) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
 }

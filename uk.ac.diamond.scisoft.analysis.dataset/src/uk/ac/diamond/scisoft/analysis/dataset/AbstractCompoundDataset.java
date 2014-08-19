@@ -800,7 +800,11 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		}
 
 		// now all the calculations are done, add the values into store
-		storedValues = new HashMap<String, Object>();
+		if (storedValues == null)
+			storedValues = new HashMap<String, Object>();
+		else
+			storedValues.clear();
+
 		for (int i = 0; i < isize; i++)
 			storedValues.put(name+i, stats[i]);
 	}
@@ -1078,30 +1082,32 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public AbstractCompoundDataset getError() {
-		if (errorData == null) {
+	public CompoundDataset getError() {
+		Dataset ed = getInternalError();
+		if (ed == null)
 			return null;
+
+		if (ed.getSize() != size || ed.getElementsPerItem() != isize) {
+			CompoundDataset errors = new CompoundDoubleDataset(isize, shape);
+			errors.setSlice(ed);
+			return errors;
 		}
-		if (errorData.getSize() != getSize()) {
-			CompoundDoubleDataset errors = new CompoundDoubleDataset(isize, shape);
-			return (AbstractCompoundDataset) Maths.sqrt(errorData, errors);
-		}
-		return (AbstractCompoundDataset) Maths.sqrt(errorData);
+		return (CompoundDataset) ed;
 	}
 
 	@Override
 	public double getError(final int i) {
-		return calcError(getSquaredErrorArray(i));
+		return calcError(getInternalErrorArray(true, i));
 	}
 
 	@Override
 	public double getError(final int i, final int j) {
-		return calcError(getSquaredErrorArray(i, j));
+		return calcError(getInternalErrorArray(true, i, j));
 	}
 
 	@Override
 	public double getError(final int... pos) {
-		return calcError(getSquaredErrorArray(pos));
+		return calcError(getInternalErrorArray(true, pos));
 	}
 
 	private double calcError(double[] es) {
@@ -1119,96 +1125,73 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 
 	@Override
 	public double[] getErrorArray(final int i) {
-		return calcErrorArray(getSquaredErrorArray(i));
+		return getInternalErrorArray(false, i);
 	}
 
 	@Override
 	public double[] getErrorArray(final int i, final int j) {
-		return calcErrorArray(getSquaredErrorArray(i, j));
+		return getInternalErrorArray(false, i, j);
 	}
 
 	@Override
 	public double[] getErrorArray(final int... pos) {
-		return calcErrorArray(getSquaredErrorArray(pos));
+		return getInternalErrorArray(false, pos);
 	}
 
-	private double[] calcErrorArray(double[] es) {
-		if (es != null) {
-			for (int k = 0; k < isize; k++) {
-				es[k] = Math.sqrt(es[k]);
+	private double[] getInternalErrorArray(final boolean squared, final int i) {
+		Dataset sed = squared ? getInternalSquaredError() : getInternalError();
+		if (sed == null)
+			return null;
+		}
+
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		int n = bs.get1DIndex(i);
+		double[] es = new double[isize];
+		if (sed instanceof CompoundDoubleDataset) {
+			((CompoundDoubleDataset) sed).getDoubleArrayAbs(n, es);
+			if (sed.getElementsPerItem() != isize) { // ensure error is broadcasted
+				Arrays.fill(es, es[0]);
 			}
+		} else {
+			Arrays.fill(es, ((DoubleDataset) sed).getElementDoubleAbs(n));
 		}
 		return es;
 	}
 
-	private double[] getSquaredErrorArray(final int i) {
-		if (errorData == null) {
+	private double[] getInternalErrorArray(final boolean squared, final int i, final int j) {
+		Dataset sed = squared ? getInternalSquaredError() : getInternalError();
+		if (sed == null)
 			return null;
-		}
 
-		double[] es = null;
-		if (errorData instanceof CompoundDoubleDataset) {
-			if (errorData.getSize() > 1) { 
-				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i);
-			} else {
-				es = new double[isize];
-				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		int n = bs.get1DIndex(i, j);
+		double[] es = new double[isize];
+		if (sed instanceof CompoundDoubleDataset) {
+			((CompoundDoubleDataset) sed).getDoubleArrayAbs(n, es);
+			if (sed.getElementsPerItem() != isize) { // ensure error is broadcasted
+				Arrays.fill(es, es[0]);
 			}
 		} else {
-			es = new double[isize];
-			if (errorData.getSize() > 1) { 
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i));
-			} else {
-				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
-			}
+			Arrays.fill(es, ((DoubleDataset) sed).getElementDoubleAbs(n));
 		}
 		return es;
 	}
 
-	private double[] getSquaredErrorArray(final int i, final int j) {
-		if (errorData == null) {
+	private double[] getInternalErrorArray(final boolean squared, final int... pos) {
+		Dataset sed = squared ? getInternalSquaredError() : getInternalError();
+		if (sed == null)
 			return null;
-		}
 
-		double[] es = null;
-		if (errorData instanceof CompoundDoubleDataset) {
-			if (errorData.getSize() > 1) { 
-				es = ((CompoundDoubleDataset) errorData).getDoubleArray(i, j);
-			} else {
-				es = new double[isize];
-				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
+		BroadcastStride bs = (BroadcastStride) getStoredValue(STORE_BROADCAST);
+		int n = bs.get1DIndex(pos);
+		double[] es = new double[isize];
+		if (sed instanceof CompoundDoubleDataset) {
+			((CompoundDoubleDataset) sed).getDoubleArrayAbs(n, es);
+			if (sed.getElementsPerItem() != isize) { // ensure error is broadcasted
+				Arrays.fill(es, es[0]);
 			}
 		} else {
-			es = new double[isize];
-			if (errorData.getSize() > 1) { 
-				Arrays.fill(es, ((DoubleDataset) errorData).get(i, j));
-			} else {
-				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
-			}
-		}
-		return es;
-	}
-
-	private double[] getSquaredErrorArray(final int... pos) {
-		if (errorData == null) {
-			return null;
-		}
-
-		double[] es = null;
-		if (errorData instanceof CompoundDoubleDataset) {
-			if (errorData.getSize() > 1) { 
-				es = ((CompoundDoubleDataset) errorData).getDoubleArray(pos);
-			} else {
-				es = new double[isize];
-				((CompoundDoubleDataset) errorData).getDoubleArrayAbs(0, es);
-			}
-		} else {
-			es = new double[isize];
-			if (errorData.getSize() > 1) { 
-				Arrays.fill(es, ((DoubleDataset) errorData).get(pos));
-			} else {
-				Arrays.fill(es, ((DoubleDataset) errorData).getElementDoubleAbs(0));
-			}
+			Arrays.fill(es, ((DoubleDataset) sed).getElementDoubleAbs(n));
 		}
 		return es;
 	}

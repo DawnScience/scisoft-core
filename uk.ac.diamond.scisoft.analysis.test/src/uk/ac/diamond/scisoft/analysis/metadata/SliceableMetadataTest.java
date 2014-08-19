@@ -298,7 +298,7 @@ public class SliceableMetadataTest {
 		l2.add(new DoubleDataset[]{Random.randn(shape)});
 		l2.add(new DoubleDataset[]{Random.randn(shape)});
 
-		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm,l2);
+		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
 
 		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
 		dataset.addMetadata(md);

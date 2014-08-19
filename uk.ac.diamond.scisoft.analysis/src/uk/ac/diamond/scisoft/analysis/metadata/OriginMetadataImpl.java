@@ -33,7 +33,7 @@ public class OriginMetadataImpl implements OriginMetadata {
 
 	public OriginMetadataImpl(OriginMetadataImpl origin) {
 		parent = origin.parent == null ? null : origin.parent.getSliceView();
-		slice = origin.slice == null ? null : slice.clone();
+		slice = origin.slice == null ? null : origin.slice.clone();
 		dataDims = origin.dataDims == null ? null : origin.dataDims.clone();
 	}
 

@@ -40,8 +40,9 @@ public class ErrorMetadataImpl implements ErrorMetadata, Serializable {
 	public ErrorMetadataImpl() {
 	}
 
-	public ErrorMetadataImpl(ErrorMetadata error) {
-		this.error = error.getError();
+	public ErrorMetadataImpl(ErrorMetadataImpl error) {
+		this.error = error.error == null ? null : error.error.getSliceView();
+		this.sqError = error.sqError == null ? null : error.sqError.getSliceView();
 	}
 
 	@Override

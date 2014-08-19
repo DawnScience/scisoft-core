@@ -43,13 +43,18 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 		this.photonEnergy = metadata.getPhotonEnergy();
 		this.workFunction = metadata.getWorkFunction();
 		this.kineticEnergies = metadata.getKineticEnergies();
-		this.analyserAngles = metadata.getAnalyserAngles();
-		this.polarAngles = metadata.getPolarAngles();
-		this.tiltAngles = metadata.getTiltAngles();
-		this.azimuthalAngles = metadata.getAzimuthalAngles();
-		this.energyAxisOffset = metadata.getEnergyAxisOffset();
-		this.bindingEnergies = metadata.getBindingEnergies();
-		this.photoelectronMomentum = metadata.getPhotoelectronMomentum();
+
+		this.analyserAngles = getView(metadata.getAnalyserAngles());
+		this.polarAngles = getView(metadata.getPolarAngles());
+		this.tiltAngles = getView(metadata.getTiltAngles());
+		this.azimuthalAngles = getView(metadata.getAzimuthalAngles());
+		this.energyAxisOffset = getView(metadata.getEnergyAxisOffset());
+		this.bindingEnergies = getView(metadata.getBindingEnergies());
+		this.photoelectronMomentum = getView(metadata.getPhotoelectronMomentum());
+	}
+
+	private ILazyDataset getView(ILazyDataset l) {
+		return l == null ? null : l.getSliceView();
 	}
 
 	@Override

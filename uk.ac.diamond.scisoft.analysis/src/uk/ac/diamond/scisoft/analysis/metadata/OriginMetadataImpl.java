@@ -30,7 +30,13 @@ public class OriginMetadataImpl implements OriginMetadata {
 		this.slice = slice;
 		this.dataDims = dataDims;
 	}
-	
+
+	public OriginMetadataImpl(OriginMetadataImpl origin) {
+		parent = origin.parent == null ? null : origin.parent.getSliceView();
+		slice = origin.slice == null ? null : slice.clone();
+		dataDims = origin.dataDims == null ? null : origin.dataDims.clone();
+	}
+
 	@Override
 	public int[] getDataDimensions() {
 		return dataDims;
@@ -48,7 +54,7 @@ public class OriginMetadataImpl implements OriginMetadata {
 	
 	@Override
 	public OriginMetadata clone() {
-		return new OriginMetadataImpl(parent, slice.clone(), dataDims.clone());
+		return new OriginMetadataImpl(this);
 	}
 
 }

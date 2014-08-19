@@ -32,6 +32,10 @@ public class MaskMetadataImpl implements MaskMetadata {
 		this.mask = mask;
 	}
 
+	public MaskMetadataImpl(MaskMetadataImpl mask) {
+		this.mask = mask == null ? null : mask.mask.getSliceView();
+	}
+
 	@Override
 	public ILazyDataset getMask() {
 		return mask;
@@ -39,7 +43,7 @@ public class MaskMetadataImpl implements MaskMetadata {
 	
 	@Override
 	public MaskMetadata clone() {
-		return new MaskMetadataImpl(mask);
+		return new MaskMetadataImpl(this);
 	}
 
 }

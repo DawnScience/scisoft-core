@@ -426,7 +426,7 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	
 	private static void processList(MetadatasetAnnotationOperation op, List<?> list) {
 		Object r = null;
-		int l = list.size();
+		int l = list!=null ? list.size() : 0;
 		if (l > 0) {
 			for (int j = 0; r == null && j < l; j++) {
 				r = list.get(j);

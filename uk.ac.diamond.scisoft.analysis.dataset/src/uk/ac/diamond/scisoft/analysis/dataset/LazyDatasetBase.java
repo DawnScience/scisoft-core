@@ -392,31 +392,35 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	}
 	
 	private static void processArray(MetadatasetAnnotationOperation op, Object o){
+		if (o == null)
+			return;
+
 		Object r = null;
 		int l = Array.getLength(o);
 		if (l > 0) {
-			for (int j = 0; r == null && j < l; j++) {
+			int j = 0;
+			for (; r == null && j < l; j++) {
 				r = Array.get(o, j);
 			}
 			if (r == null)
 				return;
 			
 			if (r instanceof ILazyDataset) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					ILazyDataset ld = (ILazyDataset) Array.get(o, i);
 					Array.set(o, i, op.run(ld));
 				}
 			} else if (r.getClass().isArray()) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					processArray(op, Array.get(o, i));
 				}
 			} else if (r instanceof List<?>) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					List<?> list = (List<?>) Array.get(o, i);
 					processList(op, list);
 				}
 			} else if (r instanceof Map<?,?>) {
-				for (int i = 0; i < l; i++) {
+				for (int i = j; i < l; i++) {
 					Map<?, ?> map = (Map<?, ?>) Array.get(o, i);
 					processMap(op, map);
 				}
@@ -425,8 +429,11 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	}
 	
 	private static void processList(MetadatasetAnnotationOperation op, List<?> list) {
+		if (list == null)
+			return;
+
 		Object r = null;
-		int l = list!=null ? list.size() : 0;
+		int l = list.size();
 		if (l > 0) {
 			for (int j = 0; r == null && j < l; j++) {
 				r = list.get(j);
@@ -459,6 +466,9 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	}
 	
 	private static void processMap(MetadatasetAnnotationOperation op, Map<?,?> map) {
+		if (map == null)
+			return;
+
 		Object r = null;
 		int l = map.size();
 		if (l > 0) {

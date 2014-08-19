@@ -1187,9 +1187,7 @@ public class DatasetUtils {
 			break;
 		}
 
-		if (lazydata instanceof Dataset) {
-			result.setErrorBuffer(((Dataset) lazydata).getErrorBuffer());
-		}
+		result.setError(data.getError());
 		return result;
 	}
 

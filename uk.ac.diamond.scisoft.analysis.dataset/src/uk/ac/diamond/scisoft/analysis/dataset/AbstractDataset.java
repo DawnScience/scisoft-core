@@ -332,7 +332,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			if (m == null) {
 				continue;
 			}
-			Class<? extends MetadataType> c = m.getClass();
+			Class<? extends MetadataType> c = findMetadataTypeSubInterfaces(m.getClass());
 			List<MetadataType> l = map.get(c);
 			if (l == null) {
 				l = new ArrayList<MetadataType>();

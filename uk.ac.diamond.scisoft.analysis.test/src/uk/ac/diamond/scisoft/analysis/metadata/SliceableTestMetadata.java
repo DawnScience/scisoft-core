@@ -47,14 +47,37 @@ public class SliceableTestMetadata implements MetadataType {
 		l2deep = l2;
 	}
 
+	public SliceableTestMetadata(SliceableTestMetadata stm) {
+		ds = stm.ds.getSliceView();
+
+		dds = new DoubleDataset[stm.dds.length];
+		for (int i = 0; i < dds.length; i++) {
+			dds[i] = stm.dds[i].getView();
+		}
+
+		lds = new ArrayList<>();
+		for (ShortDataset d : stm.lds) {
+			lds.add(d.getView());
+		}
+
+		mds = new HashMap<>();
+		for (String s : stm.mds.keySet()) {
+			mds.put(s, stm.mds.get(s).getView());
+		}
+
+		l2deep = new ArrayList<>();
+		for (DoubleDataset[] da : stm.l2deep) {
+			DoubleDataset[] ta = new DoubleDataset[da.length];
+			for (int i = 0; i < ta.length; i++) {
+				ta[i] = da[i].getView();
+			}
+			l2deep.add(ta);
+		}
+	}
+
 	@Override
 	public MetadataType clone() {
-		
-		List<DoubleDataset[]> l2clone = new ArrayList<DoubleDataset[]>(l2deep.size());
-		
-		for (int i = 0; i< l2deep.size(); i++) l2clone.add(l2deep.get(i).clone());
-		
-		return new SliceableTestMetadata(ds, dds.clone(), new ArrayList<ShortDataset>(lds), new HashMap<String, BooleanDataset>(mds), l2clone);
+		return new SliceableTestMetadata(this);
 	}
 
 	public ILazyDataset getLazyDataset() {

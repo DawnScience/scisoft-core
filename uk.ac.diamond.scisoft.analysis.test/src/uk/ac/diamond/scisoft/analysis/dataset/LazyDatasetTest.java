@@ -150,7 +150,6 @@ public class LazyDatasetTest {
 		slice = new Slice[]{new Slice(1, null, 3), new Slice(1), null, new Slice(1, 3)};
 		ILazyDataset l = ld.getSliceView(null, shape, null);
 		System.out.println(l);
-//		Assert.assertEquals("Full slice", d, l);
 		Assert.assertEquals("Full slice", d, l.getSlice());
 		l = ld.getSliceView(slice);
 		System.out.println(l);
@@ -158,7 +157,6 @@ public class LazyDatasetTest {
 
 		l = ld.getSliceView();
 		System.out.println(l);
-		Assert.assertEquals("Full slice", d, l);
 		Assert.assertEquals("Full slice", d, l.getSlice());
 		l = ld.getSliceView(slice);
 		System.out.println(l);

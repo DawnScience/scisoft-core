@@ -289,8 +289,9 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 					stt[i] = 0;
 					stp[i] = 1;
 					ste[1] = 1;
+				} else {
+					throw new IllegalArgumentException("Sliceable dataset has invalid size!");
 				}
-				if (shape[i] != oShape[i] && shape[i] != 1) throw new IllegalArgumentException("Sliceable dataset has invalid size!");
 			}
 
 			if (asView || (lz instanceof IDataset))

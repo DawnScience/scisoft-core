@@ -2097,16 +2097,21 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					metadata.addDataInfo(n, l.getShape());
 					// also add datasets under their local name (if defined) 
 					try {
-							String attr = n.concat("@local_name");
-							Object localattr = metadata.getMetaValue(attr);
-							if (localattr == null)
-								continue;
-							String localname = localattr.toString();
-							if (localname == null || localname.isEmpty())
-								continue;
-							if (lMap.keySet().contains(localname))
-								continue;
-							dh.addDataset(localname, l);
+
+						// TODO FIXME local name pollutes the DataHolder with 
+						// ghost entries which do not have an H5 location.
+						// This does not play nicely with some GUI in DAWN
+						// which assumes that the holder has a list of complete
+						// paths. For now this GUI is changed to ignore holder keys
+						// which do not start with "/"
+						String attr = n.concat("@local_name");
+						Object localattr = metadata.getMetaValue(attr);
+						if (localattr == null) continue;
+						String localname = localattr.toString();
+						if (localname == null || localname.isEmpty()) continue;
+						if (lMap.keySet().contains(localname)) continue;
+						dh.addDataset(localname, l);
+						
 					} catch (Exception ex) {
 						logger.info("seen an exception populating local nexus name for "+n, ex);
 					}

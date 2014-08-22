@@ -409,6 +409,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			
 			// Busy line, been looking at too much python...
 			List<String> headers = new ArrayList<String>(Arrays.asList(lastHeaderLine.substring(1).trim().split("\\s{2,}|\\,\\s+|\\t")));
+			headers = removeQuotations(headers);
+			
 			if (values.length > headers.size()) {
 				for (int j = headers.size(); j < values.length; j++) {
 					headers.add("Unknown"+j);
@@ -434,6 +436,25 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
+	private List<String> removeQuotations(List<String> header) {
+		
+		if (header ==null || header.isEmpty()) return header;
+		
+		final List<String> ret = new ArrayList<String>(header.size());
+		
+		for (String name : header) {
+			ret.add(removeQuotations(name));
+		}
+		
+		return ret;
+	}
+	
+	private String removeQuotations(String name) {
+		name = name.trim();
+		if (name.startsWith("\"")) name = name.substring(1);
+		if (name.endsWith("\""))   name = name.substring(0, name.length()-2);
+        return name;		
+	}
 
 	protected void createDefaultHeaders(String line) {
 		final String[] values = line.trim().split(getDelimiter());
@@ -449,6 +470,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		final String[] headers = header.substring(1).trim().split("\\s{2,}|\\,\\s*|\\t");
 		
 		for (String name : headers) {
+			name = removeQuotations(name);
 			v.put(name, new ArrayList<Double>(89));
 		}
 	}

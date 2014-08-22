@@ -41,7 +41,7 @@ BL04J-AL-SLITS-02:TOP.VAL,Points,BL04J-EA-STK-03:IAMP4:I
 ...
 
  */
-public class EpicsCSVLoader extends DatLoader {
+public class CSVLoader extends DatLoader {
 
 	/**
 	 * May override to support different file formats.
@@ -49,7 +49,7 @@ public class EpicsCSVLoader extends DatLoader {
 	 */
 	@Override
 	protected String getDelimiter() {
-		return ",";
+		return "\\s*,\\s*";
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class EpicsCSVLoader extends DatLoader {
 		if (line == null)
 			return null;
 
-		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
+		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with EpicsCSVLoader!");
 		metaData.clear();
 		vals.clear();
 
@@ -125,6 +125,7 @@ public class EpicsCSVLoader extends DatLoader {
         
 		return line;
 	}
+
 
 
 }

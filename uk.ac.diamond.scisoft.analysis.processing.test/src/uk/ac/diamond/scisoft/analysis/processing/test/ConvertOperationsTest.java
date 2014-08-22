@@ -1,32 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import java.io.File;
-
 import org.dawb.common.services.ServiceManager;
-import org.dawb.common.services.conversion.IConversionContext;
-import org.dawb.common.services.conversion.IProcessingConversionInfo;
-import org.dawb.common.services.conversion.IConversionContext.ConversionScheme;
 import org.dawb.common.services.conversion.IConversionService;
 import org.dawnsci.conversion.ConversionServiceImpl;
-import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
-import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
-import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
-import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
-import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel;
-import uk.ac.diamond.scisoft.analysis.processing.visitors.HierarchicalFileExecutionVisitor;
 
 public class ConvertOperationsTest {
 

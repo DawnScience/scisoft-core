@@ -573,7 +573,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					String eName = linkName[1];
 					if (!(new File(eName).exists())) { // use directory of linking file
 						logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
-						eName = new File(f.getParentDirectory(), new File(eName).getName()).getAbsolutePath();
+						eName = new File(f.getParentDirectory(), new File(linkName[1]).getName()).getAbsolutePath();
+						if (!(new File(eName).exists())) { // append to directory of linking file
+							String eName2 = new File(f.getParentDirectory(),linkName[1]).getAbsolutePath();
+							logger.warn("Could not find external file {}, trying in {}", eName, eName2);
+							eName = eName2;
+						}						
 					}
 					if (new File(eName).exists()) {
 						group.addNode(f, name, oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));

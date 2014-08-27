@@ -15,13 +15,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.dataset.SliceVisitor;
-import uk.ac.diamond.scisoft.analysis.dataset.Slicer;
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.slice.SliceVisitor;
+import uk.ac.diamond.scisoft.analysis.slice.Slicer;
 
 /**
  * Do not use this class externally. Instead get the IOperationService

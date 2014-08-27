@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.dataset;
+package uk.ac.diamond.scisoft.analysis.slice;
+
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 
 /**
  * Used with 

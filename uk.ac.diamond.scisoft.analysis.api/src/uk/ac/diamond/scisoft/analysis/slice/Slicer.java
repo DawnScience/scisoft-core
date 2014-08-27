@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.dataset;
+package uk.ac.diamond.scisoft.analysis.slice;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +23,10 @@ import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 
 /**
  * Methods for slicing data using visit patterns.

@@ -19,7 +19,8 @@ Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.monitor,
  uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.model,
- uk.ac.diamond.scisoft.analysis.roi
+ uk.ac.diamond.scisoft.analysis.roi,
+ uk.ac.diamond.scisoft.analysis.slice
 Import-Package: javax.measure.unit;version="4.3.1",
  javax.vecmath,
  org.slf4j;version="[1.7.6,1.7.7)"

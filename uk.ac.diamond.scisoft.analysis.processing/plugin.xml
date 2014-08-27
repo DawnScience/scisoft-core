@@ -25,7 +25,7 @@
             icon="icons/sector.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel"
-            name="Azimithal Integration">
+            name="Sector Azimithal Integration">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"
@@ -84,16 +84,34 @@
             icon="icons/PowderIntegration.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
-            name="Azimuthal Integration (Full Image)"
+            name="Azimuthal Integration"
             visible="true">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
             description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle"
-            icon="icons/PowderIntegration.png"
+            icon="icons/PowderIntegrationRadial.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
-            name="Radial Integration (Full Image)"
+            name="Radial Integration"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionOperation"
+            description="Solid angle, polarisation and detector transmission corrections"
+            icon="icons/PowderCorrection.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionModel"
+            name="Powder Diffraction Intensity Corrections"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
+            description="Remap a powder diffraction/SAXS image to q/2theta vs azimuthal angle"
+            icon="icons/PowderCake.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationModel"
+            name="Cake Remapping"
             visible="true">
       </operation>
    </extension>

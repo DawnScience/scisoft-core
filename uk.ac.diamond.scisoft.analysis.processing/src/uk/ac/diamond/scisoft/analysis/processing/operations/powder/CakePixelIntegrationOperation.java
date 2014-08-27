@@ -29,6 +29,15 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 	protected void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims,
 			List<Dataset> out) {
 		
+		
+		if (axes == null) {
+			AxesMetadataImpl amd = new AxesMetadataImpl(Math.max(dataDims[0], dataDims[1])+1);
+			amd.setAxis(dataDims[0], new ILazyDataset[] {out.get(0)});
+			amd.setAxis(dataDims[1], new ILazyDataset[] {out.get(1)});
+			data.setMetadata(amd);
+			return;
+		}
+		
 		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length);
 
 		int count = 0;

@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
@@ -11,6 +13,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
+import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public abstract class AbstractPixelIntegrationOperation extends
@@ -18,6 +21,7 @@ public abstract class AbstractPixelIntegrationOperation extends
 
 	AbstractPixelIntegration integrator;
 	IDiffractionMetadata metadata;
+	PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {
@@ -58,12 +62,25 @@ public abstract class AbstractPixelIntegrationOperation extends
 	@Override
 	public void setModel(IOperationModel model) throws Exception {
 		if (!(model instanceof PixelIntegrationModel)) throw new IllegalArgumentException("Incorrect model type");
+		
+		if (listener == null) {
+			listener = new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					AbstractPixelIntegrationOperation.this.integrator = null;
+				}
+			};
+		} else {
+			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+		}
+		
 		this.model = model;
+		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
 	}
 	
 
 	protected abstract void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims, List<Dataset> out);
 	
 	protected abstract AbstractPixelIntegration createIntegrator(PixelIntegrationModel model, IDiffractionMetadata md);
-
 }

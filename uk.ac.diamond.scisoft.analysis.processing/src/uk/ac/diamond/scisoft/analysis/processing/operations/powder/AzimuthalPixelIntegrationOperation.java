@@ -16,9 +16,6 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegrationOperation {
 
-	AbstractPixelIntegration integrator;
-	IDiffractionMetadata metadata;
-	AzimuthalPixelIntegrationModel model;
 
 	@Override
 	public OperationRank getInputRank() {

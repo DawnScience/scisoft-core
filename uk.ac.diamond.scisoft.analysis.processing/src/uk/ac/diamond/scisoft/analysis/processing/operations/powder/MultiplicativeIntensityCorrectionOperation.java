@@ -1,6 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -12,13 +14,15 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
+import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class MultiplicativeIntensityCorrectionOperation extends
 		AbstractOperation {
 
 	Dataset correction;
-	MultiplicativeIntensityCorrectionModel model;
 	IDiffractionMetadata metadata;
+	PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {
@@ -55,24 +59,46 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		return OperationRank.TWO;
 	}
 	
+	@Override
+	public void setModel(IOperationModel model) throws Exception {
+		if (!(model instanceof MultiplicativeIntensityCorrectionModel)) throw new IllegalArgumentException("Incorrect model type");
+		
+		if (listener == null) {
+			listener = new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					MultiplicativeIntensityCorrectionOperation.this.correction = null;
+				}
+			};
+		} else {
+			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+		}
+		
+		this.model = model;
+		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
+	}
+	
 	private Dataset calculateCorrectionArray(IDataset data, IDiffractionMetadata md) {
-
+		
+		MultiplicativeIntensityCorrectionModel m = (MultiplicativeIntensityCorrectionModel)model;
+		
 		Dataset cor = DatasetFactory.ones(data.getShape(), Dataset.FLOAT64);
 
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(data.getShape(), md);
 
-		if (model.isApplySolidAngleCorrection()) {
+		if (m.isApplySolidAngleCorrection()) {
 			PixelIntegrationUtils.solidAngleCorrection(cor,tth);
 		}
 
-		if (model.isApplyPolarisationCorrection()) {
+		if (m.isApplyPolarisationCorrection()) {
 			Dataset az = PixelIntegrationUtils.generateAzimuthalArray(data.getShape(), md, true);
-			az.iadd(Math.toRadians(model.getPolarisationAngularOffset()));
-			PixelIntegrationUtils.polarisationCorrection(cor, tth, az, model.getPolarisationFactor());
+			az.iadd(Math.toRadians(m.getPolarisationAngularOffset()));
+			PixelIntegrationUtils.polarisationCorrection(cor, tth, az, m.getPolarisationFactor());
 		}
 
-		if (model.isAppyDetectorTransmissionCorrection()) {
-			PixelIntegrationUtils.detectorTranmissionCorrection(cor, tth, model.getTransmittedFraction());
+		if (m.isApplyDetectorTransmissionCorrection()) {
+			PixelIntegrationUtils.detectorTranmissionCorrection(cor, tth, m.getTransmittedFraction());
 		}
 
 		return cor;

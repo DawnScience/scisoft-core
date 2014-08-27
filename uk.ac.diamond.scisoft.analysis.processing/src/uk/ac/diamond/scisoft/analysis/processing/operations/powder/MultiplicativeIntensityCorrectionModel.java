@@ -4,18 +4,18 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 
 public class MultiplicativeIntensityCorrectionModel extends AbstractOperationModel {
 
-	boolean isApplySolidAngleCorrection = false;
-	boolean isApplyPolarisationCorrection = false;
-	boolean isAppyDetectorTransmissionCorrection = false;
+	boolean applySolidAngleCorrection = false;
+	boolean applyPolarisationCorrection = false;
+	boolean applyDetectorTransmissionCorrection = false;
 	double polarisationFactor = 0.9;
 	double polarisationAngularOffset = 0;
 	double transmittedFraction = 0;
 	
 	public boolean isApplySolidAngleCorrection() {
-		return isApplySolidAngleCorrection;
+		return applySolidAngleCorrection;
 	}
 	public boolean isApplyPolarisationCorrection() {
-		return isApplyPolarisationCorrection;
+		return applyPolarisationCorrection;
 	}
 	public double getPolarisationFactor() {
 		return polarisationFactor;
@@ -24,10 +24,10 @@ public class MultiplicativeIntensityCorrectionModel extends AbstractOperationMod
 		return polarisationAngularOffset;
 	}
 	public void setApplySolidAngleCorrection(boolean isApplySolidAngleCorrection) {
-		firePropertyChange("isApplySolidAngleCorrection", this.isApplySolidAngleCorrection, this.isApplySolidAngleCorrection = isApplySolidAngleCorrection);
+		firePropertyChange("applySolidAngleCorrection", this.applySolidAngleCorrection, this.applySolidAngleCorrection = isApplySolidAngleCorrection);
 	}
 	public void setApplyPolarisationCorrection(boolean isApplyPolarisationCorrection) {
-		firePropertyChange("isApplyPolarisationCorrection", this.isApplyPolarisationCorrection, this.isApplyPolarisationCorrection = isApplyPolarisationCorrection);
+		firePropertyChange("applyPolarisationCorrection", this.applyPolarisationCorrection, this.applyPolarisationCorrection = isApplyPolarisationCorrection);
 	}
 	public void setPolarisationFactor(double polarisationFactor) {
 		firePropertyChange("polarisationFactor", this.polarisationFactor, this.polarisationFactor = polarisationFactor);
@@ -36,12 +36,12 @@ public class MultiplicativeIntensityCorrectionModel extends AbstractOperationMod
 		firePropertyChange("polarisationAngularOffset", this.polarisationAngularOffset, this.polarisationAngularOffset = polarisationAngularOffset);
 	}
 	
-	public boolean isAppyDetectorTransmissionCorrection() {
-		return isAppyDetectorTransmissionCorrection;
+	public boolean isApplyDetectorTransmissionCorrection() {
+		return applyDetectorTransmissionCorrection;
 	}
 	public void setAppyDetectorTransmissionCorrection(
 			boolean isAppyDetectorTransmissionCorrection) {
-		firePropertyChange("isAppyDetectorTransmissionCorrection", this.isAppyDetectorTransmissionCorrection, this.isAppyDetectorTransmissionCorrection = isAppyDetectorTransmissionCorrection);
+		firePropertyChange("applyDetectorTransmissionCorrection", this.applyDetectorTransmissionCorrection, this.applyDetectorTransmissionCorrection = isAppyDetectorTransmissionCorrection);
 	}
 	public double getTransmittedFraction() {
 		return transmittedFraction;

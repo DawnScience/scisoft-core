@@ -5,18 +5,16 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class ThresholdMask extends AbstractOperation {
 
@@ -67,7 +65,9 @@ public class ThresholdMask extends AbstractOperation {
 					mask.set(false, pos);
 				}
 			}
-			monitor.worked(1);
+			
+			MaskMetadata mm = new MaskMetadataImpl(mask);
+			data.setMetadata(mm);
 			
 			return new OperationData(data);
 

@@ -5,7 +5,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 public abstract class PixelIntegrationModel extends AbstractOperationModel {
 
-	boolean isPixelSplitting = false;
+	boolean pixelSplitting = false;
 	int numberOfBins = 1000;
 	
 	@OperationModelField(hint="Please set two values, start and end.\nThe values should match the axis selected (i.e. q, 2 theta, pixel).\n\nIf you delete the text, the range is cleared and the whole image used.")
@@ -19,7 +19,7 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 	}
 
 	public boolean isPixelSplitting() {
-		return isPixelSplitting;
+		return pixelSplitting;
 	}
 
 	public int getNumberOfBins() {
@@ -34,8 +34,8 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 		return azimuthalRange;
 	}
 
-	public void setPixelSplitting(boolean isPixelSplitting) {
-		firePropertyChange("isPixelSplitting", this.isPixelSplitting, this.isPixelSplitting = isPixelSplitting);
+	public void setPixelSplitting(boolean pixelSplitting) {
+		firePropertyChange("pixelSplitting", this.pixelSplitting, this.pixelSplitting = pixelSplitting);
 	}
 
 	public void setNumberOfBins(int numberOfBins) {

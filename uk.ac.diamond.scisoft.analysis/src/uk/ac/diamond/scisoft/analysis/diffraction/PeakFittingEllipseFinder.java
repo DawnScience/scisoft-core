@@ -169,10 +169,10 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new Dataset[]{xData}, (Dataset) sub, g,1000);
+				Fitter.ApacheNelderMeadFit(new Dataset[]{xData}, sub, g,1000);
 				
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.trace(e.getMessage());
 			}
 			
 			if (g == null) continue;

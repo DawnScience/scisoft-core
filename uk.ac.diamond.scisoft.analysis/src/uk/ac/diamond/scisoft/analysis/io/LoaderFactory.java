@@ -178,6 +178,9 @@ public class LoaderFactory {
 			     */
 			    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService) Activator.getService(ILoaderFactoryExtensionService.class);
 			    if (service!=null) service.registerExtensionPoints();
+		    } catch (NullPointerException e){
+		    	//TODO do not like to trap NPE, but what is the alternative here?
+		    	logger.info("Extension Service is not available in the None-OSGi context.");
 		    } catch (Throwable t) {
 				logger.error("Problem getting extension service");
 		    }

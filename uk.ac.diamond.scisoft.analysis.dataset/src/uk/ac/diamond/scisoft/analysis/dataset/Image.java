@@ -308,4 +308,20 @@ public class Image {
 		result.iadd(convolutionFilter(input, kernel));
 		return (AbstractDataset) result;
 	}
+	
+	public static Dataset flip(Dataset input, boolean vertical) {
+		
+		try {
+			Dataset ret;
+			if (vertical) {
+				ret = input.getSlice(null, null, new int[]{-1,1});
+			} else {
+				ret = input.getSlice(null, null, new int[]{1,-1});
+			}
+			return ret;
+		} catch (Throwable ne) {
+			logger.error("Cannot flip!", ne); 
+			return input;
+		}
+	}
 }

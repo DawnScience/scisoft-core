@@ -8,9 +8,9 @@ import org.dawb.common.services.IPersistentFile;
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 
+import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
@@ -82,7 +82,7 @@ public class ImportMaskOperation extends AbstractOperation {
 		if (inM == null) {
 			inM = mask;
 		} else {
-			inM = Maths.add(inM, mask);
+			inM = Comparisons.logicalAnd(inM, mask);
 		}
 		
 		MaskMetadata mm = new MaskMetadataImpl(inM);

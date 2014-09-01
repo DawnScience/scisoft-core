@@ -123,6 +123,15 @@
             name="Import Mask From File"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
+            description="Dilate the mask"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskModel"
+            name="Dilate Mask"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

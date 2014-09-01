@@ -191,6 +191,8 @@ public class PeakFittingEllipseFinder {
 			}
 		}
 		
+		if (gaussianList.isEmpty()) return polyline;
+		
 		Dataset heights = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
 		Dataset widths = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
 		

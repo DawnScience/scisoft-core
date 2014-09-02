@@ -16,10 +16,24 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.util.Collection;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.PlanarImage;
+
 /**
  * This class saves a DataHolder as a TIFF image file.
  */
 public class TIFFImageSaver extends JavaImageSaver {
+
+	private static final String FORMAT_NAME = "tiff";
 
 	/**
 	 * @param filename
@@ -33,7 +47,7 @@ public class TIFFImageSaver extends JavaImageSaver {
 	 * @param numBits
 	 */
 	public TIFFImageSaver(String filename, int numBits) {
-		super(filename, "tiff", numBits, true);
+		super(filename, FORMAT_NAME, numBits, true);
 	}
 
 	/**
@@ -42,7 +56,7 @@ public class TIFFImageSaver extends JavaImageSaver {
 	 * @param asUnsigned
 	 */
 	public TIFFImageSaver(String filename, int numBits, boolean asUnsigned) {
-		super(filename, "tiff", numBits, asUnsigned);
+		super(filename, FORMAT_NAME, numBits, asUnsigned);
 	}
 
 	/**
@@ -50,6 +64,43 @@ public class TIFFImageSaver extends JavaImageSaver {
 	 * @param asFloat
 	 */
 	public TIFFImageSaver(String filename, boolean asFloat) {
-		super(filename, "tiff", asFloat ? 33 : 16, true);
+		super(filename, FORMAT_NAME, asFloat ? 33 : 16, true);
+	}
+
+	@Override
+	protected boolean writeImageLocked(RenderedImage image, String fileType, File f, IDataHolder dh) throws Exception {
+		
+		// Write meta data to image header
+		if (image instanceof PlanarImage) {
+			PlanarImage pi = (PlanarImage)image;
+			if (dh.getFilePath()!=null) {
+				pi.setProperty("originalDataSource", dh.getFilePath());
+			}
+
+			IMetaData meta = dh.getMetadata();
+			if (meta != null) {
+				Collection<String> dNames = meta.getMetaNames();
+				if (dNames!=null) for (String name : dNames) {
+					pi.setProperty(name, meta.getMetaValue(name));
+				}
+			}
+		}
+
+		// special case to force little endian
+		ImageWriter writer = ImageIO.getImageWritersByFormatName(FORMAT_NAME).next();
+		IIOMetadata streamMeta = writer.getDefaultStreamMetadata(null);
+		String metadataFormatName = streamMeta.getNativeMetadataFormatName();
+
+		// Create the new stream metadata object for new byte order
+		IIOMetadataNode tree = new IIOMetadataNode(metadataFormatName);
+		IIOMetadataNode endianNode = new IIOMetadataNode("ByteOrder");
+		endianNode.setAttribute("value", "LITTLE_ENDIAN");
+		tree.appendChild(endianNode);
+		streamMeta.setFromTree(metadataFormatName, tree);
+
+		ImageOutputStream stream = ImageIO.createImageOutputStream(f);
+		writer.setOutput(stream);
+		writer.write(streamMeta, new IIOImage(image, null, null), null);
+		return true;
 	}
 }

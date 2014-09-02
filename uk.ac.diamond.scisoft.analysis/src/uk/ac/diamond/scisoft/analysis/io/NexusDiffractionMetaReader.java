@@ -4,17 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
-import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
-import ncsa.hdf.object.Group;
-import ncsa.hdf.object.HObject;
-import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataUtils;
@@ -160,7 +154,7 @@ public class NexusDiffractionMetaReader {
 				//populate the crystal environment
 				populateFromNexus(hiFile, nxDetector, diffcrys);
 				//populate detector properties
-				populateFromNexus(hiFile, nxDetector, detprop);
+				populateFromNexus(hiFile, nxDetector, detprop, imageSize);
 			}
 
 			} catch (Exception e) {
@@ -176,7 +170,7 @@ public class NexusDiffractionMetaReader {
 		
 		if (!successMap.get(DiffractionMetaValue.PIXEL_SIZE) && xyPixelSize != null) {
 			detprop.setHPxSize(xyPixelSize[0]);
-			detprop.setHPxSize(xyPixelSize[1]);
+			detprop.setVPxSize(xyPixelSize[1]);
 		}
 		
 		return new DiffractionMetadata(filePath,detprop,diffcrys);
@@ -484,9 +478,14 @@ public class NexusDiffractionMetaReader {
 	}
 	
 	
-	private void populateFromNexus(IHierarchicalDataFile file, String nxDetector, DetectorProperties detprop) throws Exception {
+	private void populateFromNexus(IHierarchicalDataFile file, String nxDetector, DetectorProperties detprop, int[] imageSize) throws Exception {
 		successMap.put(DiffractionMetaValue.BEAM_VECTOR, updateBeamVector(file, nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.PIXEL_NUMBER, updatePixelNumber(file, nxDetector, detprop));
+		if (!successMap.get(DiffractionMetaValue.PIXEL_NUMBER) && imageSize != null) {
+			detprop.setPx(imageSize[1]);
+			detprop.setPy(imageSize[0]);
+			successMap.put(DiffractionMetaValue.PIXEL_NUMBER, true);
+		}
 		successMap.put(DiffractionMetaValue.PIXEL_SIZE,updatePixelSize(file, nxDetector,detprop));
 		successMap.put(DiffractionMetaValue.DETECTOR_ORIENTATION, updateDetectorOrientation(file, nxDetector, detprop));
 		successMap.put(DiffractionMetaValue.DISTANCE, updateDetectorDistance(file, nxDetector,detprop));

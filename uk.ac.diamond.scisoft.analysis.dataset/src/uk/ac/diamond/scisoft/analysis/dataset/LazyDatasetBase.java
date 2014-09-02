@@ -559,6 +559,10 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 			clearMetadata(ErrorMetadata.class);
 			return;
 		}
+		if (errors == this) {
+			logger.warn("Ignoring setting error to itself as this will lead to infinite recursion");
+			return;
+		}
 
 		ILazyDataset errorData = createFromSerializable(errors, true);
 

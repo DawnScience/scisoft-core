@@ -33,6 +33,32 @@ isnan = _np.isnan
 import sys
 floatmax = sys.float_info.max # maximum float value #@UndefinedVariable
 
+prod = _np.prod
+sum = _np.sum #@ReservedAssignment
+
+mean = _np.mean
+std = _np.std
+var = _np.var
+ptp = _np.ptp
+
+amax = _np.amax
+amin = _np.amin
+
+real = _np.real
+imag = _np.imag
+
+abs = _np.abs #@ReservedAssignment
+
+absolute = _np.absolute
+
+fabs = _np.fabs
+
+angle = _np.angle
+
+conjugate = _np.conjugate
+
+conj = _np.conj
+
 add = _np.add
 
 subtract = _np.subtract
@@ -50,18 +76,6 @@ fmod = _np.fmod
 mod = _np.mod
 
 reciprocal = _np.reciprocal
-
-abs = _np.abs #@ReservedAssignment
-
-absolute = _np.absolute
-
-fabs = _np.fabs
-
-angle = _np.angle
-
-conjugate = _np.conjugate
-
-conj = _np.conj
 
 sin = _np.sin
 cos = _np.cos
@@ -108,17 +122,6 @@ sign = _np.sign
 negative = _np.negative
 
 clip = _np.clip
-
-prod = _np.prod
-sum = _np.sum #@ReservedAssignment
-
-mean = _np.mean
-std = _np.std
-var = _np.var
-ptp = _np.ptp
-
-amax = _np.amax
-amin = _np.amin
 
 median = _np.median
 cumprod = _np.cumprod

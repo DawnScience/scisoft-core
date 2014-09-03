@@ -129,6 +129,10 @@ class Test(unittest.TestCase):
         self.assertEquals(self.zz, zds)
         self.assertEquals(zds, self.zz)
         self.assertEquals(zds.item(), self.zz)
+        self.assertEquals(zds.real.item(), 1.)
+        self.assertEquals(zds.imag.item(), .5)
+        self.assertEquals(np.real(zds), 1.)
+        self.assertEquals(np.imag(zds), .5)
 
         zds = np.array([self.zz, self.zz], np.complex)
         self.assertEquals(self.zz, zds[0])
@@ -136,6 +140,10 @@ class Test(unittest.TestCase):
         if isjava:
             self.assertEquals(1, zds.dtype.elements)
         self.assertEquals(16, zds.itemsize)
+        self.checkitems([1., 1.], zds.real)
+        self.checkitems([.5, .5], zds.imag)
+        self.checkitems([1., 1.], np.real(zds))
+        self.checkitems([.5, .5], np.imag(zds))
         zds = np.array(self.za, np.complex)
         self.checkitems(self.za, zds)
         zds = np.array(self.zb, np.complex)

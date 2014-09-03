@@ -43,6 +43,69 @@ nan = _jnan
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
 from jycore import _wrap
+from jycore import asarray as _asarray
+
+# these functions call (wrapped) instance methods
+def prod(a, axis=None, dtype=None):
+    '''Product of input'''
+    return a.prod(axis, dtype)
+
+def sum(a, axis=None, dtype=None): #@ReservedAssignment
+    '''Sum of input'''
+    return a.sum(axis, dtype)
+
+def mean(a, axis=None):
+    '''Arithmetic mean of input'''
+    return a.mean(axis)
+
+def std(a, axis=None, ddof=0):
+    '''Standard deviation of input'''
+    return a.std(axis, ddof)
+
+def var(a, axis=None, ddof=0):
+    '''Variance of input'''
+    return a.var(axis, ddof)
+
+def ptp(a, axis=None):
+    '''Peak-to-peak of input'''
+    return a.ptp(axis)
+
+def amax(a, axis=None):
+    '''Maximum of input'''
+    return a.max(axis)
+
+def amin(a, axis=None):
+    '''Minimum of input'''
+    return a.min(axis)
+
+def real(a):
+    '''Real part of input'''
+    return _asarray(a).real
+
+def imag(a):
+    '''Imaginary part of input'''
+    return _asarray(a).imag
+
+@_wrap
+def abs(a, out=None): #@ReservedAssignment
+    '''Absolute value of input'''
+    return _maths.abs(a, out)
+
+absolute = abs
+
+fabs = abs # supports complex types too
+
+@_wrap
+def angle(a):
+    '''Angle of complex argument'''
+    return _maths.angle(a)
+
+@_wrap
+def conjugate(a, out=None):
+    '''Complex conjugate of input'''
+    return _maths.conjugate(a, out)
+
+conj = conjugate
 
 @_wrap
 def add(a, b, out=None):
@@ -104,27 +167,6 @@ mod = remainder
 def reciprocal(a, out=None):
     '''Calculate reciprocal of input'''
     return _maths.reciprocal(a, out)
-
-@_wrap
-def abs(a, out=None): #@ReservedAssignment
-    '''Absolute value of input'''
-    return _maths.abs(a, out)
-
-absolute = abs
-
-fabs = abs # supports complex types too
-
-@_wrap
-def angle(a):
-    '''Angle of complex argument'''
-    return _maths.angle(a)
-
-@_wrap
-def conjugate(a, out=None):
-    '''Complex conjugate of input'''
-    return _maths.conjugate(a, out)
-
-conj = conjugate
 
 @_wrap
 def sin(a, out=None):
@@ -283,39 +325,6 @@ def negative(a, out=None):
 def clip(a, a_min, a_max, out=None):
     '''Clip input to given bounds (replace NaNs with midpoint of bounds)'''
     return _maths.clip(a, a_min, a_max, out)
-
-# these functions call (wrapped) instance methods
-def prod(a, axis=None, dtype=None):
-    '''Product of input'''
-    return a.prod(axis, dtype)
-
-def sum(a, axis=None, dtype=None): #@ReservedAssignment
-    '''Sum of input'''
-    return a.sum(axis, dtype)
-
-def mean(a, axis=None):
-    '''Arithmetic mean of input'''
-    return a.mean(axis)
-
-def std(a, axis=None, ddof=0):
-    '''Standard deviation of input'''
-    return a.std(axis, ddof)
-
-def var(a, axis=None, ddof=0):
-    '''Variance of input'''
-    return a.var(axis, ddof)
-
-def ptp(a, axis=None):
-    '''Peak-to-peak of input'''
-    return a.ptp(axis)
-
-def amax(a, axis=None):
-    '''Maximum of input'''
-    return a.max(axis)
-
-def amin(a, axis=None):
-    '''Minimum of input'''
-    return a.min(axis)
 
 @_wrap
 def maximum(a, b, out=None):

@@ -22,7 +22,7 @@ public class Slice implements Cloneable {
 	private int length; // max length of dimension
 
 	public Slice() {
-		this(null);
+		this(null, null, 1);
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class Slice implements Cloneable {
 	 * @param stop if null, then default to whatever shape is when converted
 	 */
 	public Slice(final Integer stop) {
-		this(null, stop);
+		this(null, stop, 1);
 	}
 
 	/**
@@ -55,11 +55,20 @@ public class Slice implements Cloneable {
 		length = -1;
 	}
 
+	/**
+	 * Copy another slice
+	 * @param other
+	 */
+	private Slice(final Slice other) {
+		start  = other.start;
+		stop   = other.stop;
+		step   = other.step;
+		length = other.length;
+	}
+
 	@Override
 	public Slice clone() {
-		Slice c = new Slice(start, stop, step);
-		c.length = length;
-		return c;
+		return new Slice(this);
 	}
 
 	/**

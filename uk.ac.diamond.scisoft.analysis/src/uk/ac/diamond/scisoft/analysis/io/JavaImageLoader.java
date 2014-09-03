@@ -166,7 +166,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				data = new RGBDataset(channels[0], channels[1], channels[2]);
 
 				if (asGrey)
-					data = ((RGBDataset) data).createGreyDataset(channels[0].getDtype());
+					data = (AbstractDataset)((RGBDataset) data).createGreyDataset(channels[0].getDtype());
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem loading the image", e);

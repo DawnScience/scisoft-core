@@ -30,7 +30,7 @@ import org.apache.commons.math3.complex.Complex; // NAN_OMIT
  */
 public class DoubleDataset extends AbstractDataset {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	protected double[] data; // subclass alias // PRIM_TYPE
 

@@ -148,11 +148,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	public static final int ARRAYFLOAT64 = Dataset.ARRAYFLOAT64;
 
-	/**
-	 * Update this when there are any serious changes to API
-	 */
-	protected static final long serialVersionUID = -6891075135217265625L;
-
 	protected static boolean isDTypeElemental(int dtype) {
 		return (dtype <= COMPLEX128 || dtype == RGB);
 	}

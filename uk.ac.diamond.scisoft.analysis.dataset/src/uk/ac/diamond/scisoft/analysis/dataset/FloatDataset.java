@@ -30,7 +30,7 @@ import org.apache.commons.math3.complex.Complex;
  */
 public class FloatDataset extends AbstractDataset {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	protected float[] data; // subclass alias // PRIM_TYPE
 

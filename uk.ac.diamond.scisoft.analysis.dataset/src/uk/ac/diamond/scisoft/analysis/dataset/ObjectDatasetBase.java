@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class ObjectDatasetBase extends AbstractDataset {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	protected Object[] data; // subclass alias // PRIM_TYPE
 

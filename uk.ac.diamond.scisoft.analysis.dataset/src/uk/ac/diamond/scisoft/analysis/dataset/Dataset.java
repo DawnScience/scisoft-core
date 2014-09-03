@@ -143,6 +143,11 @@ public interface Dataset extends IErrorDataset {
 	public static final int ARRAYFLOAT64 = ARRAYMUL * FLOAT64;
 
 	/**
+	 * Update this when there are any serious changes to API
+	 */
+	static final long serialVersionUID = -6891075135217265625L;
+
+	/**
 	 * The shape (or array of lengths for each dimension) of the dataset can be empty for zero-rank
 	 * datasets
 	 * 

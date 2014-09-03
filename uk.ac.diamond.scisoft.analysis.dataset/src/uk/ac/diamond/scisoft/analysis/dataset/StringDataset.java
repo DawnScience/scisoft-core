@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
  */
 public class StringDataset extends StringDatasetBase {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	public StringDataset() {
 		super();

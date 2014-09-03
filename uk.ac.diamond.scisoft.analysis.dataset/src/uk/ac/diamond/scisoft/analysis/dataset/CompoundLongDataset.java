@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class CompoundLongDataset extends AbstractCompoundDataset {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	protected long[] data; // subclass alias // PRIM_TYPE
 

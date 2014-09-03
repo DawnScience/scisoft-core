@@ -35,7 +35,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  */
 public abstract class AbstractCompoundDataset extends AbstractDataset implements CompoundDataset {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	protected int isize; // number of elements per item
 

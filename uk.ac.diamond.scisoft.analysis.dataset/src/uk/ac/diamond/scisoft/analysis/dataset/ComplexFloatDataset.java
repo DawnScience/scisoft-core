@@ -30,7 +30,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  */
 public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	private static final int ISIZE = 2; // number of elements per item
 

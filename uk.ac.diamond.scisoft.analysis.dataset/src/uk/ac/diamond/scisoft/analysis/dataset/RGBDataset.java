@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
  */
 public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	// pin UID to base class
-	private static final long serialVersionUID = AbstractDataset.serialVersionUID;
+	private static final long serialVersionUID = Dataset.serialVersionUID;
 
 	private static final int ISIZE = 3; // number of elements per item
 
@@ -356,7 +356,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param dtype
 	 * @return a grey-scale dataset of given type
 	 */
-	public AbstractDataset createGreyDataset(final int dtype) {
+	public Dataset createGreyDataset(final int dtype) {
 		return createGreyDataset(Wr, Wg, Wb, dtype);
 	}
 
@@ -368,7 +368,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param dtype
 	 * @return a grey-scale dataset of given type
 	 */
-	public AbstractDataset createGreyDataset(final double red, final double green, final double blue, final int dtype) {
+	public Dataset createGreyDataset(final double red, final double green, final double blue, final int dtype) {
 		final Dataset grey = DatasetFactory.zeros(shape, dtype);
 		final IndexIterator it = getIterator();
 
@@ -376,7 +376,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 		while (it.hasNext()) {
 			grey.setObjectAbs(i++, red*data[it.index] + green*data[it.index + 1] + blue*data[it.index + 2]);
 		}
-		return (AbstractDataset) grey;
+		return grey;
 	}
 
 	/**
@@ -384,7 +384,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param dtype
 	 * @return a dataset of given type
 	 */
-	public AbstractDataset createRedDataset(final int dtype) {
+	public Dataset createRedDataset(final int dtype) {
 		return createColourChannelDataset(0, dtype, "red");
 	}
 
@@ -393,7 +393,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param dtype
 	 * @return a dataset of given type
 	 */
-	public AbstractDataset createGreenDataset(final int dtype) {
+	public Dataset createGreenDataset(final int dtype) {
 		return createColourChannelDataset(1, dtype, "green");
 	}
 
@@ -402,11 +402,11 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 	 * @param dtype
 	 * @return a dataset of given type
 	 */
-	public AbstractDataset createBlueDataset(final int dtype) {
+	public Dataset createBlueDataset(final int dtype) {
 		return createColourChannelDataset(2, dtype, "blue");
 	}
 
-	private AbstractDataset createColourChannelDataset(final int channelOffset, final int dtype, final String cName) {
+	private Dataset createColourChannelDataset(final int channelOffset, final int dtype, final String cName) {
 		final Dataset channel = DatasetFactory.zeros(shape, dtype);
 
 		final StringBuilder cname = name == null ? new StringBuilder() : new StringBuilder(name);
@@ -423,7 +423,7 @@ public class RGBDataset extends CompoundShortDataset implements Cloneable {
 			channel.setObjectAbs(i++, data[it.index + channelOffset]);
 		}
 
-		return (AbstractDataset) channel;
+		return channel;
 	}
 
 	@Override

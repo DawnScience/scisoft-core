@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 /**
  * This is a service for creating and returning operations.
@@ -107,6 +108,14 @@ public interface IOperationService {
 	 */
 	public IOperation create(String operationId) throws Exception;
 	
+	
+	/**
+	 * Checks the extension point for the model class pertinent to this operation.
+	 * 
+	 * @return IOperation
+	 */
+	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception;
+
 	/**
 	 * Executes a chain of operations in series. NOTE the fist operation must have
 	 * its data set and other operations should have their parameters set before

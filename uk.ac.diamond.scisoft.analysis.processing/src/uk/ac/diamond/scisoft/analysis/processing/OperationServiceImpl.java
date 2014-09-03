@@ -19,6 +19,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Random;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.slice.SliceVisitor;
 import uk.ac.diamond.scisoft.analysis.slice.Slicer;
 
@@ -38,7 +39,8 @@ public class OperationServiceImpl implements IOperationService {
 	static {
 		System.out.println("Starting operation service");
 	}
-	private Map<String, IOperation> operations;
+	private Map<String, IOperation>      operations;
+	private Map<String, Class<? extends IOperationModel>> models;
 	
 	public OperationServiceImpl() {
 		// Intentionally do nothing
@@ -215,6 +217,8 @@ public class OperationServiceImpl implements IOperationService {
 		if (operations!=null) return;
 		
 		operations = new HashMap<String, IOperation>(31);
+		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
+		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 			final String     id = e.getAttribute("id");
@@ -228,8 +232,20 @@ public class OperationServiceImpl implements IOperationService {
 				final String desc = e.getAttribute("description");
 				if (desc!=null) ((AbstractOperation)op).setDescription(desc);
 			}
+			
+			final String     model = e.getAttribute("model");
+			if (model!=null && !"".equals(model)) {
+				models.put(id, ((IOperationModel)e.createExecutableExtension("model")).getClass());
+			}
 		}
 	}
+	
+
+	@Override
+	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
+		return models.get(operationId);
+	}
+
 
 	@Override
 	public Collection<IOperation> find(String regex) throws Exception {

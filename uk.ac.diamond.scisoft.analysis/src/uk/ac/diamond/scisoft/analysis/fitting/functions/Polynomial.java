@@ -17,6 +17,13 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math3.complex.Complex;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -274,5 +281,46 @@ public class Polynomial extends AFunction {
 			out.append(df.format(parameters[nparams-1].getValue()));
 		
 		return out.toString();
+	}
+
+	/**
+	 * Find all roots
+	 * @return all roots
+	 */
+	public Complex[] findRoots() {
+		return findRoots(a);
+	}
+
+	/**
+	 * Find all roots
+	 * @param coeffs
+	 * @return all roots
+	 */
+	public static Complex[] findRoots(double[] coeffs) {
+		double[] reverse = new double[coeffs.length];
+		for (int i = 0; i < coeffs.length; i++) {
+			reverse[i] = coeffs[coeffs.length - 1 - i];
+		}
+		Complex[] roots = new LaguerreSolver(1e-15).solveAllComplex(reverse, -1e8);
+
+		// reorder to NumPy's roots output
+		List<Complex> rts = Arrays.asList(roots);
+		Collections.sort(rts, new Comparator<Complex>() {
+			@Override
+			public int compare(Complex o1, Complex o2) {
+				double a = o1.getReal();
+				double b = o2.getReal();
+				
+				if (a != b)
+					return a < b ? -1 : 1;
+
+				a = o1.getImaginary();
+				b = o2.getImaginary();
+				if (a == b)
+					return 0;
+				return a < b ? 1 : -1;
+			}
+		});
+		return rts.toArray(new Complex[0]);
 	}
 }

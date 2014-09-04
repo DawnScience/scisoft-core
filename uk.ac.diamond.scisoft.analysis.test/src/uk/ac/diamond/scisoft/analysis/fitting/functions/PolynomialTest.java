@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.apache.commons.math3.complex.Complex;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,5 +50,24 @@ public class PolynomialTest {
 
 		dx = f.calculatePartialDerivativeValues(f.getParameter(3), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+	}
+
+	@Test
+	public void testFindRoots() {
+		checkComplex(new Complex[] {new Complex(-2), new Complex(2)}, Polynomial.findRoots(new double[] {1, 0, -4}));
+		checkComplex(new Complex[] {new Complex(-1), new Complex(1)}, Polynomial.findRoots(new double[] {1, 0, -1}));
+		checkComplex(new Complex[] {new Complex(-1), new Complex(-1)}, Polynomial.findRoots(new double[] {1, 2, 1}));
+		checkComplex(new Complex[] {new Complex(0, 1), new Complex(0, -1)}, Polynomial.findRoots(new double[] {1, 0, 1}));
+		checkComplex(new Complex[] {new Complex(-0.3125, 0.46351240544347894), new Complex(-0.3125, -0.46351240544347894)}, Polynomial.findRoots(new double[] {3.2, 2, 1}));
+	}
+
+	private static void checkComplex(Complex[] expected, Complex[] actual) {
+		Assert.assertEquals(expected.length, actual.length);
+		for (int i = 0; i < expected.length; i++) {
+			Complex e = expected[i];
+			Complex a = actual[i];
+			Assert.assertEquals("Real " + i, e.getReal(), a.getReal(), ABS_TOL);
+			Assert.assertEquals("Imag " + i, e.getImaginary(), a.getImaginary(), ABS_TOL);
+		}
 	}
 }

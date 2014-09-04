@@ -132,6 +132,15 @@
             name="Dilate Mask"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
+            description="Rolling ball baseline correction with fixed radius"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineModel"
+            name="Rolling Ball Baseline Correction"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

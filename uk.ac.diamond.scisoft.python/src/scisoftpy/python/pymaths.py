@@ -165,3 +165,5 @@ def gradient(f, *arg):
         return result
 
     return _np.gradient(f, *arg)
+
+roots = _np.roots

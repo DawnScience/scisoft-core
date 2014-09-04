@@ -44,6 +44,7 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
 from jycore import _wrap
 from jycore import asarray as _asarray
+from jycore import float64 as _f64
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
@@ -466,3 +467,9 @@ def gradient(f, *varargs):
     if len(g) == 1:
         return g[0]
     return g
+
+def roots(p):
+    '''Roots of polynomial'''
+    from uk.ac.diamond.scisoft.analysis.fitting.functions import Polynomial as _poly
+    pa = _asarray(p, dtype=_f64)
+    return _asarray(_poly.findRoots(pa._jdataset().getBuffer()))

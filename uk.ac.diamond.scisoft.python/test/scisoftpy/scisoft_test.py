@@ -442,6 +442,21 @@ class Test(unittest.TestCase):
         self.checkitems([22, 23, 19], np.ravel_multi_index(arr, (4,6), mode='clip'))
         self.checkitems([12, 13, 13], np.ravel_multi_index(arr, (4,4), mode=('clip', 'wrap')))
 
+    def testRoots(self):
+        print 'Roots testing'
+        rts = np.roots([1, 0, -1])
+        self.checkitems([-1, 1], rts.real)
+        self.checkitems([0, 0], rts.imag)
+        rts = np.roots([1, 2, 1])
+        self.checkitems([-1, -1], rts.real)
+        self.checkitems([0, 0], rts.imag)
+        rts = np.roots([1, 0, 1])
+        self.checkitems([0, 0], rts.real)
+        self.checkitems([1, -1], rts.imag)
+        rts = np.roots([3.2, 2, 1])
+        self.checkitems([-0.3125, -0.3125], rts.real)
+        self.checkitems([0.46351240544347894, -0.46351240544347894], rts.imag)
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

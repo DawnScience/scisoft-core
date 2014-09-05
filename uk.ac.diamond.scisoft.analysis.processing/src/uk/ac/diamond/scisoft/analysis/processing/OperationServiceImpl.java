@@ -83,12 +83,13 @@ public class OperationServiceImpl implements IOperationService {
 			// We check the pipeline ranks are ok
 	        final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
 			validate(firstSlice, series);
-
 			// Create the slice visitor
 			SliceVisitor sv = new SliceVisitor() {
 				
 				@Override
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
+					
+					if (monitor != null && monitor.isCancelled()) return;
 					
 					slice.addMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims));
 					
@@ -101,6 +102,7 @@ public class OperationServiceImpl implements IOperationService {
 					}
 					
 					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
+					if (monitor != null) monitor.worked(1);
 				}
 			};
 			
@@ -222,7 +224,13 @@ public class OperationServiceImpl implements IOperationService {
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 			final String     id = e.getAttribute("id");
-			final IOperation op = (IOperation)e.createExecutableExtension("class");
+			IOperation op = null;
+			try {
+				op = (IOperation)e.createExecutableExtension("class");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			
 			operations.put(id, op);
 			
 			if (op instanceof AbstractOperation) {

@@ -222,8 +222,28 @@ public class Image {
 		}
 		return null;
 	}
-	
+
+	public static enum FilterType {
+		MEDIAN, MIN, MAX, MEAN
+	}
+
+	public static AbstractDataset minFilter(Dataset input, int[] kernel) {
+		return filter(input, kernel, FilterType.MIN);
+	}
+
+	public static AbstractDataset maxFilter(Dataset input, int[] kernel) {
+		return filter(input, kernel, FilterType.MAX);
+	}
+
 	public static AbstractDataset medianFilter(Dataset input, int[] kernel) {
+		return filter(input, kernel, FilterType.MEDIAN);
+	}
+
+	public static AbstractDataset meanFilter(Dataset input, int[] kernel) {
+		return filter(input, kernel, FilterType.MEAN);
+	}
+
+	public static AbstractDataset filter(Dataset input, int[] kernel, FilterType type) {
 		// check to see if the kernel shape in the correct dimensionality.
 		int[] shape = input.getShape();
 		if (kernel.length != shape.length)
@@ -232,7 +252,7 @@ public class Image {
 		Dataset result = input.clone();
 		int[] offset = kernel.clone();
 		for (int i = 0; i < offset.length; i++) {
-			offset[i] = -kernel[i]/2;
+			offset[i] = -kernel[i] / 2;
 		}
 		IndexIterator iter = input.getIterator(true);
 		int[] pos = iter.getPos();
@@ -242,16 +262,37 @@ public class Image {
 			for (int i = 0; i < pos.length; i++) {
 				start[i] = pos[i] + offset[i];
 				stop[i] = start[i] + kernel[i];
-				if (start[i] < 0) start[i] = 0;
-				if (stop[i] >= shape[i]) stop[i] = shape[i];
+				if (start[i] < 0)
+					start[i] = 0;
+				if (stop[i] >= shape[i])
+					stop[i] = shape[i];
 			}
 			Dataset slice = input.getSlice(start, stop, null);
-			result.set(Stats.median(slice), pos);
+			if (type == FilterType.MEDIAN)
+				result.set(Stats.median(slice), pos);
+			else if (type == FilterType.MIN)
+				result.set(slice.min(), pos);
+			else if (type == FilterType.MAX)
+				result.set(slice.max(), pos);
+			else if (type == FilterType.MEAN)
+				result.set(slice.mean(), pos);
 		}
-
 		return (AbstractDataset) result;
 	}
-	
+
+	/**
+	 * For test purpose only
+	 * @param input
+	 * @param kernel
+	 * @return dataset
+	 */
+	public static AbstractDataset backgroundFilter(Dataset input, int[] kernel) {
+		AbstractDataset min = filter(input, kernel, FilterType.MIN);
+		AbstractDataset max = filter(min, kernel, FilterType.MAX);
+		AbstractDataset result = filter(max, kernel, FilterType.MEAN);
+		return result;
+	}
+
 	public static AbstractDataset convolutionFilter(Dataset input, Dataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.
 		int[] shape = input.getShape();

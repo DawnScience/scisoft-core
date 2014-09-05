@@ -393,6 +393,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 	public CompoundByteDataset getView() {
 		CompoundByteDataset view = new CompoundByteDataset(isize);
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 
@@ -849,6 +850,7 @@ public class CompoundByteDataset extends AbstractCompoundDataset {
 		ByteDataset view = new ByteDataset(shape); // CLASS_TYPE
 
 		copyToView(this, view, true, true);
+		view.setData();
 		if (view.stride == null) {
 			int[] offset = new int[1];
 			view.stride = createStrides(this, offset);

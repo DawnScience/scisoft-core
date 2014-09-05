@@ -222,6 +222,7 @@ public class ObjectDatasetBase extends AbstractDataset {
 	public ObjectDatasetBase getView() {
 		ObjectDatasetBase view = new ObjectDatasetBase();
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 

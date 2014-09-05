@@ -393,6 +393,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 	public CompoundLongDataset getView() {
 		CompoundLongDataset view = new CompoundLongDataset(isize);
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 
@@ -849,6 +850,7 @@ public class CompoundLongDataset extends AbstractCompoundDataset {
 		LongDataset view = new LongDataset(shape); // CLASS_TYPE
 
 		copyToView(this, view, true, true);
+		view.setData();
 		if (view.stride == null) {
 			int[] offset = new int[1];
 			view.stride = createStrides(this, offset);

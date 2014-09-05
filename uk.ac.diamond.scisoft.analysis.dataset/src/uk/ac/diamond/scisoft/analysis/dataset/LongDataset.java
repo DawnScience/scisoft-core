@@ -270,6 +270,7 @@ public class LongDataset extends AbstractDataset {
 	public LongDataset getView() {
 		LongDataset view = new LongDataset();
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 

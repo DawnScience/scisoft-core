@@ -393,6 +393,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 	public CompoundShortDataset getView() {
 		CompoundShortDataset view = new CompoundShortDataset(isize);
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 
@@ -849,6 +850,7 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 		ShortDataset view = new ShortDataset(shape); // CLASS_TYPE
 
 		copyToView(this, view, true, true);
+		view.setData();
 		if (view.stride == null) {
 			int[] offset = new int[1];
 			view.stride = createStrides(this, offset);

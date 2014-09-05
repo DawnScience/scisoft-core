@@ -270,6 +270,7 @@ public class DoubleDataset extends AbstractDataset {
 	public DoubleDataset getView() {
 		DoubleDataset view = new DoubleDataset();
 		copyToView(this, view, true, true);
+		view.setData();
 		return view;
 	}
 

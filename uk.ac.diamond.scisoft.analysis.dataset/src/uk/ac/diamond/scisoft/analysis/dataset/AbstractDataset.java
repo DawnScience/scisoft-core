@@ -1684,6 +1684,43 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	/**
+	 * Create a stride array from dataset
+	 * @param a dataset
+	 * @param offset output offset
+	 * @return new strides
+	 */
+	public static int[] createStrides(Dataset a, final int[] offset) {
+		return createStrides(a.getElementsPerItem(), a.getShapeRef(), a.getStrides(), a.getOffset(), offset);
+	}
+
+	/**
+	 * Create a stride array from dataset
+	 * @param isize
+	 * @param shape
+	 * @param oStride original stride
+	 * @param oOffset original offset (only used if there is an original stride)
+	 * @param offset output offset
+	 * @return new strides
+	 */
+	public static int[] createStrides(final int isize, final int[] shape, final int[] oStride, final int oOffset, final int[] offset) {
+		int rank = shape.length;
+		final int[] stride;
+		if (oStride == null) {
+			offset[0] = 0;
+			stride = new int[rank];
+			int s = isize;
+			for (int j = rank - 1; j >= 0; j--) {
+				stride[j] = s;
+				s *= shape[j];
+			}
+		} else {
+			offset[0] = oOffset;
+			stride = oStride.clone();
+		}
+		return stride;
+	}
+
+	/**
 	 * Create a stride array from a dataset and some slice information
 	 * @param a dataset
 	 * @param start
@@ -1742,6 +1779,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 		if (oStride == null) {
 			int s = isize;
+			offset[0] = 0;
 			for (int j = rank - 1; j >= 0; j--) {
 				stride[j] = s * lstep[j];
 				offset[0] += s * lstart[j];
@@ -1845,6 +1883,18 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 */
 	@Override
 	public AbstractDataset getSliceView(Slice... slice) {
+		if (slice == null || slice.length == 0) {
+			int[] sOffset = new int[1];
+			int[] sStride = createStrides(this, sOffset);
+			
+			AbstractDataset s = getView();
+			s.stride = sStride;
+			s.offset = sOffset[0];
+			s.base = base == null ? this : base;
+
+			return s;
+		}
+
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -2752,6 +2802,14 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return this;
 	}
 
+	/**
+	 * @return real part of dataset as new dataset
+	 */
+	@Override
+	public AbstractDataset realView() {
+		return getView();
+	}
+
 	@Override
 	abstract public AbstractDataset sort(Integer axis);
 
@@ -2830,11 +2888,25 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 	/**
 	 * 
-	 * @param object
+	 * @param obj
 	 * @param slice
 	 */
 	@Override
-	public AbstractDataset setSlice(Object object, Slice... slice) {
+	public AbstractDataset setSlice(Object obj, Slice... slice) {
+		if (slice == null || slice.length == 0) {
+			Dataset ds;
+			if (obj instanceof Dataset) {
+				ds = (Dataset) obj;
+			} else if (!(obj instanceof IDataset)) {
+				ds = DatasetFactory.createFromObject(obj, isComplex() || getElementsPerItem() == 1 ? FLOAT64 : ARRAYFLOAT64);
+			} else {
+				ds = DatasetUtils.convertToDataset((ILazyDataset) obj);
+			}
+
+			setSlicedView(getSliceView(), ds);
+			return this;
+		}
+
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -2842,7 +2914,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 		Slice.convertFromSlice(slice, shape, start, stop, step);
 
-		setSlice(object, start, stop, step);
+		setSlice(obj, start, stop, step);
 		return this;
 	}
 

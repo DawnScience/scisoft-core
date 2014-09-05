@@ -270,7 +270,7 @@ public class FloatDataset extends AbstractDataset {
 	public FloatDataset getView() {
 		FloatDataset view = new FloatDataset();
 		copyToView(this, view, true, true);
-		view.data = data;
+		view.setData();
 		return view;
 	}
 

@@ -148,6 +148,16 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
+	public AbstractCompoundDataset getSliceView(int[] start, int[] stop, int[] step) {
+		return (AbstractCompoundDataset) super.getSliceView(start, stop, step);
+	}
+
+	@Override
+	public AbstractCompoundDataset getSliceView(Slice... slice) {
+		return (AbstractCompoundDataset) super.getSliceView(slice);
+	}
+
+	@Override
 	public AbstractCompoundDataset reshape(int... shape) {
 		return (AbstractCompoundDataset) super.reshape(shape);
 	}
@@ -155,6 +165,16 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	@Override
 	public AbstractCompoundDataset sort(Integer axis) {
 		throw new UnsupportedOperationException("Cannot sort dataset");
+	}
+
+	@Override
+	public AbstractCompoundDataset sum(boolean ignoreNaNs, int axis) {
+		return (AbstractCompoundDataset) super.sum(ignoreNaNs, axis);
+	}
+
+	@Override
+	public AbstractCompoundDataset sum(int axis) {
+		return (AbstractCompoundDataset) super.sum(axis);
 	}
 
 	protected static double[] toDoubleArray(final Object b, final int itemSize) {

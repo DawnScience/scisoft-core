@@ -19,10 +19,22 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 public interface CompoundDataset extends Dataset {
 
 	@Override
+	public CompoundDataset getSliceView(int[] start, int[] stop, int[] step);
+
+	@Override
+	public CompoundDataset getSliceView(Slice... slice);
+
+	@Override
 	public CompoundDataset reshape(int... shape);
 
 	@Override
 	public CompoundDataset sort(Integer axis);
+
+	@Override
+	public CompoundDataset sum(boolean ignoreNaNs, int axis);
+
+	@Override
+	public CompoundDataset sum(int axis);
 
 	/**
 	 * Get an item as a double array
@@ -44,6 +56,13 @@ public interface CompoundDataset extends Dataset {
 	 * @return dataset of chosen elements
 	 */
 	public Dataset getElements(int element);
+
+	/**
+	 * Get chosen elements from each item as a view on dataset
+	 * @param element
+	 * @return view dataset of chosen elements
+	 */
+	public Dataset getElementsView(int element);
 
 	/**
 	 * Set values of chosen elements from each item according to source dataset

@@ -222,7 +222,7 @@ public class StringDatasetBase extends AbstractDataset {
 	public StringDatasetBase getView() {
 		StringDatasetBase view = new StringDatasetBase();
 		copyToView(this, view, true, true);
-		view.data = data;
+		view.setData();
 		return view;
 	}
 

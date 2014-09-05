@@ -530,7 +530,6 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 		ILazyDataset d = null;
 		if (blob instanceof ILazyDataset) {
 			d = (ILazyDataset) blob;
-			BroadcastIterator.broadcastShapes(shape, d.getShape());
 			if (d instanceof IDataset) {
 				Dataset ed = DatasetUtils.convertToDataset(d);
 				int is = ed.getElementsPerItem();
@@ -549,6 +548,8 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 				d.setShape(shape.clone());
 			}
 		}
+		List<int[]> s = BroadcastIterator.broadcastShapes(shape, d.getShape());
+		d.setShape(s.get(2));
 
 		return d;
 	}

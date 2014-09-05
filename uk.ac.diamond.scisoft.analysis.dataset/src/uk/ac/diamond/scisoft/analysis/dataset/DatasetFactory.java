@@ -117,6 +117,16 @@ public class DatasetFactory {
 		case Dataset.ARRAYFLOAT64:
 		case Dataset.FLOAT64:
 			return CompoundDoubleDataset.createRange(itemSize, start, stop, step);
+		case Dataset.COMPLEX64:
+			if (itemSize != 2) {
+				throw new IllegalArgumentException("Item size must be equal to 2");
+			}
+			return ComplexFloatDataset.createRange(start, stop, step);
+		case Dataset.COMPLEX128:
+			if (itemSize != 2) {
+				throw new IllegalArgumentException("Item size must be equal to 2");
+			}
+			return ComplexFloatDataset.createRange(start, stop, step);
 		}
 		throw new IllegalArgumentException("dtype not known");
 	}

@@ -281,7 +281,7 @@ public class Image {
 	}
 
 	/**
-	 * For test purpose only
+	 * 
 	 * @param input
 	 * @param kernel
 	 * @return dataset
@@ -289,8 +289,8 @@ public class Image {
 	public static AbstractDataset backgroundFilter(Dataset input, int[] kernel) {
 		AbstractDataset min = filter(input, kernel, FilterType.MIN);
 		AbstractDataset max = filter(min, kernel, FilterType.MAX);
-		AbstractDataset result = filter(max, kernel, FilterType.MEAN);
-		return result;
+		AbstractDataset mean = filter(max, kernel, FilterType.MEAN);
+		return Maths.subtract(input, mean);
 	}
 
 	public static AbstractDataset convolutionFilter(Dataset input, Dataset kernel) {

@@ -346,7 +346,6 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	@Override
 	public DoubleDataset asNonCompoundDataset(final boolean shareData) { // CLASS_TYPE
 		DoubleDataset result = new DoubleDataset(); // CLASS_TYPE
-
 		final int is = getElementsPerItem();
 		final int rank = is == 1 ? shape.length : shape.length + 1;
 		final int[] nshape = Arrays.copyOf(shape, rank);
@@ -394,7 +393,6 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	public CompoundDoubleDataset getView() {
 		CompoundDoubleDataset view = new CompoundDoubleDataset(isize);
 		copyToView(this, view, true, true);
-		view.data = data;
 		return view;
 	}
 
@@ -821,6 +819,11 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
+	public AbstractDataset realView() {
+		return getElementsView(0);
+	}
+
+	@Override
 	public CompoundDoubleDataset getSlice(final SliceIterator siter) {
 		CompoundDoubleDataset result = new CompoundDoubleDataset(isize, siter.getShape());
 		double[] rdata = result.data; // PRIM_TYPE
@@ -833,6 +836,27 @@ public class CompoundDoubleDataset extends AbstractCompoundDataset {
 
 		result.setName(name + BLOCK_OPEN + Slice.createString(siter.shape, siter.start, siter.stop, siter.step) + BLOCK_CLOSE);
 		return result;
+	}
+
+	@Override
+	public DoubleDataset getElementsView(int element) { // CLASS_TYPE
+		if (element < 0)
+			element += isize;
+		if (element < 0 || element > isize) {
+			throw new IllegalArgumentException(String.format("Invalid choice of element: %d/%d", element, isize));
+		}
+
+		DoubleDataset view = new DoubleDataset(shape); // CLASS_TYPE
+
+		copyToView(this, view, true, true);
+		if (view.stride == null) {
+			int[] offset = new int[1];
+			view.stride = createStrides(this, offset);
+			view.offset = offset[0] + element;
+			view.base = base == null ? this : base;
+		}
+
+		return view;
 	}
 
 	@Override

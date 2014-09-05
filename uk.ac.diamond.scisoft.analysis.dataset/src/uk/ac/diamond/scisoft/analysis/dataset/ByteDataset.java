@@ -270,7 +270,6 @@ public class ByteDataset extends AbstractDataset {
 	public ByteDataset getView() {
 		ByteDataset view = new ByteDataset();
 		copyToView(this, view, true, true);
-		view.data = data;
 		return view;
 	}
 

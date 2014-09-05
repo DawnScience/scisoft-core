@@ -482,6 +482,13 @@ public class ComplexDoubleDataset extends CompoundDoubleDataset { // CLASS_TYPE
 		return rdataset;
 	}
 
+	/**
+	 * @return view of imaginary values
+	 */
+	public DoubleDataset imagView() { // CLASS_TYPE
+		return getElementsView(1);
+	}
+
 	@Override
 	public Number max(boolean... switches) {
 		throw new UnsupportedOperationException("Cannot compare complex numbers");

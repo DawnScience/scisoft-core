@@ -270,7 +270,6 @@ public class IntegerDataset extends AbstractDataset {
 	public IntegerDataset getView() {
 		IntegerDataset view = new IntegerDataset();
 		copyToView(this, view, true, true);
-		view.data = data;
 		return view;
 	}
 

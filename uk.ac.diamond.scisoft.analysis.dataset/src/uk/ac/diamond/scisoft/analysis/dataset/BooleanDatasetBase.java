@@ -222,7 +222,6 @@ public class BooleanDatasetBase extends AbstractDataset {
 	public BooleanDatasetBase getView() {
 		BooleanDatasetBase view = new BooleanDatasetBase();
 		copyToView(this, view, true, true);
-		view.data = data;
 		return view;
 	}
 

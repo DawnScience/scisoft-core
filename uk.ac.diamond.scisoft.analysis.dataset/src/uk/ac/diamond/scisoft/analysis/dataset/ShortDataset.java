@@ -270,7 +270,6 @@ public class ShortDataset extends AbstractDataset {
 	public ShortDataset getView() {
 		ShortDataset view = new ShortDataset();
 		copyToView(this, view, true, true);
-		view.data = data;
 		return view;
 	}
 

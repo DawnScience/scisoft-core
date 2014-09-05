@@ -16,9 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -34,51 +32,95 @@ public class AbstractCompoundDatasetTest {
 
 	@Test
 	public void testSlice() {
-		int size, type;
-
+		int isize, size, type;
+		isize = 5;
 		size = 1024;
-		type = Dataset.FLOAT64;
-		testSliceND(size, type);
+		type = Dataset.ARRAYFLOAT64;
+		testSliceND(isize, size, type);
 
 		type = Dataset.COMPLEX128;
-		testSliceND(size, type);
+		testSliceND(2, size, type);
 
+		testSliceND(size, Dataset.FLOAT64);
+		testSliceND(size, Dataset.INT16);
 	}
 
-	private void testSliceND(int size, int type) {
+	private void testSliceND(int isize, int size, int type) {
 		// 1D
-		Dataset ta;
-		ta = DatasetFactory.createRange(0, size, 1, type);
+		CompoundDataset ta;
+		ta = DatasetFactory.createRange(isize, 0, size, 1, type);
 		testSlicedDataset(ta);
 
 		// 2D
-		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, size / 16);
+		ta = DatasetFactory.createRange(isize, 0, size, 1, type).reshape(16, size / 16);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
-		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / 32, 32);
+		ta = DatasetFactory.createRange(isize, 0, size, 1, type).reshape(size / 32, 32);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
 		// 3D
-		ta = DatasetFactory.createRange(0, size, 1, type).reshape(16, 8, size / (16 * 8));
+		ta = DatasetFactory.createRange(isize, 0, size, 1, type).reshape(16, 8, size / (16 * 8));
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 
-		ta = DatasetFactory.createRange(0, size, 1, type).reshape(size / (16 * 8), 16, 8);
+		ta = DatasetFactory.createRange(isize, 0, size, 1, type).reshape(size / (16 * 8), 16, 8);
 		System.out.println(" Shape: " + Arrays.toString(ta.getShape()));
 		testSlicedDataset(ta);
 	}
 
-	private void testSlicedDataset(Dataset ta) {
+	private void testSliceND(int size, int type) {
+		// 1D
+		CompoundDataset ta;
+		ta = DatasetUtils.createCompoundDatasetFromLastAxis(DatasetFactory.createRange(size, type).reshape(size/16, 16), true);
+		testSlicedDataset(ta);
+		testElementViews(ta);
+
+		// 2D
+		ta = DatasetUtils.createCompoundDatasetFromLastAxis(DatasetFactory.createRange(size, type).reshape(size/(16*8), 16, 8), true);
+		testSlicedDataset(ta);
+		testElementViews(ta);
+
+		// 3D
+		ta = DatasetUtils.createCompoundDatasetFromLastAxis(DatasetFactory.createRange(size, type).reshape(size/(16*8), 8, 8, 2), true);
+		testSlicedDataset(ta);
+		testElementViews(ta);
+	}
+
+	private void testSlicedDataset(CompoundDataset ta) {
 		int[] stop = ta.getShape();
 		stop[stop.length - 1] -= 1;
-		Dataset sa = ta.getSliceView(null, stop, null);
+		CompoundDataset sa = ta.getSliceView(null, stop, null);
 
 		PositionIterator it = new PositionIterator(sa.getShape());
 		int[] pos = it.getPos();
+		double[] expected = new double[ta.getElementsPerItem()];
+		double[] actual   = new double[expected.length];
 		while (it.hasNext()) {
-			assertEquals(ta.getDouble(pos), sa.getDouble(pos), 1e-10);
+			ta.getDoubleArray(actual, pos);
+			sa.getDoubleArray(expected, pos);
+			assertArrayEquals(expected, actual, 1e-14);
+		}
+	}
+
+	private void testElementViews(CompoundDataset ta) {
+		int isize = ta.getElementsPerItem();
+		int e = isize > 1 ? isize - 2 : isize - 1;
+
+		Dataset va = ta.getElementsView(e);
+		assertArrayEquals(ta.getShapeRef(), va.getShapeRef());
+		IndexIterator it = ta.getIterator(true);
+		int[] pos = it.getPos();
+		while (it.hasNext()) {
+			assertEquals(ta.getElementDoubleAbs(it.index + e), va.getDouble(pos), 1e-14);
+		}
+
+		va.setSlice(0);
+		it.reset();
+		while (it.hasNext()) {
+			assertEquals(0, va.getDouble(pos), 1e-14);
+			assertEquals(0, ta.getElementDoubleAbs(it.index + e), 1e-14);
 		}
 	}
 
@@ -275,13 +317,13 @@ public class AbstractCompoundDatasetTest {
 
 		d = Random.randint(0, 255, new int[] {5,3,2});
 		dc = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
-		Dataset dca = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dc.sum(0), true);
+		Dataset dca = DatasetUtils.createDatasetFromCompoundDataset(dc.sum(0), true);
 		Dataset da = d.sum(0);
 		IndexIterator it = da.getIterator();
 		while (it.hasNext()) {
 			assertEquals(da.getElementDoubleAbs(it.index), dca.getElementDoubleAbs(it.index), 1e-15);
 		}
-		Dataset dcb = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dc.sum(1), true);
+		Dataset dcb = DatasetUtils.createDatasetFromCompoundDataset(dc.sum(1), true);
 		Dataset db = d.sum(1);
 		it = db.getIterator();
 		while (it.hasNext()) {

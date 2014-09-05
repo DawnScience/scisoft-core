@@ -275,6 +275,10 @@ public interface Dataset extends IErrorDataset {
 	 */
 	public Dataset real();
 
+	/**
+	 * @return real part of dataset as new dataset
+	 */
+	public Dataset realView();
 
 	/**
 	 * Get the error array from the dataset of same shape. This will create a new dataset
@@ -791,11 +795,12 @@ public interface Dataset extends IErrorDataset {
 	public Dataset setSlice(Object obj, int[] start, int[] stop, int[] step);
 
 	/**
+	 * This is modelled after the NumPy array slice
 	 * 
-	 * @param object
+	 * @param obj
 	 * @param slice
 	 */
-	public Dataset setSlice(Object object, Slice... slice);
+	public Dataset setSlice(Object obj, Slice... slice);
 
 	/**
 	 * @param obj

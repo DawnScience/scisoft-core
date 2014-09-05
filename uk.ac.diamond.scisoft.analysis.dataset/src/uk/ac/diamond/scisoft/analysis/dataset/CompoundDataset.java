@@ -46,6 +46,13 @@ public interface CompoundDataset extends Dataset {
 	public Dataset getElements(int element);
 
 	/**
+	 * Get chosen elements from each item as a view on dataset
+	 * @param element
+	 * @return view dataset of chosen elements
+	 */
+	public Dataset getElementsView(int element);
+
+	/**
 	 * Set values of chosen elements from each item according to source dataset
 	 * @param source
 	 * @param element

@@ -284,7 +284,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		view.name = orig.getName();
 		view.size = orig.getSize();
 		view.odata = orig.getBuffer();
-		view.setData();
 		view.offset = orig.getOffset();
 		view.base = orig instanceof AbstractDataset ? ((AbstractDataset) orig).base : null;
 

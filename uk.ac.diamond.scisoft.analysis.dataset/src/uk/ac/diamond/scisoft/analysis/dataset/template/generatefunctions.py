@@ -119,20 +119,20 @@ def oldmethod(name, jdoc=None, params=0):
         ptext = ptext[:-2]
         if is_binaryop:
             print("\t * @return %s\n\t */" % jdoc)
-            print("\tpublic static AbstractDataset %s(final Object a, final Object b, %s) {" % (name, psig))
+            print("\tpublic static Dataset %s(final Object a, final Object b, %s) {" % (name, psig))
             print ("\t\treturn %s(a, b, null, %s);" % (name, ptext))
         else:
             print("\t * @return dataset\n\t */")
-            print("\tpublic static AbstractDataset %s(final Object a, %s) {" % (name, psig))
+            print("\tpublic static Dataset %s(final Object a, %s) {" % (name, psig))
             print ("\t\treturn %s(a, null, %s);" % (name, ptext))
     else:
         if is_binaryop:
             print("\t * @return %s\n\t */" % jdoc)
-            print("\tpublic static AbstractDataset %s(final Object a, final Object b) {" % name)
+            print("\tpublic static Dataset %s(final Object a, final Object b) {" % name)
             print("\t\treturn %s(a, b, null);" % name)
         else:
             print("\t * @return dataset\n\t */")
-            print("\tpublic static AbstractDataset %s(final Object a) {" % name)
+            print("\tpublic static Dataset %s(final Object a) {" % name)
             print("\t\treturn %s(a, null);" % name)
     print("\t}\n")
 
@@ -160,17 +160,17 @@ def beginmethod(name, jdoc=None, params=0):
             print("\t * @param %s" % p)
         if is_binaryop:
             print("\t * @return %s\n\t */" % jdoc)
-            print("\tpublic static AbstractDataset %s(final Object a, final Object b, final Dataset o, %s) {" % (name, psig))
+            print("\tpublic static Dataset %s(final Object a, final Object b, final Dataset o, %s) {" % (name, psig))
         else:
             print("\t * @return dataset\n\t */")
-            print("\tpublic static AbstractDataset %s(final Object a, final Dataset o, %s) {" % (name, psig))
+            print("\tpublic static Dataset %s(final Object a, final Dataset o, %s) {" % (name, psig))
     else:
         if is_binaryop:
             print("\t * @return %s\n\t */" % jdoc)
-            print("\tpublic static AbstractDataset %s(final Object a, final Object b, final Dataset o) {" % name)
+            print("\tpublic static Dataset %s(final Object a, final Object b, final Dataset o) {" % name)
         else:
             print("\t * @return dataset\n\t */")
-            print("\tpublic static AbstractDataset %s(final Object a, final Dataset o) {" % name)
+            print("\tpublic static Dataset %s(final Object a, final Dataset o) {" % name)
     print("\t\tfinal Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);")
     if is_binaryop:
         print("\t\tfinal Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);")
@@ -201,7 +201,7 @@ def endmethod(name, jdoc, types):
         print("\t\taddBinaryOperatorName(da, db, result, \"%s\");" % opsym)
     else:
         print("\t\taddFunctionName(result, \"%s\");" % name)
-    print("\t\treturn (AbstractDataset) result;")
+    print("\t\treturn result;")
     print("\t}\n")
 
 def sameloop(codedict, cprefix, vletter, text, use_long=False, override_long=False):

@@ -121,7 +121,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a op b, operation on a and b
 	 */
-	public static AbstractDataset operate(final Object a, final Object b, final Dataset o, final BinaryOperation op) {
+	public static Dataset operate(final Object a, final Object b, final Dataset o, final BinaryOperation op) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -427,7 +427,7 @@ public class Maths {
 		// set the name based on the changes made
 		addBinaryOperatorName(da, db, result, op.toString());
 	
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -435,7 +435,7 @@ public class Maths {
 	 * @param b
 	 * @return floor division of a and b
 	 */
-	public static AbstractDataset floorDivide(final Object a, final Object b) {
+	public static Dataset floorDivide(final Object a, final Object b) {
 		return floorDivide(a, b, null);
 	}
 
@@ -445,7 +445,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return floor division of a and b
 	 */
-	public static AbstractDataset floorDivide(final Object a, final Object b, final Dataset o) {
+	public static Dataset floorDivide(final Object a, final Object b, final Dataset o) {
 		Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		return divide(da, db, o).ifloor();
@@ -456,7 +456,7 @@ public class Maths {
 	 * @param a
 	 * @return reciprocal dataset
 	 */
-	public static AbstractDataset reciprocal(final Object a) {
+	public static Dataset reciprocal(final Object a) {
 		return reciprocal(a, null);
 	}
 
@@ -466,7 +466,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return reciprocal dataset
 	 */
-	public static AbstractDataset reciprocal(final Object a, final Dataset o) {
+	public static Dataset reciprocal(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		return divide(1, da, o);
 	}
@@ -476,7 +476,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset abs(final Object a) {
+	public static Dataset abs(final Object a) {
 		return abs(a, null);
 	}
 
@@ -486,7 +486,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset abs(final Object a, final Dataset o) {
+	public static Dataset abs(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true, true, false);
 		final Dataset result = it.getOutput();
@@ -722,14 +722,14 @@ public class Maths {
 		}
 	
 		addFunctionName(result, "abs");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
 	 * @param a
 	 * @return a^*, complex conjugate of a
 	 */
-	public static AbstractDataset conjugate(final Object a) {
+	public static Dataset conjugate(final Object a) {
 		return conjugate(a, null);
 	}
 
@@ -738,7 +738,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a^*, complex conjugate of a
 	 */
-	public static AbstractDataset conjugate(final Object a, final Dataset o) {
+	public static Dataset conjugate(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		int at = da.getDtype();
 		IndexIterator it1 = da.getIterator();
@@ -769,7 +769,7 @@ public class Maths {
 			result = da;
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -777,7 +777,7 @@ public class Maths {
 	 * @param b side of right-angled triangle
 	 * @return hypotenuse of right-angled triangle: sqrt(a^2 + a^2)
 	 */
-	public static AbstractDataset hypot(final Object a, final Object b) {
+	public static Dataset hypot(final Object a, final Object b) {
 		return hypot(a, b, null);
 	}
 
@@ -787,7 +787,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return hypotenuse of right-angled triangle: sqrt(a^2 + a^2)
 	 */
-	public static AbstractDataset hypot(final Object a, final Object b, final Dataset o) {
+	public static Dataset hypot(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
@@ -1031,7 +1031,7 @@ public class Maths {
 
 		addFunctionName(da, db, result, "hypot");
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -1039,7 +1039,7 @@ public class Maths {
 	 * @param b adjacent side of right-angled triangle
 	 * @return angle of triangle: atan(b/a)
 	 */
-	public static AbstractDataset arctan2(final Object a, final Object b) {
+	public static Dataset arctan2(final Object a, final Object b) {
 		return arctan2(a, b, null);
 	}
 
@@ -1049,7 +1049,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return angle of triangle: atan(b/a)
 	 */
-	public static AbstractDataset arctan2(final Object a, final Object b, final Dataset o) {
+	public static Dataset arctan2(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 
@@ -1293,7 +1293,7 @@ public class Maths {
 
 		addFunctionName(da, db, result, "atan2");
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -1302,7 +1302,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset of angles
 	 */
-	public static AbstractDataset angle(final Object a, final Dataset o) {
+	public static Dataset angle(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
 		if (!da.isComplex()) {
@@ -1446,7 +1446,7 @@ public class Maths {
 
 		addFunctionName(result, "angle");
 	
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -1455,7 +1455,7 @@ public class Maths {
 	 * @param keepZeros if true then zero items are returned as zero rather than NaNs
 	 * @return complex dataset where items have unit amplitude
 	 */
-	public static AbstractDataset phaseAsComplexNumber(final Object a, final boolean keepZeros) {
+	public static Dataset phaseAsComplexNumber(final Object a, final boolean keepZeros) {
 		return phaseAsComplexNumber(a, null, keepZeros);
 	}
 
@@ -1466,7 +1466,7 @@ public class Maths {
 	 * @param keepZeros if true then zero items are returned as zero rather than NaNs
 	 * @return complex dataset where items have unit amplitude
 	 */
-	public static AbstractDataset phaseAsComplexNumber(final Object a, final Dataset o, final boolean keepZeros) {
+	public static Dataset phaseAsComplexNumber(final Object a, final Dataset o, final boolean keepZeros) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 
 		if (!da.isComplex()) {
@@ -1536,13 +1536,13 @@ public class Maths {
 
 		addFunctionName(result, "phase");
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
 	 * Adds all sets passed in together
 	 * 
-	 * The first IDataset must cast to AbstractDataset
+	 * The first IDataset must cast to Dataset
 	 * 
 	 * For memory efficiency sake if add(...) is called with a
 	 * set of size one, no clone is done, the original object is
@@ -1553,12 +1553,12 @@ public class Maths {
 	 * @param requireClone
 	 * @return sum of collection
 	 */
-	public static AbstractDataset add(final Collection<IDataset> sets, boolean requireClone) {
+	public static Dataset add(final Collection<IDataset> sets, boolean requireClone) {
 		if (sets.isEmpty())
 			return null;
 		final Iterator<IDataset> it = sets.iterator();
 		if (sets.size() == 1)
-			return (AbstractDataset) DatasetUtils.convertToDataset(it.next());
+			return DatasetUtils.convertToDataset(it.next());
 	
 		Dataset sum = requireClone ? ((Dataset) it.next()).clone() : (Dataset) it.next();
 	
@@ -1566,31 +1566,31 @@ public class Maths {
 			add(sum, it.next(), sum);
 		}
 	
-		return (AbstractDataset) sum;
+		return sum;
 	}
 
 	/**
 	 * Multiplies all sets passed in together
 	 * 
-	 * The first IDataset must cast to AbstractDataset
+	 * The first IDataset must cast to Dataset
 	 * 
 	 * @param sets
 	 * @param requireClone
 	 * @return product of collection
 	 */
-	public static AbstractDataset multiply(final Collection<IDataset> sets, boolean requireClone) {
+	public static Dataset multiply(final Collection<IDataset> sets, boolean requireClone) {
 		if (sets.isEmpty())
 			return null;
 		final Iterator<IDataset> it = sets.iterator();
 		if (sets.size() == 1)
-			return (AbstractDataset) DatasetUtils.convertToDataset(it.next());
+			return DatasetUtils.convertToDataset(it.next());
 		Dataset product = requireClone ? ((Dataset) it.next()).clone() : (Dataset) it.next();
 	
 		while (it.hasNext()) {
 			multiply(product, it.next(), product);
 		}
 	
-		return (AbstractDataset) product;
+		return product;
 	}
 
 	/**
@@ -2587,7 +2587,7 @@ public class Maths {
 	 * @param axis
 	 * @return difference
 	 */
-	public static AbstractDataset difference(Dataset a, final int n, int axis) {
+	public static Dataset difference(Dataset a, final int n, int axis) {
 		Dataset ds;
 		final int dt = a.getDtype();
 		final int rank = a.getRank();
@@ -2603,7 +2603,7 @@ public class Maths {
 		int[] nshape = a.getShape();
 		if (nshape[axis] <= n) {
 			nshape[axis] = 0;
-			return (AbstractDataset) DatasetFactory.zeros(is, nshape, dt);
+			return DatasetFactory.zeros(is, nshape, dt);
 		}
 
 		nshape[axis] -= n;
@@ -2623,7 +2623,7 @@ public class Maths {
 			}
 		}
 
-		return (AbstractDataset) ds;
+		return ds;
 	}
 
 	private static double SelectedMean(Dataset data, int Min, int Max) {
@@ -2684,7 +2684,7 @@ public class Maths {
 	 *            smoothing, the higher the value, the more smoothing occurs.
 	 * @return A dataset which contains all the derivative point for point.
 	 */
-	public static AbstractDataset derivative(Dataset x, Dataset y, int n) {
+	public static Dataset derivative(Dataset x, Dataset y, int n) {
 		if (x.getRank() != 1 || y.getRank() != 1) {
 			throw new IllegalArgumentException("Only one dimensional dataset supported");
 		}
@@ -2750,7 +2750,7 @@ public class Maths {
 		// set the name based on the changes made
 		result.setName(y.getName() + "'");
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -2759,7 +2759,7 @@ public class Maths {
 	 * @param axis
 	 * @return difference
 	 */
-	public static AbstractDataset centralDifference(Dataset a, int axis) {
+	public static Dataset centralDifference(Dataset a, int axis) {
 		Dataset ds;
 		final int dt = a.getDtype();
 		final int rank = a.getRank();
@@ -2792,7 +2792,7 @@ public class Maths {
 			}
 		}
 
-		return (AbstractDataset) ds;
+		return ds;
 	}
 
 	/**
@@ -3030,7 +3030,7 @@ public class Maths {
 	 * @param x one or more datasets for dependent variables
 	 * @return a list of datasets (one for each dimension in y)
 	 */
-	public static List<AbstractDataset> gradient(Dataset y, Dataset... x) {
+	public static List<Dataset> gradient(Dataset y, Dataset... x) {
 		final int rank = y.getRank();
 
 		if (x.length > 0) {
@@ -3052,16 +3052,16 @@ public class Maths {
 			}
 		}
 
-		List<AbstractDataset> grad = new ArrayList<AbstractDataset>(rank);
+		List<Dataset> grad = new ArrayList<Dataset>(rank);
 
 		for (int a = 0; a < rank; a++) {
-			AbstractDataset g = centralDifference(y, a);
+			Dataset g = centralDifference(y, a);
 			grad.add(g);
 		}
 
 		if (x.length > 0) {
 			for (int a = 0; a < rank; a++) {
-				AbstractDataset g = grad.get(a);
+				Dataset g = grad.get(a);
 				Dataset dx = x[a];
 				int r = dx.getRank();
 				if (r == rank) {
@@ -3093,7 +3093,7 @@ public class Maths {
 	 * @param b
 	 * @return a + b, addition of a and b
 	 */
-	public static AbstractDataset add(final Object a, final Object b) {
+	public static Dataset add(final Object a, final Object b) {
 		return add(a, b, null);
 	}
 
@@ -3104,7 +3104,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a + b, addition of a and b
 	 */
-	public static AbstractDataset add(final Object a, final Object b, final Dataset o) {
+	public static Dataset add(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -3604,7 +3604,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "+");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -3613,7 +3613,7 @@ public class Maths {
 	 * @param b
 	 * @return a - b, subtraction of a by b
 	 */
-	public static AbstractDataset subtract(final Object a, final Object b) {
+	public static Dataset subtract(final Object a, final Object b) {
 		return subtract(a, b, null);
 	}
 
@@ -3624,7 +3624,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a - b, subtraction of a by b
 	 */
-	public static AbstractDataset subtract(final Object a, final Object b, final Dataset o) {
+	public static Dataset subtract(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -4124,7 +4124,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "-");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -4133,7 +4133,7 @@ public class Maths {
 	 * @param b
 	 * @return a * b, product of a and b
 	 */
-	public static AbstractDataset multiply(final Object a, final Object b) {
+	public static Dataset multiply(final Object a, final Object b) {
 		return multiply(a, b, null);
 	}
 
@@ -4144,7 +4144,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a * b, product of a and b
 	 */
-	public static AbstractDataset multiply(final Object a, final Object b, final Dataset o) {
+	public static Dataset multiply(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -4644,7 +4644,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "*");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -4653,7 +4653,7 @@ public class Maths {
 	 * @param b
 	 * @return a / b, division of a by b
 	 */
-	public static AbstractDataset divide(final Object a, final Object b) {
+	public static Dataset divide(final Object a, final Object b) {
 		return divide(a, b, null);
 	}
 
@@ -4664,7 +4664,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a / b, division of a by b
 	 */
-	public static AbstractDataset divide(final Object a, final Object b, final Dataset o) {
+	public static Dataset divide(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -5266,7 +5266,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "/");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -5275,7 +5275,7 @@ public class Maths {
 	 * @param b
 	 * @return a / b, division of a by b
 	 */
-	public static AbstractDataset dividez(final Object a, final Object b) {
+	public static Dataset dividez(final Object a, final Object b) {
 		return dividez(a, b, null);
 	}
 
@@ -5286,7 +5286,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a / b, division of a by b
 	 */
-	public static AbstractDataset dividez(final Object a, final Object b, final Dataset o) {
+	public static Dataset dividez(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -5870,7 +5870,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "/");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -5879,7 +5879,7 @@ public class Maths {
 	 * @param b
 	 * @return a ** b, raise a to power of b
 	 */
-	public static AbstractDataset power(final Object a, final Object b) {
+	public static Dataset power(final Object a, final Object b) {
 		return power(a, b, null);
 	}
 
@@ -5890,7 +5890,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a ** b, raise a to power of b
 	 */
-	public static AbstractDataset power(final Object a, final Object b, final Dataset o) {
+	public static Dataset power(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -6402,7 +6402,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "**");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -6411,7 +6411,7 @@ public class Maths {
 	 * @param b
 	 * @return a % b, remainder of division of a by b
 	 */
-	public static AbstractDataset remainder(final Object a, final Object b) {
+	public static Dataset remainder(final Object a, final Object b) {
 		return remainder(a, b, null);
 	}
 
@@ -6422,7 +6422,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return a % b, remainder of division of a by b
 	 */
-	public static AbstractDataset remainder(final Object a, final Object b, final Dataset o) {
+	public static Dataset remainder(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -6832,7 +6832,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "%");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -6841,7 +6841,7 @@ public class Maths {
 	 * @param b
 	 * @return return maximum of a and b
 	 */
-	public static AbstractDataset maximum(final Object a, final Object b) {
+	public static Dataset maximum(final Object a, final Object b) {
 		return maximum(a, b, null);
 	}
 
@@ -6852,7 +6852,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return return maximum of a and b
 	 */
-	public static AbstractDataset maximum(final Object a, final Object b, final Dataset o) {
+	public static Dataset maximum(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -7400,7 +7400,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "maximum");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -7409,7 +7409,7 @@ public class Maths {
 	 * @param b
 	 * @return return minimum of a and b
 	 */
-	public static AbstractDataset minimum(final Object a, final Object b) {
+	public static Dataset minimum(final Object a, final Object b) {
 		return minimum(a, b, null);
 	}
 
@@ -7420,7 +7420,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return return minimum of a and b
 	 */
-	public static AbstractDataset minimum(final Object a, final Object b, final Dataset o) {
+	public static Dataset minimum(final Object a, final Object b, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final Dataset db = b instanceof Dataset ? (Dataset) b : DatasetFactory.createFromObject(b);
 		final BroadcastIterator it = new BroadcastIterator(da, db, o, true);
@@ -7968,7 +7968,7 @@ public class Maths {
 		}
 
 		addBinaryOperatorName(da, db, result, "minimum");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -7976,7 +7976,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset sin(final Object a) {
+	public static Dataset sin(final Object a) {
 		return sin(a, null);
 	}
 
@@ -7986,7 +7986,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset sin(final Object a, final Dataset o) {
+	public static Dataset sin(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -8279,7 +8279,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "sin");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -8287,7 +8287,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset cos(final Object a) {
+	public static Dataset cos(final Object a) {
 		return cos(a, null);
 	}
 
@@ -8297,7 +8297,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset cos(final Object a, final Dataset o) {
+	public static Dataset cos(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -8590,7 +8590,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "cos");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -8598,7 +8598,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset tan(final Object a) {
+	public static Dataset tan(final Object a) {
 		return tan(a, null);
 	}
 
@@ -8608,7 +8608,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset tan(final Object a, final Dataset o) {
+	public static Dataset tan(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -8925,7 +8925,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "tan");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -8933,7 +8933,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arcsin(final Object a) {
+	public static Dataset arcsin(final Object a) {
 		return arcsin(a, null);
 	}
 
@@ -8943,7 +8943,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arcsin(final Object a, final Dataset o) {
+	public static Dataset arcsin(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -9244,7 +9244,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arcsin");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -9252,7 +9252,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arccos(final Object a) {
+	public static Dataset arccos(final Object a) {
 		return arccos(a, null);
 	}
 
@@ -9262,7 +9262,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arccos(final Object a, final Dataset o) {
+	public static Dataset arccos(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -9563,7 +9563,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arccos");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -9571,7 +9571,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arctan(final Object a) {
+	public static Dataset arctan(final Object a) {
 		return arctan(a, null);
 	}
 
@@ -9581,7 +9581,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arctan(final Object a, final Dataset o) {
+	public static Dataset arctan(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -9882,7 +9882,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arctan");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -9890,7 +9890,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset sinh(final Object a) {
+	public static Dataset sinh(final Object a) {
 		return sinh(a, null);
 	}
 
@@ -9900,7 +9900,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset sinh(final Object a, final Dataset o) {
+	public static Dataset sinh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -10193,7 +10193,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "sinh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -10201,7 +10201,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset cosh(final Object a) {
+	public static Dataset cosh(final Object a) {
 		return cosh(a, null);
 	}
 
@@ -10211,7 +10211,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset cosh(final Object a, final Dataset o) {
+	public static Dataset cosh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -10504,7 +10504,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "cosh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -10512,7 +10512,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset tanh(final Object a) {
+	public static Dataset tanh(final Object a) {
 		return tanh(a, null);
 	}
 
@@ -10522,7 +10522,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset tanh(final Object a, final Dataset o) {
+	public static Dataset tanh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -10839,7 +10839,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "tanh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -10847,7 +10847,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arcsinh(final Object a) {
+	public static Dataset arcsinh(final Object a) {
 		return arcsinh(a, null);
 	}
 
@@ -10857,7 +10857,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arcsinh(final Object a, final Dataset o) {
+	public static Dataset arcsinh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -11158,7 +11158,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arcsinh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -11166,7 +11166,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arccosh(final Object a) {
+	public static Dataset arccosh(final Object a) {
 		return arccosh(a, null);
 	}
 
@@ -11176,7 +11176,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arccosh(final Object a, final Dataset o) {
+	public static Dataset arccosh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -11477,7 +11477,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arccosh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -11485,7 +11485,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset arctanh(final Object a) {
+	public static Dataset arctanh(final Object a) {
 		return arctanh(a, null);
 	}
 
@@ -11495,7 +11495,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset arctanh(final Object a, final Dataset o) {
+	public static Dataset arctanh(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -11796,7 +11796,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "arctanh");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -11804,7 +11804,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset log(final Object a) {
+	public static Dataset log(final Object a) {
 		return log(a, null);
 	}
 
@@ -11814,7 +11814,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset log(final Object a, final Dataset o) {
+	public static Dataset log(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -12107,7 +12107,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "log");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -12115,7 +12115,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset log2(final Object a) {
+	public static Dataset log2(final Object a) {
 		return log2(a, null);
 	}
 
@@ -12125,7 +12125,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset log2(final Object a, final Dataset o) {
+	public static Dataset log2(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -12418,7 +12418,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "log2");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -12426,7 +12426,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset log10(final Object a) {
+	public static Dataset log10(final Object a) {
 		return log10(a, null);
 	}
 
@@ -12436,7 +12436,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset log10(final Object a, final Dataset o) {
+	public static Dataset log10(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -12729,7 +12729,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "log10");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -12737,7 +12737,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset log1p(final Object a) {
+	public static Dataset log1p(final Object a) {
 		return log1p(a, null);
 	}
 
@@ -12747,7 +12747,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset log1p(final Object a, final Dataset o) {
+	public static Dataset log1p(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -13040,7 +13040,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "log1p");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -13048,7 +13048,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset exp(final Object a) {
+	public static Dataset exp(final Object a) {
 		return exp(a, null);
 	}
 
@@ -13058,7 +13058,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset exp(final Object a, final Dataset o) {
+	public static Dataset exp(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -13359,7 +13359,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "exp");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -13367,7 +13367,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset expm1(final Object a) {
+	public static Dataset expm1(final Object a) {
 		return expm1(a, null);
 	}
 
@@ -13377,7 +13377,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset expm1(final Object a, final Dataset o) {
+	public static Dataset expm1(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -13678,7 +13678,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "expm1");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -13686,7 +13686,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset sqrt(final Object a) {
+	public static Dataset sqrt(final Object a) {
 		return sqrt(a, null);
 	}
 
@@ -13696,7 +13696,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset sqrt(final Object a, final Dataset o) {
+	public static Dataset sqrt(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -13997,7 +13997,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "sqrt");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -14005,7 +14005,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset cbrt(final Object a) {
+	public static Dataset cbrt(final Object a) {
 		return cbrt(a, null);
 	}
 
@@ -14015,7 +14015,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset cbrt(final Object a, final Dataset o) {
+	public static Dataset cbrt(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -14316,7 +14316,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "cbrt");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -14324,7 +14324,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset square(final Object a) {
+	public static Dataset square(final Object a) {
 		return square(a, null);
 	}
 
@@ -14334,7 +14334,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset square(final Object a, final Dataset o) {
+	public static Dataset square(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -14627,7 +14627,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "square");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -14635,7 +14635,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset floor(final Object a) {
+	public static Dataset floor(final Object a) {
 		return floor(a, null);
 	}
 
@@ -14645,7 +14645,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset floor(final Object a, final Dataset o) {
+	public static Dataset floor(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -14954,7 +14954,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "floor");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -14962,7 +14962,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset ceil(final Object a) {
+	public static Dataset ceil(final Object a) {
 		return ceil(a, null);
 	}
 
@@ -14972,7 +14972,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset ceil(final Object a, final Dataset o) {
+	public static Dataset ceil(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -15281,7 +15281,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "ceil");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -15289,7 +15289,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset rint(final Object a) {
+	public static Dataset rint(final Object a) {
 		return rint(a, null);
 	}
 
@@ -15299,7 +15299,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset rint(final Object a, final Dataset o) {
+	public static Dataset rint(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -15608,7 +15608,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "rint");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -15616,7 +15616,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset toDegrees(final Object a) {
+	public static Dataset toDegrees(final Object a) {
 		return toDegrees(a, null);
 	}
 
@@ -15626,7 +15626,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset toDegrees(final Object a, final Dataset o) {
+	public static Dataset toDegrees(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -15919,7 +15919,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "toDegrees");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -15927,7 +15927,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset toRadians(final Object a) {
+	public static Dataset toRadians(final Object a) {
 		return toRadians(a, null);
 	}
 
@@ -15937,7 +15937,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset toRadians(final Object a, final Dataset o) {
+	public static Dataset toRadians(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -16230,7 +16230,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "toRadians");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -16238,7 +16238,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset signum(final Object a) {
+	public static Dataset signum(final Object a) {
 		return signum(a, null);
 	}
 
@@ -16248,7 +16248,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset signum(final Object a, final Dataset o) {
+	public static Dataset signum(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -16557,7 +16557,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "signum");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -16565,7 +16565,7 @@ public class Maths {
 	 * @param a
 	 * @return dataset
 	 */
-	public static AbstractDataset negative(final Object a) {
+	public static Dataset negative(final Object a) {
 		return negative(a, null);
 	}
 
@@ -16575,7 +16575,7 @@ public class Maths {
 	 * @param o output can be null - in which case, a new dataset is created
 	 * @return dataset
 	 */
-	public static AbstractDataset negative(final Object a, final Dataset o) {
+	public static Dataset negative(final Object a, final Dataset o) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -16884,7 +16884,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "negative");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -16894,7 +16894,7 @@ public class Maths {
 	 * @param pb
 	 * @return dataset
 	 */
-	public static AbstractDataset clip(final Object a, final Object pa, final Object pb) {
+	public static Dataset clip(final Object a, final Object pa, final Object pb) {
 		return clip(a, null, pa, pb);
 	}
 
@@ -16906,7 +16906,7 @@ public class Maths {
 	 * @param pb
 	 * @return dataset
 	 */
-	public static AbstractDataset clip(final Object a, final Dataset o, final Object pa, final Object pb) {
+	public static Dataset clip(final Object a, final Dataset o, final Object pa, final Object pb) {
 		final Dataset da = a instanceof Dataset ? (Dataset) a : DatasetFactory.createFromObject(a);
 		final SingleInputBroadcastIterator it = new SingleInputBroadcastIterator(da, o, true);
 		final Dataset result = it.getOutput();
@@ -17285,7 +17285,7 @@ public class Maths {
 		}
 
 		addFunctionName(result, "clip");
-		return (AbstractDataset) result;
+		return result;
 	}
 
 // End of generated code

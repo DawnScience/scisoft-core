@@ -90,7 +90,7 @@ public class AbstractDatasetDescriptor implements IFlattens {
 	}
 
 	/**
-	 * Set to true to delete the file when this object is unflattened to an AbstractDataset
+	 * Set to true to delete the file when this object is unflattened to a Dataset
 	 * 
 	 * @param deleteAfterLoad
 	 */

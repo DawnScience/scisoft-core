@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dawb.common.services.IImageFilterService;
+import org.dawb.common.services.IImageProcessingService;
 import org.dawb.common.services.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +39,11 @@ public class Image {
 	 */
 	protected static final Logger logger = LoggerFactory.getLogger(Image.class);
 
-	private static IImageFilterService service;
+	private static IImageProcessingService service;
 
 	public static void createImageFilterService() throws Exception {
 		if (service == null) {
-			service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
+			service = (IImageProcessingService)ServiceManager.getService(IImageProcessingService.class);
 		}
 	}
 
@@ -253,27 +253,27 @@ public class Image {
 		return filter(input, kernel, FilterType.MEAN);
 	}
 
-	public static AbstractDataset medianFilter(Dataset input, int radius) throws Exception {
-		return filter(input, radius, FilterType.MEDIAN);
-	}
+//	public static AbstractDataset medianFilter(Dataset input, int radius) throws Exception {
+//		return filter(input, radius, FilterType.MEDIAN);
+//	}
+//
+//	public static AbstractDataset meanFilter(Dataset input, int radius) throws Exception {
+//		return filter(input, radius, FilterType.MEAN);
+//	}
 
-	public static AbstractDataset meanFilter(Dataset input, int radius) throws Exception {
-		return filter(input, radius, FilterType.MEAN);
-	}
-
-	public static AbstractDataset filter(Dataset input, int radius, FilterType type) throws Exception {
-		createImageFilterService();
-		if (type == FilterType.MEDIAN) {
-			return (AbstractDataset) service.filterMean(input, radius);
-		} else if (type == FilterType.MIN) {
-			return (AbstractDataset) service.filterMin(input, radius);
-		} else if (type == FilterType.MAX) {
-			return (AbstractDataset) service.filterMax(input, radius);
-		} else if (type == FilterType.MEAN) {
-			return (AbstractDataset) service.filterMean(input, radius);
-		}
-		return null;
-	}
+//	public static AbstractDataset filter(Dataset input, int radius, FilterType type) throws Exception {
+//		createImageFilterService();
+//		if (type == FilterType.MEDIAN) {
+//			return (AbstractDataset) service.filterMean(input, radius);
+//		} else if (type == FilterType.MIN) {
+//			return (AbstractDataset) service.filterMin(input, radius);
+//		} else if (type == FilterType.MAX) {
+//			return (AbstractDataset) service.filterMax(input, radius);
+//		} else if (type == FilterType.MEAN) {
+//			return (AbstractDataset) service.filterMean(input, radius);
+//		}
+//		return null;
+//	}
 
 	public static AbstractDataset filter(Dataset input, int[] kernel, FilterType type) {
 		// check to see if the kernel shape in the correct dimensionality.
@@ -326,19 +326,19 @@ public class Image {
 		return Maths.subtract(input, mean);
 	}
 
-	/**
-	 * 
-	 * @param input
-	 * @param radius
-	 * @return dataset
-	 * @throws Exception 
-	 */
-	public static AbstractDataset backgroundFilter(Dataset input, int radius) throws Exception {
-		AbstractDataset min = filter(input, new int[] {radius, radius}, FilterType.MIN);
-		AbstractDataset max = filter(min, new int[] {radius, radius}, FilterType.MAX);
-		AbstractDataset mean = filter(max, radius, FilterType.MEAN);
-		return Maths.subtract(input, mean);
-	}
+//	/**
+//	 * 
+//	 * @param input
+//	 * @param radius
+//	 * @return dataset
+//	 * @throws Exception 
+//	 */
+//	public static AbstractDataset backgroundFilter(Dataset input, int radius) throws Exception {
+//		AbstractDataset min = filter(input, new int[] {radius, radius}, FilterType.MIN);
+//		AbstractDataset max = filter(min, new int[] {radius, radius}, FilterType.MAX);
+//		AbstractDataset mean = filter(max, radius, FilterType.MEAN);
+//		return Maths.subtract(input, mean);
+//	}
 
 	public static AbstractDataset convolutionFilter(Dataset input, Dataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.

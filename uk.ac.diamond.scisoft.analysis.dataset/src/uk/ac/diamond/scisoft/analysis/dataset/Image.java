@@ -264,7 +264,7 @@ public class Image {
 	public static Dataset filter(Dataset input, int radius, FilterType type) throws Exception {
 		createImageFilterService();
 		if (type == FilterType.MEDIAN) {
-			return DatasetUtils.convertToDataset(service.filterMean(input, radius));
+			return DatasetUtils.convertToDataset(service.filterMedian(input, radius));
 		} else if (type == FilterType.MIN) {
 			return DatasetUtils.convertToDataset(service.filterMin(input, radius));
 		} else if (type == FilterType.MAX) {

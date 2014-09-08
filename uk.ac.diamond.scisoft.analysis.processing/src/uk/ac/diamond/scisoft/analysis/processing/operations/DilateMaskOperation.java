@@ -2,7 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.util.List;
 
-import org.dawb.common.services.IImageProcessingService;
+import org.dawb.common.services.IImageFilterService;
 import org.dawb.common.services.ServiceManager;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
@@ -41,10 +41,10 @@ public class DilateMaskOperation extends AbstractOperation {
 		
 		if (mask == null) throw new OperationException(this, "No mask to dilate!");
 		
-		IImageProcessingService service = null;
+		IImageFilterService service = null;
 		
 		try {
-			service = (IImageProcessingService)ServiceManager.getService(IImageProcessingService.class);
+			service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
 		} catch (Exception e) {
 			throw new OperationException(this, "Could not get image processing service");
 		}

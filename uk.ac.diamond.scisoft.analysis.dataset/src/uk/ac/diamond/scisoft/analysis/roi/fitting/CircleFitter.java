@@ -33,8 +33,8 @@ import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquar
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -51,8 +51,8 @@ import Jama.SingularValueDecomposition;
  */
 class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializable {
 	private static final int PARAMETERS = CircleFitter.PARAMETERS;
-	private AbstractDataset X;
-	private AbstractDataset Y;
+	private Dataset X;
+	private Dataset Y;
 	private DoubleDataset v;
 	private double[][] j;
 	private int n; // number of points
@@ -66,8 +66,8 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 
 	@Override
 	public void setPoints(IDataset x, IDataset y) {
-		X = (AbstractDataset)x;
-		Y = (AbstractDataset)y;
+		X = DatasetUtils.convertToDataset(x);
+		Y = DatasetUtils.convertToDataset(y);
 		n = X.getSize();
 		m = 2*n;
 		v = new DoubleDataset(m);
@@ -149,7 +149,7 @@ class CircleCoordinatesFunction implements IConicSectionFitFunction, Serializabl
 	}
 
 	@Override
-	public AbstractDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+	public Dataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
 		final double[] p = calcAllInitValues(parameters).getInitialGuess();
 
 		final DoubleDataset v = new DoubleDataset(n);
@@ -317,8 +317,8 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	 * @return geometric parameters
 	 */
 	private static double[] quickfit(IDataset ix, IDataset iy) {
-		AbstractDataset x = (AbstractDataset)ix;
-		AbstractDataset y = (AbstractDataset)iy;
+		Dataset x = DatasetUtils.convertToDataset(ix);
+		Dataset y = DatasetUtils.convertToDataset(iy);
 		double mx = (Double) x.mean();
 		double my = (Double) y.mean();
 		x = Maths.subtract(x.cast(Dataset.FLOAT64), mx);
@@ -410,11 +410,11 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 	 * @param geometricParameters
 	 * @return x and y datasets
 	 */
-	public static AbstractDataset[] generateCoordinates(AbstractDataset angles, final double[] geometricParameters) {
+	public static Dataset[] generateCoordinates(Dataset angles, final double[] geometricParameters) {
 		if (geometricParameters.length != PARAMETERS)
 			throw new IllegalArgumentException("Need " + PARAMETERS + " parameters");
 
-		AbstractDataset[] coords = new AbstractDataset[2];
+		Dataset[] coords = new Dataset[2];
 
 		DoubleDataset x = new DoubleDataset(angles.getShape());
 		DoubleDataset y = new DoubleDataset(angles.getShape());

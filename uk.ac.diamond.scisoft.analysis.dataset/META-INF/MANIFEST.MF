@@ -20,6 +20,7 @@ Export-Package: uk.ac.diamond.scisoft.analysis.coords,
  uk.ac.diamond.scisoft.analysis.roi.fitting,
  uk.ac.diamond.scisoft.analysis.roi.handler
 Import-Package: Jama;version="1.0.3",
+ org.dawb.common.services,
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.6,1.7.7)"
 Bundle-ClassPath: jars/jtransforms-2.4.jar,

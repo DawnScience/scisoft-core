@@ -254,7 +254,9 @@ def asDataset(data, dtype=None, force=False):
     Used for arithmetic ops to coerce a sequence to a dataset otherwise leave as single item
     '''
     if isinstance(data, ndarray):
-        return data
+        if dtype is None or dtype == data.dtype:
+            return data
+        return ndarray(buffer=data, dtype=dtype, copy=False)
 
     if isinstance(data, _ds):
         return ndarray(buffer=data, dtype=dtype, copy=False)
@@ -461,17 +463,32 @@ class ndarray(object):
     def T(self):
         return self.transpose()
 
-    @property
     @_wrapout
-    def real(self):
-        return self.__dataset.real()
+    def _get_real(self):
+        return self.__dataset.realView()
 
-    @property
+    def _set_real(self, value):
+        value = fromDS(value)
+        if isinstance(value, ndarray):
+            value = value._jdataset()
+        _setslice(self.__dataset.realView(), value, None)
+
+    real = property(_get_real, _set_real)
+
     @_wrapout
-    def imag(self):
+    def _get_imag(self):
         if iscomplexobj(self):
-            return self.__dataset.imag()
+            return self.__dataset.imagView()
         return zeros(self.shape, dtype=self.dtype)
+
+    def _set_imag(self, value):
+        if iscomplexobj(self):
+            value = fromDS(value)
+            if isinstance(value, ndarray):
+                value = value._jdataset()
+            _setslice(self.__dataset.imagView(), value, None)
+
+    imag = property(_get_imag, _set_imag)
 
     @property
     def flat(self):

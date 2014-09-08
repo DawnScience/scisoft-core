@@ -1949,11 +1949,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		final int imax = n.length;
 		final int rank = shape.length;
 		if (imax == 0) {
-			if (rank == 0)
-				return 0;
-			if (rank == 1 && shape[0] <= 1) {
-				return 0;
-			}
+			if (rank == 0 || (rank == 1 && shape[0] <= 1))
+				return stride == null ? 0 : offset;
 			throw new IllegalArgumentException("One or more index parameters must be supplied");
 		} else if (imax > rank) {
 			throw new IllegalArgumentException("No of index parameters is different to the shape of data: " + imax

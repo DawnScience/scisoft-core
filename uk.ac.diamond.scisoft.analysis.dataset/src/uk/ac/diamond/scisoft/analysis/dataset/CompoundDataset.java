@@ -16,7 +16,45 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+
 public interface CompoundDataset extends Dataset {
+
+	@Override
+	public CompoundDataset cast(boolean repeat, int dtype, int isize);
+
+	@Override
+	public CompoundDataset cast(int dtype);
+
+	@Override
+	public CompoundDataset clone();
+
+	@Override
+	public CompoundDataset fill(Object obj);
+
+	@Override
+	public CompoundDataset flatten();
+
+	@Override
+	public CompoundDataset getBy1DIndex(IntegerDataset index);
+
+	@Override
+	public CompoundDataset getByBoolean(Dataset selection);
+
+	@Override
+	public CompoundDataset getByIndexes(Object... indexes);
+
+	@Override
+	public CompoundDataset getSlice(IMonitor mon, int[] start, int[] stop, int[] step);
+
+	@Override
+	public CompoundDataset getSlice(IMonitor mon, Slice... slice);
+
+	@Override
+	public CompoundDataset getSlice(int[] start, int[] stop, int[] step);
+
+	@Override
+	public CompoundDataset getSlice(Slice... slice);
 
 	@Override
 	public CompoundDataset getSliceView(int[] start, int[] stop, int[] step);
@@ -25,16 +63,118 @@ public interface CompoundDataset extends Dataset {
 	public CompoundDataset getSliceView(Slice... slice);
 
 	@Override
+	public CompoundDataset getTransposedView(int... axes);
+
+	@Override
+	public CompoundDataset getView();
+
+	@Override
+	public CompoundDataset iadd(Object o);
+
+	@Override
+	public CompoundDataset idivide(Object o);
+
+	@Override
+	public CompoundDataset ifloor();
+
+	@Override
+	public CompoundDataset ifloorDivide(Object o);
+
+	@Override
+	public CompoundDataset imultiply(Object o);
+
+	@Override
+	public CompoundDataset ipower(Object o);
+
+	@Override
+	public CompoundDataset iremainder(Object o);
+
+	@Override
+	public CompoundDataset isubtract(Object o);
+
+	@Override
+	public CompoundDataset max(boolean ignoreNaNs, int axis);
+
+	@Override
+	public CompoundDataset max(int axis);
+
+	@Override
+	public CompoundDataset mean(boolean ignoreNaNs, int axis);
+
+	@Override
+	public CompoundDataset mean(int axis);
+
+	@Override
+	public CompoundDataset min(boolean ignoreNaNs, int axis);
+
+	@Override
+	public CompoundDataset min(int axis);
+
+	@Override
+	public CompoundDataset peakToPeak(int axis);
+
+	@Override
+	public CompoundDataset product(int axis);
+
+	@Override
 	public CompoundDataset reshape(int... shape);
 
 	@Override
+	public CompoundDataset rootMeanSquare(int axis);
+
+	@Override
+	public CompoundDataset setBy1DIndex(Object obj, Dataset index);
+
+	@Override
+	public CompoundDataset setByBoolean(Object obj, Dataset selection);
+
+	@Override
+	public CompoundDataset setByIndexes(Object obj, Object... indexes);
+
+	@Override
+	public CompoundDataset setSlice(Object obj, IndexIterator iterator);
+
+	@Override
+	public CompoundDataset setSlice(Object obj, int[] start, int[] stop, int[] step);
+
+	@Override
+	public CompoundDataset setSlice(Object object, Slice... slice);
+
+	@Override
 	public CompoundDataset sort(Integer axis);
+
+	@Override
+	public CompoundDataset squeeze();
+
+	@Override
+	public CompoundDataset squeeze(boolean onlyFromEnd);
+
+	@Override
+	public CompoundDataset stdDeviation(int axis);
 
 	@Override
 	public CompoundDataset sum(boolean ignoreNaNs, int axis);
 
 	@Override
 	public CompoundDataset sum(int axis);
+
+	@Override
+	public CompoundDataset swapAxes(int axis1, int axis2);
+
+	@Override
+	public CompoundDataset synchronizedCopy();
+
+	@Override
+	public CompoundDataset transpose(int... axes);
+
+	@Override
+	public CompoundDataset typedProduct(int dtype, int axis);
+
+	@Override
+	public CompoundDataset typedSum(int dtype, int axis);
+
+	@Override
+	public CompoundDataset variance(int axis);
 
 	/**
 	 * Get an item as a double array

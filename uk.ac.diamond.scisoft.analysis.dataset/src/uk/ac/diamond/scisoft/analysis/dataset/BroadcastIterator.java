@@ -451,9 +451,9 @@ public class BroadcastIterator extends IndexIterator {
 			bIndex = bStart - bStride[endrank];
 			oIndex = oStart - (oStride == null ? 0 : oStride[endrank]);
 		} else {
-			aIndex = -aStep;
-			bIndex = -bStep;
-			oIndex = -oStep;
+			aIndex = aStart - aStep;
+			bIndex = bStart - bStep;
+			oIndex = oStart - oStep;
 		}
 
 		if (aIndex == 0 || bIndex == 0) { // for zero-ranked datasets

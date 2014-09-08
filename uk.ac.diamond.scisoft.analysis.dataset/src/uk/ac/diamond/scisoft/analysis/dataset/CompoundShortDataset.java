@@ -856,6 +856,8 @@ public class CompoundShortDataset extends AbstractCompoundDataset {
 			view.stride = createStrides(this, offset);
 			view.offset = offset[0] + element;
 			view.base = base == null ? this : base;
+		} else {
+			view.offset += element;
 		}
 
 		return view;

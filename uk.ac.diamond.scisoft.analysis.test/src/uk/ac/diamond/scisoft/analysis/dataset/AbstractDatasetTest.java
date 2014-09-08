@@ -1621,6 +1621,8 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", new Complex(1.0, -0.5), a.getObject());
+		assertEquals("Real view value", 1.0, a.realView().getObject());
+		assertEquals("Imaginary view value", -0.5, ((ComplexDoubleDataset) a).imagView().getObject());
 
 		a = DatasetFactory.createFromObject(1.f);
 		assertEquals("Rank", 0, a.getRank());

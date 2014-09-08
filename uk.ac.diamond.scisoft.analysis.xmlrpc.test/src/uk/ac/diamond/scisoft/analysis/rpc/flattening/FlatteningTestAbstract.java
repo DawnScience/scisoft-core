@@ -428,7 +428,7 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
-	public void testAbstractDataset() throws Exception {
+	public void testDataset() throws Exception {
 		// flatten to an npy file implicitly
 		flattenAndUnflatten(DatasetFactory.createRange(100, Dataset.INT));
 

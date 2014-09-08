@@ -213,8 +213,8 @@ public interface Dataset extends IErrorDataset {
 	public Dataset clone();
 
 	/**
-	 * This function allows anything that dirties the dataset to set stored values to null so that
-	 * the other functions can work correctly
+	 * This function allows anything that dirties the dataset to clear stored values
+	 * so that the other functions can work correctly.
 	 */
 	public void setDirty();
 

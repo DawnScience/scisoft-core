@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Generic container class for data that is compound in nature
@@ -148,33 +149,182 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public AbstractCompoundDataset getSliceView(int[] start, int[] stop, int[] step) {
-		return (AbstractCompoundDataset) super.getSliceView(start, stop, step);
+	public CompoundDataset cast(boolean repeat, int dtype, int isize) {
+		return (CompoundDataset) super.cast(repeat, dtype, isize);
 	}
 
 	@Override
-	public AbstractCompoundDataset getSliceView(Slice... slice) {
-		return (AbstractCompoundDataset) super.getSliceView(slice);
+	public CompoundDataset cast(int dtype) {
+		return (CompoundDataset) super.cast(dtype);
 	}
 
 	@Override
-	public AbstractCompoundDataset reshape(int... shape) {
-		return (AbstractCompoundDataset) super.reshape(shape);
+	abstract public AbstractCompoundDataset clone();
+
+	@Override
+	public CompoundDataset flatten() {
+		return (CompoundDataset) super.flatten();
 	}
 
 	@Override
-	public AbstractCompoundDataset sort(Integer axis) {
+	public CompoundDataset getBy1DIndex(IntegerDataset index) {
+		return (CompoundDataset) super.getBy1DIndex(index);
+	}
+
+	@Override
+	public CompoundDataset getByBoolean(Dataset selection) {
+		return (CompoundDataset) super.getByBoolean(selection);
+	}
+
+	@Override
+	public CompoundDataset getByIndexes(Object... indexes) {
+		return (CompoundDataset) super.getByIndexes(indexes);
+	}
+
+	@Override
+	public CompoundDataset getSlice(IMonitor mon, int[] start, int[] stop, int[] step) {
+		return (CompoundDataset) super.getSlice(mon, start, stop, step);
+	}
+
+	@Override
+	public CompoundDataset getSlice(IMonitor mon, Slice... slice) {
+		return (CompoundDataset) super.getSlice(mon, slice);
+	}
+
+	@Override
+	public CompoundDataset getSlice(int[] start, int[] stop, int[] step) {
+		return (CompoundDataset) super.getSlice(start, stop, step);
+	}
+
+	@Override
+	public CompoundDataset getSlice(Slice... slice) {
+		return (CompoundDataset) super.getSlice(slice);
+	}
+
+	@Override
+	abstract public AbstractCompoundDataset getSlice(SliceIterator iterator);
+
+	@Override
+	public CompoundDataset getSliceView(int[] start, int[] stop, int[] step) {
+		return (CompoundDataset) super.getSliceView(start, stop, step);
+	}
+
+	@Override
+	public CompoundDataset getSliceView(Slice... slice) {
+		return (CompoundDataset) super.getSliceView(slice);
+	}
+
+	@Override
+	public CompoundDataset getTransposedView(int... axes) {
+		return (CompoundDataset) super.getTransposedView(axes);
+	}
+
+	@Override
+	abstract public AbstractCompoundDataset getView();
+
+	@Override
+	public CompoundDataset ifloorDivide(Object o) {
+		return (CompoundDataset) super.ifloorDivide(o);
+	}
+
+	@Override
+	public CompoundDataset mean(boolean ignoreNaNs, int axis) {
+		return (CompoundDataset) super.mean(ignoreNaNs, axis);
+	}
+
+	@Override
+	public CompoundDataset mean(int axis) {
+		return (CompoundDataset) super.mean(axis);
+	}
+
+	@Override
+	public CompoundDataset peakToPeak(int axis) {
+		return (CompoundDataset) super.peakToPeak(axis);
+	}
+
+	@Override
+	public CompoundDataset product(int axis) {
+		return (CompoundDataset) super.product(axis);
+	}
+
+	@Override
+	public CompoundDataset reshape(int... shape) {
+		return (CompoundDataset) super.reshape(shape);
+	}
+
+	@Override
+	public CompoundDataset rootMeanSquare(int axis) {
+		return (CompoundDataset) super.rootMeanSquare(axis);
+	}
+
+	@Override
+	public CompoundDataset setSlice(Object obj, int[] start, int[] stop, int[] step) {
+		return (CompoundDataset) super.setSlice(obj, start, stop, step);
+	}
+
+	@Override
+	public CompoundDataset setSlice(Object object, Slice... slice) {
+		return (CompoundDataset) super.setSlice(object, slice);
+	}
+
+	@Override
+	public CompoundDataset sort(Integer axis) {
 		throw new UnsupportedOperationException("Cannot sort dataset");
 	}
 
 	@Override
-	public AbstractCompoundDataset sum(boolean ignoreNaNs, int axis) {
-		return (AbstractCompoundDataset) super.sum(ignoreNaNs, axis);
+	public CompoundDataset squeeze() {
+		return (CompoundDataset) super.squeeze();
 	}
 
 	@Override
-	public AbstractCompoundDataset sum(int axis) {
-		return (AbstractCompoundDataset) super.sum(axis);
+	public CompoundDataset squeeze(boolean onlyFromEnd) {
+		return (CompoundDataset) super.squeeze(onlyFromEnd);
+	}
+
+	@Override
+	public CompoundDataset stdDeviation(int axis) {
+		return (CompoundDataset) super.stdDeviation(axis);
+	}
+
+	@Override
+	public CompoundDataset sum(boolean ignoreNaNs, int axis) {
+		return (CompoundDataset) super.sum(ignoreNaNs, axis);
+	}
+
+	@Override
+	public CompoundDataset sum(int axis) {
+		return (CompoundDataset) super.sum(axis);
+	}
+
+	@Override
+	public CompoundDataset swapAxes(int axis1, int axis2) {
+		return (CompoundDataset) super.swapAxes(axis1, axis2);
+	}
+
+	@Override
+	public synchronized CompoundDataset synchronizedCopy() {
+		return clone();
+	}
+
+	@Override
+	public CompoundDataset transpose(int... axes) {
+		return (CompoundDataset) super.transpose(axes);
+	}
+
+	@Override
+	public CompoundDataset typedProduct(int dtype, int axis) {
+		return (CompoundDataset) super.typedProduct(dtype, axis);
+	}
+
+	@Override
+	public CompoundDataset typedSum(int dtype, int axis) {
+		return (CompoundDataset) super.typedSum(dtype, axis);
+	}
+
+	@Override
+	public CompoundDataset variance(int axis) {
+		return (CompoundDataset) super.variance(axis);
 	}
 
 	protected static double[] toDoubleArray(final Object b, final int itemSize) {
@@ -743,12 +893,6 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		return null;
 	}
 
-	@Override
-	abstract public AbstractDataset getElements(int element);
-
-	@Override
-	abstract public AbstractDataset asNonCompoundDataset(final boolean shareData);
-
 	/**
 	 * Calculate minimum and maximum for a dataset
 	 */
@@ -837,7 +981,7 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 		int alen = oshape[axis];
 		oshape[axis] = 1;
 
-		int[] nshape = AbstractDataset.squeezeShape(oshape, false);
+		int[] nshape = squeezeShape(oshape, false);
 
 		IntegerDataset count = new IntegerDataset(nshape);
 		CompoundDoubleDataset sum = new CompoundDoubleDataset(isize, nshape);
@@ -912,13 +1056,13 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public AbstractCompoundDataset max(boolean ignoreNaNs, int axis) {
+	public CompoundDataset max(boolean ignoreNaNs, int axis) {
 		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
-	public AbstractCompoundDataset max(int axis) {
+	public CompoundDataset max(int axis) {
 		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
@@ -930,13 +1074,13 @@ public abstract class AbstractCompoundDataset extends AbstractDataset implements
 	}
 
 	@Override
-	public AbstractCompoundDataset min(boolean ignoreNaNs, int axis) {
+	public CompoundDataset min(boolean ignoreNaNs, int axis) {
 		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}
 
 	@Override
-	public AbstractCompoundDataset min(int axis) {
+	public CompoundDataset min(int axis) {
 		logger.error("Cannot compare compound numbers");
 		throw new UnsupportedOperationException("Cannot compare compound numbers");
 	}

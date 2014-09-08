@@ -190,19 +190,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	public AbstractDataset() {
 	}
 
-	/**
-	 * This is a <b>synchronized</b> version of the clone method
-	 * 
-	 * @return a copy of dataset
-	 */
 	@Override
-	public synchronized AbstractDataset synchronizedCopy() {
+	public synchronized Dataset synchronizedCopy() {
 		return clone();
 	}
 
-	/**
-	 * @return true if dataset has same shape and data values
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -234,44 +226,24 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	@Override
 	abstract public AbstractDataset clone();
 
-	/**
-	 * Cast a dataset
-	 * 
-	 * @param dtype
-	 *            dataset type
-	 * @return a converted dataset
-	 */
 	@Override
-	public AbstractDataset cast(final int dtype) {
+	public Dataset cast(final int dtype) {
 		if (getDtype() == dtype) {
 			return this;
 		}
 		return DatasetUtils.cast(this, dtype);
 	}
 
-	/**
-	 * Cast a dataset
-	 * 
-	 * @param repeat
-	 * @param dtype
-	 *            dataset type
-	 * @param isize
-	 *            item size
-	 * @return a converted dataset
-	 */
 	@Override
-	public AbstractDataset cast(final boolean repeat, final int dtype, final int isize) {
+	public Dataset cast(final boolean repeat, final int dtype, final int isize) {
 		if (getDtype() == dtype && getElementsPerItem() == isize) {
 			return this;
 		}
 		return DatasetUtils.cast(this, repeat, dtype, isize);
 	}
 
-	/**
-	 * @return whole view of dataset (i.e. data buffer is shared)
-	 */
 	@Override
-	public abstract AbstractDataset getView();
+	abstract public AbstractDataset getView();
 
 	/**
 	 * Copy fields from original to view
@@ -340,11 +312,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return map;
 	}
 
-	/**
-	 * Generate an index dataset for current dataset
-	 * 
-	 * @return an index dataset
-	 */
 	@Override
 	public IntegerDataset getIndices() {
 		final IntegerDataset ret = DatasetUtils.indices(shape);
@@ -398,23 +365,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return axes;
 	}
 
-	/**
-	 * Permute copy of dataset's axes so that given order is old order:
-	 * 
-	 * <pre>
-	 *  axisPerm = (p(0), p(1),...) => newdata(n(0), n(1),...) = olddata(o(0), o(1), ...)
-	 *  such that n(i) = o(p(i)) for all i
-	 * </pre>
-	 * 
-	 * I.e. for a 3D dataset (1,0,2) implies the new dataset has its 1st dimension running along the old dataset's 2nd
-	 * dimension and the new 2nd is the old 1st. The 3rd dimension is left unchanged.
-	 * 
-	 * @param axes
-	 *            if zero length then axes order reversed
-	 * @return remapped view of data
-	 */
 	@Override
-	public AbstractDataset getTransposedView(int... axes) {
+	public Dataset getTransposedView(int... axes) {
 		AbstractDataset t = getView();
 		if (getRank() == 1)
 			return t;
@@ -438,24 +390,13 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return t;
 	}
 
-	/**
-	 * See {@link #getTransposedView}
-	 * @return remapped copy of data
-	 */
 	@Override
-	public AbstractDataset transpose(int... axes) {
+	public Dataset transpose(int... axes) {
 		return getTransposedView(axes).clone();
 	}
 
-	/**
-	 * Swap two axes in dataset
-	 * 
-	 * @param axis1
-	 * @param axis2
-	 * @return swapped view of dataset
-	 */
 	@Override
-	public AbstractDataset swapAxes(int axis1, int axis2) {
+	public Dataset swapAxes(int axis1, int axis2) {
 		int rank = shape.length;
 		if (axis1 < 0)
 			axis1 += rank;
@@ -481,13 +422,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return getTransposedView(axes);
 	}
 
-	/**
-	 * Flatten shape
-	 * 
-	 * @return a flattened dataset which is a view if dataset is contiguous otherwise is a copy
-	 */
 	@Override
-	public AbstractDataset flatten() {
+	public Dataset flatten() {
 		return reshape(size);
 	}
 
@@ -974,11 +910,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 	}
 
-	/**
-	 * @param withPosition
-	 *            set true if position is needed
-	 * @return an IndexIterator tailored for this dataset
-	 */
 	@Override
 	public IndexIterator getIterator(final boolean withPosition) {
 		if (stride != null)
@@ -986,32 +917,16 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return withPosition ? new ContiguousIteratorWithPosition(shape, size) : new ContiguousIterator(size);
 	}
 
-	/**
-	 * @return an IndexIterator tailored for this dataset
-	 */
 	@Override
 	public IndexIterator getIterator() {
 		return getIterator(false);
 	}
 
-	/**
-	 * @param axes
-	 * @return a PositionIterator that misses out axes
-	 */
 	@Override
 	public PositionIterator getPositionIterator(final int... axes) {
 		return new PositionIterator(shape, axes);
 	}
 
-	/**
-	 * @param start
-	 *            specifies the starting indexes
-	 * @param stop
-	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
-	 * @param step
-	 *            specifies the steps in the slice
-	 * @return an slice iterator that operates like an IndexIterator
-	 */
 	@Override
 	public IndexIterator getSliceIterator(final int[] start, final int[] stop, final int[] step) {
 		if (stride != null)
@@ -1050,14 +965,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return new SliceIterator(shape, size, lstart, lstep, newShape);
 	}
 
-	/**
-	 * Get a slice iterator that is defined by a starting position and a set of axes to include
-	 * 
-	 * @param pos
-	 * @param axes
-	 *            to include
-	 * @return slice iterator
-	 */
 	@Override
 	public SliceIterator getSliceIteratorFromAxes(final int[] pos, boolean[] axes) {
 		int rank = shape.length;
@@ -1203,39 +1110,18 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return checkSlice(shape, start, stop, lstart, lstop, lstep);
 	}
 
-	/**
-	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset is true
-	 * 
-	 * @param choice
-	 * @return an iterator of dataset that visits items chosen by given choice dataset
-	 */
 	@Override
 	public BooleanIterator getBooleanIterator(Dataset choice) {
 		return getBooleanIterator(choice, true);
 	}
 
-	/**
-	 * Get an iterator that visits every item in this dataset where the corresponding item in choice dataset
-	 * is given by value
-	 * 
-	 * @param choice
-	 * @param value
-	 * @return an iterator of dataset that visits items chosen by given choice dataset
-	 */
 	@Override
 	public BooleanIterator getBooleanIterator(Dataset choice, boolean value) {
 		return new BooleanIterator(getIterator(), choice, value);
 	}
 
-	/**
-	 * This is modelled after the NumPy get item with a condition specified by a boolean dataset
-	 * 
-	 * @param selection
-	 *            a boolean dataset of same shape to use for selecting items
-	 * @return The new selected dataset
-	 */
 	@Override
-	public AbstractDataset getByBoolean(Dataset selection) {
+	public Dataset getByBoolean(Dataset selection) {
 		checkCompatibility(selection);
 
 		final int length = ((Number) selection.sum()).intValue();
@@ -1248,30 +1134,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			r.setObjectAbs(i, getObjectAbs(biter.index));
 			i += is;
 		}
-		return (AbstractDataset) r;
+		return r;
 	}
 
-	/**
-	 * This is modelled after the NumPy set item with a condition specified by a boolean dataset
-	 * @param obj
-	 *            specifies the object used to set the selected items
-	 * @param selection
-	 *            a boolean dataset of same shape to use for selecting items
-	 * 
-	 * @return The dataset with modified content
-	 */
 	@Override
-	abstract public AbstractDataset setByBoolean(final Object obj, Dataset selection);
-
-	/**
-	 * This is modelled after the NumPy get item with an index dataset
-	 * 
-	 * @param index
-	 *            an integer dataset
-	 * @return The new selected dataset by indices
-	 */
-	@Override
-	public AbstractDataset getBy1DIndex(IntegerDataset index) {
+	public Dataset getBy1DIndex(IntegerDataset index) {
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, index.getShape(), getDtype());
 		final IntegerIterator iter = new IntegerIterator(index, size, is);
@@ -1281,17 +1148,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			r.setObjectAbs(i, getObjectAbs(iter.index));
 			i += is;
 		}
-		return (AbstractDataset) r;
+		return r;
 	}
 
-	/**
-	 * This is modelled after the NumPy get item with an array of indexing objects
-	 * @param indexes
-	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
-	 * @return The new selected dataset by index
-	 */
 	@Override
-	public AbstractDataset getByIndexes(final Object... indexes) {
+	public Dataset getByIndexes(final Object... indexes) {
 		final IntegersIterator iter = new IntegersIterator(shape, indexes);
 		final int is = getElementsPerItem();
 		final Dataset r = DatasetFactory.zeros(is, iter.getShape(), getDtype());
@@ -1302,32 +1163,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 			r.setObjectAbs(i, getObject(pos));
 			i += is;
 		}
-		return (AbstractDataset) r;
+		return r;
 	}
-
-	/**
-	 * This is modelled after the NumPy set item with an index dataset
-	 * @param obj
-	 *            specifies the object used to set the selected items
-	 * @param index
-	 *            an integer dataset
-	 * 
-	 * @return The dataset with modified content
-	 */
-	@Override
-	abstract public AbstractDataset setBy1DIndex(final Object obj, final Dataset index);
-
-	/**
-	 * This is modelled after the NumPy set item with an array of indexing objects
-	 * @param obj
-	 *            specifies the object used to set the selected items
-	 * @param indexes
-	 *            an array of integer dataset, boolean dataset, slices or null entries (same as full slices)
-	 * 
-	 * @return The dataset with modified content
-	 */
-	@Override
-	abstract public AbstractDataset setByIndexes(final Object obj, final Object... indexes);
 
 	/**
 	 * @param dtype
@@ -1371,9 +1208,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return elementClass(getDtype());
 	}
 
-	/**
-	 * @return true if dataset has elements which are floating point values
-	 */
 	@Override
 	public boolean hasFloatingPointElements() {
 		Class<?> cls = elementClass();
@@ -1466,25 +1300,16 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return size * isize;
 	}
 
-	/**
-	 * @return name
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name
-	 */
 	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return number of data items in dataset
-	 */
 	@Override
 	public int getSize() {
 		if (odata == null) {
@@ -1509,9 +1334,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return shape.length;
 	}
 
-	/**
-	 * @return number of bytes used
-	 */
 	@Override
 	public int getNbytes() {
 		return getSize() * getItemsize();
@@ -1547,9 +1369,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 	}
 
-	/**
-	 * @param shape
-	 */
 	@Override
 	public void setShape(final int... shape) {
 		int[] nshape = shape.clone();
@@ -1675,9 +1494,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return stride;
 	}
 
-	/**
-	 * @return the buffer that backs the dataset
-	 */
 	@Override
 	public Serializable getBuffer() {
 		return odata;
@@ -1845,14 +1661,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return stride;
 	}
 
-	/**
-	 * @param start
-	 * @param stop
-	 * @param step
-	 * @return a view of a slice
-	 */
 	@Override
-	public AbstractDataset getSliceView(final int[] start, final int[] stop, final int[] step) {
+	public Dataset getSliceView(final int[] start, final int[] stop, final int[] step) {
 		final int rank = shape.length;
 	
 		int[] sStride = new int[rank];
@@ -1877,12 +1687,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return s;
 	}
 
-	/**
-	 * @param slice
-	 * @return a view of a slice
-	 */
 	@Override
-	public AbstractDataset getSliceView(Slice... slice) {
+	public Dataset getSliceView(Slice... slice) {
 		if (slice == null || slice.length == 0) {
 			int[] sOffset = new int[1];
 			int[] sStride = createStrides(this, sOffset);
@@ -1972,6 +1778,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	protected int get1DIndex(int i) {
 		if (shape.length > 1) {
 			logger.debug("This dataset is not 1D but was addressed as such");
+//			throw new IllegalArgumentException("This dataset is not 1D but was addressed as such");
 			return get1DIndex(new int[] {i});
 		}
 		if (i < 0) {
@@ -1991,6 +1798,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	protected int get1DIndex(int i, int j) {
 		if (shape.length != 2) {
 			logger.debug("This dataset is not 2D but was addressed as such");
+//			throw new IllegalArgumentException("This dataset is not 2D but was addressed as such");
 			return get1DIndex(new int[] {i, j});
 		}
 		if (i < 0) {
@@ -2015,6 +1823,9 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	protected static int get1DIndexFromShape(final int[] shape, final int... n) {
 		final int imax = n.length;
 		final int rank = shape.length;
+//		if (rank != imax) {
+//			throw new IllegalArgumentException("Number of position indexes must be equal to rank");
+//		}
 		int index = 0;
 		int i = 0;
 		for (; i < imax; i++) {
@@ -2059,13 +1870,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return index;
 	}
 
-	/**
-	 * The n-D position in the dataset of the given index in the data array
-	 * 
-	 * @param n
-	 *            The index in the array
-	 * @return the corresponding [a,b,...,n] position in the dataset
-	 */
 	@Override
 	public int[] getNDPosition(final int n) {
 		if (isIndexInRange(n)) {
@@ -2143,12 +1947,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return output;
 	}
 
-	/**
-	 * Check that axis is in range [-rank,rank)
-	 * 
-	 * @param axis
-	 * @return sanitized axis in range [0, rank)
-	 */
 	@Override
 	public int checkAxis(int axis) {
 		return checkAxis(shape.length, axis);
@@ -2180,10 +1978,6 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return toString(false);
 	}
 
-	/**
-	 * @param showData
-	 * @return string representation
-	 */
 	@Override
 	public String toString(boolean showData) {
 		final int rank = shape == null ? 0 : shape.length;
@@ -2362,31 +2156,19 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		}
 	}
 
-	/**
-	 * This function allows anything that dirties the dataset to set stored values to null so that the other functions
-	 * can work correctly.
-	 */
 	@Override
 	public void setDirty() {
 		if (storedValues != null)
 			storedValues.clear();
 	}
 
-	/**
-	 * Remove dimensions of 1 in shape of a dataset
-	 */
 	@Override
-	public AbstractDataset squeeze() {
+	public Dataset squeeze() {
 		return squeeze(false);
 	}
 
-	/**
-	 * Remove dimensions of 1 in shape of a dataset - from both ends only, if true
-	 * 
-	 * @param onlyFromEnds
-	 */
 	@Override
-	public AbstractDataset squeeze(boolean onlyFromEnds) {
+	public Dataset squeeze(boolean onlyFromEnds) {
 		int[] tshape = squeezeShape(shape, onlyFromEnds);
 		if (stride == null) {
 			shape = tshape;
@@ -2563,28 +2345,11 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return true;
 	}
 
-	/**
-	 * This function takes a dataset and checks its shape against the current dataset. If they are both of the same
-	 * size, then this returns true otherwise it returns false.
-	 * 
-	 * @param g
-	 *            The dataset to be compared
-	 * @return true if shapes are compatible
-	 */
 	@Override
 	public boolean isCompatibleWith(final ILazyDataset g) {
 		return areShapesCompatible(shape, g.getShape());
 	}
 
-	/**
-	 * This function takes a dataset and checks its shape against the current dataset. If they are both of the same
-	 * size, then this returns with no error, if there is a problem, then an error is thrown.
-	 * 
-	 * @param g
-	 *            The dataset to be compared
-	 * @throws IllegalArgumentException
-	 *             This will be thrown if there is a problem with the compatibility
-	 */
 	@Override
 	public void checkCompatibility(final ILazyDataset g) throws IllegalArgumentException {
 		checkCompatibility(this, g);
@@ -2608,8 +2373,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset reshape(final int... shape) {
-		AbstractDataset a = getView();
+	public Dataset reshape(final int... shape) {
+		Dataset a = getView();
 		try {
 			a.setShape(shape);
 		} catch (IllegalArgumentException e) {
@@ -2626,8 +2391,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 *            can be a Java list, array or Number
 	 * @return dataset
 	 */
-	public static AbstractDataset array(final Object obj) {
-		return (AbstractDataset) DatasetFactory.createFromObject(obj);
+	public static Dataset array(final Object obj) {
+		return DatasetFactory.createFromObject(obj);
 	}
 
 	/**
@@ -2639,8 +2404,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 *            if true, interpret integer values as unsigned by increasing element bit width
 	 * @return dataset
 	 */
-	public static AbstractDataset array(final Object obj, boolean isUnsigned) {
-		return (AbstractDataset) DatasetFactory.createFromObject(obj, isUnsigned);
+	public static Dataset array(final Object obj, boolean isUnsigned) {
+		return DatasetFactory.createFromObject(obj, isUnsigned);
 	}
 
 	/**
@@ -2651,8 +2416,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return dataset
 	 */
-	public static AbstractDataset array(final Object obj, final int dtype) {
-		return (AbstractDataset) DatasetFactory.createFromObject(obj, dtype);
+	public static Dataset array(final Object obj, final int dtype) {
+		return DatasetFactory.createFromObject(obj, dtype);
 	}
 
 	/**
@@ -2661,8 +2426,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param objectList
 	 * @return dataset filled with values from list
 	 */
-	public static AbstractDataset createFromList(List<?> objectList) {
-		return (AbstractDataset) DatasetFactory.createFromList(objectList);
+	public static Dataset createFromList(List<?> objectList) {
+		return DatasetFactory.createFromList(objectList);
 	}
 
 	/**
@@ -2670,8 +2435,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset of given shape and type, filled with zeros
 	 */
-	public static AbstractDataset zeros(final int[] shape, final int dtype) {
-		return (AbstractDataset) DatasetFactory.zeros(shape, dtype);
+	public static Dataset zeros(final int[] shape, final int dtype) {
+		return DatasetFactory.zeros(shape, dtype);
 	}
 
 	/**
@@ -2681,15 +2446,15 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset of given item size, shape and type, filled with zeros
 	 */
-	public static AbstractDataset zeros(final int itemSize, final int[] shape, final int dtype) {
-		return (AbstractDataset) DatasetFactory.zeros(itemSize, shape, dtype);
+	public static Dataset zeros(final int itemSize, final int[] shape, final int dtype) {
+		return DatasetFactory.zeros(itemSize, shape, dtype);
 	}
 
 	/**
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with zeros
 	 */
-	public static AbstractDataset zeros(final Dataset dataset) {
+	public static Dataset zeros(final Dataset dataset) {
 		return zeros(dataset, dataset.getDtype());
 	}
 
@@ -2700,7 +2465,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset zeros(final Dataset dataset, final int dtype) {
+	public static Dataset zeros(final Dataset dataset, final int dtype) {
 		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 
@@ -2711,7 +2476,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dataset
 	 * @return a new dataset of same shape and type as input dataset, filled with ones
 	 */
-	public static AbstractDataset ones(final Dataset dataset) {
+	public static Dataset ones(final Dataset dataset) {
 		return ones(dataset, dataset.getDtype());
 	}
 
@@ -2722,7 +2487,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset
 	 */
-	public static AbstractDataset ones(final Dataset dataset, final int dtype) {
+	public static Dataset ones(final Dataset dataset, final int dtype) {
 		final int[] shape = dataset.getShapeRef();
 		final int isize = isDTypeElemental(dtype) ? 1 :dataset.getElementsPerItem();
 
@@ -2734,8 +2499,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset of given shape and type, filled with ones
 	 */
-	public static AbstractDataset ones(final int[] shape, final int dtype) {
-		return (AbstractDataset) DatasetFactory.ones(shape, dtype);
+	public static Dataset ones(final int[] shape, final int dtype) {
+		return DatasetFactory.ones(shape, dtype);
 	}
 
 	/**
@@ -2745,8 +2510,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset of given item size, shape and type, filled with ones
 	 */
-	public static AbstractDataset ones(final int itemSize, final int[] shape, final int dtype) {
-		return (AbstractDataset) DatasetFactory.ones(itemSize, shape, dtype);
+	public static Dataset ones(final int itemSize, final int[] shape, final int dtype) {
+		return DatasetFactory.ones(itemSize, shape, dtype);
 	}
 
 	/**
@@ -2754,7 +2519,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new dataset of given shape and type, filled with values determined by parameters
 	 */
-	public static AbstractDataset arange(final double stop, final int dtype) {
+	public static Dataset arange(final double stop, final int dtype) {
 		return arange(0, stop, 1, dtype);
 	}
 
@@ -2765,8 +2530,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param dtype
 	 * @return a new 1D dataset of given type, filled with values determined by parameters
 	 */
-	public static AbstractDataset arange(final double start, final double stop, final double step, final int dtype) {
-		return (AbstractDataset) DatasetFactory.createRange(start, stop, step, dtype);
+	public static Dataset arange(final double start, final double stop, final double step, final int dtype) {
+		return DatasetFactory.createRange(start, stop, step, dtype);
 	}
 
 	/**
@@ -2782,36 +2547,24 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return (int) Math.ceil((stop - start) / step);
 	}
 
-	/**
-	 * @return true if dataset is complex
-	 */
 	@Override
 	public boolean isComplex() {
 		int type = getDtype();
 		return type == COMPLEX64 || type == COMPLEX128;
 	}
 
-	/**
-	 * @return real part of dataset as new dataset
-	 */
 	@Override
-	public AbstractDataset real() {
+	public Dataset real() {
 		return this;
 	}
 
-	/**
-	 * @return real part of dataset as new dataset
-	 */
 	@Override
-	public AbstractDataset realView() {
+	public Dataset realView() {
 		return getView();
 	}
 
 	@Override
-	abstract public AbstractDataset sort(Integer axis);
-
-	@Override
-	public AbstractDataset getSlice(final int[] start, final int[] stop, final int[] step) {
+	public Dataset getSlice(final int[] start, final int[] stop, final int[] step) {
 		AbstractDataset s = getSlice((SliceIterator) getSliceIterator(start, stop, step));
 		s.metadata = copyMetadata();
 		s.sliceMetadata(true, start, stop, step, shape);
@@ -2827,7 +2580,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	abstract public AbstractDataset getSlice(final SliceIterator iterator);
 
 	@Override
-	public AbstractDataset getSlice(Slice... slice) {
+	public Dataset getSlice(Slice... slice) {
 		final int rank = shape.length;
 		final int[] start = new int[rank];
 		final int[] stop = new int[rank];
@@ -2839,30 +2592,17 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, Slice... slice) {
+	public Dataset getSlice(IMonitor monitor, Slice... slice) {
 		return getSlice(slice);
 	}
 
 	@Override
-	public AbstractDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) {
+	public Dataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step) {
 		return getSlice(start, stop, step);
 	}
 
-	/**
-	 * This is modelled after the NumPy array slice
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param start
-	 *            specifies the starting indexes
-	 * @param stop
-	 *            specifies the stopping indexes (nb, these are <b>not</b> included in the slice)
-	 * @param step
-	 *            specifies the steps in the slice
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
 	@Override
-	public AbstractDataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
+	public Dataset setSlice(final Object obj, final int[] start, final int[] stop, final int[] step) {
 		Dataset ds;
 		if (obj instanceof Dataset) {
 			ds = (Dataset) obj;
@@ -2881,15 +2621,10 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	 * @param d
 	 * @return this dataset
 	 */
-	abstract AbstractDataset setSlicedView(Dataset view, Dataset d);
+	abstract Dataset setSlicedView(Dataset view, Dataset d);
 
-	/**
-	 * 
-	 * @param obj
-	 * @param slice
-	 */
 	@Override
-	public AbstractDataset setSlice(Object obj, Slice... slice) {
+	public Dataset setSlice(Object obj, Slice... slice) {
 		if (slice == null || slice.length == 0) {
 			Dataset ds;
 			if (obj instanceof Dataset) {
@@ -2915,142 +2650,36 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		return this;
 	}
 
-	/**
-	 * @param obj
-	 *            specifies the object used to set the specified slice
-	 * @param iterator
-	 *            specifies the slice iterator
-	 * 
-	 * @return The dataset with the sliced set to object
-	 */
-	@Override
-	abstract public AbstractDataset setSlice(final Object obj, final IndexIterator iterator);
-
-	/**
-	 * Test if all items are true
-	 */
 	@Override
 	public boolean all() {
 		return Comparisons.allTrue(this);
 	}
 
-	/**
-	 * @param axis
-	 * @return dataset where items are true if all items along axis are true
-	 */
 	@Override
 	public BooleanDataset all(final int axis) {
 		return Comparisons.allTrue(this, axis);
 	}
 
-	/**
-	 * Test if any items are true
-	 */
 	@Override
 	public boolean any() {
 		return Comparisons.anyTrue(this);
 	}
 
-	/**
-	 * @param axis
-	 * @return dataset where items are true if any items along axis are true
-	 */
 	@Override
 	public BooleanDataset any(final int axis) {
 		return Comparisons.anyTrue(this, axis);
 	}
 
-	/**
-	 * In-place addition with object o
-	 * 
-	 * @param o
-	 * @return sum dataset
-	 */
 	@Override
-	abstract public AbstractDataset iadd(final Object o);
-
-	/**
-	 * In-place subtraction with object o
-	 * 
-	 * @param o
-	 * @return difference dataset
-	 */
-	@Override
-	abstract public AbstractDataset isubtract(final Object o);
-
-	/**
-	 * In-place multiplication with object o
-	 * 
-	 * @param o
-	 * @return product dataset
-	 */
-	@Override
-	abstract public AbstractDataset imultiply(final Object o);
-
-	/**
-	 * In-place division with object o
-	 * 
-	 * @param o
-	 * @return dividend dataset
-	 */
-	@Override
-	abstract public AbstractDataset idivide(final Object o);
-
-	/**
-	 * In-place floor division with object o
-	 * 
-	 * @param o
-	 * @return dividend dataset
-	 */
-	@Override
-	public AbstractDataset ifloorDivide(final Object o) {
+	public Dataset ifloorDivide(final Object o) {
 		return idivide(o).ifloor();
 	}
 
-	/**
-	 * In-place remainder
-	 * 
-	 * @return remaindered dataset
-	 */
-	@Override
-	abstract public AbstractDataset iremainder(final Object o);
-
-	/**
-	 * In-place floor
-	 * 
-	 * @return floored dataset
-	 */
-	@Override
-	abstract public AbstractDataset ifloor();
-
-	/**
-	 * In-place raise to power of object o
-	 * 
-	 * @param o
-	 * @return raised dataset
-	 */
-	@Override
-	abstract public AbstractDataset ipower(final Object o);
-
-	/**
-	 * Calculate residual of dataset with object o
-	 * See {@link #residual(Object o, boolean ignoreNaNs)} with ignoreNaNs = false
-	 * 
-	 * @param o
-	 * @return sum of the squares of the differences
-	 */
 	@Override
 	public double residual(final Object o) {
 		return residual(o, null, false);
 	}
 
-	/**
-	 * Calculate residual of dataset with object o
-	 * 
-	 * @param o
-	 * @param ignoreNaNs if true, skip NaNs
-	 * @return sum of the squares of the differences
-	 */
 	@Override
 	public double residual(final Object o, boolean ignoreNaNs) {
 		return residual(o, null, ignoreNaNs);
@@ -3547,12 +3176,12 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset max(int axis) {
+	public Dataset max(int axis) {
 		return max(false, axis);
 	}
 
 	@Override
-	public AbstractDataset max(boolean ignoreNaNs, int axis) {
+	public Dataset max(boolean ignoreNaNs, int axis) {
 		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
 	}
 
@@ -3574,13 +3203,13 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset min(int axis) {
+	public Dataset min(int axis) {
 		return min(false, axis);
 	}
 
 	@Override
-	public AbstractDataset min(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MIN + "-" + axis);
+	public Dataset min(boolean ignoreNaNs, int axis) {
+		return (Dataset) getStatistics(ignoreNaNs, axis, STORE_MIN + "-" + axis);
 	}
 
 	@Override
@@ -3629,7 +3258,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset peakToPeak(int axis) {
+	public Dataset peakToPeak(int axis) {
 		return Maths.subtract(max(axis), min(axis));
 	}
 
@@ -3644,13 +3273,13 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset count(int axis) {
+	public Dataset count(int axis) {
 		return count(false, axis);
 	}
 
 	@Override
-	public AbstractDataset count(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_COUNT + "-" + axis);
+	public Dataset count(boolean ignoreNaNs, int axis) {
+		return (Dataset) getStatistics(ignoreNaNs, axis, STORE_COUNT + "-" + axis);
 	}
 
 	@Override
@@ -3664,13 +3293,13 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset sum(int axis) {
+	public Dataset sum(int axis) {
 		return sum(false, axis);
 	}
 
 	@Override
-	public AbstractDataset sum(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_SUM + "-" + axis);
+	public Dataset sum(boolean ignoreNaNs, int axis) {
+		return (Dataset) getStatistics(ignoreNaNs, axis, STORE_SUM + "-" + axis);
 	}
 
 	@Override
@@ -3684,7 +3313,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset typedSum(int dtype, int axis) {
+	public Dataset typedSum(int dtype, int axis) {
 		return DatasetUtils.cast(sum(axis), dtype);
 	}
 
@@ -3694,7 +3323,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset product(int axis) {
+	public Dataset product(int axis) {
 		return Stats.product(this, axis);
 	}
 
@@ -3704,7 +3333,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset typedProduct(int dtype, int axis) {
+	public Dataset typedProduct(int dtype, int axis) {
 		return Stats.typedProduct(this, dtype, axis);
 	}
 
@@ -3715,13 +3344,13 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset mean(int axis) {
+	public Dataset mean(int axis) {
 		return mean(false, axis);
 	}
 
 	@Override
-	public AbstractDataset mean(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MEAN + "-" + axis);
+	public Dataset mean(boolean ignoreNaNs, int axis) {
+		return (Dataset) getStatistics(ignoreNaNs, axis, STORE_MEAN + "-" + axis);
 	}
 
 	@Override
@@ -3744,8 +3373,8 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset variance(int axis) {
-		return (AbstractDataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
+	public Dataset variance(int axis) {
+		return (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 	}
 
 	@Override
@@ -3759,7 +3388,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset stdDeviation(int axis) {
+	public Dataset stdDeviation(int axis) {
 		final Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		return Maths.sqrt(v);
 	}
@@ -3772,7 +3401,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	}
 
 	@Override
-	public AbstractDataset rootMeanSquare(int axis) {
+	public Dataset rootMeanSquare(int axis) {
 		Dataset v = (Dataset) getStatistics(false, axis, STORE_VAR + "-" + axis);
 		Dataset m = (Dataset) getStatistics(false, axis, STORE_MEAN + "-" + axis);
 		Dataset result = Maths.power(m, 2);

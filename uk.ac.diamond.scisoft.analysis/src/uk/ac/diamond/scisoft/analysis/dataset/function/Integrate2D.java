@@ -65,11 +65,11 @@ public class Integrate2D implements DatasetToDatasetFunction {
 	 * @return two 1D datasets which are sums over x and y
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			int[] shape = ids.getShape();
@@ -141,8 +141,8 @@ public class Integrate2D implements DatasetToDatasetFunction {
 					sumx.set(csums, b);
 				}
 			}
-			result.add((AbstractDataset) sumx);
-			result.add((AbstractDataset) sumy);
+			result.add(sumx);
+			result.add(sumy);
 		}
 		return result;
 	}

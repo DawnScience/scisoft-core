@@ -23,7 +23,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Image;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian;
@@ -70,7 +70,7 @@ public class AlignImages {
 			}
 			shift.add(s);
 			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
-			AbstractDataset data = map.value(image).get(0);
+			Dataset data = map.value(image).get(0);
 			data.setName("aligned_" + image.getName());
 			shifted.add(data);
 		}
@@ -87,7 +87,7 @@ public class AlignImages {
 	 * @return shifts
 	 */
 	public static List<double[]> align(final String[] files, final List<IDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift) {
-		IDataset[] images = new AbstractDataset[files.length];
+		IDataset[] images = new IDataset[files.length];
 
 		for (int i = 0; i < files.length; i++) {
 			try {

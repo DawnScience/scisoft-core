@@ -95,11 +95,11 @@ public class MapToPolar implements DatasetToDatasetFunction {
 	 * @return two 2D dataset where rows label radii and columns label azimuthal angles
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2)
@@ -131,8 +131,8 @@ public class MapToPolar implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add((AbstractDataset) polarmap);
-			result.add((AbstractDataset) unitpolarmap);
+			result.add(polarmap);
+			result.add(unitpolarmap);
 		}
 		return result;
 	}

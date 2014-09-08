@@ -188,7 +188,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (qSpace != null && axisType != null && axisType != XAxis.PIXEL) {
 			return simple_qvalue(datasets);
 		}
@@ -206,11 +206,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	private List<AbstractDataset> interpolate_value(IDataset... datasets) {
+	private List<Dataset> interpolate_value(IDataset... datasets) {
 		if (datasets.length == 0) {
 			return null;
 		}
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2) {
@@ -291,8 +291,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 			
-			result.add((AbstractDataset) sumr);
-			result.add((AbstractDataset) sump);
+			result.add(sumr);
+			result.add(sump);
 		}
 		return result;
 	}
@@ -364,7 +364,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @param dphi	Step size in azimuthal direction
 	 * @return axes Axes datasets
 	 */	
-	private AbstractDataset[] setupSelectedAxes(int nr, int np, double dr, double dphi) {
+	private Dataset[] setupSelectedAxes(int nr, int np, double dr, double dphi) {
 		
 		double vmin = Double.MAX_VALUE;
 		double vmax = -Double.MAX_VALUE;
@@ -381,9 +381,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			}
 		}
 		
-		AbstractDataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, Dataset.FLOAT32);
-		AbstractDataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, Dataset.FLOAT32);
-		return new AbstractDataset[] {rAxis, angAxis};
+		Dataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, Dataset.FLOAT32);
+		Dataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, Dataset.FLOAT32);
+		return new Dataset[] {rAxis, angAxis};
 	}
 	
 	/**
@@ -393,11 +393,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	private List<AbstractDataset> simple_value(IDataset... datasets) {
+	private List<Dataset> simple_value(IDataset... datasets) {
 		if (datasets.length == 0) {
 			return null;
 		}
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2) {
@@ -467,12 +467,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		return result;
 	}
 	
-	private List<AbstractDataset> simple_qvalue(IDataset... datasets) {
+	private List<Dataset> simple_qvalue(IDataset... datasets) {
 		if (datasets.length == 0 || qSpace == null) {
 			return null;
 		}
 		
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2) {
@@ -489,10 +489,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			int nystart = (int) Math.max(0, cy - erad);
 			int ny = (int) Math.min(ids.getShape()[0], cy + erad);
 			
-			AbstractDataset[] rAxis = setupSelectedAxes(npts, apts, dr, dphi);
+			Dataset[] rAxis = setupSelectedAxes(npts, apts, dr, dphi);
 			
-			AbstractDataset radAxis = rAxis[0];
-			AbstractDataset azAxis = rAxis[1];
+			Dataset radAxis = rAxis[0];
+			Dataset azAxis = rAxis[1];
 			switch (axisType) {
 			case RESOLUTION:
 	    		radAxis.setName("d-spacing (\u00c5)");
@@ -523,7 +523,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	}
 	
 	
-	class QSpaceProfileTask extends RecursiveTask<List<AbstractDataset>> {
+	class QSpaceProfileTask extends RecursiveTask<List<Dataset>> {
 
 		private static final int MAX_POINTS = 100000;
 		private static final int MIN_POINTS = 50;
@@ -532,7 +532,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		private final int nystart, ny;
 		private final IDataset ids;
 		
-		private AbstractDataset[] rAxes;
+		private Dataset[] rAxes;
 		
 		public QSpaceProfileTask(int nxstart, int nx, int nystart, int ny, final IDataset dataset) {
 			super();
@@ -547,17 +547,17 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			this.ids = dataset;
 		}
 
-		void setAxes(final AbstractDataset[] rAxes) {
+		void setAxes(final Dataset[] rAxes) {
 			this.rAxes = rAxes;
 		}
 		
 		@Override
-		protected List<AbstractDataset> compute() {
+		protected List<Dataset> compute() {
 			
 			final int dx = nx - nxstart;
 			final int dy = ny - nystart;
 			
-			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+			List<Dataset> result = new ArrayList<Dataset>();
 			
 			if ((dx * dy) > MAX_POINTS && dx > MIN_POINTS && dy > MIN_POINTS) {
 		        int mx = nxstart + (nx - nxstart) / 2;
@@ -576,24 +576,24 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		        sxmy.fork();
 		        mxsy.fork();
 		        
-		        List<AbstractDataset> mxmyResult = mxmy.compute();
-		        List<AbstractDataset> sxsyResult = sxsy.join();
+		        List<Dataset> mxmyResult = mxmy.compute();
+		        List<Dataset> sxsyResult = sxsy.join();
 		        for (int i = 0; i < sxsyResult.size(); i++) {
-		        	AbstractDataset res = sxsyResult.get(i);
+		        	Dataset res = sxsyResult.get(i);
 		        	res.iadd(mxmyResult.get(i));
 		        	result.add(res);
 		        }
 		        
 		        
-		        List<AbstractDataset> sxmyResult = sxmy.join();
-		        List<AbstractDataset> mxsyResult = mxsy.join();
+		        List<Dataset> sxmyResult = sxmy.join();
+		        List<Dataset> mxsyResult = mxsy.join();
 		        
 		        for (int i = 0; i < sxmyResult.size(); i++) {
 		        	boolean radial = (i % 2 != 0);
-		        	AbstractDataset res = (radial ? sxmyResult.get(i) : mxsyResult.get(i));
+		        	Dataset res = (radial ? sxmyResult.get(i) : mxsyResult.get(i));
 		        	res.iadd(radial ? mxsyResult.get(i) : sxmyResult.get(i));
 		        	
-		        	AbstractDataset firstRes = result.get(i); 
+		        	Dataset firstRes = result.get(i); 
 		        	firstRes.iadd(res);
 		        	result.set(i, firstRes);
 		        }
@@ -608,7 +608,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				float[] intensity = new float[npts];
 				float[] azimuth = new float[apts];
 				
-				AbstractDataset radAxis = rAxes[0];
+				Dataset radAxis = rAxes[0];
 				
 				for (int j = nystart; j < ny; j++) {
 					for (int i = nxstart; i < nx; i++) {
@@ -678,7 +678,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	private List<AbstractDataset> interpolate_value_fj(IDataset... datasets) {
+	private List<Dataset> interpolate_value_fj(IDataset... datasets) {
 		
 		if (datasets.length == 0) {
 			return null;
@@ -688,7 +688,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		final int nr = Math.max(1, (int) Math.ceil((erad - srad) / dr));
 		final int np = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
 			
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2) {
@@ -707,7 +707,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * sector region is split in half in radial and azimuthal directions, integration task
 	 * is invoked for every sector quadrant and results are merged back into the output dataset.  
 	 */
-	class ProfileTask extends RecursiveTask<List<AbstractDataset>> {
+	class ProfileTask extends RecursiveTask<List<Dataset>> {
 		
 		private static final int MIN_POINTS = 50;
 		private final int MAX_POINTS;
@@ -737,12 +737,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		}
 
 		@Override
-		protected List<AbstractDataset> compute() {
+		protected List<Dataset> compute() {
 			
 			final int nr = eri - sri;
 			final int np = epi - spi;
 			
-			List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+			List<Dataset> result = new ArrayList<Dataset>();
 			
 			if ((nr * np > MAX_POINTS) && nr > MIN_POINTS && np > MIN_POINTS) {
 		        int mri = sri + (eri - sri) / 2;
@@ -757,12 +757,12 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		        srmp.fork();
 		        mrsp.fork();
 		        
-		        List<AbstractDataset> mrmpResult = mrmp.compute();
-		        List<AbstractDataset> srspResult = srsp.join();
+		        List<Dataset> mrmpResult = mrmp.compute();
+		        List<Dataset> srspResult = srsp.join();
 		        for (int i = 0; i < srspResult.size(); i++) {
 		        	Dataset sd = srspResult.get(i);
 		        	Dataset md = mrmpResult.get(i);
-		        	AbstractDataset res = DatasetUtils.append(sd, md, 0);
+		        	Dataset res = DatasetUtils.append(sd, md, 0);
 		        	if (sd.hasErrors() && md.hasErrors()) {
 		        		Dataset se = sd.getErrorBuffer();
 		        		Dataset me = md.getErrorBuffer();
@@ -772,20 +772,20 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		        }
 		        
 		        
-		        List<AbstractDataset> srmpResult = srmp.join();
-		        List<AbstractDataset> mrspResult = mrsp.join();
+		        List<Dataset> srmpResult = srmp.join();
+		        List<Dataset> mrspResult = mrsp.join();
 		        
 		        for (int i = 0; i < srmpResult.size(); i++) {
 		        	boolean radial = (i % 2 != 0);
-		        	AbstractDataset sd = (radial ? srmpResult.get(i) : mrspResult.get(i));
-		        	AbstractDataset md = (radial ? mrspResult.get(i) : srmpResult.get(i));
-		        	AbstractDataset res = DatasetUtils.append(sd, md, 0);
+		        	Dataset sd = (radial ? srmpResult.get(i) : mrspResult.get(i));
+		        	Dataset md = (radial ? mrspResult.get(i) : srmpResult.get(i));
+		        	Dataset res = DatasetUtils.append(sd, md, 0);
 		        	if (sd.hasErrors() && md.hasErrors()) {
 		        		DoubleDataset se = (DoubleDataset) sd.getErrorBuffer();
 		        		DoubleDataset me = (DoubleDataset) md.getErrorBuffer();
 		        		res.setErrorBuffer(DatasetUtils.append(se, me, 0));
 		        	}
-		        	AbstractDataset firstRes = result.get(i); 
+		        	Dataset firstRes = result.get(i); 
 		        	firstRes.iadd(res);
 		        	if (firstRes.hasErrors()) {
 		        		DoubleDataset firstResErr = (DoubleDataset) firstRes.getErrorBuffer();
@@ -798,8 +798,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			} else {
 				
 				IDataset errIds = null; 
-				if (doErrors && (ids instanceof AbstractDataset)) {
-					Serializable errorBuffer = ((AbstractDataset) ids).getErrorBuffer();
+				if (doErrors && (ids instanceof Dataset)) {
+					Serializable errorBuffer = ((Dataset) ids).getErrorBuffer();
 					if (errorBuffer instanceof DoubleDataset) {
 						errIds = (DoubleDataset) errorBuffer;
 					}
@@ -915,8 +915,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					sumr.setErrorBuffer(errsumr);
 					sump.setErrorBuffer(errsump);
 				}
-				result.add((AbstractDataset) sumr);
-				result.add((AbstractDataset) sump);
+				result.add(sumr);
+				result.add(sump);
 			}
 			
 			return result;

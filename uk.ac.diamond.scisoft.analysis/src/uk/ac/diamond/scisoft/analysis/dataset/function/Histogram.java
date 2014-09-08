@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Comparisons;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -107,13 +106,13 @@ public class Histogram implements DatasetToDatasetFunction {
 		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToDataset(edges), Dataset.FLOAT64);
 
 		// check for increasing order
-		AbstractDataset sorted = DatasetUtils.sort(bins, null);
+		Dataset sorted = DatasetUtils.sort(bins, null);
 		if (!Comparisons.allTrue(Comparisons.almostEqualTo(bins, sorted, 1e-8, 1e-8))) {
 			throw new IllegalArgumentException("Bin edges should be given in increasing order");
 		}
 
 		// check for equal spans
-		AbstractDataset diff = Maths.difference(bins, 2, 0);
+		Dataset diff = Maths.difference(bins, 2, 0);
 		useEqualSpanBins = Comparisons.allTrue(Comparisons.almostEqualTo(diff, 0, 1e-8, 1e-8));
 
 		nbins = edges.getSize() - 1;
@@ -125,11 +124,11 @@ public class Histogram implements DatasetToDatasetFunction {
 	 * @return a list of 1D datasets which are histograms
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		if (useEqualSpanBins) {
 			for (IDataset ds : datasets) {
@@ -150,7 +149,7 @@ public class Histogram implements DatasetToDatasetFunction {
 					continue;
 				}
 
-				AbstractDataset a = DatasetUtils.convertToAbstractDataset(ds);
+				Dataset a = DatasetUtils.convertToDataset(ds);
 				IndexIterator iter = a.getIterator();
 
 				while (iter.hasNext()) {
@@ -189,7 +188,7 @@ public class Histogram implements DatasetToDatasetFunction {
 					continue;
 				}
 
-				AbstractDataset a = DatasetUtils.convertToAbstractDataset(ds);
+				Dataset a = DatasetUtils.convertToDataset(ds);
 				IndexIterator iter = a.getIterator();
 
 				while (iter.hasNext()) {

@@ -36,7 +36,7 @@ public class Sum implements DatasetToNumberFunction {
 
 		List<Number> result = new ArrayList<Number>();
 		for (IDataset d : datasets) {
-			Object value = DatasetUtils.convertToAbstractDataset(d).sum();
+			Object value = DatasetUtils.convertToDataset(d).sum();
 			if (value instanceof Complex) {
 				result.add(((Complex) value).getReal());
 				result.add(((Complex) value).getImaginary());

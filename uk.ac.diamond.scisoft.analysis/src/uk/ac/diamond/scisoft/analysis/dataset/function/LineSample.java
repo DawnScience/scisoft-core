@@ -78,11 +78,11 @@ public class LineSample implements DatasetToDatasetFunction {
 	 * @return one 1D dataset
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids == null || ids.getRank() != 2)
@@ -101,7 +101,7 @@ public class LineSample implements DatasetToDatasetFunction {
 				linsample.setObjectAbs(i, Maths.interpolate(ids, y, x));
 			}
 
-			result.add((AbstractDataset) linsample);
+			result.add(linsample);
 		}
 		return result;
 	}

@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 /**
@@ -31,6 +31,6 @@ public interface DatasetToDatasetFunction {
 	 * @param datasets list of datasets to be processed
 	 * @return list of datasets
 	 */
-	public List<AbstractDataset> value(IDataset... datasets);
+	public List<? extends Dataset> value(IDataset... datasets);
 
 }

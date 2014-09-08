@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
@@ -51,16 +50,16 @@ public class ROIProfile {
 	 *            size
 	 * @return line profile
 	 */
-	public static AbstractDataset[] line(Dataset data, LinearROI lroi, double step) {
+	public static Dataset[] line(Dataset data, LinearROI lroi, double step) {
 		
 		return ROIProfile.line(data, null, lroi, step, false);
 	}
 	
-	public static AbstractDataset[] line(Dataset data, Dataset mask, LinearROI lroi, double step, boolean maskWithNans) {
+	public static Dataset[] line(Dataset data, Dataset mask, LinearROI lroi, double step, boolean maskWithNans) {
 
 		double[] spt = lroi.getPoint();
 		double[] ept = lroi.getEndPoint();
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+		Dataset[] profiles = new Dataset[] { null, null };
 
 		LineSample ls = new LineSample(spt[0], spt[1], ept[0], ept[1], step);
 
@@ -81,7 +80,7 @@ public class ROIProfile {
 		if (dsets == null)
 			return null;
 
-		profiles[0] = (AbstractDataset) dsets.get(0);
+		profiles[0] = dsets.get(0);
 
 		if (lroi.isCrossHair()) {
 			spt = lroi.getPerpendicularBisectorPoint(0.0);
@@ -92,13 +91,13 @@ public class ROIProfile {
 			dsets = bls.value(data);
 
 			if (dsets != null)
-				profiles[1] = (AbstractDataset) dsets.get(0);
+				profiles[1] = dsets.get(0);
 		}
 
 		return profiles;
 	}
 
-	private static void clippingCompensate(IDataset data, IDataset mask, AbstractDataset[] profiles,
+	private static void clippingCompensate(IDataset data, IDataset mask, Dataset[] profiles,
 			DatasetToDatasetFunction map) {
 		// normalise plot for case when region is clipped to size of image
 		// and/or when a mask is specified
@@ -106,9 +105,9 @@ public class ROIProfile {
 			mask = DatasetFactory.ones(data.getShape(), Dataset.BOOL);
 		}
 
-		List<AbstractDataset> dsets = map.value(mask);
-		AbstractDataset nintx = dsets.get(1);
-		AbstractDataset ninty = dsets.get(0);
+		List<? extends Dataset> dsets = map.value(mask);
+		Dataset nintx = dsets.get(1);
+		Dataset ninty = dsets.get(0);
 		// calculate fraction in each element that was not clipped
 		nintx = Maths.dividez(nintx, dsets.get(3));
 		ninty = Maths.dividez(ninty, dsets.get(2));
@@ -122,7 +121,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(Dataset data, RectangularROI rroi) {
+	public static Dataset[] box(Dataset data, RectangularROI rroi) {
 		return box(data, null, rroi);
 	}
 
@@ -133,7 +132,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(Dataset data, Dataset mask, RectangularROI rroi) {
+	public static Dataset[] box(Dataset data, Dataset mask, RectangularROI rroi) {
 		return box(data, mask, rroi, false);
 	}
 
@@ -147,13 +146,13 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
-	public static AbstractDataset[] box(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static Dataset[] box(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
 		double ang = rroi.getAngle();
 		boolean clip = rroi.isClippingCompensation();
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+		Dataset[] profiles = new Dataset[] { null, null };
 
 
 		if (len[0] == 0)
@@ -206,7 +205,7 @@ public class ROIProfile {
 			
 			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
 
-			List<AbstractDataset> dsets = int2d.value(slicedData);
+			List<? extends Dataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
 
 			profiles[0] = maskWithNans
@@ -234,7 +233,7 @@ public class ROIProfile {
 
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
 					len[1], ang, false);
-			List<AbstractDataset> dsets = rcmapint.value(data);
+			List<? extends Dataset> dsets = rcmapint.value(data);
 			if (dsets == null)
 				return null;
 
@@ -260,13 +259,13 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return box profile
 	 */
-	public static AbstractDataset[] boxMean(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static Dataset[] boxMean(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 		if(data == null) return null;
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
 		double ang = rroi.getAngle();
 		boolean clip = rroi.isClippingCompensation();
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+		Dataset[] profiles = new Dataset[] { null, null };
 
 		if (len[0] == 0)
 			len[0] = 1;
@@ -314,12 +313,12 @@ public class ROIProfile {
 
 			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
 
-			List<AbstractDataset> dsets = int2d.value(slicedData);
+			List<? extends Dataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
 
-			profiles[0] = DatasetUtils.convertToAbstractDataset(slicedData.mean(0));
+			profiles[0] = DatasetUtils.convertToDataset(slicedData.mean(0));
 			
-			profiles[1] = DatasetUtils.convertToAbstractDataset(slicedData.mean(1));
+			profiles[1] = DatasetUtils.convertToDataset(slicedData.mean(1));
 
 		} else {
 			
@@ -337,7 +336,7 @@ public class ROIProfile {
 
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
 					len[1], ang, false);
-			List<AbstractDataset> dsets = rcmapint.value(data);
+			List<? extends Dataset> dsets = rcmapint.value(data);
 			if (dsets == null)
 				return null;
 
@@ -358,7 +357,7 @@ public class ROIProfile {
 	 * @param rroi
 	 * @return max in box profile
 	 */
-	public static AbstractDataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi) {
+	public static Dataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi) {
 		return maxInBox(data, mask, rroi, false);
 	}
 
@@ -372,13 +371,13 @@ public class ROIProfile {
 	 *                       pixels are NaN instead of 0.
 	 * @return max in box profile
 	 */
-	public static AbstractDataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
+	public static Dataset[] maxInBox(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 
 		int[] spt = rroi.getIntPoint();
 		int[] len = rroi.getIntLengths();
 		double ang = rroi.getAngle();
 		boolean clip = rroi.isClippingCompensation();
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+		Dataset[] profiles = new Dataset[] { null, null };
 
 
 		if (len[0] == 0)
@@ -429,9 +428,9 @@ public class ROIProfile {
 			}
 
 			
-			List<AbstractDataset> dsets = new ArrayList<AbstractDataset>();
-			dsets.add(DatasetUtils.convertToAbstractDataset(slicedData.max(1)));
-			dsets.add(DatasetUtils.convertToAbstractDataset(slicedData.max(0)));
+			List<Dataset> dsets = new ArrayList<Dataset>();
+			dsets.add(DatasetUtils.convertToDataset(slicedData.max(1)));
+			dsets.add(DatasetUtils.convertToDataset(slicedData.max(0)));
 
 			profiles[0] = maskWithNans
 					    ? processColumnNans(dsets.get(1), slicedData)
@@ -458,7 +457,7 @@ public class ROIProfile {
 
 			MapToRotatedCartesianAndIntegrate rcmapint = new MapToRotatedCartesianAndIntegrate(spt[0], spt[1], len[0],
 					len[1], ang, false);
-			List<AbstractDataset> dsets = rcmapint.maxValue(data);
+			List<? extends Dataset> dsets = rcmapint.maxValue(data);
 			if (dsets == null)
 				return null;
 
@@ -484,11 +483,11 @@ public class ROIProfile {
 	 * @param isVertical
 	 * @return box line profiles
 	 */
-	public static AbstractDataset[] boxLine(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans, boolean isVertical) {
+	public static Dataset[] boxLine(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans, boolean isVertical) {
 
 		double[] startpt = rroi.getPoint();
 		double[] endpt = rroi.getEndPoint();
-		AbstractDataset[] profiles = new AbstractDataset[] { null, null };
+		Dataset[] profiles = new Dataset[] { null, null };
 
 		// get the left and right side line profile of the rectangle
 		double[] righttoppt = { new Double(endpt[0]), new Double(startpt[1]) };
@@ -503,7 +502,7 @@ public class ROIProfile {
 			line2 = new LinearROI(leftbottompt, endpt);
 		}
 
-		AbstractDataset[] lineProfiles = ROIProfile.line(data, mask, line1, 1d, maskWithNans);
+		Dataset[] lineProfiles = ROIProfile.line(data, mask, line1, 1d, maskWithNans);
 		profiles[0] = lineProfiles != null ? lineProfiles[0] : null;
 		if(profiles[0] == null) return null;
 		lineProfiles = ROIProfile.line(data, mask, line2, 1d, maskWithNans);
@@ -541,7 +540,7 @@ public class ROIProfile {
 	}
 
 
-	private static AbstractDataset processColumnNans(AbstractDataset cols, Dataset data) {
+	private static Dataset processColumnNans(Dataset cols, Dataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
@@ -553,7 +552,7 @@ public class ROIProfile {
 	    return cols;
 	}
 	
-	private static AbstractDataset processRowNans(AbstractDataset rows, Dataset data) {
+	private static Dataset processRowNans(Dataset rows, Dataset data) {
 		
 		
         MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
@@ -572,7 +571,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(Dataset data, SectorROI sroi) {
+	public static Dataset[] sector(Dataset data, SectorROI sroi) {
 		return sector(data, null, sroi, null);
 	}
 
@@ -581,7 +580,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi) {
 		return sector(data, mask, sroi, true, true, false, null, null, false);
 	}
 
@@ -590,7 +589,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return box profile
 	 */
-	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, QSpace qSpace) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, QSpace qSpace) {
 		return sector(data, mask, sroi, true, true, false, qSpace, null, false);
 	}
 
@@ -603,7 +602,7 @@ public class ROIProfile {
 	 *            uses interpolation and fork/join which might make things faster
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ) {
 		return sector(data, mask, sroi, doRadial, doAzimuthal, useInterpolateFJ, null, null, false);
 	}
 	/**
@@ -623,7 +622,7 @@ public class ROIProfile {
 	 * @return 
 	 *     the profile
 	 */
-	public static AbstractDataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();
@@ -632,8 +631,8 @@ public class ROIProfile {
 		boolean aver = sroi.isAverageArea();
 		double dpp = sroi.getDpp();
 
-		AbstractDataset[] profiles = new AbstractDataset[8];
-		Dataset[] errors = new AbstractDataset[8];
+		Dataset[] profiles = new Dataset[8];
+		Dataset[] errors = new Dataset[8];
 
 		if (Math.abs(rad[0] - rad[1]) < 1) {
 			return null;
@@ -659,7 +658,7 @@ public class ROIProfile {
 			if (aver) {
 				final SectorROI areaSector = sroi.copy();
 				areaSector.setAverageArea(false);
-				AbstractDataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
+				Dataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
 						areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 				profiles[0] = Maths.dividez(dsetsf.get(1), areas[0]);
 				profiles[1] = Maths.dividez(dsetsf.get(0), areas[1]);
@@ -670,12 +669,12 @@ public class ROIProfile {
 					profiles[1].setErrorBuffer(errors[1]);
 				}
 			} else {
-				profiles[0] = (AbstractDataset) dsetsf.get(1);
-				profiles[1] = (AbstractDataset) dsetsf.get(0);
+				profiles[0] = dsetsf.get(1);
+				profiles[1] = dsetsf.get(0);
 			}
 			if (dsetsf.size() >= 6) {
-				profiles[4] = (AbstractDataset) dsetsf.get(5);
-				profiles[5] = (AbstractDataset) dsetsf.get(4);
+				profiles[4] = dsetsf.get(5);
+				profiles[5] = dsetsf.get(4);
 			}
 			return profiles;
 		}
@@ -695,7 +694,7 @@ public class ROIProfile {
 		pmapint.setDoAzimuthal(doAzimuthal);
 		pmapint.setQSpace(qSpace, axisType);
 		pmapint.setDoErrors(doErrors);
-		List<AbstractDataset> dsets = pmapint.value(data);
+		List<? extends Dataset> dsets = pmapint.value(data);
 		if (dsets == null) {
 			return null;
 		}
@@ -725,7 +724,7 @@ public class ROIProfile {
 			pmapsint.setDoAzimuthal(doAzimuthal);
 			pmapsint.setQSpace(qSpace, axisType);
 			pmapsint.setDoErrors(doErrors);
-			List<AbstractDataset> dsetss = pmapsint.value(data);
+			List<? extends Dataset> dsetss = pmapsint.value(data);
 			if (dsetss != null) {
 				if (sroi.isCombineSymmetry()) {
 					profiles[0] = Maths.add(profiles[0], dsetss.get(1));
@@ -751,7 +750,7 @@ public class ROIProfile {
 		if (aver) {
 			final SectorROI areaSector = sroi.copy();
 			areaSector.setAverageArea(false);
-			AbstractDataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
+			Dataset[] areas = sector(mask != null ? mask : DatasetFactory.ones(data), null,
 					areaSector, doRadial, doAzimuthal, useInterpolateFJ, qSpace, axisType, false);
 			for (int i = 0; i < 4; i++) {
 				if (profiles[i] != null && areas[i] != null) {
@@ -774,7 +773,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, int dtype, SectorROI sroi) {
+	public static Dataset[] area(int[] shape, int dtype, SectorROI sroi) {
 		return area(shape, dtype, null, sroi);
 	}
 	
@@ -788,7 +787,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi) {
+	public static Dataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi) {
 		return area(shape, dtype, mask, sroi, true, true, false);
 	}
 	
@@ -802,7 +801,7 @@ public class ROIProfile {
 	 * @param sroi
 	 * @return sector profile
 	 */
-	public static AbstractDataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
+	public static Dataset[] area(int[] shape, int dtype, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean fast) {
 		//TODO: This method only works on pixel axis. It can't be use for normalising data on non-pixel axes (e.g q-space, d-spacing).   
 		final SectorROI areaSector = sroi.copy();
 		areaSector.setAverageArea(false);

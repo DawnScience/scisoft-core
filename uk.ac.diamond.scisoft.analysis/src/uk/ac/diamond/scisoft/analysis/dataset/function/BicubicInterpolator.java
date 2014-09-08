@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -119,10 +119,10 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	}
 
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 
 		//TODO should first check for correct shape.
-		ArrayList<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ds : datasets) {
 			final int[] dShape = ds.getShape();

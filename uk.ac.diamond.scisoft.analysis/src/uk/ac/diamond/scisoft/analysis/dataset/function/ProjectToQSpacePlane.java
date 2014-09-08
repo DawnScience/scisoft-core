@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -100,14 +99,14 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 	 * @return one 2D dataset
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
-			AbstractDataset ds = DatasetUtils.convertToAbstractDataset(ids);
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			// check if input is 2D
 			int[] s = ds.getShape();
 			if (s.length != 2)
@@ -153,8 +152,8 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add((AbstractDataset) image);
-			result.add((AbstractDataset) count);
+			result.add(image);
+			result.add(count);
 		}
 		return result;
 	}

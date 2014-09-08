@@ -43,7 +43,7 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 		List<Dataset> result = new ArrayList<Dataset>();
 
 //		Dataset mt = mask;
-//		Dataset dst = DatasetUtils.convertToAbstractDataset(dataset);
+//		Dataset dst = DatasetUtils.convertToDataset(dataset);
 //		Dataset axt = radialArray;
 
 		//check mask and roi

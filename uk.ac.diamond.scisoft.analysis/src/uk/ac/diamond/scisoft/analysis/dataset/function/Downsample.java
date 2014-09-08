@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -61,11 +60,11 @@ public class Downsample implements DatasetToDatasetFunction {
 	 * @return a list of down-sampled datasets
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		int brank = bshape.length;
 
 		for (IDataset idataset : datasets) {
@@ -252,7 +251,7 @@ public class Downsample implements DatasetToDatasetFunction {
 				}
 				break;
 			}
-			result.add((AbstractDataset) binned);
+			result.add(binned);
 		}
 		return result;
 	}

@@ -20,8 +20,8 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
+import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -51,11 +51,11 @@ public class MapToShiftedCartesian implements DatasetToDatasetFunction {
 	 * @return a shifted 2D dataset
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			Dataset ds = DatasetUtils.convertToDataset(ids);
@@ -64,7 +64,7 @@ public class MapToShiftedCartesian implements DatasetToDatasetFunction {
 			if (s.length != 2)
 				return null;
 
-			Dataset newmap = AbstractDataset.zeros(s, ds.getDtype());
+			Dataset newmap = DatasetFactory.zeros(s, ds.getDtype());
 
 			double cx0, cx1;
 			for (int x0 = 0; x0 < s[0]; x0++) {
@@ -74,7 +74,7 @@ public class MapToShiftedCartesian implements DatasetToDatasetFunction {
 					newmap.set(Maths.interpolate(ds, cx0, cx1), x0, x1);
 				}
 			}
-			result.add((AbstractDataset) newmap);
+			result.add(newmap);
 		}
 		return result;
 	}

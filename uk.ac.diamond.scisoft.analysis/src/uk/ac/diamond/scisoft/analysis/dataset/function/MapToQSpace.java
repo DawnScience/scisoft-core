@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -86,7 +85,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 	 * @return one 3D dataset
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
@@ -146,8 +145,8 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 			}
 		}
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
-		result.add((AbstractDataset) newmap);
+		List<Dataset> result = new ArrayList<Dataset>();
+		result.add(newmap);
 		return result;
 	}
 

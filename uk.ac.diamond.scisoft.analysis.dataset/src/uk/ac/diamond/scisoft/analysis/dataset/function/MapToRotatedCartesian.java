@@ -102,11 +102,11 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 	 * @return two 2D dataset where rows label tilted rows and columns label tilted columns
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2)
@@ -131,8 +131,8 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 				}
 			}
 
-			result.add((AbstractDataset) newmap);
-			result.add((AbstractDataset) unitmap);
+			result.add(newmap);
+			result.add(unitmap);
 		}
 		return result;
 	}

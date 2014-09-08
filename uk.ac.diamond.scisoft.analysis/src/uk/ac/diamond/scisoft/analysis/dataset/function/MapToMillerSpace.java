@@ -24,7 +24,6 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -88,14 +87,14 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 	 * @return one 3D dataset
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
-			AbstractDataset ds = DatasetUtils.convertToAbstractDataset(ids);
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			// check if input is 2D
 			int[] s = ds.getShape();
 			if (s.length != 2)
@@ -137,7 +136,7 @@ public class MapToMillerSpace implements DatasetToDatasetFunction {
 				}
 			}
 		}
-		result.add((AbstractDataset) newmap);
+		result.add(newmap);
 		return result;
 	}
 

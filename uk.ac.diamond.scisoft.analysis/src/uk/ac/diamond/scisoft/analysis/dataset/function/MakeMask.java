@@ -19,8 +19,8 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -42,13 +42,13 @@ public class MakeMask implements DatasetToDatasetFunction {
 	}
 	
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		ArrayList<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		for (IDataset d : datasets) {
-			final AbstractDataset ds = DatasetUtils.convertToAbstractDataset(d);
+			final Dataset ds = DatasetUtils.convertToDataset(d);
 			final BooleanDataset bs = new BooleanDataset(ds.getShape());
 			final IndexIterator it = ds.getIterator();
 			int i = 0;

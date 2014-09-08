@@ -23,7 +23,6 @@ import javax.vecmath.Vector3d;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -51,27 +50,27 @@ public class PixelIntegrationUtils {
 		
 	}
 	
-	public static AbstractDataset generateQArray(IDiffractionMetadata md) {
+	public static Dataset generateQArray(IDiffractionMetadata md) {
 		return generateQArray(getShape(md), md);
 	}
 	
-	public static AbstractDataset generateQArray(int[] shape, IDiffractionMetadata md) {
+	public static Dataset generateQArray(int[] shape, IDiffractionMetadata md) {
 		QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
 		return generateRadialArray(shape, qSpace, XAxis.Q);
 		
 	}
 	
-	public static AbstractDataset generateAzimuthalArray(IDiffractionMetadata metadata, boolean radians) {
+	public static Dataset generateAzimuthalArray(IDiffractionMetadata metadata, boolean radians) {
 		return generateAzimuthalArray(metadata.getDetector2DProperties().getBeamCentreCoords(), getShape(metadata), radians);
 	}
 	
-	public static AbstractDataset generateAzimuthalArray(int[] shape, IDiffractionMetadata metadata, boolean radians) {
+	public static Dataset generateAzimuthalArray(int[] shape, IDiffractionMetadata metadata, boolean radians) {
 		return generateAzimuthalArray(metadata.getDetector2DProperties().getBeamCentreCoords(), shape,radians);
 	}
 	
-	public static AbstractDataset generateAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
+	public static Dataset generateAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
-		AbstractDataset out = (AbstractDataset) DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset out = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
@@ -183,17 +182,17 @@ public class PixelIntegrationUtils {
 		return new Dataset[]{radialArrayMin,radialArrayMax};
 	}
 	
-	public static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
+	public static Dataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
 		return generateRadialArray(shape, qSpace, xAxis, false);
 	}
 	
-	private static AbstractDataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis, boolean radians) {
+	private static Dataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis, boolean radians) {
 		
 		if (qSpace == null) return null;
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		AbstractDataset ra = (AbstractDataset) DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset ra = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
 		PositionIterator iter = ra.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -231,7 +230,7 @@ public class PixelIntegrationUtils {
 		return new int[]{metadata.getDetector2DProperties().getPy(), metadata.getDetector2DProperties().getPx()};
 	}
 	
-	public static AbstractDataset generate2Dfrom1D(IDataset[] xy1d, Dataset array2Dx) {
+	public static Dataset generate2Dfrom1D(IDataset[] xy1d, Dataset array2Dx) {
 		
 		DoubleDataset[] inXy1D = new DoubleDataset[2];
 		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], Dataset.FLOAT64);
@@ -253,12 +252,12 @@ public class PixelIntegrationUtils {
 			
 		}
 		
-		return (AbstractDataset) image;
+		return image;
 	}
 	
 	public static void solidAngleCorrection(Dataset correctionArray, Dataset tth) {
 		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
-		AbstractDataset cor = Maths.cos(tth);
+		Dataset cor = Maths.cos(tth);
 		cor.ipower(3);
 		correctionArray.idivide(cor);
 	}

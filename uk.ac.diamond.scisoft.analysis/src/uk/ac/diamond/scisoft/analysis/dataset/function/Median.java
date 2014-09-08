@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -45,12 +44,12 @@ public class Median implements DatasetToDatasetFunction {
 	}
 	
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 		
 		for (IDataset idataset : datasets) {
 			Dataset dataset = DatasetUtils.convertToDataset(idataset);
@@ -77,7 +76,7 @@ public class Median implements DatasetToDatasetFunction {
 				filtered.set(Stats.median(dataset.getSlice(start, stop, step)), pos);
 			}
 			
-			result.add((AbstractDataset) filtered);
+			result.add(filtered);
 		}
 		return result;
 	}

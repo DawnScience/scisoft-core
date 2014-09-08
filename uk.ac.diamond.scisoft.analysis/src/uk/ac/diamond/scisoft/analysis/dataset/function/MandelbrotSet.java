@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
@@ -45,21 +45,21 @@ public class MandelbrotSet implements DatasetToDatasetFunction {
 	 * @return a list containing a dataset of recursion limits
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... axes) {
-		AbstractDataset xaxis, yaxis;
+	public List<Dataset> value(IDataset... axes) {
+		Dataset xaxis, yaxis;
 
 		if (axes.length < 2) {
 			throw new IllegalArgumentException("Need two axes");
 		}
-		xaxis = DatasetUtils.convertToAbstractDataset(axes[0]);
-		yaxis = DatasetUtils.convertToAbstractDataset(axes[1]);
+		xaxis = DatasetUtils.convertToDataset(axes[0]);
+		yaxis = DatasetUtils.convertToDataset(axes[1]);
 		if (xaxis.getRank() != 1 || yaxis.getRank() != 1) {
 			throw new IllegalArgumentException("Need both axes to be 1d datasets");
 		}
 
 		IntegerDataset count = new IntegerDataset(yaxis.getShape()[0], xaxis.getShape()[0]);
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		final IndexIterator iy = yaxis.getIterator();
 		int n = 0;

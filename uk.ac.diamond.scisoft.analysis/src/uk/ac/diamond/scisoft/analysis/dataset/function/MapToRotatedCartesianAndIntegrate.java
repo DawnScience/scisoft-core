@@ -37,14 +37,14 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 	private double cp;
 	private double sp;
 
-	AbstractDataset mask;
+	Dataset mask;
 
 	/**
 	 * Set detector mask used profile calculations
 	 *  
 	 * @param mask
 	 */
-	public void setMask(AbstractDataset mask) {
+	public void setMask(Dataset mask) {
 		this.mask = mask;
 	}
 
@@ -122,11 +122,11 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 	 * a rotated dataset (second pair is for unclipped unit version of input dataset)  
 	 */
 	@Override
-	public List<AbstractDataset> value(IDataset... datasets) {
+	public List<Dataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		double msk = 1;
 		for (IDataset ids : datasets) {
@@ -162,10 +162,10 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				usumx.set(cusumx, y);
 			}
 
-			result.add((AbstractDataset) sumx);
-			result.add((AbstractDataset) sumy);
-			result.add((AbstractDataset) usumx);
-			result.add((AbstractDataset) usumy);
+			result.add(sumx);
+			result.add(sumy);
+			result.add(usumx);
+			result.add(usumy);
 		}
 		return result;
 	}
@@ -175,19 +175,19 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 	 * @param datasets
 	 * @return maximum value in 
 	 */
-	public List<AbstractDataset> maxValue(IDataset... datasets) {
+	public List<Dataset> maxValue(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<AbstractDataset> result = new ArrayList<AbstractDataset>();
+		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ids : datasets) {
 			if (ids.getRank() != 2)
 				return null;
 
 			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-			AbstractDataset mx = AbstractDataset.zeros(new int[] { h }, dtype);
-			AbstractDataset my = AbstractDataset.zeros(new int[] { w }, dtype);
+			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
+			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
 
 			double cx, cy;
 			double cmax;

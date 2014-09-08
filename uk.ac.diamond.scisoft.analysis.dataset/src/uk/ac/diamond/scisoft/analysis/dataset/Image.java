@@ -253,27 +253,27 @@ public class Image {
 		return filter(input, kernel, FilterType.MEAN);
 	}
 
-//	public static Dataset medianFilter(Dataset input, int radius) throws Exception {
-//		return filter(input, radius, FilterType.MEDIAN);
-//	}
-//
-//	public static Dataset meanFilter(Dataset input, int radius) throws Exception {
-//		return filter(input, radius, FilterType.MEAN);
-//	}
+	public static Dataset medianFilter(Dataset input, int radius) throws Exception {
+		return filter(input, radius, FilterType.MEDIAN);
+	}
 
-//	public static Dataset filter(Dataset input, int radius, FilterType type) throws Exception {
-//		createImageFilterService();
-//		if (type == FilterType.MEDIAN) {
-//			return service.filterMean(input, radius);
-//		} else if (type == FilterType.MIN) {
-//			return service.filterMin(input, radius);
-//		} else if (type == FilterType.MAX) {
-//			return service.filterMax(input, radius);
-//		} else if (type == FilterType.MEAN) {
-//			return service.filterMean(input, radius);
-//		}
-//		return null;
-//	}
+	public static Dataset meanFilter(Dataset input, int radius) throws Exception {
+		return filter(input, radius, FilterType.MEAN);
+	}
+
+	public static Dataset filter(Dataset input, int radius, FilterType type) throws Exception {
+		createImageFilterService();
+		if (type == FilterType.MEDIAN) {
+			return DatasetUtils.convertToDataset(service.filterMean(input, radius));
+		} else if (type == FilterType.MIN) {
+			return DatasetUtils.convertToDataset(service.filterMin(input, radius));
+		} else if (type == FilterType.MAX) {
+			return DatasetUtils.convertToDataset(service.filterMax(input, radius));
+		} else if (type == FilterType.MEAN) {
+			return DatasetUtils.convertToDataset(service.filterMean(input, radius));
+		}
+		return null;
+	}
 
 	public static Dataset filter(Dataset input, int[] kernel, FilterType type) {
 		// check to see if the kernel shape in the correct dimensionality.
@@ -326,19 +326,19 @@ public class Image {
 		return Maths.subtract(input, mean);
 	}
 
-//	/**
-//	 * 
-//	 * @param input
-//	 * @param radius
-//	 * @return dataset
-//	 * @throws Exception 
-//	 */
-//	public static Dataset backgroundFilter(Dataset input, int radius) throws Exception {
-//		Dataset min = filter(input, new int[] {radius, radius}, FilterType.MIN);
-//		Dataset max = filter(min, new int[] {radius, radius}, FilterType.MAX);
-//		Dataset mean = filter(max, radius, FilterType.MEAN);
-//		return Maths.subtract(input, mean);
-//	}
+	/**
+	 * 
+	 * @param input
+	 * @param radius
+	 * @return dataset
+	 * @throws Exception 
+	 */
+	public static Dataset backgroundFilter(Dataset input, int radius) throws Exception {
+		Dataset min = filter(input, new int[] {radius, radius}, FilterType.MIN);
+		Dataset max = filter(min, new int[] {radius, radius}, FilterType.MAX);
+		Dataset mean = filter(max, radius, FilterType.MEAN);
+		return Maths.subtract(input, mean);
+	}
 
 	public static Dataset convolutionFilter(Dataset input, Dataset kernel) {
 		// check to see if the kernel shape in the correct dimensionality.

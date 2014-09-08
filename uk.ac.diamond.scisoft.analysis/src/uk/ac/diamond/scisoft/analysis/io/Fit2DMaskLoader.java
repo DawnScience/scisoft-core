@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.BooleanDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
@@ -49,7 +49,7 @@ public class Fit2DMaskLoader extends AbstractFileLoader {
 	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		AbstractDataset data = null;
+		Dataset data = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;

@@ -47,7 +47,7 @@ public class DCT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct(final Dataset a) {
+	public static Dataset dct(final Dataset a) {
 		return dct(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
@@ -58,14 +58,14 @@ public class DCT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct(final Dataset a, final int n, int axis) {
+	public static Dataset dct(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return (AbstractDataset) dct1d(a, n, axis);
+		return dct1d(a, n, axis);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dct2(final Dataset a, int[] s, int[] axes) {
+	public static Dataset dct2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -106,7 +106,7 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset dctn(final Dataset a, int[] s, int[] axes) {
+	public static Dataset dctn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		Dataset result = null;
@@ -168,7 +168,7 @@ public class DCT {
 			break;
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	private static int[] newShape(final int[] shape, final int[] s, final int[] axes) {
@@ -337,7 +337,7 @@ public class DCT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct(final Dataset a) {
+	public static Dataset idct(final Dataset a) {
 		return idct(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
@@ -348,14 +348,14 @@ public class DCT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct(final Dataset a, final int n, int axis) {
+	public static Dataset idct(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return (AbstractDataset) idct1d(a, n, axis);
+		return idct1d(a, n, axis);
 	}
 
 	/**
@@ -365,7 +365,7 @@ public class DCT {
 	 * @param axes for DCT (default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idct2(final Dataset a, int[] s, int[] axes) {
+	public static Dataset idct2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -396,7 +396,7 @@ public class DCT {
 	 * @param axes for DCT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset idctn(final Dataset a, int[] s, int[] axes) {
+	public static Dataset idctn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		Dataset result = null;
@@ -457,7 +457,7 @@ public class DCT {
 			break;
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	private static Dataset idct1d(final Dataset a, final int n, final int axis) {
@@ -514,9 +514,9 @@ public class DCT {
 		return result;
 	}
 
-	private static AbstractDataset idct2d(final Dataset a, final int[] s, final int[] axes) {
-		AbstractDataset result = null;
-		AbstractDataset dest = null;
+	private static Dataset idct2d(final Dataset a, final int[] s, final int[] axes) {
+		Dataset result = null;
+		Dataset dest = null;
 
 		PositionIterator pi;
 		int[] pos;
@@ -618,7 +618,7 @@ public class DCT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset dctshift(final Dataset a, int[] axes) {
+	public static Dataset dctshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -649,7 +649,7 @@ public class DCT {
 			result = DatasetUtils.take(result, indices, axis);
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -658,7 +658,7 @@ public class DCT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset idctshift(final Dataset a, int[] axes) {
+	public static Dataset idctshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -689,7 +689,7 @@ public class DCT {
 			result = DatasetUtils.take(result, indices, axis);
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 }

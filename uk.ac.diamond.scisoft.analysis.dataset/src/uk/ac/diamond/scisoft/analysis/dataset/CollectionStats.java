@@ -22,12 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Stats of data set lists. Used for image processing.
+ * Statistics of data set lists. Used for image processing.
  */
 public class CollectionStats {
 
 	private static interface StatFunction {
-		double evaluate(AbstractDataset set);
+		double evaluate(Dataset set);
 	}
 
 	/**
@@ -37,11 +37,11 @@ public class CollectionStats {
 	 * @return mean data set of the same shape as those passed in.
 	 * @throws Exception
 	 */
-	public static AbstractDataset mean(final List<IDataset> sets) throws Exception {
+	public static Dataset mean(final List<IDataset> sets) throws Exception {
 		
 		return process(sets, new StatFunction() {
 			@Override
-			public double evaluate(AbstractDataset set) {
+			public double evaluate(Dataset set) {
 				return (Double)set.mean();
 			}
 		});
@@ -54,11 +54,11 @@ public class CollectionStats {
 	 * @return median data set of the same shape as those passed in.
 	 * @throws Exception
 	 */
-	public static AbstractDataset median(final List<IDataset> sets) throws Exception {
+	public static Dataset median(final List<IDataset> sets) throws Exception {
 		
 		return process(sets, new StatFunction() {
 			@Override
-			public double evaluate(AbstractDataset set) {
+			public double evaluate(Dataset set) {
 				return (Double)Stats.median(set);
 			}
 		});
@@ -71,7 +71,7 @@ public class CollectionStats {
 	 * @return median data set of the same shape as those passed in.
 	 * @throws Exception
 	 */
-	private static AbstractDataset process(final List<IDataset> sets,
+	private static Dataset process(final List<IDataset> sets,
 			                               final StatFunction   function) throws Exception {
 		
 		int[] shape = assertShapes(sets);

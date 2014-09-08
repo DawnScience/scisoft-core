@@ -48,7 +48,7 @@ public class FFT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft(final Dataset a) {
+	public static Dataset fft(final Dataset a) {
 		return fft(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
@@ -59,14 +59,14 @@ public class FFT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft(final Dataset a, final int n, int axis) {
+	public static Dataset fft(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return (AbstractDataset) fft1d(a, n, axis);
+		return fft1d(a, n, axis);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fft2(final Dataset a, int[] s, int[] axes) {
+	public static Dataset fft2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -107,7 +107,7 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset fftn(final Dataset a, int[] s, int[] axes) {
+	public static Dataset fftn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		Dataset result = null;
@@ -169,7 +169,7 @@ public class FFT {
 			break;
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	private static int[] newShape(final int[] shape, final int[] s, final int[] axes) {
@@ -344,7 +344,7 @@ public class FFT {
 	 * @param a dataset
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft(final Dataset a) {
+	public static Dataset ifft(final Dataset a) {
 		return ifft(a, a.getShapeRef()[a.getRank() - 1], -1);
 	}
 
@@ -355,14 +355,14 @@ public class FFT {
 	 * @param axis (negative numbers refer to axes from end, eg. -1 is last axis)
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft(final Dataset a, final int n, int axis) {
+	public static Dataset ifft(final Dataset a, final int n, int axis) {
 		if (n <= 0) {
 			logger.error("number of points should be greater than zero");
 			throw new IllegalArgumentException("number of points should be greater than zero");
 		}
 		axis = a.checkAxis(axis);
 
-		return (AbstractDataset) ifft1d(a, n, axis);
+		return ifft1d(a, n, axis);
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class FFT {
 	 * @param axes for FFT (default as [-2,-1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifft2(final Dataset a, int[] s, int[] axes) {
+	public static Dataset ifft2(final Dataset a, int[] s, int[] axes) {
 		int rank = a.getRank();
 		if (rank < 2) {
 			logger.error("dataset should be at least 2 dimensional");
@@ -403,7 +403,7 @@ public class FFT {
 	 * @param axes for FFT (if null, default as [..., -1])
 	 * @return new dataset holding transform
 	 */
-	public static AbstractDataset ifftn(final Dataset a, int[] s, int[] axes) {
+	public static Dataset ifftn(final Dataset a, int[] s, int[] axes) {
 		int[] shape = a.getShape();
 		int rank = shape.length;
 		Dataset result = null;
@@ -464,7 +464,7 @@ public class FFT {
 			break;
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	private static Dataset ifft1d(final Dataset a, final int n, final int axis) {
@@ -625,7 +625,7 @@ public class FFT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset fftshift(final Dataset a, int[] axes) {
+	public static Dataset fftshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -656,7 +656,7 @@ public class FFT {
 			result = DatasetUtils.take(result, indices, axis);
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -665,7 +665,7 @@ public class FFT {
 	 * @param axes (if null, then shift all axes)
 	 * @return shifted dataset
 	 */
-	public static AbstractDataset ifftshift(final Dataset a, int[] axes) {
+	public static Dataset ifftshift(final Dataset a, int[] axes) {
 		int alen;
 		if (axes == null) {
 			alen = a.getRank();
@@ -696,7 +696,7 @@ public class FFT {
 			result = DatasetUtils.take(result, indices, axis);
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -705,7 +705,7 @@ public class FFT {
 	 * @param d sample spacing
 	 * @return frequencies
 	 */
-	public static AbstractDataset sampleFrequencies(int n, double d) {
+	public static Dataset sampleFrequencies(int n, double d) {
 		int hn = n/2;
 		return DatasetUtils.roll(DoubleDataset.createRange(n).isubtract(hn).imultiply(1/(d*n)), n - hn, null);
 	}

@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.util.ArrayList;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -47,7 +47,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 
 		// now we need to try to load in the the pilatus data
 		if (currentDataHolder.contains(PATH_DATASET)) {
-			AbstractDataset paths = currentDataHolder.getDataset(PATH_DATASET);
+			Dataset paths = currentDataHolder.getDataset(PATH_DATASET);
 			String template = textMetadata.get(PILATUS_TEMPLATE);
 			if (template == null) {
 				// bodged format v1
@@ -66,7 +66,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		}
 	}
 
-	private ImageStackLoader getImageStack(String format, String format2, AbstractDataset paths, IMonitor mon) {
+	private ImageStackLoader getImageStack(String format, String format2, Dataset paths, IMonitor mon) {
 		ArrayList<String> files = new ArrayList<String>();
 		final File dir = new File(fileName).getParentFile();
 
@@ -143,7 +143,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 	/**
 	 * Slices the stack of images
 	 */
-	protected AbstractDataset slice(SliceObject bean, IMonitor mon) throws Exception {
+	protected Dataset slice(SliceObject bean, IMonitor mon) throws Exception {
 
 		/**
 		 * Not ideal have to parse SRS file once for each slice. The LoaderFactory caches slices which helps a little.
@@ -151,7 +151,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		this.fileName = bean.getPath();
 		final DataHolder dh = loadFile(mon);
 		ILazyDataset imageStack = dh.getLazyDataset(DATA_NAME);
-		// ImageStackLoader does load the AbstractDataset at this point
-		return (AbstractDataset) imageStack.getSlice(bean.getSliceStart(), bean.getSliceStop(), bean.getSliceStep());
+		// ImageStackLoader does load the Dataset at this point
+		return (Dataset) imageStack.getSlice(bean.getSliceStart(), bean.getSliceStop(), bean.getSliceStep());
 	}
 }

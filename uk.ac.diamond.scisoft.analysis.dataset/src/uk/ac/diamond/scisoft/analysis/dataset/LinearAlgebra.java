@@ -31,7 +31,7 @@ public class LinearAlgebra {
 	 * @param axisb axis dimension in b to sum over (can be -ve)
 	 * @return tensor dot product
 	 */
-	public static AbstractDataset tensorDotProduct(final Dataset a, final Dataset b, final int axisa, final int axisb) {
+	public static Dataset tensorDotProduct(final Dataset a, final Dataset b, final int axisa, final int axisb) {
 		// this is slower for summing lengths < ~15
 		final int[] ashape = a.getShapeRef();
 		final int[] bshape = b.getShapeRef();
@@ -99,7 +99,7 @@ public class LinearAlgebra {
 			}
 		}
 
-		return (AbstractDataset) data;
+		return data;
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class LinearAlgebra {
 	 * @param axisb axis dimensions in b to sum over (can be -ve)
 	 * @return tensor dot product
 	 */
-	public static AbstractDataset tensorDotProduct(final Dataset a, final Dataset b, final int[] axisa, final int[] axisb) {
+	public static Dataset tensorDotProduct(final Dataset a, final Dataset b, final int[] axisa, final int[] axisb) {
 		if (axisa.length != axisb.length) {
 			throw new IllegalArgumentException("Numbers of summing axes must be same");
 		}
@@ -198,7 +198,7 @@ public class LinearAlgebra {
 			}
 		}
 
-		return (AbstractDataset) data;
+		return data;
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class LinearAlgebra {
 	 * @param b
 	 * @return dot product
 	 */
-	public static AbstractDataset dotProduct(Dataset a, Dataset b) {
+	public static Dataset dotProduct(Dataset a, Dataset b) {
 		if (b.getRank() < 2)
 			return tensorDotProduct(a, b, -1, 0);
 		return tensorDotProduct(a, b, -1, -2);
@@ -221,7 +221,7 @@ public class LinearAlgebra {
 	 * @param b
 	 * @return outer product
 	 */
-	public static AbstractDataset outerProduct(Dataset a, Dataset b) {
+	public static Dataset outerProduct(Dataset a, Dataset b) {
 		int[] as = a.getShapeRef();
 		int[] bs = b.getShapeRef();
 		int rank = as.length + bs.length;
@@ -249,6 +249,6 @@ public class LinearAlgebra {
 			}
 			itb.reset();
 		}
-		return (AbstractDataset) o;
+		return o;
 	}
 }

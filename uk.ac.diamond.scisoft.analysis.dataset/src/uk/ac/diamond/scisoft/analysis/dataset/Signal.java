@@ -90,7 +90,7 @@ public class Signal {
 	 * @param axes
 	 * @return linear convolution
 	 */
-	public static AbstractDataset convolve(final Dataset f, final Dataset g, final int[] axes) {
+	public static Dataset convolve(final Dataset f, final Dataset g, final int[] axes) {
 		// compute using circular (DFT) algorithm
 		// to get a linear version, need to pad out axes to f-axes + g-axes - 1 before DFTs
 		
@@ -106,8 +106,8 @@ public class Signal {
 
 		Dataset conv = FFT.ifftn(c, s, axes);
 		if (f.isComplex() || g.isComplex())
-			return (AbstractDataset) conv;
-		return (AbstractDataset) conv.real();
+			return conv;
+		return conv.real();
 	}
 
 	/**
@@ -117,8 +117,8 @@ public class Signal {
 	 * @param axes
 	 * @return central portion of linear convolution with same shape as f
 	 */
-	public static AbstractDataset convolveToSameShape(final Dataset f, final Dataset g, final int[] axes) {
-		return (AbstractDataset) getSame(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
+	public static Dataset convolveToSameShape(final Dataset f, final Dataset g, final int[] axes) {
+		return getSame(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class Signal {
 	 * @param axes
 	 * @return overlapping portion of linear convolution
 	 */
-	public static AbstractDataset convolveForOverlap(final Dataset f, final Dataset g, final int[] axes) {
-		return (AbstractDataset) getValid(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
+	public static Dataset convolveForOverlap(final Dataset f, final Dataset g, final int[] axes) {
+		return getValid(convolve(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class Signal {
 	 * @param axes
 	 * @return linear auto-correlation
 	 */
-	public static AbstractDataset correlate(final Dataset f, final int[] axes) {
+	public static Dataset correlate(final Dataset f, final int[] axes) {
 		return correlate(f, f, axes);
 	}
 
@@ -149,7 +149,7 @@ public class Signal {
 	 * @param axes
 	 * @return linear cross-correlation (centre-shifted)
 	 */
-	public static AbstractDataset correlate(final Dataset f, final Dataset g, int[] axes) {
+	public static Dataset correlate(final Dataset f, final Dataset g, int[] axes) {
 		if (f.getRank() != g.getRank()) {
 			f.checkCompatibility(g);
 		}
@@ -192,7 +192,7 @@ public class Signal {
 			corr = DatasetUtils.roll(corr, l-1, a);
 		}
 		
-		return (AbstractDataset) corr;
+		return corr;
 	}
 
 	/**
@@ -202,8 +202,8 @@ public class Signal {
 	 * @param axes
 	 * @return central portion of linear cross-correlation with same shape as f
 	 */
-	public static AbstractDataset correlateToSameShape(final Dataset f, final Dataset g, final int[] axes) {
-		return (AbstractDataset) getSame(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
+	public static Dataset correlateToSameShape(final Dataset f, final Dataset g, final int[] axes) {
+		return getSame(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -213,8 +213,8 @@ public class Signal {
 	 * @param axes
 	 * @return overlapping portion of linear cross-correlation
 	 */
-	public static AbstractDataset correlateForOverlap(final Dataset f, final Dataset g, final int[] axes) {
-		return (AbstractDataset) getValid(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
+	public static Dataset correlateForOverlap(final Dataset f, final Dataset g, final int[] axes) {
+		return getValid(correlate(f, g, axes), f.getShapeRef(), g.getShapeRef());
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class Signal {
 	 * @param includeInverse 
 	 * @return linear phase cross-correlation and inverse of the normalized cross-power spectrum
 	 */
-	public static List<AbstractDataset> phaseCorrelate(final Dataset f, final Dataset g, final int[] axes, boolean includeInverse) {
+	public static List<Dataset> phaseCorrelate(final Dataset f, final Dataset g, final int[] axes, boolean includeInverse) {
 		Dataset c = null, d = null;
 		int[] s = paddedShape(f.getShapeRef(), g.getShapeRef(), axes);
 		c = FFT.fftn(f, s, axes);
@@ -236,22 +236,22 @@ public class Signal {
 		c.idivide(d);
 
 		Dataset corr;
-		List<AbstractDataset> results = new ArrayList<AbstractDataset>();
+		List<Dataset> results = new ArrayList<Dataset>();
 
 		d = Maths.phaseAsComplexNumber(c, true);
 
 		corr = FFT.ifftn(d, s, axes);
 		if (f.isComplex() || g.isComplex())
-			results.add((AbstractDataset) corr);
+			results.add(corr);
 		else
-			results.add((AbstractDataset) corr.real());
+			results.add(corr.real());
 
 		if (includeInverse) {
 			corr = FFT.ifftn(c, s, axes);
 			if (f.isComplex() || g.isComplex())
-				results.add((AbstractDataset) corr);
+				results.add(corr);
 			else
-				results.add((AbstractDataset) corr.real());
+				results.add(corr.real());
 		}
 
 		return results;
@@ -262,8 +262,8 @@ public class Signal {
 	 * @param n
 	 * @return window
 	 */
-	public static AbstractDataset rectangularWindow(int n) {
-		return (AbstractDataset) DatasetFactory.ones(new int[] {n}, Dataset.FLOAT64);
+	public static Dataset rectangularWindow(int n) {
+		return DatasetFactory.ones(new int[] {n}, Dataset.FLOAT64);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class Signal {
 	 * @param n
 	 * @return window
 	 */
-	public static AbstractDataset triangularWindow(int n) {
+	public static Dataset triangularWindow(int n) {
 		DoubleDataset w = new DoubleDataset(n);
 		double f = 2./(n+1);
 		double o = f*(n-1)*0.5;
@@ -286,7 +286,7 @@ public class Signal {
 	 * @param n
 	 * @return window
 	 */
-	public static AbstractDataset bartlettWindow(int n) {
+	public static Dataset bartlettWindow(int n) {
 		DoubleDataset w = new DoubleDataset(n);
 		double f = 2./(n-1);
 		double o = f*(n-1)*0.5;
@@ -301,7 +301,7 @@ public class Signal {
 	 * @param n
 	 * @return window
 	 */
-	public static AbstractDataset hannWindow(int n) {
+	public static Dataset hannWindow(int n) {
 		double a = 0.5;
 		return hammingWindow(n, a, 1-a);
 	}
@@ -311,7 +311,7 @@ public class Signal {
 	 * @param n
 	 * @return window
 	 */
-	public static AbstractDataset hammingWindow(int n) {
+	public static Dataset hammingWindow(int n) {
 		double a = 0.54;
 		return hammingWindow(n, a, 1-a);
 	}
@@ -323,7 +323,7 @@ public class Signal {
 	 * @param b
 	 * @return window
 	 */
-	public static AbstractDataset hammingWindow(int n, double a, double b) {
+	public static Dataset hammingWindow(int n, double a, double b) {
 		DoubleDataset w = new DoubleDataset(n);
 		double f = 2*Math.PI/(n-1);
 		for (int i = 0; i < n; i++) {

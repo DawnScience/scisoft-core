@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import ncsa.hdf.object.Dataset;
-
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataUtils;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
@@ -18,8 +16,8 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFindDatasetByName;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFindGroupByAttributeText;
 import org.eclipse.dawnsci.hdf5.nexus.NexusUtils;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
@@ -227,7 +225,7 @@ public class NexusDiffractionMetaReader {
 		if (nxDetectors == null || nxDetectors.isEmpty()) return null;
 		
 		if (imageSize == null) {
-			//only one nxdetector or we dont know the image size
+			//only one NXdetector or we don't know the image size
 			//so just use the first one
 			return nxDetectors.get(0);
 		}
@@ -301,7 +299,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals("keV")) {
 				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
@@ -324,7 +322,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals("keV")) {
 				diffcrys.setWavelengthFromEnergykeV(ds.getDouble(0));
@@ -345,7 +343,7 @@ public class NexusDiffractionMetaReader {
 		String dataset = getDataset(file, nexusGroup, "phi_start");
 		if (dataset == null) return false;
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
@@ -363,7 +361,7 @@ public class NexusDiffractionMetaReader {
 		String dataset = getDataset(file, nexusGroup, "phi_range");
 		if (dataset == null) return false;
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("degrees")) {
@@ -383,7 +381,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("s")) {
@@ -403,7 +401,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) dataset = getDataset(file, nexusGroup, "beam_centre");
 		if (dataset == null) return updateBeamCentreFromXY(file, nexusGroup, detprop);
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				detprop.setBeamCentreCoords(new double[] {ds.getDouble(0),ds.getDouble(1)});
@@ -431,7 +429,7 @@ public class NexusDiffractionMetaReader {
 		double xCoord = Double.NaN;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null || units.equals("pixels")) {
 				xCoord = ds.getDouble(0);
@@ -462,7 +460,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units.equals(MM)) {
 				detprop.setBeamCentreDistance(ds.getDouble(0));
@@ -498,7 +496,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			if (ds.getSize() != 9) return false;
 			if (ds instanceof DoubleDataset) {
 				detprop.setOrientation(new Matrix3d(((DoubleDataset)ds).getData()));
@@ -516,7 +514,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			if (ds.getSize() != 3) return false;
 			if (ds instanceof DoubleDataset) {
 				detprop.setBeamVector(new Vector3d(((DoubleDataset)ds).getData()));
@@ -535,7 +533,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
@@ -550,7 +548,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 		
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals("pixels")) {
@@ -571,7 +569,7 @@ public class NexusDiffractionMetaReader {
 		if (dataset == null) return false;
 
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals(MM)) {detprop.setVPxSize(ds.getDouble(0));}
@@ -583,7 +581,7 @@ public class NexusDiffractionMetaReader {
 		dataset = getDataset(file, nexusGroup, "y_pixel_size");
 
 		try {
-			AbstractDataset ds = getSet(file, dataset);
+			Dataset ds = getSet(file, dataset);
 			String units = NexusUtils.getNexusGroupAttributeValue(file, dataset, UNITS);
 			if (units == null) return false;
 			if (units.equals(MM)) {
@@ -693,22 +691,22 @@ public class NexusDiffractionMetaReader {
 		return new DiffractionCrystalEnvironment(1, 0, 0, 1);
 	}
 	
-	private String getString(final Dataset set) throws Exception {
+	private String getString(final ncsa.hdf.object.Dataset set) throws Exception {
 			return ((String[])set.getData())[0];
 	}
 	
-	private AbstractDataset getSet(IHierarchicalDataFile file, final String path) throws Exception {
+	private Dataset getSet(IHierarchicalDataFile file, final String path) throws Exception {
 
 		if (!file.isDataset(path)) return null;
 		
-		Dataset       set = (Dataset)file.getData(path);
+		ncsa.hdf.object.Dataset       set = (ncsa.hdf.object.Dataset)file.getData(path);
 		final Object  val = set.read();
 		
 		long[] dataShape = HierarchicalDataUtils.getDims(set);
 		
 		final int[] intShape  = getInt(dataShape);
          
-		AbstractDataset ret = null;
+		Dataset ret = null;
         if (val instanceof byte[]) {
         	ret = new ByteDataset((byte[])val, intShape);
         } else if (val instanceof short[]) {
@@ -727,15 +725,15 @@ public class NexusDiffractionMetaReader {
         
 		if (set.getDatatype().isUnsigned()) {
 			switch (ret.getDtype()) {
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
+			case Dataset.INT32:
 				ret = new LongDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 32);
 				break;
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
+			case Dataset.INT16:
 				ret = new IntegerDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 16);
 				break;
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
+			case Dataset.INT8:
 				ret = new ShortDataset(ret);
 				DatasetUtils.unwrapUnsigned(ret, 8);
 				break;

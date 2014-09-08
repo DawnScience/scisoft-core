@@ -35,10 +35,10 @@ public final class LazyMaths {
 	 * @param axis (can be negative)
 	 * @return sum along axis in lazy dataset
 	 */
-	public static AbstractDataset sum(final ILazyDataset data, int axis) {
+	public static Dataset sum(final ILazyDataset data, int axis) {
 		int[][] sliceInfo = new int[3][];
 		int[] shape = data.getShape();
-		final AbstractDataset result = (AbstractDataset) prepareDataset(axis, shape, sliceInfo);
+		final Dataset result = prepareDataset(axis, shape, sliceInfo);
 
 		final int[] start = sliceInfo[0];
 		final int[] stop = sliceInfo[1];
@@ -60,10 +60,10 @@ public final class LazyMaths {
 	 * @param axis (can be negative)
 	 * @return product along axis in lazy dataset
 	 */
-	public static AbstractDataset product(final ILazyDataset data, int axis) {
+	public static Dataset product(final ILazyDataset data, int axis) {
 		int[][] sliceInfo = new int[3][];
 		int[] shape = data.getShape();
-		final AbstractDataset result = (AbstractDataset) prepareDataset(axis, shape, sliceInfo);
+		final Dataset result = prepareDataset(axis, shape, sliceInfo);
 		result.fill(1);
 
 		final int[] start = sliceInfo[0];

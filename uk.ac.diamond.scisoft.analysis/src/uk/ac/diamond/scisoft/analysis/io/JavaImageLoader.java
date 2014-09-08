@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset;
 
 /**
@@ -110,7 +110,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
-		AbstractDataset data = null;
+		Dataset data = null;
 		File f = null;
 		BufferedImage input = null;
 
@@ -143,14 +143,14 @@ public class JavaImageLoader extends AbstractFileLoader {
 		return output;
 	}
 
-	protected AbstractDataset createDataset(BufferedImage input) throws ScanFileHolderException {
+	protected Dataset createDataset(BufferedImage input) throws ScanFileHolderException {
 		return createDataset(input, asGrey, keepBitWidth);
 	}
 
-	protected static AbstractDataset createDataset(BufferedImage input, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
-		AbstractDataset data = null;
+	protected static Dataset createDataset(BufferedImage input, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
+		Dataset data = null;
 		try {
-			AbstractDataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);
+			Dataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);
 			final int bands = input.getData().getNumBands();
 
 			if (bands == 1) {
@@ -166,7 +166,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				data = new RGBDataset(channels[0], channels[1], channels[2]);
 
 				if (asGrey)
-					data = (AbstractDataset)((RGBDataset) data).createGreyDataset(channels[0].getDtype());
+					data = ((RGBDataset) data).createGreyDataset(channels[0].getDtype());
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem loading the image", e);

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.CBFlib.CBFlib;
 import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
@@ -81,7 +82,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 		DataHolder output = new DataHolder();
-		AbstractDataset data = null;
+		Dataset data = null;
 		ImageOrientation imageOrien = null;
 
 		logger.info("Loading {}", fileName);
@@ -400,7 +401,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		return new ImageOrientation(xLength, yLength, xIncreasing, yIncreasing, isRowsX);
 	}
 	
-	private AbstractDataset readCBFBinaryData(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
+	private Dataset readCBFBinaryData(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
 		AbstractDataset data = null;
 
 

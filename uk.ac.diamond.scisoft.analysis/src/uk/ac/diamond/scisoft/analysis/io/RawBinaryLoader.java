@@ -143,7 +143,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				}
 			}
 
-			AbstractDataset data = loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+			Dataset data = loadRawDataset(fBuffer, dtype, isize, tSize, shape);
 			fc.close();
 
 			if (nlen > 0) {
@@ -176,8 +176,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	 *            buffer to load data set from, must by in LITTLE_ENDIAN and current position be the first byte of the
 	 *            raw data with the remaining number of bytes being the total size in bytes.
 	 * @param dtype
-	 *            Data type of the data to load, see {@link AbstractDataset} for list of types (e.g. @link
-	 *            {@link AbstractDataset#FLOAT64}
+	 *            Data type of the data to load, see {@link Dataset} for list of types (e.g. @link
+	 *            {@link Dataset#FLOAT64}
 	 * @param isize
 	 *            Data item size
 	 * @param tSize
@@ -188,7 +188,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	 * @throws ScanFileHolderException
 	 *             if a detected error is encountered, or wraps an underlying exception
 	 */
-	public static AbstractDataset loadRawDataset(ByteBuffer fBuffer, int dtype, int isize, int tSize, int[] shape)
+	public static Dataset loadRawDataset(ByteBuffer fBuffer, int dtype, int isize, int tSize, int[] shape)
 			throws ScanFileHolderException {
 		AbstractDataset data = null;
 		int hash = 0;

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -57,7 +57,7 @@ public class Fit2DLoader extends AbstractFileLoader implements IMetaLoader {
 	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		AbstractDataset data = null;
+		Dataset data = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;

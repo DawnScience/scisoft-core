@@ -162,7 +162,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			if (keepBitWidth||amax < (1 << 15)) {
-					data = DatasetUtils.cast(data, Dataset.INT16);
+					data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
 			}
 
 			hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();

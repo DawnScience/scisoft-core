@@ -35,7 +35,6 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -45,7 +44,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
-import uk.ac.diamond.scisoft.analysis.io.Metadata;
 
 /**
  * Helper methods to convert to/from AWT images and datasets
@@ -107,7 +105,7 @@ public class AWTImageUtils {
 	 * @param keepBitWidth if true, then use signed primitives of same bit width for possibly unsigned data
 	 * @return array of datasets
 	 */
-	static public AbstractDataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
+	static public Dataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
 		// make raster from buffered image
 		final Raster ras = image.getData();
 		final int bands = ras.getNumBands();
@@ -134,7 +132,7 @@ public class AWTImageUtils {
 				dbtype = DataBuffer.TYPE_BYTE;
 			}
 		}
-		AbstractDataset[] data = new AbstractDataset[bands];
+		Dataset[] data = new Dataset[bands];
 
 		createDatasets(ras, data, dbtype, keepBitWidth);
 

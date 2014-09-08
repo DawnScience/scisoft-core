@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.CompoundDoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -51,11 +50,11 @@ public class Convolve extends ABinaryOperator implements IOperator {
 
 		IDataset[] values = it.getValues();
 		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
-		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
+		Dataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
 		data.setSlice(calcConvolution(da, db));
 	}
 
-	private static AbstractDataset calcConvolution(DoubleDataset signal, AbstractDataset kernel) {
+	private static Dataset calcConvolution(DoubleDataset signal, Dataset kernel) {
 		int l = signal.getSize();
 		DoubleDataset padded = new DoubleDataset(2*l - 1);
 		int hl = l/2;
@@ -75,7 +74,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 
 		final IDataset[] values = it.getValues();
 		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
-		AbstractDataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
+		Dataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
 
 		data.setSlice(calcConvolution(da, db));
 

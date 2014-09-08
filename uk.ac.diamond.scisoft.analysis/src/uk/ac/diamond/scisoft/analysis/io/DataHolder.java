@@ -25,7 +25,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
@@ -36,7 +36,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
  * directly or via a ScanFileHolder.
  * <p>
  * This is designed to take in any dataset obeying the IDataset interface but output an
- * object that is a subclass of AbstractDataset - the dataset will be converted if necessary.
+ * object that is a subclass of Dataset - the dataset will be converted if necessary.
  * 
  * This implementation does not permit duplicated names.
  */
@@ -203,8 +203,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @return Generic dataset with given index in holder
 	 */
 	@Override
-	public AbstractDataset getDataset(int index) {
-		return DatasetUtils.convertToAbstractDataset(getLazyDataset(index));
+	public Dataset getDataset(int index) {
+		return DatasetUtils.convertToDataset(getLazyDataset(index));
 	}
 
 	/**
@@ -213,8 +213,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @return Generic dataset with given name
 	 */
 	@Override
-	public AbstractDataset getDataset(String name) {
-		return DatasetUtils.convertToAbstractDataset(getLazyDataset(name));
+	public Dataset getDataset(String name) {
+		return DatasetUtils.convertToDataset(getLazyDataset(name));
 	}
 
 	/**

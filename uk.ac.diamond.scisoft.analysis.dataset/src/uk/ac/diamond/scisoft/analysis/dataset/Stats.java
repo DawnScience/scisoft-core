@@ -41,8 +41,8 @@ public class Stats {
 	private static final String STORE_QUARTILE3 = "quartile3";
 
 	// calculates statistics and returns sorted dataset (0th element if compound)
-	private static AbstractDataset calcQuartileStats(final AbstractDataset a) {
-		AbstractDataset s = null;
+	private static Dataset calcQuartileStats(final AbstractDataset a) {
+		Dataset s = null;
 		final int is = a.getElementsPerItem();
 
 		if (is == 1) {
@@ -68,7 +68,7 @@ public class Stats {
 				store = (double[]) a.getStoredValue(STORE_QUARTILE3);
 				store[j] = pQuantile(w, 0.75);
 				if (j == 0)
-					s = (AbstractDataset) w.clone();
+					s = w.clone();
 			}
 		}
 		return s;
@@ -83,14 +83,14 @@ public class Stats {
 		return m;
 	}
 
-	static private AbstractDataset getQStatistics(final AbstractDataset a, int axis, final String stat) {
+	static private Dataset getQStatistics(final AbstractDataset a, int axis, final String stat) {
 		axis = a.checkAxis(axis);
 		Object obj = a.getStoredValue(stat);
 		final int is = a.getElementsPerItem();
 
 		if (obj == null) {
 			if (is == 1) {
-				AbstractDataset s = DatasetUtils.sort(a, axis);
+				Dataset s = DatasetUtils.sort(a, axis);
 
 				a.setStoredValue(STORE_MEDIAN + "-" + axis, pQuantile(s, axis, 0.5));
 				a.setStoredValue(STORE_QUARTILE1 + "-" + axis, pQuantile(s, axis, 0.25));
@@ -124,7 +124,7 @@ public class Stats {
 			obj = a.getStoredValue(stat);
 		}
 
-		return (AbstractDataset) obj;
+		return (Dataset) obj;
 	}
 
 	// process a sorted dataset
@@ -143,7 +143,7 @@ public class Stats {
 	}
 
 	// process a sorted dataset and returns a double or compound double dataset
-	private static AbstractDataset pQuantile(final Dataset s, final int axis, final double q) {
+	private static Dataset pQuantile(final Dataset s, final int axis, final double q) {
 		final int rank = s.getRank();
 		final int is = s.getElementsPerItem();
 
@@ -199,7 +199,7 @@ public class Stats {
 			qds.iadd(rds);
 		}
 
-		return (AbstractDataset) qds;
+		return qds;
 	}
 
 	/**
@@ -242,12 +242,12 @@ public class Stats {
 	 * @param values
 	 * @return points at which CDF has given values
 	 */
-	public static AbstractDataset[] quantile(final Dataset a, final int axis, final double... values) {
-		final AbstractDataset[] points  = new AbstractDataset[values.length];
+	public static Dataset[] quantile(final Dataset a, final int axis, final double... values) {
+		final Dataset[] points  = new Dataset[values.length];
 		final int is = a.getElementsPerItem();
 
 		if (is == 1) {
-			AbstractDataset s = DatasetUtils.sort(a, axis);
+			Dataset s = DatasetUtils.sort(a, axis);
 			for (int i = 0; i < points.length; i++) {
 				final double q = values[i];
 				if (q < 0 || q > 1) {
@@ -268,7 +268,7 @@ public class Stats {
 					}
 					final Dataset c = pQuantile(w, axis, q);
 					if (j == 0) {
-						points[i] = (AbstractDataset) DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
+						points[i] = DatasetFactory.zeros(is, c.getShapeRef(), c.getDtype());
 					}
 					((CompoundDoubleDataset) points[i]).setElements(c, j);
 				}
@@ -283,7 +283,7 @@ public class Stats {
 	 * @param axis
 	 * @return median
 	 */
-	public static AbstractDataset median(final Dataset a, final int axis) {
+	public static Dataset median(final Dataset a, final int axis) {
 		return getQStatistics(DatasetUtils.convertToAbstractDataset(a), axis, STORE_MEDIAN + "-" + axis);
 	}
 
@@ -322,9 +322,9 @@ public class Stats {
 	 * @param axis
 	 * @return range
 	 */
-	public static AbstractDataset iqr(final Dataset a, final int axis) {
+	public static Dataset iqr(final Dataset a, final int axis) {
 		AbstractDataset aa = DatasetUtils.convertToAbstractDataset(a);
-		AbstractDataset q3 = getQStatistics(aa, axis, STORE_QUARTILE3 + "-" + axis);
+		Dataset q3 = getQStatistics(aa, axis, STORE_QUARTILE3 + "-" + axis);
 
 		return Maths.subtract(q3, aa.getStoredValue(STORE_QUARTILE1 + "-" + axis));
 	}
@@ -577,7 +577,7 @@ public class Stats {
 	 * @param axis
 	 * @return skewness
 	 */
-	public static AbstractDataset skewness(final Dataset a, final int axis) {
+	public static Dataset skewness(final Dataset a, final int axis) {
 		return skewness(a, false, axis);
 	}
 
@@ -587,7 +587,7 @@ public class Stats {
 	 * @param axis
 	 * @return skewness
 	 */
-	public static AbstractDataset skewness(final Dataset a, final boolean ignoreNaNs, final int axis) {
+	public static Dataset skewness(final Dataset a, final boolean ignoreNaNs, final int axis) {
 		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_SKEWNESS + "-" + axis));
 	}
 
@@ -597,7 +597,7 @@ public class Stats {
 	 * @param axis
 	 * @return kurtosis
 	 */
-	public static AbstractDataset kurtosis(final Dataset a, final int axis) {
+	public static Dataset kurtosis(final Dataset a, final int axis) {
 		return kurtosis(a, false, axis);
 	}
 
@@ -607,7 +607,7 @@ public class Stats {
 	 * @param axis
 	 * @return kurtosis
 	 */
-	public static AbstractDataset kurtosis(final Dataset a, final boolean ignoreNaNs, final int axis) {
+	public static Dataset kurtosis(final Dataset a, final boolean ignoreNaNs, final int axis) {
 		return getHigherStatistic(DatasetUtils.convertToAbstractDataset(a), ignoreNaNs, axis, AbstractDataset.storeName(ignoreNaNs, STORE_KURTOSIS + "-" + axis));
 	}
 
@@ -755,7 +755,7 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset product(final Dataset a, final int axis) {
+	public static Dataset product(final Dataset a, final int axis) {
 		return product(a, false, axis);
 	}
 
@@ -765,7 +765,7 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset product(final Dataset a, final boolean ignoreNaNs, final int axis) {
+	public static Dataset product(final Dataset a, final boolean ignoreNaNs, final int axis) {
 		return typedProduct(a, a.getDtype(), ignoreNaNs, axis);
 	}
 
@@ -776,7 +776,7 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset typedProduct(final Dataset a, final int dtype, final int axis) {
+	public static Dataset typedProduct(final Dataset a, final int dtype, final int axis) {
 		return typedProduct(a, dtype, false, axis);
 	}
 
@@ -787,7 +787,7 @@ public class Stats {
 	 * @param axis
 	 * @return product of items along axis in dataset
 	 */
-	public static AbstractDataset typedProduct(final Dataset a, final int dtype, final boolean ignoreNaNs, int axis) {
+	public static Dataset typedProduct(final Dataset a, final int dtype, final boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		final int[] oshape = a.getShape();
 		final int is = a.getElementsPerItem();
@@ -1015,7 +1015,7 @@ public class Stats {
 		}
 
 		result.setShape(AbstractDataset.squeezeShape(oshape, axis));
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -1023,7 +1023,7 @@ public class Stats {
 	 * @param a
 	 * @return cumulative product of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final Dataset a) {
+	public static Dataset cumulativeProduct(final Dataset a) {
 		return cumulativeProduct(a, false);
 	}
 
@@ -1032,7 +1032,7 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final Dataset a, boolean ignoreNaNs) {
+	public static Dataset cumulativeProduct(final Dataset a, boolean ignoreNaNs) {
 		return cumulativeProduct(a.flatten(), ignoreNaNs, 0);
 	}
 
@@ -1042,7 +1042,7 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final Dataset a, int axis) {
+	public static Dataset cumulativeProduct(final Dataset a, int axis) {
 		return cumulativeProduct(a, false, axis);
 	}
 
@@ -1052,7 +1052,7 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative product of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeProduct(final Dataset a, boolean ignoreNaNs, int axis) {
+	public static Dataset cumulativeProduct(final Dataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
@@ -1291,7 +1291,7 @@ public class Stats {
 			}
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**
@@ -1299,7 +1299,7 @@ public class Stats {
 	 * @param a
 	 * @return cumulative sum of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeSum(final Dataset a) {
+	public static Dataset cumulativeSum(final Dataset a) {
 		return cumulativeSum(a, false);
 	}
 
@@ -1308,7 +1308,7 @@ public class Stats {
 	 * @param ignoreNaNs if true, skip NaNs
 	 * @return cumulative sum of items in flattened dataset
 	 */
-	public static AbstractDataset cumulativeSum(final Dataset a, boolean ignoreNaNs) {
+	public static Dataset cumulativeSum(final Dataset a, boolean ignoreNaNs) {
 		return cumulativeSum(a.flatten(), ignoreNaNs, 0);
 	}
 
@@ -1318,7 +1318,7 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative sum of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeSum(final Dataset a, int axis) {
+	public static Dataset cumulativeSum(final Dataset a, int axis) {
 		return cumulativeSum(a, false, axis);
 	}
 
@@ -1328,7 +1328,7 @@ public class Stats {
 	 * @param axis
 	 * @return cumulative sum of items along axis in dataset
 	 */
-	public static AbstractDataset cumulativeSum(final Dataset a, boolean ignoreNaNs, int axis) {
+	public static Dataset cumulativeSum(final Dataset a, boolean ignoreNaNs, int axis) {
 		axis = a.checkAxis(axis);
 		int dtype = a.getDtype();
 		int[] oshape = a.getShape();
@@ -1541,7 +1541,7 @@ public class Stats {
 			}
 		}
 
-		return (AbstractDataset) result;
+		return result;
 	}
 
 	/**

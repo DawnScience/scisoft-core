@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -136,7 +136,7 @@ public class FermiGauss extends AFunction implements Serializable{
 			calcCachedParameters();
 		}
 
-		AbstractDataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
+		Dataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
 		return fermiDS.getDouble(0);
 	}
 
@@ -146,9 +146,9 @@ public class FermiGauss extends AFunction implements Serializable{
 			calcCachedParameters();
 		}
 
-		AbstractDataset xAxis = (AbstractDataset) it.getValues()[0];
+		IDataset xAxis = it.getValues()[0];
 
-		AbstractDataset fermiDS = getFermiDS(xAxis);
+		Dataset fermiDS = getFermiDS(xAxis);
 
 		if (fwhm == 0.0) {
 			data.setSlice(fermiDS);
@@ -167,14 +167,14 @@ public class FermiGauss extends AFunction implements Serializable{
 		data.setSlice(Signal.convolveForOverlap(s1, gaussDS, null));
 	}
 
-	public AbstractDataset getFermiDS(IDataset xAxis) {
+	public Dataset getFermiDS(IDataset xAxis) {
 		if (isDirty()) {
 			calcCachedParameters();
 		}
 
 		Fermi fermi = new Fermi(mu, kT, 1.0, 0.0);
 		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
-		AbstractDataset fermiDS = fermi.calculateValues(xAxis);
+		Dataset fermiDS = fermi.calculateValues(xAxis);
 		DoubleDataset slDS = sl.calculateValues(Maths.subtract(xAxis,mu));
 		fermiDS.imultiply(slDS);
 		fermiDS.iadd(offset);

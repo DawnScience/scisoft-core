@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
@@ -311,7 +311,7 @@ public class PolylineROI extends PointROI implements IPolylineROI, Serializable 
 	}
 
 	@Override
-	public AbstractDataset[] makeCoordinateDatasets() {
+	public Dataset[] makeCoordinateDatasets() {
 		int n = pts.size();
 		double[] x = new double[n];
 		double[] y = new double[n];

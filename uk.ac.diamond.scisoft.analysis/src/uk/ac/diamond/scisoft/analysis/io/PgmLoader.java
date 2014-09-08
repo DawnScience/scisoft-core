@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -60,7 +60,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 
-		AbstractDataset data = null;
+		Dataset data = null;
 		DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;

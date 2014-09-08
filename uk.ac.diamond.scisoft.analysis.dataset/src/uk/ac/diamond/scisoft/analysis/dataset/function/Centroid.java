@@ -19,12 +19,10 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DatasetToNumberFunction;
 
 /**
  * Find centroid of each dataset and return list of centroids along each dataset's axes
@@ -74,7 +72,7 @@ public class Centroid implements DatasetToNumberFunction {
 
 			final int[] shape = ds.getShape();
 			if (bases == null || bases.length == 0) {
-				bases = new AbstractDataset[rank];
+				bases = new Dataset[rank];
 				for (int i = 0; i < rank; i++) {
 					final int len = shape[i];
 					final DoubleDataset axis = new DoubleDataset(len);

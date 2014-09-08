@@ -19,7 +19,6 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Maths;
@@ -57,7 +56,7 @@ public class LinearLeastSquares {
 	 * @param sigmasq estimate of squared error on each data point
 	 * @return array of values
 	 */
-	public double[] solve(AbstractDataset matrix, AbstractDataset data, AbstractDataset sigmasq) {
+	public double[] solve(Dataset matrix, Dataset data, Dataset sigmasq) {
 		if (matrix.getRank() != 2) {
 			logger.error("Matrix was not 2D");
 			throw new IllegalArgumentException("Matrix was not 2D");

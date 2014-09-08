@@ -57,7 +57,7 @@ public class IntegersIterator extends IndexIterator {
 		indexes = new ArrayList<Object>();
 		for (Object i : index) {
 			if (i instanceof BooleanDataset) { // turn boolean datasets into integer ones
-				for (IntegerDataset id : Comparisons.nonZero((AbstractDataset) i)) {
+				for (IntegerDataset id : Comparisons.nonZero((Dataset) i)) {
 					indexes.add(id);
 				}
 			} else if (i == null || i instanceof Slice || i instanceof IntegerDataset) {

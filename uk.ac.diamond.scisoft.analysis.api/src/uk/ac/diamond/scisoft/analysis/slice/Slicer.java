@@ -137,6 +137,8 @@ public class Slicer {
 			} else {
 				return data;
 			}
+			
+			if (visitor.isCancelled()) break;
 		}
 
 		return null;
@@ -202,6 +204,11 @@ public class Slicer {
 						}
 					}
 				});
+			}
+
+			@Override
+			public boolean isCancelled() {
+				return visitor.isCancelled();
 			}
 		};
 		

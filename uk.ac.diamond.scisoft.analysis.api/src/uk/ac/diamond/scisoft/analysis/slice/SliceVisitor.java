@@ -32,4 +32,10 @@ public interface SliceVisitor {
 	 * @throws Exception
 	 */
 	public void visit(IDataset data, Slice[] selectedSlice, int[] selectedShape) throws Exception;
+	
+	/**
+	 * 
+	 * @return true if the slicing is cancelled.
+	 */
+	public boolean isCancelled();
 }

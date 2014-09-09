@@ -3182,7 +3182,7 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 
 	@Override
 	public Dataset max(boolean ignoreNaNs, int axis) {
-		return (AbstractDataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
+		return (Dataset) getStatistics(ignoreNaNs, axis, STORE_MAX + "-" + axis);
 	}
 
 	@Override

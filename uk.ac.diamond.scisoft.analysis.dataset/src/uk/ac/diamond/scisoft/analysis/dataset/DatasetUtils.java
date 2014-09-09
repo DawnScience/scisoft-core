@@ -341,7 +341,7 @@ public class DatasetUtils {
 		}
 		IDataset a = as[0];
 		if (as.length == 1) {
-			return convertToAbstractDataset(a.clone());
+			return convertToDataset(a.clone());
 		}
 		int[] ashape = a.getShape();
 		int at = AbstractDataset.getDType(a);

@@ -331,7 +331,6 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 		final int rank = shape.length - 1;
 		final int is = rank < 0 ? 1 : shape[rank];
 
-
 		CompoundIntegerDataset result = new CompoundIntegerDataset(is);
 
 		result.shape = rank > 0 ? Arrays.copyOf(shape, rank) : (rank < 0 ? new int[] {} : new int[] {1});
@@ -341,7 +340,6 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 		result.setData();
 		return result;
 	}
-
 
 	@Override
 	public IntegerDataset asNonCompoundDataset(final boolean shareData) { // CLASS_TYPE
@@ -820,7 +818,7 @@ public class CompoundIntegerDataset extends AbstractCompoundDataset {
 	}
 
 	@Override
-	public AbstractDataset realView() {
+	public Dataset realView() {
 		return getElementsView(0);
 	}
 

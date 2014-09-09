@@ -285,7 +285,7 @@ public class AggregateDataset extends LazyDatasetBase implements ILazyDataset {
 		Dataset a = DatasetUtils.convertToDataset(od.getSlice(monitor, start, stop, step));
 		sliced.add(a.cast(dtype));
 
-		IDataset d = DatasetUtils.concatenate(sliced.toArray(new AbstractDataset[0]), 0);
+		IDataset d = DatasetUtils.concatenate(sliced.toArray(new Dataset[0]), 0);
 		d.setName(name);
 		return d;
 	}

@@ -190,6 +190,15 @@ class Test(unittest.TestCase):
         tds = np.array([np.arange(5), np.arange(5)+5])
         self.checkitems(np.arange(10).reshape(2,5), tds)
 
+    def testAsArray(self):
+        ta = np.array([1, 2])
+        ata = np.asarray(ta)
+        self.assertEquals(ata.dtype, np.int_)
+        self.checkitems([1, 2], ata)
+        ata = np.asarray(ta, np.float)
+        self.assertEquals(ata.dtype, np.float_)
+        self.checkitems([1, 2], ata)
+
     def testSlicing(self):
         a = np.array([], dtype=np.float_)
         self.assertEquals(len(a), 0)

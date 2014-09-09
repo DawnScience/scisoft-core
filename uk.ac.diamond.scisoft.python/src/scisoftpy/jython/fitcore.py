@@ -526,7 +526,7 @@ def ellipsefit(x, y, geo=True, init=None):
     Returns:
     a vector of geometric parameters (major, minor semi-axes, major axis angle, centre coordinates)
     '''
-    f = _efitter() #.EllipseFitter()
+    f = _efitter()
     if geo:
         f.geometricFit(_asDS(x), _asDS(y), init)
     else:

@@ -42,16 +42,16 @@ class Test(unittest.TestCase):
     def checkitems(self, la, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i]), ds[i])
+                self.assertAlmostEquals(convert(la[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j]), ds[i, j])
+                    self.assertAlmostEquals(convert(la[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertAlmostEquals(convert(la[i][j][k]), ds[i, j, k])
 
     def testStrAndRepr(self):
         print 'String and repr testing'
@@ -340,6 +340,7 @@ class Test(unittest.TestCase):
     def testZeroRank(self):
         print 'Zero rank arrays testing'
         zi = np.array(1)
+        print zi
         self.assertEquals(0, len(zi.shape))
         self.assertEquals(1, zi[()])
         self.assertEquals(np.array(1), zi[...])
@@ -405,6 +406,10 @@ class Test(unittest.TestCase):
         except:
             pass
         a.shape = 3,2,2
+
+        # broadcasted set slice
+        a[...] = np.array([-1, -2])
+        self.checkitems([[-1, -2], [-1, -2]], a[1])
 
     def testAppend(self):
         print 'Append testing'

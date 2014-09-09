@@ -16,7 +16,6 @@ Capabilities
  * Mathematical and statistical functions
 
 Key differences
- * No broadcasting except from single items
  * Incomplete implementation all NumPy's methods
 
 Implemented NumPy methods (1.6)
@@ -30,9 +29,9 @@ Implemented NumPy methods (1.6)
  * Array comparisons and logic operations: all, any, greater, greater_equal, less, less_equal, equal,
    not_equal, logical_not, logical_and, logical_or, logical_xor, allclose, nonzero, select, where, choose
  * Indexing operations: unravel_index, ravel_multi_index
- * Maths: add, subtract, multiply, divide, negative, power, absolute, exp,
-   log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
-   floor_divide, reminder, phase, signum, diff, gradient
+ * Maths: add, subtract, multiply, divide, negative, power, real, imag, absolute,
+   exp, log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
+   floor_divide, reminder, phase, signum, diff, gradient, roots
  * Trig: sin, cos, tan, arcsin, arccos, arctan, arctan2, hypot, sinh, cosh,
    tanh, arcsinh, arccosh, arctanh, deg2rad, rad2deg
  * Rounding: rint, ceil, floor

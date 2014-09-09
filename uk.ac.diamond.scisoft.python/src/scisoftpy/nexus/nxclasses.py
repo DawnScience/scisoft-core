@@ -473,6 +473,22 @@ class NXsensor(NXgroup):
     '''
     pass
 
+class NXgoniometer(NXgroup):
+    '''
+    NXgoniometer node. This is a subclass of the NXgroup class.
+    
+    See the NXgroup documentation for more details.
+    '''
+    pass
+
+class NXgrating(NXgroup):
+    '''
+    NXgrating node. This is a subclass of the NXgroup class.
+    
+    See the NXgroup documentation for more details.
+    '''
+    pass
+
 #class Unknown(NXnode):
 #    '''
 #    Unknown group type; class does not start with NX or SDS.

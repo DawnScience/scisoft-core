@@ -86,7 +86,7 @@ limit is skipped over. Thus if just an upper bound of 12.3 is required then use
 optimizer as this reduces the search space significantly.  
 
 By default, a local optimizer is used, which minimises the chi-squared value of 
-fit vrs the data, to the nearest local minima.  This means that the fit will not 
+fit vs the data, to the nearest local minima.  This means that the fit will not 
 necessarily return the best result, however the local techniques are quite fast
 if a good start point can be guessed at.  The global techniques take longer, but
 are much more likely to find the global minima, however they are slower, and

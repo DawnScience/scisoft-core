@@ -110,7 +110,7 @@ class Test(unittest.TestCase):
         self.checkitems([3.2, 0.35], fr.parameters, 0)
 
         fr = fit.fit([fit.function.quadratic], self.x, self.z, [2.5, -20., 0.8], [(0.1,4), (-40, 10), (0.,1.7)], seed=123)
-    
+
         print 'PolyG: ', fr  # print fit result
         self.checkitems([3.36, -12.2, 1.7], fr.parameters, 1)
 

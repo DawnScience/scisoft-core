@@ -16,10 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra.NormOrder;
 
 public class LinearAlgebraTest {
 
@@ -40,12 +42,12 @@ public class LinearAlgebraTest {
 
 		System.out.printf("Time taken %dus\n", start/1000);
 
-		Assert.assertArrayEquals("Shape", new int[] {5, 2}, c.getShape());
-		Assert.assertEquals("Type", Dataset.FLOAT32, c.getDtype());
+		assertArrayEquals("Shape", new int[] {5, 2}, c.getShape());
+		assertEquals("Type", Dataset.FLOAT32, c.getDtype());
 
 		Dataset d = new DoubleDataset(new double[] { 4400., 4730.,
 			4532.,  4874., 4664., 5018., 4796.,  5162., 4928.,  5306. }, 5, 2);
-		Assert.assertTrue("Data does not match", d.cast(c.getDtype()).equals(c));
+		assertTrue("Data does not match", d.cast(c.getDtype()).equals(c));
 
 		int n = 16;
 		a = DatasetFactory.createRange(20*n, Dataset.FLOAT32).reshape(n, 4, 5);
@@ -59,7 +61,7 @@ public class LinearAlgebraTest {
 		nstart += System.nanoTime();
 		System.out.printf("Time taken %dus %dus\n", start/1000, nstart/1000);
 
-		Assert.assertTrue("Data does not match", d.equals(c));
+		assertTrue("Data does not match", d.equals(c));
 	}
 
 	@Test
@@ -78,8 +80,8 @@ public class LinearAlgebraTest {
 		Number n = (Number) d.typedSum();
 		nstart += System.nanoTime();
 		System.out.printf("Time taken %dus %dus\n", start/1000, nstart/1000);
-		Assert.assertTrue("Data does not match", n.equals(c.getObjectAbs(0)));
-		Assert.assertTrue("Data does not match", n.equals(c.getObject()));
+		assertTrue("Data does not match", n.equals(c.getObjectAbs(0)));
+		assertTrue("Data does not match", n.equals(c.getObject()));
 	}
 
 	@Test
@@ -93,17 +95,17 @@ public class LinearAlgebraTest {
 		System.nanoTime();
 
 		Number n = (Number) aa.sum();
-		Assert.assertTrue("Second moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
+		assertTrue("Second moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
 
 		c = LinearAlgebra.dotProduct(aa, a);
 		Dataset d = Maths.multiply(a, aa);
 		n = (Number) d.sum();
-		Assert.assertTrue("Third moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
+		assertTrue("Third moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
 
 		c = LinearAlgebra.dotProduct(aa, aa);
 		d = Maths.multiply(aa, aa);
 		n = (Number) d.sum();
-		Assert.assertTrue("Fourth moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
+		assertTrue("Fourth moment does not match: " + n + " cf " + c.getObject(), close(n, c.getDouble()));
 	}
 
 
@@ -122,8 +124,89 @@ public class LinearAlgebraTest {
 		Dataset c = LinearAlgebra.outerProduct(a, b);
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 7; j++) {
-				Assert.assertEquals("", a.getDouble(i)*b.getDouble(j), c.getDouble(i, j), 1e-12);
+				assertEquals("", a.getDouble(i)*b.getDouble(j), c.getDouble(i, j), 1e-12);
 			}
 		}
+	}
+
+	@Test
+	public void testCross() {
+		Dataset a, b, c, d;
+
+		a = new IntegerDataset(new int[] {2, 3, 5}, 3);
+		b = new FloatDataset(new float[] {1, 4, 7, 2, 5, 8}, 2, 3);
+
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {1, -9, 5, -1, -6, 4}, 2, 3), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+		c = LinearAlgebra.crossProduct(a, b, -1, -1, 0);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {1, -1, -9, -6, 5, 4}, 3, 2), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a, -1, -1, 0);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+
+		a = new IntegerDataset(new int[] {2, 3, 0}, 3);
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {21, -14, 5, 24, -16, 4}, 2, 3), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+
+		a = new IntegerDataset(new int[] {2, 3}, 2);
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {21, -14, 5, 24, -16, 4}, 2, 3), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+
+		a = new IntegerDataset(new int[] {2, 3, 5}, 3);
+		b = new FloatDataset(new float[] {1, 4, 0, 2, 5, 0}, 2, 3);
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {-20, 5, 5, -25, 10, 4}, 2, 3), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+
+		b = new FloatDataset(new float[] {1, 4, 2, 5}, 2, 2);
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {-20, 5, 5, -25, 10, 4}, 2, 3), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+
+		a = new IntegerDataset(new int[] {2, 3}, 2);
+		b = new FloatDataset(new float[] {1, 4, 2, 5}, 2, 2);
+		c = LinearAlgebra.crossProduct(a, b);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {5, 4}, 2), c, 1e-15, 1e-15);
+		d = LinearAlgebra.crossProduct(b, a);
+		TestUtils.assertDatasetEquals(Maths.negative(c), d, 1e-15, 1e-15);
+	}
+
+	@Test
+	public void testNorm() {
+		Dataset a, b;
+		a = DatasetFactory.createRange(9, Dataset.INT32);
+		a.isubtract(4);
+		b = a.reshape(3, 3);
+
+		NormOrder n = NormOrder.DEFAULT;
+		assertEquals(7.745966692414834, LinearAlgebra.norm(a, n), 1e-15);
+		assertEquals(7.745966692414834, LinearAlgebra.norm(b, n), 1e-15);
+		n = NormOrder.POS_INFINITY;
+		assertEquals(4, LinearAlgebra.norm(a, n), 1e-15);
+		assertEquals(9, LinearAlgebra.norm(b, n), 1e-15);
+		n = NormOrder.NEG_INFINITY;
+		assertEquals(0, LinearAlgebra.norm(a, n), 1e-15);
+		assertEquals(2, LinearAlgebra.norm(b, n), 1e-15);
+
+		int p = 1;
+		assertEquals(20, LinearAlgebra.norm(a, p), 1e-15);
+		assertEquals(7, LinearAlgebra.norm(b, p), 1e-15);
+		p = -1;
+		assertEquals(-4.6566128774142013e-010, LinearAlgebra.norm(a, p), 1e-09);
+		assertEquals(6, LinearAlgebra.norm(b, p), 1e-15);
+		p = 2;
+		assertEquals(7.745966692414834, LinearAlgebra.norm(a, p), 1e-15);
+		assertEquals(7.3484692283495345, LinearAlgebra.norm(b, p), 1e-15);
+		p = -2;
+		assertEquals(1.8570331885190563e-016, LinearAlgebra.norm(b, p), 1e-15);
+		p = 3;
+		assertEquals(5.8480354764257312, LinearAlgebra.norm(a, p), 1e-15);
 	}
 }

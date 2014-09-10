@@ -16,11 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +30,13 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class AbstractDatasetTest {
+	@Test
+	public void testBestDType() {
+		assertEquals(Dataset.FLOAT32, AbstractDataset.getBestDType(Dataset.INT16, Dataset.FLOAT32));
+		assertEquals(Dataset.FLOAT64, AbstractDataset.getBestDType(Dataset.INT32, Dataset.FLOAT32));
+		assertEquals(Dataset.COMPLEX64, AbstractDataset.getBestDType(Dataset.FLOAT32, Dataset.COMPLEX64));
+		assertEquals(Dataset.COMPLEX128, AbstractDataset.getBestDType(Dataset.INT32, Dataset.COMPLEX64));
+	}
 
 	@Test
 	public void testCompatibleShapes() {

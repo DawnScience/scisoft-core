@@ -114,14 +114,14 @@ public class StrideIterator extends SliceIterator {
 		// now move on one position
 		int j = endrank;
 		for (; j >= 0; j--) {
-			pos[j]++;
 			index += stride[j];
-			if (pos[j] >= shape[j]) {
-				pos[j] = 0;
-				index -= delta[j]; // reset this dimension
-			} else {
+			final int p = pos[j] + 1;
+			if (p < shape[j]) {
+				pos[j] = p;
 				break;
 			}
+			pos[j] = 0;
+			index -= delta[j]; // reset this dimension
 		}
 		if (j == -1) {
 			if (endrank >= 0) {

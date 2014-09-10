@@ -149,7 +149,16 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 	public static final int ARRAYFLOAT64 = Dataset.ARRAYFLOAT64;
 
 	protected static boolean isDTypeElemental(int dtype) {
-		return (dtype <= COMPLEX128 || dtype == RGB);
+		return dtype <= COMPLEX128 || dtype == RGB;
+	}
+
+	protected static boolean isDTypeFloating(int dtype) {
+		return dtype == FLOAT32 || dtype == FLOAT64 || dtype == COMPLEX64 || dtype == COMPLEX128 ||
+				dtype == ARRAYFLOAT32 || dtype == ARRAYFLOAT64;
+	}
+
+	protected static boolean isDTypeComplex(int dtype) {
+		return dtype == COMPLEX64 || dtype == COMPLEX128;
 	}
 
 	/**
@@ -487,6 +496,19 @@ public abstract class AbstractDataset extends LazyDatasetBase implements Dataset
 		int a = atype >= ARRAYINT8 ? atype / ARRAYMUL : atype;
 		int b = btype >= ARRAYINT8 ? btype / ARRAYMUL : btype;
 
+		if (isDTypeFloating(a)) {
+			if (!isDTypeFloating(b)) {
+				b = getBestFloatDType(b);
+				if (isDTypeComplex(a)) {
+					b += COMPLEX64 - FLOAT32;
+				}
+			}
+		} else if (isDTypeFloating(b)) {
+			a = getBestFloatDType(a);
+			if (isDTypeComplex(b)) {
+				a += COMPLEX64 - FLOAT32;
+			}
+		}
 		besttype = a > b ? a : b;
 
 		if (atype >= ARRAYINT8 || btype >= ARRAYINT8) {

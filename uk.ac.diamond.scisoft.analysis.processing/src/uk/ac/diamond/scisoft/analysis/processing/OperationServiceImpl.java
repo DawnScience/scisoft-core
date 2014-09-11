@@ -177,20 +177,6 @@ public class OperationServiceImpl implements IOperationService {
         }
 	}
 
-//	protected IDataset getMask(IRichDataset dataset, IDataset currentSlice, Slice[] slices) {
-//		
-//		ILazyDataset lmask = dataset.getMask();
-//		if (lmask==null) return null;
-//		
-//		ILazyDataset fullData = dataset.getData();
-//		if (isCompatible(fullData.getShape(), lmask.getShape())) {
-//			return lmask.getSlice(slices);
-//		} else if (isCompatible(currentSlice.getShape(), lmask.getShape())) {
-//			return lmask.getSlice((Slice)null);
-//		}
-//		throw new OperationException(null, "The mask is neither the shape of the full data or the shape of the requested slice!");
-//	}
-	
 	protected static boolean isCompatible(final int[] ashape, final int[] bshape) {
 
 		List<Integer> alist = new ArrayList<Integer>();

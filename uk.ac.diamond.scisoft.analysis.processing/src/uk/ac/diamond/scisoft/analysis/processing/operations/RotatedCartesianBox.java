@@ -10,7 +10,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
 
-public class RotatedCartesianBox extends AbstractOperation {
+public class RotatedCartesianBox extends AbstractOperation<RotatedCartesianBoxModel, OperationData> {
 	
 	@Override
 	public String getId() {

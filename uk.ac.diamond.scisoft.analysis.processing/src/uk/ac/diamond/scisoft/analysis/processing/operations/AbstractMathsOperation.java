@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
  * @author fcp94556
  *
  */
-public abstract class AbstractMathsOperation extends AbstractOperation {
+public abstract class AbstractMathsOperation extends AbstractOperation<IOperationModel, OperationData> {
 
 	private Object         value;
 	
@@ -39,9 +39,13 @@ public abstract class AbstractMathsOperation extends AbstractOperation {
 	protected abstract IDataset operation(IDataset a, Object value);
 
 	@Override
-	public void setModel(IOperationModel model) throws Exception {
+	public void setModel(IOperationModel model) {
 		super.setModel(model);
-		this.value = model.get("Value");
+		try {
+			this.value = model.get("Value");
+		} catch (Exception e) {
+			value = null;
+		}
 	}
 
 	

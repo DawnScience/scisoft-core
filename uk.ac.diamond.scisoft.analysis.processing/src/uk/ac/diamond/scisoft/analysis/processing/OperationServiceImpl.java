@@ -39,7 +39,7 @@ public class OperationServiceImpl implements IOperationService {
 	static {
 		System.out.println("Starting operation service");
 	}
-	private Map<String, IOperation>      operations;
+	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>      operations;
 	private Map<String, Class<? extends IOperationModel>> models;
 	
 	public OperationServiceImpl() {
@@ -51,19 +51,19 @@ public class OperationServiceImpl implements IOperationService {
 	 * stacks out of the rich dataset passed in.
 	 */
 	@Override
-	public void executeSeries(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation... series) throws OperationException {
+	public void executeSeries(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.SERIES);
 	}
 
 
 	@Override
-	public void executeParallelSeries(IRichDataset dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException {
+	public void executeParallelSeries(IRichDataset dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.PARALLEL);
 	}
 
 	private long parallelTimeout;
 	
-	private void execute(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation[] series, ExecutionType type) throws OperationException {
+	private void execute(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
 		
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
@@ -209,15 +209,15 @@ public class OperationServiceImpl implements IOperationService {
 	private synchronized void checkOperations() throws CoreException {
 		if (operations!=null) return;
 		
-		operations = new HashMap<String, IOperation>(31);
+		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 			final String     id = e.getAttribute("id");
-			IOperation op = null;
+			IOperation<? extends IOperationModel, ? extends OperationData> op = null;
 			try {
-				op = (IOperation)e.createExecutableExtension("class");
+				op = (IOperation<? extends IOperationModel, ? extends OperationData>)e.createExecutableExtension("class");
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -226,10 +226,10 @@ public class OperationServiceImpl implements IOperationService {
 			
 			if (op instanceof AbstractOperation) {
 				final String name = e.getAttribute("name");
-				((AbstractOperation)op).setName(name);
+				((AbstractOperation<? extends IOperationModel, ? extends OperationData>)op).setName(name);
 				
 				final String desc = e.getAttribute("description");
-				if (desc!=null) ((AbstractOperation)op).setDescription(desc);
+				if (desc!=null) ((AbstractOperation<? extends IOperationModel, ? extends OperationData>)op).setDescription(desc);
 			}
 			
 			final String     model = e.getAttribute("model");
@@ -247,12 +247,12 @@ public class OperationServiceImpl implements IOperationService {
 
 
 	@Override
-	public Collection<IOperation> find(String regex) throws Exception {
+	public Collection<IOperation<? extends IOperationModel, ? extends OperationData>> find(String regex) throws Exception {
 		checkOperations();
 		
-		Collection<IOperation> ret = new ArrayList<IOperation>(3);
+		Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ret = new ArrayList<IOperation<? extends IOperationModel, ? extends OperationData>>(3);
 		for (String id : operations.keySet()) {
-			IOperation operation = operations.get(id);
+			IOperation<? extends IOperationModel, ? extends OperationData> operation = operations.get(id);
 			if (matches(id, operation, regex)) {
 				ret.add(operation);
 			}
@@ -261,12 +261,12 @@ public class OperationServiceImpl implements IOperationService {
 	}
 	
 	@Override
-	public Collection<IOperation> find(OperationRank rank, boolean isInput) throws Exception {
+	public Collection<IOperation<? extends IOperationModel, ? extends OperationData>> find(OperationRank rank, boolean isInput) throws Exception {
 		checkOperations();
 
-		Collection<IOperation> ret = new ArrayList<IOperation>(3);
+		Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ret = new ArrayList<IOperation<? extends IOperationModel, ? extends OperationData>>(3);
 		for (String id : operations.keySet()) {
-			IOperation operation = operations.get(id);
+			IOperation<? extends IOperationModel, ? extends OperationData> operation = operations.get(id);
 			OperationRank r      = isInput ? operation.getInputRank() : operation.getOutputRank();
 			if (rank==r) {
 				ret.add(operation);
@@ -276,11 +276,11 @@ public class OperationServiceImpl implements IOperationService {
 	}	
 	
 	@Override
-	public IOperation findFirst(String regex) throws Exception {
+	public IOperation<? extends IOperationModel, ? extends OperationData> findFirst(String regex) throws Exception {
 		checkOperations();
 		
 		for (String id : operations.keySet()) {
-			IOperation operation = operations.get(id);
+			IOperation<? extends IOperationModel, ? extends OperationData> operation = operations.get(id);
 			if (matches(id, operation, regex)) {
 				return operation;
 			}
@@ -295,7 +295,7 @@ public class OperationServiceImpl implements IOperationService {
 	 * 3. if indexOf the regex in the id is >0
 	 * 4. if indexOf the regex in the description is >0
 	 */
-	private boolean matches(String id, IOperation operation, String regex) {
+	private boolean matches(String id, IOperation<? extends IOperationModel, ? extends OperationData> operation, String regex) {
 		if (id.matches(regex)) return true;
 		final String description = operation.getDescription();
 		if (description.matches(regex)) return true;
@@ -311,11 +311,11 @@ public class OperationServiceImpl implements IOperationService {
 	}
 
 	@Override
-	public IOperation create(String operationId) throws Exception {
+	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception {
 		checkOperations();
-		IOperation op = operations.get(operationId).getClass().newInstance();
+		IOperation<? extends IOperationModel, ? extends OperationData> op = operations.get(operationId).getClass().newInstance();
 		if (op instanceof AbstractOperation) {
-			AbstractOperation aop = (AbstractOperation)op;
+			AbstractOperation<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperation<? extends IOperationModel, ? extends OperationData>)op;
 			aop.setName(operations.get(operationId).getName());
 			aop.setDescription(operations.get(operationId).getDescription());
 		}
@@ -330,8 +330,8 @@ public class OperationServiceImpl implements IOperationService {
 			if (Modifier.isAbstract(class1.getModifiers())) continue;
 			if (IOperation.class.isAssignableFrom(class1)) {
 				
-				IOperation op = (IOperation) class1.newInstance();
-				if (operations==null) operations = new HashMap<String, IOperation>(31);
+				IOperation<? extends IOperationModel, ? extends OperationData> op = (IOperation<? extends IOperationModel, ? extends OperationData>) class1.newInstance();
+				if (operations==null) operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 				
 				operations.put(op.getId(), op);
 

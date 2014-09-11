@@ -35,7 +35,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
  * When you create an IOperation is must be marked with @Operation so that 
  * it can be read into the operation service.
  */
-public interface IOperation {
+public interface IOperation<M extends IOperationModel, D extends OperationData> {
 	
 	/**
 	 * The operation name. The operation service allows operations to be 
@@ -77,25 +77,25 @@ public interface IOperation {
 	 * 
 	 * @return dataset which is the result of this operation.
 	 */
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException;
+	public D execute(IDataset slice, IMonitor monitor) throws OperationException;
 	
+	
+	/**
+	 * 
+	 * @return the model which is to be used or null if no model has been set.
+	 */
+	public M getModel();
+
 	
 	/**
 	 * The list of parameters are specific to the operation we are doing. NOTE parameters should not
 	 * be data contained in IRichDataset, like Datasets, Metadata and Regions. Parameter examples are:
 	 * double values for tolerances, xml configurations, JSON strings etc.
 	 * 
-	 * @param parameters
+	 * @param model
 	 * @throws IllegalArgumentException if the parameters are not those required by the operation.
 	 */
-	public void setModel(IOperationModel parameters) throws Exception;
-	
-	/**
-	 * 
-	 * @return the model which is to be used or null if no model has been set.
-	 */
-	public IOperationModel getModel();
-
+	public void setModel(M model);
 
 	/**
 	 * Gets the rank of input data for the operations algorithm. You might be iterating

@@ -12,7 +12,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class DiffractionMetadataTestImportOperation extends AbstractOperation {
+public class DiffractionMetadataTestImportOperation extends AbstractOperation<IOperationModel, OperationData> {
 
 	IDiffractionMetadata meta;
 	
@@ -32,7 +32,7 @@ public class DiffractionMetadataTestImportOperation extends AbstractOperation {
 	}
 
 	@Override
-	public void setModel(IOperationModel parameters) throws Exception {
+	public void setModel(IOperationModel parameters) {
 
 	}
 

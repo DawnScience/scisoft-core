@@ -31,7 +31,10 @@ public class OperationData {
 	public IDataset getData() {
 		return data;
 	}
-
+	
+	public OperationData() {
+        this(null, null);
+	}
 	public OperationData(IDataset data) {
 		this(data, (Serializable) null);
 	}

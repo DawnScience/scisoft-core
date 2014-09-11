@@ -205,10 +205,10 @@ final MaskMetadata mmd = new MaskMetadata() {
 			}
 		};
 		
-		final IOperation maskOp = new AbstractOperation() {
+		final IOperation maskOp = new AbstractOperation<IOperationModel, OperationData>() {
 			
 			@Override
-			public void setModel(IOperationModel parameters) throws Exception {
+			public void setModel(IOperationModel parameters) {
 			}
 			
 			@Override

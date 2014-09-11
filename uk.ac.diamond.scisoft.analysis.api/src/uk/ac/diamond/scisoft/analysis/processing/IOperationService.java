@@ -60,7 +60,7 @@ public interface IOperationService {
 	 * @param operationRegex
 	 * @return list of operations which match
 	 */
-	public Collection<IOperation> find(String operationRegex)  throws Exception;
+	public Collection<IOperation<? extends IOperationModel, ? extends OperationData>> find(String operationRegex)  throws Exception;
 	
 	/**
 	 * Finds all operations with either the input rank or output rank (when isInput=false)
@@ -73,7 +73,7 @@ public interface IOperationService {
 	 * @param isInput - true to search inputs, false to search outputs.
 	 * @return list of operations which match
 	 */
-	public Collection<IOperation> find(OperationRank rank, boolean isInput)  throws Exception;
+	public Collection<IOperation<? extends IOperationModel, ? extends OperationData>> find(OperationRank rank, boolean isInput)  throws Exception;
 
 	/**
 	 * Finds the first operation matcing a search
@@ -92,7 +92,7 @@ public interface IOperationService {
 	 * @param operationRegex
 	 * @return list of operations which match
 	 */
-	public IOperation findFirst(String operationRegex)  throws Exception;
+	public IOperation<? extends IOperationModel, ? extends OperationData>  findFirst(String operationRegex)  throws Exception;
 	
 	/**
 	 * Gets the ids of all the operations. The id is defined in the extension point.
@@ -106,7 +106,7 @@ public interface IOperationService {
 	 * 
 	 * @return IOperation
 	 */
-	public IOperation create(String operationId) throws Exception;
+	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception;
 	
 	
 	/**
@@ -126,7 +126,7 @@ public interface IOperationService {
 	 * @param series
 	 * @throws OperationException
 	 */
-	public void executeSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+	public void executeSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException;
 	
 
 	/**
@@ -143,7 +143,7 @@ public interface IOperationService {
 	 * @param series
 	 * @throws OperationException
 	 */
-	public void executeParallelSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation... series) throws OperationException;
+	public void executeParallelSeries(IRichDataset dataset, IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException;
 
 	/**
 	 * Method to validate a pipeline, throwing an exception if the pipeline is not valid.
@@ -152,7 +152,7 @@ public interface IOperationService {
 	 * @param series
 	 * @throws InvalidRankException
 	 */
-	public void validate(IDataset firstSlice, IOperation... series) throws InvalidRankException, OperationException;
+	public void validate(IDataset firstSlice, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws InvalidRankException, OperationException;
 
 	/**
 	 * Optionally configure the parallel timeout of this service.

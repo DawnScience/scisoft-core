@@ -10,7 +10,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
-public class BoxIntegration extends AbstractIntegrationOperation {
+public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationModel> {
 
 
 	@Override

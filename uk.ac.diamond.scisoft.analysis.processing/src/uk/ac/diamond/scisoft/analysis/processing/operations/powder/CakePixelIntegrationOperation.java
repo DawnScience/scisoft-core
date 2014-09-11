@@ -12,7 +12,7 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
-public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOperation {
+public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOperation<CakePixelIntegrationModel> {
 
 
 	@Override

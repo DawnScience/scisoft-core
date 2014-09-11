@@ -14,10 +14,8 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public abstract class AbstractPixelIntegrationOperation extends
-		AbstractOperation {
+public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrationModel> extends AbstractOperation<T, OperationData> {
 
 	AbstractPixelIntegration integrator;
 	IDiffractionMetadata metadata;
@@ -60,9 +58,9 @@ public abstract class AbstractPixelIntegrationOperation extends
 	}
 	
 	@Override
-	public void setModel(IOperationModel model) throws Exception {
-		if (!(model instanceof PixelIntegrationModel)) throw new IllegalArgumentException("Incorrect model type");
+	public void setModel(T model) {
 		
+		super.setModel(model);
 		if (listener == null) {
 			listener = new PropertyChangeListener() {
 				
@@ -75,7 +73,6 @@ public abstract class AbstractPixelIntegrationOperation extends
 			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
 		}
 		
-		this.model = model;
 		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
 	}
 	

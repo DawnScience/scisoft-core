@@ -15,9 +15,8 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class DilateMaskOperation extends AbstractOperation {
+public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -25,8 +24,7 @@ public class DilateMaskOperation extends AbstractOperation {
 	}
 
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
+	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 
 		IDataset mask = null;
 		try {
@@ -66,12 +64,6 @@ public class DilateMaskOperation extends AbstractOperation {
 		
 	}
 	
-	@Override
-	public void setModel(IOperationModel model) throws Exception {
-		if (!(model instanceof DilateMaskModel)) throw new IllegalArgumentException("Incorrect model!");
-		this.model = model;
-	}
-
 	@Override
 	public OperationRank getInputRank() {
 		return OperationRank.TWO;

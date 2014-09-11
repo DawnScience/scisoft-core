@@ -5,13 +5,11 @@ import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class DiffractionMetadataImportOperation extends AbstractOperation {
+public class DiffractionMetadataImportOperation extends AbstractOperation<DiffractionMetadataImportModel, OperationData> {
 
 	IDiffractionMetadata metadata;
 	
@@ -35,13 +33,6 @@ public class DiffractionMetadataImportOperation extends AbstractOperation {
 		return new OperationData(slice);
 	}
 
-	@Override
-	public void setModel(IOperationModel parameters) throws Exception {
-		if (!(parameters instanceof DiffractionMetadataImportModel)) throw new IllegalArgumentException("incorrect model");
-		
-		model = parameters;
-
-	}
 
 	@Override
 	public OperationRank getInputRank() {

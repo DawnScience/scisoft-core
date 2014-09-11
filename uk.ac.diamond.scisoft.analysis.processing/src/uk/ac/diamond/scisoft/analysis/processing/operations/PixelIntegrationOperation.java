@@ -19,12 +19,10 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class PixelIntegrationOperation extends AbstractOperation {
+public class PixelIntegrationOperation extends AbstractOperation<PowderIntegrationModel, OperationData> {
 
 	AbstractPixelIntegration integrator;
-	PowderIntegrationModel model;
 	IDiffractionMetadata metadata;
 
 	@Override
@@ -124,17 +122,6 @@ public class PixelIntegrationOperation extends AbstractOperation {
 		}
 		
 		return integrator;
-	}
-
-	@Override
-	public void setModel(IOperationModel parameters) throws Exception {
-		if (!(parameters instanceof PowderIntegrationModel)) {
-			throw new IllegalArgumentException("Incorrect model");
-		}
-		
-		super.setModel(parameters);
-		model = (PowderIntegrationModel) parameters;
-
 	}
 
 	@Override

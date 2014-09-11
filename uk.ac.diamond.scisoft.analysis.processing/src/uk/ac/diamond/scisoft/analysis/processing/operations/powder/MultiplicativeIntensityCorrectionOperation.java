@@ -18,7 +18,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class MultiplicativeIntensityCorrectionOperation extends
-		AbstractOperation {
+		AbstractOperation<MultiplicativeIntensityCorrectionModel, OperationData> {
 
 	Dataset correction;
 	IDiffractionMetadata metadata;
@@ -60,9 +60,9 @@ public class MultiplicativeIntensityCorrectionOperation extends
 	}
 	
 	@Override
-	public void setModel(IOperationModel model) throws Exception {
-		if (!(model instanceof MultiplicativeIntensityCorrectionModel)) throw new IllegalArgumentException("Incorrect model type");
+	public void setModel(MultiplicativeIntensityCorrectionModel model) {
 		
+		super.setModel(model);
 		if (listener == null) {
 			listener = new PropertyChangeListener() {
 				
@@ -72,11 +72,10 @@ public class MultiplicativeIntensityCorrectionOperation extends
 				}
 			};
 		} else {
-			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+			model.removePropertyChangeListener(listener);
 		}
 		
-		this.model = model;
-		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
+		model.addPropertyChangeListener(listener);
 	}
 	
 	private Dataset calculateCorrectionArray(IDataset data, IDiffractionMetadata md) {

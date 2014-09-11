@@ -29,9 +29,9 @@ import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 
-public abstract class AbstractOperation implements IOperation {
+public abstract class AbstractOperation<T extends IOperationModel, D extends OperationData> implements IOperation<T, D> {
 
-	protected IOperationModel model;
+	protected T model;
 	
     private String name;
     private String description;
@@ -85,11 +85,11 @@ public abstract class AbstractOperation implements IOperation {
 	}
 	
 	@Override
-	public IOperationModel getModel() {
+	public T getModel() {
 		return model;
 	}
 	@Override
-	public void setModel(IOperationModel model) throws Exception {
+	public void setModel(T model) {
 		this.model = model;
 	}
 	

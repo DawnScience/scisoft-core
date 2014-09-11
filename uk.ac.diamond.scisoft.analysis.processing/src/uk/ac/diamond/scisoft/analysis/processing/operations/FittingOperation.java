@@ -12,9 +12,8 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class FittingOperation extends AbstractOperation {
+public class FittingOperation extends AbstractOperation<FittingModel, OperationData> {
 
 	private FittingModel model;
 
@@ -43,13 +42,6 @@ public class FittingOperation extends AbstractOperation {
 			throw new OperationException(this, ne);
 		}
 	}
-
-	@Override
-	public void setModel(IOperationModel model) throws Exception {
-		super.setModel(model);
-		this.model = (FittingModel)model;
-	}
-
 	
 	public OperationRank getInputRank() {
 		return OperationRank.ONE; // XY data

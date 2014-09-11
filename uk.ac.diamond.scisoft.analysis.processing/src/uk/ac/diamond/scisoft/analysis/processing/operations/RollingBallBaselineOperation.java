@@ -11,7 +11,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
-public class RollingBallBaselineOperation extends AbstractOperation {
+public class RollingBallBaselineOperation extends AbstractOperation<RollingBallBaselineModel, OperationData> {
 
 	@Override
 	public String getId() {

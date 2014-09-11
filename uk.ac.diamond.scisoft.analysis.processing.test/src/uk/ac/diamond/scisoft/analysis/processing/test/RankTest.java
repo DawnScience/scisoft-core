@@ -22,6 +22,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
@@ -240,10 +241,10 @@ public class RankTest {
 	@Test
 	public void testFindByRank() throws Exception {
 
-		Collection<IOperation> ones = service.find(OperationRank.ONE, true);
+		Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ones = service.find(OperationRank.ONE, true);
 		if (ones.isEmpty()) throw new Exception("No one dimensional inputs found but there should be fitting!");
 		
-		Collection<IOperation> twos = service.find(OperationRank.TWO, true);
+		Collection<IOperation<? extends IOperationModel, ? extends OperationData>> twos = service.find(OperationRank.TWO, true);
 		if (twos.isEmpty()) throw new Exception("No two dimensional inputs found but there should be integration!");
 		
 		ones = service.find(OperationRank.ONE, false);

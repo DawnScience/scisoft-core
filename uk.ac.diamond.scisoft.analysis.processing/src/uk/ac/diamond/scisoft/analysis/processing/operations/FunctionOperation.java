@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
@@ -7,9 +9,8 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
-public class FunctionOperation extends AbstractOperation {
+public class FunctionOperation extends AbstractOperation<FunctionModel, OperationData> {
 
 	private IFunction      function;
 
@@ -30,9 +31,14 @@ public class FunctionOperation extends AbstractOperation {
 	}
 
 	@Override
-	public void setModel(IOperationModel model) throws Exception {
+	public void setModel(FunctionModel model) {
 		super.setModel(model);
-		this.function = (IFunction)model.get("function");
+		try {
+			this.function = (IFunction)model.get("function");
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			function = null;
+		}
 	}
 	
 	public OperationRank getInputRank() {

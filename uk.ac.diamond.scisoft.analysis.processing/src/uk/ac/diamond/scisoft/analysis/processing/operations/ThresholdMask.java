@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
-public class ThresholdMask extends AbstractOperation {
+public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, OperationData> {
 
 	@Override
     public String getName() {

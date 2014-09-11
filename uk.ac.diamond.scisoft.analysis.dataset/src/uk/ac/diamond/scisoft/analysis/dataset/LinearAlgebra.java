@@ -634,7 +634,7 @@ public class LinearAlgebra {
 	 * @param p
 	 * @return p-norm of dataset
 	 */
-	public static double norm(Dataset a, double p) {
+	public static double norm(Dataset a, final double p) {
 		if (p == 0) {
 			return norm(a, NormOrder.ZERO);
 		}
@@ -647,7 +647,7 @@ public class LinearAlgebra {
 		throw new IllegalArgumentException("Rank of dataset must be one or two");
 	}
 
-	private static double vectorNorm(Dataset a, double p) {
+	private static double vectorNorm(Dataset a, final double p) {
 		IndexIterator it = a.getIterator();
 		double n = 0;
 		if (a.isComplex()) {
@@ -676,7 +676,7 @@ public class LinearAlgebra {
 		return Math.pow(n, 1./p);
 	}
 
-	private static double matrixNorm(Dataset a, double p) {
+	private static double matrixNorm(Dataset a, final double p) {
 		double n;
 		if (Math.abs(p) == 1) {
 			n = maxMinMatrixNorm(a, 0, p > 0);

@@ -205,8 +205,13 @@ public class LinearAlgebraTest {
 		assertEquals(7.745966692414834, LinearAlgebra.norm(a, p), 1e-15);
 		assertEquals(7.3484692283495345, LinearAlgebra.norm(b, p), 1e-15);
 		p = -2;
+//		assertTrue(Double.isNaN(LinearAlgebra.norm(a, p))); TODO make behave like NumPy?
+		assertEquals(0, LinearAlgebra.norm(a, p), 1e-15);
 		assertEquals(1.8570331885190563e-016, LinearAlgebra.norm(b, p), 1e-15);
 		p = 3;
 		assertEquals(5.8480354764257312, LinearAlgebra.norm(a, p), 1e-15);
+		p = -3;
+//		assertTrue(Double.isNaN(LinearAlgebra.norm(a, p)));
+		assertEquals(0, LinearAlgebra.norm(a, p), 1e-15);
 	}
 }

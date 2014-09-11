@@ -134,6 +134,7 @@ vdot = _np.vdot
 inner = _np.inner
 #outer = _np.outer
 tensordot = _np.tensordot
+cross = _np.cross
 
 def gradient(f, *arg):
     '''Extended version of gradient that allows arrays for arg

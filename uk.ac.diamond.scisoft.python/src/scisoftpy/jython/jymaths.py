@@ -438,6 +438,22 @@ def tensordot(a, b, axes=2):
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
 @_wrap
+def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
+    '''Cross product of two (arrays of vectors)
+    
+    a -- first vector
+    b -- second vector
+    axisa -- axis of a that defines the vector(s)
+    axisb -- axis of b that defines the vector(s)
+    axisc -- axis of c that will contain the cross product(s)
+    axis -- override all values of axis values
+    '''
+    if axis is not None:
+        axisa = axisb = axisc = axis
+
+        return _linalg.crossProduct(a, b, axisa, axisb, axisc)
+
+@_wrap
 def gradient(f, *varargs):
     '''Gradient of array
     

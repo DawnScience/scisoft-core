@@ -60,6 +60,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		updateAxes(integrated, slices, shape, dataDims);
 		integrated.setName("data");
 		appendData(integrated,results, slices,shape, file);
+		if (!firstPassDone)file.setAttribute(results +"/" +integrated.getName(), "signal", String.valueOf(1));
 		firstPassDone = true;
 		
 	}
@@ -95,9 +96,11 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 							axDataset.setName(axesNames.get(i));
 							
 							if (setDims.contains(i) && !firstPassDone) {
-								file.createDataset(axDataset.getName(), axDataset, results);
+								String ds = file.createDataset(axDataset.getName(), axDataset, results);
+								file.setAttribute(ds, "axis", String.valueOf(i));
 							} else {
 								appendData(axDataset,results, oSlice,oShape, file);
+								file.setAttribute(results +"/" +axDataset.getName(), "axis", String.valueOf(i));
 							}
 							
 						}

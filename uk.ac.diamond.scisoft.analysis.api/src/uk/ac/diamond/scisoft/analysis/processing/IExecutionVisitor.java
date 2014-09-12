@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 /**
  * This interface is designed to be called when a series of operations has been 
@@ -28,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
  */
 public interface IExecutionVisitor {
 	
-	public void init() throws Exception;
+	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series) throws Exception;
 	
 	public void close() throws Exception;
 	
@@ -40,7 +41,7 @@ public interface IExecutionVisitor {
      * @param data
      * @param dataDims TODO
      */
-	public void notify(IOperation intermediateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims);
+	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermediateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims);
 	
 	/**
 	 * Called when the series of operations has been done, with the 
@@ -53,13 +54,13 @@ public interface IExecutionVisitor {
 	 * List of operations for which should not modify the data passing though the pipe
 	 * @param operations
 	 */
-	public void passDataThroughUnmodified(IOperation... operations);
+	public void passDataThroughUnmodified(IOperation<? extends IOperationModel, ? extends OperationData>... operations);
 	
 	/**
 	 * check if operation should modify the data passing though the pipe
 	 * @param operation
 	 */
-	public boolean isRequiredToModifyData(IOperation operation);
+	public boolean isRequiredToModifyData(IOperation<? extends IOperationModel, ? extends OperationData> operation);
 	
 	
 	public class Stub implements IExecutionVisitor {
@@ -71,25 +72,25 @@ public interface IExecutionVisitor {
 		}
 
 		@Override
-		public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
+		public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void passDataThroughUnmodified(IOperation... operations) {
+		public void passDataThroughUnmodified(IOperation<? extends IOperationModel, ? extends OperationData>... operations) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public boolean isRequiredToModifyData(IOperation operation) {
+		public boolean isRequiredToModifyData(IOperation<? extends IOperationModel, ? extends OperationData> operation) {
 			// TODO Auto-generated method stub
 			return true;
 		}
 
 		@Override
-		public void init() {
+		public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series) {
 			// TODO Auto-generated method stub
 			
 		}

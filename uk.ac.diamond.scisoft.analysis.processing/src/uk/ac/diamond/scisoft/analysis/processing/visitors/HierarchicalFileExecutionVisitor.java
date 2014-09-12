@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.dawb.common.services.IPersistenceService;
+import org.dawb.common.services.IPersistentFile;
+import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.hdf5.H5Utils;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
@@ -19,19 +22,16 @@ import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
+import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 
 	private boolean firstPassDone = false;
-	private final String PROCESS_GROUP = "process";
 	private final String RESULTS_GROUP = "result";
 	private final String ENTRY = "entry";
 	
-	private String process;
 	private String results;
 	private Map<Integer, String> axesNames = new HashMap<Integer,String>();
-	
-	private int count = 0;
 	private String filePath;
 	IHierarchicalDataFile file;
 	
@@ -40,13 +40,16 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void init() throws Exception {
+	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series) throws Exception {
 		file = HierarchicalDataFactory.getWriter(filePath);
+		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
+		IPersistentFile pf = service.createPersistentFile(file);
+		pf.setOperations(series);
+		
 	}
 	
 	private void initGroups() throws Exception {
 		file.group(ENTRY);
-		process = file.group(PROCESS_GROUP, ENTRY);
 		results = file.group(RESULTS_GROUP, ENTRY);
 	}
 	
@@ -55,20 +58,18 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		
 		final IDataset integrated = result.getData();
 		updateAxes(integrated, slices, shape, dataDims);
-		integrated.setName("integrated");
+		integrated.setName("data");
 		appendData(integrated,results, slices,shape, file);
 		firstPassDone = true;
 		
 	}
 
 	@Override
-	public void notify(IOperation intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
+	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
 		if (!firstPassDone)
 			try {
 				initGroups();
-				file.createStringDataset(Integer.toString(count++), intermeadiateData.getClass().getName(), process);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
@@ -159,13 +160,13 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 
 	@Override
-	public void passDataThroughUnmodified(IOperation... operations) {
+	public void passDataThroughUnmodified(IOperation<? extends IOperationModel, ? extends OperationData>... operations) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean isRequiredToModifyData(IOperation operation) {
+	public boolean isRequiredToModifyData(IOperation<? extends IOperationModel, ? extends OperationData> operation) {
 		// TODO Auto-generated method stub
 		return true;
 	}

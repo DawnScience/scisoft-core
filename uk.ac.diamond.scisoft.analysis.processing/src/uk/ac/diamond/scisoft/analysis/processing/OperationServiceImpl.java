@@ -111,7 +111,7 @@ public class OperationServiceImpl implements IOperationService {
 				}
 			};
 			
-			visitor.init();
+			visitor.init(series);
 			
 			// Jakes slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {

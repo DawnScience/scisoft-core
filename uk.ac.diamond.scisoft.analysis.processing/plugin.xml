@@ -141,6 +141,15 @@
             name="Rolling Ball Baseline Correction"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
+            description="Gaussian image filter"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurModel"
+            name="Gaussian Filter"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.slice;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -82,22 +83,10 @@ public class Slicer {
 		final int[] fullDims = lz.getShape();
 		
 		//Construct Slice String
-		StringBuilder sb = new StringBuilder();
+
+		if (sliceDimensions == null) sliceDimensions = new HashMap<Integer, String>();
 		
-		for (int i = 0; i < fullDims.length; i++) {
-			if (sliceDimensions.containsKey(i)) {
-				String s = sliceDimensions.get(i);
-				if (s.contains("all")) s = ":";
-				sb.append(s);
-				sb.append(",");
-			} else {
-				sb.append(":");
-				sb.append(',');
-			}
-		}
-		
-		sb.deleteCharAt(sb.length()-1);
-		Slice[] slices = Slice.convertFromString(sb.toString());
+		Slice[] slices = getSliceArrayFromSliceDimensions(sliceDimensions, lz.getShape());
 		
 		//create array of ignored axes values
 		int[] axes = getDataDimensions(fullDims, sliceDimensions);
@@ -222,6 +211,13 @@ public class Slicer {
 	
 	public static int[] getDataDimensions(int[] shape, Map<Integer, String> sliceDimensions) {
 
+		//assume single image/line
+		if (sliceDimensions == null) {
+			int[] dd = new int[shape.length];
+			for (int i = 0; i < shape.length; i++) dd[i] = i;
+			return dd;
+		}
+		
 		//create array of ignored axes values
 		Set<Integer> axesSet = new HashSet<Integer>();
 		for (int i = 0; i < shape.length; i++) axesSet.add(i);
@@ -232,6 +228,28 @@ public class Slicer {
 		while (iter.hasNext()) axes[count++] = iter.next();
 
 		return axes;
-
+	}
+	
+	public static Slice[] getSliceArrayFromSliceDimensions(Map<Integer, String> sliceDimensions, int[] shape) {
+		
+		//Construct Slice String
+		StringBuilder sb = new StringBuilder();
+		if (sliceDimensions == null) sliceDimensions = new HashMap<Integer, String>();
+		
+		for (int i = 0; i < shape.length; i++) {
+			if (sliceDimensions.containsKey(i)) {
+				String s = sliceDimensions.get(i);
+				if (s.contains("all")) s = ":";
+				sb.append(s);
+				sb.append(",");
+			} else {
+				sb.append(":");
+				sb.append(',');
+			}
+		}
+		
+		sb.deleteCharAt(sb.length()-1);
+		return Slice.convertFromString(sb.toString());
+		
 	}
 }

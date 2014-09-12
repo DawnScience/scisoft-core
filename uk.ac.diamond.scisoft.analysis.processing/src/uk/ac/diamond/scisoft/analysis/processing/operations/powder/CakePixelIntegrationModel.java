@@ -1,10 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class CakePixelIntegrationModel extends PixelIntegrationModel {
 
+	@OperationModelField(min=1, hint="Set number of bins for azimuthal axis",label = "Set number of azimuthal bins" )
 	private int numberOfBins2ndAxis = 1000;
+	@OperationModelField(hint="Set value for X axis after integration", label = "Select X Axis")
 	private XAxis axisType = XAxis.Q;
 	
 	public XAxis getAxisType() {

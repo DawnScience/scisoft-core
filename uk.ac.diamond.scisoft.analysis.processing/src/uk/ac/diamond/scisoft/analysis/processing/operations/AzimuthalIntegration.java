@@ -21,7 +21,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation {
 	
 	@Override
     public String getName() {
-		return "Azimuthal Integration";
+		return "Sector Azimuthal Profile";
 	}
 
 

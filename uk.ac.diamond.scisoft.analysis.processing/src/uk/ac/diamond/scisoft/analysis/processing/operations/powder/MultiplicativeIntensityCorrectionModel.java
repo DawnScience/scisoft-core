@@ -1,14 +1,21 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 public class MultiplicativeIntensityCorrectionModel extends AbstractOperationModel {
 
+	@OperationModelField(label = "Apply solid angle correction")
 	private boolean applySolidAngleCorrection = false;
+	@OperationModelField(label = "Apply polarisation correction")
 	private boolean applyPolarisationCorrection = false;
+	@OperationModelField(label = "Apply detector transmission correction")
 	private boolean applyDetectorTransmissionCorrection = false;
+	@OperationModelField(label = "Set polarisation factor")
 	private double polarisationFactor = 0.9;
+	@OperationModelField(label = "Set polarisation angular offset")
 	private double polarisationAngularOffset = 0;
+	@OperationModelField(label = "Set transmitted fraction")
 	private double transmittedFraction = 0;
 	
 	public boolean isApplySolidAngleCorrection() {

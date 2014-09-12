@@ -21,11 +21,12 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AzimuthalIntegration"
-            description="Azimithal integration on an image using a sector region."
+            description="Azimithal profile of an image using a sector region."
             icon="icons/sector.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel"
-            name="Sector Azimithal Integration">
+            name="Sector Azimuthal Profile"
+            visible="true">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"

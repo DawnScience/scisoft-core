@@ -61,11 +61,11 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdMask"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMask"
             description="Create a mask with intensity values below a lower bound and above an upper bound masked."
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdMaskModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel"
             name="Threshold Mask"
             visible="true">
       </operation>
@@ -115,20 +115,20 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
             description="Import Mask from .nxs or fit2d mask file"
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
             name="Import Mask From File"
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
             description="Dilate the mask"
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
             name="Dilate Mask"
             visible="true">
       </operation>

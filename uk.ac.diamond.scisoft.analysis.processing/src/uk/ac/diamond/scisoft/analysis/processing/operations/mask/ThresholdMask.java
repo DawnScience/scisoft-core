@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.ArrayList;
 import java.util.List;

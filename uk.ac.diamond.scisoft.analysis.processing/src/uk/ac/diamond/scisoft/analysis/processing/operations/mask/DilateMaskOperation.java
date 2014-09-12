@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 
 	@Override
 	public String getId() {
-		return this.getClass().getName();
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation";
 	}
 
 	@Override

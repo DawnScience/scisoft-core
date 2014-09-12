@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 	
 	@Override
 	public String getId() {
-		return this.getClass().getName();
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation";
 	}
 
 	@Override

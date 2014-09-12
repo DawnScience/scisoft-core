@@ -157,7 +157,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MinFilterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Minimum Filter"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
@@ -166,7 +166,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Max Filter"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"

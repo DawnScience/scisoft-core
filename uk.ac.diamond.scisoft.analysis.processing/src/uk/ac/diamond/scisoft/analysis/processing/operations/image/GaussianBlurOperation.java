@@ -10,7 +10,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
-public class GaussianBlurOperation extends AbstractOperation<GaussianBlurModel,OperationData> {
+public class GaussianBlurOperation extends AbstractSimpleImageOperation<KernelWidthModel> {
 
 	
 	IImageProcessingService service = null;
@@ -21,32 +21,9 @@ public class GaussianBlurOperation extends AbstractOperation<GaussianBlurModel,O
 	}
 
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
-		
-		if (service == null) {
-			try { 
-				service = (IImageProcessingService)ServiceManager.getService(IImageProcessingService.class);
-			} catch (Exception e) {
-				throw new OperationException(this, "Could not get image processing service");
-			}
-		}
-		
-		IDataset blur = service.filterGaussianBlur(slice, -1, ((GaussianBlurModel)model).getGaussianWidth());
-		
-		copyMetadata(slice, blur);
+	public IDataset processImage(IDataset dataset,
+			IImageProcessingService service) {
 
-		return new OperationData(blur);
+		return service.filterGaussianBlur(dataset, -1, ((KernelWidthModel)model).getWidth());
 	}
-
-	@Override
-	public OperationRank getInputRank() {
-		return OperationRank.TWO;
-	}
-
-	@Override
-	public OperationRank getOutputRank() {
-		return OperationRank.TWO;
-	}
-
 }

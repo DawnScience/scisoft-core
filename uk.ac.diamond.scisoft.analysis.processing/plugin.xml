@@ -146,7 +146,7 @@
             description="Gaussian image filter"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Gaussian Filter"
             visible="true">
       </operation>

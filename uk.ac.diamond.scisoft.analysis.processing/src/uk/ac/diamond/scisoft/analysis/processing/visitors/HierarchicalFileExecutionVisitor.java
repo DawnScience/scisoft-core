@@ -51,6 +51,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private void initGroups() throws Exception {
 		file.group(ENTRY);
 		results = file.group(RESULTS_GROUP, ENTRY);
+		file.setNexusAttribute(results, "NXdata");
 	}
 	
 	@Override
@@ -91,16 +92,23 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 					for (int i = 0; i < axes.length; i++) {
 						ILazyDataset ax = axes[i];
 						if (ax != null) {
-							if (!firstPassDone && ax != null) axesNames.put(i, ax.getName());
+							if (!firstPassDone && ax != null) {
+								String name = ax.getName();
+								//assume only our slicing puts [ in a axis name!
+								if (name.contains("[")) {
+									name = name.split("\\[")[0];
+								}
+								axesNames.put(i, name);
+							}
 							IDataset axDataset = ax.getSlice();
 							axDataset.setName(axesNames.get(i));
 							
 							if (setDims.contains(i) && !firstPassDone) {
-								String ds = file.createDataset(axDataset.getName(), axDataset, results);
+								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), results);
 								file.setAttribute(ds, "axis", String.valueOf(i));
 							} else {
 								appendData(axDataset,results, oSlice,oShape, file);
-								file.setAttribute(results +"/" +axDataset.getName(), "axis", String.valueOf(i));
+								file.setAttribute(results +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
 							}
 							
 						}

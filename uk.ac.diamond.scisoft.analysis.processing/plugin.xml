@@ -142,11 +142,11 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurOperation"
             description="Gaussian image filter"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurModel"
             name="Gaussian Filter"
             visible="true">
       </operation>

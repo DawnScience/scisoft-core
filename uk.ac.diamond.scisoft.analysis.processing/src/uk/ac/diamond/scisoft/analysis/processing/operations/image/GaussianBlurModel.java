@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 

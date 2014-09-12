@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import org.dawb.common.services.IImageProcessingService;
 import org.dawb.common.services.ServiceManager;
@@ -9,7 +9,6 @@ import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public class GaussianBlurOperation extends AbstractOperation<GaussianBlurModel,OperationData> {
 
@@ -18,7 +17,7 @@ public class GaussianBlurOperation extends AbstractOperation<GaussianBlurModel,O
 	
 	@Override
 	public String getId() {
-		return this.getClass().getName();
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation";
 	}
 
 	@Override

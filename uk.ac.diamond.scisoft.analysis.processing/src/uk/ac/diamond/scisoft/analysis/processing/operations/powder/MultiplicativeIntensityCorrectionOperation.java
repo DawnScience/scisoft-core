@@ -20,9 +20,9 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 public class MultiplicativeIntensityCorrectionOperation extends
 		AbstractOperation<MultiplicativeIntensityCorrectionModel, OperationData> {
 
-	Dataset correction;
-	IDiffractionMetadata metadata;
-	PropertyChangeListener listener;
+	private Dataset correction;
+	private IDiffractionMetadata metadata;
+	private PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {

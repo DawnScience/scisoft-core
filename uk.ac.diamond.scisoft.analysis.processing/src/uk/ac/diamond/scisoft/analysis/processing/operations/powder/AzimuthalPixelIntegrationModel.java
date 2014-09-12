@@ -4,7 +4,7 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class AzimuthalPixelIntegrationModel extends PixelIntegrationModel {
 
-	XAxis axisType = XAxis.Q;
+	private XAxis axisType = XAxis.Q;
 	
 	public XAxis getAxisType() {
 		return axisType;

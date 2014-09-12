@@ -4,7 +4,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 
 public class RollingBallBaselineModel extends AbstractOperationModel {
 
-	int ballRadius = 100;
+	private int ballRadius = 100;
 
 	public int getBallRadius() {
 		return ballRadius;

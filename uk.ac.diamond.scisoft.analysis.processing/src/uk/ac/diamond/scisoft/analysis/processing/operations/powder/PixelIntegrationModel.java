@@ -5,8 +5,8 @@ import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 
 public abstract class PixelIntegrationModel extends AbstractOperationModel {
 
-	boolean pixelSplitting = false;
-	int numberOfBins = 1000;
+	private boolean pixelSplitting = false;
+	private int numberOfBins = 1000;
 	
 	@OperationModelField(hint="Please set two values, start and end.\nThe values should match the axis selected (i.e. q, 2 theta, pixel).\n\nIf you delete the text, the range is cleared and the whole image used.")
 	double[] radialRange = null;

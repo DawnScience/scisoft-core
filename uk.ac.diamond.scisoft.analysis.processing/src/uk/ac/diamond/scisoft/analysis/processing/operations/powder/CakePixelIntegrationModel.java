@@ -4,8 +4,8 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class CakePixelIntegrationModel extends PixelIntegrationModel {
 
-	int numberOfBins2ndAxis = 1000;
-	XAxis axisType = XAxis.Q;
+	private int numberOfBins2ndAxis = 1000;
+	private XAxis axisType = XAxis.Q;
 	
 	public XAxis getAxisType() {
 		return axisType;

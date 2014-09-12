@@ -4,12 +4,12 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 
 public class MultiplicativeIntensityCorrectionModel extends AbstractOperationModel {
 
-	boolean applySolidAngleCorrection = false;
-	boolean applyPolarisationCorrection = false;
-	boolean applyDetectorTransmissionCorrection = false;
-	double polarisationFactor = 0.9;
-	double polarisationAngularOffset = 0;
-	double transmittedFraction = 0;
+	private boolean applySolidAngleCorrection = false;
+	private boolean applyPolarisationCorrection = false;
+	private boolean applyDetectorTransmissionCorrection = false;
+	private double polarisationFactor = 0.9;
+	private double polarisationAngularOffset = 0;
+	private double transmittedFraction = 0;
 	
 	public boolean isApplySolidAngleCorrection() {
 		return applySolidAngleCorrection;

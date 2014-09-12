@@ -17,9 +17,9 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 
 public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrationModel> extends AbstractOperation<T, OperationData> {
 
-	AbstractPixelIntegration integrator;
-	IDiffractionMetadata metadata;
-	PropertyChangeListener listener;
+	private AbstractPixelIntegration integrator;
+	private IDiffractionMetadata metadata;
+	private PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {

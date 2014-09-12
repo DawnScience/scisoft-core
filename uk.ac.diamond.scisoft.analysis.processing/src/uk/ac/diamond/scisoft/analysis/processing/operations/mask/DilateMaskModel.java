@@ -4,7 +4,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 
 public class DilateMaskModel extends AbstractOperationModel {
 
-	int numberOfPixelsToDilate = 1;
+	private int numberOfPixelsToDilate = 1;
 
 	public int getNumberOfPixelsToDilate() {
 		return numberOfPixelsToDilate;

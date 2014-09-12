@@ -7,7 +7,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 public class DiffractionMetadataImportModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Enter the path to the calibration NeXus file", file = FileType.EXISTING_FILE, label = "Select Calibration File:")
-	String filePath = "";
+	private String filePath = "";
 
 	public String getFilePath() {
 		return filePath;

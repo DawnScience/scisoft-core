@@ -7,7 +7,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
 public class ImportMaskModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Enter the path to the mask file", file = FileType.EXISTING_FILE, label = "Select Mask File:")
-	String filePath = "";
+	private String filePath = "";
 
 	public String getFilePath() {
 		return filePath;

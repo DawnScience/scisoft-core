@@ -150,6 +150,42 @@
             name="Gaussian Filter"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MinFilterOperation"
+            description="Minimum filter an image using a kernel of a specified width"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MinFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
+            name="Minimum Filter"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
+            description="Maximum filter an image with a kernel of a specific width"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
+            name="Max Filter"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
+            description="Median filter an image with a kernel of a specific width"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
+            name="Median Filter"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
+            description="Mean filter an image with a kernel of a specified width"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
+            name="Mean Filter"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

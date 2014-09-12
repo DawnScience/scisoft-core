@@ -25,7 +25,7 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 
 	@Override
 	public String getId() {
-		return " uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask";
 	}
 
 	@Override

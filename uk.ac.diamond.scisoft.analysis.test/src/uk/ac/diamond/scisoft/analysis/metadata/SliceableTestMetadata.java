@@ -28,6 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
 
 public class SliceableTestMetadata implements MetadataType {
 
+	@Reshapeable
 	@Sliceable
 	private ILazyDataset ds;
 	@Sliceable
@@ -48,30 +49,50 @@ public class SliceableTestMetadata implements MetadataType {
 	}
 
 	public SliceableTestMetadata(SliceableTestMetadata stm) {
-		ds = stm.ds.getSliceView();
-
-		dds = new DoubleDataset[stm.dds.length];
-		for (int i = 0; i < dds.length; i++) {
-			dds[i] = stm.dds[i].getView();
+		if (stm.ds == null) {
+			ds = null;
+		} else {
+			ds = stm.ds.getSliceView();
 		}
 
-		lds = new ArrayList<>();
-		for (ShortDataset d : stm.lds) {
-			lds.add(d.getView());
-		}
-
-		mds = new HashMap<>();
-		for (String s : stm.mds.keySet()) {
-			mds.put(s, stm.mds.get(s).getView());
-		}
-
-		l2deep = new ArrayList<>();
-		for (DoubleDataset[] da : stm.l2deep) {
-			DoubleDataset[] ta = new DoubleDataset[da.length];
-			for (int i = 0; i < ta.length; i++) {
-				ta[i] = da[i].getView();
+		if (stm.dds == null) {
+			dds = null;
+		} else {
+			dds = new DoubleDataset[stm.dds.length];
+			for (int i = 0; i < dds.length; i++) {
+				dds[i] = stm.dds[i].getView();
 			}
-			l2deep.add(ta);
+		}
+
+		if (stm.lds == null) {
+			lds = null;
+		} else {
+			lds = new ArrayList<>();
+			for (ShortDataset d : stm.lds) {
+				lds.add(d.getView());
+			}
+		}
+
+		if (stm.mds == null) {
+			mds = null;
+		} else {
+			mds = new HashMap<>();
+			for (String s : stm.mds.keySet()) {
+				mds.put(s, stm.mds.get(s).getView());
+			}
+		}
+
+		if (stm.l2deep == null) {
+			l2deep = null;
+		} else {
+			l2deep = new ArrayList<>();
+			for (DoubleDataset[] da : stm.l2deep) {
+				DoubleDataset[] ta = new DoubleDataset[da.length];
+				for (int i = 0; i < ta.length; i++) {
+					ta[i] = da[i].getView();
+				}
+				l2deep.add(ta);
+			}
 		}
 	}
 

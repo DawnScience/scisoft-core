@@ -171,12 +171,60 @@ public class SliceableMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
-
 	}
-	
+
+	@Test
+	public void testSlicingSqueezedMetadata() {
+		final int[] shape = new int[] {1, 1, 128};
+		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		SliceableTestMetadata md = new SliceableTestMetadata(ld, null, null, null, null);
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(md);
+
+		Slice[] slice = new Slice[] {null, null, new Slice(64)};
+		ILazyDataset sliced = dataset.getSliceView(slice);
+
+		assertArrayEquals(new int[] {1, 1, 64}, sliced.getShape());
+
+		dataset.squeeze();
+		assertEquals(1, dataset.getRank());
+		assertArrayEquals(new int[] {128}, dataset.getShape());
+		try {
+			SliceableTestMetadata tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(1, tmd.getLazyDataset().getRank());
+			assertArrayEquals(new int[] {128}, tmd.getLazyDataset().getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		slice = new Slice[] {new Slice(64)};
+		sliced = dataset.getSliceView(slice);
+		assertEquals(1, sliced.getRank());
+		assertArrayEquals(new int[] {64}, sliced.getShape());
+		try {
+			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(1, tmd.getLazyDataset().getRank());
+			assertArrayEquals(new int[] {64}, tmd.getLazyDataset().getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		slice = new Slice[] {new Slice(64)};
+		sliced = dataset.getSlice(slice);
+		assertEquals(1, sliced.getRank());
+		assertArrayEquals(new int[] {64}, sliced.getShape());
+		try {
+			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(1, tmd.getLazyDataset().getRank());
+			assertArrayEquals(new int[] {64}, tmd.getLazyDataset().getShape());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+	}
+
 	@Test
 	public void testSlicingSameRankDifferentShapeMetadata() {
-		
 		final int[] result1 = new int[] {1, 1, 1, 1};
 		final int[] result2 = new int[] {1, 1, 3, 1};
 		
@@ -267,11 +315,8 @@ public class SliceableMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
-		
-		
-
 	}
-	
+
 	@Test
 	public void testSlicingSameRankDifferentShapeMetadataFail() {
 		
@@ -330,7 +375,6 @@ public class SliceableMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
-
 	}
 
 }

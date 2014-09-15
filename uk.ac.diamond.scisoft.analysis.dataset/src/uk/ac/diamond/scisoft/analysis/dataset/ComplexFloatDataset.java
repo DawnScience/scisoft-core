@@ -81,7 +81,7 @@ public class ComplexFloatDataset extends CompoundFloatDataset { // CLASS_TYPE
 		}
 		isize = ISIZE;
 		size = calcSize(shape);
-		if (size*isize != dsize) {
+		if (size != dsize) {
 			throw new IllegalArgumentException(String.format("Shape %s is not compatible with size of data array, %d",
 					Arrays.toString(shape), dsize));
 		}

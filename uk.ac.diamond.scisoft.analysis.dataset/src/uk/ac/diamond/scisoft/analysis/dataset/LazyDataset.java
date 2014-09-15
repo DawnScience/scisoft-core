@@ -336,7 +336,7 @@ public class LazyDataset extends LazyDatasetBase implements Cloneable, Serializa
 		a.setName(name + AbstractDataset.BLOCK_OPEN + Slice.createString(oShape, nstart, nstop, nstep) + AbstractDataset.BLOCK_CLOSE);
 		if (metadata != null && a instanceof LazyDatasetBase) {
 			((LazyDatasetBase) a).metadata = copyMetadata();
-			((LazyDatasetBase) a).sliceMetadata(false, nstart, nstop, nstep, oShape);
+			((LazyDatasetBase) a).sliceMetadata(false, lstart, lstop, lstep, shape);
 		}
 
 		return a;

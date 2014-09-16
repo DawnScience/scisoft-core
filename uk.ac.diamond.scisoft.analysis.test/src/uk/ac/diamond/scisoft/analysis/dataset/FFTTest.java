@@ -297,6 +297,8 @@ public class FFTTest {
 			i++;
 		}
 
+		FFT.fft2(a, null, new int[] { -2, -1 });
+
 		g = FFT.ifft2(f, null, new int[] { 0, 2 });
 		i = 0;
 		it = g.getIterator();

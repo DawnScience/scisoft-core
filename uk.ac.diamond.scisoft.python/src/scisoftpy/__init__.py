@@ -129,6 +129,12 @@ except Exception, e:
     print >> sys.stderr, e
 
 try:
+    import linalg
+except Exception, e:
+    print >> sys.stderr, "Could not import linear algebra routines"
+    print >> sys.stderr, e
+
+try:
     import flatten
 except Exception, e:
     print >> sys.stderr, "Could not import flatten API"

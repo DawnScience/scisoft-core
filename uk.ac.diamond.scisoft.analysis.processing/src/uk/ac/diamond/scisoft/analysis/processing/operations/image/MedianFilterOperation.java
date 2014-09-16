@@ -1,6 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import org.dawb.common.services.IImageProcessingService;
+import org.dawb.common.services.IImageFilterService;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
@@ -13,7 +13,7 @@ public class MedianFilterOperation extends AbstractSimpleImageOperation<KernelWi
 
 	@Override
 	public IDataset processImage(IDataset dataset,
-			IImageProcessingService service) {
+			IImageFilterService service) {
 
 		return service.filterMedian(dataset,((KernelWidthModel)model).getWidth());
 	}

@@ -19,7 +19,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dawb.common.services.IImageProcessingService;
+import org.dawb.common.services.IImageFilterService;
 import org.dawb.common.services.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +39,11 @@ public class Image {
 	 */
 	protected static final Logger logger = LoggerFactory.getLogger(Image.class);
 
-	private static IImageProcessingService service;
+	private static IImageFilterService service;
 
 	public static void createImageFilterService() throws Exception {
 		if (service == null) {
-			service = (IImageProcessingService)ServiceManager.getService(IImageProcessingService.class);
+			service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
 		}
 	}
 

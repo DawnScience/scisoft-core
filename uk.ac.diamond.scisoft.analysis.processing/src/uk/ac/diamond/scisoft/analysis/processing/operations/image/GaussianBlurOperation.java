@@ -1,12 +1,12 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import org.dawb.common.services.IImageProcessingService;
+import org.dawb.common.services.IImageFilterService;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class GaussianBlurOperation extends AbstractSimpleImageOperation<KernelWidthModel> {
 
 	
-	IImageProcessingService service = null;
+	IImageFilterService service = null;
 	
 	@Override
 	public String getId() {
@@ -15,7 +15,7 @@ public class GaussianBlurOperation extends AbstractSimpleImageOperation<KernelWi
 
 	@Override
 	public IDataset processImage(IDataset dataset,
-			IImageProcessingService service) {
+			IImageFilterService service) {
 
 		return service.filterGaussianBlur(dataset, -1, ((KernelWidthModel)model).getWidth());
 	}

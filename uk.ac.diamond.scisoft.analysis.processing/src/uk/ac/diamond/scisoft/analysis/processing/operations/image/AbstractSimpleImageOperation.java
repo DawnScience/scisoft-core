@@ -1,6 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import org.dawb.common.services.IImageProcessingService;
+import org.dawb.common.services.IImageFilterService;
 import org.dawb.common.services.ServiceManager;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
@@ -13,7 +13,7 @@ import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
 
 public abstract class AbstractSimpleImageOperation<T extends IOperationModel> extends AbstractOperation<IOperationModel,OperationData> {
 
-	IImageProcessingService service = null;
+	IImageFilterService service = null;
 
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor)
@@ -21,7 +21,7 @@ public abstract class AbstractSimpleImageOperation<T extends IOperationModel> ex
 		
 		if (service == null) {
 			try { 
-				service = (IImageProcessingService)ServiceManager.getService(IImageProcessingService.class);
+				service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
 			} catch (Exception e) {
 				throw new OperationException(this, "Could not get image processing service");
 			}
@@ -32,7 +32,7 @@ public abstract class AbstractSimpleImageOperation<T extends IOperationModel> ex
 		return new OperationData(out);
 	}
 	
-	public abstract IDataset processImage(IDataset dataset, IImageProcessingService service);
+	public abstract IDataset processImage(IDataset dataset, IImageFilterService service);
 
 	@Override
 	public OperationRank getInputRank() {

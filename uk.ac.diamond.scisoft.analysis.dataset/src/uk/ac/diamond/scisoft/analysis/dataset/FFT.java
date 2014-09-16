@@ -90,9 +90,12 @@ public class FFT {
 		}
 		if (s == null) {
 			s = new int[2];
-			int[] shape = a.getShape();
-			s[0] = shape[axes[0]];
-			s[1] = shape[axes[1]];
+			int[] shape = a.getShapeRef();
+			for (int i = 0; i < 2; i++) {
+				axes[i] = a.checkAxis(axes[i]);
+
+				s[i] = shape[axes[i]];
+			}
 		} else if (s.length < 2) {
 			logger.error("shape should not have more than 2 dimensions");
 			throw new IllegalArgumentException("shape should not have more than 2 dimensions");
@@ -386,9 +389,11 @@ public class FFT {
 		}
 		if (s == null) {
 			s = new int[2];
-			int[] shape = a.getShape();
-			s[0] = shape[axes[0]];
-			s[1] = shape[axes[1]];
+			int[] shape = a.getShapeRef();
+			for (int i = 0; i < 2; i++) {
+				axes[i] = a.checkAxis(axes[i]);
+				s[i] = shape[axes[i]];
+			}
 		} else if (s.length < 2) {
 			logger.error("shape should not have more than 2 dimensions");
 			throw new IllegalArgumentException("shape should not have more than 2 dimensions");

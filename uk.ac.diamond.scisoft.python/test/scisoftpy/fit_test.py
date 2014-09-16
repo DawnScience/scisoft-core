@@ -114,6 +114,13 @@ class Test(unittest.TestCase):
         print 'PolyG: ', fr  # print fit result
         self.checkitems([3.36, -12.2, 1.7], fr.parameters, 1)
 
+    def testPolyRoots(self):
+        p = fit.poly1d([-1.0021380351125523e+62, -1.3325683964593362e+63, -4.3736356299729265e+62,
+                       1.5174319075477495e+62, 2.7616709058592895e+61, -5.7735973730761707e+60, -4.2781613377152188e+59,
+                       7.2891988413828689e+58, -1.8014489076363173e+56])
+        print p.c
+        print [r for r in p.r]
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main() #defaultTest='Test.testFit')

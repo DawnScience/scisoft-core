@@ -7,6 +7,7 @@
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.diamond.scisoft.analysis.api</project>
+		<project>uk.ac.diamond.scisoft.analysis.dataset</project>
 		<project>uk.ac.gda.common</project>
 	</projects>
 	<buildSpec>

@@ -411,7 +411,7 @@ from uk.ac.diamond.scisoft.analysis.fitting.functions import Polynomial as _poly
 
 class poly1d(object):
     '''1D polynomial class'''
-    def __init__(self, c_or_r, r=0, variable=None):
+    def __init__(self, c_or_r, r=False, variable=None):
         if variable:
             self.variable = variable
         else:
@@ -425,6 +425,7 @@ class poly1d(object):
             self.order = len(c_or_r) - 1
             self.c = c_or_r
             self.roots = None
+        self._poly = _poly(self.c)
 
     def __str__(self):
         par  = self.c
@@ -469,9 +470,10 @@ class poly1d(object):
         return self.c[-(k+1)]
 
     def _getroots(self):
-        if self.roots:
-            return self.roots
-        raise NotImplementedError # implement Bairstow's method
+        if self.roots is None:
+            self.roots = self._poly.findRoots()
+        return self.roots
+
     r = property(_getroots)
 
 @_wrapin
@@ -508,6 +510,13 @@ def polyval(p, x):
     poly = _poly(_asDS(p, _dnp.float64)._jdataset().data)
     d = _asDS(x, _dnp.float, force=True)._jdataset()
     return poly.calculateValues([d])
+
+
+@_wrapout
+def roots(coeffs):
+    '''Find roots of polynomial specified by coefficients
+    '''
+    return _poly.findRoots(_asDS(coeffs, _dnp.float64)._jdataset().data)
 
 # need a cspline fit function
 

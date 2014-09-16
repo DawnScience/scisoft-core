@@ -22,8 +22,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
+import org.ddogleg.solver.PolynomialOps;
+import org.ddogleg.solver.PolynomialRoots;
+import org.ddogleg.solver.RootFinderType;
+import org.ejml.data.Complex64F;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
@@ -285,7 +289,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Find all roots
-	 * @return all roots
+	 * @return all roots or null if there is any problem finding the roots
 	 */
 	public Complex[] findRoots() {
 		return findRoots(a);
@@ -294,24 +298,46 @@ public class Polynomial extends AFunction {
 	/**
 	 * Find all roots
 	 * @param coeffs
-	 * @return all roots
+	 * @return all roots or null if there is any problem finding the roots
 	 */
-	public static Complex[] findRoots(double[] coeffs) {
-		double[] reverse = new double[coeffs.length];
-		for (int i = 0; i < coeffs.length; i++) {
-			reverse[i] = coeffs[coeffs.length - 1 - i];
+	public static Complex[] findRoots(double... coeffs) {
+		double[] reverse = coeffs.clone();
+		ArrayUtils.reverse(reverse);
+		double max = Double.NEGATIVE_INFINITY;
+		for (double r : reverse) {
+			max = Math.max(max, Math.abs(r));
 		}
-		Complex[] roots = new LaguerreSolver(1e-15).solveAllComplex(reverse, -1e8);
+		for (int i = 0; i < reverse.length; i++) {
+			reverse[i] /= max;
+		}
 
+		org.ddogleg.solver.Polynomial p = org.ddogleg.solver.Polynomial.wrap(reverse);
+		PolynomialRoots rf = PolynomialOps.createRootFinder(p.computeDegree(), RootFinderType.EVD);
+		if (rf.process(p)) {
+			// reorder to NumPy's roots output
+			List<Complex64F> rts = rf.getRoots();
+			Complex[] out = new Complex[rts.size()];
+			int i = 0;
+			for (Complex64F r : rts) {
+				out[i++] = new Complex(r.getReal(), r.getImaginary());
+			}
+			return sort(out);
+		}
+
+		return null;
+	}
+
+	private static Complex[] sort(Complex[] values) {
 		// reorder to NumPy's roots output
-		List<Complex> rts = Arrays.asList(roots);
+		List<Complex> rts = Arrays.asList(values);
 		Collections.sort(rts, new Comparator<Complex>() {
 			@Override
 			public int compare(Complex o1, Complex o2) {
 				double a = o1.getReal();
 				double b = o2.getReal();
 				
-				if (a != b)
+				double u = 10*Math.ulp(Math.max(Math.abs(a), Math.abs(b)));
+				if (Math.abs(a - b) > u)
 					return a < b ? -1 : 1;
 
 				a = o1.getImaginary();
@@ -321,6 +347,8 @@ public class Polynomial extends AFunction {
 				return a < b ? 1 : -1;
 			}
 		});
+
 		return rts.toArray(new Complex[0]);
 	}
+
 }

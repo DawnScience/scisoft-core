@@ -148,6 +148,7 @@ except Exception, e:
 
 try:
     import fit
+    from fit import roots, poly1d
 except Exception, e:
     print >> sys.stderr, "Could not import fit"
 

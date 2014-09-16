@@ -17,3 +17,5 @@
 import os
 if os.name == 'java':
     from scisoftpy.jython.fitcore import *
+else:
+    from numpy import poly1d, roots  # @UnresolvedImport

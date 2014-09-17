@@ -10,6 +10,9 @@ public class FunctionModel extends AbstractOperationModel {
 	public FunctionModel(IFunction function) {
 	    this.function = function;
 	}
+	public FunctionModel() {
+	    this.function = null;
+	}
 
 	public IFunction getFunction() {
 		return function;

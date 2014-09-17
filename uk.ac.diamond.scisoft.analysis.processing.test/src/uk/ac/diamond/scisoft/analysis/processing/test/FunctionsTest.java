@@ -30,8 +30,8 @@ import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
 
 public class FunctionsTest {
 
@@ -61,12 +61,7 @@ public class FunctionsTest {
 		
 		// y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		functionOp.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public IFunction getFunction() {
-				return poly;
-			}
-		});
+		functionOp.setModel(new FunctionModel(poly));
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override

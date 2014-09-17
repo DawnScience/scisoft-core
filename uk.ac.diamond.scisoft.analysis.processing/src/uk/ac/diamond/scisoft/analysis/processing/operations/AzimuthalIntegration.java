@@ -12,7 +12,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
-public class AzimuthalIntegration extends AbstractIntegrationOperation {
+public class AzimuthalIntegration extends AbstractIntegrationOperation<SectorIntegrationModel> {
 
 	@Override
 	public String getId() {

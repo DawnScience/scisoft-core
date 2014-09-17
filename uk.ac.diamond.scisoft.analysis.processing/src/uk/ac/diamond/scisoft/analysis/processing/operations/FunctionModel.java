@@ -7,6 +7,10 @@ public class FunctionModel extends AbstractOperationModel {
 
 	private IFunction function;
 
+	public FunctionModel(IFunction function) {
+	    this.function = function;
+	}
+
 	public IFunction getFunction() {
 		return function;
 	}

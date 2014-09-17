@@ -13,4 +13,9 @@ public class SectorIntegrationModel extends IntegrationModel {
 		super();
 		setRegion(new SectorROI(10, 100, 10, 10));
 	}
+
+	public SectorIntegrationModel(IROI sector) {
+		super();
+		setRegion(sector);
+	}
 }

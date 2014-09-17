@@ -17,13 +17,14 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
@@ -59,13 +60,7 @@ public class IntegrationTest {
 		final IOperation maskOp = getMaskOperation(mask);
 		
 		final IOperation azi = service.findFirst("azimuthal");
-		azi.setModel(new AbstractOperationModel() {
-			
-			public IROI getRegion() {
-				return sector;
-			}
-			
-		});
+		azi.setModel(new SectorIntegrationModel(sector));
 		
 		count = 0;
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
@@ -95,23 +90,10 @@ public class IntegrationTest {
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
-		thresh.setModel(new AbstractOperationModel() {
-			public double getUpper() {
-				return 750d;
-			}
-			public double getLower() {
-				return 250d;
-			}
-		});
+		thresh.setModel(new ThresholdMaskModel(750d, 250d));
 		
 		final IOperation azi    = service.findFirst("azimuthal");
-		azi.setModel(new AbstractOperationModel() {
-			
-			public IROI getRegion() {
-				return sector;
-			}
-			
-		});
+		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation maskOp = getMaskOperation(mask);
 		
@@ -145,22 +127,10 @@ public class IntegrationTest {
 		rand.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
-		thresh.setModel(new AbstractOperationModel() {
-			public double getUpper() {
-				return 750d;
-			}
-			public double getLower() {
-				return 250d;
-			}
-		});
+		thresh.setModel(new ThresholdMaskModel(750d, 250d));
+		
 		final IOperation azi    = service.findFirst("azimuthal");
-		azi.setModel(new AbstractOperationModel() {
-			
-			public IROI getRegion() {
-				return sector;
-			}
-			
-		});
+		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation maskOp = getMaskOperation(mask);
 		

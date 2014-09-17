@@ -16,13 +16,14 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IExecutionVisitor;
 import uk.ac.diamond.scisoft.analysis.processing.IOperation;
 import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
-import uk.ac.diamond.scisoft.analysis.processing.IRichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.InvalidRankException;
 import uk.ac.diamond.scisoft.analysis.processing.OperationData;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.processing.RichDataset;
 import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
 import uk.ac.diamond.scisoft.analysis.processing.model.IOperationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
 
@@ -52,12 +53,7 @@ public class RankTest {
 		System.out.println("Testing function which can run with any rank of data");
 		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		function.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public IFunction getFunction() {
-				return poly;
-			}
-		});
+		function.setModel(new FunctionModel(poly));
 		
 		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
 		rand.setSlicing("all");
@@ -130,13 +126,8 @@ public class RankTest {
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi = service.findFirst("azimuthal");
-		azi.setModel(new AbstractOperationModel() {
-			
-			public IROI getRegion() {
-				return sector;
-			}
-			
-		});
+		azi.setModel(new SectorIntegrationModel(sector));
+		
 		final IOperation box = service.findFirst("box");
 		final IOperation add = service.findFirst("add");
 		add.setModel(new AbstractOperationModel() {
@@ -181,13 +172,8 @@ public class RankTest {
 		rand.setSlicing("all"); // All 2 images in first dimension.
 
 		final IOperation azi      = service.findFirst("azimuthal");
-		azi.setModel(new AbstractOperationModel() {
-			
-			public IROI getRegion() {
-				return sector;
-			}
-			
-		});
+		azi.setModel(new SectorIntegrationModel(sector));
+		
 		final IOperation add      = service.findFirst("add");
 		final IOperation sub      = service.findFirst("subtract");
 		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
@@ -195,12 +181,7 @@ public class RankTest {
 		
 		// Parameters
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
-		function.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public IFunction getFunction() {
-				return poly;
-			}
-		});
+		function.setModel(new FunctionModel(poly));
 		add.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
 			public double getValue() {

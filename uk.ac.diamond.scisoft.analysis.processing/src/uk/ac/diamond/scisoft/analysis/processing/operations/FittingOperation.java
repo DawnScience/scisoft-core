@@ -15,10 +15,6 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public class FittingOperation extends AbstractOperation<FittingModel, OperationData> {
 
-	private FittingModel model;
-
-
-
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation";

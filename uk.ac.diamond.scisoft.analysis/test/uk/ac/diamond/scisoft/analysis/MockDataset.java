@@ -23,8 +23,8 @@ import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 

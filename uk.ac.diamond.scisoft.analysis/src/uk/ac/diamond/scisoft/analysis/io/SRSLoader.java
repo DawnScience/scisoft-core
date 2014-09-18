@@ -37,6 +37,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**

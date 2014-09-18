@@ -14,6 +14,7 @@ import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public interface IDataHolder extends IDataAnalysisObject {
 	

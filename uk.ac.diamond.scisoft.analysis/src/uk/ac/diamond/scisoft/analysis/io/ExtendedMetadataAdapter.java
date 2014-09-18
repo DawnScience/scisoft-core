@@ -19,6 +19,9 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.util.Date;
 
+import uk.ac.diamond.scisoft.analysis.metadata.IExtendedMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+
 /**
  * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern
  * is generally not serializable (unless the host class is serializable and has a null constructor)

@@ -20,6 +20,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
+import uk.ac.diamond.scisoft.analysis.metadata.IExtendedMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.Metadata;
+
 public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;
 	private String creator = null;

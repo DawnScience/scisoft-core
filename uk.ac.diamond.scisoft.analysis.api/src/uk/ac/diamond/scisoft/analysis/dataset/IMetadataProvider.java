@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 
 /**

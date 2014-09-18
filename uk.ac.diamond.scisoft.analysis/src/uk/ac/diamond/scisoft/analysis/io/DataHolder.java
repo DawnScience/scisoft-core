@@ -29,6 +29,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IMetadataProvider;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.Metadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 
 /**

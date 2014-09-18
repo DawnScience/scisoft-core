@@ -28,6 +28,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.PlanarImage;
 
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+
 /**
  * This class saves a DataHolder as a TIFF image file.
  */

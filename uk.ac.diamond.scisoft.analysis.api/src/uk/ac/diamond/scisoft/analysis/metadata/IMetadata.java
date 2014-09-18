@@ -7,13 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.io;
+package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
+import uk.ac.diamond.scisoft.analysis.io.IDataAnalysisObject;
 
 /**
  * This interface describes the minimal metadata information that should be 

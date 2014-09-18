@@ -20,6 +20,8 @@ import java.io.File;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public class DiffractionMetadata extends ExtendedMetadata implements IDiffractionMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;

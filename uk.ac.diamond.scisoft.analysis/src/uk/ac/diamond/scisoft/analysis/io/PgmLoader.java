@@ -28,6 +28,9 @@ import java.util.StringTokenizer;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.Metadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**

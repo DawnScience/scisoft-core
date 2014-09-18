@@ -9,8 +9,8 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegratio
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration1D;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
-import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 

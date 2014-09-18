@@ -31,6 +31,8 @@ import javax.vecmath.Vector3d;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;

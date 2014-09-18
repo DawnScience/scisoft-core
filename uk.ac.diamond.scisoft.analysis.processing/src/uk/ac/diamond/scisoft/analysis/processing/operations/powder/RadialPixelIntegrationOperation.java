@@ -2,7 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration1D;
-import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
 
 public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation {

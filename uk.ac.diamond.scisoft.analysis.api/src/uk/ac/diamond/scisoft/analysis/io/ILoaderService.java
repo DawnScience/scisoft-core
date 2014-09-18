@@ -11,6 +11,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.Collection;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**

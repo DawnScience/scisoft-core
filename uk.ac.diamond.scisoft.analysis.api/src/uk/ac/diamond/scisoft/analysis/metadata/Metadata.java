@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.diamond.scisoft.analysis.io;
+package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;

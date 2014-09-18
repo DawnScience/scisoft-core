@@ -20,9 +20,9 @@ import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadata;

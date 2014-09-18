@@ -31,6 +31,8 @@ import org.nexusformat.NexusFile;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.gda.util.OSUtils;
 
 /**

@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
 
 public class DiffractionMetadataUtils {
 	

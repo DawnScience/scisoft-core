@@ -21,6 +21,7 @@ import java.io.File;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
 
 /**
  * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern

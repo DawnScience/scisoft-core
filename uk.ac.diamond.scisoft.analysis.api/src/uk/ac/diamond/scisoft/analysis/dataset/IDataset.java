@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 
 /**

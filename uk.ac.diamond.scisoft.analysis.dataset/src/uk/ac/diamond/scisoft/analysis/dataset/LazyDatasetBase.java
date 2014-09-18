@@ -31,9 +31,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.metadata.Reshapeable;
 import uk.ac.diamond.scisoft.analysis.metadata.Sliceable;

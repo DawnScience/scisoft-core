@@ -30,6 +30,7 @@ import javax.media.jai.TiledImage;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 /**
  * Class that saves data from DataHolder using native Java ImageIO library

@@ -12,6 +12,5 @@ Import-Package: org.dawb.common.services,
  org.dawnsci.conversion,
  org.eclipse.dawnsci.hdf5,
  org.slf4j;version="1.7.6",
- uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.metadata
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"

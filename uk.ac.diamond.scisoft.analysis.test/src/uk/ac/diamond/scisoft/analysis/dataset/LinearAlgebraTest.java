@@ -26,9 +26,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra;
+import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra.NormOrder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra.NormOrder;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;

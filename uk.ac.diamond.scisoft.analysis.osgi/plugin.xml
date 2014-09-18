@@ -6,13 +6,13 @@
       <serviceFactory
             factoryClass="uk.ac.diamond.scisoft.analysis.osgi.LoaderServiceImpl">
          <service
-               serviceClass="uk.ac.diamond.scisoft.analysis.io.ILoaderService">
+               serviceClass="org.eclipse.dawnsci.analysis.api.io.ILoaderService">
          </service>
       </serviceFactory>
       <serviceFactory
             factoryClass="uk.ac.diamond.scisoft.analysis.osgi.DatasetMathsServiceImpl">
          <service
-               serviceClass="uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService">
+               serviceClass="org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService">
          </service>
       </serviceFactory>
       <serviceFactory

@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="uk.ac.diamond.scisoft.analysis.api.operation">
+         point="org.eclipse.dawnsci.analysis.api.operation">
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractOperation"
             description="Subtract one dataset from another or subtract a scalar value."

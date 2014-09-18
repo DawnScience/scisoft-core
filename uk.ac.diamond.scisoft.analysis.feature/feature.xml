@@ -43,13 +43,6 @@
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.scisoft.analysis.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="uk.ac.diamond.scisoft.analysis.osgi"
          download-size="0"
          install-size="0"
@@ -128,6 +121,13 @@
 
    <plugin
          id="slf4j.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.dawnsci.analysis.api"
          download-size="0"
          install-size="0"
          version="0.0.0"

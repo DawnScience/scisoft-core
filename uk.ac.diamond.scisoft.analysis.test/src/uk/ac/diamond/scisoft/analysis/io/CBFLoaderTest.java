@@ -19,11 +19,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 /**
  *

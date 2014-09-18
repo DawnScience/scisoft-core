@@ -1,7 +1,0 @@
-
-This directory contains some python scripts for generating Maths, FloatDataset,
-IntegerDataset, LongDataset, ShortDataset, ByteDataset, BooleanDatasetBase,
-CompoundFloatDataset, ComplexFloatDataset classes. Also, functions.txt define
-functions for the Maths class and ../Maths.java holds the fixed part of that
-class.
-

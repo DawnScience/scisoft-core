@@ -20,11 +20,12 @@ import java.io.File;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 
 public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 

@@ -2,11 +2,11 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.lang.reflect.InvocationTargetException;
 
-import uk.ac.diamond.scisoft.analysis.processing.AbstractOperation;
-import uk.ac.diamond.scisoft.analysis.processing.OperationData;
-import uk.ac.diamond.scisoft.analysis.processing.OperationRank;
-import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
 public abstract class AbstractIntegrationOperation<T extends IntegrationModel> extends AbstractOperation<T, OperationData> {
 

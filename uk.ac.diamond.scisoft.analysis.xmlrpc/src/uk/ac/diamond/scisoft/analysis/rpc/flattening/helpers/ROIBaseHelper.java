@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIBase;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROIBase;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class ROIBaseHelper extends ROIHelper<ROIBase> {

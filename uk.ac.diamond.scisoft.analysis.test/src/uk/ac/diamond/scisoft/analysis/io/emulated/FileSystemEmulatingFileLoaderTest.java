@@ -21,13 +21,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
-import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
-import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 public class FileSystemEmulatingFileLoaderTest {
 	
 	private IFileLoader mockLoader;

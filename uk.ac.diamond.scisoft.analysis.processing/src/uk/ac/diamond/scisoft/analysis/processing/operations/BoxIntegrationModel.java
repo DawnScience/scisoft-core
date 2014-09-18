@@ -1,8 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 public class BoxIntegrationModel extends IntegrationModel {
 

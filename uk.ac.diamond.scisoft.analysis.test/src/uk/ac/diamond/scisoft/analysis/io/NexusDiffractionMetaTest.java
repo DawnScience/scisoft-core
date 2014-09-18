@@ -19,9 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
 
 public class NexusDiffractionMetaTest {
 	

@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {

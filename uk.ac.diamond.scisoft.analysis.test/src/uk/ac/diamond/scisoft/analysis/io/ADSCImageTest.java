@@ -24,13 +24,14 @@ import java.util.GregorianCalendar;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.IExtendedMetadata;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.metadata.IExtendedMetadata;
 
 /**
  * Tests the ADSC image loader with file in TestFiles

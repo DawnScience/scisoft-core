@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROIList;
 
 public class RectangularROIListHelper extends ROIListHelper<RectangularROIList, RectangularROI> {
 

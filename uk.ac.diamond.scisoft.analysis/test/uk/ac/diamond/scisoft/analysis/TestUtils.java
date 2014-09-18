@@ -23,10 +23,9 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.junit.Assert;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
 
 public class TestUtils {
 	

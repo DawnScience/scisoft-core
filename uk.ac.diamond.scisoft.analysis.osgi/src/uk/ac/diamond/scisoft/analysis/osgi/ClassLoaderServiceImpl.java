@@ -19,11 +19,11 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.dawnsci.analysis.api.api.ClassLoaderExtensionPoint;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 import py4j.ClassLoaderService;
-import uk.ac.diamond.scisoft.analysis.api.ClassLoaderExtensionPoint;
 
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 

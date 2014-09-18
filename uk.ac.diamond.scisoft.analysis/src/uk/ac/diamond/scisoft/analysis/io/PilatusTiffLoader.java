@@ -27,6 +27,8 @@ import java.util.Map;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
 

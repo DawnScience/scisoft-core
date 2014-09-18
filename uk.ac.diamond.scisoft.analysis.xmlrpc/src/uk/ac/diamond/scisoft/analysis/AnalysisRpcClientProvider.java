@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
+import org.eclipse.dawnsci.analysis.api.AbstractClientProvider;
+
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 

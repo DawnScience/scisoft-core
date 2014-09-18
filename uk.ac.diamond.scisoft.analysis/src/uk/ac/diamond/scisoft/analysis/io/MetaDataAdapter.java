@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 
 /**
  * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern

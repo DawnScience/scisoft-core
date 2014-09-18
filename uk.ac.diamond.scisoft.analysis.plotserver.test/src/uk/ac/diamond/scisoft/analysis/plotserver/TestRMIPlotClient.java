@@ -16,8 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 /**
  *

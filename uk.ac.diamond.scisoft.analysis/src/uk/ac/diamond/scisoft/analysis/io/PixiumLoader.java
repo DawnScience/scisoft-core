@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.imageio.metadata.IIOMetadata;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+
 public class PixiumLoader extends TIFFImageLoader {
 	
 	/**

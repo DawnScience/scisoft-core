@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.junit.Test;
 
 /**

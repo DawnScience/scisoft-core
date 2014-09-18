@@ -20,6 +20,7 @@ import java.io.File;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.junit.Test;
 
 public class NexusLoaderThreadTest extends LoaderThreadTestBase {

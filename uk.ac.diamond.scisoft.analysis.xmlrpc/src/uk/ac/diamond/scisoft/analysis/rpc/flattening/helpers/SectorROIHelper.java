@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class SectorROIHelper extends ROIHelper<SectorROI> {

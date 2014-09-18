@@ -17,12 +17,13 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 public class RAxisImageLoaderTest {
 

@@ -18,9 +18,9 @@ package uk.ac.diamond.scisoft.analysis.hdf5;
 
 import java.io.Serializable;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
-import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 
 /**
  * Represent an attribute using a dataset

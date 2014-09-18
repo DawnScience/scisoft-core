@@ -1,7 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public abstract class PixelIntegrationModel extends AbstractOperationModel {
 

@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderFactoryExtensionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
-import uk.ac.diamond.scisoft.analysis.io.ILoaderFactoryExtensionService;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService {

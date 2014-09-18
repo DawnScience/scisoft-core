@@ -1,7 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
 public class IntegrationModel extends AbstractOperationModel {
 

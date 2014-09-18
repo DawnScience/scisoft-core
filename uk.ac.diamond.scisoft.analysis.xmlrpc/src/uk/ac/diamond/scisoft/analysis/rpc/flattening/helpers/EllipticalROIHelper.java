@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class EllipticalROIHelper extends ROIHelper<EllipticalROI> {

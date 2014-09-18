@@ -18,15 +18,15 @@ package uk.ac.diamond.scisoft.analysis.io.numpy;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
-import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * This tests special cases not covered by the other tests which simply sweeps data types

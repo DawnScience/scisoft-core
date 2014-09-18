@@ -19,6 +19,9 @@ package uk.ac.diamond.scisoft.python;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.python.core.Py;
@@ -26,10 +29,6 @@ import org.python.core.PyInteger;
 import org.python.core.PySlice;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 
 public class PythonUtilsTest {
 	@BeforeClass

@@ -18,6 +18,10 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.InterpolatorUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.Test;
 
 public class InterpolatorUtilsTest {

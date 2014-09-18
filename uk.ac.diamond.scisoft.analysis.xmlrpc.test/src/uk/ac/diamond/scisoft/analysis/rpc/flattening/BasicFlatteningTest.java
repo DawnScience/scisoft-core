@@ -19,10 +19,9 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.junit.Assert;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
 
 /**
  * This test is intended to be as minimal as possible to demonstrate operation of the flattening.

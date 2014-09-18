@@ -49,24 +49,31 @@ import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5Link;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.io.SliceObject;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.AbstractDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ByteDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.FloatDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.LazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.LongDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.PositionIterator;
-import uk.ac.diamond.scisoft.analysis.dataset.ShortDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.StringDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Attribute;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Dataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
@@ -74,10 +81,6 @@ import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Group;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Node;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5NodeLink;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5SymLink;
-import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
-import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
-import uk.ac.diamond.scisoft.analysis.metadata.Metadata;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * Load HDF5 files using NCSA's Java library
@@ -925,34 +928,34 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private static int getDtype(final int dclass, final int dsize, final boolean isComplex) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
-			return uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING;
+			return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING;
 		case Datatype.CLASS_CHAR:
 		case Datatype.CLASS_INTEGER:
 			switch (dsize) {
 			case 1:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8;
 			case 2:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16;
 			case 4:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32;
 			case 8:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT64;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT64;
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
 			if (isComplex) {
 				switch (dsize) {
 				case 4:
-					return uk.ac.diamond.scisoft.analysis.dataset.Dataset.COMPLEX64;
+					return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.COMPLEX64;
 				case 8:
-					return uk.ac.diamond.scisoft.analysis.dataset.Dataset.COMPLEX128;
+					return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.COMPLEX128;
 				}
 			}
 			switch (dsize) {
 			case 4:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT32;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT32;
 			case 8:
-				return uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT64;
+				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT64;
 			}
 			break;
 		}
@@ -1036,31 +1039,31 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			final boolean extend) {
 		Dataset ds = null;
 		switch (dtype) {
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT32:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT32:
 			float[] fData = (float[]) data;
 			ds = new FloatDataset(fData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.FLOAT64:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT64:
 			double[] dData = (double[]) data;
 			ds = new DoubleDataset(dData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
 			byte[] bData = (byte[]) data;
 			ds = new ByteDataset(bData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
 			short[] sData = (short[]) data;
 			ds = new ShortDataset(sData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
 			int[] iData = (int[]) data;
 			ds = new IntegerDataset(iData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT64:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT64:
 			long[] lData = (long[]) data;
 			ds = new LongDataset(lData, shape);
 			break;
-		case uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING:
+		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING:
 			String[] strData = (String[]) data;
 			ds = new StringDataset(strData, shape);
 			break;
@@ -1070,15 +1073,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		if (extend) {
 			switch (dtype) {
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
+			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
 				ds = new LongDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 32);
 				break;
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
+			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
 				ds = new IntegerDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 16);
 				break;
-			case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
+			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
 				ds = new ShortDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 8);
 				break;
@@ -1514,7 +1517,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
-		if (dtype == uk.ac.diamond.scisoft.analysis.dataset.Dataset.STRING && useExternalFiles) {
+		if (dtype == org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 			if (!isVLEN && !isText) {
 				logger.error("String dataset not variable length or text!");
@@ -1898,7 +1901,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						} else {
 							H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-							if (odata instanceof byte[] && ldtype != uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8) {
+							if (odata instanceof byte[] && ldtype != org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8) {
 								// TODO check if this is actually used
 								Object idata = null;
 								byte[] bdata = (byte[]) odata;
@@ -1970,7 +1973,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							} else {
 								H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-								if (odata instanceof byte[] && ldtype != uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8) {
+								if (odata instanceof byte[] && ldtype != org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8) {
 									// TODO check if this is actually used
 									byte[] bdata = (byte[]) odata;
 									if (isText) {
@@ -2003,15 +2006,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					}
 					if (extend) {
 						switch (ldtype) {
-						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT32:
+						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
 							data = new LongDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 32);
 							break;
-						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT16:
+						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
 							data = new IntegerDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 16);
 							break;
-						case uk.ac.diamond.scisoft.analysis.dataset.Dataset.INT8:
+						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
 							data = new ShortDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 8);
 							break;

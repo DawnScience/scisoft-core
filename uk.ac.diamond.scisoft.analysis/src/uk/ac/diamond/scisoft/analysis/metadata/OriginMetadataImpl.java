@@ -16,8 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 
 public class OriginMetadataImpl implements OriginMetadata {
 	

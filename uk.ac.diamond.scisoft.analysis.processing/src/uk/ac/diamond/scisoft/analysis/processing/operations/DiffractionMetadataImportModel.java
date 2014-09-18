@@ -1,8 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.processing.model.FileType;
-import uk.ac.diamond.scisoft.analysis.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class DiffractionMetadataImportModel extends AbstractOperationModel {
 

@@ -19,7 +19,9 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 

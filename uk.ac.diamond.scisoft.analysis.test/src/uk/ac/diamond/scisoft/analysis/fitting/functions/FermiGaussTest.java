@@ -16,10 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
 
 public class FermiGaussTest {
 

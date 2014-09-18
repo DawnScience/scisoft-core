@@ -24,15 +24,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
-import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 import uk.ac.gda.util.OSUtils;
 
 /**

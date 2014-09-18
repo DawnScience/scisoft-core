@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.io.SliceObject;
+
 /**
  * A key used by the loader factory to cache previously read data.
  */

@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
 /**
  * Should act like the SRSLoader, but for Xas format ascii files. This is because the associated editor subclasses the

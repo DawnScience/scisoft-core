@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,7 +29,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
-import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * Test that unsupported data types are correctly errored on

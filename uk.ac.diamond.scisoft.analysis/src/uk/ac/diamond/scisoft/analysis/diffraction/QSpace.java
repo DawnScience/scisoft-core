@@ -18,6 +18,9 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+
 
 /**
  * Q-space calculations

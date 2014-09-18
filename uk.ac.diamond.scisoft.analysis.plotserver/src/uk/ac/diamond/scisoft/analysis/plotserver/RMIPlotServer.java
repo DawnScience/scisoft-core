@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.plotserver;
 
 import java.rmi.RemoteException;
 
-import uk.ac.diamond.scisoft.analysis.RMIServerProvider;
+import org.eclipse.dawnsci.analysis.api.RMIServerProvider;
 
 /**
  *

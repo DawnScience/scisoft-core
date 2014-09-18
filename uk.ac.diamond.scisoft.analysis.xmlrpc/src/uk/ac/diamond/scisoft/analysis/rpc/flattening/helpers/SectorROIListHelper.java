@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
-import uk.ac.diamond.scisoft.analysis.roi.SectorROI;
-import uk.ac.diamond.scisoft.analysis.roi.SectorROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.SectorROIList;
 
 public class SectorROIListHelper extends ROIListHelper<SectorROIList, SectorROI> {
 

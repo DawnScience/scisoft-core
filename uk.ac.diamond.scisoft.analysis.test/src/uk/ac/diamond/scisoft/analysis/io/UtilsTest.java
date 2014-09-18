@@ -26,10 +26,9 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Random;
 
 /**
  * Test IO utils

@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.fail;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.Test;
 
 import uk.ac.diamond.CBFlib.CBFlib;

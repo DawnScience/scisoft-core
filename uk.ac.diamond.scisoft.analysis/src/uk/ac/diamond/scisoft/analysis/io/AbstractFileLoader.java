@@ -16,7 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
 /**
  * A class which can be extended when implementing IFileLoader

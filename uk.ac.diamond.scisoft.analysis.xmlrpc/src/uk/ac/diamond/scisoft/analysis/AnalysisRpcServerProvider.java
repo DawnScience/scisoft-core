@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
+import org.eclipse.dawnsci.analysis.api.ServerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

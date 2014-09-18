@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
-import uk.ac.diamond.scisoft.analysis.roi.LinearROI;
-import uk.ac.diamond.scisoft.analysis.roi.LinearROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.LinearROIList;
 
 public class LinearROIListHelper extends ROIListHelper<LinearROIList, LinearROI> {
 

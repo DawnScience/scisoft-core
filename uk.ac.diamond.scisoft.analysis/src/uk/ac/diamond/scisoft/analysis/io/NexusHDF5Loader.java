@@ -19,12 +19,14 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.dataset.DoubleDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+
 import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is

@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
-import uk.ac.diamond.scisoft.analysis.roi.IPolylineROI;
+import org.eclipse.dawnsci.analysis.api.roi.IPolylineROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
 
 /**
  *

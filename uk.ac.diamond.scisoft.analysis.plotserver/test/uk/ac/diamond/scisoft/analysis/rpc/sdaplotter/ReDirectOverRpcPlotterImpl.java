@@ -16,11 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+
 import junit.framework.AssertionFailedError;
 import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;

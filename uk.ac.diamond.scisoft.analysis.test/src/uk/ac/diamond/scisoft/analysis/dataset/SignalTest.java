@@ -19,6 +19,11 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;

@@ -20,6 +20,12 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyComplex;
@@ -33,13 +39,6 @@ import org.python.core.PySequenceList;
 import org.python.core.PySlice;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.Slice;
 
 /**
  * Class of utilities for interfacing with Jython

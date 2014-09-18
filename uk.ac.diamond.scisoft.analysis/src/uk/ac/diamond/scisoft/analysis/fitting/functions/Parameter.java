@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

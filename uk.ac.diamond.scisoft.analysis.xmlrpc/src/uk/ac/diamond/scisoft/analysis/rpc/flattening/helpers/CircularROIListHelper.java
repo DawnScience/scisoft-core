@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
-import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
-import uk.ac.diamond.scisoft.analysis.roi.CircularROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.CircularROIList;
 
 public class CircularROIListHelper extends ROIListHelper<CircularROIList, CircularROI> {
 

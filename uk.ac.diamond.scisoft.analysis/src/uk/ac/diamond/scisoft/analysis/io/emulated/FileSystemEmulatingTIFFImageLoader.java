@@ -16,11 +16,12 @@
 
 package uk.ac.diamond.scisoft.analysis.io.emulated;
 
-import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
-import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
-import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+
 import uk.ac.diamond.scisoft.analysis.io.TIFFImageLoader;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * An implementation of {@link IFileLoader} that wraps a 'real' {@link TIFFImageLoader} with a

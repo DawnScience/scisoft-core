@@ -28,14 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nexusformat.NexusException;
 import org.xml.sax.InputSource;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 
 public class NexusLoaderTests {
 	final static String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();

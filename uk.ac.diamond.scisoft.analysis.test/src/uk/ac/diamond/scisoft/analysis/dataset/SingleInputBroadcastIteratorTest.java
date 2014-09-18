@@ -16,6 +16,11 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.SingleInputBroadcastIterator;
 import org.junit.Assert;
 import org.junit.Test;
 

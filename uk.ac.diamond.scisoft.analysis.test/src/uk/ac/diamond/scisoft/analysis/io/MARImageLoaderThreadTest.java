@@ -21,6 +21,8 @@ import java.net.UnknownHostException;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

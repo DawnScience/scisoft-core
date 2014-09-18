@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import uk.ac.diamond.scisoft.analysis.roi.GridPreferences;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
-import uk.ac.diamond.scisoft.analysis.roi.ROIList;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.GridPreferences;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROIList;
 
 /**
  * This class holds the names of the parameters used in GuiBean to communicate with the GUI

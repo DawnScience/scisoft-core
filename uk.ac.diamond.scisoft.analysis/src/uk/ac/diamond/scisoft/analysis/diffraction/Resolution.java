@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+
 
 /**
  * Utility class to calculate various aspects of resolution from crystallographic images

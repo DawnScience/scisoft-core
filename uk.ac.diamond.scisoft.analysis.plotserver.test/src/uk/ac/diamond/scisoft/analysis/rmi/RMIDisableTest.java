@@ -22,11 +22,10 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.eclipse.dawnsci.analysis.api.RMIServerProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.RMIServerProvider;
 
 public class RMIDisableTest {
 

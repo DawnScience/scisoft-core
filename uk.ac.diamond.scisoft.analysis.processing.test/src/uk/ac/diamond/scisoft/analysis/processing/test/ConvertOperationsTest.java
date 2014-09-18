@@ -3,10 +3,10 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 import org.dawb.common.services.ServiceManager;
 import org.dawb.common.services.conversion.IConversionService;
 import org.dawnsci.conversion.ConversionServiceImpl;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.IOperationService;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 
 public class ConvertOperationsTest {

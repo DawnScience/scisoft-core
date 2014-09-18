@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

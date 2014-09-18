@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -25,14 +25,15 @@ import javax.vecmath.Vector3d;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.HyperbolicROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.ParabolicROI;
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
-import uk.ac.diamond.scisoft.analysis.roi.HyperbolicROI;
-import uk.ac.diamond.scisoft.analysis.roi.IParametricROI;
-import uk.ac.diamond.scisoft.analysis.roi.IROI;
-import uk.ac.diamond.scisoft.analysis.roi.ParabolicROI;
 
 /**
  * Class that will test calculating

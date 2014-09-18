@@ -16,8 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROI;
-import uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROIList;
 
 public class EllipticalROIListHelper extends ROIListHelper<EllipticalROIList, EllipticalROI> {
 

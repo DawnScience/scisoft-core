@@ -16,7 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class MaskMetadataImpl implements MaskMetadata {
 

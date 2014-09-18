@@ -21,6 +21,8 @@ import gda.data.nexus.tree.NexusTreeProvider;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+
 /**
  * This saver adds Nexus metadata to files
  */

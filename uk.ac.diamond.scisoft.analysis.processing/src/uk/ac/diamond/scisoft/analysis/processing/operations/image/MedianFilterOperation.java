@@ -1,8 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import org.dawb.common.services.IImageFilterService;
-
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 
 public class MedianFilterOperation extends AbstractSimpleImageOperation<KernelWidthModel> {
 

@@ -18,8 +18,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.util.Iterator;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IndexIterator;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 
 /**
  * <p>Class to provide iteration through a set of coordinates

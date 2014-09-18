@@ -19,13 +19,14 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.CBFLoader;
-import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
-import uk.ac.diamond.scisoft.analysis.io.IFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.MARLoader;
-import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 
 /**
  * Class to hold methods to handle diffraction images and associated metadata

@@ -1,8 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import uk.ac.diamond.scisoft.analysis.processing.model.AbstractOperationModel;
-import uk.ac.diamond.scisoft.analysis.roi.IRectangularROI;
-import uk.ac.diamond.scisoft.analysis.roi.RectangularROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 public class RotatedCartesianBoxModel extends AbstractOperationModel {
 

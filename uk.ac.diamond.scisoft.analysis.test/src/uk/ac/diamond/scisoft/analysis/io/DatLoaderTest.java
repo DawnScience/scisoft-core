@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
-import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public class DatLoaderTest {
 

@@ -18,7 +18,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.roi.CircularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class CircularROIHelper extends ROIHelper<CircularROI> {

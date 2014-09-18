@@ -16,6 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+
 /**
  * A unimodal function (i.e. has one peak)
  */

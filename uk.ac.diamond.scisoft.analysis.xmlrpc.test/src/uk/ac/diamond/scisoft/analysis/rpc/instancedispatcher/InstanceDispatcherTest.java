@@ -18,12 +18,12 @@ package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
 
 import java.io.IOException;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.MockDataset;
-import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;

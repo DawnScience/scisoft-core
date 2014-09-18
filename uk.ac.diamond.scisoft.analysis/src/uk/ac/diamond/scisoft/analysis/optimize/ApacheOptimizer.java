@@ -38,10 +38,9 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.random.Well19937c;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IParameter;
 
 public class ApacheOptimizer extends AbstractOptimizer {
 	private static Logger logger = LoggerFactory.getLogger(ApacheOptimizer.class);

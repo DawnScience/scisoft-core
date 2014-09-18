@@ -18,7 +18,9 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 public class DiffractionMetadataUtils {
 	

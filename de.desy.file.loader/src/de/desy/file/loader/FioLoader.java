@@ -34,19 +34,17 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 // lots of below added
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
-import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.ExtendedMetadata;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
-import uk.ac.diamond.scisoft.analysis.io.IMetaLoader;
 import uk.ac.diamond.scisoft.analysis.io.ScanFileHolderException;
 import uk.ac.diamond.scisoft.analysis.io.Utils;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetaLoader;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
+import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
 /**
  * This class loads a fio data files where:
@@ -224,7 +222,7 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public void loadMetaData(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws Exception {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		int count = 1;
@@ -262,7 +260,7 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 	/**

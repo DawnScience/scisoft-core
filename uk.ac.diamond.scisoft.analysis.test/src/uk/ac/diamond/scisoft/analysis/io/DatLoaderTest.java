@@ -85,7 +85,7 @@ public class DatLoaderTest {
 	public void testMoFoilLoaderFactoryMeta() throws Exception {
 	
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/MoFoil.dat";
-		final IMetadata meta   = LoaderFactory.getMetaData(testfile1, null);
+		final IMetadata meta   = LoaderFactory.getMetadata(testfile1, null);
 		if (meta.getDataNames().size()!=13) throw new Exception("There should be 13 columns!");
 
 		if (!meta.getDataNames().contains("(13 fluo channels)")) throw new Exception("There should be a (13 fluo channels) column!");
@@ -102,7 +102,7 @@ public class DatLoaderTest {
 	public void testHorribleId143DatFile() throws Exception {
 		
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/bsa_013_01.dat";
-		final IMetadata meta   = LoaderFactory.getMetaData(testfile1, null);
+		final IMetadata meta   = LoaderFactory.getMetadata(testfile1, null);
         final Collection<String> names = meta.getDataNames();
         if (!names.contains("Unknown1")) throw new Exception("No Unknown1 in meta data!");
         if (!names.contains("Unknown2")) throw new Exception("No Unknown2 in meta data!");
@@ -123,7 +123,7 @@ public class DatLoaderTest {
 	public void testPlainDatFile() throws Exception {
 		
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/noheader.dat";
-		final IMetadata meta   = LoaderFactory.getMetaData(testfile1, null);
+		final IMetadata meta   = LoaderFactory.getMetadata(testfile1, null);
         final Collection<String> names = meta.getDataNames();
         if (!names.contains("Column_1")) throw new Exception("No Unknown1 in meta data!");
         if (!names.contains("Column_2")) throw new Exception("No Unknown2 in meta data!");

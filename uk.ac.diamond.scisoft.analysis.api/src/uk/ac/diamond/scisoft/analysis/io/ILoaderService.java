@@ -58,7 +58,7 @@ public interface ILoaderService {
 	  * This method can be used to load meta data. It will use Fabio if
 	  * LoaderFactory does not work.
 	  */
-    public IMetadata getMetaData(final String filePath, final IMonitor monitor) throws Exception;
+    public IMetadata getMetadata(final String filePath, final IMonitor monitor) throws Exception;
 
 
     /**

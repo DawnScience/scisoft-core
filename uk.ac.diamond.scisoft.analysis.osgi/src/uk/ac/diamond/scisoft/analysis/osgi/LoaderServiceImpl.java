@@ -70,10 +70,10 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	}
 	
 	@Override
-	public IMetadata getMetaData(final String filePath, final IMonitor monitor) throws Exception {
+	public IMetadata getMetadata(final String filePath, final IMonitor monitor) throws Exception {
 				
 	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
-		return LoaderFactory.getMetaData(filePath, mon);
+		return LoaderFactory.getMetadata(filePath, mon);
 	}
 
 

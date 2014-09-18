@@ -77,7 +77,7 @@ public class PgmLoaderTest {
 	@Test
 	public void loadLoaderFactoryMetaData()  throws Exception {
 		
-		IMetadata meta = LoaderFactory.getMetaData(testFileFolder+file, null);
+		IMetadata meta = LoaderFactory.getMetadata(testFileFolder+file, null);
 		assertEquals(meta.getMetaValue("MagicNumber"), "P5");			
 		assertEquals(meta.getMetaValue("Width"), "1024");			
 		assertEquals(meta.getMetaValue("Height"), "1024");			

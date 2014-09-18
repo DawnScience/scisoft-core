@@ -95,7 +95,7 @@ public class PilatusEdfLoaderTest {
 	@Test
 	public void testUseMetaDataLoaderFactory() throws Exception {
 		
-		IMetadata meta = LoaderFactory.getMetaData(testFileFolder+"diff6105.edf", null);
+		IMetadata meta = LoaderFactory.getMetadata(testFileFolder+"diff6105.edf", null);
      		
 		assertEquals(meta.getMetaValue("HeaderID"), "EH:000001:000000:000000");			
 		assertEquals(meta.getMetaValue("Image"), "1");			

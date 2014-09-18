@@ -41,7 +41,7 @@ public class Fit2DLoaderTest {
 	@Test
 	public void testF2dMetaLoader()  throws Exception {
 		
-		IMetadata meta = LoaderFactory.getMetaData(testFileFolder+"test1.f2d", null);
+		IMetadata meta = LoaderFactory.getMetadata(testFileFolder+"test1.f2d", null);
  		
 		assertEquals(meta.getMetaValue("Dim_1"), "2048");
 		assertEquals(meta.getMetaValue("Dim_2"), "2048");

@@ -580,7 +580,7 @@ public class LoaderFactory {
 	 * @return IMetadata
 	 * @throws Exception
 	 */
-	public static IMetadata getMetaData(final String path, final IMonitor mon) throws Exception {
+	public static IMetadata getMetadata(final String path, final IMonitor mon) throws Exception {
 
 		
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);

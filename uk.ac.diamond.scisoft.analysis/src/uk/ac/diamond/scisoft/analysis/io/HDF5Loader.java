@@ -2072,7 +2072,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private Metadata metadata;
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 

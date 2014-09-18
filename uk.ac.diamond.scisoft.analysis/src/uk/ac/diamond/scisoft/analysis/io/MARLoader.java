@@ -617,7 +617,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return diffMetadata;
 	}
 	
@@ -627,6 +627,6 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 			if (data!=null) return data.getMetadata(); 
 			return null;
 		}
-		return getMetaData();
+		return getMetadata();
 	}
 }

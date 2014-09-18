@@ -530,7 +530,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 
 	
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 

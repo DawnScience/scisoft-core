@@ -318,7 +318,7 @@ public class NexusLoaderTest {
 		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
 		IMetaLoader l = new NexusLoader(TestFileFolder + "/multiDetector.nxs");
 		l.loadMetadata(null);
-		IMetadata meta = l.getMetaData();
+		IMetadata meta = l.getMetadata();
 		String[] headings = meta.getDataNames().toArray(new String[meta.getDataNames().size()]);
 		Assert.assertEquals("Number of headings is incorrect", 120, headings.length);
 		Assert.assertEquals("EDXD_Element_23.edxd_q", headings[71]);

@@ -114,7 +114,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		output.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
-			data.setMetadata(getMetaData());
+			data.setMetadata(getMetadata());
 			output.setMetadata(data.getMetadata());
 		}
 		return output;
@@ -1020,7 +1020,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return diffMetadata;
 	}
 }

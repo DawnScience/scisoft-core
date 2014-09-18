@@ -29,5 +29,5 @@ public interface IMetaLoader {
      * to be read in. 
       * @return IMetaData
      */
-	public IMetadata getMetaData();
+	public IMetadata getMetadata();
 }

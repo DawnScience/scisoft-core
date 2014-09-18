@@ -613,7 +613,7 @@ public class LoaderFactory {
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
 				((IMetaLoader) loader).loadMetadata(mon);
-				IMetadata meta = ((IMetaLoader) loader).getMetaData();
+				IMetadata meta = ((IMetaLoader) loader).getMetadata();
 				recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {

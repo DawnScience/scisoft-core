@@ -116,7 +116,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		appendPilatusData(data, mon);
 		if (loadMetadata) {
 			createMetadata();
-			data.setMetadata(getMetaData());
+			data.setMetadata(getMetadata());
 		}
 		return data;
 	}

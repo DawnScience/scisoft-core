@@ -177,7 +177,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 			data.setName(DEF_IMAGE_NAME);
 			output.addDataset("ADSC Image", data);
 			if (loadMetadata) {
-				data.setMetadata(getMetaData());
+				data.setMetadata(getMetadata());
 				output.setMetadata(data.getMetadata());
 			}
 		} catch (Exception e) {
@@ -337,7 +337,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return diffMetadata;
 	}
 }

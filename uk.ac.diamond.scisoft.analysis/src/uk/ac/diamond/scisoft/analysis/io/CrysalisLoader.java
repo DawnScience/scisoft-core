@@ -155,7 +155,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 
 		output.addDataset("Ruby_Image", data);
 		if (loadMetadata) {
-			data.setMetadata(getMetaData());
+			data.setMetadata(getMetadata());
 			output.setMetadata(data.getMetadata());
 		}
 
@@ -211,7 +211,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	}
 	
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		Metadata md = new Metadata(textMetadata);
 		int width = Integer.parseInt(textMetadata.get("nx"));
 		int height = Integer.parseInt(textMetadata.get("ny"));

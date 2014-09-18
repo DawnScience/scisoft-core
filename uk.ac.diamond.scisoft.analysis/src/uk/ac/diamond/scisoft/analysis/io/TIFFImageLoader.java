@@ -165,17 +165,17 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 			}
 		}
 		if (loadMetadata) {
-			output.setMetadata(getMetaData());
+			output.setMetadata(getMetadata());
 		}
 
 		if (n == 1) {
 			Dataset image = createDataset(reader.read(0));
-			image.setMetadata(getMetaData());
+			image.setMetadata(getMetadata());
 			output.addDataset(DEF_IMAGE_NAME, image);
 		} else {
 			int dtype = createDataset(its.createBufferedImage(1, 1)).getDtype();
 			ILazyDataset ld = createLazyDataset(dtype, height, width, n);
-			ld.setMetadata(getMetaData());
+			ld.setMetadata(getMetadata());
 			output.addDataset(STACK_NAME, ld);
 		}
 	}
@@ -383,7 +383,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return getMetaData(null);
 	}
 

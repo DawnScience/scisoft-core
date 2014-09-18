@@ -146,7 +146,7 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return diffMetadata;
 	}
 

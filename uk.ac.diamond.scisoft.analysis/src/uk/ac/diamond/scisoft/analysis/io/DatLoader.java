@@ -309,7 +309,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 

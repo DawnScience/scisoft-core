@@ -186,7 +186,7 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 	
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 

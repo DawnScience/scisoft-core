@@ -163,7 +163,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 			data.setName(DEF_IMAGE_NAME);
 			output.addDataset(DATA_NAME, data);
 			if (loadMetadata) {
-				data.setMetadata(getMetaData());
+				data.setMetadata(getMetadata());
 				output.setMetadata(data.getMetadata());
 			}
 		} catch (Exception e) {
@@ -516,7 +516,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 	}
 
 	@Override
-	public IMetadata getMetaData() {
+	public IMetadata getMetadata() {
 		return diffMetadata;
 	}
 }

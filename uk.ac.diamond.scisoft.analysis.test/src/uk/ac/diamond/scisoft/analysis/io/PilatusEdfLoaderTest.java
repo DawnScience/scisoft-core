@@ -25,6 +25,7 @@ import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 
 public class PilatusEdfLoaderTest {
@@ -94,7 +95,7 @@ public class PilatusEdfLoaderTest {
 	@Test
 	public void testUseMetaDataLoaderFactory() throws Exception {
 		
-		IMetaData meta = LoaderFactory.getMetaData(testFileFolder+"diff6105.edf", null);
+		IMetadata meta = LoaderFactory.getMetaData(testFileFolder+"diff6105.edf", null);
      		
 		assertEquals(meta.getMetaValue("HeaderID"), "EH:000001:000000:000000");			
 		assertEquals(meta.getMetaValue("Image"), "1");			
@@ -116,17 +117,17 @@ public class PilatusEdfLoaderTest {
 		PilatusEdfLoader edfLoader = new PilatusEdfLoader(testFileFolder+"diff6105.edf");
 		DataHolder dataHolder = edfLoader.loadFile();
      
-		assertEquals(edfLoader.getMetaData().getMetaValue("HeaderID"), "EH:000001:000000:000000");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Image"), "1");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("ByteOrder"), "LowByteFirst");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("DataType"), "UnsignedShort");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Dim_1"), "2048");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Dim_2"), "2048");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Size"), "8388608");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("time"), "Thu Jun 18 04:24:25 2009");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("count_time"), "Na");
-		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "ESPIA FRELON Image 6105");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "6105");
+		assertEquals(edfLoader.getMetadata().getMetaValue("HeaderID"), "EH:000001:000000:000000");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Image"), "1");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("ByteOrder"), "LowByteFirst");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("DataType"), "UnsignedShort");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Dim_1"), "2048");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Dim_2"), "2048");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Size"), "8388608");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("time"), "Thu Jun 18 04:24:25 2009");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("count_time"), "Na");
+		assertEquals(edfLoader.getMetadata().getMetaValue("title"), "ESPIA FRELON Image 6105");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("run"), "6105");
 		
 		Dataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		assertEquals(data.getDouble(0, 0),      98.0, 0.0);
@@ -138,18 +139,18 @@ public class PilatusEdfLoaderTest {
 		PilatusEdfLoader edfLoader = new PilatusEdfLoader(testFileFolder+"pilatus300k.edf");
 
 		DataHolder dataHolder = edfLoader.loadFile();
-		assertEquals(edfLoader.getMetaData().getMetaValue("HeaderID"), "EH:000001:000000:000000");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Image"), "1");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("VersionNumber"), "0.10");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("ByteOrder"), "LowByteFirst");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("DataType"), "SignedInteger");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Dim_1"), "1475");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Dim_2"), "195");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Size"), "1150500");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("Date"), "Wed Jun 16 19:14:09 2010");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("count_time"), "1.000000000");
-		assertEquals(edfLoader.getMetaData().getMetaValue("title"), "# Pixel_size 172e-6 m x 172e-6 m");			
-		assertEquals(edfLoader.getMetaData().getMetaValue("run"), "0");
+		assertEquals(edfLoader.getMetadata().getMetaValue("HeaderID"), "EH:000001:000000:000000");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Image"), "1");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("VersionNumber"), "0.10");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("ByteOrder"), "LowByteFirst");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("DataType"), "SignedInteger");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Dim_1"), "1475");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Dim_2"), "195");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Size"), "1150500");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("Date"), "Wed Jun 16 19:14:09 2010");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("count_time"), "1.000000000");
+		assertEquals(edfLoader.getMetadata().getMetaValue("title"), "# Pixel_size 172e-6 m x 172e-6 m");			
+		assertEquals(edfLoader.getMetadata().getMetaValue("run"), "0");
 
 		Dataset data = dataHolder.getDataset(PilatusEdfLoader.DATA_NAME);
 		// Check the first 5 data points

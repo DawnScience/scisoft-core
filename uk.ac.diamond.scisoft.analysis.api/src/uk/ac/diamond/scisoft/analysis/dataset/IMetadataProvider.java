@@ -20,7 +20,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 public interface IMetadataProvider {
 
 	/**
-	 * @return an instance of IMetaData
+	 * @return an instance of IMetadata
 	 * @throws Exception
 	 */
 	public IMetadata getMetadata() throws Exception;

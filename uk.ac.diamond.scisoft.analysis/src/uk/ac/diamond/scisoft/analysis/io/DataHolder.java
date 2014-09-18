@@ -134,14 +134,14 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	
 	/**
 	 * Add a ImetaData object
-	 * @param metadata which is an object implementing IMetaData
+	 * @param metadata which is an object implementing IMetadata
 	 */
 	public void setMetadata(IMetadata metadata) {
 		this.metadata = metadata;
 	}
 
 	/**
-	 * @return an object implementing IMetaData
+	 * @return an object implementing IMetadata
 	 */
 	@Override
 	public IMetadata getMetadata() {

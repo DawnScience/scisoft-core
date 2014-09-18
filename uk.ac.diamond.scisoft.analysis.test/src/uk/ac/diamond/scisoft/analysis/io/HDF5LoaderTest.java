@@ -30,8 +30,8 @@ import org.apache.commons.math3.complex.Complex;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset;
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
@@ -41,6 +41,7 @@ import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Group;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Node;
 import uk.ac.diamond.scisoft.analysis.hdf5.HDF5NodeLink;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public class HDF5LoaderTest {
 	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";
@@ -254,7 +255,7 @@ public class HDF5LoaderTest {
 		String n = TestFileFolder + "FeKedge_1_15.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 
-		IMetaData md = l.loadFile().getMetadata();
+		IMetadata md = l.loadFile().getMetadata();
 
 		System.out.println(md.getMetaNames());
 		assertTrue("Wrong version", md.getMetaValue("/@NeXus_version").equals("4.2.0"));

@@ -19,7 +19,7 @@ import uk.ac.diamond.scisoft.analysis.io.IDataAnalysisObject;
  * This interface describes the minimal metadata information that should be 
  * associated with a Dataset or DataHolder. It is intended that
  * this interface will be implemented in an object that will then be 
- * associated with a DataHolder or dataset using setMetadata(IMetaData).
+ * associated with a DataHolder or dataset using setMetadata(IMetadata).
  * <p>
  * All returned collections and maps are <b>unmodifiable</b>.
  */

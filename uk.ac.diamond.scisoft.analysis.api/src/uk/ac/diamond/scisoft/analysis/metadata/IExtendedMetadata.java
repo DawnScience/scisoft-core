@@ -14,7 +14,7 @@ import java.util.Date;
 
 /**
  * This is an interface that has been designed to add information about a file in addition to
- * information which has been implemented in IMetaData.
+ * information which has been implemented in IMetadata.
  * <p>
  * It is intended that implementations of this interface will be through an adapter
  */

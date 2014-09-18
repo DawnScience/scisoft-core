@@ -27,7 +27,7 @@ public interface IMetaLoader {
     /**
      * Returns an object containing some data about the data file
      * to be read in. 
-      * @return IMetaData
+      * @return IMetadata
      */
 	public IMetadata getMetadata();
 }

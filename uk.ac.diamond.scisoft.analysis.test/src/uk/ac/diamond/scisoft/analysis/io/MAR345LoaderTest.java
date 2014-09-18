@@ -27,6 +27,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 /**
  */
@@ -92,7 +94,7 @@ public class MAR345LoaderTest {
 		Assert.assertEquals(146, image.getInt(854, 2890));
 		Assert.assertEquals(250, image.getInt(961, 1741));
 
-		IMetaData md = image.getMetadata();
+		IMetadata md = image.getMetadata();
 		Assert.assertTrue(md instanceof IDiffractionMetadata);
 		DiffractionCrystalEnvironment env = ((IDiffractionMetadata) md).getDiffractionCrystalEnvironment();
 		Assert.assertEquals(1.54179, env.getWavelength(), 1e-5);

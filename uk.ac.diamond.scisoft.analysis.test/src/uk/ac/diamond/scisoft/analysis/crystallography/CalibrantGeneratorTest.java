@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.CalibrantGenerator.Cubic;

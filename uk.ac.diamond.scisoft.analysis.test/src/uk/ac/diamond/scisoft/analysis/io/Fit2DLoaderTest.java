@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public class Fit2DLoaderTest {
 	
@@ -40,7 +41,7 @@ public class Fit2DLoaderTest {
 	@Test
 	public void testF2dMetaLoader()  throws Exception {
 		
-		IMetaData meta = LoaderFactory.getMetaData(testFileFolder+"test1.f2d", null);
+		IMetadata meta = LoaderFactory.getMetaData(testFileFolder+"test1.f2d", null);
  		
 		assertEquals(meta.getMetaValue("Dim_1"), "2048");
 		assertEquals(meta.getMetaValue("Dim_2"), "2048");

@@ -577,7 +577,7 @@ public class LoaderFactory {
 	 * 
 	 * @param path
 	 * @param mon
-	 * @return IMetaData
+	 * @return IMetadata
 	 * @throws Exception
 	 */
 	public static IMetadata getMetaData(final String path, final IMonitor mon) throws Exception {
@@ -655,7 +655,7 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Returns true if a given file is an IMetaData and able to load metadata without the data
+	 * Returns true if a given file is an IMetadata and able to load metadata without the data
 	 * 
 	 * @param path
 	 * @return true if can load metadata without all data being loaded.

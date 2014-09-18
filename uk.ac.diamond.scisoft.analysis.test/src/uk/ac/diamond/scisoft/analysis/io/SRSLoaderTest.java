@@ -36,6 +36,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.DatasetFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 /**
  * Test for SRS Loader
@@ -232,7 +233,7 @@ public class SRSLoaderTest {
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 2, dh.size());
 			assertEquals("The file does not contain correct data", 2.0, dh.getDataset(0).getDouble(1), 1e-5);
-			IMetaData mdo = dh.getMetadata();
+			IMetadata mdo = dh.getMetadata();
 			try {
 			Collection<String> mdNames = mdo.getMetaNames();
 			assertEquals("Loaded incorrect number of metadata items", 11, mdNames.size());

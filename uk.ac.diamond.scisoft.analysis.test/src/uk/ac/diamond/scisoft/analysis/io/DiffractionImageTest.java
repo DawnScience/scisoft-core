@@ -28,6 +28,8 @@ import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.Dataset;
 import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.metadata.IMetadata;
 
 public class DiffractionImageTest {
 	static String testfile1 = null;
@@ -70,7 +72,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testMetadata() throws Exception {
 		DataHolder dh = new ADSCImageLoader(testfile1).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -90,7 +92,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testMAR() throws Exception {
 		DataHolder dh = new MARLoader(testfile2).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -109,7 +111,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testminiCBF() throws Exception {
 		DataHolder dh = new CBFLoader(testfile3).loadFile();
-		IMetaData metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getMetadata();
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();

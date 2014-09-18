@@ -18,6 +18,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 

@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.metadata.IDiffractionMetadata;
+
 public class NexusDiffractionMetaTest {
 	
 	static String testScratchDirectoryName = null;

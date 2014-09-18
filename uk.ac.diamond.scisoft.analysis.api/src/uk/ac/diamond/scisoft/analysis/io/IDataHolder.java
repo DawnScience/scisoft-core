@@ -29,7 +29,7 @@ public interface IDataHolder extends IDataAnalysisObject {
 	public IDataHolder clone();
 
 	/**
-	 * @return an object implementing IMetaData
+	 * @return an object implementing IMetadata
 	 */
 	public IMetadata getMetadata();
 

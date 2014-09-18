@@ -14,7 +14,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
 /**
  * This interface is used to mark meta data which conforms to the diffraction meta
- * data specification. The following keys will exist in the IMetaData and must return
+ * data specification. The following keys will exist in the IMetadata and must return
  * meaningful values.
  */
 public interface IDiffractionMetadata extends IMetadata {

@@ -52,7 +52,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * List containing metadata
 	 */
-	private IMetaData metadata;
+	private IMetadata metadata;
 
 	/**
 	 * Loader class string
@@ -124,7 +124,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @param metadata
 	 *            the metadata that is associated with the dataset
 	 */
-	public boolean addDataset(String name, ILazyDataset dataset, IMetaData metadata) {
+	public boolean addDataset(String name, ILazyDataset dataset, IMetadata metadata) {
 		boolean ret = addDataset(name, dataset);
 		this.metadata = metadata;
 		return ret;
@@ -134,7 +134,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * Add a ImetaData object
 	 * @param metadata which is an object implementing IMetaData
 	 */
-	public void setMetadata(IMetaData metadata) {
+	public void setMetadata(IMetadata metadata) {
 		this.metadata = metadata;
 	}
 
@@ -142,14 +142,14 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @return an object implementing IMetaData
 	 */
 	@Override
-	public IMetaData getMetadata() {
+	public IMetadata getMetadata() {
 		return metadata;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
+		if (IMetadata.class.isAssignableFrom(clazz)) {
 			List<T> result = new ArrayList<T>();
 			result.add((T) getMetadata());
 			return result;

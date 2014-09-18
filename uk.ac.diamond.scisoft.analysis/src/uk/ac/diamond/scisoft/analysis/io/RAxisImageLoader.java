@@ -494,7 +494,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		// opens the file and reads the header information
 		RandomAccessFile raf = null;
 		try {
@@ -516,7 +516,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements IMetaLoader,
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return diffMetadata;
 	}
 }

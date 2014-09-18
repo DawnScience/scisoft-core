@@ -204,14 +204,14 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 		}
 	}
 	@Override
-	public void loadMetaData(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws Exception {
 		IDataHolder dh = loadFile(mon);
 		// Reads data anyway - TODO fix to have read header one day.
 		dh.clear();
 	}
 	
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		Metadata md = new Metadata(textMetadata);
 		int width = Integer.parseInt(textMetadata.get("nx"));
 		int height = Integer.parseInt(textMetadata.get("ny"));

@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DetectorProperties;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
 
 public class DiffractionMetadata extends ExtendedMetadata implements IDiffractionMetadata {
-	private static final long serialVersionUID = IMetaData.serialVersionUID;
+	private static final long serialVersionUID = IMetadata.serialVersionUID;
 
 	private DetectorProperties props, oProps;
 	private DiffractionCrystalEnvironment env, oEnv;

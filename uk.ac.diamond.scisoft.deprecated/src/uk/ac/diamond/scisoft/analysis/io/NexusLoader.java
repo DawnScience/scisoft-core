@@ -395,14 +395,14 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	private Map<String, int[]>   allDataSetRanks;
 	
 	@Override
-	public void loadMetaData(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws Exception {
 		allDataSetNames = getDatasetNames(this.filename, mon);
 		allDataSetSizes = getDataSizes(filename, allDataSetNames, mon);
 		allDataSetRanks = getDataShapes(filename, allDataSetNames, mon);
 	}
 	
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		Metadata md = new Metadata();
 		for (Entry<String, int[]> e : allDataSetRanks.entrySet()) {
 			md.addDataInfo(e.getKey(), e.getValue());

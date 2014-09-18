@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
-	private static final long serialVersionUID = IMetaData.serialVersionUID;
+	private static final long serialVersionUID = IMetadata.serialVersionUID;
 	private String creator = null;
 	private String filename = null;
 	private String owner = null;
@@ -103,7 +103,7 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	}
 
 	@Override
-	public IMetaData clone() {
+	public IMetadata clone() {
 		ExtendedMetadata c = (ExtendedMetadata) super.clone();
 		if (filesize < 0 && path != null) {
 			c.setFile(new File(path));

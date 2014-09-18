@@ -598,7 +598,7 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		boolean tmp = loadMetadata;
 		try {
 			loadMetadata = true;
@@ -617,12 +617,12 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return diffMetadata;
 	}
 	
 	@Override
-	public IMetaData getMetaData(Dataset data) {
+	public IMetadata getMetaData(Dataset data) {
 		if (metadata == null) {
 			if (data!=null) return data.getMetadata(); 
 			return null;

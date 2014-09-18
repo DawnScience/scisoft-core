@@ -77,7 +77,7 @@ public class TIFFImageSaver extends JavaImageSaver {
 				pi.setProperty("originalDataSource", dh.getFilePath());
 			}
 
-			IMetaData meta = dh.getMetadata();
+			IMetadata meta = dh.getMetadata();
 			if (meta != null) {
 				Collection<String> dNames = meta.getMetaNames();
 				if (dNames!=null) for (String name : dNames) {

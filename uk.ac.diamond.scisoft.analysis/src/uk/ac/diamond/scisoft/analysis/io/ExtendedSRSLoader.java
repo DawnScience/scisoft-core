@@ -122,8 +122,8 @@ public class ExtendedSRSLoader extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
-		super.loadMetaData(mon);
+	public void loadMetadata(IMonitor mon) throws Exception {
+		super.loadMetadata(mon);
 
 		// Cannot do this if decorator, this means that the I16 data folder would parse all
 		// the ascii files in the whole directory!!

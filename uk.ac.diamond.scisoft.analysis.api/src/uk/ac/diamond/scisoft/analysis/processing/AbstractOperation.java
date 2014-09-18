@@ -21,7 +21,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
@@ -126,16 +126,16 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 	
 	public IDiffractionMetadata getFirstDiffractionMetadata(IDataset slice) {
 		
-		List<IMetaData> metaList;
+		List<IMetadata> metaList;
 		
 		try {
-			metaList = slice.getMetadata(IMetaData.class);
+			metaList = slice.getMetadata(IMetadata.class);
 			if (metaList == null || metaList.isEmpty()) return null;
 		} catch (Exception e) {
 			return null;
 		}
 		
-		for (IMetaData meta : metaList) if (meta instanceof IDiffractionMetadata) return (IDiffractionMetadata)meta;
+		for (IMetadata meta : metaList) if (meta instanceof IDiffractionMetadata) return (IDiffractionMetadata)meta;
 		
 		return null;
 	}

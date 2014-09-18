@@ -83,12 +83,12 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 	}
 	
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		loader.loadFile(mon);
     }
 	
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		if (loader instanceof IMetaLoader) return ((IMetaLoader)loader).getMetaData();
 		return new Metadata();
 	}

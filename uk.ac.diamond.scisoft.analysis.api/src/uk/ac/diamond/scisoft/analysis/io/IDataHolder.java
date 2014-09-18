@@ -30,7 +30,7 @@ public interface IDataHolder extends IDataAnalysisObject {
 	/**
 	 * @return an object implementing IMetaData
 	 */
-	public IMetaData getMetadata();
+	public IMetadata getMetadata();
 
 	/**
 	 * This does not retrieve lazy datasets.

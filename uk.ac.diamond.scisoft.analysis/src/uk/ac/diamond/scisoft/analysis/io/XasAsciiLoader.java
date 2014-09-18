@@ -144,7 +144,7 @@ public class XasAsciiLoader extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 	}
 
 	@Override

@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.util.List;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 
 /**
@@ -23,7 +23,7 @@ public interface IMetadataProvider {
 	 * @return an instance of IMetaData
 	 * @throws Exception
 	 */
-	public IMetaData getMetadata() throws Exception;
+	public IMetadata getMetadata() throws Exception;
 
 	/**
 	 * @param clazz if null return everything

@@ -127,7 +127,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	}
 
 	@Override
-	public void loadMetaData(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws Exception {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		try {
@@ -149,7 +149,7 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return metadata;
 	}
 

@@ -18,7 +18,7 @@ import java.util.Date;
  * <p>
  * It is intended that implementations of this interface will be through an adapter
  */
-public interface IExtendedMetadata extends IMetaData {
+public interface IExtendedMetadata extends IMetadata {
 
 	/**
 	 * This should be the timestamp of when the experiment or measurement took place which should

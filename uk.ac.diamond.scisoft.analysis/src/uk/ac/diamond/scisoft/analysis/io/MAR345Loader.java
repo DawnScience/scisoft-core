@@ -111,7 +111,7 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		if (diffMetadata != null)
 			return;
 
@@ -146,7 +146,7 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return diffMetadata;
 	}
 

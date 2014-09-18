@@ -161,7 +161,7 @@ public class JavaImageSaver implements IFileSaver {
 				pi.setProperty("originalDataSource", dh.getFilePath());
 			}
 
-			IMetaData meta = dh.getMetadata();
+			IMetadata meta = dh.getMetadata();
 			if (meta != null) {
 				Collection<String> dNames = meta.getMetaNames();
 				if (dNames!=null) for (String name : dNames) {

@@ -23,7 +23,7 @@ import java.util.List;
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.Slice;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
@@ -34,11 +34,11 @@ import uk.ac.diamond.scisoft.analysis.roi.IROI;
 public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyDataset {
 
 	
-	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta, List<IROI> rois) {
+	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetadata meta, List<IROI> rois) {
 		super(data, axes, mask, meta, rois);
 	}
 
-	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
+	public RichDataset(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetadata meta) {
 		super(data, axes, mask, meta);
 	}
 
@@ -55,14 +55,14 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 
 
 	@Override
-	public IMetaData getMetadata() throws Exception {
+	public IMetadata getMetadata() throws Exception {
 		return getMeta();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
-		if (IMetaData.class.isAssignableFrom(clazz)) {
+		if (IMetadata.class.isAssignableFrom(clazz)) {
 			List<T> result = new ArrayList<T>();
 			result.add((T) getMetadata());
 			return result;
@@ -174,8 +174,8 @@ public class RichDataset extends RichDatasetBean implements IRichDataset, ILazyD
 
 	@Override
 	public void setMetadata(MetadataType metadata) {
-		if (metadata instanceof IMetaData)
-			meta = (IMetaData) metadata;
+		if (metadata instanceof IMetadata)
+			meta = (IMetadata) metadata;
 	}
 
 	@Override

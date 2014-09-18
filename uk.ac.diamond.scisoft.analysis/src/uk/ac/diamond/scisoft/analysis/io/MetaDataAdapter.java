@@ -24,7 +24,7 @@ import java.util.Map;
  * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern
  * is generally not serializable (unless the host class is serializable and has a null constructor)
  */
-public class MetaDataAdapter implements IMetaData {
+public class MetaDataAdapter implements IMetadata {
 
 	private String filePath;
 	protected Collection<String> adapterDataNames;
@@ -76,7 +76,7 @@ public class MetaDataAdapter implements IMetaData {
 	}
 
 	@Override
-	public IMetaData clone() {
+	public IMetadata clone() {
 		
 		MetaDataAdapter ret = null;
 		if (adapterUserObjects == null) {

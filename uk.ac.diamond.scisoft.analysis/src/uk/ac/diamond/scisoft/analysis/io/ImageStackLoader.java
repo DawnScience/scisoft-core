@@ -152,7 +152,7 @@ public class ImageStackLoader implements ILazyLoader {
 			n += lstep[0];
 		} while (resultStart[0] < newShape[0]);
 
-		IMetaData meta = LoaderFactory.getLockedMetaData();
+		IMetadata meta = LoaderFactory.getLockedMetaData();
 		if (meta!=null) {
 			 result.setMetadata(meta); // Locked overrides all
 		} else {

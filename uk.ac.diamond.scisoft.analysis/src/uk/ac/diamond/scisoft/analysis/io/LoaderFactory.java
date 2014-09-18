@@ -578,7 +578,7 @@ public class LoaderFactory {
 	 * @return IMetaData
 	 * @throws Exception
 	 */
-	public static IMetaData getMetaData(final String path, final IMonitor mon) throws Exception {
+	public static IMetadata getMetaData(final String path, final IMonitor mon) throws Exception {
 
 		
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
@@ -589,11 +589,11 @@ public class LoaderFactory {
 		Object cachedObject = getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {
 			if (cachedObject instanceof DataHolder) {
-				IMetaData meta = ((DataHolder) cachedObject).getMetadata();
+				IMetadata meta = ((DataHolder) cachedObject).getMetadata();
 			    if (meta!=null) return meta;
 			}
-			if (cachedObject instanceof IMetaData)
-				return (IMetaData)cachedObject;
+			if (cachedObject instanceof IMetadata)
+				return (IMetadata)cachedObject;
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
 
@@ -612,8 +612,8 @@ public class LoaderFactory {
 				// NOTE Assumes loader fails quickly and nicely
 				// if given the wrong file. If a loader does not
 				// do this, it should not be registered with LoaderFactory
-				((IMetaLoader) loader).loadMetaData(mon);
-				IMetaData meta = ((IMetaLoader) loader).getMetaData();
+				((IMetaLoader) loader).loadMetadata(mon);
+				IMetadata meta = ((IMetaLoader) loader).getMetaData();
 				recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {
@@ -879,20 +879,20 @@ public class LoaderFactory {
 	}
 
 	
-	private static IMetaData lockedMetaData;
+	private static IMetadata lockedMetaData;
 
 	/**
 	 * DO NOT MAKE Public. Use ILoaderService instead.
 	 * @return metaData
 	 */
-	static IMetaData getLockedMetaData() {
+	static IMetadata getLockedMetaData() {
 		return lockedMetaData;
 	}
 
 	/**
 	 * @Internal do not use. Use ILoaderService.getLockedDiffractionMetaData()
 	 */
-	public static void setLockedMetaData(IMetaData lockedMetaData) {
+	public static void setLockedMetaData(IMetadata lockedMetaData) {
 		LoaderFactory.lockedMetaData = lockedMetaData;
 		if (lockedMetaData==null) clear();
 	}

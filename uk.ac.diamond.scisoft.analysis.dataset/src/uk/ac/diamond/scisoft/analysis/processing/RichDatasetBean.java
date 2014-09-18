@@ -23,7 +23,7 @@ import java.util.Map;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.dataset.ILazyDataset;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
@@ -34,17 +34,17 @@ class RichDatasetBean implements Serializable {
 	protected ILazyDataset         data;
 	protected List<IDataset>       axes;
 	protected ILazyDataset         mask;
-	protected IMetaData            meta;
+	protected IMetadata            meta;
 	protected List<IROI>           rois;
 	protected Map<Integer, String> slicing;
 
 	RichDatasetBean(ILazyDataset data, List<IDataset> axes) {
         this(data, axes, null, null, null);
 	}
-	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta) {
+	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetadata meta) {
         this(data, axes, mask, meta, null);
 	}
-	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetaData meta, List<IROI> rois) {
+	RichDatasetBean(ILazyDataset data, List<IDataset> axes, ILazyDataset mask, IMetadata meta, List<IROI> rois) {
 		this.data = data;
 		this.axes = axes;
 		this.mask = mask;
@@ -70,10 +70,10 @@ class RichDatasetBean implements Serializable {
 	public void setMask(ILazyDataset mask) {
 		this.mask = mask;
 	}
-	public IMetaData getMeta() throws Exception {
+	public IMetadata getMeta() throws Exception {
 		return meta!=null ? meta : data.getMetadata();
 	}
-	public void setMeta(IMetaData meta) {
+	public void setMeta(IMetadata meta) {
 		this.meta = meta;
 	}
 	public List<IROI> getRegions() {

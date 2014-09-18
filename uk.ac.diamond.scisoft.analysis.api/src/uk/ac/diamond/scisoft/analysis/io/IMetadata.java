@@ -23,7 +23,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
  * <p>
  * All returned collections and maps are <b>unmodifiable</b>.
  */
-public interface IMetaData extends IDataAnalysisObject, MetadataType, Serializable {
+public interface IMetadata extends IDataAnalysisObject, MetadataType, Serializable {
 	/**
 	 * Update this when there are any serious changes to API
 	 */
@@ -83,5 +83,5 @@ public interface IMetaData extends IDataAnalysisObject, MetadataType, Serializab
 	 * @return deep copy
 	 */
 	@Override
-	public IMetaData clone();
+	public IMetadata clone();
 }

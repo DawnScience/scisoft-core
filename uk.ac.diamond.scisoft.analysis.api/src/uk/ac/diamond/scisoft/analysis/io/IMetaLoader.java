@@ -22,12 +22,12 @@ public interface IMetaLoader {
 	 * This can be read in more cheaply than the entire data.
 	 * @param mon
 	 */
-	public void loadMetaData(IMonitor mon) throws Exception ;
+	public void loadMetadata(IMonitor mon) throws Exception ;
 	
     /**
      * Returns an object containing some data about the data file
      * to be read in. 
       * @return IMetaData
      */
-	public IMetaData getMetaData();
+	public IMetadata getMetaData();
 }

@@ -2063,7 +2063,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		loadTree(mon);
 		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
 		metadata.setFilePath(fileName);
@@ -2072,7 +2072,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private Metadata metadata;
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return metadata;
 	}
 

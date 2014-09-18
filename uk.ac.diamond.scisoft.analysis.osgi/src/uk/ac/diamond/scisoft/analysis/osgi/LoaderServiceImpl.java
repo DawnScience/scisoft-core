@@ -19,7 +19,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.io.IDataHolder;
 import uk.ac.diamond.scisoft.analysis.io.IDiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.ILoaderService;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.monitor.IMonitor;
 
@@ -70,7 +70,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	}
 	
 	@Override
-	public IMetaData getMetaData(final String filePath, final IMonitor monitor) throws Exception {
+	public IMetadata getMetaData(final String filePath, final IMonitor monitor) throws Exception {
 				
 	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
 		return LoaderFactory.getMetaData(filePath, mon);

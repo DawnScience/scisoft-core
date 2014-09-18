@@ -17,7 +17,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionCrystalEnvironment;
  * data specification. The following keys will exist in the IMetaData and must return
  * meaningful values.
  */
-public interface IDiffractionMetadata extends IMetaData {
+public interface IDiffractionMetadata extends IMetadata {
 
 	public DetectorProperties getDetector2DProperties();
 	

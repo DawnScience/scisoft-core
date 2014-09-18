@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 
 
 /**
@@ -141,7 +141,7 @@ public interface IDataset extends ILazyDataset {
 	 * @return the metadata, may be null
 	 */
 	@Override
-	public IMetaData getMetadata();
+	public IMetadata getMetadata();
 
 	@Override
 	public IDataset getSliceView(int[] start, int[] stop, int[] step);

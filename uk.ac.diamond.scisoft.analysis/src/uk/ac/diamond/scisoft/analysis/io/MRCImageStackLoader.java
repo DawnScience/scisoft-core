@@ -105,7 +105,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		if (metadata != null)
 			return;
 
@@ -140,7 +140,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return metadata;
 	}
 

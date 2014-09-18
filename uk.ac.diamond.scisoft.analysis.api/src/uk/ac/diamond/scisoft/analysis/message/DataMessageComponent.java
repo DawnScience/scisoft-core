@@ -19,7 +19,7 @@ import java.util.TreeSet;
 
 import uk.ac.diamond.scisoft.analysis.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IFunction;
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.IROI;
 
 /**
@@ -83,7 +83,7 @@ public class DataMessageComponent implements Serializable {
 	 * A set of source meta data which may be altered
 	 * to add more information if needed.
 	 */
-	private IMetaData            meta;
+	private IMetadata            meta;
 	
 	/**
 	 * 
@@ -110,11 +110,11 @@ public class DataMessageComponent implements Serializable {
 		this.list = data;
 	}
 
-	public IMetaData getMeta() {
+	public IMetadata getMeta() {
 		return meta;
 	}
 
-	public void setMeta(IMetaData metaData) {
+	public void setMeta(IMetadata metaData) {
 		this.meta = metaData;
 	}
 	

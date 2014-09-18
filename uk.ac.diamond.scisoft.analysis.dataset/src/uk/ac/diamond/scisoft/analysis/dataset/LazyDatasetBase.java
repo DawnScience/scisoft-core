@@ -31,7 +31,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.io.IMetaData;
+import uk.ac.diamond.scisoft.analysis.io.IMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadata;
 import uk.ac.diamond.scisoft.analysis.metadata.ErrorMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.MetadataType;
@@ -145,12 +145,12 @@ public abstract class LazyDatasetBase implements ILazyDataset, Serializable {
 	}
 
 	@Override
-	public IMetaData getMetadata() {
-		List<IMetaData> ml = null;
+	public IMetadata getMetadata() {
+		List<IMetadata> ml = null;
 		try {
-			ml = getMetadata(IMetaData.class);
+			ml = getMetadata(IMetadata.class);
 		} catch (Exception e) {
-			logger.error("Problem retreiving metadata of class {}: {}", IMetaData.class.getCanonicalName(), e);
+			logger.error("Problem retreiving metadata of class {}: {}", IMetadata.class.getCanonicalName(), e);
 		}
 
 		return ml == null ? null : ml.get(0);

@@ -31,8 +31,8 @@ import org.apache.commons.lang.SerializationUtils;
 /**
  * Basic implementation of metadata
  */
-public class Metadata implements IMetaData {
-	private static final long serialVersionUID = IMetaData.serialVersionUID;
+public class Metadata implements IMetadata {
+	private static final long serialVersionUID = IMetadata.serialVersionUID;
 
 	private Map<String, ? extends Serializable> metadata;
 	// NOTE shapes is LinkedHashMap here because the names collection 
@@ -138,7 +138,7 @@ public class Metadata implements IMetaData {
 	}
 
 	@Override
-	public IMetaData clone() {
+	public IMetadata clone() {
 		Metadata c = null;
 		try {
 			c = (Metadata) super.clone();

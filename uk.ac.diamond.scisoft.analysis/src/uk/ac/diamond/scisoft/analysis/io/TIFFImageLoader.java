@@ -376,18 +376,18 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		loadData = false;
 		loadFile();
 		loadData = true;
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return getMetaData(null);
 	}
 
-	public IMetaData getMetaData(Dataset data) {
+	public IMetadata getMetaData(Dataset data) {
 		if (metadata == null) {
 			if (data!=null) return data.getMetadata(); // Might be null or might be set in AWTImageUtils.
 			return null;

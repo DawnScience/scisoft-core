@@ -88,7 +88,7 @@ public class ExtendedMetadataAdapter extends MetaDataAdapter implements IExtende
 	}
 
 	@Override
-	public IMetaData clone() {
+	public IMetadata clone() {
 		return filesize < 0 ? new ExtendedMetadataAdapter() : new ExtendedMetadataAdapter(new File(path));
 	}	
 }

@@ -1009,7 +1009,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public void loadMetaData(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws Exception {
 		cbf_handle_struct chs = new cbf_handle_struct(fileName);
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
 		try {
@@ -1020,7 +1020,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
-	public IMetaData getMetaData() {
+	public IMetadata getMetaData() {
 		return diffMetadata;
 	}
 }

@@ -20,10 +20,10 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelp
  * <p>
  * The unflattened form of this type is an {@link Dataset} in Java or an Numpy.ndarray in Python.
  * <p>
- * When unflattended in Java the filename can be any file that Analysis understands with its file loaders as the
+ * When unflattened in Java the filename can be any file that Analysis understands with its file loaders as the
  * filename is passed to {@link LoaderFactory}.
  * <p>
- * When unflattended in Python the filename must be an .npy fileformat that numpy.load can process. .npz file formats
+ * When unflattened in Python the filename must be an .npy fileformat that numpy.load can process. .npz file formats
  * are not officially supported.
  * 
  * @see LoaderFactory

@@ -14,7 +14,7 @@
 # limitations under the License.
 ###
 
-import org.eclipse.dawnsci.analysis.roi as _roi
+import uk.ac.diamond.scisoft.analysis.roi as _roi
 from jycore import _wrap
 
 _jroi = _roi.IROI

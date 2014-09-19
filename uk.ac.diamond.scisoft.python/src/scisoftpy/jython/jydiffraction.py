@@ -18,8 +18,8 @@
 Diffraction package
 '''
 
-import org.eclipse.dawnsci.analysis.diffraction as _dfn
-import org.eclipse.dawnsci.analysis.dataset.function.MapToQSpace as _maptoqspace #@UnresolvedImport
+import uk.ac.diamond.scisoft.analysis.diffraction as _dfn
+import uk.ac.diamond.scisoft.analysis.dataset.function.MapToQSpace as _maptoqspace #@UnresolvedImport
 
 
 def loadimages(name, asdict=False):

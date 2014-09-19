@@ -18,8 +18,8 @@
 Crystallography package
 '''
 
-import org.eclipse.dawnsci.analysis.crystallography as _xstal
-import org.eclipse.dawnsci.analysis.dataset.function.MapToMillerSpace as _maptomspace #@UnresolvedImport
+import uk.ac.diamond.scisoft.analysis.crystallography as _xstal
+import uk.ac.diamond.scisoft.analysis.dataset.function.MapToMillerSpace as _maptomspace #@UnresolvedImport
 
 class unitcell(_xstal.UnitCell):
     '''Unit cell'''

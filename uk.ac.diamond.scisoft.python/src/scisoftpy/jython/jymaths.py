@@ -18,9 +18,9 @@
 Maths package
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.Dataset as _ds
-import org.eclipse.dawnsci.analysis.dataset.Maths as _maths
-import org.eclipse.dawnsci.analysis.dataset.Stats as _stats
+import uk.ac.diamond.scisoft.analysis.dataset.Dataset as _ds
+import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
+import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
 
 import types as _types
 
@@ -366,7 +366,7 @@ def diff(a, order=1, axis=-1):
     '''Difference of input'''
     return _maths.difference(a, order, axis)
 
-import org.eclipse.dawnsci.analysis.dataset.function.Histogram as _histo
+import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 
 @_wrap
 def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@ReservedAssignment
@@ -385,7 +385,7 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@R
     from jycore import asDatasetList as _asList
     return h.value(_asList(a))
 
-import org.eclipse.dawnsci.analysis.dataset.LinearAlgebra as _linalg
+import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
 
 @_wrap
 def dot(a, b):

@@ -18,8 +18,8 @@
 Image processing package
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.Image as _image
-import org.eclipse.dawnsci.analysis.dataset.function.MapToShiftedCartesian as _mapshift
+import uk.ac.diamond.scisoft.analysis.dataset.Image as _image
+import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian as _mapshift
 from jycore import _wrap
 
 @_wrap
@@ -34,7 +34,7 @@ def shiftimage(image, shift):
     return sfn.value([image])[0]
 
 
-import org.eclipse.dawnsci.analysis.dataset.function.BicubicInterpolator as _bicubic
+import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator as _bicubic
 
 @_wrap
 def bicubic(image, newshape):

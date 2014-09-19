@@ -426,7 +426,7 @@ class Test(unittest.TestCase):
     
     def testTypedNone(self):
         self._flattenAndUnflatten(dnp.rpc.typednone("java.lang.Double"))
-        self._flattenAndUnflatten(dnp.rpc.typednone("uk.ac.diamond.scisoft.analysis.roi.RectangularROIList"))
+        self._flattenAndUnflatten(dnp.rpc.typednone("org.eclipse.dawnsci.analysis.dataset.roi.RectangularROIList"))
     
     def testCheckFlattenableFalse(self):
         self.assertFalse(dnp.flatten.canflatten(object()))

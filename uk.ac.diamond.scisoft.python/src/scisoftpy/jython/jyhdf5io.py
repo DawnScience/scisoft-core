@@ -24,7 +24,7 @@ from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 
-from uk.ac.diamond.scisoft.analysis.io import ScanFileHolderException as io_exception
+from org.eclipse.dawnsci.analysis.api.io import ScanFileHolderException as io_exception
 
 from java.io import OutputStream as _ostream #@UnresolvedImport
 

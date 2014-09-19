@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.dawnsci.analysis.api.api.ClassLoaderExtensionPoint;
+import org.eclipse.dawnsci.analysis.api.ClassLoaderExtensionPoint;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 

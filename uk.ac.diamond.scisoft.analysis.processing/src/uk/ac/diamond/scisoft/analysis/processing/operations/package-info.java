@@ -5,7 +5,7 @@
  * 
  * The package is manually loaded into the tests for testing the operations.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 

@@ -3,7 +3,7 @@
  * main analysis package.
  */
 /**
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 package uk.ac.diamond.scisoft.analysis.osgi;

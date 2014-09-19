@@ -18,8 +18,8 @@
 Comparisons package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.Comparisons as _cmps
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
+import org.eclipse.dawnsci.analysis.dataset.Comparisons as _cmps
+import org.eclipse.dawnsci.analysis.dataset.DatasetUtils as _dsutils
 
 from jycore import _wrap
 from jycore import asanyarray as _asany

@@ -15,7 +15,7 @@
 ###
 
 
-import uk.ac.diamond.scisoft.analysis.rpc.FlatteningService as _flatservice
+import org.eclipse.dawnsci.analysis.rpc.FlatteningService as _flatservice
 
 _flatten=_flatservice.getFlattener()
 

@@ -14,7 +14,7 @@
 # limitations under the License.
 ###
 
-import uk.ac.diamond.scisoft.analysis.rpc as _rpc
+import org.eclipse.dawnsci.analysis.rpc as _rpc
 
 rpcserver=_rpc.AnalysisRpcServer
 rpcclient=_rpc.AnalysisRpcClient

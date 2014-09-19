@@ -18,7 +18,7 @@
 Random number generator package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.Random as _random
+import org.eclipse.dawnsci.analysis.dataset.Random as _random
 
 from jycore import asIterable as _asiter
 from jycore import _wrapout

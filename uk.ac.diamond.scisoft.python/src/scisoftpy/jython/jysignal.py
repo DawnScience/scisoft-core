@@ -18,7 +18,7 @@
 Signal processing package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.Signal as _signal
+import org.eclipse.dawnsci.analysis.dataset.Signal as _signal
 
 from jycore import _wrap
 from jycore import asfarray as _asf

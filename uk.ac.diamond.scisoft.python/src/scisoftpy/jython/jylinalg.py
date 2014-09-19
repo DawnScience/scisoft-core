@@ -18,7 +18,7 @@
 Linear algebra package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
+import org.eclipse.dawnsci.analysis.dataset.LinearAlgebra as _linalg
 from uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra import NormOrder as _normorder
 
 # from jycore import asIterable as _asiter

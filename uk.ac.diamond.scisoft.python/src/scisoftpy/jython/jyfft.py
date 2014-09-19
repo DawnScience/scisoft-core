@@ -18,7 +18,7 @@
 '''FFT package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.FFT as _fft
+import org.eclipse.dawnsci.analysis.dataset.FFT as _fft
 from jycore import _wrap
 
 @_wrap

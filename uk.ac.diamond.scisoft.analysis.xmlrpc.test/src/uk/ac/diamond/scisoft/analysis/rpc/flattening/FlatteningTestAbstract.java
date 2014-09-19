@@ -52,7 +52,7 @@ import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBeanException;
-import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
+import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.plotserver.FileOperationBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiParameters;
@@ -96,11 +96,11 @@ abstract public class FlatteningTestAbstract {
 			assertFlattenEquals(expDataBean.getAxisData(), actDataBean.getAxisData());
 // TODO fix this with HDF5 tree
 //			assertFlattenEquals(Collections.emptyList(), actDataBean.getNexusTrees());
-		} else if (expected instanceof DataSetWithAxisInformation) {
-			DataSetWithAxisInformation expDataSetWithAxisInformation = (DataSetWithAxisInformation) expected;
-			DataSetWithAxisInformation actDataSetWithAxisInformation = (DataSetWithAxisInformation) actual;
-			assertFlattenEquals(expDataSetWithAxisInformation.getData(), actDataSetWithAxisInformation.getData());
-			assertFlattenEquals(expDataSetWithAxisInformation.getAxisMap(), actDataSetWithAxisInformation.getAxisMap());
+		} else if (expected instanceof DatasetWithAxisInformation) {
+			DatasetWithAxisInformation expDatasetWithAxisInformation = (DatasetWithAxisInformation) expected;
+			DatasetWithAxisInformation actDatasetWithAxisInformation = (DatasetWithAxisInformation) actual;
+			assertFlattenEquals(expDatasetWithAxisInformation.getData(), actDatasetWithAxisInformation.getData());
+			assertFlattenEquals(expDatasetWithAxisInformation.getAxisMap(), actDatasetWithAxisInformation.getAxisMap());
 		} else if (expected instanceof Exception) {
 			Exception expException = (Exception) expected;
 			Exception actException = (Exception) actual;
@@ -409,7 +409,7 @@ abstract public class FlatteningTestAbstract {
 		DataBean dataBean = new DataBean();
 		dataBean.addAxis(AxisMapBean.XAXIS, DatasetFactory.createRange(100, Dataset.INT));
 		dataBean.addAxis(AxisMapBean.XAXIS2, DatasetFactory.createRange(100, Dataset.FLOAT64));
-		dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT)));
+		dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT)));
 		flattenAndUnflatten(dataBean);
 
 		// Test that nexus tree data is removed
@@ -432,7 +432,7 @@ abstract public class FlatteningTestAbstract {
 		File tempFile = File.createTempFile("scisofttmp-", ".npy");
 		new NumPyFileSaver(tempFile.toString()).saveFile(dh);
 
-		AbstractDatasetDescriptor descriptor = new AbstractDatasetDescriptor();
+		DatasetDescriptor descriptor = new DatasetDescriptor();
 		descriptor.setFilename(tempFile.toString());
 		descriptor.setDeleteAfterLoad(false);
 		descriptor.setIndex(0);
@@ -560,18 +560,18 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
-	public void testDataSetWithAxisInformation() {
-		DataSetWithAxisInformation ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100,
+	public void testDatasetWithAxisInformation() {
+		DatasetWithAxisInformation ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100,
 				Dataset.INT));
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello");
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello");
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", "Goodbye");
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", "Goodbye");
 		flattenAndUnflatten(ds);
 
-		ds = DataSetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", null);
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", null);
 		flattenAndUnflatten(ds);
 	}
 

@@ -18,10 +18,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DatasetHelper;
 
 /**
- * Test setting temporary file location properly affects {@link AbstractDatasetHelper}
+ * Test setting temporary file location properly affects {@link DatasetHelper}
  */
 public class TempLocationTest {
 
@@ -59,7 +59,7 @@ public class TempLocationTest {
 		// check the internal form of Dataset to see where the file is
 		@SuppressWarnings("unchecked")
 		Map<String, Object> flatAD = (Map<String, Object>) flatten;
-		File loc = new File((String) flatAD.get(AbstractDatasetHelper.FILENAME));
+		File loc = new File((String) flatAD.get(DatasetHelper.FILENAME));
 		Assert.assertTrue(loc.exists());
 		if (!loc.delete())
 			throw new IOException("Failed to delete temporary file");

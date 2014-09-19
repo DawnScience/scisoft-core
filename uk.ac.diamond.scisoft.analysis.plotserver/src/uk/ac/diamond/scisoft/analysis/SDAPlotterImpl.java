@@ -39,7 +39,7 @@ import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisOperation;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBeanException;
-import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
+import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiParameters;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -186,7 +186,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						yan = AxisMapBean.YAXIS;
 					}
 					IDataset yd = renameDataset(yValues[i], yLabels == null ? null : yLabels[i]);
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
+					dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();
@@ -221,7 +221,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				dataBean.addAxis(xid, x);
 				// now add it to the plot data
 				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
+					dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(yd, new String[] {xid}, new String[] {xan, yan}));
 				} catch (DataBeanException e) {
 					logger.error("Problem adding data to bean as axis key does not exist");
 					e.printStackTrace();
@@ -290,7 +290,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 		DataBean dataBean = new DataBean(GuiPlotMode.TWOD);
 
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
 		axisData.setData(image);
@@ -334,7 +334,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 		DataBean dataBean = new DataBean(GuiPlotMode.MULTI2D);
 		for (int i = 0; i < images.length; i++) {
-			DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+			DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean();
 			axisData.setAxisMap(amb);
 			axisData.setData(images[i]);
@@ -381,7 +381,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			}
 			Dataset xCoord = coordData.getElements(0);
 			Dataset yCoord = coordData.getElements(1);
-			DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+			DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean();
 			axisData.setAxisMap(amb);
 			axisData.setData(sizes[i]);
@@ -412,7 +412,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER2D);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_NONE);
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
 		axisData.setData(sizes);
@@ -453,7 +453,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		Thread.sleep(REST_BETWEEN_PLOTOVERS);
 
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER2D);
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_UPDATE);
@@ -496,7 +496,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER3D);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_NONE);
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
 		axisData.setData(sizes);
@@ -546,7 +546,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		Thread.sleep(REST_BETWEEN_PLOTOVERS);
 
 		DataBean dataBean = new DataBean(GuiPlotMode.SCATTER3D);
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean amb = new AxisMapBean();
 		axisData.setAxisMap(amb);
 		dataBean.putGuiParameter(GuiParameters.PLOTOPERATION, GuiParameters.PLOTOP_UPDATE);
@@ -593,7 +593,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		AxisMapBean amb = new AxisMapBean();
 
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		axisData.setAxisMap(amb);
 		axisData.setData(data);
 
@@ -664,7 +664,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			for (int i = 0; i < yValues.length; i++) {
 				// now add it to the plot data
 				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i]));
+					dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(yValues[i]));
 				} catch (DataBeanException e) {
 					e.printStackTrace();
 				}
@@ -678,7 +678,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				dataBean.addAxis(axisStr, xValues[i]);
 				// now add it to the plot data
 				try {
-					dataBean.addData(DataSetWithAxisInformation.createAxisDataSet(yValues[i], axisStr));
+					dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(yValues[i], axisStr));
 				} catch (DataBeanException e) {
 					e.printStackTrace();
 				}

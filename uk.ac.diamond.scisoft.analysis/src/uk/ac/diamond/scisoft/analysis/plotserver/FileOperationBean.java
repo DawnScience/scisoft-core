@@ -204,17 +204,17 @@ public class FileOperationBean implements Serializable {
 	/**
 	 * 
 	 * @param downsample Set to true if a thumb nail is to be created
-	 * @param loadMetaData Set to true if the meta data is to be loaded 
+	 * @param loadMetadata Set to true if the meta data is to be loaded 
 	 * @return The DataBean with the image in the file specified loaded
 	 */
-	public DataBean loadImage(boolean downsample, boolean loadMetaData) {
+	public DataBean loadImage(boolean downsample, boolean loadMetadata) {
 
 		DataBean db = new DataBean(GuiPlotMode.TWOD);
 		Iterator<String> iter = files.iterator();
 		while (iter.hasNext()) {
 			String filename = iter.next();
-			IDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetaData);
-			DataSetWithAxisInformation dsAxisInf = new DataSetWithAxisInformation();
+			IDataset ds = ImageThumbnailLoader.loadImage(filename,downsample, loadMetadata);
+			DatasetWithAxisInformation dsAxisInf = new DatasetWithAxisInformation();
 			AxisMapBean amb = new AxisMapBean();
 			dsAxisInf.setData(ds);
 			dsAxisInf.setAxisMap(amb);

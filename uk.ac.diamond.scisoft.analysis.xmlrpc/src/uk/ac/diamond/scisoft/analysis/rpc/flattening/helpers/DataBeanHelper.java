@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
-import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
+import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class DataBeanHelper extends MapFlatteningHelper<DataBean> {
@@ -37,9 +37,9 @@ public class DataBeanHelper extends MapFlatteningHelper<DataBean> {
 		Object[] dataGeneric = (Object[]) rootFlattener.unflatten(thisMap.get(DATA));
 		Map<Object, Object> axisDataGeneric = (Map<Object, Object>) rootFlattener.unflatten(thisMap.get(AXISDATA));
 
-		List<DataSetWithAxisInformation> data = new ArrayList<DataSetWithAxisInformation>();
+		List<DatasetWithAxisInformation> data = new ArrayList<DatasetWithAxisInformation>();
 		for (Object object : dataGeneric) {
-			data.add((DataSetWithAxisInformation) object);
+			data.add((DatasetWithAxisInformation) object);
 		}
 
 		Map<String, Dataset> axisData = new HashMap<String, Dataset>();

@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IFlattener;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
-public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
+public class DatasetHelper extends MapFlatteningHelper<IDataset> {
 	/** Value to assign in {@link IFlattener#TYPE_KEY} */
 	public static final String TYPE_NAME = Dataset.class.getCanonicalName();
 	/** File to load/save */
@@ -37,7 +37,7 @@ public class AbstractDatasetHelper extends MapFlatteningHelper<IDataset> {
 	/** Name of data set to load from data holder. Takes precedence over index. If absent, loads index 0. */
 	public static final String NAME = "name";
 
-	public AbstractDatasetHelper() {
+	public DatasetHelper() {
 		super(IDataset.class);
 	}
 

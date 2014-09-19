@@ -135,7 +135,7 @@ class axisMapBeanHelper(flatteningHelper):
         
 class datasetWithAxisInformationHelper(flatteningHelper):
 
-    TYPE_NAME = "uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation"
+    TYPE_NAME = "uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation"
     
     def __init__(self):
         super(datasetWithAxisInformationHelper, self).__init__(_beans.datasetwithaxisinformation, self.TYPE_NAME)

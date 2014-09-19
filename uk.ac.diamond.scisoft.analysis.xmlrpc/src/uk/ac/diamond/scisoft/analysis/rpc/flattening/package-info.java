@@ -23,7 +23,7 @@
  * cannot be easily represented without wrapping simpler data types. At the time of writing, these are the classes, see
  * their javadocs for more info:
  * <ul>
- * <li> {@link uk.ac.diamond.scisoft.analysis.rpc.flattening.AbstractDatasetDescriptor}</li>
+ * <li> {@link uk.ac.diamond.scisoft.analysis.rpc.flattening.DatasetDescriptor}</li>
  * <li> {@link uk.ac.diamond.scisoft.analysis.rpc.flattening.TypedNone}</li>
  * </ul>
  */

@@ -15,12 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import uk.ac.diamond.scisoft.analysis.rpc.FlatteningService;
-import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DatasetHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AxisMapBeanHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.CircularROIHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.CircularROIListHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DataBeanHelper;
-import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DataSetWithAxisInformationHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DatasetWithAxisInformationHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.EllipticalROIHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.EllipticalROIListHelper;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.ExceptionHelper;
@@ -70,7 +70,7 @@ public class RootFlattener implements IRootFlattener {
 		flatteningHelpers.add(new SelfFlattensHelper());
 		flatteningHelpers.add(new NoneFlatteningHelper());
 		flatteningHelpers.add(new DataBeanHelper());
-		flatteningHelpers.add(new DataSetWithAxisInformationHelper());
+		flatteningHelpers.add(new DatasetWithAxisInformationHelper());
 		flatteningHelpers.add(new GuiBeanHelper());
 		flatteningHelpers.add(new EllipticalROIHelper());
 		flatteningHelpers.add(new CircularROIHelper());
@@ -88,7 +88,7 @@ public class RootFlattener implements IRootFlattener {
 		flatteningHelpers.add(new LinearROIListHelper());
 		flatteningHelpers.add(new PointROIListHelper());
 		flatteningHelpers.add(new AxisMapBeanHelper());
-		flatteningHelpers.add(new AbstractDatasetHelper());
+		flatteningHelpers.add(new DatasetHelper());
 		flatteningHelpers.add(new UUIDHelper());
 		flatteningHelpers.add(new PassThroughFlatteningHelper());
 		flatteningHelpers.add(new ListHelper());

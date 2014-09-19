@@ -119,7 +119,7 @@ class Test(unittest.TestCase):
         b.axisID = ["an id", "another id"]
         return b
     
-    def _createDataSetWithAxisInformation(self):
+    def _createDatasetWithAxisInformation(self):
         ds = dnp.plot.datasetwithaxisinformation()
         ds.data = self._createNumpyArray()
         ds.axisMap = self._createAxisMapBean()
@@ -371,8 +371,8 @@ class Test(unittest.TestCase):
         ellipseList.append(self._createEllipticalROI())
         self._flattenAndUnflatten(ellipseList)
 
-    def testDataSetWithAxisInformation(self):
-        self._flattenAndUnflatten(self._createDataSetWithAxisInformation())
+    def testDatasetWithAxisInformation(self):
+        self._flattenAndUnflatten(self._createDatasetWithAxisInformation())
         
     def testAxisMapBean(self):
         self._flattenAndUnflatten(self._createAxisMapBean())

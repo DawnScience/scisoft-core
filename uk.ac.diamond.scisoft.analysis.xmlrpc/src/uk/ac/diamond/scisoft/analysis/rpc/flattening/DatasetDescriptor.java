@@ -12,11 +12,11 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelper;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.DatasetHelper;
 
 /**
  * Use this class to describe a data set that already resides on disk and can be loaded using the file loaders. This
- * object is flattened to a flattened representation that is unflattened by {@link AbstractDatasetHelper}.
+ * object is flattened to a flattened representation that is unflattened by {@link DatasetHelper}.
  * <p>
  * The unflattened form of this type is an {@link Dataset} in Java or an Numpy.ndarray in Python.
  * <p>
@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers.AbstractDatasetHelp
  * @see LoaderFactory
  * @see <a href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html">Numpy loading</a>
  */
-public class AbstractDatasetDescriptor implements IFlattens {
+public class DatasetDescriptor implements IFlattens {
 
 	private String filename;
 	private boolean deleteAfterLoad;
@@ -114,11 +114,11 @@ public class AbstractDatasetDescriptor implements IFlattens {
 	@Override
 	public Object flatten(IRootFlattener rootFlattener) {
 		Map<String, Object> outMap = new HashMap<String, Object>();
-		outMap.put(IFlattener.TYPE_KEY, AbstractDatasetHelper.TYPE_NAME);
-		outMap.put(AbstractDatasetHelper.FILENAME, rootFlattener.flatten(filename));
-		outMap.put(AbstractDatasetHelper.DELETEFILEAFTERLOAD, rootFlattener.flatten(deleteAfterLoad));
-		outMap.put(AbstractDatasetHelper.INDEX, rootFlattener.flatten(index));
-		outMap.put(AbstractDatasetHelper.NAME, rootFlattener.flatten(name));
+		outMap.put(IFlattener.TYPE_KEY, DatasetHelper.TYPE_NAME);
+		outMap.put(DatasetHelper.FILENAME, rootFlattener.flatten(filename));
+		outMap.put(DatasetHelper.DELETEFILEAFTERLOAD, rootFlattener.flatten(deleteAfterLoad));
+		outMap.put(DatasetHelper.INDEX, rootFlattener.flatten(index));
+		outMap.put(DatasetHelper.NAME, rootFlattener.flatten(name));
 		return outMap;
 	}
 

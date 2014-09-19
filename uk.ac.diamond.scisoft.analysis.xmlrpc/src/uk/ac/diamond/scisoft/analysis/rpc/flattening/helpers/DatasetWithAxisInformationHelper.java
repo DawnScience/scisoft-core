@@ -14,21 +14,21 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
-import uk.ac.diamond.scisoft.analysis.plotserver.DataSetWithAxisInformation;
+import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
-public class DataSetWithAxisInformationHelper extends MapFlatteningHelper<DataSetWithAxisInformation> {
+public class DatasetWithAxisInformationHelper extends MapFlatteningHelper<DatasetWithAxisInformation> {
 
 	public static final String DATA = "data";
 	public static final String AXISMAP = "axisMap";
 
-	public DataSetWithAxisInformationHelper() {
-		super(DataSetWithAxisInformation.class);
+	public DatasetWithAxisInformationHelper() {
+		super(DatasetWithAxisInformation.class);
 	}
 
 	@Override
-	public DataSetWithAxisInformation unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		DataSetWithAxisInformation out = new DataSetWithAxisInformation();
+	public DatasetWithAxisInformation unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
+		DatasetWithAxisInformation out = new DatasetWithAxisInformation();
 		Dataset data = (Dataset) rootFlattener.unflatten(thisMap.get(DATA));
 		AxisMapBean axisMap = (AxisMapBean) rootFlattener.unflatten(thisMap.get(AXISMAP));
 
@@ -40,7 +40,7 @@ public class DataSetWithAxisInformationHelper extends MapFlatteningHelper<DataSe
 
 	@Override
 	public Object flatten(Object obj, IRootFlattener rootFlattener) {
-		DataSetWithAxisInformation in = (DataSetWithAxisInformation) obj;
+		DatasetWithAxisInformation in = (DatasetWithAxisInformation) obj;
 		Map<String, Object> outMap = createMap(getTypeCanonicalName());
 		outMap.put(DATA, rootFlattener.flatten(in.getData()));
 		outMap.put(AXISMAP, rootFlattener.flatten(in.getAxisMap()));

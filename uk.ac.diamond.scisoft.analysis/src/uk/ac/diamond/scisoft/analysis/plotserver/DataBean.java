@@ -28,7 +28,7 @@ public class DataBean implements Serializable {
 
 	private static final long serialVersionUID = -2033109932408452451L;
 
-	protected List<DataSetWithAxisInformation> data;
+	protected List<DatasetWithAxisInformation> data;
 
 	protected Map<String, Dataset> axisData;
 
@@ -43,14 +43,14 @@ public class DataBean implements Serializable {
 	 */
 	public DataBean(GuiPlotMode plotMode) {
 		guiPlotMode = plotMode;
-		data = new ArrayList<DataSetWithAxisInformation>();
+		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
 	
 	public DataBean() {
 		guiPlotMode = null;
-		data = new ArrayList<DataSetWithAxisInformation>();
+		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
 		hdf5Trees = new ArrayList<HDF5File>();
 	}
@@ -74,7 +74,7 @@ public class DataBean implements Serializable {
 	 * @param dataToAdd
 	 * @throws DataBeanException 
 	 */
-	public void addData(DataSetWithAxisInformation dataToAdd) throws DataBeanException {
+	public void addData(DatasetWithAxisInformation dataToAdd) throws DataBeanException {
 		// check that the dataset's axis mapping has IDs that
 		// correspond to ones in axisData
 		AxisMapBean mapping = dataToAdd.getAxisMap();
@@ -123,7 +123,7 @@ public class DataBean implements Serializable {
 	 * 
 	 * @return Returns the data.
 	 */
-	public List<DataSetWithAxisInformation> getData() {
+	public List<DatasetWithAxisInformation> getData() {
 		return data;
 	}
 
@@ -134,7 +134,7 @@ public class DataBean implements Serializable {
 	 * @param data
 	 *            The data to set.
 	 */
-	public void setData(List<DataSetWithAxisInformation> data) {
+	public void setData(List<DatasetWithAxisInformation> data) {
 		this.data = data;
 	}
 
@@ -144,7 +144,7 @@ public class DataBean implements Serializable {
 	 */
 	public void addData(DataBean bean) {
 		Map<String, Dataset> nmap = bean.getAxisData();
-		List<DataSetWithAxisInformation> ndata = bean.getData();
+		List<DatasetWithAxisInformation> ndata = bean.getData();
 		for (String s : nmap.keySet()) {
 			Dataset nd = nmap.get(s);
 			Dataset od = axisData.get(s);
@@ -171,8 +171,8 @@ public class DataBean implements Serializable {
 		data.addAll(ndata);
 	}
 
-	private void replaceAxisID(List<DataSetWithAxisInformation> ndata, String oldID, String newID) {
-		for (DataSetWithAxisInformation d : ndata) { // replace clashing name
+	private void replaceAxisID(List<DatasetWithAxisInformation> ndata, String oldID, String newID) {
+		for (DatasetWithAxisInformation d : ndata) { // replace clashing name
 			String[] ids = d.getAxisMap().getAxisID();
 			for (int j = 0; j < ids.length; j++) {
 				if (oldID.equals(ids[j])) {

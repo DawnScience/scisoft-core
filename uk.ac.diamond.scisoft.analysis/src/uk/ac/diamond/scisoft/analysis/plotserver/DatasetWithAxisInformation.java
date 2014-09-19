@@ -20,7 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
  * data is actually provided by the DataBean, which is the object that contains
  * this one
  */
-public class DataSetWithAxisInformation implements Serializable {
+public class DatasetWithAxisInformation implements Serializable {
 
 	private Dataset data;
 	private AxisMapBean axisMap;
@@ -62,7 +62,7 @@ public class DataSetWithAxisInformation implements Serializable {
 	 *            The dataset which is to be plotted
 	 * @return The dataset with Axis info included
 	 */
-	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis) {
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis) {
 		return createAxisDataSet(yAxis, AxisMapBean.XAXIS);
 	}
 
@@ -72,7 +72,7 @@ public class DataSetWithAxisInformation implements Serializable {
 	 * @param axisDatasetID
 	 * @return dataset with axis info
 	 */
-	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID) {
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID) {
 		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, null);
 	}
 
@@ -83,7 +83,7 @@ public class DataSetWithAxisInformation implements Serializable {
 	 * @param axisName
 	 * @return dataset with axis info
 	 */
-	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID, String axisName) {
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID, String axisName) {
 		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, new String[] {axisName});
 	}
 
@@ -94,8 +94,8 @@ public class DataSetWithAxisInformation implements Serializable {
 	 * @param axisNames can be null or contain nulls
 	 * @return dataset with axis info
 	 */
-	public static DataSetWithAxisInformation createAxisDataSet(IDataset yAxis, String[] axisDatasetIDs, String[] axisNames) {
-		DataSetWithAxisInformation axisData = new DataSetWithAxisInformation();
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String[] axisDatasetIDs, String[] axisNames) {
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean axisMapBean = new AxisMapBean();
 		axisMapBean.setAxisID(axisDatasetIDs.clone());
 		if (axisNames != null) {

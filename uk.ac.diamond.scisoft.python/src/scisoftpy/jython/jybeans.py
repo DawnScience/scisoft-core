@@ -59,7 +59,7 @@ from uk.ac.diamond.scisoft.analysis.plotserver import AxisMapBean as _axismapbea
 
 axismapbean = _axismapbean
 
-from uk.ac.diamond.scisoft.analysis.plotserver import DataSetWithAxisInformation as _datasetwithaxisinformation
+from uk.ac.diamond.scisoft.analysis.plotserver import DatasetWithAxisInformation as _datasetwithaxisinformation
 
 datasetwithaxisinformation = _datasetwithaxisinformation
 

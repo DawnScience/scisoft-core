@@ -9,11 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.eclipse.dawnsci.hdf5.api.HDF5File;
 
-import junit.framework.AssertionFailedError;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;

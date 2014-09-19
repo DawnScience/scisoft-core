@@ -28,14 +28,14 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
+import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
+import org.eclipse.dawnsci.hdf5.api.HDF5File;
+import org.eclipse.dawnsci.hdf5.api.HDF5Group;
+import org.eclipse.dawnsci.hdf5.api.HDF5Node;
+import org.eclipse.dawnsci.hdf5.api.HDF5NodeLink;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Dataset;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Group;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Node;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5NodeLink;
 
 public class HDF5LoaderTest {
 	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";

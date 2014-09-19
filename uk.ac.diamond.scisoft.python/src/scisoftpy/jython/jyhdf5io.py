@@ -18,7 +18,7 @@
 '''
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdataset
+from org.eclipse.dawnsci.hdf5.api import HDF5Dataset as _jdataset
 from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
 from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
 
@@ -166,13 +166,13 @@ class HDF5Loader(object):
     def setloadmetadata(self, load_metadata):
         pass
 
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Attribute as _jattr
-#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Node as _jnode
-#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdata
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Group as _jgroup
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5File as _jfile
-#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5NodeLink as _jlink
-#from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5SymLink as _jslink
+from org.eclipse.dawnsci.hdf5.api import HDF5Attribute as _jattr
+#from org.eclipse.dawnsci.hdf5.api import HDF5Node as _jnode
+#from org.eclipse.dawnsci.hdf5.api import HDF5Dataset as _jdata
+from org.eclipse.dawnsci.hdf5.api import HDF5Group as _jgroup
+from org.eclipse.dawnsci.hdf5.api import HDF5File as _jfile
+#from org.eclipse.dawnsci.hdf5.api import HDF5NodeLink as _jlink
+#from org.eclipse.dawnsci.hdf5.api import HDF5SymLink as _jslink
 
 def _tojavatree(tree):
     f = _jfile(-1, tree._filename)

@@ -77,8 +77,8 @@ from jycore import asDatasetList, _jinput#, asDatasetDict, toList
 from scisoftpy.dictutils import DataHolder
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5File as _hdf5file
-from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Group as _hdf5group
+from org.eclipse.dawnsci.hdf5.api import HDF5File as _hdf5file
+from org.eclipse.dawnsci.hdf5.api import HDF5Group as _hdf5group
 
 class h5manager(object):
     '''This holds a HDF5 tree and manages access to it. This provides

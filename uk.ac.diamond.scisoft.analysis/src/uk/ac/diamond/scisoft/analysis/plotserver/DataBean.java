@@ -18,8 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
+import org.eclipse.dawnsci.hdf5.api.HDF5File;
 
 /**
  * This bean contains all the information required by a GUI to perform a plot,

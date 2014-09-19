@@ -64,16 +64,15 @@ import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
+import org.eclipse.dawnsci.hdf5.api.HDF5Attribute;
+import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
+import org.eclipse.dawnsci.hdf5.api.HDF5File;
+import org.eclipse.dawnsci.hdf5.api.HDF5Group;
+import org.eclipse.dawnsci.hdf5.api.HDF5Node;
+import org.eclipse.dawnsci.hdf5.api.HDF5NodeLink;
+import org.eclipse.dawnsci.hdf5.api.HDF5SymLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Attribute;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Dataset;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5File;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Group;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5Node;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5NodeLink;
-import uk.ac.diamond.scisoft.analysis.hdf5.HDF5SymLink;
 
 /**
  * Load HDF5 files using NCSA's Java library

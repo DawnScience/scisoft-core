@@ -44,7 +44,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
  * Do not use this class externally. Instead get the IOperationService
  * from OSGI.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationServiceImpl implements IOperationService {

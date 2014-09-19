@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 
 /**
  * Must have OSGI so this is a junit plugin test.
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationsPluginTest {

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
  * 
  * They do not currently operate in a generic way, see FIXMEs below.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public abstract class AbstractMathsOperation extends AbstractOperation<IOperationModel, OperationData> {

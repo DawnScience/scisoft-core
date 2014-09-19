@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 /**
  * Subtracts either one dataset from another or a scalar value from all values of a dataset.
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class AddOperation extends AbstractMathsOperation {

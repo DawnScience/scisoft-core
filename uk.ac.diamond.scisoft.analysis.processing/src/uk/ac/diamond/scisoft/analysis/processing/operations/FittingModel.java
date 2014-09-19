@@ -18,7 +18,7 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 /**
  * Hacky temp model for fitting.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class FittingModel extends AbstractOperationModel {

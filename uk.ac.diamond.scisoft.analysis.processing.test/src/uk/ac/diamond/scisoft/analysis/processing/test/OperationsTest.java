@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 /**
  * Works with ordinary junit but therefore does not test the extension points
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationsTest {

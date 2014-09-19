@@ -520,7 +520,7 @@ def roots(coeffs):
 
 # need a cspline fit function
 
-from uk.ac.diamond.scisoft.analysis.roi.fitting import EllipseFitter as _efitter
+from org.eclipse.dawnsci.analysis.dataset.roi.fitting import EllipseFitter as _efitter
 
 def ellipsefit(x, y, geo=True, init=None):
     '''Ellipse fit

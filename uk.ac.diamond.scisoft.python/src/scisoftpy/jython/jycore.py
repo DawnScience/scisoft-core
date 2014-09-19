@@ -21,7 +21,6 @@ Core package contains wrappers for Java dataset classes
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset as _abstractds
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory as _df
-# import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset as _compoundds
 
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset as _booleands
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset as _integerds

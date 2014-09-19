@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="Dataset Maths Service">
    <implementation class="uk.ac.diamond.scisoft.analysis.osgi.DatasetMathsServiceImpl"/>
    <service>
-      <provide interface="uk.ac.diamond.scisoft.analysis.dataset.IDatasetMathsService"/>
+      <provide interface="org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService"/>
    </service>
 </scr:component>

@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.IntegerDataset as _integerds
 import uk.ac.diamond.scisoft.analysis.dataset.RGBDataset as _rgbds
 import uk.ac.diamond.scisoft.analysis.dataset.ComplexDoubleDataset as _complexdoubleds
 
-import uk.ac.diamond.scisoft.analysis.dataset.DatasetUtils as _dsutils
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice

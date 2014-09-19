@@ -18,9 +18,9 @@
 Maths package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.Dataset as _ds
-import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
-import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths as _maths
+import org.eclipse.dawnsci.analysis.dataset.impl.Stats as _stats
 
 import types as _types
 

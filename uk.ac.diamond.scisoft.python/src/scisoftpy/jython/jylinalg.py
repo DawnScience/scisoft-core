@@ -18,8 +18,8 @@
 Linear algebra package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
-from uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra import NormOrder as _normorder
+import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra as _linalg
+from org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra import NormOrder as _normorder
 
 # from jycore import asIterable as _asiter
 from jycore import _wrap

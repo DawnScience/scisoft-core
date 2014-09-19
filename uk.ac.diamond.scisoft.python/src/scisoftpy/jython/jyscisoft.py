@@ -18,9 +18,9 @@
 Scisoft-only package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.CompoundDataset as _compoundds
-import uk.ac.diamond.scisoft.analysis.dataset.Maths as _maths
-import uk.ac.diamond.scisoft.analysis.dataset.Stats as _stats
+import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset as _compoundds
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths as _maths
+import org.eclipse.dawnsci.analysis.dataset.impl.Stats as _stats
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
 
 from jycore import _wrap

@@ -18,7 +18,7 @@
 Image processing package
 '''
 
-import uk.ac.diamond.scisoft.analysis.dataset.Image as _image
+import org.eclipse.dawnsci.analysis.dataset.impl.Image as _image
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian as _mapshift
 from jycore import _wrap
 

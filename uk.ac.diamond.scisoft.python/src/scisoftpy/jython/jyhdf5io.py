@@ -19,8 +19,8 @@
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 from uk.ac.diamond.scisoft.analysis.hdf5 import HDF5Dataset as _jdataset
-from uk.ac.diamond.scisoft.analysis.dataset import Dataset as _dataset
-from uk.ac.diamond.scisoft.analysis.dataset import LazyDataset as _ldataset
+from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
+from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 

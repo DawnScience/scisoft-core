@@ -5,7 +5,7 @@
 	<projects>
 		<project>tp</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
-		<project>uk.ac.diamond.scisoft.analysis.api</project>
+		<project>org.eclipse.dawnsci.analysis.api</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

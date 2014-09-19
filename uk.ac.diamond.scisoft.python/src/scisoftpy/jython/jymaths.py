@@ -385,7 +385,7 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@R
     from jycore import asDatasetList as _asList
     return h.value(_asList(a))
 
-import uk.ac.diamond.scisoft.analysis.dataset.LinearAlgebra as _linalg
+import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra as _linalg
 
 @_wrap
 def dot(a, b):

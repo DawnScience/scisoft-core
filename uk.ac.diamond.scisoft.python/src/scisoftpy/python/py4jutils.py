@@ -61,7 +61,7 @@ def convert_line_roi(roi):
     Convert a line ROI to its Java equivalent
     '''
     j = get_gateway().jvm
-    l = j.uk.ac.diamond.scisoft.analysis.roi.LinearROI()
+    l = j.org.eclipse.dawnsci.analysis.dataset.roi.LinearROI()
     l.setPoint(roi.point[0], roi.point[1])
     l.setLength(roi.length)
     l.setAngleDegrees(roi.angledegrees)
@@ -72,7 +72,7 @@ def convert_rectangle_roi(roi):
     Convert a rectangle ROI to its Java equivalent
     '''
     j = get_gateway().jvm
-    r = j.uk.ac.diamond.scisoft.analysis.roi.RectangularROI()
+    r = j.org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI()
     r.setPoint(roi.point[0], roi.point[1])
     r.setLengths(roi.lengths[0], roi.lengths[1])
     r.setAngleDegrees(roi.angledegrees)
@@ -83,7 +83,7 @@ def convert_sector_roi(roi):
     Convert a sector ROI to its Java equivalent
     '''
     j = get_gateway().jvm
-    s = j.uk.ac.diamond.scisoft.analysis.roi.SectorROI()
+    s = j.org.eclipse.dawnsci.analysis.dataset.roi.SectorROI()
     s.setPoint(roi.point[0], roi.point[1])
     s.setRadii(roi.radii[0], roi.radii[1])
     s.setAnglesDegrees(roi.anglesdegrees[0], roi.anglesdegrees[1])

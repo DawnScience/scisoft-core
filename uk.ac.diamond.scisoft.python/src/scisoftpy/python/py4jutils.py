@@ -164,7 +164,7 @@ def _pyload_arrays(names):
 def _jload_datasets(names):
     num = len(names)
     gw = get_gateway()
-    datasets = gw.new_array(gw.jvm.uk.ac.diamond.scisoft.analysis.dataset.Dataset, num)
+    datasets = gw.new_array(gw.jvm.org.eclipse.dawnsci.dataset.impl.Dataset, num)
     ldr = gw.jvm.uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader
     for i in range(num):
         n = names[i]

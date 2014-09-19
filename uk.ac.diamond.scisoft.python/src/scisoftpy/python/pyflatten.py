@@ -86,31 +86,31 @@ class roiHelper(flatteningHelper):
 
     @staticmethod
     def getROIBaseHelper():
-        return roiHelper(_roi.roibase, "uk.ac.diamond.scisoft.analysis.roi.ROIBase")
+        return roiHelper(_roi.roibase, "org.eclipse.dawnsci.analysis.dataset.roi.ROIBase")
         
     @staticmethod
     def getPointHelper():
-        return roiHelper(_roi.point, "uk.ac.diamond.scisoft.analysis.roi.PointROI")
+        return roiHelper(_roi.point, "org.eclipse.dawnsci.analysis.dataset.roi.PointROI")
         
     @staticmethod
     def getRectangleHelper():
-        return roiHelper(_roi.rectangle, "uk.ac.diamond.scisoft.analysis.roi.RectangularROI")
+        return roiHelper(_roi.rectangle, "org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI")
         
     @staticmethod
     def getSectorHelper():
-        return roiHelper(_roi.sector, "uk.ac.diamond.scisoft.analysis.roi.SectorROI")
+        return roiHelper(_roi.sector, "org.eclipse.dawnsci.analysis.dataset.roi.SectorROI")
 
     @staticmethod
     def getLineHelper():
-        return roiHelper(_roi.line, "uk.ac.diamond.scisoft.analysis.roi.LinearROI")
+        return roiHelper(_roi.line, "org.eclipse.dawnsci.analysis.dataset.roi.LinearROI")
 
     @staticmethod
     def getCircleHelper():
-        return roiHelper(_roi.circle, "uk.ac.diamond.scisoft.analysis.roi.CircularROI")
+        return roiHelper(_roi.circle, "org.eclipse.dawnsci.analysis.dataset.roi.CircularROI")
 
     @staticmethod
     def getEllipseHelper():
-        return roiHelper(_roi.ellipse, "uk.ac.diamond.scisoft.analysis.roi.EllipticalROI")
+        return roiHelper(_roi.ellipse, "org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI")
 
 
 class axisMapBeanHelper(flatteningHelper):
@@ -191,7 +191,7 @@ class passThroughHelper(object):
         return self.canflatten(obj)
 
 class ndArrayHelper(flatteningHelper):
-    TYPE_NAME = "uk.ac.diamond.scisoft.analysis.dataset.Dataset"
+    TYPE_NAME = "org.eclipse.dawnsci.analysis.dataset.impl.Dataset"
     FILENAME = "filename"
     DELETEFILEAFTERLOAD = "deletefile"
     INDEX = "index"
@@ -328,27 +328,27 @@ class roiListHelper(flatteningHelper):
 
     @staticmethod
     def getPointListHelper():
-        return roiListHelper(_roi.point_list, "uk.ac.diamond.scisoft.analysis.roi.PointROIList")
+        return roiListHelper(_roi.point_list, "org.eclipse.dawnsci.analysis.dataset.roi.PointROIList")
 
     @staticmethod
     def getLineListHelper():
-        return roiListHelper(_roi.line_list, "uk.ac.diamond.scisoft.analysis.roi.LinearROIList")
+        return roiListHelper(_roi.line_list, "org.eclipse.dawnsci.analysis.dataset.roi.LinearROIList")
 
     @staticmethod
     def getRectangleListHelper():
-        return roiListHelper(_roi.rectangle_list, "uk.ac.diamond.scisoft.analysis.roi.RectangularROIList")
+        return roiListHelper(_roi.rectangle_list, "org.eclipse.dawnsci.analysis.dataset.roi.RectangularROIList")
 
     @staticmethod
     def getSectorListHelper():
-        return roiListHelper(_roi.sector_list, "uk.ac.diamond.scisoft.analysis.roi.SectorROIList")
+        return roiListHelper(_roi.sector_list, "org.eclipse.dawnsci.analysis.dataset.roi.SectorROIList")
 
     @staticmethod
     def getCircleListHelper():
-        return roiListHelper(_roi.circle_list, "uk.ac.diamond.scisoft.analysis.roi.CircularROIList")
+        return roiListHelper(_roi.circle_list, "org.eclipse.dawnsci.analysis.dataset.roi.CircularROIList")
 
     @staticmethod
     def getEllipseListHelper():
-        return roiListHelper(_roi.ellipse_list, "uk.ac.diamond.scisoft.analysis.roi.EllipticalROIList")
+        return roiListHelper(_roi.ellipse_list, "org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROIList")
 
 class listAndTupleHelper(object):
     def flatten(self, obj):

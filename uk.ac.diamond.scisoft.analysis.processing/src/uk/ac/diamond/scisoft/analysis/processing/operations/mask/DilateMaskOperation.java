@@ -10,9 +10,9 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.List;
 
-import org.dawb.common.services.IImageFilterService;
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;

@@ -229,7 +229,7 @@ public class OperationServiceImpl implements IOperationService {
 		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
 		
-		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.api.operation");
+		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 			final String     id = e.getAttribute("id");
 			IOperation<? extends IOperationModel, ? extends OperationData> op = null;

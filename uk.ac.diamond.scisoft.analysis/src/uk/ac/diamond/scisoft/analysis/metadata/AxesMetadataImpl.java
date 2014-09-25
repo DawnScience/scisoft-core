@@ -14,10 +14,12 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
+	@Reshapeable
 	@Sliceable
 	List<ILazyDataset>[] allAxes;
 

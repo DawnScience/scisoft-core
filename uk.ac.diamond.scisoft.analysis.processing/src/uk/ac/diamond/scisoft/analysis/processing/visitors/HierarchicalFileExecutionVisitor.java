@@ -154,6 +154,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 					totalDimList.add(dataset.getShape()[padCounter]);
 					padCounter++;
 				} else {
+					counter++;
 					continue;
 				}
 				

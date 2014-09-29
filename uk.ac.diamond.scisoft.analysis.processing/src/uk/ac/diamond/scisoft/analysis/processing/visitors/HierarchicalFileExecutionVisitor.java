@@ -35,12 +35,17 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 
 	private boolean firstPassDone = false;
 	private final String RESULTS_GROUP = "result";
+	private final String INTER_GROUP = "intermediate";
 	private final String ENTRY = "entry";
 	
 	private String results;
-	private Map<Integer, String> axesNames = new HashMap<Integer,String>();
+	private String intermediate;
+	private Map<String,Map<Integer, String>> groupAxesNames = new HashMap<String,Map<Integer,String>>();
+	private IOperation<? extends IOperationModel, ? extends OperationData>[] series;
 	private String filePath;
 	IHierarchicalDataFile file;
+	
+	private Map<IOperation, String> nameMap;
 	
 	public HierarchicalFileExecutionVisitor(String filePath) {
 		this.filePath = filePath;
@@ -52,6 +57,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 		IPersistentFile pf = service.createPersistentFile(file);
 		pf.setOperations(series);
+		this.series = series;
 		
 	}
 	
@@ -61,11 +67,21 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		file.setNexusAttribute(results, "NXdata");
 	}
 	
+	private void createInterGroup() {
+		try {
+			intermediate = file.group(INTER_GROUP,ENTRY);
+			file.setNexusAttribute(intermediate, "NXcollection");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 		
 		final IDataset integrated = result.getData();
-		updateAxes(integrated, slices, shape, dataDims);
+		updateAxes(integrated, slices, shape, dataDims, results);
 		integrated.setName("data");
 		appendData(integrated,results, slices,shape, file);
 		if (!firstPassDone)file.setAttribute(results +"/" +integrated.getName(), "signal", String.valueOf(1));
@@ -75,17 +91,48 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 
 	@Override
 	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
-		if (!firstPassDone)
+		if (!firstPassDone) {
 			try {
 				initGroups();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		if (intermeadiateData.isStoreOutput()) {
+			if (intermediate == null) createInterGroup();
+			
+			try {
+				
+				int i = 0;
+				while (i < series.length && series[i] != intermeadiateData) i++;
+				
+				String group = file.group(String.valueOf(i) + "-" + intermeadiateData.getName(), intermediate);
+				file.setNexusAttribute(group, "NXdata");
+				IDataset d = data.getData();
+				d.setName("data");
+				appendData(d,group, slices,shape, file);
+				updateAxes(d, slices, shape, dataDims, group);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		
 	}
 	
-	
-	private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims) throws Exception {
+	private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims, String groupName) throws Exception {
+		
+		Map<Integer, String> axesNames = null;
+		
+		if (groupAxesNames.containsKey(groupName)) {
+			axesNames = groupAxesNames.get(groupName);
+		} else {
+			axesNames = new HashMap<Integer,String>();
+			groupAxesNames.put(groupName, axesNames);
+		}
 		
 		Set<Integer> setDims = new HashSet<Integer>(dataDims.length);
 		for (int i = 0; i < dataDims.length; i++) setDims.add(dataDims[i]);
@@ -111,11 +158,11 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 							axDataset.setName(axesNames.get(i));
 							
 							if (setDims.contains(i) && !firstPassDone) {
-								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), results);
+								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), groupName);
 								file.setAttribute(ds, "axis", String.valueOf(i));
 							} else {
-								appendData(axDataset,results, oSlice,oShape, file);
-								file.setAttribute(results +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
+								appendData(axDataset,groupName, oSlice,oShape, file);
+								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
 							}
 							
 						}
@@ -176,18 +223,6 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		H5Utils.insertDataset(file, group, dataset, sliceOut, newShape);
 		
 		return;
-	}
-
-	@Override
-	public void passDataThroughUnmodified(IOperation<? extends IOperationModel, ? extends OperationData>... operations) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isRequiredToModifyData(IOperation<? extends IOperationModel, ? extends OperationData> operation) {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	@Override

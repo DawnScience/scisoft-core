@@ -114,8 +114,8 @@ public class OperationServiceImpl implements IOperationService {
 										
 					for (IOperation i : series) {
 						OperationData tmp = i.execute(data.getData(), monitor);
-						data = visitor.isRequiredToModifyData(i) ? tmp : data;
-						visitor.notify(i, data, slices, shape, dataDims); // Optionally send intermediate result
+						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
+						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
 					
 					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
@@ -178,7 +178,9 @@ public class OperationServiceImpl implements IOperationService {
         
         if (series.length > 1) {
         	
+        	
         	OperationRank output = series[0].getOutputRank();
+        	if (series[0].isPassUnmodifiedData()) output = series[0].getInputRank();        	
         	if (output == OperationRank.SAME) output = OperationRank.get(firstSlice.getRank());
         	if (output == OperationRank.ANY)  output = OperationRank.get(firstSlice.getRank());
         	
@@ -190,6 +192,7 @@ public class OperationServiceImpl implements IOperationService {
 	        	}
 	        	output = series[i].getOutputRank();
 	        	if (output == OperationRank.SAME) output = input;
+	        	if (series[i].isPassUnmodifiedData()) output = input;
 			}
         }
 	}

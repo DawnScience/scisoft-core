@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.DimensionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -21,6 +22,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegratio
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
 
 public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
@@ -43,11 +45,19 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 			AxesMetadataImpl amd = new AxesMetadataImpl(dataDims[0]+1);
 			amd.setAxis(dataDims[0], new ILazyDataset[] {out.get(0)});
 			data.setMetadata(amd);
+			
+			final int[] newDataDims = new int[]{dataDims[0]};
+			
+			OriginMetadataImpl omd = new OriginMetadataImpl(null, null, newDataDims);
+			data.setMetadata(omd);
+			
 			return;
 		}
 		
 		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length-1);
-
+		
+		int[] newDataDims = new int[1];
+		
 		boolean first = true;
 		for (int i = 0; i < axes.length; i++) {
 			boolean contained = false;
@@ -55,6 +65,7 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 				if (i == j){
 					contained = true;
 					if (first) {
+						newDataDims[0] = i;
 						amd.setAxis(i, new ILazyDataset[]{out.get(0)});
 						first = false;
 					}
@@ -66,6 +77,9 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 				amd.setAxis(i, new ILazyDataset[] {axes[i]});
 			}
 		}
+		
+		OriginMetadataImpl omd = new OriginMetadataImpl(null, null, newDataDims);
+		data.setMetadata(omd);
 
 		data.setMetadata(amd);
 		

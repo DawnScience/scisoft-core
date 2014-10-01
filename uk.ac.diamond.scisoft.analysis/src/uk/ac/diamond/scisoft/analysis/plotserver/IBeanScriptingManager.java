@@ -19,6 +19,7 @@ import java.io.Serializable;
  */
 public interface IBeanScriptingManager {
 
+
 	/**
 	 * This method allows for interested parties to get relevant GUI information
 	 * from the client

@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
-	@Reshapeable
 	@Sliceable
 	List<ILazyDataset>[] allAxes;
 

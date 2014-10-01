@@ -159,7 +159,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 							
 							if (setDims.contains(i) && !firstPassDone) {
 								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), groupName);
-								file.setAttribute(ds, "axis", String.valueOf(i));
+								file.setAttribute(ds, "axis", String.valueOf(i+1));
 							} else {
 								appendData(axDataset,groupName, oSlice,oShape, file);
 								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));

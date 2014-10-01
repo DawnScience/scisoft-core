@@ -64,6 +64,7 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 			}
 		}
 		
+		data.setMetadata(amd);
 	}
 
 	@Override

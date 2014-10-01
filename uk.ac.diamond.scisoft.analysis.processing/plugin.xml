@@ -187,6 +187,24 @@
             name="Mean Filter"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
+            description="Save 1D data as text"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
+            name="Export to .dat"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
+            description="Downsample an image"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageModel"
+            name="Downsample Image"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

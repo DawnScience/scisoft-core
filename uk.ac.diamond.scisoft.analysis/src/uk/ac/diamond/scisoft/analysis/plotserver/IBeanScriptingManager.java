@@ -12,12 +12,12 @@ package uk.ac.diamond.scisoft.analysis.plotserver;
 import java.io.Serializable;
 
 /**
- * The <code>IGuiInfoManager</code> interface provides protocol
+ * The <code>IBeanScriptingManager</code> interface provides protocol
  * for saving and restoring GUI state typically between a client and multiple
  * subscribers. 
  * 
  */
-public interface IGuiInfoManager {
+public interface IBeanScriptingManager {
 
 	/**
 	 * This method allows for interested parties to get relevant GUI information

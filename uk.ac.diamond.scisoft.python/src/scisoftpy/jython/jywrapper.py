@@ -18,8 +18,8 @@ import uk.ac.diamond.scisoft.analysis.rpc.flattening.TypedNone as _typednone
 
 typednone=_typednone
 
-import uk.ac.diamond.scisoft.analysis.rpc.flattening.DatasetDescriptor as _abstractdatasetdescriptor
-abstractdatasetdescriptor=_abstractdatasetdescriptor
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.DatasetDescriptor as _datasetdescriptor
+datasetdescriptor=_datasetdescriptor
 
 # In java a wrapper isn't necessary, simply use a byte[]
 # Set to None so that if someone tries to instantiate it give an error

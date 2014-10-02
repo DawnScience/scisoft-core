@@ -14,7 +14,7 @@
 # limitations under the License.
 ###
 
-import uk.ac.diamond.scisoft.analysis.roi as _analroi
+from uk.ac.diamond.scisoft.analysis.roi import ROIProfile as _profile
 import org.eclipse.dawnsci.analysis.api.roi as _apiroi
 import org.eclipse.dawnsci.analysis.dataset.roi as _roi
 from jycore import _wrap
@@ -269,7 +269,8 @@ def _create_list(arg):
         return circle_list()
     raise ValueError, "ROI not recognised"
 
-ROIProfile = _analroi.ROIProfile
+# No-one should be using this
+#ROIProfile = _profile
 
 @_wrap
 def profile(data, roi, step=None, mask=None):
@@ -280,17 +281,17 @@ def profile(data, roi, step=None, mask=None):
         roi  = roi._jroi()
         if step is None:
             raise ValueError, "step value required"
-        return _analroi.ROIProfile.line(data, roi, step)
+        return _profile.line(data, roi, step)
     if isinstance(roi, rectangle):
         roi  = roi._jroi()
         if mask is None:
-            return _analroi.ROIProfile.box(data, roi)
+            return _profile.box(data, roi)
         else:
-            return _analroi.ROIProfile.box(data, mask, roi)
+            return _profile.box(data, mask, roi)
     if isinstance(roi, sector):
         roi  = roi._jroi()
         if mask is None:
-            return _analroi.ROIProfile.sector(data, roi)
+            return _profile.sector(data, roi)
         else:
-            return _analroi.ROIProfile.sector(data, mask, roi)
+            return _profile.sector(data, mask, roi)
     raise TypeError, "roi is not of known type"

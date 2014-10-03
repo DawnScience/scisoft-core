@@ -14,8 +14,6 @@ import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 
 public class SectorIntegrationModel extends IntegrationModel {
 
-	@OperationModelField(label="Sector Region", hint="The region to use with the operation.\n\nClick the '...' button to open the region dialog.")
-	protected IROI region;
 
 	public SectorIntegrationModel() {
 		super();

@@ -20,7 +20,7 @@ public class IntegrationModel extends AbstractOperationModel {
 	}
 
 	public void setRegion(IROI region) {
-		this.region = region;
+		firePropertyChange("region", this.region, this.region = region);
 	}
 
 	@Override

@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -21,7 +22,10 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 
 public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationModel> {
 
-
+	public enum Direction {
+		X,Y,
+	}
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration";
@@ -36,17 +40,17 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		Dataset mask = null;
+		IDataset mask = null;
 		try {
-			MaskMetadata maskMetadata = ((MaskMetadata)slice.getMetadata(MaskMetadata.class));
-			mask = (Dataset)maskMetadata.getMask().getSlice((Slice[])null);
+			ILazyDataset firstMask = getFirstMask(slice);
+			if (firstMask != null) mask = firstMask.getSlice();
 		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}
 		RectangularROI rect = (RectangularROI)getRegion();
 		
 		
-		final Dataset[] profile = ROIProfile.box((Dataset)slice, mask, rect);
+		final Dataset[] profile = ROIProfile.box((Dataset)slice, (Dataset)mask, rect);
 		
 		Dataset x = profile[0];
 		x.setName("Box X Profile "+rect.getName());
@@ -56,8 +60,8 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 		
 
 		// If not symmetry profile[3] is null, otherwise plot it.
-		OperationData ret = new OperationData(x, y);
-	    ret.setAuxData(rect);
+		OperationData ret = new OperationData(model.getDirection() == Direction.X ? x : y);
+//	    ret.setAuxData(rect);
 
 	    return ret;
 	}

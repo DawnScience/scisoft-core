@@ -222,7 +222,7 @@ class ndArrayHelper(flatteningHelper):
                 raise
             rval[self.FILENAME] = filename
             rval[self.DELETEFILEAFTERLOAD] = True
-        elif isinstance(obj, _wrapper.abstractdatasetdescriptor):
+        elif isinstance(obj, _wrapper.datasetdescriptor):
             rval[self.FILENAME] = obj.filename
             if obj.deleteAfterLoad:
                 rval[self.DELETEFILEAFTERLOAD] = True
@@ -246,7 +246,7 @@ class ndArrayHelper(flatteningHelper):
                 os.remove(filename)
                 
     def canflatten(self, obj):
-        return isinstance(obj, (_np.ndarray, _wrapper.abstractdatasetdescriptor))
+        return isinstance(obj, (_np.ndarray, _wrapper.datasetdescriptor))
 
 class guiBeanHelper(flatteningHelper):
     TYPE_NAME = "uk.ac.diamond.scisoft.analysis.plotserver.GuiBean"

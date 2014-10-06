@@ -372,4 +372,65 @@ public class SliceableMetadataTest {
 		}
 	}
 
+	@Test
+	public void testSlicingSameRankDifferentShapeSqueezeMetadata() {
+		
+		final int[] shape = new int[] {1, 2, 3, 4};
+		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+
+		final int [] partial1 = new int[] {1, 1, 1, 4};
+		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
+
+		final int [] partial2 = new int[] {1, 1, 3, 1};
+		List<ShortDataset> sdl = new ArrayList<>();
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
+
+		final int [] partial3 = new int[] {1, 2, 1, 1};
+		Map<String, BooleanDataset> bdm = new HashMap<String, BooleanDataset>();
+		bdm.put("1", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+		bdm.put("2", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
+
+		List<DoubleDataset[]> l2 = new ArrayList<DoubleDataset[]>();
+		l2.add(new DoubleDataset[]{Random.randn(partial1)});
+		l2.add(new DoubleDataset[]{Random.randn(partial1)});
+		
+		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(md);
+		
+		try {
+			SliceableTestMetadata tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(md, tmd);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertEquals(2, tmd.getListOfArrays().size());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
+		Slice[] slice = new Slice[] {new Slice(1), new Slice(1), null, null};
+		ILazyDataset sliced = dataset.getSliceView(slice);
+		
+		sliced.squeeze();
+		int rank = sliced.getRank();
+		assertArrayEquals(new int[] {3, 4}, sliced.getShape());
+		try {
+			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertEquals(rank, tmd.getLazyDataset().getRank());
+			assertEquals(rank, tmd.getArray()[0].getRank());
+			assertEquals(rank, tmd.getList().get(0).getRank());
+			assertEquals(rank, tmd.getMap().get("1").getRank());
+			assertEquals(rank, tmd.getListOfArrays().get(0)[0].getRank());
+			
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+	}
+	
 }

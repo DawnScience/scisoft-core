@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2014 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -431,6 +431,32 @@ public class SliceableMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
+
+		dataset = Random.randn(shape).cast(Dataset.INT32);
+		md = new SliceableTestMetadata(null, dda, sdl, bdm, l2);
+		dataset.addMetadata(md);
+		try {
+			dataset.setShape(2, 4, 3);
+			fail("Should fail!");
+		} catch (Exception e) {
+		}
+
+		dataset.setShape(1, 2, 3, 2, 2);
+		rank = dataset.getRank();
+		assertArrayEquals(new int[] {1, 2, 3, 2, 2}, dataset.getShape());
+		try {
+			SliceableTestMetadata tmd = dataset.getMetadata(SliceableTestMetadata.class).get(0);
+			assertEquals(2, tmd.getArray().length);
+			assertEquals(2, tmd.getList().size());
+			assertEquals(2, tmd.getMap().size());
+			assertEquals(rank, tmd.getArray()[0].getRank());
+			assertEquals(rank, tmd.getList().get(0).getRank());
+			assertEquals(rank, tmd.getMap().get("1").getRank());
+			assertEquals(rank, tmd.getListOfArrays().get(0)[0].getRank());
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
+
 	}
-	
+
 }

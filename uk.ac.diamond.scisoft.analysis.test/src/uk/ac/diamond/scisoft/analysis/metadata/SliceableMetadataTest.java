@@ -354,8 +354,18 @@ public class SliceableMetadataTest {
 		}
 
 		Slice[] slice = new Slice[] {null, new Slice(1), null, new Slice(0,2)};
-		ILazyDataset sliced = dataset.getSliceView(slice);
+		ILazyDataset sliced;
+		try {
+			sliced = dataset.getSliceView(slice);
+			fail("Should not get here");
+		} catch (Exception e) {
+		}
 
+		final int [] partial4 = new int[] {1, 2, 1, 1};
+		final int[] result3 = new int[] {1, 1, 1, 1};
+		bdm.put("1", (BooleanDataset) Random.randn(partial4).cast(Dataset.BOOL));
+		bdm.put("2", (BooleanDataset) Random.randn(partial4).cast(Dataset.BOOL));
+		sliced = dataset.getSliceView(slice);
 		assertArrayEquals(new int[] {1, 1, 3, 2}, sliced.getShape());
 		try {
 			SliceableTestMetadata tmd = sliced.getMetadata(SliceableTestMetadata.class).get(0);
@@ -366,7 +376,8 @@ public class SliceableMetadataTest {
 			assertArrayEquals(result1, tmd.getArray()[0].getShape());
 			assertArrayEquals(result2, tmd.getList().get(0).getShape());
 			//not sliced, shape not compatible
-			assertArrayEquals(partial3, tmd.getMap().get("1").getShape());
+			assertArrayEquals(result3, tmd.getMap().get("1").getShape());
+			assertArrayEquals(result3, tmd.getMap().get("2").getShape());
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}

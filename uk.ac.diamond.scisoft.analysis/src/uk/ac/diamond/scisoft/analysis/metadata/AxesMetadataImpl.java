@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
-	@Reshapeable
+	@Reshapeable(matchRank = true)
 	@Sliceable
 	List<ILazyDataset>[] allAxes;
 

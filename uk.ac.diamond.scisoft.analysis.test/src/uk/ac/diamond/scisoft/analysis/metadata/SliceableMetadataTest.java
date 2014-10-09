@@ -9,9 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -375,7 +373,6 @@ public class SliceableMetadataTest {
 			assertArrayEquals(new int[] {1, 1, 3, 2}, tmd.getLazyDataset().getShape());
 			assertArrayEquals(result1, tmd.getArray()[0].getShape());
 			assertArrayEquals(result2, tmd.getList().get(0).getShape());
-			//not sliced, shape not compatible
 			assertArrayEquals(result3, tmd.getMap().get("1").getShape());
 			assertArrayEquals(result3, tmd.getMap().get("2").getShape());
 		} catch (Exception e) {

@@ -85,5 +85,10 @@ public class AxesMetadataImpl implements AxesMetadata {
 		}
 		allAxes[axisDim].add(axisData);
 	}
-
+	
+	@Override
+	public AxesMetadata createAxesMetadata(int rank) {
+		return new AxesMetadataImpl(rank);
+	}
+	
 }

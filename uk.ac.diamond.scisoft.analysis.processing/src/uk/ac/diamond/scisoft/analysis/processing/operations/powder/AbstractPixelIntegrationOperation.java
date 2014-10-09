@@ -35,36 +35,68 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		return this.getClass().getName();
 	}
 
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
+	
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		IDiffractionMetadata md = getFirstDiffractionMetadata(slice);
-		
+		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
+
 		if (metadata == null || !metadata.equals(md)) {
 			metadata = md;
 			integrator = null;
 		}
-		
+
 		if (integrator == null) integrator = createIntegrator((PixelIntegrationModel)model, metadata);
-		
-		ILazyDataset mask = getFirstMask(slice);
+
+		ILazyDataset mask = getFirstMask(input);
 		if (mask != null) {
 			IDataset m = mask.getSlice().squeeze();
 			integrator.setMask((Dataset)m);
 		}
-		
-		ILazyDataset[] axes = getFirstAxes(slice);
-		int[] dataDims = getOriginalDataDimensions(slice);
-		
-		final List<Dataset> out = integrator.integrate(slice);
-		
+
+//		ILazyDataset[] axes = getFirstAxes(input);
+		ILazyDataset[] axes = null;
+		int[] dataDims = getOriginalDataDimensions(input);
+
+		final List<Dataset> out = integrator.integrate(input);
+
 		Dataset data = out.remove(1);
-		
+
 		setAxes(data,axes, dataDims, out);
-		
+
 		return new OperationData(data);
+
 	}
+	
+//	@Override
+//	public OperationData execute(IDataset slice, IMonitor monitor)
+//			throws OperationException {
+//		
+//		IDiffractionMetadata md = getFirstDiffractionMetadata(slice);
+//		
+//		if (metadata == null || !metadata.equals(md)) {
+//			metadata = md;
+//			integrator = null;
+//		}
+//		
+//		if (integrator == null) integrator = createIntegrator((PixelIntegrationModel)model, metadata);
+//		
+//		ILazyDataset mask = getFirstMask(slice);
+//		if (mask != null) {
+//			IDataset m = mask.getSlice().squeeze();
+//			integrator.setMask((Dataset)m);
+//		}
+//		
+//		ILazyDataset[] axes = getFirstAxes(slice);
+//		int[] dataDims = getOriginalDataDimensions(slice);
+//		
+//		final List<Dataset> out = integrator.integrate(slice);
+//		
+//		Dataset data = out.remove(1);
+//		
+//		setAxes(data,axes, dataDims, out);
+//		
+//		return new OperationData(data);
+//	}
 	
 	@Override
 	public void setModel(T model) {

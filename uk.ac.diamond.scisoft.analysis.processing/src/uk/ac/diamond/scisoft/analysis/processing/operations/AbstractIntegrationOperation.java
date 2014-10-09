@@ -17,23 +17,9 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
 public abstract class AbstractIntegrationOperation<T extends IntegrationModel> extends AbstractOperation<T, OperationData> {
-
-	@OperationModelField(hint="The region to use with the operation.\n\nClick the '...' button to open the region dialog.")
-	private IROI region;
-
-
-	@Override
-	public void setModel(T model) {
-		super.setModel(model);
-		try {
-			this.region = (IROI)model.get("region");
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			region = null;
-		}
-	}
 	
 	protected IROI getRegion() {
-		return region;
+		return model.getRegion();
 	}
 	
 	public OperationRank getInputRank() {

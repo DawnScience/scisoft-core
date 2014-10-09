@@ -36,6 +36,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
@@ -170,7 +171,7 @@ public class OperationServiceImpl implements IOperationService {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }
         if (series[0].getInputRank().isDiscrete()) {
-	        if (firstSlice.getRank() != series[0].getInputRank().getRank()) {
+	        if (AbstractDataset.squeezeShape(firstSlice.getShape(), false).length != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }

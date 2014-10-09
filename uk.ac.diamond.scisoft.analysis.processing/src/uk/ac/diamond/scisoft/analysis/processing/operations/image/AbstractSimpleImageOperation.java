@@ -22,10 +22,7 @@ public abstract class AbstractSimpleImageOperation<T extends IOperationModel> ex
 
 	IImageFilterService service = null;
 
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
-		
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (service == null) {
 			try { 
 				service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
@@ -34,8 +31,8 @@ public abstract class AbstractSimpleImageOperation<T extends IOperationModel> ex
 			}
 		}
 		
-		IDataset out = processImage(slice, service);
-		copyMetadata(slice, out);
+		IDataset out = processImage(input, service);
+		copyMetadata(input, out);
 		return new OperationData(out);
 	}
 	

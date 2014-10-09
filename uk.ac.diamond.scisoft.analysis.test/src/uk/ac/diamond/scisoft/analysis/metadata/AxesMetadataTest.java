@@ -44,7 +44,7 @@ public class AxesMetadataTest {
 
 	@Test
 	public void testAxesMetadata() {
-		final int[] shape = new int[] {1, 2, 3, 4};
+		final int[] shape = new int[] {1, 1, 2, 3, 4, 1, 1};
 
 		int r = shape.length;
 		AxesMetadataImpl amd = new AxesMetadataImpl(r);
@@ -79,7 +79,7 @@ public class AxesMetadataTest {
 			assertEquals(amd, tmd);
 			assertEquals(r, tmd.getAxes().length);
 			for (int i = 0; i < r; i++) {
-				assertEquals(i + 2, tmd.getAxis(i).length);
+				assertEquals(i + 3, tmd.getAxis(i).length);
 			}
 			assertEquals(r, tmd.getAxis(0)[0].getRank());
 		} catch (Exception e) {
@@ -92,12 +92,26 @@ public class AxesMetadataTest {
 		assertArrayEquals(nshape, sliced.getShape());
 		try {
 			AxesMetadata tmd = sliced.getMetadata(AxesMetadata.class).get(0);
+			assertEquals(sliced.getRank(), tmd.getAxes().length);
+			assertEquals(3, tmd.getAxis(0).length);
 			assertArrayEquals(nshape, tmd.getAxis(0)[0].getShape());
+			assertEquals(4, tmd.getAxis(1).length);
 			assertArrayEquals(nshape, tmd.getAxis(1)[0].getShape());
+			assertEquals(5, tmd.getAxis(2).length);
 			assertArrayEquals(nshape, tmd.getAxis(2)[0].getShape());
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
 
+		nshape = new int[] {3, 2, 1, 1};
+		sliced.setShape(nshape);
+		try {
+			AxesMetadata tmd = sliced.getMetadata(AxesMetadata.class).get(0);
+			assertEquals(sliced.getRank(), tmd.getAxes().length);
+			assertArrayEquals(nshape, tmd.getAxis(0)[0].getShape());
+			assertArrayEquals(null, tmd.getAxis(2));
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
 	}
 }

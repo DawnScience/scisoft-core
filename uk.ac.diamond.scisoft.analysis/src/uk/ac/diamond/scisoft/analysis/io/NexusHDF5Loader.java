@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -117,27 +118,44 @@ public class NexusHDF5Loader extends HDF5Loader {
 					// look through the additional metadata for axis information
 					// TODO Should take @primary into account when adding axes.
 					// TODO also this only deals with 1D axis at the moment.
+					int[] dShape = data.getShape();
 					for (String goodKey : additionalMetadata) {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");
 							ILazyDataset axisData = dh.getLazyDataset(axisName);
 							int axisDim = Integer.parseInt((String) dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
 							ILazyDataset axisDataset = axisData.clone();
-
-							int[] shape = new int[data.getShape().length];
-							for (int i = 0; i < shape.length ; i++) {
-								if (i == axisDim) {
-									shape[i] = axisData.getShape()[0];
-								} else {
-									shape[i] = 1;
+							int[] aShape = axisData.getShape();
+							if (aShape.length == 1) {
+								int[] shape = new int[dShape.length];
+								int aLength = aShape[0];
+								Arrays.fill(shape, 1);
+								if (dShape[axisDim] != aLength) { // sanity check
+									if (dShape[dShape.length - 1 - axisDim] == aLength) { // Fortran order!
+										axisDim = dShape.length - 1 - axisDim;
+									} else {
+										logger.warn("Axis attribute of {} does not match dimension {} of signal dataset", goodKey, axisDim);
+										axisDim = -1;
+										for (int i = 0; i < shape.length ; i++) {
+											if (dShape[i] == aLength) {
+												axisDim = i;
+												break;
+											}
+										}
+									}
+									if (axisDim < 0) {
+										logger.error("Axis attribute of {} does not match any dimension of signal dataset", goodKey);
+										break;
+									}
 								}
+								shape[axisDim] = aLength;
+								axisDataset.setShape(shape);
 							}
-							axisDataset.setShape(shape);
 							axesMetadata.addAxis(axisDataset, axisDim);
 						}
 					}
 
-					data.setMetadata(null);
+//					data.setMetadata(null); was no-op anyway
 				}
 			}
 		} catch (Exception e) {

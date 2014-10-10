@@ -113,5 +113,16 @@ public class AxesMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
+
+		nshape = new int[] {1, 1, 3, 2};
+		sliced.setShape(nshape);
+		try {
+			AxesMetadata tmd = sliced.getMetadata(AxesMetadata.class).get(0);
+			assertEquals(sliced.getRank(), tmd.getAxes().length);
+			assertArrayEquals(nshape, tmd.getAxis(2)[0].getShape());
+			assertArrayEquals(null, tmd.getAxis(0));
+		} catch (Exception e) {
+			fail("Should not fail: " + e);
+		}
 	}
 }

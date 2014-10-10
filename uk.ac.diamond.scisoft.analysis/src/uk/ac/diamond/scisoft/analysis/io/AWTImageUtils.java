@@ -141,6 +141,10 @@ public class AWTImageUtils {
 	 */
 	static public BufferedImage makeBufferedImage(final Dataset data, final int bits) {
 		final int[] shape = data.getShape();
+		if (shape.length > 2) {
+			throw new IllegalArgumentException("Rank of data must be less than or equal to two");
+		}
+
 		final int height = shape[0];
 		final int width = shape.length == 1 ? 1 : shape[1]; // allow 1D datasets to be saved
 

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.IRichDataset;
+import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.AggregateDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -63,7 +63,7 @@ public class FunctionsTest {
 	public void testPolynomial() throws Exception {
 		
 		final IDataset       indices = DatasetFactory.createRange(1000, Dataset.INT);
-		final IRichDataset   rich    = new RichDataset(indices, null);
+		final ISliceConfiguration   rich    = new RichDataset(indices, null);
 
 		final IOperation functionOp = service.findFirst("function");
 		

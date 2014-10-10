@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.IRichDataset;
+import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -69,19 +69,19 @@ public class OperationServiceImpl implements IOperationService {
 	 * stacks out of the rich dataset passed in.
 	 */
 	@Override
-	public void executeSeries(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
+	public void executeSeries(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.SERIES);
 	}
 
 
 	@Override
-	public void executeParallelSeries(IRichDataset dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
+	public void executeParallelSeries(ISliceConfiguration dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.PARALLEL);
 	}
 
 	private long parallelTimeout;
 	
-	private void execute(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
+	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
 		
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");

@@ -8,8 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
-import java.util.List;
-
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
@@ -34,16 +32,7 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 
-		IDataset mask = null;
-		try {
-			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
-			if (maskMetadata != null && !maskMetadata.isEmpty()) {
-				mask = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
-			}
-				 
-		} catch (Exception e) {
-			throw new OperationException(this, e);
-		}
+		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(slice));
 		
 		if (mask == null) throw new OperationException(this, "No mask to dilate!");
 		

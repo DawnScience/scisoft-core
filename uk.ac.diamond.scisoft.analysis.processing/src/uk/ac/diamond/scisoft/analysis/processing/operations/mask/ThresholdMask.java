@@ -41,20 +41,14 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
 		Dataset data = (Dataset)slice;
-		IDataset mask = null;
-		try {
-			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
-			if (maskMetadata != null && !maskMetadata.isEmpty()) {
-				mask = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
-			}
-				 
-		} catch (Exception e) {
-			throw new OperationException(this, e);
+		if (data.getRank() != 2) {
+			data = data.getView().squeeze(true);
 		}
+		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(data));
 		
-		if (mask == null) mask = BooleanDataset.ones(slice.getShape());
+		if (mask == null) mask = BooleanDataset.ones(data.getShape());
 		
-		if (!isCompatible(slice.getShape(), mask.getShape())) {
+		if (!isCompatible(data.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
 		
@@ -70,7 +64,7 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 			while (it.hasNext()) {
 								
 				int[] pos = it.getPos();
-				if (slice.getDouble(pos)>upper || slice.getDouble(pos)<lower) {
+				if (data.getDouble(pos)>upper || data.getDouble(pos)<lower) {
 					mask.set(false, pos);
 				}
 			}

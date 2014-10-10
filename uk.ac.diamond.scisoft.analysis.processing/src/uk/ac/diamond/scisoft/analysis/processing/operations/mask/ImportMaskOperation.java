@@ -9,7 +9,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.dawb.common.services.IPersistenceService;
 import org.dawb.common.services.IPersistentFile;
@@ -43,18 +42,7 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
 		
-		IDataset inM= null;
-		
-		try {
-			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
-			if (maskMetadata != null && !maskMetadata.isEmpty()) {
-				inM = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
-			}
-				 
-		} catch (Exception e) {
-			throw new OperationException(this, e);
-		}
-		
+		IDataset inM = DatasetUtils.convertToDataset(getFirstMask(slice));
 		
 		if (mask == null) {
 			String filePath = ((ImportMaskModel)model).getFilePath();

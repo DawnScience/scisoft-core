@@ -34,6 +34,9 @@ public class FittingOperation extends AbstractOperation<FittingModel, OperationD
 	public OperationData execute(IDataset data, IMonitor monitor) throws OperationException {
 		
 		try {
+			if (data.getRank() != 1) {
+				data = data.getSliceView().squeeze(true);
+			}
 			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((Dataset)model.getxAxis(), 
 					                                                                  (Dataset)data, 
 					                                                                  model.getPeak(), model.createOptimizer(),

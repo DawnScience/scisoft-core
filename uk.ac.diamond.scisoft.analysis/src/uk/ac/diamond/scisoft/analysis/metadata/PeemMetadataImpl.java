@@ -18,7 +18,11 @@ public class PeemMetadataImpl implements PeemMetadata {
 	private double fieldOfView = 50;
 	private double rotation = -49;
 
-	public PeemMetadataImpl() {
+	public PeemMetadataImpl(double[] xyPosition, double scaling, double fieldOfView, double rotation) {
+		this.xyMotorPosition = xyPosition;
+		this.scaling = scaling;
+		this.fieldOfView = fieldOfView;
+		this.rotation = rotation;
 	}
 
 	public PeemMetadataImpl(PeemMetadata metadata) {

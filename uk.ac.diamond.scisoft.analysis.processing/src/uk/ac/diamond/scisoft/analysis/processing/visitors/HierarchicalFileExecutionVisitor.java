@@ -45,8 +45,6 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private String filePath;
 	IHierarchicalDataFile file;
 	
-	private Map<IOperation, String> nameMap;
-	
 	public HierarchicalFileExecutionVisitor(String filePath) {
 		this.filePath = filePath;
 	}
@@ -175,6 +173,8 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	private void appendData(IDataset dataset, String group, Slice[] oSlice, int[] oShape, IHierarchicalDataFile file) throws Exception {
+		
+		dataset = dataset.getSliceView();
 		
 		//determine if dataset different rank to slice
 		List<Integer> dimList = new ArrayList<Integer>();

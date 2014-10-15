@@ -28,11 +28,11 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation";
 	}
-
+	
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
-
-		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(slice));
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		
+		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
 		
 		if (mask == null) throw new OperationException(this, "No mask to dilate!");
 		
@@ -55,12 +55,12 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 		not = Comparisons.logicalNot(not);
 		
 		MaskMetadata mm = new MaskMetadataImpl(not);
-		slice.setMetadata(mm);
+		input.setMetadata(mm);
 		
-		return new OperationData(slice);
+		return new OperationData(input);
 		
 	}
-	
+
 	@Override
 	public OperationRank getInputRank() {
 		return OperationRank.TWO;

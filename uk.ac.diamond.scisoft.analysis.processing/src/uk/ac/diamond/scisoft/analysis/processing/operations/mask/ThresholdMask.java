@@ -8,8 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
@@ -19,7 +18,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 
@@ -38,17 +36,13 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 	}
 
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+
+		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
 		
-		Dataset data = (Dataset)slice;
-		if (data.getRank() != 2) {
-			data = data.getView().squeeze(true);
-		}
-		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(data));
+		if (mask == null) mask = BooleanDataset.ones(input.getShape());
 		
-		if (mask == null) mask = BooleanDataset.ones(data.getShape());
-		
-		if (!isCompatible(data.getShape(), mask.getShape())) {
+		if (!Arrays.equals(input.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
 		
@@ -64,39 +58,19 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 			while (it.hasNext()) {
 								
 				int[] pos = it.getPos();
-				if (data.getDouble(pos)>upper || data.getDouble(pos)<lower) {
+				if (input.getDouble(pos)>upper || input.getDouble(pos)<lower) {
 					mask.set(false, pos);
 				}
 			}
 			
 			MaskMetadata mm = new MaskMetadataImpl(mask);
-			data.setMetadata(mm);
+			input.setMetadata(mm);
 			
-			return new OperationData(data);
+			return new OperationData(input);
 
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}
-	}
-
-	protected static boolean isCompatible(final int[] ashape, final int[] bshape) {
-
-		List<Integer> alist = new ArrayList<Integer>();
-
-		for (int a : ashape) {
-			if (a > 1) alist.add(a);
-		}
-
-		final int imax = alist.size();
-		int i = 0;
-		for (int b : bshape) {
-			if (b == 1)
-				continue;
-			if (i >= imax || b != alist.get(i++))
-				return false;
-		}
-
-		return i == imax;
 	}
 
 	@Override

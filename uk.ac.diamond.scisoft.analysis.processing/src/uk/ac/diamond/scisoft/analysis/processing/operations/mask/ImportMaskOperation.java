@@ -37,12 +37,11 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation";
 	}
-
+	
+	
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
-		
-		IDataset inM = DatasetUtils.convertToDataset(getFirstMask(slice));
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		IDataset inM = DatasetUtils.convertToDataset(getFirstMask(input));
 		
 		if (mask == null) {
 			String filePath = ((ImportMaskModel)model).getFilePath();
@@ -52,7 +51,7 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 					IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 					IPersistentFile pf = service.getPersistentFile(filePath);
 					IDataset m = pf.getMask(pf.getMaskNames(null).get(0),null);
-					if (Arrays.equals(m.squeeze().getShape(), slice.getShape())) {
+					if (Arrays.equals(m.squeeze().getShape(), input.getShape())) {
 						mask = m;
 					} else {
 						throw new IllegalArgumentException("mask not compatible shape");
@@ -61,7 +60,7 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 				} else {
 					IDataHolder dh = LoaderFactory.getData(filePath);
 					IDataset ds = dh.getDataset(0);
-					if (Arrays.equals(ds.squeeze().getShape(), slice.getShape())) {
+					if (Arrays.equals(ds.squeeze().getShape(), input.getShape())) {
 						mask = ds;
 					} else {
 						throw new IllegalArgumentException("mask not compatible shape");
@@ -82,9 +81,9 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 		}
 		
 		MaskMetadata mm = new MaskMetadataImpl(inM);
-		slice.setMetadata(mm);
+		input.setMetadata(mm);
 
-		return new OperationData(slice);
+		return new OperationData(input);
 	}
 
 	@Override

@@ -326,6 +326,9 @@ def _isslice(rank, shape, key):
     else:
         if key is Ellipsis:
             return True
+        key = asIterable(key)
+        if len(key) > 0:
+            raise ValueError, "Cannot slice 0-d dataset" 
 
     for k in key:
         if isinstance(k, slice) or k is Ellipsis or k is newaxis:

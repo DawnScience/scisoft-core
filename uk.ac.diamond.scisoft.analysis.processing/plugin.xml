@@ -76,7 +76,7 @@
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel"
-            name="Import Diffraction Metadata"
+            name="Import Detector Calibration"
             visible="true">
       </operation>
       <operation
@@ -193,7 +193,7 @@
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
-            name="Export to .dat"
+            name="Export to Text File"
             visible="true">
       </operation>
       <operation

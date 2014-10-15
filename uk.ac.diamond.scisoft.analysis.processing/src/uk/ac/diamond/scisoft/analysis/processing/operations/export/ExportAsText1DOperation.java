@@ -1,10 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
@@ -19,23 +22,41 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {
 
-	int counter = 0;
+	private int counter = 0;
+	private ILazyDataset currentLazy = null;
+	private static final String EXPORT = "export";
 	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation";
 	}
+	
 
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		int[] dd = getOriginalDataDimensions(slice);
-		ILazyDataset[] axes = getFirstAxes(slice);
+		String filename = EXPORT;
 		
-		ILazyDataset lx = axes[dd[0]];
+		//TODO include way to export with filename/path
+//		try {
+//			List<OriginMetadata> metadata = input.getMetadata(OriginMetadata.class);
+//			if (metadata != null && !metadata.isEmpty()) {
+//				OriginMetadata om = metadata.get(0);
+//				if (currentLazy != om.getParent()) {
+//					counter=0;
+//					currentLazy = om.getParent();
+//					IMetadata metadata2 = currentLazy.getMetadata();
+//					
+//				}
+//			}
+//		} catch (Exception e1) {
+//			throw new OperationException(this,e1);
+//		}
 		
-		IDataset outds = DatasetFactory.createFromObject(slice);
+		ILazyDataset[] axes = getFirstAxes(input);
+		
+		ILazyDataset lx = axes[0];
+		
+		IDataset outds = DatasetFactory.createFromObject(input);
 		
 		outds.squeeze().setShape(outds.getShape()[0],1);
 		
@@ -45,7 +66,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
-		String fileName = model.getOutputDirectoryPath() + File.separator + "export" + String.valueOf(counter) + ".dat";
+		String fileName = model.getOutputDirectoryPath() + File.separator + filename + String.valueOf(counter) + ".dat";
 		counter++;
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
@@ -58,7 +79,8 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			e.printStackTrace();
 		}
 		
-		return new OperationData(slice);
+		return new OperationData(input);
+
 	}
 
 	@Override

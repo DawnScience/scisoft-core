@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.IRichDataset;
+import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -36,6 +36,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
@@ -68,19 +69,19 @@ public class OperationServiceImpl implements IOperationService {
 	 * stacks out of the rich dataset passed in.
 	 */
 	@Override
-	public void executeSeries(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
+	public void executeSeries(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.SERIES);
 	}
 
 
 	@Override
-	public void executeParallelSeries(IRichDataset dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
+	public void executeParallelSeries(ISliceConfiguration dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
         execute(dataset, monitor, visitor, series, ExecutionType.PARALLEL);
 	}
 
 	private long parallelTimeout;
 	
-	private void execute(final IRichDataset dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
+	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
 		
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
@@ -114,8 +115,8 @@ public class OperationServiceImpl implements IOperationService {
 										
 					for (IOperation i : series) {
 						OperationData tmp = i.execute(data.getData(), monitor);
-						data = visitor.isRequiredToModifyData(i) ? tmp : data;
-						visitor.notify(i, data, slices, shape, dataDims); // Optionally send intermediate result
+						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
+						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
 					
 					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
@@ -170,7 +171,7 @@ public class OperationServiceImpl implements IOperationService {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }
         if (series[0].getInputRank().isDiscrete()) {
-	        if (firstSlice.getRank() != series[0].getInputRank().getRank()) {
+	        if (AbstractDataset.squeezeShape(firstSlice.getShape(), false).length != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
@@ -178,7 +179,9 @@ public class OperationServiceImpl implements IOperationService {
         
         if (series.length > 1) {
         	
+        	
         	OperationRank output = series[0].getOutputRank();
+        	if (series[0].isPassUnmodifiedData()) output = series[0].getInputRank();        	
         	if (output == OperationRank.SAME) output = OperationRank.get(firstSlice.getRank());
         	if (output == OperationRank.ANY)  output = OperationRank.get(firstSlice.getRank());
         	
@@ -190,6 +193,7 @@ public class OperationServiceImpl implements IOperationService {
 	        	}
 	        	output = series[i].getOutputRank();
 	        	if (output == OperationRank.SAME) output = input;
+	        	if (series[i].isPassUnmodifiedData()) output = input;
 			}
         }
 	}

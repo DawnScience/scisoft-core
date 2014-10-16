@@ -21,12 +21,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.dawnsci.analysis.dataset.impl.function.LineSample;
 import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
-import uk.ac.diamond.scisoft.analysis.dataset.function.LineSample;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToPolarAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesianAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;

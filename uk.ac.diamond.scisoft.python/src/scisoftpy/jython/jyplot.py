@@ -19,7 +19,7 @@ from uk.ac.diamond.scisoft.analysis import SDAPlotter as _plotter,\
 from org.eclipse.dawnsci.analysis.api import RMIClientProvider as _rmiprovider
 
 try:
-    from uk.ac.diamond.scisoft.analysis.rcp.plotting import RMIPlotWindowManger as _manager
+    from uk.ac.diamond.scisoft.analysis.plotclient import RMIPlotWindowManger as _manager
 except:
     ## This code has special handling because the RCP classes may not be available
     import sys

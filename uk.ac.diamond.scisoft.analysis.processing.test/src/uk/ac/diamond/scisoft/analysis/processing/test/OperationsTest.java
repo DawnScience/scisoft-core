@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.IRichDataset;
+import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
@@ -71,7 +71,7 @@ public class OperationsTest {
 			}
 		});
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
@@ -91,7 +91,7 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final IRichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2014 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,10 +14,12 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
+	@Reshapeable(matchRank = true)
 	@Sliceable
 	List<ILazyDataset>[] allAxes;
 
@@ -42,6 +44,7 @@ public class AxesMetadataImpl implements AxesMetadata {
 		}
 	}
 
+	@Override
 	public void setAxis(int axisDim, ILazyDataset[] axisData) {
 		ArrayList<ILazyDataset> axisList = new ArrayList<ILazyDataset>(0);
 		for (int i = 0; i < axisData.length; i++) {
@@ -83,5 +86,10 @@ public class AxesMetadataImpl implements AxesMetadata {
 		}
 		allAxes[axisDim].add(axisData);
 	}
-
+	
+	@Override
+	public AxesMetadata createAxesMetadata(int rank) {
+		return new AxesMetadataImpl(rank);
+	}
+	
 }

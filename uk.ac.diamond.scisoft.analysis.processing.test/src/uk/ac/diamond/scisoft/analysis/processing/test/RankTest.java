@@ -70,7 +70,7 @@ public class RankTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=2) throw new Exception("Unexpcected rank found!");
+				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
 		}, function);
@@ -81,7 +81,7 @@ public class RankTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=1) throw new Exception("Unexpcected rank found!");
+				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
 		}, function);
@@ -93,7 +93,7 @@ public class RankTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=0) throw new Exception("Unexpcected rank found!");
+				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
 		}, function);

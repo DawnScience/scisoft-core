@@ -37,23 +37,21 @@ public class MultiplicativeIntensityCorrectionOperation extends
 	public String getId() {
 		return this.getClass().getName();
 	}
-
+	
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
-		
-		IDiffractionMetadata md = getFirstDiffractionMetadata(slice);
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
 		
 		if (metadata == null || !metadata.equals(md)) {
 			metadata = md;
 			correction = null;
 		}
 		
-		if (correction == null) correction = calculateCorrectionArray(slice, metadata);
+		if (correction == null) correction = calculateCorrectionArray(input, metadata);
 		
-		Dataset corrected = Maths.multiply(slice,correction);
+		Dataset corrected = Maths.multiply(input,correction);
 		
-		copyMetadata(slice, corrected);
+		copyMetadata(input, corrected);
 		
 		return new OperationData(corrected);
 	}

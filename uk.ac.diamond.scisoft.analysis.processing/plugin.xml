@@ -76,7 +76,7 @@
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel"
-            name="Import Diffraction Metadata"
+            name="Import Detector Calibration"
             visible="true">
       </operation>
       <operation
@@ -185,6 +185,24 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Mean Filter"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
+            description="Save 1D data as text"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
+            name="Export to Text File"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
+            description="Downsample an image"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageModel"
+            name="Downsample Image"
             visible="true">
       </operation>
    </extension>

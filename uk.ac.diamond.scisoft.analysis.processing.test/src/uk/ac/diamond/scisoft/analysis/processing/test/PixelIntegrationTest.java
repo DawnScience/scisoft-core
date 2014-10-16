@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
@@ -56,6 +57,8 @@ public class PixelIntegrationTest {
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 	}
 	
+	//ignoring, outdated operation
+	@Ignore
 	@Test
 	public void testIntegration() throws Exception {
 		

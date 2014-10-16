@@ -13,7 +13,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public abstract class PixelIntegrationModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="check to use pixel splitting integration algorithm, unchecked uses non-splitting algorithm", label = "Use pixel splitting")
+	//hint="check to use pixel splitting integration algorithm, unchecked uses non-splitting algorithm"
+	@OperationModelField(label = "Use pixel splitting")
 	private boolean pixelSplitting = false;
 	@OperationModelField(min=2, hint="Set number of bins for integration axis",label = "Set number of bins" )
 	private int numberOfBins = 1000;

@@ -306,7 +306,7 @@ class Test(unittest.TestCase):
             # we can't be removing someone else's file
             os.remove(filename)
             raise
-        add = dnp.rpc.abstractdatasetdescriptor(filename=filename, deleteAfterLoad=False)
+        add = dnp.rpc.datasetdescriptor(filename=filename, deleteAfterLoad=False)
         self._flattenAndUnflatten(add, array, dnp.ndarray)
         self.assertTrue(os.path.exists(filename))
         os.remove(filename)

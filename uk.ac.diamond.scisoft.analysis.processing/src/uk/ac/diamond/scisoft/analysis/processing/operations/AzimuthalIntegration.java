@@ -37,18 +37,12 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation<SectorInt
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		Dataset mask = null;
-		try {
-			List<MaskMetadata> maskMetadata = slice.getMetadata(MaskMetadata.class);
-			if (maskMetadata != null && !maskMetadata.isEmpty()) {
-				mask = DatasetUtils.convertToDataset(maskMetadata.get(0).getMask());
-			}
-		} catch (Exception e) {
-			throw new OperationException(this, e);
-		}
+		Dataset mask = DatasetUtils.convertToDataset(getFirstMask(slice));
 		SectorROI sector = (SectorROI)getRegion();
 		
-		
+		if (slice.getRank() != 2) {
+			slice = slice.getSliceView().squeeze(true);
+		}
 		final Dataset[] profile = ROIProfile.sector((Dataset)slice, mask, sector, false, true, false);
 		
 		Dataset integral = profile[1];

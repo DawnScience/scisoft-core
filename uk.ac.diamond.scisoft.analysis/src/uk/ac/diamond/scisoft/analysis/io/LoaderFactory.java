@@ -147,6 +147,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerLoader("srs",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("srs",  SRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  DatLoader.class);
+		    LoaderFactory.registerLoader("xy",  DatLoader.class);
 		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
 		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
 		    LoaderFactory.registerLoader("csv",  CSVLoader.class);

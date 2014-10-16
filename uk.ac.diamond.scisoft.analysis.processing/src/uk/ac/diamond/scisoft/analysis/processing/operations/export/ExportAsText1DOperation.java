@@ -56,12 +56,12 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		ILazyDataset lx = axes[0];
 		
-		IDataset outds = DatasetFactory.createFromObject(input);
+		IDataset outds = input.getSlice().clone();
 		
 		outds.squeeze().setShape(outds.getShape()[0],1);
 		
 		if (lx != null) {
-			IDataset x = lx.getSlice().squeeze();
+			IDataset x = lx.getSliceView().getSlice().squeeze();
 			x.setShape(x.getShape()[0],1);
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}

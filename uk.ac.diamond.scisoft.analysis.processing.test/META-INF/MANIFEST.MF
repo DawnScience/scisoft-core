@@ -10,6 +10,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.dawb.common.services,
  org.dawb.common.services.conversion,
  org.dawnsci.conversion,
+ org.dawnsci.persistence,
  org.eclipse.dawnsci.hdf5,
  org.slf4j;version="1.7.6",
  uk.ac.diamond.scisoft.analysis.metadata

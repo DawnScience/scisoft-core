@@ -69,7 +69,7 @@ public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, Oper
 				
 				
 			} catch (Exception e) {
-				throw new OperationException(this, "Could not import mask");
+				throw new OperationException(this, e);
 			}
 			
 		}

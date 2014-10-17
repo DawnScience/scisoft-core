@@ -161,7 +161,8 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 								file.setAttribute(ds, "axis", String.valueOf(i+1));
 								}
 							} else {
-								appendData(axDataset,groupName, oSlice,oShape, file);
+								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, file,i);
+								//appendData(axDataset,groupName, oSlice,oShape, file);
 								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
 							}
 							
@@ -170,6 +171,49 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 				}
 			}
 		}
+	}
+	
+	private void appendSingleValueAxis(IDataset dataset, String group, Slice[] oSlice, int[] oShape, IHierarchicalDataFile file, int axisDim) throws Exception{
+		
+		dataset = dataset.getSliceView().squeeze();
+		
+		H5Utils.insertDataset(file, group, dataset, new Slice[]{oSlice[axisDim]}, new long[]{oShape[axisDim]});
+		
+//		//Make new slice array to deal with new dimensions
+//		List<Slice> sliceList = new ArrayList<Slice>();
+//		List<Integer> totalDimList = new ArrayList<Integer>();
+//		int padCounter = 0;
+//		int counter = 0;
+//		for (Slice s: oSlice) {
+//			
+//			if (dimList.contains(counter)) {
+//				
+//				if (padCounter < dataRank) {
+//					sliceList.add(new Slice(0,dataset.getShape()[padCounter],1));
+//					totalDimList.add(dataset.getShape()[padCounter]);
+//					padCounter++;
+//				} else {
+//					counter++;
+//					continue;
+//				}
+//				
+//				
+//			}else {
+//				sliceList.add(s);
+//				totalDimList.add(oShape[counter]);
+//			}
+//			
+//			counter++;
+//		}
+//		
+//		Slice[] sliceOut = new Slice[sliceList.size()];
+//		sliceList.toArray(sliceOut);
+//		
+//		long[] newShape = new long[totalDimList.size()];
+//		for (int i = 0; i < newShape.length; i++) newShape[i] = totalDimList.get(i);
+		
+//		H5Utils.insertDataset(file, group, dataset, sliceOut, newShape);
+		
 	}
 	
 	private void appendData(IDataset dataset, String group, Slice[] oSlice, int[] oShape, IHierarchicalDataFile file) throws Exception {
@@ -188,6 +232,9 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 			
 		}
 		int dataRank = dataset.squeeze().getRank();
+		if (dataRank == 0){
+			dataset.toString();
+		}
 		
 		//Make new slice array to deal with new dimensions
 		List<Slice> sliceList = new ArrayList<Slice>();

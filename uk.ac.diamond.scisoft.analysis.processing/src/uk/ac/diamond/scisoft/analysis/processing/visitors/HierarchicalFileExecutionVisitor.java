@@ -8,6 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.visitors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,10 +37,12 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private boolean firstPassDone = false;
 	private final String RESULTS_GROUP = "result";
 	private final String INTER_GROUP = "intermediate";
+	private final String AUX_GROUP = "auxiliary";
 	private final String ENTRY = "entry";
 	
 	private String results;
 	private String intermediate;
+	private String auxiliary;
 	private Map<String,Map<Integer, String>> groupAxesNames = new HashMap<String,Map<Integer,String>>();
 	private IOperation<? extends IOperationModel, ? extends OperationData>[] series;
 	private String filePath;
@@ -69,6 +72,16 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		try {
 			intermediate = file.group(INTER_GROUP,ENTRY);
 			file.setNexusAttribute(intermediate, "NXcollection");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void createAuxGroup() {
+		try {
+			auxiliary = file.group(AUX_GROUP,ENTRY);
+			file.setNexusAttribute(auxiliary, "NXcollection");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +131,40 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 			}
 			
 		}
+	
+		Serializable[] auxData = data.getAuxData();
 		
+		int pos = 0;
+		while (pos < series.length && series[pos] != intermeadiateData) pos++;
+		
+
+		
+		if (auxData != null && auxData[0] != null) {
+			for (int i = 0; i < auxData.length; i++) {
+				if (auxData[i] instanceof IDataset) {
+					if (auxiliary == null) createAuxGroup();
+					try {
+						
+						IDataset ds = (IDataset)auxData[i];
+						
+						String group = file.group(String.valueOf(i) + "-" + intermeadiateData.getName(), auxiliary);
+						file.setNexusAttribute(group, "NXCollection");
+						
+						group = file.group(ds.getName(), group);
+						file.setNexusAttribute(group, "NXdata");
+						
+						ds.setName("data");
+//						ds.squeeze();
+
+						appendData(ds,group, slices,shape, file);
+						updateAxes(ds, slices, shape, dataDims, group);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 	
 	private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims, String groupName) throws Exception {
@@ -179,41 +225,6 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		
 		H5Utils.insertDataset(file, group, dataset, new Slice[]{oSlice[axisDim]}, new long[]{oShape[axisDim]});
 		
-//		//Make new slice array to deal with new dimensions
-//		List<Slice> sliceList = new ArrayList<Slice>();
-//		List<Integer> totalDimList = new ArrayList<Integer>();
-//		int padCounter = 0;
-//		int counter = 0;
-//		for (Slice s: oSlice) {
-//			
-//			if (dimList.contains(counter)) {
-//				
-//				if (padCounter < dataRank) {
-//					sliceList.add(new Slice(0,dataset.getShape()[padCounter],1));
-//					totalDimList.add(dataset.getShape()[padCounter]);
-//					padCounter++;
-//				} else {
-//					counter++;
-//					continue;
-//				}
-//				
-//				
-//			}else {
-//				sliceList.add(s);
-//				totalDimList.add(oShape[counter]);
-//			}
-//			
-//			counter++;
-//		}
-//		
-//		Slice[] sliceOut = new Slice[sliceList.size()];
-//		sliceList.toArray(sliceOut);
-//		
-//		long[] newShape = new long[totalDimList.size()];
-//		for (int i = 0; i < newShape.length; i++) newShape[i] = totalDimList.get(i);
-		
-//		H5Utils.insertDataset(file, group, dataset, sliceOut, newShape);
-		
 	}
 	
 	private void appendData(IDataset dataset, String group, Slice[] oSlice, int[] oShape, IHierarchicalDataFile file) throws Exception {
@@ -231,6 +242,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 			}
 			
 		}
+		dataset.clearMetadata(AxesMetadata.class);
 		int dataRank = dataset.squeeze().getRank();
 		if (dataRank == 0){
 			dataset.toString();

@@ -205,6 +205,15 @@
             name="Downsample Image"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
+            description="Integrate range"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DModel"
+            name="Integrate Range"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

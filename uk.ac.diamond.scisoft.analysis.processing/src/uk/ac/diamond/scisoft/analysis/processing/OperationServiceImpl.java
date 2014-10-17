@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -94,6 +95,15 @@ public class OperationServiceImpl implements IOperationService {
 			if ("".equals(slicing.get(dim))) iterator.remove();
 		}
 		
+		OriginMetadata om = null;
+		
+		try {
+			om = dataset.getData().getMetadata(OriginMetadata.class).get(0);
+		} catch (Exception e1) {
+			//TODO warn
+		}
+		
+		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
 		//detemine data axes to populate origin metadata
 		final int[] dataDims = Slicer.getDataDimensions(dataset.getData().getShape(), slicing);
 			
@@ -108,8 +118,13 @@ public class OperationServiceImpl implements IOperationService {
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 					
 					if (monitor != null && monitor.isCancelled()) return;
+					if (originMetadata == null){ 
+						slice.setMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName()));
+					} else {
+						slice.setMetadata(originMetadata);
+					}
 					
-					slice.addMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims));
+					
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 										

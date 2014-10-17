@@ -34,7 +34,7 @@ public class DiffractionMetadataImportOperation extends AbstractOperation<Diffra
 		if (metadata == null) {
 			NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(((DiffractionMetadataImportModel)model).getFilePath());
 			IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(null);
-			if (!reader.isPartialRead()) throw new OperationException(this, "File does not contain metadata");
+			if (!(reader.isPartialRead() || reader.isNcdRead())) throw new OperationException(this, "File does not contain metadata");
 			metadata = md;
 		}
 		

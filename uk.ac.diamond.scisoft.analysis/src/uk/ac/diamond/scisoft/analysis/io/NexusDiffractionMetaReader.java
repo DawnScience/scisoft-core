@@ -211,6 +211,16 @@ public class NexusDiffractionMetaReader {
 			   successMap.get(DiffractionMetaValue.PIXEL_SIZE);
 	}
 	
+	/**
+	 * Have enough values been read from an NCD experiment?
+	 */
+	public boolean isNcdRead() {
+		return successMap.get(DiffractionMetaValue.BEAM_CENTRE) &&
+			   successMap.get(DiffractionMetaValue.DISTANCE) &&
+			   successMap.get(DiffractionMetaValue.ENERGY) &&
+			   successMap.get(DiffractionMetaValue.PIXEL_SIZE);
+	}
+
 	public boolean isDetectorRead() {
 		return successMap.get(DiffractionMetaValue.PIXEL_SIZE);
 
@@ -235,7 +245,15 @@ public class NexusDiffractionMetaReader {
 		if (imageSize == null) {
 			//only one NXdetector or we don't know the image size
 			//so just use the first one
-			return nxDetectors.get(0);
+			
+			//look for something that contains useful information like pixel size(s)
+			String detectorToReturn = nxDetectors.get(0);
+			for (String detector : nxDetectors) {
+				if (getDataset(file, detector, "x_pixel_size") != null) {
+					detectorToReturn = detector;
+				}
+			}
+			return detectorToReturn;
 		}
 		for (String detector : nxDetectors) {
 			String dataset = getDataset(file, detector, DATA_NAME);

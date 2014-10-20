@@ -214,6 +214,33 @@
             name="Integrate Range"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
+            description="Custom mathematical operation"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DModel"
+            name="Mathematical Expression [1D]"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
+            description="Custom mathematical expression on an image"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
+            name="Mathematical Expression [2D]"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
+            description="Custom mathematical expressions including q, tth, azimuth and energy"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
+            name="Mathematical Expression [2D Diffraction]"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

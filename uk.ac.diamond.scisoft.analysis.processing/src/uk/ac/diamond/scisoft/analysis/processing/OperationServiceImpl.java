@@ -121,6 +121,7 @@ public class OperationServiceImpl implements IOperationService {
 					if (originMetadata == null){ 
 						slice.setMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName()));
 					} else {
+						originMetadata.setCurrentSlice(slices);
 						slice.setMetadata(originMetadata);
 					}
 					

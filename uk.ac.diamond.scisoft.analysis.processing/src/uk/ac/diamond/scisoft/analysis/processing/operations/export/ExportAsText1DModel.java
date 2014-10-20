@@ -8,6 +8,34 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Enter the path to output directory", file = FileType.EXISTING_FOLDER, label = "Select Output Directory:")
 	private String outputDirectoryPath = "";
+	private String extension = "dat";
+	private boolean includeSliceName = false;
+	private Integer zeroPad = 5;
+	
+	
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setExtension(String extension) {
+		firePropertyChange("extension", this.extension, this.extension = extension);
+	}
+
+	public boolean isIncludeSliceName() {
+		return includeSliceName;
+	}
+
+	public void setIncludeSliceName(boolean includeSliceName) {
+		firePropertyChange("includeSliceName", this.includeSliceName, this.includeSliceName = includeSliceName);
+	}
+
+	public Integer getZeroPad() {
+		return zeroPad;
+	}
+
+	public void setZeroPad(Integer zeroPad) {
+		firePropertyChange("zeroPad", this.zeroPad, this.zeroPad = zeroPad);
+	}
 
 	public String getOutputDirectoryPath() {
 		return outputDirectoryPath;

@@ -1,12 +1,12 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
 import java.io.File;
-import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
@@ -23,8 +23,9 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {
 
 	private int counter = 0;
-	private ILazyDataset currentLazy = null;
+	private String currentFilePath = null;
 	private static final String EXPORT = "export";
+	private static final String DEFAULT_EXT = "dat";
 	
 	@Override
 	public String getId() {
@@ -34,23 +35,56 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		String filename = EXPORT;
+		if (model.getOutputDirectoryPath() == null) throw new OperationException(this, "Output directory not set!");
 		
-		//TODO include way to export with filename/path
-//		try {
-//			List<OriginMetadata> metadata = input.getMetadata(OriginMetadata.class);
-//			if (metadata != null && !metadata.isEmpty()) {
-//				OriginMetadata om = metadata.get(0);
-//				if (currentLazy != om.getParent()) {
-//					counter=0;
-//					currentLazy = om.getParent();
-//					IMetadata metadata2 = currentLazy.getMetadata();
-//					
-//				}
-//			}
-//		} catch (Exception e1) {
-//			throw new OperationException(this,e1);
-//		}
+		String filename = EXPORT;
+		String slice ="";
+		String count = String.valueOf(counter);
+		String ext = DEFAULT_EXT;
+		
+		OriginMetadata om = getOriginMetadata(input);
+		
+		if (om != null) {
+			String fn = om.getFilePath();
+			if (fn != null) {
+				if (!fn.equals(currentFilePath)) {
+					currentFilePath = fn;
+					counter = 0;
+				}
+				File f = new File(fn);
+				filename = getFileNameNoExtension(f.getName());
+				
+				if (model.isIncludeSliceName()) {
+					slice = Slice.createString(om.getCurrentSlice());
+				}
+				
+				if (model.getZeroPad() != null) {
+					count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", counter);
+				}
+				
+				if (model.getExtension() != null) ext = model.getExtension();
+				
+			}
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(model.getOutputDirectoryPath());
+		sb.append(File.separator);
+		sb.append(filename);
+		sb.append("_");
+		if (!slice.isEmpty()) {
+			sb.append("[");
+			slice = slice.replace(":", ";");
+			sb.append(slice);
+			sb.append("]");
+			sb.append("_");
+		}
+		sb.append(count);
+		sb.append(".");
+		sb.append(ext);
+		
+		String fileName = sb.toString();
+		counter++;
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		
@@ -65,9 +99,6 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			x.setShape(x.getShape()[0],1);
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
-		
-		String fileName = model.getOutputDirectoryPath() + File.separator + filename + String.valueOf(counter) + ".dat";
-		counter++;
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 		
@@ -91,6 +122,12 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 	@Override
 	public OperationRank getOutputRank() {
 		return OperationRank.ONE;
+	}
+	
+	private String getFileNameNoExtension(String fileName) {
+		int posExt = fileName.lastIndexOf(".");
+		// No File Extension
+		return posExt == -1 ? fileName : fileName.substring(0, posExt);
 	}
 
 }

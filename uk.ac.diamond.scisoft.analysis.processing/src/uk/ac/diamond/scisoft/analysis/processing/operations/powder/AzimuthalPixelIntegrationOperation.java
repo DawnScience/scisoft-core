@@ -102,9 +102,11 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 		AbstractPixelIntegration integ = null;
 		
 		if (model.isPixelSplitting()) {
-			integ = new PixelSplittingIntegration(md, model.getNumberOfBins());
+			if (model.getNumberOfBins() == null) integ = new PixelSplittingIntegration(md);
+			else integ = new PixelSplittingIntegration(md, model.getNumberOfBins());
 		} else {
-			integ = new NonPixelSplittingIntegration(md, model.getNumberOfBins());
+			if (model.getNumberOfBins() == null)  integ = new NonPixelSplittingIntegration(md);
+			else integ = new NonPixelSplittingIntegration(md, model.getNumberOfBins());
 		}
 		
 		integ.setAxisType(((AzimuthalPixelIntegrationModel)model).getAxisType());

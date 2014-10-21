@@ -14,8 +14,8 @@ import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class CakePixelIntegrationModel extends PixelIntegrationModel {
 
-	@OperationModelField(min=1, hint="Set number of bins for azimuthal axis",label = "Set number of azimuthal bins" )
-	private int numberOfBins2ndAxis = 1000;
+	@OperationModelField(min=2,max=1000000, hint="Set number of bins for azimuthal axis",label = "Set number of azimuthal bins" )
+	private Integer numberOfBins2ndAxis = null;
 	@OperationModelField(hint="Set value for X axis after integration", label = "Select X Axis")
 	private XAxis axisType = XAxis.Q;
 	
@@ -27,11 +27,11 @@ public class CakePixelIntegrationModel extends PixelIntegrationModel {
 		firePropertyChange("axisType", this.axisType, this.axisType = axisType);
 	}
 	
-	public int getNumberOfBins2ndAxis() {
+	public Integer getNumberOfBins2ndAxis() {
 		return numberOfBins2ndAxis;
 	}
 
-	public void setNumberOfBins2ndAxis(int numberOfBins2ndAxis) {
+	public void setNumberOfBins2ndAxis(Integer numberOfBins2ndAxis) {
 		firePropertyChange("numberOfBins2ndAxis", this.numberOfBins2ndAxis, this.numberOfBins2ndAxis = numberOfBins2ndAxis);
 	}
 

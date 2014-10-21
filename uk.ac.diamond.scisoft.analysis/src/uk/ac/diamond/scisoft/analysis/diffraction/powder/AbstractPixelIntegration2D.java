@@ -32,6 +32,12 @@ public abstract class AbstractPixelIntegration2D extends AbstractPixelIntegratio
 		this.nBinsChi = nBinsAzimuthal;
 	}
 	
+	public AbstractPixelIntegration2D(IDiffractionMetadata metadata, Integer nBins, Integer nBinsAzimuthal) {
+		super(metadata);
+		if (nBins != null) this.nbins = nBins;
+		if (nBinsAzimuthal != null) this.nBinsChi = nBinsAzimuthal;
+	}
+	
 	public void setNumberOfAzimuthalBins(int nBins) {
 		if (nBins < 1) throw new IllegalArgumentException("Must be 1 or more");
 		this.nBinsChi = nBins;

@@ -40,7 +40,7 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		
 		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
 
-		if (metadata == null || !metadata.equals(md)) {
+		if (metadata == null || (!metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment())&& !metadata.getDetector2DProperties().equals(md.getDetector2DProperties()))) {
 			metadata = md;
 			integrator = null;
 		}

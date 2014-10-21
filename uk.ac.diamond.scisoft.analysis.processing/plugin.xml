@@ -242,11 +242,11 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroupImageOperation"
             description="Subtract a background image from a different file"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroundImageModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageModel"
             name="Subtract Background Image"
             visible="true">
       </operation>

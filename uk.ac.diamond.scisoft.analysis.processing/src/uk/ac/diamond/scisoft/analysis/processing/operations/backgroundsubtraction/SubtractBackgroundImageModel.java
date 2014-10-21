@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;

@@ -61,4 +61,26 @@ public class LazyMathsTest {
 		AbstractDatasetTest.checkDatasets(a.product(2), LazyMaths.product(a, 2), 1e-9, 1e-15);
 		AbstractDatasetTest.checkDatasets(a.product(3), LazyMaths.product(a, 3), 1e-9, 1e-15);
 	}
+	
+	@Test
+	public void testMeanIgnore() {
+
+		Dataset a = DatasetFactory.createRange(100, Dataset.FLOAT64);
+		a.setShape(10, 10);
+		AbstractDatasetTest.checkDatasets(a.mean(1), LazyMaths.mean(a, new int[]{0}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(0), LazyMaths.mean(a, new int[]{1}), 1e-9, 1e-15);
+
+		a.setShape(4, 5, 5);
+		AbstractDatasetTest.checkDatasets(a.mean(2).mean(1),LazyMaths.mean(a, new int[]{0}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(2),LazyMaths.mean(a, new int[]{0,1}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(0),LazyMaths.mean(a, new int[]{1,2}), 1e-9, 1e-15);
+
+		a.setShape(4, 5, 1, 5);
+		AbstractDatasetTest.checkDatasets(a.mean(3).mean(2),LazyMaths.mean(a, new int[]{0,1}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(3).mean(2).mean(1),LazyMaths.mean(a, new int[]{0}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(3).squeeze(),LazyMaths.mean(a, new int[]{0,1,2}), 1e-9, 1e-15);
+		AbstractDatasetTest.checkDatasets(a.mean(0).mean(0).squeeze(),LazyMaths.mean(a, new int[]{2,3}), 1e-9, 1e-15);
+		
+
+	}
 }

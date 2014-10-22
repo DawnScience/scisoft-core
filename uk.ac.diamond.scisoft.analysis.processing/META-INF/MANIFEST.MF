@@ -27,4 +27,5 @@ Bundle-ClassPath: .,
  jars/reflections-0.9.8.jar,
  jars/xml-apis-1.0.b2.jar
 Export-Package: uk.ac.diamond.scisoft.analysis.processing,
+ uk.ac.diamond.scisoft.analysis.processing.operations,
  uk.ac.diamond.scisoft.analysis.processing.visitors

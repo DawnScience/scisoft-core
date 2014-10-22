@@ -27,17 +27,14 @@ public class RollingBallBaselineOperation extends AbstractOperation<RollingBallB
 		return this.getClass().getName();
 	}
 
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		Dataset cor = rollingBallBaselineCorrection(DatasetUtils.convertToDataset(input), model.getBallRadius());
 		
-		Dataset cor = rollingBallBaselineCorrection(DatasetUtils.convertToDataset(slice), ((RollingBallBaselineModel)model).getBallRadius());
-		
-		copyMetadata(slice, cor);
+		copyMetadata(input, cor);
 		
 		return new OperationData(cor);
-
 	}
+	
 
 	@Override
 	public OperationRank getInputRank() {

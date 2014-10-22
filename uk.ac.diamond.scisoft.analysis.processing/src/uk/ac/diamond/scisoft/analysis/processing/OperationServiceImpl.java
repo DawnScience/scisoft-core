@@ -39,6 +39,8 @@ import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
@@ -60,6 +62,8 @@ public class OperationServiceImpl implements IOperationService {
 	}
 	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>      operations;
 	private Map<String, Class<? extends IOperationModel>> models;
+	
+	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
 	public OperationServiceImpl() {
 		// Intentionally do nothing
@@ -128,13 +132,13 @@ public class OperationServiceImpl implements IOperationService {
 					
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
-										
+					long start = System.currentTimeMillis();
 					for (IOperation i : series) {
 						OperationData tmp = i.execute(data.getData(), monitor);
 						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
 						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
-					
+					logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
 					if (monitor != null) monitor.worked(1);
 				}
@@ -146,7 +150,7 @@ public class OperationServiceImpl implements IOperationService {
 			};
 			
 			visitor.init(series);
-			
+			long start = System.currentTimeMillis();
 			// Jakes slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {
 				Slicer.visitAll(dataset.getData(), slicing, "Slice", sv);
@@ -157,7 +161,7 @@ public class OperationServiceImpl implements IOperationService {
 			} else {
 				throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
 			}
-			
+			logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
 			
 		} catch (OperationException o) {
 			throw o;

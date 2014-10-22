@@ -250,6 +250,15 @@
             name="Subtract Background Image"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
+            description="Subtract a blank frame in the processed dataset"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameModel"
+            name="Subtract Blank Frame"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

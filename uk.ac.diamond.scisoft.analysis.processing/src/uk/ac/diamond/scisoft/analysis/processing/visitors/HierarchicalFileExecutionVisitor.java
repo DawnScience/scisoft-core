@@ -147,7 +147,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 						
 						IDataset ds = (IDataset)auxData[i];
 						
-						String group = file.group(String.valueOf(i) + "-" + intermeadiateData.getName(), auxiliary);
+						String group = file.group(String.valueOf(pos) + "-" + intermeadiateData.getName(), auxiliary);
 						file.setNexusAttribute(group, "NXCollection");
 						
 						group = file.group(ds.getName(), group);

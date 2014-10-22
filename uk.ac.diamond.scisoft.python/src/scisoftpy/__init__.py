@@ -123,6 +123,12 @@ except Exception, e:
     print >> sys.stderr, e
 
 try:
+    import data
+except Exception, e:
+    print >> sys.stderr, "Could not import data routines"
+    print >> sys.stderr, e
+
+try:
     import random
 except Exception, e:
     print >> sys.stderr, "Could not import random routines"

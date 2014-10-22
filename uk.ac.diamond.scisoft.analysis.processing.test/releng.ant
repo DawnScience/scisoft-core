@@ -15,7 +15,7 @@
 
 	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
 	<target name="junit-tests" depends="set-test-base-DAWN">
-		<property name="plugin-uk.ac.diamond.scisoft.analysis.processing.test-maxmemory" value="1536m" />
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.processing.test-maxmemory" value="2048m" />
 		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.processing.test-maxmemory}">
 			<formatter type="xml" />
 			<classpath>

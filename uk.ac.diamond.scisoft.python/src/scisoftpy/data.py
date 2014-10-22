@@ -25,9 +25,12 @@ if os.name == 'java':
 else:
     import python.pydata as _data
 
-
-def send(data):
-    _data.send(data)
+'''
+name - the long name of the dataset
+data - dictionary of dataset names.
+'''
+def send(name, data):
+    _data.send(name, data)
     
 def get(name):
     _data.get(name)

@@ -33,8 +33,6 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.operations.PixelIntegrationOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.PowderIntegrationModel;
 
 public class OperationDataAxesRankTest {
 

@@ -71,11 +71,11 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation"
             description="Import detector geometry and x-ray energy"
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel"
             name="Import Detector Calibration"
             visible="true">
       </operation>
@@ -134,11 +134,11 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineOperation"
             description="Rolling ball baseline correction with fixed radius"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineModel"
             name="Rolling Ball Baseline Correction"
             visible="true">
       </operation>
@@ -197,20 +197,20 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
             description="Downsample an image"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageModel"
             name="Downsample Image"
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DOperation"
             description="Integrate range"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DModel"
             name="Integrate Range"
             visible="true">
       </operation>

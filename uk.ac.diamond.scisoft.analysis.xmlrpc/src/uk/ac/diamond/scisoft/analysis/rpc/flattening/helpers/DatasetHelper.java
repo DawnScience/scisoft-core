@@ -87,6 +87,9 @@ public class DatasetHelper extends MapFlatteningHelper<IDataset> {
 		try {
 			tempFile = File.createTempFile("scisofttmp-", ".npy", rootFlattener.getTempLocation());
 			new NumPyFileSaver(tempFile.toString()).saveFile(dh);
+			
+			// These files seemed to be building up. They should be deleted I think.
+			tempFile.deleteOnExit();
 		} catch (Exception e) {
 			throw new UnsupportedOperationException("Unable to save Dataset", e);
 		}

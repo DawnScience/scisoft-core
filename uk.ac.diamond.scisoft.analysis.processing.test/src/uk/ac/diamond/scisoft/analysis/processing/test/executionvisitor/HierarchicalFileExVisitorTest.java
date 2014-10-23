@@ -46,7 +46,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {10,1000,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		RichDataset rich = new RichDataset(lazy, null);
 		rich.setSlicing("all");
@@ -86,7 +86,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {5,10,1000,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		
 		RichDataset rich = new RichDataset(lazy, null);
@@ -128,7 +128,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {2,5,10,1000,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		
 		RichDataset rich = new RichDataset(lazy, null);
@@ -170,7 +170,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {10,30,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		
 		RichDataset rich = new RichDataset(lazy, null);
@@ -210,7 +210,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {10,30,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		
 		RichDataset rich = new RichDataset(lazy, null);
@@ -255,7 +255,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		int[] inputShape = new int[] {10,30,1100};
 		
-		ILazyDataset lazy = getLazyDataset(inputShape);
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
 		
 		
 		RichDataset rich = new RichDataset(lazy, null);
@@ -295,7 +295,48 @@ public class HierarchicalFileExVisitorTest {
 		
 	}
 	
-	public ILazyDataset getLazyDataset(int[] dsShape) {
+	
+	@Test
+	public void Process3DStackAs2DTo1DNoAxes() throws Exception {
+		
+		int[] inputShape = new int[] {10,1000,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,false);
+		
+		RichDataset rich = new RichDataset(lazy, null);
+		rich.setSlicing("all");
+		
+		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
+		op22.setModel(new Junk2Dto2Dmodel());
+		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
+		op21.setModel(new Junk1DModel());
+		
+		try {
+
+			final File tmp = File.createTempFile("Test", ".h5");
+			tmp.deleteOnExit();
+			tmp.createNewFile();
+			
+			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
+			
+			
+			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+			assertTrue(dh.contains("/entry/result/data"));
+//			assertTrue(dh.contains("/entry/result/Axis_0"));
+			assertTrue(dh.contains("/entry/result/Junk1Dax"));
+			
+			assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+//			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	public ILazyDataset getLazyDataset(int[] dsShape, boolean withAxes) {
 		
 		final IDataset innerDS = Random.rand(dsShape);
 		
@@ -318,19 +359,22 @@ public class HierarchicalFileExVisitorTest {
 			}
 		});
 		
-		AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);
-		
-		for (int i = 0; i < dsShape.length; i++) {
-			IDataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
-			int[] shape = new int[dsShape.length];
-			Arrays.fill(shape, 1);
-			shape[i] = dsShape[i];
-			ax.setShape(shape);
-			ax.setName("Axis_" + String.valueOf(i));
-			am.setAxis(i, new ILazyDataset[]{ax});
+		if (withAxes) {
+			AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);
+			
+			for (int i = 0; i < dsShape.length; i++) {
+				IDataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
+				int[] shape = new int[dsShape.length];
+				Arrays.fill(shape, 1);
+				shape[i] = dsShape[i];
+				ax.setShape(shape);
+				ax.setName("Axis_" + String.valueOf(i));
+				am.setAxis(i, new ILazyDataset[]{ax});
+			}
+			
+			lz.setMetadata(am);
 		}
 		
-		lz.setMetadata(am);
 		
 		lz.setName("mainlazy");
 		

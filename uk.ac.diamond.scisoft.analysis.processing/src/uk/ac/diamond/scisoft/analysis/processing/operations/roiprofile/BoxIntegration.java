@@ -38,12 +38,10 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 		return "Box Integration";
 	}
 	
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
-		
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		IDataset mask = null;
 		try {
-			ILazyDataset firstMask = getFirstMask(slice);
+			ILazyDataset firstMask = getFirstMask(input);
 			if (firstMask != null) mask = firstMask.getSlice();
 		} catch (Exception e) {
 			throw new OperationException(this, e);
@@ -51,7 +49,7 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 		RectangularROI rect = (RectangularROI)getRegion();
 		
 		
-		final Dataset[] profile = ROIProfile.box((Dataset)slice, (Dataset)mask, rect);
+		final Dataset[] profile = ROIProfile.box((Dataset)input, (Dataset)mask, rect);
 		
 		Dataset x = profile[0];
 		x.setName("Box X Profile "+rect.getName());
@@ -65,6 +63,9 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 //	    ret.setAuxData(rect);
 
 	    return ret;
+
 	}
+	
+
 
 }

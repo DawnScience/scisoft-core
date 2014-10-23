@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.dawnsci.analysis.api;bundle-version="1.0.0",
  org.eclipse.core.runtime;bundle-version="3.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.dawb.common.services,
+Import-Package: com.fasterxml.jackson.annotation;version="2.2.0",
+ org.dawb.common.services,
  org.dawb.common.services.expressions,
  org.eclipse.dawnsci.hdf5,
  org.junit;version="4.10.0",

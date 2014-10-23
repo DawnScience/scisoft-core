@@ -462,6 +462,22 @@ class Test(unittest.TestCase):
         self.checkitems([-0.3125, -0.3125], rts.real)
         self.checkitems([0.46351240544347894, -0.46351240544347894], rts.imag)
 
+    def testBitwise(self):
+        print 'Bitwise testing'
+        a = np.arange(-4,4, dtype=np.int8)
+        b = np.arange(8, dtype=np.int8)
+        self.checkitems([0, 1, 2, 3, 0, 1, 2, 3], np.bitwise_and(a, b))
+        self.checkitems([-4, -3, -2, -1, 4, 5, 6, 7], np.bitwise_or(a, b))
+        self.checkitems([-4, -4, -4, -4, 4, 4, 4, 4], np.bitwise_xor(a, b))
+        self.checkitems([3, 2, 1, 0, -1, -2, -3, -4], np.invert(a))
+        self.checkitems([-1, -2, -3, -4, -5, -6, -7, -8], np.invert(b))
+        self.checkitems([-4, -6, -8, -8, 0, 32, -128, -128], np.left_shift(a, b))
+        self.checkitems([0, 0, 0, 0, 4, 10, 24, 56], np.left_shift(b, a))
+        self.checkitems([0, 0, 0, 0, 0, 2, 8, 24], np.left_shift(a, a))
+        self.checkitems([-4, -2, -1, -1, 0, 0, 0, 0], np.right_shift(a, b))
+        self.checkitems([0, 0, 0, 0, 4, 2, 1, 0], np.right_shift(b, a))
+        self.checkitems([-1, -1, -1, -1, 0, 0, 0, 0], np.right_shift(a, a))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

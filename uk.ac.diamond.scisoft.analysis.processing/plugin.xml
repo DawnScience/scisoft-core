@@ -37,11 +37,11 @@
             name="Function Operation">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegration"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration"
             description="Using a box region, select a portion of the data to integrate in X and Y."
             icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegrationModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegrationModel"
             name="Box Integration">
       </operation>
       <operation

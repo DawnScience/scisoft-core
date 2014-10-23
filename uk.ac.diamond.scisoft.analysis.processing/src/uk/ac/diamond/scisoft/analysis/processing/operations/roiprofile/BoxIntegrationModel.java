@@ -6,11 +6,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.BoxIntegration.Direction;
+import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
 public class BoxIntegrationModel extends IntegrationModel {
 

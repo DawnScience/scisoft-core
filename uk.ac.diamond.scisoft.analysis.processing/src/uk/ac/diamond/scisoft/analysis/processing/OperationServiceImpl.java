@@ -149,7 +149,7 @@ public class OperationServiceImpl implements IOperationService {
 				}
 			};
 			
-			visitor.init(series);
+			visitor.init(series, originMetadata);
 			long start = System.currentTimeMillis();
 			// Jakes slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {

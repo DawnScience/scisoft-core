@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -53,11 +54,12 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series) throws Exception {
+	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series, OriginMetadata origin) throws Exception {
 		file = HierarchicalDataFactory.getWriter(filePath);
 		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 		IPersistentFile pf = service.createPersistentFile(file);
 		pf.setOperations(series);
+		pf.setOperationDataOrigin(origin);
 		this.series = series;
 		
 	}

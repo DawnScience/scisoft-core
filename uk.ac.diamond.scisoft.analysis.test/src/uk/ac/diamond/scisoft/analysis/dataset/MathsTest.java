@@ -35,6 +35,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
+
 
 public class MathsTest {
 	private final static int SSTEP = 15;
@@ -2026,5 +2028,46 @@ public class MathsTest {
 				checkInterpolateArray(cxb, x, y);
 			}
 		}
+	}
+
+	@Test
+	public void testBitwise() {
+		Dataset xa = DatasetFactory.createRange(-4, 4, 1, Dataset.INT8);
+		Dataset xb = DatasetFactory.createRange(8, Dataset.INT8);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 1, 2, 3, 0, 1, 2, 3}),
+				Maths.bitwiseAnd(xa, xb), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-4, -3, -2, -1, 4, 5, 6, 7}),
+				Maths.bitwiseOr(xa, xb), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-4, -4, -4, -4, 4, 4, 4, 4}),
+				Maths.bitwiseXor(xa, xb), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {3, 2, 1, 0, -1, -2, -3, -4}),
+				Maths.bitwiseInvert(xa), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-1, -2, -3, -4, -5, -6, -7, -8}),
+				Maths.bitwiseInvert(xb), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-4, -6, -8, -8, 0, 32, -128, -128}),
+				Maths.leftShift(xa, xb), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 4, 10, 24, 56}),
+				Maths.leftShift(xb, xa), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 0, 2, 8, 24}),
+				Maths.leftShift(xa, xa), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-4, -2, -1, -1, 0, 0, 0, 0}),
+				Maths.rightShift(xa, xb), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 4, 2, 1, 0}),
+				Maths.rightShift(xb, xa), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-1, -1, -1, -1, 0, 0, 0, 0}),
+				Maths.rightShift(xa, xa), ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-4, 126, 63, 31, 0, 0, 0, 0}),
+				Maths.unsignedRightShift(xa, xb), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 4, 2, 1, 0}),
+				Maths.unsignedRightShift(xb, xa), ABSERRD, ABSERRD);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 0, 0, 0, 0}),
+				Maths.unsignedRightShift(xa, xa), ABSERRD, ABSERRD);
 	}
 }

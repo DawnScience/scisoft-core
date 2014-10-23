@@ -21,21 +21,18 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation";
 	}
-
-	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor)
-			throws OperationException {
-		
-		ILazyDataset mask = getFirstMask(slice);
+	
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		ILazyDataset mask = getFirstMask(input);
 		
 		if (mask != null) {
 			Dataset m = (Dataset)mask.getSlice();
-			((Dataset)slice).setByBoolean(Double.NaN, Comparisons.logicalNot(m));
+			((Dataset)input).setByBoolean(Double.NaN, Comparisons.logicalNot(m));
 		}
 		
 		Downsample downsample = new Downsample(((DownsampleImageModel)model).getDownsampleMode(), new int[] {((DownsampleImageModel)model).getDownsampleSize(),((DownsampleImageModel)model).getDownsampleSize()});
 		
-		List<Dataset> out = downsample.value(slice);
+		List<Dataset> out = downsample.value(input);
 		
 		return new OperationData(out.get(0));
 	}

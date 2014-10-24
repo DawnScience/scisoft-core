@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import java.io.Serializable;
 import java.util.Arrays;

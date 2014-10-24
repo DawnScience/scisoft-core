@@ -170,6 +170,36 @@ def reciprocal(a, out=None):
     return _maths.reciprocal(a, out)
 
 @_wrap
+def bitwise_and(a, b, out=None):
+    '''Return bitwise AND of inputs'''
+    return _maths.bitwiseAnd(a, b, out)
+
+@_wrap
+def bitwise_or(a, b, out=None):
+    '''Return bitwise inclusive OR of inputs'''
+    return _maths.bitwiseOr(a, b, out)
+
+@_wrap
+def bitwise_xor(a, b, out=None):
+    '''Return bitwise exclusive OR of inputs'''
+    return _maths.bitwiseXor(a, b, out)
+
+@_wrap
+def invert(a, out=None):
+    '''Return bitwise inversion (or NOT) of input'''
+    return _maths.bitwiseInvert(a, out)
+
+@_wrap
+def left_shift(a, b, out=None):
+    '''Return bitwise left shift'''
+    return _maths.leftShift(a, b, out)
+
+@_wrap
+def right_shift(a, b, out=None):
+    '''Return bitwise right shift'''
+    return _maths.rightShift(a, b, out)
+
+@_wrap
 def sin(a, out=None):
     '''Sine of input'''
     return _maths.sin(a, out)

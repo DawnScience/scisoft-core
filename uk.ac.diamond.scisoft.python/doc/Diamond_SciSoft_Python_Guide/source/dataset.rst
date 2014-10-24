@@ -35,6 +35,7 @@ Implemented NumPy methods (1.6)
  * Trig: sin, cos, tan, arcsin, arccos, arctan, arctan2, hypot, sinh, cosh,
    tanh, arcsinh, arccosh, arctanh, deg2rad, rad2deg
  * Rounding: rint, ceil, floor
+ * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
  * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed
 

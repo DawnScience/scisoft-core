@@ -511,12 +511,11 @@ def polyval(p, x):
     d = _asDS(x, _dnp.float, force=True)._jdataset()
     return poly.calculateValues([d])
 
-
-@_wrapout
 def roots(coeffs):
     '''Find roots of polynomial specified by coefficients
     '''
-    return _poly.findRoots(_asDS(coeffs, _dnp.float64)._jdataset().data)
+    poly = _poly(_asDS(coeffs, _dnp.float64)._jdataset().data) # static method call fails
+    return _asDS(poly.findRoots()) # cannot rely on general wrapper with arrays of stuff
 
 # need a cspline fit function
 

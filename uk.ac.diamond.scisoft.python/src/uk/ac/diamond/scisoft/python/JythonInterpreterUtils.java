@@ -38,17 +38,22 @@ public class JythonInterpreterUtils {
 	static {
 		PySystemState.initialize();
 	}
+
+	
 	
 	/**
-	 * scisoftpy is imported as dnp
+	 * Create Jython interpreter
 	 * 
-	 * @return a new PythonInterpreter with scisoft scripts loaded.
+	 * @return a new PythonInterpreter.
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
-	public static PythonInterpreter getInterpreter() throws Exception {
+	public static PythonInterpreter getBasicInterpreter() throws Exception {
 		
 		final long start = System.currentTimeMillis();
+		
+		//This was the major part of the getInterpreter method.
+		//Idea is to separate interpreter creation and starting of scisoftpy
 		logger.debug("Starting new Jython Interpreter.");
 		PySystemState     state       = new PySystemState();
 		
@@ -115,6 +120,28 @@ public class JythonInterpreterUtils {
 		}
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
+		
+		final long end = System.currentTimeMillis();
+		logger.debug("Created new Jython Interpreter in {}ms.", end-start);
+		
+		return interpreter;
+	}
+
+	
+	
+	/**
+	 * scisoftpy is imported as dnp
+	 * 
+	 * @return a new PythonInterpreter with scisoft scripts loaded.
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 */
+	public static PythonInterpreter getInterpreter() throws Exception {
+		
+		final long start = System.currentTimeMillis();
+		
+		PythonInterpreter interpreter = getBasicInterpreter();
+		
 		interpreter.exec("import sys");
 		interpreter.exec("for p in sys.path: print '\t%s' % p");
 		interpreter.exec("import scisoftpy as dnp");

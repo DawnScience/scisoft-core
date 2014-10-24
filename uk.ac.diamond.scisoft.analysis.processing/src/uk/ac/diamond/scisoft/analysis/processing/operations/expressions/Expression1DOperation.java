@@ -79,7 +79,7 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 	}
 	
 	protected IDataset evaluateData(IDataset input, String expression, int expectedRank) throws OperationException {
-		if (expression ==  null) {
+		if (expression ==  null || expression.isEmpty()) {
 			return input;
 		} else {
 			IDataset outdata = null;

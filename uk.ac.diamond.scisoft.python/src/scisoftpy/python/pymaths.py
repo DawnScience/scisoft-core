@@ -77,6 +77,13 @@ mod = _np.mod
 
 reciprocal = _np.reciprocal
 
+bitwise_and = _np.bitwise_and
+bitwise_or = _np.bitwise_or
+bitwise_xor = _np.bitwise_xor
+invert = _np.invert
+left_shift = _np.left_shift
+right_shift = _np.right_shift
+
 sin = _np.sin
 cos = _np.cos
 tan = _np.tan

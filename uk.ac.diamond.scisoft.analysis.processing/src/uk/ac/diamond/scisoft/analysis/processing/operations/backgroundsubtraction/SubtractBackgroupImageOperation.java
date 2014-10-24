@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -56,6 +57,7 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 		
 		try {
 			String dsName = om.getDatasetName();
+			if (model.getFilePath() == null) throw new OperationException(this,"File path not set!");
 			IDataHolder dh = LoaderFactory.getData(model.getFilePath());
 			ILazyDataset lzBg = dh.getLazyDataset(dsName);
 			
@@ -67,6 +69,8 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 			}
 			
 			
+		}catch (FileNotFoundException e) {
+			throw new OperationException(this, "Background file not found!");
 		} catch (Exception e) {
 			throw new OperationException(this, e.getMessage());
 		}

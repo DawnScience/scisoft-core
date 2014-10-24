@@ -33,287 +33,277 @@ limitations under the License.
          id="uk.ac.gda.common"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.3.0.qualifier"/>
 
    <plugin
          id="uk.ac.diamond.jama"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.3"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.CBFlib"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.2.0.qualifier"/>
 
    <plugin
          id="org.apache.commons.math"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.2.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.math3"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.2.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.draw2d"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.8.1.201301141834"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.lang"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.6.0"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.python"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.3.0"/>
 
    <plugin
          id="uk.ac.diamond.org.apache.xmlrpc.client"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.1.3"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.org.apache.xmlrpc.common"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.1.3"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.org.apache.xmlrpc.server"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.1.3"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.org.apache.ws.commons.util"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.2"
          unpack="false"/>
 
    <plugin
          id="javax.activation"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.0.v201108011116"
          unpack="false"/>
 
    <plugin
          id="com.springsource.org.aopalliance"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.org.springframework"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="4.0.6.RELEASE"/>
 
    <plugin
          id="uk.ac.diamond.sda.meta"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.3.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.sda.meta.extended"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.3.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.jython"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="2.5.3.qualifier"/>
 
    <plugin
          id="javax.vecmath"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.5.2"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.org.jscience4"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="4.3.1"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis.osgi"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.3.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="com.springsource.javax.media.jai.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.3"
          unpack="false"/>
 
    <plugin
          id="com.springsource.javax.media.jai.codec"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.3"
          unpack="false"/>
 
    <plugin
          id="org.uncommons.maths"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.3"
          unpack="false"/>
 
    <plugin
          id="ncsa.hdf"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="2.8.0.qualifier"/>
 
    <plugin
          id="org.eclipse.dawnsci.hdf5"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis.plotserver"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis.xmlrpc"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.configuration"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.10.0"
          unpack="false"/>
 
    <plugin
          id="slf4j.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.7.6"
          unpack="false"/>
 
    <plugin
          id="ch.qos.logback.classic"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.qos.logback.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="jcl.over.slf4j"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.7.6"
          unpack="false"/>
 
    <plugin
          id="uk.ac.diamond.scisoft.analysis.processing"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.0.qualifier"/>
 
    <plugin
          id="org.dawnsci.boofcv"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.boofcv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.georegression"
-         download-size="0"
-         install-size="0"
-         version="0.5.0"
-         unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.ddogleg"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.ejml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.dawnsci.analysis.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.dawnsci.analysis.dataset"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
+
+   <plugin
+         id="org.ddogleg"
+         download-size="0"
+         install-size="0"
+         version="0.6.0.SNAPSHOT"/>
+
+   <plugin
+         id="com.googlecode.efficient-java-matrix-library.core"
+         download-size="0"
+         install-size="0"
+         version="0.26.0"/>
+
+   <plugin
+         id="org.georegression"
+         download-size="0"
+         install-size="0"
+         version="0.7.0"/>
 
 </feature>

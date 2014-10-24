@@ -2073,6 +2073,22 @@ public class MathsTest {
 	}
 
 	@Test
+	public void testDivideTowardsFloor() {
+		Dataset xa = DatasetFactory.createRange(-4, 4, 1, Dataset.INT8);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-2, -2, -1, -1,  0,  0,  1,  1}),
+				Maths.divideTowardsFloor(xa, 2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {2, 1, 1,  0,  0,  -1,  -1, -2}),
+				Maths.divideTowardsFloor(xa, -2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {-1.6, -1.2, -0.8, -0.4, 0, 0.4, 0.8, 1.2}),
+				Maths.divideTowardsFloor(xa, 2.5), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new FloatDataset(new float[] {1.6f, 1.2f, 0.8f, 0.4f, 0 , -0.4f, -0.8f, -1.2f}),
+				Maths.divideTowardsFloor(xa, -2.5f), true, ABSERRD, ABSERRD);
+	}
+
+	@Test
 	public void testFloorDivide() {
 		Dataset xa = DatasetFactory.createRange(-4, 4, 1, Dataset.INT8);
 		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-2, -2, -1, -1,  0,  0,  1,  1}),

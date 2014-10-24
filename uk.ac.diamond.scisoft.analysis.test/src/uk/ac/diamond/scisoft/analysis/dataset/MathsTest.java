@@ -27,6 +27,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -2069,5 +2070,37 @@ public class MathsTest {
 				Maths.unsignedRightShift(xb, xa), ABSERRD, ABSERRD);
 		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 0, 0, 0, 0, 0, 0, 0}),
 				Maths.unsignedRightShift(xa, xa), ABSERRD, ABSERRD);
+	}
+
+	@Test
+	public void testFloorDivide() {
+		Dataset xa = DatasetFactory.createRange(-4, 4, 1, Dataset.INT8);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {-2, -2, -1, -1,  0,  0,  1,  1}),
+				Maths.floorDivide(xa, 2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {2, 1, 1,  0,  0,  -1,  -1, -2}),
+				Maths.floorDivide(xa, -2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {-2, -2, -1, -1,  0,  0,  0,  1}),
+				Maths.floorDivide(xa, 2.5), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new FloatDataset(new float[] {1, 1,  0,  0,  0, -1,  -1, -2}),
+				Maths.floorDivide(xa, -2.5f), true, ABSERRD, ABSERRD);
+	}
+
+	@Test
+	public void testFloorRemainder() {
+		Dataset xa = DatasetFactory.createRange(-4, 4, 1, Dataset.INT8);
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, 1, 0, 1, 0, 1, 0, 1}),
+				Maths.floorRemainder(xa, 2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new ByteDataset(new byte[] {0, -1, 0, -1, 0, -1, 0, -1}),
+				Maths.floorRemainder(xa, -2), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[] {1, 2, 0.5, 1.5, 0, 1, 2, 0.5}),
+				Maths.floorRemainder(xa, 2.5), true, ABSERRD, ABSERRD);
+
+		TestUtils.assertDatasetEquals(new FloatDataset(new float[] {-1.5f, -0.5f, -2, -1, 0, -1.5f, -0.5f, -2}),
+				Maths.floorRemainder(xa, -2.5f), true, ABSERRD, ABSERRD);
 	}
 }

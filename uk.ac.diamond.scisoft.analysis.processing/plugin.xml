@@ -19,6 +19,40 @@
             name="Add"
             visible="false">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            name="Masking">
+      </category>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMask"
+            description="Create a mask with intensity values below a lower bound and above an upper bound masked."
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel"
+            name="Threshold Mask"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
+            description="Import Mask from .nxs or fit2d mask file"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
+            name="Import Mask From File"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
+            description="Dilate the mask"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
+            name="Dilate Mask"
+            visible="true">
+      </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AzimuthalIntegration"
             description="Azimithal profile of an image using a sector region."
@@ -27,14 +61,6 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel"
             name="Sector Azimuthal Profile"
             visible="true">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"
-            description="Run an arbitrary function on the data to transform it."
-            icon="icons/function.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel"
-            name="Function Operation">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration"
@@ -53,21 +79,20 @@
             name="Cut Rotated Cartesian Box">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionOperation"
+            description="Run an arbitrary function on the data to transform it."
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel"
+            name="Function Operation">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"
             description="Fit a peak to 1D data"
             icon="icons/fit.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel"
             name="Peak Fit"
-            visible="true">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMask"
-            description="Create a mask with intensity values below a lower bound and above an upper bound masked."
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.thresholdMask"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel"
-            name="Threshold Mask"
             visible="true">
       </operation>
       <operation
@@ -116,24 +141,6 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
-            description="Import Mask from .nxs or fit2d mask file"
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
-            name="Import Mask From File"
-            visible="true">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
-            description="Dilate the mask"
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
-            name="Dilate Mask"
-            visible="true">
-      </operation>
-      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
             description="Rolling ball baseline correction with fixed radius"
             icon="icons/function.png"
@@ -142,7 +149,12 @@
             name="Rolling Ball Baseline Correction"
             visible="true">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            name="Filter">
+      </category>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurOperation"
             description="Gaussian image filter"
             icon="icons/function.png"
@@ -152,6 +164,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MinFilterOperation"
             description="Minimum filter an image using a kernel of a specified width"
             icon="icons/function.png"
@@ -161,6 +174,7 @@
             visible="false">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
             description="Maximum filter an image with a kernel of a specific width"
             icon="icons/function.png"
@@ -170,6 +184,7 @@
             visible="false">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
             description="Median filter an image with a kernel of a specific width"
             icon="icons/function.png"
@@ -179,6 +194,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
             description="Mean filter an image with a kernel of a specified width"
             icon="icons/function.png"

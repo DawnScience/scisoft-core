@@ -15,8 +15,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,6 +33,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -60,8 +63,11 @@ public class OperationServiceImpl implements IOperationService {
 	static {
 		System.out.println("Starting operation service");
 	}
-	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>      operations;
-	private Map<String, Class<? extends IOperationModel>> models;
+	
+	// Generic gone mad ; ah - hahaha...
+	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>  operations;
+	private Map<String, Class<? extends IOperationModel>>                                models;
+	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categories;
 	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
@@ -252,8 +258,18 @@ public class OperationServiceImpl implements IOperationService {
 		
 		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
+		categories = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
 		
-		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
+		final Map<String, OperationCategory> cats = new HashMap<String, OperationCategory>(7);
+		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.category");
+		for (IConfigurationElement e : eles) {
+			final String     id   = e.getAttribute("id");
+			final String     name = e.getAttribute("name");
+			final String     icon = e.getAttribute("icon");
+			cats.put(id, new OperationCategory(name, icon, id));		
+		}
+		
+		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 			final String     id = e.getAttribute("id");
 			IOperation<? extends IOperationModel, ? extends OperationData> op = null;
@@ -265,18 +281,34 @@ public class OperationServiceImpl implements IOperationService {
 			
 			operations.put(id, op);
 			
+			final String     catId= e.getAttribute("category");
+			if (catId!=null) {
+				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categories.get(catId);
+				if (ops==null) {
+					ops = new LinkedHashSet<IOperation<? extends IOperationModel,? extends OperationData>>();
+					categories.put(catId, ops);
+				}
+				ops.add(op);
+			}
+
 			if (op instanceof AbstractOperation) {
 				final String name = e.getAttribute("name");
-				((AbstractOperation<? extends IOperationModel, ? extends OperationData>)op).setName(name);
+				AbstractOperation<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperation<? extends IOperationModel, ? extends OperationData>)op;
+				aop.setName(name);
 				
 				final String desc = e.getAttribute("description");
-				if (desc!=null) ((AbstractOperation<? extends IOperationModel, ? extends OperationData>)op).setDescription(desc);
+				if (desc!=null) aop.setDescription(desc);
+
+				if (catId != null && cats.containsKey(catId)) {
+					aop.setCategory(cats.get(catId));
+				}
 			}
 			
 			final String     model = e.getAttribute("model");
 			if (model!=null && !"".equals(model)) {
 				models.put(id, ((IOperationModel)e.createExecutableExtension("model")).getClass());
 			}
+			
 		}
 	}
 	
@@ -349,6 +381,13 @@ public class OperationServiceImpl implements IOperationService {
 	public Collection<String> getRegisteredOperations() throws Exception {
 		checkOperations();
 		return operations.keySet();
+	}
+	
+	@Override
+	public Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>> getCategorizedOperations() throws Exception {
+		checkOperations();
+		// Sorted alphabetically by id string
+		return new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>(categories);
 	}
 
 	@Override

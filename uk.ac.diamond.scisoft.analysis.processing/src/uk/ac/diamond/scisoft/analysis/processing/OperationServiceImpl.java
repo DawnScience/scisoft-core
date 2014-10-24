@@ -261,8 +261,9 @@ public class OperationServiceImpl implements IOperationService {
 		categories = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
 		
 		final Map<String, OperationCategory> cats = new HashMap<String, OperationCategory>(7);
-		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.category");
+		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
+	    	if (!e.getName().equals("category")) continue;
 			final String     id   = e.getAttribute("id");
 			final String     name = e.getAttribute("name");
 			final String     icon = e.getAttribute("icon");
@@ -271,12 +272,14 @@ public class OperationServiceImpl implements IOperationService {
 		
 		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
+	    	if (!e.getName().equals("operation")) continue;
 			final String     id = e.getAttribute("id");
 			IOperation<? extends IOperationModel, ? extends OperationData> op = null;
 			try {
 				op = (IOperation<? extends IOperationModel, ? extends OperationData>)e.createExecutableExtension("class");
 			} catch (Exception e1) {
 				e1.printStackTrace();
+				continue;
 			}
 			
 			operations.put(id, op);

@@ -141,9 +141,6 @@
             visible="true">
       </operation>
       <operation
-<<<<<<< HEAD
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
-=======
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
             description="Import Mask from .nxs or fit2d mask file"
             icon="icons/mask.png"
@@ -163,7 +160,6 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineOperation"
->>>>>>> branch 'master' of ssh://dascgitolite@dasc-git.diamond.ac.uk/scisoft/scisoft-core.git
             description="Rolling ball baseline correction with fixed radius"
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"

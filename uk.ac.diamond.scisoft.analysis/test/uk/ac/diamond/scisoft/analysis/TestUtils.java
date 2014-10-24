@@ -203,9 +203,24 @@ public class TestUtils {
 	 * @param absTolerance
 	 */
 	public static void assertDatasetEquals(Dataset expected, Dataset calc, double relTolerance, double absTolerance) {
+		assertDatasetEquals(expected, calc, false, relTolerance, absTolerance);
+	}
+
+	/**
+	 * Assert equality of datasets where each element is true if abs(a - b) <= absTol + relTol*abs(b)
+	 * @param expected
+	 * @param calc
+	 * @param testDtype
+	 * @param relTolerance
+	 * @param absTolerance
+	 */
+	public static void assertDatasetEquals(Dataset expected, Dataset calc, boolean testDtype, double relTolerance, double absTolerance) {
 		Assert.assertEquals("Rank", expected.getRank(), calc.getRank());
 		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
 		Assert.assertEquals("Itemsize", expected.getElementsPerItem(), calc.getElementsPerItem());
+		if (testDtype) {
+			Assert.assertEquals("Dataset type", expected.getDtype(), calc.getDtype());
+		}
 		IndexIterator at = calc.getIterator(true);
 		IndexIterator bt = expected.getIterator();
 		final int is = calc.getElementsPerItem();

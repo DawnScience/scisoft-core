@@ -13,6 +13,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
@@ -124,5 +126,24 @@ public class AxesMetadataTest {
 		} catch (Exception e) {
 			fail("Should not fail: " + e);
 		}
+	}
+
+	@Test
+	public void testAxesMetadataReshape() {
+		final int[] shape = new int[] { 1, 2, 3, 1 };
+		final int[] reshape = new int[] { 1, 1, 2, 3, 1 };
+
+		int r = shape.length;
+		int[] nShape = new int[r];
+		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		for (int i = 0; i < r; i++) {
+			Arrays.fill(nShape, 1);
+			nShape[i] = shape[i];
+			DoubleDataset array = Random.randn(nShape);
+			amd.setAxis(i, new ILazyDataset[] { array });
+		}
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(amd);
+		dataset.setShape(reshape);
 	}
 }

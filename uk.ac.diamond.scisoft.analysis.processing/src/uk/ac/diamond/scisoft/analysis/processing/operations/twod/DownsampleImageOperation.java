@@ -33,8 +33,9 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		Downsample downsample = new Downsample(((DownsampleImageModel)model).getDownsampleMode(), new int[] {((DownsampleImageModel)model).getDownsampleSize(),((DownsampleImageModel)model).getDownsampleSize()});
 		
 		List<Dataset> out = downsample.value(input);
-		
-		return new OperationData(out.get(0));
+		Dataset dataset = out.get(0);
+		dataset.setName("downsampled");
+		return new OperationData(dataset);
 	}
 
 	@Override

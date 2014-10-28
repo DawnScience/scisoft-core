@@ -14,6 +14,8 @@ import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
 public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> {
 
+	private boolean withAxes = true;
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor.Junk1Dto1DOperation";
@@ -34,20 +36,28 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		return "Junk1Dto1DOperation";
 	}
 	
+	public void setWithAxes(boolean withAxes) {
+		this.withAxes = withAxes;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		int x = model.getxDim();
 
 		IDataset out = Random.rand(new int[] {x});
 		out.setName("Junk1Dout");
-		IDataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
-		ax1.setShape(new int[]{x});
-		ax1.setName("Junk1Dax");
 		
-		AxesMetadataImpl am = new AxesMetadataImpl(1);
-		am.addAxis(ax1, 0);
+		if (withAxes) {
+			IDataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
+			ax1.setShape(new int[]{x});
+			ax1.setName("Junk1Dax");
+			
+			AxesMetadataImpl am = new AxesMetadataImpl(1);
+			am.addAxis(ax1, 0);
+			
+			out.setMetadata(am);
+		}
 		
-		out.setMetadata(am);
 		
 		return new OperationData(out);
 	}

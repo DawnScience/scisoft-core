@@ -14,6 +14,8 @@ import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
 public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, OperationData> {
 
+	private boolean withAxes = true;
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor.Junk2Dto2DOperation";
@@ -34,6 +36,10 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		return OperationRank.TWO;
 	}
 	
+	public void setWithAxes(boolean withAxes) {
+		this.withAxes = withAxes;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		int x = model.getxDim();
@@ -47,12 +53,14 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		IDataset ax2 = DatasetFactory.createRange(0, y,1, Dataset.INT16);
 		ax2.setShape(new int[]{1,y});
 		ax2.setName("Junk2Dto2DAx2");
+		if (withAxes) {
+			AxesMetadataImpl am = new AxesMetadataImpl(2);
+			am.addAxis(ax1, 0);
+			am.addAxis(ax2, 1);
+			
+			out.setMetadata(am);
+		}
 		
-		AxesMetadataImpl am = new AxesMetadataImpl(2);
-		am.addAxis(ax1, 0);
-		am.addAxis(ax2, 1);
-		
-		out.setMetadata(am);
 		
 		return new OperationData(out);
 	}

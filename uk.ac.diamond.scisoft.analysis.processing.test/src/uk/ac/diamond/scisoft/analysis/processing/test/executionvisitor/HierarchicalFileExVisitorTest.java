@@ -379,6 +379,47 @@ public class HierarchicalFileExVisitorTest {
 		
 	}
 	
+	@Test
+	public void Process3DStackAs2DTo1DNoAxesOperations() throws Exception {
+		
+		int[] inputShape = new int[] {10,1000,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,false);
+		lazy.addMetadata(new AxesMetadataImpl(3));
+		
+		RichDataset rich = new RichDataset(lazy, null);
+		rich.setSlicing("all");
+		
+		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
+		op22.setWithAxes(false);
+		op22.setModel(new Junk2Dto2Dmodel());
+		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
+		op21.setModel(new Junk1DModel());
+		op21.setWithAxes(false);
+		
+		try {
+
+			final File tmp = File.createTempFile("Test", ".h5");
+			tmp.deleteOnExit();
+			tmp.createNewFile();
+			
+			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
+			
+			
+			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+			assertTrue(dh.contains("/entry/result/data"));
+			assertFalse(dh.contains("/entry/result/Axis_0"));
+			assertFalse(dh.contains("/entry/result/Junk1Dax"));
+			
+			assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
 	public ILazyDataset getLazyDataset(int[] dsShape, boolean withAxes) {
 		
 		final IDataset innerDS = Random.rand(dsShape);

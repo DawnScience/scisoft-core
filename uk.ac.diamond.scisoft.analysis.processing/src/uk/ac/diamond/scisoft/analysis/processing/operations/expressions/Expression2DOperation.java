@@ -43,7 +43,9 @@ public class Expression2DOperation extends Expression1DOperation<Expression2DMod
 		
 		outdata.setName("custom_expression");
 		outaxisx.setName("custom_x_axis");
+		outaxisx.setShape(new int[]{outaxisx.getShape()[0],1});
 		outaxisy.setName("custom_y_axis");
+		outaxisy.setShape(new int[]{1,outaxisy.getShape()[0]});
 		
 		AxesMetadata am = new AxesMetadataImpl(2);
 		am.setAxis(0, new ILazyDataset[]{outaxisx});

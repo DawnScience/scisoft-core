@@ -140,6 +140,7 @@ public class BroadcastIteratorTest {
 
 		b = DatasetFactory.createFromObject(2);
 		it = new BroadcastIterator(a, b);
+		it.setOutputDouble(true);
 		Assert.assertArrayEquals("Broadcast shape", new int[] {}, it.getShape());
 		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 		Assert.assertTrue(it.hasNext());

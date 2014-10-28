@@ -39,6 +39,7 @@ public class SingleInputBroadcastIteratorTest {
 		// zero-rank dataset
 		a = DatasetFactory.createFromObject(1);
 		it = new SingleInputBroadcastIterator(a, null);
+		it.setOutputDouble(true);
 		Assert.assertArrayEquals("Broadcast shape", new int[] {}, it.getShape());
 		c = DatasetFactory.zeros(it.getShape(), Dataset.FLOAT64);
 

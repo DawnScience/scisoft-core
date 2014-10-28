@@ -10,8 +10,10 @@ package uk.ac.diamond.scisoft.analysis.processing.visitors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,10 +31,36 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.hdf5.H5Utils;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Nexus writing implementation of IExecutionVisitor.
+ * 
+ * Handles writing 2D or 1D (and 0D auxiliary data) including axes to file. The name of the dataset in the file is
+ * based on the dataset name.
+ * 
+ * Also writes all the operation model values to NXProcess
+ * 
+ * The resulting tree structure of the Nexus file saved will be the following:<br>
+ * <pre>
+ *     Entry name              |   Class        |    Description          
+ * -----------------------------------------------------------------
+ * entry                       |   NXentry      |                         
+ * entry/result                |   NXdata       | contains data + axes
+ * entry/process               |   NXprocess    | contains NXnotes of models
+ * entry/intermediate          |   NXcollection | contains NXdatas of intermediate data
+ * entry/auxiliary             |   NXcollection | contains NXdatas of auxiliary data
+ * 
+ * </pre>
+ * 
+ * @author vdp96513
+ *
+ */
 public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 
 	private boolean firstPassDone = false;
@@ -49,6 +77,8 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private String filePath;
 	IHierarchicalDataFile file;
 	
+	private final static Logger logger = LoggerFactory.getLogger(HierarchicalFileExecutionVisitor.class);
+	
 	public HierarchicalFileExecutionVisitor(String filePath) {
 		this.filePath = filePath;
 	}
@@ -64,35 +94,43 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		
 	}
 	
+	/**
+	 * Makes entry and result NXdata
+	 * @throws Exception
+	 */
 	private void initGroups() throws Exception {
 		file.group(ENTRY);
 		results = file.group(RESULTS_GROUP, ENTRY);
 		file.setNexusAttribute(results, "NXdata");
 	}
 	
+	/**
+	 * Make the intermediate data NXcollection to store data from the middle of the pipeline
+	 */
 	private void createInterGroup() {
 		try {
 			intermediate = file.group(INTER_GROUP,ENTRY);
 			file.setNexusAttribute(intermediate, "NXcollection");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
+	/**
+	 * Makes NXCollection to store the Auxiliary data from each operation (if supplied)
+	 */
 	private void createAuxGroup() {
 		try {
 			auxiliary = file.group(AUX_GROUP,ENTRY);
 			file.setNexusAttribute(auxiliary, "NXcollection");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
 	@Override
 	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-		
+		//Write data to file
 		final IDataset integrated = result.getData();
 		updateAxes(integrated, slices, shape, dataDims, results);
 		integrated.setName("data");
@@ -104,14 +142,16 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 
 	@Override
 	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
+		//make groups on first pass
 		if (!firstPassDone) {
 			try {
 				initGroups();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		
+		//if specified to save data, do it
 		if (intermeadiateData.isStoreOutput()) {
 			if (intermediate == null) createInterGroup();
 			
@@ -128,8 +168,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 				updateAxes(d, slices, shape, dataDims, group);
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			
 		}
@@ -140,7 +179,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		while (pos < series.length && series[pos] != intermeadiateData) pos++;
 		
 
-		
+		//save aux data (should be IDataset, with unit dimensions)
 		if (auxData != null && auxData[0] != null) {
 			for (int i = 0; i < auxData.length; i++) {
 				if (auxData[i] instanceof IDataset) {
@@ -148,7 +187,6 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 					try {
 						
 						IDataset ds = (IDataset)auxData[i];
-						
 						String group = file.group(String.valueOf(pos) + "-" + intermeadiateData.getName(), auxiliary);
 						file.setNexusAttribute(group, "NXCollection");
 						
@@ -156,13 +194,11 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 						file.setNexusAttribute(group, "NXdata");
 						
 						ds.setName("data");
-//						ds.squeeze();
 
 						appendData(ds,group, slices,shape, file);
 						updateAxes(ds, slices, shape, dataDims, group);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error(e.getMessage());
 					}
 				}
 			}
@@ -181,7 +217,15 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		}
 		
 		Set<Integer> setDims = new HashSet<Integer>(dataDims.length);
-		for (int i = 0; i < dataDims.length; i++) setDims.add(dataDims[i]);
+		for (int i = 0; i < dataDims.length; i++) {
+			setDims.add(dataDims[i]);
+		}
+		
+		int[] dsShape = data.getShape();
+		if (dsShape.length > dataDims.length) {
+			//1D to 2D
+			setDims.add(dsShape.length-1);
+		}
 		
 		List<AxesMetadata> mList = data.getMetadata(AxesMetadata.class);
 		if (mList!= null && !mList.isEmpty()) {
@@ -210,7 +254,6 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 								}
 							} else {
 								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, file,i);
-								//appendData(axDataset,groupName, oSlice,oShape, file);
 								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
 							}
 							
@@ -229,60 +272,23 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		
 	}
 	
+	/**
+	 * Write the data into the correct position, in the correct dataset
+	 * @param dataset
+	 * @param group
+	 * @param oSlice
+	 * @param oShape
+	 * @param file
+	 * @throws Exception
+	 */
 	private void appendData(IDataset dataset, String group, Slice[] oSlice, int[] oShape, IHierarchicalDataFile file) throws Exception {
-		
-		dataset = dataset.getSliceView();
-		
-		//determine if dataset different rank to slice
-		List<Integer> dimList = new ArrayList<Integer>();
-		for (int i = 0; i < oSlice.length; i++) {
-			if (oSlice[i].getStop() == null && oSlice[i].getLength() ==-1) {
-				dimList.add(i);
-			} else {
-				int nSteps = oSlice[i].getNumSteps();
-				if (nSteps > 1) dimList.add(i);
-			}
-			
-		}
-		dataset.clearMetadata(AxesMetadata.class);
-		int dataRank = dataset.squeeze().getRank();
-		if (dataRank == 0){
-			dataset.toString();
-		}
-		
-		//Make new slice array to deal with new dimensions
-		List<Slice> sliceList = new ArrayList<Slice>();
-		List<Integer> totalDimList = new ArrayList<Integer>();
-		int padCounter = 0;
-		int counter = 0;
-		for (Slice s: oSlice) {
-			
-			if (dimList.contains(counter)) {
-				
-				if (padCounter < dataRank) {
-					sliceList.add(new Slice(0,dataset.getShape()[padCounter],1));
-					totalDimList.add(dataset.getShape()[padCounter]);
-					padCounter++;
-				} else {
-					counter++;
-					continue;
-				}
-				
-				
-			}else {
-				sliceList.add(s);
-				totalDimList.add(oShape[counter]);
-			}
-			
-			counter++;
-		}
-		
-		Slice[] sliceOut = new Slice[sliceList.size()];
-		sliceList.toArray(sliceOut);
-		
-		long[] newShape = new long[totalDimList.size()];
-		for (int i = 0; i < newShape.length; i++) newShape[i] = totalDimList.get(i);
-		
+		//determine the dimensions of the original data
+		int[] dd = getNonSingularDimensions(oSlice, oShape);
+		//update the slice to reflect the new data shape/rank
+		Slice[] sliceOut = getUpdatedSliceArray( oShape, dataset.getShape(), oSlice, dd);
+		//determine shape of full output dataset
+		long[] newShape = getNewShape(oShape, dataset.getShape(), dd);
+		//write
 		H5Utils.insertDataset(file, group, dataset, sliceOut, newShape);
 		
 		return;
@@ -294,4 +300,132 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		
 	}
 
+	/**
+	 * Parse slice array to determine which dimensions are not equal to 1 and assume these are the data dimensions
+	 * @param slices
+	 * @param shape
+	 * @return datadims
+	 */
+	private int[] getNonSingularDimensions(Slice[] slices, int[] shape) {
+		
+		int[] start = new int[slices.length];
+		int[] stop = new int[slices.length];
+		int[] step = new int[slices.length];
+		
+		Slice.convertFromSlice(slices, shape, start, stop, step);
+		int[] newShape = AbstractDataset.checkSlice(shape,start,stop,start,stop,step);
+		
+		List<Integer> notOne = new ArrayList<Integer>();
+		
+		for (int i = 0; i < newShape.length; i++) if (newShape[i] != 1) notOne.add(i);
+		
+		int[] out = new int[notOne.size()];
+		for (int i = 0; i < out.length; i++) {
+			out[i] = notOne.get(i);
+		}
+		
+		return out;
+	}
+	
+	/**
+	 * Get a new slice array which reflects the position of the processed data in the full output dataset
+	 * @param oShape
+	 * @param dsShape
+	 * @param oSlice
+	 * @param datadims
+	 * @return newSlices
+	 */
+	private Slice[] getUpdatedSliceArray(int[] oShape, int[] dsShape, Slice[] oSlice, int[] datadims) {
+		
+		if (AbstractDataset.squeezeShape(dsShape, false).length == 0) {
+			List<Slice> l = new LinkedList<Slice>(Arrays.asList(oSlice));
+			for (int i =  datadims.length-1; i >= 0; i--) {
+				l.remove(datadims[i]);
+			}
+			return l.toArray(new Slice[l.size()]);
+			
+		}
+		
+		Arrays.sort(datadims);
+		Slice[] out = null;
+		int dRank = oShape.length - dsShape.length;
+		int[] s = oShape.clone();
+		out = oSlice.clone();
+		if (dRank == 0) {
+			for (int i = 0; i < datadims.length; i++) {
+				out[datadims[i]] = new Slice(0, dsShape[datadims[i]], 1);
+				s[datadims[i]] = s[datadims[i]];
+			}
+		} else if (dRank > 0) {
+			List<Slice> l = new LinkedList<Slice>(Arrays.asList(out));
+			l.remove(datadims[datadims.length-1]);
+			out = l.toArray(new Slice[l.size()]);
+			out[datadims[0]] = new Slice(0, dsShape[datadims[0]], 1);
+		} else if (dRank < 0) {
+			for (int i = 0; i < datadims.length; i++) {
+				out[datadims[i]] = new Slice(0, dsShape[datadims[i]], 1);
+				s[datadims[i]] = s[datadims[i]];
+			}
+			
+			List<Slice> l = new LinkedList<Slice>(Arrays.asList(out));
+			l.add(new Slice(0, dsShape[dsShape.length-1], 1));
+			out = l.toArray(new Slice[l.size()]);
+		}
+		
+		return out;
+	}
+	
+	/**
+	 * Get the expected final shape of the output dataset
+	 * @param oShape
+	 * @param dsShape
+	 * @param dd
+	 * @return newShape
+	 */
+	private long[] getNewShape(int[]oShape, int[] dsShape, int[] dd) {
+		
+		if (AbstractDataset.squeezeShape(dsShape, false).length == 0) {
+			List<Integer> l = new LinkedList<Integer>();
+			for (int i : oShape) l.add(i);
+			for (int i =  dd.length-1; i >= 0; i--) {
+				l.remove(dd[i]);
+			}
+			long[] out = new long[l.size()];
+			for (int i = 0; i< l.size(); i++) out[i] = l.get(i);
+			return out;
+			
+		}
+		
+		int dRank = oShape.length - dsShape.length;
+		long[] out = null;
+		
+		if (dRank == 0) {
+			out = new long[oShape.length];
+			for (int i = 0; i < oShape.length; i++) out[i] = oShape[i];
+			for (int i : dd) {
+				out[i] = dsShape[i]; 
+			}
+		} else if (dRank > 0) {
+			List<Integer> ll = new LinkedList<Integer>();
+			for (int i : oShape) ll.add(i);
+			for (int i = 0; i < dd.length ; i++) if (i < dRank) ll.remove(dd[i]);
+			for (int i = 0;  i < dRank; i++) ll.set(dd[i], dsShape[dd[i]]);
+			out = new long[ll.size()];
+			for (int i = 0; i< ll.size(); i++) out[i] = ll.get(i);
+			
+		} else if (dRank < 0) {
+			List<Integer> ll = new LinkedList<Integer>();
+			for (int i : oShape) ll.add(i);
+			for (int i = 0; i < dd.length ; i++) ll.set(dd[i], dsShape[dd[i]]);
+			for (int i = dRank;  i < 0; i++){
+				ll.add(dsShape[dsShape.length+i]);
+			}
+			out = new long[ll.size()];
+			for (int i = 0; i< ll.size(); i++) out[i] = ll.get(i);
+			
+		}
+		
+		return out;
+	}
+	
 }

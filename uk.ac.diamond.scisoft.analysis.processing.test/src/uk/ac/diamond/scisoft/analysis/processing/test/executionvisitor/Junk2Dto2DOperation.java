@@ -42,11 +42,11 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		IDataset out = Random.rand(new int[] {x,y});
 		out.setName("Junk2Dto2Dout");
 		IDataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
-		ax1.setShape(new int[]{20,1});
+		ax1.setShape(new int[]{x,1});
 		ax1.setName("Junk2Dto2DAx1");
 		IDataset ax2 = DatasetFactory.createRange(0, y,1, Dataset.INT16);
-		ax2.setShape(new int[]{30,1});
-		ax1.setName("Junk2Dto2DAx2");
+		ax2.setShape(new int[]{1,y});
+		ax2.setName("Junk2Dto2DAx2");
 		
 		AxesMetadataImpl am = new AxesMetadataImpl(2);
 		am.addAxis(ax1, 0);

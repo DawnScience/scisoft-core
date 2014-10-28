@@ -41,7 +41,7 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		IDataset out = Random.rand(new int[] {x});
 		out.setName("Junk1Dout");
 		IDataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
-		ax1.setShape(new int[]{20,1});
+		ax1.setShape(new int[]{x});
 		ax1.setName("Junk1Dax");
 		
 		AxesMetadataImpl am = new AxesMetadataImpl(1);

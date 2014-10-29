@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import java.io.Serializable;
+import java.text.Format;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -23,6 +24,11 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import junit.framework.AssertionFailedError;
 
 public class MockDataset implements IDataset {
+	@Override
+	public void setStringFormat(Format format) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
 	@Override
 	public String getName() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");

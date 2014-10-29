@@ -96,9 +96,16 @@ public class RGBDatasetTest {
 		Dataset s = new DoubleDataset(new double[] {1, 1, 1, 0.5, 0.5, 0.667}, 6);
 		RGBDataset a = RGBDataset.createFromHSV(h, s, v);
 		TestUtils.assertDatasetEquals(rgb, a, 1, 1);
+		h.isubtract(360);
+		a = RGBDataset.createFromHSV(h, s, v);
+		TestUtils.assertDatasetEquals(rgb, a, 1, 1);
 
 		Dataset l = new FloatDataset(new float[] {0.5f, 0.375f, 0.25f, 0.75f, 0.75f, 0.5f}, 6);
 		s = new DoubleDataset(new double[] {1, 1, 1, 1, 1, 0.5}, 6);
+		a = RGBDataset.createFromHSL(h, s, l);
+		TestUtils.assertDatasetEquals(rgb, a, 1, 1);
+
+		h.iadd(360);
 		a = RGBDataset.createFromHSL(h, s, l);
 		TestUtils.assertDatasetEquals(rgb, a, 1, 1);
 	}

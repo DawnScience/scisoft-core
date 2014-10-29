@@ -44,8 +44,8 @@ public class ImageThumbnailLoader {
 	 * @param createThumbnail
 	 * @return Dataset
 	 */
-	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData) {
-		return loadImage(filename, createThumbnail, loadMetaData, null);
+	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetadata) {
+		return loadImage(filename, createThumbnail, loadMetadata, null);
 	}
 
 	/**
@@ -59,13 +59,13 @@ public class ImageThumbnailLoader {
 	 * @param createThumbnail
 	 * @return Dataset
 	 */
-	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetaData, IMonitor monitor) {
+	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetadata, IMonitor monitor) {
 		
 		IDataHolder scan = null;
 		if (!filename.toLowerCase().endsWith(".raw")) {
 //			long start = -System.nanoTime();
 			try {
-				scan = LoaderFactory.getData(filename, loadMetaData, monitor);
+				scan = LoaderFactory.getData(filename, loadMetadata, monitor);
 			} catch (Exception e) {
 				logger.error("Cannot load "+filename, e);
 			}

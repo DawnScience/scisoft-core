@@ -1761,6 +1761,28 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testFindOccurrences() {
+		Dataset a = new DoubleDataset(new double[] {0, 0, 3, 7, -4, 2, 1});
+		Dataset v = DatasetFactory.createRange(-3, 3, 1, Dataset.FLOAT64);
+
+		Dataset indexes = DatasetUtils.findFirstOccurrences(a, v);
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[] {-1, -1, -1, 0, 6, 5}, null), indexes, true, 1, 1);
+	}
+
+	@Test
+	public void testFindIndexes() {
+		Dataset a = new DoubleDataset(new double[] {0, 0, 3, 7, -4, 2, 1});
+		Dataset v = DatasetFactory.createRange(-3, 3, 1, Dataset.FLOAT64);
+
+		IntegerDataset indexes = DatasetUtils.findIndexesForValues(a, v);
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[] {3, 3, -1, -1, -1, 5, 4}, null), indexes, true, 1, 1);
+
+		v = new DoubleDataset(new double[] {-4, 0, 1, 2, 3, 7});
+		indexes = DatasetUtils.findIndexesForValues(a, v);
+		TestUtils.assertDatasetEquals(a, v.getBy1DIndex(indexes), true, 1e-6, 1e-6);
+	}
+
+	@Test
 	public void testAppend() {
 		double[] x = { 0., 1., 2., 3., 4., 5. };
 		Dataset d1 = DoubleDataset.createRange(3.);

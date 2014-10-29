@@ -22,8 +22,6 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {
 
-	private int counter = 0;
-	private String currentFilePath = null;
 	private static final String EXPORT = "export";
 	private static final String DEFAULT_EXT = "dat";
 	
@@ -36,36 +34,33 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		if (model.getOutputDirectoryPath() == null) throw new OperationException(this, "Output directory not set!");
+		OriginMetadata om = getOriginMetadata(input);
+		if (om == null) throw new OperationException(this, "Dataset has not Origin!");
 		
 		String filename = EXPORT;
 		String slice ="";
-		String count = String.valueOf(counter);
 		String ext = DEFAULT_EXT;
 		
-		OriginMetadata om = getOriginMetadata(input);
-		
-		if (om != null) {
-			String fn = om.getFilePath();
-			if (fn != null) {
-				if (!fn.equals(currentFilePath)) {
-					currentFilePath = fn;
-					counter = 0;
-				}
-				File f = new File(fn);
-				filename = getFileNameNoExtension(f.getName());
-				
-				if (model.isIncludeSliceName()) {
-					slice = Slice.createString(om.getCurrentSlice());
-				}
-				
-				if (model.getZeroPad() != null) {
-					count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", counter);
-				}
-				
-				if (model.getExtension() != null) ext = model.getExtension();
-				
-			}
+		if (model.isIncludeSliceName()) {
+			slice = Slice.createString(om.getCurrentSlice());
 		}
+		
+		int c = getCurrentSliceNumber(om);
+		String count = "";
+		if (model.getZeroPad() != null) {
+			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
+		} else {
+			count =String.valueOf(c);
+		}
+		
+		if (model.getExtension() != null) ext = model.getExtension();
+		
+		String fn = om.getFilePath();
+		if (fn != null) {
+			File f = new File(fn);
+			filename = getFileNameNoExtension(f.getName());
+		}
+
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(model.getOutputDirectoryPath());
@@ -84,7 +79,6 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		sb.append(ext);
 		
 		String fileName = sb.toString();
-		counter++;
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		

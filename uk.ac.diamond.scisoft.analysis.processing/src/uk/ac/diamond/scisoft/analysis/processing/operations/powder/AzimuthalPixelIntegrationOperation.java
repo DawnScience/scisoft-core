@@ -40,57 +40,10 @@ public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegration
 	}
 
 	@Override
-	protected void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims, List<Dataset> out) {
+	protected void setAxes(IDataset data, List<Dataset> out) {
 
-		if (axes == null) {
-			AxesMetadataImpl amd = new AxesMetadataImpl(1);
-			amd.setAxis(0, new ILazyDataset[] {out.get(0)});
-			data.setMetadata(amd);
-			
-//			final int[] newDataDims = new int[]{dataDims[0]};
-			
-//			OriginMetadataImpl omd = new OriginMetadataImpl(null, null, newDataDims);
-//			data.setMetadata(omd);
-			
-			return;
-		}
-		
-		int rank = axes.length-1;
-		AxesMetadataImpl amd = new AxesMetadataImpl(rank);
-		int[] shape = new int[rank];
-		
-//		int[] newDataDims = new int[1];
-		
-		boolean first = true;
-		for (int i = 0; i < axes.length; i++) {
-			boolean contained = false;
-			for (int j : dataDims) {
-				if (i == j){
-					contained = true;
-					if (first) {
-						Dataset ds = out.get(0);
-						Arrays.fill(shape, 1);
-						shape[i] = ds.getShape()[0];
-						ds.setShape(shape);
-//						newDataDims[0] = i;
-						amd.setAxis(i, new ILazyDataset[]{ds});
-						first = false;
-					}
-					break;
-				}
-
-			}
-			if (!contained) {
-				ILazyDataset sq = axes[i].squeeze();
-				Arrays.fill(shape, 1);
-					if (sq.getShape().length == 0) sq.setShape(shape);
-				amd.setAxis(i, new ILazyDataset[] {sq});
-			}
-		}
-		
-//		OriginMetadataImpl omd = new OriginMetadataImpl(null, null, newDataDims);
-//		data.setMetadata(omd);
-
+		AxesMetadataImpl amd = new AxesMetadataImpl(1);
+		amd.setAxis(0, new ILazyDataset[] {out.get(0)});
 		data.setMetadata(amd);
 		
 	}

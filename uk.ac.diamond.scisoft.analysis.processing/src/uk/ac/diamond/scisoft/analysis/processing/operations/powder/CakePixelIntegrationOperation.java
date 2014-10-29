@@ -8,7 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -36,49 +35,18 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 	}
 
 	@Override
-	protected void setAxes(IDataset data, ILazyDataset[] axes, int[] dataDims,
-			List<Dataset> out) {
+	protected void setAxes(IDataset data, List<Dataset> out) {
 		
-		
-		if (axes == null) {
-			AxesMetadataImpl amd = new AxesMetadataImpl(2);
-			Dataset first = out.get(0);
-			first.setShape(new int[]{first.getShape()[0], 1});
-			Dataset second = out.get(1);
-			second.setShape(new int[]{1, second.getShape()[0]});
-			amd.setAxis(0, new ILazyDataset[] {out.get(0)});
-			amd.setAxis(1, new ILazyDataset[] {out.get(1)});
-			data.setMetadata(amd);
-			return;
-		}
-		
-		AxesMetadataImpl amd = new AxesMetadataImpl(axes.length);
-
-		int rank = axes.length;
-		int[] shape = new int[rank];
-		int count = 0;
-		for (int i = 0; i < axes.length; i++) {
-			boolean contained = false;
-			for (int j : dataDims) {
-				if (i == j){
-					contained = true;
-					Dataset ds = out.get(count++);
-					Arrays.fill(shape, 1);
-					shape[i] = ds.getShape()[0];
-					ds.setShape(shape);
-					amd.setAxis(i, new ILazyDataset[]{ds});
-					break;
-				}
-			}
-			if (!contained) {
-				ILazyDataset sq = axes[i].squeeze();
-				Arrays.fill(shape, 1);
-				if (sq.getShape().length == 0) sq.setShape(shape);
-				amd.setAxis(i, new ILazyDataset[] {sq});
-			}
-		}
-		
+		AxesMetadataImpl amd = new AxesMetadataImpl(2);
+		Dataset first = out.get(0);
+		first.setShape(new int[]{first.getShape()[0], 1});
+		Dataset second = out.get(1);
+		second.setShape(new int[]{1, second.getShape()[0]});
+		amd.setAxis(0, new ILazyDataset[] {out.get(0)});
+		amd.setAxis(1, new ILazyDataset[] {out.get(1)});
 		data.setMetadata(amd);
+		return;
+
 	}
 
 	@Override

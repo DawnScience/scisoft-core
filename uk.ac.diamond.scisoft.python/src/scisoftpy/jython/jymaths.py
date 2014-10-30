@@ -126,7 +126,7 @@ def multiply(a, b, out=None):
 @_wrap
 def divide(a, b, out=None):
     '''Divide one array-like object by another'''
-    return _maths.divide(a, b, out)
+    return _maths.divideTowardsFloor(a, b, out)
 
 @_wrap
 def floor_divide(a, b, out=None):
@@ -136,7 +136,7 @@ def floor_divide(a, b, out=None):
 @_wrap
 def remainder(a, b, out=None):
     '''Return remainder of division of inputs'''
-    return _maths.remainder(a, b, out)
+    return _maths.floorRemainder(a, b, out)
 #>>> np.floor_divide(7,3)
 #2
 #>>> np.floor_divide([1., 2., 3., 4.], 2.5)

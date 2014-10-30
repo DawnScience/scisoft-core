@@ -551,6 +551,20 @@ class Test(unittest.TestCase):
         zr /= (1.3 + 0.2j)
         self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr, iscomplex=True)
 
+        a = np.arange(-4, 4, dtype=np.int8)
+        self.checkitems([-2, -2, -1, -1,  0,  0,  1,  1], a / 2)
+        self.checkitems([-2, -2, -1, -1,  0,  0,  1,  1], a // 2)
+        self.checkitems([0, 1, 0, 1, 0, 1, 0, 1], a % 2)
+        self.checkitems([2,  1,  1,  0,  0, -1, -1, -2], a / -2)
+        self.checkitems([2,  1,  1,  0,  0, -1, -1, -2], a // -2)
+        self.checkitems([0, -1,  0, -1,  0, -1,  0, -1], a % -2)
+        self.checkitems([-1.6, -1.2, -0.8, -0.4,  0. ,  0.4,  0.8,  1.2], a / 2.5)
+        self.checkitems([-2., -2., -1., -1.,  0.,  0.,  0.,  1.], a // 2.5)
+        self.checkitems([1., 2., 0.5, 1.5, 0., 1., 2., 0.5], a % 2.5)
+        self.checkitems([1.6, 1.2, 0.8, 0.4, -0., -0.4, -0.8, -1.2], a / -2.5)
+        self.checkitems([1., 1., 0., 0., -0., -1., -1., -2.], a // -2.5)
+        self.checkitems([-1.5, -0.5, -2., -1., 0., -1.5, -0.5, -2.], a % -2.5)
+
     def testCopyItems(self):
         if isjava:
             import jarray

@@ -825,8 +825,8 @@ class ndarray(object):
         return self
     def __abs__(self):
         return _maths.abs(self)
-
-    # MISSING: __invert__
+    def __invert__(self):
+        return _maths.invert(self)
 
     #  arithmetic operators
     def __add__(self, o):
@@ -845,7 +845,19 @@ class ndarray(object):
         return _maths.remainder(self, asDataset(o))
     def __pow__(self, o, z=None):
         return _maths.power(self, asDataset(o))
-    # MISSING: __divmod__, __lshift__, __rshift__, __and__, __or__, __xor__
+    def __divmod__(self, o):
+        return (_maths.floor_divide(self, asDataset(o)), _maths.remainder(self, asDataset(o)))
+    def __lshift__(self, o):
+        return _maths.left_shift(self, asDataset(o))
+    def __rshift__(self, o):
+        return _maths.right_shift(self, asDataset(o))
+    def __and__(self, o):
+        return _maths.bitwise_and(self, asDataset(o))
+    def __or__(self, o):
+        return _maths.bitwise_or(self, asDataset(o))
+    def __xor__(self, o):
+        return _maths.bitwise_xor(self, asDataset(o))
+
     def __radd__(self, o):
         return _maths.add(self, asDataset(o))
     def __rsub__(self, o):
@@ -867,21 +879,35 @@ class ndarray(object):
         self.__dataset.imultiply(__cvt_jobj(o, dtype=self.dtype, copy=False))
         return self
     def __idiv__(self, o):
-        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        _maths.divide(self, o, self)
         return self
     def __itruediv__(self, o):
-        self.__dataset.idivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        _maths.divide(self, o, self)
         return self
     def __ifloordiv__(self, o):
-        self.__dataset.ifloordivide(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        _maths.floor_divide(self, o, self)
         return self
     def __imod__(self, o):
-        self.__dataset.iremainder(__cvt_jobj(o, dtype=self.dtype, copy=False))
+        _maths.remainder(self, o, self)
         return self
     def __ipow__(self, o):
         self.__dataset.ipower(__cvt_jobj(o, dtype=self.dtype, copy=False))
         return self
-    # MISSING: __ilshift__, __irshift__, __iand__, __ior__, __ixor__
+    def __ilshift__(self, o):
+        _maths.left_shift(self, o, self)
+        return self
+    def __irshift__(self, o):
+        _maths.right_shift(self, o, self)
+        return self
+    def __iand__(self, o):
+        _maths.bitwise_and(self, o, self)
+        return self
+    def __ior__(self, o):
+        _maths.bitwise_or(self, o, self)
+        return self
+    def __ixor__(self, o):
+        _maths.bitwise_xor(self, o, self)
+        return self
 
     # Special methods
 

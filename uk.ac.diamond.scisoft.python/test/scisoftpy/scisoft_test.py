@@ -478,6 +478,16 @@ class Test(unittest.TestCase):
         self.checkitems([0, 0, 0, 0, 4, 2, 1, 0], np.right_shift(b, a))
         self.checkitems([-1, -1, -1, -1, 0, 0, 0, 0], np.right_shift(a, a))
 
+    def testDivmod(self):
+        print 'Divmod testing'
+        a = np.arange(-4,4, dtype=np.int8)
+        c = divmod(a, 2)
+        self.checkitems([-2, -2, -1, -1,  0,  0,  1,  1], c[0])
+        self.checkitems([0, 1, 0, 1, 0, 1, 0, 1], c[1])
+        c = divmod(a, 2.5)
+        self.checkitems([-2., -2., -1., -1.,  0.,  0.,  0.,  1.], c[0])
+        self.checkitems([1.,  2.,  0.5,  1.5,  0.,  1.,  2.,  0.5], c[1])
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

@@ -135,33 +135,21 @@ def floor_divide(a, b, out=None):
 
 @_wrap
 def remainder(a, b, out=None):
-    '''Return remainder of division of inputs'''
+    '''Return remainder of division of inputs like Python's modulo operator'''
     return _maths.floorRemainder(a, b, out)
-#>>> np.floor_divide(7,3)
-#2
-#>>> np.floor_divide([1., 2., 3., 4.], 2.5)
-#array([ 0.,  0.,  1.,  1.])
 
-# modf
-#Return the fractional and integral part of a number.
-#
-#The fractional and integral parts are negative if the given number is negative.
+@_wrap
+def modf(a, out1=None, out2=None):
+    '''Return fractional and integral parts of inputs'''
+    ia = _maths.truncate(a, out1).cast(_f64.value)
+    fa = _maths.subtract(a, ia, out2)
+    return (fa, ia)
 
-#>>> np.modf(2.5)
-#(0.5, 2.0)
-#>>> np.modf(-.4)
-#(-0.40000000000000002, -0.0)
+@_wrap
+def fmod(a, b, out=None):
+    '''Return remainder of division of inputs like C's or Java's modulo operator'''
+    return _maths.remainder(a, b, out)
 
-#>>> np.remainder([4,7],[2,3])
-#array([0, 1])
-
-fmod = remainder
-# FIXME these are different
-# >>> np.fmod([-3, -2, -1, 1, 2, 3], 2)
-# array([-1,  0, -1,  1,  0,  1])
-# >>> np.mod([-3, -2, -1, 1, 2, 3], 2)
-# array([1, 0, 1, 1, 0, 1])
-#
 mod = remainder
 
 @_wrap

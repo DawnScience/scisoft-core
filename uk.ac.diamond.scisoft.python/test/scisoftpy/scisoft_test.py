@@ -488,6 +488,24 @@ class Test(unittest.TestCase):
         self.checkitems([-2., -2., -1., -1.,  0.,  0.,  0.,  1.], c[0])
         self.checkitems([1.,  2.,  0.5,  1.5,  0.,  1.,  2.,  0.5], c[1])
 
+    def testModf(self):
+        print 'Modf testing'
+        a = np.modf(2.5)
+        self.assertAlmostEqual(0.5, a[0], 5)
+        self.assertAlmostEqual(2.0, a[1], 5)
+        a = np.modf(-.4)
+        self.assertAlmostEqual(-0.4, a[0], 5)
+        self.assertAlmostEqual(0.0, a[1], 5)
+
+    def testRemainder(self):
+        print 'Remainder testing'
+        a = np.remainder([4,7], [2,3])
+        self.checkitems([0, 1], a)
+        self.checkitems([0, -2,  5, -1], np.remainder([4, 7, -3, -7], [2, -3,  8, -3]))
+        self.checkitems([0, 1,  -3, -1], np.fmod([4, 7, -3, -7], [2, -3,  8, -3]))
+        self.checkitems([-1,  0, -1,  1,  0,  1], np.fmod([-3, -2, -1, 1, 2, 3], 2))
+        self.checkitems([1, 0, 1, 1, 0, 1], np.mod([-3, -2, -1, 1, 2, 3], 2))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

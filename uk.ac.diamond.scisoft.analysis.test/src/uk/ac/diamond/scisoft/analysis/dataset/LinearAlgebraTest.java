@@ -13,6 +13,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -217,4 +218,21 @@ public class LinearAlgebraTest {
 //		assertTrue(Double.isNaN(LinearAlgebra.norm(a, p)));
 		assertEquals(0, LinearAlgebra.norm(a, p), 1e-15);
 	}
-}
+
+	@Test
+	public void testDeterminant() {
+		Dataset a = DatasetFactory.createRange(1, 21, 1, Dataset.INT32).reshape(4, 5);
+		assertEquals(0, LinearAlgebra.calcDeterminant(a.getSliceView(null, new Slice(4))), 1e-8);
+	}
+
+	@Test
+	public void testTrace() {
+		Dataset a = DatasetFactory.createRange(20, Dataset.INT32).reshape(4, 5);
+		assertEquals(36, LinearAlgebra.trace(a).getInt());
+		assertEquals(33, LinearAlgebra.trace(a, -1, 0, 1).getInt());
+		assertEquals(40, LinearAlgebra.trace(a, 1, 0, 1).getInt());
+
+		a = DatasetFactory.createRange(60, Dataset.INT32).reshape(3, 4, 5);
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[]{36, 116, 196}, null), LinearAlgebra.trace(a, 0, 1, 2), true, 1, 1);
+	}
+ }

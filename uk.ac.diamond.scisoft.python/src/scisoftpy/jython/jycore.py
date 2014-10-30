@@ -712,7 +712,10 @@ class ndarray(object):
         else:
             return self.__dataset.typedSum(dtval, axis)
 
-    # MISSING: cumsum
+    def cumsum(self, axis=None, dtype=None):
+        if dtype is None:
+            dtype = self.dtype
+        return _maths.cumsum(self, axis).astype(dtype)
 
     @_wrapout
     def mean(self, axis=None):
@@ -774,7 +777,10 @@ class ndarray(object):
         else:
             return self.__dataset.typedProduct(dtval, axis)
 
-    # MISSING: cumprod
+    def cumprod(self, axis=None, dtype=None):
+        if dtype is None:
+            dtype = self.dtype
+        return _maths.cumprod(self, axis).astype(dtype)
 
     @_wrapout
     def all(self, axis=None): #@ReservedAssignment

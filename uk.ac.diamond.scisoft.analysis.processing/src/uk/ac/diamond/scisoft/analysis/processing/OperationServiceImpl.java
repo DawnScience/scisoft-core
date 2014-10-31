@@ -28,6 +28,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
@@ -92,8 +93,10 @@ public class OperationServiceImpl implements IOperationService {
 
 	private long parallelTimeout;
 	
-	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
+	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor v, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
 		
+		final IExecutionVisitor visitor = v==null ? new IExecutionVisitor.Stub() : null;
+
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
 		}
@@ -141,11 +144,14 @@ public class OperationServiceImpl implements IOperationService {
 					long start = System.currentTimeMillis();
 					for (IOperation i : series) {
 						OperationData tmp = i.execute(data.getData(), monitor);
-						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
+						visitor.notify(new ExecutionEvent(i, tmp, slices, shape, dataDims)); // Optionally send intermediate result
 						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
 					logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
-					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
+					
+					ExecutionEvent evt = new ExecutionEvent(null, data, slices, shape, dataDims);
+					evt.setMonitor(monitor); // Might be null
+					visitor.executed(evt);   // Send result.
 					if (monitor != null) monitor.worked(1);
 				}
 
@@ -155,8 +161,9 @@ public class OperationServiceImpl implements IOperationService {
 				}
 			};
 			
-			visitor.init(series, originMetadata);
+			visitor.init(new ExecutionEvent(this, series, originMetadata));
 			long start = System.currentTimeMillis();
+			
 			// Jakes slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {
 				Slicer.visitAll(dataset.getData(), slicing, "Slice", sv);
@@ -433,4 +440,23 @@ public class OperationServiceImpl implements IOperationService {
 		checkOperations();
 		return operations.get(id).getDescription();
 	}
+
+	@Override
+	public void executeSeries(
+			ISliceConfiguration dataset,
+			IOperation<? extends IOperationModel, ? extends OperationData>... series)
+			throws OperationException {
+		executeSeries(dataset, null, null, series);
+	}
+
+	@Override
+	public void executeParallelSeries(
+			ISliceConfiguration dataset,
+			IOperation<? extends IOperationModel, ? extends OperationData>... series)
+			throws OperationException {
+		executeSeries(dataset, null, null, series);
+		
+	}
+
+
  }

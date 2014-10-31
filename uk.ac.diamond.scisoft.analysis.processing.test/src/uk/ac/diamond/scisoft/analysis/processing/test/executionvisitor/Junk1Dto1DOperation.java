@@ -9,12 +9,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
 public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> {
 
 	private boolean withAxes = true;
+	private boolean withErrors = true;
 	
 	@Override
 	public String getId() {
@@ -40,6 +42,10 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		this.withAxes = withAxes;
 	}
 	
+	public void setWithErrors(boolean withErrors) {
+		this.withErrors = withErrors;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		int x = model.getxDim();
@@ -56,6 +62,13 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 			am.addAxis(ax1, 0);
 			
 			out.setMetadata(am);
+		}
+		
+		if (withErrors) {
+			IDataset error = Random.rand(new int[] {x});
+			ErrorMetadataImpl em = new ErrorMetadataImpl();
+			em.setError(error);
+			out.setMetadata(em);
 		}
 		
 		

@@ -291,6 +291,14 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		//write
 		H5Utils.insertDataset(file, group, dataset, sliceOut, newShape);
 		
+		ILazyDataset error = dataset.getError();
+		
+		if (error != null) {
+			IDataset e = error.getSlice();
+			e.setName("errors");
+			H5Utils.insertDataset(file, group, e, sliceOut, newShape);
+		}
+		
 		return;
 	}
 

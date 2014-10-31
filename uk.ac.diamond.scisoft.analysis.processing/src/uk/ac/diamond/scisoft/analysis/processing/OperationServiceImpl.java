@@ -95,7 +95,7 @@ public class OperationServiceImpl implements IOperationService {
 	
 	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor v, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
 		
-		final IExecutionVisitor visitor = v==null ? new IExecutionVisitor.Stub() : null;
+		final IExecutionVisitor visitor = v==null ? new IExecutionVisitor.Stub() : v;
 
 		if (type==ExecutionType.GRAPH) {
 			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
@@ -161,7 +161,7 @@ public class OperationServiceImpl implements IOperationService {
 				}
 			};
 			
-			visitor.init(new ExecutionEvent(this, series, originMetadata));
+			visitor.init(new ExecutionEvent(OperationServiceImpl.this, series, originMetadata));
 			long start = System.currentTimeMillis();
 			
 			// Jakes slicing from the conversion tool is now in Slicer.

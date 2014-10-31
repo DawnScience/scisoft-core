@@ -15,14 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.AggregateDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -73,13 +72,13 @@ public class FunctionsTest {
 		
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(ExecutionEvent evt) throws Exception {
 				
-				System.out.println(result.getData().getName());
-				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+				System.out.println(evt.getData().getData().getName());
+				for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
 					
 					// Get result
-					double opVal   = result.getData().getDouble(i);
+					double opVal   = evt.getData().getData().getDouble(i);
 					
 					// Calc polynomial
 					double v = poly.getParameterValue(0);
@@ -133,11 +132,11 @@ public class FunctionsTest {
 		count = 0;
 		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(ExecutionEvent evt) throws Exception {
 				
-				System.out.println(result.getData().getName());
+				System.out.println(evt.getData().getData().getName());
 				
-				final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
+				final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)evt.getData().getAuxData()[0];
 				
 				double[] fittedPeakPos = new double[fittedPeakList.size()];
 				int i = 0;
@@ -180,11 +179,11 @@ public class FunctionsTest {
 			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(ExecutionEvent evt) throws Exception {
 
-					System.out.println(result.getData().getName());
+					System.out.println(evt.getData().getData().getName());
 
-					final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
+					final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)evt.getData().getAuxData()[0];
 
 					double[] fittedPeakPos = new double[fittedPeakList.size()];
 					int i = 0;

@@ -144,12 +144,12 @@ public class OperationServiceImpl implements IOperationService {
 					long start = System.currentTimeMillis();
 					for (IOperation i : series) {
 						OperationData tmp = i.execute(data.getData(), monitor);
-						visitor.notify(new ExecutionEvent(i, tmp, slices, shape, dataDims)); // Optionally send intermediate result
+						visitor.notify(new ExecutionEvent(OperationServiceImpl.this, i, tmp, slices, shape, dataDims)); // Optionally send intermediate result
 						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
 					logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 					
-					ExecutionEvent evt = new ExecutionEvent(null, data, slices, shape, dataDims);
+					ExecutionEvent evt = new ExecutionEvent(OperationServiceImpl.this, null, data, slices, shape, dataDims);
 					evt.setMonitor(monitor); // Might be null
 					visitor.executed(evt);   // Send result.
 					if (monitor != null) monitor.worked(1);

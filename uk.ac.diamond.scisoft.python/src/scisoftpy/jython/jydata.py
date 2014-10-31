@@ -3,7 +3,7 @@ import sys
 
 try:
     from uk.ac.diamond.scisoft.analysis.plotclient.dataset import DatasetMailman as dsm
-    manager = dsm.getRemoteManager()
+    _manager = dsm.getRemoteManager()
 except:
     ## This code has special handling because the RCP classes may not be available 
     print >> sys.stderr, "Could not import Dataset Manager"

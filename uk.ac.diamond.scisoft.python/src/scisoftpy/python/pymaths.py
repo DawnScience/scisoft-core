@@ -71,6 +71,8 @@ floor_divide = _np.floor_divide
 
 remainder = _np.remainder
 
+modf = _np.modf
+
 fmod = _np.fmod
 
 mod = _np.mod
@@ -118,6 +120,8 @@ power = _np.power
 floor = _np.floor
 ceil = _np.ceil
 rint = _np.rint
+trunc = _np.trunc
+fix = _np.fix
 
 rad2deg = _np.rad2deg
 deg2rad = _np.deg2rad
@@ -129,6 +133,8 @@ sign = _np.sign
 negative = _np.negative
 
 clip = _np.clip
+maximum = _np.maximum
+minimum = _np.minimum
 
 median = _np.median
 cumprod = _np.cumprod

@@ -318,6 +318,13 @@ def rint(a, out=None):
     return _maths.rint(a, out)
 
 @_wrap
+def trunc(a, out=None):
+    '''Truncate elements of input to nearest integers'''
+    return _maths.truncate(a, out)
+
+fix = trunc
+
+@_wrap
 def rad2deg(a, out=None):
     '''Convert from radian to degree'''
     return _maths.toDegrees(a, out)

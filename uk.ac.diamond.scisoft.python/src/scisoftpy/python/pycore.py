@@ -197,10 +197,6 @@ argmax = _np.argmax
 
 argmin = _np.argmin
 
-maximum = _np.maximum
-
-minimum = _np.minimum
-
 meshgrid = _np.meshgrid
 
 indices = _np.indices

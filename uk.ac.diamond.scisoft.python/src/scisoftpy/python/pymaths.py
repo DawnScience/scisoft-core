@@ -71,6 +71,8 @@ floor_divide = _np.floor_divide
 
 remainder = _np.remainder
 
+modf = _np.modf
+
 fmod = _np.fmod
 
 mod = _np.mod
@@ -131,6 +133,8 @@ sign = _np.sign
 negative = _np.negative
 
 clip = _np.clip
+maximum = _np.maximum
+minimum = _np.minimum
 
 median = _np.median
 cumprod = _np.cumprod

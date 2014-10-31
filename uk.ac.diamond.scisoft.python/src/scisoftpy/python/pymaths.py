@@ -118,6 +118,8 @@ power = _np.power
 floor = _np.floor
 ceil = _np.ceil
 rint = _np.rint
+trunc = _np.trunc
+fix = _np.fix
 
 rad2deg = _np.rad2deg
 deg2rad = _np.deg2rad

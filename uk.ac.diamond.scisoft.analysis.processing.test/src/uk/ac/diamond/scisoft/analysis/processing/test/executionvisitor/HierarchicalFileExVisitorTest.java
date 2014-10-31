@@ -10,9 +10,11 @@ import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
@@ -20,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
@@ -27,6 +30,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.visitors.HierarchicalFileExecutionVisitor;
 
@@ -506,6 +510,45 @@ public class HierarchicalFileExVisitorTest {
 		lz.setName("mainlazy");
 		
 		return lz;
+	}
+	
+	@Test
+	public void AbstractOperationCounter() {
+	
+		int[] shape = new int[]{1,2,3,4,5,10,10};
+		int[] dd = new int[]{2,3};
+		final IDataset parent = Random.rand(shape);
+		Slice[] init = new Slice[shape.length];
+		PositionIterator pi = new PositionIterator(shape,dd);
+		
+		OriginMetadataImpl om = new OriginMetadataImpl(parent,init,dd,"test","test");
+		
+		int[] pos = pi.getPos();
+
+		int count = 0;
+		while (pi.hasNext()) {
+
+			int[] end = pos.clone();
+			for (int i = 0; i<pos.length;i++) {
+				end[i]++;
+			}
+
+			for (int i = 0; i < dd.length; i++){
+				end[dd[i]] = shape[dd[i]];
+			}
+
+			int[] st = pos.clone();
+			for (int i = 0; i < st.length;i++) st[i] = 1;
+
+			Slice[] slice = Slice.convertToSlice(pos, end, st);
+			
+			om.setCurrentSlice(slice);
+			int currentSliceNumber = AbstractOperation.getCurrentSliceNumber(om);
+			assertTrue(currentSliceNumber == count++);
+			
+		}
+		
+		
 	}
 	
 }

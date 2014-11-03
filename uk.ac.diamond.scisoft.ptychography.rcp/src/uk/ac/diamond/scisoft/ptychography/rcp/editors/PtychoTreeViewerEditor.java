@@ -126,33 +126,47 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		List<PtychoNode> nodes = new ArrayList<PtychoNode>();
 		int i = 0;
 		while (i < input.size()) {
-			switch (input.get(i).getLevel()) {
-			case 1:
-				nodes.add(new PtychoNode(input.get(i), 0));
-				i++;
-				break;
-			case 2:
-				
-				break;
-			case 3:
-				break;
+			if (i < input.size() - 1) {
+				PtychoNode node = new PtychoNode(input.get(i));
+				int level = input.get(i).getLevel();
+				int nextLevel = input.get(i + 1).getLevel();
+				if (level == 3 && nextLevel == 2) {
+					int j = 0;
+					while(nextLevel == 2){
+						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
+						child.setParent(node);
+						node.addChild(child);
+						j++;
+						if (i < input.size() - j)
+							nextLevel = input.get(i + 1 + j).getLevel();
+						else
+							break;
+					}
+				} else if (level == 3 && nextLevel == 3) {
+					// just add the node
+				} else if (level == 2 && nextLevel == 1) {
+					int j = 0;
+					while(nextLevel == 1){
+						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
+						child.setParent(node);
+						node.addChild(child);
+						j++;
+						if (i < input.size() - j)
+							nextLevel = input.get(i + 1 + j).getLevel();
+						else
+							break;
+					}
+				} else if (level == 2 && nextLevel == 2) {
+				} else if (level == 1 && nextLevel == 3) {
+				} else if (level == 1 && nextLevel == 2) {
+				} else if (level == 1 && nextLevel == 1) {
+				}
+				nodes.add(node);
 			}
 			i++;
 		}
 		return nodes;
 	}
-
-	//http://stackoverflow.com/questions/16229732/cant-wrap-my-head-around-populating-an-n-ary-tree
-//	private static void addNodesRecursive(PtychoNode node, List<PtychoNode> addedList) {
-//		for (String stationName : network.getConnections(node)) {
-//			if (!addedList.contains(stationName)) {
-//				PtychoNode child = new PtychoNode(stationName);
-//				node.addChild(child);
-//				addedList.add(child);
-//				addNodesRecursive(child, addedList);
-//			}
-//		}
-//	}
 
 	private IResource getResource(IEditorInput input) {
 		IResource resource = (IResource) input.getAdapter(IFile.class);

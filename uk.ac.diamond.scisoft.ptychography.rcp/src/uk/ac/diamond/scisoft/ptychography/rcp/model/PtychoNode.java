@@ -6,11 +6,10 @@ import java.util.List;
 public class PtychoNode {
 	private PtychoInput data;
 	private PtychoNode parent;
-	private List<PtychoNode> children;
+	private List<PtychoNode> children = new ArrayList<PtychoNode>();
 
-	public PtychoNode(PtychoInput data, int nbChildren) {
+	public PtychoNode(PtychoInput data) {
 		this.setData(data);
-		this.children = new ArrayList<PtychoNode>(nbChildren);
 	}
 
 	public void addChild(PtychoNode child) {

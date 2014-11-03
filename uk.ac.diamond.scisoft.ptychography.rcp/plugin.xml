@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
+            default="false"
+            extensions="csv"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor"
+            name="Ptychography input editor">
+      </editor>
+   </extension>
+
+</plugin>

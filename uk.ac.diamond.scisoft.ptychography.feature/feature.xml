@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="uk.ac.diamond.scisoft.ptychography"
+         id="uk.ac.diamond.scisoft.ptychography.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"

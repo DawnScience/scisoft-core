@@ -25,7 +25,8 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -83,12 +84,12 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void init(ExecutionEvent evt) throws Exception {
+	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series, OriginMetadata origin) throws Exception {
 		file = HierarchicalDataFactory.getWriter(filePath);
 		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 		IPersistentFile pf = service.createPersistentFile(file);
 		pf.setOperations(series);
-		pf.setOperationDataOrigin(evt.getOrigin());
+		pf.setOperationDataOrigin(origin);
 		this.series = series;
 		
 	}
@@ -128,19 +129,19 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void executed(ExecutionEvent evt) throws Exception {
+	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 		//Write data to file
-		final IDataset integrated = evt.getData().getData();
-		updateAxes(integrated, evt.getSlices(), evt.getShape(), evt.getDataDims(), results);
+		final IDataset integrated = result.getData();
+		updateAxes(integrated, slices, shape, dataDims, results);
 		integrated.setName("data");
-		appendData(integrated,results, evt.getSlices(),evt.getShape(), file);
+		appendData(integrated,results, slices,shape, file);
 		if (!firstPassDone)file.setAttribute(results +"/" +integrated.getName(), "signal", String.valueOf(1));
 		firstPassDone = true;
 		
 	}
 
 	@Override
-	public void notify(ExecutionEvent evt) {
+	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
 		//make groups on first pass
 		if (!firstPassDone) {
 			try {
@@ -151,20 +152,20 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		}
 		
 		//if specified to save data, do it
-		if (evt.getIntermediateData().isStoreOutput()) {
+		if (intermeadiateData.isStoreOutput()) {
 			if (intermediate == null) createInterGroup();
 			
 			try {
 				
 				int i = 0;
-				while (i < series.length && series[i] != evt.getIntermediateData()) i++;
+				while (i < series.length && series[i] != intermeadiateData) i++;
 				
-				String group = file.group(String.valueOf(i) + "-" + evt.getIntermediateData().getName(), intermediate);
+				String group = file.group(String.valueOf(i) + "-" + intermeadiateData.getName(), intermediate);
 				file.setNexusAttribute(group, "NXdata");
-				IDataset d = evt.getData().getData();
+				IDataset d = data.getData();
 				d.setName("data");
-				appendData(d,group, evt.getSlices(), evt.getShape(), file);
-				updateAxes(d, evt.getSlices(), evt.getShape(), evt.getDataDims(), group);
+				appendData(d,group, slices,shape, file);
+				updateAxes(d, slices, shape, dataDims, group);
 				
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -172,10 +173,10 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 			
 		}
 	
-		Serializable[] auxData = evt.getData().getAuxData();
+		Serializable[] auxData = data.getAuxData();
 		
 		int pos = 0;
-		while (pos < series.length && series[pos] != evt.getIntermediateData()) pos++;
+		while (pos < series.length && series[pos] != intermeadiateData) pos++;
 		
 
 		//save aux data (should be IDataset, with unit dimensions)
@@ -186,7 +187,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 					try {
 						
 						IDataset ds = (IDataset)auxData[i];
-						String group = file.group(String.valueOf(pos) + "-" + evt.getIntermediateData().getName(), auxiliary);
+						String group = file.group(String.valueOf(pos) + "-" + intermeadiateData.getName(), auxiliary);
 						file.setNexusAttribute(group, "NXCollection");
 						
 						group = file.group(ds.getName(), group);
@@ -194,8 +195,8 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 						
 						ds.setName("data");
 
-						appendData(ds,group, evt.getSlices(),evt.getShape(), file);
-						updateAxes(ds, evt.getSlices(), evt.getShape(), evt.getDataDims(), group);
+						appendData(ds,group, slices,shape, file);
+						updateAxes(ds, slices, shape, dataDims, group);
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}

@@ -12,10 +12,10 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
-import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
@@ -72,9 +72,9 @@ public class IntegrationTest {
 		count = 0;
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
-				final IDataset integrated = evt.getData().getData();
+				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
 					throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 				}
@@ -108,9 +108,9 @@ public class IntegrationTest {
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 
-				final IDataset integrated = evt.getData().getData();
+				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
 					throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 				}
@@ -148,9 +148,9 @@ public class IntegrationTest {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				
 				@Override
-				public void executed(ExecutionEvent evt) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 	
-					final IDataset integrated = evt.getData().getData();
+					final IDataset integrated = result.getData();
 					if (integrated.getSize()!=472) {
 						throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 					}

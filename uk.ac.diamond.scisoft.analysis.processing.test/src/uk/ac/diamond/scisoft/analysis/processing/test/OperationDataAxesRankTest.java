@@ -1,26 +1,29 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
-import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
+import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
@@ -28,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 
 public class OperationDataAxesRankTest {
@@ -64,9 +68,9 @@ public class OperationDataAxesRankTest {
 
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
-				final IDataset integrated = evt.getData().getData();
+				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 3) {
 					throw new Exception("Unexpected data rank");
 				}
@@ -97,9 +101,9 @@ public class OperationDataAxesRankTest {
 
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
-				final IDataset integrated = evt.getData().getData();
+				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 2) {
 					throw new Exception("Unexpected data rank");
 				}
@@ -135,9 +139,9 @@ public class OperationDataAxesRankTest {
 //		
 		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
-				final IDataset integrated = evt.getData().getData();
+				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 3) {
 					throw new Exception("Unexpected data rank");
 				}

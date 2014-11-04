@@ -10,12 +10,13 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.util.Collection;
 
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.api.processing.ExecutionEvent;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
@@ -74,10 +75,10 @@ public class OperationsTest {
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
-				for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-					for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-					    if ( evt.getData().getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -107,10 +108,10 @@ public class OperationsTest {
 		
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
-				for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-					for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-					    if ( evt.getData().getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+evt.getData().getData().getDouble(i,j));
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+result.getData().getDouble(i,j));
 					}
 				}
 			}			
@@ -144,13 +145,13 @@ public class OperationsTest {
 		counter = 0;
 		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(ExecutionEvent evt) throws Exception {
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
-				System.out.println(evt.getData().getData().getName());
+				System.out.println(result.getData().getName());
 				counter++;
-				for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-					for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-					    if ( evt.getData().getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -187,7 +188,7 @@ public class OperationsTest {
 	
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(ExecutionEvent evt) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -199,9 +200,9 @@ public class OperationsTest {
 					}
 	
 					counter++;
-					for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-						for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-						    if ( evt.getData().getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 						}
 					}
 				}			
@@ -239,7 +240,7 @@ public class OperationsTest {
 		try {
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(ExecutionEvent evt) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					
 				    try {
 				    	// This sleep simply introduces some random behaviour
@@ -250,9 +251,9 @@ public class OperationsTest {
 						e.printStackTrace();
 					}
 	
-					for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-						for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-						    if ( evt.getData().getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 						}
 					}
 				}			
@@ -292,7 +293,7 @@ public class OperationsTest {
 			service.setParallelTimeout(Long.MAX_VALUE);
 			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(ExecutionEvent evt) throws Exception {
+				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 	
 					try {
 						// This sleep simply introduces some random behaviour
@@ -303,9 +304,9 @@ public class OperationsTest {
 						e.printStackTrace();
 					}
 					counter++;
-					for (int i = 0; i < evt.getData().getData().getShape()[0]; i++) {
-						for (int j = 0; j < evt.getData().getData().getShape()[1]; j++) {
-						    if ( evt.getData().getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+					for (int i = 0; i < result.getData().getShape()[0]; i++) {
+						for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 						}
 					}
 				}			

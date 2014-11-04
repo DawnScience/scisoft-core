@@ -293,6 +293,16 @@
             name="Subtract Blank Frame"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
+            description="A filter which normalises the data frame by the profile of the selected region of the X axis."
+            icon="icons/region.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalizeModel"
+            name="X Region Profile Normalize"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

@@ -209,7 +209,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		TreeViewerColumn var = new TreeViewerColumn(viewer, SWT.LEFT, 0);
 		var.getColumn().setText("Name"); // Selected
 		var.getColumn().setWidth(260);
-		var.setLabelProvider(new PtychoTreeLabelProvider(0));
+		var.setLabelProvider(new DelegatingProviderWithTooltip(new PtychoTreeLabelProvider(0)));
 		var = new TreeViewerColumn(viewer, SWT.LEFT, 1);
 		var.getColumn().setText("Value"); // Selected
 		var.getColumn().setWidth(100);

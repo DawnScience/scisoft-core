@@ -61,12 +61,15 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 		}
 		
 		smoothedProfile.setShape(smoothedProfile.getShape()[0], 1);
+		smoothedProfile.setName("SmoothedProfile");
 		
 		Dataset result = Maths.divide(input, smoothedProfile);
+		result.setName("NormalizedData");
 		
 		copyMetadata(input, result);
 		
 		OperationData opData = new OperationData(result);
+		opData.setAuxData(smoothedProfile);
 		
 		return opData;
 	}

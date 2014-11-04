@@ -114,7 +114,7 @@ level,name,default,type,unique,lowerlimit,upperlimit,shortdoc,longdoc
 1,smooth_gradient,0,float,,0,,"Smoothing preconditioner. If 0, not used, if > 0 gaussian filter if < 0 Hann window.",
 1,scale_precond,False,bool,,0,,Whether to use the object/probe scaling preconditioner.,Set this value higher for noise data
 1,scale_probe_object,1.,float,,0,,the relative scale of probe and object.,Set this value higher for noise data
-,probe_update_start,0,int,,,,Number of iterations before probe update starts,
+1,probe_update_start,0,int,,,,Number of iterations before probe update starts,
 3,engines,,list,yes,,,empty structure to be filled with engines,42 it is!
 3,simulation,,Param,yes,,,Parameter container for simulation,If any scan's data source is named 'sim' us this Param as Basis for a simulation 
 2,rebin,1,int,,0,,Rebinning,

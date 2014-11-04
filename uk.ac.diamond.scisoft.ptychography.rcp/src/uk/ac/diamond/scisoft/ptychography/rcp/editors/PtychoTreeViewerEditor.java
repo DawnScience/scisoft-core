@@ -67,6 +67,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		}
 
 		setSite(site);
+		setInput(input);
 //		levels = PtychoModel.getInstance((PtychoTreeEditorInput)loadedInput));
 		setPartName("Ptychography parameter Tree Editor");
 	}
@@ -133,33 +134,37 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 				if (level == 3 && nextLevel == 2) {
 					int j = 0;
 					while(nextLevel == 2){
+						int max = input.size() - (j+1);
+						if (i == max)
+							break;
+//						if ((i + 1 +j) > 114)
+//							System.out.println("");
 						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
+						j++;
+						if ((i +1 +j) >= input.size()) {
+							child.setParent(node);
+							node.addChild(child);
+							break;
+						}
+						nextLevel = input.get(i + 1 + j).getLevel();
+						if (nextLevel == 1) {
+							int k = 0;
+							i += j;
+							while (nextLevel == 1) {
+								PtychoNode subchild = new PtychoNode(input.get(i + 1 + k));
+								k++;
+								if (i < input.size() - k)
+									nextLevel = input.get(i + 1 + k).getLevel();
+								subchild.setParent(child);
+								child.addChild(subchild);
+							}
+							i += k;
+							j = 0;
+						}
 						child.setParent(node);
 						node.addChild(child);
-						j++;
-						if (i < input.size() - j)
-							nextLevel = input.get(i + 1 + j).getLevel();
-						else
-							break;
 					}
-				} else if (level == 3 && nextLevel == 3) {
-					// just add the node
-				} else if (level == 2 && nextLevel == 1) {
-					int j = 0;
-					while(nextLevel == 1){
-						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
-						child.setParent(node);
-						node.addChild(child);
-						j++;
-						if (i < input.size() - j)
-							nextLevel = input.get(i + 1 + j).getLevel();
-						else
-							break;
-					}
-				} else if (level == 2 && nextLevel == 2) {
-				} else if (level == 1 && nextLevel == 3) {
-				} else if (level == 1 && nextLevel == 2) {
-				} else if (level == 1 && nextLevel == 1) {
+					i += j;
 				}
 				nodes.add(node);
 			}
@@ -215,7 +220,6 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		viewer.getTree().setLinesVisible(true);
 		viewer.getTree().setHeaderVisible(true);
 		viewer.setInput(tree);
-
 	}
 
 	@Override

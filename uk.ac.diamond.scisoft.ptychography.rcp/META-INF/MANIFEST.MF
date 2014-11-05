@@ -10,7 +10,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,
  org.dawnsci.common.widgets,
  uk.ac.diamond.org.jscience4,
- org.apache.commons.csv
+ org.apache.commons.csv,
+ uk.ac.diamond.scisoft.analysis.rcp,
+ org.eclipse.core.filesystem,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.console,
+ org.dawb.common.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang;version="2.6.0",

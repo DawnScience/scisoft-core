@@ -1,21 +1,11 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
 import org.dawnsci.common.widgets.tree.ClearableFilteredTree;
 import org.dawnsci.common.widgets.tree.DelegatingProviderWithTooltip;
 import org.dawnsci.common.widgets.tree.IResettableExpansion;
 import org.dawnsci.common.widgets.tree.NodeFilter;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -24,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -37,9 +28,12 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoInput;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
+import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class PtychoTreeViewerEditor extends EditorPart implements IResettableExpansion {
 
+	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor";
 	private TreeViewer viewer;
 	private ClearableFilteredTree filteredTree;
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
@@ -62,10 +56,8 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		try {
-//			model = loadSpreadSheet(input);
-			levels = loadSpreadSheet(input);
-		
-			tree = populate(levels);
+			levels = PtychoUtils.loadSpreadSheet(input);
+			tree = PtychoTreeUtils.populate(levels);
 		} catch (Exception e) {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
 			e.printStackTrace();
@@ -73,117 +65,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 
 		setSite(site);
 		setInput(input);
-//		levels = PtychoModel.getInstance((PtychoTreeEditorInput)loadedInput));
 		setPartName("Ptychography parameter Tree Editor");
-	}
-
-	private List<PtychoInput> loadSpreadSheet(IEditorInput input) {
-		IResource rsc = getResource(input);
-		String fullPath = "";
-		if (rsc instanceof File) {
-			File file = (File) rsc;
-			fullPath = file.getAbsolutePath();
-		} else if (rsc instanceof IFile) {
-			IFile iFile = (IFile) rsc;
-			fullPath = iFile.getLocation().toOSString();
-		}
-		CSVParser parser;
-		List<PtychoInput> loaded = new ArrayList<PtychoInput>();
-		try {
-			CSVFormat format = CSVFormat.EXCEL
-					.withHeader("level", "name", "default", "type", "unique", "lowerlimit", "upperlimit", "shortdoc", "longdoc")
-					.withSkipHeaderRecord(true);
-			parser = CSVParser.parse(new File(fullPath), StandardCharsets.UTF_8, format);
-			for (CSVRecord csvRecord : parser) {
-				String level = csvRecord.get("level");
-				String name = csvRecord.get("name");
-				String defaultVal = csvRecord.get("default");
-				String type = csvRecord.get("type");
-				String unique = csvRecord.get("unique");
-				String lowerlimit = csvRecord.get("lowerlimit");
-				String upperlimit = csvRecord.get("upperlimit");
-				String shortdoc = csvRecord.get("shortdoc");
-				String longdoc = csvRecord.get("longdoc");
-				
-				PtychoInput row = new PtychoInput();
-				if (level.length() > 0 && StringUtils.isNumeric(level))
-					row.setLevel(Integer.valueOf(level));
-				row.setName(name);
-				row.setDefaultValue(defaultVal);
-				row.setType(type);
-				row.setUnique(unique.equals("yes") ? true : false);
-				if (lowerlimit.length() > 0 && StringUtils.isNumeric(lowerlimit))
-					row.setLowerLimit(Integer.valueOf(lowerlimit));
-				if (upperlimit.length() > 0 && StringUtils.isNumeric(upperlimit))
-					row.setUpperLimit(Integer.valueOf(upperlimit));
-				row.setShortDoc(shortdoc);
-				row.setLongDoc(longdoc);
-				loaded.add(row);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return loaded;
-	}
-
-	//TODO to be finished
-	private List<PtychoNode> populate(List<PtychoInput> input) {
-		List<PtychoNode> nodes = new ArrayList<PtychoNode>();
-		int i = 0;
-		while (i < input.size()) {
-			if (i < input.size() - 1) {
-				PtychoNode node = new PtychoNode(input.get(i));
-				int level = input.get(i).getLevel();
-				int nextLevel = input.get(i + 1).getLevel();
-				if (level == 3 && nextLevel == 2) {
-					int j = 0;
-					while(nextLevel == 2){
-						int max = input.size() - (j+1);
-						if (i == max)
-							break;
-//						if ((i + 1 +j) > 114)
-//							System.out.println("");
-						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
-						j++;
-						if ((i +1 +j) >= input.size()) {
-							child.setParent(node);
-							node.addChild(child);
-							break;
-						}
-						nextLevel = input.get(i + 1 + j).getLevel();
-						if (nextLevel == 1) {
-							int k = 0;
-							i += j;
-							while (nextLevel == 1) {
-								PtychoNode subchild = new PtychoNode(input.get(i + 1 + k));
-								k++;
-								if (i < input.size() - k)
-									nextLevel = input.get(i + 1 + k).getLevel();
-								subchild.setParent(child);
-								child.addChild(subchild);
-							}
-							i += k;
-							j = 0;
-						}
-						child.setParent(node);
-						node.addChild(child);
-					}
-					i += j;
-				}
-				nodes.add(node);
-			}
-			i++;
-		}
-		return nodes;
-	}
-
-	private IResource getResource(IEditorInput input) {
-		IResource resource = (IResource) input.getAdapter(IFile.class);
-		if (resource == null) {
-			resource = (IResource) input.getAdapter(IResource.class);
-		}
-		return resource;
 	}
 
 	@Override
@@ -258,7 +140,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		subLeftComp.setLayout(new GridLayout(3, false));
 		subLeftComp.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false, 3, 1));
 		gridData = new GridData();
-		gridData.widthHint = 80;
+		gridData.widthHint = 60;
 		Label lowerUpperLabel = new Label(subLeftComp, SWT.NONE);
 		lowerUpperLabel.setText("Lower/Upper limit");
 		Text lowerText = new Text(subLeftComp, SWT.BORDER);
@@ -282,6 +164,11 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		StyledText longDocStyledText = new StyledText(rightComp, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		longDocStyledText.setText("");
 		longDocStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
+
+		Button runButton = new Button(container, SWT.NONE);
+		runButton.setText("RUN");
+		runButton.setToolTipText("Run ptychography process on cluster");
+		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 	}
 
 	@Override

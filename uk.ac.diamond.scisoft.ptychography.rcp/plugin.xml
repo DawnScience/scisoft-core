@@ -12,5 +12,82 @@
             name="Ptychography input editor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="uk.ac.diamond.scisoft.ptychography.rcp.handlers.CallPtychoEditor"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.openPtychoEditor"
+            name="Open PtychoEditor">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspective"
+            icon="icons/ptypy.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.perspective"
+            name="Ptychography">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbe"
+            name="Probe"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObject"
+            name="Object"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewScanPos"
+            name="Relative Scan Positions"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewData"
+            name="Data"
+            restorable="true">
+      </view>
+      <category
+            id="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            name="Ptychography">
+      </category>
+   </extension>
+   <extension
+         point="org.dawnsci.introRegister">
+      <introPageRegister
+            class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspectiveLaunch"
+            description="Opens the Ptychography perspective"
+            icon="icons/ptypy.png"
+            id="uk.ac.diamond.scisoft.intro.PtychographyPerspective"
+            name="Ptychography">
+      </introPageRegister>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.dawnsci.intro.universalConfig"
+            content="intro/introContribution.xml">
+      </configExtension>
+   </extension>
 
 </plugin>

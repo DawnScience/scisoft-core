@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<introContent>
+  	<extensionContent id="ptycho-perspective-extension" style="style.css" name="Ptychography Perspective" path="perspectives/@">
+		<group id="ptycho-perspective-group" style-id="content-group">
+       		<link label="Ptychography" url="http://org.eclipse.ui.intro/runAction?pluginId=org.dawnsci.intro&amp;class=org.dawnsci.intro.actions.OpenPerspectiveAction&amp;name=uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspectiveLaunch" id="scisoft-ptycho" style-id="content-link">
+          		<text>Opens the Ptychography perspective</text>
+       		</link>
+       	</group>
+  	</extensionContent>
+</introContent>

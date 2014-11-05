@@ -25,6 +25,9 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
@@ -181,15 +184,15 @@ public class HDF5LoaderTest {
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
 
-		HDF5File tree = l.loadTree(null);
+		Tree tree = l.loadTree(null);
 		System.out.println(tree.getNodeLink());
-		for (HDF5NodeLink nl : tree.getGroup())
+		for (NodeLink nl : tree.getGroupNode())
 			System.out.println(nl);
 
-		HDF5Group g = tree.getGroup().getGroup("entry1");
+		GroupNode g = tree.getGroupNode().getGroupNode("entry1");
 		assertEquals("Group is wrongly named" , "/entry1/EDXD_Element_00", g.getNodeLink("EDXD_Element_00").getFullName());
-		g = g.getGroup("EDXD_Element_00");
-		assertEquals("Attribute is wrongly named" , "/entry1/EDXD_Element_00/a@axis", g.getDataset("a").getAttribute("axis").getFullName());
+		g = g.getGroupNode("EDXD_Element_00");
+		assertEquals("Attribute is wrongly named" , "/entry1/EDXD_Element_00/a@axis", g.getDataNode("a").getAttribute("axis").getFullName());
 	}
 
 	@Test

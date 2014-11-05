@@ -50,6 +50,9 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -63,6 +66,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
+import org.eclipse.dawnsci.analysis.tree.impl.NodeImpl;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.api.HDF5Attribute;
 import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
@@ -2135,22 +2139,22 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
 	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private static void addToMaps(HDF5NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
-		HDF5Node node = link.getDestination();
+	private static void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
+		Node node = link.getDestination();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();
-			String name = link.getFullName() + HDF5Node.ATTRIBUTE;
+			String name = link.getFullName() + NodeImpl.ATTRIBUTE;
 			while (iter.hasNext()) {
 				String attr = iter.next();
 				aMap.put(name + attr, node.getAttribute(attr).getFirstElement());
 			}
 		}
 
-		if (node instanceof HDF5Group) {
-			for (HDF5NodeLink l : (HDF5Group) node) {
+		if (node instanceof GroupNode) {
+			for (NodeLink l : (GroupNode) node) {
 				addToMaps(l, lMap, aMap);
 
-				if (l.isDestinationADataset()) {
+				if (l.isDestinationData()) {
 					HDF5Dataset d = (HDF5Dataset) l.getDestination();
 					ILazyDataset dataset = d.getDataset();
 					lMap.put(l.getFullName(), dataset);

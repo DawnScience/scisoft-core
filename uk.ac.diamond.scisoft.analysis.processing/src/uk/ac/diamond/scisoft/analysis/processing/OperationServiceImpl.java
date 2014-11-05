@@ -199,28 +199,31 @@ public class OperationServiceImpl implements IOperationService {
 			IOperation<? extends IOperationModel, ? extends OperationData>... series)
 			throws InvalidRankException, OperationException {
 		       
-		if (firstSlice==null) firstSlice = Random.rand(new int[]{1024, 1024});
+//		if (firstSlice==null) firstSlice = Random.rand(new int[]{1024, 1024});
         if (series[0].getInputRank()==OperationRank.SAME) {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }
-        if (series[0].getInputRank().isDiscrete()) {
+        if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
 	        if (AbstractDataset.squeezeShape(firstSlice.getShape(), false).length != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
         }
         
+        
+        OperationRank firstRank = OperationRank.ANY;
+        if (firstSlice != null) firstRank = OperationRank.get(firstSlice.getRank());
+        
         if (series.length > 1) {
-        	
         	
         	OperationRank output = series[0].getOutputRank();
         	if (series[0].isPassUnmodifiedData()) output = series[0].getInputRank();        	
-        	if (output == OperationRank.SAME) output = OperationRank.get(firstSlice.getRank());
-        	if (output == OperationRank.ANY)  output = OperationRank.get(firstSlice.getRank());
+        	if (output == OperationRank.SAME) output = firstRank;
+        	if (output == OperationRank.ANY)  output = firstRank;
         	
 	        for (int i = 1; i < series.length; i++) {
 	        	OperationRank input = series[i].getInputRank();
-	        	if (input == OperationRank.ANY)  input = OperationRank.get(firstSlice.getRank());
+	        	if (input == OperationRank.ANY)  input = firstRank;
 	        	if (!input.isCompatibleWith(output)) {
 	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getName()+"' is not compatible with the input of '"+series[i].getName()+"'.");
 	        	}

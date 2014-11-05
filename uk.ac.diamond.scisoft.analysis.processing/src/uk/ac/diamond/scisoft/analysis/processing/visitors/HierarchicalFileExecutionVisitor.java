@@ -165,6 +165,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 				IDataset d = data.getData();
 				d.setName("data");
 				appendData(d,group, slices,shape, file);
+				if (!firstPassDone)file.setAttribute(group +"/" +d.getName(), "signal", String.valueOf(1));
 				updateAxes(d, slices, shape, dataDims, group);
 				
 			} catch (Exception e) {
@@ -194,8 +195,8 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 						file.setNexusAttribute(group, "NXdata");
 						
 						ds.setName("data");
-
 						appendData(ds,group, slices,shape, file);
+						if (!firstPassDone)file.setAttribute(group +"/" +ds.getName(), "signal", String.valueOf(1));
 						updateAxes(ds, slices, shape, dataDims, group);
 					} catch (Exception e) {
 						logger.error(e.getMessage());

@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
  * Copy of Histogram class as base for nonpixelsplitting integration
@@ -76,6 +77,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		}
 		
 		Dataset d = DatasetUtils.convertToDataset(dataset);
+		Dataset e = d.getErrorBuffer();
 		Dataset a = radialArray != null ? radialArray[0] : null;
 		Dataset r = azimuthalArray != null ? azimuthalArray[0] : null;
 		double[] integrationRange = azimuthalRange;
@@ -100,6 +102,13 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		final double span = (hi - lo)/nbins;
 		IntegerDataset histo = new IntegerDataset(nbins);
 		DoubleDataset intensity = new DoubleDataset(nbins);
+		DoubleDataset error = null;
+		double[] eb = null;
+		if (e != null) {
+			error = new DoubleDataset(nbins);
+			eb = error.getData();
+		}
+		
 		final int[] h = histo.getData();
 		final double[] in = intensity.getData();
 		if (span <= 0 || a == null) {
@@ -111,7 +120,7 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 
 		//iterate over dataset, binning values per pixel
 		IndexIterator iter = a.getIterator();
-		
+
 		while (iter.hasNext()) {
 			final double val = a.getElementDoubleAbs(iter.index);
 			final double sig = d.getElementDoubleAbs(iter.index);
@@ -127,14 +136,18 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 				continue;
 			}
 
-			if(((int) ((val-lo)/span))<h.length){
-				h[(int) ((val-lo)/span)]++;
-				in[(int) ((val-lo)/span)] += sig;
+			int p = (int) ((val-lo)/span);
+			
+			if(p < h.length){
+				h[p]++;
+				in[p] += sig;
+				if (e!=null) eb[p] += e.getElementDoubleAbs(iter.index);
 			}
 		}
 		
+		if (eb != null) intensity.setErrorBuffer(eb);
+		
 		processAndAddToResult(intensity, histo, result, binRange, dataset.getName());
-
 		
 		return result;
 	}

@@ -40,27 +40,33 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 	protected void processAndAddToResult(Dataset intensity, Dataset histo, List<Dataset> result,
 			 double[] binRange, String name) {
 		
+		Dataset error = intensity.getError();
+		if (error != null) error.idivide(histo);
+		
 		if (isAzimuthalIntegration) {
 			super.processAndAddToResult(intensity, histo, result, binRange, name);
-			return;
-		} 
-		
-		Dataset axis = null;
-		
-		if (binRange == null) {
-			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
-			axis.idivide(2);
+			
 		} else {
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
+			Dataset axis = null;
+			
+			if (binRange == null) {
+				axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
+				axis.idivide(2);
+			} else {
+				axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
+			}
+			
+			axis.setName("azimuthal angle (degrees)");
+			
+			intensity.idivide(histo);
+			DatasetUtils.makeFinite(intensity);
+			
+			intensity.setName(name + "_integrated");
+			result.add(axis);
+			result.add(intensity);
 		}
 		
-		axis.setName("azimuthal angle (degrees)");
+		result.get(1).setError(error);
 		
-		intensity.idivide(histo);
-		DatasetUtils.makeFinite(intensity);
-		
-		intensity.setName(name + "_integrated");
-		result.add(axis);
-		result.add(intensity);
 	}
 }

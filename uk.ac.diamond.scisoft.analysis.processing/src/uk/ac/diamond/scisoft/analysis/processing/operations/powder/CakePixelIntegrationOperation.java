@@ -38,12 +38,12 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 	protected void setAxes(IDataset data, List<Dataset> out) {
 		
 		AxesMetadataImpl amd = new AxesMetadataImpl(2);
-		Dataset first = out.get(0);
+		Dataset first = out.get(1);
 		first.setShape(new int[]{first.getShape()[0], 1});
-		Dataset second = out.get(1);
+		Dataset second = out.get(0);
 		second.setShape(new int[]{1, second.getShape()[0]});
-		amd.setAxis(0, new ILazyDataset[] {out.get(0)});
-		amd.setAxis(1, new ILazyDataset[] {out.get(1)});
+		amd.setAxis(0, new ILazyDataset[] {out.get(1)});
+		amd.setAxis(1, new ILazyDataset[] {out.get(0)});
 		data.setMetadata(amd);
 		return;
 
@@ -55,10 +55,18 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 		
 		AbstractPixelIntegration integ = null;
 		
+		int[] shape = new int[]{md.getDetector2DProperties().getPy(), md.getDetector2DProperties().getPx()};
+		int nBins = AbstractPixelIntegration.calculateNumberOfBins(md.getDetector2DProperties().getBeamCentreCoords(), shape);
+		int nBins2 = nBins;
+		
+		if (model.getNumberOfBins() != null) nBins = model.getNumberOfBins();
+		if (((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis() != null) nBins2 = ((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis() ;
+		
 		if (model.isPixelSplitting()) {
-			integ = new PixelSplittingIntegration2D(md, model.getNumberOfBins(),((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis());
+			
+			integ = new PixelSplittingIntegration2D(md, nBins, nBins2);
 		} else {
-			integ = new NonPixelSplittingIntegration2D(md, model.getNumberOfBins(),((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis());
+			integ = new NonPixelSplittingIntegration2D(md, nBins, nBins2);
 		}
 		
 		integ.setAxisType(((CakePixelIntegrationModel)model).getAxisType());

@@ -298,6 +298,100 @@ public class HierarchicalFileExVisitorTest {
 	}
 	
 	@Test
+	public void Process3DStackAs1DTo1DAux2D() throws Exception {
+		
+		int[] inputShape = new int[] {10,30,1100};
+		int[] auxShape = new int[]{2,3};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
+		
+		
+		RichDataset rich = new RichDataset(lazy, null);
+		rich.setSlicing("all","all");
+		
+		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
+		op11.setModel(new Junk1DModel());
+		op11.setAuxShape(auxShape);
+		
+		try {
+
+			final File tmp = File.createTempFile("Test", ".h5");
+			tmp.deleteOnExit();
+			tmp.createNewFile();
+			
+			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			
+			
+			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+			assertTrue(dh.contains("/entry/result/data"));
+			assertTrue(dh.contains("/entry/result/Axis_0"));
+			assertTrue(dh.contains("/entry/result/Axis_1"));
+			assertTrue(dh.contains("/entry/result/Junk1Dax"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+			
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0],auxShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	@Test
+	public void Process3DStackAs1DTo1DAux1D() throws Exception {
+		
+		int[] inputShape = new int[] {10,30,1100};
+		int[] auxShape = new int[]{3};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
+		
+		
+		RichDataset rich = new RichDataset(lazy, null);
+		rich.setSlicing("all","all");
+		
+		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
+		op11.setModel(new Junk1DModel());
+		op11.setAuxShape(auxShape);
+		
+		try {
+
+			final File tmp = File.createTempFile("Test", ".h5");
+			tmp.deleteOnExit();
+			tmp.createNewFile();
+			
+			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			
+			
+			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+			assertTrue(dh.contains("/entry/result/data"));
+			assertTrue(dh.contains("/entry/result/Axis_0"));
+			assertTrue(dh.contains("/entry/result/Axis_1"));
+			assertTrue(dh.contains("/entry/result/Junk1Dax"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
+			assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+			
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	@Test
 	public void Process3DStackAs2DTo1DAux() throws Exception {
 		
 		int[] inputShape = new int[] {10,30,1100};

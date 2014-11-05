@@ -56,7 +56,7 @@ public class ApachePolynomial {
 		int xs =  x.getSize();
 		Dataset result = DatasetFactory.zeros(y);
 		double[] guess = new double[polyOrder+1];
-		Arrays.fill(guess, 1);
+//		Arrays.fill(guess, 0);
 
 		for (int idx = 0; idx < xs; idx++) {
 			fitter.clearObservations();

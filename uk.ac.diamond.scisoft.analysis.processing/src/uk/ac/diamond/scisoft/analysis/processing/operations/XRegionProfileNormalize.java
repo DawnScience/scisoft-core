@@ -37,25 +37,15 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 		// Get the Region to work with
-		int xStart;
-		int xEnd;
-		int smoothing;
-		try {
-			xStart = (int)model.get("xStart");
-			xEnd = (int)model.get("xEnd");
-			smoothing = (int)model.get("smoothing");
-		} catch (Exception e) {
-			throw new OperationException(this, e);
-		}
 		
-		Dataset region = DatasetUtils.convertToDataset(input.getSlice(new Slice[] {null, new Slice(xStart, xEnd, 1)}));
+		Dataset region = DatasetUtils.convertToDataset(input.getSlice(new Slice[] {null, new Slice(model.getxStart(), model.getxEnd(), 1)}));
 		Dataset regionProfile = region.sum(1);
 		
 		Dataset smoothedProfile = regionProfile;
 		
 		try {
 			Dataset xAxis = DoubleDataset.createRange(regionProfile.getShape()[0]);
-			smoothedProfile = ApachePolynomial.getPolynomialSmoothed(xAxis, regionProfile, smoothing, 3);
+			smoothedProfile = ApachePolynomial.getPolynomialSmoothed(xAxis, regionProfile, model.getSmoothing(), 3);
 		} catch (Exception e) {
 			throw new OperationException(this, e);
 		}

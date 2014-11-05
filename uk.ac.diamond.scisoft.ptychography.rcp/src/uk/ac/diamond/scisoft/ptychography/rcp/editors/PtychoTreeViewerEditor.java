@@ -21,8 +21,13 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -195,8 +200,12 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 
 	@Override
 	public void createPartControl(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout(1, false));
+		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		this.filteredTree = new ClearableFilteredTree(
-				parent,
+				container,
 				SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
 				new NodeFilter(this),
 				true,
@@ -220,6 +229,59 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		viewer.getTree().setLinesVisible(true);
 		viewer.getTree().setHeaderVisible(true);
 		viewer.setInput(tree);
+
+		Composite editorComposite = new Composite(container, SWT.NONE);
+		editorComposite.setLayout(new GridLayout(2, false));
+		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		Composite leftComp = new Composite(editorComposite, SWT.NONE);
+		leftComp.setLayout(new GridLayout(3, false));
+
+		GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false, 2, 1);
+		Label nameLabel = new Label(leftComp, SWT.NONE);
+		nameLabel.setText("Name");
+		Text nameText = new Text(leftComp, SWT.BORDER);
+		nameText.setText("");
+		nameText.setLayoutData(gridData);
+		Label valueLabel = new Label(leftComp, SWT.NONE);
+		valueLabel.setText("Value");
+		Text valueText = new Text(leftComp, SWT.BORDER);
+		valueText.setText("");
+		valueText.setLayoutData(gridData);
+		valueText.setLayoutData(gridData);
+		Label typeLabel = new Label(leftComp, SWT.NONE);
+		typeLabel.setText("Type");
+		Combo typeCombo = new Combo(leftComp, SWT.BORDER);
+		typeCombo.setItems(new String[] {"Param", "str", "int", "float", "bool", "list", "tuple"});
+		typeCombo.setLayoutData(gridData);
+
+		Composite subLeftComp = new Composite(leftComp, SWT.NONE);
+		subLeftComp.setLayout(new GridLayout(3, false));
+		subLeftComp.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false, 3, 1));
+		gridData = new GridData();
+		gridData.widthHint = 80;
+		Label lowerUpperLabel = new Label(subLeftComp, SWT.NONE);
+		lowerUpperLabel.setText("Lower/Upper limit");
+		Text lowerText = new Text(subLeftComp, SWT.BORDER);
+		lowerText.setText("");
+		lowerText.setLayoutData(gridData);
+		Text upperText = new Text(subLeftComp, SWT.BORDER);
+		upperText.setText("");
+		upperText.setLayoutData(gridData);
+
+		Composite rightComp = new Composite(editorComposite, SWT.NONE);
+		rightComp.setLayout(new GridLayout(2, false));
+		rightComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
+		Label shortDocLabel = new Label(rightComp, SWT.NONE);
+		shortDocLabel.setText("Shortdoc");
+		Text shortDocText = new Text(rightComp, SWT.BORDER);
+		shortDocText.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
+		
+		Label longDocLabel = new Label(rightComp, SWT.NONE);
+		longDocLabel.setText("Longdoc");
+		StyledText longDocStyledText = new StyledText(rightComp, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		longDocStyledText.setText("");
+		longDocStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
 	}
 
 	@Override

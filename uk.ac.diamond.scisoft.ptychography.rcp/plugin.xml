@@ -8,6 +8,7 @@
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
             default="false"
             extensions="csv"
+            icon="icons/ptypy.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor"
             name="Ptychography input editor">
       </editor>

@@ -3,6 +3,12 @@
 	<name>uk.ac.diamond.scisoft.analysis.test</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.dawnsci.analysis.api</project>
+		<project>org.eclipse.dawnsci.analysis.dataset</project>
+		<project>org.eclipse.dawnsci.analysis.tree</project>
+		<project>org.eclipse.dawnsci.hdf5</project>
+		<project>tp</project>
+		<project>uk.ac.diamond.scisoft.analysis</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

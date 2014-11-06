@@ -3,9 +3,12 @@
 	<name>uk.ac.diamond.scisoft.analysis.xmlrpc</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.dawnsci.analysis.api</project>
+		<project>org.eclipse.dawnsci.analysis.dataset</project>
+		<project>org.eclipse.dawnsci.analysis.tree</project>
+		<project>org.eclipse.dawnsci.hdf5</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
-		<project>org.eclipse.dawnsci.analysis.api</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

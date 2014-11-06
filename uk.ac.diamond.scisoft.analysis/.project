@@ -4,10 +4,12 @@
 	<comment></comment>
 	<projects>
 		<project>ncsa.hdf</project>
-		<project>tp</project>
-		<project>uk.ac.diamond.CBFlib</project>
 		<project>org.eclipse.dawnsci.analysis.api</project>
 		<project>org.eclipse.dawnsci.analysis.dataset</project>
+		<project>org.eclipse.dawnsci.analysis.tree</project>
+		<project>org.eclipse.dawnsci.hdf5</project>
+		<project>tp</project>
+		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.gda.common</project>
 	</projects>
 	<buildSpec>

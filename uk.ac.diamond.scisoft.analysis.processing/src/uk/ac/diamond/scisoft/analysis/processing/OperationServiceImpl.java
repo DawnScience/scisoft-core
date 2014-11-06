@@ -411,6 +411,12 @@ public class OperationServiceImpl implements IOperationService {
 			AbstractOperation<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperation<? extends IOperationModel, ? extends OperationData>)op;
 			aop.setName(operations.get(operationId).getName());
 			aop.setDescription(operations.get(operationId).getDescription());
+			try {
+				Class modelType = aop.getModelClass();
+				((IOperation)aop).setModel((IOperationModel)modelType.newInstance());
+			} catch (Exception e) {
+				logger.debug("Could not add model",e);
+			}
 		}
 		return op;
 	}

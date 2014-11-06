@@ -38,7 +38,9 @@ public class CallPtychoEditor extends AbstractHandler implements IHandler {
 		try {
 			File bundle = BundleUtils.getBundleLocation("uk.ac.diamond.scisoft.ptychography.rcp");
 			String fullPath = bundle.getAbsolutePath();
-			URI uri = new URI(fullPath + PtychoConstants.SPREADSHEET_FILE);
+			URI uri = new URI(fullPath + File.separator
+					+ PtychoConstants.RESOURCES + File.separator
+					+ PtychoConstants.SPREADSHEET_FILE);
 			fileLocation = EFS.getLocalFileSystem().getStore(uri);
 			FileStoreEditorInput fileStoreEditorInput = new FileStoreEditorInput(fileLocation);
 			page.openEditor((IEditorInput) fileStoreEditorInput,

@@ -39,7 +39,7 @@ public class Expression2DOperation extends Expression1DOperation<Expression2DMod
 		
 		IDataset outdata = evaluateData(input, model.getDataExpression(),2);
 		IDataset outaxisx = evaluateData(axes[0], model.getAxisExpressionX(), 1);
-		IDataset outaxisy = evaluateData(axes[1], model.getAxisExpressionY(), 1);
+		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), 1);
 		
 		outdata.setName("custom_expression");
 		outaxisx.setName("custom_x_axis");

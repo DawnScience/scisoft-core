@@ -50,9 +50,13 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -66,15 +70,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
-import org.eclipse.dawnsci.analysis.tree.impl.NodeImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
-import org.eclipse.dawnsci.hdf5.api.HDF5Attribute;
-import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
-import org.eclipse.dawnsci.hdf5.api.HDF5Group;
-import org.eclipse.dawnsci.hdf5.api.HDF5Node;
-import org.eclipse.dawnsci.hdf5.api.HDF5NodeLink;
-import org.eclipse.dawnsci.hdf5.api.HDF5SymLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +151,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		HDF5File tree = loadTree(mon);
+		Tree tree = loadTree(mon);
 		DataHolder dh = createDataHolder(tree, loadMetadata);
 		if (loadMetadata) {
 			metadata = (Metadata) dh.getMetadata();
@@ -163,11 +160,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return dh;
 	}
 
-	public HDF5File loadTree() throws ScanFileHolderException {
+	public TreeFile loadTree() throws ScanFileHolderException {
 		return loadTree(null);
 	}
 
-	HDF5File tFile = null;
+	TreeFile tFile = null;
 
 	private LoadFileThread loaderThread = null;
 
@@ -233,7 +230,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return a HDF5File tree
 	 * @throws ScanFileHolderException
 	 */
-	public HDF5File loadTree(final IMonitor mon) throws ScanFileHolderException {
+	public TreeFile loadTree(final IMonitor mon) throws ScanFileHolderException {
 		if (!monitorIncrement(mon)) {
 			return null;
 		}
@@ -301,16 +298,16 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return a HDF5 tree
 	 * @throws Exception
 	 */
-	private HDF5File createTree(final int fid, final boolean keepBitWidth) throws Exception {
+	private TreeFile createTree(final int fid, final boolean keepBitWidth) throws Exception {
 		final long oid = fileName.hashCode(); // include file name in ID
-		HDF5File f = new HDF5File(oid, fileName);
+		TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 		f.setHostname(host);
 
-		HDF5Group g = (HDF5Group) createGroup(fid, f, -1, new HashMap<Long, HDF5Node>(), null, HDF5File.ROOT, keepBitWidth);
+		GroupNode g = (GroupNode) createGroup(fid, f, -1, new HashMap<Long, Node>(), null, Tree.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
-		f.setGroup(g);
+		f.setGroupNode(g);
 		return f;
 	}
 
@@ -322,30 +319,30 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return a HDF5 tree
 	 * @throws Exception
 	 */
-	private HDF5File createTreeBF(final IMonitor mon, final int fid, final boolean keepBitWidth) throws Exception {
+	private TreeFile createTreeBF(final IMonitor mon, final int fid, final boolean keepBitWidth) throws Exception {
 		final long oid = fileName.hashCode(); // include file name in ID
-		HDF5File f = new HDF5File(oid, fileName);
+		TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 		f.setHostname(host);
 
-		HashMap<Long, HDF5Node> pool = new HashMap<Long, HDF5Node>();
+		HashMap<Long, Node> pool = new HashMap<Long, Node>();
 		Queue<String> iqueue = new LinkedList<String>();
-		HDF5Group g = (HDF5Group) createGroup(fid, f, -1, pool, iqueue, HDF5File.ROOT, keepBitWidth);
+		GroupNode g = (GroupNode) createGroup(fid, f, -1, pool, iqueue, Tree.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
-		f.setGroup(g);
+		f.setGroupNode(g);
 
 		Queue<String> oqueue = new LinkedList<String>();
 		while (iqueue.size() > 0) { // read in first level
 			String nn = iqueue.remove();
-			HDF5Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
+			Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
 			if (n == null) {
 				logger.error("Could not find group {}", nn);
 				continue;
 			}
-			HDF5NodeLink ol = f.findNodeLink(HDF5File.ROOT);
-			HDF5Group og = (HDF5Group) ol.getDestination();
-			og.addNode(f, HDF5File.ROOT, nn.substring(1, nn.length() - 1), n);
+			NodeLink ol = f.findNodeLink(Tree.ROOT);
+			GroupNode og = (GroupNode) ol.getDestination();
+			og.addNode(f, Tree.ROOT, nn.substring(1, nn.length() - 1), n);
 		}
 
 		tFile = f;
@@ -362,14 +359,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			while (iqueue.size() > 0) {
 				updateSyncNodes(pool.size());
 				String nn = iqueue.remove();
-				HDF5Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
+				Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
 				if (n == null) {
 					logger.error("Could not find group {}", nn);
 					continue;
 				}
-				int i = nn.lastIndexOf(HDF5Node.SEPARATOR, nn.length() - 2);
-				HDF5NodeLink ol = f.findNodeLink(nn.substring(0, i));
-				HDF5Group og = (HDF5Group) ol.getDestination();
+				int i = nn.lastIndexOf(Node.SEPARATOR, nn.length() - 2);
+				NodeLink ol = f.findNodeLink(nn.substring(0, i));
+				GroupNode og = (GroupNode) ol.getDestination();
 				og.addNode(f, nn.substring(0, i+1), nn.substring(i + 1, nn.length() - 1), n);
 			}
 			if (!monitorIncrement(mon)) {
@@ -396,7 +393,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createNode(final int fid, final HDF5File f, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private static Node createNode(final int fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		try {
 			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
@@ -427,9 +424,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createGroup(final int fid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private static Node createGroup(final int fid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		int gid = -1;
-		HDF5Group group = null;
+		GroupNode group = null;
 
 		try {
 			int nelems = 0;
@@ -450,15 +447,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					throw new ScanFileHolderException("Could not find group reference", ex);
 				}
 				if (oid >= 0 && pool != null && pool.containsKey(oid)) {
-					HDF5Node p = pool.get(oid);
-					if (!(p instanceof HDF5Group)) {
+					Node p = pool.get(oid);
+					if (!(p instanceof GroupNode)) {
 						throw new IllegalStateException("Matching pooled node is not a group");
 					}
 					return p;
 				}
 			}
 
-			group = new HDF5Group(oid);
+			group = TreeFactory.createGroupNode(oid);
 			if (pool != null)
 				pool.put(oid, group);
 			if (copyAttributes(f, name, group, gid)) {
@@ -508,8 +505,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
 						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
-							HDF5Node p = pool.get(oid);
-							if (!(p instanceof HDF5Group)) {
+							Node p = pool.get(oid);
+							if (!(p instanceof GroupNode)) {
 								throw new IllegalStateException("Matching pooled node is not a group");
 							}
 							group.addNode(f, name, oname, p);
@@ -517,13 +514,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						}
 
 						// System.err.println("G: " + oname);
-						String newname = name + HDF5Node.SEPARATOR + oname + HDF5Node.SEPARATOR;
-						newname = newname.replaceAll("([" + HDF5Node.SEPARATOR + "])\\1+",
-								HDF5Node.SEPARATOR);
+						String newname = name + Node.SEPARATOR + oname + Node.SEPARATOR;
+						newname = newname.replaceAll("([" + Node.SEPARATOR + "])\\1+",
+								Node.SEPARATOR);
 						if (queue != null) {
 							queue.add(newname);
 						} else {
-							HDF5Node g = createGroup(fid, f, oid, pool, queue, newname, keepBitWidth);
+							Node g = createGroup(fid, f, oid, pool, queue, newname, keepBitWidth);
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
@@ -532,8 +529,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
 						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
-							HDF5Node p = pool.get(oid);
-							if (!(p instanceof HDF5Dataset)) {
+							Node p = pool.get(oid);
+							if (!(p instanceof DataNode)) {
 								throw new IllegalStateException("Matching pooled node is not a dataset");
 							}
 							group.addNode(f, name, oname, p);
@@ -541,10 +538,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						}
 
 						// System.err.println("D: " + oname);
-						String newname = name + HDF5Node.SEPARATOR + oname;
-						newname = newname.replaceAll("([" + HDF5Node.SEPARATOR + "])\\1+",
-								HDF5Node.SEPARATOR);
-						HDF5Node n = createDataset(fid, f, oid, pool, newname, keepBitWidth);
+						String newname = name + Node.SEPARATOR + oname;
+						newname = newname.replaceAll("([" + Node.SEPARATOR + "])\\1+",
+								Node.SEPARATOR);
+						Node n = createDataset(fid, f, oid, pool, newname, keepBitWidth);
 
 						if (n != null)
 							group.addNode(f, name, oname, n);
@@ -560,7 +557,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 						continue;
 					}
 					// System.err.println("  -> " + linkName[0]);
-					HDF5SymLink slink = new HDF5SymLink(oid, f, linkName[0]);
+					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, linkName[0]);
 					group.addNode(f, name, oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
@@ -614,7 +611,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static HDF5Node createDataset(final int lid, final HDF5File f, long oid, final HashMap<Long, HDF5Node> pool, final String path, final boolean keepBitWidth) throws Exception {
+	private static Node createDataset(final int lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
 		byte[] idbuf = null;
 		if (oid == -1) {
 			try {
@@ -624,8 +621,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				throw new ScanFileHolderException("Could not find object reference", ex);
 			}
 			if (oid >= 0 && pool != null && pool.containsKey(oid)) {
-				HDF5Node p = pool.get(oid);
-				if (!(p instanceof HDF5Dataset)) {
+				Node p = pool.get(oid);
+				if (!(p instanceof DataNode)) {
 					throw new IllegalStateException("Matching pooled node is not a dataset");
 				}
 				return p;
@@ -640,12 +637,12 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			tid = H5.H5Dget_type(did);
 
 			// create a new dataset
-			HDF5Dataset d = new HDF5Dataset(oid);
+			DataNode d = TreeFactory.createDataNode(oid);
 			if (copyAttributes(f, path, d, did)) {
 				final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(f, pool, link, keepBitWidth);
 			}
-			int i = path.lastIndexOf(HDF5Node.SEPARATOR);
+			int i = path.lastIndexOf(Node.SEPARATOR);
 			final String sname = i >= 0 ? path.substring(i + 1) : path;
 			if (!createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
 					d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
@@ -678,17 +675,17 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	private static final String NAPISCHEME = "nxfile";
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final HDF5File f, final HDF5Node nn, final HObject oo) {
+	private static boolean copyAttributes(final TreeFile f, final Node nn, final HObject oo) {
 		boolean hasNAPIMount = false;
 
 		try {
 			if (oo.hasAttribute()) {
 				@SuppressWarnings("unchecked")
 				final List<Attribute> attributes = oo.getMetadata();
-				final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? HDF5File.ROOT : oo
+				final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? Tree.ROOT : oo
 						.getFullName();
 				for (Attribute a : attributes) {
-					HDF5Attribute h = new HDF5Attribute(f, fname, a.getName(), a.getValue(), a.isUnsigned());
+					org.eclipse.dawnsci.analysis.api.tree.Attribute h = TreeFactory.createAttribute(f, fname, a.getName(), a.getValue(), a.isUnsigned());
 					h.setTypeName(getTypeName(a.getType()));
 					nn.addAttribute(h);
 					if (a.getName().equals(NAPIMOUNT)) {
@@ -703,13 +700,13 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final HDF5File f, final String name, final HDF5Node nn, final int id) {
+	private static boolean copyAttributes(final TreeFile f, final String name, final Node nn, final int id) {
 		boolean hasNAPIMount = false;
 
 		try {
 			final List<Attribute> attributes = H5File.getAttribute(id);
 			for (Attribute a : attributes) {
-				HDF5Attribute h = new HDF5Attribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
+				org.eclipse.dawnsci.analysis.api.tree.Attribute h = TreeFactory.createAttribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
@@ -723,11 +720,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	// get external node
-	private static HDF5Node getExternalNode(final HashMap<Long, HDF5Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
-		HDF5Node nn = null;
+	private static Node getExternalNode(final HashMap<Long, Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
+		Node nn = null;
 
-		if (!node.startsWith(HDF5File.ROOT)) {
-			node = HDF5File.ROOT + node;
+		if (!node.startsWith(Tree.ROOT)) {
+			node = Tree.ROOT + node;
 		}
 
 		final String cPath;
@@ -744,7 +741,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			fid = H5.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
 
 			final long oid = path.hashCode(); // include file name in ID
-			HDF5File f = new HDF5File(oid, path);
+			TreeFile f = TreeFactory.createTreeFile(oid, path);
 			f.setHostname(host);
 
 			nn = createNode(fid, f, pool, null, node, keepBitWidth);
@@ -762,9 +759,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	// retrieve external file link
-	private static HDF5Node copyNAPIMountNode(final HDF5File file, final HashMap<Long, HDF5Node> pool, final String link, final boolean keepBitWidth) throws Exception {
+	private static Node copyNAPIMountNode(final TreeFile file, final HashMap<Long, Node> pool, final String link, final boolean keepBitWidth) throws Exception {
 		final URI ulink = new URI(link);
-		HDF5Node nn = null;
+		Node nn = null;
 		if (ulink.getScheme().equals(NAPISCHEME)) {
 			String lpath = ulink.getPath();
 			String ltarget = ulink.getFragment();
@@ -795,10 +792,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param pool - may be null
 	 * @param oo
 	 * @param keepBitWidth
-	 * @return HDF5Node, child to be added.
+	 * @return Node, child to be added.
 	 * @throws Exception
 	 */
-	public static HDF5Node copyNode(final HDF5File file, final HashMap<Long, HDF5Node> pool, final HObject oo, final boolean keepBitWidth) throws Exception {
+	public static Node copyNode(final TreeFile file, final HashMap<Long, Node> pool, final HObject oo, final boolean keepBitWidth) throws Exception {
 		if (oo instanceof H5Link) {
 			// a link which cannot be resolved remains a link
 			H5Link ol = (H5Link) oo;
@@ -815,14 +812,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		if (oo instanceof ncsa.hdf.object.Dataset) {
 			if (pool != null && pool.containsKey(oid)) {
-				HDF5Node p = pool.get(oid);
-				if (!(p instanceof HDF5Dataset)) {
+				Node p = pool.get(oid);
+				if (!(p instanceof DataNode)) {
 					throw new IllegalStateException("Matching pooled node is not a dataset");
 				}
 				return p;
 			}
 
-			HDF5Dataset nd = new HDF5Dataset(oid);
+			DataNode nd = TreeFactory.createDataNode(oid);
 			if (copyAttributes(file, nd, oo)) {
 				final String link = nd.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
@@ -876,14 +873,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			return nd;
 		} else if (oo instanceof H5Group) {
 			if (pool != null && pool.containsKey(oid)) {
-				HDF5Node p = pool.get(oid);
-				if (!(p instanceof HDF5Group)) {
+				Node p = pool.get(oid);
+				if (!(p instanceof GroupNode)) {
 					throw new IllegalStateException("Matching pooled node is not a group");
 				}
 				return p;
 			}
 			H5Group og = (H5Group) oo;
-			HDF5Group ng = new HDF5Group(oid);
+			GroupNode ng = TreeFactory.createGroupNode(oid);
 			if (copyAttributes(file, ng, og)) {
 				final String link = ng.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(file, pool, link, keepBitWidth);
@@ -1371,7 +1368,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @return true if created
 	 * @throws Exception
 	 */
-	private static boolean createLazyDataset(final HDF5File file, final HDF5Dataset dataset,
+	private static boolean createLazyDataset(final TreeFile file, final DataNode dataset,
 			final String nodePath, final String name, final int did, final int tid,
 			final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
 		int sid = -1, pid = -1;
@@ -2083,7 +2080,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param tree
 	 * @param withMetadata
 	 */
-	public static DataHolder createDataHolder(HDF5File tree, boolean withMetadata) {
+	public static DataHolder createDataHolder(Tree tree, boolean withMetadata) {
 		DataHolder dh = new DataHolder();
 		if (tree == null)
 			return dh;
@@ -2095,7 +2092,8 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		if (withMetadata) {
 			Metadata metadata = new Metadata(aMap);
-			metadata.setFilePath(tree.getFilename());
+			if (tree instanceof TreeFile)
+				metadata.setFilePath(((TreeFile) tree).getFilename());
 			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {
 				String n = e.getKey();
 				ILazyDataset l = e.getValue();
@@ -2143,7 +2141,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		Node node = link.getDestination();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();
-			String name = link.getFullName() + NodeImpl.ATTRIBUTE;
+			String name = link.getFullName() + Node.ATTRIBUTE;
 			while (iter.hasNext()) {
 				String attr = iter.next();
 				aMap.put(name + attr, node.getAttribute(attr).getFirstElement());
@@ -2155,7 +2153,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				addToMaps(l, lMap, aMap);
 
 				if (l.isDestinationData()) {
-					HDF5Dataset d = (HDF5Dataset) l.getDestination();
+					DataNode d = (DataNode) l.getDestination();
 					ILazyDataset dataset = d.getDataset();
 					lMap.put(l.getFullName(), dataset);
 					if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
@@ -2198,10 +2196,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			final long oid = fileName.hashCode(); // include file name in ID
-			HDF5File f = new HDF5File(oid, fileName);
+			TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 			f.setHostname(host);
 
-			visitGroup(fid, f, HDF5File.ROOT, Arrays.asList(names), 0, depth, list);
+			visitGroup(fid, f, Tree.ROOT, Arrays.asList(names), 0, depth, list);
 
 		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
@@ -2215,7 +2213,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		return list;
 	}
 
-	private void visitGroup(final int fid, final HDF5File f, final String name, final List<String> names, int cDepth, int rDepth, ArrayList<ILazyDataset> list) throws Exception {
+	private void visitGroup(final int fid, final TreeFile f, final String name, final List<String> names, int cDepth, int rDepth, ArrayList<ILazyDataset> list) throws Exception {
 		int gid = -1;
 
 		try {
@@ -2269,7 +2267,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP && cDepth < rDepth) {
 						// System.err.println("G: " + oname);
-						visitGroup(fid, f, name + oname + HDF5Node.SEPARATOR, names,
+						visitGroup(fid, f, name + oname + Node.SEPARATOR, names,
 								cDepth + 1, rDepth, list);
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET && cDepth == rDepth) {
 						// System.err.println("D: " + oname);
@@ -2281,7 +2279,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							tid = H5.H5Dget_type(did);
 
 							// create a new dataset
-							HDF5Dataset d = new HDF5Dataset(oid);
+							DataNode d = TreeFactory.createDataNode(oid);
 							if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
 									d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
 								logger.error("Could not create a lazy dataset {} from {}", oname, name);

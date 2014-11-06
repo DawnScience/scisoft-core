@@ -17,9 +17,9 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
-import org.eclipse.dawnsci.hdf5.api.HDF5NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,15 +33,15 @@ public class HDF5LoaderSliceThreadTest extends LoaderThreadTestBase {
 	public void createLazyDataset() {
 		Assert.assertTrue(new File(filename).canRead());
 		HDF5Loader l = new HDF5Loader(filename);
-		HDF5File t;
+		Tree t;
 		try {
 			t = l.loadTree();
 		} catch (ScanFileHolderException e) {
 			throw new IllegalArgumentException("Could not load tree");
 		}
-		HDF5NodeLink n = t.findNodeLink("/RawDCT/data");
-		Assert.assertTrue(n.isDestinationADataset());
-		HDF5Dataset d = (HDF5Dataset) n.getDestination();
+		NodeLink n = t.findNodeLink("/RawDCT/data");
+		Assert.assertTrue(n.isDestinationData());
+		DataNode d = (DataNode) n.getDestination();
 
 		dataset = d.getDataset();
 	}

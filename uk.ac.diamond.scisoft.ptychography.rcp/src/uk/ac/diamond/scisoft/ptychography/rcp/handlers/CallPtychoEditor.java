@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -38,9 +37,10 @@ public class CallPtychoEditor extends AbstractHandler implements IHandler {
 		try {
 			File bundle = BundleUtils.getBundleLocation("uk.ac.diamond.scisoft.ptychography.rcp");
 			String fullPath = bundle.getAbsolutePath();
-			URI uri = new URI(fullPath + File.separator
+			File f = new File(fullPath + File.separator
 					+ PtychoConstants.RESOURCES + File.separator
 					+ PtychoConstants.SPREADSHEET_FILE);
+			URI uri = f.toURI();
 			fileLocation = EFS.getLocalFileSystem().getStore(uri);
 			FileStoreEditorInput fileStoreEditorInput = new FileStoreEditorInput(fileLocation);
 			page.openEditor((IEditorInput) fileStoreEditorInput,
@@ -48,9 +48,6 @@ public class CallPtychoEditor extends AbstractHandler implements IHandler {
 		} catch (PartInitException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

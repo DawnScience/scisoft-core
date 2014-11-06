@@ -77,8 +77,9 @@ from jycore import asDatasetList, _jinput#, asDatasetDict, toList
 from scisoftpy.dictutils import DataHolder
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
-from org.eclipse.dawnsci.hdf5.api import HDF5File as _hdf5file
-from org.eclipse.dawnsci.hdf5.api import HDF5Group as _hdf5group
+from org.eclipse.dawnsci.analysis.api.tree import Tree as _tree
+from org.eclipse.dawnsci.analysis.api.tree import GroupNode as _gnode
+from org.eclipse.dawnsci.analysis.tree.impl import TreeFileImpl as _treefile
 
 class h5manager(object):
     '''This holds a HDF5 tree and manages access to it. This provides
@@ -88,10 +89,10 @@ class h5manager(object):
         '''Arguments:
         tree -- HDF tree
         '''
-        if isinstance(tree, _hdf5file):
+        if isinstance(tree, _tree):
             self.file = tree
-            self.grp = self.file.getGroup()
-        elif isinstance(tree, _hdf5group):
+            self.grp = self.file.getGroupNode()
+        elif isinstance(tree, _gnode):
             self.file = None
             self.grp = tree
         else:
@@ -99,8 +100,8 @@ class h5manager(object):
 
     def gettree(self):
         if self.file is None:
-            t = _hdf5file(-1, "FakePlasticTree.h5")
-            t.setGroup(self.grp)
+            t = _treefile(-1, "FakePlasticTree.h5")
+            t.setGroupNode(self.grp)
             return t
         return self.file
 

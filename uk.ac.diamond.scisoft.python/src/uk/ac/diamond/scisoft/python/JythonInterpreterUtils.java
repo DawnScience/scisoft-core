@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.python.core.PyList;
@@ -51,7 +53,9 @@ public class JythonInterpreterUtils {
 	 * @throws ClassNotFoundException 
 	 */
 	public static PythonInterpreter getBasicInterpreter() throws Exception {
-		
+		return getBasicInterpreter(null);
+	}
+	public static PythonInterpreter getBasicInterpreter(List<File> extraPaths) throws Exception {
 		final long start = System.currentTimeMillis();
 		
 		//This was the major part of the getInterpreter method.
@@ -70,16 +74,6 @@ public class JythonInterpreterUtils {
 		}
 		File jyRoot = JythonPath.getInterpreterDirectory();
 		File jyBundleLoc = jyRoot.getParentFile();
-//		try {
-//			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
-//		} catch (Exception ignored) {
-//		}
-//		if (jyBundleLoc == null) {
-//			if (System.getProperty(JYTHON_BUNDLE_LOC)==null)
-//				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
-//			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
-//		}
-//		logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
@@ -94,38 +88,46 @@ public class JythonInterpreterUtils {
 		path.append(new PyString(new File(jyLib, "distutils").getAbsolutePath()));
 		File site = new File(jyLib, "site-packages");
 		path.append(new PyString(site.getAbsolutePath())); // TODO? iterate over sub-directories
-
-		try {
-			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
-			if (pythonPlugin == null || !pythonPlugin.exists()) {
-				logger.debug("No scisoftpy found at {} - now trying to find git workspace", pythonPlugin);
-				File gitws = jyBundleLoc.getParentFile().getParentFile();
-				if (gitws.exists()) {
-					logger.debug("Git workspace found: {}", gitws.getAbsolutePath());
-					pythonPlugin = new File(new File(gitws, "scisoft-core.git"), SCISOFTPY);
-					if (!pythonPlugin.exists()) {
-						throw new IllegalStateException("Can't find scisoftpy at " + pythonPlugin);
-					}
-				} else {
-					throw new IllegalStateException("No git workspace at " + gitws);
-				}
+		
+		//Add additional paths to sys.path in new interpreter
+		if (extraPaths != null){
+			for (File f : extraPaths){
+				path.append(new PyString(f.getAbsolutePath()));
 			}
-			logger.debug("Found Scisoft Python plugin at {}", pythonPlugin);
-			File bin = new File(pythonPlugin, "bin");
-			if (bin.exists()) {
-				logger.debug("Found bin directory at {}", bin);
-				path.append(new PyString(bin.getAbsolutePath()));
-			} else {
-				path.append(new PyString(pythonPlugin.getAbsolutePath()));
-			}
-		} catch (Exception e) {
-			logger.error("Could not find Scisoft Python plugin", e);
 		}
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
 		
 		final long end = System.currentTimeMillis();
 		logger.debug("Created new Jython Interpreter in {}ms.", end-start);
+		
+		return interpreter;
+	}
+	
+	public static PythonInterpreter getscisoftpyInterpreter() throws Exception{
+		final List<File> extraPaths = new ArrayList<File>();
+		
+		try {
+			//This seems to work in git repo case (and presumably in binary)
+			//Old code in 0f667dd and before (now deleted) was more verbose
+			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
+			logger.debug("Found Scisoft Python plugin at {}", pythonPlugin);
+			File bin = new File(pythonPlugin, "bin");
+			if (bin.exists()) {
+				logger.debug("Found bin directory at {}", bin);
+				extraPaths.add(bin);
+			} else {
+				extraPaths.add(pythonPlugin);
+			}
+		} catch (Exception e) {
+			logger.error("Could not find Scisoft Python plugin", e);
+		}
+		
+		PythonInterpreter interpreter = getBasicInterpreter(extraPaths);
+		
+		interpreter.exec("import sys");
+		interpreter.exec("for p in sys.path: print '\t%s' % p");
+		interpreter.exec("import scisoftpy as dnp");
 		
 		return interpreter;
 	}
@@ -143,11 +145,7 @@ public class JythonInterpreterUtils {
 		
 		final long start = System.currentTimeMillis();
 		
-		PythonInterpreter interpreter = getBasicInterpreter();
-		
-		interpreter.exec("import sys");
-		interpreter.exec("for p in sys.path: print '\t%s' % p");
-		interpreter.exec("import scisoftpy as dnp");
+		PythonInterpreter interpreter = getscisoftpyInterpreter();
 		
 		final long end = System.currentTimeMillis();
 		

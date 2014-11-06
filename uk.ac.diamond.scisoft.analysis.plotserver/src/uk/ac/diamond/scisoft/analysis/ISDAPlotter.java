@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
@@ -395,14 +395,7 @@ public interface ISDAPlotter {
 	 * @param tree
 	 * @throws Exception
 	 */
-	public void viewNexusTree(String viewer, HDF5File tree) throws Exception;
-
-	/**
-	 * @param viewer
-	 * @param tree
-	 * @throws Exception
-	 */
-	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception;
+	public void viewTree(String viewer, Tree tree) throws Exception;
 
 	/**
 	 * General way to send a gui bean to plot server

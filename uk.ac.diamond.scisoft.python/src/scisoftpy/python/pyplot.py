@@ -70,7 +70,7 @@ _plot_name_remapper = {
     'plot_updatepoints3d': 'scatter3DPlotOver',
     
     'plot_scanforimages': 'scanForImages',
-    'plot_viewnexustree': 'viewNexusTree',
+    'plot_viewtree': 'viewTree',
     'plot_volume': 'volumePlot',
     
     'plot_getbean': 'getGuiBean',

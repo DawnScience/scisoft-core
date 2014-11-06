@@ -54,7 +54,7 @@ public class NexusDataBean extends DataBean implements Serializable {
 		bean.data.addAll(data);
 		bean.axisData.putAll(axisData);
 		bean.nexusTrees.addAll(nexusTrees);
-		bean.hdf5Trees.addAll(hdf5Trees);
+		bean.trees.addAll(trees);
 		bean.guiPlotMode = guiPlotMode;
 		return bean;
 	}

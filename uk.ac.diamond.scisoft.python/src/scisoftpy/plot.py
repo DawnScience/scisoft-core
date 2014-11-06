@@ -46,8 +46,8 @@ _plot_points2d = _plot.plot_points2d
 _plot_updatepoints2d = _plot.plot_updatepoints2d
 _plot_points3d = _plot.plot_points3d
 _plot_updatepoints3d = _plot.plot_updatepoints3d
-_plot_scanforimages = _plot.plot_scanforimages 
-_plot_viewnexustree = _plot.plot_viewnexustree
+_plot_scanforimages = _plot.plot_scanforimages
+_plot_viewtree = _plot.plot_viewtree
 _plot_volume = _plot.plot_volume
 
 _plot_createaxis = _plot.plot_createaxis
@@ -890,6 +890,9 @@ def getfiles(bean):
     return fl
 
 _H5TVNAME="hdf5TreeViewer"
-def viewnexus(tree, name=_H5TVNAME):
+def viewtree(tree, name=_H5TVNAME):
     '''View a NeXus/HDF5 tree in the named view'''
-    _plot_viewnexustree(name, tree)
+    _plot_viewtree(name, tree)
+
+viewnexus = viewtree
+

@@ -10,9 +10,9 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
@@ -1166,17 +1166,8 @@ public class SDAPlotter {
 	 * @param tree
 	 * @throws Exception
 	 */
-	public static void viewNexusTree(String viewer, HDF5File tree) throws Exception {
-		getPlotterImpl().viewHDF5Tree(viewer, tree);
-	}
-
-	/**
-	 * @param viewer
-	 * @param tree
-	 * @throws Exception
-	 */
-	public static void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
-		getPlotterImpl().viewHDF5Tree(viewer, tree);
+	public static void viewTree(String viewer, Tree tree) throws Exception {
+		getPlotterImpl().viewTree(viewer, tree);
 	}
 
 	/**

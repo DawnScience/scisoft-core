@@ -24,11 +24,11 @@ import java.util.regex.Pattern;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -998,20 +998,11 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void viewNexusTree(String viewer, HDF5File tree) throws Exception {
+	public void viewTree(String viewer, Tree tree) throws Exception {
 		logger.info("Tree sent to {}", viewer);
 
 		DataBean db = new DataBean(null);
-		db.addHDF5Tree(tree);
-		setDataBean(viewer, db);
-	}
-
-	@Override
-	public void viewHDF5Tree(String viewer, HDF5File tree) throws Exception {
-		logger.info("Tree sent to {}", viewer);
-
-		DataBean db = new DataBean(null);
-		db.addHDF5Tree(tree);
+		db.addTree(tree);
 		setDataBean(viewer, db);
 	}
 

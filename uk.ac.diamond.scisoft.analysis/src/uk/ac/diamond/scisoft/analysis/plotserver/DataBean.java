@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
 
 /**
  * This bean contains all the information required by a GUI to perform a plot,
@@ -32,7 +32,7 @@ public class DataBean implements Serializable {
 
 	protected Map<String, Dataset> axisData;
 
-	protected List<HDF5File> hdf5Trees;
+	protected List<Tree> trees;
 	
 	protected GuiPlotMode guiPlotMode;
 	
@@ -45,14 +45,14 @@ public class DataBean implements Serializable {
 		guiPlotMode = plotMode;
 		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
-		hdf5Trees = new ArrayList<HDF5File>();
+		trees = new ArrayList<Tree>();
 	}
 	
 	public DataBean() {
 		guiPlotMode = null;
 		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
-		hdf5Trees = new ArrayList<HDF5File>();
+		trees = new ArrayList<Tree>();
 	}
 	
 
@@ -63,7 +63,7 @@ public class DataBean implements Serializable {
 		DataBean bean = new DataBean();
 		bean.data.addAll(data);
 		bean.axisData.putAll(axisData);
-		bean.hdf5Trees.addAll(hdf5Trees);
+		bean.trees.addAll(trees);
 		bean.guiPlotMode = guiPlotMode;
 		return bean;
 	}
@@ -100,12 +100,12 @@ public class DataBean implements Serializable {
 	}
 
 	/**
-	 * Adds the provided HDF5 tree to the bean, one element at a time
+	 * Adds the provided tree to the bean
 	 * 
-	 * @param hdf5TreeToAdd
+	 * @param treeToAdd
 	 */
-	public void addHDF5Tree(HDF5File hdf5TreeToAdd) {
-		hdf5Trees.add(hdf5TreeToAdd);
+	public void addTree(Tree treeToAdd) {
+		trees.add(treeToAdd);
 	}
 
 	/**
@@ -183,20 +183,19 @@ public class DataBean implements Serializable {
 	}
 
 	/**
-	 * gets all the nexusTrees as a collection
+	 * gets all the trees as a collection
 	 * 
-	 * @return nexusTrees
+	 * @return trees
 	 */
-	public List<HDF5File> getHDF5Trees() {
-		return hdf5Trees;
+	public List<Tree> getTrees() {
+		return trees;
 	}
 	
 	/**
-	 * 
-	 * @param hdf5Trees
+	 * @param trees
 	 */
-	public void setHDF5Trees(List<HDF5File> hdf5Trees) {
-		this.hdf5Trees = hdf5Trees;
+	public void setTrees(List<Tree> trees) {
+		this.trees = trees;
 	}
 
 	/**

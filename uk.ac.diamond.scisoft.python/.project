@@ -4,12 +4,15 @@
 	<comment></comment>
 	<projects>
 		<project>ncsa.hdf</project>
+		<project>org.eclipse.dawnsci.analysis.api</project>
+		<project>org.eclipse.dawnsci.analysis.dataset</project>
+		<project>org.eclipse.dawnsci.analysis.tree</project>
 		<project>org.eclipse.dawnsci.hdf5</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
-		<project>org.eclipse.dawnsci.analysis.api</project>
-		<project>org.eclipse.dawnsci.analysis.dataset</project>
+		<project>uk.ac.diamond.scisoft.analysis.osgi</project>
+		<project>uk.ac.diamond.scisoft.analysis.plotclient</project>
 		<project>uk.ac.diamond.scisoft.analysis.plotserver</project>
 		<project>uk.ac.diamond.scisoft.analysis.rcp</project>
 		<project>uk.ac.diamond.scisoft.analysis.xmlrpc</project>

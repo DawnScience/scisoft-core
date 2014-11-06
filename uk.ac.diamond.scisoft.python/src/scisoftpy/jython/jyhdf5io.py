@@ -18,7 +18,7 @@
 '''
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
-from org.eclipse.dawnsci.hdf5.api import HDF5Dataset as _jdataset
+from org.eclipse.dawnsci.analysis.api.tree import DataNode as _jdnode
 from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
 from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
 
@@ -39,7 +39,7 @@ from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap
 
 class SDS(_hdataset):
     def __init__(self, dataset, attrs, parent):
-        if isinstance(dataset, _jdataset):
+        if isinstance(dataset, _jdnode):
             if dataset.isString() or not dataset.isSupported():
                 dataset = asarray(dataset.getString())
                 shape = None
@@ -166,13 +166,13 @@ class HDF5Loader(object):
     def setloadmetadata(self, load_metadata):
         pass
 
-from org.eclipse.dawnsci.hdf5.api import HDF5Attribute as _jattr
-#from org.eclipse.dawnsci.hdf5.api import HDF5Node as _jnode
-#from org.eclipse.dawnsci.hdf5.api import HDF5Dataset as _jdata
-from org.eclipse.dawnsci.hdf5.api import HDF5Group as _jgroup
-from org.eclipse.dawnsci.hdf5.api import HDF5File as _jfile
-#from org.eclipse.dawnsci.hdf5.api import HDF5NodeLink as _jlink
-#from org.eclipse.dawnsci.hdf5.api import HDF5SymLink as _jslink
+from org.eclipse.dawnsci.analysis.tree.impl import AttributeImpl as _jattr
+# from org.eclipse.dawnsci.analysis.tree.impl import NodeImpl as _jnode
+# from org.eclipse.dawnsci.analysis.tree.impl import DataNodeImpl as _jdata
+from org.eclipse.dawnsci.analysis.tree.impl import GroupNodeImpl as _jgroup
+from org.eclipse.dawnsci.analysis.tree.impl import TreeFileImpl as _jfile
+# from org.eclipse.dawnsci.analysis.tree.impl import NodeLinkImpl as _jlink
+# from org.eclipse.dawnsci.analysis.tree.impl import SymbolicNodeImpl as _jslink
 
 def _tojavatree(tree):
     f = _jfile(-1, tree._filename)

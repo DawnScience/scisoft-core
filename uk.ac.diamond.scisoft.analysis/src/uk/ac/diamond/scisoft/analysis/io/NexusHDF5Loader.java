@@ -27,6 +27,10 @@ import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
  * loaded, it will attempt to load the errors associated with the dataset.
  */
 public class NexusHDF5Loader extends HDF5Loader {
+	/**
+	 * Attribute name for a NeXus class
+	 */
+	public static final String NX_CLASS = "NX_class";
 
 	public static final String NX_AXES = "axes";
 	public static final String NX_AXIS = "axis";

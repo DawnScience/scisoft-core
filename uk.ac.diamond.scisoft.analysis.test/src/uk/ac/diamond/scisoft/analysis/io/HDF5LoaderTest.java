@@ -25,17 +25,15 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5Dataset;
-import org.eclipse.dawnsci.hdf5.api.HDF5File;
-import org.eclipse.dawnsci.hdf5.api.HDF5Group;
-import org.eclipse.dawnsci.hdf5.api.HDF5Node;
-import org.eclipse.dawnsci.hdf5.api.HDF5NodeLink;
+import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
@@ -95,7 +93,7 @@ public class HDF5LoaderTest {
 		HDF5Loader l = new HDF5Loader(n);
 
 		@SuppressWarnings("unused")
-		HDF5File tree = l.loadTree(null);
+		Tree tree = l.loadTree(null);
 
 		n = TestFileFolder + "strings2d.h5";
 		l = new HDF5Loader(n);
@@ -114,7 +112,7 @@ public class HDF5LoaderTest {
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
 
-		HDF5File tree = l.loadTree(null);
+		Tree tree = l.loadTree(null);
 		System.out.println(tree.getNodeLink());
 
 		List<ILazyDataset> list;
@@ -123,7 +121,7 @@ public class HDF5LoaderTest {
 
 		// original
 		name = "original";
-		list = tree.getGroup().getDatasets("d1");
+		list = tree.getGroupNode().getDatasets("d1");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 25, 3 });
@@ -133,7 +131,7 @@ public class HDF5LoaderTest {
 
 		// hard link
 		name = "hard link";
-		list = tree.getGroup().getDatasets("d_hl");
+		list = tree.getGroupNode().getDatasets("d_hl");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 25, 3 });
@@ -143,7 +141,7 @@ public class HDF5LoaderTest {
 
 		// soft link
 		name = "soft link";
-		list = tree.getGroup().getDatasets("d_sl");
+		list = tree.getGroupNode().getDatasets("d_sl");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 25, 3 });
@@ -153,7 +151,7 @@ public class HDF5LoaderTest {
 
 		// external link
 		name = "external link";
-		list = tree.getGroup().getDatasets("d_el");
+		list = tree.getGroupNode().getDatasets("d_el");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 2, 5 });
@@ -162,7 +160,7 @@ public class HDF5LoaderTest {
 
 		// NAPI mount
 		name = "NAPI";
-		list = tree.getGroup().getDatasets("extdst");
+		list = tree.getGroupNode().getDatasets("extdst");
 		assertEquals("Number of " + name, 1, list.size());
 		dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 2, 5 });
@@ -200,38 +198,38 @@ public class HDF5LoaderTest {
 		String n = TestFileFolder + "FeKedge_1_15.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 
-		HDF5File tree = l.loadTree(null);
+		Tree tree = l.loadTree(null);
 		System.out.println(tree.getNodeLink());
 
-		HDF5NodeLink nl;
+		NodeLink nl;
 
 		nl = tree.findNodeLink("/");
-		assertTrue("Not a group", nl.isDestinationAGroup());
+		assertTrue("Not a group", nl.isDestinationGroup());
 		assertTrue("Wrong name", nl.getName().equals("/"));
 
 		nl = tree.findNodeLink("/entry1");
-		assertTrue("Not a group", nl.isDestinationAGroup());
+		assertTrue("Not a group", nl.isDestinationGroup());
 		assertTrue("Wrong name", nl.getName().equals("entry1"));
 
 		nl = tree.findNodeLink("/entry1/FFI0");
-		assertTrue("Not a group", nl.isDestinationAGroup());
+		assertTrue("Not a group", nl.isDestinationGroup());
 		assertTrue("Wrong name", nl.getName().equals("FFI0"));
 
 		nl = tree.findNodeLink("/entry1/FFI0/Energy");
-		assertTrue("Not a group", nl.isDestinationADataset());
+		assertTrue("Not a group", nl.isDestinationData());
 		assertTrue("Wrong name", nl.getName().equals("Energy"));
 
-		nl = tree.getGroup().getNodeLink("entry1");
+		nl = tree.getGroupNode().getNodeLink("entry1");
 		System.out.println(nl);
 
-		nl = ((HDF5Group) nl.getDestination()).getNodeLink("FFI0");
+		nl = ((GroupNode) nl.getDestination()).getNodeLink("FFI0");
 		System.out.println(nl);
 
 		String name = "Energy";
-		nl = ((HDF5Group) nl.getDestination()).getNodeLink(name);
+		nl = ((GroupNode) nl.getDestination()).getNodeLink(name);
 		System.out.println(nl);
 
-		List<ILazyDataset> list = tree.getGroup().getDatasets(name);
+		List<ILazyDataset> list = tree.getGroupNode().getDatasets(name);
 		assertEquals("Number of " + name, 1, list.size());
 		IDataset dataset = list.get(0).getSlice();
 		checkDataset(name, dataset, new int[] { 489 });
@@ -239,9 +237,9 @@ public class HDF5LoaderTest {
 		assertEquals("Value of " + name, 7944.5, dataset.getDouble(479), 7944.5 * 1e-8);
 		nl = tree.findNodeLink("/entry1/user01/username");
 		System.out.println(nl);
-		HDF5Node nd = nl.getDestination();
-		assertTrue("Dataset node", nd instanceof HDF5Dataset);
-		HDF5Dataset dn = (HDF5Dataset) nd;
+		Node nd = nl.getDestination();
+		assertTrue("Dataset node", nd instanceof DataNode);
+		DataNode dn = (DataNode) nd;
 		assertTrue("String dataset", dn.isString());
 		Dataset a = (Dataset) dn.getDataset();
 		assertEquals("Username", "rjw82", a.getString(0));
@@ -272,12 +270,12 @@ public class HDF5LoaderTest {
 
 		HDF5Loader l = new HDF5Loader(n);
 
-		HDF5File tree = l.loadTree(null);
-		HDF5NodeLink nl;
+		Tree tree = l.loadTree(null);
+		NodeLink nl;
 		nl = tree.findNodeLink("/RawDCT/data");
-		HDF5Node nd = nl.getDestination();
-		assertTrue("Dataset node", nd instanceof HDF5Dataset);
-		HDF5Dataset dn = (HDF5Dataset) nd;
+		Node nd = nl.getDestination();
+		assertTrue("Dataset node", nd instanceof DataNode);
+		DataNode dn = (DataNode) nd;
 
 		Dataset ad;
 		double x;
@@ -349,7 +347,7 @@ public class HDF5LoaderTest {
 		String[] after = { "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal" };
 
 		for (int i = 0; i < before.length; i++)
-			assertEquals("Path", after[i], HDF5File.canonicalizePath(before[i]));
+			assertEquals("Path", after[i], TreeImpl.canonicalizePath(before[i]));
 	}
 
 	@Test

@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
-public class Expression2DOperation extends Expression1DOperation<Expression2DModel> {
+public class Expression2DOperation<T extends Expression2DModel> extends Expression1DOperation<Expression2DModel> {
 
 	@Override
 	public String getId() {

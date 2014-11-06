@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
 
-public class AzimuthalPixelIntegrationOperation extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
+public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrationModel> extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
 
 
 	@Override

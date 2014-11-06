@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration1D;
 
-public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation {
+public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
 
 	@Override
 	public OperationRank getInputRank() {

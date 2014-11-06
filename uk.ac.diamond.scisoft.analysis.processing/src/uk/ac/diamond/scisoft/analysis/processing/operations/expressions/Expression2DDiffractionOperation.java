@@ -7,7 +7,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
-public class Expression2DDiffractionOperation extends Expression2DOperation {
+public class Expression2DDiffractionOperation extends Expression2DOperation<Expression2DModel> {
 	
 	IDiffractionMetadata meta = null;
 	IDataset q = null;

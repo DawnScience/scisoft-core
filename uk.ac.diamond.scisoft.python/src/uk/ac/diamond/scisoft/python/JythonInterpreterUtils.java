@@ -23,6 +23,8 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.jython.util.JythonPath;
+
 /**
  * SCISOFT - added static method which returns a PythonInterpreter which can run scisoft scripts
  * This is for executing a script directly from the workflow tool when you do not want to
@@ -66,17 +68,18 @@ public class JythonInterpreterUtils {
 				logger.debug("\t{}", u.getPath());
 			}
 		}
-		File jyBundleLoc = null;
-		try {
-			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
-		} catch (Exception ignored) {
-		}
-		if (jyBundleLoc == null) {
-			if (System.getProperty(JYTHON_BUNDLE_LOC)==null)
-				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
-			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
-		}
-		logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
+		File jyRoot = JythonPath.getInterpreterDirectory();
+		File jyBundleLoc = jyRoot.getParentFile();
+//		try {
+//			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
+//		} catch (Exception ignored) {
+//		}
+//		if (jyBundleLoc == null) {
+//			if (System.getProperty(JYTHON_BUNDLE_LOC)==null)
+//				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
+//			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
+//		}
+//		logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
@@ -84,7 +87,7 @@ public class JythonInterpreterUtils {
 
 		PyList path = state.path;
 //		path.clear();
-		File jyRoot = new File(jyBundleLoc, "jython2.5");
+//		File jyRoot = new File(jyBundleLoc, "jython2.5");
 		path.append(new PyString(new File(jyRoot, "jython.jar").getAbsolutePath()));
 		File jyLib = new File(jyRoot, "Lib");
 		path.append(new PyString(jyLib.getAbsolutePath()));

@@ -303,6 +303,14 @@
             name="X Region Profile Normalize"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
+            description="Subtract mean and divide by standard deviation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Standard Normal Variate"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

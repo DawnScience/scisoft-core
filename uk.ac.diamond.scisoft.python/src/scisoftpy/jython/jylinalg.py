@@ -22,9 +22,56 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra as _linalg
 from org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra import NormOrder as _normorder
 
 # from jycore import asIterable as _asiter
-from jycore import _wrap
+from jycore import _wrap, _jinput
 
 from java.lang.Double import isInfinite as _isinf #@UnresolvedImport
+
+class LinAlgError(Exception):
+    pass
+
+@_wrap
+def eig(a):
+    '''Eigen decomposition
+    '''
+    try:
+        return _linalg.calcEigenDecomposition(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def eigvals(a):
+    '''Eigenvalues
+    '''
+    try:
+        return _linalg.calcEigenvalues(a)
+    except Exception, e:
+        raise LinAlgError(e)
+@_wrap
+def cholesky(a):
+    '''Cholesky decomposition
+    '''
+    try:
+        return _linalg.calcCholeskyDecomposition(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def qr(a, mode='full'):
+    '''QR decomposition
+    '''
+    try:
+        return _linalg.calcQRDecomposition(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def svd(a, full_matrices=1, compute_uv=1):
+    '''Singular value decomposition
+    '''
+    try:
+        return _linalg.calcSingularValueDecomposition(a)
+    except Exception, e:
+        raise LinAlgError(e)
 
 @_wrap
 def norm(x, order=None):
@@ -52,4 +99,75 @@ def norm(x, order=None):
         else:
             order = _normorder.NEG_INFINITY # @UndefinedVariable
 
-    return _linalg.norm(x, order)
+    try:
+        return _linalg.norm(x, order)
+    except Exception, e:
+        raise LinAlgError(e)
+
+def cond(a, order=None):
+    '''Condition number
+    x -- input array
+    ord -- None  = 2-norm computed directly using SVD
+           'fro' = Frobenius norm
+           inf   = max(sum(abs(x),axis=1))
+           -inf  = min(sum(abs(x),axis=1))
+           0     = n/a                     | sum(x != 0)
+           1     = max(sum(abs(x),axis=0))
+           -1    = min(sum(abs(x),axis=0))
+           2     = 2-norm (largest s.v.)  
+           -2    = smallest singular value
+           other = n/a                    
+    Return norm
+    '''
+    if order is None:
+        try:
+            return _linalg.calcConditionNumber(_jinput(a))
+        except Exception, e:
+            raise LinAlgError(e)
+    return norm(a, order)*norm(pinv(a), order)
+
+@_wrap
+def det(a):
+    '''Determinant
+    '''
+    try:
+        return _linalg.calcDeterminant(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def solve(a, b):
+    '''Solve equation a x = b
+    '''
+    try:
+        return _linalg.solve(a, b)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def inv(a):
+    '''Inverse of square array
+    '''
+    try:
+        return _linalg.calcInverse(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def pinv(a, rcond=1e-15):
+    '''Pseudo-inverse of array
+    '''
+    try:
+        return _linalg.calcPseudoInverse(a)
+    except Exception, e:
+        raise LinAlgError(e)
+
+@_wrap
+def matrix_power(a, n):
+    '''Raise matrix to given power
+    '''
+    try:
+        return _linalg.power(a, n)
+    except Exception, e:
+        raise LinAlgError(e)
+

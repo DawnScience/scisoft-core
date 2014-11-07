@@ -18,10 +18,10 @@ Capabilities
 Key differences
  * Incomplete implementation all NumPy's methods
 
-Implemented NumPy methods (1.6)
+Implemented NumPy methods (1.7)
  * Array attributes: shape, ndim, data, size, itemsize, nbytes, T, view, indices
  * Array methods: copy, fill, reshape, resize, transpose, flatten, squeeze,
-   take, put, max, min, sum, prod, all, any, argmax, argmin
+   take, put, max, min, sum, prod, all, any, argmax, argmin, cumsum, cumprod
  * Array creation: array, zeros, ones, linspace, logspace, arange, diag, diagflat, meshgrid, indices
  * Array manipulation: append, tile, repeat, concatenate, vstack,
    hstack, dstack, array_split, split, vsplit, hsplit, dsplit, roll, reshape, resize, ravel, rollaxis
@@ -31,10 +31,11 @@ Implemented NumPy methods (1.6)
  * Indexing operations: unravel_index, ravel_multi_index
  * Maths: add, subtract, multiply, divide, negative, power, real, imag, absolute,
    exp, log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
-   floor_divide, reminder, phase, signum, diff, gradient, roots
+   floor_divide, remainder, phase, signum, diff, gradient, roots, modf, fmod
  * Trig: sin, cos, tan, arcsin, arccos, arctan, arctan2, hypot, sinh, cosh,
    tanh, arcsinh, arccosh, arctanh, deg2rad, rad2deg
- * Rounding: rint, ceil, floor
+ * Linear algebra: trace, tensordot, eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
+ * Rounding: rint, ceil, floor, trunc, fix
  * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
  * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed

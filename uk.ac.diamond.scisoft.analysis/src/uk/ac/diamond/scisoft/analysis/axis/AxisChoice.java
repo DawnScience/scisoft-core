@@ -206,7 +206,7 @@ public class AxisChoice {
 	 * Clone everything but values
 	 */
 	@Override
-	protected AxisChoice clone() {
+	public AxisChoice clone() {
 		AxisChoice choice = new AxisChoice(values, primary);
 		choice.setIndexMapping(indexMapping);
 		choice.setAxisNumber(number);

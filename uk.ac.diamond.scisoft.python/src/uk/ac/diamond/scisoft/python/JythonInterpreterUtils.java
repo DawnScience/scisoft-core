@@ -33,10 +33,14 @@ import uk.ac.diamond.jython.util.JythonPath;
  * start a separate debug/run process to start the script.
  */
 public class JythonInterpreterUtils {
+	
+	 // Boolean to set to true if running jython scripts that utilise ScisoftPy in IDE
+	public static final String RUN_IN_ECLIPSE = "run.in.eclipse";
 
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
 	private static final String JYTHON_BUNDLE = "uk.ac.diamond.jython";
 	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
+	
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
 	static {
@@ -49,12 +53,19 @@ public class JythonInterpreterUtils {
 	 * Create Jython interpreter
 	 * 
 	 * @return a new PythonInterpreter.
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
+	// * @throws IOException 
+	// * @throws ClassNotFoundException 
 	 */
 	public static PythonInterpreter getBasicInterpreter() throws Exception {
 		return getBasicInterpreter(null);
 	}
+	
+	/**
+	 * 
+	 * @param extraPaths
+	 * @return a new Jython Interpreter
+	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
+	 */
 	public static PythonInterpreter getBasicInterpreter(List<File> extraPaths) throws Exception {
 		final long start = System.currentTimeMillis();
 		
@@ -104,6 +115,11 @@ public class JythonInterpreterUtils {
 		return interpreter;
 	}
 	
+	/**
+	 * scisoftpy is imported as dnp
+	 * @return a new Jython Interpreter, with only scisoftpy in sys.path
+	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
+	 */
 	public static PythonInterpreter getscisoftpyInterpreter() throws Exception{
 		final List<File> extraPaths = new ArrayList<File>();
 		
@@ -131,8 +147,32 @@ public class JythonInterpreterUtils {
 		
 		return interpreter;
 	}
-
 	
+	public static PythonInterpreter getFullInterpreter() throws Exception {
+		//Store for the additional things to go to sys.path
+		final List<File> extraPaths = new ArrayList<File>();
+		
+		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
+		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
+		File pluginsDir = JythonPath.getPluginsDirectory(isRunningInEclipse); 
+		
+		//Find third party jars first
+		logger.debug("Searching for 3rd party jars");
+		extraPaths.addAll(JythonPath.findJars(pluginsDir));
+		
+		//Find all
+		final List<File> allPluginDirs = JythonPath.findDirs(pluginsDir, isRunningInEclipse);
+		if (isRunningInEclipse) {
+			File wsDir = pluginsDir;
+			if (!new File(wsDir, "tp").isDirectory()) {
+				
+			}
+		}
+		
+		//If we've got everything in the extraPaths list, send it to the interpreter maker
+		PythonInterpreter interpreter = getBasicInterpreter(extraPaths);
+		return interpreter;
+	}
 	
 	/**
 	 * scisoftpy is imported as dnp

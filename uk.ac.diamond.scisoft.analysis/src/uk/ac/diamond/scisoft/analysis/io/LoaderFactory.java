@@ -292,7 +292,7 @@ public class LoaderFactory {
 	 * all the loaders for a given extension if the extension is registered already. 
 	 * Otherwise it tries all loaders - in no particular order.
 	 * 
-	 *   *synchronized* is REQUIRED because multiple threads load data synmultaneously and without
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
 	 *   a synchronized you can get data loaded twice which is SLOW.
 	 * 
 	 * @param path to file
@@ -898,7 +898,7 @@ public class LoaderFactory {
 		if (lockedMetaData==null) clear();
 	}
 
-	public final static List<String> EXT;
+	private final static List<String> HDF5_EXT;
 	static {
 		List<String> tmp = new ArrayList<String>(7);
 		tmp.add("h5");
@@ -907,14 +907,14 @@ public class LoaderFactory {
 		tmp.add("hdf5");
 		tmp.add("hdf");
 		tmp.add("nexus");
-		EXT = Collections.unmodifiableList(tmp);
+		HDF5_EXT = Collections.unmodifiableList(tmp);
 	}	
 
 	private static boolean isH5(final String filePath) {
 		if (filePath == null) { return false; }
 		final String ext = FileUtils.getFileExtension(filePath);
 		if (ext == null) { return false; }
-		return EXT.contains(ext.toLowerCase());
+		return HDF5_EXT.contains(ext.toLowerCase());
 	}
 
 }

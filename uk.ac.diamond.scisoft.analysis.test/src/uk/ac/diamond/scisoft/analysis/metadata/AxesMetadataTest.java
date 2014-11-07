@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
@@ -145,5 +146,31 @@ public class AxesMetadataTest {
 		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
 		dataset.addMetadata(amd);
 		dataset.setShape(reshape);
+	}
+
+	@Test
+	public void testAxesMetadataReshapeEmpty() throws Exception {
+		final int[] shape = new int[] { 1, 2, 3, 1 };
+
+		int r = shape.length;
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+
+		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		dataset.addMetadata(amd);
+
+		ILazyDataset v = dataset.getSliceView();
+		v.squeeze();
+		assertEquals(2, v.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		IDataset d = v.getSlice(new Slice(1), null);
+		assertEquals(2, d.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		final int[] reshape = new int[] { 1, 1, 2, 3, 1 };
+		v.setShape(reshape);
+		assertEquals(5, v.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		d = v.getSlice((Slice) null, null, new Slice(1));
+		assertEquals(5, d.getMetadata(AxesMetadata.class).get(0).getAxes().length);
 	}
 }

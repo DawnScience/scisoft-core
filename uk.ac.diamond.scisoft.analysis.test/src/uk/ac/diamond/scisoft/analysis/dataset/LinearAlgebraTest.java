@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -235,4 +236,27 @@ public class LinearAlgebraTest {
 		a = DatasetFactory.createRange(60, Dataset.INT32).reshape(3, 4, 5);
 		TestUtils.assertDatasetEquals(new IntegerDataset(new int[]{36, 116, 196}, null), LinearAlgebra.trace(a, 0, 1, 2), true, 1, 1);
 	}
- }
+
+	@Test
+	public void testKronecker() {
+		Dataset a = DatasetFactory.createFromObject(new int[] {1, 10, 100}, Dataset.INT32);
+		Dataset b = DatasetFactory.createFromObject(new int[] {5, 6, 7}, Dataset.INT32);
+		
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[]{5, 6, 7, 50, 60, 70, 500, 600, 700}, null), LinearAlgebra.kroneckerProduct(a, b), true, 1, 1);
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[]{5, 50, 500, 6, 60, 600, 7, 70, 700}, null), LinearAlgebra.kroneckerProduct(b, a), true, 1, 1);
+
+		a = DatasetUtils.eye(2, 2, 0, Dataset.INT16);
+		b = DatasetFactory.ones(new int[] {2, 2}, Dataset.FLOAT32);
+		TestUtils.assertDatasetEquals(new FloatDataset(new float[]{1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1}, 4, 4), LinearAlgebra.kroneckerProduct(a, b), true, 1, 1);
+	}
+
+	@Test
+	public void testPower() {
+		Dataset a = new IntegerDataset(new int[] {0, 1, -1, 0}, 2, 2);
+
+		TestUtils.assertDatasetEquals(new IntegerDataset(new int[]{0, -1, 1, 0}, 2, 2), LinearAlgebra.power(a, 3), true, 1, 1);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[]{0, 1, -1, 0}, 2, 2), LinearAlgebra.power(a, -3), true, 1, 1);
+
+		TestUtils.assertDatasetEquals(DatasetUtils.eye(4, 4, 0, Dataset.INT32), LinearAlgebra.power(DatasetFactory.zeros(new int[] {4, 4}, Dataset.INT32), 0), true, 1, 1);
+	}
+}

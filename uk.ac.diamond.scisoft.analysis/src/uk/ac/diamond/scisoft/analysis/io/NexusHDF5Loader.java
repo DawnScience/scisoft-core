@@ -120,7 +120,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 					} else {
 						axesMetadata = (AxesMetadataImpl) list.get(0);
 					}
-					axesMetadata.toString();
 
 					// look through the additional metadata for axis information
 					// TODO Should take @primary into account when adding axes.

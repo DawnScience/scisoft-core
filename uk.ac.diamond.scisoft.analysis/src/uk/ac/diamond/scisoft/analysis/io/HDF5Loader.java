@@ -155,7 +155,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		DataHolder dh = createDataHolder(tree, loadMetadata);
 		if (loadMetadata) {
 			metadata = (Metadata) dh.getMetadata();
-			metadata.setFilePath(fileName);
 		}
 		return dh;
 	}
@@ -2065,7 +2064,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	public void loadMetadata(IMonitor mon) throws Exception {
 		loadTree(mon);
 		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
-		metadata.setFilePath(fileName);
 	}
 
 	private Metadata metadata;
@@ -2080,7 +2078,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param tree
 	 * @param withMetadata
 	 */
-	public static DataHolder createDataHolder(Tree tree, boolean withMetadata) {
+	public DataHolder createDataHolder(Tree tree, boolean withMetadata) {
 		DataHolder dh = new DataHolder();
 		if (tree == null)
 			return dh;
@@ -2137,7 +2135,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
 	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private static void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
+	private void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
 		Node node = link.getDestination();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();

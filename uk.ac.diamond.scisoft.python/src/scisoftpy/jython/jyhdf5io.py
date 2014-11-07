@@ -147,18 +147,18 @@ class HDF5Loader(object):
                 v = Sciwrap(v)
             attrs.append((n, v))
 
-        if link.isDestinationAGroup():
+        if link.isDestinationGroup():
             name = link.getName()
             g = self._mkgroup(name, link, attrs, parent)
             pool[nid] = g
             nodes = [(l.getName(), self._copynode(pool, l, g)) for l in node]
             g.init_group(nodes)
             return g
-        elif link.isDestinationADataset():
+        elif link.isDestinationData():
             d = self._mkdataset(node, attrs, parent)
             pool[nid] = d
             return d
-        elif link.isDestinationASymLink():
+        elif link.isDestinationSymbolic():
             pass
         else:
             pass

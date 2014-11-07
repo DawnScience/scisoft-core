@@ -203,8 +203,14 @@ public class OperationServiceImpl implements IOperationService {
         if (series[0].getInputRank()==OperationRank.SAME) {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }
+        
+        int[] squeezedShape = null;
+        
+        if (firstSlice != null) squeezedShape = AbstractDataset.squeezeShape(firstSlice.getShape(), false);
+        
         if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
-	        if (AbstractDataset.squeezeShape(firstSlice.getShape(), false).length != series[0].getInputRank().getRank()) {
+        	
+	        if (squeezedShape.length != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
@@ -212,7 +218,7 @@ public class OperationServiceImpl implements IOperationService {
         
         
         OperationRank firstRank = OperationRank.ANY;
-        if (firstSlice != null) firstRank = OperationRank.get(firstSlice.getRank());
+        if (firstSlice != null) firstRank = OperationRank.get(squeezedShape.length);
         
         if (series.length > 1) {
         	

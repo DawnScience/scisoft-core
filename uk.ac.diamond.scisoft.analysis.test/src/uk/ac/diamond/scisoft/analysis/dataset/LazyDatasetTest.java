@@ -128,7 +128,7 @@ public class LazyDatasetTest {
 
 	@Test
 	public void testGetSliceView() {
-		final int[] shape = new int[] {6, 2, 3, 4};
+		final int[] shape = new int[] {6, 2, 4, 1};
 		final Dataset d = Random.randn(shape);
 		LazyDataset ld = new LazyDataset("", Dataset.INT, shape, new ILazyLoader() {
 			@Override
@@ -144,7 +144,7 @@ public class LazyDatasetTest {
 		});
 
 		Slice[] slice;
-		slice = new Slice[]{new Slice(1, null, 3), new Slice(1), null, new Slice(1, 3)};
+		slice = new Slice[]{new Slice(1, null, 3), new Slice(1), new Slice(1, 3), null};
 		ILazyDataset l = ld.getSliceView(null, shape, null);
 		System.out.println(l);
 		Assert.assertEquals("Full slice", d, l.getSlice());
@@ -158,5 +158,10 @@ public class LazyDatasetTest {
 		l = ld.getSliceView(slice);
 		System.out.println(l);
 		Assert.assertEquals("Part slice", d.getSlice(slice), l.getSlice());
+
+		l = ld.getSliceView();
+		l.squeeze();
+		Assert.assertEquals("Full slice", 3, l.getSlice().getRank());
+
 	}
 }

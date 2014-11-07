@@ -18,9 +18,11 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 
 import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.utils.OSUtils;
 
 /**
  * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is
@@ -118,6 +120,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 					} else {
 						axesMetadata = (AxesMetadataImpl) list.get(0);
 					}
+					axesMetadata.toString();
 
 					// look through the additional metadata for axis information
 					// TODO Should take @primary into account when adding axes.
@@ -154,12 +157,37 @@ public class NexusHDF5Loader extends HDF5Loader {
 								}
 								shape[axisDim] = aLength;
 								axisDataset.setShape(shape);
+								axesMetadata.addAxis(checkDatasetShapeSlicable(axisDataset, dShape), axisDim);
+							} else {
+								if (axisDataset.getRank() == data.getRank()){
+									axesMetadata.addAxis(axisDataset, axisDim);
+								} else {
+									//TODO this might need to be generic'd up a bit... try-catch incase anything troublesome happens
+									try {
+										int[] shape = new int[dShape.length];
+										Arrays.fill(shape, 1);
+										
+										int[] overlap = Arrays.copyOfRange(dShape, axisDim-aShape.length+1, axisDim+1);
+										
+										if (Arrays.equals(aShape, overlap)) {
+											
+											for (int i = axisDim-aShape.length+1; i < axisDim+1; i++) shape[i] = dShape[i];
+											axisDataset.setShape(shape);
+										}
+										
+										axesMetadata.addAxis(checkDatasetShapeSlicable(axisDataset, dShape), axisDim);
+
+									} catch (Exception e) {
+										logger.warn("Trouble with multidimensional axis {} for {} dim of signal dataset", goodKey, axisDim);
+									}
+									
+								}
+								
 							}
-							axesMetadata.addAxis(axisDataset, axisDim);
+							
 						}
 					}
 
-//					data.setMetadata(null); was no-op anyway
 				}
 			}
 		} catch (Exception e) {
@@ -223,6 +251,22 @@ public class NexusHDF5Loader extends HDF5Loader {
 		}
 
 		return dh;
+	}
+	
+	private ILazyDataset checkDatasetShapeSlicable(ILazyDataset lz, int[] originalShape) {
+		
+		boolean correct = true;
+		
+		int[] s = lz.getShape();
+		
+		if (s.length != originalShape.length) return null;
+		
+		for (int i = 0; i < originalShape.length; i++) {
+			if (s[i] == 1) continue;
+			if (s[i] != originalShape[i]) correct = false;
+		}
+		
+		return correct ? lz : null;
 	}
 
 }

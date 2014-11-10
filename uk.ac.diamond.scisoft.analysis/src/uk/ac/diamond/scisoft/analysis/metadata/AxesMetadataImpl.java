@@ -77,7 +77,8 @@ public class AxesMetadataImpl implements AxesMetadata {
 	}
 
 	/**
-	 * Add axis data to given dimension
+	 * Add axis data to given dimension. This dataset must be one dimensional or match rank
+	 * with the associating dataset
 	 * @param axisDim dimension (n.b. this is zero-based)
 	 * @param axisData dataset for axis
 	 */

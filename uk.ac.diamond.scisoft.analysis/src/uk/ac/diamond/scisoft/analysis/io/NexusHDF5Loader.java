@@ -65,26 +65,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 		if (dh == null)
 			return null;
 
-		// We assign errors in ILazyDatasets read by nexus error
-		// "standard"
-		// TODO FIXME Also there is the attribute way of specifying and error.
-		for (String name : dh.getNames()) {
-			ILazyDataset data = dh.getLazyDataset(name);
-			if (data == null)
-				continue;
-
-			ILazyDataset error = null;
-			String errorName = name + NX_ERRORS_SUFFIX;
-			if (dh.contains(errorName)) {
-				error = dh.getLazyDataset(errorName);
-			} else if (name.endsWith("/" + DATA)) {
-				final String ep = name.substring(0, name.length() - DATA.length()) + NX_ERRORS;
-				error = dh.getLazyDataset(ep);
-			}
-			if (error != null)
-				data.setError(error);
-		}
-
 		// TODO Add in unit metadata information
 
 		// Augment data as required
@@ -192,6 +172,30 @@ public class NexusHDF5Loader extends HDF5Loader {
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Failed to augment data with metadata", e);
 		}
+		
+		// We assign errors in ILazyDatasets read by nexus error
+		// "standard"
+		// TODO FIXME Also there is the attribute way of specifying and error.
+		for (String name : dh.getNames()) {
+			ILazyDataset data = dh.getLazyDataset(name);
+			if (data == null)
+				continue;
+
+			ILazyDataset error = null;
+			String errorName = name + NX_ERRORS_SUFFIX;
+			if (dh.contains(errorName)) {
+				error = dh.getLazyDataset(errorName);
+			} else if (name.endsWith("/" + DATA)) {
+				final String ep = name.substring(0, name.length() - DATA.length()) + NX_ERRORS;
+				error = dh.getLazyDataset(ep);
+			}
+			if (error != null)
+				//TODO need better slicable metadata clearing to stop stack overflow
+				error.clearMetadata(AxesMetadata.class);
+				data.setError(error);
+		}
+		
+		
 
 		// TODO this should probably be done with an extention point, but possibly wait until an osgi gda server and jython.
 		// Add ARPES specific metadata where required.

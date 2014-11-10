@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 
-public class ImportMaskOperation extends AbstractOperation<ImportMaskModel, OperationData>{
+public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOperation<ImportMaskModel,OperationData>{
 
 	
 	IDataset mask;

@@ -192,4 +192,31 @@ public class AxesMetadataTest {
 		
 		dataset.setShape(2,3,1,1);
 	}
+
+	@Test
+	public void testAxesMetadataTranspose() throws Exception {
+		final int[] shape = new int[] { 1, 2, 3, 4 };
+		int r = shape.length;
+		int[] nShape = new int[r];
+		AxesMetadata amd = new AxesMetadataImpl(r);
+		for (int i = 0; i < r; i++) {
+			Arrays.fill(nShape, 1);
+			nShape[i] = shape[i];
+			DoubleDataset array = Random.randn(nShape);
+			amd.setAxis(i, new ILazyDataset[] { array });
+		}
+
+		Dataset dataset = Random.rand(shape);
+		dataset.addMetadata(amd);
+
+		int[] map = new int[] {3, 1, 2, 0};
+		Dataset t = dataset.getTransposedView(map);
+		assertArrayEquals(new int[]{4, 2, 3, 1}, t.getShape());
+		amd = t.getMetadata(AxesMetadata.class).get(0);
+
+		for (int i = 0; i < r; i++) {
+			ILazyDataset a = amd.getAxis(i)[0];
+			assertEquals(shape[map[i]], a.getSize());
+		}
+	}
 }

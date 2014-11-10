@@ -17,9 +17,11 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
+import org.eclipse.dawnsci.analysis.api.metadata.Transposable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
+	@Transposable
 	@Reshapeable(matchRank = true)
 	@Sliceable
 	List<ILazyDataset>[] allAxes;

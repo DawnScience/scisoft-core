@@ -239,10 +239,24 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 						if (ax != null) {
 							if (!firstPassDone && ax != null) {
 								String name = ax.getName();
+								
 								//assume only our slicing puts [ in a axis name!
 								if (name.contains("[")) {
 									name = name.split("\\[")[0];
 								}
+								
+								if (name.contains("/")) {
+									name = name.replace("/", "_");
+								}
+								
+								//sanitize - cant have an axis called data
+								if (name.isEmpty() || name.equals("data")) {
+									int n = 0;
+									while(groupAxesNames.containsKey("axis" + n)) n++;
+									
+									name = "axis" +n;
+								}
+								
 								axesNames.put(i, name);
 							}
 							IDataset axDataset = ax.getSlice();
@@ -256,7 +270,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 								ILazyDataset error = axDataset.getError();
 								
 								if (error != null) {
-									IDataset e = error.getSlice();
+									IDataset e = error.getSlice().squeeze();
 									e.setName(axDataset.getName() + "_errors");
 									file.createDataset(e.getName(), e.squeeze(), groupName);
 								}
@@ -312,7 +326,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		ILazyDataset error = dataset.getError();
 		
 		if (error != null) {
-			IDataset e = error.getSlice();
+			IDataset e = error.getSlice().squeeze();
 			e.setName("errors");
 			H5Utils.insertDataset(file, group, e, sliceOut, newShape);
 		}

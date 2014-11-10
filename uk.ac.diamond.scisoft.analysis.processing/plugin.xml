@@ -313,6 +313,14 @@
             name="Standard Normal Variate"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
+            description="Sets the current value of the data as the variance on the dataset"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Set Poisson Error"
+            visible="true">
+      </operation>
    </extension>
 
 </plugin>

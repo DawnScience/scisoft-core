@@ -94,6 +94,13 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
+		IDataset error = input.getError().getSlice();
+		
+		if (error != null) {
+			error.setShape(error.getShape()[0],1);
+			outds = DatasetUtils.concatenate(new IDataset[]{outds,error}, 1);
+		}
+		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 		
 		DataHolder dh = new DataHolder();

@@ -92,8 +92,8 @@ public class AxesMetadataImpl implements AxesMetadata {
 	private ILazyDataset sanitizeAxisData(int axisDim, ILazyDataset axisData) {
 		// remove any axes metadata to prevent infinite recursion
 		// and also check rank
-		ILazyDataset clone = axisData.clone();
-		clone.clearMetadata(AxesMetadata.class);
+		ILazyDataset view = axisData.getSliceView();
+		view.clearMetadata(AxesMetadata.class);
 		if (axisData.getRank() != allAxes.length) {
 			if (axisData.getRank() != 1) {
 				throw new IllegalArgumentException("Given axis dataset must be one dimensional or match rank");
@@ -101,9 +101,9 @@ public class AxesMetadataImpl implements AxesMetadata {
 			int[] newShape = new int[allAxes.length];
 			Arrays.fill(newShape, 1);
 			newShape[axisDim] = axisData.getSize();
-			clone.setShape(newShape);
+			view.setShape(newShape);
 		}
-		return clone;
+		return view;
 	}
 
 	@Override

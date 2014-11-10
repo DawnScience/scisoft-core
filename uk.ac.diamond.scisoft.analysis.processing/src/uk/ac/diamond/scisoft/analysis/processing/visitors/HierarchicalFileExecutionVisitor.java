@@ -252,10 +252,27 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 								if(!firstPassDone) {
 								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), groupName);
 								file.setAttribute(ds, "axis", String.valueOf(i+1));
+								
+								ILazyDataset error = axDataset.getError();
+								
+								if (error != null) {
+									IDataset e = error.getSlice();
+									e.setName(axDataset.getName() + "_errors");
+									file.createDataset(e.getName(), e.squeeze(), groupName);
+								}
+								
 								}
 							} else {
 								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, file,i);
 								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
+								
+								ILazyDataset error = axDataset.getError();
+								
+								if (error != null) {
+									IDataset e = error.getSlice();
+									e.setName(axDataset.getName() + "_errors");
+									appendSingleValueAxis(e,groupName, oSlice,oShape, file,i);
+								}
 							}
 							
 						}

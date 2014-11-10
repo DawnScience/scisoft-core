@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -48,7 +49,7 @@ public class AxesMetadataImpl implements AxesMetadata {
 	public void setAxis(int axisDim, ILazyDataset[] axisData) {
 		ArrayList<ILazyDataset> axisList = new ArrayList<ILazyDataset>(0);
 		for (int i = 0; i < axisData.length; i++) {
-			axisList.add(axisData[i]);
+			axisList.add(sanitizeAxisData(axisDim, axisData[i]));
 		}
 		allAxes[axisDim] = axisList;
 	}
@@ -84,9 +85,26 @@ public class AxesMetadataImpl implements AxesMetadata {
 		if (allAxes[axisDim] == null) {
 			allAxes[axisDim] = new ArrayList<ILazyDataset>();
 		}
-		allAxes[axisDim].add(axisData);
+		allAxes[axisDim].add(sanitizeAxisData(axisDim, axisData));
 	}
-	
+
+	private ILazyDataset sanitizeAxisData(int axisDim, ILazyDataset axisData) {
+		// remove any axes metadata to prevent infinite recursion
+		// and also check rank
+		ILazyDataset clone = axisData.clone();
+		clone.clearMetadata(AxesMetadata.class);
+		if (axisData.getRank() != allAxes.length) {
+			if (axisData.getRank() != 1) {
+				throw new IllegalArgumentException("Given axis dataset must be one dimensional or match rank");
+			}
+			int[] newShape = new int[allAxes.length];
+			Arrays.fill(newShape, 1);
+			newShape[axisDim] = axisData.getSize();
+			clone.setShape(newShape);
+		}
+		return clone;
+	}
+
 	@Override
 	public AxesMetadata createAxesMetadata(int rank) {
 		return new AxesMetadataImpl(rank);

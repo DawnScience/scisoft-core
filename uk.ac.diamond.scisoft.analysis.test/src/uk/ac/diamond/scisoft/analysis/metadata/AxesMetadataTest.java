@@ -173,4 +173,23 @@ public class AxesMetadataTest {
 		d = v.getSlice((Slice) null, null, new Slice(1));
 		assertEquals(5, d.getMetadata(AxesMetadata.class).get(0).getAxes().length);
 	}
+
+	@Test
+	public void testAxesMetadataRecursion() {
+		final int[] shape = new int[] { 1, 2, 3, 1 };
+
+		int r = shape.length;
+
+		ILazyDataset axis = createRandomLazyDataset("axis", new int[] {2}, Dataset.INT32);
+		AxesMetadataImpl amd = new AxesMetadataImpl(1);
+		amd.setAxis(0, new ILazyDataset[] {createRandomLazyDataset("axis2", new int[] {2}, Dataset.INT32)});
+		axis.addMetadata(amd);
+
+		amd = new AxesMetadataImpl(r);
+		amd.setAxis(1, new ILazyDataset[] {axis});
+		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		dataset.addMetadata(amd);
+		
+		dataset.setShape(2,3,1,1);
+	}
 }

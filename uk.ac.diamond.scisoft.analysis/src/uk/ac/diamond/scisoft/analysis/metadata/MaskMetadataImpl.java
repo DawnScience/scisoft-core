@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.metadata;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
+import org.eclipse.dawnsci.analysis.api.metadata.Transposable;
 
 public class MaskMetadataImpl implements MaskMetadata {
 
@@ -20,6 +21,7 @@ public class MaskMetadataImpl implements MaskMetadata {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@Transposable
 	@Sliceable
 	ILazyDataset mask;
 	

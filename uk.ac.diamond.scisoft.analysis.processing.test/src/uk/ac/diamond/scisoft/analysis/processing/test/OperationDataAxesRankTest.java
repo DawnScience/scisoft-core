@@ -1,9 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -15,15 +15,12 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
@@ -31,7 +28,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 
 public class OperationDataAxesRankTest {
@@ -233,9 +229,9 @@ public class OperationDataAxesRankTest {
 		axDataset3.setShape(new int[] {1,1,1000});
 
 		AxesMetadataImpl am = new AxesMetadataImpl(3);
-		am.addAxis(axDataset1, 0);
-		am.addAxis(axDataset2, 1);
-		am.addAxis(axDataset3, 2);
+		am.addAxis(0, axDataset1);
+		am.addAxis(1, axDataset2);
+		am.addAxis(2, axDataset3);
 
 		lz.addMetadata(am);
 
@@ -253,8 +249,8 @@ public class OperationDataAxesRankTest {
 			Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax2.setShape(new int[]{1,10});
 			AxesMetadataImpl md = new AxesMetadataImpl(2);
-			md.addAxis(ax1, 0);
-			md.addAxis(ax2, 1);
+			md.addAxis(0, ax1);
+			md.addAxis(1, ax2);
 			ones.setMetadata(md);
 			
 			return new OperationData(ones);
@@ -288,8 +284,8 @@ public class OperationDataAxesRankTest {
 			Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax2.setShape(new int[]{1,10});
 			AxesMetadataImpl md = new AxesMetadataImpl(2);
-			md.addAxis(ax1, 0);
-			md.addAxis(ax2, 1);
+			md.addAxis(0, ax1);
+			md.addAxis(1, ax2);
 			ones.setMetadata(md);
 			
 			return new OperationData(ones);
@@ -321,7 +317,7 @@ public class OperationDataAxesRankTest {
 			Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax1.setShape(new int[]{10});
 			AxesMetadataImpl md = new AxesMetadataImpl(1);
-			md.addAxis(ax1, 0);
+			md.addAxis(0, ax1);
 			ones.setMetadata(md);
 			
 			return new OperationData(ones);
@@ -353,7 +349,7 @@ private class Op1dto1d extends AbstractOperation<IOperationModel, OperationData>
 			Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax1.setShape(new int[]{10});
 			AxesMetadataImpl md = new AxesMetadataImpl(1);
-			md.addAxis(ax1, 0);
+			md.addAxis(0, ax1);
 			ones.setMetadata(md);
 			
 			return new OperationData(ones);

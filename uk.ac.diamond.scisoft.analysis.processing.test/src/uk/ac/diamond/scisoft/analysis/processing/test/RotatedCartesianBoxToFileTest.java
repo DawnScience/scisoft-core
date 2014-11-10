@@ -91,9 +91,9 @@ private static IOperationService service;
 		axDataset3.setName("x");
 		
 		AxesMetadataImpl am = new AxesMetadataImpl(3);
-		am.addAxis(axDataset1, 0);
-		am.addAxis(axDataset2, 1);
-		am.addAxis(axDataset3, 2);
+		am.addAxis(0, axDataset1);
+		am.addAxis(1, axDataset2);
+		am.addAxis(2, axDataset3);
 		
 		lz.addMetadata(am);
 		

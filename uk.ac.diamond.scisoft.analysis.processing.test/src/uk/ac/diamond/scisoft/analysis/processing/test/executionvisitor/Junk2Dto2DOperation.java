@@ -39,7 +39,7 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 	public void setWithAxes(boolean withAxes) {
 		this.withAxes = withAxes;
 	}
-	
+
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		int x = model.getxDim();
@@ -55,8 +55,8 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		ax2.setName("Junk2Dto2DAx2");
 		if (withAxes) {
 			AxesMetadataImpl am = new AxesMetadataImpl(2);
-			am.addAxis(ax1, 0);
-			am.addAxis(ax2, 1);
+			am.addAxis(0, ax1);
+			am.addAxis(1, ax2);
 			
 			out.setMetadata(am);
 		}

@@ -156,10 +156,10 @@ public class NexusHDF5Loader extends HDF5Loader {
 								}
 								shape[axisDim] = aLength;
 								axisDataset.setShape(shape);
-								axesMetadata.addAxis(checkDatasetShapeSlicable(axisDataset, dShape), axisDim);
+								axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
 							} else {
 								if (axisDataset.getRank() == data.getRank()){
-									axesMetadata.addAxis(axisDataset, axisDim);
+									axesMetadata.addAxis(axisDim, axisDataset);
 								} else {
 									//TODO this might need to be generic'd up a bit... try-catch incase anything troublesome happens
 									try {
@@ -174,7 +174,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 											axisDataset.setShape(shape);
 										}
 										
-										axesMetadata.addAxis(checkDatasetShapeSlicable(axisDataset, dShape), axisDim);
+										axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
 
 									} catch (Exception e) {
 										logger.warn("Trouble with multidimensional axis {} for {} dim of signal dataset", goodKey, axisDim);

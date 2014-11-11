@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -553,6 +554,62 @@ public class HierarchicalFileExVisitorTest {
 			assertFalse(dh.contains("/entry/result/Junk1Dax"));
 			
 			assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	@Test
+	public void Process3DStackAs1DTo1DErrorAxes() throws Exception {
+		
+		int[] inputShape = new int[] {10,30,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,true);
+		
+		AxesMetadata ax = lazy.getMetadata(AxesMetadata.class).get(0);
+		IDataset ae1 = DatasetFactory.createRange(10, Dataset.INT16);
+		ae1.setShape(new int[] {10,1,1});
+		IDataset ae2 = DatasetFactory.createRange(30, Dataset.INT16);
+		ae2.setShape(new int[] {1,30,1});
+		
+		((Dataset)ax.getAxis(0)[0]).setError(ae1);
+		((Dataset)ax.getAxis(1)[0]).setError(ae2);
+
+		
+		RichDataset rich = new RichDataset(lazy, null);
+		rich.setSlicing("all","all");
+		
+		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
+		op11.setWithErrors(true);
+		op11.setWithAxes(true);
+		op11.setModel(new Junk1DModel());
+		
+		try {
+
+			final File tmp = File.createTempFile("Test", ".h5");
+			tmp.deleteOnExit();
+			tmp.createNewFile();
+			
+			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			
+			
+			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+			assertTrue(dh.contains("/entry/result/data"));
+			assertTrue(dh.contains("/entry/result/errors"));
+			assertTrue(dh.contains("/entry/result/Axis_0"));
+			assertTrue(dh.contains("/entry/result/Axis_1"));
+			assertTrue(dh.contains("/entry/result/Junk1Dax"));
+			assertTrue(dh.contains("/entry/result/Axis_0_errors"));
+			assertTrue(dh.contains("/entry/result/Axis_1_errors"));
+			
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+			assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/errors").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_errors").getShape());
+			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
 			
 		} catch (Exception e) {

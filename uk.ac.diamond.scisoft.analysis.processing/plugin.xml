@@ -46,7 +46,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
-            description="Dilate the mask"
+            description="Dilate the mask by a set number of pixels"
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
@@ -60,11 +60,11 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel"
             name="Sector Azimuthal Profile"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration"
-            description="Using a box region, select a portion of the data to integrate in X and Y."
+            description="Using a box region, select a portion of the data to integrate in X or Y."
             icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.boxIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegrationModel"
@@ -84,7 +84,8 @@
             icon="icons/function.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel"
-            name="Function Operation">
+            name="Function Operation"
+            visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FittingOperation"
@@ -93,11 +94,11 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel"
             name="Peak Fit"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation"
-            description="Import detector geometry and x-ray energy"
+            description="Import detector geometry and x-ray energy (can be determined in powder calibration perspective)"
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel"
@@ -106,7 +107,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
-            description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern"
+            description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern (Intensity vs q, 2 theta, d or pixel)"
             icon="icons/PowderIntegration.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
@@ -115,7 +116,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
-            description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle"
+            description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle (Intensity vs azimuthal angle)"
             icon="icons/PowderIntegrationRadial.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
@@ -161,7 +162,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineOperation"
             description="Rolling ball baseline correction with fixed radius"
-            icon="icons/function.png"
+            icon="icons/rollingball.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineModel"
             name="Rolling Ball Baseline Correction"
@@ -174,8 +175,8 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurOperation"
-            description="Gaussian image filter"
-            icon="icons/function.png"
+            description="Gaussian image filter using kernal of specified width"
+            icon="icons/gausfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Gaussian Filter"
@@ -204,8 +205,8 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
-            description="Median filter an image with a kernel of a specific width"
-            icon="icons/function.png"
+            description="Median filter an image with a kernel of a specified width"
+            icon="icons/medfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Median Filter"
@@ -215,7 +216,7 @@
             category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
             description="Mean filter an image with a kernel of a specified width"
-            icon="icons/function.png"
+            icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
             name="Mean Filter"
@@ -223,8 +224,8 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
-            description="Save 1D data as text"
-            icon="icons/function.png"
+            description="Save 1D data with axes as text"
+            icon="icons/exptext.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
             name="Export to Text File"
@@ -233,7 +234,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
             description="Downsample an image"
-            icon="icons/function.png"
+            icon="icons/downsamp.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageModel"
             name="Downsample Image"
@@ -242,7 +243,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DOperation"
             description="Integrate range"
-            icon="icons/function.png"
+            icon="icons/intrange.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DModel"
             name="Integrate Range"
@@ -251,7 +252,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
             description="Custom mathematical operation"
-            icon="icons/function.png"
+            icon="icons/exp1d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DModel"
             name="Mathematical Expression [1D]"
@@ -259,8 +260,8 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
-            description="Custom mathematical expression on an image"
-            icon="icons/function.png"
+            description="Custom mathematical operation on an image"
+            icon="icons/exp2d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
             name="Mathematical Expression [2D]"
@@ -268,8 +269,8 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
-            description="Custom mathematical expressions including q, tth, azimuth and energy"
-            icon="icons/function.png"
+            description="Custom mathematical operation including q, tth, azimuth and energy"
+            icon="icons/exp2dd.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
             name="Mathematical Expression [2D Diffraction]"
@@ -278,7 +279,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroupImageOperation"
             description="Subtract a background image from a different file"
-            icon="icons/function.png"
+            icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageModel"
             name="Subtract Background Image"
@@ -287,7 +288,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
             description="Subtract a blank frame in the processed dataset"
-            icon="icons/function.png"
+            icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameModel"
             name="Subtract Blank Frame"
@@ -306,9 +307,18 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
             description="Subtract mean and divide by standard deviation"
+            icon="icons/snv.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Standard Normal Variate"
+            visible="true">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
+            description="Sets the current value of the data as the variance on the dataset"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Set Poisson Error"
             visible="true">
       </operation>
    </extension>

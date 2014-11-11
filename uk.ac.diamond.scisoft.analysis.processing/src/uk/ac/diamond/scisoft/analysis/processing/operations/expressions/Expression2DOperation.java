@@ -48,8 +48,8 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		outaxisy.setShape(new int[]{1,outaxisy.getShape()[0]});
 		
 		AxesMetadata am = new AxesMetadataImpl(2);
-		am.setAxis(0, new ILazyDataset[]{outaxisx});
-		am.setAxis(1, new ILazyDataset[]{outaxisy});
+		am.setAxis(0, outaxisx);
+		am.setAxis(1, outaxisy);
 		outdata.setMetadata(am);
 		
 		return new OperationData(outdata);

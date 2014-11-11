@@ -141,7 +141,7 @@ public class AxesMetadataTest {
 			Arrays.fill(nShape, 1);
 			nShape[i] = shape[i];
 			DoubleDataset array = Random.randn(nShape);
-			amd.setAxis(i, new ILazyDataset[] { array });
+			amd.setAxis(i, array);
 		}
 		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
 		dataset.addMetadata(amd);
@@ -182,14 +182,14 @@ public class AxesMetadataTest {
 
 		ILazyDataset axis = createRandomLazyDataset("axis", new int[] {2}, Dataset.INT32);
 		AxesMetadataImpl amd = new AxesMetadataImpl(1);
-		amd.setAxis(0, new ILazyDataset[] {createRandomLazyDataset("axis2", new int[] {2}, Dataset.INT32)});
+		amd.setAxis(0, createRandomLazyDataset("axis2", new int[] {2}, Dataset.INT32));
 		axis.addMetadata(amd);
 
 		amd = new AxesMetadataImpl(r);
-		amd.setAxis(1, new ILazyDataset[] {axis});
+		amd.setAxis(1, axis);
 		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
 		dataset.addMetadata(amd);
-		
+
 		dataset.setShape(2,3,1,1);
 	}
 
@@ -203,7 +203,7 @@ public class AxesMetadataTest {
 			Arrays.fill(nShape, 1);
 			nShape[i] = shape[i];
 			DoubleDataset array = Random.randn(nShape);
-			amd.setAxis(i, new ILazyDataset[] { array });
+			amd.setAxis(i, array);
 		}
 
 		Dataset dataset = Random.rand(shape);

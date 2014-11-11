@@ -70,38 +70,12 @@ public class PixelIntegrationUtils {
 		
 		//+0.5 for centre of pixel
 		while (iter.hasNext()) {
-			double val = -Math.atan2(pos[0]+0.5-beamCentre[1],pos[1]+0.5-beamCentre[0]);
+			double val = Math.atan2(pos[0]+0.5-beamCentre[1],pos[1]+0.5-beamCentre[0]);
 			if (radians) out.set(val, pos);
 			else out.set(Math.toDegrees(val), pos);
 		}
 		
 		return out;
-	}
-	
-	public static void inPlaceOffsetAzimuthalArray(Dataset array, double offset, boolean radians) {
-		
-		double[] range = new double[2];
-		double full = 0;
-		
-		if (radians) {
-			range[0] = -Math.PI;
-			range[1] = Math.PI;
-			full = Math.PI*2;
-		} else {
-			range[0] = -180;
-			range[1] = 180;
-			full = 360;
-		}
-		
-		IndexIterator it = array.getIterator();
-		
-		while (it.hasNext()) {
-			double val = array.getElementDoubleAbs(it.index);
-			val = val + offset;
-			val = val > range[1] ? val-full : val;
-			val = val < range[0] ? val+full : val;
-			array.setObjectAbs(it.index, val);
-		}
 	}
 	
 	public static Dataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
@@ -115,10 +89,10 @@ public class PixelIntegrationUtils {
 		
 		while (iter.hasNext()) {
 			//find vals at pixel corners
-			vals[0] = -Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]);
-			vals[1] = -Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]);
-			vals[2] = -Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]+1);
-			vals[3] = -Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]+1);
+			vals[0] = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]);
+			vals[1] = Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]);
+			vals[2] = Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]+1);
+			vals[3] = Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]+1);
 			
 			Arrays.sort(vals);
 			

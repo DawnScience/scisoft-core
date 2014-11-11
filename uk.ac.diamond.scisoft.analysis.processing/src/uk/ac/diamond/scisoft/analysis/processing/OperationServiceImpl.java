@@ -15,10 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -65,9 +67,10 @@ public class OperationServiceImpl implements IOperationService {
 	}
 	
 	// Generic gone mad ; ah - hahaha...
-	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>  operations;
-	private Map<String, Class<? extends IOperationModel>>                                models;
-	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categories;
+	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>              operations;
+	private Map<String, Class<? extends IOperationModel>>                                            models;
+	private Map<String, OperationCategory>                                                           categoryId;
+	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categoryOp;
 	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
@@ -274,16 +277,16 @@ public class OperationServiceImpl implements IOperationService {
 		
 		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
-		categories = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
+		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);		
+		categoryId = new HashMap<String, OperationCategory>(7);
 		
-		final Map<String, OperationCategory> cats = new HashMap<String, OperationCategory>(7);
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 	    	if (!e.getName().equals("category")) continue;
 			final String     id   = e.getAttribute("id");
 			final String     name = e.getAttribute("name");
 			final String     icon = e.getAttribute("icon");
-			cats.put(id, new OperationCategory(name, icon, id));		
+			categoryId.put(id, new OperationCategory(name, icon, id));		
 		}
 		
 		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
@@ -302,10 +305,10 @@ public class OperationServiceImpl implements IOperationService {
 			
 			final String     catId= e.getAttribute("category");
 			if (catId!=null) {
-				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categories.get(catId);
+				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categoryOp.get(catId);
 				if (ops==null) {
-					ops = new LinkedHashSet<IOperation<? extends IOperationModel,? extends OperationData>>();
-					categories.put(catId, ops);
+					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+					categoryOp.put(catId, ops);
 				}
 				ops.add(op);
 			}
@@ -318,8 +321,8 @@ public class OperationServiceImpl implements IOperationService {
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
 
-				if (catId != null && cats.containsKey(catId)) {
-					aop.setCategory(cats.get(catId));
+				if (catId != null && categoryId.containsKey(catId)) {
+					aop.setCategory(categoryId.get(catId));
 				}
 			}
 			
@@ -404,9 +407,36 @@ public class OperationServiceImpl implements IOperationService {
 	
 	@Override
 	public Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>> getCategorizedOperations() throws Exception {
+		
 		checkOperations();
-		// Sorted alphabetically by id string
-		return new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>(categories);
+		
+		// Sorted alphabetically by category name string
+		final TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> cats = new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		
+		for (String catId : categoryId.keySet()) {
+			
+			final OperationCategory cat = categoryId.get(catId);
+			final Collection<IOperation<? extends IOperationModel,? extends OperationData>> group = categoryOp.get(catId);
+			
+			cats.put(cat.getName(), group);
+		}
+		
+		final LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> ret = new LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		ret.putAll(cats);
+		
+		// Now add all those with no category
+		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+		for (String id : operations.keySet()) {
+			final IOperation op = operations.get(id);
+			if (op instanceof AbstractOperation) {
+				AbstractOperation<IOperationModel, OperationData> aop = (AbstractOperation<IOperationModel, OperationData>)op;
+				if (aop.getCategory()==null) uncategorized.add(aop);
+			}
+		}
+		
+		ret.put("", uncategorized);
+		
+		return ret;
 	}
 
 	@Override

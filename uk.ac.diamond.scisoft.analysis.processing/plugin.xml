@@ -97,6 +97,7 @@
             visible="false">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation"
             description="Import detector geometry and x-ray energy (can be determined in powder calibration perspective)"
             icon="icons/CalibrationRun.png"
@@ -106,6 +107,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
             description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern (Intensity vs q, 2 theta, d or pixel)"
             icon="icons/PowderIntegration.png"
@@ -115,6 +117,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
             description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle (Intensity vs azimuthal angle)"
             icon="icons/PowderIntegrationRadial.png"
@@ -124,6 +127,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionOperation"
             description="Solid angle, polarisation and detector transmission corrections"
             icon="icons/PowderCorrection.png"
@@ -133,6 +137,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
             description="Remap a powder diffraction/SAXS image to q/2theta vs azimuthal angle"
             icon="icons/PowderCake.png"
@@ -142,6 +147,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineOperation"
             description="Rolling ball baseline correction with fixed radius"
             icon="icons/rollingball.png"
@@ -151,11 +157,11 @@
             visible="true">
       </operation>
       <category
-            id="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
-            name="Filter">
+            id="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
+            name="Image Filter">
       </category>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurOperation"
             description="Gaussian image filter using kernal of specified width"
             icon="icons/gausfilt.png"
@@ -165,7 +171,7 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MinFilterOperation"
             description="Minimum filter an image using a kernel of a specified width"
             icon="icons/function.png"
@@ -175,7 +181,7 @@
             visible="false">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MaxFilterOperation"
             description="Maximum filter an image with a kernel of a specific width"
             icon="icons/function.png"
@@ -185,7 +191,7 @@
             visible="false">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MedianFilterOperation"
             description="Median filter an image with a kernel of a specified width"
             icon="icons/medfilt.png"
@@ -195,7 +201,7 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation"
             description="Mean filter an image with a kernel of a specified width"
             icon="icons/meanfilt.png"
@@ -214,6 +220,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
             description="Downsample an image"
             icon="icons/downsamp.png"
@@ -232,6 +239,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
             description="Custom mathematical operation"
             icon="icons/exp1d.png"
@@ -241,6 +249,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
             description="Custom mathematical operation on an image"
             icon="icons/exp2d.png"
@@ -250,6 +259,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
             description="Custom mathematical operation including q, tth, azimuth and energy"
             icon="icons/exp2dd.png"
@@ -259,6 +269,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroupImageOperation"
             description="Subtract a background image from a different file"
             icon="icons/subblank.png"
@@ -268,6 +279,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
             description="Subtract a blank frame in the processed dataset"
             icon="icons/subblank.png"
@@ -298,11 +310,28 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
             description="Sets the current value of the data as the variance on the dataset"
+            icon="icons/pois.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Set Poisson Error"
             visible="true">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
+            name="XRD2 Integration">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.expressions"
+            name="Expressions">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
+            name="XRD2 Image Processing">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            name="Background Subtraction">
+      </category>
    </extension>
 
 </plugin>

@@ -89,7 +89,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 					// TODO FIXME
 					// This is wrong because it makes the parsing n^2 with meta data names.
 					// There can be ~1000 meta data entires for nexus files (non-Diamond ones at
-					// the moment through). Therefore n^2 is SLOW.
+					// the moment though). Therefore n^2 is SLOW.
 					for (String repassKey : dh.getMetadata().getMetaNames()) {
 						if (repassKey.startsWith(parentKey)) {
 							additionalMetadata.add(repassKey);

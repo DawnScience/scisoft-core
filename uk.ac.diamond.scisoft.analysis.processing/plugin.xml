@@ -142,24 +142,6 @@
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
-            description="Import Mask from .nxs or fit2d mask file"
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
-            name="Import Mask From File"
-            visible="true">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
-            description="Dilate the mask"
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
-            name="Dilate Mask"
-            visible="true">
-      </operation>
-      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RollingBallBaselineOperation"
             description="Rolling ball baseline correction with fixed radius"
             icon="icons/rollingball.png"

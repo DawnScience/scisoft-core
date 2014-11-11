@@ -16,7 +16,7 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate";
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {

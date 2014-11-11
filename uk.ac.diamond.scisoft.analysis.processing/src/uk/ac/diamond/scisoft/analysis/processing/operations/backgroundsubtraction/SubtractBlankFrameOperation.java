@@ -17,7 +17,7 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBlankFrameOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation";
 	}
 
 	@Override

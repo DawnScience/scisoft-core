@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -18,11 +19,9 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 
 import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.utils.OSUtils;
 
 /**
  * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is
@@ -47,16 +46,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 	public static final String SDS = "SDS";
 
 	public static final String DATA = "data";
-
-	private static final String NX_ARPES_MANIPULATOR_SAAZIMUTHAL = "/entry1/instrument/manipulator/saazimuthal";
-	private static final String NX_ARPES_MANIPULATOR_SATILT = "/entry1/instrument/manipulator/satilt";
-	private static final String NX_ARPES_MANIPULATOR_SAPOLAR = "/entry1/instrument/manipulator/sapolar";
-	private static final String NX_ARPES_ANALYSER_ENERGIES = "/entry1/instrument/analyser/energies";
-	private static final String NX_ARPES_ANALYSER_ANGLES = "/entry1/instrument/analyser/angles";
-	private static final String NX_ARPES_SAMPLE_TEMPERATURE = "/entry1/sample/temperature";
-	private static final String NX_ARPES_MONOCHROMATOR_ENERGY = "/entry1/instrument/monochromator/energy";
-	private static final String NX_ARPES_ANALYSER_PASS_ENERGY = "/entry1/instrument/analyser/pass_energy";
-	private static final String NX_ARPES_ANALYSER_DATA = "/entry1/instrument/analyser/data";
 	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
@@ -70,7 +59,10 @@ public class NexusHDF5Loader extends HDF5Loader {
 		// get all data with signal attribute
 		try {
 			// Parse Metadata.
-			for (String metaKey : dh.getMetadata().getMetaNames()) {
+			List<String> metaNames = new ArrayList<String>(dh.getMetadata().getMetaNames());
+			Collections.sort(metaNames);
+			for (int dataPos = 0; dataPos < metaNames.size(); dataPos++) {
+				String metaKey = metaNames.get(dataPos);
 				if (metaKey.contains("@signal")) {
 					// find the data
 					String key = metaKey.replace("@signal", "");
@@ -86,13 +78,25 @@ public class NexusHDF5Loader extends HDF5Loader {
 						}
 					}
 					
-					// TODO FIXME
-					// This is wrong because it makes the parsing n^2 with meta data names.
-					// There can be ~1000 meta data entires for nexus files (non-Diamond ones at
-					// the moment though). Therefore n^2 is SLOW.
-					for (String repassKey : dh.getMetadata().getMetaNames()) {
+					// Check Forward through list for matching metadata
+					for (int axisPos = dataPos+1; axisPos < metaNames.size(); axisPos++) {
+						String repassKey = metaNames.get(axisPos);
 						if (repassKey.startsWith(parentKey)) {
 							additionalMetadata.add(repassKey);
+						} else {
+							// End of entries so we can exit the loop
+							break;
+						}
+					}
+					
+					// Check Backwards through list for matching metadata
+					for (int axisPos = dataPos-1; axisPos > 0; axisPos--) {
+						String repassKey = metaNames.get(axisPos);
+						if (repassKey.startsWith(parentKey)) {
+							additionalMetadata.add(repassKey);
+						} else {
+							// End of entries so we can exit the loop
+							break;
 						}
 					}
 
@@ -187,93 +191,37 @@ public class NexusHDF5Loader extends HDF5Loader {
 				}
 			}
 		} catch (Exception e) {
-			// TODO FIXME
-			// Is this fatal? We were simply parsing meta data.
-			// The LoaderFactory will swallow the error and return a DataHolder from
-			// another loader.
-			throw new ScanFileHolderException("Failed to augment data with metadata", e);
+			// Non fatal exception, as the file does not support NeXus for axis definitions
+			logger.warn("Failed to augment data with axis metadata", e);
 		}
 		
 		// We assign errors in ILazyDatasets read by nexus error
 		// "standard"
 		// TODO FIXME Also there is the attribute way of specifying and error.
-		for (String name : dh.getNames()) {
-			ILazyDataset data = dh.getLazyDataset(name);
-			if (data == null)
-				continue;
-
-			ILazyDataset error = null;
-			String errorName = name + NX_ERRORS_SUFFIX;
-			if (dh.contains(errorName)) {
-				error = dh.getLazyDataset(errorName);
-			} else if (name.endsWith("/" + DATA)) {
-				final String ep = name.substring(0, name.length() - DATA.length()) + NX_ERRORS;
-				error = dh.getLazyDataset(ep);
+		try {
+			for (String name : dh.getNames()) {
+				ILazyDataset data = dh.getLazyDataset(name);
+				if (data == null)
+					continue;
+	
+				ILazyDataset error = null;
+				String errorName = name + NX_ERRORS_SUFFIX;
+				if (dh.contains(errorName)) {
+					error = dh.getLazyDataset(errorName);
+				} else if (name.endsWith("/" + DATA)) {
+					final String ep = name.substring(0, name.length() - DATA.length()) + NX_ERRORS;
+					error = dh.getLazyDataset(ep);
+				}
+				if (error != null)
+					//TODO need better slicable metadata clearing to stop stack overflow
+					error.clearMetadata(AxesMetadata.class);
+					data.setError(error);
 			}
-			if (error != null)
-				//TODO need better slicable metadata clearing to stop stack overflow
-				error.clearMetadata(AxesMetadata.class);
-				data.setError(error);
+		} catch (Exception e) {
+			// Non fatal exception, as the file does not support NeXus for error definitions
+			logger.warn("Failed to augment data with error dataset", e);
 		}
 		
-		
-
-		// TODO this should probably be done with an extention point, but possibly wait until an osgi gda server and jython.
-		// Add ARPES specific metadata where required.
-		if (dh.contains(NX_ARPES_ANALYSER_DATA)) {
-			ILazyDataset data = dh.getLazyDataset(NX_ARPES_ANALYSER_DATA);
-			ARPESMetadataImpl arpesMetadata = new ARPESMetadataImpl();
-			try {
-				arpesMetadata.setPassEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
-						NX_ARPES_ANALYSER_PASS_ENERGY)));
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			try {
-				arpesMetadata.setPhotonEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
-						NX_ARPES_MONOCHROMATOR_ENERGY)));
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			try {
-				arpesMetadata.setTemperature(Double.parseDouble((String) dh.getMetadata().getMetaValue(
-						NX_ARPES_SAMPLE_TEMPERATURE)));
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			
-			if (dh.contains(NX_ARPES_ANALYSER_ANGLES)) {
-				arpesMetadata.setAnalyserAngles(dh.getLazyDataset(NX_ARPES_ANALYSER_ANGLES));
-			} else {
-				arpesMetadata.setAnalyserAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
-			}
-			
-			if (dh.contains(NX_ARPES_ANALYSER_ENERGIES)) {
-				arpesMetadata.setKineticEnergies(dh.getLazyDataset(NX_ARPES_ANALYSER_ENERGIES));
-			} else {
-				arpesMetadata.setKineticEnergies(new DoubleDataset(new double[] {0.0}, new int[] {1}));
-			}
-			
-			if (dh.contains(NX_ARPES_MANIPULATOR_SAPOLAR)) {
-				arpesMetadata.setPolarAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAPOLAR));
-			} else {
-				arpesMetadata.setPolarAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
-			}
-			
-			if (dh.contains(NX_ARPES_MANIPULATOR_SATILT)) {
-				arpesMetadata.setTiltAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SATILT));
-			} else {
-				arpesMetadata.setTiltAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
-			}
-		
-			if (dh.contains(NX_ARPES_MANIPULATOR_SAAZIMUTHAL)) {
-				arpesMetadata.setAzimuthalAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAAZIMUTHAL));
-			} else {
-				arpesMetadata.setAzimuthalAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
-			}
-			data.setMetadata(arpesMetadata);
-		}
-
 		return dh;
 	}
 	

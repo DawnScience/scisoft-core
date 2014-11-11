@@ -205,7 +205,7 @@ public class AxesMetadataTest {
 
 		axisErr.setShape(2,1);
 		axisErr.getSliceView(new Slice(1));
-		axisErr.getTransposedView();
+//		axisErr.getTransposedView();
 	}
 
 	@Test

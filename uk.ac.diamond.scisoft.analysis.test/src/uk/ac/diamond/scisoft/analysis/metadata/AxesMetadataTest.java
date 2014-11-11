@@ -25,11 +25,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
 import org.junit.Test;
 
 public class AxesMetadataTest {
 
-	ILazyDataset createRandomLazyDataset(String name, final int[] shape, final int dtype) {
+	ILazyDataset createRandomLazyDataset(String name, final int dtype, final int... shape) {
 		LazyDataset ld = new LazyDataset(name, dtype, shape, new ILazyLoader() {
 			final Dataset d = Random.randn(shape).cast(dtype);
 			@Override
@@ -60,7 +61,7 @@ public class AxesMetadataTest {
 		}
 
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 		dataset.addMetadata(amd);
 
 		try {
@@ -143,7 +144,7 @@ public class AxesMetadataTest {
 			DoubleDataset array = Random.randn(nShape);
 			amd.setAxis(i, array);
 		}
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 		dataset.addMetadata(amd);
 		dataset.setShape(reshape);
 	}
@@ -154,7 +155,7 @@ public class AxesMetadataTest {
 
 		int r = shape.length;
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 
 		AxesMetadataImpl amd = new AxesMetadataImpl(r);
 		dataset.addMetadata(amd);
@@ -180,17 +181,31 @@ public class AxesMetadataTest {
 
 		int r = shape.length;
 
-		ILazyDataset axis = createRandomLazyDataset("axis", new int[] {2}, Dataset.INT32);
+		ILazyDataset axis = createRandomLazyDataset("axis", Dataset.INT32, 2);
 		AxesMetadataImpl amd = new AxesMetadataImpl(1);
-		amd.setAxis(0, createRandomLazyDataset("axis2", new int[] {2}, Dataset.INT32));
+		amd.setAxis(0, createRandomLazyDataset("axis2", Dataset.INT32, 2));
 		axis.addMetadata(amd);
 
 		amd = new AxesMetadataImpl(r);
 		amd.setAxis(1, axis);
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 		dataset.addMetadata(amd);
 
 		dataset.setShape(2,3,1,1);
+
+		
+		ErrorMetadataImpl emd = new ErrorMetadataImpl();
+		ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
+		emd.setError(axisErr);
+		axis.addMetadata(emd);
+
+		amd = new AxesMetadataImpl(1);
+		amd.setAxis(0, axis);
+		axisErr.addMetadata(amd);
+
+		axisErr.setShape(2,1);
+		axisErr.getSliceView(new Slice(1));
+		axisErr.getTransposedView();
 	}
 
 	@Test

@@ -24,7 +24,7 @@ public class AxesMetadataImpl implements AxesMetadata {
 	@Transposable
 	@Reshapeable(matchRank = true)
 	@Sliceable
-	List<ILazyDataset>[] allAxes;
+	final List<ILazyDataset>[] allAxes;
 
 	@SuppressWarnings("unchecked")
 	public AxesMetadataImpl(int rank) {

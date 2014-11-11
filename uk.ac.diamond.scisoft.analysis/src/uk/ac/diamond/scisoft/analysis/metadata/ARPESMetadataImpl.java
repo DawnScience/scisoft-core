@@ -10,10 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.ARPESMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class ARPESMetadataImpl implements ARPESMetadata {
 
@@ -27,7 +26,7 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 	private static final String NX_ARPES_ANALYSER_PASS_ENERGY = "/entry1/instrument/analyser/pass_energy";
 	private static final String NX_ARPES_ANALYSER_DATA = "/entry1/instrument/analyser/data";
 	
-	public static ARPESMetadata GetFromDataHolder(DataHolder dh) {
+	public static ILazyDataset GetFromDataHolder(IDataHolder dh) {
 		// TODO this needs to be fixed up a little to be useful, but this will do to start.
 		// Add ARPES specific metadata where required.
 		if (dh.contains(NX_ARPES_ANALYSER_DATA)) {
@@ -81,7 +80,8 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 			} else {
 				arpesMetadata.setAzimuthalAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
 			}
-			return arpesMetadata;
+			data.addMetadata(arpesMetadata);
+			return data;
 		}
 		return null;
 	}

@@ -105,6 +105,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 		if (cache == null || !Arrays.equals(location, cache.location)) {
 			// load the file
 			String filename = getFilename(location);
+			filename = getLegalPath(filename);
 			if (parent != null) {
 				File f = new File(filename);
 				if (f.isAbsolute()) {
@@ -139,6 +140,28 @@ public class ImageStackLoaderEx implements ILazyLoader {
 			cache = new DatasetRecord(abstractDataset, location);
 		}
 		return cache.dataset;
+	}
+	
+	/**
+	 * 
+	 * @param dlsPath
+	 * @return String in windows format.
+	 */
+	private static String getLegalPath(String dlsPath) {
+		if (dlsPath ==null) return null;
+		
+		String path = dlsPath;
+		if (isWindowsOS() && path.startsWith("/dls/")) {
+			path = "\\\\Data.diamond.ac.uk\\"+path.substring(5);
+		}
+		
+        return path;
+	}
+	/**
+	 * @return true if windows
+	 */
+	static public boolean isWindowsOS() {
+		return (System.getProperty("os.name").indexOf("Windows") == 0);
 	}
 
 	@Override

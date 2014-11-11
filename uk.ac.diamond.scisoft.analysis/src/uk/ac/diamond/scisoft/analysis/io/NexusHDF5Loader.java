@@ -66,10 +66,10 @@ public class NexusHDF5Loader extends HDF5Loader {
 			return null;
 
 		// TODO Add in unit metadata information
-
 		// Augment data as required
 		// get all data with signal attribute
 		try {
+			// Parse Metadata.
 			for (String metaKey : dh.getMetadata().getMetaNames()) {
 				if (metaKey.contains("@signal")) {
 					// find the data
@@ -85,6 +85,11 @@ public class NexusHDF5Loader extends HDF5Loader {
 							parentKey += "/" + result[i];
 						}
 					}
+					
+					// TODO FIXME
+					// This is wrong because it makes the parsing n^2 with meta data names.
+					// There can be ~1000 meta data entires for nexus files (non-Diamond ones at
+					// the moment through). Therefore n^2 is SLOW.
 					for (String repassKey : dh.getMetadata().getMetaNames()) {
 						if (repassKey.startsWith(parentKey)) {
 							additionalMetadata.add(repassKey);
@@ -103,66 +108,78 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 					// look through the additional metadata for axis information
 					// TODO Should take @primary into account when adding axes.
-					// TODO also this only deals with 1D axis at the moment.
+					// Good test file which fails if this is not done right is:
+					// /dls/i12/data/2014/cm4963-4/rawdata/41781.nxs
+					
 					int[] dShape = data.getShape();
 					for (String goodKey : additionalMetadata) {
 						if (goodKey.endsWith("@axis")) {
 							String axisName = goodKey.replace("@axis", "");
 							ILazyDataset axisData = dh.getLazyDataset(axisName);
-							int axisDim = Integer.parseInt((String) dh.getMetadata().getMetaValue(goodKey)) - 1; // zero-based
-							ILazyDataset axisDataset = axisData.clone();
-							int[] aShape = axisData.getShape();
-							if (aShape.length == 1) {
-								int[] shape = new int[dShape.length];
-								int aLength = aShape[0];
-								Arrays.fill(shape, 1);
-								if (dShape[axisDim] != aLength) { // sanity check
-									if (dShape[dShape.length - 1 - axisDim] == aLength) { // Fortran order!
-										axisDim = dShape.length - 1 - axisDim;
-									} else {
-										logger.warn("Axis attribute of {} does not match dimension {} of signal dataset", goodKey, axisDim);
-										axisDim = -1;
-										for (int i = 0; i < shape.length ; i++) {
-											if (dShape[i] == aLength) {
-												axisDim = i;
-												break;
+							
+							// This string is a comma separated list of numbers, normally one number
+							// but occasionally, two.
+							String axes = (String) dh.getMetadata().getMetaValue(goodKey);
+							String[] laxes = axes.split(",");
+
+							for (String axis : laxes) {
+
+								int axisDim = Integer.parseInt(axis) - 1; // zero-based
+								ILazyDataset axisDataset = axisData.clone();
+								int[] aShape = axisData.getShape();
+								if (aShape.length == 1) {
+									int[] shape = new int[dShape.length];
+									int aLength = aShape[0];
+									Arrays.fill(shape, 1);
+									if (dShape[axisDim] != aLength) { // sanity check
+										if (dShape[dShape.length - 1 - axisDim] == aLength) { // Fortran order!
+											axisDim = dShape.length - 1 - axisDim;
+										} else {
+											logger.warn("Axis attribute of {} does not match dimension {} of signal dataset", goodKey, axisDim);
+											axisDim = -1;
+											for (int i = 0; i < shape.length ; i++) {
+												if (dShape[i] == aLength) {
+													axisDim = i;
+													break;
+												}
 											}
 										}
-									}
-									if (axisDim < 0) {
-										logger.error("Axis attribute of {} does not match any dimension of signal dataset", goodKey);
-										break;
-									}
-								}
-								shape[axisDim] = aLength;
-								axisDataset.setShape(shape);
-								axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
-							} else {
-								if (axisDataset.getRank() == data.getRank()){
-									axesMetadata.addAxis(axisDim, axisDataset);
-								} else {
-									//TODO this might need to be generic'd up a bit... try-catch incase anything troublesome happens
-									try {
-										int[] shape = new int[dShape.length];
-										Arrays.fill(shape, 1);
-										
-										int[] overlap = Arrays.copyOfRange(dShape, axisDim-aShape.length+1, axisDim+1);
-										
-										if (Arrays.equals(aShape, overlap)) {
-											
-											for (int i = axisDim-aShape.length+1; i < axisDim+1; i++) shape[i] = dShape[i];
-											axisDataset.setShape(shape);
+										if (axisDim < 0) {
+											logger.error("Axis attribute of {} does not match any dimension of signal dataset", goodKey);
+											break;
 										}
-										
-										axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
-
-									} catch (Exception e) {
-										logger.warn("Trouble with multidimensional axis {} for {} dim of signal dataset", goodKey, axisDim);
 									}
-									
+									shape[axisDim] = aLength;
+									axisDataset.setShape(shape);
+									axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
+								} else {
+									if (axisDataset.getRank() == data.getRank()){
+										axesMetadata.addAxis(axisDim, axisDataset);
+									} else {
+										//TODO this might need to be generic'd up a bit... try-catch incase anything troublesome happens
+										try {
+											int[] shape = new int[dShape.length];
+											Arrays.fill(shape, 1);
+
+											int[] overlap = Arrays.copyOfRange(dShape, axisDim-aShape.length+1, axisDim+1);
+
+											if (Arrays.equals(aShape, overlap)) {
+
+												for (int i = axisDim-aShape.length+1; i < axisDim+1; i++) shape[i] = dShape[i];
+												axisDataset.setShape(shape);
+											}
+
+											axesMetadata.addAxis(axisDim, checkDatasetShapeSlicable(axisDataset, dShape));
+
+										} catch (Exception e) {
+											logger.warn("Trouble with multidimensional axis {} for {} dim of signal dataset", goodKey, axisDim);
+										}
+
+									}
+
 								}
-								
 							}
+
 							
 						}
 					}
@@ -170,6 +187,10 @@ public class NexusHDF5Loader extends HDF5Loader {
 				}
 			}
 		} catch (Exception e) {
+			// TODO FIXME
+			// Is this fatal? We were simply parsing meta data.
+			// The LoaderFactory will swallow the error and return a DataHolder from
+			// another loader.
 			throw new ScanFileHolderException("Failed to augment data with metadata", e);
 		}
 		

@@ -11,7 +11,6 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
@@ -48,7 +47,7 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		outaxis.setName("custom_x_axis");
 		
 		AxesMetadata am = new AxesMetadataImpl(1);
-		am.setAxis(0, new ILazyDataset[]{outaxis});
+		am.setAxis(0, outaxis);
 		outdata.setMetadata(am);
 		
 		return new OperationData(outdata);

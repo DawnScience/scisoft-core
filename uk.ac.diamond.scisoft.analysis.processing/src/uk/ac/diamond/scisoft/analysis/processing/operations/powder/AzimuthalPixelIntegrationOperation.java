@@ -8,12 +8,9 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.DimensionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -23,7 +20,6 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegratio
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
 
 public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrationModel> extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
@@ -43,7 +39,7 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 	protected void setAxes(IDataset data, List<Dataset> out) {
 
 		AxesMetadataImpl amd = new AxesMetadataImpl(1);
-		amd.setAxis(0, new ILazyDataset[] {out.get(0)});
+		amd.setAxis(0, out.get(0));
 		data.setMetadata(amd);
 		
 	}

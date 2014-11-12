@@ -71,6 +71,7 @@ public class OperationServiceImpl implements IOperationService {
 	private Map<String, Class<? extends IOperationModel>>                                            models;
 	private Map<String, OperationCategory>                                                           categoryId;
 	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categoryOp;
+	private Map<String, String>                                                                      opIdCategory;
 	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
@@ -288,6 +289,7 @@ public class OperationServiceImpl implements IOperationService {
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
 		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);		
 		categoryId = new HashMap<String, OperationCategory>(7);
+		opIdCategory = new HashMap<String, String>();
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
@@ -313,6 +315,8 @@ public class OperationServiceImpl implements IOperationService {
 			operations.put(id, op);
 			
 			final String     catId= e.getAttribute("category");
+			opIdCategory.put(id, catId);
+			
 			if (catId!=null) {
 				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categoryOp.get(catId);
 				if (ops==null) {
@@ -330,9 +334,6 @@ public class OperationServiceImpl implements IOperationService {
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
 
-				if (catId != null && categoryId.containsKey(catId)) {
-					aop.setCategory(categoryId.get(catId));
-				}
 			}
 			
 			final String     model = e.getAttribute("model");
@@ -347,6 +348,14 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
 		return models.get(operationId);
+	}
+
+	@Override
+	public OperationCategory getCategory(String operationId) {
+		String catid = opIdCategory.get(operationId);
+		if (catid == null || catid.isEmpty()) return null;
+		
+		return categoryId.get(catid);
 	}
 
 
@@ -439,7 +448,7 @@ public class OperationServiceImpl implements IOperationService {
 			final IOperation op = operations.get(id);
 			if (op instanceof AbstractOperation) {
 				AbstractOperation<IOperationModel, OperationData> aop = (AbstractOperation<IOperationModel, OperationData>)op;
-				if (aop.getCategory()==null) uncategorized.add(aop);
+				if (getCategory(aop.getId())==null) uncategorized.add(aop);
 			}
 		}
 		

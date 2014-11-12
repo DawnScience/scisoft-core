@@ -42,9 +42,9 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), 1);
 		
 		outdata.setName("custom_expression");
-		outaxisy.setName("custom_y_axis");
+		if (((Expression2DModel)model).getAxisExpressionY() != null && !((Expression2DModel)model).getAxisExpressionY().isEmpty()) outaxisy.setName("custom_y_axis");
 		outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
-		outaxisx.setName("custom_x_axis");
+		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxisx.setName("custom_x_axis");
 		outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});
 		
 		AxesMetadata am = new AxesMetadataImpl(2);
@@ -73,12 +73,12 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		IDataset axisy = null;
 		if (axes != null ) {
 			if (axes[0] != null) {
-				axisx= axes[0].getSlice().squeeze();
+				axisx= axes[1].getSlice().squeeze();
 				
 			}
 			
-			if (axes[1] != null) {
-				axisy= axes[1].getSlice().squeeze();
+			if (axes[0] != null) {
+				axisy= axes[0].getSlice().squeeze();
 				
 			}
 			

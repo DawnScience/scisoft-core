@@ -44,7 +44,7 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		IDataset outaxis = evaluateData(axes[0], model.getAxisExpressionX(), 1);
 		
 		outdata.setName("custom_expression");
-		outaxis.setName("custom_x_axis");
+		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxis.setName("custom_x_axis");
 		
 		AxesMetadata am = new AxesMetadataImpl(1);
 		am.setAxis(0, outaxis);

@@ -115,7 +115,7 @@ public class OperationServiceImpl implements IOperationService {
 		try {
 			om = dataset.getData().getMetadata(OriginMetadata.class).get(0);
 		} catch (Exception e1) {
-			//TODO warn
+			logger.warn("No origin metadata in operation input!");
 		}
 		
 		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
@@ -132,19 +132,28 @@ public class OperationServiceImpl implements IOperationService {
 				@Override
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 					
+					OriginMetadataImpl innerOm = originMetadata;
+					
 					if (monitor != null && monitor.isCancelled()) return;
-					if (originMetadata == null){ 
-						slice.setMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName()));
+					if (innerOm == null){ 
+						innerOm = new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName());
+						slice.setMetadata(innerOm);
 					} else {
-						originMetadata.setCurrentSlice(slices);
-						slice.setMetadata(originMetadata);
+						innerOm.setCurrentSlice(slices);
+						slice.setMetadata(innerOm);
 					}
 					
-					
+					String path = innerOm.getFilePath();
+					if (path == null) path = "";
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 					long start = System.currentTimeMillis();
 					for (IOperation i : series) {
+						
+						if (monitor!=null) {
+							monitor.subTask(path +" : " + i.getName());
+						}
+						
 						OperationData tmp = i.execute(data.getData(), monitor);
 
 						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result

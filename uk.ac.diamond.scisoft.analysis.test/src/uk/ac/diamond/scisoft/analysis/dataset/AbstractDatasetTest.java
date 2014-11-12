@@ -1430,7 +1430,7 @@ public class AbstractDatasetTest {
 
 		// compound
 		CompoundDataset c = DatasetFactory.createRange(3, 100, Dataset.ARRAYFLOAT64).reshape(20, 5);
-		a.setSlice(DatasetFactory.createRange(3, Dataset.INT16), new Slice(2, 10), new Slice(null, null, 2));
+		c.setSlice(DatasetFactory.createRange(3, Dataset.INT16), new Slice(2, 10), new Slice(null, null, 2));
 	}
 
 	@Test
@@ -1645,6 +1645,11 @@ public class AbstractDatasetTest {
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
 		assertEquals("Value", 1.f, a.getObject());
+
+		a = DoubleDataset.ones(1);
+		a.squeeze();
+		assertEquals("Rank", 0, a.getRank());
+		assertEquals("Shape", 0, a.getShape().length);
 	}
 
 	@Test

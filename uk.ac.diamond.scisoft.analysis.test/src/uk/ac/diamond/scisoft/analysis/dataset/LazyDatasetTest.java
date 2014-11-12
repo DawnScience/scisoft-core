@@ -11,13 +11,13 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Assert;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class LazyDatasetTest {
 
@@ -72,18 +72,7 @@ public class LazyDatasetTest {
 	public void testGetSlice() {
 		final int[] shape = new int[] {1, 2, 3, 4};
 		final Dataset d = Random.randn(shape);
-		LazyDataset ld = new LazyDataset("", Dataset.INT, shape, new ILazyLoader() {
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			
-			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws Exception {
-				return d.getSlice(mon, start, stop, step);
-			}
-		});
+		LazyDataset ld = LazyDataset.createLazyDataset(d);
 
 		Slice[] slice;
 		slice = new Slice[]{null, new Slice(1), null, new Slice(1, 3)};
@@ -130,18 +119,7 @@ public class LazyDatasetTest {
 	public void testGetSliceView() {
 		final int[] shape = new int[] {6, 2, 4, 1};
 		final Dataset d = Random.randn(shape);
-		LazyDataset ld = new LazyDataset("", Dataset.INT, shape, new ILazyLoader() {
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			
-			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws Exception {
-				return d.getSliceView(start, stop, step);
-			}
-		});
+		LazyDataset ld = LazyDataset.createLazyDataset(d);
 
 		Slice[] slice;
 		slice = new Slice[]{new Slice(1, null, 3), new Slice(1), new Slice(1, 3), null};
@@ -162,6 +140,101 @@ public class LazyDatasetTest {
 		l = ld.getSliceView();
 		l.squeeze();
 		Assert.assertEquals("Full slice", 3, l.getSlice().getRank());
+	}
 
+	@Test
+	public void testShape() {
+		Dataset data = Random.rand(new int[] {1, 2, 3, 4});
+		data.setName("random");
+		LazyDataset ld = LazyDataset.createLazyDataset(data);
+
+		ld.setShape(1, 1, 2, 3, 4, 1);
+		Assert.assertArrayEquals(new int[] {1, 1, 2, 3, 4, 1}, ld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), ld.getSlice(), true, 1e-14, 1e-14);
+
+		LazyDataset tld = ld.getSliceView();
+		Assert.assertArrayEquals(new int[] {1, 1, 2, 3, 4, 1}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), tld.getSlice(), true, 1e-14, 1e-14);
+
+		ld.setShape(1, 2, 3, 4);
+		tld = ld.getSliceView();
+		ld.setShape(1, 1, 2, 3, 4, 1);
+		Assert.assertArrayEquals(new int[] {1, 1, 2, 3, 4, 1}, ld.getShape());
+		Assert.assertArrayEquals(new int[] {1, 2, 3, 4}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), ld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), ld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+
+		tld.setShape(1, 1, 2, 3, 4, 1);
+		Assert.assertArrayEquals(new int[] {1, 1, 2, 3, 4, 1}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), tld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+
+		LazyDataset uld = tld.getSliceView();
+		Assert.assertArrayEquals(new int[] {1, 1, 2, 3, 4, 1}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), uld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1), uld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+
+		uld.setShape(2, 3, 4);
+		Assert.assertArrayEquals(new int[] {2, 3, 4}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(2, 3, 4), uld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.reshape(2, 3, 4), uld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+	}
+
+	@Test
+	public void testTranspose() {
+		Dataset data = Random.rand(new int[] {1, 2, 3, 4});
+		data.setName("random");
+		LazyDataset ld = LazyDataset.createLazyDataset(data);
+
+		LazyDataset tld = ld.getTransposedView(3, 1, 0, 2);
+		Assert.assertArrayEquals(new int[] {4, 2, 1, 3}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2), tld.getSlice(), true, 1e-14, 1e-14);
+
+		LazyDataset uld = tld.getTransposedView(3, 2, 1, 0);
+		Assert.assertArrayEquals(new int[] {3, 1, 2, 4}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).getTransposedView(3, 2, 1, 0), uld.getSlice(), true, 1e-14, 1e-14);
+
+		Assert.assertArrayEquals(new int[] {3, 1, 2, 4}, ld.getTransposedView(2, 0, 1, 3).getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(2, 0, 1, 3), uld.getSlice(), true, 1e-14, 1e-14);
+
+		// set shape of transposed view
+		tld.setShape(1, 4, 2, 1, 3, 1);
+		Assert.assertArrayEquals(new int[] {1, 4, 2, 1, 3, 1}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1), tld.getSlice(), true, 1e-14, 1e-14);
+
+		// get transpose of shaped dataset
+		ld.setShape(1, 1, 2, 3, 4, 1);
+		tld = ld.getTransposedView(3, 1, 0, 2, 4, 5);
+		Assert.assertArrayEquals(new int[] {3, 1, 1, 2, 4, 1}, tld.getShape());
+		TestUtils.assertDatasetEquals(data.reshape(1, 1, 2, 3, 4, 1).getTransposedView(3, 1, 0, 2, 4, 5), tld.getSlice(), true, 1e-14, 1e-14);
+
+		// get transpose of shaped sliced dataset
+		ld.setShape(1, 2, 3, 4);
+		tld = ld.getSliceView(null, null, null, new Slice(1, null, 2));
+		TestUtils.assertDatasetEquals(data.getSliceView(null, null, null, new Slice(1, null, 2)), tld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.getSliceView(null, null, null, new Slice(1, null, 2)), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+		uld = tld.getTransposedView(3, 1, 0, 2);
+		Assert.assertArrayEquals(new int[] {2, 2, 1, 3}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.getSliceView(null, null, null, new Slice(1, null, 2)).getTransposedView(3, 1, 0, 2), uld.getSlice(), true, 1e-14, 1e-14);
+
+		// slice after transpose
+		tld = ld.getTransposedView(3, 1, 0, 2);
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2), tld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+		LazyDataset vld = tld.getSliceView(new Slice(1, null, 2));
+		Assert.assertArrayEquals(new int[] {2, 2, 1, 3}, vld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).getSliceView(new Slice(1, null, 2)), vld.getSlice(), true, 1e-14, 1e-14);
+
+		// transpose of reshaped transpose
+		tld.setShape(1, 4, 2, 1, 3, 1);
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1), tld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+		uld = tld.getTransposedView();
+		Assert.assertArrayEquals(new int[] {1, 3, 1, 2, 4, 1}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1).getTransposedView(), uld.getSlice(), true, 1e-14, 1e-14);
+		uld.setShape(3, 1, 2, 4, 1);
+		Assert.assertArrayEquals(new int[] {3, 1, 2, 4, 1}, uld.getShape());
+		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1).getTransposedView().reshape(3, 1, 2, 4, 1),
+				uld.getSlice(), true, 1e-14, 1e-14);
 	}
 }

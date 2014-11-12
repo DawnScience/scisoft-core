@@ -52,6 +52,8 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		if (model.getEndFrame() != null) {
 			end = model.getEndFrame();
 		}
+		
+		if (end <= startFrame) throw new OperationException(this,"End cannot be before or the same as start");
 
 		ILazyDataset bg = lzBg.getSliceView();
 		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);

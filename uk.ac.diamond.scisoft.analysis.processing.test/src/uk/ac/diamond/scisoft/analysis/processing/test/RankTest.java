@@ -183,7 +183,7 @@ public class RankTest {
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation add      = service.findFirst("add");
-		final IOperation sub      = service.findFirst("subtract");
+		final IOperation sub      = service.findFirst("subtractOperation");
 		final IOperation function = service.create("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
 		final IOperation box      = service.findFirst("box");
 		

@@ -27,27 +27,6 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation";
 	}
 	
-
-	
-//	protected Dataset getBackground(OriginMetadata om) {
-//		
-//		Dataset bg = null;
-//		
-//		try {
-//			String dsName = om.getDatasetName();
-//			IDataHolder dh = LoaderFactory.getData(model.getFilePath());
-//			ILazyDataset lzBg = dh.getLazyDataset(dsName);
-//			bg = LazyMaths.mean(lzBg, om.getDataDimensions());
-//		} catch (Exception e) {
-//			throw new OperationException(this, e.getMessage());
-//		}
-//		
-//		//TODO if average set member background else dont
-//		return bg;
-//	}
-
-
-
 	@Override
 	protected Dataset getImage(IDataset input) throws OperationException {
 		OriginMetadata om = getOriginMetadata(input);

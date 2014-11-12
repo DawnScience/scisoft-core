@@ -15,10 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -65,9 +67,11 @@ public class OperationServiceImpl implements IOperationService {
 	}
 	
 	// Generic gone mad ; ah - hahaha...
-	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>  operations;
-	private Map<String, Class<? extends IOperationModel>>                                models;
-	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categories;
+	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>              operations;
+	private Map<String, Class<? extends IOperationModel>>                                            models;
+	private Map<String, OperationCategory>                                                           categoryId;
+	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categoryOp;
+	private Map<String, String>                                                                      opIdCategory;
 	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
@@ -112,7 +116,7 @@ public class OperationServiceImpl implements IOperationService {
 		try {
 			om = dataset.getData().getMetadata(OriginMetadata.class).get(0);
 		} catch (Exception e1) {
-			//TODO warn
+			logger.warn("No origin metadata in operation input!");
 		}
 		
 		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
@@ -129,19 +133,28 @@ public class OperationServiceImpl implements IOperationService {
 				@Override
 				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 					
+					OriginMetadataImpl innerOm = originMetadata;
+					
 					if (monitor != null && monitor.isCancelled()) return;
-					if (originMetadata == null){ 
-						slice.setMetadata(new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName()));
+					if (innerOm == null){ 
+						innerOm = new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName());
+						slice.setMetadata(innerOm);
 					} else {
-						originMetadata.setCurrentSlice(slices);
-						slice.setMetadata(originMetadata);
+						innerOm.setCurrentSlice(slices);
+						slice.setMetadata(innerOm);
 					}
 					
-					
+					String path = innerOm.getFilePath();
+					if (path == null) path = "";
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 					long start = System.currentTimeMillis();
 					for (IOperation i : series) {
+						
+						if (monitor!=null) {
+							monitor.subTask(path +" : " + i.getName());
+						}
+						
 						OperationData tmp = i.execute(data.getData(), monitor);
 
 						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
@@ -203,8 +216,14 @@ public class OperationServiceImpl implements IOperationService {
         if (series[0].getInputRank()==OperationRank.SAME) {
         	throw new InvalidRankException(series[0], "The input rank may not be "+OperationRank.SAME);
         }
+        
+        int[] squeezedShape = null;
+        
+        if (firstSlice != null) squeezedShape = AbstractDataset.squeezeShape(firstSlice.getShape(), false);
+        
         if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
-	        if (AbstractDataset.squeezeShape(firstSlice.getShape(), false).length != series[0].getInputRank().getRank()) {
+        	
+	        if (squeezedShape.length != series[0].getInputRank().getRank()) {
 	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
@@ -212,7 +231,7 @@ public class OperationServiceImpl implements IOperationService {
         
         
         OperationRank firstRank = OperationRank.ANY;
-        if (firstSlice != null) firstRank = OperationRank.get(firstSlice.getRank());
+        if (firstSlice != null) firstRank = OperationRank.get(squeezedShape.length);
         
         if (series.length > 1) {
         	
@@ -268,16 +287,17 @@ public class OperationServiceImpl implements IOperationService {
 		
 		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
-		categories = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
+		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);		
+		categoryId = new HashMap<String, OperationCategory>(7);
+		opIdCategory = new HashMap<String, String>();
 		
-		final Map<String, OperationCategory> cats = new HashMap<String, OperationCategory>(7);
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
 	    	if (!e.getName().equals("category")) continue;
 			final String     id   = e.getAttribute("id");
 			final String     name = e.getAttribute("name");
 			final String     icon = e.getAttribute("icon");
-			cats.put(id, new OperationCategory(name, icon, id));		
+			categoryId.put(id, new OperationCategory(name, icon, id));		
 		}
 		
 		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
@@ -295,11 +315,13 @@ public class OperationServiceImpl implements IOperationService {
 			operations.put(id, op);
 			
 			final String     catId= e.getAttribute("category");
+			opIdCategory.put(id, catId);
+			
 			if (catId!=null) {
-				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categories.get(catId);
+				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categoryOp.get(catId);
 				if (ops==null) {
-					ops = new LinkedHashSet<IOperation<? extends IOperationModel,? extends OperationData>>();
-					categories.put(catId, ops);
+					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+					categoryOp.put(catId, ops);
 				}
 				ops.add(op);
 			}
@@ -312,9 +334,6 @@ public class OperationServiceImpl implements IOperationService {
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
 
-				if (catId != null && cats.containsKey(catId)) {
-					aop.setCategory(cats.get(catId));
-				}
 			}
 			
 			final String     model = e.getAttribute("model");
@@ -329,6 +348,14 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
 		return models.get(operationId);
+	}
+
+	@Override
+	public OperationCategory getCategory(String operationId) {
+		String catid = opIdCategory.get(operationId);
+		if (catid == null || catid.isEmpty()) return null;
+		
+		return categoryId.get(catid);
 	}
 
 
@@ -398,9 +425,36 @@ public class OperationServiceImpl implements IOperationService {
 	
 	@Override
 	public Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>> getCategorizedOperations() throws Exception {
+		
 		checkOperations();
-		// Sorted alphabetically by id string
-		return new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>(categories);
+		
+		// Sorted alphabetically by category name string
+		final TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> cats = new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		
+		for (String catId : categoryId.keySet()) {
+			
+			final OperationCategory cat = categoryId.get(catId);
+			final Collection<IOperation<? extends IOperationModel,? extends OperationData>> group = categoryOp.get(catId);
+			
+			cats.put(cat.getName(), group);
+		}
+		
+		final LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> ret = new LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		ret.putAll(cats);
+		
+		// Now add all those with no category
+		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+		for (String id : operations.keySet()) {
+			final IOperation op = operations.get(id);
+			if (op instanceof AbstractOperation) {
+				AbstractOperation<IOperationModel, OperationData> aop = (AbstractOperation<IOperationModel, OperationData>)op;
+				if (getCategory(aop.getId())==null) uncategorized.add(aop);
+			}
+		}
+		
+		ret.put("", uncategorized);
+		
+		return ret;
 	}
 
 	@Override

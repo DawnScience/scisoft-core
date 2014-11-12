@@ -41,7 +41,10 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 			 double[] binRange, String name) {
 		
 		Dataset error = intensity.getError();
-		if (error != null) error.idivide(histo);
+		if (error != null) {
+			error.idivide(histo);
+			DatasetUtils.makeFinite(error);
+		}
 		
 		if (isAzimuthalIntegration) {
 			super.processAndAddToResult(intensity, histo, result, binRange, name);

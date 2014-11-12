@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
@@ -24,11 +25,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
 import org.junit.Test;
 
 public class AxesMetadataTest {
 
-	ILazyDataset createRandomLazyDataset(String name, final int[] shape, final int dtype) {
+	ILazyDataset createRandomLazyDataset(String name, final int dtype, final int... shape) {
 		LazyDataset ld = new LazyDataset(name, dtype, shape, new ILazyLoader() {
 			final Dataset d = Random.randn(shape).cast(dtype);
 			@Override
@@ -59,7 +61,7 @@ public class AxesMetadataTest {
 		}
 
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 		dataset.addMetadata(amd);
 
 		try {
@@ -140,10 +142,96 @@ public class AxesMetadataTest {
 			Arrays.fill(nShape, 1);
 			nShape[i] = shape[i];
 			DoubleDataset array = Random.randn(nShape);
-			amd.setAxis(i, new ILazyDataset[] { array });
+			amd.setAxis(i, array);
 		}
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
 		dataset.addMetadata(amd);
 		dataset.setShape(reshape);
+	}
+
+	@Test
+	public void testAxesMetadataReshapeEmpty() throws Exception {
+		final int[] shape = new int[] { 1, 2, 3, 1 };
+
+		int r = shape.length;
+
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+
+		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		dataset.addMetadata(amd);
+
+		ILazyDataset v = dataset.getSliceView();
+		v.squeeze();
+		assertEquals(2, v.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		IDataset d = v.getSlice(new Slice(1), null);
+		assertEquals(2, d.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		final int[] reshape = new int[] { 1, 1, 2, 3, 1 };
+		v.setShape(reshape);
+		assertEquals(5, v.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+
+		d = v.getSlice((Slice) null, null, new Slice(1));
+		assertEquals(5, d.getMetadata(AxesMetadata.class).get(0).getAxes().length);
+	}
+
+	@Test
+	public void testAxesMetadataRecursion() {
+		final int[] shape = new int[] { 1, 2, 3, 1 };
+
+		int r = shape.length;
+
+		ILazyDataset axis = createRandomLazyDataset("axis", Dataset.INT32, 2);
+		AxesMetadataImpl amd = new AxesMetadataImpl(1);
+		amd.setAxis(0, createRandomLazyDataset("axis2", Dataset.INT32, 2));
+		axis.addMetadata(amd);
+
+		amd = new AxesMetadataImpl(r);
+		amd.setAxis(1, axis);
+		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+		dataset.addMetadata(amd);
+
+		dataset.setShape(2,3,1,1);
+
+		
+		ErrorMetadataImpl emd = new ErrorMetadataImpl();
+		ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
+		emd.setError(axisErr);
+		axis.addMetadata(emd);
+
+		amd = new AxesMetadataImpl(1);
+		amd.setAxis(0, axis);
+		axisErr.addMetadata(amd);
+
+		axisErr.setShape(2,1);
+		axisErr.getSliceView(new Slice(1));
+//		axisErr.getTransposedView();
+	}
+
+	@Test
+	public void testAxesMetadataTranspose() throws Exception {
+		final int[] shape = new int[] { 1, 2, 3, 4 };
+		int r = shape.length;
+		int[] nShape = new int[r];
+		AxesMetadata amd = new AxesMetadataImpl(r);
+		for (int i = 0; i < r; i++) {
+			Arrays.fill(nShape, 1);
+			nShape[i] = shape[i];
+			DoubleDataset array = Random.randn(nShape);
+			amd.setAxis(i, array);
+		}
+
+		Dataset dataset = Random.rand(shape);
+		dataset.addMetadata(amd);
+
+		int[] map = new int[] {3, 1, 2, 0};
+		Dataset t = dataset.getTransposedView(map);
+		assertArrayEquals(new int[]{4, 2, 3, 1}, t.getShape());
+		amd = t.getMetadata(AxesMetadata.class).get(0);
+
+		for (int i = 0; i < r; i++) {
+			ILazyDataset a = amd.getAxis(i)[0];
+			assertEquals(shape[map[i]], a.getSize());
+		}
 	}
 }

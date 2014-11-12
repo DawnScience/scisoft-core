@@ -10,18 +10,21 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
+import org.eclipse.dawnsci.analysis.api.metadata.Transposable;
 
 public class AxesMetadataImpl implements AxesMetadata {
 
+	@Transposable
 	@Reshapeable(matchRank = true)
 	@Sliceable
-	List<ILazyDataset>[] allAxes;
+	final List<ILazyDataset>[] allAxes;
 
 	@SuppressWarnings("unchecked")
 	public AxesMetadataImpl(int rank) {
@@ -45,10 +48,10 @@ public class AxesMetadataImpl implements AxesMetadata {
 	}
 
 	@Override
-	public void setAxis(int axisDim, ILazyDataset[] axisData) {
+	public void setAxis(int axisDim, ILazyDataset... axisData) {
 		ArrayList<ILazyDataset> axisList = new ArrayList<ILazyDataset>(0);
 		for (int i = 0; i < axisData.length; i++) {
-			axisList.add(axisData[i]);
+			axisList.add(sanitizeAxisData(axisDim, axisData[i]));
 		}
 		allAxes[axisDim] = axisList;
 	}
@@ -76,17 +79,36 @@ public class AxesMetadataImpl implements AxesMetadata {
 	}
 
 	/**
-	 * Add axis data to given dimension
-	 * @param axisData dataset for axis
+	 * Add axis data to given dimension. This dataset must be one dimensional or match rank
+	 * with the associating dataset
 	 * @param axisDim dimension (n.b. this is zero-based)
+	 * @param axisData dataset for axis
 	 */
-	public void addAxis(ILazyDataset axisData, int axisDim) {
+	public void addAxis(int axisDim, ILazyDataset axisData) {
 		if (allAxes[axisDim] == null) {
 			allAxes[axisDim] = new ArrayList<ILazyDataset>();
 		}
-		allAxes[axisDim].add(axisData);
+		allAxes[axisDim].add(sanitizeAxisData(axisDim, axisData));
 	}
-	
+
+	private ILazyDataset sanitizeAxisData(int axisDim, ILazyDataset axisData) {
+		// remove any axes metadata to prevent infinite recursion
+		// and also check rank
+		if (axisData == null) return null;
+		ILazyDataset view = axisData.getSliceView();
+		view.clearMetadata(AxesMetadata.class);
+		if (axisData.getRank() != allAxes.length) {
+			if (axisData.getRank() != 1) {
+				throw new IllegalArgumentException("Given axis dataset must be one dimensional or match rank");
+			}
+			int[] newShape = new int[allAxes.length];
+			Arrays.fill(newShape, 1);
+			newShape[axisDim] = axisData.getSize();
+			view.setShape(newShape);
+		}
+		return view;
+	}
+
 	@Override
 	public AxesMetadata createAxesMetadata(int rank) {
 		return new AxesMetadataImpl(rank);

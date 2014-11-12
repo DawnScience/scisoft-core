@@ -45,7 +45,7 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 	public void setWithErrors(boolean withErrors) {
 		this.withErrors = withErrors;
 	}
-	
+
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		int x = model.getxDim();
@@ -58,8 +58,12 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 			ax1.setShape(new int[]{x});
 			ax1.setName("Junk1Dax");
 			
+			if (withErrors) {
+				ax1.setError(DatasetFactory.createRange(1, x+1,1, Dataset.INT16));
+			}
+			
 			AxesMetadataImpl am = new AxesMetadataImpl(1);
-			am.addAxis(ax1, 0);
+			am.addAxis(0, ax1);
 			
 			out.setMetadata(am);
 		}

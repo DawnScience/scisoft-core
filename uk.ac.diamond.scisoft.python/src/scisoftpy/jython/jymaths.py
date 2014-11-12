@@ -45,6 +45,7 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 from jycore import _wrap
 from jycore import asarray as _asarray
 from jycore import float64 as _f64
+from jycore import _translatenativetype
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
@@ -433,15 +434,15 @@ def tensordot(a, b, axes=2):
     '''
     if isinstance(axes, int):
         bx = range(axes)
-        ao = a.ndim - axes - 1
+        ao = a.getRank() - axes
         ax = [ ao + i for i in bx ]
     else:
         t = type(axes)
         if t is _types.ListType or t is _types.TupleType:
-            if len(t) == 0:
+            if len(axes) == 0:
                 raise ValueError, "Given axes sequence should be non-empty"
 
-            if len(t) == 1:
+            if len(axes) == 1:
                 ax = axes[0]
                 bx = axes[0]
             else:
@@ -461,6 +462,15 @@ def tensordot(a, b, axes=2):
             raise ValueError, "Given axes has wrong type"
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
+
+@_wrap
+def trace(a, offset=0, axis1=0, axis2=1, dtype=None):
+    if dtype is None:
+        dtype = a.getDtype()
+    else:
+        dtype = dtype.value
+
+    return _linalg.trace(a, offset).cast(dtype)
 
 @_wrap
 def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):

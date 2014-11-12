@@ -24,7 +24,7 @@ public class RollingBallBaselineOperation extends AbstractOperation<RollingBallB
 	@Override
 	public String getId() {
 
-		return this.getClass().getName();
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.RollingBallBaselineOperation";
 	}
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {

@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -15,7 +16,7 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate";
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
@@ -25,7 +26,9 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 		Dataset output = Maths.subtract(input,mean);
 		output.idivide(std);
 		
-		Dataset eb = (Dataset)input.getError().getSlice();
+		ILazyDataset el = input.getError();
+		IDataset eb = null;
+		if (el != null) eb = el.getSlice();
 		//transfer axes
 		copyMetadata(input, output);
 		

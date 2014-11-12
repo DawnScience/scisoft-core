@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -42,8 +41,8 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 		first.setShape(new int[]{first.getShape()[0], 1});
 		Dataset second = out.get(0);
 		second.setShape(new int[]{1, second.getShape()[0]});
-		amd.setAxis(0, new ILazyDataset[] {out.get(1)});
-		amd.setAxis(1, new ILazyDataset[] {out.get(0)});
+		amd.setAxis(0, first);
+		amd.setAxis(1, second);
 		data.setMetadata(amd);
 		return;
 

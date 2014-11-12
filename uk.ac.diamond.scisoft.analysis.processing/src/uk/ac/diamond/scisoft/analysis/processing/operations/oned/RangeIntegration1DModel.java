@@ -7,6 +7,7 @@ public class RangeIntegration1DModel extends AbstractOperationModel {
 
 	@OperationModelField(label = "Set integration range",hint="Please set two values, start and end.\nThe values should match the axis .\n\nIf you delete the text, the range is cleared and the whole range used.")
 	double[] integrationRange = null;
+	@OperationModelField(label = "Subtract linear baseline")
 	boolean subtractBaseline = false;
 	
 	public double[] getIntegrationRange() {

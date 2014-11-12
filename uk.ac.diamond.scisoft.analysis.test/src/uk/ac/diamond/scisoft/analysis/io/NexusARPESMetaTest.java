@@ -18,6 +18,8 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.ARPESMetadata;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
+
 public class NexusARPESMetaTest {
 
 	private static final String ENTRY1_ANALYSER_DATA = "/entry1/instrument/analyser/data";
@@ -39,7 +41,7 @@ public class NexusARPESMetaTest {
 			fail("Required dataset " + ENTRY1_ANALYSER_DATA + " is not available");
 		}
 
-		ILazyDataset dataset = dh.getLazyDataset(ENTRY1_ANALYSER_DATA);
+		ILazyDataset dataset = ARPESMetadataImpl.GetFromDataHolder(dh);
 
 		ARPESMetadata arpesMetadata = null;
 

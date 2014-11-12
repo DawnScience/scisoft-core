@@ -10,10 +10,82 @@
 package uk.ac.diamond.scisoft.analysis.metadata;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.ARPESMetadata;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 public class ARPESMetadataImpl implements ARPESMetadata {
 
+	private static final String NX_ARPES_MANIPULATOR_SAAZIMUTHAL = "/entry1/instrument/manipulator/saazimuthal";
+	private static final String NX_ARPES_MANIPULATOR_SATILT = "/entry1/instrument/manipulator/satilt";
+	private static final String NX_ARPES_MANIPULATOR_SAPOLAR = "/entry1/instrument/manipulator/sapolar";
+	private static final String NX_ARPES_ANALYSER_ENERGIES = "/entry1/instrument/analyser/energies";
+	private static final String NX_ARPES_ANALYSER_ANGLES = "/entry1/instrument/analyser/angles";
+	private static final String NX_ARPES_SAMPLE_TEMPERATURE = "/entry1/sample/temperature";
+	private static final String NX_ARPES_MONOCHROMATOR_ENERGY = "/entry1/instrument/monochromator/energy";
+	private static final String NX_ARPES_ANALYSER_PASS_ENERGY = "/entry1/instrument/analyser/pass_energy";
+	private static final String NX_ARPES_ANALYSER_DATA = "/entry1/instrument/analyser/data";
+	
+	public static ILazyDataset GetFromDataHolder(IDataHolder dh) {
+		// TODO this needs to be fixed up a little to be useful, but this will do to start.
+		// Add ARPES specific metadata where required.
+		if (dh.contains(NX_ARPES_ANALYSER_DATA)) {
+			ILazyDataset data = dh.getLazyDataset(NX_ARPES_ANALYSER_DATA);
+			ARPESMetadataImpl arpesMetadata = new ARPESMetadataImpl();
+			try {
+				arpesMetadata.setPassEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_ANALYSER_PASS_ENERGY)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			try {
+				arpesMetadata.setPhotonEnergy(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_MONOCHROMATOR_ENERGY)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			try {
+				arpesMetadata.setTemperature(Double.parseDouble((String) dh.getMetadata().getMetaValue(
+						NX_ARPES_SAMPLE_TEMPERATURE)));
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			
+			if (dh.contains(NX_ARPES_ANALYSER_ANGLES)) {
+				arpesMetadata.setAnalyserAngles(dh.getLazyDataset(NX_ARPES_ANALYSER_ANGLES));
+			} else {
+				arpesMetadata.setAnalyserAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_ANALYSER_ENERGIES)) {
+				arpesMetadata.setKineticEnergies(dh.getLazyDataset(NX_ARPES_ANALYSER_ENERGIES));
+			} else {
+				arpesMetadata.setKineticEnergies(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_MANIPULATOR_SAPOLAR)) {
+				arpesMetadata.setPolarAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAPOLAR));
+			} else {
+				arpesMetadata.setPolarAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			
+			if (dh.contains(NX_ARPES_MANIPULATOR_SATILT)) {
+				arpesMetadata.setTiltAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SATILT));
+			} else {
+				arpesMetadata.setTiltAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+		
+			if (dh.contains(NX_ARPES_MANIPULATOR_SAAZIMUTHAL)) {
+				arpesMetadata.setAzimuthalAngles(dh.getLazyDataset(NX_ARPES_MANIPULATOR_SAAZIMUTHAL));
+			} else {
+				arpesMetadata.setAzimuthalAngles(new DoubleDataset(new double[] {0.0}, new int[] {1}));
+			}
+			data.addMetadata(arpesMetadata);
+			return data;
+		}
+		return null;
+	}
+	
 	double photonEnergy = 0.0;
 	double workFunction = 0.0;
 	double passEnergy = 0.0;
@@ -29,6 +101,7 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 	ILazyDataset bindingEnergies = null;
 	ILazyDataset photoelectronMomentum = null;
 
+	
 	public ARPESMetadataImpl() {
 	}
 
@@ -46,7 +119,7 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 		this.bindingEnergies = getView(metadata.getBindingEnergies());
 		this.photoelectronMomentum = getView(metadata.getPhotoelectronMomentum());
 	}
-
+	
 	private ILazyDataset getView(ILazyDataset l) {
 		return l == null ? null : l.getSliceView();
 	}
@@ -185,4 +258,5 @@ public class ARPESMetadataImpl implements ARPESMetadata {
 	public ARPESMetadataImpl clone() {
 		return new ARPESMetadataImpl(this);
 	}
+
 }

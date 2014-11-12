@@ -89,7 +89,7 @@ public class OperationsTest {
 	public void testSimpleAddAndSubtractUsingFind() throws Exception {
 						
 		final IOperation add      = service.findFirst("add");
-		final IOperation subtract = service.findFirst("subtract");
+		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
 		
@@ -124,7 +124,7 @@ public class OperationsTest {
 	public void testSimpleAddAndSubtractOnStack() throws Exception {
 						
 		final IOperation add      = service.findFirst("add");
-		final IOperation subtract = service.findFirst("subtract");
+		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
@@ -164,7 +164,7 @@ public class OperationsTest {
 	public void testSimpleAddAndSubtractOnStackParallel() throws Exception {
 						
 		final IOperation add      = service.findFirst("add");
-		final IOperation subtract = service.findFirst("subtract");
+		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
@@ -219,7 +219,7 @@ public class OperationsTest {
 	public void testParallelLongerThanDefault() throws Exception {
 						
 		final IOperation add      = service.findFirst("add");
-		final IOperation subtract = service.findFirst("subtract");
+		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 
@@ -269,7 +269,7 @@ public class OperationsTest {
 	public void testParallelTimeout() throws Exception {
 						
 		final IOperation add      = service.findFirst("add");
-		final IOperation subtract = service.findFirst("subtract");
+		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
 		rand.setSlicing("all"); // 

@@ -9,6 +9,11 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
 public class Expression2DDiffractionOperation extends Expression2DOperation<Expression2DModel> {
 	
+	@Override
+	public String getId() {
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation";
+	}
+
 	IDiffractionMetadata meta = null;
 	IDataset q = null;
 	IDataset tth = null;

@@ -42,14 +42,14 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), 1);
 		
 		outdata.setName("custom_expression");
-		outaxisx.setName("custom_x_axis");
-		outaxisx.setShape(new int[]{outaxisx.getShape()[0],1});
 		outaxisy.setName("custom_y_axis");
-		outaxisy.setShape(new int[]{1,outaxisy.getShape()[0]});
+		outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
+		outaxisx.setName("custom_x_axis");
+		outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});
 		
 		AxesMetadata am = new AxesMetadataImpl(2);
-		am.setAxis(0, outaxisx);
-		am.setAxis(1, outaxisy);
+		am.setAxis(0, outaxisy);
+		am.setAxis(1, outaxisx);
 		outdata.setMetadata(am);
 		
 		return new OperationData(outdata);

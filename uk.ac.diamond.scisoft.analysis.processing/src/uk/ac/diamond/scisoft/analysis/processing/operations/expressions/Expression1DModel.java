@@ -1,10 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class Expression1DModel extends AbstractOperationModel {
 	
+	@OperationModelField(label = "Enter data function")
 	String dataExpression = "dnp:power(data,2)";
+	@OperationModelField(label = "Enter x axis function")
 	String axisExpressionX = "xaxis - dat:min(xaxis,0)";
 	
 	public String getDataExpression() {

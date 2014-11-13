@@ -209,7 +209,7 @@ public class OperationsTest {
 			}, subtract, add);
 			
 		} finally {
-			service.setParallelTimeout(50000);
+			service.setParallelTimeout(5000);
 		}
 		
 		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");

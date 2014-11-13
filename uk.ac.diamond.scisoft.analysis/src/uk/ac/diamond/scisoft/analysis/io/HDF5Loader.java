@@ -92,7 +92,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 	private String host = null;
 
-	private static final int HASH_MULTIPLIER = 139;
+	private static final long DEFAULT_OBJECT_ID = -1;
 
 	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
 
@@ -302,7 +302,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 		f.setHostname(host);
 
-		GroupNode g = (GroupNode) createGroup(fid, f, -1, new HashMap<Long, Node>(), null, Tree.ROOT, keepBitWidth);
+		GroupNode g = (GroupNode) createGroup(fid, f, DEFAULT_OBJECT_ID, new HashMap<Long, Node>(), null, Tree.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
@@ -325,7 +325,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 
 		HashMap<Long, Node> pool = new HashMap<Long, Node>();
 		Queue<String> iqueue = new LinkedList<String>();
-		GroupNode g = (GroupNode) createGroup(fid, f, -1, pool, iqueue, Tree.ROOT, keepBitWidth);
+		GroupNode g = (GroupNode) createGroup(fid, f, DEFAULT_OBJECT_ID, pool, iqueue, Tree.ROOT, keepBitWidth);
 		if (g == null) {
 			throw new ScanFileHolderException("Could not copy root group");
 		}
@@ -334,7 +334,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		Queue<String> oqueue = new LinkedList<String>();
 		while (iqueue.size() > 0) { // read in first level
 			String nn = iqueue.remove();
-			Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
+			Node n = createGroup(fid, f, DEFAULT_OBJECT_ID, pool, oqueue, nn, keepBitWidth);
 			if (n == null) {
 				logger.error("Could not find group {}", nn);
 				continue;
@@ -358,7 +358,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			while (iqueue.size() > 0) {
 				updateSyncNodes(pool.size());
 				String nn = iqueue.remove();
-				Node n = createGroup(fid, f, -1, pool, oqueue, nn, keepBitWidth);
+				Node n = createGroup(fid, f, DEFAULT_OBJECT_ID, pool, oqueue, nn, keepBitWidth);
 				if (n == null) {
 					logger.error("Could not find group {}", nn);
 					continue;
@@ -397,9 +397,9 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
 			if (t == HDF5Constants.H5O_TYPE_GROUP) {
-				return createGroup(fid, f, -1, pool, queue, name, keepBitWidth);
+				return createGroup(fid, f, DEFAULT_OBJECT_ID, pool, queue, name, keepBitWidth);
 			} else if (t == HDF5Constants.H5O_TYPE_DATASET) {
-				return createDataset(fid, f, -1, pool, name, keepBitWidth);
+				return createDataset(fid, f, DEFAULT_OBJECT_ID, pool, name, keepBitWidth);
 			} else if (t == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 				logger.error("Named datatype not supported"); // TODO
 			} else {
@@ -409,6 +409,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			logger.error("Could not find info about object {}" + name);
 		}
 		return null;
+	}
+
+	private static final int HASH_MULTIPLIER = 139;
+	private static long createObjectID(long id, long other) {
+		long oid = id * HASH_MULTIPLIER + other;
+		if (oid == DEFAULT_OBJECT_ID) {
+			oid = oid * HASH_MULTIPLIER + other;
+		}
+		return oid;
 	}
 
 	/**
@@ -437,15 +446,15 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				throw new ScanFileHolderException("Could not open group", ex);
 			}
 
-			if (oid == -1) {
+			if (oid == DEFAULT_OBJECT_ID) {
 				byte[] idbuf = null;
 				try {
 					idbuf = H5.H5Rcreate(fid, name, HDF5Constants.H5R_OBJECT, -1);
-					oid = f.getID() * HASH_MULTIPLIER + HDFNativeData.byteToLong(idbuf, 0);
+					oid = createObjectID(f.getID(), HDFNativeData.byteToLong(idbuf, 0));
 				} catch (HDF5Exception ex) {
 					throw new ScanFileHolderException("Could not find group reference", ex);
 				}
-				if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+				if (oid != DEFAULT_OBJECT_ID && pool != null && pool.containsKey(oid)) {
 					Node p = pool.get(oid);
 					if (!(p instanceof GroupNode)) {
 						throw new IllegalStateException("Matching pooled node is not a group");
@@ -499,11 +508,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				}
 				otype = oTypes[i];
 				ltype = lTypes[i];
-				oid = f.getID() * HASH_MULTIPLIER + oids[i];
+				oid = createObjectID(f.getID(), oids[i]);
 
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
-						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+						if (oid != DEFAULT_OBJECT_ID && pool != null && pool.containsKey(oid)) {
 							Node p = pool.get(oid);
 							if (!(p instanceof GroupNode)) {
 								throw new IllegalStateException("Matching pooled node is not a group");
@@ -527,7 +536,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
-						if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+						if (oid != DEFAULT_OBJECT_ID && pool != null && pool.containsKey(oid)) {
 							Node p = pool.get(oid);
 							if (!(p instanceof DataNode)) {
 								throw new IllegalStateException("Matching pooled node is not a dataset");
@@ -612,14 +621,14 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	 */
 	private static Node createDataset(final int lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
 		byte[] idbuf = null;
-		if (oid == -1) {
+		if (oid == DEFAULT_OBJECT_ID) {
 			try {
 				idbuf = H5.H5Rcreate(lid, path, HDF5Constants.H5R_OBJECT, -1);
-				oid = f.getID() * HASH_MULTIPLIER + HDFNativeData.byteToLong(idbuf, 0);
+				oid = createObjectID(f.getID(), HDFNativeData.byteToLong(idbuf, 0));
 			} catch (HDF5Exception ex) {
 				throw new ScanFileHolderException("Could not find object reference", ex);
 			}
-			if (oid >= 0 && pool != null && pool.containsKey(oid)) {
+			if (oid != DEFAULT_OBJECT_ID && pool != null && pool.containsKey(oid)) {
 				Node p = pool.get(oid);
 				if (!(p instanceof DataNode)) {
 					throw new IllegalStateException("Matching pooled node is not a dataset");

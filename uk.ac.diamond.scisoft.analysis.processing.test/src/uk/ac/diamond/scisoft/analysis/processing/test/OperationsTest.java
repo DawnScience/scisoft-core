@@ -199,7 +199,7 @@ public class OperationsTest {
 						e.printStackTrace();
 					}
 	
-					counter++;
+					++counter;
 					for (int i = 0; i < result.getData().getShape()[0]; i++) {
 						for (int j = 0; j < result.getData().getShape()[1]; j++) {
 						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
@@ -208,11 +208,12 @@ public class OperationsTest {
 				}			
 			}, subtract, add);
 			
+			if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+			
 		} finally {
 			service.setParallelTimeout(5000);
 		}
 		
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 	}
 
 	@Test

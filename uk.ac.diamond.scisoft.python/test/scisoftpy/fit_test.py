@@ -122,6 +122,7 @@ class Test(unittest.TestCase):
         print p.c
         print [r for r in p.r]
 
+        print p(0.5)
         print p(p.r)
 
 if __name__ == "__main__":

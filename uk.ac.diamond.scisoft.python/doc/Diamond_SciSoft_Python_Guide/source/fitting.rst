@@ -186,6 +186,23 @@ A polynomial can be evaluated with the ``polyval`` function::
 where ``p`` is a list of coefficients, ``x`` is a dataset of evaluation points and a dataset is
 returned of the values at those points.
 
+A polynomial root finder and polynomial class are available::
+
+    r = dnp.roots(coeffs)
+    p = dnp.poly1d(c_or_r, r=False, variable=None)
+
+where ``coeffs`` specify the coefficients of a polynomial (in order of decreasing powers),
+``c_or_r`` are the coefficients or roots of a polynomial, ``r`` determines whether to interpret
+the first argument as roots, ``variable`` is the string representation of the variable in the
+polynomial (defaults to 'x'). ``root`` returns the complex roots of a polynomial. ``poly1d`` is
+an polynomial object that can be evaluated::
+
+    p = dnp.poly1d([1, 2, 3]) # x^2 + 2 x + 3
+    p(0.5) # 4.25
+    p.r    # (complex) roots
+    p.c    # coefficients
+    p[0]   # coefficient of 0th power (in general, p[k] gives p.c[-(k+1)]
+
 
 Ellipse fitting
 ---------------

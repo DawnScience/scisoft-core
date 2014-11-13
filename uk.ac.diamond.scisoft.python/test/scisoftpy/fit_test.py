@@ -36,6 +36,7 @@ class Test(unittest.TestCase):
     def __init__(self, *args):
         unittest.TestCase.__init__(self, *args)
         self.x = dnp.linspace(0, 5, 20)
+        dnp.random.seed(12347)
         self.n = dnp.random.randn(20)*0.1
         self.y = 3.2*self.x + 0.35 + self.n
         self.z = 3.2*self.x*self.x - 12.2*self.x + 0.35 + self.n
@@ -90,18 +91,18 @@ class Test(unittest.TestCase):
         fr = fit.polyfit(self.x, self.y, 1)
     
         print 'Poly: ', fr  # print polynomial coeffs
-        self.checkitems([3.2, 0.36], fr, 1)
+        self.checkitems([3.2, 0.37], fr, 1)
 
         fr = fit.polyfit(self.x, self.z, 2)
     
         print 'Poly: ', fr  # print polynomial coeffs
-        self.checkitems([3.2, -12.2, 0.35], fr, 1)
+        self.checkitems([3.2, -12.2, 0.4], fr, 1)
 
     def testPolyVal(self):
         fr = fit.polyfit(self.x, self.y, 1)
         v = fit.polyval(fr, [0,1])
         print 'value is', dnp.abs(v-0.3)
-        self.checkitems([0.1, -9], v, 0)
+        self.checkitems([0.36, 3.55], v, 0)
 
     def testPolyG(self):
         fr = fit.fit([fit.function.linear], self.x, self.y, [2.5, 0.8], [(0.1,4), (0.,1.7)], seed=123)
@@ -112,14 +113,16 @@ class Test(unittest.TestCase):
         fr = fit.fit([fit.function.quadratic], self.x, self.z, [2.5, -20., 0.8], [(0.1,4), (-40, 10), (0.,1.7)], seed=123)
 
         print 'PolyG: ', fr  # print fit result
-        self.checkitems([3.36, -12.2, 1.7], fr.parameters, 1)
+        self.checkitems([3.2, -12.2, 0.4], fr.parameters, 1)
 
     def testPolyRoots(self):
-        p = fit.poly1d([-1.0021380351125523e+62, -1.3325683964593362e+63, -4.3736356299729265e+62,
+        p = dnp.poly1d([-1.0021380351125523e+62, -1.3325683964593362e+63, -4.3736356299729265e+62,
                        1.5174319075477495e+62, 2.7616709058592895e+61, -5.7735973730761707e+60, -4.2781613377152188e+59,
                        7.2891988413828689e+58, -1.8014489076363173e+56])
         print p.c
         print [r for r in p.r]
+
+        print p(p.r)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

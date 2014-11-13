@@ -471,10 +471,14 @@ class poly1d(object):
 
     def _getroots(self):
         if self.roots is None:
-            self.roots = self._poly.findRoots()
+            self.roots = _asDS(self._poly.findRoots())
         return self.roots
 
     r = property(_getroots)
+
+    @_wrapin
+    def __call__(self, a):
+        return self._poly.calculateValues([a])
 
 @_wrapin
 def polyfit(x, y, deg, rcond=None, full=False):

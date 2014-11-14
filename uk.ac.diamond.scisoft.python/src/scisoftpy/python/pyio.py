@@ -402,7 +402,10 @@ class ImageSaver(PythonSaver):
             c[...,1] = d.get_green(dtype=_core._uint8)
             c[...,2] = d.get_blue(dtype=_core._uint8)
             d = c
-        im = _im.fromarray(d)
+        if d.dtype == _core.int64:
+            im = _im.fromarray(d, mode='I')
+        else:
+            im = _im.fromarray(d)
         im.save(self.name)
 
 
@@ -423,7 +426,10 @@ class TIFFSaver(PythonSaver):
             c[...,2] = d.get_blue(dtype=_core._uint8)
             d = c
         try:
-            im = _im.fromarray(d)
+            if d.dtype == _core.int64:
+                im = _im.fromarray(d, mode='I')
+            else:
+                im = _im.fromarray(d)
         except:
             if d.dtype == _core._uint16: # trap a known PIL 1.1.7 TIFF bug
                 im = _im.frombuffer("I;16", tuple(reversed(d.shape)), d.data, 'raw', "I;16", 0, 1)

@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,7 +42,6 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +118,7 @@ public class OperationServiceImpl implements IOperationService {
 		}
 		
 		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
-		//detemine data axes to populate origin metadata
+		// determine data axes to populate origin metadata
 		final int[] dataDims = Slicer.getDataDimensions(dataset.getData().getShape(), slicing);
 			
 		try {
@@ -174,7 +172,7 @@ public class OperationServiceImpl implements IOperationService {
 			
 			visitor.init(series, originMetadata);
 			long start = System.currentTimeMillis();
-			// Jakes slicing from the conversion tool is now in Slicer.
+			// Jake's slicing from the conversion tool is now in Slicer.
 			if (type==ExecutionType.SERIES) {
 				Slicer.visitAll(dataset.getData(), slicing, "Slice", sv);
 				

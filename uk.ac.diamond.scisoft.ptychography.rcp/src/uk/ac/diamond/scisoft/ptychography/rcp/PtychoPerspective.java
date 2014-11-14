@@ -55,7 +55,7 @@ public class PtychoPerspective implements IPerspectiveFactory {
 					handlerService.executeCommand(CallPtychoEditor.COMMAND_ID, null);
 				} catch (ExecutionException | NotDefinedException | NotEnabledException
 						| NotHandledException e) {
-					logger.equals("Error opening Ptycho editor:" + e.getMessage());
+					logger.error("Error opening Ptycho editor:" + e.getMessage());
 				}
 			}
 		});

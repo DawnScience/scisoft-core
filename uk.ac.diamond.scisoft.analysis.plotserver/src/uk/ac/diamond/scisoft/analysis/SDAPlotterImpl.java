@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,6 +273,10 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xAxisName, String yAxisName) throws Exception {
+		if (isDataND(image, 3) && image.getShape()[2] == 3) { // hack for RGB ndarrays from python
+			CompoundDataset compound = DatasetUtils.createCompoundDatasetFromLastAxis(DatasetUtils.convertToDataset(image), true);
+			image = RGBDataset.createFromCompoundDataset(compound);
+		}
 		if (!isDataND(image, 2)) {
 			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());
 			throw new Exception("Input dataset has incorrect rank: it should be 2");

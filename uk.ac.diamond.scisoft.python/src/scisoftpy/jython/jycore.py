@@ -1044,7 +1044,9 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createRedDataset(dtype.value)
+        if dtype != int16:
+            return self._jdataset().createRedDataset(dtype.value)
+        return self._jdataset().getRedView()
 
     @_wrapout
     def get_green(self, dtype=None):
@@ -1052,7 +1054,9 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createGreenDataset(dtype.value)
+        if dtype != int16:
+            return self._jdataset().createGreenDataset(dtype.value)
+        return self._jdataset().getGreenView()
 
     @_wrapout
     def get_blue(self, dtype=None):
@@ -1060,7 +1064,9 @@ class ndarrayRGB(ndarray):
             dtype = int16
         else:
             dtype = _translatenativetype(dtype)
-        return self._jdataset().createBlueDataset(dtype.value)
+        if dtype != int16:
+            return self._jdataset().createBlueDataset(dtype.value)
+        return self._jdataset().getBlueView()
 
     @_wrapout
     def get_grey(self, cweights=None, dtype=None):

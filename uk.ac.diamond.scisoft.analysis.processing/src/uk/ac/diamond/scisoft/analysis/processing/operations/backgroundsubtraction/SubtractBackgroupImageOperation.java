@@ -41,9 +41,9 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 			ILazyDataset lzBg = dh.getLazyDataset(dsName);
 			
 			if (Arrays.equals(lzBg.getShape(), om.getParent().getShape())) {
-				bg = (Dataset)lzBg.getSliceView(om.getInitialSlice()).getSlice(om.getCurrentSlice());
+				bg = (Dataset)lzBg.getSliceView(om.getInitialSlice()).getSlice(om.getCurrentSlice()).squeeze();
 			} else {
-				bg = LazyMaths.mean(lzBg, om.getDataDimensions());
+				bg = LazyMaths.mean(lzBg, om.getDataDimensions()).squeeze();
 				image = bg;
 			}
 			

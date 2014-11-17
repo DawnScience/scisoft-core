@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -50,7 +49,7 @@ public class PtychoPerspective implements IPerspectiveFactory {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 				try {
 					handlerService.executeCommand(CallPtychoEditor.COMMAND_ID, null);
 				} catch (ExecutionException | NotDefinedException | NotEnabledException
@@ -59,12 +58,5 @@ public class PtychoPerspective implements IPerspectiveFactory {
 				}
 			}
 		});
-	}
-
-	private IWorkbenchPartSite getSite() {
-		IWorkbenchPartSite site = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getActiveEditor()
-				.getSite();
-		return site;
 	}
 }

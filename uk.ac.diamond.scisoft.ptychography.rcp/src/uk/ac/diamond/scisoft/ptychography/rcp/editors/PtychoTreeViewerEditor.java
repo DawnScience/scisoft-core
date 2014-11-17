@@ -8,10 +8,16 @@ import org.dawnsci.common.widgets.tree.IResettableExpansion;
 import org.dawnsci.common.widgets.tree.NodeFilter;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -39,6 +45,16 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private List<PtychoInput> levels;
 	private List<PtychoNode> tree;
+	private ISelectionChangedListener selectionListener;
+	private Text nameText;
+	private Text valueText;
+	private Combo typeCombo;
+	private Text lowerText;
+	private Text upperText;
+	private Text shortDocText;
+	private StyledText longDocStyledText;
+	private PtychoNode currentNode;
+	private boolean isDirtyFlag;
 	
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -66,12 +82,34 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		setSite(site);
 		setInput(input);
 		setPartName("Ptychography parameter Tree Editor");
+
+		selectionListener = new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection instanceof TreeSelection) {
+					TreeSelection treeSelection = (TreeSelection) selection;
+					Object selected = treeSelection.getFirstElement();
+					if (selected instanceof PtychoNode) {
+						PtychoNode node = (PtychoNode) selected;
+						currentNode = node;
+						PtychoInput data = node.getData();
+						nameText.setText(data.getName());
+						valueText.setText(data.getDefaultValue());
+						typeCombo.setText(data.getType());
+						lowerText.setText(String.valueOf(data.getLowerLimit()));
+						upperText.setText(String.valueOf(data.getUpperLimit()));
+						shortDocText.setText(data.getShortDoc());
+						longDocStyledText.setText(data.getLongDoc());
+					}
+				}
+			}
+		};
 	}
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
+		return isDirtyFlag;
 	}
 
 	@Override
@@ -111,6 +149,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		viewer.getTree().setLinesVisible(true);
 		viewer.getTree().setHeaderVisible(true);
 		viewer.setInput(tree);
+		viewer.addSelectionChangedListener(selectionListener);
 
 		Composite editorComposite = new Composite(container, SWT.NONE);
 		editorComposite.setLayout(new GridLayout(2, false));
@@ -121,18 +160,36 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false, 2, 1);
 		Label nameLabel = new Label(leftComp, SWT.NONE);
 		nameLabel.setText("Name");
-		Text nameText = new Text(leftComp, SWT.BORDER);
+		nameText = new Text(leftComp, SWT.BORDER);
 		nameText.setText("");
 		nameText.setLayoutData(gridData);
+		nameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (currentNode == null)
+					return;
+				PtychoInput data = currentNode.getData();
+				if (!data.isUnique()) {
+					
+				}
+			}
+		});
 		Label valueLabel = new Label(leftComp, SWT.NONE);
 		valueLabel.setText("Value");
-		Text valueText = new Text(leftComp, SWT.BORDER);
+		valueText = new Text(leftComp, SWT.BORDER);
 		valueText.setText("");
 		valueText.setLayoutData(gridData);
 		valueText.setLayoutData(gridData);
+		valueText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		Label typeLabel = new Label(leftComp, SWT.NONE);
 		typeLabel.setText("Type");
-		Combo typeCombo = new Combo(leftComp, SWT.BORDER);
+		typeCombo = new Combo(leftComp, SWT.BORDER);
 		typeCombo.setItems(new String[] {"Param", "str", "int", "float", "bool", "list", "tuple"});
 		typeCombo.setLayoutData(gridData);
 
@@ -143,12 +200,26 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		gridData.widthHint = 60;
 		Label lowerUpperLabel = new Label(subLeftComp, SWT.NONE);
 		lowerUpperLabel.setText("Lower/Upper limit");
-		Text lowerText = new Text(subLeftComp, SWT.BORDER);
+		lowerText = new Text(subLeftComp, SWT.BORDER);
 		lowerText.setText("");
 		lowerText.setLayoutData(gridData);
-		Text upperText = new Text(subLeftComp, SWT.BORDER);
+		lowerText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		upperText = new Text(subLeftComp, SWT.BORDER);
 		upperText.setText("");
 		upperText.setLayoutData(gridData);
+		upperText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		Composite rightComp = new Composite(editorComposite, SWT.NONE);
 		rightComp.setLayout(new GridLayout(2, false));
@@ -156,19 +227,37 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		
 		Label shortDocLabel = new Label(rightComp, SWT.NONE);
 		shortDocLabel.setText("Shortdoc");
-		Text shortDocText = new Text(rightComp, SWT.BORDER);
+		shortDocText = new Text(rightComp, SWT.BORDER);
 		shortDocText.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
-		
+		shortDocText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		Label longDocLabel = new Label(rightComp, SWT.NONE);
 		longDocLabel.setText("Longdoc");
-		StyledText longDocStyledText = new StyledText(rightComp, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		longDocStyledText = new StyledText(rightComp, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		longDocStyledText.setText("");
 		longDocStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
-
+		longDocStyledText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		Button runButton = new Button(container, SWT.NONE);
 		runButton.setText("RUN");
 		runButton.setToolTipText("Run ptychography process on cluster");
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+	}
+
+	@Override
+	public void dispose() {
+		if (viewer != null)
+			viewer.removeSelectionChangedListener(selectionListener);
 	}
 
 	@Override

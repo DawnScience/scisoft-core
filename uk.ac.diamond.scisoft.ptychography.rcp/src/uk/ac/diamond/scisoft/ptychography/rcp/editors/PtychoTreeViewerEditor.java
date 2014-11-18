@@ -2,10 +2,6 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.util.List;
 
-import org.dawnsci.common.widgets.tree.ClearableFilteredTree;
-import org.dawnsci.common.widgets.tree.DelegatingProviderWithTooltip;
-import org.dawnsci.common.widgets.tree.IResettableExpansion;
-import org.dawnsci.common.widgets.tree.NodeFilter;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
@@ -18,16 +14,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,11 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
-public class PtychoTreeViewerEditor extends EditorPart implements IResettableExpansion {
+public class PtychoTreeViewerEditor extends EditorPart {
 
 	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor";
 	private TreeViewer viewer;
-	private ClearableFilteredTree filteredTree;
+	private FilteredTree filteredTree;
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private List<PtychoInput> levels;
 	private List<PtychoNode> tree;
@@ -55,6 +55,10 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 	private StyledText longDocStyledText;
 	private PtychoNode currentNode;
 	private boolean isDirtyFlag;
+	private Color white;
+	private Color gray;
+	private Color darkGray;
+	private Color black;
 	
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -83,6 +87,12 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		setInput(input);
 		setPartName("Ptychography parameter Tree Editor");
 
+		Display display = Display.getDefault();
+		white = new Color(display, 255, 255, 255);
+		gray = new Color(display, 237, 236, 235);
+		darkGray = new Color(display, 170, 166, 161);
+		black = new Color(display, 0, 0, 0);
+
 		selectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -101,6 +111,21 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 						upperText.setText(String.valueOf(data.getUpperLimit()));
 						shortDocText.setText(data.getShortDoc());
 						longDocStyledText.setText(data.getLongDoc());
+						boolean unique = data.isUnique();
+						nameText.setEnabled(!unique);
+						valueText.setEnabled(!unique);
+						typeCombo.setEnabled(!unique);
+						lowerText.setEnabled(!unique);
+						upperText.setEnabled(!unique);
+						shortDocText.setEnabled(!unique);
+						longDocStyledText.setEnabled(!unique);
+						if (unique) {
+							longDocStyledText.setBackground(gray);
+							longDocStyledText.setForeground(darkGray);
+						} else {
+							longDocStyledText.setBackground(white);
+							longDocStyledText.setForeground(black);
+						}
 					}
 				}
 			}
@@ -124,12 +149,12 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		this.filteredTree = new ClearableFilteredTree(
+		this.filteredTree = new FilteredTree(
 				container,
 				SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-				new NodeFilter(this),
-				true,
-				"Enter search string to filter the tree.\nThis will match on name, value or units");
+				new PatternFilter(),
+				true);
+				//"Enter search string to filter the tree.\nThis will match on name, value or units");
 		viewer = filteredTree.getViewer();
 		viewer.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -138,12 +163,11 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		TreeViewerColumn var = new TreeViewerColumn(viewer, SWT.LEFT, 0);
 		var.getColumn().setText("Name"); // Selected
 		var.getColumn().setWidth(260);
-		var.setLabelProvider(new DelegatingProviderWithTooltip(new PtychoTreeLabelProvider(0)));
+		var.setLabelProvider(new PtychoTreeLabelProvider(0));
 		var = new TreeViewerColumn(viewer, SWT.LEFT, 1);
 		var.getColumn().setText("Value"); // Selected
 		var.getColumn().setWidth(100);
-		var.setLabelProvider(new DelegatingProviderWithTooltip(
-				new PtychoTreeLabelProvider(1)));
+		var.setLabelProvider(new PtychoTreeLabelProvider(1));
 
 		viewer.setContentProvider(new PtychoTreeContentProvider());
 		viewer.getTree().setLinesVisible(true);
@@ -166,12 +190,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		nameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (currentNode == null)
-					return;
-				PtychoInput data = currentNode.getData();
-				if (!data.isUnique()) {
-					
-				}
+				updateAttributes(e);
 			}
 		});
 		Label valueLabel = new Label(leftComp, SWT.NONE);
@@ -183,8 +202,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		valueText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateAttributes(e);
 			}
 		});
 		Label typeLabel = new Label(leftComp, SWT.NONE);
@@ -206,8 +224,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		lowerText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateAttributes(e);
 			}
 		});
 		upperText = new Text(subLeftComp, SWT.BORDER);
@@ -216,8 +233,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		upperText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateAttributes(e);
 			}
 		});
 
@@ -232,8 +248,7 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		shortDocText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateAttributes(e);
 			}
 		});
 		Label longDocLabel = new Label(rightComp, SWT.NONE);
@@ -244,32 +259,63 @@ public class PtychoTreeViewerEditor extends EditorPart implements IResettableExp
 		longDocStyledText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateAttributes(e);
 			}
 		});
 		Button runButton = new Button(container, SWT.NONE);
 		runButton.setText("RUN");
 		runButton.setToolTipText("Run ptychography process on cluster");
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+
+		getSite().setSelectionProvider(viewer);
+	}
+
+	private void updateAttributes(ModifyEvent event) {
+		if (currentNode == null)
+			return;
+		PtychoInput data = currentNode.getData();
+		if (!data.isUnique()) {
+			Object evt = event.getSource();
+			if (evt instanceof Text) {
+				Text txt = (Text) evt;
+				if (txt == nameText) {
+					data.setName(txt.getText());
+				} else if (txt == valueText)
+					data.setDefaultValue(txt.getText());
+				else if (txt == lowerText)
+					data.setLowerLimit(Integer.valueOf(txt.getText()));
+				else if (txt == upperText)
+					data.setUpperLimit(Integer.valueOf(txt.getText()));
+				else if (txt == shortDocText)
+					data.setShortDoc(txt.getText());
+			} else if (evt instanceof StyledText) {
+				StyledText stxt = (StyledText) evt;
+				data.setLongDoc(stxt.getText());
+			} else if (evt instanceof Combo) {
+				;
+			}
+			viewer.refresh();
+		}
 	}
 
 	@Override
 	public void dispose() {
 		if (viewer != null)
 			viewer.removeSelectionChangedListener(selectionListener);
+		if (white != null && !white.isDisposed() && gray != null
+				&& !gray.isDisposed() && darkGray != null
+				&& !darkGray.isDisposed() && black != null
+				&& !black.isDisposed()) {
+			white.dispose();
+			gray.dispose();
+			darkGray.dispose();
+			black.dispose();
+		}
 	}
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		if (viewer != null)
+			viewer.getControl().setFocus();
 	}
-
-	@Override
-	public void resetExpansion() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

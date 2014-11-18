@@ -1,13 +1,11 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 
-public class PtychoTreeLabelProvider extends ColumnLabelProvider implements IStyledLabelProvider{
+public class PtychoTreeLabelProvider extends ColumnLabelProvider {
 
 	private int column;
 
@@ -16,22 +14,22 @@ public class PtychoTreeLabelProvider extends ColumnLabelProvider implements ISty
 	}
 
 	@Override
-	public StyledString getStyledText(Object element) {
+	public String getText(Object element) {
 		if (element == null || !(element instanceof PtychoNode))
 			return null;
 		PtychoNode row = (PtychoNode)element;
-		StyledString ret = new StyledString();
+		StringBuilder ret = new StringBuilder();
 		switch (column) {
 		case 0:
-			ret.append(row.getData().getName(), StyledString.DECORATIONS_STYLER);
+			ret.append(row.getData().getName());
 			break;
 		case 1:
-			ret.append(row.getData().getDefaultValue(), StyledString.DECORATIONS_STYLER);
+			ret.append(row.getData().getDefaultValue());
 			break;
 		default:
 			break;
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	@Override

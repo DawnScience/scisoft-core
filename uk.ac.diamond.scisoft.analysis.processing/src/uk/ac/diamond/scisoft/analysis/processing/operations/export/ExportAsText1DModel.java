@@ -9,7 +9,9 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the path to output directory", file = FileType.EXISTING_FOLDER, label = "Select Output Directory:")
 	private String outputDirectoryPath = "";
 	private String extension = "dat";
+	@OperationModelField(label = "Include slice in filename")
 	private boolean includeSliceName = false;
+	@OperationModelField(label = "Pad with zeros", hint = "Leave blank for no padding")
 	private Integer zeroPad = 5;
 	
 	

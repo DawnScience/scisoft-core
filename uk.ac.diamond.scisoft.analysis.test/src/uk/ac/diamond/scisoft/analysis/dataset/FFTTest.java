@@ -73,6 +73,17 @@ public class FFTTest {
 			i++;
 		}
 
+		or = new double[] {5.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5};
+		oi = new double[] {0, -1.86602540378, -0.866025403784, -0.5, -0.288675134595, -0.133974596216,
+				0.0, 0.133974596216, 0.288675134595, 0.5, 0.866025403784, 1.86602540378};
+		g = FFT.ifft(a);
+		i = 0;
+		it = g.getIterator();
+		while (it.hasNext()) {
+			assertEquals("1D double: real", or[i], g.getElementDoubleAbs(it.index), abstol);
+			assertEquals("1D double: imag", oi[i], g.getElementDoubleAbs(it.index + 1), abstol);
+			i++;
+		}
 
 		double[] br = { 6., -2., -2., -2., 22., -2., -2., -2., 38., -2., -2., -2. };
 		double[] bi = { 0., 2., 0., -2., 0., 2., 0., -2., 0., 2., 0., -2. };
@@ -240,6 +251,17 @@ public class FFTTest {
 		while (it.hasNext()) {
 			assertEquals("2D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("2D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
+			i++;
+		}
+
+		ar = new double[] {5.5, -0.5, -0.5, -0.5, -2, 0, 0, 0, -2, 0, 0, 0};
+		ai = new double[] {0, -0.5, 0, 0.5, -1.15470053838, 0, 0, 0, 1.15470053838, 0, 0, 0};
+		g = FFT.ifft2(a, null, null);
+		i = 0;
+		it = g.getIterator();
+		while (it.hasNext()) {
+			assertEquals("2D double: real", ar[i], g.getElementDoubleAbs(it.index), abstol);
+			assertEquals("2D double: imag", ai[i], g.getElementDoubleAbs(it.index + 1), abstol);
 			i++;
 		}
 
@@ -443,6 +465,25 @@ public class FFTTest {
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
+			i++;
+		}
+
+		ar = new double[] { 29.5, -0.5, -0.5, -0.5, -2, 0, 0, 0, -2, 0, 0, 0, -2, 0, 0, 0,
+				-2, 0, 0, 0, -10, 0, 0, 0, -2.22044604925e-16, 0, 0, 0, -1.48029736617e-16,
+				0, 0, 0, -1.48029736617e-16, 0, 0, 0, -2.22044604925e-16, 0, 0, 0,
+				-10, 0, 0, 0, -2.22044604925e-16, 0, 0, 0, -1.48029736617e-16, 0, 0, 0,
+				-1.48029736617e-16, 0, 0, 0, -2.22044604925e-16, 0, 0, 0 };
+		ai = new double[] { 0, -0.5, 0, 0.5, -2.75276384094, 0, 0, 0, -0.649839392466, 0, 0, 0,
+				0.649839392466, 0, 0, 0, 2.75276384094, 0, 0, 0, -5.7735026919, 0, 0, 0,
+				3.84592537277e-16, 0, 0, 0, 1.92296268638e-16, 0, 0, 0, 1.92296268638e-16, 0, 0, 0,
+				3.84592537277e-16, 0, 0, 0, 5.7735026919, 0, 0, 0, -3.84592537277e-16, 0, 0, 0,
+				-1.92296268638e-16, 0, 0, 0, -1.92296268638e-16, 0, 0, 0, -3.84592537277e-16, 0, 0, 0 };
+		g = FFT.ifftn(a, null, null);
+		i = 0;
+		it = g.getIterator();
+		while (it.hasNext()) {
+			assertEquals("3D double: real", ar[i], g.getElementDoubleAbs(it.index), abstol);
+			assertEquals("3D double: imag", ai[i], g.getElementDoubleAbs(it.index + 1), abstol);
 			i++;
 		}
 

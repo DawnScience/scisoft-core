@@ -212,57 +212,57 @@ ravel_multi_index = _np.ravel_multi_index
 #compoundarray(a, view=True):
 #    '''Create a compound array from an nd array by grouping last axis items into compound items
 #    '''
-class ndarrayCB(ndarray):
-    '''
-    Wrap compound byte dataset
-    '''
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cint8(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
-
-class ndarrayCS(ndarray):
-    '''
-    Wrap compound short dataset
-    '''
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cint16(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
-
-class ndarrayCI(ndarray):
-    '''
-    Wrap compound integer dataset
-    '''
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cint32(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
-
-class ndarrayCL(ndarray):
-    '''
-    Wrap compound long dataset
-    '''
-    def __new__(cls, elements, shape):
-        obj = _np.ndarray.__new__(cls, shape, cint64(elements), None, 0, None, None)
-        obj.elementsPerItem = elements
-        return obj
-
-    def __array_finalize__(self, obj):
-        if obj is None: return
-        self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+# class ndarrayCB(ndarray):
+#     '''
+#     Wrap compound byte dataset
+#     '''
+#     def __new__(cls, elements, shape):
+#         obj = _np.ndarray.__new__(cls, shape, cint8(elements), None, 0, None, None)
+#         obj.elementsPerItem = elements
+#         return obj
+# 
+#     def __array_finalize__(self, obj):
+#         if obj is None: return
+#         self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+# 
+# class ndarrayCS(ndarray):
+#     '''
+#     Wrap compound short dataset
+#     '''
+#     def __new__(cls, elements, shape):
+#         obj = _np.ndarray.__new__(cls, shape, cint16(elements), None, 0, None, None)
+#         obj.elementsPerItem = elements
+#         return obj
+# 
+#     def __array_finalize__(self, obj):
+#         if obj is None: return
+#         self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+# 
+# class ndarrayCI(ndarray):
+#     '''
+#     Wrap compound integer dataset
+#     '''
+#     def __new__(cls, elements, shape):
+#         obj = _np.ndarray.__new__(cls, shape, cint32(elements), None, 0, None, None)
+#         obj.elementsPerItem = elements
+#         return obj
+# 
+#     def __array_finalize__(self, obj):
+#         if obj is None: return
+#         self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
+# 
+# class ndarrayCL(ndarray):
+#     '''
+#     Wrap compound long dataset
+#     '''
+#     def __new__(cls, elements, shape):
+#         obj = _np.ndarray.__new__(cls, shape, cint64(elements), None, 0, None, None)
+#         obj.elementsPerItem = elements
+#         return obj
+# 
+#     def __array_finalize__(self, obj):
+#         if obj is None: return
+#         self.elementsPerItem = getattr(obj, 'elementsPerItem', 1)
 
 #class ndarray(_np.ndarray):
 #    def __new__(cls, shape, dtype=int16, buffer=None, offset=0, strides=None, order=None):
@@ -304,31 +304,35 @@ class ndarrayRGB(ndarray):
 #        if self.shape[-1] == 1:
 #            self.shape = self.shape[:-1]
 
-#    def __get_shape(self):
-#        return self._oldshape
-#    def __set_shape(self, *shape):
-#        if len(shape) == 1:
-#            shape = asIterable(shape[0])
-#
-#        shape.append(3)
-#        super(ndarrayRGB, self).shape = shape
-#        self._oldshape = shape
-#    shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
+    def __get_shape(self):
+        return self._oldshape
+    def __set_shape(self, *shape):
+        if len(shape) == 1:
+            shape = asIterable(shape[0])
+
+        shape.append(3)
+        super(ndarrayRGB, self).shape = shape
+        self._oldshape = shape
+    shape = property(__get_shape, __set_shape) # python 2.5 rather than using @shape.setter
+
 
     def get_red(self, dtype=None):
         if dtype is None:
             dtype = int16
-        return self['r'].astype(dtype)
+#        return self['r'].astype(dtype)
+        return self.view(ndarray)[..., 0].astype(dtype)
 
     def get_green(self, dtype=None):
         if dtype is None:
             dtype = int16
-        return self['g'].astype(dtype)
+#        return self['g'].astype(dtype)
+        return self.view(ndarray)[..., 1].astype(dtype)
 
     def get_blue(self, dtype=None):
         if dtype is None:
             dtype = int16
-        return self['b'].astype(dtype)
+#        return self['b'].astype(dtype)
+        return self.view(ndarray)[..., 2].astype(dtype)
 
     def get_grey(self, cweights=None, dtype=None):
         '''Get grey image

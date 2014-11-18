@@ -20,6 +20,7 @@ This module is generally for internal use by AnalysisRPC and is only made
 public for the purpose of testing, see pyflatten_test.py
 '''
 
+import scisoftpy.python.pycore as _core
 import scisoftpy.python.pyroi as _roi
 import scisoftpy.python.pybeans as _beans
 import scisoftpy.python.pywrapper as _wrapper
@@ -202,6 +203,8 @@ class ndArrayHelper(flatteningHelper):
     
     def flatten(self, obj):
         rval = dict()
+        if isinstance(obj, _core.ndarrayRGB):
+            obj = obj.view(_np.ndarray)
         if isinstance(obj, _np.ndarray):
             global _TEMP_LOCATION, _TEMP_LOCATION_SET
             if not _TEMP_LOCATION_SET:

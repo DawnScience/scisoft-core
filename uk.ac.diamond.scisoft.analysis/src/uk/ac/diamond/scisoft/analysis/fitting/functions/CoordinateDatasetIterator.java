@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
  * An iterator over a dataset whose items are coordinates
  */
 public class CoordinateDatasetIterator extends CoordinatesIterator {
-	private int rank;
 	CompoundDataset cvalue;
 
 	/**
@@ -35,10 +34,9 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 		} else {
 			cvalue = (CompoundDataset) value;
 		}
-		rank = cvalue.getRank();
 		shape = cvalue.getShape();
 
-		coords = new double[rank];
+		coords = new double[cvalue.getElementsPerItem()];
 		values = new IDataset[] { cvalue };
 		it = new PositionIterator(shape);
 		pos = it.getPos();
@@ -49,9 +47,7 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 		if (!it.hasNext())
 			return false;
 
-		for (int i = 0; i < rank; i++) {
-			cvalue.getDoubleArray(coords, pos);
-		}
+		cvalue.getDoubleArray(coords, pos);
 		return true;
 	}
 }

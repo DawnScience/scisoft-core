@@ -52,13 +52,15 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		if (model.getEndFrame() != null) {
 			end = model.getEndFrame();
 		}
+		
+		if (end <= startFrame) throw new OperationException(this,"End cannot be before or the same as start");
 
 		ILazyDataset bg = lzBg.getSliceView();
 		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);
 		if (ss.length == 2) {
-			image = (Dataset)bg.getSlice();
+			image = (Dataset)bg.getSlice().squeeze();
 		} else {
-			image = mean(startFrame, end, bg, dd);
+			image = mean(startFrame, end, bg, dd).squeeze();
 		}
 
 		return image;

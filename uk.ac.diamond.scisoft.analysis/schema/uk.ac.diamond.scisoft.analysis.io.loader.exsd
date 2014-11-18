@@ -62,7 +62,7 @@ Some loaders are hard coded into LoaderFactory, this extension allows new ones t
                   The loader to load data into Dawn. It is also suggested that your loader implement IDataSetLoader to work efficiently in the UI.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader:uk.ac.diamond.scisoft.analysis.io.IMetaLoader"/>
+                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader:org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader"/>
                </appinfo>
             </annotation>
          </attribute>

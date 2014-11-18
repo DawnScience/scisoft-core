@@ -13,11 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.python.core.PyList;
+import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
@@ -38,8 +39,6 @@ public class JythonInterpreterUtils {
 	public static final String RUN_IN_ECLIPSE = "run.in.eclipse";
 
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
-	private static final String JYTHON_BUNDLE = "uk.ac.diamond.jython";
-	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
 	
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
@@ -66,7 +65,7 @@ public class JythonInterpreterUtils {
 	 * @return a new Jython Interpreter
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
-	public static PythonInterpreter getBasicInterpreter(List<File> extraPaths) throws Exception {
+	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
 		final long start = System.currentTimeMillis();
 		
 		//This was the major part of the getInterpreter method.
@@ -84,11 +83,15 @@ public class JythonInterpreterUtils {
 			}
 		}
 		File jyRoot = JythonPath.getInterpreterDirectory();
-		File jyBundleLoc = jyRoot.getParentFile();
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
 		}
+		
+		PyObject executable = state.executable;
+		
+		File exec_File = new File(JythonPath.getInterpreterDirectory(), "jython.jar"); 
+		state.executable = new PyString(exec_File.getAbsolutePath());
 
 		PyList path = state.path;
 //		path.clear();
@@ -102,8 +105,8 @@ public class JythonInterpreterUtils {
 		
 		//Add additional paths to sys.path in new interpreter
 		if (extraPaths != null){
-			for (File f : extraPaths){
-				path.append(new PyString(f.getAbsolutePath()));
+			for (String jyPath : extraPaths){
+				path.append(new PyString(jyPath));
 			}
 		}
 		
@@ -121,22 +124,22 @@ public class JythonInterpreterUtils {
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
 	public static PythonInterpreter getscisoftpyInterpreter() throws Exception{
-		final List<File> extraPaths = new ArrayList<File>();
+		final Set<String> extraPaths = new HashSet<String>();
 		
 		try {
 			//This seems to work in git repo case (and presumably in binary)
 			//Old code in 0f667dd and before (now deleted) was more verbose
 			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
-			logger.debug("Found Scisoft Python plugin at {}", pythonPlugin);
-			File bin = new File(pythonPlugin, "bin");
-			if (bin.exists()) {
-				logger.debug("Found bin directory at {}", bin);
-				extraPaths.add(bin);
+			logger.debug("Found Scisoft Python (Jython) plugin: {}", pythonPlugin);
+			File binDir = new File(pythonPlugin, "bin");
+			if (binDir.exists()) {
+				logger.debug("Found bin directory at {}", binDir);
+				extraPaths.add(binDir.getAbsolutePath());
 			} else {
-				extraPaths.add(pythonPlugin);
+				extraPaths.add(pythonPlugin.getAbsolutePath());
 			}
 		} catch (Exception e) {
-			logger.error("Could not find Scisoft Python plugin", e);
+			logger.error("Errors encountered getting paths to Scisoft Python (Jython) plugin", e);
 		}
 		
 		PythonInterpreter interpreter = getBasicInterpreter(extraPaths);
@@ -149,28 +152,23 @@ public class JythonInterpreterUtils {
 	}
 	
 	public static PythonInterpreter getFullInterpreter() throws Exception {
-		//Store for the additional things to go to sys.path
-		final List<File> extraPaths = new ArrayList<File>();
-		
 		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
 		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
 		File pluginsDir = JythonPath.getPluginsDirectory(isRunningInEclipse); 
-		
-		//Find third party jars first
-		logger.debug("Searching for 3rd party jars");
-		extraPaths.addAll(JythonPath.findJars(pluginsDir));
-		
-		//Find all
-		final List<File> allPluginDirs = JythonPath.findDirs(pluginsDir, isRunningInEclipse);
-		if (isRunningInEclipse) {
-			File wsDir = pluginsDir;
-			if (!new File(wsDir, "tp").isDirectory()) {
-				
-			}
+		if (pluginsDir == null) {
+			logger.error("Failed to find the plugins directory! Cannot start jython interpreter.");
+			return null;
 		}
+		logger.debug("Plugins directory set to: {}", pluginsDir);
+		
+		//Could set cache dir here???
+		//System.setProperty("python.cachedir", cachePath);
+		
+		//Instantiate the jyPaths HashSet and get its contents
+		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, isRunningInEclipse);
 		
 		//If we've got everything in the extraPaths list, send it to the interpreter maker
-		PythonInterpreter interpreter = getBasicInterpreter(extraPaths);
+		PythonInterpreter interpreter = getBasicInterpreter(jyPaths);
 		return interpreter;
 	}
 	

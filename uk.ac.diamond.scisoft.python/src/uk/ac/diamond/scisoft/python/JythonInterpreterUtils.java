@@ -87,11 +87,9 @@ public class JythonInterpreterUtils {
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
 		}
-		
-		PyObject executable = state.executable;
-		
-		File exec_File = new File(jyRoot, "jython.jar"); 
-		state.executable = new PyString(exec_File.getAbsolutePath());
+
+		state.exec_prefix = new PyString(jyRoot.getAbsolutePath());
+		state.executable = new PyString(JythonPath.getJythonExecutableName());
 
 		PyList path = state.path;
 //		path.clear();

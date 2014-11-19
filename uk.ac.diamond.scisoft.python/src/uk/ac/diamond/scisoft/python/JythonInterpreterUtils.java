@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
@@ -93,7 +94,6 @@ public class JythonInterpreterUtils {
 
 		PyList path = state.path;
 //		path.clear();
-//		File jyRoot = new File(jyBundleLoc, "jython2.5");
 		path.append(new PyString(new File(jyRoot, "jython.jar").getAbsolutePath()));
 		File jyLib = new File(jyRoot, "Lib");
 		path.append(new PyString(jyLib.getAbsolutePath()));
@@ -107,6 +107,10 @@ public class JythonInterpreterUtils {
 				path.append(new PyString(jyPath));
 			}
 		}
+		
+		Properties preProperties = System.getProperties();
+		
+		PythonInterpreter.initialize(preProperties, null, null);
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
 		

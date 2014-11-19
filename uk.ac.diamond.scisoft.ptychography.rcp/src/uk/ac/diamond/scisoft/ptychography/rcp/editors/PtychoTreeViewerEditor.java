@@ -3,10 +3,6 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
@@ -20,7 +16,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,7 +28,12 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -49,9 +54,9 @@ import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 public class PtychoTreeViewerEditor extends EditorPart {
 
 	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor";
-	private TreeViewer viewer;
-//	private FilteredTree filteredTree;
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
+	private TreeViewer viewer;
+	private FilteredTree filteredTree;
 	private List<PtychoInput> levels;
 	private List<PtychoNode> tree;
 	private ISelectionChangedListener selectionListener;
@@ -68,8 +73,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private Color gray;
 	private Color darkGray;
 	private Color black;
-	private FilteredTree filteredTree;
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		isDirtyFlag = false;
@@ -155,7 +159,9 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	public void createPartControl(final Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
-		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		container.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true));
+
+		createToolBarActions(container);
 
 		PatternFilter filter = new PatternFilter() {
 			@Override
@@ -284,7 +290,6 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		runButton.setToolTipText("Run ptychography process on cluster");
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 
-		createActions();
 		getSite().setSelectionProvider(viewer);
 	}
 
@@ -317,90 +322,112 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		}
 	}
 
-	private void createActions() {
-//		final IPreferenceStore store = Activator.getPlottingPreferenceStore();
-		IToolBarManager toolBarMan = ((IEditorSite) getSite()).getActionBars().getToolBarManager();
-		IMenuManager menuMan = ((IEditorSite) getSite()).getActionBars().getMenuManager();
-
-		final Action expandAll = new Action("Expand All", Activator.getImageDescriptor("icons/expand_all.png")) {
-			public void run() {
-				if (viewer != null) {
+	private void createToolBarActions(Composite parent) {
+		ToolBar toolBar = new ToolBar(parent, SWT.RIGHT);
+		ToolItem expand = new ToolItem(toolBar, SWT.PUSH);
+		expand.setToolTipText("Expand All");
+		Image icon = Activator.getImageDescriptor("icons/expand_all.png").createImage();
+		expand.setImage(icon);
+		expand.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (viewer != null) 
 					viewer.expandAll();
-				}
 			}
-		};
-		expandAll.setToolTipText("Expand All");
+		});
 
-		final Action collapseAll = new Action("Collapse All", Activator.getImageDescriptor("icons/collapse_all.png")) {
-			public void run() {
-				if (viewer != null) {
+		ToolItem collapse = new ToolItem(toolBar, SWT.PUSH);
+		collapse.setToolTipText("Collapse All");
+		icon = Activator.getImageDescriptor("icons/collapse_all.png").createImage();
+		collapse.setImage(icon);
+		collapse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (viewer != null) 
 					viewer.collapseAll();
-				}
 			}
-		};
-		collapseAll.setToolTipText("Collapse All");
+		});
 
-		final Action open = new Action("Open previously saved table", Activator.getImageDescriptor("icons/file_obj.gif")) {
-			public void run() {
-			}
-		};
-		open.setToolTipText("Open a previously saved configuration parameter file (CSV)");
+		new ToolItem(toolBar, SWT.SEPARATOR);
 
-		final Action exportAs = new Action("Export table to file", Activator.getImageDescriptor("icons/export_wiz.gif")) {
-			public void run() {
+		ToolItem export = new ToolItem(toolBar, SWT.PUSH);
+		export.setToolTipText("Export table to file");
+		icon = Activator.getImageDescriptor("icons/export_wiz.gif").createImage();
+		export.setImage(icon);
+		export.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
 				try {
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);
 				}
 			}
-		};
+		});
 
-		final Action save = new Action("Save table", Activator.getImageDescriptor("icons/save_edit.gif")) {
-			public void run() {
-				try {
-				} catch (Exception e) {
-					logger.error("Problem saving table", e);
+		ToolItem itemDrop = new ToolItem(toolBar, SWT.DROP_DOWN);
+		itemDrop.addSelectionListener(new SelectionAdapter() {
+			Menu dropMenu = null;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (dropMenu == null) {
+					Shell shell = Display.getDefault().getActiveShell();
+					dropMenu = new Menu(shell, SWT.POP_UP);
+					shell.setMenu(dropMenu);
+					MenuItem preferences = new MenuItem(dropMenu, SWT.PUSH);
+					preferences.setText("Preferences...");
+					preferences.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent event) {
+							PreferenceDialog pref = PreferencesUtil
+									.createPreferenceDialogOn(PlatformUI
+											.getWorkbench()
+											.getActiveWorkbenchWindow()
+											.getShell(),
+											PtychoTreeViewerEditor.ID, null,
+											null);
+							if (pref != null)
+								pref.open();
+						}
+					});
+				}
+
+				if (e.detail == SWT.ARROW) {
+					// Position the menu below and vertically aligned with the
+					// the drop down tool button.
+					final ToolItem toolItem = (ToolItem) e.widget;
+					final ToolBar toolBar = toolItem.getParent();
+
+					Point point = toolBar.toDisplay(new Point(e.x, e.y));
+					dropMenu.setLocation(point.x, point.y);
+					dropMenu.setVisible(true);
 				}
 			}
-		};
+		});
 
-		final Action preferences = new Action("Preferences...") {
-			public void run() {
-				PreferenceDialog pref = PreferencesUtil
-						.createPreferenceDialogOn(PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getShell(),
-								PtychoTreeViewerEditor.ID, null, null);
-				if (pref != null)
-					pref.open();
-			}
-		};
-		preferences.setToolTipText("Open Region Editor preferences");
-
-		//toolbar buttons
-		toolBarMan.add(new Separator());
-		toolBarMan.add(expandAll);
-		toolBarMan.add(collapseAll);
-		toolBarMan.add(new Separator());
-		toolBarMan.add(open);
-		toolBarMan.add(exportAs);
-		toolBarMan.add(save);
-		toolBarMan.add(new Separator());
-
-		// right click menu buttons
-//		MenuManager rightClickMenuMan = new MenuManager();
-//		addRightClickMenuCheckActions(rightClickMenuMan);
-//		rightClickMenuMan.add(copy);
-//		rightClickMenuMan.add(show);
-//		rightClickMenuMan.add(clear);
-//		rightClickMenuMan.add(deleteMenuAction);
-//		viewer.getControl().setMenu(rightClickMenuMan.createContextMenu(viewer.getControl()));
-
-		// menu buttons
-		menuMan.add(open);
-		menuMan.add(exportAs);
-		menuMan.add(save);
-		menuMan.add(new Separator());
-		menuMan.add(preferences);
+//		final Action open = new Action("Open previously saved table", Activator.getImageDescriptor("icons/file_obj.gif")) {
+//			public void run() {
+//			}
+//		};
+//		open.setToolTipText("Open a previously saved configuration parameter file (CSV)");
+//
+//		final Action exportAs = new Action("Export table to file", Activator.getImageDescriptor("icons/export_wiz.gif")) {
+//			public void run() {
+//				try {
+//				} catch (Exception e) {
+//					logger.error("Problem exporting to file", e);
+//				}
+//			}
+//		};
+//
+//		final Action save = new Action("Save table", Activator.getImageDescriptor("icons/save_edit.gif")) {
+//			public void run() {
+//				try {
+//				} catch (Exception e) {
+//					logger.error("Problem saving table", e);
+//				}
+//			}
+//		};
 	}
 
 	@Override

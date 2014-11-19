@@ -90,7 +90,7 @@ public class JythonInterpreterUtils {
 		
 		PyObject executable = state.executable;
 		
-		File exec_File = new File(JythonPath.getInterpreterDirectory(), "jython.jar"); 
+		File exec_File = new File(jyRoot, "jython.jar"); 
 		state.executable = new PyString(exec_File.getAbsolutePath());
 
 		PyList path = state.path;

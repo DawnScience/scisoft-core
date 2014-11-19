@@ -110,12 +110,12 @@ public class IntegrationTest {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 
+				count++;
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
 					throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 				}
 				
-				count++;
 			}
 		}, maskOp, thresh, azi);
 		
@@ -168,7 +168,7 @@ public class IntegrationTest {
 
 	private IOperation getMaskOperation(final IDataset mask) {
 		
-final MaskMetadata mmd = new MaskMetadata() {
+		final MaskMetadata mmd = new MaskMetadata() {
 			
 			@Override
 			public ILazyDataset getMask() {

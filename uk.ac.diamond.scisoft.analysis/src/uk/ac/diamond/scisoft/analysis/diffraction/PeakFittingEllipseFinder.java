@@ -170,7 +170,7 @@ public class PeakFittingEllipseFinder {
 			
 			if (g == null) continue;
 			
-			//lineAngle != i for non-ellipical
+			//lineAngle != i for non-elliptical
 			double lineAngle = line.getAngle();
 			
 			double r = g.getParameter(0).getValue();
@@ -180,6 +180,7 @@ public class PeakFittingEllipseFinder {
 			gaussianList.add(g);
 			
 			if (mon != null) {
+				mon.worked(1);
 				if (mon.isCancelled()) return null;
 			}
 		}

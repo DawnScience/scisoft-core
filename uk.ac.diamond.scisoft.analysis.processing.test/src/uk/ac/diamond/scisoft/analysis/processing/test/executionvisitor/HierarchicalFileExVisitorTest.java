@@ -564,6 +564,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
+		op22.setNumberOfAxes(2);
 		context.setSeries(op22);
 		
 		try {
@@ -579,6 +580,7 @@ public class HierarchicalFileExVisitorTest {
 			assertTrue(dh.contains("/entry/result/Axis_0"));
 			assertTrue(dh.contains("/entry/result/Axis_0_1"));
 			assertTrue(dh.contains("/entry/result/Junk2Dto2DAx2"));
+			assertTrue(dh.contains("/entry/result/Junk2Dto2DAx2_1"));
 			
 			assertArrayEquals(new int[]{inputShape[0],op22.getModel().getxDim(),op22.getModel().getyDim()}, dh.getLazyDataset("/entry/result/data").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());

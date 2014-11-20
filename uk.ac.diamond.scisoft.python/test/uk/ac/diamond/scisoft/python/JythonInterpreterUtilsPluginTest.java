@@ -28,7 +28,7 @@ import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
-public class JythonInterpreterUtilsTest {
+public class JythonInterpreterUtilsPluginTest {
 	private PythonInterpreter jyTestInt;
 	
 	@Before
@@ -70,21 +70,22 @@ public class JythonInterpreterUtilsTest {
 			jyTestInt.exec("myExec = str(sys.executable)");
 			PyString jyVar2 = (PyString) jyTestInt.get(new String("myExec"));
 			String jyVar2Str = jyVar2.toString();
-			assertEquals(new String("None"), jyVar2Str);
+			if (!jyVar2Str.endsWith("/jython.jar")) {
+				fail("Executable name wrong or not set.");
+			}
 			
 			//And a quick maths check
 			jyTestInt.exec("import math");
 			jyTestInt.exec("myVal = round(math.cos(math.radians(60)), 5)");
 			PyFloat jyVar3 = (PyFloat) jyTestInt.get(new String("myVal"));
-			Float jyVar3fl = (Float) jyVar3.__tojava__(Float.class);
-			assertEquals(new Float(0.5), jyVar3fl);
+			assertEquals(new PyFloat(0.5), jyVar3);
 		}
 	}
 	
 	@Test
 	public void interpreterShouldStartWithSciSoftPyLibs() {
 		try{
-			jyTestInt = JythonInterpreterUtils.getInterpreter();
+			jyTestInt = JythonInterpreterUtils.getscisoftpyInterpreter();
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}

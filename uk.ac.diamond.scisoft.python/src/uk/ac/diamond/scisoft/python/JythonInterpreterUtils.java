@@ -43,9 +43,9 @@ public class JythonInterpreterUtils {
 	
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
-	static {
-		PySystemState.initialize();
-	}
+//	static {
+//		PySystemState.initialize();
+//	}
 
 	
 	
@@ -53,21 +53,25 @@ public class JythonInterpreterUtils {
 	 * Create Jython interpreter
 	 * 
 	 * @return a new PythonInterpreter.
-	// * @throws IOException 
-	// * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
 	 */
 	public static PythonInterpreter getBasicInterpreter() throws Exception {
 		return getBasicInterpreter(null);
 	}
 	
 	/**
+	 * Create Jython interpreter with extra java libraries
 	 * 
-	 * @param extraPaths
+	 * @param extraPaths set of paths to extra libraries to load
 	 * @return a new Jython Interpreter
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
 	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
 		final long start = System.currentTimeMillis();
+		
+		Properties preProperties = System.getProperties();
+		PythonInterpreter.initialize(preProperties, null, null);
 		
 		//This was the major part of the getInterpreter method.
 		//Idea is to separate interpreter creation and starting of scisoftpy
@@ -90,7 +94,8 @@ public class JythonInterpreterUtils {
 		}
 
 		state.exec_prefix = new PyString(jyRoot.getAbsolutePath());
-		state.executable = new PyString(JythonPath.getJythonExecutableName());
+		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
+		state.executable = new PyString(executable);
 
 		PyList path = state.path;
 //		path.clear();
@@ -107,10 +112,6 @@ public class JythonInterpreterUtils {
 				path.append(new PyString(jyPath));
 			}
 		}
-		
-		Properties preProperties = System.getProperties();
-		
-		PythonInterpreter.initialize(preProperties, null, null);
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
 		

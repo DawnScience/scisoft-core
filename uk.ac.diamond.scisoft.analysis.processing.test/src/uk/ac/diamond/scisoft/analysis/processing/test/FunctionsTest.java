@@ -18,17 +18,17 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.AggregateDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -63,7 +63,9 @@ public class FunctionsTest {
 	public void testPolynomial() throws Exception {
 		
 		final IDataset       indices = DatasetFactory.createRange(1000, Dataset.INT);
-		final ISliceConfiguration   rich    = new RichDataset(indices, null);
+		final IOperationContext context = service.createContext();
+		context.setData(indices);
+
 
 		final IOperation functionOp = service.findFirst("function");
 		
@@ -71,7 +73,7 @@ public class FunctionsTest {
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
 		functionOp.setModel(new FunctionModel(poly));
 		
-		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -93,8 +95,10 @@ public class FunctionsTest {
 					}
 				}
 			}			
-		}, functionOp);
-
+		});
+		
+		context.setSeries(functionOp);
+		service.execute(context);
 	}
 	
 	static final int[] defaultPeakPos;
@@ -124,14 +128,15 @@ public class FunctionsTest {
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
-		final RichDataset   rich = new RichDataset(aggy, null);
-		rich.setSlicing("all", "");
+		final IOperationContext context  = service.createContext();
+		context.setData(aggy);
+		context.setSlicing("all", "");
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
 		count = 0;
-		service.executeSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -154,7 +159,10 @@ public class FunctionsTest {
 				count++;
 
 			}			
-		}, fittingOp);
+		});
+		
+		context.setSeries(fittingOp);
+		service.execute(context);
 
 		
 		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
@@ -169,50 +177,52 @@ public class FunctionsTest {
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
-		final RichDataset   rich = new RichDataset(aggy, null);
-		rich.setSlicing("all", "");
+		final IOperationContext context  = service.createContext();
+		context.setData(aggy);
+		context.setSlicing("all", "");
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
 		count = 0;
-		try {
-			service.setParallelTimeout(Long.MAX_VALUE);
-			service.executeParallelSeries(rich, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+		context.setParallelTimeout(Long.MAX_VALUE);
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 
-					System.out.println(result.getData().getName());
+				System.out.println(result.getData().getName());
 
-					final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
+				final List<CompositeFunction> fittedPeakList = (List<CompositeFunction>)result.getAuxData()[0];
 
-					double[] fittedPeakPos = new double[fittedPeakList.size()];
-					int i = 0;
-					for (CompositeFunction p : fittedPeakList) {
-						fittedPeakPos[i++] = p.getPeak(0).getPosition();
-					}
-					Arrays.sort(fittedPeakPos);
+				double[] fittedPeakPos = new double[fittedPeakList.size()];
+				int i = 0;
+				for (CompositeFunction p : fittedPeakList) {
+					fittedPeakPos[i++] = p.getPeak(0).getPosition();
+				}
+				Arrays.sort(fittedPeakPos);
 
-					assertEquals("The number of peaks found was not the same as generated", defaultPeakPos.length, fittedPeakPos.length);
+				assertEquals("The number of peaks found was not the same as generated", defaultPeakPos.length, fittedPeakPos.length);
 
-					for (int k = 0; k < fittedPeakPos.length; k++) {
-						assertEquals(defaultPeakPos[k], fittedPeakPos[k], 2d);
-					}
-					try {
-						// This sleep simply introduces some random behaviour
-						// on the parallel jobs so that we definitely get a different order.
-						final long time = Math.round(Math.random()*1000);
-						Thread.sleep(time);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					count++;
+				for (int k = 0; k < fittedPeakPos.length; k++) {
+					assertEquals(defaultPeakPos[k], fittedPeakPos[k], 2d);
+				}
+				try {
+					// This sleep simply introduces some random behaviour
+					// on the parallel jobs so that we definitely get a different order.
+					final long time = Math.round(Math.random()*1000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				count++;
 
-				}			
-			}, fittingOp);
-		} finally {
-			service.setParallelTimeout(5000);
-		}
+			}			
+		});
+		
+		context.setSeries(fittingOp);
+		
+		context.setExecutionType(ExecutionType.PARALLEL);
+		service.execute(context);
 
 		
 		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");

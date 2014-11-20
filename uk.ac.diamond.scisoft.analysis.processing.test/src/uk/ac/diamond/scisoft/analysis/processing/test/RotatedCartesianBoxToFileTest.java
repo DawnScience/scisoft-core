@@ -17,12 +17,12 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,11 +72,11 @@ private static IOperationService service;
 			}
 		});
 		
-		final RichDataset   richDataset = new RichDataset(lz, null, null, null, null);
+		final IOperationContext context = service.createContext();
+		context.setData(lz);
 		Map<Integer, String> sliceMap = new HashMap<Integer, String>();
 		sliceMap.put(0, "all");
-		
-		richDataset.setSlicing(sliceMap);
+		context.setSlicing(sliceMap); // 
 		
 		final IDataset axDataset1 = DatasetFactory.createRange(100,Dataset.INT16);
 		axDataset1.setShape(new int[] {100,1,1});
@@ -111,7 +111,10 @@ private static IOperationService service;
 			
 			long time =  System.currentTimeMillis();
 			
-			service.executeSeries(richDataset, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), rotatedCartesianBox);
+			context.setSeries(rotatedCartesianBox);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			
+			service.execute(context);
 			
 			System.out.println( System.currentTimeMillis()  - time);
 		} catch (Exception e) {

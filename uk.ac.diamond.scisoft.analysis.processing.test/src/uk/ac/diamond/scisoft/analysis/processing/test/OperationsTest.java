@@ -12,14 +12,15 @@ import java.util.Collection;
 
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -71,9 +72,10 @@ public class OperationsTest {
 			}
 		});
 		
-		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -82,7 +84,9 @@ public class OperationsTest {
 					}
 				}
 			}			
-		}, subtract);
+		});
+		context.setSeries(subtract);
+		service.execute(context);
 	}
 
 	@Test
@@ -91,7 +95,8 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
-		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -106,7 +111,7 @@ public class OperationsTest {
 			}
 		});
 		
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -115,7 +120,9 @@ public class OperationsTest {
 					}
 				}
 			}			
-		}, subtract, add);
+		});
+		context.setSeries(subtract, add);
+		service.execute(context);
 	}
 
 	private volatile int counter;
@@ -126,8 +133,9 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
-		rand.setSlicing("all"); // 
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
+		context.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -143,7 +151,7 @@ public class OperationsTest {
 		});
 		
 		counter = 0;
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -155,9 +163,11 @@ public class OperationsTest {
 					}
 				}
 			}			
-		}, subtract, add);
+		});
+		context.setSeries(subtract, add);
+		service.execute(context);
 		
-		if ( counter != 24 ) throw new Exception();
+		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 	}
 
 	@Test
@@ -166,8 +176,9 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
-		rand.setSlicing("all"); // 
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
+		context.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -183,38 +194,36 @@ public class OperationsTest {
 		});
 		
 		counter = 0;
-		try {
-			service.setParallelTimeout(Long.MAX_VALUE);
-	
-			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-					
-				    try {
-				    	// This sleep simply introduces some random behaviour
-				    	// on the parallel jobs so that we definitely get a different order.
-						final long time = Math.round(Math.random()*1000);
-						Thread.sleep(time);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+		context.setParallelTimeout(Long.MAX_VALUE);
+		context.setExecutionType(ExecutionType.PARALLEL);
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+
+				try {
+					// This sleep simply introduces some random behaviour
+					// on the parallel jobs so that we definitely get a different order.
+					final long time = Math.round(Math.random()*1000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				++counter;
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
-	
-					++counter;
-					for (int i = 0; i < result.getData().getShape()[0]; i++) {
-						for (int j = 0; j < result.getData().getShape()[1]; j++) {
-						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
-						}
-					}
-				}			
-			}, subtract, add);
-			
-			if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
-			
-		} finally {
-			service.setParallelTimeout(5000);
-		}
-		
+				}
+			}			
+		});
+		context.setSeries(subtract, add);
+		service.execute(context);
+
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 	}
+
 
 	@Test
 	public void testParallelLongerThanDefault() throws Exception {
@@ -222,8 +231,9 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
-		rand.setSlicing("all"); // 
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
+		context.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -237,33 +247,37 @@ public class OperationsTest {
 				return 101;
 			}
 		});
-				
+			
+		context.setExecutionType(ExecutionType.PARALLEL);
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+
+				try {
+					// This sleep simply introduces some random behaviour
+					// on the parallel jobs so that we 
+					final long time = Math.round(Math.random()*10000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+					}
+				}
+			}			
+		});
+
+		context.setSeries(subtract, add);
 		try {
-			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-					
-				    try {
-				    	// This sleep simply introduces some random behaviour
-				    	// on the parallel jobs so that we 
-						final long time = Math.round(Math.random()*10000);
-						Thread.sleep(time);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-	
-					for (int i = 0; i < result.getData().getShape()[0]; i++) {
-						for (int j = 0; j < result.getData().getShape()[1]; j++) {
-						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
-						}
-					}
-				}			
-			}, subtract, add);
-		} catch (Exception shouldThrowException) {
-			return;
+		    service.execute(context);
+		} catch (OperationException ne) {
+			return; // That's what we wanted!
 		}
-		
-		throw new Exception("The default wait time of 5000ms should have been ");
+
+		throw new Exception("The default wait time of 5000ms should have been reached!");
 	}
 
 	@Test
@@ -272,8 +286,9 @@ public class OperationsTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 24, 1024, 1024), null);
-		rand.setSlicing("all"); // 
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
+		context.setSlicing("all"); // 
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -287,37 +302,36 @@ public class OperationsTest {
 				return 101;
 			}
 		});
-				
+
 		counter = 0;
-		
-		try {
-			service.setParallelTimeout(Long.MAX_VALUE);
-			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-	
-					try {
-						// This sleep simply introduces some random behaviour
-						// on the parallel jobs so that we 
-						final long time = Math.round(Math.random()*10000);
-						Thread.sleep(time);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+
+		context.setParallelTimeout(Long.MAX_VALUE);
+		context.setExecutionType(ExecutionType.PARALLEL);
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+
+				try {
+					// This sleep simply introduces some random behaviour
+					// on the parallel jobs so that we 
+					final long time = Math.round(Math.random()*10000);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				counter++;
+				for (int i = 0; i < result.getData().getShape()[0]; i++) {
+					for (int j = 0; j < result.getData().getShape()[1]; j++) {
+						if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
-					counter++;
-					for (int i = 0; i < result.getData().getShape()[0]; i++) {
-						for (int j = 0; j < result.getData().getShape()[1]; j++) {
-						    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
-						}
-					}
-				}			
-			}, subtract, add);
-			
-			if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
-			
-		} finally {
-			service.setParallelTimeout(5000);
-		}
+				}
+			}			
+		});
+		context.setSeries(subtract, add);
+		service.execute(context);
+
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+
 
 	}
 

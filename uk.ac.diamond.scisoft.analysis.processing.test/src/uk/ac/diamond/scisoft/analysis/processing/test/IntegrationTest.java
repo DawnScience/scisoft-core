@@ -8,16 +8,16 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import java.util.Arrays;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,8 +60,9 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
-		rand.setSlicing("all"); // All 24 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
+		context.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation maskOp = getMaskOperation(mask);
 		
@@ -70,7 +70,7 @@ public class IntegrationTest {
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		count = 0;
-		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -81,7 +81,10 @@ public class IntegrationTest {
 				
 				count++;
 			}
-		}, maskOp,azi);
+		});
+		
+		context.setSeries(maskOp,azi);
+		service.execute(context);
 		
 		if (count!=24) throw new Exception("Size of integrated results incorrect!");
 	}
@@ -92,9 +95,9 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
-				
-		rand.setSlicing("all"); // All 24 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
+		context.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));
@@ -105,7 +108,7 @@ public class IntegrationTest {
 		final IOperation maskOp = getMaskOperation(mask);
 		
 		count = 0;
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
@@ -117,7 +120,10 @@ public class IntegrationTest {
 				}
 				
 			}
-		}, maskOp, thresh, azi);
+		});
+		context.setSeries(maskOp, thresh, azi);
+		
+		service.execute(context);
 		
 		if (count!=24) throw new Exception("Size of integrated results incorrect!");
 
@@ -129,9 +135,9 @@ public class IntegrationTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 24, 1000, 1000), null, mask, null, Arrays.asList(sector));
-				
-		rand.setSlicing("all"); // All 24 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
+		context.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));
@@ -142,26 +148,26 @@ public class IntegrationTest {
 		final IOperation maskOp = getMaskOperation(mask);
 		
 		count = 0;
-		try {
-			service.setParallelTimeout(Long.MAX_VALUE);
-			
-			service.executeParallelSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-				
-				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-	
-					final IDataset integrated = result.getData();
-					if (integrated.getSize()!=472) {
-						throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
-					}
-					
-					count++;
+		context.setParallelTimeout(Long.MAX_VALUE);
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+
+			@Override
+			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+
+				final IDataset integrated = result.getData();
+				if (integrated.getSize()!=472) {
+					throw new Exception("Unexpected azimuthal integration size! Size is "+integrated.getSize());
 				}
-			}, maskOp, thresh, azi);
-		} finally {
-			service.setParallelTimeout(5000);
-		}
+
+				count++;
+			}
+		});
 		
+		context.setSeries(maskOp, thresh, azi);
+		context.setExecutionType(ExecutionType.PARALLEL);
+		service.execute(context);
+
 		if (count!=24) throw new Exception("Size of integrated results incorrect! Results found was "+count);
 
 	}

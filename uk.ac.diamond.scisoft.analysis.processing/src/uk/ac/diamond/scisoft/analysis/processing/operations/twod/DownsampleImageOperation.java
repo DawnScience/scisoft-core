@@ -41,23 +41,31 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		Dataset dataset = out.get(0);
 		dataset.setName("downsampled");
 		
-		ILazyDataset[] firstAxes = getFirstAxes(input);
+		List<AxesMetadata> ml = null;
+		try {
+			ml = input.getMetadata(AxesMetadata.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		if (firstAxes != null && (firstAxes[0] != null || firstAxes[1] != null)) {
+		if (ml != null && !ml.isEmpty() && ml.get(0).getAxes() != null) {
 			AxesMetadata axm = new AxesMetadataImpl(2);
+			AxesMetadata inm = ml.get(0);
 			
+			int rank = inm.getAxes().length;
 			Downsample dsax = new Downsample(DownsampleMode.MEAN, y,x);
-			
-			if (firstAxes[0] != null)	{
-				List<Dataset> ax1 = dsax.value(firstAxes[0].getSlice());
-				ax1.get(0).setName(firstAxes[0].getName());
-				axm.setAxis(0, ax1.get(0));
-			}
-			
-			if (firstAxes[1] != null)	{
-				List<Dataset> ax2 = dsax.value(firstAxes[1].getSlice());
-				ax2.get(0).setName(firstAxes[1].getName());
-				axm.setAxis(1, ax2.get(0));
+			for (int i = 0; i<rank;i++) {
+				ILazyDataset[] axis = inm.getAxis(i);
+				if (axis == null) continue;
+				ILazyDataset[] o = new ILazyDataset[axis.length];
+				for (int j = 0; j < axis.length; j++) {
+					if (axis[j] != null) {
+						o[j] = dsax.value(axis[j].getSlice()).get(0);
+						o[j].setName(axis[j].getName());
+					}
+				}
+				
+				axm.setAxis(i, o);
 			}
 			
 			dataset.setMetadata(axm);

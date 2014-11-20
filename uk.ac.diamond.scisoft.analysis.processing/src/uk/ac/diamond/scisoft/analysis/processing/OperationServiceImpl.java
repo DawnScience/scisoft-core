@@ -29,10 +29,11 @@ import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -56,9 +57,6 @@ import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
  */
 public class OperationServiceImpl implements IOperationService {
 	
-	enum ExecutionType {
-		SERIES, PARALLEL, GRAPH;
-	}
 	
 	static {
 		System.out.println("Starting operation service");
@@ -76,33 +74,29 @@ public class OperationServiceImpl implements IOperationService {
 	public OperationServiceImpl() {
 		// Intentionally do nothing
 	}
+	
+	public IOperationContext createContext() {
+		return new OperationContextImpl();
+	}
 
 	/**
 	 * Uses the Slicer.visitAll(...) method which conversions also use to process
 	 * stacks out of the rich dataset passed in.
 	 */
 	@Override
-	public void executeSeries(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor visitor, final IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
-        execute(dataset, monitor, visitor, series, ExecutionType.SERIES);
-	}
-
-
-	@Override
-	public void executeParallelSeries(ISliceConfiguration dataset,final IMonitor monitor, IExecutionVisitor visitor, IOperation<? extends IOperationModel, ? extends OperationData>... series) throws OperationException {
-        execute(dataset, monitor, visitor, series, ExecutionType.PARALLEL);
-	}
-
-	private long parallelTimeout;
-	
-	private void execute(final ISliceConfiguration dataset,final IMonitor monitor, final IExecutionVisitor v, final IOperation<? extends IOperationModel, ? extends OperationData>[] series, ExecutionType type) throws OperationException {
+	public void execute(final IOperationContext context) throws OperationException {
 		
-		final IExecutionVisitor visitor = v ==null ? new IExecutionVisitor.Stub() : v;
+		final IExecutionVisitor visitor = context.getVisitor() ==null ? new IExecutionVisitor.Stub() : context.getVisitor();
 		
-		if (type==ExecutionType.GRAPH) {
-			throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
+		if (context.getSeries()==null || context.getSeries().length<1) {
+			throw new OperationException(null, "No operation list defined, call setSerices(...) with something meaningful please!");
 		}
 		
-		Map<Integer, String> slicing = dataset.getSlicing();
+		if (context.getExecutionType()==ExecutionType.GRAPH) {
+			throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
+		}
+		
+		Map<Integer, String> slicing = context.getSlicing();
 		if (slicing==null) slicing = Collections.emptyMap();
 		for (Iterator<Integer> iterator = slicing.keySet().iterator(); iterator.hasNext();) {
 			Integer dim = iterator.next();
@@ -112,19 +106,19 @@ public class OperationServiceImpl implements IOperationService {
 		OriginMetadata om = null;
 		
 		try {
-			om = dataset.getData().getMetadata(OriginMetadata.class).get(0);
+			om = context.getData().getMetadata(OriginMetadata.class).get(0);
 		} catch (Exception e1) {
 			logger.warn("No origin metadata in operation input!");
 		}
 		
 		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
 		// determine data axes to populate origin metadata
-		final int[] dataDims = Slicer.getDataDimensions(dataset.getData().getShape(), slicing);
+		final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), slicing);
 			
 		try {
 			// We check the pipeline ranks are ok
-	        final IDataset firstSlice = Slicer.getFirstSlice(dataset.getData(), slicing);
-			validate(firstSlice, series);
+	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), slicing);
+			validate(firstSlice, context.getSeries());
 			// Create the slice visitor
 			SliceVisitor sv = new SliceVisitor() {
 				
@@ -133,9 +127,9 @@ public class OperationServiceImpl implements IOperationService {
 					
 					OriginMetadataImpl innerOm = originMetadata;
 					
-					if (monitor != null && monitor.isCancelled()) return;
+					if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
 					if (innerOm == null){ 
-						innerOm = new OriginMetadataImpl(dataset.getData(), slices, dataDims,"",dataset.getData().getName());
+						innerOm = new OriginMetadataImpl(context.getData(), slices, dataDims,"",context.getData().getName());
 						slice.setMetadata(innerOm);
 					} else {
 						innerOm.setCurrentSlice(slices);
@@ -147,40 +141,40 @@ public class OperationServiceImpl implements IOperationService {
 					
 					OperationData  data = new OperationData(slice, (Serializable[])null);
 					long start = System.currentTimeMillis();
-					for (IOperation i : series) {
+					for (IOperation i : context.getSeries()) {
 						
-						if (monitor!=null) {
-							monitor.subTask(path +" : " + i.getName());
+						if (context.getMonitor()!=null) {
+							context.getMonitor().subTask(path +" : " + i.getName());
 						}
 						
-						OperationData tmp = i.execute(data.getData(), monitor);
+						OperationData tmp = i.execute(data.getData(), context.getMonitor());
 
 						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
 						data = i.isPassUnmodifiedData() ? data : tmp;
 					}
 					logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 
-					visitor.executed(data, monitor, slices, shape, dataDims); // Send result.
-					if (monitor != null) monitor.worked(1);
+					visitor.executed(data, context.getMonitor(), slices, shape, dataDims); // Send result.
+					if (context.getMonitor() != null) context.getMonitor().worked(1);
 				}
 
 				@Override
 				public boolean isCancelled() {
-					return monitor!=null ? monitor.isCancelled() : false;
+					return context.getMonitor()!=null ? context.getMonitor().isCancelled() : false;
 				}
 			};
 			
-			visitor.init(series, originMetadata);
+			visitor.init(context.getSeries(), originMetadata);
 			long start = System.currentTimeMillis();
 			// Jake's slicing from the conversion tool is now in Slicer.
-			if (type==ExecutionType.SERIES) {
-				Slicer.visitAll(dataset.getData(), slicing, "Slice", sv);
+			if (context.getExecutionType()==ExecutionType.SERIES) {
+				Slicer.visitAll(context.getData(), slicing, "Slice", sv);
 				
-			} else if (type==ExecutionType.PARALLEL) {
-				Slicer.visitAllParallel(dataset.getData(), slicing, "Slice", sv, parallelTimeout>0 ? parallelTimeout : 5000);
+			} else if (context.getExecutionType()==ExecutionType.PARALLEL) {
+				Slicer.visitAllParallel(context.getData(), slicing, "Slice", sv, context.getParallelTimeout());
 				
 			} else {
-				throw new OperationException(series[0], "The edges are needed to execute a graph using ptolemy!");
+				throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
 			}
 			logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
 			
@@ -269,14 +263,6 @@ public class OperationServiceImpl implements IOperationService {
 		}
 
 		return i == imax;
-	}
-
-	public long getParallelTimeout() {
-		return parallelTimeout;
-	}
-
-	public void setParallelTimeout(long parallelTimeout) {
-		this.parallelTimeout = parallelTimeout;
 	}
 
 	// Reads the declared operations from extension point, if they have not been already.
@@ -501,23 +487,4 @@ public class OperationServiceImpl implements IOperationService {
 		checkOperations();
 		return operations.get(id).getDescription();
 	}
-
-	@Override
-	public void executeSeries(
-			ISliceConfiguration dataset,
-			IOperation<? extends IOperationModel, ? extends OperationData>... series)
-			throws OperationException {
-		executeSeries(dataset, null, null, series);
-	}
-
-	@Override
-	public void executeParallelSeries(
-			ISliceConfiguration dataset,
-			IOperation<? extends IOperationModel, ? extends OperationData>... series)
-			throws OperationException {
-		executeSeries(dataset, null, null, series);
-		
-	}
-
-
  }

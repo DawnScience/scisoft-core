@@ -14,6 +14,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -23,7 +24,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,14 +55,14 @@ public class OperationDataAxesRankTest {
 		
 		ILazyDataset ds = getDataset();
 		
-		final RichDataset   rand = new RichDataset(ds, null, null, null, null);
-		rand.setSlicing("all"); // All 24 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
 		
-
 
 		final IOperation di = new Op2dto2d();
 
-		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -80,8 +80,9 @@ public class OperationDataAxesRankTest {
 				assertArrayEquals(new int[]{1,1,10}, ax[2].getShape());
 				
 			}
-		}, di);
-		
+		});
+		context.setSeries(di);
+		service.execute(context);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -90,12 +91,13 @@ public class OperationDataAxesRankTest {
 		
 		ILazyDataset ds = getDataset();
 		
-		final RichDataset   rand = new RichDataset(ds, null, null, null, null);
-		rand.setSlicing("all"); // All 1d
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
 		
 		final IOperation di = new Op2dto1d();
 
-		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -111,7 +113,9 @@ public class OperationDataAxesRankTest {
 				assertArrayEquals(new int[]{1,1}, ax[0].getShape());
 				assertArrayEquals(new int[]{1,10}, ax[1].getShape());
 			}
-		}, di);
+		});
+		context.setSeries(di);
+		service.execute(context);
 		
 	}
 	
@@ -121,9 +125,9 @@ public class OperationDataAxesRankTest {
 		
 		ILazyDataset ds = getDataset();
 		
-		final RichDataset   rand = new RichDataset(ds, null, null, null, null);
-		rand.setSlicing("all","all"); // All 24 images in first dimension.
-		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all","all"); // All 24 images in first dimension.		
 
 
 		final IOperation di = new Op1dto1d();
@@ -133,7 +137,7 @@ public class OperationDataAxesRankTest {
 //		azi.setModel(new PowderIntegrationModel());
 //		
 //		
-		service.executeSeries(rand, new IMonitor.Stub(),new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				
@@ -150,7 +154,9 @@ public class OperationDataAxesRankTest {
 				assertArrayEquals(new int[]{1,1,1}, ax[1].getShape());
 				assertArrayEquals(new int[]{1,1,10}, ax[2].getShape());
 			}
-		}, di);
+		});
+		context.setSeries(di);
+		service.execute(context);
 	}
 	
 //	@Test
@@ -215,9 +221,6 @@ public class OperationDataAxesRankTest {
 				return innerDS.getSlice(mon, start, stop, step);
 			}
 		});
-
-		final RichDataset   rand = new RichDataset(lz, null, null, null, null);
-		rand.setSlicing("all"); // All 24 images in first dimension.
 
 		final IDataset axDataset1 = DatasetFactory.createRange(24,Dataset.INT16);
 		axDataset1.setShape(new int[] {24,1,1});

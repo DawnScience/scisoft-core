@@ -1,8 +1,11 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -49,6 +53,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoInput;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
+import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class PtychoTreeViewerEditor extends EditorPart {
@@ -73,23 +78,76 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private Color gray;
 	private Color darkGray;
 	private Color black;
+	private String fullPath;
+	private String fileSavedPath;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		isDirtyFlag = false;
-
+		if (fileSavedPath != null)
+			saveFile(fullPath + ".tmp.csv");
+		else
+			saveFile(fileSavedPath);
+		setDirty(false);
 	}
 
 	@Override
 	public void doSaveAs() {
-		isDirtyFlag = false;
+		FileDialog dialog = new FileDialog(Display.getDefault()
+				.getActiveShell(), SWT.SAVE);
+		String[] filterExtensions = new String[] {
+				"*.csv;*.CSV", "*.json;*.JSON",
+				"*.xml;*.XML" };
+		if (fileSavedPath != null) {
+			dialog.setFilterPath((new File(fileSavedPath)).getParent());
+		} else {
+			String filterPath = "/";
+			String platform = SWT.getPlatform();
+			if (platform.equals("win32") || platform.equals("wpf")) {
+				filterPath = "c:\\";
+			}
+			dialog.setFilterPath(filterPath);
+		}
+		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
+		dialog.setFilterExtensions(filterExtensions);
+		fileSavedPath = dialog.open();
+		if (fileSavedPath == null) {
+		
+			return;
+		}
+		try {
+			final File file = new File(fileSavedPath);
+			if (file.exists()) {
+				boolean yes = MessageDialog.openQuestion(Display.getDefault()
+						.getActiveShell(), "Confirm Overwrite", "The file '"
+						+ file.getName()
+						+ "' exists.\n\nWould you like to overwrite it?");
+				if (!yes)
+					;
+			}
+			saveFile(fileSavedPath);
+			// logger.debug("Plot saved");
+		} catch (Exception e) {
+			throw e;
+		}
+		setDirty(false);
+	}
+
+	private void saveFile(String filePath) {
+		List<PtychoInput> list = PtychoTreeUtils.extract(tree);
+		try {
+			PtychoUtils.saveSpreadsheet(list, filePath);
+		} catch (FileNotFoundException e) {
+			logger.error("Error saving file:" +e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		try {
-			levels = PtychoUtils.loadSpreadSheet(input);
+			fullPath = PtychoUtils.getFullPath(input);
+			levels = PtychoUtils.loadSpreadSheet(fullPath);
 			tree = PtychoTreeUtils.populate(levels);
 		} catch (Exception e) {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
@@ -148,6 +206,11 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	@Override
 	public boolean isDirty() {
 		return isDirtyFlag;
+	}
+
+	protected void setDirty(boolean value) {
+		isDirtyFlag = value;
+		firePropertyChange(PROP_DIRTY);
 	}
 
 	@Override
@@ -294,7 +357,6 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	}
 
 	private void updateAttributes(ModifyEvent event) {
-		isDirtyFlag = true;
 		if (currentNode == null)
 			return;
 		PtychoInput data = currentNode.getData();
@@ -319,6 +381,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				;
 			}
 			viewer.refresh();
+			setDirty(true);
 		}
 	}
 
@@ -358,6 +421,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
+					
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);
 				}

@@ -60,4 +60,30 @@ public class PtychoTreeUtils {
 		}
 		return nodes;
 	}
+
+	/**
+	 * expands the depth 3 tree and puts it into a list
+	 * TODO put in a recursive method
+	 * @param tree
+	 * @return
+	 */
+	public static List<PtychoInput> extract(List<PtychoNode> tree) {
+		List<PtychoInput> result = new ArrayList<PtychoInput>();
+		for (PtychoNode node : tree) {
+			result.add(node.getData());
+			if (!node.getChildren().isEmpty()) {
+				List<PtychoNode> children = node.getChildren();
+				for (PtychoNode child : children) {
+					result.add(child.getData());
+					if (!child.getChildren().isEmpty()) {
+						List<PtychoNode> leafs = child.getChildren();
+						for (PtychoNode leaf : leafs) {
+							result.add(leaf.getData());
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
 }

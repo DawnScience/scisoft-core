@@ -1,13 +1,16 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
@@ -19,13 +22,17 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoInput;
 
 public class PtychoUtils {
 
+	private final static String[] HEADERS = new String[] {"level", "name", "default", "type", "unique", "lowerlimit", "upperlimit", "shortdoc", "longdoc"};
+	private final static CSVFormat format = CSVFormat.EXCEL
+			.withHeader(HEADERS)
+			.withSkipHeaderRecord(true);
+
 	/**
-	 * Loads the CSV spreadshet and returns a list of PtychoInput
-	 * 
+	 * Returns a fullpath given an IEditorInput
 	 * @param input
 	 * @return
 	 */
-	public static List<PtychoInput> loadSpreadSheet(IEditorInput input) {
+	public static String getFullPath(IEditorInput input) {
 		IResource rsc = getResource(input);
 		String fullPath = "";
 		if (rsc instanceof File) {
@@ -39,12 +46,19 @@ public class PtychoUtils {
 			FileStoreEditorInput fileStore = (FileStoreEditorInput) input;
 			fullPath = fileStore.getURI().getPath();
 		}
+		return fullPath;
+	}
+
+	/**
+	 * Loads the CSV spreadshet and returns a list of PtychoInput
+	 * 
+	 * @param fullPath
+	 * @return
+	 */
+	public static List<PtychoInput> loadSpreadSheet(String fullPath) {
 		CSVParser parser;
 		List<PtychoInput> loaded = new ArrayList<PtychoInput>();
 		try {
-			CSVFormat format = CSVFormat.EXCEL
-					.withHeader("level", "name", "default", "type", "unique", "lowerlimit", "upperlimit", "shortdoc", "longdoc")
-					.withSkipHeaderRecord(true);
 			parser = CSVParser.parse(new File(fullPath), StandardCharsets.UTF_8, format);
 			for (CSVRecord csvRecord : parser) {
 				String level = csvRecord.get("level");
@@ -77,6 +91,35 @@ public class PtychoUtils {
 			e.printStackTrace();
 		}
 		return loaded;
+	}
+
+	/**
+	 * Save the list of PtychoInput into a CSV file
+	 * @param input
+	 * @param filePath
+	 * @throws FileNotFoundException
+	 */
+	public static void saveSpreadsheet(List<PtychoInput> input, String filePath) throws FileNotFoundException {
+		CSVPrinter printer;
+		try {
+			printer = new CSVPrinter(new PrintWriter(filePath), format);
+			for (PtychoInput row : input) {
+				List<String> rowData = new ArrayList<String>();
+				rowData.add(String.valueOf(row.getLevel()));
+				rowData.add(row.getName());
+				rowData.add(row.getDefaultValue());
+				rowData.add(row.getType());
+				rowData.add(String.valueOf(row.isUnique()));
+				rowData.add(String.valueOf(row.getLowerLimit()));
+				rowData.add(String.valueOf(row.getUpperLimit()));
+				rowData.add(row.getShortDoc());
+				rowData.add(row.getLongDoc());
+				printer.printRecord(rowData);
+			}
+			printer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

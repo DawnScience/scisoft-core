@@ -332,6 +332,30 @@
             id="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             name="Background Subtraction">
       </category>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESGoldCalibrationCorrection"
+            description="ARPES Gold Calibration Correction"
+            icon="icons/fit.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESGoldCalibrationCorrection"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESGoldCalibrationCorrectionModel"
+            name="ARPES Gold Calibration Correction"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESAxisConversion"
+            description="ARPES Axis Conversion"
+            icon="icons/downsamp.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESAxisConversion"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESAxisConversionModel"
+            name="ARPES Axis Conversion"
+            visible="true">
+      </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
+            name="ARPES Analysis">
+      </category>
    </extension>
 
 </plugin>

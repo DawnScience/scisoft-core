@@ -19,13 +19,13 @@ import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -53,8 +53,9 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -67,8 +68,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op22,op21);
+			service.execute(context);
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -94,8 +96,9 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -108,8 +111,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op22,op21);
+			service.execute(context);
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -136,8 +140,9 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all","all");
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -150,9 +155,11 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
-			
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op22,op21);
+			service.execute(context);
+
+						
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
 			assertTrue(dh.contains("/entry/result/Axis_0"));
@@ -178,8 +185,9 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setModel(new Junk1DModel());
@@ -190,7 +198,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -218,8 +228,10 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
+		
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setWithErrors(true);
@@ -231,7 +243,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -261,8 +275,10 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
+		
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
@@ -273,8 +289,10 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
+	
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -306,9 +324,10 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
@@ -320,8 +339,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -353,10 +373,10 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
-		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
-		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
+				
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
 		op11.setAuxShape(auxShape);
@@ -367,7 +387,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -399,9 +421,10 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
 		op21.setModel(new Junk1DModel());
@@ -414,8 +437,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op21,op11);
-			
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op21,op11);
+			service.execute(context);
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -445,8 +469,10 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
+		
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -459,7 +485,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op22,op21);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -486,8 +514,9 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
 		
 		Junk1Dto2DOperation op11 = new Junk1Dto2DOperation();
 		op11.setModel(new Junk2Dto2Dmodel());
@@ -498,7 +527,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -610,8 +641,9 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
 		lazy.addMetadata(new AxesMetadataImpl(3));
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setWithAxes(false);
@@ -626,7 +658,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22,op21);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op22,op21);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -660,8 +694,9 @@ public class HierarchicalFileExVisitorTest {
 		((Dataset)ax.getAxis(1)[0]).setError(ae2);
 
 		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all","all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all","all");
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setWithErrors(true);
@@ -674,7 +709,9 @@ public class HierarchicalFileExVisitorTest {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op11);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setSeries(op11);
+			service.execute(context);
 			
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());

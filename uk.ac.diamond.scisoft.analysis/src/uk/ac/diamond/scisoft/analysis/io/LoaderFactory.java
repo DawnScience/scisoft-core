@@ -628,10 +628,19 @@ public class LoaderFactory {
 	}
 
 	/**
-	 * Loads a single data by loading the whole data holder and asking for the dataset
+	 * Loads a single dataset by loading the whole data holder and asking for the dataset
 	 * by name. Loaders should load things properly to ILazyDatasets and then this method
 	 * will take from the data holder the set by name. This uses caching of the data holder
 	 * if the data has been previously loaded into a DataHolder.
+	 * 
+	 * NOTE LazyDatasets will be loaded into memory by this method. To avoid this use:
+	 * <code>
+	 * IDataHolder holder = LoaderFactory.getData(...)
+	 * ILazyDataset lz    = holder.getLazyDataset(...)
+	 * <code>
+	 * 
+	 * Now the ILazyDataset is available rather than loading all into memory.
+	 * If you use this method all the data of the dataset will be loaded to memory.
 	 * 
 	 * @param path
 	 * @param mon

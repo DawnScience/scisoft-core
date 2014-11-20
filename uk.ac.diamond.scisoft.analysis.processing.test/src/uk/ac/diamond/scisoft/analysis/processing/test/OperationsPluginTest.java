@@ -13,12 +13,11 @@ import java.util.Collection;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.api.processing.ISliceConfiguration;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
@@ -59,9 +58,10 @@ public class OperationsPluginTest {
 			}
 		});
 		
-		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			public void executed(OperationData result, IMonitor monitor) {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -69,7 +69,9 @@ public class OperationsPluginTest {
 					}
 				}
 			}			
-		}, subtract);
+		});
+		context.setSeries(subtract);
+		service.execute(context);
 
 	}
 
@@ -82,7 +84,8 @@ public class OperationsPluginTest {
 		final IOperation add      = service.findFirst("add");
 		final IOperation subtract = service.findFirst("subtract");
 		
-		final ISliceConfiguration   rand = new RichDataset(Random.rand(0.0, 10.0, 1024, 1024), null);
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
 		subtract.setModel(new AbstractOperationModel() {
 			@SuppressWarnings("unused")
@@ -97,7 +100,7 @@ public class OperationsPluginTest {
 			}
 		});
 		
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			public void executed(OperationData result, IMonitor monitor) {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -105,7 +108,9 @@ public class OperationsPluginTest {
 					}
 				}
 			}			
-		}, subtract, add);
+		});
+		context.setSeries(subtract, add);
+		service.execute(context);
 	}
 
 }

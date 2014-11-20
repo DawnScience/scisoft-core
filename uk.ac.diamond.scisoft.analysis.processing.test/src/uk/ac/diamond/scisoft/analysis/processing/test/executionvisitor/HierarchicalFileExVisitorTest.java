@@ -558,21 +558,21 @@ public class HierarchicalFileExVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
-		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setSlicing("all");
+		context.setData(lazy);
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
-
+		context.setSeries(op22);
 		
 		try {
 
 			final File tmp = File.createTempFile("Test", ".h5");
 			tmp.deleteOnExit();
 			tmp.createNewFile();
-			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op22);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			service.execute(context);
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));
@@ -599,21 +599,21 @@ public class HierarchicalFileExVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
-		
-		RichDataset rich = new RichDataset(lazy, null);
-		rich.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
 		op21.setModel(new Junk1DModel());
-
+		context.setSeries(op21);
 		
 		try {
 
 			final File tmp = File.createTempFile("Test", ".h5");
 			tmp.deleteOnExit();
 			tmp.createNewFile();
-			
-			service.executeSeries(rich, new IMonitor.Stub(),new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()), op21);
+			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			service.execute(context);
 			
 			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 			assertTrue(dh.contains("/entry/result/data"));

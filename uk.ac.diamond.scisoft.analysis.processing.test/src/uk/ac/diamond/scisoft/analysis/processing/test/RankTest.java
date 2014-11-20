@@ -8,7 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -16,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,40 +62,32 @@ public class RankTest {
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
 		function.setModel(new FunctionModel(poly));
 		
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
-		rand.setSlicing("all");
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 10.0, 10, 1024, 1024));
 		
-		count=0;
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
+				if (result.getData().getRank()!=context.getData().getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
-		}, function);
+		});
+		context.setSeries(function);
+		
+		count=0;
+		context.setSlicing("all"); // 
+        service.execute(context);
 		System.out.println("Run with iterating first dimension gave "+count+ "of rank 2");
 
 		count=0;
-		rand.setSlicing("all", "500");
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
-				count++;
-			}			
-		}, function);
+		context.setSlicing("all", "500");
+        service.execute(context);
 		System.out.println("Run with slicing first and second dimension gave "+count+ "of rank 1");
 
 		
 		count=0;
-		rand.setSlicing("8", "500", "500");
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
-			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
-				if (result.getData().getRank()!=rand.getRank()) throw new Exception("Unexpected rank found!");
-				count++;
-			}			
-		}, function);
+		context.setSlicing("8", "500", "500");
+        service.execute(context);
 		System.out.println("Run with slicing first, second and third dimension gave "+count+ "of rank 0");
 
 	}
@@ -107,15 +98,18 @@ public class RankTest {
 		try {
 			final IOperation box      = service.findFirst("box");
 
-			final RichDataset   rand = new RichDataset(Random.rand(0.0, 10.0, 10, 1024, 1024), null);
-			rand.setSlicing("all", "500");
-					
-			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			final IOperationContext context = service.createContext();
+			context.setData(Random.rand(0.0, 10.0, 10, 1024, 1024));
+			context.setSlicing("all", "500"); // 
+	
+			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, box);
+			});
+			context.setSeries(box);
+			service.execute(context);
 			
 		} catch (InvalidRankException expected) {
 			return;
@@ -130,9 +124,10 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
-		rand.setSlicing("all"); // All 2 images in first dimension.
-
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
+		context.setSlicing("all"); // 
+	
 		final IOperation azi = service.findFirst("azimuthal");
 		azi.setModel(new SectorIntegrationModel(sector));
 		
@@ -146,21 +141,26 @@ public class RankTest {
 		});
 
 		// This order is ok
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
 			}			
-		}, add, azi);
+		});
+		context.setSeries(add, azi);
+	    service.execute(context);
 
 		// This order is not ok.
 		try {
-			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, azi, box);
+			});
+			context.setSeries(azi, box);
+		    service.execute(context);
 
 		} catch (InvalidRankException expected) {
 			return;
@@ -176,8 +176,9 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
-		rand.setSlicing("all"); // All 2 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
+		context.setSlicing("all"); // 
 
 		final IOperation azi      = service.findFirst("azimuthal");
 		azi.setModel(new SectorIntegrationModel(sector));
@@ -202,22 +203,27 @@ public class RankTest {
 				return 100;
 			}
 		});
+		context.setSeries(add, sub, function, azi);
 
-		service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
-		}, add, sub, function, azi);
+		});
+		service.execute(context);
 
 		// This order is not ok.
 		try {
-			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, add, sub, function, azi, box);
+			});
+			context.setSeries(add, sub, function, azi, box);
+			service.execute(context);
 
 		} catch (InvalidRankException expected) {
 			return;
@@ -251,20 +257,23 @@ public class RankTest {
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
 		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
 
-		final RichDataset   rand = new RichDataset(Random.rand(0.0, 1000.0, 2, 1000, 1000), null, mask, null, Arrays.asList(sector));
-		rand.setSlicing("all"); // All 2 images in first dimension.
+		final IOperationContext context = service.createContext();
+		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
+		context.setSlicing("all"); // 
 
 		final IOperation add      = service.findFirst("add");
 		final IOperation fitting  = service.findFirst("fitting");
+		context.setSeries(add, fitting);
 		
 		// This order is not ok.
 		try {
-			service.executeSeries(rand, new IMonitor.Stub(), new IExecutionVisitor.Stub() {
+			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
 				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
-			}, add, fitting);
+			});
+			service.execute(context);
 
 		} catch (InvalidRankException expected) {
 			return;

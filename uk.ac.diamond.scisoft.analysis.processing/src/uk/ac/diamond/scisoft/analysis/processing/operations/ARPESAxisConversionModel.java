@@ -8,19 +8,18 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
-public class SectorIntegrationModel extends IntegrationModel {
+public class ARPESAxisConversionModel extends AbstractOperationModel {
 
+	private double workFunction = 2.1;
 
-	public SectorIntegrationModel() {
-		super();
-		setRegion(new SectorROI(10, 100, 10, 10));
+	public double getWorkFunction() {
+		return workFunction;
 	}
 
-	public SectorIntegrationModel(IROI sector) {
-		super();
-		setRegion(sector);
+	public void setWorkFunction(double workFunction) {
+		this.workFunction = workFunction;
 	}
+	
 }

@@ -233,65 +233,71 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 			
 			for (AxesMetadata am : mList) {
 				ILazyDataset[] axes = am.getAxes();
-				if (axes != null) {
-					for (int i = 0; i < axes.length; i++) {
-						ILazyDataset ax = axes[i];
-						if (ax != null) {
-							if (!firstPassDone && ax != null) {
-								String name = ax.getName();
-								
-								//assume only our slicing puts [ in a axis name!
-								if (name.contains("[")) {
-									name = name.split("\\[")[0];
-								}
-								
-								if (name.contains("/")) {
-									name = name.replace("/", "_");
-								}
-								
-								//sanitize - cant have an axis called data
-								if (name.isEmpty() || name.equals("data")) {
-									int n = 0;
-									while(groupAxesNames.containsKey("axis" + n)) n++;
-									
-									name = "axis" +n;
-								}
-								
-								axesNames.put(i, name);
-							}
-							IDataset axDataset = ax.getSlice();
-							axDataset.setName(axesNames.get(i));
+				if (axes == null) return;
+				
+				int rank = axes.length;
+					
+				for (int i = 0; i< rank; i++) {
+					ILazyDataset[] axis = am.getAxis(i);
+					if (axis == null) continue;
+					for (int j = 0; j < axis.length; j++) {
+						ILazyDataset ax = axis[j];
+						if (ax == null) continue;
+						if (!firstPassDone) {
+							String name = ax.getName();
 							
-							if (setDims.contains(i)) {
-								if(!firstPassDone) {
-								String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), groupName);
-								file.setAttribute(ds, "axis", String.valueOf(i+1));
-								
-								ILazyDataset error = axDataset.getError();
-								
-								if (error != null) {
-									IDataset e = error.getSlice().squeeze();
-									e.setName(axDataset.getName() + "_errors");
-									file.createDataset(e.getName(), e.squeeze(), groupName);
-								}
-								
-								}
-							} else {
-								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, file,i);
-								file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
-								
-								ILazyDataset error = axDataset.getError();
-								
-								if (error != null) {
-									IDataset e = error.getSlice();
-									e.setName(axDataset.getName() + "_errors");
-									appendSingleValueAxis(e,groupName, oSlice,oShape, file,i);
-								}
+							//assume only our slicing puts [ in a axis name!
+							if (name.contains("[")) {
+								name = name.split("\\[")[0];
 							}
 							
+							if (name.contains("/")) {
+								name = name.replace("/", "_");
+							}
+							
+							//sanitize - cant have an axis called data
+							if (name.isEmpty() || name.equals("data")) {
+								int n = 0;
+								while(groupAxesNames.containsKey("axis" + n)) n++;
+								
+								name = "axis" +n;
+							}
+							
+							axesNames.put(i, name);
 						}
+						IDataset axDataset = ax.getSlice();
+						axDataset.setName(axesNames.get(i));
+						
+						if (setDims.contains(i)) {
+							if(!firstPassDone) {
+							String ds = file.createDataset(axDataset.getName(), axDataset.squeeze(), groupName);
+							file.setAttribute(ds, "axis", String.valueOf(i+1));
+							
+							ILazyDataset error = axDataset.getError();
+							
+							if (error != null) {
+								IDataset e = error.getSlice().squeeze();
+								e.setName(axDataset.getName() + "_errors");
+								file.createDataset(e.getName(), e.squeeze(), groupName);
+							}
+							
+							}
+						} else {
+							appendSingleValueAxis(axDataset,groupName, oSlice,oShape, file,i);
+							file.setAttribute(groupName +"/" +axDataset.getName(), "axis", String.valueOf(i+1));
+							
+							ILazyDataset error = axDataset.getError();
+							
+							if (error != null) {
+								IDataset e = error.getSlice();
+								e.setName(axDataset.getName() + "_errors");
+								appendSingleValueAxis(e,groupName, oSlice,oShape, file,i);
+							}
+						}
+					
 					}
 				}
+				
 			}
 		}
 	}

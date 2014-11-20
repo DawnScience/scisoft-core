@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.processing.RichDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -222,9 +221,6 @@ public class OperationDataAxesRankTest {
 				return innerDS.getSlice(mon, start, stop, step);
 			}
 		});
-
-		final RichDataset   rand = new RichDataset(lz, null, null, null, null);
-		rand.setSlicing("all"); // All 24 images in first dimension.
 
 		final IDataset axDataset1 = DatasetFactory.createRange(24,Dataset.INT16);
 		axDataset1.setShape(new int[] {24,1,1});

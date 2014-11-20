@@ -83,7 +83,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		if (fileSavedPath != null)
+		if (fileSavedPath == null)
 			saveFile(fullPath + ".tmp.csv");
 		else
 			saveFile(fileSavedPath);

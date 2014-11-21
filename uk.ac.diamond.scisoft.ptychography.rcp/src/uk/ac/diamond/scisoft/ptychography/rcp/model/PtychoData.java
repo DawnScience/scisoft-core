@@ -1,6 +1,6 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.model;
 
-public class PtychoInput {
+public class PtychoData {
 
 	private int level;
 	private String name;
@@ -17,6 +17,7 @@ public class PtychoInput {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+	
 	public String getName() {
 		return name;
 	}
@@ -90,7 +91,7 @@ public class PtychoInput {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PtychoInput other = (PtychoInput) obj;
+		PtychoData other = (PtychoData) obj;
 		if (defaultValue == null) {
 			if (other.defaultValue != null)
 				return false;

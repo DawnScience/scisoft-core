@@ -18,7 +18,10 @@ Require-Bundle: org.eclipse.ui,
  org.dawb.common.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.lang;version="2.6.0",
+Import-Package: com.fasterxml.jackson.annotation;version="2.2.0",
+ com.fasterxml.jackson.core;version="2.2.0",
+ com.fasterxml.jackson.databind;version="2.2.0",
+ org.apache.commons.lang;version="2.6.0",
  org.dawb.common.ui.viewers,
  org.eclipse.core.resources,
  org.slf4j;version="1.7.6"

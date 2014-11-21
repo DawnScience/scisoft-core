@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PtychoNode {
-	private PtychoInput data;
+	private PtychoData data;
 	private PtychoNode parent;
 	private List<PtychoNode> children = new ArrayList<PtychoNode>();
 
-	public PtychoNode(PtychoInput data) {
+	public PtychoNode(PtychoData data) {
 		this.setData(data);
 	}
 
@@ -24,11 +24,11 @@ public class PtychoNode {
 		return children;
 	}
 
-	public PtychoInput getData() {
+	public PtychoData getData() {
 		return data;
 	}
 
-	public void setData(PtychoInput data) {
+	public void setData(PtychoData data) {
 		this.data = data;
 	}
 

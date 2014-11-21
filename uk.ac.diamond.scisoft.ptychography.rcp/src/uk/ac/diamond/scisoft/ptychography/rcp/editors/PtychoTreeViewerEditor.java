@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoInput;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
@@ -62,7 +62,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private TreeViewer viewer;
 	private FilteredTree filteredTree;
-	private List<PtychoInput> levels;
+	private List<PtychoData> levels;
 	private List<PtychoNode> tree;
 	private ISelectionChangedListener selectionListener;
 	private Text nameText;
@@ -133,7 +133,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	}
 
 	private void saveFile(String filePath) {
-		List<PtychoInput> list = PtychoTreeUtils.extract(tree);
+		List<PtychoData> list = PtychoTreeUtils.extract(tree);
 		try {
 			PtychoUtils.saveSpreadsheet(list, filePath);
 		} catch (FileNotFoundException e) {
@@ -174,7 +174,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 					if (selected instanceof PtychoNode) {
 						PtychoNode node = (PtychoNode) selected;
 						currentNode = node;
-						PtychoInput data = node.getData();
+						PtychoData data = node.getData();
 						nameText.setText(data.getName());
 						valueText.setText(data.getDefaultValue());
 						typeCombo.setText(data.getType());
@@ -359,7 +359,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private void updateAttributes(ModifyEvent event) {
 		if (currentNode == null)
 			return;
-		PtychoInput data = currentNode.getData();
+		PtychoData data = currentNode.getData();
 		if (!data.isUnique()) {
 			Object evt = event.getSource();
 			if (evt instanceof Text) {
@@ -421,7 +421,8 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					
+					String json = PtychoUtils.jsonMarshal(tree);
+					System.out.println(json);
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);
 				}

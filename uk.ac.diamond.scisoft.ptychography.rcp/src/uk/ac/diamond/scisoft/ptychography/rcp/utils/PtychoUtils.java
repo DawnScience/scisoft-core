@@ -18,7 +18,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoInput;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 
 public class PtychoUtils {
 
@@ -55,9 +59,9 @@ public class PtychoUtils {
 	 * @param fullPath
 	 * @return
 	 */
-	public static List<PtychoInput> loadSpreadSheet(String fullPath) {
+	public static List<PtychoData> loadSpreadSheet(String fullPath) {
 		CSVParser parser;
-		List<PtychoInput> loaded = new ArrayList<PtychoInput>();
+		List<PtychoData> loaded = new ArrayList<PtychoData>();
 		try {
 			parser = CSVParser.parse(new File(fullPath), StandardCharsets.UTF_8, format);
 			for (CSVRecord csvRecord : parser) {
@@ -71,7 +75,7 @@ public class PtychoUtils {
 				String shortdoc = csvRecord.get("shortdoc");
 				String longdoc = csvRecord.get("longdoc");
 				
-				PtychoInput row = new PtychoInput();
+				PtychoData row = new PtychoData();
 				if (level.length() > 0 && StringUtils.isNumeric(level))
 					row.setLevel(Integer.valueOf(level));
 				row.setName(name);
@@ -99,11 +103,11 @@ public class PtychoUtils {
 	 * @param filePath
 	 * @throws FileNotFoundException
 	 */
-	public static void saveSpreadsheet(List<PtychoInput> input, String filePath) throws FileNotFoundException {
+	public static void saveSpreadsheet(List<PtychoData> input, String filePath) throws FileNotFoundException {
 		CSVPrinter printer;
 		try {
 			printer = new CSVPrinter(new PrintWriter(filePath), format);
-			for (PtychoInput row : input) {
+			for (PtychoData row : input) {
 				List<String> rowData = new ArrayList<String>();
 				rowData.add(String.valueOf(row.getLevel()));
 				rowData.add(row.getName());
@@ -133,5 +137,20 @@ public class PtychoUtils {
 			resource = (IResource) input.getAdapter(IResource.class);
 		}
 		return resource;
+	}
+
+	public static String jsonMarshal(List<PtychoNode> tree) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		String json = "";
+		for (PtychoNode node : tree) {
+			
+			//TODO
+//			mapper.writeValueAsString(obj)
+		}
+		return json;
+	}
+
+	public static void writeFile() {
+		
 	}
 }

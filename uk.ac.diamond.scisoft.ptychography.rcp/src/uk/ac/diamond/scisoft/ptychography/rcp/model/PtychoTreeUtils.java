@@ -12,7 +12,7 @@ public class PtychoTreeUtils {
 	 * @param input
 	 * @return
 	 */
-	public static List<PtychoNode> populate(List<PtychoInput> input) {
+	public static List<PtychoNode> populate(List<PtychoData> input) {
 		List<PtychoNode> nodes = new ArrayList<PtychoNode>();
 		int i = 0;
 		while (i < input.size()) {
@@ -67,8 +67,8 @@ public class PtychoTreeUtils {
 	 * @param tree
 	 * @return
 	 */
-	public static List<PtychoInput> extract(List<PtychoNode> tree) {
-		List<PtychoInput> result = new ArrayList<PtychoInput>();
+	public static List<PtychoData> extract(List<PtychoNode> tree) {
+		List<PtychoData> result = new ArrayList<PtychoData>();
 		for (PtychoNode node : tree) {
 			result.add(node.getData());
 			if (!node.getChildren().isEmpty()) {

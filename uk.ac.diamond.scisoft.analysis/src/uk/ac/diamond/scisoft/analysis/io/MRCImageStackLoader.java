@@ -26,11 +26,11 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,30 +156,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 			@Override
 			public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
 				final int rank = shape.length;
-				int[] lstart, lstop, lstep;
-
-				if (step == null) {
-					lstep = new int[rank];
-					for (int i = 0; i < rank; i++) {
-						lstep[i] = 1;
-					}
-				} else {
-					lstep = step;
-				}
-
-				if (start == null) {
-					lstart = new int[rank];
-				} else {
-					lstart = start;
-				}
-
-				if (stop == null) {
-					lstop = new int[rank];
-				} else {
-					lstop = stop;
-				}
-
-				int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+				SliceND slice = new SliceND(shape, start, stop, step);
+				int[] lstart = slice.getStart();
+				int[] lstep  = slice.getStep();
+				int[] newShape = slice.getShape();
 
 				Dataset d = null;
 				try {

@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 
 /**
@@ -171,30 +172,11 @@ public class ImageStackLoaderEx implements ILazyLoader {
 
 	@Override
 	public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
-		int rank = shape.length;
-		int[] lstart, lstop, lstep;
-
-		if (step == null) {
-			lstep = new int[rank];
-			Arrays.fill(lstep, 1);
-		} else {
-			lstep = step;
-		}
-
-		if (start == null) {
-			lstart = new int[rank];
-		} else {
-			lstart = start;
-		}
-
-		if (stop == null) {
-			lstop = new int[rank];
-		} else {
-			lstop = stop;
-		}
-
-		// check slice values are valid given shape of whole dataset
-		final int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+		SliceND slice = new SliceND(shape, start, stop, step);
+		int[] lstart = slice.getStart();
+		int[] lstop  = slice.getStop();
+		int[] lstep  = slice.getStep();
+		int[] newShape = slice.getShape();
 
 		// dataset we will return
 		Dataset result = DatasetFactory.zeros(newShape, dtype);
@@ -229,11 +211,11 @@ public class ImageStackLoaderEx implements ILazyLoader {
 			int[] fileImageStep = Arrays.copyOfRange(lstep, dimensions.length, lstart.length);
 			
 			// extract the slice required
-			IDataset slice = dataSetFromFile.getSlice(fileImageStart, fileImageStop, fileImageStep);
+			IDataset data = dataSetFromFile.getSlice(fileImageStart, fileImageStop, fileImageStep);
 			
 			try{
 				// add data from this file to the overall result
-				result.setSlice(slice, currentResultStart, currentResultStop, resultStep);
+				result.setSlice(data, currentResultStart, currentResultStop, resultStep);
 			} catch( Exception e){
 				throw new IllegalArgumentException("Error adding slice",e);
 			}

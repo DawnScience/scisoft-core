@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;

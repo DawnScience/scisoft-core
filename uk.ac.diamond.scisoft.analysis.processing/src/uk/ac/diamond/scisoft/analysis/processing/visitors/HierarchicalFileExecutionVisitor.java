@@ -32,6 +32,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.eclipse.dawnsci.hdf5.H5Utils;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
@@ -350,16 +351,10 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	 * Parse slice array to determine which dimensions are not equal to 1 and assume these are the data dimensions
 	 * @param slices
 	 * @param shape
-	 * @return datadims
+	 * @return data dims
 	 */
 	private int[] getNonSingularDimensions(Slice[] slices, int[] shape) {
-		
-		int[] start = new int[slices.length];
-		int[] stop = new int[slices.length];
-		int[] step = new int[slices.length];
-		
-		Slice.convertFromSlice(slices, shape, start, stop, step);
-		int[] newShape = AbstractDataset.checkSlice(shape,start,stop,start,stop,step);
+		int[] newShape = new SliceND(shape, slices).getShape();
 		
 		List<Integer> notOne = new ArrayList<Integer>();
 		

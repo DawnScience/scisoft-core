@@ -586,6 +586,23 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_1").getShape());
 			assertArrayEquals(new int[]{op22.getModel().getyDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx2").getShape());
+			
+			IDataset a1 = dh.getLazyDataset("/entry/result/Axis_0").getSlice();
+			IDataset a2 = dh.getLazyDataset("/entry/result/Axis_0_1").getSlice();
+			
+			for (int i = 0; i < 10;i++) {
+				if (a2.getInt(i) != i+1) {
+					fail("axes2 not equal");
+					break;
+				}
+			}
+			for (int i = 0; i < 10;i++) {
+				if (a1.getInt(i) != i) {
+					fail("axes1 not equal");
+					break;
+				}
+			}
+			
 
 			
 		} catch (Exception e) {

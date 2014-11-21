@@ -73,7 +73,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	private String results;
 	private String intermediate;
 	private String auxiliary;
-	private Map<String,Map<Integer, String>> groupAxesNames = new HashMap<String,Map<Integer,String>>();
+	private Map<String,Map<Integer, String[]>> groupAxesNames = new HashMap<String,Map<Integer,String[]>>();
 	private IOperation<? extends IOperationModel, ? extends OperationData>[] series;
 	private String filePath;
 	IHierarchicalDataFile file;
@@ -207,14 +207,14 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		}
 	}
 	
-	private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims, String groupName) throws Exception {
+private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims, String groupName) throws Exception {
 		
-		Map<Integer, String> axesNames = null;
+		Map<Integer, String[]> axesNames = null;
 		
 		if (groupAxesNames.containsKey(groupName)) {
 			axesNames = groupAxesNames.get(groupName);
 		} else {
-			axesNames = new HashMap<Integer,String>();
+			axesNames = new HashMap<Integer,String[]>();
 			groupAxesNames.put(groupName, axesNames);
 		}
 		
@@ -241,6 +241,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 				for (int i = 0; i< rank; i++) {
 					ILazyDataset[] axis = am.getAxis(i);
 					if (axis == null) continue;
+					String[] names = new String[axis.length];
 					for (int j = 0; j < axis.length; j++) {
 						ILazyDataset ax = axis[j];
 						if (ax == null) continue;
@@ -263,11 +264,11 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 								
 								name = "axis" +n;
 							}
-							
-							axesNames.put(i, name);
+							names[j] = name;
+							axesNames.put(i, names);
 						}
 						IDataset axDataset = ax.getSlice();
-						axDataset.setName(axesNames.get(i));
+						axDataset.setName(axesNames.get(i)[j]);
 						
 						if (setDims.contains(i)) {
 							if(!firstPassDone) {

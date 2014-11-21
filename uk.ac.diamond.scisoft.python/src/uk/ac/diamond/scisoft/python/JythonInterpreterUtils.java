@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.python.core.PyList;
@@ -23,6 +26,8 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.jython.util.JythonPath;
+
 /**
  * SCISOFT - added static method which returns a PythonInterpreter which can run scisoft scripts
  * This is for executing a script directly from the workflow tool when you do not want to
@@ -30,14 +35,16 @@ import org.slf4j.LoggerFactory;
  */
 public class JythonInterpreterUtils {
 
+	// Boolean to set to true if running jython scripts that utilise ScisoftPy in IDE
+	public static final String RUN_IN_ECLIPSE = "run.in.eclipse";
+
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
-	private static final String JYTHON_BUNDLE = "uk.ac.diamond.jython";
-	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
+	
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
-	static {
-		PySystemState.initialize();
-	}
+//	static {
+//		PySystemState.initialize();
+//	}
 
 	
 	
@@ -49,8 +56,21 @@ public class JythonInterpreterUtils {
 	 * @throws ClassNotFoundException 
 	 */
 	public static PythonInterpreter getBasicInterpreter() throws Exception {
-		
+		return getBasicInterpreter(null);
+	}
+	
+	/**
+	 * Create Jython interpreter with extra java libraries
+	 * 
+	 * @param extraPaths set of paths to extra libraries to load
+	 * @return a new Jython Interpreter
+	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
+	 */
+	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
 		final long start = System.currentTimeMillis();
+		
+		Properties preProperties = System.getProperties();
+		PythonInterpreter.initialize(preProperties, null, null);
 		
 		//This was the major part of the getInterpreter method.
 		//Idea is to separate interpreter creation and starting of scisoftpy
@@ -66,57 +86,30 @@ public class JythonInterpreterUtils {
 				logger.debug("\t{}", u.getPath());
 			}
 		}
-		File jyBundleLoc = null;
-		try {
-			jyBundleLoc = BundleUtils.getBundleLocation(JYTHON_BUNDLE);
-		} catch (Exception ignored) {
-		}
-		if (jyBundleLoc == null) {
-			if (System.getProperty(JYTHON_BUNDLE_LOC)==null)
-				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
-			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
-		}
-		logger.info("Jython bundle found: {}", jyBundleLoc.getAbsolutePath());
+		File jyRoot = JythonPath.getInterpreterDirectory();
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
 		}
 
+		PySystemState.exec_prefix = new PyString(jyRoot.getAbsolutePath());
+		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
+		state.executable = new PyString(executable);
+
 		PyList path = state.path;
 //		path.clear();
-		File jyRoot = new File(jyBundleLoc, "jython2.5");
 		path.append(new PyString(new File(jyRoot, "jython.jar").getAbsolutePath()));
 		File jyLib = new File(jyRoot, "Lib");
 		path.append(new PyString(jyLib.getAbsolutePath()));
 		path.append(new PyString(new File(jyLib, "distutils").getAbsolutePath()));
 		File site = new File(jyLib, "site-packages");
 		path.append(new PyString(site.getAbsolutePath())); // TODO? iterate over sub-directories
-
-		try {
-			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
-			if (pythonPlugin == null || !pythonPlugin.exists()) {
-				logger.debug("No scisoftpy found at {} - now trying to find git workspace", pythonPlugin);
-				File gitws = jyBundleLoc.getParentFile().getParentFile();
-				if (gitws.exists()) {
-					logger.debug("Git workspace found: {}", gitws.getAbsolutePath());
-					pythonPlugin = new File(new File(gitws, "scisoft-core.git"), SCISOFTPY);
-					if (!pythonPlugin.exists()) {
-						throw new IllegalStateException("Can't find scisoftpy at " + pythonPlugin);
-					}
-				} else {
-					throw new IllegalStateException("No git workspace at " + gitws);
-				}
+		
+		//Add additional paths to sys.path in new interpreter
+		if (extraPaths != null){
+			for (String jyPath : extraPaths){
+				path.append(new PyString(jyPath));
 			}
-			logger.debug("Found Scisoft Python plugin at {}", pythonPlugin);
-			File bin = new File(pythonPlugin, "bin");
-			if (bin.exists()) {
-				logger.debug("Found bin directory at {}", bin);
-				path.append(new PyString(bin.getAbsolutePath()));
-			} else {
-				path.append(new PyString(pythonPlugin.getAbsolutePath()));
-			}
-		} catch (Exception e) {
-			logger.error("Could not find Scisoft Python plugin", e);
 		}
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
@@ -126,8 +119,60 @@ public class JythonInterpreterUtils {
 		
 		return interpreter;
 	}
-
 	
+	/**
+	 * scisoftpy is imported as dnp
+	 * @return a new Jython Interpreter, with only scisoftpy in sys.path
+	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
+	 */
+	public static PythonInterpreter getScisoftpyInterpreter() throws Exception{
+		final Set<String> extraPaths = new HashSet<String>();
+		
+		try {
+			//This seems to work in git repo case (and presumably in binary)
+			//Old code in 0f667dd and before (now deleted) was more verbose
+			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
+			logger.debug("Found Scisoft Python (Jython) plugin: {}", pythonPlugin);
+			File binDir = new File(pythonPlugin, "bin");
+			if (binDir.exists()) {
+				logger.debug("Found bin directory at {}", binDir);
+				extraPaths.add(binDir.getAbsolutePath());
+			} else {
+				extraPaths.add(pythonPlugin.getAbsolutePath());
+			}
+		} catch (Exception e) {
+			logger.error("Errors encountered getting paths to Scisoft Python (Jython) plugin", e);
+		}
+		
+		PythonInterpreter interpreter = getBasicInterpreter(extraPaths);
+		
+		interpreter.exec("import sys");
+		interpreter.exec("for p in sys.path: print '\t%s' % p");
+		interpreter.exec("import scisoftpy as dnp");
+		
+		return interpreter;
+	}
+	
+	public static PythonInterpreter getFullInterpreter() throws Exception {
+		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
+		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
+		File pluginsDir = JythonPath.getPluginsDirectory(isRunningInEclipse); 
+		if (pluginsDir == null) {
+			logger.error("Failed to find the plugins directory! Cannot start jython interpreter.");
+			return null;
+		}
+		logger.debug("Plugins directory set to: {}", pluginsDir);
+		
+		//Could set cache dir here???
+		//System.setProperty("python.cachedir", cachePath);
+		
+		//Instantiate the jyPaths HashSet and get its contents
+		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, isRunningInEclipse);
+		
+		//If we've got everything in the extraPaths list, send it to the interpreter maker
+		PythonInterpreter interpreter = getBasicInterpreter(jyPaths);
+		return interpreter;
+	}
 	
 	/**
 	 * scisoftpy is imported as dnp
@@ -140,11 +185,7 @@ public class JythonInterpreterUtils {
 		
 		final long start = System.currentTimeMillis();
 		
-		PythonInterpreter interpreter = getBasicInterpreter();
-		
-		interpreter.exec("import sys");
-		interpreter.exec("for p in sys.path: print '\t%s' % p");
-		interpreter.exec("import scisoftpy as dnp");
+		PythonInterpreter interpreter = getScisoftpyInterpreter();
 		
 		final long end = System.currentTimeMillis();
 		

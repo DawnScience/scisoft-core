@@ -33,7 +33,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -43,6 +42,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 import org.slf4j.Logger;
@@ -247,35 +247,11 @@ public class Nexus {
 				@Override
 				public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
 					final int rank = shape.length;
-					int[] lstart, lstop, lstep;
 
-					if (step == null) {
-						lstep = new int[rank];
-						for (int i = 0; i < rank; i++) {
-							lstep[i] = 1;
-						}
-					} else {
-						lstep = step;
-					}
-
-					if (start == null) {
-						lstart = new int[rank];
-					} else {
-						lstart = start;
-					}
-
-					if (stop == null) {
-						lstop = new int[rank];
-					} else {
-						lstop = stop;
-					}
-
-					int[] newShape;
-					if (rank > 1 || shape[0] > 0) {
-						newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
-					} else {
-						newShape = new int[rank];
-					}
+					SliceND slice = new SliceND(shape, start, stop, step);
+					int[] lstart = slice.getStart();
+					int[] lstep  = slice.getStep();
+					int[] newShape = slice.getShape();
 
 					boolean useSteps = false;
 					int[] size;

@@ -69,6 +69,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
@@ -1279,30 +1280,10 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 					throws ScanFileHolderException {
 				final int rank = shape.length;
-				int[] lstart, lstop, lstep;
-
-				if (step == null) {
-					lstep = new int[rank];
-					for (int i = 0; i < rank; i++) {
-						lstep[i] = 1;
-					}
-				} else {
-					lstep = step;
-				}
-
-				if (start == null) {
-					lstart = new int[rank];
-				} else {
-					lstart = start;
-				}
-
-				if (stop == null) {
-					lstop = new int[rank];
-				} else {
-					lstop = stop;
-				}
-
-				int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+				SliceND slice = new SliceND(shape, start, stop, step);
+				int[] lstart = slice.getStart();
+				int[] lstep  = slice.getStep();
+				int[] newShape = slice.getShape();
 
 				Dataset d = null;
 				try {
@@ -1572,30 +1553,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 					throws ScanFileHolderException {
 				final int rank = shape.length;
-				int[] lstart, lstop, lstep;
 
-				if (step == null) {
-					lstep = new int[rank];
-					for (int i = 0; i < rank; i++) {
-						lstep[i] = 1;
-					}
-				} else {
-					lstep = step;
-				}
-
-				if (start == null) {
-					lstart = new int[rank];
-				} else {
-					lstart = start;
-				}
-
-				if (stop == null) {
-					lstop = new int[rank];
-				} else {
-					lstop = stop;
-				}
-
-				int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+				SliceND slice = new SliceND(shape, start, stop, step);
+				int[] lstart = slice.getStart();
+				int[] lstep  = slice.getStep();
+				int[] newShape = slice.getShape();
 
 				Dataset d = null;
 				try {

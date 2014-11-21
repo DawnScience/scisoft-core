@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -23,6 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 
 public class ImageStackLoader implements ILazyLoader {
 
@@ -87,28 +87,11 @@ public class ImageStackLoader implements ILazyLoader {
 		if (start==null && step==null) return getFullStack();// Might cause out of memory!
 		                                                     // But this allows expressions of the stack to work if the stack fit in memory.
 
-		int rank = shape.length;
-		int[] lstart, lstop, lstep;
-
-		if (step == null) {
-			lstep = new int[rank];
-			Arrays.fill(lstep, 1);
-		} else {
-			lstep = step;
-		}
-
-		if (start == null) {
-			lstart = new int[rank];
-		} else {
-			lstart = start;
-		}
-
-		if (stop == null) {
-			lstop = new int[rank];
-		} else {
-			lstop = stop;
-		}
-		int[] newShape = AbstractDataset.checkSlice(shape, start, stop, lstart, lstop, lstep);
+		SliceND slice = new SliceND(shape, start, stop, step);
+		int[] lstart = slice.getStart();
+		int[] lstop  = slice.getStop();
+		int[] lstep  = slice.getStep();
+		int[] newShape = slice.getShape();
 
 		Dataset result = DatasetFactory.zeros(newShape, dtype);
 
@@ -143,9 +126,9 @@ public class ImageStackLoader implements ILazyLoader {
 				loaderClass = data.getLoaderClass();
 			}
 
-			ILazyDataset slice = data.getLazyDataset(0).getSliceView(imageStart, imageStop, imageStep);
+			ILazyDataset sliced = data.getLazyDataset(0).getSliceView(imageStart, imageStop, imageStep);
 			resultStop[0] = resultStart[0] + 1;
-			result.setSlice(slice, resultStart, resultStop, resultStep);
+			result.setSlice(sliced, resultStart, resultStop, resultStep);
 			resultStart[0]++;
 			n += lstep[0];
 		} while (resultStart[0] < newShape[0]);

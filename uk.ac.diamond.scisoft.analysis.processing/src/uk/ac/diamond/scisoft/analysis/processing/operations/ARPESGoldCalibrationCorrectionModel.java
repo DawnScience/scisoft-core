@@ -16,7 +16,8 @@ public class ARPESGoldCalibrationCorrectionModel extends AbstractOperationModel 
 
 	@OperationModelField(hint="Enter the path to the calibration NeXus file", file = FileType.EXISTING_FILE, label = "Select Calibration File:")
 	private String filePath = "";
-
+	private double energyOffset = 0.0;
+	
 	public String getFilePath() {
 		return filePath;
 	}
@@ -24,5 +25,13 @@ public class ARPESGoldCalibrationCorrectionModel extends AbstractOperationModel 
 	public void setFilePath(String filePath) {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
-	
+
+	public double getEnergyOffset() {
+		return energyOffset;
+	}
+
+	public void setEnergyOffset(double energyOffset) {
+		this.energyOffset = energyOffset;
+	}
+
 }

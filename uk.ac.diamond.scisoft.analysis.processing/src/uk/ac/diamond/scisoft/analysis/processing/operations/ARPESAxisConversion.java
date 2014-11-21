@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -54,8 +55,9 @@ public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionMo
 		for (ILazyDataset axis : axesMetadata.getAxis(0)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("sapolar")) {
-					IDataset kx = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
+					Dataset kx = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
 					kx = Maths.multiply(Maths.sin(Maths.toRadians(axis)), k);
+					kx.iadd(model.getKxOffset());
 					kx.setName("kx");
 					
 					try {
@@ -71,8 +73,9 @@ public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionMo
 		for (ILazyDataset axis : axesMetadata.getAxis(1)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("angle")) {
-					IDataset ky = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
+					Dataset ky = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
 					ky = Maths.multiply(Maths.sin(Maths.toRadians(axis)), k);
+					ky.iadd(model.getKyOffset());
 					ky.setName("ky");
 					try {
 						axesMetadata.setAxis(1, ky, axis);

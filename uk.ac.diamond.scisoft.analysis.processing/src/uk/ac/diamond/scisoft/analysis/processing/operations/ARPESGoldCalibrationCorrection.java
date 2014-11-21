@@ -85,6 +85,7 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 		
 		Dataset newEnergyAxis = Maths.subtract(xAxis, goldData.mean());
 		newEnergyAxis.imultiply(-1.0);
+		newEnergyAxis.iadd(model.getEnergyOffset());
 		newEnergyAxis.setName("Binding Energy");
 		
 		try {

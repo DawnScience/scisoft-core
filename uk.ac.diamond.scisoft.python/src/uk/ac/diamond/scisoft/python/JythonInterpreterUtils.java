@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.python.core.PyList;
-import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
@@ -35,8 +34,8 @@ import uk.ac.diamond.jython.util.JythonPath;
  * start a separate debug/run process to start the script.
  */
 public class JythonInterpreterUtils {
-	
-	 // Boolean to set to true if running jython scripts that utilise ScisoftPy in IDE
+
+	// Boolean to set to true if running jython scripts that utilise ScisoftPy in IDE
 	public static final String RUN_IN_ECLIPSE = "run.in.eclipse";
 
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
@@ -93,7 +92,7 @@ public class JythonInterpreterUtils {
 			logger.debug("\t{}", p);
 		}
 
-		state.exec_prefix = new PyString(jyRoot.getAbsolutePath());
+		PySystemState.exec_prefix = new PyString(jyRoot.getAbsolutePath());
 		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
 		state.executable = new PyString(executable);
 
@@ -126,7 +125,7 @@ public class JythonInterpreterUtils {
 	 * @return a new Jython Interpreter, with only scisoftpy in sys.path
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
-	public static PythonInterpreter getscisoftpyInterpreter() throws Exception{
+	public static PythonInterpreter getScisoftpyInterpreter() throws Exception{
 		final Set<String> extraPaths = new HashSet<String>();
 		
 		try {
@@ -186,7 +185,7 @@ public class JythonInterpreterUtils {
 		
 		final long start = System.currentTimeMillis();
 		
-		PythonInterpreter interpreter = getscisoftpyInterpreter();
+		PythonInterpreter interpreter = getScisoftpyInterpreter();
 		
 		final long end = System.currentTimeMillis();
 		

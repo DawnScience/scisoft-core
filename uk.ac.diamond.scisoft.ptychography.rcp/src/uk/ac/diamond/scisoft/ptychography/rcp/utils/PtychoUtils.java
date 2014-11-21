@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.ptychography.rcp.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -17,15 +18,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.FileStoreEditorInput;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 
 public class PtychoUtils {
 
+	private final static Logger logger = LoggerFactory.getLogger(PtychoUtils.class);
 	private final static String[] HEADERS = new String[] {"level", "name", "default", "type", "unique", "lowerlimit", "upperlimit", "shortdoc", "longdoc"};
 	private final static CSVFormat format = CSVFormat.EXCEL
 			.withHeader(HEADERS)
@@ -139,18 +139,40 @@ public class PtychoUtils {
 		return resource;
 	}
 
-	public static String jsonMarshal(List<PtychoNode> tree) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		String json = "";
-		for (PtychoNode node : tree) {
-			
-			//TODO
-//			mapper.writeValueAsString(obj)
+	/**
+	 * 
+	 * @param filePath
+	 * @param content
+	 */
+	public static void saveCSVFile(String filePath, List<PtychoData> content) {
+		try {
+			saveSpreadsheet(content, filePath);
+		} catch (FileNotFoundException e) {
+			logger.error("Error saving file:" +e.getMessage());
+			e.printStackTrace();
 		}
-		return json;
 	}
 
-	public static void writeFile() {
-		
+	/**
+	 * 
+	 * @param filePath
+	 * @param content
+	 */
+	public static void saveJSon(String filePath, String content) {
+		FileWriter fileWriter = null;
+		try {
+			File newTextFile = new File(filePath);
+			fileWriter = new FileWriter(newTextFile);
+			fileWriter.write(content);
+			fileWriter.close();
+		} catch (IOException ex) {
+			logger.error("Error writing to file:" + ex.getMessage());
+		} finally {
+			try {
+				fileWriter.close();
+			} catch (IOException ex) {
+				logger.error("Error closing file writer:" + ex.getMessage());
+			}
+		}
 	}
 }

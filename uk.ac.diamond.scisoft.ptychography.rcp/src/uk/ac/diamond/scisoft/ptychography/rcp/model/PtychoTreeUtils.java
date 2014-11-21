@@ -86,4 +86,56 @@ public class PtychoTreeUtils {
 		}
 		return result;
 	}
+
+	/**
+	 * creates a Json string out of a PtychoNode tree of depth 3
+	 * TODO put in a recursive method
+	 * @param tree
+	 * @return
+	 */
+	public static String jsonMarshal(List<PtychoNode> tree) {
+		StringBuilder json = new StringBuilder();
+		json.append("{");
+		for (int i = 0; i < tree.size(); i ++) {
+			PtychoNode node = tree.get(i);
+			json.append("\"" + node.getData().getName() +"\"");
+			json.append(":");
+			if (!node.getChildren().isEmpty()) {
+				List<PtychoNode> children = node.getChildren();
+				json.append("{");
+				for (int j = 0; j < children.size(); j ++) {
+					PtychoNode child = children.get(j);
+					json.append("\"" + child.getData().getName() +"\"");
+					json.append(":");
+					if (!child.getChildren().isEmpty()) {
+						List<PtychoNode> leafs = child.getChildren();
+						json.append("{");
+						for (int k = 0; k < leafs.size(); k ++) {
+							PtychoNode leaf = leafs.get(k);
+							json.append("\"" + leaf.getData().getName() +"\"");
+							json.append(":");
+							json.append("\"" + leaf.getData().getDefaultValue() +"\"");
+							if (k < leafs.size() - 1)
+								json.append(",");
+						}
+						json.append("}");
+						if (j < children.size() - 1)
+							json.append(",");
+					} else {
+						json.append("\"" + child.getData().getDefaultValue() +"\"");
+						if (j < children.size() - 1)
+							json.append(",");
+					}
+				}
+				json.append("}");
+			} else {
+				json.append("\"" + node.getData().getDefaultValue() +"\"");
+			}
+			
+			if (i < tree.size() - 1)
+				json.append(",");
+		}
+		json.append("}");
+		return json.toString();
+	}
 }

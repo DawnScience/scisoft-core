@@ -1,7 +1,6 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,63 +82,18 @@ public class PtychoTreeViewerEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
+		List<PtychoData> list = PtychoTreeUtils.extract(tree);
 		if (fileSavedPath == null)
-			saveFile(fullPath + ".tmp.csv");
+			PtychoUtils.saveCSVFile(fullPath, list);
 		else
-			saveFile(fileSavedPath);
+			PtychoUtils.saveCSVFile(fileSavedPath, list);
 		setDirty(false);
 	}
 
 	@Override
 	public void doSaveAs() {
-		FileDialog dialog = new FileDialog(Display.getDefault()
-				.getActiveShell(), SWT.SAVE);
-		String[] filterExtensions = new String[] {
-				"*.csv;*.CSV", "*.json;*.JSON",
-				"*.xml;*.XML" };
-		if (fileSavedPath != null) {
-			dialog.setFilterPath((new File(fileSavedPath)).getParent());
-		} else {
-			String filterPath = "/";
-			String platform = SWT.getPlatform();
-			if (platform.equals("win32") || platform.equals("wpf")) {
-				filterPath = "c:\\";
-			}
-			dialog.setFilterPath(filterPath);
-		}
-		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
-		dialog.setFilterExtensions(filterExtensions);
-		fileSavedPath = dialog.open();
-		if (fileSavedPath == null) {
-		
-			return;
-		}
-		try {
-			final File file = new File(fileSavedPath);
-			if (file.exists()) {
-				boolean yes = MessageDialog.openQuestion(Display.getDefault()
-						.getActiveShell(), "Confirm Overwrite", "The file '"
-						+ file.getName()
-						+ "' exists.\n\nWould you like to overwrite it?");
-				if (!yes)
-					;
-			}
-			saveFile(fileSavedPath);
-			// logger.debug("Plot saved");
-		} catch (Exception e) {
-			throw e;
-		}
+		saveAs();
 		setDirty(false);
-	}
-
-	private void saveFile(String filePath) {
-		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-		try {
-			PtychoUtils.saveSpreadsheet(list, filePath);
-		} catch (FileNotFoundException e) {
-			logger.error("Error saving file:" +e.getMessage());
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -421,8 +375,8 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					String json = PtychoUtils.jsonMarshal(tree);
-					System.out.println(json);
+					saveAs();
+					isDirtyFlag = false;
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);
 				}
@@ -469,30 +423,54 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				}
 			}
 		});
+	}
 
-//		final Action open = new Action("Open previously saved table", Activator.getImageDescriptor("icons/file_obj.gif")) {
-//			public void run() {
-//			}
-//		};
-//		open.setToolTipText("Open a previously saved configuration parameter file (CSV)");
-//
-//		final Action exportAs = new Action("Export table to file", Activator.getImageDescriptor("icons/export_wiz.gif")) {
-//			public void run() {
-//				try {
-//				} catch (Exception e) {
-//					logger.error("Problem exporting to file", e);
-//				}
-//			}
-//		};
-//
-//		final Action save = new Action("Save table", Activator.getImageDescriptor("icons/save_edit.gif")) {
-//			public void run() {
-//				try {
-//				} catch (Exception e) {
-//					logger.error("Problem saving table", e);
-//				}
-//			}
-//		};
+	private void saveAs() {
+		FileDialog dialog = new FileDialog(Display.getDefault()
+				.getActiveShell(), SWT.SAVE);
+		dialog.setText("Save as");
+		String[] filterExtensions = new String[] {
+				"*.csv;*.CSV", "*.json;*.JSON",
+				"*.xml;*.XML" };
+		if (fileSavedPath != null) {
+			dialog.setFilterPath((new File(fileSavedPath)).getParent());
+		} else {
+			String filterPath = "/";
+			String platform = SWT.getPlatform();
+			if (platform.equals("win32") || platform.equals("wpf")) {
+				filterPath = "c:\\";
+			}
+			dialog.setFilterPath(filterPath);
+		}
+		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
+		dialog.setFilterExtensions(filterExtensions);
+		fileSavedPath = dialog.open();
+		if (fileSavedPath == null) {
+			return;
+		}
+		try {
+			final File file = new File(fileSavedPath);
+			if (file.exists()) {
+				boolean yes = MessageDialog.openQuestion(Display.getDefault()
+						.getActiveShell(), "Confirm Overwrite", "The file '"
+						+ file.getName()
+						+ "' exists.\n\nWould you like to overwrite it?");
+				if (!yes)
+					;
+			}
+			String fileType = PtychoConstants.FILE_TYPES[dialog.getFilterIndex()];
+			if (fileType.equals("CSV File")) {
+				List<PtychoData> list = PtychoTreeUtils.extract(tree);
+				PtychoUtils.saveCSVFile(fileSavedPath, list);
+			} else if (fileType.equals("JSon File")) {
+				String json = PtychoTreeUtils.jsonMarshal(tree);
+				PtychoUtils.saveJSon(fileSavedPath, json);
+			} else {
+				throw new Exception("XML serialisation is not yet implemented.");
+			}
+		} catch (Exception e) {
+			logger.error("Error saving file:"+ e.getMessage());
+		}
 	}
 
 	@Override

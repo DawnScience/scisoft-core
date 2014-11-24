@@ -53,75 +53,67 @@ public class JythonInterpreterUtilsPluginTest {
 			fail("Starting Jython interpreter failed!");
 		}
 		
-		if (jyTestInt == null) {
+		// Have we *really* got a python interpreter???
+		assertTrue("jyTestInt not a PythonInterpreter", jyTestInt != null);
+
+		// Call some very basic python
+		jyTestInt.exec("import os");
+		jyTestInt.exec("myOs = str(os.name)");
+		PyString jyVar = (PyString) jyTestInt.get(new String("myOs"));
+		String jyVarStr = jyVar.toString();
+		assertEquals(new String("java"), jyVarStr);
+
+		jyTestInt.exec("import sys");
+		jyTestInt.exec("myExec = str(sys.executable)");
+		PyString jyVar2 = (PyString) jyTestInt.get(new String("myExec"));
+		String jyVar2Str = jyVar2.toString();
+		if (!jyVar2Str.endsWith("/jython.jar")) {
+			fail("Executable name wrong or not set.");
 		}
-		else {
-			//Have we *really* got a python interpreter???
-			assertTrue("jyTestInt not a PythonInterpreter", jyTestInt instanceof PythonInterpreter);
-			
-			//Call some very basic python
-			jyTestInt.exec("import os");
-			jyTestInt.exec("myOs = str(os.name)");
-			PyString jyVar = (PyString) jyTestInt.get(new String("myOs"));
-			String jyVarStr = jyVar.toString();
-			assertEquals(new String("java"), jyVarStr);
-			
-			jyTestInt.exec("import sys");
-			jyTestInt.exec("myExec = str(sys.executable)");
-			PyString jyVar2 = (PyString) jyTestInt.get(new String("myExec"));
-			String jyVar2Str = jyVar2.toString();
-			if (!jyVar2Str.endsWith("/jython.jar")) {
-				fail("Executable name wrong or not set.");
-			}
-			
-			//And a quick maths check
-			jyTestInt.exec("import math");
-			jyTestInt.exec("myVal = round(math.cos(math.radians(60)), 5)");
-			PyFloat jyVar3 = (PyFloat) jyTestInt.get(new String("myVal"));
-			assertEquals(new PyFloat(0.5), jyVar3);
-		}
+
+		// And a quick maths check
+		jyTestInt.exec("import math");
+		jyTestInt.exec("myVal = round(math.cos(math.radians(60)), 5)");
+		PyFloat jyVar3 = (PyFloat) jyTestInt.get(new String("myVal"));
+		assertEquals(new PyFloat(0.5), jyVar3);
 	}
 	
 	@Test
 	public void interpreterShouldStartWithSciSoftPyLibs() {
 		try{
-			jyTestInt = JythonInterpreterUtils.getscisoftpyInterpreter();
+			jyTestInt = JythonInterpreterUtils.getScisoftpyInterpreter();
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}
 		
-		if (jyTestInt == null) {
-		}
-		else {
-			//Have we *really* got a python interpreter???
-			assertTrue("jyTestInt not a PythonInterpreter", jyTestInt instanceof PythonInterpreter);
-			
-			//Do some numpy type stuff to see that everything is beahving.
-			//Check scisoftpy libs are loaded and we can do stuff
-			jyTestInt.exec("myArray = dnp.zeros((4,5))");
-			jyTestInt.exec("myShape = myArray.shape");
-			PyTuple jyVar = (PyTuple) jyTestInt.get(new String("myShape"));
-			PyTuple expectedShape = new PyTuple(new PyInteger[]{new PyInteger(4),new PyInteger(5)});
-			assertEquals(expectedShape, jyVar);
-			
-			//Make a new array with some fairly simple filler
-			jyTestInt.exec("myArray = dnp.array([[1,2,3,4,5],[6,7,8,9,10],[10,9,8,7,6],[5,4,3,2,1]])");
-			jyTestInt.exec("myShape2 = myArray.shape");
-			PyTuple jyVar2 = (PyTuple) jyTestInt.get(new String("myShape2"));
-			assertEquals("myArray has wrong shape", expectedShape, jyVar2);
-			jyTestInt.exec("rowSum = sum(myArray[1][...])");
-			PyInteger jyVar3 = (PyInteger) jyTestInt.get(new String("rowSum"));
-			assertEquals("Sum of row in myArray incorrect", new PyInteger(40), jyVar3);
-			
-			jyTestInt.exec("myArray2 = myArray.transpose()");
-			jyTestInt.exec("myShape4 = myArray.shape");
-			PyTuple jyVar4 = (PyTuple) jyTestInt.get(new String("myShape4"));
-			assertEquals("myArray2 has wrong shape", expectedShape, jyVar4);
-			jyTestInt.exec("rowSum5 = sum(myArray2[1][...])");
-			PyInteger jyVar5 = (PyInteger) jyTestInt.get(new String("rowSum5"));
-			assertEquals("Sum of row in myArray2 incorrect", new PyInteger(22), jyVar5);
-			
-		}
+		// Have we *really* got a python interpreter???
+		assertTrue("jyTestInt not a PythonInterpreter", jyTestInt != null);
+
+		// Do some numpy type stuff to see that everything is beahving.
+		// Check scisoftpy libs are loaded and we can do stuff
+		jyTestInt.exec("myArray = dnp.zeros((4,5))");
+		jyTestInt.exec("myShape = myArray.shape");
+		PyTuple jyVar = (PyTuple) jyTestInt.get(new String("myShape"));
+		PyTuple expectedShape = new PyTuple(new PyInteger[] { new PyInteger(4), new PyInteger(5) });
+		assertEquals(expectedShape, jyVar);
+
+		// Make a new array with some fairly simple filler
+		jyTestInt.exec("myArray = dnp.array([[1,2,3,4,5],[6,7,8,9,10],[10,9,8,7,6],[5,4,3,2,1]])");
+		jyTestInt.exec("myShape2 = myArray.shape");
+		PyTuple jyVar2 = (PyTuple) jyTestInt.get(new String("myShape2"));
+		assertEquals("myArray has wrong shape", expectedShape, jyVar2);
+		jyTestInt.exec("rowSum = sum(myArray[1][...])");
+		PyInteger jyVar3 = (PyInteger) jyTestInt.get(new String("rowSum"));
+		assertEquals("Sum of row in myArray incorrect", new PyInteger(40), jyVar3);
+
+		jyTestInt.exec("myArray2 = myArray.transpose()");
+		jyTestInt.exec("myShape4 = myArray.shape");
+		PyTuple jyVar4 = (PyTuple) jyTestInt.get(new String("myShape4"));
+		assertEquals("myArray2 has wrong shape", expectedShape, jyVar4);
+		jyTestInt.exec("rowSum5 = sum(myArray2[1][...])");
+		PyInteger jyVar5 = (PyInteger) jyTestInt.get(new String("rowSum5"));
+		assertEquals("Sum of row in myArray2 incorrect", new PyInteger(22), jyVar5);
+
 	}
 	
 	@Test

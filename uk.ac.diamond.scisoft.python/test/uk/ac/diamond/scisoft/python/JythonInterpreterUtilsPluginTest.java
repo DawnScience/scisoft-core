@@ -123,4 +123,13 @@ public class JythonInterpreterUtilsPluginTest {
 			
 		}
 	}
+	
+	@Test
+	public void interpreterShouldLoadDLSLibs() {
+		try{
+			jyTestInt = JythonInterpreterUtils.getFullInterpreter();
+		} catch (Exception e) {
+			fail("Starting Jython interpreter failed!");
+		}
+	}
 }

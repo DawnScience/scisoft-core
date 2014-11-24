@@ -356,6 +356,11 @@
             id="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
             name="ARPES Analysis">
       </category>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1dOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1dOperation"
+            name="Crop Data [1D]">
+      </operation>
    </extension>
 
 </plugin>

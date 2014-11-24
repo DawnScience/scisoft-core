@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 /**
@@ -16,8 +17,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
  * @author Matthew Gerring
  *
  */
-public class SubtractOperation extends AbstractMathsOperation {
-
+public class SubtractOperation extends AbstractMathsOperation<ValueModel, OperationData> {
+	
 	protected IDataset operation(IDataset a, Object value) {
 		return ((Dataset)a).isubtract(value);
 	}
@@ -30,4 +31,6 @@ public class SubtractOperation extends AbstractMathsOperation {
     public String getName() {
 		return "Subtract datasets";
 	}
+	
+	
 }

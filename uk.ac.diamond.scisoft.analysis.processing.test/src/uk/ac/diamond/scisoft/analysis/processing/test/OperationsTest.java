@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 
 /**
  * Works with ordinary junit but therefore does not test the extension points
@@ -65,12 +66,7 @@ public class OperationsTest {
 	public void testSimpleSubtract() throws Exception {
 				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
@@ -98,18 +94,8 @@ public class OperationsTest {
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
@@ -137,18 +123,8 @@ public class OperationsTest {
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
 		context.setSlicing("all"); // 
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 		
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
@@ -180,18 +156,8 @@ public class OperationsTest {
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
 		context.setSlicing("all"); // 
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 		
 		counter = 0;
 		context.setParallelTimeout(Long.MAX_VALUE);
@@ -235,18 +201,8 @@ public class OperationsTest {
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		context.setSlicing("all"); // 
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 			
 		context.setExecutionType(ExecutionType.PARALLEL);
 		context.setVisitor(new IExecutionVisitor.Stub() {
@@ -290,18 +246,8 @@ public class OperationsTest {
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
 		context.setSlicing("all"); // 
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 
 		counter = 0;
 

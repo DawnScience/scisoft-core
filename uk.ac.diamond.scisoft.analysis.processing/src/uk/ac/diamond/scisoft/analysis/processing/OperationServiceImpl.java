@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -112,10 +111,11 @@ public class OperationServiceImpl implements IOperationService {
 		}
 		
 		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
-		// determine data axes to populate origin metadata
-		final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), slicing);
 			
 		try {
+			// determine data axes to populate origin metadata
+			final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), slicing);
+
 			// We check the pipeline ranks are ok
 	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), slicing);
 			validate(firstSlice, context.getSeries());

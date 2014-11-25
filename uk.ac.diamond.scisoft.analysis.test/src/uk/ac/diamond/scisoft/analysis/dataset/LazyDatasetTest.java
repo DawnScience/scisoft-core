@@ -237,4 +237,17 @@ public class LazyDatasetTest {
 		TestUtils.assertDatasetEquals(data.getTransposedView(3, 1, 0, 2).reshape(1, 4, 2, 1, 3, 1).getTransposedView().reshape(3, 1, 2, 4, 1),
 				uld.getSlice(), true, 1e-14, 1e-14);
 	}
+
+	@Test
+    public void testSlicePadRankSlice() {
+		Dataset data = Random.rand(new int[] { 10 });
+		data.setName("random");
+		LazyDataset ld = LazyDataset.createLazyDataset(data);
+
+		LazyDataset sv = ld.getSliceView(new int[] { 0 }, new int[] { 5 }, null);
+		sv.setShape(new int[] { 1, 1, 5 });
+		LazyDataset view = sv.getSliceView(new int[] { 0, 0, 0 }, new int[] { 1, 1, 4 }, null);
+		TestUtils.assertDatasetEquals(data.getSliceView(new Slice(5)).reshape(1, 1, 5).getSliceView(null, null, new Slice(4)),
+				view.getSlice(), true, 1e-14, 1e-14);
+    }
 }

@@ -234,4 +234,36 @@ public class AxesMetadataTest {
 			assertEquals(shape[map[i]], a.getSize());
 		}
 	}
+
+    @Test
+    public void testAxesMetadataError() {
+           final int[] shape = new int[] { 1, 2, 3, 1 };
+
+           int r = shape.length;
+
+           ILazyDataset axis = createRandomLazyDataset("axis", Dataset.INT32, 2);
+           AxesMetadataImpl amd = new AxesMetadataImpl(1);
+           amd.setAxis(0, createRandomLazyDataset("axis2", Dataset.INT32, 2));
+           axis.addMetadata(amd);
+
+           amd = new AxesMetadataImpl(r);
+           amd.setAxis(1, axis);
+           ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+           dataset.addMetadata(amd);
+
+           dataset.setShape(2,3,1,1);
+
+           ILazyDataset datasetErr = createRandomLazyDataset("dataset_err", Dataset.INT32, 2, 1, 1, 1);
+           dataset.setError(datasetErr);
+
+           ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
+
+           amd = new AxesMetadataImpl(1);
+           amd.setAxis(0, axis);
+           axisErr.addMetadata(amd);
+           axis.setError(axisErr);
+
+           ILazyDataset d=dataset.getSliceView();
+           d.squeeze();
+    }
 }

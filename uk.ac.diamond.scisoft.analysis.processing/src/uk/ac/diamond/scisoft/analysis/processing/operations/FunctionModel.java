@@ -11,8 +11,11 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class FunctionModel extends AbstractOperationModel {
 
+	@JsonIgnore
 	private IFunction function;
 
 	public FunctionModel(IFunction function) {

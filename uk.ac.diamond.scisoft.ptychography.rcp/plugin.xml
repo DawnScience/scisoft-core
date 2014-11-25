@@ -83,6 +83,8 @@
             name="Ptychography">
       </introPageRegister>
    </extension>
+   <!-- comment out for now until the ptychography perspective is fully done
+   <!--
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
@@ -90,5 +92,5 @@
             content="intro/introContribution.xml">
       </configExtension>
    </extension>
-
+	-->
 </plugin>

@@ -107,6 +107,10 @@ public class OperationSource extends AbstractDataMessageSource {
 			throw new DataMessageException("Cannot read data from '"+info.getSliceName()+"'", this, ne);
 		}
 
+		if (context.getMonitor()!=null) {
+			context.getMonitor().subTask(info.getSliceName());
+		}
+
 		return msg;
 
 	}
@@ -114,6 +118,7 @@ public class OperationSource extends AbstractDataMessageSource {
 	private DataMessageComponent getData(SliceInfo info) {
 		DataMessageComponent ret = new DataMessageComponent();
 		ret.setList(info.slice());
+		ret.setSliceInfo(info);
 		return ret;
 	}
 

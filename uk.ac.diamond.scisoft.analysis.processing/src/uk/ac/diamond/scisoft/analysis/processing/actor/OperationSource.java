@@ -97,6 +97,7 @@ public class OperationSource extends AbstractDataMessageSource {
         ManagedMessage msg = MessageFactory.getInstance().createMessageInSequence(msgSequenceID, msgCounter++, hasNoMoreMessages(), getStandardMessageHeaders());
     
 		try {
+			msg.setBodyHeader("TITLE", info.getSliceName());
 			msg.setBodyContent(getData(info), DatasetConstants.CONTENT_TYPE_DATA);
 		} catch (MessageException e) {
 			msg = MessageFactory.getInstance().createErrorMessage(new PasserelleException(ErrorCode.MSG_CONSTRUCTION_ERROR, "Cannot set map of data in message body!", this, e));
@@ -104,12 +105,6 @@ public class OperationSource extends AbstractDataMessageSource {
 		} catch (Exception ne) {
 			queue.clear();
 			throw new DataMessageException("Cannot read data from '"+info.getSliceName()+"'", this, ne);
-		}
-			
-		try {
-			msg.setBodyHeader("TITLE", info.getSliceName());
-		} catch (MessageException e) {
-			msg = MessageFactory.getInstance().createErrorMessage(new PasserelleException(ErrorCode.MSG_CONSTRUCTION_ERROR, "Cannot set header in message!", this, e));
 		}
 
 		return msg;

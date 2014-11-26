@@ -66,7 +66,7 @@ public class IntegrationTest {
 		
 		final IOperation maskOp = getMaskOperation(mask);
 		
-		final IOperation azi = service.findFirst("azimuthal");
+		final IOperation azi = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration");
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		count = 0;
@@ -102,7 +102,7 @@ public class IntegrationTest {
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));
 		
-		final IOperation azi    = service.findFirst("azimuthal");
+		final IOperation azi    = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration");
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation maskOp = getMaskOperation(mask);
@@ -142,7 +142,7 @@ public class IntegrationTest {
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));
 		
-		final IOperation azi    = service.findFirst("azimuthal");
+		final IOperation azi    = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.azimuthalIntegration");
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation maskOp = getMaskOperation(mask);

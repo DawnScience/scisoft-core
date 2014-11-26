@@ -13,6 +13,12 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 public class ValueModel extends AbstractOperationModel {
 
 	private Object value;
+	public ValueModel() {
+
+	}
+	public ValueModel(Object value) {
+		setValue(value);
+	}
 
 	public Object getValue() {
 		return value;

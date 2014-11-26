@@ -115,4 +115,13 @@ public class JythonInterpreterUtilsPluginTest {
 		assertEquals("Sum of row in myArray2 incorrect", new PyInteger(22), jyVar5);
 
 	}
+	
+	@Test
+	public void interpreterShouldLoadDLSLibs() {
+		try{
+			jyTestInt = JythonInterpreterUtils.getFullInterpreter();
+		} catch (Exception e) {
+			fail("Starting Jython interpreter failed!");
+		}
+	}
 }

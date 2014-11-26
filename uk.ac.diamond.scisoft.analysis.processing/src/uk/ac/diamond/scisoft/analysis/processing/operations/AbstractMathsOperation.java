@@ -14,6 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
 /**
@@ -24,10 +25,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
  * @author Matthew Gerring
  *
  */
-public abstract class AbstractMathsOperation extends AbstractOperation<IOperationModel, OperationData> {
+public abstract class AbstractMathsOperation<T extends ValueModel, D extends OperationData> extends AbstractOperation<ValueModel, OperationData> {
 
-	private Object         value;
-	
 	/**
 	 * TODO This operation is only an example.
 	 */
@@ -35,7 +34,7 @@ public abstract class AbstractMathsOperation extends AbstractOperation<IOperatio
 	public OperationData execute(IDataset a, IMonitor monitor) throws OperationException {
 		
 		try {
-			IDataset result= operation(a, value);
+			IDataset result= operation(a, model.getValue());
 			// TODO Need to set up axes and meta correctly.
 			return new OperationData(result);
 			
@@ -45,16 +44,6 @@ public abstract class AbstractMathsOperation extends AbstractOperation<IOperatio
 	}
 	
 	protected abstract IDataset operation(IDataset a, Object value);
-
-	@Override
-	public void setModel(IOperationModel model) {
-		super.setModel(model);
-		try {
-			this.value = model.get("Value");
-		} catch (Exception e) {
-			value = null;
-		}
-	}
 
 	
 	public OperationRank getInputRank() {

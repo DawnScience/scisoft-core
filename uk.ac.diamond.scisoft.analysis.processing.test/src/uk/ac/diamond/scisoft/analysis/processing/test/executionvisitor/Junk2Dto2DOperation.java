@@ -12,7 +12,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
-public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, OperationData> {
+public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, OperationData> implements ITestOperation {
 
 	private boolean withAxes = true;
 	private int nAxes = 1;
@@ -47,10 +47,15 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
+		return getTestData();
+	}
+
+	public OperationData getTestData() {
 		int x = model.getxDim();
 		int y = model.getyDim();
 		
-		IDataset out = Random.rand(new int[] {x,y});
+		IDataset out = DatasetFactory.createRange(x*y,Dataset.INT16);
+		out.setShape(new int[]{x,y});;
 		out.setName("Junk2Dto2Dout");
 		
 		if (withAxes) {
@@ -78,5 +83,4 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		
 		return new OperationData(out);
 	}
-
 }

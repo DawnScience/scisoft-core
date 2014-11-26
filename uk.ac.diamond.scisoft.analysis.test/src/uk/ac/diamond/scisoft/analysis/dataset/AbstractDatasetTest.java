@@ -9,11 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1431,6 +1427,10 @@ public class AbstractDatasetTest {
 		a.squeeze();
 		assertEquals("Rank", 0, a.getRank());
 		assertEquals("Shape", 0, a.getShape().length);
+
+		a = DatasetFactory.createFromObject(1.f);
+		assertEquals("Equals", a, DatasetFactory.createFromObject(1.f));
+		assertFalse("Differs", a.equals(DatasetFactory.createFromObject(2.f)));
 	}
 
 	@Test

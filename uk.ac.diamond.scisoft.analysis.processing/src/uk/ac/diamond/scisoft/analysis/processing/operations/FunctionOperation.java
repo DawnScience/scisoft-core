@@ -35,7 +35,12 @@ public class FunctionOperation extends AbstractOperation<FunctionModel, Operatio
 
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
-		return new OperationData(function.calculateValues(slice));
+		return new OperationData(getFunction().calculateValues(slice));
+	}
+
+	private IFunction getFunction() {
+        if (function!=null) return function;
+        return model.getFunction();
 	}
 
 	@Override

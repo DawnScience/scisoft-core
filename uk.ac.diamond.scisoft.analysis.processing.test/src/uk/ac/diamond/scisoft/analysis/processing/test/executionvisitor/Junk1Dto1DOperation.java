@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
-public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> {
+public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> implements ITestOperation {
 
 	private boolean withAxes = true;
 	private boolean withErrors = true;
@@ -48,9 +48,14 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
+		return getTestData();
+		
+	}
+	
+	public OperationData getTestData() {
 		int x = model.getxDim();
 
-		IDataset out = Random.rand(new int[] {x});
+		IDataset out = DatasetFactory.createRange(x,Dataset.INT16);
 		out.setName("Junk1Dout");
 		
 		if (withAxes) {
@@ -74,7 +79,6 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 			em.setError(error);
 			out.setMetadata(em);
 		}
-		
 		
 		return new OperationData(out);
 	}

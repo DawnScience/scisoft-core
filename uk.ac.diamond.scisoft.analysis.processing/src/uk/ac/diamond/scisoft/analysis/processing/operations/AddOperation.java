@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 /**
@@ -16,7 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
  * @author Matthew Gerring
  *
  */
-public class AddOperation extends AbstractMathsOperation {
+public class AddOperation extends AbstractMathsOperation<ValueModel, OperationData> {
 
 	protected IDataset operation(IDataset a, Object value) {
 		return ((Dataset) a).iadd(value);

@@ -51,7 +51,8 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			IDataset data = (IDataset)msg.getList().values().iterator().next();
 			
 			OperationData tmp = operation.execute(data, context.getMonitor());
-	
+			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
+
 			final SliceInfo info = msg.getSliceInfo();
 	
 			if (context.getVisitor()!=null) {
@@ -59,7 +60,10 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 				context.getVisitor().notify(operation, tmp, info.getSlice(), info.getData().getShape(), dataDims); // Optionally send intermediate result
 			
 			    if (output.getWidth()<1) { // We have reached the end.
-			    	context.getVisitor().executed(data, context.getMonitor(), info.getSlice(), info.getData().getShape(), dataDims); // Send result.
+			    	OperationData odata = new OperationData(data);
+			    	if (!operation.isPassUnmodifiedData()) odata.setAuxData(tmp.getAuxData());
+			    	
+			    	context.getVisitor().executed(odata, context.getMonitor(), info.getSlice(), info.getData().getShape(), dataDims); // Send result.
 					if (context.getMonitor() != null) context.getMonitor().worked(1);
 					
 					logger.debug(info.getSliceName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
@@ -67,7 +71,6 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			}
 			
 			// Construct a DataMessageComponent to pass on.
-			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 			msg.clearList();
 			msg.setList(data);
 			return msg;

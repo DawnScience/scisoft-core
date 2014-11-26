@@ -41,11 +41,15 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	
 	@Override
 	public IDataHolder getData(String filePath, final IMonitor monitor) throws Throwable {
-	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
-		return LoaderFactory.getData(filePath, mon);
+		return getData(filePath, false, monitor);
 	}
 
-	
+	@Override
+	public IDataHolder getData(String filePath, boolean lazily, IMonitor monitor) throws Throwable {
+	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
+		return LoaderFactory.getData(filePath, true, false, lazily, mon);
+	}
+
 	@Override
 	public IDataset getDataset(String filePath, final IMonitor monitor) throws Throwable {
 	    try {
@@ -59,8 +63,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 		final IDataHolder dh  = LoaderFactory.getData(filePath, mon);
 		return dh!=null ? dh.getDataset(0) : null;
 	}
-	
-	
+
 	@Override
 	public IDataset getDataset(final String path, final String datasetName, final IMonitor monitor) throws Throwable {
 	    
@@ -74,8 +77,6 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
 		return LoaderFactory.getMetadata(filePath, mon);
 	}
-
-
 
 	@Override
 	public Object create(@SuppressWarnings("rawtypes") Class serviceInterface, 
@@ -103,12 +104,10 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 		return old;
 	}
 
-
 	@Override
 	public Collection<String> getSupportedExtensions() {
 		return LoaderFactory.getSupportedExtensions();
 	}
-
 
 	@Override
 	public void clearSoftReferenceCache() {

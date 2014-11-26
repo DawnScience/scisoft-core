@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.nexusformat.NexusException;
@@ -34,8 +36,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
  */
 public class RawNexusLoader extends AbstractFileLoader {
 
-	private String fileName = "";
-
 	public RawNexusLoader() {
 		
 	}
@@ -47,19 +47,29 @@ public class RawNexusLoader extends AbstractFileLoader {
 		fileName = FileName;
 	}
 	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public DataHolder loadFile() {
+		return loadFile(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public DataHolder loadFile(boolean loadData) {
 
 		DataHolder dataHolder = new DataHolder();
 
 		NexusFile file;
 		try {
 			file = new NexusFile(fileName, NexusFile.NXACC_READ);
+
+			if (loadMetadata) {
+				metadata = new Metadata();
+				metadata.setFilePath(fileName);
+			}
 
 			// file.opengroup("entry1", "NXentry");
 
@@ -114,12 +124,16 @@ public class RawNexusLoader extends AbstractFileLoader {
 								// Now lets create an array of the dimensions for creating the dataset.
 								final int rank = iStart[0];
 								int[] shape = Arrays.copyOf(iDim, rank);
-								final int dtype = Nexus.getDType(iStart[1]);
-								Dataset ds = DatasetFactory.zeros(shape, dtype);
-								file.getdata(ds.getBuffer());
-								ds.setName(dataName);
-								dataHolder.addDataset(dataName, ds);
-
+								if (loadData) {
+									final int dtype = Nexus.getDType(iStart[1]);
+									Dataset ds = DatasetFactory.zeros(shape, dtype);
+									file.getdata(ds.getBuffer());
+									ds.setName(dataName);
+									dataHolder.addDataset(dataName, ds);
+								}
+								if (loadMetadata) {
+									metadata.addDataInfo(dataName, shape);
+								}
 								file.closedata();
 							}
 							// Close NXdata
@@ -136,7 +150,9 @@ public class RawNexusLoader extends AbstractFileLoader {
 			// }
 
 			file.close();
-
+			if (loadMetadata) {
+				dataHolder.setMetadata(metadata);
+			}
 			return dataHolder;
 
 		} catch (NexusException e) {
@@ -149,4 +165,9 @@ public class RawNexusLoader extends AbstractFileLoader {
 		return null;
 	}
 
+	@Override
+	public void loadMetadata(IMonitor mon) throws Exception {
+		loadMetadata = true;
+		loadFile(false);
+	}
 }

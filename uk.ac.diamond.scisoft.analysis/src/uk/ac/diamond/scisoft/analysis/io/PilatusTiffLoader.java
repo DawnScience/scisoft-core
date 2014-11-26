@@ -41,7 +41,7 @@ public class PilatusTiffLoader extends TIFFImageLoader {
 		"Tau =", "Threshold_setting", "N_excluded_pixels", "Excluded_pixels:", "Trim_directory:", "Flat_field:" };
 
 	@Override
-	protected Map<String,Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
+	protected Map<String,Serializable> createMetadataMap(IIOMetadata imageMetadata) throws ScanFileHolderException {
 
 		Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
         

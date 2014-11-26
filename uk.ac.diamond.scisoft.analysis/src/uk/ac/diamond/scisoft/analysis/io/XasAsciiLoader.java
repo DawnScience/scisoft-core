@@ -45,6 +45,7 @@ public class XasAsciiLoader extends SRSLoader {
 			boolean readingHeader = true;
 			boolean readingFooter = false;
 			List<?>[] columnData = null;
+			int count = 0;
 			while ((dataStr = reader.readLine()) != null) {
 
 				// ignore blank
@@ -80,17 +81,29 @@ public class XasAsciiLoader extends SRSLoader {
 				}
 
 				if (columnData != null) {
-					parseColumns(splitLine(dataStr.trim()), columnData);
+					if (!loadLazily)
+						parseColumns(splitLine(dataStr.trim()), columnData);
+					count++;
 				} else {
 					logger.warn("Dropped possible data owing to lack of column headers: {}", dataStr);
 				}
 			}
 
 			DataHolder result = new DataHolder();
-			try {
-				convertToDatasets(result, datasetNames, columnData, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
-			} catch (Exception e) {
-				logger.warn(e.getMessage());
+			if (loadLazily) {
+				for (String n : datasetNames) {
+					result.addDataset(n, createLazyDataset(n, -1, new int[] {count}, new XasAsciiLoader(fileName)));
+				}
+			} else {
+				try {
+					convertToDatasets(result, datasetNames, columnData, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
+				} catch (Exception e) {
+					logger.warn(e.getMessage());
+				}
+			}
+			if (loadMetadata) {
+				createMetadata();
+				result.setMetadata(metadata);
 			}
 
 			return result;
@@ -136,10 +149,6 @@ public class XasAsciiLoader extends SRSLoader {
 		String key = dataStr.substring(0, colonLoc);
 		String value = dataStr.substring(colonLoc+1);
 		textMetadata.put(key.trim(), value.trim());
-	}
-
-	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
 	}
 
 	@Override

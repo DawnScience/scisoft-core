@@ -35,7 +35,7 @@ public class XMapLoaderTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
-		IDataHolder dh = LoaderFactory.getData( "testfiles/gda/analysis/io/XMapLoaderTest/module1binary_31.zip", null);
+		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/XMapLoaderTest/module1binary_31.zip", null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
  	}
 }

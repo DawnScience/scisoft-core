@@ -178,7 +178,7 @@ public class HDF5LoaderTest {
 	
 
 	private void testLoadingNames(boolean async) throws ScanFileHolderException {
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "/327.nxs";
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "327.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
 
@@ -265,7 +265,7 @@ public class HDF5LoaderTest {
 	@Test
 	public void testLoadingChunked() throws ScanFileHolderException {
 
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/sino.h5";
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "NexusUITest/sino.h5";
 		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Loader l = new HDF5Loader(n);
@@ -330,7 +330,7 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingChunkedSpeed() throws Exception {
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "/NexusUITest/3dDataChunked.nxs";
+		final String n = TestUtils.getGDALargeTestFilesLocation() + "NexusUITest/3dDataChunked.nxs";
 		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Loader.loadData(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },

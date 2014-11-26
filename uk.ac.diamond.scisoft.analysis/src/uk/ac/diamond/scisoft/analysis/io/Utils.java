@@ -205,12 +205,13 @@ public class Utils {
 	public static void readLeInt(InputStream is, IntegerDataset data, int start) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
-		final byte[] buf = new byte[start + 4 * size];
+		final byte[] buf = new byte[4 * size];
+		is.skip(start);
 		is.read(buf);
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
-		int pos = start;
+		int pos = 0;
 		for (int i = 0; i < size; i++) {
 			int value = leInt(buf[pos], buf[pos + 1], buf[pos + 2], buf[pos + 3]);
 			hash = (hash * 19 + value);
@@ -245,12 +246,13 @@ public class Utils {
 	public static void readBeInt(InputStream is, IntegerDataset data, int start) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
-		final byte[] buf = new byte[start + 4 * size];
+		final byte[] buf = new byte[4 * size];
+		is.skip(start);
 		is.read(buf);
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
-		int pos = start;
+		int pos = 0;
 		for (int i = 0; i < size; i++) {
 			int value = beInt(buf[pos], buf[pos + 1], buf[pos + 2], buf[pos + 3]);
 			hash = (hash * 19 + value);
@@ -286,12 +288,13 @@ public class Utils {
 	public static void readBeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
-		byte[] buf = new byte[(2 * size)+start];
+		byte[] buf = new byte[2 * size];
+		is.skip(start);
 		is.read(buf);
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
-		int pos = start; // Byte offset to start of data
+		int pos = 0; // Byte offset to start of data
 		if (signed) {
 			for (int i = 0; i < size; i++) {
 				int value = beIntSE(buf[pos], buf[pos+1]);
@@ -342,12 +345,13 @@ public class Utils {
 	public static void readLeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
-		byte[] buf = new byte[(2 * size)+start];
+		byte[] buf = new byte[2 * size];
+		is.skip(start);
 		is.read(buf);
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;
 		int hash = 0;
-		int pos = start; // Byte offset to start of data
+		int pos = 0; // Byte offset to start of data
 		if (signed) {
 			for (int i = 0; i < size; i++) {
 				int value = leIntSE(buf[pos], buf[pos + 1]);
@@ -396,12 +400,13 @@ public class Utils {
 	public static void readByte(InputStream is, ShortDataset data, int start) throws IOException {
 		final int size = data.getSize();
 		final short[] idata = data.getData();
-		byte[] buf = new byte[(size)+start];
+		byte[] buf = new byte[size];
+		is.skip(start);
 		is.read(buf);
 		short amax = Short.MIN_VALUE;
 		short amin = Short.MAX_VALUE;
 		int hash = 0;
-		int pos = start; // Byte offset to start of data
+		int pos = 0; // Byte offset to start of data
 		for (int i = 0; i < size; i++) {
 			short value = (short) (buf[pos] & 0xff);
 			hash = (hash * 19 + value);
@@ -437,13 +442,14 @@ public class Utils {
 	public static void readFloat(InputStream is, FloatDataset data, int start) throws IOException {
 		final int size = data.getSize();
 		final float[] fdata = data.getData();
-		byte[] buf = new byte[4*(size)+start];
+		byte[] buf = new byte[4*size];
+		is.skip(start);
 		is.read(buf);
 		byte [] bdata = new byte[4];
 		float fmax = Float.MIN_VALUE;
 		float fmin = Float.MAX_VALUE;
 		double hash = 0.0;
-		int pos = start; // Byte offset to start of data
+		int pos = 0; // Byte offset to start of data
 		float value;
 		for (int i = 0; i < size; i++) {
 			bdata[0] = buf[pos+3];

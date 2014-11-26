@@ -15,19 +15,18 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
-
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 /**
  * Loader to allow the XMap files to be loaded in
  */
 public class XMapLoader extends AbstractFileLoader {
-
-	String fileName = "";
 
 	public XMapLoader() {
 		
@@ -42,10 +41,10 @@ public class XMapLoader extends AbstractFileLoader {
 		fileName = InputFileName;
 	}
 
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+	@Override
+	protected void clearMetadata() {
 	}
+	
 	/**
 	 * Implemented method which actually loads in the data. Using the DXD-xMAP : Mapping buffer Specification
 	 * 
@@ -54,124 +53,110 @@ public class XMapLoader extends AbstractFileLoader {
 	 */
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {		
-		ZipFile zipFile;
+		ZipFile zipFile = null;
 		DataHolder ldh = new DataHolder();
-		Dataset[] data = new Dataset[4];
+		ILazyDataset[] data = new ILazyDataset[CHANNELS];
+		int[] size = new int[CHANNELS];
+		int[] count = new int[CHANNELS];
 
 		try {
 			zipFile = new ZipFile(fileName);
-		} catch (IOException e) {
-			throw new ScanFileHolderException("The zip file was not opened correctly", e);
-		}
+			for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 
-		for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
+				InputStream in;
 
-			InputStream in;
-
-			try {
-				in = zipFile.getInputStream((ZipEntry) e.nextElement());
-			} catch (IOException e1) {
-				throw new ScanFileHolderException("Zip entry not valid", e1);
-			}
-
-			// File file = new File(fileName);
-			// InputStream in;
-			// try {
-			// in = new FileInputStream(file);
-			// } catch (FileNotFoundException e) {
-			// e.printStackTrace();
-			// throw new ScanFileHolderException("");
-			// }
-
-			boolean finished = false;
-
-			BufferData bufferedData = new BufferData();
-			try {
-				bufferedData.read(in);
-			} catch (IOException e2) {
-				throw new ScanFileHolderException("The main Headder was not read correctly", e2);
-			}
-//			System.out.println(bufferedData);
-
-			while (!finished) {
-
-				if (bufferedData.mappingMode == 1) {
-
-					// i think there are a number of scans at this point
-					for (int i = 0; i < bufferedData.numberOfPixelsInBuffer; i++) {
-
-						// we are running in mapping mode and should therefore read in the data in this way
-						MappingMode1Data mappingMode1Data = new MappingMode1Data();
-						try {
-							mappingMode1Data.read(in);
-						} catch (IOException e2) {
-							throw new ScanFileHolderException("The zip file was not opend cortrectly", e2);
-						}
-//						System.out.println(mappingMode1Data);
-
-						if (mappingMode1Data.channel0Size > 0) {
-							ShortDataset temp = new ShortDataset(mappingMode1Data.channel0Spectrum, 1,
-									mappingMode1Data.channel0Size);
-							if (data[0] == null) {
-								// create the dataset
-								data[0] = temp;
-							} else {
-								data[0] = DatasetUtils.append(data[0], temp, 0);
-							}
-						}
-						if (mappingMode1Data.channel1Size > 0) {
-							ShortDataset temp = new ShortDataset(mappingMode1Data.channel1Spectrum, 1,
-									mappingMode1Data.channel1Size);
-							if (data[1] == null) {
-								// create the dataset
-								data[1] = temp;
-							} else {
-								data[1] = DatasetUtils.append(data[1], temp, 0);
-							}
-						}
-						if (mappingMode1Data.channel2Size > 0) {
-							ShortDataset temp = new ShortDataset(mappingMode1Data.channel2Spectrum, 1,
-									mappingMode1Data.channel2Size);
-							if (data[2] == null) {
-								// create the dataset
-								data[2] = temp;
-							} else {
-								data[2] = DatasetUtils.append(data[2], temp, 0);
-							}
-						}
-						if (mappingMode1Data.channel3Size > 0) {
-							ShortDataset temp = new ShortDataset(mappingMode1Data.channel3Spectrum, 1,
-									mappingMode1Data.channel3Size);
-							if (data[3] == null) {
-								// create the dataset
-								data[3] = temp;
-							} else {
-								data[3] = DatasetUtils.append(data[3], temp, 0);
-							}
-						}
-
-					}
+				try {
+					in = zipFile.getInputStream((ZipEntry) e.nextElement());
+				} catch (IOException e1) {
+					throw new ScanFileHolderException("Zip entry not valid", e1);
 				}
 
+				boolean finished = false;
+
+				BufferData bufferedData = new BufferData();
 				try {
 					bufferedData.read(in);
 				} catch (IOException e2) {
-					finished = true;
+					throw new ScanFileHolderException("The main header was not read correctly", e2);
 				}
-//				System.out.println(bufferedData);
 
+				while (!finished) {
+
+					if (bufferedData.mappingMode == 1) {
+
+						// i think there are a number of scans at this point
+						for (int i = 0; i < bufferedData.numberOfPixelsInBuffer; i++) {
+
+							// we are running in mapping mode and should therefore read in the data in this way
+							MappingMode1Data mappingMode1Data = new MappingMode1Data();
+							try {
+								mappingMode1Data.read(in, !loadLazily);
+							} catch (IOException e2) {
+								throw new ScanFileHolderException("The zip file was not opened correctly", e2);
+							}
+							// System.out.println(mappingMode1Data);
+
+							for (int c = 0; c < CHANNELS; c++) {
+								if (mappingMode1Data.channelSize[c] > 0) {
+									size[c] = mappingMode1Data.channelSize[c];
+									if (!loadLazily) {
+										ShortDataset temp = new ShortDataset(mappingMode1Data.channelSpectrum[c], 1,
+												mappingMode1Data.channelSize[c]);
+										if (data[c] == null) {
+											// create the dataset
+											data[c] = temp;
+										} else {
+											data[c] = DatasetUtils.append((IDataset) data[c], temp, 0);
+										}
+									}
+									count[c]++;
+								}
+							}
+						}
+					}
+
+					try {
+						bufferedData.read(in);
+					} catch (IOException e2) {
+						finished = true;
+					}
+//					System.out.println(bufferedData);
+
+				}
 			}
 
+			if (loadLazily) {
+				for (int c = 0; c < CHANNELS; c++) {
+					data[c] = createLazyDataset("Channel" + c, Dataset.INT16, new int[] { count[c], size[c] },
+							new XMapLoader(fileName));
+				}
+			}
+		} catch (Exception e) {
+			throw new ScanFileHolderException("The zip file was not opened correctly", e);
+		} finally {
+			try {
+				if (zipFile != null)
+					zipFile.close();
+			} catch (IOException e) {
+				throw new ScanFileHolderException("The zip file could not be closed correctly", e);
+			}
 		}
 
-		ldh.addDataset("Channel0", data[0]);
-		ldh.addDataset("Channel1", data[1]);
-		ldh.addDataset("Channel2", data[2]);
-		ldh.addDataset("Channel3", data[3]);
+		for (int c = 0; c < CHANNELS; c++) {
+			ldh.addDataset("Channel" + c, data[c]);
+		}
+		if (loadMetadata) {
+			metadata = new Metadata();
+			metadata.setFilePath(fileName);
+			for (int c = 0; c < CHANNELS; c++) {
+				metadata.addDataInfo("Channel" + c, data[c].getShape());
+			}
+		}
 
 		return ldh;
 	}
 
+	final static int CHANNELS = 4;
 	private class BufferData {
 		int tagWord0;
 		int tagWord1;
@@ -183,18 +168,9 @@ public class XMapLoader extends AbstractFileLoader {
 		int numberOfPixelsInBuffer;
 		int startingPixelNumber;
 		int moduleSerialNumber;
-		int detectorChannel0;
-		int detectorElementChannel0;
-		int detectorChannel1;
-		int detectorElementChannel1;
-		int detectorChannel2;
-		int detectorElementChannel2;
-		int detectorChannel3;
-		int detectorElementChannel3;
-		int channel0Size;
-		int channel1Size;
-		int channel2Size;
-		int channel3Size;
+		int[] detectorChannel = new int[CHANNELS];
+		int[] detectorElementChannel = new int[CHANNELS];
+		int[] channelSize = new int[CHANNELS];
 		int bufferErrors;
 
 		void read(InputStream in) throws IOException {
@@ -211,18 +187,13 @@ public class XMapLoader extends AbstractFileLoader {
 			numberOfPixelsInBuffer = buf.readShort();
 			startingPixelNumber = buf.readInt();
 			moduleSerialNumber = buf.readShort();
-			detectorChannel0 = buf.readShort();
-			detectorElementChannel0 = buf.readShort();
-			detectorChannel1 = buf.readShort();
-			detectorElementChannel1 = buf.readShort();
-			detectorChannel2 = buf.readShort();
-			detectorElementChannel2 = buf.readShort();
-			detectorChannel3 = buf.readShort();
-			detectorElementChannel3 = buf.readShort();
-			channel0Size = buf.readShort();
-			channel1Size = buf.readShort();
-			channel2Size = buf.readShort();
-			channel3Size = buf.readShort();
+			for (int c = 0; c < CHANNELS; c++) {
+				detectorChannel[c] = buf.readShort();
+				detectorElementChannel[c] = buf.readShort();
+			}
+			for (int c = 0; c < CHANNELS; c++) {
+				channelSize[c] = buf.readShort();
+			}
 			bufferErrors = buf.readShort();
 			buf.skipWords( 231);
 
@@ -244,18 +215,13 @@ public class XMapLoader extends AbstractFileLoader {
 			output += ("numberOfPixelsInBuffer " + numberOfPixelsInBuffer + "\n");
 			output += ("startingPixelNumber " + startingPixelNumber + "\n");
 			output += ("moduleSerialNumber " + moduleSerialNumber + "\n");
-			output += ("detectorChannel0 " + detectorChannel0 + "\n");
-			output += ("detectorElementChannel0 " + detectorElementChannel0 + "\n");
-			output += ("detectorChannel1 " + detectorChannel1 + "\n");
-			output += ("detectorElementChannel1 " + detectorElementChannel1 + "\n");
-			output += ("detectorChannel2 " + detectorChannel2 + "\n");
-			output += ("detectorElementChannel2 " + detectorElementChannel2 + "\n");
-			output += ("detectorChannel3 " + detectorChannel3 + "\n");
-			output += ("detectorElementChannel3 " + detectorElementChannel3 + "\n");
-			output += ("channel0Size " + channel0Size + "\n");
-			output += ("channel1Size " + channel1Size + "\n");
-			output += ("channel2Size " + channel2Size + "\n");
-			output += ("channel3Size " + channel3Size + "\n");
+			for (int c = 0; c < CHANNELS; c++) {
+				output += "detectorChannel " + c + ": " + detectorChannel[c] + "\n";
+				output += "detectorElementChannel " + c + ": " + detectorElementChannel[c] + "\n";
+			}
+			for (int c = 0; c < CHANNELS; c++) {
+				output += "Channel " + c + " Size = " + channelSize[c] + "\n";
+			}
 			output += ("bufferErrors " + bufferErrors + "\n");
 			return output;
 		}
@@ -268,7 +234,7 @@ public class XMapLoader extends AbstractFileLoader {
 		int triggers;
 		int outputEvents;
 
-		void read(ByteBuffer buf) {
+		void read(ByteBuffer buf) { // 16 bytes
 			realtime = buf.readFloat();
 			livetime = buf.readFloat();
 			triggers = buf.readInt();
@@ -296,18 +262,9 @@ public class XMapLoader extends AbstractFileLoader {
 		int mappingMode;
 		int pixelNumber;
 		int totalPixelBlockSize;
-		int channel0Size, k;
-		int channel1Size, l;
-		int channel2Size, m;
-		int channel3Size, n;
-		ChannelStatistics channel0Statistics;
-		ChannelStatistics channel1Statistics;
-		ChannelStatistics channel2Statistics;
-		ChannelStatistics channel3Statistics;
-		short[] channel0Spectrum;
-		short[] channel1Spectrum;
-		short[] channel2Spectrum;
-		short[] channel3Spectrum;
+		int[] channelSize = new int[CHANNELS];
+		ChannelStatistics[] channelStatistics = new ChannelStatistics[CHANNELS];
+		short[][] channelSpectrum = new short[CHANNELS][];
 
 		short[] readSpectrum(InputStream in, int sizeOfSpectrum) throws IOException {
 			short[] spectrum = new short[sizeOfSpectrum];
@@ -318,7 +275,7 @@ public class XMapLoader extends AbstractFileLoader {
 			return spectrum;
 		}
 
-		void read(InputStream in) throws IOException {
+		void read(InputStream in, boolean includeData) throws IOException {
 			
 			ByteBuffer buf = new ByteBuffer(256, in);
 			
@@ -328,29 +285,27 @@ public class XMapLoader extends AbstractFileLoader {
 			mappingMode = buf.readShort();
 			pixelNumber = buf.readInt();
 			totalPixelBlockSize = buf.readInt();
-			channel0Size = buf.readShort();
-			k = channel0Size;
-			channel1Size = buf.readShort();
-			l = channel1Size;
-			channel2Size = buf.readShort();
-			m = channel2Size;
-			channel3Size = buf.readShort();
-			n = channel3Size;
-			buf.skipWords(20);
-			channel0Statistics = new ChannelStatistics();
-			channel0Statistics.read(buf);
-			channel1Statistics = new ChannelStatistics();
-			channel1Statistics.read(buf);
-			channel2Statistics = new ChannelStatistics();
-			channel2Statistics.read(buf);
-			channel3Statistics = new ChannelStatistics();
-			channel3Statistics.read(buf);
-			buf.skipWords(192);
-			
-			channel0Spectrum = readSpectrum(in, k);
-			channel1Spectrum = readSpectrum(in, l);
-			channel2Spectrum = readSpectrum(in, m);
-			channel3Spectrum = readSpectrum(in, n);
+			for (int c = 0; c < CHANNELS; c++) {
+				channelSize[c] = buf.readShort();
+			}
+
+			if (includeData) {
+				buf.skipWords(20);
+	
+				for (int c = 0; c < CHANNELS; c++) {
+					channelStatistics[c] = new ChannelStatistics();
+					channelStatistics[c].read(buf);
+				}
+				buf.skipWords(192);
+				
+				for (int c = 0; c < CHANNELS; c++) {
+					channelSpectrum[c] = readSpectrum(in, channelSize[c]);
+				}
+			} else {
+				// 4x2 + 2x4 + 4x2 + 20x2 + 4x16 + 192x2 = 512 bytes already read in 
+				// (channel0Size + ...) x 2
+				in.skip((channelSize[0] + channelSize[1] + channelSize[2] + channelSize[3]) * 2);
+			}
 		}
 
 		/**
@@ -367,18 +322,12 @@ public class XMapLoader extends AbstractFileLoader {
 			output += "Mapping Mode = " + mappingMode + "\n";
 			output += "Pixel Number = " + pixelNumber + "\n";
 			output += "Total Pixel Block Size = " + totalPixelBlockSize + "\n";
-			output += "Channel 0 Size = " + channel0Size + "\n";
-			output += "Channel 1 Size = " + channel1Size + "\n";
-			output += "Channel 2 Size = " + channel2Size + "\n";
-			output += "Channel 3 Size = " + channel3Size + "\n";
-			output += "(k) = " + k + "\n";
-			output += "(l) = " + l + "\n";
-			output += "(m) = " + m + "\n";
-			output += "(n) = " + n + "\n";
-			output += "Channel 0 Statistics = " + channel0Statistics + "\n";
-			output += "Channel 1 Statistics = " + channel1Statistics + "\n";
-			output += "Channel 2 Statistics = " + channel2Statistics + "\n";
-			output += "Channel 3 Statistics = " + channel3Statistics + "\n";
+			for (int c = 0; c < CHANNELS; c++) {
+				output += "Channel " + c + " Size = " + channelSize[c] + "\n";
+			}
+			for (int c = 0; c < CHANNELS; c++) {
+				output += "Channel " + c + " Statistics = " + channelStatistics[c] + "\n";
+			}
 			return output;
 		}
 

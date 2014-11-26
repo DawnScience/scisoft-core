@@ -59,10 +59,10 @@ Some loaders are hard coded into LoaderFactory, this extension allows new ones t
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The loader to load data into Dawn. It is also suggested that your loader implement IDataSetLoader to work efficiently in the UI.
+                  The loader to load data into Dawn. It is also suggested that your loader implement IFileLoader to work efficiently in the UI.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader:org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.dawnsci.analysis.api.io.IFileLoader:org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader"/>
                </appinfo>
             </annotation>
          </attribute>

@@ -33,7 +33,7 @@ public class CBFLoaderThreadTest extends LoaderThreadTestBase {
 			".CBFLoaderThreadTest skipped, since currently failing on Windows");
 
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
 		TestFileFolder += "CBFLoaderTest/";

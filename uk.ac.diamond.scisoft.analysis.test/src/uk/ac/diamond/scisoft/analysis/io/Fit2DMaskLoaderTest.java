@@ -27,13 +27,12 @@ public class Fit2DMaskLoaderTest {
 	public static void setUpBeforeClass() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(Fit2DMaskLoaderTest.class.getCanonicalName());
 	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
-		
 	}
 	
 	@Test
 	public void testReadMask1()  throws Exception {
 		
-		final String path = testFileFolder+"/fit2d.msk";
+		final String path = testFileFolder+"fit2d.msk";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
 		
 		IDataset data = dataHolder.getDataset(0);
@@ -48,7 +47,7 @@ public class Fit2DMaskLoaderTest {
 	@Test
 	public void testReadMask2()  throws Exception {
 		
-		final String path = testFileFolder+"/fit2d2.msk";
+		final String path = testFileFolder+"fit2d2.msk";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
 		
 		IDataset data = dataHolder.getDataset(0);

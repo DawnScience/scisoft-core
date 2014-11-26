@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
@@ -23,7 +24,10 @@ import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
@@ -59,7 +63,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
  *
  */
 public class RawBinaryLoader extends AbstractFileLoader {
-	private String fileName;
+	private String dName;
+	private int[] shape;
+	private int dtype;
+	private int isize;
 	
 	public RawBinaryLoader() {
 		
@@ -71,9 +78,9 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	public RawBinaryLoader(String FileName) {
 		fileName = FileName;
 	}
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+
+	@Override
+	protected void clearMetadata() {
 	}
 
 	@Override
@@ -91,26 +98,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			MappedByteBuffer fBuffer = fc.map(MapMode.READ_ONLY, 0, fc.size());
 			fBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-			if (RawBinarySaver.getFormatTag() != fBuffer.getInt()) {
-				throw new ScanFileHolderException("File does not start with a Diamond format tag " + String.format("%x", fBuffer.getInt()));
-			}
-			int dtype = fBuffer.get();
-			int isize = fBuffer.get();
-			if (isize < 0) isize += 256;
-			int rank = fBuffer.get();
-			if (rank < 0) rank += 256;
-			int tSize = isize;
-			int[] shape = new int[rank];
-			for (int j = 0; j < rank; j++) {
-				shape[j] = fBuffer.getInt();
-				tSize *= shape[j];
-			}
-			int nlen = fBuffer.getShort();
-			if (nlen < 0)
-				nlen += 65536;
-			byte[] name = new byte[nlen];
-			if (nlen > 0)
-				fBuffer.get(name);
+			readHeader(fBuffer);
+
 			while (fBuffer.position() % 4 != 0) // move past any padding
 				fBuffer.get();
 
@@ -137,17 +126,24 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				}
 			}
 
-			Dataset data = loadRawDataset(fBuffer, dtype, isize, tSize, shape);
-			fc.close();
-
-			if (nlen > 0) {
-				String dName = new String(name, "UTF-8");
-				data.setName(dName);
-			    output.addDataset(dName, data);
+			ILazyDataset data;
+			if (loadLazily) {
+				data = createLazyDataset(dName, dtype, shape, new RawBinaryLoader(fileName));
 			} else {
-			    output.addDataset("RAW file", data);				
+				int tSize = isize;
+				for (int j = 0; j < shape.length; j++) {
+					tSize *= shape[j];
+				}
+
+				data = loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+				data.setName(dName);
 			}
-		    data.setDirty();
+			fc.close();
+			output.addDataset(dName, data);
+			if (loadMetadata) {
+				metadata = createMetadata();
+				output.setMetadata(metadata);
+			}
 		} catch (Exception ex) {
 			if (ex instanceof ScanFileHolderException)
 				throw (ScanFileHolderException) ex;
@@ -161,6 +157,69 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				}
 		}
 		return output;
+	}
+
+	void readHeader(ByteBuffer fBuffer) throws ScanFileHolderException, UnsupportedEncodingException {
+		if (RawBinarySaver.getFormatTag() != fBuffer.getInt()) {
+			throw new ScanFileHolderException("File does not start with a Diamond format tag " + String.format("%x", fBuffer.getInt()));
+		}
+		dtype = fBuffer.get();
+		isize = fBuffer.get();
+		if (isize < 0) isize += 256;
+		int rank = fBuffer.get();
+		if (rank < 0) rank += 256;
+		shape = new int[rank];
+		for (int j = 0; j < rank; j++) {
+			shape[j] = fBuffer.getInt();
+		}
+		int nlen = fBuffer.getShort();
+		if (nlen < 0)
+			nlen += 65536;
+		byte[] name = new byte[nlen];
+		if (nlen > 0)
+			fBuffer.get(name);
+
+		if (nlen > 0) {
+			dName = new String(name, "UTF-8");
+		} else {
+		    dName = "RAW file";			
+		}
+	}
+
+	@Override
+	public void loadMetadata(IMonitor mon) throws Exception {
+		File f = null;
+		FileInputStream fi = null;
+		try {
+
+			f = new File(fileName);
+			fi = new FileInputStream(f);
+			FileChannel fc = fi.getChannel();
+
+			MappedByteBuffer fBuffer = fc.map(MapMode.READ_ONLY, 0, fc.size());
+			fBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+			readHeader(fBuffer);
+			metadata = createMetadata();
+		} catch (Exception ex) {
+			if (ex instanceof ScanFileHolderException)
+				throw (ScanFileHolderException) ex;
+			throw new ScanFileHolderException("There was a problem reading the Raw file", ex);			
+		} finally {
+			if (fi != null)
+				try {
+					fi.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+	}
+
+	private Metadata createMetadata() {
+		Metadata md = new Metadata();
+		md.setFilePath(fileName);
+		md.addDataInfo(dName, shape);
+		return md;
 	}
 
 	/**

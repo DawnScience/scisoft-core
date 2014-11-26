@@ -26,15 +26,10 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
@@ -48,9 +43,9 @@ import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 /**
  * This class loads a TIFF image file
  */
-public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
+public class TIFFImageLoader extends JavaImageLoader {
 
-	protected Map<String, Serializable> metadata = null;
+	protected Map<String, Serializable> metadataMap = null;
 	private boolean loadData = true;
 	private int height = -1;
 	private int width = -1;
@@ -138,57 +133,59 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 		if (n == 0) {
 			return;
 		}
-		if (loadMetadata && metadata == null)
-			metadata = createMetadata(reader.getImageMetadata(0));
+		if (loadMetadata && metadataMap == null)
+			metadataMap = createMetadataMap(reader.getImageMetadata(0));
 
 		if (!loadData)
 			return;
 
+		boolean allSame = true;
 		if (height < 0 || width < 0) {
 			height = reader.getHeight(0); // this can throw NPE when using 12-bit reader
 			width = reader.getWidth(0);
 			for (int i = 1; i < n; i++) {
-				if (height != reader.getHeight(i)) {
-					throw new ScanFileHolderException("Height of image in stack does not match first");
-				}
-				if (width != reader.getWidth(i)) {
-					throw new ScanFileHolderException("Width of image in stack does not match first");
+				if (height != reader.getHeight(i) || width != reader.getWidth(i)) {
+					allSame = false;
+					break;
 				}
 			}
 		}
 
 		final ImageTypeSpecifier its = reader.getRawImageType(0); // this raises an exception for 12-bit images when using standard reader
-		for (int i = 1; i < n; i++) {
-			if (!its.equals(reader.getRawImageType(i))) {
-				throw new ScanFileHolderException("Type of image in stack does not match first");
+		if (allSame) {
+			for (int i = 1; i < n; i++) {
+				if (!its.equals(reader.getRawImageType(i))) {
+					throw new ScanFileHolderException("Type of image in stack does not match first");
+				}
 			}
 		}
-		if (loadMetadata) {
-			output.setMetadata(getMetadata());
+		int dtype = AWTImageUtils.getDTypeFromImage(its.getSampleModel(), keepBitWidth)[0];
+		if (n == 1) {
+			ILazyDataset image;
+			if (loadLazily) {
+				image = createLazyDataset(dtype, height, width);
+			} else {
+				image = createDataset(reader.read(0));
+			}
+			image.setMetadata(metadata);
+			output.addDataset(DEF_IMAGE_NAME, image);
+		} else if (allSame) {
+			ILazyDataset ld = createLazyDataset(dtype, n, height, width);
+			ld.setMetadata(metadata);
+			output.addDataset(STACK_NAME, ld);
+		} else {
+			createLazyDatasets(output, reader);
 		}
 
-		if (n == 1) {
-			Dataset image = createDataset(reader.read(0));
-			image.setMetadata(getMetadata());
-			output.addDataset(DEF_IMAGE_NAME, image);
-		} else {
-			int dtype = createDataset(its.createBufferedImage(1, 1)).getDtype();
-			ILazyDataset ld = createLazyDataset(dtype, height, width, n);
-			ld.setMetadata(getMetadata());
-			output.addDataset(STACK_NAME, ld);
+		if (loadMetadata) {
+			createMetadata(output, reader);
+			metadata.setMetadata(metadataMap);
+			output.setMetadata(metadata);
 		}
 	}
 
-	private ILazyDataset createLazyDataset(final int dtype, final int width, final int height, final int depth) {
-		final int[] trueShape = new int[] {depth, height, width};
-
-		ILazyLoader l = new ILazyLoader() {
-			
-			@Override
-			public boolean isFileReadable() {
-				return new File(fileName).canRead();
-			}
-			
+	private ILazyDataset createLazyDataset(final int dtype, final int... trueShape) {
+		LazyLoaderStub l = new LazyLoaderStub() {
 			@Override
 			public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
 				final int rank = shape.length;
@@ -251,7 +248,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 
 		};
 
-		return new LazyDataset(STACK_NAME, dtype, 1, trueShape.clone(), l);
+		return createLazyDataset(STACK_NAME, dtype, trueShape.clone(), l);
 	}
 
 	private static Dataset loadData(IMonitor mon, String filename, boolean asGrey, boolean keepBitWidth,
@@ -264,10 +261,15 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 			// test to see if the filename passed will load
 			iis = new FileImageInputStream(new File(filename));
 
-			int[] imageStart = new int[] {start[1], start[2]};
-			int[] imageStop  = new int[] {start[1] + count[1] * step[1], start[2] + count[2] * step[2]};
-			int[] imageStep  = new int[] {step[1], step[2]};
-			int[] dataStart = new int[d.getRank()];
+			int rank = start.length;
+			boolean is2D = rank == 2;
+			int num = is2D ? 0 : start[0];
+			int off = is2D ? 0 : rank - 2;
+
+			int[] imageStart = new int[] {start[off], start[off + 1]};
+			int[] imageStop  = new int[] {start[off] + count[off] * step[off], start[off + 1] + count[off + 1] * step[off + 1]};
+			int[] imageStep  = new int[] {step[off], step[off + 1]};
+			int[] dataStart = new int[rank];
 			int[] dataStop  = count.clone();
 
 			try {
@@ -279,12 +281,11 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
 			}
-			int num = start[0];
 			do {
 				Dataset image = readImage(filename, reader, asGrey, keepBitWidth, num);
 				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
-				if (mon != null) {
-					mon.worked(1);
+				if (monitorIncrement(mon) || is2D) {
+					break;
 				}
 				num += step[0];
 				dataStart[0]++;
@@ -333,7 +334,7 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	 * @return metadata map
 	 */
 	@SuppressWarnings("unused")
-	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
+	protected Map<String, Serializable> createMetadataMap(IIOMetadata imageMetadata) throws ScanFileHolderException {
 		try {
 			Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
 			TIFFDirectory tiffDir;
@@ -355,25 +356,8 @@ public class TIFFImageLoader extends JavaImageLoader implements IMetaLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		loadData = false;
-		loadFile();
-		loadData = true;
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return getMetaData(null);
-	}
-
-	public IMetadata getMetaData(Dataset data) {
-		if (metadata == null) {
-			if (data!=null) return data.getMetadata(); // Might be null or might be set in AWTImageUtils.
-			return null;
-		}
-
-		Metadata md = new Metadata(metadata);
-		md.setFilePath(fileName);
-		return md;
+	protected void clearMetadata() {
+		super.clearMetadata();
+		metadataMap.clear();
 	}
 }

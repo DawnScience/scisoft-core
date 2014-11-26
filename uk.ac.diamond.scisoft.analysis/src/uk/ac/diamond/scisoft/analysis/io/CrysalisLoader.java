@@ -21,13 +21,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Basic class that loads in data from the Oxford Instruments Ruby detector
  */
-public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IMetaLoader {
+public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 
 	/**
 	 * Setup the logging facilities
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(CrysalisLoader.class);
 
-	private String fileName = "";
     private Map<String, String> textMetadata;
     
 	public CrysalisLoader() {
@@ -55,9 +54,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 		textMetadata = new HashMap<String, String>(3);
 		setFile(FileName);
 	}
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
 		textMetadata.clear();
 	}
 
@@ -70,70 +70,125 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 
-		IntegerDataset data = null;
+		ILazyDataset data = null;
+		BufferedReader br = null;
 		File f = null;
 		FileInputStream fi = null;
 		// Try to load the file
 		try {
 
 			f = new File(fileName);
-			fi = new FileInputStream(f);
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			char[] headChunk = new char[255];
-			br.read(headChunk,0,255);
-			String testStr = new String(headChunk);
-			if (testStr.contains("OD"))
-			{
-				br.close();
-				fi.close();
-				fi = new FileInputStream(f);
-				br = new BufferedReader(new FileReader(f));
-				
-				String[] lines = new String[5];
-				for (int i = 0; i < lines.length; i++) {
-					lines[i] = br.readLine();
-				}
-				if (!lines[1].contains("COMPRESSION= NO")) {
-					throw new IllegalArgumentException("File is compressed  - " + fileName);
-				}
-				Pattern p = Pattern.compile("NX= *(\\d+).*");
-				Matcher m = p.matcher(lines[2]);
-				if (!m.matches()) {
-					throw new IllegalArgumentException("NX not found  - " + fileName);
-				}
-				int nx = Integer.valueOf(m.group(1));
-				textMetadata.put("nx", ""+nx);
-				
-				p = Pattern.compile(".*NY= *(\\d+).*");
-				m = p.matcher(lines[2]);
-				if (!m.matches()) {
-					throw new IllegalArgumentException("NY not found  - " + fileName);
-				}
-				int ny = Integer.valueOf(m.group(1));
-				textMetadata.put("ny", ""+ny);
-
-				p = Pattern.compile("NHEADER= *(\\d+).*");
-				m = p.matcher(lines[3]);
-				if (!m.matches()) {
-					throw new IllegalArgumentException("NHEADER not found  - " + fileName);
-				}
-				int nheader = Integer.valueOf(m.group(1));
-				textMetadata.put("nheader", ""+nheader);
-
-				char[] cbuf = new char[nheader];
-				for (int i = 0; i < cbuf.length; i++) {
-					fi.read();
-				}
-
-				int height = nx; // read NX value from header
-				int width = ny; // read NY value from header
-
-				data = new IntegerDataset(height, width);
-				Utils.readLeInt(fi, data, 0);
-				data.setName(DEF_IMAGE_NAME);
-			} else {
+			br = new BufferedReader(new FileReader(f));
+			br.mark(8192);
+			char[] magic = new char[8];
+			br.read(magic);
+			if (!new String(magic).startsWith("OD")) {
 				throw new ScanFileHolderException("Not a valid Crysalis file");
 			}
+			br.reset();
+			String[] lines = new String[5];
+			for (int i = 0; i < lines.length; i++) {
+				lines[i] = br.readLine();
+			}
+
+			if (!lines[1].contains("COMPRESSION= NO")) {
+				throw new IllegalArgumentException("File is compressed  - " + fileName);
+			}
+			Pattern p = Pattern.compile("NX= *(\\d+).*");
+			Matcher m = p.matcher(lines[2]);
+			if (!m.matches()) {
+				throw new IllegalArgumentException("NX not found  - " + fileName);
+			}
+			int nx = Integer.valueOf(m.group(1));
+			textMetadata.put("nx", "" + nx);
+
+			p = Pattern.compile(".*NY= *(\\d+).*");
+			m = p.matcher(lines[2]);
+			if (!m.matches()) {
+				throw new IllegalArgumentException("NY not found  - " + fileName);
+			}
+			int ny = Integer.valueOf(m.group(1));
+			textMetadata.put("ny", "" + ny);
+
+			p = Pattern.compile("NHEADER= *(\\d+).*");
+			m = p.matcher(lines[3]);
+			if (!m.matches()) {
+				throw new IllegalArgumentException("NHEADER not found  - " + fileName);
+			}
+			final int nheader = Integer.valueOf(m.group(1));
+			textMetadata.put("nheader", "" + nheader);
+
+			fi = new FileInputStream(f);
+			fi.skip(nheader);
+
+			int[] shape = new int[] { nx, ny };
+
+			if (loadLazily) {
+				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
+					@Override
+					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+							throws Exception {
+						Dataset data = loadDataset(fileName, nheader, shape);
+						return data.getSliceView(start, stop, step);
+					}
+				});
+			} else {
+				data = new IntegerDataset(shape);
+				Utils.readLeInt(fi, (IntegerDataset) data, 0);
+			}
+			data.setName(DEF_IMAGE_NAME);
+
+			if (loadMetadata)
+				createMetadata(data);
+		} catch (Exception e) {
+			logger.error("File failed to load {} with error: {}" , fileName, e);
+			throw new ScanFileHolderException("File failed to load " + fileName, e);
+		} finally {
+			if (fi != null) {
+				try {
+					fi.close();
+				} catch (IOException ex) {
+					// do nothing
+				}
+				fi = null;
+			}
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException ex) {
+					// do nothing
+				}
+				br = null;
+			}
+		}
+
+		// create the holder and then put to the output.
+		DataHolder output = new DataHolder();
+
+		output.addDataset(DEF_IMAGE_NAME, data);
+		if (loadMetadata) {
+			data.setMetadata(metadata);
+			output.setMetadata(metadata);
+		}
+
+		return output;
+
+	}
+
+	private static Dataset loadDataset(String fileName, int header, int[] shape) throws ScanFileHolderException {
+		Dataset data = null;
+		FileInputStream fi = null;
+		// Try to load the file
+		try {
+
+			fi = new FileInputStream(new File(fileName));
+
+			fi.skip(header);
+
+			data = new IntegerDataset(shape);
+			Utils.readLeInt(fi, (IntegerDataset) data, 0);
+			data.setName(DEF_IMAGE_NAME);
+
 		} catch (Exception e) {
 			logger.error("File failed to load {} with error: {}" , fileName, e);
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -147,18 +202,13 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 				fi = null;
 			}
 		}
+		return data;
+	}
 
-		// create the holder and then put to the output.
-		DataHolder output = new DataHolder();
-
-		output.addDataset("Ruby_Image", data);
-		if (loadMetadata) {
-			data.setMetadata(getMetadata());
-			output.setMetadata(data.getMetadata());
-		}
-
-		return output;
-
+	private void createMetadata(ILazyDataset data) {
+		metadata = new Metadata(textMetadata);
+		metadata.addDataInfo(DEF_IMAGE_NAME, data.getShape());
+		metadata.setFilePath(fileName);
 	}
 
 	/**
@@ -200,21 +250,5 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver, IM
 				fo = null;
 			}
 		}
-	}
-	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
-		IDataHolder dh = loadFile(mon);
-		// Reads data anyway - TODO fix to have read header one day.
-		dh.clear();
-	}
-	
-	@Override
-	public IMetadata getMetadata() {
-		Metadata md = new Metadata(textMetadata);
-		int width = Integer.parseInt(textMetadata.get("nx"));
-		int height = Integer.parseInt(textMetadata.get("ny"));
-		md.addDataInfo("Crysalis Img", height, width);
-		md.setFilePath(fileName);
-		return md;
 	}
 }

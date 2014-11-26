@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
+import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -26,9 +27,14 @@ public class PilatusEdfLoaderTest {
 	
 	static String testScratchDirectoryName = null;
 	final static String testFileFolder = "testfiles/gda/analysis/io/EdfLoaderTest/";
+	static String TestFileFolder;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		if (TestFileFolder == null) {
+			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
+		}
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
 
 	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
@@ -37,8 +43,8 @@ public class PilatusEdfLoaderTest {
 	
 	@Test
 	public void testUnsignedShortFiles()  throws Exception {
-		testShortFile(System.getProperty("GDALargeTestFilesLocation")+"/EDFLoaderTest/billeA_4201_EF_XRD_5000.edf");
-		testShortFile(System.getProperty("GDALargeTestFilesLocation")+"/EDFLoaderTest/billeA_4201_EF_XRD_5873.edf");
+		testShortFile(TestFileFolder + "/EDFLoaderTest/billeA_4201_EF_XRD_5000.edf");
+		testShortFile(TestFileFolder + "/EDFLoaderTest/billeA_4201_EF_XRD_5873.edf");
 	}
 	
 	private void testShortFile(final String filePath) throws Exception {

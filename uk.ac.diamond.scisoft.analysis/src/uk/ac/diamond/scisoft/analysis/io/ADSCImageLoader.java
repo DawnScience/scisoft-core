@@ -21,11 +21,11 @@ import java.util.Vector;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -38,13 +38,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Class to load ADSC images
  */
-public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
+public class ADSCImageLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(ADSCImageLoader.class);
 
-	private String fileName = "";
-
-	private HashMap<String, String>      metadata    = new HashMap<String, String>();
-//	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
+	private HashMap<String, String>      metadataMap    = new HashMap<String, String>();
 	private Vector<String> extraHeaders;
 	DetectorProperties detectorProperties;
 	DiffractionCrystalEnvironment diffractionCrystalEnvironment;
@@ -52,7 +49,6 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
 
-	private DiffractionMetadata diffMetadata;
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -90,14 +86,13 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		setFile(FileName);
 		this.keepBitWidth = keepBitWidth;
 	}
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
-		// New file, new meta data 
-		metadata.clear();
-//		GDAMetadata.clear();
-	}
 
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		metadataMap.clear();
+	}
+	
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 
@@ -126,50 +121,22 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		try {
 			int height = getInteger("SIZE1");
 			int width = getInteger("SIZE2");
-			int pointer = getInteger("HEADER_BYTES");
-
-			raf.seek(pointer);
+			final int pointer = getInteger("HEADER_BYTES");
 
 			int[] shape = { height, width };
-			AbstractDataset data;
-
-			// read in all the data at once for speed.
-
-			byte[] read = new byte[(height * width) * 2];
-			raf.read(read);
-
-			// and put it into the dataset
-			data = new IntegerDataset(shape);
-			int[] databuf = ((IntegerDataset) data).getData();
-			int amax = Integer.MIN_VALUE;
-			int amin = Integer.MAX_VALUE;
-			int hash = 0;
-			for (int i = 0, j = 0; i < databuf.length; i++, j += 2) {
-				int value = Utils.leInt(read[j], read[j + 1]);
-				hash = (hash * 19 + value);
-				databuf[i] = value;
-				if (value > amax) {
-					amax = value;
-				}
-				if (value < amin) {
-					amin = value;
-				}
+			ILazyDataset data;
+			if (loadLazily) {
+				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
+					@Override
+					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+						Dataset tmp = loadDataset(fileName, shape, pointer, keepBitWidth);
+						return tmp == null ? null : tmp.getSliceView(start, stop, step);
+					}
+				});
+			} else {
+				raf.seek(pointer);
+				data = createDataset(raf, shape, keepBitWidth);
 			}
-
-			if (keepBitWidth||amax < (1 << 15)) {
-					data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
-			}
-
-			hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
-			int rank = shape.length;
-			for (int i = 0; i < rank; i++) {
-				hash = hash*17 + shape[i];
-			}
-			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-			data.setStoredValue(AbstractDataset.STORE_HASH, hash);
-
-			data.setName(DEF_IMAGE_NAME);
 			output.addDataset("ADSC Image", data);
 			if (loadMetadata) {
 				data.setMetadata(getMetadata());
@@ -186,6 +153,71 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 
 		return output;
+	}
+
+	private static Dataset loadDataset(String fileName, int[] shape, int pointer, boolean keepBitWidth) throws ScanFileHolderException {
+		RandomAccessFile raf = null;
+		try {
+
+			raf = new RandomAccessFile(fileName, "r");
+			raf.seek(pointer);
+
+			Dataset data = createDataset(raf, shape, keepBitWidth);
+			return data;
+		} catch (FileNotFoundException fnf) {
+			throw new ScanFileHolderException("File not found", fnf);
+		} catch (Exception e) {
+			try {
+				if (raf != null)
+					raf.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			throw new ScanFileHolderException("There was a problem loading or reading metadata", e);
+		}
+	}
+
+	private static Dataset createDataset(RandomAccessFile raf, int[] shape, boolean keepBitWidth) throws IOException {
+		AbstractDataset data;
+
+		// read in all the data at once for speed.
+
+		byte[] read = new byte[shape[0] * shape[1] * 2];
+		raf.read(read);
+
+		// and put it into the dataset
+		data = new IntegerDataset(shape);
+		int[] databuf = ((IntegerDataset) data).getData();
+		int amax = Integer.MIN_VALUE;
+		int amin = Integer.MAX_VALUE;
+		int hash = 0;
+		for (int i = 0, j = 0; i < databuf.length; i++, j += 2) {
+			int value = Utils.leInt(read[j], read[j + 1]);
+			hash = (hash * 19 + value);
+			databuf[i] = value;
+			if (value > amax) {
+				amax = value;
+			}
+			if (value < amin) {
+				amin = value;
+			}
+		}
+
+		if (keepBitWidth||amax < (1 << 15)) {
+				data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
+		}
+
+		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		int rank = shape.length;
+		for (int i = 0; i < rank; i++) {
+			hash = hash*17 + shape[i];
+		}
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+
+		data.setName(DEF_IMAGE_NAME);
+		return data;
 	}
 
 	/**
@@ -218,7 +250,7 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 					return;
 				} else if (line.contains("=")) {
 					String[] keyvalue = line.split("=");
-					metadata.put(keyvalue[0], keyvalue[1].substring(0, keyvalue[1].length() - 1));
+					metadataMap.put(keyvalue[0], keyvalue[1].substring(0, keyvalue[1].length() - 1));
 				} else {
 					extraHeaders.add(line);
 				}
@@ -279,12 +311,13 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 		diffractionCrystalEnvironment = new DiffractionCrystalEnvironment(getDouble("WAVELENGTH"),
 				getDouble("OSC_START"), getDouble("OSC_RANGE"), getDouble("TIME"));
 
-		diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+		DiffractionMetadata diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+		metadata = diffMetadata;
 		diffMetadata.addDataInfo("ADSC Image", getInteger("SIZE1"), getInteger("SIZE2"));
-		diffMetadata.setMetadata(metadata);
+		diffMetadata.setMetadata(metadataMap);
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		try {
-			Date date = sdf.parse(metadata.get("DATE"));
+			Date date = sdf.parse(metadataMap.get("DATE"));
 			diffMetadata.setCreationDate(date);
 		} catch (ParseException e) {
 			throw new ScanFileHolderException("Could not parse the date from the header", e);
@@ -308,31 +341,9 @@ public class ADSCImageLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private String getMetadataValue(String key) throws ScanFileHolderException {
-		String v = metadata.get(key);
+		String v = metadataMap.get(key);
 		if (v == null)
 			throw new ScanFileHolderException("The keyword " + key + " was not found in the ADSC Header");
 		return v;
-	}
-
-	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		// opens the file and reads the header information
-		RandomAccessFile raf = null;
-		try {
-
-			raf = new RandomAccessFile(fileName, "r");
-			processingMetadata(raf);
-			
-		} catch (FileNotFoundException fnf) {
-			throw new ScanFileHolderException("File not found", fnf);
-		} finally{
-			if (raf != null)
-			raf.close();
-		}
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return diffMetadata;
 	}
 }

@@ -26,10 +26,10 @@ public class PilatusTiffLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		testfile1 = TestFileFolder + "/PilatusTiffLoaderTest/p678450.tif"; // 100k
+		testfile1 = TestFileFolder + "PilatusTiffLoaderTest/p678450.tif"; // 100k
 	}
 
 	/**
@@ -41,6 +41,5 @@ public class PilatusTiffLoaderTest {
 	public void testLoadFile() throws ScanFileHolderException {
 		new PilatusTiffLoader(testfile1).loadFile();
 	}
-
 }
 

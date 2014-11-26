@@ -28,10 +28,10 @@ public class CBFLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "/CBFLoaderTest/";
+		TestFileFolder += "CBFLoaderTest/";
 		testpath = TestFileFolder;
 		if (testpath.matches("^/[a-zA-Z]:.*")) // Windows path
 			testpath = testpath.substring(1); // strip leading slash

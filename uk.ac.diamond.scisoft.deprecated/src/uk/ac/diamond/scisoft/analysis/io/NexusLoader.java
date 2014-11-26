@@ -36,7 +36,6 @@ import java.util.Vector;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -52,7 +51,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 /**
  *
  */
-public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
+public class NexusLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(NexusLoader.class);
 
 	private String filename;
@@ -90,9 +89,10 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	public NexusLoader(String filename) {
 		setFile(filename);
 	}
-	
-	public void setFile(final String fileName) {
-		this.filename = fileName;
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
 		this.nexusDataSelectionFilename = "";
 		this.nexusMetaDataSelectionFilename = "";
 		this.dataSelectionTree=null;
@@ -396,13 +396,11 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	private List<String>         allDataSetNames;
-	private Map<String, Integer> allDataSetSizes;
 	private Map<String, int[]>   allDataSetRanks;
 	
 	@Override
 	public void loadMetadata(final IMonitor mon) throws Exception {
 		allDataSetNames = getDatasetNames(this.filename, mon);
-		allDataSetSizes = getDataSizes(filename, allDataSetNames, mon);
 		allDataSetRanks = getDataShapes(filename, allDataSetNames, mon);
 	}
 	
@@ -415,20 +413,20 @@ public class NexusLoader extends AbstractFileLoader implements IMetaLoader {
 		return md;
 	}
 
-	private Map<String, Integer> getDataSizes(String path, List<String> sets, IMonitor mon) {
-		
-		try {
-			Map< String, INexusTree> trees = getDatasetNexusTrees(path, sets, false, mon);
-			final Map<String,Integer> ret = new HashMap<String, Integer>(sets.size());
-			for (Entry<String, INexusTree> tree : trees.entrySet()) {
-				ret.put(tree.getKey(), NexusExtractor.calcTotalLength(tree.getValue().getData().dimensions));
-			}
-			return ret;
-		} catch (Exception ne) {
-			logger.error("Cannot get data sizes for "+path, ne);
-		}
-		return null;
-	}
+//	private Map<String, Integer> getDataSizes(String path, List<String> sets, IMonitor mon) {
+//		
+//		try {
+//			Map< String, INexusTree> trees = getDatasetNexusTrees(path, sets, false, mon);
+//			final Map<String,Integer> ret = new HashMap<String, Integer>(sets.size());
+//			for (Entry<String, INexusTree> tree : trees.entrySet()) {
+//				ret.put(tree.getKey(), NexusExtractor.calcTotalLength(tree.getValue().getData().dimensions));
+//			}
+//			return ret;
+//		} catch (Exception ne) {
+//			logger.error("Cannot get data sizes for "+path, ne);
+//		}
+//		return null;
+//	}
 	private Map<String, int[]> getDataShapes(String path, List<String> sets, IMonitor mon) {
 		
 		try {

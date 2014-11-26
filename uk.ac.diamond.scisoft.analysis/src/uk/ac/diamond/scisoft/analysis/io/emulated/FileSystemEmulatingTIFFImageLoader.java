@@ -68,8 +68,9 @@ public class FileSystemEmulatingTIFFImageLoader implements IFileLoader {
 
 	@Override
 	public void setLoadMetadata(boolean willLoadMetadata) {
-		// TODO Auto-generated method stub
-		
 	}
 
+	@Override
+	public void setLoadAllLazily(boolean willLoadLazily) {
+	}
 }

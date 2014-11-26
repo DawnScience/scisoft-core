@@ -16,8 +16,6 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-
 /**
  * An implementation of {@link IFileLoader} that wraps a 'real' loader to emulate the latency of file availability and load time. 
  */
@@ -91,7 +89,9 @@ public class FileSystemEmulatingFileLoader implements IFileLoader {
 
 	@Override
 	public void setLoadMetadata(boolean willLoadMetadata) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public void setLoadAllLazily(boolean willLoadLazily) {
 	}
 }

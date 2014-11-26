@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
 /**
@@ -26,13 +28,15 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
  */
 public class RawTextLoader extends AbstractFileLoader {
 
-	private String fileName = "";
-
 	/**
 	 * @param filename
 	 */
 	public RawTextLoader(String filename) {
 		fileName = filename;
+	}
+
+	@Override
+	protected void clearMetadata() {
 	}
 
 	private static final Pattern SPLIT_REGEX = Pattern.compile("\\s+");
@@ -57,21 +61,43 @@ public class RawTextLoader extends AbstractFileLoader {
 			}
 
 			String[] values = SPLIT_REGEX.split(l.trim());
-			List<Object[]> rows = new ArrayList<Object[]>();
-			rows.add(parseRow(values));
+			int[] shape = new int[] {0, values.length};
+			ILazyDataset data;
+			if (loadLazily) {
+				int rows = 1;
 
-			l = br.readLine();
-			while (l != null) {
-				if (l.length() != 0) {
-					rows.add(parseRow(SPLIT_REGEX.split(l.trim())));
-				}
 				l = br.readLine();
-			}
+				while (l != null) {
+					if (l.length() != 0) {
+						rows++;
+					}
+					l = br.readLine();
+				}
+				shape[0] = rows;
+				data = createLazyDataset(DEF_IMAGE_NAME, -1, AbstractDataset.squeezeShape(shape, false),
+						new RawTextLoader(fileName));
+			} else {
+				List<Object[]> rows = new ArrayList<Object[]>();
+				rows.add(parseRow(values));
 
-			final Dataset ds = DatasetFactory.createFromObject(rows);
-			ds.squeeze(); // convert Nx1 to 1D dataset
+				l = br.readLine();
+				while (l != null) {
+					if (l.length() != 0) {
+						rows.add(parseRow(SPLIT_REGEX.split(l.trim())));
+					}
+					l = br.readLine();
+				}
+				data = DatasetFactory.createFromObject(rows);
+				data.squeeze(); // convert Nx1 to 1D dataset
+				shape = data.getShape();
+			}
+			if (loadMetadata) {
+				metadata = new Metadata();
+				metadata.setFilePath(fileName);
+				metadata.addDataInfo(DEF_IMAGE_NAME, shape);
+			}
 			DataHolder dh = new DataHolder();
-			dh.addDataset(DEF_IMAGE_NAME, ds);
+			dh.addDataset(DEF_IMAGE_NAME, data);
 			return dh;
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("Cannot load file", fnf);

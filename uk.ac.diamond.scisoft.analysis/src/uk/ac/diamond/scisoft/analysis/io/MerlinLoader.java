@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -23,7 +24,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
 public class MerlinLoader extends AbstractFileLoader {
 
-	private String fileName;
 	private static final String DATA_NAME = "MerlinData";
 	private static final String U16 = "U16";
 //	private static final String U32 = "U32";
@@ -32,7 +32,10 @@ public class MerlinLoader extends AbstractFileLoader {
 		this.fileName = fileName;
 	}
 	
-	
+	@Override
+	protected void clearMetadata() {
+	}
+
 	private class MetaListHolder {
 		
 		private ArrayList<Object> dataList = new ArrayList<Object>();
@@ -66,7 +69,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		ArrayList<Dataset> dataList = new ArrayList<Dataset>();
 		
 		ArrayList<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
-		
+		final int x, y;
 		try {
 			
 			
@@ -86,10 +89,10 @@ public class MerlinLoader extends AbstractFileLoader {
 				throw new ScanFileHolderException("Merlin File should start with MQ1!");
 			}
 			
-			String imageStart = head[2];
+			final int imageStart = Integer.parseInt(head[2]);
 			String numberOfChips = head[3];
-			String imageX = head[4];
-			String imageY = head[5];
+			x = Integer.parseInt(head[4]);
+			y = Integer.parseInt(head[5]);
 			String depth = head[6];
 			
 			// build the arrays to hold the data			
@@ -145,12 +148,12 @@ public class MerlinLoader extends AbstractFileLoader {
 				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPrefA", i)));
 				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPrefB", i)));
 			}
+
+			char[] cbufRemainder = new char[imageStart-54];
 			
-			char[] cbufRemainder = new char[Integer.parseInt(imageStart)-54];
 			
-			
-			int imageReadStart = Integer.parseInt(imageStart);
-			
+			int imageReadStart = imageStart;
+			long skip = x*y*2;
 			while (br.read(cbufRemainder) > 0) {
 			
 				String fullHeader = new String(cbuf) + new String(cbufRemainder);
@@ -172,25 +175,28 @@ public class MerlinLoader extends AbstractFileLoader {
 					metaHolder.get(i).addValue(value);
 				}
 				
-				br.skip(Integer.parseInt(imageX)*Integer.parseInt(imageY)*2);
-				
-				// reset the cbuffer to the full size
-				cbufRemainder = new char[Integer.parseInt(imageStart)];
-				
-				data = new IntegerDataset(new int[]{Integer.parseInt(imageX),Integer.parseInt(imageY)});
-	
-				if (depth.contains(U16)) {
-					Utils.readBeShort(fi, data, imageReadStart,false);
+				br.skip(skip);
+				if (loadLazily) {
+					dataList.add(null);
 				} else {
-					Utils.readBeInt(fi, data, imageReadStart);
-				}			
-				
-//				Number max = data.max(false);
-//				Number min = data.min(false);
-				
-				//imageReadStart += Integer.parseInt(imageX)*Integer.parseInt(imageY)*2 + Integer.parseInt(imageStart) + 100000;
-				
-				dataList.add(new IntegerDataset(data));
+					// reset the cbuffer to the full size
+					cbufRemainder = new char[imageStart];
+					
+					data = new IntegerDataset(new int[]{x, y});
+		
+					if (depth.contains(U16)) {
+						Utils.readBeShort(fi, data, imageReadStart,false);
+					} else {
+						Utils.readBeInt(fi, data, imageReadStart);
+					}			
+					
+	//				Number max = data.max(false);
+	//				Number min = data.min(false);
+					
+					//imageReadStart += Integer.parseInt(imageX)*Integer.parseInt(imageY)*2 + Integer.parseInt(imageStart) + 100000;
+					
+					dataList.add(new IntegerDataset(data));
+				}
 			}
 			
 		} catch (Exception e) {
@@ -212,11 +218,22 @@ public class MerlinLoader extends AbstractFileLoader {
 				fi = null;
 			}
 		}
-		
-		IntegerDataset ds = new IntegerDataset(dataList.size(), dataList.get(0).getShape()[0], dataList.get(0).getShape()[1]);
-		
-		for(int i = 0; i < dataList.size(); i++) {
-			ds.setSlice(dataList.get(i), new int[] {i,0,0}, new int[] {i+1,dataList.get(0).getShape()[0], dataList.get(0).getShape()[1]}, new int[] {1,1,1});
+
+		ILazyDataset ds;
+		int[] shape = new int[] {dataList.size(), x, y};
+		if (loadLazily) {
+			ds = createLazyDataset(DATA_NAME, Dataset.INT32, shape, new MerlinLoader(fileName));
+		} else {
+			ds = new IntegerDataset(shape);
+
+			int[] start = new int[3];
+			int[] stop  = shape.clone();
+			int[] step  = new int[] {1,1,1};
+			for(int i = 0; i < shape[0]; i++) {
+				start[0] = i;
+				stop[0] = i + 1;
+				((Dataset) ds).setSlice(dataList.get(i), start, stop, step);
+			}
 		}
 		output.addDataset(DATA_NAME, ds.squeeze());
 		for(int i = 0; i < metaHolder.size(); i++) {
@@ -224,7 +241,5 @@ public class MerlinLoader extends AbstractFileLoader {
 		}
 
 		return output;
-
 	}
-
 }

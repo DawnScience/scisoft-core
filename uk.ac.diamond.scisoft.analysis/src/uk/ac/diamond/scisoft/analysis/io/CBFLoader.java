@@ -22,11 +22,10 @@ import java.util.HashMap;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
@@ -50,12 +49,10 @@ import uk.ac.diamond.CBFlib.CBFlib;
  *
  * TODO remove Nexus dependency
  */
-public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
+public class CBFLoader extends AbstractFileLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
-	private String fileName = null;
-	private HashMap<String, String> metadata = new HashMap<String, String>();
+	private HashMap<String, String> metadataMap = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
-	private Metadata diffMetadata;
 
 	static {
 		CBFlib.loadLibrary();
@@ -72,14 +69,17 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		fileName = FileName;
 	}
 
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		metadataMap.clear();
+		GDAMetadata.clear();
 	}
 
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 		DataHolder output = new DataHolder();
-		Dataset data = null;
+		ILazyDataset data = null;
 		ImageOrientation imageOrien = null;
 
 		logger.info("Loading {}", fileName);
@@ -104,15 +104,22 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 		}
 
-		data = readCBFBinaryData(chs, imageOrien);
+		if (loadLazily) {
+			if (imageOrien == null) {
+				imageOrien = readImageOrientation(chs);
+			}
+			data = createLazyDataset(DEF_IMAGE_NAME, imageOrien.getDType(), imageOrien.getShape(), new CBFLoader(fileName));
+		} else {
+			data = readCBFBinaryData(chs, imageOrien);
+		}
 		data.setName(DEF_IMAGE_NAME);
 
 		chs.delete(); // this also closes the file
 
 		output.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
-			data.setMetadata(getMetadata());
-			output.setMetadata(data.getMetadata());
+			data.setMetadata(metadata);
+			output.setMetadata(metadata);
 		}
 		return output;
 	}
@@ -151,13 +158,13 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				boolean found = false;
 				for (String name : miniCBFheaderNames) {
 					if (temp.startsWith(name, 2)) {
-						metadata.put(name, temp.substring(2 + name.length()).trim());
+						metadataMap.put(name, temp.substring(2 + name.length()).trim());
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					metadata.put("Unknown " + unknownNum, temp);
+					metadataMap.put("Unknown " + unknownNum, temp);
 					unknownNum++;
 				}
 			}
@@ -181,8 +188,10 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		int xDimension = (int) dim1.value();
 		int yDimension = (int) dim2.value();
-		metadata.put("numPixels_x", Integer.toString(xDimension));
-		metadata.put("numPixels_y", Integer.toString(yDimension));
+		metadataMap.put("numPixels_x", Integer.toString(xDimension));
+		metadataMap.put("numPixels_y", Integer.toString(yDimension));
+		int isReal = isre.value();
+		int isSigned = els.value();
 
 		cifcomp.delete();
 		bid.delete(); els.delete(); elu.delete();
@@ -197,12 +206,12 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			logger.warn("Could not create GDA metadata", e);
 		}
 		
-		return new ImageOrientation(xDimension, yDimension);
+		return new ImageOrientation(xDimension, yDimension, isReal, isSigned);
 	}
 	
 	private void createGDAMetadata(int x, int y) throws ScanFileHolderException {
 		try {
-			String pixelSize = metadata.get("Pixel_size");
+			String pixelSize = metadataMap.get("Pixel_size");
 			if (pixelSize == null) {
 				throw new ScanFileHolderException("No relevant metadata found");
 			}
@@ -210,7 +219,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			double xPxVal = Double.parseDouble(xypixVal[0])*1000;
 			double yPXVal = Double.parseDouble(xypixVal[1].split("m")[0])*1000;
 			
-			String tmp = metadata.get("Beam_xy");
+			String tmp = metadataMap.get("Beam_xy");
 			double beamPosX;
 			double beamPosY;
 			if (tmp != null) {
@@ -253,7 +262,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			// "NXmonochromator:wavelength"
 			double lambda = Double.NaN;
 			String value;
-			value = metadata.get("Wavelength");
+			value = metadataMap.get("Wavelength");
 			if (value != null) {
 				if (value.contains("A"))
 					lambda = getFirstDouble("Wavelength", "A");
@@ -297,13 +306,13 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 					getFirstDouble("Start_angle", "deg"), getFirstDouble("Angle_increment", "deg"), getFirstDouble(
 							"Exposure_time", "s"));
 
-			diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
-			diffMetadata.addDataInfo(DEF_IMAGE_NAME, getInteger("numPixels_x"), getInteger("numPixels_y"));
-			diffMetadata.setMetadata(metadata);
+			metadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
+			metadata.addDataInfo(DEF_IMAGE_NAME, getInteger("numPixels_x"), getInteger("numPixels_y"));
+			metadata.setMetadata(metadataMap);
 		} catch (ScanFileHolderException e) {
-			diffMetadata = new Metadata(metadata);
+			metadata = new Metadata(metadataMap);
 		}
-		diffMetadata.setFilePath(fileName);
+		metadata.setFilePath(fileName);
 	}
 
 	private ImageOrientation readCBFHeaderData(cbf_handle_struct chs)throws ScanFileHolderException{
@@ -319,7 +328,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		intP ip = new intP();
 		CBFError.errorChecker(cbf.cbf_get_value(chs, s));
 		String arrayid = new String(cbf.charPP_value(s));
-		metadata.put("diffrn_data_frame.array_id", arrayid);
+		metadataMap.put("diffrn_data_frame.array_id", arrayid);
 
 		// get the image dimensions
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_structure_list"));
@@ -341,22 +350,22 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 			CBFError.errorChecker(cbf.cbf_find_column(chs, "dimension"));
 			CBFError.errorChecker(cbf.cbf_get_integervalue(chs, ip.cast()));
-			metadata.put("SIZE " + String.valueOf(index), String.valueOf(ip.value()));
+			metadataMap.put("SIZE " + String.valueOf(index), String.valueOf(ip.value()));
 
 			CBFError.errorChecker(cbf.cbf_find_column(chs, "precedence"));
 			CBFError.errorChecker(cbf.cbf_get_integervalue(chs, ip.cast()));
 			precedence = ip.value();
-			metadata.put("precedence " + index, String.valueOf(precedence));
+			metadataMap.put("precedence " + index, String.valueOf(precedence));
 
 			CBFError.errorChecker(cbf.cbf_find_column(chs, "direction"));
 			CBFError.errorChecker(cbf.cbf_get_value(chs, s));
 			direction = new String(cbf.charPP_value(s));
-			metadata.put("direction " + index, direction);
+			metadataMap.put("direction " + index, direction);
 
 			CBFError.errorChecker(cbf.cbf_find_column(chs, "axis_set_id"));
 			CBFError.errorChecker(cbf.cbf_get_value(chs, s));
 			axis_set_id = new String(cbf.charPP_value(s));
-			metadata.put("axis_set_id " + index, axis_set_id);
+			metadataMap.put("axis_set_id " + index, axis_set_id);
 
 			//System.out.println("ind: " + index + ", dim: " + dimension + ", prec: " + precedence + ", dir: "
 			//		+ direction + ", axis: " + axis_set_id);
@@ -373,7 +382,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "array_id"));
 
-		String value = metadata.get("diffrn_data_frame.array_id"); // TODO check for null
+		String value = metadataMap.get("diffrn_data_frame.array_id"); // TODO check for null
 		CBFError.errorChecker(cbf.cbf_find_row(chs, value));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
@@ -395,25 +404,10 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			yIncreasing = isMatch("direction 1", "increasing");
 		}
 
-		return new ImageOrientation(xLength, yLength, xIncreasing, yIncreasing, isRowsX);
+		return new ImageOrientation(xLength, yLength, -1, -1, xIncreasing, yIncreasing, isRowsX);
 	}
 	
-	private Dataset readCBFBinaryData(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
-		AbstractDataset data = null;
-
-
-			// change array_data to given dimensions
-	//		NexusTreeNode anode = ((NexusTreeNode) tree).findNode("array_data");
-	//		if (anode != null) {
-	//			anode = anode.findNode("row");
-	//			if (anode != null) {
-	//				NexusGroupData adata = anode.getData();
-	//				if (adata != null) {
-	//					adata.dimensions = new int[] { yLength, xLength };
-	//				}
-	//			}
-	//		}
-
+	private ImageOrientation readImageOrientation(cbf_handle_struct chs) throws ScanFileHolderException {
 		uintP cifcomp = new uintP();
 		intP bid = new intP(), els = new intP(), elu = new intP();
 		intP minel = new intP(), maxel = new intP(), isre = new intP();
@@ -425,18 +419,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				.cast(), elu.cast(), elnum.cast(), minel.cast(), maxel.cast(), isre.cast(), byteorder, dim1.cast(),
 				dim2.cast(), dim3.cast(), pad.cast()));
 
-		if (imageOrien == null) {
-			imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value());
-		}
+		ImageOrientation imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
 
-		int xLength = imageOrien.getXLength();
-		int yLength = imageOrien.getYLength();
-		boolean xIncreasing = imageOrien.isXIncreasing();
-		boolean yIncreasing = imageOrien.isYIncreasing();
-		boolean isRowsX = imageOrien.isRowsX();
-
-		boolean isreal = (isre.value() == 1);
-		int numPixels = xLength * yLength;
+		long numPixels = dim1.value() * dim2.value();
 
 		if (numPixels != elnum.value()) {
 			throw new ScanFileHolderException("Mismatch of CBF binary data size");
@@ -453,7 +438,41 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		dim3.delete();
 		pad.delete();
 
-		sizetP rsize = new sizetP();
+		bid.delete();
+		els.delete();
+		elu.delete();
+		return imageOrien;
+	}
+
+	private Dataset readCBFBinaryData(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
+		AbstractDataset data = null;
+
+
+			// change array_data to given dimensions
+	//		NexusTreeNode anode = ((NexusTreeNode) tree).findNode("array_data");
+	//		if (anode != null) {
+	//			anode = anode.findNode("row");
+	//			if (anode != null) {
+	//				NexusGroupData adata = anode.getData();
+	//				if (adata != null) {
+	//					adata.dimensions = new int[] { yLength, xLength };
+	//				}
+	//			}
+	//		}
+
+		if (imageOrien == null) {
+			imageOrien = readCBFHeaderData(chs);
+		}
+
+		int[] shape = imageOrien.getShape();
+		int xLength = shape[1];
+		int yLength = shape[0];
+		boolean xIncreasing = imageOrien.isXIncreasing();
+		boolean yIncreasing = imageOrien.isYIncreasing();
+		boolean isRowsX = imageOrien.isRowsX();
+
+		boolean isreal = imageOrien.isReal == 1;
+		int numPixels = xLength * yLength;
 
 //		System.out.println("Loading " + fileName + ", " + numPixels);
 
@@ -508,6 +527,9 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		int index = 0; // index in destination
 		int position = 0; // position in buffer
 		int hash = 0;
+		intP bid = new intP();
+		sizetP rsize = new sizetP();
+
 		if (isreal) {
 			DoubleBuffer ddata;
 			try {
@@ -526,7 +548,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			try {
-				data = new DoubleDataset(yLength, xLength);
+				data = new DoubleDataset(shape);
 			} catch (OutOfMemoryError e) {
 				throw new ScanFileHolderException("CBFLoader failed when creating a DoubleDataset for the data", e);
 			} catch (Exception eb) {
@@ -572,8 +594,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 				throw new ScanFileHolderException("CBFLoader failed to allocate bytebuffer (intbuffer)",eb);
 			}
 			
-
-			CBFError.errorChecker(cbf.cbf_get_integerarray(chs, bid.cast(), idata, (Integer.SIZE / 8), els.value(),
+			int signed = imageOrien.isSigned;
+			CBFError.errorChecker(cbf.cbf_get_integerarray(chs, bid.cast(), idata, (Integer.SIZE / 8), signed,
 					numPixels, rsize.cast()));
 
 			if (numPixels != rsize.value()) {
@@ -581,7 +603,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 			}
 
 			try {
-				data = new IntegerDataset(yLength, xLength);
+				data = new IntegerDataset(shape);
 			} catch (OutOfMemoryError e) {
 				throw new ScanFileHolderException("Could not assign IntegerDataset", e);
 			} catch (Exception eb) {
@@ -616,11 +638,8 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 		rsize.delete();
 		bid.delete();
-		els.delete();
-		elu.delete();
 
 		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
@@ -914,7 +933,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private int getInteger(String key) throws ScanFileHolderException {
 		try {
-			String value = metadata.get(key);
+			String value = metadataMap.get(key);
 			if (value == null) {
 				throw new ScanFileHolderException("No such key: " + key);
 			}
@@ -926,7 +945,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private double getDouble(String key) throws ScanFileHolderException {
 		try {
-			String value = metadata.get(key);
+			String value = metadataMap.get(key);
 			if (value == null) {
 				throw new ScanFileHolderException("No such key: " + key);
 			}
@@ -938,7 +957,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private double getFirstDouble(String key, String split) throws ScanFileHolderException {
 		try {
-			String value = metadata.get(key);
+			String value = metadataMap.get(key);
 			if (value == null) {
 				throw new ScanFileHolderException("No such key: " + key);
 			}
@@ -950,7 +969,7 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private boolean isMatch(String key, String value) throws ScanFileHolderException {
 		try {
-			String mValue = metadata.get(key);
+			String mValue = metadataMap.get(key);
 			return value.equalsIgnoreCase(mValue);
 		} catch (NumberFormatException e) {
 			throw new ScanFileHolderException("There was a problem parsing double value from string",e);
@@ -959,36 +978,38 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 
 	private class ImageOrientation {
 
-		int xLength;
-		int yLength;
+		int [] shape;
 		boolean xIncreasing;
 		boolean yIncreasing;
 		boolean isRowsX;
+		int isReal;
+		int isSigned;
 
-		private ImageOrientation(int x, int y) {
+		private ImageOrientation(int x, int y, int isReal, int isSigned) {
 			// these values are to support the 6M on i24 for the time being
-			xLength = x;
-			yLength = y;
-			xIncreasing = true;
-			yIncreasing = false;
-			isRowsX = true;
+			this(x, y, isReal, isSigned, true, false, true);
 		}
 
-		private ImageOrientation(int x, int y, boolean increasingX, boolean increasingY,
+		private ImageOrientation(int x, int y, int isReal, int isSigned, boolean increasingX, boolean increasingY,
 				boolean areRowsX) {
-			xLength = x;
-			yLength = y;
+			shape = new int[] {y, x};
+			this.isReal = isReal;
+			this.isSigned = isSigned;
 			xIncreasing = increasingX;
 			yIncreasing = increasingY;
 			isRowsX = areRowsX;
 		}
 
-		public int getXLength() {
-			return xLength;
+		public int getDType() {
+			if (isReal == -1)
+				return -1;
+			if (isReal == 0)
+				return Dataset.INT32;
+			return Dataset.FLOAT64;
 		}
 
-		public int getYLength() {
-			return yLength;
+		public int[] getShape() {
+			return shape;
 		}
 
 		public boolean isXIncreasing() {
@@ -1002,7 +1023,6 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		public boolean isRowsX() {
 			return isRowsX;
 		}
-
 	}
 
 	@Override
@@ -1014,10 +1034,5 @@ public class CBFLoader extends AbstractFileLoader implements IMetaLoader {
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Could not create metadata form CBF", e);
 		}
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return diffMetadata;
 	}
 }

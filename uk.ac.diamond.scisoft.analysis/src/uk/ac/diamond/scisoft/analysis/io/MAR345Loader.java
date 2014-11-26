@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +35,21 @@ import org.slf4j.LoggerFactory;
  * Class to read Rayonix's MAR345 image format
  * 
  */
-public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Serializable {
+public class MAR345Loader extends AbstractFileLoader implements Serializable {
 	protected static final Logger logger = LoggerFactory.getLogger(MAR345Loader.class);
 
-	private String fileName;
 	protected Map<String, Serializable> headers = new HashMap<>();
 	private boolean littleEndian;
 	private int side;
-	private DiffractionMetadata diffMetadata = null;
 
 	public MAR345Loader(String fileName) {
 		this.fileName = fileName;
+	}
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		headers.clear();
 	}
 
 	@Override
@@ -77,9 +81,9 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 				mon.worked(10);
 			}
 
-			if (highs != null) {// apply high values
+			if (image != null && highs != null) {// apply high values
 				for (int i = 0; i < highs.length; i += 2) {
-					image[highs[i]] = highs[i+1];
+					image[highs[i]] = highs[i + 1];
 				}
 			}
 		} catch (Exception e) {
@@ -97,52 +101,15 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 		}
 
 		DataHolder result = new DataHolder();
-		result.addDataset(DEF_IMAGE_NAME, new IntegerDataset(image, side, side));
+		ILazyDataset data = image == null ? createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32,
+				new int[] {side,  side}, new MAR345Loader(fileName)) :
+				new IntegerDataset(image, side, side);
+		result.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
-			result.setMetadata(diffMetadata);
-			result.getDataset(0).setMetadata(diffMetadata);
+			result.setMetadata(metadata);
+			result.getDataset(0).setMetadata(metadata);
 		}
 		return result;
-	}
-
-	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		if (diffMetadata != null)
-			return;
-
-		File f = null;
-		BufferedInputStream bi = null;
-
-		f = new File(fileName);
-		if (!f.exists()) {
-			throw new ScanFileHolderException("Cannot find " + fileName);
-		}
-
-		try {
-			bi = new BufferedInputStream(new FileInputStream(f));
-			
-			readMetadata(bi);
-			if (mon != null) {
-				mon.worked(1);
-			}
-		} catch (Exception e) {
-			logger.error("Problem with file", e);
-			throw new ScanFileHolderException("Problem with file", e);
-		} finally {
-			if (bi != null) {
-				try {
-					bi.close();
-				} catch (IOException e1) {
-					logger.error("Cannot close stream", e1);
-					throw new ScanFileHolderException("Cannot close stream");
-				}
-			}
-		}
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return diffMetadata;
 	}
 
 	private int[] readMetadata(BufferedInputStream bi) throws IOException, ScanFileHolderException {
@@ -194,8 +161,8 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 				getKeyAsDouble(TextKey.PHI, 0), getKeyAsDouble(TextKey.PHI, 1), getKeyAsDouble(TextKey.TIME),
 				getKeyAsDouble(TextKey.PHI, 2));
 
-		diffMetadata = new DiffractionMetadata(fileName, detprop, env);
-		diffMetadata.setMetadata(headers);
+		metadata = new DiffractionMetadata(fileName, detprop, env);
+		metadata.setMetadata(headers);
 		return highs;
 	}
 
@@ -587,6 +554,9 @@ public class MAR345Loader extends AbstractFileLoader implements IMetaLoader, Ser
 		if (side != y || side != size) {
 			throw new ScanFileHolderException("Dimensions in CCP4 string does not match those specified in header");
 		}
+
+		if (loadLazily)
+			return null;
 
 		size = side * y;
 		int[] image = new int[size];

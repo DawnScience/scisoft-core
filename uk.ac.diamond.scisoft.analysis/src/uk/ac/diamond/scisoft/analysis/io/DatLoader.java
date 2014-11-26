@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -89,20 +87,17 @@ import org.slf4j.LoggerFactory;
 It is also legal to have no header section at all and just columns of white space separated numbers.
 In this case the columns will be labelled Column_1...Column_N.
  */
-public class DatLoader extends AbstractFileLoader implements IMetaLoader {
+public class DatLoader extends AbstractFileLoader {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
 	
 	private static final String  FLOAT = "([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)|(0\\.)";
 	transient protected final Pattern DATA;
 
-	protected String                    fileName;
-	protected Map<String,String>        metaData;
+	protected Map<String,String>        metadataMap;
 	protected List<String>              footer;
 	protected Map<String, List<Double>> vals;
 	protected int                       columnIndex;
-
-	private ExtendedMetadata metadata;
 
 	public DatLoader() {
 		DATA  = Pattern.compile("^(("+FLOAT+")"+getDelimiter()+")+("+FLOAT+")$");
@@ -113,16 +108,20 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	 */
 	public DatLoader(final String fileName) {
 		this();
-		setFile(fileName);
-	}
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
-		this.metaData = new HashMap<String,String>(7);
-		this.footer   = new ArrayList<String>(7);
+		metadataMap = new HashMap<String,String>(7);
+		footer   = new ArrayList<String>(7);
 		
 		// Important must use LinkedHashMap as order assumes is insertion order.
-		this.vals   = new LinkedHashMap<String, List<Double>>();
+		vals   = new LinkedHashMap<String, List<Double>>();
+		setFile(fileName);
+	}
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		metadataMap.clear();
+		footer.clear();
+		vals.clear();
 	}
 
 	@Override
@@ -155,12 +154,14 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			boolean readingFooter = false;
 			
 			String line	= parseHeaders(in, name, mon);
+			int columns = vals.size();
+			if (columns == 0) throw new ScanFileHolderException("Cannot read header for data set names!");
 
 			// Read data
+			int count = 0;
+
 			DATA: while (line != null) {
-				
-				if (mon!=null) mon.worked(1);
-				if (mon!=null && mon.isCancelled()) {
+				if (!monitorIncrement(mon)) {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				
@@ -171,21 +172,23 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 						readingFooter = true;
 						break DATA;
 					}
-					if (vals.isEmpty()) throw new ScanFileHolderException("Cannot read header for data set names!");
-					
-					final String[] values = line.split(getDelimiter());
-					if (columnIndex>-1 && name!=null) {
-					    final String value = values[columnIndex];
-					    vals.get(name).add(Utils.parseDouble(value.trim()));
-					} else {
-						if (values.length != vals.size()) {
-							throw new ScanFileHolderException("Data and header must be the same size!");
-						}
-						final Iterator<String> it = vals.keySet().iterator();
-						for (String value : values) {
-							vals.get(it.next()).add(Utils.parseDouble(value.trim())); 
+
+					if (!loadLazily) {
+						final String[] values = line.split(getDelimiter());
+						if (columnIndex>-1 && name!=null) {
+						    final String value = values[columnIndex];
+						    vals.get(name).add(Utils.parseDouble(value.trim()));
+						} else {
+							if (values.length != columns) {
+								throw new ScanFileHolderException("Data and header must be the same size!");
+							}
+							final Iterator<String> it = vals.keySet().iterator();
+							for (String value : values) {
+								vals.get(it.next()).add(Utils.parseDouble(value.trim())); 
+							}
 						}
 					}
+					count++;
 					
 				}
 				
@@ -204,11 +207,16 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 
-			for (String n : vals.keySet()) {
-				final Dataset set =  DatasetFactory.createFromList(vals.get(n));
-				set.setName(n);
-				result.addDataset(n, set);
-			}		
+			for (final String n : vals.keySet()) {
+				ILazyDataset data;
+				if (loadLazily) {
+					data = createLazyDataset(n, -1, new int[] { count }, new DatLoader(fileName));
+				} else {
+					data = DatasetFactory.createFromList(vals.get(n));
+					data.setName(n);
+				}
+				result.addDataset(n, data);
+			}
 
 			if (loadMetadata) {
 				createMetadata();
@@ -246,7 +254,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		final DataHolder dh = loadFile(name, mon);
 		return dh.getDataset(name);
 	}
-	
+
 	/**
 	 * There are no efficiency gains in using this method, it reads everything in and garbage
 	 * collects what is not needed.
@@ -293,7 +301,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 	
 	private void createMetadata(int approxSize) {
 		metadata = new ExtendedMetadata(new File(fileName));
-		metadata.setMetadata(metaData);
+		metadata.setMetadata(metadataMap);
 		for (Entry<String, List<Double>> e : vals.entrySet()) {
 			if (approxSize>-1 &&  e.getValue().size()<1) {
 			    metadata.addDataInfo(e.getKey(), approxSize);
@@ -301,11 +309,6 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			    metadata.addDataInfo(e.getKey(), e.getValue().size());
 			}
 		}
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
 	}
 
 	protected static final Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
@@ -332,7 +335,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 		if (line == null)
 			throw new ScanFileHolderException("No lines found");
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
-		metaData.clear();
+		metadataMap.clear();
 		vals.clear();
 		
 		List<String> header = new ArrayList<String>(31);
@@ -345,9 +348,8 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 			try {
 				if ("".equals(line.trim())) continue;
 				foundHeaderLine = true;
-				
-				if (mon!=null) mon.worked(1);
-				if (mon!=null && mon.isCancelled()) {
+
+				if (!monitorIncrement(mon)) {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				
@@ -372,7 +374,7 @@ public class DatLoader extends AbstractFileLoader implements IMetaLoader {
 					for (int p = 2; p < parts.length; p++) {
 						value = value+":"+parts[p];
 					}
-					metaData.put(key.trim(),value.trim());
+					metadataMap.put(key.trim(),value.trim());
 				}
 				
 				

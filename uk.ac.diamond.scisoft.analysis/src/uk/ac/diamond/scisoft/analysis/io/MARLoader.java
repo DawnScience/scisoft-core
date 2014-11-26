@@ -24,10 +24,6 @@ import javax.vecmath.Vector3d;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
@@ -41,13 +37,12 @@ import com.sun.media.imageio.plugins.tiff.TIFFField;
  * hashmap as string object pairs. The MAR header is read as a stream of bytes
  * the value of which is determined in a C header file. Most values are 32bit ints.
  */
-public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializable {
+public class MARLoader extends TIFFImageLoader implements Serializable {
 	private static final int MAR_TAG_NUMBER = 34710;
 	static final int MAX_IMAGES = 9;
 	static final int MAR_HEADER_SIZE = 3072;
 	private boolean littleEndian;
 	private Map<String, Serializable> metadataTable = new HashMap<String, Serializable>();
-	private DiffractionMetadata diffMetadata;
 	
 	/**
 	 * @param FileName
@@ -57,7 +52,13 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 	}
 
 	@Override
-	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
+	protected void clearMetadata() {
+		super.clearMetadata();
+		metadataTable.clear();
+	}
+
+	@Override
+	protected Map<String, Serializable> createMetadataMap(IIOMetadata imageMetadata) throws ScanFileHolderException {
 		long offset = -1;
 		try {
 			TIFFDirectory tiffDir = TIFFDirectory.createFromMetadata(imageMetadata);
@@ -580,8 +581,8 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 		DetectorProperties detProps = new DetectorProperties(new Vector3d(detectorOrigin), imageLength, imageWidth, pixelSizeX, pixelSizeY, euler);
 		DiffractionCrystalEnvironment diffEnv = new DiffractionCrystalEnvironment(lambda, startOmega, rangeOmega, (Double) getMetadataValue("exposureTime"));
 
-		diffMetadata = new DiffractionMetadata(fileName, detProps, diffEnv);
-		diffMetadata.setMetadata(createStringMap());
+		metadata = new DiffractionMetadata(fileName, detProps, diffEnv);
+		metadata.setMetadata(createStringMap());
 	}
 
 	private Serializable getMetadataValue(String key) throws ScanFileHolderException {
@@ -593,36 +594,11 @@ public class MARLoader extends TIFFImageLoader implements IMetaLoader, Serializa
 		}
 	}
 
-	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		boolean tmp = loadMetadata;
-		try {
-			loadMetadata = true;
-			loadFile(); // TODO Implement a method for loading meta which does not load the image
-		} finally {
-			loadMetadata = tmp;
-		}
-	}
-
 	private Map<String, String> createStringMap() {
 		Map<String, String> ret = new HashMap<String,String>(7);
 		for (String key : metadataTable.keySet()) {
 			ret.put(key, metadataTable.get(key).toString().trim());
 		}
 		return ret;
-	}
-
-	@Override
-	public IMetadata getMetadata() {
-		return diffMetadata;
-	}
-	
-	@Override
-	public IMetadata getMetaData(Dataset data) {
-		if (metadata == null) {
-			if (data!=null) return data.getMetadata(); 
-			return null;
-		}
-		return getMetadata();
 	}
 }

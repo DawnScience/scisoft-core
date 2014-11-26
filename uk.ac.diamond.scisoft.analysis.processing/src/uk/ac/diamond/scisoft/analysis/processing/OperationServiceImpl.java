@@ -8,7 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
-import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
-import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
@@ -39,13 +36,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
 
 /**
  * Do not use this class externally. Instead get the IOperationService
@@ -84,15 +80,9 @@ public class OperationServiceImpl implements IOperationService {
 	 */
 	@Override
 	public void execute(final IOperationContext context) throws OperationException {
-		
-		final IExecutionVisitor visitor = context.getVisitor() ==null ? new IExecutionVisitor.Stub() : context.getVisitor();
-		
+				
 		if (context.getSeries()==null || context.getSeries().length<1) {
 			throw new OperationException(null, "No operation list defined, call setSerices(...) with something meaningful please!");
-		}
-		
-		if (context.getExecutionType()==ExecutionType.GRAPH) {
-			throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
 		}
 		
 		Map<Integer, String> slicing = context.getSlicing();
@@ -101,96 +91,40 @@ public class OperationServiceImpl implements IOperationService {
 			Integer dim = iterator.next();
 			if ("".equals(slicing.get(dim))) iterator.remove();
 		}
+		context.setSlicing(slicing);
 		
-		OriginMetadata om = null;
-		
+		// We check the pipeline ranks are ok
 		try {
-			om = context.getData().getMetadata(OriginMetadata.class).get(0);
-		} catch (Exception e1) {
-			logger.warn("No origin metadata in operation input!");
-		}
-		
-		final OriginMetadataImpl originMetadata = (OriginMetadataImpl)om;
-			
-		try {
-			// determine data axes to populate origin metadata
-			final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), slicing);
-
-			// We check the pipeline ranks are ok
-	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), slicing);
+	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), context.getSlicing());
 			validate(firstSlice, context.getSeries());
-			// Create the slice visitor
-			SliceVisitor sv = new SliceVisitor() {
-				
-				@Override
-				public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
-					
-					OriginMetadataImpl innerOm = originMetadata;
-					
-					if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
-					if (innerOm == null){ 
-						innerOm = new OriginMetadataImpl(context.getData(), slices, dataDims,"",context.getData().getName());
-						slice.setMetadata(innerOm);
-					} else {
-						innerOm.setCurrentSlice(slices);
-						slice.setMetadata(innerOm);
-					}
-					
-					String path = innerOm.getFilePath();
-					if (path == null) path = "";
-					
-					OperationData  data = new OperationData(slice, (Serializable[])null);
-					long start = System.currentTimeMillis();
-					for (IOperation i : context.getSeries()) {
-						
-						if (context.getMonitor()!=null) {
-							context.getMonitor().subTask(path +" : " + i.getName());
-						}
-						
-						OperationData tmp = i.execute(data.getData(), context.getMonitor());
-
-						visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
-						data = i.isPassUnmodifiedData() ? data : tmp;
-					}
-					logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
-
-					visitor.executed(data, context.getMonitor(), slices, shape, dataDims); // Send result.
-					if (context.getMonitor() != null) context.getMonitor().worked(1);
-				}
-
-				@Override
-				public boolean isCancelled() {
-					return context.getMonitor()!=null ? context.getMonitor().isCancelled() : false;
-				}
-			};
+	
+			OriginMetadata om = null;
 			
-			visitor.init(context.getSeries(), originMetadata);
-			long start = System.currentTimeMillis();
-			// Jake's slicing from the conversion tool is now in Slicer.
-			if (context.getExecutionType()==ExecutionType.SERIES) {
-				Slicer.visitAll(context.getData(), slicing, "Slice", sv);
-				
-			} else if (context.getExecutionType()==ExecutionType.PARALLEL) {
-				Slicer.visitAllParallel(context.getData(), slicing, "Slice", sv, context.getParallelTimeout());
-				
-			} else {
-				throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
+			try {
+				om = context.getData().getMetadata(OriginMetadata.class).get(0);
+			} catch (Exception e1) {
+				logger.warn("No origin metadata in operation input!");
 			}
-			logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
+			
+			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());
+			runner.init(context, om);
+			runner.execute();
 			
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {
 			throw new OperationException(null, e);
 		} finally {
-			if (visitor != null)
+			if (context.getVisitor() != null) {
 				try {
-					visitor.close();
+					context.getVisitor().close();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
 		}
+
 	}
 
 	/**
@@ -199,10 +133,8 @@ public class OperationServiceImpl implements IOperationService {
 	 * @param firstSlice - may be null, image assumed if it is
 	 * @param series
 	 */
-	public void validate(
-			IDataset firstSlice,
-			IOperation<? extends IOperationModel, ? extends OperationData>... series)
-			throws InvalidRankException, OperationException {
+	public void validate( IDataset firstSlice,
+			              IOperation<? extends IOperationModel, ? extends OperationData>... series) throws InvalidRankException, OperationException {
 		       
 //		if (firstSlice==null) firstSlice = Random.rand(new int[]{1024, 1024});
         if (series[0].getInputRank()==OperationRank.SAME) {

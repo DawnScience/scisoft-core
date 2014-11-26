@@ -35,6 +35,7 @@ public class OperationContextImpl implements IOperationContext {
 	
 	// The default timeout is 5000 ms
 	private long                 parallelTimeout=5000;
+	private int                  slugCount=1;
 	
 	private ExecutionType executionType = ExecutionType.SERIES;
 	
@@ -214,6 +215,12 @@ public class OperationContextImpl implements IOperationContext {
 	}
 	public void setDatasetPath(String datasetPath) {
 		this.datasetPath = datasetPath;
+	}
+	public int getSlugCount() {
+		return slugCount;
+	}
+	public void setSlugCount(int slugCount) {
+		this.slugCount = slugCount;
 	}
 
 }

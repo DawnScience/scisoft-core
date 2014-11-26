@@ -13,11 +13,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderFactoryExtensionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService {
@@ -55,11 +55,11 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 	 */
 	private final static void registerLoader(IConfigurationElement i) {
 		try {
-			final AbstractFileLoader loader = (AbstractFileLoader)i.createExecutableExtension("class");
+			final IFileLoader loader = (IFileLoader) i.createExecutableExtension("class");
 			final String[] exts = i.getAttribute("file_extension").split(",");
         	final String high = i.getAttribute("high_priority");
             final boolean isHigh = "true".equals(high);
-			Class<? extends AbstractFileLoader> clazz = loader.getClass();
+			Class<? extends IFileLoader> clazz = loader.getClass();
 			for (String ext : exts) {
 				String e = ext.trim();
 				if (isHigh) {

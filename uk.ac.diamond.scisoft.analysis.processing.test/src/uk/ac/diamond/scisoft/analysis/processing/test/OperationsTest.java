@@ -187,7 +187,7 @@ public class OperationsTest {
 		context.setSeries(subtract, add);
 		service.execute(context);
 
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run! Loop count was : "+counter);
 	}
 
 

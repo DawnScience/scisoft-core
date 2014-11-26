@@ -717,9 +717,9 @@ public class NexusDiffractionMetaReader {
 		return new DiffractionCrystalEnvironment(1, 0, 0, 1);
 	}
 	
-	private String getString(final ncsa.hdf.object.Dataset set) throws Exception {
-			return ((String[])set.getData())[0];
-	}
+//	private String getString(final ncsa.hdf.object.Dataset set) throws Exception {
+//			return ((String[])set.getData())[0];
+//	}
 	
 	private Dataset getSet(IHierarchicalDataFile file, final String path) throws Exception {
 

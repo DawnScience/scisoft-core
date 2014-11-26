@@ -9,11 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
@@ -86,8 +86,11 @@ public class PNGTest {
 		dha.addDataset("testing data", data);
 		new PNGSaver(testScratchDirectoryName + filePath).saveFile(dha);
 
-		final IDataHolder dh = LoaderFactory.getData(testScratchDirectoryName + filePath, null);
+		final IDataHolder dh = LoaderFactory.getData(testScratchDirectoryName + filePath, true, false, true, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
+
+		ILazyDataset lazy = dh.getLazyDataset(0);
+		assertArrayEquals(new int[] {sizex, sizey}, lazy.getShape());
 	}
 
 	/**

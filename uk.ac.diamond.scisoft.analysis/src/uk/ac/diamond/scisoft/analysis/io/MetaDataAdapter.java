@@ -95,5 +95,4 @@ public class MetaDataAdapter implements IMetadata {
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
-
 }

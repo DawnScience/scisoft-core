@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.runner;
 
 import java.util.HashMap;
 
+import org.dawb.passerelle.common.actors.ActorUtils;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -43,8 +44,18 @@ class GraphRunner  implements IOperationRunner {
 		
 		buildGraph(flow);
 		
-		FlowManager flowMgr = new FlowManager();
-		flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());		
+		try {
+		    // We switch off being able to remotely debug the workflow
+		    ActorUtils.setCanNotify(false);
+		    
+		    // We run the workflow
+			FlowManager flowMgr = new FlowManager();
+			flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());		
+			
+		} finally {
+			// We put it back 
+		    ActorUtils.setCanNotify(true);
+		}
 	}
 
 	/**

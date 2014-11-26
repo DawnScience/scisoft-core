@@ -72,10 +72,13 @@ public class OperationSource extends AbstractDataMessageSource {
 		msgCounter = 0;
 		msgSequenceID = MessageFactory.getInstance().createSequenceID();
         try {
-    		if (!isTriggerConnected()) queue = Slicer.getSlices(context.getData(), context.getSlicing());
+    		if (!isTriggerConnected()) {
+    			queue = Slicer.getSlices(context.getData(), context.getSlicing());
+    		}
 		} catch (Exception e) {
 			throw new InitializationException(ErrorCode.FATAL, e.getMessage(), this, e);
 		}
+        super.doInitialize();
 	}
 	
 	public boolean hasNoMoreMessages() {

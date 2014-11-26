@@ -5,7 +5,9 @@ import java.util.Queue;
 import org.dawb.passerelle.common.DatasetConstants;
 import org.dawb.passerelle.common.actors.AbstractDataMessageSource;
 import org.dawb.passerelle.common.message.DataMessageException;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
+import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.slice.SliceInfo;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
@@ -13,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
+import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
 import com.isencia.passerelle.actor.InitializationException;
 import com.isencia.passerelle.actor.ProcessingException;
@@ -38,6 +41,7 @@ public class OperationSource extends AbstractDataMessageSource {
 
 	private Queue<SliceInfo>  queue;
 	private IOperationContext context;
+	private OriginMetadata    originMetadata;
 	
 	// a counter for indexing each generated message in the complete sequence that this source generates
 	private long msgCounter;
@@ -114,10 +118,29 @@ public class OperationSource extends AbstractDataMessageSource {
 		return msg;
 
 	}
+	
+	public boolean isFinishRequested() {
+		if (super.isFinishRequested()) return true;
+		if (context.getMonitor()!=null && context.getMonitor().isCancelled()) return true;
+		return false;
+	}
 
-	private DataMessageComponent getData(SliceInfo info) {
+	private DataMessageComponent getData(SliceInfo info) throws Exception {
+		
 		DataMessageComponent ret = new DataMessageComponent();
-		ret.setList(info.slice());
+		
+		final IDataset slice = info.slice();
+		OriginMetadata innerOm = originMetadata;
+
+        if (innerOm == null){ 
+			final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
+			innerOm = new OriginMetadataImpl(context.getData(), info.getSlice(), dataDims,"",context.getData().getName());
+		} else {
+			((OriginMetadataImpl)innerOm).setCurrentSlice(info.getSlice());
+		}
+		slice.setMetadata(innerOm);
+
+		ret.setList(slice);
 		ret.setSliceInfo(info);
 		return ret;
 	}
@@ -154,6 +177,15 @@ public class OperationSource extends AbstractDataMessageSource {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void setOriginMetadata(OriginMetadata originMetadata) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public OriginMetadata getOriginMetadata() {
+		return originMetadata;
 	}
 
 }

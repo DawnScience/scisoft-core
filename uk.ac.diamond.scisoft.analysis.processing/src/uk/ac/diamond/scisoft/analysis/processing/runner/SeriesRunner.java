@@ -46,11 +46,10 @@ class SeriesRunner implements IOperationRunner {
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
 				if (innerOm == null){ 
 					innerOm = new OriginMetadataImpl(context.getData(), slices, dataDims,"",context.getData().getName());
-					slice.setMetadata(innerOm);
 				} else {
 					((OriginMetadataImpl)innerOm).setCurrentSlice(slices);
-					slice.setMetadata(innerOm);
 				}
+				slice.setMetadata(innerOm);
 
 				String path = innerOm.getFilePath();
 				if (path == null) path = "";

@@ -1,8 +1,18 @@
 package uk.ac.diamond.scisoft.analysis.processing.runner;
 
+import java.util.HashMap;
+
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
+
+import ptolemy.kernel.util.IllegalActionException;
+import ptolemy.kernel.util.NameDuplicationException;
+import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
+
+import com.isencia.passerelle.domain.et.ETDirector;
+import com.isencia.passerelle.model.Flow;
+import com.isencia.passerelle.model.FlowManager;
 
 /**
  * Builds a graph for executing with Passerelle
@@ -20,6 +30,24 @@ class GraphRunner  implements IOperationRunner {
 	}
 
 	public void execute() throws Exception {
-		throw new Exception("Graph runner not implemented as yet!");
+		
+		Flow flow = new Flow("Operations Graph", null);
+		
+		ETDirector director = new ETDirector(flow, "Director");
+		flow.setDirector(director);
+		
+		buildGraph(flow);
+		
+		FlowManager flowMgr = new FlowManager();
+		flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());		
+	}
+
+	private void buildGraph(Flow flow) throws Exception {
+		
+        final OperationSource source = new OperationSource(flow, "Operation Pipeline");
+        source.setContext(context);
+        source.setOriginMetadata(originMetadata);
+        
+        // TODO 
 	}
 }

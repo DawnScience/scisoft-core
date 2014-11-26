@@ -9,6 +9,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
+import ptolemy.data.IntToken;
 import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
 import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
 
@@ -65,6 +66,7 @@ class GraphRunner  implements IOperationRunner {
         	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
         	opTrans.setContext(context);
         	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
+        	opTrans.receiverQueueCapacityParam.setToken(new IntToken(context.getSlugCount()));
         	
         	flow.connect(from, opTrans.input);
         	from = opTrans.input;

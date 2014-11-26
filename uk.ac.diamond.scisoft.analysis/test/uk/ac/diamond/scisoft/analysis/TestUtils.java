@@ -216,6 +216,7 @@ public class TestUtils {
 	 */
 	public static void assertDatasetEquals(Dataset expected, Dataset calc, boolean testDtype, double relTolerance, double absTolerance) {
 		Assert.assertEquals("Rank", expected.getRank(), calc.getRank());
+		Assert.assertEquals("Size", expected.getSize(), calc.getSize());
 		Assert.assertArrayEquals("Shape", expected.getShape(), calc.getShape());
 		Assert.assertEquals("Itemsize", expected.getElementsPerItem(), calc.getElementsPerItem());
 		if (testDtype) {

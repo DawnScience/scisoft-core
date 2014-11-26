@@ -19,8 +19,10 @@ import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
@@ -81,6 +83,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset(op21, "5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -125,6 +128,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
 			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset( op21, "3,5,:",dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -170,6 +174,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
 			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset(op21, "1,3,5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -212,7 +217,8 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-
+			
+			testDataset(op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -260,6 +266,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -309,6 +316,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0],inputShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
+			testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -358,6 +366,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0],auxShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
+			testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -407,6 +416,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
+			testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -454,6 +464,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 
+			testDataset( op11, "5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -499,6 +510,7 @@ public class HierarchicalFileExVisitorTest {
 //			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -545,6 +557,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx1").getShape());
 			assertArrayEquals(new int[]{op11.getModel().getyDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx2").getShape());
 
+			testDataset( op11, "5,10,:,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -603,7 +616,7 @@ public class HierarchicalFileExVisitorTest {
 				}
 			}
 			
-
+			testDataset( op22, "5,:,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -645,6 +658,7 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_1").getShape());
 			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
+			testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -688,7 +702,8 @@ public class HierarchicalFileExVisitorTest {
 			assertFalse(dh.contains("/entry/result/Junk1Dax"));
 			
 			assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-
+			
+			testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -747,12 +762,40 @@ public class HierarchicalFileExVisitorTest {
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
 			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_errors").getShape());
 			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-
+			
+			testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+			testAxesDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/Junk1Dax"),0);
+			
+			compareDatasets(dh.getLazyDataset("/entry/result/Axis_0_errors").getSlice(), ae1);
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		
+	}
+	
+	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) {
+		Slice[] slices = Slice.convertFromString(slice);
+		IDataset data = op.getTestData().getData();
+		IDataset out = lz.getSlice(slices);
+		out = out.squeeze();
+		compareDatasets(out, data);
+		
+	}
+	
+	private void compareDatasets(IDataset a, IDataset b) {
+		double sum = (Double)((Dataset)a).sum();
+		assertFalse(sum == 0);
+		double sum1 = (Double)((Dataset)b).sum();
+		assertTrue(sum1 == sum);
+	}
+	
+	private void testAxesDataset(ITestOperation op, String slice, ILazyDataset lz, int dim) throws Exception {
+		Slice[] slices = Slice.convertFromString(slice);
+		IDataset data = op.getTestData().getData().getMetadata(AxesMetadata.class).get(0).getAxes()[dim].getSlice();
+		IDataset out = lz.getSlice(slices);
+		out = out.squeeze();
+		compareDatasets(out, data);
 	}
 	
 	public ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
@@ -845,5 +888,6 @@ public class HierarchicalFileExVisitorTest {
 		
 		
 	}
+	
 	
 }

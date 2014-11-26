@@ -34,7 +34,7 @@ public class ADSCImageTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
 	}
@@ -43,7 +43,7 @@ public class ADSCImageTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		testfile1 = "/ADSCImageTest/F6_1_001.img";
+		testfile1 = "ADSCImageTest/F6_1_001.img";
 	}
 
 	/**

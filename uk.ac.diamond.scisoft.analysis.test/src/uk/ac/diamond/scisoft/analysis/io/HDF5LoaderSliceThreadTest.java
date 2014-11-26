@@ -21,11 +21,23 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class HDF5LoaderSliceThreadTest extends LoaderThreadTestBase {
 	
-	private static String filename = System.getProperty("GDALargeTestFilesLocation")+"/NexusUITest/DCT_201006-good.h5";
+	private static String filename;
+	static String TestFileFolder;
+	@BeforeClass
+	static public void setUpClass() {
+		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		if (TestFileFolder == null) {
+			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
+		}
+		filename =  TestFileFolder + "NexusUITest/DCT_201006-good.h5";
+	}
 
 	private ILazyDataset dataset;
 

@@ -18,11 +18,23 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class NexusLoaderSliceThreadTest extends LoaderThreadTestBase {
 
-	private static String filename = System.getProperty("GDALargeTestFilesLocation") + "/NexusUITest/DCT_201006-good.h5";
+	static String TestFileFolder;
+	private static String filename;
+	@BeforeClass
+	static public void setUpClass() {
+		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		if (TestFileFolder == null) {
+			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
+		}
+		filename =  TestFileFolder + "NexusUITest/DCT_201006-good.h5";
+	}
 
 	private SliceObject sliceObject;
 

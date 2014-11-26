@@ -31,10 +31,10 @@ public class MRCImageStackLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "/MRCImageStackLoaderTest/";
+		TestFileFolder += "MRCImageStackLoaderTest/";
 		testfile = TestFileFolder + "May10_15.48.32.mrc";
 	}
 

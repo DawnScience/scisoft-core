@@ -26,10 +26,10 @@ public class CrysalisLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "/CrysalisLoaderTest/";
+		TestFileFolder += "CrysalisLoaderTest/";
 	}
 
 	/**

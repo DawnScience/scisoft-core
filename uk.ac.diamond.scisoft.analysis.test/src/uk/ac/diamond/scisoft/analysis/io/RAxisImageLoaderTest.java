@@ -25,10 +25,10 @@ public class RAxisImageLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		filename = TestFileFolder+"/RigakuLoaderTest/4_05_screen_0001.osc";
+		filename = TestFileFolder + "RigakuLoaderTest/4_05_screen_0001.osc";
 	}
 	/**
 	 * Test Loading

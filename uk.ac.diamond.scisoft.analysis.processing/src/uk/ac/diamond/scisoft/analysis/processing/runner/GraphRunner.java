@@ -1,6 +1,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.runner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.dawb.passerelle.common.actors.ActorUtils;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
@@ -50,11 +52,55 @@ class GraphRunner  implements IOperationRunner {
 		    
 		    // We run the workflow
 			FlowManager flowMgr = new FlowManager();
-			flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());		
+			
+			if (context.getSlugCount()<2) { // No timeout
+			    flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());	
+			} else {
+				executeGraphWithTimeout(flowMgr, flow);
+			}
 			
 		} finally {
 			// We put it back 
 		    ActorUtils.setCanNotify(true);
+		}
+	}
+
+	/**
+	 * Executes the workflow in another thread but throws an exception if 
+	 * the timeout is reached.
+	 * 
+	 * @param flowMgr
+	 * @param flow
+	 * @throws Exception
+	 */
+	private void executeGraphWithTimeout(final FlowManager flowMgr, final Flow flow) throws Exception {
+		
+		final Thread mainThread   = Thread.currentThread();
+		final List<Exception> except = new ArrayList<Exception>(1); 
+		
+		final Thread workerThread  = new Thread(new Runnable() {
+			public void run() {
+				try {
+				    flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());	
+				} catch (Exception ne) {
+					except.add(ne);
+				} finally {
+					mainThread.interrupt();
+				}
+			}
+		});
+		
+		workerThread.start();
+		
+		try {
+			Thread.sleep(context.getParallelTimeout());
+			throw new Exception("The timeout of "+context.getParallelTimeout()+" ms has been exceeded!");
+			
+		} catch (InterruptedException expected) {
+			
+			if (!except.isEmpty()) throw except.get(0);
+			
+			// Otherwise it worked ok
 		}
 	}
 
@@ -80,7 +126,7 @@ class GraphRunner  implements IOperationRunner {
         	opTrans.receiverQueueCapacityParam.setToken(new IntToken(context.getSlugCount()));
         	
         	flow.connect(from, opTrans.input);
-        	from = opTrans.input;
+        	from = opTrans.output;
         }
 	}
 }

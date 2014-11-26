@@ -48,6 +48,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 		
 		try {
 			DataMessageComponent msg = MessageUtils.mergeAll(cache);
+			
 			IDataset data = (IDataset)msg.getList().values().iterator().next();
 			
 			OperationData tmp = operation.execute(data, context.getMonitor());

@@ -17,6 +17,18 @@ import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
+/**
+ * Runs a pipeline by looping the services of operations.
+ * 
+ * This will not work unless the pipeline is a linear series of operations 
+ * with one slug running the length.
+ * 
+ * If you have averaging or branching, you will need to consider using a 
+ * graph to execute your operations.
+ * 
+ * @author fcp94556
+ *
+ */
 class SeriesRunner implements IOperationRunner {
 
 

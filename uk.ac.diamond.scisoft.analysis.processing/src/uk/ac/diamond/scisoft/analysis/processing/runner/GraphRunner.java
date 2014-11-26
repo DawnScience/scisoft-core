@@ -3,19 +3,23 @@ package uk.ac.diamond.scisoft.analysis.processing.runner;
 import java.util.HashMap;
 
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
-import ptolemy.kernel.util.IllegalActionException;
-import ptolemy.kernel.util.NameDuplicationException;
 import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
+import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
 
+import com.isencia.passerelle.core.Port;
 import com.isencia.passerelle.domain.et.ETDirector;
 import com.isencia.passerelle.model.Flow;
 import com.isencia.passerelle.model.FlowManager;
 
 /**
  * Builds a graph for executing with Passerelle
+ * 
  * @author fcp94556
  *
  */
@@ -42,12 +46,28 @@ class GraphRunner  implements IOperationRunner {
 		flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());		
 	}
 
+	/**
+	 * Currently we simply build an in memory graph which is a linear
+	 * list of operations. Later we might execute a full graph.
+	 * 
+	 * @param flow
+	 * @throws Exception
+	 */
 	private void buildGraph(Flow flow) throws Exception {
 		
         final OperationSource source = new OperationSource(flow, "Operation Pipeline");
         source.setContext(context);
         source.setOriginMetadata(originMetadata);
         
-        // TODO 
+        Port from = source.output;
+        for (IOperation<? extends IOperationModel, ? extends OperationData> op : context.getSeries()) {
+        	
+        	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
+        	opTrans.setContext(context);
+        	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
+        	
+        	flow.connect(from, opTrans.input);
+        	from = opTrans.input;
+        }
 	}
 }

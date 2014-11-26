@@ -39,6 +39,7 @@ public abstract class AbstractFileLoader implements IFileLoader {
 	public static final String FILEPATH_DATASET_SEPARATOR = ":";
 
 	protected boolean loadMetadata = true;
+	protected boolean loadLazily = false;
 
 	@Override
 	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
@@ -48,6 +49,11 @@ public abstract class AbstractFileLoader implements IFileLoader {
 	@Override
 	public void setLoadMetadata(boolean willLoadMetadata) {
 		loadMetadata = willLoadMetadata;
+	}
+
+	@Override
+	public void setLoadAllLazily(boolean willLoadLazily) {
+		loadLazily = willLoadLazily;
 	}
 
 	/**

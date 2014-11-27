@@ -99,6 +99,9 @@ public class FunctionsTest {
 		
 		context.setSeries(functionOp);
 		service.execute(context);
+		
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
 	}
 	
 	static final int[] defaultPeakPos;
@@ -162,10 +165,14 @@ public class FunctionsTest {
 		});
 		
 		context.setSeries(fittingOp);
-		service.execute(context);
-
-		
+		service.execute(context);		
 		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+		
+		count = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+
 	}
 	
 	@Test
@@ -223,9 +230,13 @@ public class FunctionsTest {
 		
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
-
-		
 		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+		
+		count = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+
 	}
 
 	private DoubleDataset generatePseudoVoigt(int numPeaks) {

@@ -56,7 +56,7 @@ class GraphRunner  implements IOperationRunner {
 		    // We run the workflow
 			FlowManager flowMgr = new FlowManager();
 			
-			if (context.getSlugCount()<2) { // No timeout
+			if (context.getParallelTimeout()<1) { // No timeout
 			    flowMgr.executeBlockingErrorLocally(flow, new HashMap<String, String>());	
 			} else {
 				executeGraphWithTimeout(flowMgr, flow);
@@ -97,6 +97,7 @@ class GraphRunner  implements IOperationRunner {
 		
 		try {
 			Thread.sleep(context.getParallelTimeout());
+			
 			throw new Exception("The timeout of "+context.getParallelTimeout()+" ms has been exceeded!");
 			
 		} catch (InterruptedException expected) {
@@ -126,7 +127,7 @@ class GraphRunner  implements IOperationRunner {
         	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
         	opTrans.setContext(context);
         	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
-        	opTrans.receiverQueueCapacityParam.setToken(new IntToken(context.getSlugCount()));
+        	opTrans.receiverQueueCapacityParam.setToken(new IntToken(context.getQueueSize()));
         	
         	flow.connect(from, opTrans.input);
         	from = opTrans.output;

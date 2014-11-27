@@ -39,8 +39,14 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 	private IOperationContext                          context;
 
 	public OperationTransformer(CompositeEntity container, String name)	throws NameDuplicationException, IllegalActionException {
-		super(container, name);
+		super(container, createNonNullName(name));
 		// TODO We could have attributes in here for editing the operation or operation model.
+	}
+
+	private static long nullNameCount = 0;
+	private static String createNonNullName(String name) {
+		if (name!=null) return name;
+		return "OperationTransformer_"+(++nullNameCount);
 	}
 
 	@Override

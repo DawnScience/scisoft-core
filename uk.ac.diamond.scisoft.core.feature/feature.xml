@@ -262,12 +262,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.scisoft.analysis.processing"
-         download-size="0"
-         install-size="0"
-         version="1.0.0.qualifier"/>
-
-   <plugin
          id="org.dawnsci.boofcv"
          download-size="0"
          install-size="0"

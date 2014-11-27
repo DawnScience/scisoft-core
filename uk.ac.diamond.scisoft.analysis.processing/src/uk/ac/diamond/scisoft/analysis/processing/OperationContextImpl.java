@@ -47,12 +47,10 @@ public class OperationContextImpl implements IOperationContext {
 	private long                 parallelTimeout=-1;
 	
 	/**
-	 * The size of the queue used in GRAPH mode. By default the value is 1 meaning that each operation
-	 * may operation on one slice at a time, giving a maximum memory usage for graph mode as n+1 slices
-	 * where n is the number of operations. In practice the pipeline will have considerably less than n
-	 * slices in memory because of operations not all taking the same time.
+	 * The size of the thread pool used in GRAPH mode. By default the value is 1 meaning that 1 slice is ]
+	 * in the pipeline at a time.
 	 */
-	private int                  queueSize=1;
+	private int                  poolSize=1;
 	
 	/**
 	 * Defaults to ExecutionType.SERIES
@@ -237,11 +235,11 @@ public class OperationContextImpl implements IOperationContext {
 	public void setDatasetPath(String datasetPath) {
 		this.datasetPath = datasetPath;
 	}
-	public int getQueueSize() {
-		return queueSize;
+	public int getPoolSize() {
+		return poolSize;
 	}
-	public void setQueueSize(int slugCount) {
-		this.queueSize = slugCount;
+	public void setPoolSize(int slugCount) {
+		this.poolSize = slugCount;
 	}
 
 }

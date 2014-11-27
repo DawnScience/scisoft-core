@@ -50,6 +50,8 @@ class GraphRunner  implements IOperationRunner {
 		Flow flow = new Flow("Operations Graph", null);
 		
 		ETDirector director = new ETDirector(flow, "Director");
+		director.dispatchThreadsParameter.setToken(new IntToken(context.getPoolSize()));
+		
 		flow.setDirector(director);
 		
 		buildGraph(flow);
@@ -132,8 +134,7 @@ class GraphRunner  implements IOperationRunner {
         	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
         	opTrans.setContext(context);
         	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
-        	opTrans.receiverQueueCapacityParam.setToken(new IntToken(context.getQueueSize()));
-        	
+       	
         	flow.connect(from, opTrans.input);
         	from = opTrans.output;
         }

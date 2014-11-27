@@ -220,7 +220,7 @@ public class OperationsTest {
 		// Test in graph mode
 		counter = 0;
 		context.setExecutionType(ExecutionType.GRAPH);
-		context.setQueueSize(Runtime.getRuntime().availableProcessors());
+		context.setPoolSize(Runtime.getRuntime().availableProcessors());
 		service.execute(context);
 		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 
@@ -271,7 +271,7 @@ public class OperationsTest {
 				// This also should timeout
 			    context.setExecutionType(ExecutionType.GRAPH);
 				context.setParallelTimeout(5000);
-			    context.setQueueSize(Runtime.getRuntime().availableProcessors());
+			    context.setPoolSize(Runtime.getRuntime().availableProcessors());
 			    service.execute(context);
 			    
 			} catch (OperationException neo) {	
@@ -326,7 +326,7 @@ public class OperationsTest {
 
 		counter=0;
 	    context.setExecutionType(ExecutionType.GRAPH);
-	    context.setQueueSize(Runtime.getRuntime().availableProcessors());
+	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
 	    service.execute(context);
 		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 	}

@@ -17,7 +17,7 @@ import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
 import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
 
 import com.isencia.passerelle.core.Port;
-import com.isencia.passerelle.domain.et.ETDirector;
+import com.isencia.passerelle.domain.cap.Director;
 import com.isencia.passerelle.model.Flow;
 import com.isencia.passerelle.model.FlowManager;
 
@@ -49,7 +49,7 @@ class GraphRunner  implements IOperationRunner {
 		
 		Flow flow = new Flow("Operations Graph", null);
 		
-		ETDirector director = new ETDirector(flow, "Director");
+		Director director = new Director(flow, "Director");
 		flow.setDirector(director);
 		
 		buildGraph(flow);

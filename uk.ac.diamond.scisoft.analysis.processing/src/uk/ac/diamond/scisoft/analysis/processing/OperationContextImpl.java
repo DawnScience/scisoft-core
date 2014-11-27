@@ -52,7 +52,7 @@ public class OperationContextImpl implements IOperationContext {
 	 * where n is the number of operations. In practice the pipeline will have considerably less than n
 	 * slices in memory because of operations not all taking the same time.
 	 */
-	private int                  queueSize=1;
+	private int                  queueSize=2;
 	
 	/**
 	 * Defaults to ExecutionType.SERIES

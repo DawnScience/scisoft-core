@@ -32,9 +32,12 @@ class GraphRunner  implements IOperationRunner {
 	private IOperationContext context;
 	private OriginMetadata    originMetadata;
 
-	public void init(IOperationContext context, OriginMetadata originMetadata) {
+	public void init(IOperationContext context, OriginMetadata originMetadata) throws Exception {
 		this.context        = context;
 		this.originMetadata = originMetadata;
+		if (context.getVisitor()!=null) {
+			context.getVisitor().init(context.getSeries(), originMetadata);
+		}
 	}
 
 	public void execute() throws Exception {

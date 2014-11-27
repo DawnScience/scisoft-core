@@ -5,13 +5,14 @@ import java.util.List;
 import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.api.slice.SliceInfo;
-import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,22 +59,30 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			IDataset data = (IDataset)msg.getList().values().iterator().next();
 			
 			OperationData tmp = operation.execute(data, context.getMonitor());
+			
 			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 
-			final SliceInfo info = msg.getSliceInfo();
-	
+			final ILazyDataset info = msg.getSlice();
+			final SliceFromSeriesMetadata ssm = info.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			SourceInformation ssource = null;
+			try {
+				ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			}catch (Exception e) {
+				logger.error("Source not obtainable. Hope this is just a unit test...");
+			}
+			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+			tmp.getData().setMetadata(fullssm);
 			if (context.getVisitor()!=null) {
-				final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
-				context.getVisitor().notify(operation, tmp, info.getSlice(), info.getData().getShape(), dataDims); // Optionally send intermediate result
+				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result
 			
 			    if (output.getWidth()<1) { // We have reached the end.
 			    	OperationData odata = new OperationData(data);
 			    	if (!operation.isPassUnmodifiedData()) odata.setAuxData(tmp.getAuxData());
 			    	
-			    	context.getVisitor().executed(odata, context.getMonitor(), info.getSlice(), info.getData().getShape(), dataDims); // Send result.
+			    	context.getVisitor().executed(odata, context.getMonitor()); // Send result.
 					if (context.getMonitor() != null) context.getMonitor().worked(1);
 					
-					logger.debug(info.getSliceName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
+					logger.debug(info.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
 			    }
 			}
 			

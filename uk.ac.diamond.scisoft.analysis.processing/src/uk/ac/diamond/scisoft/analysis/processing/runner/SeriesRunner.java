@@ -12,8 +12,10 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
 
 import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
@@ -46,13 +48,23 @@ class SeriesRunner implements IOperationRunner {
 
 		// determine data axes to populate origin metadata
 		final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
-
+		final SourceInformation ssource = null; 
+		
+		try {
+			context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+		} catch (Exception e) {
+			logger.error("Source not obtainable. Hope this is just a unit test...");
+		}
+		
 		// Create the slice visitor
 		SliceVisitor sv = new SliceVisitor() {
 
 			@Override
 			public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 
+				SliceFromSeriesMetadata ssm = slice.getMetadata(SliceFromSeriesMetadata.class).get(0);
+				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				slice.setMetadata(fullssm);
 				OriginMetadata innerOm = originMetadata;
 
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
@@ -75,13 +87,14 @@ class SeriesRunner implements IOperationRunner {
 					}
 
 					OperationData tmp = i.execute(data.getData(), context.getMonitor());
-
-					visitor.notify(i, tmp, slices, shape, dataDims); // Optionally send intermediate result
+					tmp.getData().setMetadata(fullssm);
+					
+					visitor.notify(i, tmp); // Optionally send intermediate result
 					data = i.isPassUnmodifiedData() ? data : tmp;
 				}
 				logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 
-				visitor.executed(data, context.getMonitor(), slices, shape, dataDims); // Send result.
+				visitor.executed(data, context.getMonitor()); // Send result.
 				if (context.getMonitor() != null) context.getMonitor().worked(1);
 			}
 
@@ -91,7 +104,7 @@ class SeriesRunner implements IOperationRunner {
 			}
 		};
 
-		visitor.init(context.getSeries(), originMetadata);
+		visitor.init(context.getSeries(), context.getData());
 		long start = System.currentTimeMillis();
 		// Jake's slicing from the conversion tool is now in Slicer.
 		if (context.getExecutionType()==ExecutionType.SERIES) {

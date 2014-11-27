@@ -69,7 +69,7 @@ public class RankTest {
 		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=context.getData().getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
@@ -113,7 +113,7 @@ public class RankTest {
 	
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			});
@@ -147,7 +147,7 @@ public class RankTest {
 		// This order is ok
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
 			}			
 		});
@@ -158,7 +158,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
@@ -202,7 +202,7 @@ public class RankTest {
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
 		});
@@ -212,7 +212,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
@@ -264,7 +264,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			});

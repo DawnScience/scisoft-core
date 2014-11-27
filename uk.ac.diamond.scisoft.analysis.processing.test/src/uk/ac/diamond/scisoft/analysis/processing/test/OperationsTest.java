@@ -74,7 +74,7 @@ public class OperationsTest {
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				++counter;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -110,7 +110,7 @@ public class OperationsTest {
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				++counter;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -150,7 +150,7 @@ public class OperationsTest {
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				counter++;
@@ -192,7 +192,7 @@ public class OperationsTest {
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour
@@ -243,7 +243,7 @@ public class OperationsTest {
 		context.setExecutionType(ExecutionType.PARALLEL);
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour
@@ -300,7 +300,7 @@ public class OperationsTest {
 		context.setParallelTimeout(Long.MAX_VALUE);
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour

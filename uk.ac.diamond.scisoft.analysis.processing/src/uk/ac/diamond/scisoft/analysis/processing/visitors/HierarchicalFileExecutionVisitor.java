@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.eclipse.dawnsci.hdf5.H5Utils;
@@ -38,6 +39,8 @@ import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf5.IHierarchicalDataFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.processing.operations.image.MeanFilterOperation;
 
 /**
  * Nexus writing implementation of IExecutionVisitor.
@@ -85,7 +88,10 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series, OriginMetadata origin) throws Exception {
+	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series, ILazyDataset data) throws Exception {
+		OriginMetadata origin = null;
+		List<OriginMetadata> metadata = data.getMetadata(OriginMetadata.class);
+		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 		file = HierarchicalDataFactory.getWriter(filePath);
 		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 		IPersistentFile pf = service.createPersistentFile(file);
@@ -130,9 +136,13 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 	
 	@Override
-	public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+	public void executed(OperationData result, IMonitor monitor) throws Exception {
 		//Write data to file
 		final IDataset integrated = result.getData();
+		SliceFromSeriesMetadata metadata = integrated.getMetadata(SliceFromSeriesMetadata.class).get(0);
+		int[] dataDims = metadata.getShapeInfo().getDataDimensions();
+		int[] shape = metadata.getShapeInfo().getSubSampledShape();
+		Slice[] slices = metadata.getSliceInfo().getCurrentSlice();
 		updateAxes(integrated, slices, shape, dataDims, results);
 		integrated.setName("data");
 		appendData(integrated,results, slices,shape, file);
@@ -142,7 +152,7 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	}
 
 	@Override
-	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data, Slice[] slices, int[] shape, int[] dataDims) {
+	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data) {
 		//make groups on first pass
 		if (!firstPassDone) {
 			try {
@@ -151,6 +161,19 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 				logger.error(e.getMessage());
 			}
 		}
+		
+		SliceFromSeriesMetadata metadata;
+		try {
+			metadata = data.getData().getMetadata(SliceFromSeriesMetadata.class).get(0);
+		} catch (Exception e) {
+			logger.error("", "Cannot access series metadata, contact DAWN support");
+			return;
+		}
+		
+		
+		int[] dataDims = metadata.getShapeInfo().getDataDimensions();
+		int[] shape = metadata.getShapeInfo().getSubSampledShape();
+		Slice[] slices = metadata.getSliceInfo().getCurrentSlice();
 		
 		//if specified to save data, do it
 		if (intermeadiateData.isStoreOutput()) {

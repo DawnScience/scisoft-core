@@ -6,9 +6,11 @@ import org.dawb.passerelle.common.DatasetConstants;
 import org.dawb.passerelle.common.actors.AbstractDataMessageSource;
 import org.dawb.passerelle.common.message.DataMessageException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.SliceInfo;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 
@@ -39,7 +41,7 @@ import com.isencia.passerelle.message.MessageFactory;
  */
 public class OperationSource extends AbstractDataMessageSource {
 
-	private Queue<SliceInfo>  queue;
+	private Queue<ILazyDataset>  queue;
 	private IOperationContext context;
 	private OriginMetadata    originMetadata;
 	
@@ -98,24 +100,24 @@ public class OperationSource extends AbstractDataMessageSource {
 
 		//ActorUtils.waitWhileLocked();
 		
-		final SliceInfo info = queue.poll();
+		final ILazyDataset info = queue.poll();
 		if (info==null) return null;
 		
         ManagedMessage msg = MessageFactory.getInstance().createMessageInSequence(msgSequenceID, msgCounter++, hasNoMoreMessages(), getStandardMessageHeaders());
     
 		try {
-			msg.setBodyHeader("TITLE", info.getSliceName());
+			msg.setBodyHeader("TITLE", info.getName());
 			msg.setBodyContent(getData(info), DatasetConstants.CONTENT_TYPE_DATA);
 		} catch (MessageException e) {
 			msg = MessageFactory.getInstance().createErrorMessage(new PasserelleException(ErrorCode.MSG_CONSTRUCTION_ERROR, "Cannot set map of data in message body!", this, e));
 			queue.clear();
 		} catch (Exception ne) {
 			queue.clear();
-			throw new DataMessageException("Cannot read data from '"+info.getSliceName()+"'", this, ne);
+			throw new DataMessageException("Cannot read data from '"+info.getName()+"'", this, ne);
 		}
 
 		if (context.getMonitor()!=null) {
-			context.getMonitor().subTask(info.getSliceName());
+			context.getMonitor().subTask(info.getName());
 		}
 
 		return msg;
@@ -128,23 +130,24 @@ public class OperationSource extends AbstractDataMessageSource {
 		return false;
 	}
 
-	private DataMessageComponent getData(SliceInfo info) throws Exception {
+	private DataMessageComponent getData(ILazyDataset info) throws Exception {
 		
 		DataMessageComponent ret = new DataMessageComponent();
 		
-		final IDataset slice = info.slice();
+		final IDataset slice = info.getSlice();
 		OriginMetadata innerOm = originMetadata;
+		SliceFromSeriesMetadata ssm = info.getMetadata(SliceFromSeriesMetadata.class).get(0);
 
         if (innerOm == null){ 
 			final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
-			innerOm = new OriginMetadataImpl(context.getData(), info.getSlice(), dataDims,"",context.getData().getName());
+			innerOm = new OriginMetadataImpl(context.getData(), ssm.getSliceInfo().getViewSlice(), dataDims,"",context.getData().getName());
 		} else {
-			((OriginMetadataImpl)innerOm).setCurrentSlice(info.getSlice());
+			((OriginMetadataImpl)innerOm).setCurrentSlice(ssm.getSliceInfo().getCurrentSlice());
 		}
 		slice.setMetadata(innerOm);
-
+		
 		ret.setList(slice);
-		ret.setSliceInfo(info);
+		ret.setSlice(info);
 		return ret;
 	}
 

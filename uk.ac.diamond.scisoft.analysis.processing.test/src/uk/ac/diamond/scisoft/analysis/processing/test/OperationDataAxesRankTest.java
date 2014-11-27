@@ -64,7 +64,7 @@ public class OperationDataAxesRankTest {
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 3) {
@@ -99,7 +99,7 @@ public class OperationDataAxesRankTest {
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 2) {
@@ -139,7 +139,7 @@ public class OperationDataAxesRankTest {
 //		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getRank() != 3) {

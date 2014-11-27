@@ -75,7 +75,7 @@ public class FunctionsTest {
 		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
@@ -141,7 +141,7 @@ public class FunctionsTest {
 		count = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor,  Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				
@@ -195,7 +195,7 @@ public class FunctionsTest {
 		context.setParallelTimeout(Long.MAX_VALUE);
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				System.out.println(result.getData().getName());
 

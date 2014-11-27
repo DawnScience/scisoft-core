@@ -230,12 +230,14 @@ public class FunctionsTest {
 		
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
-		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+		
+		Thread.sleep(1000);
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit 5 times! "+count);
 		
 		count = 0;
 		context.setExecutionType(ExecutionType.GRAPH);
 		service.execute(context);
-		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit ten times!");
+		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit 5 times! "+count);
 
 	}
 

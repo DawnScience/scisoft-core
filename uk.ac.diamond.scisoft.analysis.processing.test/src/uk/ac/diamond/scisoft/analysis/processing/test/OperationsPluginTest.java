@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 
 /**
  * Must have OSGI so this is a junit plugin test.
@@ -51,12 +52,7 @@ public class OperationsPluginTest {
 		if (service == null) throw new Exception("Cannot get the service!");
 				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
@@ -87,18 +83,8 @@ public class OperationsPluginTest {
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
-		subtract.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 101;
-			}
-		});
+		subtract.setModel(new ValueModel(100));
+		add.setModel(new ValueModel(101));
 		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			public void executed(OperationData result, IMonitor monitor) {

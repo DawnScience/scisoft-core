@@ -48,7 +48,7 @@ public class GraphBuilder {
         	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
         	opTrans.setContext(context);
         	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
-            new Location(opTrans, "_location").setLocation(new double[]{count*200, 100});
+            new Location(opTrans, "_location").setLocation(new double[]{count*150, 100});
             count++;
        	
         	flow.connect(from, opTrans.input);

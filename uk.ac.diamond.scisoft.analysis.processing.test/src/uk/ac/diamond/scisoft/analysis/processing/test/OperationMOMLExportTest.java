@@ -70,7 +70,10 @@ public class OperationMOMLExportTest {
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
 		subtract.setModel(new ValueModel(100));
 		
-		context.setSeries(subtract);
+		final IOperation add      = service.findFirst("add");
+		add.setModel(new ValueModel(100));
+	
+		context.setSeries(subtract, add);
 
 		GraphBuilder builder = new GraphBuilder(context);
 		Flow flow = builder.createEventDirectorFlow();

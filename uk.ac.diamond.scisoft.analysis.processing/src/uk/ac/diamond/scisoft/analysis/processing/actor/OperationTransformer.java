@@ -58,19 +58,25 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			
 			IDataset data = (IDataset)msg.getList().values().iterator().next();
 			
-			OperationData tmp = operation.execute(data, context.getMonitor());
-			
-			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
-
-			final ILazyDataset info = msg.getSlice();
-			final SliceFromSeriesMetadata ssm = info.getMetadata(SliceFromSeriesMetadata.class).get(0);
 			SourceInformation ssource = null;
+			
 			try {
 				ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
 			}catch (Exception e) {
 				logger.error("Source not obtainable. Hope this is just a unit test...");
 			}
+			final SliceFromSeriesMetadata ssm = data.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			
 			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+			
+			data.setMetadata(fullssm);
+			
+			OperationData tmp = operation.execute(data, context.getMonitor());
+			
+			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
+
+			final ILazyDataset info = msg.getSlice();
+
 			tmp.getData().setMetadata(fullssm);
 			if (context.getVisitor()!=null) {
 				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result

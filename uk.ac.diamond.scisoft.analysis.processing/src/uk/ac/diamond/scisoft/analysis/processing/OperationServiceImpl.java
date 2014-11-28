@@ -36,6 +36,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.slf4j.Logger;
@@ -98,16 +99,13 @@ public class OperationServiceImpl implements IOperationService {
 	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), context.getSlicing());
 			validate(firstSlice, context.getSeries());
 	
-			OriginMetadata om = null;
 			
-			try {
-				om = context.getData().getMetadata(OriginMetadata.class).get(0);
-			} catch (Exception e1) {
-				logger.warn("No origin metadata in operation input!");
-			}
+			SliceFromSeriesMetadata ssm = firstSlice.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo(), ssm.getShapeInfo(), ssm.getSliceInfo());
+			context.getData().setMetadata(fullssm);
 			
 			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());
-			runner.init(context, om);
+			runner.init(context);
 			runner.execute();
 			
 		} catch (OperationException o) {

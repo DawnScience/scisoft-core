@@ -35,11 +35,9 @@ class SeriesRunner implements IOperationRunner {
 
 
 	private IOperationContext context;
-	private OriginMetadata    originMetadata;
 
-	public void init(IOperationContext context, OriginMetadata originMetadata) {
+	public void init(IOperationContext context) {
 		this.context        = context;
-		this.originMetadata = originMetadata;
 	}
 
 	@Override
@@ -47,14 +45,15 @@ class SeriesRunner implements IOperationRunner {
 		final IExecutionVisitor visitor = context.getVisitor() ==null ? new IExecutionVisitor.Stub() : context.getVisitor();
 
 		// determine data axes to populate origin metadata
-		final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
-		final SourceInformation ssource = null; 
+		SourceInformation ssource = null; 
 		
 		try {
-			context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			 ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
 		} catch (Exception e) {
 			logger.error("Source not obtainable. Hope this is just a unit test...");
 		}
+		
+		final SourceInformation finalSource = ssource;
 		
 		// Create the slice visitor
 		SliceVisitor sv = new SliceVisitor() {
@@ -63,19 +62,12 @@ class SeriesRunner implements IOperationRunner {
 			public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 
 				SliceFromSeriesMetadata ssm = slice.getMetadata(SliceFromSeriesMetadata.class).get(0);
-				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getShapeInfo(), ssm.getSliceInfo());
 				slice.setMetadata(fullssm);
-				OriginMetadata innerOm = originMetadata;
 
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
-				if (innerOm == null){ 
-					innerOm = new OriginMetadataImpl(context.getData(), slices, dataDims,"",context.getData().getName());
-				} else {
-					((OriginMetadataImpl)innerOm).setCurrentSlice(slices);
-				}
-				slice.setMetadata(innerOm);
 
-				String path = innerOm.getFilePath();
+				String path = fullssm.getSourceInfo().getFilePath();
 				if (path == null) path = "";
 
 				OperationData  data = new OperationData(slice, (Serializable[])null);

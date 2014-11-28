@@ -30,11 +30,9 @@ import com.isencia.passerelle.model.FlowManager;
 class GraphRunner  implements IOperationRunner {
 
 	private IOperationContext context;
-	private OriginMetadata    originMetadata;
 
-	public void init(IOperationContext context, OriginMetadata originMetadata) throws Exception {
+	public void init(IOperationContext context) throws Exception {
 		this.context        = context;
-		this.originMetadata = originMetadata;
 		if (context.getVisitor()!=null) {
 		    context.getVisitor().init(context.getSeries(), context.getData());
 		}
@@ -121,7 +119,6 @@ class GraphRunner  implements IOperationRunner {
 		
         final OperationSource source = new OperationSource(flow, "Operation Pipeline");
         source.setContext(context);
-        source.setOriginMetadata(originMetadata);
         
         Port from = source.output;
         for (IOperation<? extends IOperationModel, ? extends OperationData> op : context.getSeries()) {

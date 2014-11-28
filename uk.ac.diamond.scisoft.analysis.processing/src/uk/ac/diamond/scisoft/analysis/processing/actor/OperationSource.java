@@ -135,16 +135,8 @@ public class OperationSource extends AbstractDataMessageSource {
 		DataMessageComponent ret = new DataMessageComponent();
 		
 		final IDataset slice = info.getSlice();
-		OriginMetadata innerOm = originMetadata;
 		SliceFromSeriesMetadata ssm = info.getMetadata(SliceFromSeriesMetadata.class).get(0);
-
-        if (innerOm == null){ 
-			final int[] dataDims = Slicer.getDataDimensions(context.getData().getShape(), context.getSlicing());
-			innerOm = new OriginMetadataImpl(context.getData(), ssm.getSliceInfo().getViewSlice(), dataDims,"",context.getData().getName());
-		} else {
-			((OriginMetadataImpl)innerOm).setCurrentSlice(ssm.getSliceInfo().getCurrentSlice());
-		}
-		slice.setMetadata(innerOm);
+		slice.setMetadata(ssm);
 		
 		ret.setList(slice);
 		ret.setSlice(info);

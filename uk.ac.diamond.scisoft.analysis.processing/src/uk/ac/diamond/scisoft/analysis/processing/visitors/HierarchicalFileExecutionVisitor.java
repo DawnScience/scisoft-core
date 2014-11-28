@@ -89,15 +89,15 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 	
 	@Override
 	public void init(IOperation<? extends IOperationModel, ? extends OperationData>[] series, ILazyDataset data) throws Exception {
+		this.series = series;
 		OriginMetadata origin = null;
-		List<OriginMetadata> metadata = data.getMetadata(OriginMetadata.class);
+		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 		file = HierarchicalDataFactory.getWriter(filePath);
 		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 		IPersistentFile pf = service.createPersistentFile(file);
 		pf.setOperations(series);
 		pf.setOperationDataOrigin(origin);
-		this.series = series;
 		
 	}
 	

@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import org.dawb.passerelle.common.DatasetConstants;
 import org.dawb.passerelle.common.actors.AbstractDataMessageSource;
+import org.dawb.passerelle.common.actors.ActorUtils;
 import org.dawb.passerelle.common.message.DataMessageException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -11,13 +12,11 @@ import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.api.slice.SliceInfo;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
-import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
 
 import com.isencia.passerelle.actor.InitializationException;
 import com.isencia.passerelle.actor.ProcessingException;
@@ -98,7 +97,8 @@ public class OperationSource extends AbstractDataMessageSource {
 			return null;
 		}
 
-		//ActorUtils.waitWhileLocked();
+		// Required to stop too many slugs going into a threading actor.
+		ActorUtils.waitWhileLocked();
 		
 		final ILazyDataset info = queue.poll();
 		if (info==null) return null;
